@@ -49,6 +49,21 @@ const AVATAR_PART_FILES = [...listJsTree(AVATAR_CELL_DIR, true), ...listJsTree(p
 const AVATAR_SRC = [AVATAR_SYSTEM_JS, ...AVATAR_PART_FILES].map(readAvatarFile).join('\n');
 // 지금(부품 파일 0개)은 아바타 합본이 js/avatar-system.js 한 파일과 글자가 같다 — 범위만 넓혔고 읽는 글자는 그대로임을 단언한다.
 if (AVATAR_PART_FILES.length === 0) assert.strictEqual(AVATAR_SRC, fs.readFileSync(AVATAR_SYSTEM_JS, 'utf8'), '아바타 합본 = js/avatar-system.js (부품 파일이 없을 때)');
+// #TASK-ES-388 (팀 세포 쪼개기 2차 선행 — 시험지): 팀 코드가 js/team-invite-comm.js 에서 js/team-*.js 세포(팀 세포 키트 OurgoalTeamCommKit 에 함수를 담는 파일)로 옮겨 가도(동작 그대로)
+// 같은 단언이 같은 코드를 찾도록, 팀 소스 글자 검사는 '팀 합본' = js/team-invite-comm.js(원문 그대로, 맨 앞) + 키트 부품 js/team-*.js(이름순) 를 본다.
+// 쪼개기 생성기(gen-team-split.js)는 원본 스코프 이름을 T.<이름>, 키트를 K.<이름> 으로 바꿔 쓴다 — 부품만 그 접두를 떼고 읽는다(L.·K.·AV.·MS. 와 같은 방식). 단언·기대값은 그대로다.
+const TEAM_INVITE_COMM_JS = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
+function isTeamCommPartFile(f) {
+  const n = path.basename(f);
+  return n.indexOf('team-') === 0 && n !== 'team-invite-comm.js' && fs.readFileSync(f, 'utf8').indexOf('OurgoalTeamCommKit') >= 0;
+}
+function readTeamPartFile(f) { return fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\.(?=[A-Za-z_$])/g, '$1'); }
+const TEAM_COMM_PART_FILES = listJsTree(path.join(__dirname, '..', 'js'), false).filter(isTeamCommPartFile);
+const TEAM_INVITE_COMM_RAW = fs.readFileSync(TEAM_INVITE_COMM_JS, 'utf8');
+const TEAM_COMM_SRC = [TEAM_INVITE_COMM_RAW, ...TEAM_COMM_PART_FILES.map(readTeamPartFile)].join('\n');
+// 합본 맨 앞은 js/team-invite-comm.js 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
+assert.strictEqual(TEAM_COMM_SRC.slice(0, TEAM_INVITE_COMM_RAW.length), TEAM_INVITE_COMM_RAW, '팀 합본 맨 앞 = js/team-invite-comm.js 원문');
+if (TEAM_COMM_PART_FILES.length === 0) assert.strictEqual(TEAM_COMM_SRC, TEAM_INVITE_COMM_RAW, '팀 합본 = js/team-invite-comm.js (부품 파일이 없을 때)');
 const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + readAppModule(f); }).join('');
 // 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다.
 const APP_SRC = html;
@@ -4584,7 +4599,7 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
   assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
   assert.ok(indexHtml.includes('js/team-invite-comm.js'), 'index.html 내 team-invite-comm.js 로드 태그 탑재');
 
-  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+  const moduleContent = TEAM_COMM_SRC;
   assert.ok(moduleContent.includes('openTeamInviteModal'), 'openTeamInviteModal 함수 탑재');
   assert.ok(moduleContent.includes('openTeamChatModal'), 'openTeamChatModal 함수 탑재');
   assert.ok(moduleContent.includes('handlePingSentAutoReply'), 'handlePingSentAutoReply 함수 탑재');
@@ -4629,7 +4644,7 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
   const indexHtml = APP_SRC;
   const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
   assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
-  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+  const moduleContent = TEAM_COMM_SRC;
 
   // 1. 추천템플릿 3종 목표 탭 이전 및 슬롯/버튼/둘러보기 배선
   assert.ok(indexHtml.includes('id="goalsTemplateAccordionSlot"'), '목표 탭 상단 추천 템플릿 아코디언 슬롯 탑재');
@@ -4708,7 +4723,7 @@ check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 �
   const indexHtml = APP_SRC;
   const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
   assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
-  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+  const moduleContent = TEAM_COMM_SRC;
 
   // 1. 헌법 제19조 제4항 1호/2호: 서버 DB 원장 및 Realtime 채널 백본 검증
   assert.ok(moduleContent.includes('getDmThreadId'), '발송자/수신자 UID 기반 고유 쓰레드 ID 생성 함수 탑재');
@@ -5072,7 +5087,7 @@ check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 �
   const viralSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'viral-sharing.js'), 'utf8');
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
   const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
 
   // 1. 바이럴 공유 모듈 헬퍼 함수 구현 확인
   assert.ok(viralSrc.includes('function shareContent(opts)'), 'shareContent 함수 구현');
@@ -5182,7 +5197,7 @@ check('compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquir
 });
 
 check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 복원(Vercel 서버리스 + RPC 폴백) 및 가상 유저 3인 AI 동반자 투명 뱃지 표기 검증', () => {
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
   const rpcSql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-16-search-users-rpc.sql'), 'utf8');
 
@@ -5414,7 +5429,7 @@ check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일�
 
 /* ============ [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존 검증 ============ */
 check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존(로컬 자가복원 + 서버리스 원장) 검증', () => {
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
   const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
@@ -5440,7 +5455,7 @@ check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무�
 });
 
 check('compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 PostgrestFilterBuilder 예외 완전 격리 검증', () => {
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
   const indexSrc = APP_SRC;
 
   // 1. Supabase PostgrestFilterBuilder .catch 문법 에러 배제
@@ -5458,7 +5473,7 @@ check('compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 Post
 
 /* ============ [#TASK-ES-131] DM 수신자 완벽 사용자 경험(UX) 파이프라인 검증 ============ */
 check('compliance: [#TASK-ES-131] DM 수신자 완벽 사용자 경험(수신함 자동인입 + 레드 닷 뱃지 + 맞추가 배너) 검증', () => {
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
   const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -5894,7 +5909,7 @@ check('compliance: [#TASK-ES-143] 전 AI 엔드포인트 로컬 스마트 룰베
 
 check('compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근본 해결 및 1:1 DM 실시간 수신 파이프라인 무결성 검증', () => {
   const indexSrc = APP_SRC;
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
 
   // 1. index.html defaultProfile, loadProfile, saveProfile 동반자 영속화 배선 확인
   assert.ok(indexSrc.includes('companions: [],'), 'defaultProfile에 companions 기본 배열 탑재');
@@ -5923,7 +5938,7 @@ check('compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근�
 /* ============ [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증 ============ */
 check('compliance: [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증', () => {
   const indexSrc = APP_SRC;
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
 
   // 1. index.html isValidRealUser 탑재 및 실 사용자 UUID 정밀 식별
   assert.ok(indexSrc.includes('function isValidRealUser(id)'), 'isValidRealUser 함수 탑재');
@@ -6079,7 +6094,7 @@ check('compliance: [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료
 check('compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증', () => {
   const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
   const notifyModPath = path.join(__dirname, '..', 'js', 'notify-engine.js');
 
   // 1. OurgoalNotifyEngine 모듈 및 API 완비 검증
@@ -6661,7 +6676,7 @@ check('compliance: [#TASK-ES-167] 아바타 페르소나 사용자 노출 \'77�
 check('compliance: [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWorker·스마트 폴링·상단바 알림센터) 무결성 전면 고도화 검증', () => {
   const pushSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-dispatch.js'), 'utf8');
   const notifySrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'notify-engine.js'), 'utf8');
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
   const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
@@ -6695,7 +6710,7 @@ check('compliance: [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWork
 /* ============ [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 및 가짜 타이머 제거·직통 배선 검증 ============ */
 check('compliance: [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 및 가짜 타이머 제거·직통 배선 검증', () => {
   const viralSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'viral-sharing.js'), 'utf8');
-  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commSrc = TEAM_COMM_SRC;
   const leaderSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
   const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
@@ -6930,7 +6945,7 @@ check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제(
   const indexHtml = APP_SRC;
   const manifestJson = fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8');
   const widgetHtml = fs.readFileSync(path.join(__dirname, '..', 'widget.html'), 'utf8');
-  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commJs = TEAM_COMM_SRC;
   const componentsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -7812,7 +7827,7 @@ check('[#TASK-ES-230] 마니또(Manito) 매칭 즉시 원클릭 웰컴 응원 �
 });
 
 check('[#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 복사] 및 [가입자 닉네임 검색] 상단 신설 무결성', () => {
-  const commJsContent = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commJsContent = TEAM_COMM_SRC;
   const indexHtmlContent = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -8934,7 +8949,7 @@ check('compliance: [#TASK-ES-276] 측정지표 분석할 항목별 차등 지정
 check('compliance: [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선)', () => {
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const teamInviteCommJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const teamInviteCommJs = TEAM_COMM_SRC;
 
   // 1. js/team-invite-comm.js handle팀목표_Item25Action 정의 검증
   assert.ok(teamInviteCommJs.includes('async function handle팀목표_Item25Action('), 'handle팀목표_Item25Action 함수 정의');
@@ -8978,7 +8993,7 @@ check('compliance: [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 
 check('compliance: [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경', () => {
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commJs = TEAM_COMM_SRC;
 
   // 1. js/team-invite-comm.js handle소통_Item28Action 정의 검증
   assert.ok(commJs.includes('async function handle소통_Item28Action('), 'handle소통_Item28Action 함수 정의');
@@ -9023,7 +9038,7 @@ check('compliance: [#TASK-ES-280] 일정 사진 일기장 안내창 우측 상�
 check('compliance: [#TASK-ES-281] 소통탭 게시하기 버튼 먹통 오류 수정 및 정상 동작 복구', () => {
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commJs = TEAM_COMM_SRC;
 
   // 1. js/team-invite-comm.js handle소통_Item30Action 정의 검증
   assert.ok(commJs.includes('async function handle소통_Item30Action('), 'handle소통_Item30Action 함수 정의');
@@ -9175,7 +9190,7 @@ check('compliance: [#TASK-ES-287] 동반자 탭 내 AI 동반자 전면 제거 (
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const teamJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const teamJs = TEAM_COMM_SRC;
 
   // 1. js/components.js 및 js/team-invite-comm.js handle팀목표_Item37Action 정의 검증
   assert.ok(compJs.includes('async function handle팀목표_Item37Action('), 'handle팀목표_Item37Action 함수 정의');
@@ -9223,7 +9238,7 @@ check('TASK-ES-288: 설정창 전면 개편 4위 1체 배선 및 모바일 375px
 /* ============ [TASK-ES-289] 마니또 AI 동반자 1명 제한 및 실 유저 20명 초과 시 AI 동반자 전원 자동 삭제 ============ */
 check('TASK-ES-289: 마니또 AI 동반자 1명 제한 및 실 유저 20명 초과 시 AI 전원 삭제 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const teamJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const teamJs = TEAM_COMM_SRC;
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -9905,7 +9920,7 @@ check('compliance: [#TASK-ES-314] [63] 피드 게시 시 실천기록 최신순 
 
 check('compliance: [#TASK-ES-315] [64] 기존 \'AI 추천 목표템플릿 예시 60선\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증', () => {
   const indexHtml = APP_SRC;
-  const teamInviteJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const teamInviteJs = TEAM_COMM_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. 목표탭 & 소통탭 구형 60선 창 영구 제거 및 무해화
@@ -9972,7 +9987,7 @@ check('compliance: [#TASK-ES-317] [66] 아워골 평가해주기 창 밑 상시 
 });
 
 check('compliance: [#TASK-ES-318] [67] DM 전송 상태·읽음 확인(카카오톡 방식 노란색 1) 및 전송·도착·읽음 시각 상세 표시 무결성 검증', () => {
-  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commJs = TEAM_COMM_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. 카카오톡 스타일 미확인 뱃지 및 상세 시각 표시 요소 확인
@@ -10018,7 +10033,7 @@ check('compliance: [#TASK-ES-319] [68] 팀 만들기 불필요 제약(정원 제
 check('compliance: [#TASK-ES-320] [69] 카카오 로그인 동명이인 가입/중복 닉네임 방지 고유 태그 부여 및 동반자 핀포인트 매칭 완결 무결성 검증', () => {
   const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const commJs = TEAM_COMM_SRC;
 
   // 1. 고유 태그 부여 및 충돌 방지 5회 루프 검증
   assert.ok(indexHtml.includes('resolveUniqueDisplayName'), 'index.html resolveUniqueDisplayName 함수 탑재');

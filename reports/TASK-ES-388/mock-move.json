@@ -1,0 +1,24 @@
+{
+  "task": "TASK-ES-388",
+  "what": "모의 이전(저장소에 넣지 않음): 스크래치 사본에서 js/team-invite-comm.js 58~287줄(팀 채팅 openTeamChatModal·handlePingSentAutoReply 묶음, 230줄)을 키트 부품 js/team-chat-mock.js 로 옮기고 대표 이름 8곳에 T. 접두를 붙인 가짜 트리. 같은 트리를 기준 시험지와 새 시험지로 채점.",
+  "tool": "scratchpad/mock388.js (스크래치 전용)",
+  "oldSheet": {
+    "tree": "origin/main 시험지",
+    "smoke": [
+      442,
+      1
+    ],
+    "failed": [
+      "✗ compliance: [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 및 가짜 타이머 제거·직통 배선 검증"
+    ]
+  },
+  "newSheet": {
+    "tree": "ES-388 시험지",
+    "smoke": [
+      443,
+      0
+    ],
+    "failed": []
+  },
+  "meaning": "기준 시험지는 원본 한 파일만 읽어 옮긴 묶음의 글자(team_chat_room_ 등)를 못 찾고 깨진다. 새 시험지는 팀 합본(원본 + 키트 부품, T./K. 접두 제거)을 읽어 같은 단언이 그대로 통과한다."
+}

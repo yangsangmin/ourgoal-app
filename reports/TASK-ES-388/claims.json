@@ -1,0 +1,502 @@
+{
+  "task": "TASK-ES-388",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-388-TEAM-TEST-BUNDLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "scripts/smoke-test.js(23곳)와 tests 9개가 팀 소통 글자를 「팀 합본」(js/team-invite-comm.js 원문 맨 앞 + js/ 바로 아래 OurgoalTeamCommKit 표식이 있는 team-*.js 키트 부품, 이름순, 부품만 T.·K. 접두 제거)에서 읽는다. 단언 문장·기대값·검사 수 변경 0, 제품 코드 0, 금고 파일 0. 합본 맨 앞 = 원문 단언."
+    },
+    {
+      "id": "R2",
+      "text": "전후 측정: 기준(git archive) 대 작업 npm test 수치·smoke 검사 제목 동일, tests 13개 출력 동일(정규화 뒤), 모의 이전 트리에서 기준 시험지는 깨지고 새 시험지는 통과."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "팀 합본 = js/team-invite-comm.js 원문(맨 앞) + 키트 부품(이름순, 접두 제거)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const TEAM_COMM_SRC = [TEAM_INVITE_COMM_RAW, ...TEAM_COMM_PART_FILES.map(readTeamPartFile)].join('\\n');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "키트 부품 = js/ 바로 아래 team-*.js 중 원본이 아니고 OurgoalTeamCommKit 표식이 있는 파일",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "return n.indexOf('team-') === 0 && n !== 'team-invite-comm.js' && fs.readFileSync(f, 'utf8').indexOf('OurgoalTeamCommKit') >= 0;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품만 생성기 접두 T.·K. 를 떼고 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function readTeamPartFile(f) { return fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'); }",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "합본 맨 앞이 원본 원문 그대로임을 단언(check 밖 — 검사 수 불변)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "assert.strictEqual(TEAM_COMM_SRC.slice(0, TEAM_INVITE_COMM_RAW.length), TEAM_INVITE_COMM_RAW, '팀 합본 맨 앞 = js/team-invite-comm.js 원문');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 파일이 없으면 합본 = 원문 단언",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if (TEAM_COMM_PART_FILES.length === 0) assert.strictEqual(TEAM_COMM_SRC, TEAM_INVITE_COMM_RAW, '팀 합본 = js/team-invite-comm.js (부품 파일이 없을 때)');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ES-104·105·106 검사가 팀 합본을 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const moduleContent = TEAM_COMM_SRC;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본을 직접 읽던 검사들이 팀 합본을 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const commSrc = TEAM_COMM_SRC;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "AI 신원 시험의 KNOWN_AI_BOT_NAMES 글자 검사가 팀 합본을 읽음",
+      "touches": [
+        "tests/comm-ai-identity-es348.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const src = readTeamCommBundle(ROOT);",
+        "file": "tests/comm-ai-identity-es348.test.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "comm-ai-identity-es348.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/comm-ai-identity-es348.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/comm-ai-identity-es348.test.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DM 도착·읽음 시험의 글자 검사가 팀 합본을 읽음",
+      "touches": [
+        "tests/dm-delivery-read-receipt.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const commJs = readTeamCommBundle(path.resolve(__dirname, '..'));",
+        "file": "tests/dm-delivery-read-receipt.test.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dm-delivery-read-receipt.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/dm-delivery-read-receipt.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/dm-delivery-read-receipt.test.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "60선 창 제거 시험의 글자 검사가 팀 합본을 읽음",
+      "touches": [
+        "tests/goal-template-legacy-cleanup.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const teamInviteJs = readTeamCommBundle(path.join(__dirname, '..'));",
+        "file": "tests/goal-template-legacy-cleanup.test.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "goal-template-legacy-cleanup.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/goal-template-legacy-cleanup.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/goal-template-legacy-cleanup.test.js"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "마니또 AI 제한 시험의 글자 검사가 팀 합본을 읽음",
+      "touches": [
+        "tests/manito-ai-limit.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const teamInviteJs = readTeamCommBundle(rootDir);",
+        "file": "tests/manito-ai-limit.test.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "manito-ai-limit.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/manito-ai-limit.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/manito-ai-limit.test.js"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "AI 동반자 제거 시험의 글자 검사가 팀 합본을 읽음",
+      "touches": [
+        "tests/remove-ai-companions.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const teamInviteJs = readTeamCommBundle(rootDir);",
+        "file": "tests/remove-ai-companions.test.js"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "remove-ai-companions.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/remove-ai-companions.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/remove-ai-companions.test.js"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고유 닉네임 시험의 글자 검사가 팀 합본을 읽음",
+      "touches": [
+        "tests/unique-display-name.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const commContent = readTeamCommBundle(path.join(__dirname, '..'));",
+        "file": "tests/unique-display-name.test.js"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "unique-display-name.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/unique-display-name.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/unique-display-name.test.js"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "피드 공유 DM 부품 시험의 vm 실행 목록 = 키트 부품(이름순) + 원본",
+      "touches": [
+        "tests/feed-share-dm-thread-es382.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const files = listTeamCommParts(ROOT).map(function (f) { return 'js/' + path.basename(f); }).concat(['js/team-invite-comm.js']);",
+        "file": "tests/feed-share-dm-thread-es382.test.js"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "feed-share-dm-thread-es382.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/feed-share-dm-thread-es382.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/feed-share-dm-thread-es382.test.js"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "직접 confirm( 부재 단언이 팀 합본을 봄(존재 단언은 원본 그대로)",
+      "touches": [
+        "tests/core-confirm-es374.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const scan = f === 'js/team-invite-comm.js' ? readTeamCommBundle(ROOT)",
+        "file": "tests/core-confirm-es374.test.js"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "core-confirm-es374.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/core-confirm-es374.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/core-confirm-es374.test.js"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "자체 토스트 함수 부재 단언이 팀 합본을 봄(존재 단언은 원본 그대로)",
+      "touches": [
+        "tests/core-toast-es361.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const scan = f === 'team-invite-comm' ? readTeamCommBundle(ROOT) : src;",
+        "file": "tests/core-toast-es361.test.js"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "core-toast-es361.test.js: 합본 도우미가 부품만 T.·K. 접두를 떼고 원문 뒤에 이어 붙임",
+      "touches": [
+        "tests/core-toast-es361.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\\.(?=[A-Za-z_$])/g, '$1'))].join('\\n');",
+        "file": "tests/core-toast-es361.test.js"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준(2e3558a git archive)과 작업 트리의 smoke 검사 제목·결과 목록이 같다고 기록되어 있다(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-388/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-388/test-compare.json",
+        "path": "smokeTitlesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리 smoke 443 통과·0 실패로 기록되어 있다(기준과 같음, 작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-388/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-388/test-compare.json",
+        "path": "work.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 사본 smoke 443 통과·0 실패로 기록되어 있다(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-388/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-388/test-compare.json",
+        "path": "base.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리 버튼 943/943 로 기록되어 있다(기준과 같음)",
+      "touches": [
+        "reports/TASK-ES-388/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-388/test-compare.json",
+        "path": "work.npmTest.buttons",
+        "equals": [
+          943,
+          943
+        ]
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 이전 트리를 기준 시험지로 채점하면 442/443(옮긴 글자 단언 실패)으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-388/mock-move.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-388/mock-move.json",
+        "path": "oldSheet.smoke",
+        "equals": [
+          442,
+          1
+        ]
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "같은 모의 이전 트리를 새 시험지로 채점하면 443/443 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-388/mock-move.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-388/mock-move.json",
+        "path": "newSheet.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    }
+  ]
+}
