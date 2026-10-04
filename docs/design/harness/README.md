@@ -12,4 +12,5 @@
 - `shots.js` / `shots-lib.js` — 디자인 촬영(390×844) 과 공용 페이지 준비 함수
 - `audit.js` — 탭별 합계 지표
 - `gcal-isolation-check.js` — 구글 캘린더 토큰 격리 점검
+- `real-account-check.js` — 테스트 계정 2개로 레벨 5 시나리오 재생(TASK-ES-355 · CORE-02). 표 `real-account-scenarios.md`, 준비·실행 `real-account-README.md`. 계정 환경 변수가 없으면 접속 없이 '계정 없음 — 재생 안 함'
 - `eval-*.js` — 페르소나 평가
