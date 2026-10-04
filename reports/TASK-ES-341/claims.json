@@ -1,0 +1,80 @@
+{
+  "task": "TASK-ES-341",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-341-HOME-EXP-NICKNAME.md",
+  "requirements": [
+    { "id": "R1", "text": "HOME-19: 홈에는 레벨·EXP 숫자를 표시하지 않고 아바타 둘레(또는 아래)의 숫자 없는 진행 링/바만 둔다(홈에 항상 나오던 \"Lv.1 · 0 / 100 EXP\" 제거)." },
+    { "id": "R2", "text": "HOME-19: refreshAvatar 가 쓰이지 않는 p.exp 대신 실제 경험치 state.profile.settings.xp.total 과 앱의 레벨 공식(levelForXP)으로 진행 비율을 계산한다." },
+    { "id": "R3", "text": "HOME-19: EXP 를 얻는 순간 \"+N EXP\" 를 0.5초 띄웠다가 사라지게 한다." },
+    { "id": "R4", "text": "HOME-19: 홈 아바타 탭 → 아바타 설정창(openAvatarModal) 연결을 확인한다. 레벨 숫자는 레벨업 팝업·아바타 설정창·내 프로필에서만." },
+    { "id": "R5", "text": "HOME-21: 홈 헤드라인의 하드코딩 기본값 '상민' 을 없앤다(닉네임 없으면 이름 없는 문장)." },
+    { "id": "R6", "text": "HOME-21: 동반자 위젯의 하드코딩 기본값 '상민' 을 없앤다(닉네임 없으면 이름 없는 문장)." },
+    { "id": "R7", "text": "HOME-21: /api/track 요청 displayName·nickname 기본값 '상민' 을 없앤다(서버에는 빈 값 — 서버가 필수로 요구하면 그 사실만 보고하고 그대로 둔다)." },
+    { "id": "R8", "text": "HOME-21: 루틴 템플릿 author '상민' 을 확인한다(사용자 표시·서버 전송용 기본값이면 없앤다)." },
+    { "id": "R9", "text": "HOME-21: 헤드라인 '오늘 N회 기록' 이 체크인 기록에 date 필드가 없어 안 나오는 문제를 startAt 에서 날짜를 구하는 방식으로 고친다(기존 date 필드 기록도 계속 센다)." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "behavior", "change": "fix", "symptom": 7,
+      "domain": "ui-behavior",
+      "statement": "로그인 없이 둘러보기로 홈에 들어오면 아바타 아래에 숫자 글자(Lv.1 · 0 / 100 EXP) 없이 진행 바만 보이고, 체크인한 뒤에도 숫자 글자가 나오지 않는다",
+      "touches": ["js/tabs/home/sub-onescreen.js", "ui.css"],
+      "scenario": "scenarios/home-exp-ring.json"
+    },
+    {
+      "id": "C2", "req": "R2", "kind": "behavior", "change": "fix", "symptom": 6,
+      "domain": "ui-behavior",
+      "statement": "홈 진행 바는 settings.xp.total 기준 현재 레벨 구간 비율을 보여 준다 — 경험치 0 이면 0, 첫 체크인으로 경험치가 50 이 되면 진행 바 값이 50 이고 채움 너비가 바의 절반(90px)이 된다",
+      "touches": ["js/tabs/home/sub-onescreen.js", "index.html"],
+      "scenario": "scenarios/home-exp-value.json"
+    },
+    {
+      "id": "C3", "req": "R3", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "awardXP 가 notifyXpGained 로 홈에 알리고, onXpGained 가 #homeHeroExpGain 에 \"+N EXP\" 를 넣었다가 500ms 뒤 지운다(같은 순간의 연속 보상은 합산)",
+      "touches": ["js/tabs/home/sub-onescreen.js", "index.html", "ui.css"],
+      "check": { "type": "codeContains", "file": "js/tabs/home/sub-onescreen.js", "text": "gain.textContent = '+' + n + ' EXP';" }
+    },
+    {
+      "id": "C4", "req": "R4", "kind": "behavior", "change": "new",
+      "domain": "navigation",
+      "statement": "홈 아바타를 누르면 아바타 설정창이 열린다",
+      "touches": ["js/tabs/home/sub-onescreen.js"],
+      "scenario": "scenarios/home-avatar-tap.json"
+    },
+    {
+      "id": "C5", "req": "R5", "kind": "behavior", "change": "fix", "symptom": 6,
+      "domain": "ui-behavior",
+      "statement": "닉네임이 없는 게스트로 홈에 들어오면 헤드라인이 '상민님,' 없이 \"가슴 뛰는 첫 번째 목표를 시작해볼까요? 🌱\" 로 나온다",
+      "touches": ["index.html"],
+      "scenario": "scenarios/home-headline-no-name.json"
+    },
+    {
+      "id": "C6", "req": "R6", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "renderCrewPacingWidget 의 닉네임 기본값이 '상민' 에서 빈 값으로 바뀌었고, applyCrewPacingUI 는 닉네임이 없으면 이름 없는 문장을 쓴다",
+      "touches": ["index.html"],
+      "check": { "type": "codeNotContains", "file": "index.html", "text": "(state.profile.nickname || state.profile.displayName)) || '상민'" }
+    },
+    {
+      "id": "C7", "req": "R7", "kind": "static",
+      "domain": "config",
+      "statement": "/api/track sync_records 요청의 displayName·nickname 기본값이 '상민' 에서 빈 문자열로 바뀌었다(api/track.js handleSyncRecords 는 빈 값을 허용하고 username 으로 대체하므로 필수 아님)",
+      "touches": ["index.html"],
+      "check": { "type": "codeNotContains", "file": "index.html", "text": "dname || '상민'" }
+    },
+    {
+      "id": "C8", "req": "R8", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "루틴 템플릿 rt_real_sangmin_445 의 author '상민' 은 사용자 기본값이 아니라 템플릿 콘텐츠의 작성자 표기(제목 '상민 대표의 04:45 기상 루틴')라 바꾸지 않았다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "id: 'rt_real_sangmin_445'" }
+    },
+    {
+      "id": "C9", "req": "R9", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "renderHome 헤드라인의 오늘 체크인 수가 r.date 가 없으면 dateKey(r.startAt) 로 날짜를 구해 센다(date 필드 기록도 그대로 센다)",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "var rKey = r.date || (r.startAt ? dateKey(r.startAt) : null);" }
+    }
+  ]
+}

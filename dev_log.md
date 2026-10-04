@@ -5714,6 +5714,14 @@
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
 
+## [2026-10-04] #TASK-ES-341: 홈 아바타 EXP 진행 바 실값화 · 하드코딩 이름 제거 (HOME-19, HOME-21)
+- **과제 티켓**: `#TASK-ES-341` (노션 DB UI/UX 대개편 `HOME-19`, `HOME-21`)
+- **수정 내역**:
+  - `js/tabs/home/sub-onescreen.js`: `#homeHeroExpText`(Lv.1 · 0 / 100 EXP 고정 글자) 제거, `#homeHeroExpBar` progressbar(aria-valuenow), `expProgressPct`(settings.xp.total → levelProgress.pct), `onXpGained`(+N EXP 0.5초, 연속 보상 합산), `#homeHeroExpGain`.
+  - `index.html`: `notifyXpGained` 신설·`awardXP`/웰컴 스탬프(+5) 경로 배선, 헤드라인·동반자 위젯·/api/track 의 '상민' 기본값 제거(닉네임 없으면 이름 없는 문장), 헤드라인 오늘 체크인 수를 `r.date || dateKey(r.startAt)` 로 집계.
+  - `ui.css`: `.hero-avatar-exp-gain` + `@keyframes heroExpGainFloat`(0.5초, reduced-motion 대응).
+- **범위 밖(보고만)**: 루틴 템플릿 `rt_real_sangmin_445` author '상민' 은 콘텐츠 작성자 표기라 유지. 타인 화면의 레벨 숫자 숨김은 이번 범위 아님.
+- **예비 검증(판정 아님)**: npm test 종료코드 0. 로컬 court 실행기로 시나리오 4건을 기준(origin/main)·작업 트리에서 실행 — 작업 트리 4건 통과, 기준은 home-exp-ring 단계7·home-exp-value 단계6·home-headline-no-name 단계6에서 실패, home-avatar-tap 은 기준에서도 통과(연결 확인).
 ## [2026-10-04 12:40] #TASK-ES-342: 홈 점검 하네스 home-check.js (HOME-25, GOALS-01 공용)
 - **목표**: 테마 4종 × 뷰포트 375×667·375×812 × 상태(기본·`#homeDetailSheet` 열림·`#captureInput` 포커스) 홈 화면을 같은 측정으로 기록하는 도구.
 - **구현**: `docs/design/harness/home-check.js` 신규 — `shots-lib.js` 의 `newPage`(게스트 시드·Supabase 목·외부 호출 차단) 재사용, `APP_DIR`·`outDir`·`tab`(기본 home)·`--summary` 인자. `shots.js`·`shots-lib.js`·`audit.js` 는 수정하지 않음.
@@ -5729,4 +5737,17 @@
 - **예비 확인(판정 아님)**: `docs/design/harness/gcal-isolation-check.js` 를 수정 전(origin/main c634fc2)·후에 실행 → 수정 전에는 게스트가 u_alice 토큰을 받고 A 일정·이메일이 보였음. 수정 후 restoreGoogleToken=null, A 일정·이메일 0, 구글 호출 중 A 토큰 0, 공용 키 3종 삭제, 설정 복사 0, A 재로그인 시 A 토큰 복원, 게스트→회원 이전 후 게스트 키 삭제, 만료 시 안내·다시 연결 표시. 요약: `docs/design/harness/out-gcal-isolation-2026-10-04.json`. `npm test` 종료코드 0(smoke 441 통과·0 실패).
 - **확인 못 함**: 실계정 2개 교차 확인(레벨 5), 실제 구글 OAuth 재연결 완료 화면.
 - **진행 단계**: [4단계: 심사 청구]
+## [2026-10-04 13:30] #TASK-ES-343: 법정(court) PR #650 이전 구조로 복원 + 변경분 한정 정적 검사 3종 이식
+- **목표**: v4 엔진(court/engine.js)이 기존 부채까지 세어 모든 PR 을 돌려보내고(#651·#652 REJECTED), 가짜 "Level 5 Verified" 를 찍으며, pull_request + 관리자 키로 판사 분리를 깨뜨린 문제를 되돌린다. v4 의 정적 검사는 "이번 변경이 새로 만든 것만" 세는 형태로 예전 법정에 옮긴다.
+- **수정/실행 내역**:
+  - `.github/workflows/court.yml`: `git show a18f22e^:.github/workflows/court.yml` 그대로 복원(blob 5abdf42 일치). pull_request_target · 읽기 권한(contents·pull-requests) · main 의 trusted/court/judge.js · 시크릿 없음.
+  - `court/lib/new-debt.js`(신규): 기준 커밋(merge-base)과 작업 커밋의 git show/diff 글자만 읽어 ① js/ .js 800줄 상한을 새로 넘김 ② CSS 은폐 줄 ③ anti_pattern_blacklist 12개 낱말을 센다. ②③은 추가된 줄에 있고 파일 안의 패턴 수가 기준보다 늘었을 때만(독립 검토 반영). 이름 변경 파일은 옛 경로와 맞댐.
+  - `court/judge.js`: "2) 추가된 줄 검사" 뒤에서 호출해 돌려보냄 사유로 넣음(+4줄, 703줄). 기존 검사·임계값 변경 없음.
+  - `court/selftest/unit-new-debt.js`(신규, U-new-debt-pure·repo·judge) + `court/selftest/unit.js` 등록 1줄.
+  - `court/README.md`: engine.js 미사용·존치는 상민님 결정 단락, 새 검사 3종 표.
+  - `court/engine.js` 는 지우지 않음.
+- **검증 결과**(측정값, 판정 아님):
+  - `node court/selftest/run.js --unit-only`: 기대대로 35/35.
+  - 실제 저장소: #651(5bd2bac) 새 위반 0 · #652(94fa362, ui.css·index.html·js 수정) 새 위반 0 — 같은 커밋에서 js/ 800줄 초과 파일 12개(v4 식 전체 스캔이 세는 것). 94fa362 위 시험 커밋 ac89218(ui.css 에 display:none !important 한 줄) → "CSS 은폐 줄이 새로 추가됨 ui.css:17217" 1건. 시험 커밋 c61c64d(새 900줄 js) → "800줄 상한을 새로 넘김" 1건. 시험 커밋은 임시 복제 저장소에만 있음.
+- **진행 단계**: [4단계: 심사 청구]. 이 PR 은 main 의 v4 설정으로 심사된다(금고 파일 변경 → v4 VAULT_VIOLATION 예상). 우회하지 않고 결과를 PR 에 기록.
 ---
