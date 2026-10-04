@@ -2873,35 +2873,48 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return count;
     }
   };
+  /* ============ [#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정 격리 ============
+     토큰·일정 캐시는 오직 "현재 로그인 uid" 키(ourgoal_gcal_token_v1_<uid>, ourgoal_gcal_events_<uid>)에서만 읽고 쓴다.
+     예전의 계정 공용 키(_last 토큰, 이메일 _last, 접미사 없는 일정 캐시)는 다른 계정의 토큰·일정을 새 계정에 넘겨주던 통로라
+     읽지 않고, 로드 때마다 지운다. 유일한 예외는 migrateGuestDataToUser 의 게스트 -> 회원 1회 이전(같은 사람이 같은 기기에서
+     게스트로 쓰다가 가입한 경우)이며, 이전 직후 게스트 키를 지워 두 번 쓰이지 않게 한다. */
+  var GCAL_LEGACY_SHARED_KEYS = ['ourgoal_gcal_token_v1_last', 'ourgoal_gcal_email_last', 'ourgoal_gcal_events', 'ourgoal_google_token'];
+  function purgeLegacySharedGcalKeys(){
+    try {
+      for(var li = 0; li < GCAL_LEGACY_SHARED_KEYS.length; li++) localStorage.removeItem(GCAL_LEGACY_SHARED_KEYS[li]);
+    } catch(e){}
+  }
+  function gcalCurrentUid(){
+    return (state.profile && state.profile.id) || 'guest';
+  }
+  function gcalEventsKey(){
+    return 'ourgoal_gcal_events_' + gcalCurrentUid();
+  }
+  // 메모리에 남은 토큰·일정 캐시가 다른 계정 것이면 버린다(로그아웃 없이 계정을 바꾼 경우 포함).
+  function ensureGcalOwner(){
+    var uid = gcalCurrentUid();
+    if(state._gcalOwnerUid !== uid){
+      state.googleToken = null;
+      state._lastExpiredGoogleToken = null;
+      state.gcalEventsCache = null;
+      try { sessionStorage.removeItem('ourgoal_google_token'); } catch(e){}
+      state._gcalOwnerUid = uid;
+    }
+    return uid;
+  }
+  if(typeof window !== 'undefined'){
+    window.purgeLegacySharedGcalKeys = purgeLegacySharedGcalKeys;
+    window.ensureGcalOwner = ensureGcalOwner;
+    window.gcalEventsKey = gcalEventsKey;
+  }
   function loadLocalSettings(userId){
     try{
       var raw = localStorage.getItem('ourgoal_settings_'+userId);
       var s = raw ? Object.assign(defaultSettings(), JSON.parse(raw)) : defaultSettings();
-      // [자가 치유 #TASK-ES-265] 새 사용자 ID에 구글 캘린더 설정이 아직 없다면 이전 세션(guest/last)에서 안전 복원
-      if(!s.googleCalendarConnected){
-        try {
-          var candKeys = ['ourgoal_settings_guest'];
-          var curUid = localStorage.getItem('ourgoal_current_user');
-          if(curUid && curUid !== userId) candKeys.push('ourgoal_settings_' + curUid);
-          for(var ci = 0; ci < candKeys.length; ci++){
-            var candRaw = localStorage.getItem(candKeys[ci]);
-            if(candRaw){
-              var candObj = JSON.parse(candRaw);
-              if(candObj && candObj.googleCalendarConnected){
-                s.googleCalendarConnected = true;
-                if(candObj.googleCalendarEmail && !s.googleCalendarEmail) s.googleCalendarEmail = candObj.googleCalendarEmail;
-                if(candObj.gcalClientId && !s.gcalClientId) s.gcalClientId = candObj.gcalClientId;
-                if(candObj.gcalSync && (!s.gcalSync || Object.keys(s.gcalSync.goals||{}).length === 0)) s.gcalSync = candObj.gcalSync;
-                break;
-              }
-            }
-          }
-          if(!s.googleCalendarConnected && localStorage.getItem('ourgoal_gcal_email_last')){
-            s.googleCalendarConnected = true;
-            s.googleCalendarEmail = localStorage.getItem('ourgoal_gcal_email_last');
-          }
-        } catch(candErr){}
-      }
+      // [#TASK-ES-345 CAL-02] 예전에는 연동 설정이 없으면 게스트·직전 사용자(ourgoal_current_user)·이메일 _last 에서
+      // 구글 캘린더 연동 설정을 복사해 왔다(#TASK-ES-265). 다른 계정의 연동 정보를 새 계정에 붙이는 통로라 제거한다.
+      // 게스트 -> 회원 전환은 migrateGuestDataToUser 가 명시적으로 처리한다.
+      purgeLegacySharedGcalKeys();
       if(!s.privacy) s.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };
       if(!s.customSchedules) s.customSchedules = [];
       applyAppSettings(s);
@@ -5173,7 +5186,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           state.profile.settings.googleCalendarConnected = true;
           if(data.settings.googleCalendarEmail && !state.profile.settings.googleCalendarEmail){
             state.profile.settings.googleCalendarEmail = data.settings.googleCalendarEmail;
-            try { localStorage.setItem('ourgoal_gcal_email_last', data.settings.googleCalendarEmail); } catch(e){}
           }
           if(data.settings.gcalClientId && !state.profile.settings.gcalClientId){
             state.profile.settings.gcalClientId = data.settings.gcalClientId;
@@ -5520,7 +5532,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(!state.profile.settings) state.profile.settings = {};
       state.profile.settings.googleCalendarEmail = email;
       state.profile.settings.googleCalendarConnected = true;
-      try { localStorage.setItem('ourgoal_gcal_email_last', email); } catch(e){}
       if(picture && !state.profile.avatarUrl) state.profile.avatarUrl = picture;
       await saveProfile();
       toast('Google 계정 및 캘린더가 안전하게 연동되었습니다!');
@@ -5888,7 +5899,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         if(gData.settings.googleCalendarEmail){
           targetProfile.settings.googleCalendarEmail = gData.settings.googleCalendarEmail;
           if(state.profile && state.profile.settings) state.profile.settings.googleCalendarEmail = gData.settings.googleCalendarEmail;
-          try { localStorage.setItem('ourgoal_gcal_email_last', gData.settings.googleCalendarEmail); } catch(e){}
         }
         if(gData.settings.gcalClientId){
           targetProfile.settings.gcalClientId = gData.settings.gcalClientId;
@@ -5905,12 +5915,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           gData.settings.customSchedules.forEach(function(cs){ if(cs && cs.id && !csMap[cs.id]) targetProfile.settings.customSchedules.push(cs); });
           if(state.profile && state.profile.settings) state.profile.settings.customSchedules = targetProfile.settings.customSchedules;
         }
+        // [#TASK-ES-345 CAL-02] 유지하는 유일한 예외 경로: 게스트 -> 회원 1회 이전.
+        // 이 기기에서 게스트로 구글 캘린더를 연결한 사람이 곧바로 가입·로그인한 경우(같은 사람)에 다시 연결을 강요하지 않기 위해,
+        // 이 기기 게스트 프로필의 uid 키(ourgoal_gcal_token_v1_<게스트 id>, 프로필이 없던 때의 ourgoal_gcal_token_v1_guest)만
+        // 새 uid 키로 옮긴다. _last 키는 읽지 않고, 새 uid 에 이미 자기 토큰이 있으면 덮어쓰지 않으며,
+        // 옮긴 직후 게스트 키를 지워 다음 계정이 같은 토큰을 다시 받지 못하게 한다.
         try {
-          var gTok = localStorage.getItem('ourgoal_gcal_token_v1_guest') || localStorage.getItem('ourgoal_gcal_token_v1_last');
-          if(gTok){
-            localStorage.setItem('ourgoal_gcal_token_v1_' + targetUserId, gTok);
-            localStorage.setItem('ourgoal_gcal_token_v1_last', gTok);
+          var guestTokKeys = ['ourgoal_gcal_token_v1_guest'];
+          if(gData.id && String(gData.id).indexOf('guest') === 0) guestTokKeys.unshift('ourgoal_gcal_token_v1_' + gData.id);
+          for(var gti = 0; gti < guestTokKeys.length; gti++){
+            var gTok = localStorage.getItem(guestTokKeys[gti]);
+            if(!gTok || targetUserId === 'guest') continue;
+            if(!localStorage.getItem('ourgoal_gcal_token_v1_' + targetUserId)){
+              var gTokObj = JSON.parse(gTok);
+              if(gTokObj && gTokObj.accessToken){
+                gTokObj.ownerUid = targetUserId;
+                localStorage.setItem('ourgoal_gcal_token_v1_' + targetUserId, JSON.stringify(gTokObj));
+              }
+            }
+            localStorage.removeItem(guestTokKeys[gti]);
           }
+          purgeLegacySharedGcalKeys();
         } catch(tErr){}
         guestMigrated = true;
       }
@@ -9341,7 +9366,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } else if(entityType === 'gcal'){
       if(Array.isArray(state.gcalEventsCache)){
         state.gcalEventsCache = state.gcalEventsCache.filter(function(e){ return e.id !== entityId; });
-        try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
+        try { localStorage.setItem(gcalEventsKey(), JSON.stringify(state.gcalEventsCache)); } catch(e){}
       }
     }
 
@@ -9596,9 +9621,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function isGoogleCalendarConnected(){
     var s = (state.profile && state.profile.settings) || {};
     if(s.googleCalendarConnected) return true;
-    var uid = (state.profile && state.profile.id) || 'guest';
+    // [#TASK-ES-345 CAL-02] 현재 uid 의 설정·토큰 키만 본다(게스트 설정·이메일 _last·_last 토큰 폴백 제거).
+    var uid = gcalCurrentUid();
     try {
-      var rawSet = localStorage.getItem('ourgoal_settings_' + uid) || localStorage.getItem('ourgoal_settings_guest');
+      var rawSet = localStorage.getItem('ourgoal_settings_' + uid);
       if(rawSet){
         var ps = JSON.parse(rawSet);
         if(ps && ps.googleCalendarConnected){
@@ -9609,13 +9635,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           return true;
         }
       }
-      var lastEmail = localStorage.getItem('ourgoal_gcal_email_last');
-      var lastTok = localStorage.getItem('ourgoal_gcal_token_v1_' + uid) || localStorage.getItem('ourgoal_gcal_token_v1_last') || localStorage.getItem('ourgoal_google_token');
-      if(lastEmail || lastTok){
-        if(state.profile && state.profile.settings){
-          state.profile.settings.googleCalendarConnected = true;
-          if(lastEmail && !state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = lastEmail;
-        }
+      var ownTok = localStorage.getItem('ourgoal_gcal_token_v1_' + uid);
+      if(ownTok){
+        if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
         return true;
       }
     } catch(e){}
@@ -9640,9 +9662,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       } catch(e){}
       if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = '연동 완료';
-      if(state.profile.settings.googleCalendarEmail && state.profile.settings.googleCalendarEmail !== '연동 완료'){
-        try { localStorage.setItem('ourgoal_gcal_email_last', state.profile.settings.googleCalendarEmail); } catch(e){}
-      }
       if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken, state.profile.settings.googleCalendarEmail);
       await saveProfile();
       toast('구글 캘린더가 연동되었습니다 · 상호 동기화 중…');
@@ -9731,7 +9750,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       });
       state.gcalEventsCache = events;
-      try{ localStorage.setItem('ourgoal_gcal_events', JSON.stringify(events)); } catch(e){}
+      try{ localStorage.setItem(gcalEventsKey(), JSON.stringify(events)); } catch(e){}
       return events;
     } catch(e){
       console.warn('구글 캘린더 일정 조회 실패:', e);
@@ -9803,36 +9822,39 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var optEmail = arguments[1];
     if(!tokenObj || !tokenObj.accessToken) return;
     try {
-      var uid = (state.profile && state.profile.id) || 'guest';
-      var emailVal = optEmail || (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || localStorage.getItem('ourgoal_gcal_email_last') || '';
+      // [#TASK-ES-345 CAL-02] 현재 uid 키에만 저장한다. 계정 공용 _last 토큰·이메일 키는 쓰지 않는다.
+      var uid = gcalCurrentUid();
+      if(state._gcalOwnerUid !== uid){
+        // 다른 계정의 일정 캐시가 메모리에 남아 있으면 새 계정 토큰과 섞이지 않게 버린다.
+        state.gcalEventsCache = null;
+        state._lastExpiredGoogleToken = null;
+        state._gcalOwnerUid = uid;
+      }
+      var emailVal = optEmail || (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
       var payload = JSON.stringify({
         accessToken: tokenObj.accessToken,
         expiresAt: tokenObj.expiresAt || (Date.now() + 3300000),
         email: emailVal,
+        ownerUid: uid,
         updatedAt: Date.now()
       });
       localStorage.setItem('ourgoal_gcal_token_v1_' + uid, payload);
-      localStorage.setItem('ourgoal_gcal_token_v1_last', payload);
-      if(emailVal && emailVal.indexOf('@') !== -1) localStorage.setItem('ourgoal_gcal_email_last', emailVal);
+      purgeLegacySharedGcalKeys();
       sessionStorage.setItem('ourgoal_google_token', tokenObj.accessToken);
     } catch(e){}
   }
   function restoreGoogleToken(){
     try {
+      // [#TASK-ES-345 CAL-02] 현재 로그인 uid 키만 읽는다. _last 키 폴백과 "아무 ourgoal_gcal_token_v1_* 키" 탐색은
+      // 같은 기기의 다른 계정 토큰으로 그 계정의 일정을 읽게 만들던 결함이라 제거했다.
+      var uid = ensureGcalOwner();
+      purgeLegacySharedGcalKeys();
       if(state.googleToken && state.googleToken.expiresAt > Date.now()) return state.googleToken;
-      var uid = (state.profile && state.profile.id) || 'guest';
-      var raw = localStorage.getItem('ourgoal_gcal_token_v1_' + uid) || localStorage.getItem('ourgoal_gcal_token_v1_last');
-      if(!raw){
-        for(var ki = 0; ki < localStorage.length; ki++){
-          var lk = localStorage.key(ki);
-          if(lk && lk.indexOf('ourgoal_gcal_token_v1_') === 0){
-            raw = localStorage.getItem(lk);
-            if(raw) break;
-          }
-        }
-      }
+      var raw = localStorage.getItem('ourgoal_gcal_token_v1_' + uid);
       if(!raw) return state.googleToken || null;
       var parsed = JSON.parse(raw);
+      // 저장 당시 주인이 기록돼 있는데 현재 uid 와 다르면(키가 손으로 옮겨진 경우 등) 쓰지 않는다.
+      if(parsed && parsed.ownerUid && parsed.ownerUid !== uid) return state.googleToken || null;
       if(parsed && parsed.accessToken){
         state.googleToken = parsed;
         if(parsed.expiresAt <= Date.now()){
@@ -9848,7 +9870,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){}
     return state.googleToken || null;
   }
+  // [#TASK-ES-345 CAL-02] 현재 계정 토큰 상태: 'valid' | 'expired' | 'missing'. 연동돼 있는데 valid 가 아니면 '다시 연결' 안내를 띄운다.
+  function gcalTokenStatus(){
+    var tok = restoreGoogleToken();
+    if(!tok || !tok.accessToken) return 'missing';
+    return tok.expiresAt > Date.now() ? 'valid' : 'expired';
+  }
   if(typeof window !== 'undefined'){
+    window.gcalTokenStatus = gcalTokenStatus;
     window.saveGoogleToken = saveGoogleToken;
     window.restoreGoogleToken = restoreGoogleToken;
     window.isGoogleCalendarConnected = isGoogleCalendarConnected;
@@ -9888,7 +9917,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           return;
         }
         state.googleToken = { accessToken: resp.access_token, expiresAt: Date.now() + ((resp.expires_in||3300)*1000) };
-        var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || localStorage.getItem('ourgoal_gcal_email_last') || '';
+        var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
         saveGoogleToken(state.googleToken, gEmail);
         resolve(resp.access_token);
       };
@@ -9896,7 +9925,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var isConnected = isGoogleCalendarConnected();
       var reqOpts = { prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent' };
       if(opts.silent) reqOpts.prompt = '';
-      var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || localStorage.getItem('ourgoal_gcal_email_last') || '';
+      var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
       if(gEmail && gEmail.indexOf('@') !== -1) reqOpts.hint = gEmail;
       try{ client.requestAccessToken(reqOpts); }
       catch(e){
@@ -9906,6 +9935,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
   async function getGoogleAccessToken(interactive){
+    // [#TASK-ES-345 CAL-02] 다른 계정 토큰이 메모리에 남아 있으면 쓰지 않는다.
+    ensureGcalOwner();
     if(!state.googleToken) restoreGoogleToken();
     if(state.googleToken && state.googleToken.expiresAt > Date.now()+30000) return state.googleToken.accessToken;
     var isConn = isGoogleCalendarConnected();
@@ -10226,10 +10257,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     });
     // 🗓️ 구글 캘린더 상호 연동 일정 (배지 없이 일반 일정과 동일하게 달력에 통합 표시)
+    // [#TASK-ES-345 CAL-02] 메모리 캐시가 다른 계정 것이면 버리고, 로컬 캐시는 현재 uid 키에서만 읽는다.
+    try { ensureGcalOwner(); } catch(ownErr){}
     var gcalEvs = state.gcalEventsCache;
     if(!gcalEvs || !gcalEvs.length){
       try{
-        var localGcal = JSON.parse(localStorage.getItem('ourgoal_gcal_events') || '[]');
+        var localGcal = JSON.parse(localStorage.getItem(gcalEventsKey()) || '[]');
         if(localGcal && localGcal.length){
           gcalEvs = state.gcalEventsCache = localGcal;
         }
@@ -10548,7 +10581,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         isNowDone = true;
         state.gcalEventsCache.push({ id: gcalTarget, done: true, kind: 'gcal' });
       }
-      try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
+      try { localStorage.setItem(gcalEventsKey(), JSON.stringify(state.gcalEventsCache)); } catch(e){}
       if(!state.profile.settings) state.profile.settings = {};
       if(!state.profile.settings.gcalDoneEvents) state.profile.settings.gcalDoneEvents = {};
       state.profile.settings.gcalDoneEvents[gcalTarget] = isNowDone;
@@ -11292,7 +11325,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               if(typeof renderStatsScreen === 'function') renderStatsScreen();
             } else if(kind==='gcal'){
               state.gcalEventsCache = (state.gcalEventsCache || []).filter(function(c){ return String(c.id) !== String(eventItem.id); });
-              try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
+              try { localStorage.setItem(gcalEventsKey(), JSON.stringify(state.gcalEventsCache)); } catch(e){}
               toast('구글 일정을 캘린더에서 제거했어요');
               renderCalendarScreen();
               if(typeof renderGoalsScreen === 'function') renderGoalsScreen();
@@ -11456,7 +11489,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 gMatch.notifyEnabled = isNotifyOn;
                 gMatch.notifyMinutes = notifyMinutesVal;
               }
-              try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
+              try { localStorage.setItem(gcalEventsKey(), JSON.stringify(state.gcalEventsCache)); } catch(e){}
               if(!state.profile.settings) state.profile.settings = {};
               if(!state.profile.settings.gcalDoneEvents) state.profile.settings.gcalDoneEvents = {};
               state.profile.settings.gcalDoneEvents[eventItem.id] = isDone;
@@ -11668,8 +11701,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       }
     }
+    // [#TASK-ES-345 CAL-02] 메모리에 남은 다른 계정 토큰으로 일정을 불러오지 않게 주인부터 확인한다.
+    try { ensureGcalOwner(); } catch(ownErr){}
     var isConn = isGoogleCalendarConnected();
     var gEmail = (state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
+    var gTokState = isConn ? gcalTokenStatus() : 'missing';
     if(isConn){
       if(state.googleToken && state.googleToken.expiresAt > Date.now()){
         if(!state._lastGcalFetch || (Date.now() - state._lastGcalFetch > 60000)){
@@ -11697,7 +11733,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>' +
         '<path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>' +
       '</svg>';
-      if(isConn){
+      if(isConn && gTokState !== 'valid'){
+        // [#TASK-ES-345 CAL-02] 토큰 만료·부재: 1줄 안내(title) + '다시 연결' 1탭 — 기존 연결 함수를 그대로 쓴다.
+        gBadgeSlot.innerHTML =
+          '<button class="dday-pill" id="calGcalMiniBadge" type="button" data-gcal-state="' + gTokState + '" style="cursor:pointer;background:var(--surface-2);border:1px solid var(--rule);padding:2px 8px;min-height:22px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;" title="' + (gTokState === 'expired' ? '구글 캘린더 연결이 끊겼어요 · 눌러서 다시 연결' : '이 계정의 구글 캘린더 연결 정보가 없어요 · 눌러서 다시 연결') + '">' +
+            gIconSvg +
+            '<span style="color:var(--amber);">다시 연결</span>' +
+          '</button>';
+        var rBtn = gBadgeSlot.querySelector('#calGcalMiniBadge');
+        if(rBtn){
+          rBtn.onclick = function(){
+            toast('구글 캘린더를 다시 연결해요');
+            openGoogleCalendarConnectModal();
+          };
+        }
+      } else if(isConn){
         gBadgeSlot.innerHTML =
           '<button class="dday-pill" id="calGcalMiniBadge" type="button" style="cursor:pointer;background:var(--surface-2);border:1px solid var(--rule);padding:2px 8px;min-height:22px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;" title="구글 캘린더 연동됨' + (gEmail ? ' ('+escapeHtml(gEmail)+')' : '') + ' · 클릭하여 지금 동기화">' +
             gIconSvg +
@@ -39041,10 +39091,24 @@ wirePromptEncyclopediaEvents(body);
     if(gcalIdInput) gcalIdInput.value = settings.gcalClientId || '';
     var gcalConnected = isGoogleCalendarConnected();
     var statusBox = document.getElementById('gcalStatusBox');
+    // [#TASK-ES-345 CAL-02] 연동돼 있는데 이 계정의 토큰이 없거나 만료됐으면 1줄 안내 + '다시 연결' 1탭(기존 연결 함수 재사용)
+    var gcalTokState = gcalConnected ? gcalTokenStatus() : 'missing';
     if(statusBox){
-      statusBox.innerHTML = gcalConnected
-        ? '<p class="faint" style="margin:0;color:var(--sage);font-weight:700;">구글 캘린더가 연동되었습니다</p>'
-        : '<p class="faint" style="margin:0;color:var(--amber);font-weight:700;">구글 캘린더를 연동하세요</p>';
+      if(gcalConnected && gcalTokState !== 'valid'){
+        statusBox.innerHTML =
+          '<div id="gcalReconnectNotice" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+            '<p class="faint" style="margin:0;color:var(--amber);font-weight:700;flex:1;min-width:0;">' +
+              (gcalTokState === 'expired' ? '구글 캘린더 연결이 끊겼어요 · 다시 연결해 주세요' : '이 계정의 구글 캘린더 연결 정보가 없어요 · 다시 연결해 주세요') +
+            '</p>' +
+            '<button class="btn btn-primary btn-sm" id="gcalReconnectBtn" type="button" style="min-height:44px;">다시 연결</button>' +
+          '</div>';
+        var reBtn = document.getElementById('gcalReconnectBtn');
+        if(reBtn) reBtn.onclick = openGoogleCalendarConnectModal;
+      } else {
+        statusBox.innerHTML = gcalConnected
+          ? '<p class="faint" style="margin:0;color:var(--sage);font-weight:700;">구글 캘린더가 연동되었습니다</p>'
+          : '<p class="faint" style="margin:0;color:var(--amber);font-weight:700;">구글 캘린더를 연동하세요</p>';
+      }
     }
     var qConnRow = document.getElementById('gcalQuickConnectRow');
     if(qConnRow) qConnRow.style.display = gcalConnected ? 'none' : 'block';

@@ -5736,6 +5736,12 @@
 - **스키마 선택**: 칸 7개 대신 jsonb `meta` 1칸 — SQL 1줄·재시도 분기 1개, laps 는 원래 배열 객체, 서버 집계 용도 없음, 기존 `theme_metadata jsonb` 관례와 같음.
 - **예비 확인(판정 아님, 부품만 돌려 봄 — 가짜 Supabase)**: `tests/record-ledger-sync.test.js` 9/9. 측정값 deletedAfterSync 0·deletedAfterMerge 0·roundTripMismatch 0(META 7칸)·localKept 1. 같은 시험을 기준 커밋 `api/track.js` 로 돌리면 5/9(지운 기록 1건 부활, META 7칸 전부 불일치). `npm test` 종료코드 0(smoke 440/0, clicks 38/38).
 - **실서버 할 일**: SQL Editor 에서 `docs/sql/2026-10-04-checkins-meta.sql` 실행, `checkins.deleted_at` 실재 확인(없으면 `docs/sql/goals-checkins-softdelete.sql`).
+## [2026-10-04 14:20] #TASK-ES-345: 구글 캘린더 토큰 계정 격리 (CAL-02)
+- **목표**: 같은 기기에서 계정을 바꾸면 다른 계정의 구글 토큰·일정·이메일을 쓰던 통로 제거(메모 08·17, 노션 CAL-02).
+- **원인**: #TASK-ES-265 재연동 완화용 공용 키(`ourgoal_gcal_token_v1_last`·`ourgoal_gcal_email_last`·`ourgoal_gcal_events`)와 폴백(`restoreGoogleToken` 아무 키 탐색, `loadLocalSettings` 타 uid 설정 복사), 메모리 토큰 주인 미확인.
+- **구현**: `index.html` — `purgeLegacySharedGcalKeys`·`gcalCurrentUid`·`gcalEventsKey`·`ensureGcalOwner`·`gcalTokenStatus` 신규, `restoreGoogleToken`·`saveGoogleToken`·`isGoogleCalendarConnected`·`loadLocalSettings`·`migrateGuestDataToUser`·`getGoogleAccessToken`·`renderCalendarScreen`·설정 `#gcalStatusBox` 수정. 일정 캐시는 `ourgoal_gcal_events_<uid>`. 만료·부재 시 `#gcalReconnectBtn`·`#calGcalMiniBadge[data-gcal-state]` 가 `openGoogleCalendarConnectModal()` 재사용. 유지한 예외: 게스트 프로필 uid 키 → 새 uid 1회 이전 후 게스트 키 삭제.
+- **예비 확인(판정 아님)**: `docs/design/harness/gcal-isolation-check.js` 를 수정 전(origin/main c634fc2)·후에 실행 → 수정 전에는 게스트가 u_alice 토큰을 받고 A 일정·이메일이 보였음. 수정 후 restoreGoogleToken=null, A 일정·이메일 0, 구글 호출 중 A 토큰 0, 공용 키 3종 삭제, 설정 복사 0, A 재로그인 시 A 토큰 복원, 게스트→회원 이전 후 게스트 키 삭제, 만료 시 안내·다시 연결 표시. 요약: `docs/design/harness/out-gcal-isolation-2026-10-04.json`. `npm test` 종료코드 0(smoke 441 통과·0 실패).
+- **확인 못 함**: 실계정 2개 교차 확인(레벨 5), 실제 구글 OAuth 재연결 완료 화면.
 - **진행 단계**: [4단계: 심사 청구]
 ## [2026-10-04 13:30] #TASK-ES-343: 법정(court) PR #650 이전 구조로 복원 + 변경분 한정 정적 검사 3종 이식
 - **목표**: v4 엔진(court/engine.js)이 기존 부채까지 세어 모든 PR 을 돌려보내고(#651·#652 REJECTED), 가짜 "Level 5 Verified" 를 찍으며, pull_request + 관리자 키로 판사 분리를 깨뜨린 문제를 되돌린다. v4 의 정적 검사는 "이번 변경이 새로 만든 것만" 세는 형태로 예전 법정에 옮긴다.
