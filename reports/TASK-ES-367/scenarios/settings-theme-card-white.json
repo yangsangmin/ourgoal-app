@@ -1,0 +1,73 @@
+{
+  "id": "settings-theme-card-white",
+  "title": "테마 선택 창을 지운 뒤에도 게스트가 설정 탭 → 화면 & 홈 구성 → 테마 카드(화이트)를 누르면 카드가 선택되고 앱 화면 테마가 화이트로 바뀐다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#themeSelectorModal"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#captureLiveTheme"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#btnOpenThemeModal"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "details:has(#themeGrid) > summary"
+    },
+    {
+      "expect": "visible",
+      "selector": "#themeGrid .theme-card[data-themeid=\"white\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#themeGrid .theme-card[data-themeid=\"white\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "html[data-theme=\"white\"] #themeGrid .theme-card.active[data-themeid=\"white\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "화이트 (White) 테마가 적용되었어요"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#themeGrid .theme-card[data-themeid=\"white\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#themeGrid .theme-card[data-themeid=\"focus-sanctuary\"]",
+      "className": "active"
+    },
+    {
+      "capture": "settings-theme-white"
+    }
+  ]
+}

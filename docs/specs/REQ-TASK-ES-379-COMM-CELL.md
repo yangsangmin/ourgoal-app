@@ -68,7 +68,7 @@
 | 실계정 RA-COMM-03·04A | `real-account-check.js --only RA-COMM-03,RA-COMM-04A`(로컬 127.0.0.2 + /api 운영 전달) | 기준 사본 **통과·통과** · 이 변경 **통과·통과**(동반자 즉시·새로고침·다른 기기 모두 참, B 도착 1건). 주소·계정 가림 |
 | 실계정 로그인 상태 조작 | 작업자 보조 스크립트(같은 로컬 방식, 계정 A·B, 읽기 조작만) | 15단계 × 7칸 × 2계정 = 210값, 기준1 대 후 0·기준1 대 기준2 0·기준2 대 후 0. 콘솔 오류 A 14·B 9 세 번 모두 같은 수·같은 종류(404·400) (`real-account-comm-dom-compare.json`) |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` runScenario, 법정 정적 서버·법정 무작위 호스트 | `comm-subtabs-switch` 기준·후 모두 통과, 약점 0, 예외 0 |
-| 모듈 가드 | `node scripts/module-guard.js` | ① 인라인 스크립트 34,316 → 34,117(-199) · ② 함수 선언 678 → 670 · ③ 282 그대로 · ④ 11 그대로 · ⑤ 0. 기준선 낮춤(`--update`, 13번째) |
+| 모듈 가드 | `node scripts/module-guard.js` | ① 인라인 스크립트 34,316 → 34,117(-199) · ② 함수 선언 678 → 670 · ③ 282 그대로 · ④ 11 그대로 · ⑤ 0. 기준선 낮춤(`--update`, 13번째). origin/main(#682·#688·#695) 합친 뒤 다시 만든 기준선: 34,257 → 34,058(-199) · 677 → 669(14번째) |
 | index.html 전체 줄 | wc -l | 36,699 → 36,502 |
 | 새 파일 줄 수 | wc -l | render.js 89 · feed-comments.js 199 (모두 800 이하) |
 | npm test | `NODE_PATH=… npm test` | 기준·후 같음 — smoke-test 443/443 · verify-integrity-gate 38/38 · verify-all-clicks 957/957 · test-shipyard-modular 통과(모듈 파일 40 → 42개 모두 800줄 이하) |

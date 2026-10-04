@@ -1,0 +1,46 @@
+{
+  "id": "checkin-save-daily-theme",
+  "title": "테마 선택 창을 지운 뒤에도 게스트가 홈에서 한 줄 체크인을 적고 저장하면 첫 체크인 축하 창에 그 글이 안전하게 기록됐다고 뜬다(저장 경로의 buildCheckinThemePayload 호출이 깨지지 않음)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "오늘 아침 5km 조깅 완주"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet",
+      "text": "\"오늘 아침 5km 조깅 완주\" 실천이 안전하게 기록되었습니다",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet",
+      "text": "+10 EXP"
+    },
+    {
+      "capture": "checkin-saved"
+    }
+  ]
+}

@@ -1,0 +1,344 @@
+{
+  "task": "TASK-ES-367",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-367-THEME-SELECTOR-REMOVE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "입구 두 곳(#captureLiveMeta 안의 #captureLiveTheme, #captureThemeQuickBar 안의 #btnOpenThemeModal — ui.css 5824·5955 줄 규칙으로 앱 테마 4종 모두에서 display:none !important)을 제거한다"
+    },
+    {
+      "id": "R2",
+      "text": "창 #themeSelectorModal, js/theme-system.js 의 openThemeSelector/closeThemeSelector, 밖에서 부르는 themeUI.openModal 을 제거한다 — 범위는 사용자가 열 수 없는 테마 선택 창과 그 입구, 그것만 쓰는 CSS·코드로 한정"
+    },
+    {
+      "id": "R3",
+      "text": "theme-system.js 의 체크인 테마 분류 등 다른 기능, 설정 탭 테마 카드, 저장된 테마 정규화는 그대로 둔다"
+    },
+    {
+      "id": "R4",
+      "text": "법정 화면 주장: 설정 탭 → 테마 카드(화이트)를 눌러 선택되고 화면 테마가 바뀐다(테마 변경 길이 살아 있음 증명)"
+    },
+    {
+      "id": "R5",
+      "text": "module-metrics·UI 지표 변화를 측정하고, 신고서를 module-specs --write 로 갱신한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-markup",
+      "statement": "index.html 에 CSS 로 숨겨져 있던 입구 #captureLiveTheme 가 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "id=\"captureLiveTheme\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-markup",
+      "statement": "index.html 에 #btnOpenThemeModal 을 담던 숨겨진 퀵바 #captureThemeQuickBar 가 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "id=\"captureThemeQuickBar\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-markup",
+      "statement": "#btnOpenThemeModal 을 그리던 곳(js/theme-system.js renderQuickBar)이 없다 — 앱 어디에서도 이 버튼을 만들지 않는다",
+      "touches": [
+        "js/theme-system.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/theme-system.js",
+        "text": "btnOpenThemeModal"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-markup",
+      "statement": "index.html 에 #btnOpenThemeModal 이 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "btnOpenThemeModal"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "css",
+      "statement": "ui.css 에 퀵바를 앱 테마 4종에서 display:none !important 로 숨기던 규칙이 없다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "ui.css",
+        "text": "#captureThemeQuickBar"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-markup",
+      "statement": "index.html 에 열 수 없던 테마 선택 창 #themeSelectorModal 이 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "id=\"themeSelectorModal\""
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/theme-system.js 에 창을 열고 닫던 openThemeSelector 가 없다",
+      "touches": [
+        "js/theme-system.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/theme-system.js",
+        "text": "openThemeSelector"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/theme-system.js 에 창 UI 초기화 함수 initUI 가 없다",
+      "touches": [
+        "js/theme-system.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/theme-system.js",
+        "text": "function initUI("
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html 에 창을 부르던 themeUI.openModal 호출이 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "themeUI.openModal"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "css",
+      "statement": "ui.css 에 지운 창만 쓰던 스타일(.theme-modal-backdrop)이 없다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "ui.css",
+        "text": ".theme-modal-backdrop"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/theme-system.js 의 체크인 테마 분류 함수 suggestTheme 는 남아 있다",
+      "touches": [
+        "js/theme-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/theme-system.js",
+        "text": "  function suggestTheme(text, customThemes){"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "체크인 저장은 그대로 buildCheckinThemePayload 로 테마 칸을 채운다(고르는 창이 없어 늘 null 이던 선택값을 null 로 고정 — 동작 불변)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "        ? OurgoalThemeSystem.buildCheckinThemePayload(null)"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "저장된 테마 정규화(applyTheme 의 4종 밖 값 → focus-sanctuary)는 그대로다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    if(['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(themeId) === -1) themeId = 'focus-sanctuary';"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트 화면에 #themeSelectorModal·#captureLiveTheme·#btnOpenThemeModal 이 없고, 설정 탭 → 화면 & 홈 구성 → 테마 카드(화이트)를 누르면 카드가 선택(active)되고 앱 화면 테마가 화이트(html[data-theme=white])로 바뀌며 적용 토스트가 뜬다",
+      "touches": [
+        "index.html",
+        "js/theme-system.js",
+        "ui.css"
+      ],
+      "scenario": "scenarios/settings-theme-card-white.json"
+    },
+    {
+      "id": "C15",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 가드 기준선 최신 항목(commit 698398b, origin/main a0ad802 합친 뒤 module-guard --update 산출)에서 js/theme-system.js 가 800줄 넘는 세포 목록에 없다(804 → 606줄, 800줄 초과 세포 11 → 10)",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/module-baseline.json",
+        "text": "\"commit\": \"698398b\""
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 8원칙 8절에 module-metrics(origin/main 24f105b 기준 미분화 35822 → 35763, 800줄 초과 11 → 10)와 tab-check(홈 !important 숨김 장당 43 → 41, 숨은 조작 요소 46 → 40) 측정값이 적혀 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-367-THEME-SELECTOR-REMOVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-367-THEME-SELECTOR-REMOVE.md",
+        "text": "미분화 덩어리 35822 → 35763(-59)"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트가 홈 체크인 카드의 더 보기 접힘(details.checkin-more-options)을 펼치면 맞춤 피드백 설정 버튼은 보이지만, CSS 로 숨겨져 있던 테마 입구(#captureThemeQuickBar 와 그 안의 +테마 #btnOpenThemeModal·즐겨찾기 칩, #captureLiveTheme 배지)는 DOM 에 없다",
+      "touches": [
+        "index.html",
+        "js/theme-system.js",
+        "ui.css"
+      ],
+      "scenario": "scenarios/home-theme-entrances-gone.json"
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트 앱에 열 수 없던 활동 테마 선택 창(#themeSelectorModal·.theme-modal-backdrop·#customThemeInput)이 없고, 설정 탭으로 옮겨도 생기지 않는다",
+      "touches": [
+        "index.html",
+        "js/theme-system.js",
+        "ui.css"
+      ],
+      "scenario": "scenarios/theme-selector-modal-gone.json"
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "테마 선택 창·배지를 지운 뒤에도 게스트가 홈에서 한 줄 체크인을 적고 저장하면 첫 체크인 축하 창(#modalSheet)에 그 글이 안전하게 기록됐다는 문구와 +10 EXP 가 뜬다 — 저장 경로의 buildCheckinThemePayload 호출이 깨지지 않았다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/checkin-save-daily-theme.json"
+    },
+    {
+      "id": "C20",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "부품 시험 tests/core-modal-es363.test.js 가 OurgoalThemeSystem.initUI 가 없어졌음(undefined)을 단언한다(PR #677 이 함수로 남아 있기를 단언하던 줄을 승인된 삭제에 맞춰 바꿈)",
+      "touches": [
+        "tests/core-modal-es363.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/core-modal-es363.test.js",
+        "text": "    assert.strictEqual(typeof theme.initUI, 'undefined', 'theme-system: 열 수 없던 테마 선택 창(initUI)은 #TASK-ES-367 에서 제거');"
+      }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-028] 계층형 테마(대·중·소) 온톨로지, 즐겨찾기 퀵바, 커스텀 테마 및 비강제 추천 시스템이 완벽히 구현되어 있다",
+      "reason": "SET-09 기능 삭제 승인(상민님 2026-10-04 원문: \"결심필요 - 사용자가 열 수 없는 테마 선택 창 권장대로 진행해\"). 이 검사의 6번 단언 3개는 앱 테마 4종 모두에서 CSS 로 숨어 열 수 없던 퀵바 #captureThemeQuickBar·창 #themeSelectorModal·창 안 #customThemeInput 의 존재를 요구했다. 승인대로 그 창과 입구를 지웠으므로 단언을 '없음'으로 바꾸고 #captureLiveTheme 없음을 더했다. 온톨로지·즐겨찾기·커스텀·추천·페이로드 단언(1~5, 7)은 그대로 실행된다. 법정은 이 검사를 제품 함수를 돌리는 실행 검사로 분류한다. 바뀐 단언은 그 안의 html/ui.css 글자 존재 단언뿐이고, 제품 함수를 돌리는 단언은 바꾸지 않았다. 상민님 \"금고 변경 승인\" 대상임을 안다."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 안정성(ReferenceError esc 방어, min-height 0, 정적 리스너)이 완비되어 있다",
+      "reason": "SET-09 기능 삭제 승인(상민님 2026-10-04 원문: \"결심필요 - 사용자가 열 수 없는 테마 선택 창 권장대로 진행해\"). 'esc: escapeHtml,' 문자열은 index.html 에서 열 수 없던 테마 창 초기화 OurgoalThemeSystem.initUI 호출 한 곳에만 있었다. 그 호출을 창과 함께 지웠으므로 단언을 'initUI 호출 없음'으로 바꿨다. 미선언 esc 전달 금지 단언과 나머지 단언은 그대로다. 글자 존재 검사이며 제품 함수를 돌리지 않는다."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장형 아바타 시스템이 완벽히 구현되어 있다",
+      "reason": "SET-09 기능 삭제 승인(상민님 2026-10-04 원문: \"결심필요 - 사용자가 열 수 없는 테마 선택 창 권장대로 진행해\"). 3번 단언은 '+테마' 퀵바와 입력창 사이 안내 문구 '(테마 : ai 분석 및 DB시각화에 활용됨)' 의 존재를 요구했다. 이 문구는 숨겨진 +테마 퀵바(#captureThemeQuickBar)를 설명하는 문구이고 그 자체도 앱 테마 4종에서 display:none !important 였다. 퀵바와 함께 지웠으므로 단언을 '없음'으로 바꿨다. 법정은 이 검사를 제품 함수를 돌리는 실행 검사로 분류한다. 바뀐 단언은 그 안의 html/ui.css 글자 존재 단언뿐이고, 제품 함수를 돌리는 단언은 바꾸지 않았다. 상민님 \"금고 변경 승인\" 대상임을 안다."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 테마·홈구성 모달 정상화가 완벽히 구현되어 있다",
+      "reason": "SET-09 기능 삭제 승인(상민님 2026-10-04 원문: \"결심필요 - 사용자가 열 수 없는 테마 선택 창 권장대로 진행해\"). 6번 단언 2개는 지운 테마 선택 창 안에서만 쓰이던 .theme-custom-input·.theme-leaf-chip 스타일의 존재를 요구했다. 창을 지우며 그 창만 쓰던 스타일도 지웠으므로 단언을 '없음'으로 바꿨다. 나머지 단언은 그대로다. 글자 존재 검사이며 제품 함수를 돌리지 않는다."
+    }
+  ]
+}

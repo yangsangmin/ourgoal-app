@@ -278,7 +278,9 @@ async function check(name, fn) {
     assert.strictEqual(m.bSessionExplicitAProfile, 'B', '세션과 다른 uid 로 열림: ' + m.bSessionExplicitAProfile);
   });
 
-  await check('④ 구글 인증 이메일 입장(Supabase 세션 없음)은 유지되고, 그 이메일의 uid 로만 열어 이 기기의 A 백업을 고르지 않는다', async function () {
+  /* [#TASK-ES-373] 바뀐 규칙: 구글 이메일만으로(세션 없음) 들어가던 갈래는 서명 검증이 없어 막는다. 구글 입장은
+     tests/google-session-guard.test.js 가 Supabase 검증 세션 uid 로 열리는지 따로 잰다(입장 방법은 남는다). */
+  await check('④ 구글 이메일만 넘긴 입장(Supabase 세션 없음)은 열지 않는다 — u_ uid 입장 0, 화면에 A 데이터 0, 정식 로그인 안내', async function () {
     serverDb = new ServerDb();
     var b = makeBrowser();
     await leaveABackupOnDevice(b);
@@ -286,9 +288,13 @@ async function check(name, fn) {
     m.googleOk = ok;
     m.googleUidIsEmailUid = !!(b.state.profile && /^u_[0-9a-f]{16}$/.test(b.state.profile.id));
     m.googleAOnScreen = aDataOnScreen(b);
+    m.googleEnterApp = b.calls.enterApp;
+    m.googleAuthScreen = b.els.authScreen ? b.els.authScreen.style.display : null;
     assert.strictEqual(m.googleAOnScreen, 0, '구글 입장 화면에 A 데이터 ' + m.googleAOnScreen + '건');
-    assert.strictEqual(m.googleOk, true, '구글 인증 입장이 막힘(입장 방법이 사라지면 안 됨)');
-    assert.ok(m.googleUidIsEmailUid, '구글 입장 uid 가 이메일 결정 uid 가 아님');
+    assert.strictEqual(m.googleOk, false, '세션 없는 구글 이메일로 입장이 성공함');
+    assert.strictEqual(m.googleUidIsEmailUid, false, '이메일에서 만든 u_ uid 로 열림');
+    assert.strictEqual(m.googleEnterApp, 0, '세션 없는 구글 이메일로 앱 입장 ' + m.googleEnterApp + '회');
+    assert.strictEqual(m.googleAuthScreen, 'flex', '정식 로그인 화면이 열리지 않음');
   });
 
   await check('⑤ 기존 흐름 유지: A 세션으로 빠른 복구하면 서버가 비어 있어도 A 자기 백업을 되찾는다', async function () {

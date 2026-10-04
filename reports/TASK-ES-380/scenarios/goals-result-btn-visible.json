@@ -1,0 +1,29 @@
+{
+  "id": "goals-result-btn-visible",
+  "title": "게스트가 새 목표를 만들고 목표 탭을 열면 목표 상세 맨 위 줄에 「+ 최종 결과」 버튼이 375px 화면에서 보이고(숨김 카드 밖), 누르면 「목표 결과 기록」 입력 창이 열리며, 그동안 미처리 예외가 0건이다",
+  "viewport": { "width": 375, "height": 812 },
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": "#homeAddGoal" },
+    { "do": "waitFor", "selector": "#ngManualBtn" },
+    { "do": "click", "selector": "#ngManualBtn" },
+    { "do": "waitFor", "selector": "#mGoalTitle" },
+    { "do": "type", "selector": "#mGoalTitle", "text": "버튼 위치 확인 목표" },
+    { "do": "click", "selector": "#mSave" },
+    { "do": "wait", "ms": 1200 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "textContains", "selector": "#goalDetailBody", "text": "전체 (3)" },
+    { "expect": "visible", "selector": "#goalResultRow #goalResultBtn" },
+    { "expect": "textEquals", "selector": "#goalResultBtn", "text": "+ 최종 결과" },
+    { "expect": "rect", "selector": "#goalResultBtn", "minWidth": 40, "minHeight": 20 },
+    { "expect": "noHorizontalOverflow" },
+    { "do": "click", "selector": "#goalResultBtn" },
+    { "expect": "visible", "selector": "#rsSave" },
+    { "expect": "textContains", "selector": "#modalSheet", "text": "목표 결과 기록" },
+    { "capture": "goal-result-modal-open" },
+    { "expect": "noExceptions" }
+  ]
+}

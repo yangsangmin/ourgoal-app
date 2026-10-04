@@ -1,0 +1,18 @@
+{
+  "id": "home-theme-entrances-gone",
+  "title": "게스트가 홈 체크인 카드의 '더 보기' 접힘을 펼쳐도 CSS 로 숨겨져 있던 테마 선택 입구(#captureThemeQuickBar 의 +테마 #btnOpenThemeModal·즐겨찾기 칩, #captureLiveTheme 배지)가 DOM 에 없고, 같은 접힘 안의 맞춤 피드백 설정 버튼은 보인다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "type", "selector": "#captureInput", "text": "오늘 아침 5km 조깅 완주" },
+    { "do": "click", "selector": "details.checkin-more-options > summary" },
+    { "expect": "visible", "selector": "details.checkin-more-options[open] #customFeedbackBtn" },
+    { "expect": "notExists", "selector": "details.checkin-more-options #captureThemeQuickBar" },
+    { "expect": "notExists", "selector": "#btnOpenThemeModal" },
+    { "expect": "notExists", "selector": ".theme-fav-chip" },
+    { "expect": "notExists", "selector": "#captureLiveTheme" },
+    { "capture": "home-capture-no-theme-entrance" }
+  ]
+}

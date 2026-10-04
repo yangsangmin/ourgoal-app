@@ -1,0 +1,107 @@
+{
+  "task": "TASK-ES-380",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-380-GOAL-RESULT-BTN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 상세의 「+ 최종 결과」 버튼 #goalResultBtn 이 ui.css 숨김 카드(.toss-goal-hero-card) 안에 묻혀 보이지 않음 — 카드는 그대로 숨기고 버튼만 보이는 위쪽 영역으로 옮겨 다시 누를 수 있게 한다(문구·openResultModal 동작 그대로)"
+    },
+    {
+      "id": "R2",
+      "text": "버튼을 누르면 결과 입력 창이 열리고 저장하면 결과가 화면에 표시되며, 같은 창의 「보관」으로 목표 단위 보관(#694 R1)이 화면에서 동작한다 — 모바일 375px 에서도 가려지지 않는다"
+    },
+    {
+      "id": "R3",
+      "text": "숨김 CSS 규칙(#goalDetailBody > .toss-goal-hero-card { display:none !important })은 손대지 않고 CSS 덧칠로 버튼을 다시 가리거나 드러내지 않으며, index.html 인라인 줄 수를 늘리지 않고, 부품 시험은 npm test 경로에 둔다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 14,
+      "domain": "ui-behavior",
+      "statement": "게스트가 새 목표를 만들고 375px 화면의 목표 탭에서 「+ 최종 결과」를 눌러 결과를 저장하면 버튼이 「📝 결과 수정」으로 바뀌고 최종 결과 요약이 보이며, 다시 열어 「보관」을 누르면 「목표가 보관함으로 이동되었습니다」 토스트가 뜨고 창이 닫히며 목표 탭이 빈 목표 안내로 바뀌고, 그동안 미처리 예외가 0건이다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "scenario": "scenarios/goals-result-btn-save-archive.json"
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 14,
+      "domain": "ui-behavior",
+      "statement": "게스트가 새 목표를 만들고 목표 탭을 열면 목표 상세 맨 위 줄(#goalResultRow)에 「+ 최종 결과」 버튼이 375px 화면에서 보이고, 누르면 「목표 결과 기록」 입력 창이 열리며, 그동안 미처리 예외가 0건이다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "scenario": "scenarios/goals-result-btn-visible.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "보기 모드의 목표 상세는 숨김 카드(metaStrip) 다음에 결과 버튼 줄(goalResultRow)을 #goalDetailBody 바로 아래에 붙인다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail.js",
+        "text": "dueRow + visRow : metaStrip + goalResultRow) +"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "결과 버튼 줄은 숨김 카드 클래스가 아닌 .goal-result-row 이다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail.js",
+        "text": "    var goalResultRow = '<div class=\"goal-result-row\" id=\"goalResultRow\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "저장된 목표 결과가 있으면 그 달성률(계산 불가면 「기록 완료」)을 결과 버튼 옆 요약으로 보여 준다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail.js",
+        "text": "    var goalResultPct = goal.result ? L.resultPct(goal.result) : null;"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 tests/goal-result-btn-es380.test.js(숨김 규칙 유지, 버튼이 숨김 카드 밖 맨 위 줄, 문구 2종·요약, 편집 모드 없음)를 npm test 경로(scripts/test-shipyard-modular.js)에 등록했다",
+      "touches": [
+        "scripts/test-shipyard-modular.js",
+        "tests/goal-result-btn-es380.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/goal-result-btn-es380.test.js');"
+      }
+    }
+  ]
+}

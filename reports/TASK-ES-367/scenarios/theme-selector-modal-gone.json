@@ -1,0 +1,17 @@
+{
+  "id": "theme-selector-modal-gone",
+  "title": "게스트 앱 어디에도 열 수 없던 활동 테마 선택 창(#themeSelectorModal·.theme-modal-backdrop·나만의 테마 입력 #customThemeInput)이 없고, 홈 → 설정 탭으로 옮겨 다녀도 생기지 않는다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "expect": "notExists", "selector": "#themeSelectorModal" },
+    { "expect": "notExists", "selector": ".theme-modal-backdrop" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "visible", "selector": "#themeGrid" },
+    { "expect": "notExists", "selector": "#themeSelectorModal" },
+    { "expect": "notExists", "selector": "#customThemeInput" },
+    { "capture": "settings-no-theme-modal" }
+  ]
+}

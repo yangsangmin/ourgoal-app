@@ -165,11 +165,14 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/goal-templates-data-split.test.js');
   runNode('tests/comm-dm-ledger-es366.test.js'); // #TASK-ES-366 DM·동반자 서버 원장 통로(COMM-03·04)·동반자 자기 키만
   runNode('tests/direct-login-guard.test.js'); // #TASK-ES-368 CORE-13 빠른 복구 잠금(A 백업 기기에서 세션 없이/B 세션으로 복구 시 A 데이터 0건)
+  runNode('tests/google-session-guard.test.js'); // #TASK-ES-373 CORE-14 구글 로그인 서버 검증 세션(위조·무서명 자격증명 입장 0, 검증 성공 시 세션 uid)
   runNode('tests/dev-host-gate.test.js'); // #TASK-ES-372 테스터 B 직통 입장은 로컬 개발 호스트에서만(운영 주소 ?debug=true 로 버튼 0개·직접 호출 입장 0회)
   // #TASK-ES-377 Supabase 클라이언트 없음(sb=null) → 실시간 구독 예외 없이 건너뜀 · 휴지통 되돌리기 안내가 조작을 막지 않음
   runNode('tests/guest-null-client-es377.test.js');
   // #TASK-ES-378 결과 입력 창 「보관」 — 목표 단위·마일스톤·할 일 어디서 열어도 목표 보관 + 화면 갱신(renderAll), 예외 0
   runNode('tests/result-modal-archive-es378.test.js');
+  // #TASK-ES-380 「+ 최종 결과」(#goalResultBtn) 가 숨김 카드(.toss-goal-hero-card) 밖 목표 상세 맨 위 줄에 있다
+  runNode('tests/goal-result-btn-es380.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 
