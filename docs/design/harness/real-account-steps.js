@@ -168,7 +168,8 @@ async function companionListed(page, uid){
 
 async function addCompanion(dev, nick, uid){
   if (!(await openCompanions(dev.page))) return { ok: false, saw: '소통 > 동반자 서브탭 진입 실패' };
-  if (await companionListed(dev.page, uid)) return { ok: true, already: true };
+  /* 새 기기에서는 서버 동반자 목록이 늦게 그려진다 — 이미 동반자면(앞선 실행이 남긴 관계 포함) 검색 결과에서 빠지므로 목록 동기화를 잠깐 기다린 뒤 판단 */
+  if (await waitUntil(() => companionListed(dev.page, uid), 8000)) return { ok: true, already: true };
   if (!(await clickReal(dev.page, '#companionNicknameSearchInput'))) return { ok: false, saw: '#companionNicknameSearchInput 없음' };
   await dev.page.type('#companionNicknameSearchInput', nick);
   const btn = 'button[data-addcomp="' + uid + '"]';
@@ -496,9 +497,15 @@ async function cleanup(ctx){
     const page = r.dev.page;
     /* 동반자로 추가한 테스트 상대는 목록에서 뺀다(화면의 삭제 버튼) */
     for (const peer of ['B', 'C']) {
-      if (label !== 'A' || !ctx.uids[peer] || !ctx.made.some((m) => m.table === 'users.companions' && m.what === peer)) continue;
+      /* 테스트 계정끼리의 관계라 이번 실행이 만들지 않았어도(앞선 실행이 남긴 관계) 지운다 */
+      if (label !== 'A' || !ctx.uids[peer]) continue;
       await openCompanions(page);
-      const ok = await clickReal(page, '#commSubBody [data-delcomp="' + ctx.uids[peer] + '"]', 4000); await wait(1500);
+      if (!(await waitUntil(() => companionListed(page, ctx.uids[peer]), 8000))) continue;
+      await openCompanions(page);
+      const ok = await clickReal(page, '#commSubBody [data-delcomp="' + ctx.uids[peer] + '"]', 4000); await wait(800);
+      /* #TASK-ES-374/376 이후 삭제 확인은 브라우저 기본 dialog 가 아니라 앱 바텀시트 — 뜨면 [확인]을 누른다 */
+      try { await clickReal(page, '#modalOverlay.active #btnSheetConfirmOk', 2500); } catch (e) { /* 기본 dialog 경로면 위 page.on('dialog') 가 이미 수락 */ }
+      await wait(1200);
       await openCompanions(page); const still = await companionListed(page, ctx.uids[peer]);
       (ok && !still ? log.deleted : log.leftover).push({ by: label, table: 'users.companions', what: peer, how: '화면 삭제 버튼' });
     }
