@@ -5842,3 +5842,9 @@
 ---
 
 - 2026-10-04 TASK-ES-355 후속: 실계정 하네스가 OG_TEST_ALLOW(정확히 같은 주소)로 기존 테스트 계정을 받도록 함. 근거: 상민님 "이미 테스트계정이 많은데 또 만들어야 하나?"
+## [2026-10-04 21:30] #TASK-ES-357: 시험지 합본 읽기(CORE-07 준비)
+- **목표**: 탭 코드를 index.html 에서 js/tabs·js/core 로 옮겨도(동작 그대로) 기준 시험지가 같은 단언으로 같은 코드를 찾게 한다 — #666(TASK-ES-354)의 retire 13건을 결심 없이 풀기 위한 선행 PR.
+- **수정**: `scripts/smoke-test.js`(html = index.html + js/tabs/**/*.js + js/core/*.js, 검사마다 index.html 을 다시 읽던 187곳 → 같은 합본 APP_SRC, 인라인 문법 검사·FN_NAMES 추출은 index.html 만), `scripts/verify-all-clicks.js`(버튼 추출·핸들러 소스에 같은 합본).
+- **측정**: main(2853540)에서 전후 npm test 0 · smoke ✓/✗ 줄 전부 동일(443) · 무결성 38/38 · 버튼 953/953 → 957/957(home sub-onescreen.js 실제 버튼 4개 추가 검사, 전부 배선). 단언 줄 변경 0.
+- **진행 단계**: [4단계: 심사 청구]
+---

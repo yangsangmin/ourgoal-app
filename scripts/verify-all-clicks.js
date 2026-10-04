@@ -29,6 +29,22 @@ if (fs.existsSync(JS_DIR)) {
     allJs += '\n' + fs.readFileSync(path.join(JS_DIR, f), 'utf8');
   });
 }
+// #TASK-ES-357 (CORE-07 준비): 탭 렌더 코드(버튼을 그리는 문자열·핸들러 배선)가 index.html 인라인 스크립트에서 js/tabs/<탭>/*.js · js/core/*.js 로 옮겨 가도(동작 그대로)
+// 같은 범위를 재도록, 앱 소스 합본 = index.html + js/tabs/**/*.js + js/core/*.js 를 정적 <button> 추출 대상과 핸들러 소스 양쪽에 쓴다(이전엔 index.html·js/ 바로 아래만).
+function listJsTree(dir, recursive) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const p = path.join(dir, e.name);
+    if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+    else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+  }
+  return out;
+}
+const moduleSrc = [...listJsTree(path.join(JS_DIR, 'tabs'), true), ...listJsTree(path.join(JS_DIR, 'core'), false)]
+  .map(p => '\n' + fs.readFileSync(p, 'utf8')).join('');
+allJs += moduleSrc;
+const markupSrc = html + moduleSrc;
 const combinedJs = allJs;
 
 console.log('================================================================');
@@ -129,7 +145,7 @@ console.log('✓ [PASS] 카나리 변이 시험 통과: 공통 CSS 클래스를 
 // ================================================================
 // 1. Static HTML 버튼 전수 추출 및 검사
 // ================================================================
-const staticButtons = [...html.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)].map(m => {
+const staticButtons = [...markupSrc.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)].map(m => {
   const attrs = m[1];
   const text = m[2].replace(/<[^>]+>/g, '').trim();
   const idMatch = attrs.match(/id=["']([^"']+)["']/i);
