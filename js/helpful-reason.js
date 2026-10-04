@@ -35,7 +35,7 @@
   function profile(){ return deps && deps.getProfile ? deps.getProfile() : null; }
   function settings(){ var p = profile(); if(!p) return null; if(!p.settings) p.settings = {}; return p.settings; }
   function myId(){ var p = profile(); return p ? p.id : null; }
-  function toast(m){ if(deps && deps.toast) deps.toast(m); }
+  var toast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return deps && deps.toast; }); /* #TASK-ES-361: 공용 토스트 통로(js/core/toast.js · ui.toast) — 주입 토스트 우선, 없으면 공용(준비 전이면 대기열) */
   function isBot(it){ return window.OurgoalReactions ? window.OurgoalReactions.isBot(it) : !!(it && it.is_ai); }
   function isVirtualMine(it){ return !!(it && typeof it.id === 'string' && it.id.indexOf('me_') === 0); }
   function missingSchema(err){

@@ -15,7 +15,7 @@
   function getState(){ return (_ctx.getState ? _ctx.getState() : global.state) || {}; }
   function getProfile(){ return (_ctx.getProfile ? _ctx.getProfile() : (getState().profile || {})) || {}; }
   function saveProfile(){ return (_ctx.saveProfile ? _ctx.saveProfile() : (global.saveProfile ? global.saveProfile() : Promise.resolve())); }
-  function toast(msg){ if(_ctx.toast) _ctx.toast(msg); else if(global.toast) global.toast(msg); }
+  var toast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return _ctx && _ctx.toast; }); /* #TASK-ES-361: 공용 토스트 통로(js/core/toast.js · ui.toast) — 주입 토스트 우선, 없으면 공용(준비 전이면 대기열) */
   function openModal(html, cb){ if(_ctx.openModal) _ctx.openModal(html, cb); else if(global.openModal) global.openModal(html, cb); }
   function closeModal(){ if(_ctx.closeModal) _ctx.closeModal(); else if(global.closeModal) global.closeModal(); }
   function triggerHaptic(ms){ if(_ctx.triggerHaptic) _ctx.triggerHaptic(ms); else if(global.triggerHaptic) global.triggerHaptic(ms); }

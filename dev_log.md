@@ -5859,3 +5859,4 @@
 
 - 2026-10-04 TASK-ES-359: 시험지가 세포 파일의 L./K. 접두를 떼고 읽음(기대값 변경 0) — 기록 탭 이전(ES-358)이 TASK-ES-060 단언에 막힌 구조 문제 해소
 - 2026-10-04 TASK-ES-358: 기록 탭 렌더 7함수를 index.html 인라인에서 js/tabs/records/render.js·period-ai-card.js 로 동작 그대로 이전(인라인 38,207→37,368줄, 토큰 동일 검사·누수 0). 설정 시범 #666 이전 틀을 따름(미병합 상태라 app-scope.js 는 동일 사본). 기준 시험지의 index.html 글자 검사 7개는 이 브랜치에서 실패 — 합본 읽기 PR 뒤 재판정.
+- 2026-10-04 TASK-ES-361: 공용 토스트 한 통로 js/core/toast.js(ui.toast·ui.toast.bind) — 토스트 연결 통로 6곳 융합(중복 세포 toast 6→0, module-metrics 산출), CORE-10 team-invite-comm init 전 재귀 제거(부품 시험: init 전 호출 정본 1회, origin/main 0회), capabilities.js·toast.js 를 index.html 에 붙임, 문구·2.2초·모양 불변

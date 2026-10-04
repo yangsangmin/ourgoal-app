@@ -26,7 +26,9 @@
       "role": null,
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.toast.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -44,6 +46,7 @@
         "closeModal",
         "openModal",
         "performLogout",
+        "require:./core/toast.js",
         "saveProfile",
         "sb",
         "state"
@@ -145,7 +148,6 @@
       "capabilities": [],
       "planned": {
         "provides": [
-          "ui.toast",
           "ui.sheet",
           "ui.confirm"
         ],
@@ -345,6 +347,59 @@
       ]
     },
     {
+      "id": "core/toast",
+      "file": "js/core/toast.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "공용 토스트 통로 — 능력 ui.toast·ui.toast.bind. 그리기는 index.html 정본 toast()(#toast), 정본 준비 전 대기열(#TASK-ES-361 · CORE-10)",
+      "spans": [],
+      "provides": [
+        "ui.toast",
+        "ui.toast.bind"
+      ],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [
+        {
+          "name": "ui.toast",
+          "description": "화면 아래 토스트로 짧은 안내 문구를 띄운다(index.html 정본 #toast, 2.2초). 정본 준비 전이면 대기열에 두었다가 띄운다",
+          "sideEffect": "screen",
+          "needsConfirm": false,
+          "input": {
+            "message": "string"
+          }
+        },
+        {
+          "name": "ui.toast.bind",
+          "description": "세포용 토스트 함수를 만든다 — 주입받은 토스트(getOverride())가 있으면 그것, 없으면 ui.toast",
+          "sideEffect": "none",
+          "needsConfirm": false,
+          "input": {
+            "getOverride": "function"
+          },
+          "output": {
+            "toast": "function"
+          }
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalCapabilities",
+        "require:./capabilities.js",
+        "toast"
+      ]
+    },
+    {
       "id": "core/ui-helpers",
       "file": "js/core/ui-helpers.js",
       "layer": "core",
@@ -534,7 +589,9 @@
         "records"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.toast.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -548,7 +605,8 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalCredits",
-        "OurgoalReactions"
+        "OurgoalReactions",
+        "require:./core/toast.js"
       ]
     },
     {
@@ -603,7 +661,9 @@
         "records"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.toast.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -619,7 +679,8 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalHelpfulReason"
+        "OurgoalHelpfulReason",
+        "require:./core/toast.js"
       ]
     },
     {
@@ -1829,7 +1890,9 @@
         "comm"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.toast.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -1867,13 +1930,12 @@
         "renderCommScreen",
         "renderGoalsScreen",
         "renderTeamGoalsScreen",
+        "require:./core/toast.js",
         "saveProfile",
         "sb",
         "setTab",
         "shareContent",
-        "showToast",
         "state",
-        "toast",
         "triggerHaptic",
         "updateTopNotifBadge"
       ]
@@ -1924,7 +1986,9 @@
         "comm"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.toast.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -1947,9 +2011,9 @@
         "openModal",
         "renderGoalsScreen",
         "renderTeamGoalsScreen",
+        "require:./core/toast.js",
         "saveProfile",
         "state",
-        "toast",
         "triggerHaptic"
       ]
     },
@@ -1966,7 +2030,9 @@
         "comm"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.toast.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -1991,10 +2057,10 @@
         "groupState",
         "openModal",
         "renderTeamGoalsScreen",
+        "require:./core/toast.js",
         "saveProfile",
         "state",
         "teamCommentsBlockHtml",
-        "toast",
         "triggerHaptic",
         "uid"
       ]

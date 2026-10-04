@@ -1,0 +1,20 @@
+{
+  "id": "team-nudge-toast",
+  "title": "게스트가 팀목표 체험 팀에서 팀원 찌르기를 누르면 팀 연계 모듈 토스트(콕 찔러 응원했어요)가 화면에 뜨고 약 2.2초 뒤 사라진다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "click", "selector": "#btnGoalsSubTeam" },
+    { "do": "click", "selector": "[data-tgquickjoin=\"g-workshop\"]" },
+    { "do": "wait", "ms": 2600 },
+    { "do": "click", "selector": "[data-tgpnudge=\"g-workshop:tg-ws-1:상민\"]" },
+    { "expect": "textContains", "selector": "#toast", "text": "님을 콕 찔러 응원했어요" },
+    { "expect": "hasClass", "selector": "#toast", "className": "show" },
+    { "capture": "nudge-toast" },
+    { "do": "wait", "ms": 2800 },
+    { "expect": "notHasClass", "selector": "#toast", "className": "show" }
+  ]
+}
