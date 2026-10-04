@@ -1,0 +1,17 @@
+{
+  "id": "rescue-needs-login",
+  "title": "로그인하지 않은 첫 화면에서 '빠른 복구·입장'에 닉네임을 넣고 입장을 누르면 앱에 들어가지 않고 정식 로그인 화면과 로그인 안내 문구가 뜬다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#landRescueBtn" },
+    { "do": "click", "selector": "#landRescueBtn" },
+    { "expect": "visible", "selector": "#rescueIdentifierInput" },
+    { "do": "type", "selector": "#rescueIdentifierInput", "text": "ogtest-a" },
+    { "do": "click", "selector": "#rescueDirectEnterBtn" },
+    { "expect": "visible", "selector": "#authScreen", "timeoutMs": 8000 },
+    { "expect": "textContains", "selector": "#loginError", "text": "로그인한 상태에서만" },
+    { "expect": "visible", "selector": "#authKakaoBtn" },
+    { "expect": "notVisible", "selector": "#homeAddGoal" },
+    { "capture": "rescue-needs-login" }
+  ]
+}

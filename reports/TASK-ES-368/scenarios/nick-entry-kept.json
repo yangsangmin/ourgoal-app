@@ -1,0 +1,17 @@
+{
+  "id": "nick-entry-kept",
+  "title": "첫 화면의 '카카오 없이 닉네임으로 1초 만에 바로 시작'을 누르면 닉네임 입력칸과 입장 버튼이 그대로 열리고, 로그인한 계정으로만 열린다는 안내 한 줄이 함께 보인다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#landNickQuickLink" },
+    { "do": "click", "selector": "#landNickQuickLink" },
+    { "expect": "visible", "selector": "#rescueIdentifierInput" },
+    { "expect": "visible", "selector": "#rescueDirectEnterBtn" },
+    { "expect": "visible", "selector": "#rescueLoginRequiredNote" },
+    { "expect": "textContains", "selector": "#rescueLoginRequiredNote", "text": "로그인한 계정으로만" },
+    { "do": "click", "selector": "#rescueModalCloseBtn" },
+    { "expect": "notVisible", "selector": "#rescueIdentifierInput" },
+    { "expect": "visible", "selector": "#landNickQuickLink" },
+    { "capture": "nick-entry-kept" }
+  ]
+}
