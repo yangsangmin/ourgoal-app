@@ -101,9 +101,7 @@
           "xp.award"
         ],
         "contributes": [
-          "home.card",
-          "settings.section",
-          "profile.badge"
+          "settings.section"
         ]
       },
       "emits": [],
@@ -111,9 +109,12 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "closeModal",
         "handle",
-        "openModal",
+        "require:./avatar/craft-engine.js",
+        "require:./avatar/dynamic-album.js",
+        "require:./avatar/render.js",
+        "require:./avatar/themes.js",
+        "require:./avatar/wallet.js",
         "require:./core/confirm.js",
         "require:./data/avatar-personas/enfj.js",
         "require:./data/avatar-personas/enfp.js",
@@ -132,6 +133,164 @@
         "require:./data/avatar-personas/istj.js",
         "require:./data/avatar-personas/istp.js"
       ]
+    },
+    {
+      "id": "avatar/craft-engine",
+      "file": "js/avatar/craft-engine.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal Avatar Cell: 사진 → 3등신 합성 · 기간 페르소나 분석 (#TASK-ES-389 · 아바타·EXP 쪼개기 PR-3)",
+      "spans": [
+        "home",
+        "settings",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "avatar.craft"
+        ],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "avatar/dynamic-album",
+      "file": "js/avatar/dynamic-album.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal Avatar Cell: 상황별 다이나믹 아바타 · 앨범 (#TASK-ES-389 · 아바타·EXP 쪼개기 PR-3)",
+      "spans": [
+        "home",
+        "settings",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "avatar.album"
+        ],
+        "contributes": [
+          "settings.section"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal"
+      ]
+    },
+    {
+      "id": "avatar/render",
+      "file": "js/avatar/render.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal Avatar Cell: 아바타·랭크 그리기 입구 (로봇 SVG · 나무망치 연출 · 5대 랭크 테마·날개 · renderAvatarHtml) (#TASK-ES-389 · 아바타·EXP 쪼개기 PR-3)",
+      "spans": [
+        "home",
+        "settings",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "avatar.render"
+        ],
+        "contributes": [
+          "home.card",
+          "profile.badge"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "avatar/themes",
+      "file": "js/avatar/themes.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal Avatar Cell: 77종 바디 테마 · 320종 도감 조회 · 도감 목록 화면 (#TASK-ES-389 · 아바타·EXP 쪼개기 PR-3)",
+      "spans": [
+        "home",
+        "settings",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "avatar.themes"
+        ],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "avatar/wallet",
+      "file": "js/avatar/wallet.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal Avatar Cell: 제작권(횟수·스트릭 보너스) · 보관함 10칸 (#TASK-ES-389 · 아바타·EXP 쪼개기 PR-3)",
+      "spans": [
+        "home",
+        "settings",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "avatar.wallet"
+        ],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
     },
     {
       "id": "calendar-attachment",

@@ -6,11 +6,28 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+// #TASK-ES-389 (아바타·EXP 쪼개기 PR-3): 아바타 로직이 js/avatar-system.js 에서 js/avatar/*.js 로 옮겨 가도(동작 그대로) 같은 단언이 같은 코드를 찾도록
+// '아바타 합본'(js/avatar-system.js + js/avatar/**/*.js + js/data/avatar-personas/*.js 이름순, 쪼개기 생성기가 붙이는 AV.·MS. 접두를 뗌)을 읽는다 — scripts/smoke-test.js(#TASK-ES-385)와 같은 방식. 단언·기대값은 그대로다.
+function readAvatarBundle(single) {
+  const listJsTree = (dir, recursive) => {
+    if (!fs.existsSync(dir)) return [];
+    const out = [];
+    for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+      const p = path.join(dir, e.name);
+      if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+      else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+    }
+    return out;
+  };
+  const js = path.dirname(single);
+  const parts = [...listJsTree(path.join(js, 'avatar'), true), ...listJsTree(path.join(js, 'data', 'avatar-personas'), false)];
+  return [single, ...parts].map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])(?:AV|MS)\.(?=[A-Za-z_$])/g, '$1')).join('\n');
+}
 
 const avatarSystemPath = path.join(__dirname, '..', 'js', 'avatar-system.js');
 const cssPath = path.join(__dirname, '..', 'ui.css');
 
-const avatarCode = fs.readFileSync(avatarSystemPath, 'utf8');
+const avatarCode = readAvatarBundle(avatarSystemPath);
 const cssCode = fs.readFileSync(cssPath, 'utf8');
 
 // 1. 코드 정적 단언
