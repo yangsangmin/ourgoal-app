@@ -1,0 +1,86 @@
+{
+  "task": "TASK-ES-350",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-350-LEDGER-DESIGN.md",
+  "requirements": [
+    { "id": "R1", "text": "origin/main 기준 사용자 데이터 원장 전수 조사 — 항목별 [쓰는 곳(localStorage 키·state 경로·Supabase 표·칸) / 쓰는 함수 / 읽는 함수 / 서버 왕복 여부 / 중복 저장 여부]. 최소: EXP·레벨·체크인·기록·목표·마일스톤·할일(dueDate vs deadline)·루틴·일정(customSchedules·배경사진·gcalDoneEvents)·설정 전반·동반자·홈 구성·테마(키 3개)·앱 잠금 PIN·프로필 4종(잇템·관심·지역·동네)" },
+    { "id": "R2", "text": "목표 설계: 항목별 정본 저장소 1곳(Server-First), 단일 읽기/쓰기 함수 이름(js/record-ledger.js 패턴 확장), 값당 칸 하나(EXP·루틴·D-day 통일안), 로컬→서버 이전 절차와 백업, 충돌 해결 규칙. 새 개인정보 칸은 추가하지 않고 필요해 보이면 [결심 필요] 후보로 표시" },
+    { "id": "R3", "text": "수명주기 4단계(생성→localStorage 삭제→리로드→원격 복원 deepStrictEqual) 공통 검사의 설계(어떤 하네스로, 항목별 시나리오). 구현은 하지 않는다" },
+    { "id": "R4", "text": "실행 순서: GOALS-03·CAL-01·SET-05·HOME-14·HOME-19 잔여·REC-01 잔여별로 무엇을 바꾸는지 1~3줄씩" },
+    { "id": "R5", "text": "필요한 SQL 은 초안만 설계서 부록에(비파괴 ADD COLUMN IF NOT EXISTS 등), 파일로 만들지 말 것" },
+    { "id": "R6", "text": "문서: REQ/PLAN(TASK-ES-350), reports/TASK-ES-350/claims.json, TICKETS 1줄, dev_log 항목" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "설계서 1절 지도표에 휴지통 항목(M25)까지 29개 항목이 쓰는 곳·쓰는 함수·읽는 함수·서버 왕복·중복 저장 열로 실려 있다",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "| ID | 항목 | 저장 위치(현재) | 쓰는 함수 | 읽는 함수 | 서버 왕복 | 중복 저장 |" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "설계서 1-1절 집계에 중복 저장 16개가 적혀 있다(집계 스크립트 산출값)",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "| 중복 저장 '예' | 16 |" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "지도표 집계 스크립트가 설계서 1절 표의 서버 왕복·중복 저장 열을 센다",
+      "touches": ["reports/TASK-ES-350/count-ledger-map.js"],
+      "check": { "type": "codeContains", "file": "reports/TASK-ES-350/count-ledger-map.js", "text": "if (dup === '예') { out.duplicate++; out.ids.duplicate.push(id); }" }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "설계서 2-3절에 단일 읽기/쓰기 모듈 js/user-ledger.js 의 함수 표(readDoc·writeDoc 등)가 있다",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "### 2-3. 단일 읽기/쓰기 함수 (js/record-ledger.js 패턴 확장 제안)" }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "설계서 2-5절 충돌 규칙에 EXP 는 로그 합집합으로 합계를 다시 계산한다고 적혀 있다",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "- **EXP**: 최신 우선이 아니라 **로그 합집합**" }
+    },
+    {
+      "id": "C6", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "설계서 3절에 서버 보관 확대 안건이 [결심 필요] 후보 표로 분리되어 있다",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "## 3. [결심 필요] 후보 (이 설계서는 결정하지 않음 — 승인선 ②·①)" }
+    },
+    {
+      "id": "C7", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "설계서 4절에 수명주기 공통 검사 하네스와 게스트 이전 시나리오 L10 이 적혀 있다",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "| L10 | HOME-14 게스트 이전 |" }
+    },
+    {
+      "id": "C8", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "설계서 5절 실행 순서 표에 GOALS-03 행이 있다",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "| 4 | GOALS-03 |" }
+    },
+    {
+      "id": "C9", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "설계서 부록 A 에 goals.start_date 비파괴 칸 추가 SQL 초안이 있다",
+      "touches": ["docs/specs/LEDGER-DESIGN-2026-10-04.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/LEDGER-DESIGN-2026-10-04.md", "text": "alter table public.goals add column if not exists start_date text;" }
+    },
+    {
+      "id": "C10", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "TICKETS 에 TASK-ES-350 한 줄이 4단계(심사 청구)로 등록되어 있다",
+      "touches": ["docs/rules/TICKETS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/TICKETS.md", "text": "- #TASK-ES-350 | INFRA/원장 | [CORE-03]" }
+    },
+    {
+      "id": "C11", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "dev_log 에 TASK-ES-350 항목이 있다",
+      "touches": ["dev_log.md"],
+      "check": { "type": "codeContains", "file": "dev_log.md", "text": "#TASK-ES-350: 단일 원장 설계서 (CORE-03)" }
+    },
+    {
+      "id": "C12", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "PLAN 문서에 8원칙 6번 절차 재검증 절이 있다",
+      "touches": ["docs/plans/PLAN-TASK-ES-350-LEDGER-DESIGN.md"],
+      "check": { "type": "codeContains", "file": "docs/plans/PLAN-TASK-ES-350-LEDGER-DESIGN.md", "text": "## 6. 절차 재검증 및 반론 격파" }
+    }
+  ]
+}
