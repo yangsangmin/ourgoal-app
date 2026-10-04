@@ -81,7 +81,7 @@ ok('2단계: C 가 A 가 만든 DM 부모 행 upsert', !r.err, r);
 r = await as('authenticated', B, `insert into team_pings(id,group_id,sender_id,receiver_id,target_type,message) values ('dm_${A}_${C}','dm_direct','${B}','${A}','dm','hijack') on conflict (id) do update set sender_id=excluded.sender_id, receiver_id=excluded.receiver_id`);
 ok('2단계: 제3자 B 의 DM 부모 행 가로채기 upsert 차단', !!r.err, r);
 r = await as('authenticated', C, `update team_ping_replies set is_read=true, status='read', read_at=now() where ping_id='dm_${A}_${C}' and receiver_id='${C}' and status<>'read'`);
-ok('2단계: 받는 사람 C 의 읽음 표시 1행', !r.err && r.n===1, r);
+ok('2단계(#TASK-ES-381 재확정): 받는 사람 C 의 직접 update 읽음 표시는 0행 — 읽음은 og_dm_mark 로(2026-10-05-dm-rls-step2-recheck-test.mjs)', !r.err && r.n===0, r);
 r = await as('authenticated', B, `update team_ping_replies set status='read' where ping_id='dm_${A}_${C}'`);
 ok('2단계: B 의 남의 DM 읽음 표시 0행', !r.err && r.n===0, r);
 r = await as('authenticated', B, `delete from team_pings where id='fc1' and sender_id='${C}'`);
