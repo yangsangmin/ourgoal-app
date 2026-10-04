@@ -110,7 +110,7 @@ function makeBrowser(opt) {
   var calls = { enterApp: 0, restore: [], toasts: [], modals: 0, loginDirect: [] };
   var state = { profile: null };
   var modalSheet = null;
-  var win = { location: { origin: "https://ourgoal.test" } };
+  var win = { location: { origin: "https://ourgoal.example.invalid" } };
   var ctx = {
     console: { log: function () {}, warn: function () {}, error: function () {} },
     JSON: JSON, Date: Date, Math: Math, Object: Object, Array: Array, String: String, Promise: Promise, RegExp: RegExp, Error: Error, Uint8Array: Uint8Array,
