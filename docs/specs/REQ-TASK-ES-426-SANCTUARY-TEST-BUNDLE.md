@@ -42,7 +42,7 @@ ES-425 는 `js/sanctuary-v3-engine.js` 의 레이더 함수 4개·렌더 분기 
 ## 8. [원칙 ⑧] 성과 측정 · 막히는 지점
 작업자 실측(판정 아님) — `reports/TASK-ES-426/test-compare.json`·`mock-move.json`:
 - 기준(origin/main f020065 `git archive` 사본) 대 작업 npm test: smoke 443 통과·0 실패 · 무결성 38/38 · 버튼 943/943 · 모듈 가드 ① 34007 · ② 663 · ③ 282 · ④ 3 · ⑤ 0 — test-compare.json 의 sameNumbers 로 확인.
-- tests: 종료 코드·정규화 출력 비교는 test-compare.json(testsExitCodesIdentical).
+- smoke 검사 제목 487줄·결과 같음. tests 107개: 종료 코드 107/107 같음(기준에서도 실패하던 시험은 그대로 — 고치지 않음). 정규화 출력 차이 2개(`avatar-personas-split`·`goal-templates-data-split`)는 기준 사본이 `git archive` 스크래치 저장소라 옛 커밋(ddbb761·9962457)을 못 읽어 지문 비교로 대신한 줄 수 차이다(작업 worktree 는 저장소 이력으로 원본 비교까지 더 함) — 이 PR 변경과 무관, 종료 코드 같음.
 - 모의 이전(스크래치, 저장소에 넣지 않음): 기준 시험지 smoke 440/443(3개 실패) → 새 시험지 smoke 443/443, npm test 종료 0, tests 종료 코드 기준과 같음.
 - 막히는 지점: ES-425 생성기가 다른 표식·이름을 쓰면 합본에서 빠진다 → 생성기는 `sanctuary-` 이름과 `OurgoalSanctuaryV3Kit` 표식으로 부품을 쓴다(모의 이전에서 확인). 동결 무결성 게이트는 합본으로 넓힐 수 없으므로 ES-425 가 그 글자 구간을 원본에 남긴다.
 
