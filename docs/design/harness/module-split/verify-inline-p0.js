@@ -58,7 +58,7 @@ for (const [f, names] of Object.entries(MOVED)) {
     equiv.push({ name: n, file: f, tokensOrig: a.length, tokensNew: b.length, same, firstDiff: same ? null : { i: at, orig: a.slice(at - 3, at + 5), neu: b.slice(at - 3, at + 5) } });
   }
   // ①-더: 덩어리 줄 맞대기
-  const nl = src.split('\n').map(strip);
+  const nl = src.replace(/\r\n/g, '\n').split('\n').map(strip); // 작업 폴더 줄바꿈(CRLF 체크아웃)과 무관하게 맞댄다
   for (const ch of meta.chunks.filter(c => c.cell === f)) {
     const seg = origLines.slice(ch.start - 1, ch.end);
     let at = -1;
