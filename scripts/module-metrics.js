@@ -161,6 +161,18 @@ function tabDefinedSymbols(texts) {
 }
 
 // ⑤ 탭 간 직접 참조: [{ from, to, file, line, text }]
+// index.html 인라인 스크립트가 window·global·globalThis 에 다는 이름(조건부 방어 초기화 포함 — 인라인이 주인이면 어느 꼴이든 주인이다)
+function inlineWindowSymbols(root) {
+  const names = new Set();
+  const indexPath = path.join(root, 'index.html');
+  if (!fs.existsSync(indexPath)) return names;
+  const t = blankCommentOnlyLines(maskToInlineScripts(readText(indexPath)));
+  const re = /\b(?:global|window|globalThis)\s*\.\s*([A-Za-z_$][\w$]*)\s*=(?![=>])/g;
+  let m;
+  while ((m = re.exec(t))) names.add(m[1]);
+  return names;
+}
+
 function crossTabRefs(root) {
   const tabsDir = path.join(root, 'js', 'tabs');
   if (!fs.existsSync(tabsDir)) return [];
@@ -171,9 +183,12 @@ function crossTabRefs(root) {
     filesByTab[tab] = listJs(root, 'js/tabs/' + tab);
     for (const f of filesByTab[tab]) textByFile[f] = blankCommentOnlyLines(readText(path.join(root, f)));
   }
+  // #TASK-ES-507: index.html 인라인 스크립트가 window 에 다는 이름은 인라인(미분화 덩어리)이 주인이다 — 세포가 그 값을 바꿔 써도(예: 불러옴 표시)
+  // 그 탭의 정의가 아니다. 그런 이름을 다른 탭이 읽는 것은 탭 간 참조가 아니라 인라인 공용 상태 읽기다(통로 L 과 같은 주인).
+  const inlineOwned = inlineWindowSymbols(root);
   const patternsByTab = {};
   for (const tab of tabs) {
-    const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f])));
+    const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s));
     const parts = [
       '\\bOurgoal' + escapeRe(capital(tab)) + '[A-Z][\\w$]*',
       '\\btabs\\/' + escapeRe(tab) + '\\/',
@@ -405,4 +420,4 @@ if (require.main === module) {
   else process.stdout.write(args.pretty ? text : JSON.stringify(doc) + '\n');
 }
 
-module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, MAX_LINES };
+module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, MAX_LINES };
