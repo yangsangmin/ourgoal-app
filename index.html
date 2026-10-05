@@ -3045,7 +3045,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.OurgoalAppScope.expose('index.html', {
     get openHallOfFame(){ return openHallOfFame; },
     get regionPickerHtml(){ return regionPickerHtml; },
-    get renderProBadge(){ return renderProBadge; },
     get wireRegionPicker(){ return wireRegionPicker; }
   });
   /* [#TASK-ES-536] js/tabs/settings/notify-timer.js · js/tabs/settings/web-push.js · js/core/date-rollover.js · js/core/deep-link-gateway.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -3291,14 +3290,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   if(typeof window !== 'undefined'){ window.getSupabaseAuthToken = getSupabaseAuthToken; }
   /* [#TASK-ES-521] GOOGLE_OAUTH_CLIENT_ID → js/core/supabase-auth.js 로 옮김(인라인 3단계 Z1 로그인·계정 1차 — 앞 주석 포함) */
 
-  /* ============ 아워골 앱 환경설정 및 보상형 광고 파이프라인 (TASK-ES-013) ============ */
+  /* ============ 아워골 앱 환경설정 ============
+     [#TASK-ES-516] 템플릿 복제 광고 설정 4개는 상민님 결정(2026-10-06)으로 지웠다. 크레딧 원장 플래그만 남는다. */
   var OURGOAL_CONFIG = {
-    // 🚀 베타 테스트 기간에는 false (사용자 확장을 위해 100% 완전 무료 무마찰 제공)
-    // 💰 유저 트래픽 확보 후 보상형 광고 수익화 전환 시 true로 변경
-    ENABLE_TEMPLATE_REWARDED_ADS: false,
-    ADMOB_REWARDED_AD_UNIT_ID: 'ca-app-pub-3940256099942544/5224354917', // 구글 공식 테스트 보상형 동영상 ID
-    AD_DELAY_SECONDS: 5,
-    AD_NOTICE_MESSAGE: '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다',
     // 💳 공용 크레딧(#TASK-ES-015). 서버 credit_settings.enabled 와 둘 다 true 여야 어떤 적립·표시도 일어난다. M1(유저 5천 명) 전까지 false
     ENABLE_CREDITS: false
   };
@@ -3384,14 +3378,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.gcalEventsKey = gcalEventsKey;
   }
   /* [#TASK-ES-471] loadLocalSettings · saveLocalSettings → js/core/gcal-token.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
-
-  /* ============ 구독 상태 (전체 기능 100% 완전 무료 제공) ============ */
-  function subscriptionState(){
-    var s = (state.profile && state.profile.settings) || {};
-    if(!s.subscription) s.subscription = { isPro:true, plan:'free_all', expiresAt:null, billingKey:null };
-    s.subscription.isPro = true;
-    return s.subscription;
-  }
 
   /* ============ XP/레벨 시스템 ============
      [#TASK-ES-395] 선언(XP_RULES · XP_LOG_MAX · xpForLevel · levelForXP · levelProgress · triggerAvatarCelebrationPopup · awardXP · notifyXpGained)은 js/avatar/xp.js 로 옮김(동작 그대로).
@@ -4670,7 +4656,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     shell.classList.add('active');
     document.getElementById('topUserName').textContent = state.profile.displayName;
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
-    renderProBadge();
     await checkStreakFreeze();
     renderAll();
     try{ updateAppBadge(computeStreakDays()); }catch(e){}
@@ -5161,34 +5146,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-437] showLegalModal → js/tabs/settings/account-entry.js 로 옮김(인라인 스크립트 세포화 P0) */
   if(typeof window !== 'undefined'){
     window.showLegalModal = showLegalModal;
-  }
-
-  /* ============ 안내 모달 (전체 기능 100% 완전 무료 제공) ============ */
-  function openPaywallModal(triggerReason){
-    var reasonText = triggerReason ? ('(' + escapeHtml(triggerReason) + ')') : '';
-    openModal(
-      '<h3>🎉 아워골은 100% 평생 무료입니다</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">모든 유저의 무공해 성장과 도전을 응원합니다 ' + reasonText + '</p>' +
-      '<div style="padding:14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;margin-bottom:14px;line-height:1.6;font-size:.84rem;color:var(--ink);">' +
-        '<div style="font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:6px;">' +
-          '<span>✨</span> <b>아워골 완전 무료화 헌법 선언</b>' +
-        '</div>' +
-        '아워골은 유저의 코어 루프(목표 수립, 체크인, 회고, 통계, AI 조언, 캘린더 연동)에 어떠한 유료 장벽도 두지 않습니다.<br>' +
-        '모든 기능을 제한 없이 <b>100% 완전 무료</b>로 자유롭게 이용하세요! 🚀' +
-      '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-primary btn-block" id="freeManifestConfirmBtn" type="button">자유롭게 이용하기</button>' +
-      '</div>',
-      function(sheet){
-        var confirmBtn = sheet.querySelector('#freeManifestConfirmBtn');
-        if(confirmBtn) confirmBtn.onclick = closeModal;
-      }
-    );
-  }
-  window.openPaywallModal = openPaywallModal;
-
-  function renderProBadge(){
-    document.querySelectorAll('.pro-badge').forEach(function(el){ el.remove(); });
   }
 
   /* [#TASK-ES-437] gaugeSvg → js/tabs/goals/result-input.js 로 옮김(인라인 스크립트 세포화 P0) */
@@ -10843,39 +10800,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   ];
 
-  /* ============ 템플릿 복제 보상형 광고(Rewarded Ad) 파이프라인 (TASK-ES-013) ============ */
-  function getTemplateAdNoticeMessage(){
-    return (typeof OURGOAL_CONFIG !== 'undefined' && OURGOAL_CONFIG.AD_NOTICE_MESSAGE) ?
-      OURGOAL_CONFIG.AD_NOTICE_MESSAGE :
-      '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다';
-  }
-
-  function computeAdCountdownProgress(remaining, totalSec){
-    var total = Number(totalSec) || 5;
-    var rem = Math.max(0, Math.min(total, Number(remaining) || 0));
-    return Math.round((rem / total) * 100);
-  }
-
-  function isTemplateRewardedAdEnabled(cfg){
-    var c = cfg || (typeof OURGOAL_CONFIG !== 'undefined' ? OURGOAL_CONFIG : null);
-    return !!(c && c.ENABLE_TEMPLATE_REWARDED_ADS);
-  }
-
-  function startTemplateAdCountdown(seconds, onComplete){
-    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 카운트다운 전면 배제 (직접 지시 전까지 절대 사용 금지)
-    if(typeof onComplete === 'function') onComplete();
-  }
-
-  function playRewardedAdVideo(tpl, onComplete){
-    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 전면 배제 (직접 지시 전까지 절대 사용 금지)
-    if(typeof onComplete === 'function') onComplete({ rewarded: true });
-  }
-
-  function showWebRewardedAdModal(tpl, onComplete){
-    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 웹 보상형 광고 모달 전면 배제
-    if(typeof onComplete === 'function') onComplete();
-  }
-
+  /* ============ 템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013) ============
+     [#TASK-ES-516] 복제 앞뒤의 보상형 광고 함수는 상민님 결정(2026-10-06)으로 지웠다. 복제는 아래 본체가 바로 한다. */
   function executeDirectTemplateClone(tpl, onSelectTemplate){
     var customTemplates = (state.settings && state.settings.customTemplates) || [];
     var existing = customTemplates.find(function(t){ return t.title === tpl.title; });
@@ -10904,33 +10830,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     closeModal();
     if(typeof onSelectTemplate === 'function') onSelectTemplate(newTpl);
     return newTpl;
-  }
-
-  function handleTemplateCloneWithAd(tpl, onSelectTemplate, forceAdFlow){
-    if(!tpl) return;
-    var customTemplates = (state.settings && state.settings.customTemplates) || [];
-    var existing = customTemplates.find(function(t){ return t.title === tpl.title; });
-    if(existing){
-      toast('이미 복제된 템플릿입니다: ' + tpl.title);
-      closeModal();
-      if(typeof onSelectTemplate === 'function') onSelectTemplate(existing);
-      return;
-    }
-
-    // KF-2 #TASK-ES-017 · 정본 §3: 복제 흐름에서 광고를 분리한다. 플래그(ENABLE_TEMPLATE_REWARDED_ADS)는 설정의 "광고 보고 크레딧 받기" 선택형 버튼(js/template-credit.js)에서만 쓴다.
-    var adsEnabled = !!forceAdFlow; // 복제 흐름은 플래그와 무관하게 광고 없음
-    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 전면 배제 (직접 지시 전까지 절대 사용 금지)
-    // 🚀 무마찰 100% 무료 1초 즉시 복제
-    executeDirectTemplateClone(tpl, onSelectTemplate);
-    return;
-  }
-
-  // 개발 및 시연/테스트용 함수
-  if(typeof window !== 'undefined'){
-    window.testTemplateAdFlow = function(tplKey){
-      var tpl = (CURATED_MARKET_TEMPLATES || []).find(function(t){ return t.key === tplKey; }) || (CURATED_MARKET_TEMPLATES && CURATED_MARKET_TEMPLATES[0]);
-      if(tpl) handleTemplateCloneWithAd(tpl, null, false);
-    };
   }
 
   /* 🏪 템플릿 마켓플레이스 모달 */
@@ -11039,7 +10938,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       function cloneTemplate(tpl){
-        return handleTemplateCloneWithAd(tpl, onSelectTemplate);
+        if(!tpl) return;
+        executeDirectTemplateClone(tpl, onSelectTemplate);
       }
 
       function bindGridEvents(){
@@ -13016,7 +12916,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   if(window.OurgoalTeamVisibilityLevels && typeof window.OurgoalTeamVisibilityLevels.init==='function'){ window.OurgoalTeamVisibilityLevels.init({ getState:function(){return state;}, getProfile:function(){return state.profile;}, saveProfile:saveProfile, toast:toast, openModal:openModal, closeModal:closeModal, triggerHaptic:(typeof triggerHaptic==='function'?triggerHaptic:null), dDay:dDay, uid:uid, daysFromNow:daysFromNow, MOCK_GROUPS:MOCK_GROUPS, getGroupState:groupState, canManageTeamGoals:canManageTeamGoals, renderTeamGoalsScreen:renderTeamGoalsScreen, getGroupLevelGoals:getGroupLevelGoals, getTeamCommentsCache:function(){return TEAM_COMMENTS_CACHE;}, teamCommentsBlockHtml:teamCommentsBlockHtml }); }
   /* ============ KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결 ============ */
   if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){
-    window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast, playRewardedAd: playRewardedAdVideo });
+    window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast });
   }
 
   /* ============ PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) ============ */
