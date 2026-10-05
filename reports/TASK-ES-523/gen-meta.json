@@ -1,0 +1,271 @@
+{
+ "task": "TASK-ES-523",
+ "slot": "H4",
+ "scriptHtmlLines": [
+  2298,
+  13575
+ ],
+ "plan": [
+  {
+   "cell": "firstLoginGuide",
+   "action": "move",
+   "segment": [
+    4787,
+    4794
+   ],
+   "stmt": [
+    4787,
+    4794
+   ],
+   "names": [
+    "maybeShowFirstLoginGuide"
+   ],
+   "why": null
+  },
+  {
+   "cell": "firstLoginGuide",
+   "action": "move",
+   "segment": [
+    4795,
+    4995
+   ],
+   "stmt": [
+    4796,
+    4995
+   ],
+   "names": [
+    "startFirstLoginGuide"
+   ],
+   "why": null
+  },
+  {
+   "cell": "firstLoginGuide",
+   "action": "keep",
+   "segment": [
+    4996,
+    4996
+   ],
+   "stmt": [
+    4996,
+    4996
+   ],
+   "names": [],
+   "why": "window 노출 — 원래 자리(순서 보존)"
+  },
+  {
+   "cell": "firstLoginGuide",
+   "action": "keep",
+   "segment": [
+    4997,
+    4998
+   ],
+   "stmt": [
+    4998,
+    4998
+   ],
+   "names": [
+    "navButtons"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "firstLoginGuide",
+   "action": "keep",
+   "segment": [
+    4999,
+    4999
+   ],
+   "stmt": [
+    4999,
+    4999
+   ],
+   "names": [
+    "screens"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "privacyBadges",
+   "action": "move",
+   "segment": [
+    5000,
+    5004
+   ],
+   "stmt": [
+    5000,
+    5004
+   ],
+   "names": [
+    "getPrivacyLabel"
+   ],
+   "why": null
+  },
+  {
+   "cell": "privacyBadges",
+   "action": "move",
+   "segment": [
+    5005,
+    5034
+   ],
+   "stmt": [
+    5005,
+    5034
+   ],
+   "names": [
+    "updatePrivacyBadges"
+   ],
+   "why": null
+  },
+  {
+   "cell": "privacyBadges",
+   "action": "move",
+   "segment": [
+    5035,
+    5068
+   ],
+   "stmt": [
+    5035,
+    5068
+   ],
+   "names": [
+    "openPrivacyPickerModal"
+   ],
+   "why": null
+  },
+  {
+   "cell": "stopwatchFormat",
+   "action": "move",
+   "segment": [
+    10472,
+    10485
+   ],
+   "stmt": [
+    10472,
+    10485
+   ],
+   "names": [
+    "formatStopwatchTime"
+   ],
+   "why": null
+  },
+  {
+   "cell": "stopwatchFormat",
+   "action": "keep",
+   "segment": [
+    10486,
+    10490
+   ],
+   "stmt": [
+    10487,
+    10490
+   ],
+   "names": [],
+   "why": "window 노출 묶음(if 안 window.X = … 만) — 원래 자리(순서 보존, #TASK-ES-465)"
+  }
+ ],
+ "imports": [
+  {
+   "n": "startFirstLoginGuide",
+   "cell": "firstLoginGuide"
+  },
+  {
+   "n": "updatePrivacyBadges",
+   "cell": "privacyBadges"
+  },
+  {
+   "n": "formatStopwatchTime",
+   "cell": "stopwatchFormat"
+  }
+ ],
+ "outsideRefs": {
+  "startFirstLoginGuide": [
+   4607,
+   4996
+  ],
+  "updatePrivacyBadges": [
+   2377
+  ],
+  "formatStopwatchTime": [
+   12164,
+   12308,
+   12339,
+   12394
+  ]
+ },
+ "bridged": [
+  {
+   "n": "closeModal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "escapeHtml",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "openModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "pad",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "saveProfile",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "setTab",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "showCommTourModal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "state",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": true
+  },
+  {
+   "n": "toast",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  }
+ ],
+ "exposed": [
+  "showCommTourModal"
+ ],
+ "edits": 47,
+ "htmlLinesBefore": 13614,
+ "htmlLinesAfter": 13332,
+ "files": {
+  "js/tabs/settings/first-login-guide.js": 236,
+  "js/tabs/settings/privacy-badges.js": 97,
+  "js/tabs/records/stopwatch-format.js": 39
+ }
+}

@@ -1,0 +1,80 @@
+{
+ "id": "records-pro-stopwatch",
+ "title": "게스트로 전문 템플릿 기록 창의 스톱워치는 「00:00.0」에서 시작하고, 시작을 누르고 약 1초 뒤 멈추면 「00:01.x」 꼴의 흐른 시간이 보인다 — 옮긴 formatStopwatchTime(js/tabs/records/stopwatch-format.js)이 이전 전과 같이 시간 글자를 만든다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"records\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#recQuickDockBar",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#recQuickDockBar > button:nth-child(4)"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#recOpenProTemplateBtn",
+   "timeoutMs": 8000
+  },
+  {
+   "do": "click",
+   "selector": "#recOpenProTemplateBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#swStartPauseBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "textEquals",
+   "selector": "#swDisplay",
+   "text": "00:00.0"
+  },
+  {
+   "do": "click",
+   "selector": "#swStartPauseBtn"
+  },
+  {
+   "do": "wait",
+   "ms": 1200
+  },
+  {
+   "do": "click",
+   "selector": "#swStartPauseBtn"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#swDisplay",
+   "text": "00:01."
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

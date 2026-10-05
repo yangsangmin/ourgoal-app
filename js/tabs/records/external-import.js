@@ -1,8 +1,9 @@
 /**
- * OurGoal External Import (기록 — 외부 데이터 불러오기 (mock) · 홈 구성 열기)
+ * OurGoal External Import (기록 — 외부 데이터 불러오기 (mock))
  *
- * 기록 입력의 「외부 기록 불러오기」 단추(#importExternalBtn) 처리기 — 샘플 데이터(EXTERNAL_DATA, 이름 그대로 mock) 목록 창과 CSV/줄글 대량 가져오기 창 열기, 홈 구성 열기(openHomeCustomizer), 「개인 목표 200% 활용 가이드」 단추 처리기.
- * 처리기 등록 문 두 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. 한 줄에 두 문인 홈 구성·가이드 단추 등록 세 줄은 원래 자리에 그대로 있다. 샘플(mock) 데이터는 고치지 않고 그대로 옮겼다.
+ * 기록 입력의 「외부 기록 불러오기」 단추(#importExternalBtn) 처리기 — 샘플 데이터(EXTERNAL_DATA, 이름 그대로 mock) 목록 창과 CSV/줄글 대량 가져오기 창 열기, 「개인 목표 200% 활용 가이드」 단추 처리
+ * #TASK-ES-515: 늘 숨어 있던 홈 머리 「나만의 홈 구성」·상단바 「⚙️ 홈구성」 단추만 부르던 홈 구성 열기 처리기를 두 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」). 홈 구성은 설정 「홈 구성 고르기」(#homeLayoutOpenBtn)가 연다.기.
+ * 처리기 등록 문 두 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. 한 줄에 두 문인 가이드 단추 등록 줄은 원래 자리에 그대로 있다. 샘플(mock) 데이터는 고치지 않고 그대로 옮겼다.
  * #TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 7969~8022 · 8023~8024 · 8030~8034줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
@@ -72,10 +73,6 @@
     );
   });
   } /* bindImportExternalBtn */
-  /* ---- 이전 전 index.html 8023~8024줄(#TASK-ES-483 생성기 표지) ---- */
-
-  function openHomeCustomizer(){ if(window.OurgoalCustomize && typeof window.OurgoalCustomize.open === 'function'){ OurgoalCustomize.open({ state: L.state, saveProfile: L.saveProfile, toast: L.toast, openModal: L.openModal, closeModal: L.closeModal, track: L.track }); } else { var settingOpenBtn = document.getElementById('homeLayoutOpenBtn'); if(settingOpenBtn) settingOpenBtn.click(); } }
-
   /* ---- 이전 전 index.html 8030~8034줄(#TASK-ES-483 생성기 표지) ---- */
   function bindPersonalGuideBtn() { /* [#TASK-ES-483] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnShowGuide){
@@ -86,7 +83,6 @@
   } /* bindPersonalGuideBtn */
 
   K.bindImportExternalBtn = bindImportExternalBtn;
-  K.openHomeCustomizer = openHomeCustomizer;
   K.bindPersonalGuideBtn = bindPersonalGuideBtn;
 
   if (typeof module !== 'undefined' && module.exports) {

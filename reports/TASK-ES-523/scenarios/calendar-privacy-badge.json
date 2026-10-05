@@ -1,0 +1,70 @@
+{
+ "id": "calendar-privacy-badge",
+ "title": "게스트로 일정 탭 머리의 공개 범위 배지(「나만 보기」)를 누르면 「일정 공개 범위 설정」 창이 뜨고, 「팀원 공개」를 고르면 「일정 공개 범위를 팀원(으)로 변경했어요」 토스트가 뜨며 배지 글자가 「팀원」으로 바뀐다 — 옮긴 updatePrivacyBadges·openPrivacyPickerModal·getPrivacyLabel(js/tabs/settings/privacy-badges.js)이 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"calendar\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"calendar\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#calPrivacyBadge",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "textEquals",
+   "selector": "#calPrivacyBadge",
+   "text": "나만 보기"
+  },
+  {
+   "do": "click",
+   "selector": "#calPrivacyBadge"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalSheet",
+   "text": "일정 공개 범위 설정",
+   "timeoutMs": 5000
+  },
+  {
+   "do": "click",
+   "selector": "#modalSheet [data-privopt=\"team\"]"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "일정 공개 범위를 팀원(으)로 변경했어요",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "textEquals",
+   "selector": "#calPrivacyBadge",
+   "text": "팀원"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
