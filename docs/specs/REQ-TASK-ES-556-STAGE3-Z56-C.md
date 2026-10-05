@@ -46,7 +46,7 @@ DOM `#homeCompassQuest` · `#homeGoalList` · `.starter-goal-btn[data-starter="s
 | 원본 단독 로드 | 회귀 0, 새 파일 3개 단독 로드 ok (`module-load-probe.json`) |
 | 게스트 시나리오 | 3개 기준·작업 통과 (`scenario-local.json`) |
 | 게스트 조작 비교 | 5단계 기준1 대 작업 차이 0 · 기준1 대 기준2 0 (`guest-compare.json`) |
-| tests 전후 | `test-compare.json` |
+| tests 전후 | 작업 npm test 종료 0 · 기준 사본 1 · 종료 코드가 갈린 시험지 ["tests/cell-map-export-es414.test.js"](기준 사본 이력 없음 — 회귀 아님) (`test-compare.json`) |
 | 막힐 지점 | 병합 줄(#814 → #819 → …) 뒤 main 합치기 때 생성기 재실행(L010), 토스트 시간 창 |
 
 [4단계: 심사 청구]
