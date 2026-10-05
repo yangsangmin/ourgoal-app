@@ -1,0 +1,64 @@
+{
+  "id": "records-pro-template-chart",
+  "title": "게스트로 기록 탭 「템플릿」 칸의 「닫기」(내 템플릿으로 기록)를 누르면 전문 템플릿 기록 창이 뜨고, 일자별 추이 칸(#proTrendChartWrap)에 「성장 추이」 차트, 자동 집계 칸(#proAnalyticsWrap)에 집계 띠(#proAnalyticsBanner)가 그려진다 — 추이 차트 그리기(renderTrendSvgChart)·집계 결과 그리기(renderAnalyticsHtml)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#proTrendChartWrap",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTrendChartWrap",
+      "text": "성장 추이",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "exists",
+      "selector": "#proAnalyticsWrap #proAnalyticsBanner",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

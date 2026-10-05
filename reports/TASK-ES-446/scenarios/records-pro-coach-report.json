@@ -1,0 +1,72 @@
+{
+  "id": "records-pro-coach-report",
+  "title": "게스트로 전문 템플릿 기록 창에서 「AI 코치」를 누르면 「AI 프로 코칭 리포트」 창이 뜨고 「닫기」로 닫힌다 — AI 프로 코칭 리포트 창(openProCoachReportModal)을 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#proTrendChartWrap",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#proCoachBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "AI 프로 코칭 리포트",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#coachCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#coachCloseBtn",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

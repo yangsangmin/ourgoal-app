@@ -2,7 +2,7 @@
  * OurGoal Goal Status Refresh (목표 탭 — 종합상황 AI 요약 새로 고침)
  *
  * #TASK-ES-453 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —
- *   refreshGoalStatusSummary(이전 전 18021~18068줄, 구획 주석 포함 · 구획 「현재 종합상황 (AI 요약)」)
+ *   refreshGoalStatusSummary(이전 전 18045~18092줄, 구획 주석 포함 · 구획 「현재 종합상황 (AI 요약)」)
  * #TASK-ES-436 에서 시험지(ai-conditional-call-optimization)가 index.html 한 파일만 읽어 남겼던 함수 — #TASK-ES-451 로 시험지가 인라인 합본을 읽게 되어 옮겼다.
  * 묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,
  * 같은 키트의 다른 세포 함수는 K.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓). 로드 중 바로 도는 문·최상위 변수는 index.html 원래 자리에 남았다.
