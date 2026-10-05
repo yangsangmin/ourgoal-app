@@ -1,0 +1,63 @@
+{
+ "id": "ux-rage-tap-tabs",
+ "title": "게스트로 하단 탭 「설정」을 빠르게 두 번 누르고 「홈」을 누르면 연타 감지 처리기가 붙어 있어도 설정 화면·홈 화면이 그대로 열리고 예외가 없다 — 옮긴 bindRageTapTelemetry(js/tabs/settings/ux-telemetry.js)가 등록한 문서 클릭 처리기",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 500
+  },
+  {
+   "expect": "visible",
+   "selector": "#screen-settings"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"home\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 600
+  },
+  {
+   "expect": "visible",
+   "selector": "#screen-home"
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#screen-settings"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

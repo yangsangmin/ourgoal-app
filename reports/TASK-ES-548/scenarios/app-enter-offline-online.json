@@ -1,0 +1,61 @@
+{
+ "id": "app-enter-offline-online",
+ "title": "게스트로 「로그인 없이 둘러보기」를 누르면 앱 화면(하단 탭)이 열리고, 네트워크가 끊기면 「오프라인 모드로 전환되었어요」 토스트가 뜨고, 다시 연결되면 「온라인에 다시 연결되었어요」 토스트가 뜬다 — 옮긴 enterApp·bindOfflineNotice·bindOnlineSync(js/core/app-enter.js)",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "expect": "visible",
+   "selector": "#appShell.active"
+  },
+  {
+   "do": "setOffline",
+   "offline": true
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "오프라인 모드로 전환되었어요"
+  },
+  {
+   "do": "setOffline",
+   "offline": false
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "온라인에 다시 연결되었어요"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
