@@ -1,0 +1,57 @@
+{
+ "note": "작업자 PC 예비 실행(판정 아님). court/lib/scenario.js runScenario 를 그대로 불러 git archive 기준 사본(origin/main 42cd3c6)과 작업 폴더를 각각 정적 서버(court/lib/static-server.js)·법정 호스트 이름(court/lib/site-host.js)으로 띄워 돌림",
+ "team-subtask-toggle": {
+  "scenario": "reports/TASK-ES-410/scenarios/team-subtask-toggle.json",
+  "base": {
+   "passed": false,
+   "failedStep": 15,
+   "failKind": "expect",
+   "exceptions": 0,
+   "steps": [
+    "1 ok /index.html",
+    "2 ok #btnLandingPreviewDirect → 보이는 요소 1개",
+    "3 ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+    "4 ok #homeAddGoal → 보이는 요소 1개",
+    "5 ok 클릭 button \"목표\" 57x50px",
+    "6 ok 클릭 button#btnGoalsSubTeam \"👥 팀목표\" 46x44px",
+    "7 ok 클릭 button \"🏢 회사 워크숍\" 111x44px",
+    "8 ok 클릭 button \"👀 1초 둘러보기 체험\" 159x44px",
+    "9 ok #teamGoalsView [data-tgfoldlist] → 보이는 글자: [\"마일스톤 펼치기 ▼\"]",
+    "10 ok 클릭 button \"마일스톤 펼치기 ▼\" 119x44px",
+    "11 ok #teamGoalsView [data-tgmslist] → 보이는 요소 1개",
+    "12 ok #teamGoalsView [data-tgtoggletasks=\"tg-ws-1:tgm-ws-1a\"] .t-arrow → 보이는 글자: [\"▼\"]",
+    "13 ok #teamGoalsView [data-tgtaskbox=\"tg-ws-1:tgm-ws-1a\"] → 보이는 요소 0개",
+    "14 ok 클릭 button \"세부 할 일 2/2 ▼\" 93x44px",
+    "15 FAIL #teamGoalsView [data-tgtaskbox=\"tg-ws-1:tgm-ws-1a\"] → 보이는 요소 0개"
+   ]
+  },
+  "work": {
+   "passed": true,
+   "failedStep": null,
+   "failKind": null,
+   "exceptions": 0,
+   "steps": [
+    "1 ok /index.html",
+    "2 ok #btnLandingPreviewDirect → 보이는 요소 1개",
+    "3 ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+    "4 ok #homeAddGoal → 보이는 요소 1개",
+    "5 ok 클릭 button \"목표\" 57x50px",
+    "6 ok 클릭 button#btnGoalsSubTeam \"👥 팀목표\" 46x44px",
+    "7 ok 클릭 button \"🏢 회사 워크숍\" 111x44px",
+    "8 ok 클릭 button \"👀 1초 둘러보기 체험\" 159x44px",
+    "9 ok #teamGoalsView [data-tgfoldlist] → 보이는 글자: [\"마일스톤 펼치기 ▼\"]",
+    "10 ok 클릭 button \"마일스톤 펼치기 ▼\" 119x44px",
+    "11 ok #teamGoalsView [data-tgmslist] → 보이는 요소 1개",
+    "12 ok #teamGoalsView [data-tgtoggletasks=\"tg-ws-1:tgm-ws-1a\"] .t-arrow → 보이는 글자: [\"▼\"]",
+    "13 ok #teamGoalsView [data-tgtaskbox=\"tg-ws-1:tgm-ws-1a\"] → 보이는 요소 0개",
+    "14 ok 클릭 button \"세부 할 일 2/2 ▼\" 93x44px",
+    "15 ok #teamGoalsView [data-tgtaskbox=\"tg-ws-1:tgm-ws-1a\"] → 보이는 요소 1개",
+    "16 ok #teamGoalsView [data-tgtoggletasks=\"tg-ws-1:tgm-ws-1a\"] .t-arrow → 보이는 글자: [\"▲\"]",
+    "17 ok 클릭 button \"세부 할 일 2/2 ▲\" 93x44px",
+    "18 ok #teamGoalsView [data-tgtaskbox=\"tg-ws-1:tgm-ws-1a\"] → 보이는 요소 0개",
+    "19 ok #teamGoalsView [data-tgtoggletasks=\"tg-ws-1:tgm-ws-1a\"] .t-arrow → 보이는 글자: [\"▼\"]",
+    "20 ok 행동 이후 미처리 예외 0건"
+   ]
+  }
+ }
+}

@@ -25561,7 +25561,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           btn.addEventListener('click', function(){
             var key = btn.dataset.tgtoggletasks;
             var box = tgEl.querySelector('[data-tgtaskbox="'+key+'"]');
-            if(!box) return;
+            if(!box || window.OurgoalTeamVisibilityLevels) return; // #TASK-ES-410: 모듈 bindEvents 가 같은 버튼을 이미 묶는다(두 손잡이가 한 번씩 뒤집어 세부 할 일 상자가 바로 접히던 죽은 클릭)
             var isHidden = box.style.display === 'none' || !box.style.display;
             box.style.display = isHidden ? 'block' : 'none';
             var arr = btn.querySelector('.t-arrow');
