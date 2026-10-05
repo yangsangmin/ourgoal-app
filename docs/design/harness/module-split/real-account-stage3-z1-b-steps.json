@@ -1,0 +1,9 @@
+{"moved":["getSupabaseAuthToken","GOOGLE_OAUTH_CLIENT_ID","bindSupabaseAuthStateListener","enterAsTesterB","bindLandTesterBButton","bindAuthTesterBButton","openNewPasswordModal","bindLoginSubmit","bindResyncAccountDataButton","bindLogoutButton","bindResetButton"],
+ "steps":[
+ {"name":"① 로그인 제출(#loginSubmit) 뒤 홈 #screen-home","tab":"home","wait":1500,"read":"#screen-home"},
+ {"name":"② 기록 탭 #screen-records","tab":"records","wait":2500,"read":"#screen-records"},
+ {"name":"③ 설정 탭 #screen-settings","tab":"settings","wait":2500,"read":"#screen-settings","count":{"resyncBtn":"#resyncAccountDataBtn","resetBtn":"#resetBtn","logoutBtn":"#logoutBtn"}},
+ {"name":"④ 내 데이터 다시 맞추기(#resyncAccountDataBtn) → 토스트 #toast","click":"#resyncAccountDataBtn","wait":6000,"read":"#toast"},
+ {"name":"⑤ 로그아웃(#logoutBtn) → 로그인 화면 #authScreen","click":"#logoutBtn","wait":3500,"read":"#authScreen","count":{"appShellActive":"#appShell.active"}},
+ {"name":"⑥ 로그아웃 토스트 #toast","read":"#toast"}
+]}
