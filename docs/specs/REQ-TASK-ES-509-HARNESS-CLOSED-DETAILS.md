@@ -1,7 +1,7 @@
 # REQ — #TASK-ES-509 감사 하네스의 접힌 <details> 오탐 제거
 
 - 근거: 코디네이터 지시(2026-10-05) — 「보이는데 가려져 안 눌림」 오탐이 5번째(#767 R4 홈 피드백 단계 막대·설정 모드 칩, 3차 AI 말투·고급 설정·가이드 다시보기, 4차 프로필 편집·맞춤 피드백 봇). 모두 닫힌 `<details>` 안 요소였다.
-- 범위: `docs/design/harness/tab-states.js`(clickReal·VISIBLE_FN), `docs/design/harness/audit.js`(AUDIT_FN vis), `tests/harness-closed-details.test.js`(새), `reports/TASK-ES-509/**`.
+- 범위: `docs/design/harness/tab-states.js`(clickReal·VISIBLE_FN), `docs/design/harness/audit.js`(AUDIT_FN vis), `docs/design/harness/closed-details-check.js`(새), `reports/TASK-ES-509/**`.
 - 금고 확인: `court/vault.json` frozen 에 `docs/design/harness/**` 없음(문서·기록 neutral). **법정 실행기 자체(`court/lib/scenario.js` 의 `vis` — rect·display·visibility·opacity 만 보고 접힌 details 조상을 보지 않음)는 금고라 고치지 않았다.** 그래서 법정 시나리오로 접힌 details 안 단추를 바로 누르면 계속 「그 자리를 다른 요소가 덮고 있다」로 실패한다 — 시나리오는 summary 를 먼저 누르게 써야 한다(보고).
 
 ## 1. [원칙 ①] 문제 정확히 파악
@@ -26,7 +26,7 @@
 - 반론 2: "진짜 가려진 단추까지 안 잡힐 수 있다." → 격파: 시험 2) 가 덮개(#cover)로 가린 단추를 여전히 「가려짐」으로 잡는지 확인한다.
 
 ## 7. [원칙 ⑦] 측정(작업자, 판정 아님)
-- `tests/harness-closed-details.test.js`: 기준 하네스 실패(「접힌 details 안 단추는 보이지 않음」), 작업 통과 — 오탐 0·진짜 가림 여전히 검출(`reports/TASK-ES-509/test-compare.json`).
+- `docs/design/harness/closed-details-check.js`: 기준 하네스 실패(「접힌 details 안 단추는 보이지 않음」), 작업 통과 — 오탐 0·진짜 가림 여전히 검출(`reports/TASK-ES-509/test-compare.json`).
 
 ## 8. [원칙 ⑧] 막히는 지점
-- 시험은 크롬이 있어야 돈다(court/lib/chrome.js 와 같은 실행기).
+- 시험은 크롬이 있어야 돈다(puppeteer-core · 설치된 Chrome).
