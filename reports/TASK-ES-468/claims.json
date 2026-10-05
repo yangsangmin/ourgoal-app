@@ -1,0 +1,140 @@
+{
+ "task": "TASK-ES-468",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-468-INLINE-H4-TEST-FIRST.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "tests/team-creation-clean.test.js 가 index.html 한 파일 대신 인라인 합본(원문 맨 앞 + js/tabs 세포, tests/helpers/inline-bundle.js)을 읽게 범위만 넓힌다 — 단언·기대값·검사 수 그대로, 지운 단언 0(인라인 어려움 구역 H4 선행: 「전역 공유 팀 로더 & 렌더링」 이동 준비)."
+  },
+  {
+   "id": "R2",
+   "text": "모의 이동으로 옛 시험지는 깨지고 새 시험지는 통과함을 보인다. 문서: REQ, dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지가 인라인 합본을 읽는다",
+   "touches": [
+    "tests/team-creation-clean.test.js"
+   ],
+   "check": {
+    "file": "tests/team-creation-clean.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 단언 수가 그대로다(지운 단언 0)",
+   "touches": [
+    "reports/TASK-ES-468/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-468/mock-move.json",
+    "type": "jsonPath",
+    "path": "sameAssertCount",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이동 뒤 옛 시험지는 실패한다",
+   "touches": [
+    "reports/TASK-ES-468/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-468/mock-move.json",
+    "type": "jsonPath",
+    "path": "oldTestExitAfterMockMove",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이동 뒤 새 시험지는 통과한다",
+   "touches": [
+    "reports/TASK-ES-468/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-468/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestExitAfterMockMove",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮기지 않은 지금 main 에서도 새 시험지는 통과한다",
+   "touches": [
+    "reports/TASK-ES-468/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-468/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestExitOnMainUnmoved",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-468-INLINE-H4-TEST-FIRST.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-468-INLINE-H4-TEST-FIRST.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-468: 시험지 인라인 합본 읽기(어려움 구역 H4 선행)"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-468 | INFRA | [시험지 인라인 합본 읽기 H4 선행]"
+   }
+  }
+ ]
+}
