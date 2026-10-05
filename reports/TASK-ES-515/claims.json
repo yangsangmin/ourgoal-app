@@ -1,0 +1,507 @@
+{
+ "task": "TASK-ES-515",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "① 기록 탭 달력 융합 칩 #recCalFuseSwitcher 와 switchRecFusionMode(옛 숨은 #calGrid HTML 복사본 붙이기)·그 칩만 쓰던 #recInlineCalendarSlot·ui.css 숨김 규칙의 해당 선택자를 지운다. — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)"
+  },
+  {
+   "id": "R2",
+   "text": "② 빠른 스톱워치 바 #quickStopwatchBar 와 handleQuickStopwatchToggle·handleQuickStopwatchSaveRecord(saveProfile 없이 state 에만 기록)를 지운다. — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)"
+  },
+  {
+   "id": "R3",
+   "text": "④ 한 번도 그려진 적 없는 루틴 매트릭스 renderRoutineMatrixGrid·toggleRoutineStamp(저장 없는 토스트)와 #routineMatrixGrid 마크업을 지운다. — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)"
+  },
+  {
+   "id": "R4",
+   "text": "⑥ 옛 기록 세그먼트 막대 #recSegmentBar 와 그 처리기를 지운다(보기 전환 setRecordsSegment 는 보이는 성소 기록 단추가 부르므로 남기고, 보이는 기능 동작 0 변화). — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)"
+  },
+  {
+   "id": "R5",
+   "text": "⑨ 첫 화면 「이메일로 가입하기」 #landStartWrap/#landStartBtn 과 그 처리기(bindLandStartBtn)를 지운다(#landGuestBtn·가입 양식 #signupForm 은 유지). — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)"
+  },
+  {
+   "id": "R6",
+   "text": "⑩ 홈 머리 「나만의 홈 구성」 #btnCustomHomeLayout(이중 처리기)·상단바 #topHomeLayoutBtn 과 그 처리기(openHomeCustomizer)를 지운다(설정 「홈 구성 고르기」 #homeLayoutOpenBtn 은 유지). — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)"
+  },
+  {
+   "id": "R7",
+   "text": "공통(헌법 lifecycle 4): 지우기 전 실제 동작을 REQ 에 적고, 흔적 0·데이터 보존·신고서(modules.json·cell-descriptions.json) 갱신·숨김 게이트 허용 목록 줄이기·시험 단언 「있다」→「없다」(검사 수 유지)·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 7,
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭에 들어가면 숨은 달력 융합 칩(#recCalFuseSwitcher)과 인라인 달력 칸(#recInlineCalendarSlot)이 없고, 보이는 달력 탭 단추는 눌러 달력 화면이 열린다",
+   "touches": [
+    "index.html",
+    "ui.css",
+    "js/tabs/records/archive-toggle.js"
+   ],
+   "scenario": "scenarios/records-fuse-chip-gone.json"
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "융합 칩을 지운 뒤에도 성소 「📝 실천 타임라인」 단추는 내 기록 보기를 열고, 달력 탭은 달력 화면을 연다(남은 진입로 정상)",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/records-timeline-calendar-ok.json"
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 7,
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭에 들어가면 숨은 빠른 스톱워치 바(#quickStopwatchBar)와 그 단추가 없고, 보이는 「⏱️ 시간기록」 단추는 눌러 전체화면 시간기록 창이 열린다",
+   "touches": [
+    "index.html",
+    "ui.css",
+    "js/tabs/records/archive-toggle.js"
+   ],
+   "scenario": "scenarios/records-quick-stopwatch-gone.json"
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "빠른 스톱워치를 지운 뒤에도 성소 「⏱️ 몰입 타이머」 단추는 눌러 켜진다(남은 진입로 정상)",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/records-focus-timer-ok.json"
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 3,
+   "domain": "ui-behavior",
+   "statement": "첫 화면부터 루틴 매트릭스 칸(#routineMatrixGrid) 마크업이 없고, 게스트 목표 탭 「🔄 루틴」 하위 탭은 눌러 루틴 화면(루틴 체크 칸)이 보인다",
+   "touches": [
+    "index.html",
+    "ui.css",
+    "js/tabs/goals/render.js",
+    "js/tabs/goals/goals-ia-actions.js"
+   ],
+   "scenario": "scenarios/goals-routine-matrix-gone.json"
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "루틴 매트릭스를 지운 뒤에도 루틴 하위 탭의 첫 루틴 체크 칸은 눌러 켜진다(남은 루틴 화면 정상)",
+   "touches": [
+    "js/tabs/goals/render.js"
+   ],
+   "scenario": "scenarios/goals-routine-check-ok.json"
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 7,
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭에 들어가면 숨은 옛 세그먼트 막대(#recSegmentBar)와 그 단추가 없고, 성소 「📈 히트맵·통계」 단추는 눌러 통계 보기(#recViewStats)가 보인다",
+   "touches": [
+    "index.html",
+    "ui.css",
+    "js/tabs/records/render.js",
+    "js/tabs/records/weekly-recap.js"
+   ],
+   "scenario": "scenarios/records-segment-bar-gone.json"
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "세그먼트 막대를 지운 뒤에도 성소 기록 단추 3개(📈 히트맵·통계 · 🗂️ 보관함 · 📝 실천 타임라인)가 각각 통계·보관함·내 기록 보기를 연다(setRecordsSegment 보기 전환 동작 0 변화)",
+   "touches": [
+    "js/tabs/records/render.js",
+    "js/tabs/records/weekly-recap.js"
+   ],
+   "scenario": "scenarios/records-sanctuary-modes-ok.json"
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 3,
+   "domain": "ui-behavior",
+   "statement": "첫 화면에 숨은 「이메일로 가입하기」(#landStartWrap·#landStartBtn)가 없고, 보이는 「카카오 없이 닉네임으로 1초 만에 바로 시작」은 눌러 닉네임 입장 창이 열린다",
+   "touches": [
+    "index.html",
+    "js/tabs/settings/inapp-landing.js"
+   ],
+   "scenario": "scenarios/landing-email-signup-gone.json"
+  },
+  {
+   "id": "C10",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "이메일 가입 단추를 지운 뒤에도 첫 화면 카카오 시작 단추가 보이고 「로그인 없이 둘러보기」는 게스트로 앱에 들어간다(남은 진입로 정상)",
+   "touches": [
+    "js/tabs/settings/inapp-landing.js"
+   ],
+   "scenario": "scenarios/landing-kakao-browse-ok.json"
+  },
+  {
+   "id": "C11",
+   "req": "R6",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 5,
+   "domain": "ui-behavior",
+   "statement": "게스트 앱에 숨은 홈 머리 「나만의 홈 구성」(#btnCustomHomeLayout)·상단바 「⚙️ 홈구성」(#topHomeLayoutBtn)이 없고, 설정 「홈 구성 고르기」는 눌러 홈 구성 창이 열린다",
+   "touches": [
+    "index.html",
+    "ui.css",
+    "js/customize.js",
+    "js/tabs/records/external-import.js"
+   ],
+   "scenario": "scenarios/home-layout-buttons-gone.json"
+  },
+  {
+   "id": "C12",
+   "req": "R6",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "두 단추를 지운 뒤에도 설정 「홈 구성 고르기」 창의 「오늘의 카드」 스위치를 끄고 다시 켤 수 있다(남은 진입로 정상)",
+   "touches": [
+    "js/customize.js",
+    "js/tabs/records/external-import.js"
+   ],
+   "scenario": "scenarios/settings-home-layout-ok.json"
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "보기 전환 함수 setRecordsSegment 는 기록 세포에 그대로 있다(성소 기록 단추가 부름 — 지우지 않음)",
+   "touches": [
+    "js/tabs/records/render.js"
+   ],
+   "check": {
+    "file": "js/tabs/records/render.js",
+    "type": "codeContains",
+    "text": "function setRecordsSegment(seg, silent){"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "가입 양식 #signupForm 은 남아 있다(인증 화면 회원가입 탭이 씀 — 지우지 않음)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "file": "index.html",
+    "type": "codeContains",
+    "text": "<div id=\"signupForm\" style=\"display:none;\">"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "숨김 게이트 정적판 허용 목록에서 지운 빠른 스톱워치 단추 키가 빠졌다(--update, 줄이는 방향)",
+   "touches": [
+    "docs/architecture/hidden-entry-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/hidden-entry-baseline.json",
+    "type": "codeNotContains",
+    "text": "#btnFastStopwatchSave"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "숨김 게이트 브라우저판 허용 목록에서 지운 세그먼트 막대 단추 키가 빠졌다(줄이는 방향)",
+   "touches": [
+    "docs/architecture/hidden-entry-sweep-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/hidden-entry-sweep-baseline.json",
+    "type": "codeNotContains",
+    "text": "#recSegFeedBtn"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "숨김 게이트가 통과한다(허용 목록 밖 0 — 이 PR 스냅샷)",
+   "touches": [
+    "reports/TASK-ES-515/hidden-entry-guard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-515/hidden-entry-guard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리 npm test 종료 코드 0(이 PR 스냅샷)",
+   "touches": [
+    "reports/TASK-ES-515/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-515/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 로드 탐침 회귀 0(이 PR 스냅샷 — 기준 사본 대 작업 트리)",
+   "touches": [
+    "reports/TASK-ES-515/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-515/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 지우기 전 실제 동작(빠른 스톱워치: 저장 없음)이 적혀 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
+    "type": "codeContains",
+    "text": "**`saveProfile` 을 부르지 않아 서버·기기에 저장하지 않는다**"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 루틴 매트릭스가 한 번도 그려지지 않은 까닭(덮어쓰기)이 적혀 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
+    "type": "codeContains",
+    "text": "**한 번도 그려진 적이 없는 껍데기**"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R7",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서 role 에서 지운 홈 구성 열기 처리기를 걷었다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "숨은 두 단추만 부르던 홈 구성 열기는 #TASK-ES-515 에서 지움"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R7",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "세포 설명에서 지운 이메일 가입 단추를 걷었다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "첫 화면의 닉네임 빠른 입장·로그인·둘러보기 단추를 처리한다"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "스모크 시험지가 지운 세그먼트 막대를 「없다」로 잰다",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "assert.ok(!html.includes('id=\"recSegmentBar\"'), '옛 3분할 세그먼트 바 마크업 없음(지움)');"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "홈 구성 중복 단추 시험지가 지운 홈 머리 단추를 「없다」로 잰다",
+   "touches": [
+    "tests/remove-duplicate-home-layout-button.test.js"
+   ],
+   "check": {
+    "file": "tests/remove-duplicate-home-layout-button.test.js",
+    "type": "codeContains",
+    "text": "assert.ok(!indexHtml.includes('id=\"btnCustomHomeLayout\"'), 'hidden btnCustomHomeLayout must be removed from index.html');"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "index.html·ui.css 지움 재적용 스크립트가 있다(main 합칠 때 재실행)",
+   "touches": [
+    "docs/design/harness/module-split/apply-es515-cleanup.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/apply-es515-cleanup.js",
+    "type": "codeContains",
+    "text": "throw new Error('쓰는 법: node apply-es515-cleanup.js <index.html> <ui.css>')"
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-515 | FIX |"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-515:"
+   }
+  }
+ ],
+ "retire": [
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스바·4단 캐러셀 및 과거 기록 계층형 아코디언이 구현되어 있다",
+   "reason": "R4 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 4테마 모두 display:none !important 로 늘 숨던 옛 세그먼트 막대(#recSegmentBar)와 단추 3개·단일 선택자 CSS(.rec-segment-bar 등)를 지웠다. 「마크업·버튼·CSS 있음」 단언 3개를 「없음」으로 바꿨다(보기 컨테이너·펄스바·캐러셀·setRecordsSegment 함수 단언은 그대로)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 안정성(ReferenceError esc 방어, min-height 0, 정적 리스너)이 완비되어 있다",
+   "reason": "R4 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 숨은 세그먼트 막대와 함께 그 정적 리스너(bindRecSegmentBar)를 지웠다. 「세그먼트 정적 리스너 있음」 단언을 「없음」으로 바꿨다(캐러셀·펄스바 리스너 단언은 그대로)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장형 아바타 시스템이 완벽히 구현되어 있다",
+   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨던 홈 머리 「나만의 홈 구성」(#btnCustomHomeLayout, 처리기 두 벌)과 그 처리기 openHomeCustomizer 를 지웠다. 「버튼 id 있음」을 「없음」으로, 「window.OurgoalCustomize.open 연동」을 「옛 처리기 없음 + 설정 「홈 구성 고르기」의 OurgoalCustomize.open 연동 있음」으로 바꿨다."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 테마·홈구성 모달 정상화가 완벽히 구현되어 있다",
+   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 홈 머리 단추와 그 밑 안내문구 「필요없는 창 지우기」를 함께 지웠다. 안내문구 단언을 「없음」으로, 「window.OurgoalCustomize.open + saveProfile 인자」 단언을 남은 진입로(설정 「홈 구성 고르기」)의 같은 호출 인자로 바꿨다."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 검증",
+   "reason": "R5 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨던(display:none) 첫 화면 「이메일로 가입하기」 #landStartWrap/#landStartBtn 과 처리기를 지웠다. 「숨김 상태로 있음」 단언을 「없음」으로 바꿨다(회원가입 탭 숨김 단언은 그대로)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신",
+   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨던 상단바 「⚙️ 홈구성」(#topHomeLayoutBtn)과 그 하나만 담던 칸(#topbarActions)·처리기·.topbar-actions CSS 를 지웠다. 해당 단언 4개를 「없음」으로 바꿨다(활용법 단추·.topbar-action-btn 스타일·flex-wrap·sw.js 단언은 그대로)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-282] 전 탭 상위 중복 '홈구성' 버튼 제거 및 '나만의 홈 구성' 단일화",
+   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 숨겨 두던 상단바 홈구성·홈 머리 「나만의 홈 구성」 단추를 지웠다(숨김 대신 삭제). 「topHomeLayoutBtn 숨김 있음」「#btnCustomHomeLayout 있음」「ui.css #topHomeLayoutBtn 규칙 있음」을 「없음」으로 바꿨다(og-task-31 카드·handle홈_Item31Action 단언은 그대로)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-282] 전 탭 상위 중복 \\'홈구성\\' 버튼 제거 및 \\'나만의 홈 구성\\' 단일화",
+   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — (같은 검사의 소스 표기 제목, 따옴표 이스케이프 포함) 숨겨 두던 상단바 홈구성·홈 머리 「나만의 홈 구성」 단추를 지웠다. 「topHomeLayoutBtn 숨김 있음」「#btnCustomHomeLayout 있음」「ui.css #topHomeLayoutBtn 규칙 있음」 단언 3줄을 「없음」으로 바꿨다."
+  }
+ ],
+ "outOfScopeReports": [
+  "tests/remove-duplicate-home-layout-button.test.js 의 단언 2개(btnCustomHomeLayout 있음·ui.css #topHomeLayoutBtn 있음)를 「없음」으로 바꿨다 — 법정이 돌리지 않는 시험지라 retire 대신 주장 C26 으로 적는다(근거: 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달))",
+  "가입 양식 #signupForm·#signupSubmit 은 남겼다 — 인증 화면 「회원가입」 탭 단추([data-authtab=\"signup\"])가 style=\"display:none;\" 이라 이 PR 뒤 보이는 진입로 0(삭제는 이번 승인 범위 밖, 결심 후보)",
+  "tests/remove-duplicate-home-layout-button.test.js 의 비동기 부분은 기준·작업 모두 「renderCalendar must be called」로 실패(기존 결함, 정적 단언은 통과) — 이 PR 에서 고치지 않음"
+ ]
+}

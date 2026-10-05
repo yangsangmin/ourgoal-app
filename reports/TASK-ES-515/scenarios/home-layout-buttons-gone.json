@@ -1,0 +1,56 @@
+{
+  "id": "home-layout-buttons-gone",
+  "title": "게스트 앱에 숨은 홈 머리 「나만의 홈 구성」(#btnCustomHomeLayout, 이중 처리기)·상단바 「⚙️ 홈구성」(#topHomeLayoutBtn)이 없고, 설정 「홈 구성 고르기」는 눌러 홈 구성 창이 열린다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#btnCustomHomeLayout"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#topHomeLayoutBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#kf1LayoutList",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

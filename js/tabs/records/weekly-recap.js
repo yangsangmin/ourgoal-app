@@ -2,7 +2,8 @@
  * OurGoal Records Weekly Recap (기록 탭 — 위클리 리캡 카드·기록 추가 창·기록 탭 정적 단추 처리기)
  *
  * 위클리 리캡 카드 그림·창(fitBigFont · generateWeeklyRecapImage · findBestMoment · openWeeklyRecapModal · openLegacyRecapCanvasModal) · 기록 추가 창(openRecordModal).
- * 기록 탭 로드 중 처리기 등록 문 다섯 개(시간 기록 단추 · 세그먼트 막대 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecSegmentBar · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).
+ * 기록 탭 로드 중 처리기 등록 문 네 개(시간 기록 단추 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).
+ * #TASK-ES-515: 늘 숨어 있던 옛 세그먼트 막대의 등록 문(처리기)을 막대와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」).
  * 한 줄 등록 문 세 개와 상태 변수(btnOpenTt · staticPulseBar)는 원래 자리에 있다. weeklyRecapStats 는 smoke-test FN_NAMES 함수 — smoke-test 가 인라인 합본(js/tabs 세포 포함)에서 잘라 가므로(#TASK-ES-465) 같이 옮겼다.
  * #TASK-ES-474(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 15223~15240 · 15241~15249 · 15250~15330 · 15331~15355 · 15356~15469 · 15470~15613 · 15614~15710 · 15713~15719 · 15722~15729 · 15731~15736 · 15737~15742 · 15743~15832줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
@@ -523,18 +524,6 @@
   }
   } /* bindRecTimeTrackerBtn */
 
-  /* ---- 이전 전 index.html 15722~15729줄(#TASK-ES-474 생성기 표지) ---- */
-  function bindRecSegmentBar() { /* [#TASK-ES-474] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
-
-  // 세그먼트·펄스바·캐러셀 알약 정적 클릭 리스너 보장 (이벤트 유실 원천 방어)
-  document.querySelectorAll('#recSegmentBar [data-recseg]').forEach(function(btn){
-    btn.addEventListener('click', function(e){
-      e.preventDefault();
-      L.setRecordsSegment(btn.dataset.recseg);
-    });
-  });
-  } /* bindRecSegmentBar */
-
   /* ---- 이전 전 index.html 15731~15736줄(#TASK-ES-474 생성기 표지) ---- */
   function bindRecPulseBar() { /* [#TASK-ES-474] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.staticPulseBar){
@@ -655,7 +644,6 @@
   K.openLegacyRecapCanvasModal = openLegacyRecapCanvasModal;
   K.openRecordModal = openRecordModal;
   K.bindRecTimeTrackerBtn = bindRecTimeTrackerBtn;
-  K.bindRecSegmentBar = bindRecSegmentBar;
   K.bindRecPulseBar = bindRecPulseBar;
   K.bindRecCarouselPills = bindRecCarouselPills;
   K.bindRecDocumentClick = bindRecDocumentClick;
