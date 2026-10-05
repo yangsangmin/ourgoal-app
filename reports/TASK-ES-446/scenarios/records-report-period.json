@@ -1,0 +1,72 @@
+{
+  "id": "records-report-period",
+  "title": "게스트로 기록 탭의 이번 주 실천 띠(#recMiniPulseBar, 「성취 확인」)를 눌러 성취 통계로 가서 「🟩 히트맵」을 누르면 기록 히트맵 칸(#recordHeatmap .heatmap-cell)이 보이고, 「🤖 AI리포트」에서 리포트의 「30일」을 누르면 그 칸이 켜진다(active) — 기록 히트맵 그리기(renderRecordHeatmap)와 리포트 그리기(renderReportSummary·svgTrendChart·svgCategoryDonut·TOPIC_COLORS)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recMiniPulseBar"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recCarouselPills [data-recslide=\"2\"]",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recCarouselPills [data-recslide=\"2\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recordHeatmap .heatmap-cell",
+      "timeoutMs": 6000
+    },
+    {
+      "do": "click",
+      "selector": "#recCarouselPills [data-recslide=\"3\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#reportPeriodToggle [data-period=\"30\"]",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#reportPeriodToggle [data-period=\"30\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#reportPeriodToggle [data-period=\"30\"]",
+      "className": "active",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
