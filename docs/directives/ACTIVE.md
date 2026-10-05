@@ -7,7 +7,7 @@
 
 | 문서 | 무엇을 정하나 | 바뀌는 빈도 | 누가 바꾸나 |
 |---|---|---|---|
-| **헌법** (`docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`) | **일하는 법** — 어떻게 일하고, 무엇이 "됐다"인가 | 드물다 | 상민님의 "헌법 개정 승인" + PR 병합 |
+| **헌법** — 실행 정본: 커널 `AGENTS.md` · `CLAUDE.md` · `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md`(세 사본, 같은 내용) · 상세: 법령 전문 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md` · 이력: `docs/rules/CONSTITUTION_VERSIONS.md` | **일하는 법** — 어떻게 일하고, 무엇이 "됐다"인가. 세션은 커널을 읽고 따른다. 커널과 법령 전문이 다르게 말하면 커널을 따른다(2026-10-05 상민님 결심 K4 A, PR #727) | 드물다 | 상민님의 "헌법 개정 승인" + PR 병합 |
 | **지시함** (이 문서) | **지금 할 일** — 오늘 누가 무엇을 하는가 | 자주 | 상민님이 승인해 병합한 PR |
 | **법정 판정서** (GitHub `court` 검사, `node court/chat.js <PR번호>`) | **결과** — 했다는 주장이 맞는가 | 작업마다 | GitHub 의 법정 (AI 는 쓸 수 없다) |
 | 작업계획서·티켓·dev_log·REQ/PLAN 등 | AI 자신의 진행 서류 | 수시 | 각 AI. **효력도 근거도 아니다** |
