@@ -1,0 +1,72 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base2",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "67bb6583576d8d96",
+   "opened": null
+  },
+  {
+   "name": "② 퀘스트 나침반 → 홈 목표 목록 #homeGoalList",
+   "present": true,
+   "visible": true,
+   "textHash": "e17515d0fff9bdbd",
+   "textLen": 271,
+   "attrsHash": "aece94760147f8a9",
+   "opened": true
+  },
+  {
+   "name": "③ 스타터 「매일 1시간 몰입」 → 목표 목록 다시 그림 #homeGoalList",
+   "present": true,
+   "visible": true,
+   "textHash": "b4a24aab6efd53e6",
+   "textLen": 77,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true
+  },
+  {
+   "name": "④ 홈 마이크 → 권한 안내 창 #micPermissionGuideModal",
+   "present": true,
+   "visible": true,
+   "textHash": "167da4de993b54cd",
+   "textLen": 410,
+   "attrsHash": "e1f96471900eafcf",
+   "opened": true
+  },
+  {
+   "name": "⑤ 기록 탭 #screen-records",
+   "present": true,
+   "visible": true,
+   "textHash": "fc7bc23110582a5b",
+   "textLen": 558,
+   "attrsHash": "e1424b895461c1ae",
+   "opened": null
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "renderHome/undefined,openMicPermissionGuideModal/function,THEME_FEEDBACK_PROMPTS/undefined,PREMIUM_FEEDBACK_CATALOG/object,GeminiQuotaDispatcher/object,DONE_KEYWORDS/undefined",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {
+   "/api/todaymission": 1
+  }
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 3,
+  "POST /rest/v1/goals": 2
+ }
+}
