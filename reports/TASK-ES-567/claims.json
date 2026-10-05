@@ -1,0 +1,113 @@
+{
+ "task": "TASK-ES-567",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-567-STAGE3-Z2-CONFIRM-FIRST.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "확인창 시험(tests/core-confirm-es376.test.js)의 「처리기는 confirm.js 뒤」 검사가 처리기 글자를 인라인 합본(HTML_CELLS — 원문 맨 앞 + 세포, L. 접두 제거)에서 찾는다. 단언·기대값·검사 수 변경 0, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 작업 트리에서 바꾼 시험지 통과, #TASK-ES-552 생성기 결과 사본에서 옛 시험지는 깨지고 새 시험지는 통과."
+  },
+  {
+   "id": "R3",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "확인창 시험의 처리기 위치 검사가 인라인 합본을 읽는다",
+   "touches": [
+    "tests/core-confirm-es376.test.js"
+   ],
+   "check": {
+    "file": "tests/core-confirm-es376.test.js",
+    "type": "codeContains",
+    "text": "const inline0 = HTML_CELLS.indexOf("
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리에서 바꾼 시험지가 통과한 것으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-567/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-567/test-compare.json",
+    "type": "jsonPath",
+    "path": "changedTestsFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이전 사본에서 옛 시험지 1개가 실패한 것으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-567/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-567/mock-move.json",
+    "type": "jsonPath",
+    "path": "oldTestsFailing",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이전 사본에서 새 시험지가 통과한 것으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-567/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-567/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestsFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-567-STAGE3-Z2-CONFIRM-FIRST.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-567-STAGE3-Z2-CONFIRM-FIRST.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 에 이 작업 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "#TASK-ES-567 | INFRA | [시험지 선행 · 인라인 3단계 Z2]"
+   }
+  }
+ ]
+}
