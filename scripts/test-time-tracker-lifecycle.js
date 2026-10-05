@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const Module = require('module');
 
 console.log('⏱️ [시간기록 라이프사이클 시뮬레이션 검증]');
 
@@ -128,8 +129,13 @@ global.renderHome = function() { global.renderHomeCalled = true; };
 global.toast = function(msg) { global.lastToast = msg; };
 
 // time-tracker.js 로드 및 실행
-const code = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
-eval(code);
+// #TASK-ES-409: eval 한 원본 안의 require('./core/confirm.js')·require('./time-tracker-*.js') 는 원본 파일(js/time-tracker.js) 기준으로 풀어야 한다(scripts/ 기준이면 MODULE_NOT_FOUND).
+const timeTrackerFile = path.join(__dirname, '..', 'js', 'time-tracker.js');
+const code = fs.readFileSync(timeTrackerFile, 'utf8');
+{
+  const require = Module.createRequire(timeTrackerFile);
+  eval(code);
+}
 
 assert.ok(mockWindow.OurgoalTimeTracker, 'OurgoalTimeTracker 전역 객체가 노출되어야 함');
 console.log('  ✓ OurgoalTimeTracker 모듈 로드 성공');
