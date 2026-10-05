@@ -1,5 +1,5 @@
 {
- "runner": "court/lib/scenario.js runScenario 로컬(scenario-local-components.js), 기준 = origin/main eb9e6e4 git archive 사본, 작업 = 이 브랜치 커밋 git archive 사본",
+ "runner": "court/lib/scenario.js runScenario 로컬(scenario-local-components.js), 기준 = origin/main 194ed83 git archive 사본, 작업 = 이 브랜치 커밋 git archive 사본",
  "allPassedBoth": true,
  "scenarios": {
   "settings-pwa-install-guide": {
@@ -66,6 +66,67 @@
      "10 textContains ok #sharePreviewSlot → 보이는 글자: [\"📱 피드 게시 미리보기 (실제 피드 노출 모습) 게 게스트 방금 전 · 공부·수험 갓생 목표를 향해 한 걸음 더 나아가는 중! ❤️ 응원 0 \"]",
      "11 textContains ok #sharePreviewBtn → 보이는 글자: [\"✕ 미리보기 닫기\"]",
      "12 noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  "home-starter-goal": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 1,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 1,
+    "exceptions": [],
+    "steps": [
+     "1 goto ok /index.html",
+     "2 waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 waitFor ok .navbtn[data-tab=\"home\"] → 보이는 요소 1개",
+     "5 click ok 클릭 button \"홈\" 57x50px",
+     "6 waitFor ok #homeCompassQuest → 보이는 요소 1개",
+     "7 click ok 클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px",
+     "8 waitFor ok [data-starter=\"running\"] → 보이는 요소 1개",
+     "9 click ok 클릭 button \"🏃 매일 3km 러닝 & 심폐지구력 가벼운 조깅 · \" 307x55px",
+     "10 textContains ok #toast → 보이는 글자: [\"첫 갓생 목표가 시작되었어요! 오늘 1줄 기록을 남겨보세요.\"]",
+     "11 noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  "records-story-card-canvas": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 2,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 2,
+    "exceptions": [],
+    "steps": [
+     "1 goto ok /index.html",
+     "2 waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 waitFor ok .navbtn[data-tab=\"records\"] → 보이는 요소 1개",
+     "5 click ok 클릭 button \"기록/통계\" 57x50px",
+     "6 waitFor ok #sRecStoryCardBtn → 보이는 요소 1개",
+     "7 click ok 클릭 button#sRecStoryCardBtn \"📸 갓생 스토리카드\" 126x44px",
+     "8 textContains ok #modalOverlay → 보이는 글자: [\"✕ 오늘의 MZ 갓생 스토리 카드 인스타그램 스토리(9:16)·피드(1:1)·카카오톡에 오늘의 성취를 고화질 그래픽 카드로 인증하세요. 9:16\"]",
+     "9 visible ok #mzStoryCanvasEl → 보이는 요소 1개",
+     "10 noExceptions ok 행동 이후 미처리 예외 0건"
     ]
    }
   }

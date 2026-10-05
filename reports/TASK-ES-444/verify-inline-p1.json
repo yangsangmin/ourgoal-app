@@ -1,13 +1,21 @@
 {
  "task": "TASK-ES-444",
  "equivalent": true,
- "movedFunctions": 22,
+ "movedFunctions": 27,
  "equiv": [
   {
    "fn": "compressCalendarBgImage",
-   "file": "js/tabs/calendar/day-bg-image.js",
+   "file": "js/tabs/calendar/day-bg-picker.js",
    "tokensOrig": 284,
    "tokensNew": 284,
+   "same": true,
+   "firstDiff": null
+  },
+  {
+   "fn": "openCalendarDayBgPickerModal",
+   "file": "js/tabs/calendar/day-bg-picker.js",
+   "tokensOrig": 1205,
+   "tokensNew": 1205,
    "same": true,
    "firstDiff": null
   },
@@ -124,10 +132,26 @@
    "firstDiff": null
   },
   {
+   "fn": "quickCreateStarterGoal",
+   "file": "js/tabs/goals/starter-goal.js",
+   "tokensOrig": 110,
+   "tokensNew": 110,
+   "same": true,
+   "firstDiff": null
+  },
+  {
    "fn": "renderHomeGrassSummary",
    "file": "js/tabs/records/heatmap-summary.js",
    "tokensOrig": 425,
    "tokensNew": 425,
+   "same": true,
+   "firstDiff": null
+  },
+  {
+   "fn": "generateMzStoryCanvas",
+   "file": "js/tabs/comm/story-canvas.js",
+   "tokensOrig": 3358,
+   "tokensNew": 3358,
    "same": true,
    "firstDiff": null
   },
@@ -178,23 +202,40 @@
    "tokensNew": 266,
    "same": true,
    "firstDiff": null
+  },
+  {
+   "fn": "localTodayMission",
+   "file": "js/tabs/goals/ai-local-fallback.js",
+   "tokensOrig": 44,
+   "tokensNew": 44,
+   "same": true,
+   "firstDiff": null
+  },
+  {
+   "fn": "localNextActionSuggestion",
+   "file": "js/tabs/goals/ai-local-fallback.js",
+   "tokensOrig": 52,
+   "tokensNew": 52,
+   "same": true,
+   "firstDiff": null
   }
  ],
  "lineCheck": [
   {
-   "file": "js/tabs/calendar/day-bg-image.js",
+   "file": "js/tabs/calendar/day-bg-picker.js",
    "names": [
-    "compressCalendarBgImage"
+    "compressCalendarBgImage",
+    "openCalendarDayBgPickerModal"
    ],
    "origLines": [
-    10490,
-    10528
+    10524,
+    10748
    ],
    "cellLines": [
-    19,
-    57
+    18,
+    242
    ],
-   "lines": 39,
+   "lines": 225,
    "diffLines": 0,
    "firstDiff": null
   },
@@ -206,8 +247,8 @@
     "closeLockScreenLiveCard"
    ],
    "origLines": [
-    11390,
-    11635
+    11424,
+    11669
    ],
    "cellLines": [
     18,
@@ -223,8 +264,8 @@
     "openChallengeRoomModal"
    ],
    "origLines": [
-    14477,
-    14572
+    14511,
+    14606
    ],
    "cellLines": [
     18,
@@ -241,8 +282,8 @@
     "scheduleCheerDelivery"
    ],
    "origLines": [
-    15178,
-    15214
+    15212,
+    15248
    ],
    "cellLines": [
     18,
@@ -258,8 +299,8 @@
     "toggleFeedPostPreview"
    ],
    "origLines": [
-    17770,
-    17806
+    17370,
+    17406
    ],
    "cellLines": [
     18,
@@ -276,8 +317,8 @@
     "compressImage"
    ],
    "origLines": [
-    14896,
-    14939
+    14930,
+    14973
    ],
    "cellLines": [
     18,
@@ -293,8 +334,8 @@
     "renderHomeGrassSummary"
    ],
    "origLines": [
-    13434,
-    13484
+    13468,
+    13518
    ],
    "cellLines": [
     18,
@@ -311,8 +352,8 @@
     "switchUxMode"
    ],
    "origLines": [
-    12726,
-    12741
+    12760,
+    12775
    ],
    "cellLines": [
     20,
@@ -328,8 +369,8 @@
     "renderAdaptiveModeBar"
    ],
    "origLines": [
-    12744,
-    12754
+    12778,
+    12788
    ],
    "cellLines": [
     37,
@@ -345,8 +386,8 @@
     "_recordHesitation"
    ],
    "origLines": [
-    12997,
-    13002
+    13031,
+    13036
    ],
    "cellLines": [
     49,
@@ -363,8 +404,8 @@
     "openIosPwaInstallGuideModal"
    ],
    "origLines": [
-    13018,
-    13155
+    13052,
+    13189
    ],
    "cellLines": [
     23,
@@ -380,8 +421,8 @@
     "initKeyboardShield"
    ],
    "origLines": [
-    22959,
-    22978
+    21724,
+    21743
    ],
    "cellLines": [
     162,
@@ -397,8 +438,8 @@
     "openPwaInstallGuideModal"
    ],
    "origLines": [
-    22985,
-    22996
+    21750,
+    21761
    ],
    "cellLines": [
     183,
@@ -414,8 +455,8 @@
     "closePwaInstallGuideModal"
    ],
    "origLines": [
-    22999,
-    23003
+    21764,
+    21768
    ],
    "cellLines": [
     196,
@@ -431,8 +472,8 @@
     "switchPwaOsTab"
    ],
    "origLines": [
-    23006,
-    23023
+    21771,
+    21788
    ],
    "cellLines": [
     202,
@@ -448,8 +489,8 @@
     "confirmPwaInstall"
    ],
    "origLines": [
-    23026,
-    23033
+    21791,
+    21798
    ],
    "cellLines": [
     221,
@@ -458,58 +499,152 @@
    "lines": 8,
    "diffLines": 0,
    "firstDiff": null
+  },
+  {
+   "file": "js/tabs/goals/starter-goal.js",
+   "names": [
+    "quickCreateStarterGoal"
+   ],
+   "origLines": [
+    13232,
+    13253
+   ],
+   "cellLines": [
+    18,
+    39
+   ],
+   "lines": 22,
+   "diffLines": 0,
+   "firstDiff": null
+  },
+  {
+   "file": "js/tabs/goals/ai-local-fallback.js",
+   "names": [
+    "localTodayMission"
+   ],
+   "origLines": [
+    19302,
+    19307
+   ],
+   "cellLines": [
+    19,
+    24
+   ],
+   "lines": 6,
+   "diffLines": 0,
+   "firstDiff": null
+  },
+  {
+   "file": "js/tabs/goals/ai-local-fallback.js",
+   "names": [
+    "localNextActionSuggestion"
+   ],
+   "origLines": [
+    19387,
+    19391
+   ],
+   "cellLines": [
+    26,
+    30
+   ],
+   "lines": 5,
+   "diffLines": 0,
+   "firstDiff": null
+  },
+  {
+   "file": "js/tabs/comm/story-canvas.js",
+   "names": [
+    "generateMzStoryCanvas"
+   ],
+   "origLines": [
+    13664,
+    14012
+   ],
+   "cellLines": [
+    18,
+    366
+   ],
+   "lines": 349,
+   "diffLines": 0,
+   "firstDiff": null
   }
  ],
  "restOfIndexSame": true,
  "restDiffs": [],
  "seamOnlyDeclsAndExpose": true,
- "seamLines": 28,
+ "seamLines": 33,
  "tagHits": {
+  "js/tabs/goals/starter-goal.js": 1,
+  "js/tabs/goals/ai-local-fallback.js": 1,
   "js/tabs/records/photo-proof.js": 1,
   "js/tabs/records/heatmap-summary.js": 1,
-  "js/tabs/calendar/day-bg-image.js": 1,
+  "js/tabs/calendar/day-bg-picker.js": 1,
   "js/tabs/calendar/lockscreen-live.js": 1,
   "js/tabs/comm/challenge-room.js": 1,
   "js/tabs/comm/first-cheer.js": 1,
   "js/tabs/comm/feed-post-preview.js": 1,
+  "js/tabs/comm/story-canvas.js": 1,
   "js/tabs/settings/adaptive-ux.js": 1,
   "js/tabs/settings/pwa-install.js": 1
  },
- "exposed": 153,
+ "exposed": 167,
  "imported": [
   "_recordHesitation",
+  "applyScheduleUpdate",
+  "archiveGoal",
   "bindSettingsHapticDelegate",
   "bindSettingsStaticHandlers",
   "buildLockScreenCardPayload",
   "calShift",
+  "celebrateMilestoneDone",
   "closeLockScreenLiveCard",
   "closePwaInstallGuideModal",
   "collapseAllSettingsSections",
-  "compressCalendarBgImage",
   "compressImage",
+  "computeGoalStatusHash",
   "confirmPwaInstall",
+  "exportGoalSnapshot",
+  "formatSchedulePillHtml",
+  "generateGoalStatusSummary",
   "generateLockScreenCalendarImage",
   "generateLockScreenScheduleCardImage",
+  "generateMzStoryCanvas",
   "getFeedComments",
   "handleUserCommentSubmit",
+  "initFeedbackTierBar",
   "initKeyboardShield",
   "loadServerFeedComments",
+  "localGoalStatusSummary",
+  "localNextActionSuggestion",
+  "localTodayMission",
+  "milestonesForAI",
+  "openCalendarDayBgPickerModal",
   "openIosPwaInstallGuideModal",
   "openPhotoViewerModal",
   "openPwaInstallGuideModal",
+  "openResultModal",
+  "openScheduleSetupModal",
   "openSelectCompanionForStoryModal",
   "openSelectTeamForStoryModal",
   "paintCacheUsage",
+  "quickCreateStarterGoal",
   "renderAdaptiveModeBar",
   "renderCalendarScreen",
   "renderCommScreen",
+  "renderGoalsScreen",
   "renderHomeGrassSummary",
   "renderIosPwaBanner",
   "renderRecordsScreen",
   "renderSettingsScreen",
+  "requestAIFeedback",
+  "requestServerAIFeedback",
+  "requestTodayMission",
+  "sanitizeAttachments",
+  "sendGoalAgentMessage",
   "setFeedComments",
   "setRecordsSegment",
   "setRecordsSlide",
+  "showGoalAgentReviewStep",
   "switchPwaOsTab",
   "switchUxMode",
   "syncLockScreenLiveCard",
@@ -521,16 +656,22 @@
  "leftDefsInIndex": [],
  "usedInIndexNotImported": [],
  "files": {
-  "js/tabs/calendar/day-bg-image.js": {
-   "lines": 64,
+  "js/tabs/calendar/day-bg-picker.js": {
+   "lines": 250,
    "globals": [
+    "Array",
+    "Date",
     "Error",
     "FileReader",
     "Image",
+    "JSON",
     "Math",
+    "OurgoalCapabilities",
     "document",
     "globalThis",
+    "localStorage",
     "module",
+    "undefined",
     "window"
    ],
    "leaksIIFEName": []
@@ -582,6 +723,15 @@
    ],
    "leaksIIFEName": []
   },
+  "js/tabs/goals/starter-goal.js": {
+   "lines": 46,
+   "globals": [
+    "globalThis",
+    "module",
+    "window"
+   ],
+   "leaksIIFEName": []
+  },
   "js/tabs/records/heatmap-summary.js": {
    "lines": 75,
    "globals": [
@@ -591,6 +741,20 @@
     "module",
     "stats",
     "streak",
+    "window"
+   ],
+   "leaksIIFEName": []
+  },
+  "js/tabs/comm/story-canvas.js": {
+   "lines": 373,
+   "globals": [
+    "Date",
+    "Math",
+    "Number",
+    "String",
+    "document",
+    "globalThis",
+    "module",
     "window"
    ],
    "leaksIIFEName": []
@@ -639,10 +803,20 @@
     "window"
    ],
    "leaksIIFEName": []
+  },
+  "js/tabs/goals/ai-local-fallback.js": {
+   "lines": 38,
+   "globals": [
+    "globalThis",
+    "module",
+    "window"
+   ],
+   "leaksIIFEName": []
   }
  },
  "usedL": [
   "SIM_PERSONAS",
+  "STARTER_GOAL_TEMPLATES",
   "_uxTelemetry",
   "announceToA11y",
   "avatarHtml",
@@ -653,8 +827,12 @@
   "dateKey",
   "escapeHtml",
   "goalAchievement",
+  "isoDate",
+  "newId",
   "nowISO",
+  "openCalendarDayEditHubModal",
   "openModal",
+  "renderCalendarScreen",
   "saveProfile",
   "state",
   "toast",

@@ -4,14 +4,15 @@
 //   홈: 사진 인증 입력에 같은 그림 파일(옮긴 compressImage) → 미리보기 → 사진 보기 창(openPhotoViewerModal) · 체크인 저장(triggerFirstCheerResponse·scheduleCheerDelivery) · 히트맵 요약(renderHomeGrassSummary) · iOS 설치 안내 창(window.openIosPwaInstallGuideModal)
 //   설정: 화면 모드 칩(switchUxMode·renderAdaptiveModeBar) · 설치 안내 창(openPwaInstallGuideModal·switchPwaOsTab·closePwaInstallGuideModal·confirmPwaInstall) · 망설임 기록(window._recordHesitation)
 //   소통: 피드 게시 창 미리보기 토글(toggleFeedPostPreview)
+//   목표: 마일스톤 완료 축하(남은 celebrateMilestoneDone → 옮긴 localNextActionSuggestion) · 기록: 갓생 스토리카드 창(옮긴 generateMzStoryCanvas, 캔버스 해시)
 // 그림 파일은 브라우저 안에서 같은 캔버스 그림(색 칸 4개)으로 만들어 두 앱에 똑같이 넣는다(파일 선택 창은 띄우지 않는다).
 const FILE_INTO = sel => ({ evalFn: '(async function(){ var inp = document.querySelector(' + JSON.stringify(sel) + '); if(!inp) return "missing"; var c = document.createElement("canvas"); c.width = 64; c.height = 48; var x = c.getContext("2d"); x.fillStyle = "#3182f6"; x.fillRect(0,0,32,24); x.fillStyle = "#f04452"; x.fillRect(32,0,32,24); x.fillStyle = "#03b26c"; x.fillRect(0,24,32,24); x.fillStyle = "#ffc342"; x.fillRect(32,24,32,24); var blob = await new Promise(function(r){ c.toBlob(r, "image/png"); }); var dt = new DataTransfer(); dt.items.add(new File([blob], "p1-test.png", { type: "image/png" })); inp.files = dt.files; inp.dispatchEvent(new Event("change", { bubbles: true })); return "file:" + blob.size; })()' });
 const ev = js => ({ evalFn: js });
 exports.globals = ['openCalendarDayBgPickerModal', 'syncLockScreenLiveCard', 'closeLockScreenLiveCard', 'buildLockScreenCardPayload', 'compressCalendarBgImage', 'openChallengeRoomModal', 'triggerFirstCheerResponse',
   'toggleFeedPostPreview', 'openPhotoViewerModal', 'compressImage', 'renderHomeGrassSummary', 'switchUxMode', 'getUxMode', 'renderAdaptiveModeBar', '_recordHesitation', '_uxTelemetry',
-  'renderIosPwaBanner', 'openIosPwaInstallGuideModal', 'initKeyboardShield', 'openPwaInstallGuideModal', 'closePwaInstallGuideModal', 'switchPwaOsTab', 'confirmPwaInstall'];
+  'renderIosPwaBanner', 'quickCreateStarterGoal', 'generateMzStoryCanvas', 'localTodayMission', 'localNextActionSuggestion', 'openIosPwaInstallGuideModal', 'initKeyboardShield', 'openPwaInstallGuideModal', 'closePwaInstallGuideModal', 'switchPwaOsTab', 'confirmPwaInstall'];
 exports.steps = ({ click, clickIn }) => [
-  ['home-enter', { goTab: 'home' }, 3000],
+  ['home-enter', { goTab: 'home' }, 6000],
   ['grass-card', ev('(function(){ var e = document.getElementById("homeGrassSummaryCard"); return e ? "grass:" + e.innerHTML.length + ":" + e.textContent.replace(/\s+/g, " ").trim().slice(0, 200) : "none"; })()')],
   ['photo-file', FILE_INTO('#capturePhotoInput'), 1500],
   ['photo-preview-state', ev('(function(){ var w = document.getElementById("capturePhotoPreview"); return w ? "preview:" + w.className + ":" + (w.innerHTML.length > 0) + ":" + getComputedStyle(w).display : "none"; })()')],
@@ -44,5 +45,12 @@ exports.steps = ({ click, clickIn }) => [
   ['post-preview-on', clickIn('#sharePreviewBtn'), 600],
   ['post-preview-off', clickIn('#sharePreviewBtn'), 600],
   ['post-close', { closeModal: true }],
+  ['goals-enter', { goTab: 'goals' }, 1500],
+  ['ms-complete', click('#screen-goals .ms-status.doing'), 2500],
+  ['ms-celebrate-close', { closeModal: true }, 1500],
+  ['records-enter', { goTab: 'records' }],
+  ['story-open', click('#sRecStoryCardBtn'), 2000],
+  ['story-canvas', ev('(function(){ var c = document.getElementById("mzStoryCanvasEl"); if(!c) return "none"; var u = c.toDataURL("image/png"); var h = 2166136261; for (var i = 0; i < u.length; i++){ h ^= u.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return "canvas:" + c.width + "x" + c.height + ":h" + h.toString(16); })()')],
+  ['story-close', { closeModal: true }],
   ['tab-roundtrip', { tabRoundTrip: true }],
 ];
