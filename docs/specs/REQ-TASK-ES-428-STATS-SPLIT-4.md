@@ -64,7 +64,7 @@
 - 막혔던 지점(해결): 시나리오에서 기록 탭 첫 누름이 화면을 바꾸지 않음(게스트 첫 진입) → 두 번 누름. 성소 테마는 `#recSegmentBar` 를 숨김 → 성소 기록 화면의 「📈 히트맵·통계」로 들어감. 머리 가운데 누름은 머리 안 버튼에 걸릴 수 있음 → 접기 아이콘으로.
 
 ## 9. 화면 측정
-- `tab-check.js` 기록·목표 기준(git archive) 2회·후 1회 → `tab-compare-base1-base2.json`·`tab-compare-base1-after.json`.
+- `tab-check.js` 기록·목표 기준(git archive) 2회·후 1회 → `tab-compare-base1-base2.json`·`tab-compare-base1-after.json`·`tab-compare-base2-after.json` 모두 894값 중 차이 0.
 - `dom-compare-stats-4.js` 게스트 조작 95단계(3차 69단계 + 4차 26단계: 기간 3·스케일 2·모드 왕복·종목 칩 2·측정 지표 2·효율 렌즈 분자/분모 change·십자선 → 툴팁 수정 → 저장·숨은 앵커 가져오기/CSV(Blob 글자)/스냅샷(알림 글자)·접기/아이콘 펼치기·탭 왕복) → `dom-compare-stats-4.json`.
 - 로그인 상태: `real-account-stats-4.js` — 로컬 127.0.0.2 + /api 운영 전달, 테스트 계정 A, 읽기 전용 39단계(3차 22단계 + 4차 17단계 — 저장·융합·샘플 로드 없음) 기준 2회·후 1회, 단계마다 화면·모달 정규화 HTML sha256·바이트 → `real-account-stats.json`(주소·계정·기록 내용 미기록).
 
