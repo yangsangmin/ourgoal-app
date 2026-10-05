@@ -1,0 +1,25 @@
+{
+  "task": "TASK-ES-521",
+  "label": "인라인 3단계 Z1 로그인·계정 1차",
+  "slot": "HO 기관",
+  "slots": ["H0 시범 #TASK-ES-439", "H1", "H2", "H3", "H4", "HO 기관"],
+  "cells": [
+    { "key": "supabaseAuth", "file": "js/core/supabase-auth.js", "kit": "OurgoalUiHelpers", "kitVar": "_uiKit", "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Supabase Auth (기관 — 로그인 세션 토큰·인증 상태 감지·구글 OAuth 클라이언트 id)",
+      "desc": ["「Supabase」 묶음 중 로그인 세션 토큰 꺼내기(getSupabaseAuthToken — 여러 탭의 서버 호출이 Authorization 헤더에 쓴다), 구글 OAuth 공개 클라이언트 id(GOOGLE_OAUTH_CLIENT_ID), 인증 상태 변화 감지 등록 문(bindSupabaseAuthStateListener — 로그인·토큰 갱신 때 세션 복구 입장을 부른다, index.html 원래 자리에서 부른다).",
+               "Supabase 주소·공개 키(SUPABASE_URL·SUPABASE_ANON_KEY)·클라이언트(sb)·대기 세션(_pendingAuthSession)·window 노출 줄은 원래 자리에 그대로 있다 — 주소·키는 실계정 하네스(docs/design/harness/real-account-steps.js)가 index.html 에서 읽는다."],
+      "take": [ { "group": "============ Supabase ============", "names": ["getSupabaseAuthToken", "GOOGLE_OAUTH_CLIENT_ID"], "keepRest": true, "wrap": ["bindSupabaseAuthStateListener"] } ] },
+    { "key": "testerEntry", "file": "js/tabs/settings/tester-entry.js", "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit", "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Tester Entry (설정 — 2계정 상호작용 테스트용 테스터 B 직통 입장, 로컬 개발 주소 전용)",
+      "desc": ["「2계정 상호작용 테스트 (테스터 B 직통 입장: #TASK-ES-169)」 묶음: 테스터 B 직통 입장(enterAsTesterB — 로컬 개발 주소에서만 연다)과 랜딩·로그인 화면의 테스터 B 단추 처리기 등록 문(bindLandTesterBButton·bindAuthTesterBButton — 단추가 화면에 있을 때만 건다, index.html 원래 자리에서 부른다).",
+               "단추 요소 변수(landTesterBBtn·authTesterBBtn)와 window 노출 줄은 원래 자리에 그대로 있다."],
+      "take": [ { "group": "2계정 상호작용 테스트", "all": true, "wrap": ["bindLandTesterBButton", "bindAuthTesterBButton"] } ] },
+    { "key": "accountActions", "file": "js/tabs/settings/account-actions.js", "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit", "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Account Actions (설정 — 이메일 로그인 제출·계정 데이터 다시 맞추기·로그아웃·초기화 단추·새 비밀번호 창)",
+      "desc": ["「P0: 새 비밀번호 입력 모달」 묶음(openNewPasswordModal — 비밀번호 복구 링크로 들어왔을 때 OurgoalAuthSafety 창을 연다)과 「P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크」 묶음의 단추 처리기 등록 문 4개:",
+               "이메일 로그인 제출(bindLoginSubmit — 로그인 뒤 기기 로그인 시각·아이디 기억·프로필 불러오기·게스트 기록 합치기·탈퇴 유예 복구 확인), 계정 데이터 다시 맞추기(bindResyncAccountDataButton), 로그아웃(bindLogoutButton), 계정 초기화(bindResetButton). 모두 index.html 원래 자리에서 부른다(등록 순서 보존).",
+               "다시 맞추기 단추 변수(resyncBtn)와 탈퇴 단추 한 줄 등록은 원래 자리에 그대로 있다."],
+      "take": [ { "group": "P0: 새 비밀번호 입력 모달", "all": true },
+                { "group": "P0: 회원 탈퇴 30일 유예", "all": true, "wrap": ["bindLoginSubmit", "bindResyncAccountDataButton", "bindLogoutButton", "bindResetButton"] } ] }
+  ]
+}

@@ -30,7 +30,7 @@
       customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, feedComments:{}, myFeedPosts:[], contentReports:{}, todayMissions:{},
       streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] },
       highContrast: false, challenges: [],
-      hasSeenGuide:false, subscription:{ isPro:true, plan:'free_all', expiresAt:null, billingKey:null }, maxBaseCrafts:3, bonusCraftCredits:0, lastStreakAwarded:0
+      hasSeenGuide:false, maxBaseCrafts:3, bonusCraftCredits:0, lastStreakAwarded:0
     };
   }
 

@@ -1745,6 +1745,9 @@ check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무
 
   // 5. 30일 리포트 페이월 제거 확인
   assert.strictEqual(html.includes("openPaywallModal('report30d')"), false, '30일 리포트 열람 시 페이월 제거');
+
+  // 6. [#TASK-ES-516] 구독 상태·페이월 모달·PRO 배지 코드 자체가 없다(상민님 결정 2026-10-06)
+  ['function subscriptionState(', 'function openPaywallModal(', 'renderProBadge', 'pro-badge'].forEach(n => assert.ok(!html.includes(n), n + ' 없음'));
 });
 
 check('compliance: 기록/달력 6대 UX 개선사항(기록 탭 AI 피드백, 히트맵 기간·횟수 시각화, 위클리 리캡 항목선택, 기간별 AI 피드백, 퀵도크 삭제, 일정 허브 모달 정상동작)이 모두 구현되어 있다', () => {
@@ -2417,18 +2420,14 @@ check('compliance: [PEER INVITE] 친구와 1:1 또는 5인 소그룹 마라톤 �
 
 /* ============ [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인 ============ */
 check('compliance: [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인(5초 카운트다운, 모달 안내, AdMob 및 Web fallback, app-ads.txt) 무결성 검증', () => {
-  assert.ok(html.includes('OURGOAL_CONFIG'), 'OURGOAL_CONFIG 설정 객체 존재');
-  assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '기본값 베타 테스트 100% 무료(false) 보장');
-  assert.ok(html.includes('다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다'), '상민님 지시 정확한 안내 문구 존재');
-  assert.ok(html.includes('startTemplateAdCountdown'), '5초 카운트다운 함수 존재');
-  assert.ok(html.includes('playRewardedAdVideo'), '보상형 광고 재생 함수 존재');
-  assert.ok(html.includes('showWebRewardedAdModal'), '웹 fallback 시뮬레이션 플레이어 존재');
-  assert.ok(html.includes('handleTemplateCloneWithAd'), '광고 연동 템플릿 복제 핸들러 존재');
-  assert.ok(html.includes('testTemplateAdFlow'), '테스트/시연용 즉시 실행 함수 존재');
-  const appAdsPath = path.join(__dirname, '..', 'app-ads.txt');
-  assert.ok(fs.existsSync(appAdsPath), 'app-ads.txt 파일 실재 확인');
-  const appAdsContent = fs.readFileSync(appAdsPath, 'utf8');
-  assert.ok(appAdsContent.includes('google.com'), 'app-ads.txt 구글 퍼블리셔 형식 준수 확인');
+  // [#TASK-ES-516] 상민님 결정(2026-10-06 「미분화덩어리에서 광고, 구독관련은 삭제해…」)으로 보상형 광고 파이프라인을 지웠다 — 「없다」로 고정
+  assert.ok(html.includes('OURGOAL_CONFIG'), 'OURGOAL_CONFIG 설정 객체 존재(크레딧 원장 플래그만)');
+  assert.ok(!html.includes('ENABLE_TEMPLATE_REWARDED_ADS'), '광고 플래그 없음');
+  assert.ok(!html.includes('5초 뒤 광고영상이 시작됩니다'), '광고 안내 문구 없음');
+  ['startTemplateAdCountdown', 'playRewardedAdVideo', 'showWebRewardedAdModal', 'handleTemplateCloneWithAd', 'testTemplateAdFlow',
+   'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled', 'ADMOB_REWARDED_AD_UNIT_ID', 'AD_DELAY_SECONDS'].forEach(n => assert.ok(!html.includes(n), n + ' 없음'));
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'app-ads.txt')), 'app-ads.txt(AdMob 게시자 선언) 없음');
+  assert.ok(html.includes('executeDirectTemplateClone(tpl, onSelectTemplate);'), '템플릿 복제는 본체가 바로 한다');
 });
 
 check('compliance: 오늘 같은 테마 실사용자 수 집계 RPC DDL(T01-S02, #TASK-ES-001)이 존재하고 유효하다', () => {
@@ -2705,19 +2704,21 @@ check('KF-2: js/template-credit.js 가 존재하고 문법이 유효하며 API 5
   assert.ok(fs.existsSync(p), 'js/template-credit.js 존재');
   const src = fs.readFileSync(p, 'utf8');
   new Function(src);
-  ['init', 'recordCopy', 'counts', 'fillCounts', 'renderAdOptIn'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn));
+  ['init', 'recordCopy', 'counts', 'fillCounts'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn));
+  assert.ok(!src.includes('renderAdOptIn'), '[#TASK-ES-516] 「광고 보고 크레딧 받기」 버튼 API 없음');
   assert.ok(!/현금|환전|₩|출금|상품권/.test(src), '화폐 문구 없음(정본 §2)');
   assert.ok(html.includes('<script src="js/template-credit.js"></script>'), 'index.html 이 모듈을 로드');
   assert.ok(html.includes('window.OurgoalTemplateCredit.init({ sb: sb'), '부팅 시 앱 핸들 주입');
 });
 check('KF-2: 복제 흐름에서 광고가 분리되고, 광고는 설정의 선택형 버튼 한 경로뿐이다 (정본 §3)', () => {
-  assert.ok(html.includes('var adsEnabled = !!forceAdFlow;'), '복제 흐름은 플래그와 무관하게 광고 없음');
-  assert.ok(!html.includes('var adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled();'), '구 강제 경로 제거');
-  assert.ok(html.includes('function playRewardedAdVideo(tpl, onComplete)'), '광고 완료 콜백 지원');
-  assert.ok(html.includes("OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock'))"), '선택형 버튼은 설정 › 크레딧 섹션에만');
+  // [#TASK-ES-516] 상민님 결정(2026-10-06)으로 광고 경로를 모두 지웠다 — 복제 흐름에도 설정에도 광고가 없다
+  assert.ok(!html.includes('adsEnabled'), '복제 흐름 광고 분기 없음');
+  assert.ok(!html.includes('playRewardedAdVideo'), '광고 재생 함수 없음');
+  assert.ok(!html.includes('renderAdOptIn'), '설정 › 크레딧 칸의 광고 버튼 호출 없음');
+  assert.ok(!html.includes('playRewardedAd:'), '템플릿 복제 크레딧 모듈에 광고 손잡이를 넘기지 않음');
   const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'template-credit.js'), 'utf8');
-  assert.ok(src.includes('ENABLE_TEMPLATE_REWARDED_ADS') && src.includes('isEnabled()'), '플래그와 크레딧 enabled 둘 다 켜져야 버튼 표시');
-  assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '광고 플래그 기본 OFF 유지');
+  assert.ok(!src.includes('ENABLE_TEMPLATE_REWARDED_ADS') && !src.includes('creditAdOptInBtn') && !src.includes('ad_watched'), '모듈에 광고 플래그·버튼·광고 적립 없음');
+  assert.ok(!html.includes('ENABLE_TEMPLATE_REWARDED_ADS'), '광고 플래그 없음');
 });
 check('KF-2: 마켓·기본 템플릿의 고정 복제 수·가상 크리에이터 표기가 화면에서 사라지고 서버 실데이터 배지만 남는다 (금지 6-1)', () => {
   assert.ok(!html.includes("t.downloads + '회 복제'"), '고정 downloads 문자열 표시 없음');
@@ -2973,8 +2974,9 @@ check('compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로
 
 check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스바·4단 캐러셀 및 과거 기록 계층형 아코디언이 구현되어 있다', () => {
   // 1. 마크업 무결성
-  assert.ok(html.includes('id="recSegmentBar"'), '3분할 세그먼트 바 마크업');
-  assert.ok(html.includes('id="recSegFeedBtn"') && html.includes('id="recSegStatsBtn"') && html.includes('id="recSegArchiveBtn"'), '3분할 세그먼트 버튼들');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 옛 세그먼트 막대(#recSegmentBar)를 지웠다. 보기 전환은 성소 기록 모드 단추가 setRecordsSegment 로 한다
+  assert.ok(!html.includes('id="recSegmentBar"'), '옛 3분할 세그먼트 바 마크업 없음(지움)');
+  assert.ok(!html.includes('id="recSegFeedBtn"') && !html.includes('id="recSegStatsBtn"') && !html.includes('id="recSegArchiveBtn"'), '옛 3분할 세그먼트 버튼들 없음(지움)');
   assert.ok(html.includes('id="recViewFeed"') && html.includes('id="recViewStats"') && html.includes('id="recViewArchive"'), '3개 뷰 컨테이너');
   assert.ok(html.includes('id="recMiniPulseBar"') && html.includes('id="recMiniPulseText"'), '미니 성취 펄스 바 마크업');
   assert.ok(html.includes('id="recCarouselViewport"') && html.includes('id="recCarouselTrack"') && html.includes('id="recCarouselPills"'), '4단 메트릭 캐러셀 뷰포트 및 알약 탭');
@@ -2985,7 +2987,7 @@ check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스
   assert.ok(html.includes('rec-accordion-card') && html.includes('data-toggleacc'), '과거 기록 계층형 아코디언 토글');
 
   // 3. CSS 무결성
-  assert.ok(styleSrc.includes('.rec-segment-bar') && styleSrc.includes('.rec-mini-pulse-bar'), '세그먼트 및 펄스바 CSS');
+  assert.ok(!styleSrc.includes('.rec-segment-bar') && styleSrc.includes('.rec-mini-pulse-bar'), '옛 세그먼트 CSS 없음(지움) 및 펄스바 CSS');
   assert.ok(styleSrc.includes('.rec-carousel-viewport') && styleSrc.includes('.rec-carousel-track'), '캐러셀 CSS');
   assert.ok(styleSrc.includes('.rec-accordion-card') && styleSrc.includes('.rec-acc-body'), '계층형 아코디언 CSS');
 });
@@ -3024,7 +3026,7 @@ check('compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 �
   assert.ok(styleSrc.includes('.rec-acc-inner{overflow:hidden;padding:0;min-height:0;}'), '아코디언 축소 min-height 0');
 
   // 3. 기록 탭 버튼 정적 리스너 검증
-  assert.ok(html.includes("document.querySelectorAll('#recSegmentBar [data-recseg]')"), '세그먼트 정적 리스너');
+  assert.ok(!html.includes("document.querySelectorAll('#recSegmentBar [data-recseg]')"), '옛 세그먼트 정적 리스너 없음(막대와 함께 지움, #TASK-ES-515)');
   assert.ok(html.includes("document.querySelectorAll('#recCarouselPills [data-recslide]')"), '캐러셀 알약 정적 리스너');
   assert.ok(html.includes("document.getElementById('recMiniPulseBar')"), '미니 펄스바 정적 리스너');
 });
@@ -3169,8 +3171,9 @@ check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장�
   assert.strictEqual(html.includes('(테마 : ai 분석 및 DB시각화에 활용됨)'), false, '숨겨진 +테마 퀵바 안내 문구 제거');
 
   // 4. (닉네임)님, 안녕하세요 우측 끝 '나만의 홈 구성' 버튼 및 모달 연동
-  assert.ok(html.includes('id="btnCustomHomeLayout"'), '나만의 홈 구성 버튼 id 존재');
-  assert.ok(html.includes('window.OurgoalCustomize.open'), '홈 구성 커스터마이즈 모달 연동 확인');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 홈 머리 「나만의 홈 구성」 단추(이중 처리기)를 지웠다. 홈 구성은 설정 #homeLayoutOpenBtn 이 연다
+  assert.ok(!html.includes('id="btnCustomHomeLayout"'), '옛 나만의 홈 구성 버튼 id 없음(지움)');
+  assert.ok(!html.includes('window.OurgoalCustomize.open') && html.includes("OurgoalCustomize.open({ state: state, saveProfile: saveProfile"), '옛 홈 머리 단추 처리기 없음(지움)·설정 「홈 구성 고르기」 커스터마이즈 모달 연동 확인');
 
   // 5. 목표탭 4종 뷰 필터 버튼 (기본, 목표만, 마일스톤, 할일)
   assert.ok(html.includes('id="msViewToggle"'), '4종 뷰 필터 컨테이너 id 존재');
@@ -3242,10 +3245,12 @@ check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 �
   assert.strictEqual(styleSrc.includes('.theme-leaf-chip'), false, '지운 테마 창 칩 스타일 제거');
 
   // 7. 나만의 홈 구성 버튼 밑에 안내문구 '필요없는 창 지우기' 추가
-  assert.ok(html.includes('필요없는 창 지우기'), '필요없는 창 지우기 안내문구 마크업 존재');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 홈 머리 단추와 그 밑 안내문구를 함께 지웠다
+  assert.ok(!html.includes('필요없는 창 지우기'), '옛 홈 머리 단추 안내문구 없음(단추와 함께 지움)');
 
   // 8. 나만의 홈 구성 클릭 시 OurgoalCustomize.open 정규 연동
-  assert.ok(html.includes('window.OurgoalCustomize.open') && html.includes('saveProfile: saveProfile'), 'OurgoalCustomize.open 정규 호출 인자 완비');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 남은 진입로는 설정 「홈 구성 고르기」(#homeLayoutOpenBtn)
+  assert.ok(html.includes("OurgoalCustomize.open({ state: state, saveProfile: saveProfile") && html.includes('saveProfile: saveProfile'), 'OurgoalCustomize.open 정규 호출 인자 완비(설정 홈 구성 고르기)');
 });
 
 check('compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 추첨 합성 & 나무망치 제작 연출 검증', () => {
@@ -4844,7 +4849,8 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
   assert.ok(indexHtml.includes('카톡 실명 걱정 No!'), '카톡 실명 걱정 해소 카피 존재');
 
   // 5. 이메일로 가입하기 버튼 및 회원가입 탭 비노출 숨김 (상민님 지시사항: 카카오 단일 가입 일원화)
-  assert.ok(indexHtml.includes('id="landStartWrap" style="display:none;"'), '랜딩 화면 이메일 가입 버튼 비노출 숨김');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 첫 화면 「이메일로 가입하기」 단추를 처리기와 함께 지웠다
+  assert.ok(!indexHtml.includes('id="landStartWrap"') && !indexHtml.includes('id="landStartBtn"'), '랜딩 화면 이메일 가입 버튼 없음(지움)');
   assert.ok(indexHtml.includes('data-authtab="signup" type="button" style="display:none;"'), '인증 화면 이메일 회원가입 탭 비노출 숨김');
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
@@ -5096,15 +5102,16 @@ check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로�
 check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신', () => {
   // 1. 탑바 우측 퀵 액션 버튼 마크업 확인
   assert.ok(html.includes('id="topHomeGuideBtn"'), '탑바 내 활용법 퀵 액션 버튼(#topHomeGuideBtn) 존재');
-  assert.ok(html.includes('id="topHomeLayoutBtn"'), '탑바 내 홈구성 퀵 액션 버튼(#topHomeLayoutBtn) 존재');
-  assert.ok(html.includes('id="topbarActions"'), '탑바 내 액션 컨테이너(#topbarActions) 존재');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 상단바 「⚙️ 홈구성」 단추와 그 하나만 담던 칸을 지웠다
+  assert.ok(!html.includes('id="topHomeLayoutBtn"'), '탑바 내 옛 홈구성 퀵 액션 버튼(#topHomeLayoutBtn) 없음(지움)');
+  assert.ok(!html.includes('id="topbarActions"'), '탑바 내 옛 액션 컨테이너(#topbarActions) 없음(지움)');
 
   // 2. 이벤트 핸들러 배선 확인
-  assert.ok(html.includes("topBtnCustomHome.addEventListener('click', openHomeCustomizer)"), '탑바 홈구성 버튼 핸들러 연동');
+  assert.ok(!html.includes("topBtnCustomHome.addEventListener('click', openHomeCustomizer)"), '탑바 옛 홈구성 버튼 핸들러 없음(지움)');
   assert.ok(html.includes("topBtnGuide.addEventListener('click'"), '탑바 활용법 버튼 핸들러 연동');
 
   // 3. 모바일 반응형 flex-wrap 및 safe-area CSS 확인
-  assert.ok(styleSrc.includes('.topbar-actions') && styleSrc.includes('.topbar-action-btn'), '탑바 퀵 액션 버튼 스타일 정의');
+  assert.ok(!styleSrc.includes('.topbar-actions') && styleSrc.includes('.topbar-action-btn'), '옛 탑바 액션 칸 스타일 없음(지움)·남은 탑바 활용법 단추 스타일 정의');
   assert.ok(styleSrc.includes('.home-head-row') && styleSrc.includes('flex-wrap: wrap;'), '홈 헤더 행 flex-wrap 줄바꿈 안전 배선');
 
   // 4. PWA sw.js 캐시 버전 갱신 확인
@@ -7528,8 +7535,8 @@ check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결�
   assert.ok(!indexHtml.includes('외부 공유 기능을 준비 중입니다'), '외부 공유 준비중 토스트 부재');
   assert.ok(!sanctuaryJs.includes('일정 추가 창을 준비 중입니다'), '성소 캘린더 준비중 토스트 부재');
 
-  // 4. 완전 무료 선언 공식 모달 승화 확인
-  assert.ok(indexHtml.includes('아워골 완전 무료화 헌법 선언'), '아워골 완전 무료 선언 모달 마크업 존재');
+  // 4. [#TASK-ES-516] 상민님 결정(2026-10-06)으로 구독·페이월 자리였던 「완전 무료 선언」 모달(openPaywallModal, 부르는 곳 0)을 지웠다 — 없다
+  assert.ok(!indexHtml.includes('아워골 완전 무료화 헌법 선언') && !indexHtml.includes('function openPaywallModal('), '페이월 자리 안내 모달 없음');
 });
 
 check('[#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 검증', () => {
@@ -9133,15 +9140,16 @@ check('compliance: [#TASK-ES-282] 전 탭 상위 중복 \'홈구성\' 버튼 제
   assert.ok(customJs.includes('handle홈_Item31Action = handle홈_Item31Action'), 'handle홈_Item31Action 노출');
 
   // 2. index.html 상위 버튼 소거 및 본문 DOM 마크업 검증
-  assert.ok(indexHtml.includes('id="topHomeLayoutBtn"') && indexHtml.includes('display:none !important'), '상위 탑바 topHomeLayoutBtn 전 탭 완전 은폐 및 소거');
-  assert.ok(indexHtml.includes('id="btnCustomHomeLayout"'), 'index.html #btnCustomHomeLayout 단일 정통 버튼 탑재');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 상단바 홈구성·홈 머리 「나만의 홈 구성」 단추를 지웠다(숨김 대신 삭제)
+  assert.ok(!indexHtml.includes('id="topHomeLayoutBtn"'), '상위 탑바 topHomeLayoutBtn 없음(지움)');
+  assert.ok(!indexHtml.includes('id="btnCustomHomeLayout"'), 'index.html 옛 #btnCustomHomeLayout 없음(지움)');
   assert.ok(indexHtml.includes('handle홈_Item31Action'), 'index.html #btnCustomHomeLayout에 handle홈_Item31Action 연동');
   assert.ok(indexHtml.includes('id="og-task-31-container"'), 'index.html #og-task-31-container 마크업 탑재');
   assert.ok(indexHtml.includes('id="og-task-31-action-btn"'), 'index.html #og-task-31-action-btn 버튼 마크업 탑재');
   assert.ok(indexHtml.includes('handle홈_Item31Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
 
   // 3. ui.css 스타일 및 반응형 검증
-  assert.ok(uiCss.includes('#topHomeLayoutBtn'), 'ui.css #topHomeLayoutBtn 소거 스타일 정의');
+  assert.ok(!uiCss.includes('#topHomeLayoutBtn'), 'ui.css #topHomeLayoutBtn 숨김 규칙 없음(요소와 함께 지움)');
   assert.ok(uiCss.includes('#og-task-31-container'), 'ui.css #og-task-31-container 스타일 정의');
   assert.ok(uiCss.includes('#og-task-31-action-btn'), 'ui.css #og-task-31-action-btn 스타일 정의');
   assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');

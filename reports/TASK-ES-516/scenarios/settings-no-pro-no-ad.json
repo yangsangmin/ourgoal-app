@@ -1,0 +1,44 @@
+{
+  "id": "settings-no-pro-no-ad",
+  "title": "게스트로 앱에 들어가 설정 탭을 누르면 설정 화면이 열리고(상단 바 그리기 포함 예외 없음), PRO 배지·「광고 보고 크레딧 받기」 단추는 없다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#screen-settings",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#creditAdOptInBtn"
+    },
+    {
+      "expect": "count",
+      "selector": ".pro-badge",
+      "equals": 0
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

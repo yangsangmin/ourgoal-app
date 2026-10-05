@@ -15,7 +15,7 @@ var argRoot = process.argv.indexOf('--root');
 var ROOT = argRoot > -1 ? path.resolve(process.argv[argRoot + 1]) : path.join(__dirname, '..');
 var htmlArg = process.argv.indexOf('--html');
 var HTML_PATH = htmlArg > -1 ? path.resolve(process.argv[htmlArg + 1]) : path.join(ROOT, 'index.html');
-var html = fs.readFileSync(HTML_PATH, 'utf8');
+var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(HTML_PATH, 'utf8')); /* #TASK-ES-518: 인라인 합본(원문 맨 앞 + 세포) — 단언·기대값 그대로 */
 function readIf(p) { return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null; }
 var directGuardSrc = readIf(path.join(ROOT, 'js', 'direct-login-guard.js'));
 var googleGuardSrc = readIf(path.join(ROOT, 'js', 'google-session-guard.js'));

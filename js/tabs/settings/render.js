@@ -161,7 +161,7 @@
     renderSettingsHeroCard();
     L.refreshCustomFeedbackButtons();
     L.renderProfileCard();
-    if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')).then(function(){ if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock')); }); } // KF-2 #TASK-ES-017: 선택형 "광고 보고 크레딧 받기"
+    if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')); }
 
     var settings = L.state.profile.settings;
     // 🧩 앱을 내맘대로! (#TASK-ES-020) — 로직은 js/customize.js

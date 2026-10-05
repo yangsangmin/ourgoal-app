@@ -403,7 +403,6 @@
     } catch(e){}
     var p = L.state.profile;
     document.getElementById('topUserName').textContent = p.displayName;
-    L.renderProBadge();
     var av = document.getElementById('topAvatar');
     if(av && p){
       if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
