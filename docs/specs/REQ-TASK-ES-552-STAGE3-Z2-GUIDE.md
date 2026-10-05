@@ -36,7 +36,7 @@ index.html 인라인 IIFE 에 「개인 목표 200% 활용 가이드 & 템플릿
 
 ## 5. [원칙 ⑤] 절차
 
-worktree `C:/dev/wt/stage3-z2`(origin/main 03dcb6b, #803 포함) → 게스트 탐색(체험·팀 개설·편집 창) → 설정 → 생성기 → verify(assignedL 0 확인) → 신고서(module-specs --write · cell-descriptions 관련 세포 옆 · ui.confirm requires) → module-guard → 원본 단독 로드 → 게스트 시나리오 3개 기준·작업 → 113개 시험지 종료 코드 기준 대비 → 테스트 계정·게스트 기준1/작업/기준2 비교 → main 합치기 → PR → 판정.
+worktree `C:/dev/wt/stage3-z2`(처음 origin/main 03dcb6b, #803 포함 — 이후 main 을 합치고 index.html 은 main 판을 입력으로 생성기 재실행, L010) → 게스트 탐색(체험·팀 개설·편집 창) → 설정 → 생성기 → verify(assignedL 0 확인) → 신고서(module-specs --write · cell-descriptions 관련 세포 옆 · ui.confirm requires) → module-guard → 원본 단독 로드 → 게스트 시나리오 3개 기준·작업 → 113개 시험지 종료 코드 기준 대비 → 테스트 계정·게스트 기준1/작업/기준2 비교 → main 합치기 → PR → 판정.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
@@ -57,7 +57,7 @@ worktree `C:/dev/wt/stage3-z2`(origin/main 03dcb6b, #803 포함) → 게스트 �
 | 원본 단독 로드 | 회귀 0 · 새 세포 3개 단독 로드 ok (`module-load-probe.json`) |
 | 게스트 시나리오 | 3개 기준·작업 통과 (`scenario-local.json`) |
 | tests 전후 | 113개 종료 코드 기준 = 작업 (`tests-compare.json`) |
-| 게스트·실계정 조작 비교 | `guest-compare.json` · `real-account-compare.json` |
+| 게스트·실계정 조작 비교 | 6단계 기준1/작업/기준2 차이 0 (`guest-compare.json` · `real-account-compare.json`) — 기준 사본은 origin/main 03dcb6b 판, 작업은 그 위에 생성한 판. 이후 main 을 합쳐 다시 생성한 판은 verify·단독 로드·시나리오·시험지 비교를 다시 쟀다 |
 | 막힐 지점 | 같은 H2 자리를 쓰는 #TASK-ES-545 와 머리 이음매 충돌(L010 생성기 재실행) · main 이동 |
 
 [4단계: 심사 청구]

@@ -1,0 +1,78 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base2",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 첫 화면 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "67bb6583576d8d96",
+   "opened": null
+  },
+  {
+   "name": "② 일정 탭 공개 범위 배지 #calPrivacyBadge",
+   "present": true,
+   "visible": true,
+   "textHash": "cea319083ecf1950",
+   "textLen": 5,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": null
+  },
+  {
+   "name": "③ 목표 탭 #screen-goals(공개 범위 배지 포함)",
+   "present": true,
+   "visible": true,
+   "textHash": "3c08e90fe9b18654",
+   "textLen": 345,
+   "attrsHash": "de8d692ed9f36ffb",
+   "opened": null
+  },
+  {
+   "name": "④ 기록 탭 #screen-records(공개 범위 배지 포함)",
+   "present": true,
+   "visible": true,
+   "textHash": "fc7bc23110582a5b",
+   "textLen": 558,
+   "attrsHash": "e1424b895461c1ae",
+   "opened": null
+  },
+  {
+   "name": "⑤ 설정 탭 #screen-settings",
+   "present": true,
+   "visible": true,
+   "textHash": "662cd8b7b3ecc669",
+   "textLen": 753,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null
+  },
+  {
+   "name": "⑥ 설정 데이터 묶음 펼침 → 가이드 다시보기 단추 #btnRestartGuide",
+   "present": true,
+   "visible": true,
+   "textHash": "b936f0f68cb5d819",
+   "textLen": 22,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "startFirstLoginGuide/function,maybeShowFirstLoginGuide/undefined,getPrivacyLabel/undefined,updatePrivacyBadges/undefined,openPrivacyPickerModal/undefined,formatStopwatchTime/undefined,renderStopwatchWidgetHtml/function,renderLapRowsHtml/function",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 1
+ }
+}

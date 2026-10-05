@@ -3,7 +3,7 @@
  *
  * 같은 묶음의 팀 화면 도우미 몫: 예시(가상) 팀 판별(isMockGroup) · 팀 수준별 목표 읽기·기본값(getGroupLevelGoals) · 수준별 조 상세 창 예비 경로(openLevelGroupDetailModal — OurgoalTeamVisibilityLevels 가 있으면 그쪽이 불린다) · 팀목표 화면 일괄 접기(collapseAllTeamGoalAccordions).
  * window 노출 줄(isMockGroup·collapseAllTeamGoalAccordions)은 index.html 원래 자리에 그대로 있다. collapseAllTeamGoalAccordions 를 잘라 읽는 시험지는 #TASK-ES-519 시험지 선행으로 합본에서 같은 함수를 찾는다.
- * #TASK-ES-552(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집): index.html 인라인 IIFE 의 구간(이전 전 9186~9194 · 9200~9376 · 9377~9671 · 9672~9712줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-552(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집): index.html 인라인 IIFE 의 구간(이전 전 8739~8747 · 8753~8929 · 8930~9224 · 9225~9265줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 9186~9194줄(#TASK-ES-552 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8739~8747줄(#TASK-ES-552 생성기 표지) ---- */
 
   /* [#TASK-ES-229] 가상 목 그룹(MOCK_GROUPS) 판별 및 팀 생성 대형 히어로 카드 */
   function isMockGroup(g){
@@ -26,7 +26,7 @@
     return /^(g-workshop|g-travel|g-marathon-pair|g-marathon-small|g\d+)$/.test(g.id);
   }
 
-  /* ---- 이전 전 index.html 9200~9376줄(#TASK-ES-552 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8753~8929줄(#TASK-ES-552 생성기 표지) ---- */
   /* [#TASK-ES-493] wireTeamGoalsGuideEvents → js/tabs/goals/team-goals-guide.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   function getGroupLevelGoals(gid){
@@ -204,7 +204,7 @@
     }
     return L.state.profile.settings.groupLevelGoals[gid];
   }
-  /* ---- 이전 전 index.html 9377~9671줄(#TASK-ES-552 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8930~9224줄(#TASK-ES-552 생성기 표지) ---- */
 
   function openLevelGroupDetailModal(gid, lgId){
     var g = L.MOCK_GROUPS.find(function(x){ return x.id===gid; });
@@ -500,7 +500,7 @@
       });
     });
   }
-  /* ---- 이전 전 index.html 9672~9712줄(#TASK-ES-552 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9225~9265줄(#TASK-ES-552 생성기 표지) ---- */
 
   function collapseAllTeamGoalAccordions() {
     if (typeof document === 'undefined') return; var isTeamLevelSectionOpen = function(gid){ return !!(gid && window.OurgoalTeamVisibilityLevels && typeof OurgoalTeamVisibilityLevels.isLevelSectionOpen === 'function' && OurgoalTeamVisibilityLevels.isLevelSectionOpen(gid)); }; var isTeamMsListOpen = function(tgid){ return !!(tgid && window.OurgoalTeamVisibilityLevels && typeof window.OurgoalTeamVisibilityLevels.isMsListOpen === 'function' && window.OurgoalTeamVisibilityLevels.isMsListOpen(tgid)); }; var isTeamParticipantsOpen = function(tgid){ return !!(tgid && window.OurgoalTeamLinkedGoals && typeof window.OurgoalTeamLinkedGoals.isParticipantsOpen === 'function' && window.OurgoalTeamLinkedGoals.isParticipantsOpen(tgid)); };
