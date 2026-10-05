@@ -1,0 +1,38 @@
+{
+ "task": "TASK-ES-431",
+ "note": "작업자 측정(판정 아님). 기준 = origin/main 분리 worktree, 작업 = 이 브랜치.",
+ "npmTestBase": {
+  "exitCode": 0,
+  "smoke": "443/0",
+  "integrity": "38/38",
+  "es431Lines": []
+ },
+ "npmTestAfter": {
+  "exitCode": 0,
+  "smoke": "443/0",
+  "integrity": "38/38",
+  "es431Lines": [
+   "[ES-431] ok   A1 카드 그리기가 예외 없이 캔버스를 돌려준다",
+   "[ES-431] ok   A2 스트릭 줄이 computeStreakDays() 값으로 그려진다",
+   "[ES-431] ok   B1 computeStreakDays 가 통로에 없으면 0일로 그린다",
+   "[ES-431] lockscreen-card-streak: all checks held"
+  ]
+ },
+ "unitTest": {
+  "file": "tests/lockscreen-card-streak-es431.test.js",
+  "baseExitCode": 1,
+  "workExitCode": 0,
+  "baseLines": [
+   "[ES-431] FAIL A1 카드 그리기가 예외 없이 캔버스를 돌려준다 :: streakDays is not defined",
+   "[ES-431] FAIL A2 스트릭 줄이 computeStreakDays() 값으로 그려진다 :: 그린 글자: [\"OURGOAL · DAILY LOCKSCREEN\",\"2026년 10월 5일 월요일\"]",
+   "[ES-431] FAIL B1 computeStreakDays 가 통로에 없으면 0일로 그린다 :: streakDays is not defined",
+   "[ES-431] lockscreen-card-streak: 3 failed"
+  ],
+  "workLines": [
+   "[ES-431] ok   A1 카드 그리기가 예외 없이 캔버스를 돌려준다",
+   "[ES-431] ok   A2 스트릭 줄이 computeStreakDays() 값으로 그려진다",
+   "[ES-431] ok   B1 computeStreakDays 가 통로에 없으면 0일로 그린다",
+   "[ES-431] lockscreen-card-streak: all checks held"
+  ]
+ }
+}

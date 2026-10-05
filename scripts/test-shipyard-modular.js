@@ -189,6 +189,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/logout-scope-es399.test.js');
   // #TASK-ES-414 세포지도 생성기(scripts/cell-map-export.js): 두 번 만들어 바이트 같음 · 필수 칸 · 영역이 모든 세포를 한 번씩 · 분열 이력 12 → 지표
   runNode('tests/cell-map-export-es414.test.js');
+  // #TASK-ES-431 잠금화면용 9:16 일정 카드 그리기: 정의 안 된 streakDays → computeStreakDays() 값(예외 없이 캔버스·스트릭 줄 글자, 통로에 없으면 0일)
+  runNode('tests/lockscreen-card-streak-es431.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 
