@@ -152,17 +152,62 @@
     clear: function(){
       try{ if(typeof localStorage !== 'undefined' && localStorage) localStorage.removeItem(this.QUEUE_KEY); }catch(e){}
     },
+    // [#TASK-ES-490] GUARD_03 데이터 손실 수정: 예전에는 처리기 없이 불러도(유일한 호출부가 그랬다), 처리기가 실패해도 큐를 통째로 비웠다.
+    //   이제 처리기가 성공한 항목만 지우고 실패한 항목은 큐에 남긴다. 처리기가 없으면 아무것도 지우지 않는다. 돌려주는 값 = 동기화한 항목 수.
+    _write: function(q){
+      try{
+        if(typeof localStorage === 'undefined' || !localStorage) return;
+        if(q.length) localStorage.setItem(this.QUEUE_KEY, JSON.stringify(q)); else localStorage.removeItem(this.QUEUE_KEY);
+      }catch(e){}
+    },
     flush: async function(syncHandler){
       var q = this.getQueue();
       if(!q.length) return 0;
-      var count = q.length;
-      if(typeof syncHandler === 'function'){
-        for(var i=0; i<q.length; i++){
-          try { await syncHandler(q[i]); }catch(e){}
-        }
+      if(typeof syncHandler !== 'function') return 0;
+      var failed = [];
+      var synced = 0;
+      for(var i=0; i<q.length; i++){
+        try { await syncHandler(q[i]); synced++; }
+        catch(e){ failed.push(q[i]); console.warn('[OfflineSyncManager] 동기화 실패 — 큐에 남김', e); }
       }
-      this.clear();
-      return count;
+      // 처리하는 동안 새로 들어온 항목도 지우지 않는다(처리한 id 만 뺀다)
+      var doneIds = {};
+      q.forEach(function(it){ if(failed.indexOf(it) === -1) doneIds[it.id] = true; });
+      this._write(this.getQueue().filter(function(it){ return !doneIds[it.id]; }));
+      this.lastResult = { synced: synced, failed: failed.length };
+      return synced;
+    },
+    // 큐의 기록 하나를 앱 상태에 되살린다(이미 있으면 그대로). 실제 저장은 syncOnline 이 saveProfile 로 한 번에 한다.
+    restoreItem: function(item){
+      var a = item && item.action;
+      if(!a || a.type !== 'record' || !a.data) return;
+      var profile = L.state && L.state.profile;
+      if(!profile) throw new Error('프로필 없음');
+      if(!Array.isArray(profile.records)) profile.records = [];
+      var rec = a.data;
+      var exists = profile.records.some(function(r){ return r && rec.id && r.id === rec.id; });
+      if(!exists) profile.records.unshift(rec);
+    },
+    // 온라인 복귀 때: 큐 기록을 상태에 되살리고 saveProfile(기기 사본 + 로그인 사용자는 서버 원장)이 끝난 뒤에만 큐를 비운다.
+    // 실패하면 큐를 그대로 두고 알리며 30초 뒤 다시 시도한다(온라인일 때).
+    syncOnline: async function(){
+      var self = this;
+      var q = this.getQueue();
+      if(!q.length) return { synced: 0, failed: 0 };
+      try {
+        q.forEach(function(it){ self.restoreItem(it); });
+        if(typeof L.saveProfile === 'function') await L.saveProfile();
+      } catch(e) {
+        console.warn('[OfflineSyncManager] 온라인 동기화 실패 — 큐 유지·재시도 예약', e);
+        if(typeof L.toast === 'function') L.toast('오프라인 기록 ' + q.length + '건을 아직 보내지 못했어요. 잠시 뒤 다시 시도할게요.');
+        clearTimeout(self._retryTimer);
+        self._retryTimer = setTimeout(function(){ if(typeof navigator === 'undefined' || navigator.onLine !== false) self.syncOnline(); }, 30000);
+        return { synced: 0, failed: q.length };
+      }
+      var n = await this.flush(function(){ /* 위에서 저장까지 끝났다 — 여기서는 큐에서 뺄 항목만 표시한다 */ });
+      try { if(typeof L.dispatchFullViewPropagation === 'function') L.dispatchFullViewPropagation(); } catch(e){}
+      if(typeof L.toast === 'function') L.toast('오프라인 기록 ' + n + '건을 동기화했어요 ✅');
+      return { synced: n, failed: 0 };
     }
   };
 

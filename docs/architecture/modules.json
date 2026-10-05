@@ -1009,6 +1009,32 @@
       "dependsOn": []
     },
     {
+      "id": "core/badges",
+      "file": "js/core/badges.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 뱃지 판정 문맥(badgeContext)·뱃지 목록(BADGES)·명예의 전당 창(openHallOfFame). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-482)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "core/capabilities",
       "file": "js/core/capabilities.js",
       "layer": "core",
@@ -1031,6 +1057,32 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": []
+    },
+    {
+      "id": "core/confetti",
+      "file": "js/core/confetti.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 축하 꽃가루(burstConfetti, #confettiLayer)·목표 공개 범위 되돌리기 토스트(showUndoPrivacyToast). 토스트(toast)·타이머는 index.html 에 남김. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-482)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
     },
     {
       "id": "core/confirm",
@@ -1118,13 +1170,40 @@
       "dependsOn": []
     },
     {
+      "id": "core/gcal-sync",
+      "file": "js/core/gcal-sync.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 구글 캘린더 연결: 클라이언트 id·연결 상태·연결 창·일정 읽기·전체 보내기·토큰 복원/상태/받기·가져오기/내보내기 창. 토큰 저장(saveGoogleToken)·calendarAvailable 은 index.html 에 남김. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-482)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "google"
+      ]
+    },
+    {
       "id": "core/gcal-token",
       "file": "js/core/gcal-token.js",
       "layer": "core",
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "기관 — 구글 캘린더 토큰·일정 캐시 계정(uid) 격리(ensureGcalOwner·gcalEventsKey·purgeLegacySharedGcalKeys 등). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "role": "OurGoal Google Calendar Token (기관 — 구글 캘린더 토큰·일정 캐시 계정 격리)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -1150,7 +1229,7 @@
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "기관 — 홈 1초 조망 ↔ 무저항 체크인 콕핏(initHomeCockpit·initDimensionSliders·renderQuickCheckinGuideChips·switchHomeDate·saveProfile). 여러 탭이 saveProfile 을 부르는 공용 부품. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "role": "OurGoal Home Cockpit (기관 — 홈 1초 조망 ↔ 체크인 콕핏)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -1178,7 +1257,7 @@
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "기관 — 모달 닫기(closeModal)·닫기 직후 잠깐 막기(isModalDismissCooldown)·하단 시트(openBottomSheetAlert·openBottomSheetConfirm)·뒤로가기 처리 등록(bindModalPopstateBack). openModal 은 최상위 arguments 를 써서 index.html 에 남김(헌법 CELL_SPLIT 5). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "role": "OurGoal Modal Helper (기관 — 모달 도우미·안드로이드 뒤로가기 처리)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -1267,7 +1346,7 @@
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "기관 — 조선소 블록 레지스트리 6대 메가블록 초기화(initShipyardRegistry)·탭 전환(setTab·switchTab)·탭 단추 클릭 등록(bindNavButtonsClick, index.html 원래 자리에서 부른다). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "role": "OurGoal Registry Init (기관 — 조선소 블록 레지스트리 6대 메가블록 초기화)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -1394,7 +1473,7 @@
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "기관 — 익명 이벤트 계측(getSid·getAttribution·parseAttribution·recordLanding·dDay 등). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "role": "OurGoal Telemetry (기관 — 익명 이벤트 계측)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -1421,7 +1500,7 @@
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "기관 — 시간 글자(fmtTime·fmtDateLabel·nowISO)·날짜 키(pad·dateKey·getKSTDateKey·getEffectiveStandardDateKey)·고유 id(uid·newId) 도우미. 노출 묶음(window.getKSTDateKey 등)은 index.html 원래 자리. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "role": "OurGoal Time Keys (기관 — 시간·날짜 키·id 도우미)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -1494,6 +1573,32 @@
       ]
     },
     {
+      "id": "core/trash-bin",
+      "file": "js/core/trash-bin.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 전역 7일 유예 통합 휴지통: 목록·자동 비우기·옮기기·되살리기·영구 삭제·비우기·되돌리기 토스트·휴지통 창(#TASK-ES-153). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-482)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "core/ui-helpers",
       "file": "js/core/ui-helpers.js",
       "layer": "core",
@@ -1524,7 +1629,7 @@
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "기관 — 「가상유저 개선 10대 핵심 헬퍼 함수」 묶음(triggerHaptic·triggerHapticFeedback·reorderMilestones·filterFeedByCategory·calculateWeeklyFocusStats·exportRecordsToCsv·exportRecordsToMarkdown·OfflineSyncManager). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "role": "OurGoal Virtual-User Helpers (기관 — 가상유저 개선 10대 헬퍼)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -4574,6 +4679,38 @@
       ]
     },
     {
+      "id": "goals/focus-autopilot",
+      "file": "js/tabs/goals/focus-autopilot.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "1순위 대표 목표 AI 초집중 모드 창(openFocusAutoPilotModal)·MZ 갓생 스토리 카드 창(openMzShareCardModal). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-476)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "checkin:created",
+        "record:saved"
+      ],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalEvents",
+        "OurgoalStore",
+        "OurgoalTeamInviteComm"
+      ]
+    },
+    {
       "id": "goals/goal-detail-events",
       "file": "js/tabs/goals/goal-detail-events.js",
       "layer": "tabs",
@@ -5516,6 +5653,32 @@
       ]
     },
     {
+      "id": "records/first-checkin-tutorial",
+      "file": "js/tabs/records/first-checkin-tutorial.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "첫 체크인 튜토리얼 배너·축하 창(renderFirstCheckinTutorialBanner·triggerFirstCheckinCelebrationModal)·동료 러너 환영 도장. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-476)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "records/heatmap-summary",
       "file": "js/tabs/records/heatmap-summary.js",
       "layer": "tabs",
@@ -6203,6 +6366,33 @@
       ]
     },
     {
+      "id": "settings/avatar-levelup-modal",
+      "file": "js/tabs/settings/avatar-levelup-modal.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "아바타 레벨업 대형 팝업 열기·닫기(openAvatarLevelUpModal·closeAvatarLevelUpModal)·성장 성향 키워드 저장(filterHarmfulWords)·공유·이미지 저장 처리기. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-476)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalAvatar"
+      ]
+    },
+    {
       "id": "settings/comm-tour",
       "file": "js/tabs/settings/comm-tour.js",
       "layer": "tabs",
@@ -6307,6 +6497,32 @@
         "OurgoalAccountIsolation",
         "OurgoalAppScope",
         "sb"
+      ]
+    },
+    {
+      "id": "settings/inapp-landing",
+      "file": "js/tabs/settings/inapp-landing.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "카카오톡 인앱 브라우저 감지·탈출 배너(checkKakaoInAppBrowser·escapeKakaoInAppBrowser)·첫 화면 진입 단추 처리기 4개. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-476)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {

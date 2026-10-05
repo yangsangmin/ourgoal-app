@@ -1,0 +1,91 @@
+{
+  "task": "TASK-ES-476",
+  "slot": "H1",
+  "slots": [],
+  "cells": [
+    {
+      "key": "avatarLevelUp",
+      "file": "js/tabs/settings/avatar-levelup-modal.js",
+      "kit": "OurgoalSettingsKit",
+      "kitVar": "_settingsKit",
+      "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Avatar Level-Up Modal (설정 — 아바타 레벨업 대형 팝업 & 성장 성향 키워드)",
+      "desc": [
+        "레벨이 오르면 뜨는 「LEVEL UP!」 대형 팝업 열기·닫기(openAvatarLevelUpModal·closeAvatarLevelUpModal)와 성장 성향 키워드 저장(유해 단어 거름 filterHarmfulWords)·공유·이미지 저장 처리기.",
+        "처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. window 노출 두 줄·단추 요소 변수 선언·3줄 이하 등록은 원래 자리에 그대로 있다."
+      ],
+      "take": [
+        {
+          "group": "[#TASK-ES-150] 아바타 레벨업 대형 팝업",
+          "all": true,
+          "wrap": [
+            "bindAvatarLevelUpBackdrop",
+            "bindAvatarGrowthPromptSave",
+            "bindAvatarLevelUpShare",
+            "bindAvatarLevelUpSaveImage"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "inappLanding",
+      "file": "js/tabs/settings/inapp-landing.js",
+      "kit": "OurgoalSettingsKit",
+      "kitVar": "_settingsKit",
+      "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal In-App Browser & Landing Entry (설정 — 카카오톡 인앱 브라우저 감지·첫 화면 진입 단추)",
+      "desc": [
+        "카카오톡 인앱 브라우저 감지·외부 브라우저로 빠져나가기 배너(checkKakaoInAppBrowser·escapeKakaoInAppBrowser)와 첫 화면 단추 처리기(닉네임 빠른 입장·이메일 가입·로그인·둘러보기).",
+        "첫 화면 단추 처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다."
+      ],
+      "take": [
+        {
+          "group": "카카오톡 인앱 브라우저",
+          "all": true,
+          "wrap": [
+            "bindLandNickQuickLink",
+            "bindLandStartBtn",
+            "bindLandLoginLink",
+            "bindLandGuestBtn"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "firstCheckin",
+      "file": "js/tabs/records/first-checkin-tutorial.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal First Check-in Tutorial (기록 — 첫 체크인 튜토리얼 가이드 및 축하 연출)",
+      "desc": [
+        "첫 체크인 안내 배너(renderFirstCheckinTutorialBanner)와 첫 체크인 축하 창(triggerFirstCheckinCelebrationModal), 같은 분야 동료 러너 고르기·환영 도장 보내기(getPeerRunnersForCategory·sendFirstCheckinWelcomeStamps 등).",
+        "window 노출 세 줄은 index.html 원래 자리에 그대로 있다."
+      ],
+      "take": [
+        {
+          "group": "3단계: 첫 체크인 튜토리얼",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "focusAutoPilot",
+      "file": "js/tabs/goals/focus-autopilot.js",
+      "kit": "OurgoalGoalsKit",
+      "kitVar": "_goalsKit",
+      "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+      "title": "OurGoal Focus Auto-Pilot & MZ Story Card (목표 — 1순위 대표 목표 AI 초집중 모드·MZ 갓생 스토리 카드)",
+      "desc": [
+        "대표 목표 초집중 모드 창(openFocusAutoPilotModal)과 홈 「내 성장 자랑하기」로 여는 「오늘의 MZ 갓생 스토리 카드」 창(openMzShareCardModal).",
+        "초집중 타이머 상태 변수(focusTimerInterval·focusTimerSeconds·focusTimerRunning)와 FEED_POSTS_CACHE 는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
+      ],
+      "take": [
+        {
+          "group": "1순위 대표 목표 AI 초집중 모드",
+          "all": true
+        }
+      ]
+    }
+  ]
+}
