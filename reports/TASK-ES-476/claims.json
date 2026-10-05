@@ -1,0 +1,372 @@
+{
+ "task": "TASK-ES-476",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 H1 어려움 네 묶음(아바타 레벨업 대형 팝업·카카오톡 인앱 브라우저 감지·첫 체크인 튜토리얼·AI 초집중 모드)을 #762 생성기로 세포 4개에 글자 그대로 옮긴다 — 이름 참조만 L. 접두, 기존 탭 키트 사용(새 전역 0), window 노출·상태 변수 선언 원래 자리, 4줄 이상 로드 중 문은 bind 함수로 감싸 원래 자리에서 부름, 머리 이음매는 자리 표지 H1 아래."
+  },
+  {
+   "id": "R2",
+   "text": "레벨이 오르면 뜨는 LEVEL UP 대형 팝업과 확인 닫기가 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R3",
+   "text": "첫 화면 「로그인」 단추로 로그인 화면이 뜨는 것이 옮긴 뒤에도 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R4",
+   "text": "첫 체크인을 남기면 뜨는 첫 체크인 축하 창이 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R5",
+   "text": "홈 「내 성장 자랑하기」의 MZ 갓생 스토리 카드 창이 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R6",
+   "text": "동작 그대로를 측정한다 — 단독 로드 회귀 0, tests·scripts 시험 종료 코드 기준=작업, 게스트 조작 DOM 비교 차이 0."
+  },
+  {
+   "id": "R7",
+   "text": "세포 등록: modules.json(module-specs --write·손 칸 role), cell-descriptions.json 짧은 이름·하는 일. 생성 지도 3종은 main 판 그대로."
+  },
+  {
+   "id": "R8",
+   "text": "문서: REQ 8원칙, dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수·감싼 문 토큰 동일(L. 접두 제외)·덩어리 줄 동일·남은 글자 동일·누수 0·미노출 0·setter 빠짐 0·이중 처리기 0 검사가 ok",
+   "touches": [
+    "reports/TASK-ES-476/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이전 전 index.html IIFE 의 남은 문이 글자 그대로 같은 순서로 남았다(남은 글자 동일)",
+   "touches": [
+    "reports/TASK-ES-476/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "처리기 등록 수가 이전 전과 같다(이전 전 IIFE = 새 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-476/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정은 네 묶음을 자리 표지 H1 아래에 넣는다",
+   "touches": [
+    "docs/design/harness/module-split/inline-hard-h1-476.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-hard-h1-476.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H1"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 초집중 모드·스토리 카드 파일은 800줄 이하다(517줄)",
+   "touches": [
+    "reports/TASK-ES-476/gen-inline-hard-meta.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/gen-inline-hard-meta.json",
+    "type": "codeContains",
+    "text": "\"js/tabs/goals/focus-autopilot.js\": 517"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 기록 0건 게스트로 체크인을 일곱 번 남겨 경험치 100 이 되면 「LEVEL UP! Lv.2 달성!」 대형 팝업이 뜨고(display flex), 확인 단추를 누르면 닫힌다(display none) — 옮긴 openAvatarLevelUpModal·closeAvatarLevelUpModal",
+   "touches": [
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/avatar-levelup-modal.json"
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 첫 화면에서 「로그인」을 누르면 첫 화면이 닫히고(display none) 로그인 화면이 뜬다(display flex) — 옮긴 bindLandLoginLink 가 index.html 원래 자리에서 걸린다",
+   "touches": [
+    "js/tabs/settings/inapp-landing.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/landing-login-link.json"
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 기록 0건 게스트가 첫 실천을 적고 「기록」을 누르면 「첫 체크인(E1) 완주」 축하 창이 그 실천 글과 「+10 EXP」를 담아 뜬다 — 옮긴 triggerFirstCheckinCelebrationModal",
+   "touches": [
+    "js/tabs/records/first-checkin-tutorial.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/first-checkin-celebration.json"
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 「내 성장 자랑하기」를 누르면 「오늘의 MZ 갓생 스토리 카드」 창이 「9:16 인스타 스토리 맞춤」 비율 안내·닫기 단추와 함께 뜬다 — 옮긴 openMzShareCardModal",
+   "touches": [
+    "js/tabs/goals/focus-autopilot.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/mz-share-card-open.json"
+  },
+  {
+   "id": "C10",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0",
+   "touches": [
+    "reports/TASK-ES-476/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 4개를 단독으로 실으면 오류 없이 기존 탭 키트 하나씩만 등록한다",
+   "touches": [
+    "reports/TASK-ES-476/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "newFilesAllOkOnlyExistingKits",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests·scripts 시험 126개 종료 코드가 기준과 작업에서 모두 같다",
+   "touches": [
+    "reports/TASK-ES-476/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 DOM 비교(12단계, 기준 대 작업) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-476/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/dom-compare.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 기준 앱 2회 게스트 조작 비교 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-476/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/dom-compare.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 형식 시나리오 4개를 로컬 법정 실행기로 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-476/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-476/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 레벨업 팝업이 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/settings/avatar-levelup-modal.js\","
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 첫 체크인 축하가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/records/first-checkin-tutorial.js\","
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 인앱 브라우저·첫 화면 단추 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"settings/inapp-landing\": \"인앱 브라우저·첫 화면 단추\""
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 초집중 모드·스토리 카드 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"goals/focus-autopilot\": \"초집중 모드·스토리 카드\""
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-476: 인라인 어려움 구역 H1 2차"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-476 | INFRA | [인라인 어려움 구역 H1 2차]"
+   }
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+{"id":"landing-login-link","title":"첫 화면에서 「이미 계정이 있으신가요? 로그인」을 누르면 첫 화면이 닫히고 로그인 화면이 뜬다 — 옮긴 로드 중 처리기(bindLandLoginLink, js/tabs/settings/inapp-landing.js)가 index.html 원래 자리에서 걸려 이전 전과 같이 돈다","steps":[
+{"do":"goto","path":"/index.html"},
+{"do":"waitFor","selector":"#landLoginLink"},
+{"expect":"style","selector":"#authScreen","prop":"display","equals":"none"},
+{"do":"click","selector":"#landLoginLink"},
+{"expect":"style","selector":"#landingScreen","prop":"display","equals":"none"},
+{"expect":"style","selector":"#authScreen","prop":"display","equals":"flex"},
+{"expect":"noExceptions"}]}
