@@ -1,0 +1,67 @@
+{
+  "id": "home-layout-no-heatmap-switch",
+  "title": "게스트로 설정 탭 「앱을 내맘대로!」 홈 구성 창을 열면 「최근 히트맵 요약」 스위치는 없고, 「오늘의 카드」 스위치는 그대로 있어 누르면 꺼진다 — 홈 구성 목록(js/customize.js WHITELIST)과 홈 카드 선언 속성에서 히트맵 요약을 뺐다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#kf1LayoutList",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#kf1LayoutList [data-kf1-id=\"homeGrassSummaryCard\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]",
+      "className": "on"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]",
+      "className": "on",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -682,7 +682,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <button type="button" id="closeFirstCheckinTutorialBtn" aria-label="첫 체크인 튜토리얼 배너 닫기" style="background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;padding:2px 6px;">✕</button>
         </div>
       </div>
-      <div id="homeGrassSummaryCard" style="display:none !important;" data-home-widget="homeGrassSummaryCard" data-widget-label="최근 히트맵 요약" data-widget-hint="최근 2주간의 기록 한눈에"></div>
+      <div id="homeGrassSummaryCard" style="display:none !important;"></div>
       <div class="capture-card card toss-checkin-clean-box" id="captureCardBox" data-home-widget="captureCardBox" data-widget-label="오늘의 1순위 실천 콕핏" data-widget-hint="1줄 체크인 입력창 (상단 고정)" data-widget-fixed="true">
         <div class="capture-title" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <div style="display:flex;align-items:center;gap:6px;">
@@ -1318,39 +1318,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       
 
       
-
-      <!-- [#UIUX-49] [COMM-3X2-HUB] 소통 탭 3×2 그리드 허브 (TASK-ES-129: 은폐 단일화) -->
-      <div class="comm-hub-grid" id="commHubGrid" style="display:none !important;" aria-hidden="true">
-        <button id="btnCommHubFeed" class="comm-hub-card active" type="button" onclick="switchCommSubTab('feed')">
-          <span style="font-size:1.2rem;">📰</span>
-          <span>피드</span>
-        </button>
-        <button id="btnCommHubCrew" class="comm-hub-card" type="button" onclick="switchCommSubTab('crew')">
-          <span style="font-size:1.2rem;">🤝</span>
-          <span>동반자</span>
-        </button>
-        <button id="btnCommHubTeam" class="comm-hub-card" type="button" onclick="switchCommSubTab('team')">
-          <span style="font-size:1.2rem;">👥</span>
-          <span>팀</span>
-        </button>
-      </div>
-
-      <!-- [#UIUX-52] [NONTOXIC-REACTION] 4종 무공해 연대 리액션 플로팅 바 (공통 퀵 응원) -->
-      <div class="reaction-floating-bar" id="commFloatingReactionDock" style="margin-bottom:6px;">
-        <span style="font-size:0.8rem;color:var(--ink-soft);font-weight:700;margin-right:4px;">무공해 응원:</span>
-        <button id="btnFloatingReactFire" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('🔥')">🔥 <span id="reactCountFire">0</span></button>
-        <button id="btnFloatingReactClap" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('👏')">👏 <span id="reactCountClap">0</span></button>
-        <button id="btnFloatingReactHeart" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('❤️')">❤️ <span id="reactCountHeart">0</span></button>
-        <button id="btnFloatingReactRocket" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('🚀')">🚀 <span id="reactCountRocket">0</span></button>
-      </div>
-
-      <!-- [#UIUX-50] 프로필 바텀시트 컨테이너 -->
-      <div id="commProfileBottomSheet" class="comm-profile-bottomsheet" style="display:none;margin-bottom:14px;">
-        <div class="comm-profile-avatar-wrap" id="commProfileAvatarDisplay">🦁</div>
-        <div style="text-align:center;font-weight:700;font-size:1.05rem;color:var(--ink);margin-bottom:4px;" id="commProfileNameDisplay">성장 러너</div>
-        <div style="text-align:center;font-size:0.82rem;color:var(--ink-soft);margin-bottom:14px;" id="commProfileGoalDisplay">매일 아침 6시 런닝 🏃‍♂️</div>
-        <button id="btnInAppDmStart" class="btn-inapp-dm-start" type="button" onclick="openInAppDmSheet()">💬 1:1 안심 DM 대화하기</button>
-      </div>
 
       <div id="commBody"></div>
           
@@ -2268,7 +2235,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/comm/sub-crew.js"></script>
 <script src="js/tabs/comm/feed-comments.js"></script>
 <script src="js/tabs/comm/render.js"></script>
-<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/challenge-room.js"></script><script src="js/tabs/comm/first-cheer.js"></script><script src="js/tabs/comm/feed-post-preview.js"></script><script src="js/tabs/comm/story-canvas.js"></script><script src="js/tabs/comm/sample-data.js"></script><script src="js/tabs/comm/share-card.js"></script><script src="js/tabs/comm/feed-posts-sync.js"></script><script src="js/tabs/comm/manito-basics.js"></script><script src="js/tabs/comm/crew-pacing.js"></script><script src="js/tabs/comm/goal-certificate-share.js"></script><script src="js/tabs/comm/manito-real.js"></script><script src="js/tabs/comm/peer-invite.js"></script><script src="js/tabs/comm/cheer-notify.js"></script><script src="js/tabs/comm/index.js"></script>
+<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/first-cheer.js"></script><script src="js/tabs/comm/feed-post-preview.js"></script><script src="js/tabs/comm/story-canvas.js"></script><script src="js/tabs/comm/sample-data.js"></script><script src="js/tabs/comm/share-card.js"></script><script src="js/tabs/comm/feed-posts-sync.js"></script><script src="js/tabs/comm/manito-basics.js"></script><script src="js/tabs/comm/crew-pacing.js"></script><script src="js/tabs/comm/goal-certificate-share.js"></script><script src="js/tabs/comm/manito-real.js"></script><script src="js/tabs/comm/peer-invite.js"></script><script src="js/tabs/comm/cheer-notify.js"></script><script src="js/tabs/comm/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Settings Mega-Block & Sub-Blocks (설정 메가블록 및 소블록 외판) -->
 <script src="js/tabs/settings/sub-profile.js"></script>
 <script src="js/tabs/settings/sub-security.js"></script>
@@ -2571,7 +2538,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   });
 
   /* ============ [#TASK-ES-444] 인라인 스크립트 세포화 P1 이음매 2 — 일정 배경·잠금화면 라이브, 소통 창·스토리 캔버스, 사진 인증, 목표 스타터·로컬 문장, 설정(적응형 UX·PWA 설치) (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
-     ① 가져오기: js/tabs/calendar/day-bg-picker.js · js/tabs/calendar/lockscreen-live.js · js/tabs/comm/challenge-room.js · js/tabs/comm/first-cheer.js · js/tabs/comm/feed-post-preview.js · js/tabs/records/photo-proof.js · js/tabs/records/heatmap-summary.js · js/tabs/settings/adaptive-ux.js · js/tabs/settings/pwa-install.js · js/tabs/goals/starter-goal.js · js/tabs/goals/ai-local-fallback.js · js/tabs/comm/story-canvas.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ① 가져오기: js/tabs/calendar/day-bg-picker.js · js/tabs/calendar/lockscreen-live.js · js/tabs/comm/first-cheer.js · js/tabs/comm/feed-post-preview.js · js/tabs/records/photo-proof.js · js/tabs/records/heatmap-summary.js · js/tabs/settings/adaptive-ux.js · js/tabs/settings/pwa-install.js · js/tabs/goals/starter-goal.js · js/tabs/goals/ai-local-fallback.js · js/tabs/comm/story-canvas.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
   var openCalendarDayBgPickerModal = _calendarKit.openCalendarDayBgPickerModal;
   var buildLockScreenCardPayload = _calendarKit.buildLockScreenCardPayload;
@@ -7237,7 +7204,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* [#TASK-ES-423] openSelectCompanionForStoryModal · openSelectTeamForStoryModal → js/tabs/comm/story-card-send.js 로 옮김(인라인 스크립트 세포화 1차 — 구획 주석 포함) */
 
-  /* [#TASK-ES-444] openChallengeRoomModal → js/tabs/comm/challenge-room.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
   /* ============ 원터치 퀵 루틴 칩 ============ */
   var qRoutineRow = document.getElementById('quickRoutineRow');
@@ -10279,72 +10245,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.exportRecordsCsv = exportRecordsCsv;
 
   /* ============ [PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTIONS ============ */
-  function switchCommSubTab(subTab){
-    triggerHapticFeedback(12);
-    if(!state) state = {};
-    state.commSubTab = subTab;
-    var map = { 'feed':'btnCommHubFeed', 'crew':'btnCommHubCrew', 'team':'btnCommHubTeam' };
-    ['btnCommHubFeed', 'btnCommHubCrew', 'btnCommHubTeam'].forEach(function(id){
-      var btn = document.getElementById(id);
-      if(btn) btn.classList.remove('active');
-    });
-    var activeBtn = document.getElementById(map[subTab]);
-    if(activeBtn) activeBtn.classList.add('active');
-
-    if(subTab === 'feed'){
-      if(typeof renderFeedList === 'function') renderFeedList();
-      else if(typeof renderCommScreen === 'function') renderCommScreen();
-    } else if(subTab === 'crew'){
-      if(typeof renderCrewScreen === 'function') renderCrewScreen();
-      else if(typeof renderCommScreen === 'function') renderCommScreen();
-    } else if(subTab === 'team'){
-      if(typeof renderTeamScreen === 'function') renderTeamScreen();
-      else if(typeof renderCommScreen === 'function') renderCommScreen();
-    }
-    if(typeof toast === 'function') {
-      var names = { 'feed':'피드', 'crew':'동반자', 'team':'팀' };
-      toast(names[subTab] + ' 탭으로 전환되었습니다 🤝');
-    }
-  }
-  window.switchCommSubTab = switchCommSubTab;
-
-  window._commReactionCounts = { '🔥':0, '👏':0, '❤️':0, '🚀':0 };
-  function triggerFloatingReaction(emoji){
-    triggerHapticFeedback(12);
-    if(!window._commReactionCounts) window._commReactionCounts = { '🔥':0, '👏':0, '❤️':0, '🚀':0 };
-    window._commReactionCounts[emoji] = (window._commReactionCounts[emoji] || 0) + 1;
-    var countMap = {
-      '🔥': 'reactCountFire',
-      '👏': 'reactCountClap',
-      '❤️': 'reactCountHeart',
-      '🚀': 'reactCountRocket'
-    };
-    var el = document.getElementById(countMap[emoji]);
-    if(el) el.textContent = window._commReactionCounts[emoji];
-
-    var dock = document.getElementById('commFloatingReactionDock');
-    if(dock){
-      var floater = document.createElement('span');
-      floater.className = 'reaction-float-anim';
-      floater.style.position = 'absolute';
-      floater.style.fontSize = '1.4rem';
-      floater.style.pointerEvents = 'none';
-      floater.textContent = emoji;
-      dock.style.position = 'relative';
-      dock.appendChild(floater);
-      setTimeout(function(){ try{ dock.removeChild(floater); }catch(e){} }, 600);
-    }
-    if(typeof toast === 'function') toast(emoji + ' 따뜻한 응원을 전송했습니다! ✨');
-  }
-  window.triggerFloatingReaction = triggerFloatingReaction;
-
-  function openInAppDmSheet(){
-    triggerHapticFeedback(12);
-    var sheet = document.getElementById('commProfileBottomSheet');
-    if(sheet) sheet.style.display = (sheet.style.display === 'none' ? 'block' : 'none');
-    if(typeof toast === 'function') toast('안전한 인앱 1:1 대화방이 연결되었습니다 💬');
-  }
-  window.openInAppDmSheet = openInAppDmSheet;
   /* [#TASK-ES-439] paintSecurityCard → js/tabs/settings/quick-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.paintSecurityCard = paintSecurityCard;
   /* [#TASK-ES-439] refreshSecurityStatus → js/tabs/settings/quick-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
@@ -16504,16 +16404,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       blendedItems = window.OurgoalTopHelpful.arrange(blendedItems, curCat, { posts: FEED_POSTS_CACHE, rerender: function(){ if(state.activeTab==='comm' && state.commSubTab==='feed') renderCommFeed(body); } });
     }
 
-    var quickPostBannerHtml = '<div class="comm-quick-strip" style="display:none !important;">' +
-      '<div class="comm-quick-strip-left">' +
-        '<span style="font-size:1.15rem;">📢</span>' +
-        '<span class="comm-quick-strip-text">오늘 달성한 실천을 피드에 공유하고 동료들과 응원을 나눠보세요!</span>' +
-      '</div>' +
-      '<button class="btn btn-primary btn-sm" id="feedQuickPostBtn" type="button" onclick="openShareToFeedModal()" style="font-weight:700;border-radius:8px;padding:6px 12px;font-size:0.75rem;white-space:nowrap;cursor:pointer;flex:0 0 auto;">' +
-        '게시하기' +
-      '</button>' +
-    '</div>';
-
     var feedType = state.commFeedType || 'all';
     var typeFilterHtml = '<div class="comm-feed-type-bar">' +
       '<button type="button" class="comm-type-pill' + (feedType === 'all' ? ' active' : '') + '" data-feedtype="all">전체 피드</button>' +
@@ -16579,7 +16469,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     }
 
-    body.innerHTML = quickPostBannerHtml +
+    body.innerHTML = 
       typeFilterHtml +
       catChipsHtml +
       '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들' + stageLabel +
