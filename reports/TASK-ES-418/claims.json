@@ -1,0 +1,75 @@
+{
+  "task": "TASK-ES-418",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-418-CELL-SHORT-NAMES.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "세포지도 데이터에 세포마다 사용자가 알아보는 짧은 한국어 이름(name)을 둔다. 손으로 쓴 짧은 이름 → 「하는 일」 첫 구절(— 앞) → id 순으로 대신한다. 제품 코드 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "생성기는 짧은 이름을 손 이름, 하는 일 첫 구절, id 순으로 고른다",
+      "touches": ["scripts/cell-map-export.js"],
+      "check": { "type": "codeContains", "file": "scripts/cell-map-export.js", "text": "  const head = String(does || '').split(' — ')[0].trim();" }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "생성기는 세포마다 name 칸을 채운다",
+      "touches": ["scripts/cell-map-export.js"],
+      "check": { "type": "codeContains", "file": "scripts/cell-map-export.js", "text": "      name: shortName(shortNames[c.id], hand || fallback, c.id)," }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설명 파일에 DM 대화방 세포의 짧은 이름이 있다",
+      "touches": ["docs/architecture/cell-descriptions.json"],
+      "check": { "type": "jsonPath", "file": "docs/architecture/cell-descriptions.json", "path": "names.team-dm-room", "equals": "DM 대화방" }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "저장된 세포지도의 첫 세포(account-isolation)에 짧은 이름이 들어 있다",
+      "touches": ["docs/architecture/cell-map.json"],
+      "check": { "type": "jsonPath", "file": "docs/architecture/cell-map.json", "path": "cells.0.name", "equals": "계정 전환 격리" }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 이름이 없을 때 하는 일 첫 구절로 대신하는지 본다",
+      "touches": ["tests/cell-map-export-es414.test.js"],
+      "check": { "type": "codeContains", "file": "tests/cell-map-export-es414.test.js", "text": "  assert.strictEqual(exporter.shortName('', 'DM 대화방 화면 — 메시지 보기', 'x'), 'DM 대화방 화면');" }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-418 한 줄 기록",
+      "touches": ["dev_log.md"],
+      "check": { "type": "codeContains", "file": "dev_log.md", "text": "- 2026-10-05 TASK-ES-418: 세포지도 구조도 이름표" }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-418 한 줄 기록(4단계 심사 청구)",
+      "touches": ["docs/rules/TICKETS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/TICKETS.md", "text": "- #TASK-ES-418 | INFRA | [세포지도 짧은 이름표]" }
+    }
+  ]
+}

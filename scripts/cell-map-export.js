@@ -137,6 +137,14 @@ function reqFiles(root) {
   return map;
 }
 
+/** 구조도 이름표: 손으로 쓴 짧은 이름 → 「하는 일」 첫 구절(— 앞, 20자 이하) → 세포 id */
+function shortName(hand, does, id) {
+  if (hand && String(hand).trim()) return String(hand).trim();
+  const head = String(does || '').split(' — ')[0].trim();
+  if (head && head !== does && head.length <= 20) return head;
+  return id;
+}
+
 function areaOf(cell) {
   if (cell.kind === 'tab') return cell.tab;
   if (cell.kind === 'organ') return /^core\//.test(cell.id) ? 'organ-core' : 'organ-body';
@@ -184,6 +192,7 @@ function buildFrom(root, gitRoot) {
   const baseline = readJson(root, 'docs/architecture/module-baseline.json', { history: [] });
   const descDoc = readJson(root, 'docs/architecture/cell-descriptions.json', { cells: {} });
   const desc = descDoc.cells || {};
+  const shortNames = descDoc.names || {};
   const indexHtml = fs.existsSync(path.join(root, 'index.html')) ? fs.readFileSync(path.join(root, 'index.html'), 'utf8') : '';
   const indexScriptCode = metrics.blankCommentOnlyLines(metrics.inlineScripts(indexHtml).map(s => s.body).join('\n'));
   const loadedByIndex = new Set(allMatches(indexHtml, /<script[^>]*\bsrc="([^"?#]+)/).map(s => s.replace(/^\.\//, '')));
@@ -243,6 +252,8 @@ function buildFrom(root, gitRoot) {
       size: c.size,
       area: areaOf(s),
       tabs,
+      name: shortName(shortNames[c.id], hand || fallback, c.id),
+      nameSource: shortNames[c.id] ? 'hand' : 'derived',
       does: hand || fallback,
       doesSource: hand ? 'hand' : 'header',
       header: c.headerAll.slice(0, 4),
@@ -397,4 +408,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { build, buildFrom, trackedInputs, INPUT_PATHS, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };
+module.exports = { build, buildFrom, shortName, trackedInputs, INPUT_PATHS, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };
