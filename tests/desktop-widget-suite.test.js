@@ -17,7 +17,7 @@ const manifestPath = path.join(rootDir, 'manifest.json');
 const jsCompPath = path.join(rootDir, 'js', 'components.js');
 
 const widgetHtml = fs.readFileSync(widgetHtmlPath, 'utf8');
-const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8')); /* #TASK-ES-447 인라인 합본(원문 맨 앞 + js/tabs 세포) — 위젯 설정 창이 설정 탭 세포로 옮겨 가도 같은 글자를 찾는다 */
 const manifestJson = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 const componentsModule = require(jsCompPath);
 
