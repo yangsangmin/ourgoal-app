@@ -1,0 +1,7 @@
+{"id":"first-checkin-celebration","title":"게스트(기록 0건)로 홈 체크인 입력칸에 첫 실천을 적고 「기록」을 누르면 「첫 체크인(E1) 완주」 축하 창이 그 실천 글과 보너스 경험치를 담아 뜬다 — 옮긴 triggerFirstCheckinCelebrationModal(js/tabs/records/first-checkin-tutorial.js)이 이전 전과 같이 돈다","steps":[{"do":"goto","path":"/index.html"},{"do":"waitFor","selector":"#btnLandingPreviewDirect"},{"do":"click","selector":"#btnLandingPreviewDirect"},{"do":"waitFor","selector":"#captureInput","timeoutMs":15000},
+{"do":"type","selector":"#captureInput","text":"아침 30분 걷기"},
+{"do":"click","selector":"#captureSave"},
+{"expect":"textContains","selector":"#modalOverlay","text":"첫 체크인(E1) 완주","timeoutMs":8000},
+{"expect":"textContains","selector":"#modalOverlay","text":"\"아침 30분 걷기\" 실천이 안전하게 기록되었습니다."},
+{"expect":"textContains","selector":"#modalOverlay","text":"+10 EXP"},
+{"expect":"noExceptions"}]}
