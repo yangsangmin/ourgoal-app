@@ -1,0 +1,89 @@
+{
+ "id": "settings-guide-hub-and-restart",
+ "title": "게스트로 설정 탭 「데이터·계정」 묶음을 펼쳐 「고객지원 및 가이드」에서 「각 탭 200% 활용법」을 누르면 탭 활용법 허브 창이 열리고, 뒤로가기로 닫은 뒤 「앱 기본 가이드 다시보기」를 누르면 4대 탭 라이브 가이드(1 / 4 홈 화면 「오늘의 실천과 3초 체크인」)가 뜬다 — 옮긴 bindTabGuideHubButton·bindRestartGuideButton(js/tabs/settings/guide-buttons.js)이 등록한 처리기",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#setGroupDataSummary",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#setGroupDataSummary"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnTabGuideHub",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#btnTabGuideHub"
+  },
+  {
+   "do": "wait",
+   "ms": 500
+  },
+  {
+   "expect": "visible",
+   "selector": "#tabGuideHubModal"
+  },
+  {
+   "do": "back"
+  },
+  {
+   "do": "wait",
+   "ms": 600
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#tabGuideHubModal"
+  },
+  {
+   "do": "click",
+   "selector": "#btnRestartGuide"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "expect": "visible",
+   "selector": "#miniGuideOverlay"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#miniGuideOverlay",
+   "text": "오늘의 실천과 3초 체크인"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

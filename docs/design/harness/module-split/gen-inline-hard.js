@@ -298,6 +298,13 @@ for (const r of repl.slice().sort((a, b) => b.segStart - a.segStart)) {
 // (2) 머리 이음매: 구역 자리 표지 아래(없으면 #TASK-ES-423 이음매 다음에 자리 표지 묶음을 만든다)
 const usIdx = nh.findIndex((l, i) => i > sLine - 1 && l.includes('"use strict";'));
 const SLOT_RE = s => new RegExp('^  /\\* \\[어려움 이음매 자리 ' + s + '[ \\]]');
+// [#TASK-ES-524] 설정 newSlotBefore: 자리 묶음이 이미 있는데 이 구역 자리 표지가 없으면, 그 이름의 자리 표지 바로 앞에 이 구역 자리 표지 한 줄만 새로 둔다
+// (인라인 3단계 병렬 구역 — 다른 빌더가 쓰는 자리와 다른 줄이라 머리에서 병합 충돌이 나지 않는다. 주석 한 줄이라 토큰 0).
+if (CFG.newSlotBefore && !nh.some(l => SLOT_RE(CFG.slot).test(l))) {
+  const b = nh.findIndex(l => SLOT_RE(CFG.newSlotBefore).test(l));
+  if (b < 0) fail('newSlotBefore 자리 표지 없음: ' + CFG.newSlotBefore);
+  nh.splice(b, 0, '  /* [어려움 이음매 자리 ' + CFG.slot + '] */');
+}
 if (!nh.some(l => SLOT_RE(CFG.slot).test(l))) {
   const a = nh.findIndex(l => l.includes('[#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매'));
   if (a < 0) fail('1차 이음매(#TASK-ES-423) 없음');

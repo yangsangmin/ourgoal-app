@@ -1,0 +1,395 @@
+{
+ "task": "TASK-ES-562",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「[71] 앱 잠금 PIN (이 기기)」의 APP_LOCK_PIN_PREFIX 를 설정 세포 js/tabs/settings/app-lock-pin-format.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 표지 Z56)."
+  },
+  {
+   "id": "R2",
+   "text": "「Goal category templates」의 GOAL_TEMPLATES·ONBOARDING_PRESETS·QUICK_ACTIONS_BY_CAT 와 「결과 기록 (체크박스 대신 수치 입력)」의 RESULT_UNITS 를 목표 세포 js/tabs/goals/goal-category-templates.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R3",
+   "text": "로그인 화면 탭 단추 등록 문(bindAuthTabButtons)과 「P0: 비밀번호 찾기」의 openForgotPasswordModal 을 js/tabs/settings/auth-screen-actions.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R4",
+   "text": "「각 탭 200% 활용법 …」·「앱 활용 가이드 다시보기」 단추 등록 문(bindTabGuideHubButton·bindRestartGuideButton)을 js/tabs/settings/guide-buttons.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R5",
+   "text": "「1:1 고객 문의 / 버그 제보」 단추 등록 문(bindInquiryButtons·bindSupportEmailLink)을 js/tabs/settings/support-inquiry-bind.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R6",
+   "text": "옮기기 증명: verify(토큰·남은 글자·이중 처리기 0·키트 변수 뒤 가져오기·마지막 노출 setter), 이음매 순서 점검(L046·L047), 원본·새 파일 단독 로드 회귀 0, 게스트 조작 비교 차이 0, 신고서·설명·설정(tests 전후는 REQ 8절 측정 — main 이 움직이면 바뀌는 값이라 주장에 쓰지 않음, L002)."
+  },
+  {
+   "id": "R7",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 「계정」 묶음에서 앱 잠금 PIN 스위치를 눌러 4자리 PIN 을 두 번 넣고 「앱 잠금 켜기」를 누르면 「이 기기에 앱 잠금 PIN 을 설정했어요」 토스트가 뜨고 스위치가 켜지며 PIN 변경 칸이 보이고 예외가 없다 — 옮긴 APP_LOCK_PIN_PREFIX 로 해시 값을 만든다",
+   "touches": [
+    "js/tabs/settings/app-lock-pin-format.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-app-lock-pin-set.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 「새 목표」 → 「직접 설정할게요」를 누르면 목표 종류 칸 7개(공부·운동·사업·시험·여행·기타·직접 입력)가 보이고 「공부」 칸을 누르면 켜지며 예외가 없다 — 옮긴 GOAL_TEMPLATES 로 그린 칸",
+   "touches": [
+    "js/tabs/goals/goal-category-templates.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-new-goal-category-chips.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 첫 화면 「로그인」 → 로그인 화면 「로그인」 탭을 누르면 로그인 양식이 보이고 탭이 켜지며, 「비밀번호를 잊으셨나요?」를 누르면 재설정 창(가입 이메일 칸)이 열리고 예외가 없다 — 옮긴 bindAuthTabButtons·openForgotPasswordModal",
+   "touches": [
+    "js/tabs/settings/auth-screen-actions.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/auth-login-tab-forgot-password.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 「데이터 백업 & 고급 설정 / 고객지원」 묶음을 펼쳐 「각 탭 200% 활용법」을 누르면 활용법 허브 창이 열리고, 뒤로가기로 닫은 뒤 「앱 기본 가이드 다시보기」를 누르면 4대 탭 라이브 가이드 1단계가 뜨며 예외가 없다 — 옮긴 bindTabGuideHubButton·bindRestartGuideButton 이 등록한 처리기",
+   "touches": [
+    "js/tabs/settings/guide-buttons.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-guide-hub-and-restart.json"
+  },
+  {
+   "id": "C5",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 바닥글 「공식 지원」 이메일을 누르면 「공식 지원 이메일(ourgoal.support@gmail.com)이 복사되었습니다」 토스트가 뜨고 1:1 문의 창이 열리며 예외가 없다 — 옮긴 bindSupportEmailLink 가 등록한 처리기",
+   "touches": [
+    "js/tabs/settings/support-inquiry-bind.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-support-email-inquiry.json"
+  },
+  {
+   "id": "C6",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-562/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-562/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-562/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 종합 결과 ok",
+   "touches": [
+    "reports/TASK-ES-562/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "이음매 순서 점검: 키트 선언보다 앞선 가져오기 0 · 대입 이름 setter 빠짐 0(L046·L047)",
+   "touches": [
+    "reports/TASK-ES-562/seam-order-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/seam-order-check.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-562/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교(기준1 대 작업) 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-562/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 2회 사이 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-562/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-562/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 파일에 CSS 은폐 글자가 없다",
+   "touches": [
+    "js/tabs/settings/app-lock-pin-format.js"
+   ],
+   "check": {
+    "file": "js/tabs/settings/app-lock-pin-format.js",
+    "type": "codeNotContains",
+    "text": "!important"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/app-lock-pin-format 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/app-lock-pin-format\""
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/goal-category-templates 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/goal-category-templates\""
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/auth-screen-actions 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/auth-screen-actions\""
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/guide-buttons 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/guide-buttons\""
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/support-inquiry-bind 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/support-inquiry-bind\""
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일에 새 세포의 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"settings/app-lock-pin-format\": \"앱 잠금 PIN 형식\""
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정이 이음매 자리 Z56 를 쓴다",
+   "touches": [
+    "docs/design/harness/module-split/inline-stage3-z56-a.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-stage3-z56-a.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "Z56"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-562 | INFRA |"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-562:"
+   }
+  }
+ ]
+}

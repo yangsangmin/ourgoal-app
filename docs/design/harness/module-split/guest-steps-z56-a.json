@@ -1,0 +1,13 @@
+{"moved":["APP_LOCK_PIN_PREFIX","GOAL_TEMPLATES","openForgotPasswordModal","bindAuthTabButtons","bindTabGuideHubButton","bindRestartGuideButton","bindInquiryButtons","bindSupportEmailLink"],
+ "steps":[
+ {"name":"① 설정 탭 #screen-settings","tab":"settings","wait":1500,"read":"#screen-settings"},
+ {"name":"② 계정 묶음 펼침","click":"#setGroupAccountSummary","wait":800,"read":"#screen-settings"},
+ {"name":"③ 앱 잠금 스위치 → PIN 창 #modalOverlay","click":"#twoFactorSwitch","wait":1200,"read":"#modalOverlay","close":"#btnCancel2Fa"},
+ {"name":"④ 데이터 묶음 펼침 → 고객지원 및 가이드 칸(저장공간 추정치 줄은 index.html 크기에 따라 달라 읽지 않음)","click":"#setGroupDataSummary","wait":800,"read":".set-block:has(#btnTabGuideHub)"},
+ {"name":"⑤ 각 탭 활용법 허브 #modalOverlay","click":"#btnTabGuideHub","wait":1200,"read":"#modalOverlay","close":"#btnTabGuideClose"},
+ {"name":"⑥ 1:1 문의 창 #modalOverlay","click":"#feedbackInquiryBtn","wait":1200,"read":"#modalOverlay"},
+ {"name":"⑦ 홈 새 목표 창 #modalOverlay","tab":"home","click":"#homeAddGoal","wait":1500,"read":"#modalOverlay"},
+ {"name":"⑧ 직접 설정 → 종류 칸 #mCatGrid","click":"#ngManualBtn","wait":1200,"read":"#mCatGrid"},
+ {"name":"⑨ 공부 칸 누름 #mCatGrid","click":"#mCatGrid [data-cat=\"study\"]","wait":600,"read":"#mCatGrid","close":"#mCancel"},
+ {"name":"⑩ 설정 지원 이메일 → 토스트 #toast","tab":"settings","click":"#footSupportEmailLink","wait":800,"read":"#toast"}
+]}

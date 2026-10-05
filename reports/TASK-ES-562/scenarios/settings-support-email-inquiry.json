@@ -1,0 +1,57 @@
+{
+ "id": "settings-support-email-inquiry",
+ "title": "게스트로 설정 탭 바닥글 「공식 지원」 이메일을 누르면 「공식 지원 이메일(ourgoal.support@gmail.com)이 복사되었습니다」 토스트가 뜨고 1:1 문의 창(문의 유형 칸)이 열린다 — 옮긴 bindSupportEmailLink(js/tabs/settings/support-inquiry-bind.js)가 등록한 처리기",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#footSupportEmailLink",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#footSupportEmailLink"
+  },
+  {
+   "do": "wait",
+   "ms": 600
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "공식 지원 이메일(ourgoal.support@gmail.com)이 복사되었습니다"
+  },
+  {
+   "expect": "visible",
+   "selector": "#inquiryType"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
