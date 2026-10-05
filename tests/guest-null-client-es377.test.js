@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
+const HTML = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')).replace(/\r\n/g, '\n'); /* #TASK-ES-447 인라인 합본(원문 맨 앞 + js/tabs 세포) — 피드 동기화 함수가 소통 탭 세포로 옮겨 가도 같은 소스를 잘라 돌린다 */
 
 let n = 0;
 async function check(title, fn) {
