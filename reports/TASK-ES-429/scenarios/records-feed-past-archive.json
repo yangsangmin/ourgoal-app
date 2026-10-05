@@ -1,0 +1,18 @@
+{
+  "id": "records-feed-past-archive",
+  "title": "게스트로 기록 탭에 들어가 포커스 성소 기록 모드 바(#sRecModesWrap)의 「📝 실천 타임라인」을 누르면 성소 기록 칸(#sanctuaryRecordsView)에 내 기록 피드(.s-feed-header 「나의 체크인 & 회고 피드 (0건)」)와 기록 없음 안내(「등록된 기록이 없습니다.」)가 그려진다 — 피드 그리기(renderSanctuaryRecords 의 feed 분기 본문)를 js/sanctuary-record-feed.js 로 옮기고 원본은 그 함수를 부르는 한 줄이 됐으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#sRecModesWrap", "timeoutMs": 8000 },
+    { "do": "click", "selector": "#sRecModesWrap .s-rec-mode-btn:nth-child(3)" },
+    { "expect": "hasClass", "selector": "#sRecModesWrap .s-rec-mode-btn:nth-child(3)", "className": "active", "timeoutMs": 5000 },
+    { "expect": "visible", "selector": "#sanctuaryRecordsView .s-feed-header", "timeoutMs": 5000 },
+    { "expect": "textContains", "selector": "#sanctuaryRecordsView .s-feed-header", "text": "회고 피드 (0건)" },
+    { "expect": "textContains", "selector": "#sanctuaryRecordsView .s-feed-container", "text": "등록된 기록이 없습니다." },
+    { "expect": "noExceptions" }
+  ]
+}

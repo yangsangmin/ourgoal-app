@@ -1,12 +1,12 @@
 # index.html 인라인 스크립트 책임 묶음 지도
 
 > 생성: `NODE_PATH=<node_modules> node scripts/inline-script-map.js --write` (#TASK-ES-423). **손으로 고치지 않는다** — 다시 만들면 같은 입력에서 같은 글자가 나온다(결정적).
-> 출처: `index.html` sha256 앞 12자 `17afecdb1b55` · 큰 인라인 IIFE 2331~34969줄(32639줄) · 다른 인라인 블록 4줄(8줄), 34972줄(16줄).
+> 출처: `index.html` sha256 앞 12자 `9b28eb45ae31` · 큰 인라인 IIFE 2331~34969줄(32639줄) · 다른 인라인 블록 4줄(8줄), 34972줄(16줄).
 
 ## 1. 요약
 
 - 묶음 182개(이음매 7 · 옮길 대상 148 · 빈 구획 27). 묶음 = IIFE 최상위 구획 주석 `/* ============ 제목 ============ */` 에서 다음 구획 주석 앞까지.
-- 최상위 함수 523 · 최상위 변수 198 · window 전역 대입 246줄(module-metrics ③ 의 index.html 몫과 같은 정규식) · addEventListener 430 · on<이벤트> 대입 357 · 로드 중 바로 도는 최상위 문 324 · 인라인 on*="…" 처리기가 부르는 IIFE 이름 46개.
+- 최상위 함수 523 · 최상위 변수 198 · window 전역 대입 246줄(module-metrics ③ 의 index.html 몫과 같은 정규식) · addEventListener 430 · on<이벤트> 대입 357 · 로드 중 바로 도는 최상위 문 324 · 인라인 on*="…" 처리기가 부르는 IIFE 이름 45개.
 - 난이도 묶음 수(줄): 쉬움 22(731줄) · 보통 57(7714줄) · 어려움 69(23457줄) · 빈 구획 27(496줄) · 이음매(옮기지 않음) 7(241줄).
 
 ### 난이도 점수(낮을수록 안전하게 옮긴다)
@@ -28,7 +28,7 @@
 | G094 | 맞춤 피드백 봇 설정 | 1085 | 18 | 어려움(81) | 1/2/9 | 7 | 13 | 17(10) |
 | G137 | CSV / 엑셀 양방향 연동 & 스마트워치 매핑 & 목표 3각 추적 | 864 | 11 | 어려움(31) | 0/0/2 | 0 | 1 | 9(6) |
 | G130 | 전문적(내 전용 템플릿) 기록하기 & 일정 연동 | 850 | 7 | 어려움(27) | 0/0/2 | 0 | 4 | 3(2) |
-| G072 | [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달 | 829 | 7 | 어려움(118) | 0/0/7 | 1 | 18 | 19(10) |
+| G072 | [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달 | 829 | 7 | 어려움(120) | 0/0/7 | 1 | 18 | 19(10) |
 | G065 | [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템 | 778 | 24 | 어려움(73) | 0/1/7 | 1 | 12 | 18(12) |
 | G114 | [#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템 | 744 | 1 | 어려움(51) | 0/1/5 | 8 | 1 | 12(6) |
 | G095 | 목표 & 기록 선택 피드 공유 모달 (전면 고도화) | 739 | 2 | 어려움(44) | 1/2/5 | 1 | 3 | 17(7) |
@@ -89,16 +89,16 @@
 | G011 | 2688~2711 | 24 | Utilities | 7 | 0 | 어려움(113) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 66/0 | 0 | 5(4) |
 | G012 | 2712~2736 | 25 | [#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가 표준시 00:00) 기 | 2 | 0 | 어려움(54) | 0 · 0 · 1 | 2 | 0/0 | 1 | 0 | 37/1 | 1 | 3(2) |
 | G013 | 2737~2834 | 98 | 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 | 9 | 0 | 어려움(78) | 0 · 0 · 2 | 0 | 0/0 | 0 | 0 | 33/1 | 0 | 8(6) |
-| G014 | 2835~2908 | 74 | Confetti | 3 | 1 | 어려움(197) | 0 · 0 · 1 | 3 | 0/2 | 2 | 1 | 94/3 | 93 | 1(0) |
+| G014 | 2835~2908 | 74 | Confetti | 3 | 1 | 어려움(203) | 0 · 0 · 1 | 3 | 0/2 | 2 | 1 | 94/3 | 99 | 1(0) |
 | G015 | 2909~2926 | 18 | Storage (Supabase: goals & checkins; localStorage: settings) | 1 | 0 | 보통(19) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 2/0 | 0 | 5(4) |
 | G016 | 2927~2942 | 16 | 8대 화면 스타일 (테마) 정의 | 0 | 1 | 보통(12) | 0 · 0 · 1 | 2 | 0/0 | 1 | 0 | 0/0 | 4 | 2(1) |
-| G017 | 2943~3086 | 144 | 가상유저 개선 10대 핵심 헬퍼 함수 | 7 | 1 | 어려움(126) | 0 · 0 · 0 | 1 | 0/0 | 1 | 2 | 47/4 | 15 | 13(9) |
+| G017 | 2943~3086 | 144 | 가상유저 개선 10대 핵심 헬퍼 함수 | 7 | 1 | 어려움(127) | 0 · 0 · 0 | 1 | 0/0 | 1 | 2 | 47/4 | 16 | 13(9) |
 | G018 | 3087~3138 | 52 | [#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정 격리 | 6 | 1 | 어려움(33) | 0 · 1 · 2 | 3 | 0/0 | 1 | 0 | 14/1 | 1 | 4(3) |
 | G019 | 3139~3146 | 8 | 구독 상태 (전체 기능 100% 완전 무료 제공) | 1 | 0 | 쉬움(6) | 0 · 0 · 1 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 1(0) |
 | G020 | 3147~3252 | 106 | XP/레벨 시스템 | 3 | 0 | 어려움(71) | 0 · 0 · 7 | 6 | 0/2 | 6 | 0 | 8/7 | 8 | 14(10) |
 | G021 | 3253~3411 | 159 | [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 | 3 | 6 | 어려움(37) | 0 · 0 · 2 | 2 | 6/0 | 14 | 0 | 1/2 | 1 | 4(1) |
 | G022 | 3412~3419 | 8 | #TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트) | 0 | 1 | 보통(10) | 0 · 0 · 2 | 2 | 0/0 | 2 | 0 | 0/0 | 2 | 1(0) |
-| G023 | 3420~3769 | 350 | 뱃지 컬렉션 (명예의 전당) | 8 | 2 | 어려움(185) | 0 · 0 · 3 | 4 | 1/0 | 4 | 0 | 11/9 | 112 | 22(14) |
+| G023 | 3420~3769 | 350 | 뱃지 컬렉션 (명예의 전당) | 8 | 2 | 어려움(192) | 0 · 0 · 3 | 4 | 1/0 | 4 | 0 | 11/9 | 119 | 22(14) |
 | G024 | 3770~3860 | 91 | [70] 활성 로그인 기기 목록 실시간 렌더링 & 개별 세션 로그아웃 | 2 | 0 | 쉬움(8) | 0 · 0 · 2 | 0 | 1/0 | 0 | 0 | 3/4 | 0 | 2(1) |
 | G025 | 3861~3959 | 99 | [70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달 | 1 | 0 | 보통(16) | 0 · 0 · 3 | 1 | 2/0 | 1 | 0 | 3/6 | 1 | 4(2) |
 | G026 | 3960~4194 | 235 | [71] 앱 잠금 PIN (이 기기) — 설정·해제·앱 진입 확인 | 8 | 1 | 보통(20) | 0 · 0 · 2 | 5 | 8/0 | 2 | 0 | 2/5 | 1 | 5(2) |
@@ -107,7 +107,7 @@
 | G029 | 4667~4670 | 4 | [82] 팀 목표 내 '팀 연계 개인목표' 생성 모달 | 0 | 0 | 빈 구획(5) | 0 · 0 · 1 | 1 | 0/0 | 1 | 0 | 0/0 | 1 | 1(0) |
 | G030 | 4671~4675 | 5 | [83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능 | 0 | 0 | 빈 구획(8) | 0 · 0 · 1 | 1 | 0/0 | 1 | 0 | 0/0 | 4 | 1(0) |
 | G031 | 4676~4679 | 4 | [88] 오늘의 3초 체크인 목표 버튼 선택 시 플레이스홀더(백그라운드 가이드) 예시 문구 렌더링 | 0 | 0 | 빈 구획(5) | 0 · 0 · 1 | 1 | 0/0 | 1 | 0 | 0/0 | 1 | 0(0) |
-| G032 | 4680~4920 | 241 | [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업 | 5 | 0 | 어려움(197) | 0 · 0 · 4 | 7 | 6/0 | 5 | 0 | 70/6 | 65 | 18(14) |
+| G032 | 4680~4920 | 241 | [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업 | 5 | 0 | 어려움(200) | 0 · 0 · 4 | 7 | 6/0 | 5 | 0 | 70/6 | 68 | 18(14) |
 | G033 | 4921~5033 | 113 | 서버 관리자 API를 통한 기록 및 프로필 복구 (#TASK-ES-036) | 1 | 0 | 어려움(31) | 0 · 0 · 4 | 0 | 0/0 | 0 | 0 | 3/3 | 0 | 12(8) |
 | G034 | 5034~5034 | 1 | Landing | 0 | 0 | 빈 구획(0) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 0(0) |
 | G035 | 5035~5193 | 159 | [#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저 감지 및 Android Chrome | 2 | 2 | 어려움(51) | 0 · 1 · 2 | 2 | 7/2 | 9 | 0 | 0/6 | 0 | 12(9) |
@@ -130,7 +130,7 @@
 | G052 | 6664~6897 | 234 | Onboarding (first-time, after signup) — 16종 동물 아바타 & 직관적 안착  | 1 | 1 | 보통(25) | 0 · 1 · 3 | 2 | 7/0 | 1 | 0 | 2/7 | 0 | 8(5) |
 | G053 | 6898~7143 | 246 | 3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출 | 7 | 0 | 어려움(37) | 0 · 1 · 5 | 3 | 2/1 | 3 | 0 | 3/8 | 0 | 10(6) |
 | G054 | 7144~7427 | 284 | 최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합 | 5 | 2 | 어려움(30) | 0 · 0 · 3 | 1 | 12/9 | 3 | 0 | 3/4 | 0 | 7(4) |
-| G055 | 7428~7552 | 125 | 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항) | 3 | 0 | 어려움(82) | 0 · 1 · 8 | 3 | 1/0 | 3 | 2 | 25/3 | 28 | 5(2) |
+| G055 | 7428~7552 | 125 | 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항) | 3 | 0 | 어려움(85) | 0 · 1 · 8 | 3 | 1/0 | 3 | 2 | 25/3 | 31 | 5(2) |
 | G056 | 7553~7694 | 142 | Modal helper & Android Hardware Back Handler | 5 | 2 | 어려움(141) | 0 · 0 · 0 | 5 | 1/5 | 2 | 1 | 63/0 | 52 | 10(5) |
 | G057 | 7695~7700 | 6 | 이용약관 & 개인정보처리방침 모달 | 0 | 0 | 빈 구획(5) | 0 · 0 · 1 | 1 | 0/0 | 1 | 0 | 0/0 | 1 | 1(0) |
 | G058 | 7701~7730 | 30 | 안내 모달 (전체 기능 100% 완전 무료 제공) | 2 | 0 | 쉬움(6) | 0 · 0 · 1 | 1 | 0/1 | 1 | 0 | 2/1 | 0 | 2(0) |
@@ -147,7 +147,7 @@
 | G069 | 9995~10174 | 180 | 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 | 1 | 0 | 어려움(39) | 0 · 0 · 2 | 1 | 0/9 | 1 | 0 | 6/9 | 4 | 16(8) |
 | G070 | 10175~10665 | 491 | 캘린더 수동 일정 편집 모달 (Req 2 & #TASK-ES-253) | 1 | 0 | 어려움(28) | 0 · 1 · 5 | 0 | 0/10 | 0 | 0 | 3/9 | 0 | 13(6) |
 | G071 | 10666~10915 | 250 | [#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync) | 3 | 0 | 보통(16) | 0 · 0 · 1 | 0 | 0/0 | 0 | 0 | 3/6 | 0 | 6(4) |
-| G072 | 10916~11744 | 829 | [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달 | 7 | 1 | 어려움(118) | 0 · 0 · 7 | 13 | 0/14 | 1 | 0 | 18/15 | 28 | 19(10) |
+| G072 | 10916~11744 | 829 | [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달 | 7 | 1 | 어려움(120) | 0 · 0 · 7 | 13 | 0/14 | 1 | 0 | 18/15 | 30 | 19(10) |
 | G073 | 11745~12000 | 256 | 5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001) | 3 | 4 | 어려움(37) | 0 · 0 · 5 | 0 | 0/0 | 0 | 0 | 3/7 | 0 | 12(8) |
 | G074 | 12001~12031 | 31 | Adaptive UX Mode | 3 | 0 | 쉬움(6) | 0 · 0 · 0 | 1 | 0/0 | 1 | 1 | 1/2 | 0 | 1(0) |
 | G075 | 12032~12264 | 233 | Social Crew Pacing (#TASK-ES-228) | 4 | 0 | 어려움(35) | 0 · 1 · 4 | 4 | 0/4 | 4 | 2 | 1/5 | 0 | 5(4) |
@@ -180,7 +180,7 @@
 | G102 | 18230~18230 | 1 | 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) | 0 | 0 | 빈 구획(0) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 0(0) |
 | G103 | 18231~18791 | 561 | 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) | 8 | 0 | 어려움(37) | 0 · 1 · 3 | 4 | 11/1 | 1 | 0 | 4/11 | 4 | 11(6) |
 | G104 | 18792~19249 | 458 | 목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5) | 4 | 1 | 보통(13) | 0 · 0 · 2 | 1 | 16/0 | 5 | 0 | 0/9 | 0 | 1(0) |
-| G105 | 19250~19419 | 170 | 목표 보관(기록으로 옮기기) | 3 | 0 | 어려움(140) | 0 · 1 · 2 | 4 | 1/0 | 2 | 1 | 4/7 | 112 | 4(2) |
+| G105 | 19250~19419 | 170 | 목표 보관(기록으로 옮기기) | 3 | 0 | 어려움(147) | 0 · 1 · 2 | 4 | 1/0 | 2 | 1 | 4/7 | 119 | 4(2) |
 | G106 | 19420~19517 | 98 | 현재 종합상황 (AI 요약) | 4 | 0 | 보통(21) | 0 · 1 · 1 | 0 | 0/0 | 0 | 0 | 3/5 | 0 | 6(5) |
 | G107 | 19518~19543 | 26 | 오늘의 미션 | 3 | 0 | 보통(12) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 1/0 | 0 | 3(2) |
 | G108 | 19544~19621 | 78 | [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 | 2 | 0 | 어려움(27) | 0 · 1 · 2 | 1 | 0/1 | 1 | 0 | 2/5 | 0 | 9(6) |
@@ -214,7 +214,7 @@
 | G136 | 27371~27492 | 122 | Notion 실제 표 내보내기 & 클립보드 복사 모달 (혁신 4) | 1 | 0 | 보통(9) | 0 · 0 · 2 | 0 | 0/4 | 0 | 0 | 1/4 | 0 | 4(2) |
 | G137 | 27493~28356 | 864 | CSV / 엑셀 양방향 연동 & 스마트워치 매핑 & 목표 3각 추적 | 11 | 2 | 어려움(31) | 0 · 0 · 2 | 0 | 0/29 | 0 | 0 | 1/4 | 0 | 9(6) |
 | G138 | 28357~29735 | 1379 | 템플릿 복제 보상형 광고(Rewarded Ad) 파이프라인 (TASK-ES-013) | 12 | 0 | 어려움(52) | 0 · 1 · 9 | 1 | 3/49 | 2 | 0 | 6/24 | 0 | 13(5) |
-| G139 | 29736~29771 | 36 | [#TASK-ES-358] 기록 탭 렌더 → js/tabs/records/period-ai-card.js · | 0 | 0 | 빈 구획(44) | 0 · 1 · 2 | 7 | 0/0 | 2 | 0 | 0/5 | 26 | 4(1) |
+| G139 | 29736~29771 | 36 | [#TASK-ES-358] 기록 탭 렌더 → js/tabs/records/period-ai-card.js · | 0 | 0 | 빈 구획(46) | 0 · 1 · 2 | 7 | 0/0 | 2 | 0 | 0/5 | 28 | 4(1) |
 | G140 | 29772~30383 | 612 | 위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용) | 7 | 2 | 어려움(69) | 0 · 1 · 8 | 0 | 11/9 | 10 | 1 | 8/17 | 0 | 12(8) |
 | G141 | 30384~30416 | 33 | 테마별 기록 DB 다운로드 & 외부 AI 분석 프롬프트 번들 (TASK-OG-001) | 2 | 0 | 보통(18) | 0 · 0 · 3 | 0 | 0/0 | 0 | 0 | 2/2 | 0 | 2(1) |
 | G142 | 30417~30417 | 1 | RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11) | 0 | 0 | 빈 구획(0) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 0(0) |
@@ -256,7 +256,7 @@
 | G178 | 34905~34912 | 8 | #TASK-ES-105: 팀 초대 및 소통/DM/동반자 모듈(js/team-invite-comm.js) 연결 | 0 | 0 | 빈 구획(16) | 0 · 0 · 5 | 0 | 0/0 | 1 | 0 | 0/7 | 0 | 8(3) |
 | G179 | 34913~34921 | 9 | #TASK-ES-105: 팀 연계 개인목표 및 상호 체크 모듈(js/team-linked-goals.js)  | 0 | 0 | 빈 구획(18) | 0 · 0 · 5 | 0 | 0/0 | 2 | 0 | 0/11 | 0 | 5(3) |
 | G180 | 34922~34926 | 5 | KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸 | 0 | 0 | 빈 구획(4) | 0 · 0 · 2 | 0 | 0/0 | 1 | 0 | 0/2 | 0 | 1(0) |
-| G181 | 34927~34969 | 43 | PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) | 0 | 0 | 빈 구획(132) | 0 · 0 · 3 | 8 | 5/0 | 10 | 0 | 0/7 | 92 | 5(3) |
+| G181 | 34927~34969 | 43 | PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) | 0 | 0 | 빈 구획(135) | 0 · 0 · 3 | 8 | 5/0 | 10 | 0 | 0/7 | 95 | 5(3) |
 
 ## 5. 묶음별 의존 상세 (옮길 대상만, 권장 순서)
 
@@ -975,7 +975,7 @@
 - 이벤트 처리기: addEventListener 5 · on<이벤트> 대입 5
 - 부르는 묶음(들어옴): G003×1, G069×1, G072×1
 - 부르는 대상(나감): G014×6, G056×4, G069×4, G032×2, G066×1
-- 바깥 js 가 window 이름을 씀: js/sanctuary-v3-engine.js, js/tabs/calendar/day-detail.js, js/tabs/calendar/render.js
+- 바깥 js 가 window 이름을 씀: js/sanctuary-calendar-actions.js, js/tabs/calendar/day-detail.js, js/tabs/calendar/render.js
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/test-shipyard-modular.js, scripts/verify-all-clicks.js, scripts/verify-integrity-gate.js, tests/core-confirm-es374.test.js, tests/core-confirm-es376.test.js, tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js (index.html 단독 읽기: tests/core-confirm-es376.test.js, tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js)
 
 ### G125 기록 히트맵 (GitHub 히트맵 스타일)
@@ -1432,7 +1432,7 @@
 - 이벤트 처리기: addEventListener 0 · on<이벤트> 대입 9
 - 부르는 묶음(들어옴): G068×4, G070×4, G138×3, G003×1, G072×1, G103×1
 - 부르는 대상(나감): G056×2, G066×2, G070×2, G138×2, G013×1, G065×1, G067×1, G068×1, G103×1
-- 바깥 js 가 window 이름을 씀: js/calendar-attachment.js, js/sanctuary-v3-engine.js, js/tabs/calendar/day-detail.js, js/tabs/calendar/render.js
+- 바깥 js 가 window 이름을 씀: js/calendar-attachment.js, js/sanctuary-calendar-actions.js, js/tabs/calendar/day-detail.js, js/tabs/calendar/render.js
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/test-calendar-attachments.js, scripts/test-shipyard-modular.js, scripts/verify-all-clicks.js, scripts/verify-integrity-gate.js, tests/avatar-10slots-growth.test.js, tests/core-confirm-es374.test.js, tests/core-confirm-es376.test.js 외 8 (index.html 단독 읽기: scripts/test-calendar-attachments.js, tests/avatar-10slots-growth.test.js, tests/core-confirm-es376.test.js, tests/gcal-login-reconnect-fix.test.js, tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js, tests/routine-tab-scheduler.test.js, tests/schedule-goal-sync.test.js)
 
 ### G170 Render all
@@ -1783,7 +1783,7 @@
 
 ### G055 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항)
 
-- 7428~7552줄(125줄) · 어려움(82)
+- 7428~7552줄(125줄) · 어려움(85)
 - 함수(3): initShipyardRegistry, setTab, switchTab
 - 다른 묶음 상태 — 대입: 없음 · 변경: state · 읽기: navButtons, renderCalendarScreen, renderCommScreen, renderGoalsScreen, renderRecordsScreen, renderSettingsScreen, screens, state
 - 로드 중 문 3: TryStatement 1 · 호출 1 · IfStatement 1
@@ -1792,7 +1792,7 @@
 - 인라인 on*="…" 이 부르는 함수: setTab, switchTab
 - 부르는 묶음(들어옴): G075×8, G094×7, G054×4, G081×4, G128×4, G063×3, G140×3, G181×3, G047×2, G051×2 외 15
 - 부르는 대상(나감): G079×3, G140×2, G054×1
-- 바깥 js 가 window 이름을 씀: js/core/event-bus.js, js/core/registry.js, js/notify-engine.js, js/sanctuary-v3-engine.js, js/stats-import.js, js/tabs/calendar/day-detail.js, js/tabs/calendar/index.js, js/tabs/comm/index.js 외 20
+- 바깥 js 가 window 이름을 씀: js/core/event-bus.js, js/core/registry.js, js/notify-engine.js, js/sanctuary-calendar-actions.js, js/sanctuary-goal-trail.js, js/sanctuary-record-feed.js, js/sanctuary-v3-engine.js, js/stats-import.js 외 23
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/verify-integrity-gate.js, tests/new-module.test.js, tests/records-tab-rename.test.js, tests/top-page-guide-reposition.test.js (index.html 단독 읽기: tests/records-tab-rename.test.js, tests/top-page-guide-reposition.test.js)
 
 ### G121 개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135)
@@ -1818,7 +1818,7 @@
 
 ### G072 [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달
 
-- 10916~11744줄(829줄) · 어려움(118)
+- 10916~11744줄(829줄) · 어려움(120)
 - 함수(7): computeStreakDays, maybeApplyStreakFreeze, maybeGrantAvatarCraftBonus, maybeGrantStreakFreeze, openLockScreenHubModal, streakBadgeHtml, updateAppBadge
 - 변수(1): STREAK_FREEZE_MAX
 - 다른 묶음 상태 — 대입: 없음 · 변경: 없음 · 읽기: calShift, escapeHtml, generateLockScreenCalendarImage, generateLockScreenScheduleCardImage, renderCalendarScreen, setRecordsSegment, state
@@ -1827,13 +1827,13 @@
 - 이벤트 처리기: addEventListener 0 · on<이벤트> 대입 14
 - 부르는 묶음(들어옴): G051×6, G089×5, G073×4, G079×4, G140×4, G008×3, G032×2, G071×2, G154×2, G157×2 외 8
 - 부르는 대상(나감): G014×18, G011×8, G071×8, G143×7, G017×4, G056×3, G012×2, G018×2, G032×2, G166×2 외 5
-- 바깥 js 가 window 이름을 씀: js/avatar/feature-cards.js, js/calendar-attachment.js, js/components-auth-actions.js, js/components-avatar-actions.js, js/components-feed-actions.js, js/components-goal-actions.js, js/components-home-actions.js, js/components-record-actions.js 외 20
+- 바깥 js 가 window 이름을 씀: js/avatar/feature-cards.js, js/calendar-attachment.js, js/components-auth-actions.js, js/components-avatar-actions.js, js/components-feed-actions.js, js/components-goal-actions.js, js/components-home-actions.js, js/components-record-actions.js 외 22
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/test-shipyard-modular.js, scripts/verify-all-clicks.js, scripts/verify-integrity-gate.js, tests/account-switch-isolation.test.js, tests/achievement-graph-multiset.test.js, tests/avatar-10slots-growth.test.js, tests/desktop-widget-suite.test.js 외 11 (index.html 단독 읽기: tests/account-switch-isolation.test.js, tests/avatar-10slots-growth.test.js, tests/desktop-widget-suite.test.js, tests/direct-login-guard.test.js, tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js, tests/logout-scope-es399.test.js, tests/push-subscribe-auth-es400.test.js 외 2)
 - smoke-test FN_NAMES: computeStreakDays, maybeApplyStreakFreeze, maybeGrantStreakFreeze, updateAppBadge — 옮기려면 시험지 선행 PR 먼저
 
 ### G017 가상유저 개선 10대 핵심 헬퍼 함수
 
-- 2943~3086줄(144줄) · 어려움(126)
+- 2943~3086줄(144줄) · 어려움(127)
 - 함수(7): calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, filterFeedByCategory, reorderMilestones, triggerHaptic, triggerHapticFeedback
 - 변수(1): OfflineSyncManager
 - 로드 중 문 1: window 노출 1
@@ -1841,24 +1841,9 @@
 - 인라인 on*="…" 이 부르는 함수: triggerHaptic, triggerHapticFeedback
 - 부르는 묶음(들어옴): G121×21, G027×18, G095×17, G083×16, G112×15, G026×14, G086×14, G075×12, G104×12, G035×10 외 37
 - 부르는 대상(나감): G011×4, G012×1, G141×1, G143×1
-- 바깥 js 가 window 이름을 씀: js/avatar/dynamic-album.js, js/components-schedule-actions.js, js/sanctuary-v3-engine.js, js/tabs/calendar/render.js, js/tabs/comm/render.js, js/tabs/goals/goal-detail-events.js, js/tabs/goals/render.js, js/tabs/records/render.js 외 7
+- 바깥 js 가 window 이름을 씀: js/avatar/dynamic-album.js, js/components-schedule-actions.js, js/sanctuary-peer-radar.js, js/sanctuary-v3-engine.js, js/tabs/calendar/render.js, js/tabs/comm/render.js, js/tabs/goals/goal-detail-events.js, js/tabs/goals/render.js 외 8
 - 시험지 글자 의존: scripts/smoke-test.js, tests/account-switch-isolation.test.js, tests/core-confirm-es376.test.js, tests/dm-push-auth-es397.test.js, tests/feed-post-category-diversity.test.js, tests/goal-templates-data-split.test.js, tests/schedule-goal-sync.test.js, tests/schedule-notification-setting.test.js 외 5 (index.html 단독 읽기: tests/account-switch-isolation.test.js, tests/core-confirm-es376.test.js, tests/goal-templates-data-split.test.js, tests/schedule-goal-sync.test.js, tests/team-fold-state-es409.test.js, tests/team-level-accordion-es406.test.js, tests/team-level-management.test.js, tests/team-tasks-toggle-es410.test.js 외 1)
 - smoke-test FN_NAMES: calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, filterFeedByCategory, reorderMilestones, triggerHaptic — 옮기려면 시험지 선행 PR 먼저
-
-### G105 목표 보관(기록으로 옮기기)
-
-- 19250~19419줄(170줄) · 어려움(140)
-- 함수(3): goalAchievement, renderArchivedGoals, restoreGoal
-- 다른 묶음 상태 — 대입: 없음 · 변경: state · 읽기: escapeHtml, state
-- 로드 중 문 2: window 노출 2
-- window 노출(4줄): setArchivedPage, setArchivedPeriod, state
-- 이벤트 처리기: addEventListener 1 · on<이벤트> 대입 0
-- 인라인 on*="…" 이 부르는 함수: restoreGoal
-- 부르는 묶음(들어옴): G071×2, G002×1, G004×1, G179×1
-- 부르는 대상(나감): G061×3, G012×1, G014×1, G032×1, G055×1, G146×1, G170×1
-- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js, js/avatar/xp.js 외 104
-- 시험지 글자 의존: scripts/smoke-test.js, scripts/verify-all-clicks.js, tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js (index.html 단독 읽기: tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js)
-- smoke-test FN_NAMES: goalAchievement — 옮기려면 시험지 선행 PR 먼저
 
 ### G056 Modal helper & Android Hardware Back Handler
 
@@ -1873,9 +1858,24 @@
 - 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js, js/components-home-actions.js, js/components.js, js/core/confirm.js, js/core/modal.js 외 44
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/verify-all-clicks.js, scripts/verify-integrity-gate.js, tests/core-confirm-es374.test.js, tests/core-confirm-es376.test.js, tests/core-modal-es363.test.js, tests/dm-push-auth-es397.test.js, tests/goals-schedule-sync.test.js 외 2 (index.html 단독 읽기: tests/core-confirm-es376.test.js, tests/core-modal-es363.test.js, tests/goals-schedule-sync.test.js, tests/google-session-guard.test.js, tests/guest-null-client-es377.test.js)
 
+### G105 목표 보관(기록으로 옮기기)
+
+- 19250~19419줄(170줄) · 어려움(147)
+- 함수(3): goalAchievement, renderArchivedGoals, restoreGoal
+- 다른 묶음 상태 — 대입: 없음 · 변경: state · 읽기: escapeHtml, state
+- 로드 중 문 2: window 노출 2
+- window 노출(4줄): setArchivedPage, setArchivedPeriod, state
+- 이벤트 처리기: addEventListener 1 · on<이벤트> 대입 0
+- 인라인 on*="…" 이 부르는 함수: restoreGoal
+- 부르는 묶음(들어옴): G071×2, G002×1, G004×1, G179×1
+- 부르는 대상(나감): G061×3, G012×1, G014×1, G032×1, G055×1, G146×1, G170×1
+- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js, js/avatar/xp.js 외 111
+- 시험지 글자 의존: scripts/smoke-test.js, scripts/verify-all-clicks.js, tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js (index.html 단독 읽기: tests/goals-schedule-sync.test.js, tests/guest-null-client-es377.test.js)
+- smoke-test FN_NAMES: goalAchievement — 옮기려면 시험지 선행 PR 먼저
+
 ### G023 뱃지 컬렉션 (명예의 전당)
 
-- 3420~3769줄(350줄) · 어려움(185)
+- 3420~3769줄(350줄) · 어려움(192)
 - 함수(8): badgeContext, defaultProfile, ensureUserRow, formatDisplayNameWithTag, loadProfile, openHallOfFame, resolveUniqueDisplayName, totalCompletedMilestones
 - 변수(2): BADGES, state
 - 다른 묶음 상태 — 대입: 없음 · 변경: 없음 · 읽기: escapeHtml, levelForXP, sb
@@ -1884,13 +1884,13 @@
 - 이벤트 처리기: addEventListener 1 · on<이벤트> 대입 0
 - 부르는 묶음(들어옴): G171×5, G045×3, G042×2, G173×2, G002×1, G032×1, G035×1, G036×1, G063×1, G079×1 외 1
 - 부르는 대상(나감): G013×4, G018×3, G056×2, G066×2, G073×2, G009×1, G011×1, G015×1, G072×1
-- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js, js/avatar/xp.js 외 104
+- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js, js/avatar/xp.js 외 111
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/test-shipyard-modular.js, scripts/verify-integrity-gate.js, tests/account-switch-isolation.test.js, tests/account-withdrawal-modal.test.js, tests/avatar-10slots-growth.test.js, tests/avatar-personas-split.test.js, tests/dev-host-gate.test.js 외 14 (index.html 단독 읽기: tests/account-switch-isolation.test.js, tests/account-withdrawal-modal.test.js, tests/avatar-10slots-growth.test.js, tests/avatar-personas-split.test.js, tests/dev-host-gate.test.js, tests/direct-login-guard.test.js, tests/gcal-login-reconnect-fix.test.js, tests/goal-templates-data-split.test.js 외 6)
 - smoke-test FN_NAMES: totalCompletedMilestones — 옮기려면 시험지 선행 PR 먼저
 
 ### G032 [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업
 
-- 4680~4920줄(241줄) · 어려움(197)
+- 4680~4920줄(241줄) · 어려움(200)
 - 함수(5): initDimensionSliders, initHomeCockpit, renderQuickCheckinGuideChips, saveProfile, switchHomeDate
 - 다른 묶음 상태 — 대입: 없음 · 변경: 없음 · 읽기: applyQuickCunningText, escapeHtml, sb, state
 - 로드 중 문 5: window 노출 4 · IfStatement 1
@@ -1898,12 +1898,12 @@
 - 이벤트 처리기: addEventListener 6 · on<이벤트> 대입 0
 - 부르는 묶음(들어옴): G121×47, G065×11, G094×11, G114×10, G112×8, G157×7, G154×6, G079×5, G152×5, G120×4 외 60
 - 부르는 대상(나감): G017×6, G011×2, G071×2, G072×2, G018×1, G023×1
-- 바깥 js 가 window 이름을 씀: js/account-isolation.js, js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js, js/avatar/xp.js 외 57
+- 바깥 js 가 window 이름을 씀: js/account-isolation.js, js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js, js/avatar/xp.js 외 60
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/test-calendar-attachments.js, scripts/verify-all-clicks.js, scripts/verify-integrity-gate.js, tests/account-switch-isolation.test.js, tests/core-confirm-es374.test.js, tests/core-confirm-es376.test.js, tests/direct-login-guard.test.js 외 10 (index.html 단독 읽기: scripts/test-calendar-attachments.js, tests/account-switch-isolation.test.js, tests/core-confirm-es376.test.js, tests/direct-login-guard.test.js, tests/gcal-login-reconnect-fix.test.js, tests/goals-schedule-sync.test.js, tests/google-session-guard.test.js, tests/guest-null-client-es377.test.js 외 6)
 
 ### G014 Confetti
 
-- 2835~2908줄(74줄) · 어려움(197)
+- 2835~2908줄(74줄) · 어려움(203)
 - 함수(3): burstConfetti, showUndoPrivacyToast, toast
 - 변수(1): toastTimer
 - 다른 묶음 상태 — 대입: 없음 · 변경: 없음 · 읽기: state
@@ -1913,7 +1913,7 @@
 - 인라인 on*="…" 이 부르는 함수: toast
 - 부르는 묶음(들어옴): G065×28, G094×27, G116×22, G138×21, G121×20, G072×18, G083×18, G137×14, G103×13, G063×12 외 84
 - 부르는 대상(나감): G168×2, G032×1, G170×1
-- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-persona.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js 외 85
+- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-persona.js, js/avatar/modal/bind-save.js, js/avatar/modal/index.js 외 91
 - 시험지 글자 의존: scripts/smoke-test.js
 
 ## 6. 이음매·빈 구획
