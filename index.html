@@ -2268,7 +2268,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/comm/sub-crew.js"></script>
 <script src="js/tabs/comm/feed-comments.js"></script>
 <script src="js/tabs/comm/render.js"></script>
-<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/challenge-room.js"></script><script src="js/tabs/comm/first-cheer.js"></script><script src="js/tabs/comm/feed-post-preview.js"></script><script src="js/tabs/comm/story-canvas.js"></script><script src="js/tabs/comm/sample-data.js"></script><script src="js/tabs/comm/share-card.js"></script><script src="js/tabs/comm/feed-posts-sync.js"></script><script src="js/tabs/comm/manito-basics.js"></script><script src="js/tabs/comm/crew-pacing.js"></script><script src="js/tabs/comm/goal-certificate-share.js"></script><script src="js/tabs/comm/manito-real.js"></script><script src="js/tabs/comm/peer-invite.js"></script><script src="js/tabs/comm/index.js"></script>
+<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/challenge-room.js"></script><script src="js/tabs/comm/first-cheer.js"></script><script src="js/tabs/comm/feed-post-preview.js"></script><script src="js/tabs/comm/story-canvas.js"></script><script src="js/tabs/comm/sample-data.js"></script><script src="js/tabs/comm/share-card.js"></script><script src="js/tabs/comm/feed-posts-sync.js"></script><script src="js/tabs/comm/manito-basics.js"></script><script src="js/tabs/comm/crew-pacing.js"></script><script src="js/tabs/comm/goal-certificate-share.js"></script><script src="js/tabs/comm/manito-real.js"></script><script src="js/tabs/comm/peer-invite.js"></script><script src="js/tabs/comm/cheer-notify.js"></script><script src="js/tabs/comm/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Settings Mega-Block & Sub-Blocks (설정 메가블록 및 소블록 외판) -->
 <script src="js/tabs/settings/sub-profile.js"></script>
 <script src="js/tabs/settings/sub-security.js"></script>
@@ -2613,6 +2613,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openSelectTeamForStoryModal = _commKit.openSelectTeamForStoryModal;
   window.OurgoalAppScope.expose('index.html', {
     get groupState(){ return groupState; }
+  });
+
+  /* ============ [#TASK-ES-432] 인라인 스크립트 세포화 2차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀) ============
+     ① 가져오기: js/tabs/comm/cheer-notify.js 로 옮긴 함수 중 이 스코프에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 소통 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). */
+  var checkSocialNotifications = _commKit.checkSocialNotifications;
+  window.OurgoalAppScope.expose('index.html', {
+    get manitoInbox(){ return manitoInbox; },
+    get manitoState(){ return manitoState; }
   });
 
   /* [#TASK-ES-439] 인라인 어려움 묶음 이음매 자리 (docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 생성기 docs/design/harness/module-split/gen-inline-hard.js)
@@ -18870,39 +18879,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     } catch(e){ console.warn('Web Push 구독 해제 실패:', e); }
   }
-  /* ============ 받은 응원 알림 (실제 내 게시물 응원 수 + 마니또 받은 응원함) ============ */
-  function totalFeedCheers(){
-    var myPosts = (FEED_POSTS_CACHE || []).filter(function(p){ return p.user_id === state.profile.id; });
-    var sum = 0;
-    myPosts.forEach(function(p){ sum += (p.cheers_count || 0); });
-    return sum;
-  }
-  function checkSocialNotifications(){
-    var s = state.profile.settings;
-    if(!s.social) s.social = { cheersSeen:0, manitoSeen:0 };
-    var cheerTotal = totalFeedCheers();
-    var manitoTotal = manitoState().joined ? manitoInbox().length : 0;
-    var newCheers = Math.max(0, cheerTotal - s.social.cheersSeen);
-    var newManito = Math.max(0, manitoTotal - s.social.manitoSeen);
-    s.social.cheersSeen = cheerTotal;
-    s.social.manitoSeen = manitoTotal;
-    if(newCheers > 0 || newManito > 0){
-      showSocialNotifyBanner(newCheers, newManito);
-      saveProfile();
-    }
-  }
-  function showSocialNotifyBanner(newCheers, newManito){
-    var container = document.getElementById('socialNotifySlot');
-    if(!container) return;
-    var parts = [];
-    if(newCheers > 0) parts.push('내 기록에 응원 '+newCheers+'개');
-    if(newManito > 0) parts.push('마니또 응원 '+newManito+'개');
-    container.innerHTML = '<div class="notify-banner"><div class="nb-txt"><b>응원이 도착했어요</b>'+parts.join(' · ')+'</div><button id="sbOpen" type="button">확인하기</button></div>';
-    document.getElementById('sbOpen').addEventListener('click', function(){
-      container.innerHTML = '';
-      setTab('comm');
-    });
-  }
+  /* [#TASK-ES-432] totalFeedCheers · checkSocialNotifications · showSocialNotifyBanner → js/tabs/comm/cheer-notify.js 로 옮김(인라인 스크립트 세포화 2차 — 구획 주석 포함) */
 
   /* ============ 4대 연계 뷰 원자적 동시 전파 디스패처 (헌법 제1조 제4항 제5호 & 제15조 제6항 제3호) ============ */
   /* [#TASK-ES-486] dispatchFullViewPropagation → js/core/view-dispatch.js 로 옮김(인라인 어려움 기관 묶음 이전 2차 — 앞 주석 포함) */
