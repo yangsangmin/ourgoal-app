@@ -1,0 +1,80 @@
+{
+ "id": "settings-withdraw-modal-open-cancel",
+ "title": "게스트로 설정 탭 「데이터·계정」 묶음의 「회원 탈퇴」를 누르면 「회원 탈퇴 및 법적책임·데이터 분실 사전 안내」 창이 뜨고 확정 단추는 동의 전 잠겨 있으며, 「취소」를 누르면 창이 닫히고 예외가 없다(확정 단추는 누르지 않는다) — 옮긴 openWithdrawModal·closeWithdrawModal(js/tabs/settings/withdraw-modal.js)이 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#setGroupDataSummary",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#setGroupDataSummary"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#withdrawBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#withdrawModal"
+  },
+  {
+   "do": "click",
+   "selector": "#withdrawBtn"
+  },
+  {
+   "expect": "visible",
+   "selector": "#withdrawModal"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#withdrawModal",
+   "text": "회원 탈퇴 및 법적책임·데이터 분실 사전 안내"
+  },
+  {
+   "expect": "attr",
+   "selector": "#withdrawConfirmBtn",
+   "name": "disabled",
+   "equals": ""
+  },
+  {
+   "do": "click",
+   "selector": "#withdrawCancelBtn"
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#withdrawModal"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

@@ -1,0 +1,308 @@
+{
+ "task": "TASK-ES-522",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-522-STAGE3-Z1-C.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「뱃지 컬렉션 (명예의 전당)」에 남은 프로필 쪽(totalCompletedMilestones·resolveUniqueDisplayName·formatDisplayNameWithTag·ensureUserRow·loadProfile)을 기관 세포 js/core/profile-load.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 HO). 게스트로 닿는 몫(명예의 전당이 부르는 완료 마일스톤 합)은 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R2",
+   "text": "index.html 인라인 묶음 「서버 관리자 API를 통한 기록 및 프로필 복구 (#TASK-ES-036)」(syncServerRecords)를 기관 세포 js/core/server-records-sync.js 로 동작 그대로 옮긴다 — 로그인 세션 토큰이 있어야 도는 경로."
+  },
+  {
+   "id": "R3",
+   "text": "index.html 인라인 묶음 「회원 탈퇴 전용 안내 모달 및 법적책임·데이터분실 사전 안내 (#TASK-ES-158)」(openWithdrawModal·closeWithdrawModal·submitWithdrawAccount·withdrawAccount)를 설정 탭 세포 js/tabs/settings/withdraw-modal.js 로 동작 그대로 옮긴다. 게스트로 닿는 몫(안내 창 열기·확정 잠김·취소로 닫기)은 게스트 시나리오로 낸다. 탈퇴 확정 단추는 누르지 않는다."
+  },
+  {
+   "id": "R4",
+   "text": "로그인·Supabase 가 있어야 도는 몫(로그인 때 프로필 불러오기·사용자 행 확인, 다시 맞추기의 서버 기록 복구·프로필 다시 불러오기, 로그인 상태의 탈퇴 안내 창)은 테스트 계정 실계정 하네스로 기준·작업·기준을 읽기 전용으로 맞댄다."
+  },
+  {
+   "id": "R5",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0·키트 변수 뒤 가져오기·마지막 getter setter(verify), 원본·새 파일 단독 로드 회귀 0, 신고서 등록."
+  },
+  {
+   "id": "R6",
+   "text": "실계정 하네스 측정 기록(테스트 계정 기준1·작업·기준2 비교 결과와 게스트·계정 도달 실측)을 저장소 reports/TASK-ES-522/ 에 남긴다 — 로그인 뒤 경로의 동작 주장(R2·R4)과 분리한 기록 항목."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 프로필 묶음의 「명예의 전당」을 누르면 창에 「N / M개 획득」과 「마일스톤 헌터」 칸이 그려지고 예외가 없다 — 뱃지 문맥이 부르는 옮긴 totalCompletedMilestones 가 그린다",
+   "touches": [
+    "js/core/profile-load.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/core-profile-load-hall-of-fame.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "테스트 계정으로 로그인한 상태에서 「내 데이터 전체 복원 및 동기화」를 누르면 옮긴 syncServerRecords 가 서버 기록 복구를 거쳐 이전 전과 같은 토스트·설정 화면을 낸다",
+   "touches": [
+    "js/core/server-records-sync.js",
+    "index.html"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 환경 변수(OG_APP_URL·OG_TEST_A_EMAIL·OG_TEST_A_PASSWORD)가 있는 이 PC 의 세션",
+    "how": [
+     "git archive origin/main 으로 기준 사본을 푼다",
+     "node docs/design/harness/module-split/real-account-split-check.js <기준 사본> docs/design/harness/module-split/real-account-stage3-z1-c-steps.json base1 base1.json 을 돌리고, 같은 명령을 이 변경 트리(after)와 기준 사본(base2)으로 한 번씩 더 돌린다",
+     "node docs/design/harness/module-split/real-account-compare-inline-split-2.js base1.json after.json base2.json 비교.json 으로 base1VsAfter.differing 과 base1VsBase2.differing 이 0 인지 본다"
+    ],
+    "note": "작업자 실측(판정 아님): 기준1·작업·기준2 각 56값 비교에서 차이 0, pageerror 0(reports/TASK-ES-522/real-account-compare.json ⑤·⑥단계). 게스트도 부르지만 로그인 세션 토큰이 없으면 첫 줄에서 끝난다(도달 실측 real-account-reach-guest-base.json)."
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 「데이터·계정」 묶음의 「회원 탈퇴」를 누르면 「회원 탈퇴 및 법적책임·데이터 분실 사전 안내」 창이 뜨고 확정 단추는 동의 전 잠겨 있으며, 「취소」를 누르면 창이 닫히고 예외가 없다 — 옮긴 openWithdrawModal·closeWithdrawModal 이 그린다",
+   "touches": [
+    "js/tabs/settings/withdraw-modal.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-withdraw-modal-open-cancel.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "테스트 계정으로 로그인하면 옮긴 loadProfile·ensureUserRow 가 불러온 홈·기록·설정·명예의 전당 화면과, 로그인 상태의 탈퇴 안내 창 열기·취소가 이전 전과 같다",
+   "touches": [
+    "js/core/profile-load.js",
+    "js/tabs/settings/withdraw-modal.js",
+    "index.html"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 환경 변수(OG_APP_URL·OG_TEST_A_EMAIL·OG_TEST_A_PASSWORD)가 있는 이 PC 의 세션",
+    "how": [
+     "git archive origin/main 으로 기준 사본을 푼다",
+     "node docs/design/harness/module-split/real-account-split-check.js <기준 사본> docs/design/harness/module-split/real-account-stage3-z1-c-steps.json base1 base1.json 을 돌리고, 같은 명령을 이 변경 트리(after)와 기준 사본(base2)으로 한 번씩 더 돌린다",
+     "node docs/design/harness/module-split/real-account-compare-inline-split-2.js base1.json after.json base2.json 비교.json 으로 base1VsAfter.differing 과 base1VsBase2.differing 이 0 인지 본다"
+    ],
+    "note": "작업자 실측(판정 아님): 테스트 계정 A 8단계 기준1 대 작업 0 · 기준1 대 기준2 0 · pageerror 0, Supabase 쓰기 요청은 도구가 끊음(reports/TASK-ES-522/real-account-compare.json). 탈퇴 확정 단추는 누르지 않았다. 게스트 다시 맞추기도 loadProfile 을 부르지만 Supabase 라이브러리(외부)와 서버가 있어야 본문이 돈다 — 법정은 외부 통신을 막아 sb 가 없다(REQ 4절)."
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-522/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-522/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 이후 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-522/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 키트 변수 선언보다 앞선 가져오기 줄 0",
+   "touches": [
+    "reports/TASK-ES-522/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "importBeforeKit",
+    "equals": []
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 대입하는 이름의 마지막 getter 줄에 setter 빠짐 0",
+   "touches": [
+    "reports/TASK-ES-522/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "lastGetterNoSetter",
+    "equals": []
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 3개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-522/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 core/profile-load 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"core/profile-load\""
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 core/server-records-sync 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"core/server-records-sync\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/withdraw-modal 이 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/withdraw-modal\""
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-522/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-522/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도달 실측: 테스트 계정으로 로그인한 첫 단계까지 loadProfile 이 2회 불린 것으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-522/real-account-reach-A-base.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/real-account-reach-A-base.json",
+    "type": "jsonPath",
+    "path": "steps.0.calls.loadProfile",
+    "equals": 2
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도달 실측: 게스트 홈 첫 단계에서 syncServerRecords 가 1회 불린 것으로 기록되어 있다(로그인 세션 토큰이 없어 첫 줄에서 끝나는 경로)",
+   "touches": [
+    "reports/TASK-ES-522/real-account-reach-guest-base.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-522/real-account-reach-guest-base.json",
+    "type": "jsonPath",
+    "path": "steps.0.calls.syncServerRecords",
+    "equals": 1
+   }
+  }
+ ]
+}

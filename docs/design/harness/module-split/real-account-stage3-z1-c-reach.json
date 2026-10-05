@@ -1,0 +1,10 @@
+{"moved":["loadProfile","syncServerRecords","openWithdrawModal"],
+ "steps":[
+ {"name":"① 홈","tab":"home","wait":1500,"read":"#screen-home"},
+ {"name":"② 목표","tab":"goals","wait":2000,"read":"#screen-goals"},
+ {"name":"③ 소통","tab":"comm","wait":2000,"read":"#screen-comm"},
+ {"name":"④ 기록","tab":"records","wait":2000,"read":"#screen-records"},
+ {"name":"⑤ 설정","tab":"settings","wait":2000,"read":"#screen-settings","count":{"withdrawBtn":"#withdrawBtn","resync":"#resyncAccountDataBtn"}},
+ {"name":"⑥ 데이터 다시 맞추기","click":"#resyncAccountDataBtn","wait":6000,"read":"#toast"},
+ {"name":"⑦ 탈퇴 안내 창 열기(확정 단추는 누르지 않음)","click":"#withdrawBtn","wait":1500,"read":"#withdrawModal","close":"#withdrawCancelBtn"}
+]}
