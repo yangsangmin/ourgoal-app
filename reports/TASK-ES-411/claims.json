@@ -1,0 +1,1313 @@
+{
+ "task": "TASK-ES-411",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-411-COMPONENTS-SPLIT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "js/components.js(3,861줄)에서 탭별 직통 핸들러 묶음 11개(함수 56개)를 js/components-<탭>-actions.js 로 글자 그대로 옮긴다. 원본은 머리에서 같은 이름으로 가져오고, 상수(OurgoalComponents)·허브 핸들러 23·별칭·닫기 위임·노출 줄(자리·순서)은 원본에 둔다. index.html 태그는 원본 태그 앞 같은 줄. 새 전역 = 키트 1개. 신고서·기준선 갱신."
+  },
+  {
+   "id": "R2",
+   "text": "옮기기·검사·측정 도구(묶음 정의·생성기·검사기·신고서 손 칸·게스트 조작 비교·실계정 확인·시나리오 로컬 실행)를 저장소에 남긴다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 측정: git archive 기준 대비 토큰 동일·누수 0·노출 동일·원본 단독 로드, 법정 모듈 로드 탐침 회귀 0, 게스트 조작 비교·탭 실측 차이 0, npm test·tests 기준과 같음, 실계정 읽기 전용 기준과 같음."
+  },
+  {
+   "id": "R4",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  },
+  {
+   "id": "R5",
+   "text": "게스트 화면: 소통 탭 게시 모달의 한마디 안내 글자가 옮긴 다짐 문구 함수로 기준과 같이 보인다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 머리 이음매: 키트를 읽는다(쓰지 않는다)",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeContains",
+    "text": "  var _cKit = window.OurgoalComponentsKit || {};"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 키트 칸이 없으면 node 에서 부품을 require 한다",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeContains",
+    "text": "  if(!_cHome && typeof require === 'function'){ _cHome = require('./components-home-actions.js'); }"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 옮긴 함수를 같은 이름으로 가져온다",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeContains",
+    "text": "  var handle홈탭_Item33Action = _cHome.handle홈탭_Item33Action;"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "노출 줄은 원본 자리에 그대로",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeContains",
+    "text": "    window.handle홈탭_Item33Action = handle홈탭_Item33Action;"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "별칭은 원본에 그대로",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeContains",
+    "text": "  var handle팀목표_Item51Action = handle소통_Item51Action;"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "컴포넌트 모듈화 허브 핸들러는 원본에 남음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeContains",
+    "text": "  async function handle전체공통_Item23Action(event) {"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-home-actions.js: 홈 탭 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-home-actions.js"
+   ],
+   "check": {
+    "file": "js/components-home-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle홈탭_Item33Action = handle홈탭_Item33Action;"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-home-actions.js 로 handle홈탭_Item33Action 정의를 옮김",
+   "touches": [
+    "js/components-home-actions.js"
+   ],
+   "check": {
+    "file": "js/components-home-actions.js",
+    "type": "codeContains",
+    "text": "async function handle홈탭_Item33Action(event) {"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle홈탭_Item33Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle홈탭_Item33Action(event) {"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-record-actions.js: 기록·스톱워치 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-record-actions.js"
+   ],
+   "check": {
+    "file": "js/components-record-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle기록스톱워치_Item35Action = handle기록스톱워치_Item35Action;"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-record-actions.js 로 handle기록스톱워치_Item35Action 정의를 옮김",
+   "touches": [
+    "js/components-record-actions.js"
+   ],
+   "check": {
+    "file": "js/components-record-actions.js",
+    "type": "codeContains",
+    "text": "async function handle기록스톱워치_Item35Action(event) {"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle기록스톱워치_Item35Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle기록스톱워치_Item35Action(event) {"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-team-actions.js: 팀 목표 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-team-actions.js"
+   ],
+   "check": {
+    "file": "js/components-team-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle팀목표_Item37Action = handle팀목표_Item37Action;"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-team-actions.js 로 handle팀목표_Item37Action 정의를 옮김",
+   "touches": [
+    "js/components-team-actions.js"
+   ],
+   "check": {
+    "file": "js/components-team-actions.js",
+    "type": "codeContains",
+    "text": "async function handle팀목표_Item37Action(event) {"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle팀목표_Item37Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle팀목표_Item37Action(event) {"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-feed-actions.js: 소통 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-feed-actions.js"
+   ],
+   "check": {
+    "file": "js/components-feed-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle소통_Item57Action = handle소통_Item57Action;"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-feed-actions.js 로 handle소통_Item57Action 정의를 옮김",
+   "touches": [
+    "js/components-feed-actions.js"
+   ],
+   "check": {
+    "file": "js/components-feed-actions.js",
+    "type": "codeContains",
+    "text": "async function handle소통_Item57Action(event, customPayload) {"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle소통_Item57Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle소통_Item57Action(event, customPayload) {"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-goal-actions.js: 목표 탭 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-goal-actions.js"
+   ],
+   "check": {
+    "file": "js/components-goal-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle목표탭_Item40Action = handle목표탭_Item40Action;"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-goal-actions.js 로 handle목표탭_Item40Action 정의를 옮김",
+   "touches": [
+    "js/components-goal-actions.js"
+   ],
+   "check": {
+    "file": "js/components-goal-actions.js",
+    "type": "codeContains",
+    "text": "async function handle목표탭_Item40Action(event) {"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle목표탭_Item40Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle목표탭_Item40Action(event) {"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-avatar-actions.js: 아바타 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-avatar-actions.js"
+   ],
+   "check": {
+    "file": "js/components-avatar-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle아바타_Item41Action = handle아바타_Item41Action;"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-avatar-actions.js 로 handle아바타_Item41Action 정의를 옮김",
+   "touches": [
+    "js/components-avatar-actions.js"
+   ],
+   "check": {
+    "file": "js/components-avatar-actions.js",
+    "type": "codeContains",
+    "text": "async function handle아바타_Item41Action(event) {"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle아바타_Item41Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle아바타_Item41Action(event) {"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-stats-actions.js: 성취 통계 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-stats-actions.js"
+   ],
+   "check": {
+    "file": "js/components-stats-actions.js",
+    "type": "codeContains",
+    "text": "  K.toggleAchievementMetricFilter = toggleAchievementMetricFilter;"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-stats-actions.js 로 toggleAchievementMetricFilter 정의를 옮김",
+   "touches": [
+    "js/components-stats-actions.js"
+   ],
+   "check": {
+    "file": "js/components-stats-actions.js",
+    "type": "codeContains",
+    "text": "function toggleAchievementMetricFilter(metricKey, currentSelected) {"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 toggleAchievementMetricFilter 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "function toggleAchievementMetricFilter(metricKey, currentSelected) {"
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-auth-actions.js: 인증 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-auth-actions.js"
+   ],
+   "check": {
+    "file": "js/components-auth-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle인증_Item69Action = handle인증_Item69Action;"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-auth-actions.js 로 handle인증_Item69Action 정의를 옮김",
+   "touches": [
+    "js/components-auth-actions.js"
+   ],
+   "check": {
+    "file": "js/components-auth-actions.js",
+    "type": "codeContains",
+    "text": "async function handle인증_Item69Action(event, customPayload) {"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle인증_Item69Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle인증_Item69Action(event, customPayload) {"
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-settings-actions.js: 설정 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-settings-actions.js"
+   ],
+   "check": {
+    "file": "js/components-settings-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle전체공통_Item38Action = handle전체공통_Item38Action;"
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-settings-actions.js 로 handle전체공통_Item38Action 정의를 옮김",
+   "touches": [
+    "js/components-settings-actions.js"
+   ],
+   "check": {
+    "file": "js/components-settings-actions.js",
+    "type": "codeContains",
+    "text": "async function handle전체공통_Item38Action(event) {"
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle전체공통_Item38Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle전체공통_Item38Action(event) {"
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-widget-actions.js: 바탕화면 위젯 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-widget-actions.js"
+   ],
+   "check": {
+    "file": "js/components-widget-actions.js",
+    "type": "codeContains",
+    "text": "  K.getWidgetRenderSpec = getWidgetRenderSpec;"
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-widget-actions.js 로 getWidgetRenderSpec 정의를 옮김",
+   "touches": [
+    "js/components-widget-actions.js"
+   ],
+   "check": {
+    "file": "js/components-widget-actions.js",
+    "type": "codeContains",
+    "text": "function getWidgetRenderSpec(type, size) {"
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 getWidgetRenderSpec 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "function getWidgetRenderSpec(type, size) {"
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-schedule-actions.js: 일정 직통 핸들러 칸에 함수를 담는다",
+   "touches": [
+    "js/components-schedule-actions.js"
+   ],
+   "check": {
+    "file": "js/components-schedule-actions.js",
+    "type": "codeContains",
+    "text": "  K.handle일정_Item65Action = handle일정_Item65Action;"
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/components-schedule-actions.js 로 handle일정_Item65Action 정의를 옮김",
+   "touches": [
+    "js/components-schedule-actions.js"
+   ],
+   "check": {
+    "file": "js/components-schedule-actions.js",
+    "type": "codeContains",
+    "text": "async function handle일정_Item65Action(event, customPayload) {"
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handle일정_Item65Action 정의가 남지 않음",
+   "touches": [
+    "js/components.js"
+   ],
+   "check": {
+    "file": "js/components.js",
+    "type": "codeNotContains",
+    "text": "async function handle일정_Item65Action(event, customPayload) {"
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "부품 IIFE 인자 이름은 window, 키트 등록은 별칭 root",
+   "touches": [
+    "js/components-home-actions.js"
+   ],
+   "check": {
+    "file": "js/components-home-actions.js",
+    "type": "codeContains",
+    "text": "  var KIT = root.OurgoalComponentsKit = root.OurgoalComponentsKit || {};"
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "부품을 부르는 식은 원본과 같음",
+   "touches": [
+    "js/components-home-actions.js"
+   ],
+   "check": {
+    "file": "js/components-home-actions.js",
+    "type": "codeContains",
+    "text": "})(typeof window !== 'undefined' ? window : global);"
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "index.html: 원본 태그 바로 앞 같은 줄에 부품 태그 11개(순증가 0줄)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "file": "index.html",
+    "type": "codeContains",
+    "text": "<script src=\"js/components-home-actions.js?v=20261005-es411\"></script><script src=\"js/components-record-actions.js?v=20261005-es411\"></script><script src=\"js/components-team-actions.js?v=20261005-es411\"></script><script src=\"js/components-feed-actions.js?v=20261005-es411\"></script><script src=\"js/components-goal-actions.js?v=20261005-es411\"></script><script src=\"js/components-avatar-actions.js?v=20261005-es411\"></script><script src=\"js/components-stats-actions.js?v=20261005-es411\"></script><script src=\"js/components-auth-actions.js?v=20261005-es411\"></script><script src=\"js/components-settings-actions.js?v=20261005-es411\"></script><script src=\"js/components-widget-actions.js?v=20261005-es411\"></script><script src=\"js/components-schedule-actions.js?v=20261005-es411\"></script><script src=\"js/components.js?v=20260917-es162\"></script>"
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포(원본 kind 그대로)",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/components-home-actions.js\","
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 가드 기준선 갱신(④ 에서 components.js 빠짐)",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/module-baseline.json",
+    "type": "codeContains",
+    "text": "          \"count\": 3,"
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: 최상위 문이 옮길 함수를 로드 중에 부르면 멈춤",
+   "touches": [
+    "docs/design/harness/module-split/gen-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-components.js",
+    "type": "codeContains",
+    "text": "    if (p.parentPath.isCallExpression() && p.parent.callee === p.node) throw new Error('최상위 문이 옮길 함수를 바로 부름: ' + p.node.name);"
+   }
+  },
+  {
+   "id": "C46",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "묶음 정의: 소통 묶음",
+   "touches": [
+    "docs/design/harness/module-split/components-cells.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/components-cells.js",
+    "type": "codeContains",
+    "text": "  { kit: 'feed', cell: 'js/components-feed-actions.js', imp: '_cFeed',"
+   }
+  },
+  {
+   "id": "C47",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기: 법정 탐침 loadOne 으로 원본 단독 로드",
+   "touches": [
+    "docs/design/harness/module-split/verify-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-components.js",
+    "type": "codeContains",
+    "text": "const sb = loadOne(path.join(BASE, SRC)), sa = loadOne(path.join(APP, SRC));"
+   }
+  },
+  {
+   "id": "C48",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서 손 칸 스크립트",
+   "touches": [
+    "docs/design/harness/module-split/spec-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/spec-components.js",
+    "type": "codeContains",
+    "text": "  c.kind = src.kind;"
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교: 숨은 배선 칸 버튼",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-compare-components.js",
+    "type": "codeContains",
+    "text": "const wire = n => ['wire-' + n, { click: '#og-task-' + n + '-action-btn' }];"
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 읽기 전용 확인: 테스트 계정 표식 없으면 접속 안 함",
+   "touches": [
+    "docs/design/harness/module-split/real-account-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/real-account-components.js",
+    "type": "codeContains",
+    "text": "if (!/ogtest/i.test(env.OG_TEST_A_EMAIL) && !allow.includes(env.OG_TEST_A_EMAIL)) { console.log('테스트 계정 표식 없음 — 접속 안 함'); process.exitCode = 3; return; }"
+   }
+  },
+  {
+   "id": "C51",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 시나리오 로컬 실행: 법정 실행기 사용",
+   "touches": [
+    "docs/design/harness/module-split/scenario-local-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/scenario-local-components.js",
+    "type": "codeContains",
+    "text": "const { runScenario, validateScenario, loadConfig } = C('scenario.js');"
+   }
+  },
+  {
+   "id": "C52",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 전체 통과(토큰 동일·누수 0·노출 동일·단독 로드)",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C53",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 단독 로드 성공·등록 전역 같음",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C54",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 단독 로드 전역 이름 수",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "standalone.after.globals",
+    "equals": 59
+   }
+  },
+  {
+   "id": "C55",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 줄 수(이전 후)",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "mainLinesAfter",
+    "equals": 487
+   }
+  },
+  {
+   "id": "C56",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수 수",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "movedFunctions",
+    "equals": 56
+   }
+  },
+  {
+   "id": "C57",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 window 이름 = 키트 1개",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "runtime.newWindowNames",
+    "equals": [
+     "OurgoalComponentsKit"
+    ]
+   }
+  },
+  {
+   "id": "C58",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "노출 window 함수 글자 차이 0",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "runtime.windowFunctionTextDiff",
+    "equals": []
+   }
+  },
+  {
+   "id": "C59",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "node require module.exports 함수 글자 차이 0",
+   "touches": [
+    "reports/TASK-ES-411/verify-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/verify-components.json",
+    "type": "jsonPath",
+    "path": "runtime.nodeRequireFunctionTextDiff",
+    "equals": []
+   }
+  },
+  {
+   "id": "C60",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0",
+   "touches": [
+    "reports/TASK-ES-411/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C61",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교: 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-411/dom-compare-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/dom-compare-components.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C62",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교: 실행한 단계 수",
+   "touches": [
+    "reports/TASK-ES-411/dom-compare-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/dom-compare-components.json",
+    "type": "jsonPath",
+    "path": "stepsActed",
+    "equals": 83
+   }
+  },
+  {
+   "id": "C63",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교: 작업 콘솔 오류 0",
+   "touches": [
+    "reports/TASK-ES-411/dom-compare-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/dom-compare-components.json",
+    "type": "jsonPath",
+    "path": "errorsAfter",
+    "equals": []
+   }
+  },
+  {
+   "id": "C64",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 smoke 통과·실패",
+   "touches": [
+    "reports/TASK-ES-411/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C65",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 결과 목록 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-411/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/test-compare.json",
+    "type": "jsonPath",
+    "path": "smokeResultsIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C66",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 무결성 검사",
+   "touches": [
+    "reports/TASK-ES-411/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.integrity",
+    "equals": [
+     38,
+     38
+    ]
+   }
+  },
+  {
+   "id": "C67",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 버튼 배선",
+   "touches": [
+    "reports/TASK-ES-411/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.buttons",
+    "equals": [
+     943,
+     943
+    ]
+   }
+  },
+  {
+   "id": "C68",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-411/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C69",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 정규화 출력 차이 0",
+   "touches": [
+    "reports/TASK-ES-411/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsOutputDiffAfterNormalize",
+    "equals": []
+   }
+  },
+  {
+   "id": "C70",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 npm test 종료 0",
+   "touches": [
+    "reports/TASK-ES-411/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C71",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 기준1 대 작업 같음",
+   "touches": [
+    "reports/TASK-ES-411/real-account-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/real-account-components.json",
+    "type": "jsonPath",
+    "path": "sameBase1Work",
+    "equals": true
+   }
+  },
+  {
+   "id": "C72",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 기준2 대 작업 같음",
+   "touches": [
+    "reports/TASK-ES-411/real-account-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/real-account-components.json",
+    "type": "jsonPath",
+    "path": "sameBase2Work",
+    "equals": true
+   }
+  },
+  {
+   "id": "C73",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 쓴 행 0",
+   "touches": [
+    "reports/TASK-ES-411/real-account-components.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/real-account-components.json",
+    "type": "jsonPath",
+    "path": "rowsWritten",
+    "equals": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C74",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탭 실측 tab-compare-base1-after 차이 0",
+   "touches": [
+    "reports/TASK-ES-411/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/tab-compare-base1-after.json",
+    "type": "jsonPath",
+    "path": "diffs",
+    "equals": []
+   }
+  },
+  {
+   "id": "C75",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탭 실측 tab-compare-base1-base2 차이 0",
+   "touches": [
+    "reports/TASK-ES-411/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/tab-compare-base1-base2.json",
+    "type": "jsonPath",
+    "path": "diffs",
+    "equals": []
+   }
+  },
+  {
+   "id": "C76",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탭 실측 tab-compare-base2-after 차이 0",
+   "touches": [
+    "reports/TASK-ES-411/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/tab-compare-base2-after.json",
+    "type": "jsonPath",
+    "path": "diffs",
+    "equals": []
+   }
+  },
+  {
+   "id": "C77",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 시나리오 로컬(법정 실행기): 작업 통과",
+   "touches": [
+    "reports/TASK-ES-411/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-411/scenario-local.json",
+    "type": "jsonPath",
+    "path": "runs.work.passed",
+    "equals": true
+   }
+  },
+  {
+   "id": "C78",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-411-COMPONENTS-SPLIT.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-411-COMPONENTS-SPLIT.md",
+    "type": "codeContains",
+    "text": "## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)"
+   }
+  },
+  {
+   "id": "C79",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-411: 공통 UI 컴포넌트 세포 분열 1차 — js/components.js(3,861줄)에서 탭별 직통 핸들러 11묶음(handle<탭>_ItemNNAction 38개 + 작은 함수 18개)을 js/components-{home,record,team,feed,goal,avatar,stats,auth,settings,widget,schedule}-actions.js 로 글자 그대로 이전(3,861 → 487줄, 부품 123~681줄). OurgoalComponents 상수·허브 핸들러 23·별칭·닫기 위임·노출 줄(자리·순서)은 원본, 원본 머리에서 같은 이름으로 가져옴, 새 전역 = 키트 OurgoalComponentsKit 1개. 실측(판정 아님): 토큰 동일·누수 0·노출 이름·함수 글자 동일·원본 단독 로드 성공, 법정 모듈 로드 탐침 회귀 0, 게스트 조작 비교 1,079값 차이 0, 탭 실측 기준 2회·후 1회, npm test 443/0·38/38·943/943(모듈 가드 ④ 4 → 3), tests 105개 같음, 실계정 읽기 전용 기준1·작업·기준2 같음. 선행 #726(ES-412). REQ docs/specs/REQ-TASK-ES-411-COMPONENTS-SPLIT.md"
+   }
+  },
+  {
+   "id": "C80",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-411 | REFACTOR | [공통 UI 컴포넌트 세포 분열 1차] js/components.js 에서 탭별 직통 핸들러 11묶음(함수 56개)을 js/components-*-actions.js 로 동작 그대로 이전(3,861 → 487줄) | 코디네이터 지시 (2026-10-05), 선행 #726(ES-412), REQ docs/specs/REQ-TASK-ES-411-COMPONENTS-SPLIT.md | 4단계(심사 청구)"
+   }
+  },
+  {
+   "id": "C81",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 소통 탭의 「게시하기」를 누르면 게시 모달의 한마디 입력칸 안내 글자가 다짐 문구 함수(generateRecordPledgeMessage, js/components-feed-actions.js 로 옮김)가 만든 「예: 오늘도 목표를 향해 한 걸음 내딛습니다. 모두 함께 힘내요! ✨」로 보인다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/components-feed-actions.js",
+    "js/components.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/comm-post-pledge-caption.json"
+  },
+  {
+   "id": "C82",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 새 세포 11개에 「이 세포가 하는 일」 한 줄(사용자가 보는 기능 말로)",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"components-feed-actions\": \"소통 피드 글쓰기(공유 대상 선택·사진 첨부·카테고리·미리보기)·AI 봇 글 줄이기·기록으로 다짐 문구 만들기·DM 읽음 표시를 처리한다\","
+   }
+  },
+  {
+   "id": "C83",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 정본(cell-map.json)을 생성기로 다시 만들어 새 세포가 설명과 함께 실림",
+   "touches": [
+    "docs/architecture/cell-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-map.json",
+    "type": "codeContains",
+    "text": "\"does\": \"휴대폰 바탕화면 위젯(일정·목표·기록 3종 × 3가지 크기)의 모양을 정하고 켠다\","
+   }
+  }
+ ]
+}
