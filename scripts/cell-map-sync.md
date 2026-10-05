@@ -21,6 +21,7 @@
    git -C C:/dev/ourgoal-app worktree add C:/dev/wt/cell-map-sync -b chore/<날짜>-cell-map-sync origin/main
    cd C:/dev/wt/cell-map-sync
    node scripts/cell-map-export.js --check     # 「갱신 필요」면 아래 계속, 「최신」이면 2단계부터(저장본·노션만 맞춘다)
+   # --check 는 기준 커밋 도장(source.commit·short·committedAt·subject)을 빼고 내용만 비교한다(#TASK-ES-424) — 「도장만 다름」이면 다시 만들지 않는다
    node scripts/cell-map-export.js             # docs/architecture/cell-map.json 다시 씀
    NODE_PATH=C:/dev/ourgoal-app/node_modules node tests/cell-map-export-es414.test.js
    ```

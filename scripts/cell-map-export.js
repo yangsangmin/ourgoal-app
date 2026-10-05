@@ -6,6 +6,8 @@
  *   node scripts/cell-map-export.js            — docs/architecture/cell-map.json 을 다시 쓴다
  *   node scripts/cell-map-export.js --stdout   — 파일은 안 고치고 표준 출력에 JSON
  *   node scripts/cell-map-export.js --check    — 저장된 cell-map.json 이 지금 코드로 만든 것과 같은지 출력(종료 코드 0, 판정 아님)
+ *                                               기준 커밋 도장(source.commit·short·committedAt·subject)은 비교에서 뺀다(#TASK-ES-424) —
+ *                                               지도 갱신 PR 을 병합하면 병합 커밋이 도장을 바꿔 내용이 같아도 다시 「갱신 필요」가 되던 순환을 끊는다.
  *
  * 입력(모두 저장소 안): docs/architecture/modules.json(세포 신고서) · docs/architecture/module-baseline.json(분열 이력)
  *   · docs/architecture/cell-descriptions.json(「이 세포가 하는 일」 한 줄) · js/** 실제 파일(줄 수·머리 주석·노출 이름·require)
@@ -388,6 +390,30 @@ function serialize(doc) {
   return JSON.stringify(doc, null, 1) + '\n';
 }
 
+/** 기준 커밋 도장 칸 — 어느 커밋에서 만들었는지 적는 칸이라 내용 비교에서 뺀다(#TASK-ES-424) */
+const STAMP_FIELDS = ['commit', 'short', 'committedAt', 'subject'];
+
+/** 도장을 뺀 내용 */
+function withoutStamp(doc) {
+  const copy = JSON.parse(JSON.stringify(doc));
+  if (copy && copy.source) STAMP_FIELDS.forEach(k => { delete copy.source[k]; });
+  return copy;
+}
+
+/**
+ * 저장본이 지금 코드로 만든 것과 같은가 — 도장(source.commit·short·committedAt·subject)만 다르면 같다고 본다.
+ * 돌려주는 값: { fresh, stampOnly } — stampOnly 는 내용은 같고 도장만 다를 때 true
+ */
+function compareSaved(savedText, builtText) {
+  if (savedText === null || savedText === undefined) return { fresh: false, stampOnly: false };
+  const a = String(savedText).replace(/\r\n/g, '\n');
+  if (a === builtText) return { fresh: true, stampOnly: false };
+  let saved;
+  try { saved = JSON.parse(a); } catch (e) { return { fresh: false, stampOnly: false }; }
+  const same = serialize(withoutStamp(saved)) === serialize(withoutStamp(JSON.parse(builtText)));
+  return { fresh: same, stampOnly: same };
+}
+
 if (require.main === module) {
   const argv = process.argv.slice(2);
   const ri = argv.indexOf('--root');
@@ -397,8 +423,14 @@ if (require.main === module) {
     process.stdout.write(text);
   } else if (argv.includes('--check')) {
     const p = path.join(root, OUT_PATH);
-    const saved = fs.existsSync(p) ? fs.readFileSync(p, 'utf8').replace(/\r\n/g, '\n') : null;
-    console.log(saved === text ? '세포지도 최신: 저장본과 지금 코드로 만든 것이 같다' : '세포지도 갱신 필요: node scripts/cell-map-export.js 를 실행한다');
+    const saved = fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
+    const r = compareSaved(saved, text);
+    if (r.fresh && r.stampOnly) {
+      const was = JSON.parse(saved.replace(/\r\n/g, '\n')).source || {};
+      console.log(`세포지도 최신: 내용이 같다(기준 커밋 도장만 다름: 저장본 ${was.short} · 지금 ${JSON.parse(text).source.short} — 다시 만들 필요 없음)`);
+    } else {
+      console.log(r.fresh ? '세포지도 최신: 저장본과 지금 코드로 만든 것이 같다' : '세포지도 갱신 필요: node scripts/cell-map-export.js 를 실행한다');
+    }
   } else {
     const p = path.join(root, OUT_PATH);
     fs.mkdirSync(path.dirname(p), { recursive: true });
@@ -408,4 +440,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { build, buildFrom, shortName, trackedInputs, INPUT_PATHS, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };
+module.exports = { build, buildFrom, shortName, compareSaved, withoutStamp, STAMP_FIELDS, trackedInputs, INPUT_PATHS, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };

@@ -1,0 +1,117 @@
+{
+  "task": "TASK-ES-424",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-424-CELL-MAP-CHECK-STABLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "세포지도 --check 가 기준 커밋 도장(source.commit·short·committedAt·subject)만 다를 때 「최신」으로 보게 해 지도 갱신 PR 병합 뒤의 순환을 끊는다. 시험에 「내용 같고 HEAD 만 다르면 최신」 단언 추가(기존 단언 유지). 제품 코드 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "비교에서 빼는 칸은 기준 커밋 도장 4칸뿐이다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "const STAMP_FIELDS = ['commit', 'short', 'committedAt', 'subject'];"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "도장을 뺀 내용이 같으면 최신(도장만 다름)으로 본다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "  const same = serialize(withoutStamp(saved)) === serialize(withoutStamp(JSON.parse(builtText)));"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "--check 가 비교 함수를 쓴다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "    const r = compareSaved(saved, text);"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 도장만 다른 저장본을 최신으로 본다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  assert.deepStrictEqual(exporter.compareSaved(exporter.serialize(stamped), built), { fresh: true, stampOnly: true });"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 내용이 다르면 갱신 필요로 본다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  assert.strictEqual(exporter.compareSaved(exporter.serialize(changed), built).fresh, false);"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-424 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-424: 세포지도 --check 순환 끊기"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-424 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-424 | FIX/버그 | [세포지도 --check 순환]"
+      }
+    }
+  ]
+}
