@@ -1,0 +1,30 @@
+{
+  "id": "time-tracker-record",
+  "title": "게스트로 기록 탭 빠른 실행 줄(#recQuickDockBar)의 시간기록 버튼을 눌러 스톱워치를 시작하고 구간을 기록한 뒤(전체중지 때 마지막 구간이 하나 더 붙어 2개), 구간을 눌러 메모를 저장하고 「전체중지 및 기록하기」로 기록 작성 화면에서 활동명을 적어 「내 기록에 저장」하면 덮개가 닫히고 기록 탭에 그 활동명이 보인다 — 몰입 화면 만들기·배선(initDOM·bindEvents)·구간 메모(openLapMemoModal)·기록 작성·저장(openReviewView·handleSaveRecord)을 js/time-tracker-*.js 로 옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "click", "selector": "#recQuickDockBar button[onclick*=\"OurgoalTimeTracker\"]" },
+    { "expect": "visible", "selector": "#timeTrackerOverlay #btnTtActionStart", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#btnTtActionStart" },
+    { "do": "wait", "ms": 1500 },
+    { "do": "click", "selector": "#btnTtActionLap" },
+    { "expect": "textContains", "selector": "#ttLapsList", "text": "구간 1", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#ttLapsList .tt-lap-item" },
+    { "expect": "textContains", "selector": "#ttLapMemoContainer", "text": "시간별로 세부 내용을 작성할 수 있어요", "timeoutMs": 5000 },
+    { "do": "type", "selector": "#ttLapMemoInput", "text": "법정 구간 메모" },
+    { "do": "click", "selector": "#btnTtLapMemoSave" },
+    { "expect": "textContains", "selector": "#ttLapsList", "text": "법정 구간 메모", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#btnTtActionStopRecord" },
+    { "expect": "textContains", "selector": "#ttReviewLapCount", "text": "총 2개 구간 측정 완료", "timeoutMs": 5000 },
+    { "capture": "time-tracker-review" },
+    { "do": "type", "selector": "#ttActivityTitle", "text": "법정 시간기록 확인", "clear": true },
+    { "do": "click", "selector": "#btnTtSaveRecord" },
+    { "expect": "notVisible", "selector": "#timeTrackerOverlay", "timeoutMs": 5000 },
+    { "expect": "textContains", "selector": "#screen-records", "text": "법정 시간기록 확인", "timeoutMs": 5000 },
+    { "expect": "noExceptions" }
+  ]
+}

@@ -1,0 +1,887 @@
+{
+ "task": "TASK-ES-407",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-407-TIME-TRACKER-SPLIT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "js/time-tracker.js(1,220줄)에서 응집된 책임 묶음(몰입 화면 만들기·버튼 배선 initDOM·bindEvents / 구간 메모 패널 openLapMemoModal / 기록 작성·저장 openReviewView·handleSaveRecord)을 하는 일 이름의 새 파일 js/time-tracker-screen.js·time-tracker-lap-memo.js·time-tracker-review.js(각 800줄 이하)로 글자 그대로 옮겨 원본 800줄 이하. 전역 노출(OurgoalTimeTracker 키·순서)·호출 순서·동작 그대로, 기능 추가·삭제 0, 상태는 원본, 새 전역은 키트 OurgoalTimeTrackerKit 1개. index.html 은 원본 태그 앞 같은 줄(순증가 0줄). 신고서·모듈 가드 기준선은 도구로 갱신."
+  },
+  {
+   "id": "R2",
+   "text": "옮기기·검사·측정 도구(생성기·검사기·신고서 손 칸·게스트 조작 비교·실계정 확인·시험 비교)를 저장소에 남긴다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 측정: git archive 기준 대비 토큰 동일·누수 0·노출 동일, npm test·tests 기준과 같음, 기록 탭 tab-check 기준 2회·후 1회 차이 0, 시간 기록 조작(시작·정지·랩·기록 저장) 게스트 DOM 비교 차이 0, 실계정(읽기 위주) 기준1·작업·기준2 같음, 게스트 화면 시나리오."
+  },
+  {
+   "id": "R4",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 이음매: 키트를 전역에서 읽음",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var _ttKit = global.OurgoalTimeTrackerKit || {};",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 initDOM 을 같은 이름으로 가져옴",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var initDOM = _ttScreen.initDOM;",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 openLapMemoModal 을 같은 이름으로 가져옴",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var openLapMemoModal = _ttLapMemo.openLapMemoModal;",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 handleSaveRecord 를 같은 이름으로 가져옴",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var handleSaveRecord = _ttReview.handleSaveRecord;",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 노출 객체 키 그대로(open)",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "    open: openTrackerOverlay,",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "상태 tracker 는 원본에 남음",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var tracker = {",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 initDOM 정의가 남지 않음",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "text": "function initDOM(",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 openLapMemoModal 정의가 남지 않음",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "text": "function openLapMemoModal(",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 handleSaveRecord 정의가 남지 않음",
+   "touches": [
+    "js/time-tracker.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "text": "function handleSaveRecord(",
+    "file": "js/time-tracker.js"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 부품: 키트 칸 screen",
+   "touches": [
+    "js/time-tracker-screen.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var K = KIT.screen = KIT.screen || {};",
+    "file": "js/time-tracker-screen.js"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 부품: bindEvents 가 저장 버튼에서 원본 통로로 handleSaveRecord 를 부름",
+   "touches": [
+    "js/time-tracker-screen.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "      T.handleSaveRecord();",
+    "file": "js/time-tracker-screen.js"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 부품: 옮긴 함수를 칸에 담음",
+   "touches": [
+    "js/time-tracker-screen.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  K.initDOM = initDOM;",
+    "file": "js/time-tracker-screen.js"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "구간 메모 부품: 키트 칸 lapMemo",
+   "touches": [
+    "js/time-tracker-lap-memo.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var K = KIT.lapMemo = KIT.lapMemo || {};",
+    "file": "js/time-tracker-lap-memo.js"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "구간 메모 부품: 저장 뒤 원본 renderLapsList 를 부름",
+   "touches": [
+    "js/time-tracker-lap-memo.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "      T.renderLapsList();",
+    "file": "js/time-tracker-lap-memo.js"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 작성 부품: 키트 칸 review",
+   "touches": [
+    "js/time-tracker-review.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  var K = KIT.review = KIT.review || {};",
+    "file": "js/time-tracker-review.js"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 작성 부품: 내 기록 저장 글자 그대로",
+   "touches": [
+    "js/time-tracker-review.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "      state.profile.records.unshift(newRecord);",
+    "file": "js/time-tracker-review.js"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 작성 부품: 저장 뒤 원본 closeTrackerOverlay 를 부름",
+   "touches": [
+    "js/time-tracker-review.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "    T.closeTrackerOverlay();",
+    "file": "js/time-tracker-review.js"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "index.html: 원본 태그 앞 같은 줄에 부품 태그 3개",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "<script src=\"js/time-tracker-screen.js?v=20261005-es407\"></script><script src=\"js/time-tracker-lap-memo.js?v=20261005-es407\"></script><script src=\"js/time-tracker-review.js?v=20261005-es407\"></script><script src=\"js/time-tracker.js?v=20260915-es090\"></script>",
+    "file": "index.html"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 3개(도구로 생성)",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "\"file\": \"js/time-tracker-lap-memo.js\"",
+    "file": "docs/architecture/modules.json"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 가드 기준선: 800줄 초과 js 4개(time-tracker.js 빠짐)",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/module-baseline.json",
+    "path": "history.23.metrics.oversizeJsFiles.count",
+    "equals": 4
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: 옮길 함수 묶음 3개",
+   "touches": [
+    "docs/design/harness/module-split/gen-time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "    names: ['openReviewView', 'handleSaveRecord'] },",
+    "file": "docs/design/harness/module-split/gen-time-tracker.js"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기: 토큰열 비교",
+   "touches": [
+    "docs/design/harness/module-split/verify-time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "    const same = a.length === b.length && a.every((v, i) => v === b[i]);",
+    "file": "docs/design/harness/module-split/verify-time-tracker.js"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서 손 칸 스크립트: 원본 세포 값 읽음",
+   "touches": [
+    "docs/design/harness/module-split/spec-time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  c.spans = src.spans.slice();",
+    "file": "docs/design/harness/module-split/spec-time-tracker.js"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교: 기록 저장 단계",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  ['save', { type: ['#ttActivityTitle', '비교 스톱워치 활동'], click: '#btnTtSaveRecord' }],",
+    "file": "docs/design/harness/module-split/dom-compare-time-tracker.js"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 확인: 저장 대신 정말 취소(쓰기 0)",
+   "touches": [
+    "docs/design/harness/module-split/real-account-time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "    await clickSel(page, '#btnTtCancelYes'); await wait(1000);",
+    "file": "docs/design/harness/module-split/real-account-time-tracker.js"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 비교 도구: lifecycle 시험 포함",
+   "touches": [
+    "docs/design/harness/module-split/test-compare-time-tracker.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  const files = fs.readdirSync(path.join(root, 'tests')).filter(n => n.endsWith('.test.js')).sort().map(n => 'tests/' + n).concat(['scripts/test-time-tracker-lifecycle.js']);",
+    "file": "docs/design/harness/module-split/test-compare-time-tracker.js"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사 종합 ok",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 줄 수(옮긴 뒤)",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "mainLinesAfter",
+    "equals": 730
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 부품 토큰열 동일",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "cells.time-tracker-screen.tokensSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "구간 메모 부품 토큰열 동일",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "cells.time-tracker-lap-memo.tokensSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 작성 부품 토큰열 동일",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "cells.time-tracker-review.tokensSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 부품 줄 수",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "cells.time-tracker-screen.cellLines",
+    "equals": 312
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "노출 객체 키·순서 동일",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "sameApiKeysAndOrder",
+    "equals": true
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 window 이름은 키트 1개뿐",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "newWindowNames",
+    "equals": [
+     "OurgoalTimeTrackerKit"
+    ]
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "getState 가 세 칸이 읽는 tracker 와 같은 객체",
+   "touches": [
+    "reports/TASK-ES-407/verify-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/verify-summary.json",
+    "path": "getStateIsLiveTrackerObject",
+    "equals": true
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 smoke 443/0",
+   "touches": [
+    "reports/TASK-ES-407/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/test-compare.json",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 smoke 결과 목록 동일",
+   "touches": [
+    "reports/TASK-ES-407/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/test-compare.json",
+    "path": "smokeResultsIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 무결성 38/38",
+   "touches": [
+    "reports/TASK-ES-407/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/test-compare.json",
+    "path": "work.npmTest.integrity",
+    "equals": [
+     38,
+     38
+    ]
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 버튼 943/943",
+   "touches": [
+    "reports/TASK-ES-407/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/test-compare.json",
+    "path": "work.npmTest.buttons",
+    "equals": [
+     943,
+     943
+    ]
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 103개 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-407/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/test-compare.json",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "라이프사이클 시뮬레이션 기준·작업 출력 같음",
+   "touches": [
+    "reports/TASK-ES-407/lifecycle-probe.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/lifecycle-probe.json",
+    "path": "outputIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침 회귀 0",
+   "touches": [
+    "reports/TASK-ES-407/module-load-probe.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/module-load-probe.json",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 868값 중 기준 대 후 차이",
+   "touches": [
+    "reports/TASK-ES-407/dom-compare-time-tracker.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/dom-compare-time-tracker.json",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 기준 차이",
+   "touches": [
+    "reports/TASK-ES-407/dom-compare-time-tracker.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/dom-compare-time-tracker.json",
+    "path": "baseVsBase.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 비교한 값 수",
+   "touches": [
+    "reports/TASK-ES-407/dom-compare-time-tracker.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/dom-compare-time-tracker.json",
+    "path": "comparedValues",
+    "equals": 868
+   }
+  },
+  {
+   "id": "C46",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탭 실측 기준1 대 작업 차이",
+   "touches": [
+    "reports/TASK-ES-407/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/tab-compare-base1-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C47",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탭 실측 기준2 대 작업 차이",
+   "touches": [
+    "reports/TASK-ES-407/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/tab-compare-base2-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C48",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탭 실측 기준1 대 기준2 차이",
+   "touches": [
+    "reports/TASK-ES-407/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/tab-compare-base1-base2.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 기준1 대 작업 같음",
+   "touches": [
+    "reports/TASK-ES-407/real-account-time-tracker.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/real-account-time-tracker.json",
+    "path": "base1VsWork",
+    "equals": true
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 기준2 대 작업 같음",
+   "touches": [
+    "reports/TASK-ES-407/real-account-time-tracker.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/real-account-time-tracker.json",
+    "path": "base2VsWork",
+    "equals": true
+   }
+  },
+  {
+   "id": "C51",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 쓴 행 0",
+   "touches": [
+    "reports/TASK-ES-407/real-account-time-tracker.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-407/real-account-time-tracker.json",
+    "path": "rowsWritten",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C52",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 빠른 실행 줄의 「⏱️ 시간기록」을 눌러 스톱워치를 시작하고 구간을 기록한 뒤 구간을 눌러 메모를 저장하면 구간 목록에 그 메모가 보이고, 「전체중지 및 기록하기」를 누르면 기록 작성 화면에 「총 2개 구간 측정 완료」가 보이며, 활동명을 적어 「내 기록에 저장」하면 덮개가 닫히고 기록 탭에 그 활동명이 보인다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/time-tracker-screen.js",
+    "js/time-tracker-lap-memo.js",
+    "js/time-tracker-review.js",
+    "js/time-tracker.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/time-tracker-record.json"
+  },
+  {
+   "id": "C53",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-407-TIME-TRACKER-SPLIT.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)",
+    "file": "docs/specs/REQ-TASK-ES-407-TIME-TRACKER-SPLIT.md"
+   }
+  },
+  {
+   "id": "C54",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-407: 시간기록 세포 분열 — 생성기 gen-time-tracker.js 로 js/time-tracker.js(1,220→730)에서 몰입 화면 만들기·버튼 배선(initDOM·bindEvents → js/time-tracker-screen.js 312)·구간 메모 패널(openLapMemoModal → js/time-tracker-lap-memo.js 112)·기록 작성·저장(openReviewView·handleSaveRecord → js/time-tracker-review.js 181)을 글자 그대로 이전(원본 이름 T. 접두만, 상태 tracker 원본 유지, 새 전역 키트 OurgoalTimeTrackerKit 1개, index.html 같은 줄 태그). 선행 시험지 #720(ES-408). 실측(판정 아님): 토큰 동일·누수 0·노출 키 동일, npm test 443/0·38/38·943/943 기준과 같음, tests 103개 종료 코드 같음, 게스트 조작 868값·탭 816값 차이 0(기준 대 기준 0), 화면 시나리오 기준·작업 통과, 실계정(읽기 위주, 쓴 행 0) 기준1·작업·기준2 같음, 모듈 가드 ④ 5→4. 기존 결함: scripts/test-time-tracker-lifecycle.js 가 기준에서도 실패(eval 안 require 경로, js/ 안에서 돌리면 기준·작업 모두 통과·출력 같음). REQ docs/specs/REQ-TASK-ES-407-TIME-TRACKER-SPLIT.md",
+    "file": "dev_log.md"
+   }
+  },
+  {
+   "id": "C55",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "- #TASK-ES-407 | REFACTOR | [시간기록 세포 분열] js/time-tracker.js 에서 몰입 화면 만들기·버튼 배선·구간 메모 패널·기록 작성·저장 3묶음을 js/time-tracker-screen·time-tracker-lap-memo·time-tracker-review.js 로 동작 그대로 이전(1,220 → 730줄) | 코디네이터 지시 (2026-10-05), 선행 #720(ES-408), REQ docs/specs/REQ-TASK-ES-407-TIME-TRACKER-SPLIT.md | 4단계(심사 청구)",
+    "file": "docs/rules/TICKETS.md"
+   }
+  }
+ ]
+}
