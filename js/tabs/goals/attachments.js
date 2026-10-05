@@ -3,7 +3,7 @@
  *
  * 목표·일정의 참고자료 첨부 창(openAddAttachmentModal)·보기 창(openAttachmentViewer)·칩 그리기·칩 누르기 연결, 목표 도우미 결과 반영(applyGoalAgentOp·buildGoalFromAgentData·normalizeSequentialMilestoneDates).
  * window 노출 묶음(if 안 window.X = …)은 index.html 원래 자리에 그대로 있다(js/calendar-attachment.js 등이 그 이름을 찾는다).
- * #TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 8607~8619 · 8620~8635 · 8636~8689 · 8690~8969 · 8976~9022 · 9023~9060 · 9061~9092 · 9093~9166줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 8647~8659 · 8660~8675 · 8676~8729 · 8730~9009 · 9016~9062 · 9063~9100 · 9101~9132 · 9133~9206줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 8607~8619줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8647~8659줄(#TASK-ES-483 생성기 표지) ---- */
   function renderAttachmentChipsHtml(attachments, targetKind, targetId, parentId){
     if(!attachments || !attachments.length) return '';
     return '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">' +
@@ -29,7 +29,7 @@
       }).join('') +
     '</div>';
   }
-  /* ---- 이전 전 index.html 8620~8635줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8660~8675줄(#TASK-ES-483 생성기 표지) ---- */
 
   /* [#TASK-ES-274] 인라인 목표/마일스톤/할일용 시각적 미니 칩 렌더러 */
   function renderInlineAttachmentChips(attachments, targetKind, targetId, parentId){
@@ -46,7 +46,7 @@
       }).join('') +
     '</span>';
   }
-  /* ---- 이전 전 index.html 8636~8689줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8676~8729줄(#TASK-ES-483 생성기 표지) ---- */
 
   function openAttachmentViewer(att, onEdit, onDelete){
     var contentHtml = '';
@@ -101,7 +101,7 @@
       }
     );
   }
-  /* ---- 이전 전 index.html 8690~8969줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8730~9009줄(#TASK-ES-483 생성기 표지) ---- */
 
   function openAddAttachmentModal(targetItem, onSaved, onCancel){
     var draftAtt = { type: 'video', title: '', url: '', note: '' };
@@ -383,7 +383,7 @@
     );
   }
 
-  /* ---- 이전 전 index.html 8976~9022줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9016~9062줄(#TASK-ES-483 생성기 표지) ---- */
 
   function wireAttachmentChipClicks(container){
     if(!container) return;
@@ -431,7 +431,7 @@
       });
     });
   }
-  /* ---- 이전 전 index.html 9023~9060줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9063~9100줄(#TASK-ES-483 생성기 표지) ---- */
 
   function normalizeSequentialMilestoneDates(milestones, goalDueDate){
     if(!Array.isArray(milestones) || milestones.length <= 1) return milestones;
@@ -470,7 +470,7 @@
     }
     return milestones;
   }
-  /* ---- 이전 전 index.html 9061~9092줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9101~9132줄(#TASK-ES-483 생성기 표지) ---- */
 
   function buildGoalFromAgentData(data){
     var rawMilestones = (data.milestones||[]).map(function(m){
@@ -503,7 +503,7 @@
       milestones: milestones
     };
   }
-  /* ---- 이전 전 index.html 9093~9166줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9133~9206줄(#TASK-ES-483 생성기 표지) ---- */
   function applyGoalAgentOp(op){
     var goals = L.state.profile.goals;
     if(op.level==='goal'){

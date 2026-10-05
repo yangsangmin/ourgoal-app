@@ -3,7 +3,7 @@
  *
  * 기록 입력의 「외부 기록 불러오기」 단추(#importExternalBtn) 처리기 — 샘플 데이터(EXTERNAL_DATA, 이름 그대로 mock) 목록 창과 CSV/줄글 대량 가져오기 창 열기, 홈 구성 열기(openHomeCustomizer), 「개인 목표 200% 활용 가이드」 단추 처리기.
  * 처리기 등록 문 두 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. 한 줄에 두 문인 홈 구성·가이드 단추 등록 세 줄은 원래 자리에 그대로 있다. 샘플(mock) 데이터는 고치지 않고 그대로 옮겼다.
- * #TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 7929~7982 · 7983~7984 · 7990~7994줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 7969~8022 · 8023~8024 · 8030~8034줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 7929~7982줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7969~8022줄(#TASK-ES-483 생성기 표지) ---- */
   function bindImportExternalBtn() { /* [#TASK-ES-483] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   document.getElementById('importExternalBtn').addEventListener('click', function(){
     L.openModal(
@@ -72,11 +72,11 @@
     );
   });
   } /* bindImportExternalBtn */
-  /* ---- 이전 전 index.html 7983~7984줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8023~8024줄(#TASK-ES-483 생성기 표지) ---- */
 
   function openHomeCustomizer(){ if(window.OurgoalCustomize && typeof window.OurgoalCustomize.open === 'function'){ OurgoalCustomize.open({ state: L.state, saveProfile: L.saveProfile, toast: L.toast, openModal: L.openModal, closeModal: L.closeModal, track: L.track }); } else { var settingOpenBtn = document.getElementById('homeLayoutOpenBtn'); if(settingOpenBtn) settingOpenBtn.click(); } }
 
-  /* ---- 이전 전 index.html 7990~7994줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8030~8034줄(#TASK-ES-483 생성기 표지) ---- */
   function bindPersonalGuideBtn() { /* [#TASK-ES-483] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnShowGuide){
     L.btnShowGuide.addEventListener('click', function(){
