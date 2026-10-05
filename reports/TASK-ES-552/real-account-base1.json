@@ -1,0 +1,90 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base1",
+ "mode": "test-account-A",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · test account A (address hidden) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 목표 개인 하위 탭(빈 안내·추천 템플릿) #screen-goals",
+   "present": true,
+   "visible": true,
+   "textHash": "3c08e90fe9b18654",
+   "textLen": 345,
+   "attrsHash": "de8d692ed9f36ffb",
+   "opened": null
+  },
+  {
+   "name": "② 개인 목표 활용가이드 창 #modalSheet",
+   "present": true,
+   "visible": true,
+   "textHash": "49cd9abb0e1e5015",
+   "textLen": 631,
+   "attrsHash": "0b7c60b9dabdd4c1",
+   "opened": true
+  },
+  {
+   "name": "③ 소통 팀 하위 탭(예시 팀 판별) #commBody",
+   "present": true,
+   "visible": true,
+   "textHash": "2069c1b603eee2cf",
+   "textLen": 2140,
+   "attrsHash": "2f386b776e8584f9",
+   "opened": null,
+   "counts": {
+    "mockBadge": 12
+   }
+  },
+  {
+   "name": "④ 예시 팀 체험 참여 g-workshop(저장 쓰기는 도구가 끊음) #commBody",
+   "present": true,
+   "visible": true,
+   "textHash": "2359f9add10f16af",
+   "textLen": 2152,
+   "attrsHash": "2f386b776e8584f9",
+   "opened": true
+  },
+  {
+   "name": "⑤ 목표 팀목표 하위 탭(수준별 목표·일괄 접기) #screen-goals",
+   "present": true,
+   "visible": true,
+   "textHash": "082cb4bd1ea5f109",
+   "textLen": 733,
+   "attrsHash": "1e7b0458966a145a",
+   "opened": null,
+   "counts": {
+    "leavePreview": 1,
+    "foldBtn": 1,
+    "levelBody": 1
+   }
+  },
+  {
+   "name": "⑥ 마일스톤 펼치기 [data-tgfoldlist]",
+   "present": true,
+   "visible": true,
+   "textHash": "81d2ca4ab586c1fd",
+   "textLen": 9,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true
+  }
+ ],
+ "errors": [],
+ "loggedIn": true,
+ "entered": true,
+ "globals": "renderPersonalGoalsEmptyGuideHtml/undefined,isMockGroup/function,getGroupLevelGoals/undefined,openLevelGroupDetailModal/undefined,collapseAllTeamGoalAccordions/function,openTeamGoalEditModal/undefined",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 5,
+  "POST /rest/v1/checkins": 5,
+  "POST /rest/v1/rpc/count_content_reactions": 1,
+  "POST /rest/v1/rpc/list_content_advice": 1,
+  "POST /rest/v1/rpc/my_content_reactions": 1
+ }
+}

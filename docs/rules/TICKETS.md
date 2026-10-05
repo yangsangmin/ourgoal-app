@@ -604,3 +604,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-519 | INFRA | [시험지 선행 · 인라인 3단계 Z4] 구간 절단 시험지 3개(renderMultiMetricSvg·collapseAllTeamGoalAccordions)가 세포 이전 뒤에도 같은 함수를 읽음 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md
 - #TASK-ES-537 | INFRA | [인라인 3단계 기관] 루틴 상세·편집 창 세포 이동(생성기, 자리 HO), Modal helper·Confetti 옮길 문 0 확인 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md | 4단계(심사 청구)
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
+- #TASK-ES-552 | INFRA | [인라인 3단계 Z2 2차] 「개인 목표 200% 활용 가이드」 묶음을 세포 3개(goals/personal-goals-guide·goals/team-level-goals·goals/team-goal-edit-modal)로 옮김 — 게스트 시나리오 3(예시 팀 체험·템플릿 팀 개설로 팀 경로 도달) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-552-STAGE3-Z2-GUIDE.md | 4단계(심사 청구)

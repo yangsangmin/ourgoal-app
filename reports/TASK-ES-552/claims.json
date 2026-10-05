@@ -1,0 +1,240 @@
+{
+ "task": "TASK-ES-552",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-552-STAGE3-Z2-GUIDE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「개인 목표 200% 활용 가이드 & 템플릿 백과사전」의 renderPersonalGoalsEmptyGuideHtml 을 목표 탭 세포 js/tabs/goals/personal-goals-guide.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 H2). 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R2",
+   "text": "같은 묶음의 isMockGroup·getGroupLevelGoals·openLevelGroupDetailModal·collapseAllTeamGoalAccordions 를 목표 탭 세포 js/tabs/goals/team-level-goals.js 로 동작 그대로 옮긴다(window 노출 줄은 원래 자리). 게스트 시나리오(예시 팀 체험 → 팀목표)로 낸다."
+  },
+  {
+   "id": "R3",
+   "text": "같은 묶음의 openTeamGoalEditModal 을 목표 탭 세포 js/tabs/goals/team-goal-edit-modal.js 로 동작 그대로 옮긴다. 게스트 시나리오(템플릿으로 팀 개설 → 편집 → 상세 편집 창)로 낸다."
+  },
+  {
+   "id": "R4",
+   "text": "실계정 하네스 측정 기록(테스트 계정·게스트 기준1·작업·기준2 읽기 전용 비교와 도달 실측)을 저장소 reports/TASK-ES-552/ 에 남긴다."
+  },
+  {
+   "id": "R5",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 시험지 종료 코드 기준=작업, 신고서 등록."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 추천 템플릿 하나를 담고 「활용가이드」를 누르면 「개인 목표 200% 활용 가이드」 창에 추천 목표 템플릿 백과사전 카드와 3단계 실천법이 보이고 예외가 없다 — 옮긴 renderPersonalGoalsEmptyGuideHtml 이 그린다",
+   "touches": [
+    "js/tabs/goals/personal-goals-guide.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-personal-guide-guest.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 예시 팀을 체험 참여하고 목표 「팀목표」를 열면 「체험 팀 나가기」 단추가 보이고 마일스톤 단추가 「마일스톤 펼치기 ▼」로 접혀 있다가 누르면 「마일스톤 접기 ▲」가 되며 예외가 없다 — 옮긴 isMockGroup·collapseAllTeamGoalAccordions 가 동작한다",
+   "touches": [
+    "js/tabs/goals/team-level-goals.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-team-level-preview-guest.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 예시 팀 템플릿으로 팀을 개설하고 팀목표 「편집」을 켜 상세 편집 단추를 누르면 「팀 목표 상세 편집」 창이 팀 이름과 함께 보이고 예외가 없다 — 옮긴 openTeamGoalEditModal 이 연다",
+   "touches": [
+    "js/tabs/goals/team-goal-edit-modal.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-team-goal-edit-guest.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-552/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-552/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 같은 단계 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-552/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-552/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-552/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 이후 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-552/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 3개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-552/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 종료 코드가 기준과 작업에서 다른 것이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-552/tests-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-552/tests-compare.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/personal-goals-guide 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/personal-goals-guide\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/team-level-goals 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/team-level-goals\""
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/team-goal-edit-modal 이 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/team-goal-edit-modal\""
+   }
+  }
+ ]
+}

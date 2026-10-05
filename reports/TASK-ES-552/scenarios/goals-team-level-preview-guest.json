@@ -1,0 +1,26 @@
+{
+ "id": "goals-team-level-preview-guest",
+ "title": "게스트로 소통 「팀」에서 예시 팀(2026 하반기 전략 워크숍 TF)을 체험 참여한 뒤 목표 「팀목표」를 열면 예시 팀이라 「체험 팀 나가기」 단추가 보이고, 일괄 접기로 팀 목표의 마일스톤 단추가 「마일스톤 펼치기 ▼」로 정돈된다 — 옮긴 isMockGroup·getGroupLevelGoals·collapseAllTeamGoalAccordions(js/tabs/goals/team-level-goals.js)가 이전 전과 같이 동작한다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 15000 },
+  { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+  { "do": "waitFor", "selector": "#commBody [data-sub=\"group\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#commBody [data-sub=\"group\"]" },
+  { "do": "waitFor", "selector": "[data-join=\"g-workshop\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "[data-join=\"g-workshop\"]" },
+  { "expect": "textContains", "selector": "#toast", "text": "참여했어요" },
+  { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+  { "do": "waitFor", "selector": "#btnGoalsSubTeam", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#btnGoalsSubTeam" },
+  { "do": "waitFor", "selector": "[data-tgleavepreview=\"g-workshop\"]", "timeoutMs": 10000 },
+  { "expect": "visible", "selector": "[data-tgleavepreview=\"g-workshop\"]" },
+  { "expect": "textContains", "selector": "[data-tgfoldlist=\"tg-ws-1\"]", "text": "마일스톤 펼치기 ▼" },
+  { "do": "click", "selector": "[data-tgfoldlist=\"tg-ws-1\"]" },
+  { "expect": "textContains", "selector": "[data-tgfoldlist=\"tg-ws-1\"]", "text": "마일스톤 접기 ▲" },
+  { "expect": "noExceptions" }
+ ]
+}

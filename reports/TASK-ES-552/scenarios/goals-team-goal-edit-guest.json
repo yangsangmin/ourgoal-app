@@ -1,0 +1,29 @@
+{
+ "id": "goals-team-goal-edit-guest",
+ "title": "게스트로 소통 「팀」에서 예시 팀 템플릿으로 팀을 개설(팀장)한 뒤 목표 「팀목표」에서 「편집」을 켜고 팀 목표의 상세 편집 단추를 누르면 「팀 목표 상세 편집」 창이 팀 이름과 함께 보인다 — 옮긴 openTeamGoalEditModal(js/tabs/goals/team-goal-edit-modal.js)이 연다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 15000 },
+  { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+  { "do": "waitFor", "selector": "#commBody [data-sub=\"group\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#commBody [data-sub=\"group\"]" },
+  { "do": "waitFor", "selector": "[data-tplgroup-create=\"g-workshop\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "[data-tplgroup-create=\"g-workshop\"]" },
+  { "do": "waitFor", "selector": "#grpSave", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#grpSave" },
+  { "expect": "textContains", "selector": "#toast", "text": "팀을 템플릿으로 개설했어요" },
+  { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+  { "do": "waitFor", "selector": "#btnGoalsSubTeam", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#btnGoalsSubTeam" },
+  { "do": "waitFor", "selector": "#teamGoalEditToggle", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#teamGoalEditToggle" },
+  { "do": "waitFor", "selector": "[data-tgeditmodal]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "[data-tgeditmodal]" },
+  { "expect": "textContains", "selector": "#modalSheet", "text": "팀 목표 상세 편집" },
+  { "expect": "textContains", "selector": "#modalSheet", "text": "2026 하반기 전략 워크숍 TF" },
+  { "expect": "noExceptions" }
+ ]
+}
