@@ -1,0 +1,19 @@
+{
+  "id": "settings-home-layout-open",
+  "title": "게스트가 설정 탭 「앱을 내맘대로!」 묶음을 펼쳐 「홈 구성 고르기」(#homeLayoutOpenBtn)를 누르면 「앱을 내맘대로!」 홈 구성 창이 열려 위젯 목록(#kf1LayoutList)과 「완료」(#kf1DoneBtn)가 보이고, 「완료」를 누르면 닫힌다 — js/customize.js(OurgoalCustomize)를 고친 뒤에도 보이는 진입로가 그대로 동작하는지 보는 회귀 확인",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "expect": "notVisible", "selector": "#avatarGreetingModal", "timeoutMs": 8000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "details.settings-group-accordion:has(#homeLayoutOpenBtn) > summary" },
+    { "do": "click", "selector": "#homeLayoutOpenBtn" },
+    { "expect": "visible", "selector": "#modalSheet #kf1LayoutList", "timeoutMs": 5000 },
+    { "expect": "textContains", "selector": "#modalSheet", "text": "앱을 내맘대로!" },
+    { "do": "click", "selector": "#kf1DoneBtn" },
+    { "expect": "notVisible", "selector": "#modalSheet #kf1LayoutList", "timeoutMs": 5000 },
+    { "expect": "noExceptions" }
+  ]
+}
