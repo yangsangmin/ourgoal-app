@@ -569,3 +569,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-466 | INFRA | [인라인 어려움 구역 H1 1차] 동반자 페이스·피드 게시 창·평가 창·새 목표 창 네 묶음을 세포 4개로 이전(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md
 - #TASK-ES-475 | INFRA | [시험지 선행 · 인라인 어려움 H3] achievement-graph-multiset 이 인라인 합본을 읽음(읽기 줄 1줄) | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-475-H3-TEST-BUNDLE.md
 - #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md
+- #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통] core-confirm-es376 잘라 읽기가 인라인 합본을 읽음 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md
