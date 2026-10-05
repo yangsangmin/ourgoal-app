@@ -573,3 +573,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-478 | FIX/버그 | [남은 허상지표·위젯 시험 픽스처·소통 숨김 진입로 판정] 통계 카드 가짜 스트릭·리캡 가짜 25분 제거, desktop-widget-suite 픽스처 이름 정정 — 소통 허브·빠른 게시 띠는 중복·고장이라 복원하지 않고 보고, 응원 바·프로필 시트 가짜 전송 보고 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-478-HIDDEN-COMM-FAKE-METRICS.md
 - #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md
 - #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통] core-confirm-es376 잘라 읽기가 인라인 합본을 읽음 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md
+- #TASK-ES-493 | INFRA | [인라인 어려움 구역 H2 2차] 목표 탭 루틴 하위 탭 화면·새 루틴 창, 팀 만들기 안내·활용 가이드·빠른 템플릿 프리셋을 js/tabs/goals/routine-screen.js · team-goals-guide.js 로 동작 그대로 이전(게스트 화면에서 열 수 없는 루틴 상세·팀 목표 편집·수준별 목표는 남김) | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-493-INLINE-H2-2.md | 4단계(심사 청구)
