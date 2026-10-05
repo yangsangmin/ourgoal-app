@@ -1,0 +1,68 @@
+{
+  "id": "settings-home-layout-ok",
+  "title": "게스트 설정 「홈 구성 고르기」 창에서 「오늘의 카드」 스위치를 끄고 다시 켤 수 있다 — 홈 머리·상단바 홈 구성 단추를 지운 뒤 남은 진입로",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]",
+      "timeoutMs": 6000
+    },
+    {
+      "do": "click",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]",
+      "className": "on",
+      "timeoutMs": 4000
+    },
+    {
+      "do": "click",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#kf1LayoutList .switch[data-kf1-id=\"todayMissionCard\"]",
+      "className": "on",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

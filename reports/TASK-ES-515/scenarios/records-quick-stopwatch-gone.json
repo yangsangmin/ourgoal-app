@@ -1,0 +1,56 @@
+{
+  "id": "records-quick-stopwatch-gone",
+  "title": "게스트로 기록 탭에 들어가면 숨은 빠른 스톱워치 바(#quickStopwatchBar)와 그 단추가 없고, 보이는 「⏱️ 시간기록」 단추는 눌러 전체화면 시간기록 창(측정 시작 단추)이 열린다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#quickStopwatchBar"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#btnFastStopwatchStart"
+    },
+    {
+      "do": "click",
+      "selector": "#sRecModesWrap > button:nth-child(3)"
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar button[onclick*=\"OurgoalTimeTracker\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#btnTtActionStart",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "settings-widget-opener-guest",
+ "title": "게스트로 설정에서 「바탕화면 위젯 설정 & 미리보기」 단추가 든 묶음을 펼쳐 그 단추를 누르면 「기기 바탕화면 위젯 설정 & 미리보기」 창이 보인다 — index.html 원래 자리에서 부르는 bindWidgetModalOpener(js/tabs/settings/widget-modal-opener.js)가 문서 클릭 위임을 이전 전과 같이 건다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]", "timeoutMs": 15000 },
+  { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+  { "do": "waitFor", "selector": "details:has(#btnOpenWidgetModal) > summary", "timeoutMs": 10000 },
+  { "do": "click", "selector": "details:has(#btnOpenWidgetModal) > summary" },
+  { "expect": "visible", "selector": "#btnOpenWidgetModal" },
+  { "do": "click", "selector": "#btnOpenWidgetModal" },
+  { "expect": "textContains", "selector": "#modalSheet", "text": "기기 바탕화면 위젯 설정 & 미리보기" },
+  { "expect": "noExceptions" }
+ ]
+}

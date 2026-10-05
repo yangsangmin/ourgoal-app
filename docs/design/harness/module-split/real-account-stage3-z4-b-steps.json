@@ -1,0 +1,9 @@
+{"moved":["renderArchivedGoals","restoreGoal","goalAchievement","setArchivedPeriod","setArchivedPage","heatmapLevel","filterRecordsByQuery","computeTableAnalytics","computeTrendChartData","renderMultiMetricSvg","TREND_METRICS"],
+ "steps":[
+ {"name":"① 홈 첫 화면 #screen-home","tab":"home","wait":1500,"read":"#screen-home"},
+ {"name":"② 기록 탭 #screen-records(기록 목록·검색 칸)","tab":"records","wait":2500,"read":"#recordsList"},
+ {"name":"③ 히트맵·통계 모드 → 히트맵 #recordHeatmap","click":"button.s-rec-mode-btn[onclick*=\"heatmap\"]","wait":1200,"read":"#recordHeatmap","count":{"heatmapCells":"#recordHeatmap .heatmap-cell"}},
+ {"name":"④ 실천추이 차트 #chartContainer(여러 지표 SVG)","click":"#recCarouselPills [data-recslide=\"0\"]","wait":1200,"read":"#chartContainer","count":{"trendPaths":"#chartContainer svg.trend-multi-svg path"}},
+ {"name":"⑤ 보관함 모드 #archivedGoals","click":"#sRecArchiveBtn","wait":1200,"read":"#archivedGoals"},
+ {"name":"⑥ 목표 탭 #screen-goals","tab":"goals","wait":1500,"read":"#screen-goals"}
+]}

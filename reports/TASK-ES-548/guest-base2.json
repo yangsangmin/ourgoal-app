@@ -1,0 +1,94 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base2",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 앱 진입 뒤 홈 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "770dd238d507f2ba",
+   "opened": null,
+   "counts": {
+    "appShellActive": 1
+   }
+  },
+  {
+   "name": "② 일정 탭 #screen-calendar",
+   "present": true,
+   "visible": true,
+   "textHash": "d38e70346bac9974",
+   "textLen": 391,
+   "attrsHash": "f92a6b9fe3159986",
+   "opened": null
+  },
+  {
+   "name": "③ 일정 추가 → 새 일정 창 #modalOverlay",
+   "present": true,
+   "visible": true,
+   "textHash": "9cb766d70fe53f45",
+   "textLen": 182,
+   "attrsHash": "46d79665598a63a5",
+   "opened": true
+  },
+  {
+   "name": "④ 홈 퀘스트 나침반 #homeDetailSheet",
+   "present": true,
+   "visible": true,
+   "textHash": "5ca42c248ffae9c8",
+   "textLen": 599,
+   "attrsHash": "3f2168254478bf38",
+   "opened": true
+  },
+  {
+   "name": "⑤ 스타터 「매일 1시간 몰입」 → 토스트 #toast",
+   "present": true,
+   "visible": true,
+   "textHash": "b6a1c8ac1ed3e7ba",
+   "textLen": 33,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true
+  },
+  {
+   "name": "⑥ 목표 탭 #screen-goals",
+   "present": true,
+   "visible": true,
+   "textHash": "f6a5f55c6b5a8a6d",
+   "textLen": 677,
+   "attrsHash": "f2be682b4a0874f9",
+   "opened": null
+  },
+  {
+   "name": "⑦ 설정 탭 #screen-settings",
+   "present": true,
+   "visible": true,
+   "textHash": "9095a9833dc3565e",
+   "textLen": 753,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "enterApp/undefined,openCalendarManualEditModal/function,_uxTelemetry/object,STARTER_GOAL_TEMPLATES/undefined,bindFocusResync/undefined,bindVisibilityResync/undefined,bindRemoteLogoutStorageListener/undefined,startRemoteSessionPoll/undefined,bindOnlineSync/undefined,bindOfflineNotice/undefined,bindRageTapTelemetry/undefined",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {
+   "/api/todaymission": 1,
+   "/api/goalstatus": 1
+  }
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 4,
+  "POST /rest/v1/goals": 3
+ }
+}

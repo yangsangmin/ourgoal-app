@@ -2974,8 +2974,9 @@ check('compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로
 
 check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스바·4단 캐러셀 및 과거 기록 계층형 아코디언이 구현되어 있다', () => {
   // 1. 마크업 무결성
-  assert.ok(html.includes('id="recSegmentBar"'), '3분할 세그먼트 바 마크업');
-  assert.ok(html.includes('id="recSegFeedBtn"') && html.includes('id="recSegStatsBtn"') && html.includes('id="recSegArchiveBtn"'), '3분할 세그먼트 버튼들');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 옛 세그먼트 막대(#recSegmentBar)를 지웠다. 보기 전환은 성소 기록 모드 단추가 setRecordsSegment 로 한다
+  assert.ok(!html.includes('id="recSegmentBar"'), '옛 3분할 세그먼트 바 마크업 없음(지움)');
+  assert.ok(!html.includes('id="recSegFeedBtn"') && !html.includes('id="recSegStatsBtn"') && !html.includes('id="recSegArchiveBtn"'), '옛 3분할 세그먼트 버튼들 없음(지움)');
   assert.ok(html.includes('id="recViewFeed"') && html.includes('id="recViewStats"') && html.includes('id="recViewArchive"'), '3개 뷰 컨테이너');
   assert.ok(html.includes('id="recMiniPulseBar"') && html.includes('id="recMiniPulseText"'), '미니 성취 펄스 바 마크업');
   assert.ok(html.includes('id="recCarouselViewport"') && html.includes('id="recCarouselTrack"') && html.includes('id="recCarouselPills"'), '4단 메트릭 캐러셀 뷰포트 및 알약 탭');
@@ -2986,7 +2987,7 @@ check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스
   assert.ok(html.includes('rec-accordion-card') && html.includes('data-toggleacc'), '과거 기록 계층형 아코디언 토글');
 
   // 3. CSS 무결성
-  assert.ok(styleSrc.includes('.rec-segment-bar') && styleSrc.includes('.rec-mini-pulse-bar'), '세그먼트 및 펄스바 CSS');
+  assert.ok(!styleSrc.includes('.rec-segment-bar') && styleSrc.includes('.rec-mini-pulse-bar'), '옛 세그먼트 CSS 없음(지움) 및 펄스바 CSS');
   assert.ok(styleSrc.includes('.rec-carousel-viewport') && styleSrc.includes('.rec-carousel-track'), '캐러셀 CSS');
   assert.ok(styleSrc.includes('.rec-accordion-card') && styleSrc.includes('.rec-acc-body'), '계층형 아코디언 CSS');
 });
@@ -3025,7 +3026,7 @@ check('compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 �
   assert.ok(styleSrc.includes('.rec-acc-inner{overflow:hidden;padding:0;min-height:0;}'), '아코디언 축소 min-height 0');
 
   // 3. 기록 탭 버튼 정적 리스너 검증
-  assert.ok(html.includes("document.querySelectorAll('#recSegmentBar [data-recseg]')"), '세그먼트 정적 리스너');
+  assert.ok(!html.includes("document.querySelectorAll('#recSegmentBar [data-recseg]')"), '옛 세그먼트 정적 리스너 없음(막대와 함께 지움, #TASK-ES-515)');
   assert.ok(html.includes("document.querySelectorAll('#recCarouselPills [data-recslide]')"), '캐러셀 알약 정적 리스너');
   assert.ok(html.includes("document.getElementById('recMiniPulseBar')"), '미니 펄스바 정적 리스너');
 });
@@ -3170,8 +3171,9 @@ check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장�
   assert.strictEqual(html.includes('(테마 : ai 분석 및 DB시각화에 활용됨)'), false, '숨겨진 +테마 퀵바 안내 문구 제거');
 
   // 4. (닉네임)님, 안녕하세요 우측 끝 '나만의 홈 구성' 버튼 및 모달 연동
-  assert.ok(html.includes('id="btnCustomHomeLayout"'), '나만의 홈 구성 버튼 id 존재');
-  assert.ok(html.includes('window.OurgoalCustomize.open'), '홈 구성 커스터마이즈 모달 연동 확인');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 홈 머리 「나만의 홈 구성」 단추(이중 처리기)를 지웠다. 홈 구성은 설정 #homeLayoutOpenBtn 이 연다
+  assert.ok(!html.includes('id="btnCustomHomeLayout"'), '옛 나만의 홈 구성 버튼 id 없음(지움)');
+  assert.ok(!html.includes('window.OurgoalCustomize.open') && html.includes("OurgoalCustomize.open({ state: state, saveProfile: saveProfile"), '옛 홈 머리 단추 처리기 없음(지움)·설정 「홈 구성 고르기」 커스터마이즈 모달 연동 확인');
 
   // 5. 목표탭 4종 뷰 필터 버튼 (기본, 목표만, 마일스톤, 할일)
   assert.ok(html.includes('id="msViewToggle"'), '4종 뷰 필터 컨테이너 id 존재');
@@ -3243,10 +3245,12 @@ check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 �
   assert.strictEqual(styleSrc.includes('.theme-leaf-chip'), false, '지운 테마 창 칩 스타일 제거');
 
   // 7. 나만의 홈 구성 버튼 밑에 안내문구 '필요없는 창 지우기' 추가
-  assert.ok(html.includes('필요없는 창 지우기'), '필요없는 창 지우기 안내문구 마크업 존재');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 홈 머리 단추와 그 밑 안내문구를 함께 지웠다
+  assert.ok(!html.includes('필요없는 창 지우기'), '옛 홈 머리 단추 안내문구 없음(단추와 함께 지움)');
 
   // 8. 나만의 홈 구성 클릭 시 OurgoalCustomize.open 정규 연동
-  assert.ok(html.includes('window.OurgoalCustomize.open') && html.includes('saveProfile: saveProfile'), 'OurgoalCustomize.open 정규 호출 인자 완비');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 남은 진입로는 설정 「홈 구성 고르기」(#homeLayoutOpenBtn)
+  assert.ok(html.includes("OurgoalCustomize.open({ state: state, saveProfile: saveProfile") && html.includes('saveProfile: saveProfile'), 'OurgoalCustomize.open 정규 호출 인자 완비(설정 홈 구성 고르기)');
 });
 
 check('compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 추첨 합성 & 나무망치 제작 연출 검증', () => {
@@ -4845,7 +4849,8 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
   assert.ok(indexHtml.includes('카톡 실명 걱정 No!'), '카톡 실명 걱정 해소 카피 존재');
 
   // 5. 이메일로 가입하기 버튼 및 회원가입 탭 비노출 숨김 (상민님 지시사항: 카카오 단일 가입 일원화)
-  assert.ok(indexHtml.includes('id="landStartWrap" style="display:none;"'), '랜딩 화면 이메일 가입 버튼 비노출 숨김');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 첫 화면 「이메일로 가입하기」 단추를 처리기와 함께 지웠다
+  assert.ok(!indexHtml.includes('id="landStartWrap"') && !indexHtml.includes('id="landStartBtn"'), '랜딩 화면 이메일 가입 버튼 없음(지움)');
   assert.ok(indexHtml.includes('data-authtab="signup" type="button" style="display:none;"'), '인증 화면 이메일 회원가입 탭 비노출 숨김');
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
@@ -5097,15 +5102,16 @@ check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로�
 check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신', () => {
   // 1. 탑바 우측 퀵 액션 버튼 마크업 확인
   assert.ok(html.includes('id="topHomeGuideBtn"'), '탑바 내 활용법 퀵 액션 버튼(#topHomeGuideBtn) 존재');
-  assert.ok(html.includes('id="topHomeLayoutBtn"'), '탑바 내 홈구성 퀵 액션 버튼(#topHomeLayoutBtn) 존재');
-  assert.ok(html.includes('id="topbarActions"'), '탑바 내 액션 컨테이너(#topbarActions) 존재');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 상단바 「⚙️ 홈구성」 단추와 그 하나만 담던 칸을 지웠다
+  assert.ok(!html.includes('id="topHomeLayoutBtn"'), '탑바 내 옛 홈구성 퀵 액션 버튼(#topHomeLayoutBtn) 없음(지움)');
+  assert.ok(!html.includes('id="topbarActions"'), '탑바 내 옛 액션 컨테이너(#topbarActions) 없음(지움)');
 
   // 2. 이벤트 핸들러 배선 확인
-  assert.ok(html.includes("topBtnCustomHome.addEventListener('click', openHomeCustomizer)"), '탑바 홈구성 버튼 핸들러 연동');
+  assert.ok(!html.includes("topBtnCustomHome.addEventListener('click', openHomeCustomizer)"), '탑바 옛 홈구성 버튼 핸들러 없음(지움)');
   assert.ok(html.includes("topBtnGuide.addEventListener('click'"), '탑바 활용법 버튼 핸들러 연동');
 
   // 3. 모바일 반응형 flex-wrap 및 safe-area CSS 확인
-  assert.ok(styleSrc.includes('.topbar-actions') && styleSrc.includes('.topbar-action-btn'), '탑바 퀵 액션 버튼 스타일 정의');
+  assert.ok(!styleSrc.includes('.topbar-actions') && styleSrc.includes('.topbar-action-btn'), '옛 탑바 액션 칸 스타일 없음(지움)·남은 탑바 활용법 단추 스타일 정의');
   assert.ok(styleSrc.includes('.home-head-row') && styleSrc.includes('flex-wrap: wrap;'), '홈 헤더 행 flex-wrap 줄바꿈 안전 배선');
 
   // 4. PWA sw.js 캐시 버전 갱신 확인
@@ -9134,15 +9140,16 @@ check('compliance: [#TASK-ES-282] 전 탭 상위 중복 \'홈구성\' 버튼 제
   assert.ok(customJs.includes('handle홈_Item31Action = handle홈_Item31Action'), 'handle홈_Item31Action 노출');
 
   // 2. index.html 상위 버튼 소거 및 본문 DOM 마크업 검증
-  assert.ok(indexHtml.includes('id="topHomeLayoutBtn"') && indexHtml.includes('display:none !important'), '상위 탑바 topHomeLayoutBtn 전 탭 완전 은폐 및 소거');
-  assert.ok(indexHtml.includes('id="btnCustomHomeLayout"'), 'index.html #btnCustomHomeLayout 단일 정통 버튼 탑재');
+  // [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 상단바 홈구성·홈 머리 「나만의 홈 구성」 단추를 지웠다(숨김 대신 삭제)
+  assert.ok(!indexHtml.includes('id="topHomeLayoutBtn"'), '상위 탑바 topHomeLayoutBtn 없음(지움)');
+  assert.ok(!indexHtml.includes('id="btnCustomHomeLayout"'), 'index.html 옛 #btnCustomHomeLayout 없음(지움)');
   assert.ok(indexHtml.includes('handle홈_Item31Action'), 'index.html #btnCustomHomeLayout에 handle홈_Item31Action 연동');
   assert.ok(indexHtml.includes('id="og-task-31-container"'), 'index.html #og-task-31-container 마크업 탑재');
   assert.ok(indexHtml.includes('id="og-task-31-action-btn"'), 'index.html #og-task-31-action-btn 버튼 마크업 탑재');
   assert.ok(indexHtml.includes('handle홈_Item31Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
 
   // 3. ui.css 스타일 및 반응형 검증
-  assert.ok(uiCss.includes('#topHomeLayoutBtn'), 'ui.css #topHomeLayoutBtn 소거 스타일 정의');
+  assert.ok(!uiCss.includes('#topHomeLayoutBtn'), 'ui.css #topHomeLayoutBtn 숨김 규칙 없음(요소와 함께 지움)');
   assert.ok(uiCss.includes('#og-task-31-container'), 'ui.css #og-task-31-container 스타일 정의');
   assert.ok(uiCss.includes('#og-task-31-action-btn'), 'ui.css #og-task-31-action-btn 스타일 정의');
   assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');

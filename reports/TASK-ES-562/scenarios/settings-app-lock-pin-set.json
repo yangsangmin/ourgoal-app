@@ -1,0 +1,84 @@
+{
+ "id": "settings-app-lock-pin-set",
+ "title": "게스트로 설정 탭 「계정」 묶음에서 앱 잠금 PIN 스위치를 눌러 4자리 PIN 을 두 번 넣고 「앱 잠금 켜기」를 누르면 「이 기기에 앱 잠금 PIN 을 설정했어요」 토스트가 뜨고 스위치가 켜지며 PIN 변경 칸이 보인다 — 옮긴 APP_LOCK_PIN_PREFIX(js/tabs/settings/app-lock-pin-format.js)로 해시 값을 만든다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#setGroupAccountSummary",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#setGroupAccountSummary"
+  },
+  {
+   "do": "click",
+   "selector": "#twoFactorSwitch"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#twoFaPinInput"
+  },
+  {
+   "do": "type",
+   "selector": "#twoFaPinInput",
+   "text": "1234"
+  },
+  {
+   "do": "type",
+   "selector": "#twoFaPinConfirm",
+   "text": "1234"
+  },
+  {
+   "do": "click",
+   "selector": "#btnSave2Fa"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "이 기기에 앱 잠금 PIN 을 설정했어요"
+  },
+  {
+   "expect": "hasClass",
+   "selector": "#twoFactorSwitch",
+   "className": "on"
+  },
+  {
+   "expect": "visible",
+   "selector": "#twoFactorPinControls"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
