@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "65af5938282f97989d540bfefe631afa6ecd773d",
-  "short": "65af593",
-  "committedAt": "2026-10-05T16:35:59+09:00",
-  "subject": "[INFRA] #TASK-ES-423 chore: Merge branch 'main' into feat/2026-10-05-task-es-423-inline-split-1 — 기준선·세포지도는 main 판을 받고 module-specs --write·module-guard --update 로 다시 만듦"
+  "commit": "a89ce00ff8a836281ddad4527f28a4e826813663",
+  "short": "a89ce00",
+  "committedAt": "2026-10-05T17:23:43+09:00",
+  "subject": "Merge pull request #746 from yangsangmin/fix/2026-10-05-task-es-431-lockscreen-streak"
  },
  "summary": {
-  "cells": 172,
-  "files": 171,
-  "jsLines": 52729,
+  "cells": 177,
+  "files": 176,
+  "jsLines": 52730,
   "kinds": {
    "organ": 29,
-   "tab": 44,
+   "tab": 49,
    "hybrid": 98,
    "future": 1
   },
-  "descriptionsHand": 172,
+  "descriptionsHand": 177,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -42,11 +42,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 33385,
-   "functionDecls": 658
+   "inlineScriptLines": 32150,
+   "functionDecls": 629
   },
   "health": {
-   "undifferentiatedLines": 33385,
+   "undifferentiatedLines": 32150,
    "globalLinks": 282,
    "oversizeCells": 1,
    "drawingSmallCells": {
@@ -85,9 +85,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 44,
+   "count": 49,
    "large": 6,
-   "small": 38
+   "small": 43
   },
   {
    "key": "hybrid",
@@ -125,11 +125,14 @@
    "desc": "개인·루틴·팀 목표와 마일스톤·할 일",
    "cells": [
     "goals/index",
+    "goals/ai-agent",
+    "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "goals/schedule-setup",
     "goals/sub-personal",
     "goals/sub-routine",
     "goals/sub-team"
@@ -144,6 +147,8 @@
    "desc": "체크인 기록·시간 기록·회고·통계",
    "cells": [
     "records/index",
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
     "records/period-ai-card",
     "records/render",
     "records/sub-retrospect",
@@ -168,7 +173,7 @@
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 1563,
+   "lines": 1564,
    "over800": 0
   },
   {
@@ -1516,6 +1521,7 @@
     "data/avatar-personas/istp"
    ],
    "calledBy": [
+    "goals/ai-status",
     "home/sub-onescreen",
     "settings/render"
    ],
@@ -3328,7 +3334,9 @@
     "OurgoalModeration"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "goals/ai-agent"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -3396,11 +3404,16 @@
     "comm/feed-comments",
     "comm/render",
     "comm/story-card-send",
+    "goals/ai-agent",
+    "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "goals/schedule-setup",
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
     "records/period-ai-card",
     "records/render",
     "settings/render",
@@ -5153,7 +5166,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/health",
@@ -5201,7 +5221,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/hobby",
@@ -5249,7 +5276,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/mind",
@@ -5297,7 +5331,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/relation",
@@ -5345,7 +5386,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/study",
@@ -5393,7 +5441,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/goal-templates/career",
@@ -5991,9 +6046,19 @@
      "goal.template"
     ]
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
    "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    },
     {
      "number": 211,
      "task": null,
@@ -6652,7 +6717,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-428-STATS-SPLIT-4.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 743,
+     "task": "TASK-ES-428",
+     "title": "[E2] #TASK-ES-428 refactor: 통계 세포 쪼개기 4차 — renderUniversalStatsDashboard 를 문맥 객체 D 구획 함수로 나눠 js/stats-dashboard*.js 3개로 이전(1,614 → 732줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "stats-dashboard-view",
@@ -6702,7 +6774,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-428-STATS-SPLIT-4.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 743,
+     "task": "TASK-ES-428",
+     "title": "[E2] #TASK-ES-428 refactor: 통계 세포 쪼개기 4차 — renderUniversalStatsDashboard 를 문맥 객체 D 구획 함수로 나눠 js/stats-dashboard*.js 3개로 이전(1,614 → 732줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "stats-dashboard",
@@ -6756,7 +6835,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-428-STATS-SPLIT-4.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 743,
+     "task": "TASK-ES-428",
+     "title": "[E2] #TASK-ES-428 refactor: 통계 세포 쪼개기 4차 — renderUniversalStatsDashboard 를 문맥 객체 D 구획 함수로 나눠 js/stats-dashboard*.js 3개로 이전(1,614 → 732줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "stats-data-grid",
@@ -7802,7 +7888,7 @@
     "lsDrawRoundRect · generateLockScreenCalendarImage(이전 전 11377~11654줄)",
     "generateLockScreenScheduleCardImage(이전 전 11904~12126줄)"
    ],
-   "lines": 530,
+   "lines": 531,
    "over800": false,
    "exposes": [
     "OurgoalCalendarKit"
@@ -7830,13 +7916,28 @@
    },
    "tasks": [
     "TASK-ES-379",
-    "TASK-ES-423"
+    "TASK-ES-423",
+    "TASK-ES-431"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-431-LOCKSCREEN-STREAK.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 746,
+     "task": "TASK-ES-431",
+     "title": "[FIX] #TASK-ES-431 fix: 잠금화면용 일정 카드 저장이 오류 토스트로 끝나던 것 — 정의 안 된 streakDays 를 computeStreakDays() 로 연결",
+     "date": "2026-10-05"
+    },
+    {
+     "number": 744,
+     "task": "TASK-ES-423",
+     "title": "[INFRA] #TASK-ES-423 refactor: 인라인 스크립트 세포화 1차 — 책임 묶음 지도 + 잠금화면 이미지·갓생 카드 보내기 4묶음 세포 이전(인라인 −622줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "calendar/natural-schedule",
@@ -8483,7 +8584,14 @@
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 744,
+     "task": "TASK-ES-423",
+     "title": "[INFRA] #TASK-ES-423 refactor: 인라인 스크립트 세포화 1차 — 책임 묶음 지도 + 잠금화면 이미지·갓생 카드 보내기 4묶음 세포 이전(인라인 −622줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "comm/sub-companions",
@@ -8667,6 +8775,84 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "goals/ai-agent",
+   "file": "js/tabs/goals/ai-agent.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 어시스턴트",
+   "nameSource": "hand",
+   "does": "목표 탭에서 말로 마일스톤·할 일 추가·변경을 요청하면 AI 제안(diff)을 받아 미리보기로 보여 주고 확인 뒤 반영한다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "content-moderation",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "goals/ai-status",
+   "file": "js/tabs/goals/ai-status.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 요약·미션",
+   "nameSource": "hand",
+   "does": "목표의 종합상황 요약·오늘의 미션 문장을 AI(실패 시 로컬 문장)로 만들고, 마일스톤을 끝내면 축하 창과 다음 행동 제안을 띄운다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "avatar-system",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "goals/goal-detail-events",
@@ -9059,6 +9245,44 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "goals/schedule-setup",
+   "file": "js/tabs/goals/schedule-setup.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 일정 설정",
+   "nameSource": "hand",
+   "does": "목표·마일스톤·할 일의 시작일·마감일을 정하는 일정 설정 창을 띄워 저장하고, 디데이·기간 알약을 그린다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "goals/sub-personal",
@@ -9587,6 +9811,82 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "records/ai-feedback-providers",
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "AI 피드백 공급자",
+   "nameSource": "hand",
+   "does": "기록 AI 피드백을 서버 AI·Gemini 로 요청하고, 실패하면 로컬 문장으로 대신한다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "records/ai-feedback",
+   "file": "js/tabs/records/ai-feedback.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "기록 AI 피드백",
+   "nameSource": "hand",
+   "does": "체크인 기록에 대한 AI 피드백을 요청하고(프롬프트·최근 기록·다가오는 일정 재료), 피드백 단계 막대를 그린다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "records/index",
@@ -12457,15 +12757,23 @@
     "TASK-ES-374",
     "TASK-ES-392",
     "TASK-ES-401",
-    "TASK-ES-405"
+    "TASK-ES-405",
+    "TASK-ES-428"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-374-CONFIRM-SHEET.md",
     "docs/specs/REQ-TASK-ES-392-STATS-SPLIT.md",
     "docs/specs/REQ-TASK-ES-401-STATS-SPLIT-2.md",
-    "docs/specs/REQ-TASK-ES-405-STATS-SPLIT-3.md"
+    "docs/specs/REQ-TASK-ES-405-STATS-SPLIT-3.md",
+    "docs/specs/REQ-TASK-ES-428-STATS-SPLIT-4.md"
    ],
    "prs": [
+    {
+     "number": 743,
+     "task": "TASK-ES-428",
+     "title": "[E2] #TASK-ES-428 refactor: 통계 세포 쪼개기 4차 — renderUniversalStatsDashboard 를 문맥 객체 D 구획 함수로 나눠 js/stats-dashboard*.js 3개로 이전(1,614 → 732줄, 동작 그대로)",
+     "date": "2026-10-05"
+    },
     {
      "number": 725,
      "task": "TASK-ES-405",
@@ -12506,12 +12814,6 @@
      "number": 294,
      "task": null,
      "title": "[E3] #TASK-ES-177 feat: 소통 피드 직접 사진 첨부([58]) · 카테고리 10종 확장 및 가로스크롤([59]) · 성취통계 껍데기 버튼 영구 삭제([60])",
-     "date": "2026-09-18"
-    },
-    {
-     "number": 287,
-     "task": null,
-     "title": "[E1] #TASK-ES-174 feat: 아워골 생각 메모장 잔여 대기 과제 9건([45]~[53]) 전수 구현 및 3자 동기화",
      "date": "2026-09-18"
     }
    ]

@@ -1,0 +1,516 @@
+{
+ "task": "TASK-ES-436",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "P1 구역 8묶음(G098·G099·G108·G111·G113·G114·G116·G117)의 함수 선언 28개를 생성기(gen-inline-p1.js, 설정 inline-p1-436.json)로 글자 그대로 js/tabs/goals/ai-agent.js·ai-status.js·schedule-setup.js·js/tabs/records/ai-feedback.js·ai-feedback-providers.js 로 옮긴다. 이름 참조만 L./K. 접두, 로드 중 문·최상위 변수·smoke 함수·시험지 단독 의존 함수는 원래 자리, 기존 키트 사용(새 전역 0), 새 파일 800줄 이하, 기능 추가·삭제 0."
+  },
+  {
+   "id": "R2",
+   "text": "index.html 인라인 줄 순증가 0(줄어듦), 새 script 태그는 그 탭 index.js 태그 앞 같은 줄, IIFE 머리 이음매에서 옮긴 함수를 같은 이름으로 가져와 부르는 쪽·window 노출 줄을 그대로 둔다."
+  },
+  {
+   "id": "R3",
+   "text": "동작 그대로를 측정한다 — 토큰·덩어리 줄·index.html 나머지 동일, 원본 단독 로드 회귀 0, 게스트 조작 DOM 비교(기준 2회·후 1회) 0, 법정 형식 게스트 화면 시나리오, npm test·tests 기준=후, 쓰이는 탭 tab-check."
+  },
+  {
+   "id": "R4",
+   "text": "세포 등록: cell-descriptions.json 짧은 이름·하는 일, modules.json(module-specs --write), module-baseline.json(module-guard --update), cell-map.json·inline-script-map 재생성."
+  },
+  {
+   "id": "R5",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정: 목표 AI 어시스턴트 세포 정의(구획 주석 글자로 묶음을 찾음)",
+   "touches": [
+    "docs/design/harness/module-split/inline-p1-436.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-p1-436.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/goals/ai-agent.js\""
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정: 시험지가 index.html 한 파일에서 찾는 refreshGoalStatusSummary 는 남긴다",
+   "touches": [
+    "docs/design/harness/module-split/inline-p1-436.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-p1-436.json",
+    "type": "codeContains",
+    "text": "\"refreshGoalStatusSummary\""
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: smoke-test FN_NAMES 함수는 옮기지 않는다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-p1.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-p1.js",
+    "type": "codeContains",
+    "text": "if (SMOKE.has(name)) return { st, name, move: false, why: 'smoke-test FN_NAMES' };"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 ok 조건: 토큰·덩어리 줄·index.html 나머지·누수·800줄",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-p1.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-inline-p1.js",
+    "type": "codeContains",
+    "text": "const ok = report.equivalent && lineCheck.length === meta.cellChunkLines.length && lineCheck.every(x => x.diffLines === 0) && report.restOfIndexSame"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수 28개 토큰 동일·덩어리 줄 동일·index.html 나머지 그대로·누수 0 검사가 ok",
+   "touches": [
+    "reports/TASK-ES-436/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수 수는 28개",
+   "touches": [
+    "reports/TASK-ES-436/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "movedFunctions",
+    "equals": 28
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "덩어리 13개 모두 원본 줄과 같다(index.html 나머지 비교 포함)",
+   "touches": [
+    "reports/TASK-ES-436/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "restOfIndexSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 가드 기준선의 인라인 스크립트 줄 수가 32150 으로 낮아졌다(33385 에서 −1235)",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/module-baseline.json",
+    "type": "codeContains",
+    "text": "\"inlineScriptLines\": 32150"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 메타: index.html 은 35732줄 → 34497줄",
+   "touches": [
+    "reports/TASK-ES-436/gen-inline-p1-meta.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/gen-inline-p1-meta.json",
+    "type": "jsonPath",
+    "path": "htmlLinesAfter",
+    "equals": 34497
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 메타: 다른 키트 세포에서 부르는 이름은 milestonesForAI 하나뿐이다",
+   "touches": [
+    "reports/TASK-ES-436/gen-inline-p1-meta.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/gen-inline-p1-meta.json",
+    "type": "jsonPath",
+    "path": "crossImports.0",
+    "equals": "milestonesForAI"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0 — 작업 쪽 정상 로드 모듈 수가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-436/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "counts.headOk",
+    "equals": 74
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "게스트 조작 DOM 비교(25단계×10칸, 기준 대 후) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-436/dom-compare-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/dom-compare-inline-p1.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "같은 기준 앱 2회 게스트 조작 비교(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-436/dom-compare-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/dom-compare-inline-p1.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 단계: 일정 알약·AI 어시스턴트·마일스톤 완료·피드백 단계 막대·체크인 저장",
+   "touches": [
+    "docs/design/harness/module-split/dom-steps-inline-p1-436.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-steps-inline-p1-436.js",
+    "type": "codeContains",
+    "text": "['ms-complete', click('#screen-goals .ms-status.doing'), 2500],"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "법정 형식 시나리오 4개를 로컬 법정 실행기로 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-436/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allPassedBoth",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 108개 종료 코드가 기준과 작업에서 모두 같다",
+   "touches": [
+    "reports/TASK-ES-436/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test smoke 통과·실패 수가 기준과 같다(443/0)",
+   "touches": [
+    "reports/TASK-ES-436/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-436/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭에서 템플릿 목표를 담고 마일스톤 일정 알약을 누르면 일정 설정 창이 뜨고, 「내일 마감」→「일정 저장」을 누르면 저장 토스트가 뜨고 창이 닫힌다(이전 전과 같은 동작 — 기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/ai-status.js",
+    "js/tabs/goals/schedule-setup.js",
+    "js/tabs/records/ai-feedback.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-schedule-setup-save.json"
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭 AI 목표 어시스턴트에 문장을 넣고 「보내기」를 누르면 서버 AI 가 없는 환경에서 이전 전과 같은 「요청을 처리하지 못했어요」 토스트가 뜬다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/ai-status.js",
+    "js/tabs/goals/schedule-setup.js",
+    "js/tabs/records/ai-feedback.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-agent-send.json"
+  },
+  {
+   "id": "C20",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭에서 진행 중 마일스톤 상태를 완료로 바꾸면 축하 창이 다음 마일스톤 제안과 함께 뜬다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/ai-status.js",
+    "js/tabs/goals/schedule-setup.js",
+    "js/tabs/records/ai-feedback.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-milestone-celebrate.json"
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 체크인을 저장하면 AI 피드백 요청이 로컬 대체로 끝나 이전 전과 같은 「고품질 추천 엔진으로」 토스트가 뜬다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/ai-status.js",
+    "js/tabs/goals/schedule-setup.js",
+    "js/tabs/records/ai-feedback.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/home-checkin-ai-feedback.json"
+  },
+  {
+   "id": "C22",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 목표 AI 어시스턴트 세포 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"goals/ai-agent\": \"목표 AI 어시스턴트\","
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 기록 AI 피드백 세포 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"records/ai-feedback\": \"기록 AI 피드백\","
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 목표 일정 설정 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/goals/schedule-setup.js\","
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 AI 피드백 공급자 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/records/ai-feedback-providers.js\","
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 정본(cell-map.json)을 생성기로 다시 만들어 새 세포가 실림",
+   "touches": [
+    "docs/architecture/cell-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-map.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/ai-status\""
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "인라인 지도를 이 PR 의 index.html 로 다시 만듦(IIFE 32128줄)",
+   "touches": [
+    "docs/architecture/inline-script-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-script-map.json",
+    "type": "jsonPath",
+    "path": "totals.iifeLines",
+    "equals": 32128
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "등록 도구가 module-specs --write → module-guard --update → inline-script-map --write → cell-map-export 를 차례로 돌린다",
+   "touches": [
+    "docs/design/harness/module-split/register-inline-p1.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/register-inline-p1.js",
+    "type": "codeContains",
+    "text": "run(['scripts/module-specs.js', '--write']);"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-436: 인라인 스크립트 세포화 P1 구역 1차"
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-436 | INFRA | [인라인 스크립트 세포화 P1 구역 1차]"
+   }
+  }
+ ]
+}
