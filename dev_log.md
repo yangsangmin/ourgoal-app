@@ -5957,3 +5957,4 @@
 - 2026-10-05 TASK-ES-453: 인라인 스크립트 세포화 P1 구역 3차 — #TASK-ES-436 에서 시험지 때문에 남긴 refreshGoalStatusSummary(목표 종합상황 AI 요약 새로 고침)를 js/tabs/goals/ai-status-refresh.js 로 글자 그대로 이전(구획 주석 포함). 실측(판정 아님): verify ok, 게스트 조작 90값 기준 대 후 0, 시나리오 기준·후 통과, tests 종료 코드 같음. 기준선·세포지도·인라인 지도는 main 판 그대로. REQ docs/specs/REQ-TASK-ES-453-INLINE-P1-3.md
 - 2026-10-05 TASK-ES-455: 생성 지도 3종 일괄 갱신 — 새 운영 규칙(분열 PR 은 생성 파일을 커밋하지 않음)에 따라 main 3232cc2 에서 module-guard --update(낮아진 값만)·cell-map-export·inline-script-map --write 재생성. 두 번 생성 해시 같음, cell-map --check 최신, module-guard 통과(작업자 측정). 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-455-GENERATED-MAPS-SYNC.md
 - 2026-10-05 TASK-ES-455(추가): origin/main 4260afb(#760) 합친 뒤 생성 지도 3종 재생성(도장 686904c), scripts/cell-map-publish.js 요약 줄 끝 「— 」 제거 한 줄 + 부품 시험 1건(지운 단언 0).
+- 2026-10-05 TASK-ES-455(추가 2): origin/main 4050d60(#763) 합침 — 생성 지도 3종은 main 판을 받은 뒤 다시 생성(도장 e5fe2bbb, 손으로 푼 충돌 0).
