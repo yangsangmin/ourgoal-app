@@ -1,0 +1,74 @@
+{
+  "id": "home-sheet-daily-quest",
+  "title": "게스트가 홈 「🎯 오늘 목표」 시트에서 시작 목표를 하나 만들면 시트에 「⚡ 오늘의 3대 퀘스트」(#dailyQuestBarWrap)가 보이고, 퀘스트 「할일 1개 완료」 줄(#questItemMilestone)을 누르면 시트가 닫히고 목표 탭으로 간다 — 고치기 전에는 4테마 공통 숨김(html[data-theme] #dailyQuestBarWrap, display:none !important)이 퀘스트 막대를 늘 숨겼다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "do": "click",
+      "selector": ".starter-goal-btn[data-starter=\"workout\"]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".starter-goal-btn[data-starter=\"workout\"]",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "visible",
+      "selector": "#dailyQuestBarWrap",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#dailyQuestBarWrap",
+      "text": "오늘의 3대 퀘스트"
+    },
+    {
+      "do": "click",
+      "selector": "#questItemMilestone"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

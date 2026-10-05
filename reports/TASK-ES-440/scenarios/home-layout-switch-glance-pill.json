@@ -1,0 +1,142 @@
+{
+  "id": "home-layout-switch-glance-pill",
+  "title": "게스트가 시작 목표를 만들면 홈 「🎯 오늘 목표」 시트 맨 위에 「오늘 몰입 요약」(#todayGlancePill)이 보이고, 설정 「홈 구성 고르기」에서 「오늘 몰입 요약」 스위치를 끄면 시트에서 사라진다 — 고치기 전에는 4테마 숨김(!important)이 늘 이겨서 이 스위치가 화면을 못 바꿨다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "do": "click",
+      "selector": ".starter-goal-btn[data-starter=\"workout\"]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".starter-goal-btn[data-starter=\"workout\"]",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "visible",
+      "selector": "#todayGlancePill",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#todayGlancePill",
+      "text": "오늘 기록"
+    },
+    {
+      "do": "click",
+      "selector": "#homeDetailClose"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".switch[data-kf1-id=\"todayGlancePill\"]",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"todayGlancePill\"]",
+      "name": "aria-checked",
+      "equals": "true"
+    },
+    {
+      "do": "click",
+      "selector": ".switch[data-kf1-id=\"todayGlancePill\"]"
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"todayGlancePill\"]",
+      "name": "aria-checked",
+      "equals": "false"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1DoneBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeCompassQuest",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeGoalList",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#todayGlancePill"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

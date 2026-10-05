@@ -415,14 +415,16 @@
     var isTimerActive = (engine.activeRecMode === 'timer');
     var isFeedActive = (engine.activeRecMode === 'feed' || engine.activeRecMode === 'archive' || engine.activeRecMode === 'recap');
 
-    var modeNav = '<div class="s-rec-modes-wrap" id="sRecModesWrap" style="display:flex;gap:6px;padding-bottom:4px;margin-bottom:12px;width:100%;">' +
+    var modeNav = '<div class="s-rec-modes-wrap" id="sRecModesWrap" style="display:grid;grid-template-columns:repeat(3,minmax(min-content,1fr));gap:6px;padding-bottom:4px;margin-bottom:12px;width:100%;">' +
       '<button type="button" class="s-rec-mode-btn ' + (isHeatmapActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">📈 히트맵·통계</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (isTimerActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">⏱️ 몰입 타이머</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (isFeedActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">📝 실천 타임라인</button>' +
+      '<div class="s-rec-submodes" id="sRecSubModes" role="group" aria-label="기록 더 보기" style="grid-column:1 / -1;display:flex;gap:6px;">' + /* [#TASK-ES-440] 보관함·위클리 리캡 카드는 아래 숨김 칸(#TASK-ES-131)에만 있어 들어갈 길이 없었다 → 보이는 둘째 줄로. 「성취 통계」는 「📈 히트맵·통계」가 같은 통계 화면(#recViewStats)을 열어 숨김 칸에 그대로 둔다 */
+        '<button type="button" id="sRecArchiveBtn" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" style="flex:1;min-height:42px;padding:6px 10px;font-size:0.8125rem;font-weight:700;border-radius:12px;" title="누르면: 보관한 목표 목록과 「다시 진행하기」가 보여요" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">🗂️ 보관함</button>' +
+        '<button type="button" id="sRecRecapBtn" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" style="flex:1;min-height:42px;padding:6px 10px;font-size:0.8125rem;font-weight:700;border-radius:12px;" title="누르면: 인스타 스토리용 9:16 위클리 리캡 카드(PNG 저장·카카오 공유)가 보여요" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">🎬 위클리 리캡 카드</button>' +
+      '</div>' +
       '<div style="display:none !important;" aria-hidden="true">' +
         '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">성취 통계</button>' +
-        '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">보관함</button>' +
-        '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">위클리 리캡</button>' +
       '</div>' +
     '</div>' + '<div class="s-rec-quick-action-bar" style="display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:-4px 0 12px;"><button type="button" id="sRecStoryCardBtn" class="btn-ghost" title="누르면: 인스타·카톡 공유용 갓생 스토리 카드 창이 열립니다" onclick="if(typeof window.openMzShareCardModal===\'function\'){window.openMzShareCardModal();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:0.74rem;font-weight:600;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid var(--rule, rgba(255,255,255,0.08));color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;">📸 갓생 스토리카드</button></div>'; /* [#TASK-ES-433] 기록 탭 갓생 카드 창 진입 단추 — 옛 #recStoryCardBtn 은 4테마 공통 숨김 머리줄(#screen-records > .screen-head) 안에 있어 보인 적이 없다 */
 
