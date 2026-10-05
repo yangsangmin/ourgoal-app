@@ -1,0 +1,60 @@
+{
+ "task": "TASK-ES-440",
+ "note": "작업자 측정(판정 아님). docs/design/harness/tab-check.js all(6탭 × 4테마 × 375×667·375×812 × 상태) --deadclick off — 기준 = origin/main(eb9e6e4) 분리 worktree 2회(흔들리는 칸 거름)·작업 1회, tab-compare.js 비교. 원본 출력은 저장소 밖 임시 폴더. Dead-Click 탐지는 시간(한 상태 최대 516초) 때문에 껐다 — 새 진입로의 클릭 반응은 시나리오 8개·4테마 실측(layout-measure.json)의 진짜 마우스 클릭으로 쟀다.",
+ "baseVsBase": {
+  "comparedValues": 2312,
+  "differingValues": 4,
+  "recorded": true,
+  "diffs": [
+   {
+    "shot": "home-white-375x667-sheet",
+    "field": "entered"
+   },
+   {
+    "shot": "home-white-375x667-sheet",
+    "field": "innerScrollers"
+   },
+   {
+    "shot": "home-white-375x667-sheet",
+    "field": "hiddenInteractive"
+   },
+   {
+    "shot": "home-white-375x667-sheet",
+    "field": "hiddenInteractiveDetail"
+   }
+  ]
+ },
+ "baseVsWork": {
+  "comparedValues": 2312,
+  "differingValues": 337,
+  "byField": {
+   "home.hiddenInteractive": 24,
+   "home.hiddenInteractiveDetail": 24,
+   "home.importantNoneInScope": 24,
+   "home.importantNoneInDoc": 24,
+   "home.importantNoneRules": 24,
+   "home.innerScrollers": 8,
+   "home.entered": 1,
+   "goals.importantNoneInDoc": 24,
+   "records.docScrollHeight": 24,
+   "records.heightRatio": 24,
+   "records.hiddenInteractive": 24,
+   "records.hiddenInteractiveDetail": 24,
+   "records.importantNoneInDoc": 24,
+   "calendar.importantNoneInDoc": 24,
+   "comm.importantNoneInDoc": 24,
+   "settings.importantNoneInDoc": 16
+  }
+ },
+ "explained": {
+  "home-widgets-unhidden": 94,
+  "narrowed-4": 136,
+  "home-sheet-longer": 7,
+  "base-unstable": 4,
+  "records-second-row-50px": 48,
+  "records-hidden-slot-2-buttons-out": 48
+ },
+ "homeFirstScreenHeightUnchanged": true,
+ "unexplainedDiffs": 0,
+ "unexplained": []
+}

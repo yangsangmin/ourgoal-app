@@ -105,10 +105,15 @@
         topRight.insertBefore(addGoal, topRight.firstChild);
       }
 
-      // 4. 기존 노드를 지우지 않고 옮긴다(순서 유지: 미션 카드 -> 목표 타이틀 -> 칩 스트립 -> 목표 목록 -> 평가 배너)
+      // 4. 기존 노드를 지우지 않고 옮긴다(순서 유지: 오늘 몰입 요약 -> 미션 카드 -> 3대 퀘스트 -> 목표 타이틀 -> 칩 스트립 -> 목표 목록 -> 평가 배너)
+      //    [#TASK-ES-440] 오늘 몰입 요약·3대 퀘스트도 시트로 — ui.css 의 4테마 숨김은 홈 첫 화면(#screen-home 바로 아래)에만 걸리므로 시트 안에서는 홈 구성 스위치대로 보인다
       var questPanel = doc.getElementById('homeSheetPanelQuest');
+      var glancePill = doc.getElementById('todayGlancePill');
+      if (glancePill) questPanel.appendChild(glancePill);
       var missionCard = doc.getElementById('todayMissionCard');
       if (missionCard) questPanel.appendChild(missionCard);
+      var questBar = doc.getElementById('dailyQuestBarWrap');
+      if (questBar) questPanel.appendChild(questBar);
       if (goalTitle) questPanel.appendChild(goalTitle);
       var strip = doc.getElementById('homePositionStrip');
       if (strip) questPanel.appendChild(strip);
@@ -140,8 +145,9 @@
       doc.getElementById('homeDetailBackdrop').addEventListener('click', function() { haptic(); self.close(); });
 
       // 시트 안 버튼이 체크인 입력으로 보내거나 다른 탭으로 보내면 시트를 먼저 닫는다
+      // [#TASK-ES-440] 오늘 몰입 요약(체크인 입력으로 스크롤)·3대 퀘스트 항목(체크인 입력·목표 탭·시간기록)도 같은 경우
       doc.getElementById('homeDetailBody').addEventListener('click', function(e) {
-        var t = e.target.closest ? e.target.closest('#btnCrewStartCheckin') : null;
+        var t = e.target.closest ? e.target.closest('#btnCrewStartCheckin, #todayGlancePill, .daily-quest-item') : null;
         if (t) self.close();
       }, true);
 

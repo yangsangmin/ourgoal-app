@@ -5530,20 +5530,21 @@ html[data-theme="urban-city"] #appShell {
 [data-theme="black"] #levelBadgeRow,
 [data-theme="white"] #levelBadgeRow,
 [data-theme="urban-city"] #levelBadgeRow,
-[data-theme="focus-sanctuary"] #todayMissionCard,
-[data-theme="black"] #todayMissionCard,
-[data-theme="white"] #todayMissionCard,
-[data-theme="urban-city"] #todayMissionCard,
+[data-theme="focus-sanctuary"] #screen-home > #todayMissionCard,
+[data-theme="black"] #screen-home > #todayMissionCard,
+[data-theme="white"] #screen-home > #todayMissionCard,
+[data-theme="urban-city"] #screen-home > #todayMissionCard,
 [data-theme="focus-sanctuary"] #captureLiveMeta,
 [data-theme="black"] #captureLiveMeta,
 [data-theme="white"] #captureLiveMeta,
 [data-theme="urban-city"] #captureLiveMeta,
-[data-theme="focus-sanctuary"] #todayGlancePill,
-[data-theme="black"] #todayGlancePill,
-[data-theme="white"] #todayGlancePill,
-[data-theme="urban-city"] #todayGlancePill {
+[data-theme="focus-sanctuary"] #screen-home > #todayGlancePill,
+[data-theme="black"] #screen-home > #todayGlancePill,
+[data-theme="white"] #screen-home > #todayGlancePill,
+[data-theme="urban-city"] #screen-home > #todayGlancePill {
   display: none !important;
 }
+/* [#TASK-ES-440] #todayMissionCard·#todayGlancePill 은 홈 첫 화면(#screen-home 바로 아래)에서만 숨긴다 — 홈 원스크린(js/tabs/home/sub-onescreen.js)이 「오늘 목표」 시트로 옮긴 뒤에는 보이고, 보이기/숨기기는 홈 구성 스위치(js/customize.js)가 정한다 */
 
 /* 🌿 14일 활동 기록 (Sanctuary 1st Tier - Unified) */
 [data-theme="focus-sanctuary"] #homeGrassSummaryCard,
@@ -6081,16 +6082,17 @@ html[data-theme="urban-city"] #homeGrassSummaryCard {
   visibility: visible !important;
 }
 
-html[data-theme="focus-sanctuary"] #dailyQuestBarWrap,
-html[data-theme="focus-sanctuary"] body #dailyQuestBarWrap,
-html[data-theme="black"] #dailyQuestBarWrap,
-html[data-theme="black"] body #dailyQuestBarWrap,
-html[data-theme="white"] #dailyQuestBarWrap,
-html[data-theme="white"] body #dailyQuestBarWrap,
-html[data-theme="urban-city"] #dailyQuestBarWrap,
-html[data-theme="urban-city"] body #dailyQuestBarWrap {
+html[data-theme="focus-sanctuary"] #screen-home > #dailyQuestBarWrap,
+html[data-theme="focus-sanctuary"] body #screen-home > #dailyQuestBarWrap,
+html[data-theme="black"] #screen-home > #dailyQuestBarWrap,
+html[data-theme="black"] body #screen-home > #dailyQuestBarWrap,
+html[data-theme="white"] #screen-home > #dailyQuestBarWrap,
+html[data-theme="white"] body #screen-home > #dailyQuestBarWrap,
+html[data-theme="urban-city"] #screen-home > #dailyQuestBarWrap,
+html[data-theme="urban-city"] body #screen-home > #dailyQuestBarWrap {
   display: none !important;
 }
+/* [#TASK-ES-440] 3대 퀘스트도 홈 첫 화면에서만 숨긴다 — 「오늘 목표」 시트 안에서는 보이고 홈 구성 스위치가 정한다(옛 선택자는 ui.css 615 「게이미피케이션 모드면 보이기」까지 이겨 그 모드를 무력화했다) */
 
 html[data-theme="focus-sanctuary"] .home-recent-title,
 html[data-theme="black"] .home-recent-title,
@@ -9940,9 +9942,8 @@ html[data-theme="white"] #goalsHeadlineSentence b {
 #screen-home #notifyBannerSlot { order: 32; }
 #screen-home #socialNotifySlot { order: 33; }
 #screen-home #iosPwaSlot { order: 34; }
-#screen-home #homeEvalBanner,
-#homeEvalBanner,
-.home-eval-banner-box {
+/* [#TASK-ES-440] 앱 평가 배너는 홈 첫 화면에서만 숨긴다 — 「오늘 목표」 시트(목표 목록 아래)에서 보인다. 옛 선택자(#homeEvalBanner·.home-eval-banner-box 전역)는 시트로 옮긴 배너까지 숨겨 평가 진입로가 0개였다 */
+#screen-home > #homeEvalBanner {
   display: none !important;
   height: 0 !important;
   margin: 0 !important;

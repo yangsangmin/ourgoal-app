@@ -1,0 +1,60 @@
+{
+  "id": "home-sheet-eval-entry",
+  "title": "게스트로 홈 「🎯 오늘 목표」 시트를 열면 맨 아래 「아워골 평가해주기」 배너의 단추(#btnOpenEvalModal)가 보이고, 누르면 평가 창 「아워골 솔직 평가 & 피드백」이 열린다 — 고치기 전에는 ui.css 의 #homeEvalBanner·.home-eval-banner-box 전역 숨김(display:none !important)이 시트로 옮긴 배너까지 숨겨 평가로 가는 길이 0개였다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "expect": "visible",
+      "selector": "#btnOpenEvalModal",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#btnOpenEvalModal"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#appEvaluationModal",
+      "text": "아워골 솔직 평가 & 피드백",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

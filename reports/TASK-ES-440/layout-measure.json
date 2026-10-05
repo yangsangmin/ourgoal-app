@@ -1,0 +1,1070 @@
+{
+ "task": "TASK-ES-440",
+ "note": "작업자 측정(판정 아님). 헤드리스 Chrome, 게스트 진입 → OurgoalSanctuaryV3.switchTheme(테마) → 아바타 인사 닫음 → 각 진입로를 화면 가운데로 스크롤해 잰다. hit = 가운데 점 elementFromPoint 가 그 요소(또는 그 안). clearOfNav = 가운데 점이 하단 탭에 있지 않고, 하단 탭이 보이는 화면이면 요소 아래끝 <= 하단 탭 윗끝(「오늘 목표」 시트가 열려 있으면 시트가 하단 탭을 덮으므로 hit 로 판정). 클릭은 page.mouse.click(진짜 마우스 입력). 기준 = origin/main(eb9e6e4) 분리 worktree, 작업 = 이 브랜치 작업 폴더. 같은 스크립트(저장소 밖 scratchpad/es440/layout.js)로 양쪽을 쟀다.",
+ "summary": {
+  "cells": 8,
+  "entriesPerCell": 8,
+  "entries": [
+   "bell",
+   "glancePill",
+   "missionCard",
+   "questBar",
+   "questItem",
+   "evalBtn",
+   "archiveBtn",
+   "recapBtn"
+  ],
+  "themesApplied": true,
+  "allVisible": true,
+  "allHit": true,
+  "allClearOfNav": true,
+  "allClickWorked": true,
+  "pageErrors": 0,
+  "perEntryVisibleCells": {
+   "bell": 8,
+   "glancePill": 8,
+   "missionCard": 8,
+   "questBar": 8,
+   "questItem": 8,
+   "evalBtn": 8,
+   "archiveBtn": 8,
+   "recapBtn": 8
+  },
+  "bellOpensNotificationCenterCells": 8
+ },
+ "base": {
+  "summary": {
+   "cells": 8,
+   "entriesPerCell": 8,
+   "entries": [
+    "bell",
+    "glancePill",
+    "missionCard",
+    "questBar",
+    "questItem",
+    "evalBtn",
+    "archiveBtn",
+    "recapBtn"
+   ],
+   "themesApplied": true,
+   "allVisible": false,
+   "allHit": false,
+   "allClearOfNav": false,
+   "allClickWorked": false,
+   "pageErrors": 0,
+   "perEntryVisibleCells": {
+    "bell": 8,
+    "glancePill": 0,
+    "missionCard": 0,
+    "questBar": 0,
+    "questItem": 0,
+    "evalBtn": 0,
+    "archiveBtn": 0,
+    "recapBtn": 0
+   },
+   "bellOpensNotificationCenterCells": 0
+  }
+ },
+ "cells": [
+  {
+   "theme": "focus-sanctuary",
+   "width": 1280,
+   "appliedTheme": "focus-sanctuary",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 207,
+    "bottom": 251,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 406,
+    "h": 123,
+    "top": 267,
+    "bottom": 390,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 406,
+    "h": 256,
+    "top": 376,
+    "bottom": 632,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 368,
+    "h": 54,
+    "top": 476,
+    "bottom": 530,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 539,
+    "bottom": 583,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "focus-sanctuary",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 406,
+    "clientWidth": 406
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  },
+  {
+   "theme": "focus-sanctuary",
+   "width": 375,
+   "appliedTheme": "focus-sanctuary",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 209,
+    "bottom": 253,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 341,
+    "h": 143,
+    "top": 268,
+    "bottom": 411,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 341,
+    "h": 256,
+    "top": 382,
+    "bottom": 638,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 303,
+    "h": 54,
+    "top": 483,
+    "bottom": 537,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 534,
+    "bottom": 578,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "focus-sanctuary",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 349,
+    "clientWidth": 341
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  },
+  {
+   "theme": "black",
+   "width": 1280,
+   "appliedTheme": "black",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 207,
+    "bottom": 251,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 406,
+    "h": 123,
+    "top": 267,
+    "bottom": 390,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 406,
+    "h": 256,
+    "top": 376,
+    "bottom": 632,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 368,
+    "h": 54,
+    "top": 476,
+    "bottom": 530,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 539,
+    "bottom": 583,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "black",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 406,
+    "clientWidth": 406
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  },
+  {
+   "theme": "black",
+   "width": 375,
+   "appliedTheme": "black",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 209,
+    "bottom": 253,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 341,
+    "h": 143,
+    "top": 268,
+    "bottom": 411,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 341,
+    "h": 256,
+    "top": 382,
+    "bottom": 638,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 303,
+    "h": 54,
+    "top": 483,
+    "bottom": 537,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 534,
+    "bottom": 578,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "black",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 349,
+    "clientWidth": 341
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  },
+  {
+   "theme": "white",
+   "width": 1280,
+   "appliedTheme": "white",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 207,
+    "bottom": 251,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 406,
+    "h": 123,
+    "top": 267,
+    "bottom": 390,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 406,
+    "h": 256,
+    "top": 376,
+    "bottom": 632,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 368,
+    "h": 54,
+    "top": 476,
+    "bottom": 530,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 539,
+    "bottom": 583,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "white",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 406,
+    "clientWidth": 406
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  },
+  {
+   "theme": "white",
+   "width": 375,
+   "appliedTheme": "white",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 209,
+    "bottom": 253,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 341,
+    "h": 143,
+    "top": 268,
+    "bottom": 411,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 341,
+    "h": 256,
+    "top": 382,
+    "bottom": 638,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 303,
+    "h": 54,
+    "top": 483,
+    "bottom": 537,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 534,
+    "bottom": 578,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "white",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 349,
+    "clientWidth": 341
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  },
+  {
+   "theme": "urban-city",
+   "width": 1280,
+   "appliedTheme": "urban-city",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 207,
+    "bottom": 251,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 406,
+    "h": 123,
+    "top": 267,
+    "bottom": 390,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 406,
+    "h": 256,
+    "top": 376,
+    "bottom": 632,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 368,
+    "h": 54,
+    "top": 476,
+    "bottom": 530,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 539,
+    "bottom": 583,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "urban-city",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 193,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 726,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 406,
+    "clientWidth": 406
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  },
+  {
+   "theme": "urban-city",
+   "width": 375,
+   "appliedTheme": "urban-city",
+   "bell": {
+    "sel": "#sanctuaryBellBtn",
+    "exists": true,
+    "w": 44,
+    "h": 44,
+    "top": 156,
+    "bottom": 200,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "알림 센터"
+    }
+   },
+   "sheetOpen": true,
+   "glancePill": {
+    "sel": "#todayGlancePill",
+    "exists": true,
+    "w": 273,
+    "h": 44,
+    "top": 209,
+    "bottom": 253,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "missionCard": {
+    "sel": "#todayMissionCard .mission-card",
+    "exists": true,
+    "w": 341,
+    "h": 143,
+    "top": 268,
+    "bottom": 411,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questBar": {
+    "sel": "#dailyQuestBarWrap",
+    "exists": true,
+    "w": 341,
+    "h": 256,
+    "top": 382,
+    "bottom": 638,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "questItem": {
+    "sel": "#questItemMilestone",
+    "exists": true,
+    "w": 303,
+    "h": 54,
+    "top": 483,
+    "bottom": 537,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true
+   },
+   "evalBtn": {
+    "sel": "#btnOpenEvalModal",
+    "exists": true,
+    "w": 137,
+    "h": 44,
+    "top": 534,
+    "bottom": 578,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "open": true,
+     "title": "아워골 솔직 평가 & 피드백"
+    }
+   },
+   "themeAtRecords": "urban-city",
+   "archiveBtn": {
+    "sel": "#sRecArchiveBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "archiveView": true,
+     "active": true
+    }
+   },
+   "recapBtn": {
+    "sel": "#sRecRecapBtn",
+    "exists": true,
+    "w": 168,
+    "h": 44,
+    "top": 102,
+    "bottom": 146,
+    "hit": true,
+    "navTop": 738,
+    "clearOfNav": true,
+    "visible": true,
+    "click": {
+     "canvas": true,
+     "actions": 3
+    }
+   },
+   "recordsOverflow": {
+    "scrollWidth": 349,
+    "clientWidth": 341
+   },
+   "pageErrors": 0,
+   "pageErrorSamples": []
+  }
+ ]
+}
