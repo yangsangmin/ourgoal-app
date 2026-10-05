@@ -3,8 +3,8 @@
  * 숨김 게이트 — 정적판 (#TASK-ES-458 · W98 재발 방지)
  *
  * 무엇을 막나: 누르는 요소(처리기가 걸린 요소)가 !important 숨김 아래에 새로 갇히는 것.
- *   #TASK-ES-433·#TASK-ES-440 에서 살아 있는 기능 7개가 ui.css 의 4테마 `display:none !important` 규칙과
- *   인라인 `display:none !important` 칸에 갇혀 보이는 진입로가 0개였다. 그 뒤로 새로 생기는 것만 막는다(증가 금지 — module-guard 와 같은 래칫).
+ *   #TASK-ES-433·#TASK-ES-440 에서 살아 있는 기능 7개가 ui.css 의 4테마 `display:none` + `!important` 규칙과
+ *   인라인 `display:none` + `!important` 칸에 갇혀 보이는 진입로가 0개였다. 그 뒤로 새로 생기는 것만 막는다(증가 금지 — module-guard 와 같은 래칫).
  *
  * 사용:
  *   node scripts/hidden-entry-guard.js                         — 검사(npm test 가 tests/hidden-entry-guard.test.js 를 거쳐 부른다)
@@ -15,7 +15,7 @@
  *   공통 선택: --root <저장소> --baseline <허용목록.json> --quiet --json
  *
  * 재는 것(파일을 읽기만 한다):
- *   1) 숨김 규칙: ui.css 의 규칙 중 선언에 `display: none !important` 또는 `visibility: hidden !important` 가 있는 것(@media print 제외)
+ *   1) 숨김 규칙: ui.css 의 규칙 중 선언에 `display: none`·`visibility: hidden` 에 `!important` 가 붙은 선언 가 있는 것(@media print 제외)
  *      + index.html 마크업의 인라인 style 에 같은 선언이 있는 요소.
  *   2) 처리기 요소: index.html 마크업에서 onclick 속성이 있는 요소, 또는 id 가 있고 그 id 로 click 처리기를 거는 코드
  *      (getElementById('id') … .addEventListener / .onclick, 변수에 담아 거는 꼴 포함)가 index.html·js/**.js 에 있는 요소.
