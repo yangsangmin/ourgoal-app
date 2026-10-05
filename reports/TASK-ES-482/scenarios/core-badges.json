@@ -1,0 +1,59 @@
+{
+  "id": "core-badges",
+  "title": "게스트로 설정 탭 프로필 묶음을 펼치고 프로필 카드의 「명예의 전당」을 누르면 「명예의 전당」 창이 뜨고 뱃지 칸이 그려진다 — 뱃지 문맥·목록·명예의 전당 창(badgeContext·BADGES·openHallOfFame)을 기관 세포 js/core/badges.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details.settings-group-accordion:has(#profileCard) > summary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#profileCard) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hallOfFameBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#hallOfFameBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet h3",
+      "text": "명예의 전당",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "count",
+      "selector": "#modalSheet .badge-tile",
+      "min": 1
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

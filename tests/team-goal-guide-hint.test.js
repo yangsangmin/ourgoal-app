@@ -10,7 +10,7 @@ const SUITE_TASK = 'TASK-ES-256';
 console.log('[TEST] team-goal-guide-hint.test.js: starting execution for ' + SUITE_TASK + '...');
 
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));
 
 // 1. 소스 정적 검증: 안내문구, 클래스, ID 및 스타일
 {

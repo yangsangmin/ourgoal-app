@@ -1,0 +1,419 @@
+{
+ "task": "TASK-ES-482",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "인라인 어려움 기관 묶음 「Confetti」·「뱃지 컬렉션 (명예의 전당)」·「[#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템」(같은 구획의 구글 캘린더 연결 포함)을 기관 세포 4개(js/core/confetti·badges·trash-bin·gcal-sync)로 글자 그대로 옮긴다. 새 전역 0, 새 파일 800줄 이하, 기능 추가·삭제 0. 옮긴 화면이 게스트에게 이전과 같이 그려지고 동작한다. 로그인 뒤에만 도는 프로필 불러오기 쪽·smoke FN_NAMES·최상위 arguments 함수·상태 변수는 남긴다."
+  },
+  {
+   "id": "R2",
+   "text": "설정·생성기 수정(한 줄 두 문·keepRest 겹침 정지를 옮기는 문일 때로 좁힘)·게스트 조작 비교 하네스를 저장소에 남긴다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 측정(git archive 기준 origin/main): verify 토큰·덩어리 줄 동일·누수 0·원본에서 구간 사라짐, 법정 모듈 로드 탐침 회귀 0, 게스트 조작 비교 기준 2회·후 1회 차이 0, 시험 기준과 같음, 화면 시나리오 기준·작업 통과. main 이 움직이면 바뀌는 전체 수치는 주장하지 않는다."
+  },
+  {
+   "id": "R4",
+   "text": "세포 신고서(modules.json, kind organ)·세포지도 설명·REQ 8원칙·dev_log·TICKETS 각 1줄. 생성 지도 3종은 커밋하지 않는다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 체크인 입력칸에 글을 쓰고 「기록」을 누르면 축하 꽃가루 조각(#confettiLayer .confetti-piece)이 뿌려지고 예외가 없다 — 옮긴 burstConfetti",
+   "touches": [
+    "js/core/confetti.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/core-confetti.json"
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 프로필 묶음을 펼치고 「명예의 전당」을 누르면 「명예의 전당」 창과 뱃지 칸이 그려지고 예외가 없다 — 옮긴 badgeContext·BADGES·openHallOfFame",
+   "touches": [
+    "js/core/badges.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/core-badges.json"
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 「데이터」 묶음을 펼치고 「🗑️ 휴지통」을 누르면 휴지통 창이 뜨고 예외가 없다 — 옮긴 getTrashList·openTrashModal",
+   "touches": [
+    "js/core/trash-bin.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/core-trash-bin.json"
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭 구글 캘린더 「+ 연동」 배지를 누르면 연결을 시도하고(바깥 통신 막힘) 「구글 캘린더 연동에 실패했어요」 토스트가 뜨며 예외가 없다 — 옮긴 openGoogleCalendarConnectModal·tryConnectGoogleCalendar·requestGoogleToken",
+   "touches": [
+    "js/core/gcal-sync.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/core-gcal-sync.json"
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "생성기: 한 줄을 나눠 쓰는 문은 옮기거나 감쌀 때만 멈춘다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "if (out && it.sharesPrevLine) fail("
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "생성기: 다른 세포의 keepRest 남김은 그 문을 옮기는 세포에 양보한다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "its.some(i => i.action === 'keep' && !(i.keepRestOnly))"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설정: 구역 자리 HO",
+   "touches": [
+    "docs/design/harness/module-split/inline-organ-482.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-organ-482.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "HO"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설정: 휴지통 구획에서 구글 캘린더 쪽을 따로 나눈 세포",
+   "touches": [
+    "docs/design/harness/module-split/inline-organ-482.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-organ-482.json",
+    "type": "jsonPath",
+    "path": "cells.3.file",
+    "equals": "js/core/gcal-sync.js"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 단계: 기록 카드 삭제 확인(휴지통으로 옮기기)",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-inline-organ-482.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-compare-inline-organ-482.js",
+    "type": "codeContains",
+    "text": "['card-del-ok', click('#btnSheetConfirmOk'), 800],"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "토큰·덩어리 줄·남은 글자 동일·누수 0·노출·이중 처리기 0 종합",
+   "touches": [
+    "reports/TASK-ES-482/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "옮긴 구간 토큰열 동일(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-482/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "옮긴 선언이 index.html 인라인에 남지 않았다",
+   "touches": [
+    "reports/TASK-ES-482/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "leftDefsInIndex",
+    "equals": []
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "index.html 에서 쓰는 옮긴 이름은 모두 키트에서 가져온다",
+   "touches": [
+    "reports/TASK-ES-482/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "usedInIndexNotImported",
+    "equals": []
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "법정 모듈 로드 탐침 회귀 0",
+   "touches": [
+    "reports/TASK-ES-482/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressionCount",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 기관 세포 파일 4개 단독 로드 성공",
+   "touches": [
+    "reports/TASK-ES-482/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "newFilesStandaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-482/dom-compare-inline-organ-482.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/dom-compare-inline-organ-482.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-482/dom-compare-inline-organ-482.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/dom-compare-inline-organ-482.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "smoke·무결성·버튼 통과·실패 수 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-482/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/test-compare.json",
+    "type": "jsonPath",
+    "path": "passFailSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-482/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitCodesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "시나리오 로컬 4개 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-482/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-482/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서: 휴지통 기관 세포",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/core/trash-bin.js\","
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서: 구글 캘린더 연결 기관 세포",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/core/gcal-sync.js\","
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "세포지도 설명: 축하 꽃가루 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "    \"core/confetti\": \"축하 꽃가루\","
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-482: 인라인 어려움 기관 묶음"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-482 | INFRA | [인라인 어려움 기관 묶음 · H3 빌더]"
+   }
+  }
+ ]
+}

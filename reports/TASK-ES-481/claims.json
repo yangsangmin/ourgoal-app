@@ -1,0 +1,312 @@
+{
+ "task": "TASK-ES-481",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 H2 1단계 어려움 묶음 3개(Phase 4 목표 탭 IA · 템플릿 백과사전 3대 분류 · PHASE 5 기록·일정)에서 게스트 화면으로 잴 수 있는 함수·순수 상수를 생성기(gen-inline-hard.js, 자리 H2)로 글자 그대로 세포 3개로 옮긴다."
+  },
+  {
+   "id": "R2",
+   "text": "옮긴 뒤 동작이 같음을 verify-inline-hard·모듈 로드 탐침·게스트 조작 비교·시험 기준/후 비교로 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "옮긴 세포마다 게스트 화면 시나리오로 이전 전과 같은 동작을 보인다."
+  },
+  {
+   "id": "R4",
+   "text": "세포 신고서(modules.json)·설명(cell-descriptions.json)·REQ 8원칙·TICKETS·dev_log 를 갱신한다(생성 지도 3종은 커밋하지 않는다)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정이 구역 자리 H2 를 쓴다",
+   "touches": [
+    "docs/design/harness/module-split/inline-h2-pr1.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-h2-pr1.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H2"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 결과: 토큰·줄·남은 글자 동일, 누수·미노출·setter 빠짐·이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-481/verify-inline-hard-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/verify-inline-hard-pr1.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 결과: 남은 글자(옮긴 구간·이음매 줄 뺀 IIFE 토큰열)가 같다",
+   "touches": [
+    "reports/TASK-ES-481/verify-inline-hard-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/verify-inline-hard-pr1.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 새 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-481/verify-inline-hard-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/verify-inline-hard-pr1.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 파일 3개 단독 로드가 되고 모듈 로드 회귀가 없다(법정 탐침 로컬)",
+   "touches": [
+    "reports/TASK-ES-481/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-481/dom-compare-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/dom-compare-pr1.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-481/dom-compare-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/dom-compare-pr1.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 커밋에서 npm test 가 종료 코드 0 으로 끝난다(smoke·무결성·버튼 수치는 기준과 같음)",
+   "touches": [
+    "reports/TASK-ES-481/test-compare-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/test-compare-pr1.json",
+    "type": "jsonPath",
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드가 기준과 다른 것은 git 이력 없는 기준 사본에서만 실패하는 세포지도 이력 비교 시험 1건뿐",
+   "touches": [
+    "reports/TASK-ES-481/test-compare-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-481/test-compare-pr1.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff.length",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 목표 탭 IA 동작 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/goals-ia-actions\""
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 템플릿 백과사전 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/template-encyclopedia\""
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 기록 아카이브 펼치기 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/archive-toggle\""
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일에 새 세포의 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"goals/template-encyclopedia\": \"템플릿 백과사전\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-481 | INFRA |"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-481:"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭 개인 하위 탭의 추천 템플릿 「담기」를 누르면 담김 토스트가 뜨고, 「성취통계」에서 「월간」을 누르면 월간 단추가 켜지고 월간 목표 달성 리포트가 그려지며 예외가 없다 — 옮긴 adoptTemplateAsMyGoal·switchGoalsSubTab·switchGoalStatPeriod·renderGoalStatsChart 가 원래 자리의 window 노출 줄을 거쳐 닿는다",
+   "touches": [
+    "js/tabs/goals/goals-ia-actions.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-ia-actions.json"
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭 「템플릿」에서 「루틴 백과사전」을 누르면 루틴 카탈로그와 미라클 모닝 3종 세트 템플릿이 그려지고, 「실사용자 템플릿」을 눌러도 루틴 도메인이 유지되며 예외가 없다 — 옮긴 renderTemplateEncyclopediaScreen·루틴 템플릿 상수가 원래 자리의 분류 상태 변수를 getter·setter 로 읽고 쓴다",
+   "touches": [
+    "js/tabs/goals/template-encyclopedia.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-template-encyclopedia.json"
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 「이전 기록 전체 보기」를 누르면 단추 글자가 「이전 기록 접기」로 바뀌고 펼침 토스트가, 다시 누르면 원래 글자와 접힘 토스트가 뜨며 예외가 없다 — 옮긴 toggleRecordArchive 가 원래 자리의 window 노출 줄을 거쳐 닿는다",
+   "touches": [
+    "js/tabs/records/archive-toggle.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-archive-toggle.json"
+  }
+ ]
+}

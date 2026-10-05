@@ -2,7 +2,7 @@
  * OurGoal Checkin Feedback (기록 — 체크인 AI 피드백 칸·창·피드 공유)
  *
  * 「맞춤 피드백 봇 설정」 묶음 중 피드백 보여 주기 몫: 판정 색(verdictClass)·홈/기록 피드백 칸 그리기·체크인 피드백 창 열기/닫기·피드 바로 공유·내 아바타 글자·「n분 전」 글자(timeAgoStr).
- * #TASK-ES-492(인라인 어려움 기관 묶음 이전 3차): index.html 인라인 IIFE 의 구간(이전 전 10202~10203 · 10204~10272 · 10273~10292 · 10293~10524 · 10525~10532 · 10537~10617 · 10619~10683 · 10684~10692줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-492(인라인 어려움 기관 묶음 이전 3차): index.html 인라인 IIFE 의 구간(이전 전 9425~9426 · 9427~9495 · 9496~9515 · 9516~9747 · 9748~9755 · 9760~9840 · 9842~9906 · 9907~9915줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,10 +14,10 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 10202~10203줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9425~9426줄(#TASK-ES-492 생성기 표지) ---- */
 
   function verdictClass(v){ return (v==='도움됨'||v==='실천 완료')?'good':(v==='도움안됨'?'bad':'mid'); }
-  /* ---- 이전 전 index.html 10204~10272줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9427~9495줄(#TASK-ES-492 생성기 표지) ---- */
   function renderFeedbackSlot(fb){
     var existing = document.getElementById('fbSlot');
     if(existing) existing.remove();
@@ -87,7 +87,7 @@
       }
     }
   }
-  /* ---- 이전 전 index.html 10273~10292줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9496~9515줄(#TASK-ES-492 생성기 표지) ---- */
 
   function getUserAvatarHtml(size){
     size = size || 48;
@@ -108,7 +108,7 @@
       return '<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;background:var(--primary-glow, rgba(99,102,241,0.15));display:flex;align-items:center;justify-content:center;font-size:24px;">🌱</div>';
     }
   }
-  /* ---- 이전 전 index.html 10293~10524줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9516~9747줄(#TASK-ES-492 생성기 표지) ---- */
 
   function showCheckinFeedbackSheet(rec, fb){
     try {
@@ -341,7 +341,7 @@
       });
     }
   }
-  /* ---- 이전 전 index.html 10525~10532줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9748~9755줄(#TASK-ES-492 생성기 표지) ---- */
 
   function closeCheckinFeedbackSheet(){
     var existingBackdrop = document.getElementById('checkinAiSheetBackdrop');
@@ -351,7 +351,7 @@
     }
   }
 
-  /* ---- 이전 전 index.html 10537~10617줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9760~9840줄(#TASK-ES-492 생성기 표지) ---- */
 
   async function instantShareCheckinToFeed(rec, fb, opt){
     opt = opt || {};
@@ -434,7 +434,7 @@
     return post;
   }
 
-  /* ---- 이전 전 index.html 10619~10683줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9842~9906줄(#TASK-ES-492 생성기 표지) ---- */
 
   function renderRecordFeedbackSlot(fb){
     var el = document.getElementById('recFeedbackSlot');
@@ -500,7 +500,7 @@
       }
     }
   }
-  /* ---- 이전 전 index.html 10684~10692줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 9907~9915줄(#TASK-ES-492 생성기 표지) ---- */
   function timeAgoStr(iso){
     var diff = Math.max(0, Date.now() - new Date(iso).getTime());
     var min = Math.floor(diff/60000);
