@@ -4176,6 +4176,33 @@
       ]
     },
     {
+      "id": "comm/goal-certificate-share",
+      "file": "js/tabs/comm/goal-certificate-share.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "소통 탭 공유 하위 화면(목표·기록·마일스톤 고르기·카드 미리보기·피드 게시·외부 공유)과 목표 완주 인증서 그림(generateGoalCertificateImage·renderCommShare). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalTeamInviteComm"
+      ]
+    },
+    {
       "id": "comm/index",
       "file": "js/tabs/comm/index.js",
       "layer": "tabs",
@@ -4234,6 +4261,60 @@
       "ownerKeys": [],
       "dependsOn": [
         "MANITO_STAMP_COOLDOWN",
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "comm/manito-real",
+      "file": "js/tabs/comm/manito-real.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "실 유저 판별(isValidRealUser)·서버 마니또 자료(loadServerManitoData)·짝·응원 집계(manitoPartners·manitoSentToday·manitoStreak·manitoMutualCount·manitoInbox)·마니또 화면(renderCommManito)·익명 대화(renderManitoDm). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [
+        "ui.confirm"
+      ],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "comm/peer-invite",
+      "file": "js/tabs/comm/peer-invite.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "클립보드 복사(copyTextToClipboard·fallbackCopyText)·초대 기록(trackPeerInvite)·카카오 공유(shareGroupToKakao)·링크 복사(copyGroupInviteLink)·초대 성공 창(openPeerInviteSuccessModal)·초대 수락(acceptPeerInvite)·초대 받은 화면(showPeerInviteLandingModal). 순수 함수 3개(smoke FN_NAMES)는 index.html 에 남음. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
         "OurgoalAppScope"
       ]
     },
@@ -5575,6 +5656,59 @@
       ]
     },
     {
+      "id": "records/pro-template-modals",
+      "file": "js/tabs/records/pro-template-modals.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "전문 템플릿 화면 — 내 전용 템플릿 만들기 창(openCreateCustomTemplateModal, 줄글 추천·표 미리보기)·표 속성(열) 편집 창(openTemplateColumnEditModal). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-467)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalModeration"
+      ]
+    },
+    {
+      "id": "records/pro-templates",
+      "file": "js/tabs/records/pro-templates.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "전문 템플릿 데이터·해석 — 기본 전문 템플릿 목록(DEFAULT_PRO_TEMPLATES)·내 템플릿 합친 목록(getAllProTemplates)·키로 찾기(getProTemplateByKey)·날짜 꼬리표(fmtYYMMDD)·줄글 → 표 열 해석(parseNaturalLanguageTemplateSpec)·키워드 추천(recommendTemplateFromAI). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-467)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "records/record-assistant",
       "file": "js/tabs/records/record-assistant.js",
       "layer": "tabs",
@@ -5881,6 +6015,32 @@
         "AudioContext",
         "OurgoalAppScope",
         "webkitAudioContext"
+      ]
+    },
+    {
+      "id": "records/trend-metrics-chart",
+      "file": "js/tabs/records/trend-metrics-chart.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "기록 탭 「📈 히트맵·통계」 실천 추이 차트 — 측정지표 정의(TREND_METRICS)·차트 칸 그리기와 지표 칩·기간 단추(renderWeekChart, #chartContainer). 여러 지표 SVG(renderMultiMetricSvg)는 시험지 잘라 읽기 때문에 index.html 에 남김. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-467)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {
@@ -6379,6 +6539,34 @@
         "OurgoalSettingsSubSecurity",
         "OurgoalTemplateCredit",
         "OurgoalUiHelpers"
+      ]
+    },
+    {
+      "id": "settings/session-entry",
+      "file": "js/tabs/settings/session-entry.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "세션 복구 뒤 앱 입장(restoreSessionAndEnter)·아이디 직접 로그인(loginWithDirectIdentifier)·로그인 빠른 복구 창(openLoginRescueModal·rescueLoginSession)·복구 링크 처리기 등록(bindLoginRescueButtons). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAccountIsolation",
+        "OurgoalAppScope",
+        "OurgoalDirectLoginGuard"
       ]
     },
     {

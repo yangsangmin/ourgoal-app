@@ -2,7 +2,7 @@
  * OurGoal Lock Screen Hub (일정 탭 — 폰 잠금화면에서 바로 보기 통합 허브 창)
  *
  * 일정 탭 「잠금화면」 단추가 여는 통합 허브 창(openLockScreenHubModal). 노출 묶음(window.openLockScreenHubModal 등)은 index.html 원래 자리.
- * #TASK-ES-486(인라인 어려움 기관 묶음 이전 2차): index.html 인라인 IIFE 의 구간(이전 전 7980~8711줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-486(인라인 어려움 기관 묶음 이전 2차): index.html 인라인 IIFE 의 구간(이전 전 8044~8775줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalCalendarKit = global.OurgoalCalendarKit || {};
 
-  /* ---- 이전 전 index.html 7980~8711줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8044~8775줄(#TASK-ES-486 생성기 표지) ---- */
   function openLockScreenHubModal(){
     var curYear = L.state.calDate ? parseInt(L.state.calDate.slice(0, 4), 10) : new Date().getFullYear();
     var curMonth = L.state.calDate ? (parseInt(L.state.calDate.slice(5, 7), 10) - 1) : new Date().getMonth();

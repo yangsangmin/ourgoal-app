@@ -1,0 +1,76 @@
+{
+  "id": "records-trend-metrics",
+  "title": "게스트로 기록 탭 「📈 히트맵·통계」의 「📊 실천추이」 차트에서 꺼져 있던 측정지표 「달성률」 칩을 누르면 그 칩이 켜지고, 기간 「월간」을 누르면 월간 단추가 켜진다 — 측정지표 정의·추이 차트 그리기(TREND_METRICS·renderWeekChart — 여러 지표 SVG renderMultiMetricSvg 는 index.html 에 남아 통로로 불림)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "button.s-rec-mode-btn[onclick*=\"heatmap\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "button.s-rec-mode-btn[onclick*=\"heatmap\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recCarouselPills [data-recslide=\"0\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#recCarouselPills [data-recslide=\"0\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#chartContainer [data-trendmetric=\"rate\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#chartContainer [data-trendmetric=\"rate\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#chartContainer [data-trendmetric=\"rate\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#chartContainer [data-trendmetric=\"rate\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#chartContainer [data-trendseg=\"month\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#chartContainer [data-trendseg=\"month\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

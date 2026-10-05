@@ -1,0 +1,702 @@
+{
+ "task": "TASK-ES-486",
+ "slot": "HO",
+ "scriptHtmlLines": [
+  2331,
+  23980
+ ],
+ "plan": [
+  {
+   "cell": "calCore",
+   "action": "move",
+   "segment": [
+    7191,
+    7193
+   ],
+   "stmt": [
+    7193,
+    7193
+   ],
+   "names": [
+    "isoDate"
+   ],
+   "why": null
+  },
+  {
+   "cell": "calCore",
+   "action": "move",
+   "segment": [
+    7194,
+    7202
+   ],
+   "stmt": [
+    7196,
+    7202
+   ],
+   "names": [
+    "toLocalInputValue"
+   ],
+   "why": null
+  },
+  {
+   "cell": "calCore",
+   "action": "move",
+   "segment": [
+    7203,
+    7206
+   ],
+   "stmt": [
+    7203,
+    7206
+   ],
+   "names": [
+    "toDateTimeLocalValue"
+   ],
+   "why": null
+  },
+  {
+   "cell": "calCore",
+   "action": "move",
+   "segment": [
+    7207,
+    7247
+   ],
+   "stmt": [
+    7207,
+    7247
+   ],
+   "names": [
+    "pushCalendarEvent"
+   ],
+   "why": null
+  },
+  {
+   "cell": "calCore",
+   "action": "move",
+   "segment": [
+    7248,
+    7299
+   ],
+   "stmt": [
+    7248,
+    7299
+   ],
+   "names": [
+    "quickSyncToCalendar"
+   ],
+   "why": null
+  },
+  {
+   "cell": "calCore",
+   "action": "move",
+   "segment": [
+    7300,
+    7452
+   ],
+   "stmt": [
+    7300,
+    7452
+   ],
+   "names": [
+    "calendarItemsByDate"
+   ],
+   "why": null
+  },
+  {
+   "cell": "calCore",
+   "action": "move",
+   "segment": [
+    7453,
+    7530
+   ],
+   "stmt": [
+    7453,
+    7530
+   ],
+   "names": [
+    "calCellHtml"
+   ],
+   "why": null
+  },
+  {
+   "cell": "lockHub",
+   "action": "move",
+   "segment": [
+    8044,
+    8775
+   ],
+   "stmt": [
+    8044,
+    8775
+   ],
+   "names": [
+    "openLockScreenHubModal"
+   ],
+   "why": null
+  },
+  {
+   "cell": "streakBadge",
+   "action": "keep",
+   "segment": [
+    8776,
+    8791
+   ],
+   "stmt": [
+    8777,
+    8791
+   ],
+   "names": [],
+   "why": "window 노출 묶음(if 안 window.X = … 만) — 원래 자리(순서 보존, #TASK-ES-465)"
+  },
+  {
+   "cell": "streakBadge",
+   "action": "move",
+   "segment": [
+    8792,
+    8799
+   ],
+   "stmt": [
+    8792,
+    8799
+   ],
+   "names": [
+    "streakBadgeHtml"
+   ],
+   "why": null
+  },
+  {
+   "cell": "streakBadge",
+   "action": "move",
+   "segment": [
+    8800,
+    8820
+   ],
+   "stmt": [
+    8800,
+    8820
+   ],
+   "names": [
+    "computeStreakDays"
+   ],
+   "why": null
+  },
+  {
+   "cell": "streakBadge",
+   "action": "move",
+   "segment": [
+    8821,
+    8830
+   ],
+   "stmt": [
+    8822,
+    8830
+   ],
+   "names": [
+    "updateAppBadge"
+   ],
+   "why": null
+  },
+  {
+   "cell": "streakBadge",
+   "action": "move",
+   "segment": [
+    8831,
+    8831
+   ],
+   "stmt": [
+    8831,
+    8831
+   ],
+   "names": [
+    "STREAK_FREEZE_MAX"
+   ],
+   "why": null
+  },
+  {
+   "cell": "streakBadge",
+   "action": "move",
+   "segment": [
+    8832,
+    8841
+   ],
+   "stmt": [
+    8832,
+    8841
+   ],
+   "names": [
+    "maybeGrantStreakFreeze"
+   ],
+   "why": null
+  },
+  {
+   "cell": "streakBadge",
+   "action": "move",
+   "segment": [
+    8842,
+    8856
+   ],
+   "stmt": [
+    8842,
+    8856
+   ],
+   "names": [
+    "maybeApplyStreakFreeze"
+   ],
+   "why": null
+  },
+  {
+   "cell": "streakBadge",
+   "action": "move",
+   "segment": [
+    8857,
+    8868
+   ],
+   "stmt": [
+    8857,
+    8868
+   ],
+   "names": [
+    "maybeGrantAvatarCraftBonus"
+   ],
+   "why": null
+  },
+  {
+   "cell": "viewDispatch",
+   "action": "move",
+   "segment": [
+    23548,
+    23587
+   ],
+   "stmt": [
+    23548,
+    23587
+   ],
+   "names": [
+    "dispatchFullViewPropagation"
+   ],
+   "why": null
+  },
+  {
+   "cell": "viewDispatch",
+   "action": "keep",
+   "segment": [
+    23588,
+    23590
+   ],
+   "stmt": [
+    23588,
+    23590
+   ],
+   "names": [],
+   "why": "window 노출 묶음(if 안 window.X = … 만) — 원래 자리(순서 보존, #TASK-ES-465)"
+  }
+ ],
+ "imports": [
+  {
+   "n": "isoDate",
+   "cell": "calCore"
+  },
+  {
+   "n": "toLocalInputValue",
+   "cell": "calCore"
+  },
+  {
+   "n": "toDateTimeLocalValue",
+   "cell": "calCore"
+  },
+  {
+   "n": "pushCalendarEvent",
+   "cell": "calCore"
+  },
+  {
+   "n": "quickSyncToCalendar",
+   "cell": "calCore"
+  },
+  {
+   "n": "calendarItemsByDate",
+   "cell": "calCore"
+  },
+  {
+   "n": "calCellHtml",
+   "cell": "calCore"
+  },
+  {
+   "n": "openLockScreenHubModal",
+   "cell": "lockHub"
+  },
+  {
+   "n": "streakBadgeHtml",
+   "cell": "streakBadge"
+  },
+  {
+   "n": "computeStreakDays",
+   "cell": "streakBadge"
+  },
+  {
+   "n": "updateAppBadge",
+   "cell": "streakBadge"
+  },
+  {
+   "n": "maybeGrantStreakFreeze",
+   "cell": "streakBadge"
+  },
+  {
+   "n": "maybeApplyStreakFreeze",
+   "cell": "streakBadge"
+  },
+  {
+   "n": "maybeGrantAvatarCraftBonus",
+   "cell": "streakBadge"
+  },
+  {
+   "n": "dispatchFullViewPropagation",
+   "cell": "viewDispatch"
+  }
+ ],
+ "outsideRefs": {
+  "isoDate": [
+   2431,
+   3529,
+   3529,
+   7548,
+   20841
+  ],
+  "toLocalInputValue": [
+   19797,
+   19798,
+   20547,
+   21323,
+   21325
+  ],
+  "toDateTimeLocalValue": [
+   2522,
+   6853,
+   7551,
+   7551
+  ],
+  "pushCalendarEvent": [
+   6891,
+   6898,
+   6905,
+   6916,
+   7179,
+   7999
+  ],
+  "quickSyncToCalendar": [
+   2475,
+   9379
+  ],
+  "calendarItemsByDate": [
+   2465,
+   8784
+  ],
+  "calCellHtml": [
+   2463
+  ],
+  "openLockScreenHubModal": [
+   2473,
+   8786
+  ],
+  "streakBadgeHtml": [
+   2645,
+   9256,
+   22958,
+   23010
+  ],
+  "computeStreakDays": [
+   2364,
+   3478,
+   5035,
+   5093,
+   5104,
+   5854,
+   9062,
+   9253,
+   9260,
+   9436,
+   9710,
+   21043,
+   21043,
+   21157,
+   21157
+  ],
+  "updateAppBadge": [
+   2648,
+   4583,
+   4840,
+   5035,
+   5093,
+   5104,
+   9062,
+   9254
+  ],
+  "maybeGrantStreakFreeze": [
+   2640,
+   2960,
+   9053
+  ],
+  "maybeApplyStreakFreeze": [
+   2958
+  ],
+  "maybeGrantAvatarCraftBonus": [
+   2639,
+   2959,
+   9054
+  ],
+  "dispatchFullViewPropagation": [
+   2831,
+   3139,
+   3140,
+   9072,
+   9072,
+   9295,
+   9295,
+   11729,
+   11729,
+   15176,
+   15176,
+   15224,
+   15224,
+   15353,
+   15353,
+   15498,
+   15498,
+   20890,
+   20890,
+   23589,
+   23605,
+   23605
+  ]
+ },
+ "bridged": [
+  {
+   "n": "MOCK_GROUPS",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "buildICS",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "buildLockScreenCardPayload",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "buildWebCalUrl",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "checkGuestBackupNudge",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "closeLockScreenLiveCard",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "closeModal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "dateKey",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "ensureGcalOwner",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "escapeHtml",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "fetchSignedCalendarToken",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "gcalEventsKey",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "generateLockScreenScheduleCardImage",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "getGoogleAccessToken",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "groupState",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "nextDayISO",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "openModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "openScheduleSetupModal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "pad",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderCalendarScreen",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderHome",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderRecordsScreen",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "saveLocalSettings",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "saveProfile",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "state",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": true
+  },
+  {
+   "n": "syncLockScreenLiveCard",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "syncPushSubscription",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "toast",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "triggerHaptic",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "triggerHapticFeedback",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  }
+ ],
+ "exposed": [
+  "buildICS",
+  "buildLockScreenCardPayload",
+  "buildWebCalUrl",
+  "closeLockScreenLiveCard",
+  "fetchSignedCalendarToken",
+  "gcalEventsKey",
+  "generateLockScreenScheduleCardImage",
+  "nextDayISO"
+ ],
+ "edits": 190,
+ "htmlLinesBefore": 24019,
+ "htmlLinesAfter": 22860,
+ "files": {
+  "js/core/streak-badge.js": 113,
+  "js/tabs/calendar/lockscreen-hub.js": 756,
+  "js/tabs/calendar/calendar-core.js": 376,
+  "js/core/view-dispatch.js": 64
+ }
+}
