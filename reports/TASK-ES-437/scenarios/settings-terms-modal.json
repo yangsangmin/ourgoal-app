@@ -1,0 +1,44 @@
+{
+  "id": "settings-terms-modal",
+  "title": "게스트로 설정 탭 맨 아래 「이용약관」 링크를 누르면 옮긴 약관 창(showLegalModal — js/tabs/settings/account-entry.js)이 이전 전과 같이 열린다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#setTermsLink",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#setTermsLink"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "이용약관"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
