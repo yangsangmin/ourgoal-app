@@ -1,0 +1,58 @@
+{
+  "task": "TASK-ES-415",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-415-CONSTITUTION-LEDGER.md",
+  "requirements": [
+    { "id": "R1", "text": "K4 A: 커널은 세션이 읽는 실행 정본, 법령 전문은 상세 — 병합 뒤 법령 전문·버전 대장에 반영" },
+    { "id": "R2", "text": "커널 첫 배치(4fc1209)가 버전 대장에 빠진 것을 기록" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "법령 전문 머리에 커널과 법령 전문의 관계 절이 있다",
+      "touches": ["docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md", "text": "### 커널과 법령 전문의 관계 (2026-10-05, 상민님 결심 K4 A" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "버전 대장에 커널 v2026.10.05-CELL 행이 있다",
+      "touches": ["docs/rules/CONSTITUTION_VERSIONS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/CONSTITUTION_VERSIONS.md", "text": "| **`v2026.10.05-CELL`** (커널) | 2026-10-05 |" }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "버전 대장에 커널 첫 배치 v2026.10-KERNEL-V4 행이 있다",
+      "touches": ["docs/rules/CONSTITUTION_VERSIONS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/CONSTITUTION_VERSIONS.md", "text": "| `v2026.10-KERNEL-V4` (커널) | 2026-10-04 |" }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "직전 커널 v2026.10 원문이 아카이브에 보존돼 있다",
+      "touches": ["docs/rules/archive/AGENTS_KERNEL_v2026.10.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/archive/AGENTS_KERNEL_v2026.10.md", "text": "<system_kernel id=\"ourgoal-supreme-constitution-v2026.10\">" }
+    },
+    {
+      "id": "C5", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "머리를 고치기 전 법령 전문 원문이 아카이브에 보존돼 있다",
+      "touches": ["docs/rules/archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.10.02_SHIPYARD_MODULAR_ARCHITECTURE.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.10.02_SHIPYARD_MODULAR_ARCHITECTURE.md", "text": "**헌법 버전**: 2026.10.02-SUPREME-15-ARTICLES-SHIPYARD-MODULAR-ARCHITECTURE" }
+    },
+    {
+      "id": "C6", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "REQ 에 바꾼 파일과 근거 표가 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-415-CONSTITUTION-LEDGER.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-415-CONSTITUTION-LEDGER.md", "text": "# REQ/PLAN — TASK-ES-415 헌법 K4 후속" }
+    },
+    {
+      "id": "C7", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "dev_log 에 이 작업 한 줄이 있다",
+      "touches": ["dev_log.md"],
+      "check": { "type": "codeContains", "file": "dev_log.md", "text": "- 2026-10-05 TASK-ES-415: 헌법 K4 후속" }
+    },
+    {
+      "id": "C8", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "TICKETS 에 이 작업 티켓 줄이 있다",
+      "touches": ["docs/rules/TICKETS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/TICKETS.md", "text": "- #TASK-ES-415 | INFRA/헌법 |" }
+    }
+  ]
+}
