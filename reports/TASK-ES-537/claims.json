@@ -1,0 +1,108 @@
+{
+ "task": "TASK-ES-537",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「[#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달」에 남은 루틴 상세·편집 창 openRoutineDetailModal 을 목표 탭 세포 js/tabs/goals/routine-detail-modal.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 HO). 게스트 화면 시나리오로 낸다."
+  },
+  {
+   "id": "R2",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 신고서 등록."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭 「루틴」의 모닝 루틴 카드를 누르면 「루틴 상세 & 편집」 창이 열리고, 이름을 고쳐 「저장하기」를 누르면 「루틴 설정이 저장되었습니다」 토스트와 함께 그 카드에 새 이름이 보이며 예외가 없다",
+   "touches": [
+    "js/tabs/goals/routine-detail-modal.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/routine-detail-guest-edit.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-537/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-537/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-537/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-537/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 이후 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-537/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-537/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-537/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-537/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/routine-detail-modal 이 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/routine-detail-modal\""
+   }
+  }
+ ]
+}
