@@ -1,0 +1,162 @@
+{
+ "runner": "docs/design/harness/module-split/scenario-local-components.js(법정 실행기를 읽기만 함) — 판정 아님",
+ "base": "origin/main 194ed83 git archive 사본",
+ "work": "작업 트리",
+ "note": "settings-guide-comm-tour 는 처음 판(상세 혜택 안내 → 건너뛰기)이 가이드 종료 400ms 뒤 투어 창이 상세 가이드를 덮는 경쟁으로 흔들려, 미니 가이드 「건너뛰기」 → 투어 창 길로 바꿈(같은 showCommTourModal). 바꾼 판 2회 기준·작업 통과",
+ "allPassed": true,
+ "runs": [
+  {
+   "scenario": "settings-theme-white",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"settings\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"설정\" 57x50px",
+     "6 do waitFor ok details.settings-group-accordion:has(.theme-card) > summary → 보이는 요소 1개",
+     "7 do click ok 클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px",
+     "8 do waitFor ok .theme-card[data-themeid=\"white\"] → 보이는 요소 1개",
+     "9 do click ok 클릭 div \"화이트 (White) 화사하고 깔끔한 순백 라이트 테마\" 315x67px",
+     "10 expect hasClass ok .theme-card[data-themeid=\"white\"] → class=\"theme-card active\"",
+     "11 expect textContains ok #toast → 보이는 글자: [\"화이트 (White) 테마가 적용되었어요\"]",
+     "12 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  {
+   "scenario": "settings-terms-modal",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"settings\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"설정\" 57x50px",
+     "6 do waitFor ok #setTermsLink → 보이는 요소 1개",
+     "7 do click ok 클릭 a#setTermsLink \"이용약관\" 47x16px",
+     "8 expect textContains ok #modalOverlay → 보이는 글자: [\"✕ 이용약관 개인정보처리방침 아워골 서비스 이용약관 시행일자: 2026년 9월 9일 제1조 (목적) 본 약관은 아워골 서비스의 이용과 관련하여 \"]",
+     "9 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  {
+   "scenario": "settings-guide-comm-tour",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"settings\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"설정\" 57x50px",
+     "6 do waitFor ok #setGroupDataSummary → 보이는 요소 1개",
+     "7 do click ok 클릭 summary#setGroupDataSummary \"💾 데이터 백업 & 고급 설정 / 고객지원 데이터 백\" 339x115px",
+     "8 do waitFor ok #btnRestartGuide → 보이는 요소 1개",
+     "9 do click ok 클릭 button#btnRestartGuide \"앱 기본 가이드 다시보기 (온보딩 안내)\" 315x44px",
+     "10 do waitFor ok #btnMiniGuideSkip → 보이는 요소 1개",
+     "11 do click ok 클릭 button#btnMiniGuideSkip \"건너뛰기\" 59x18px",
+     "12 do waitFor ok #tourGo → 보이는 요소 1개",
+     "13 expect textContains ok #modalOverlay → 보이는 글자: [\"✕ 첫 목표를 만들었어요! 혼자보다 함께면 오래 갈 수 있어요. 소통 탭에서 이런 걸 할 수 있어요. 마니또 비슷한 목표를 가진 사람과 익명으로\"]",
+     "14 do click ok 클릭 button#tourGo \"소통 탭 보러가기\" 150x44px",
+     "15 expect hasClass ok #screen-comm → class=\"screen active\"",
+     "16 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  {
+   "scenario": "settings-avatar-greeting",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"settings\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"설정\" 57x50px",
+     "6 do waitFor ok details.settings-group-accordion:has(#btnPreviewAvatarGreeting) > summary → 보이는 요소 1개",
+     "7 do click ok 클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px",
+     "8 do waitFor ok #btnPreviewAvatarGreeting → 보이는 요소 1개",
+     "9 do click ok 클릭 button#btnPreviewAvatarGreeting \"👀 아바타 인사 미리보기\" 315x44px",
+     "10 expect visible ok #avatarGreetingModal → 보이는 요소 1개",
+     "11 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  {
+   "scenario": "home-cunning-chip",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"home\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"홈\" 57x50px",
+     "6 do waitFor ok .cunning-chips-wrap .btn-quick-chip:first-child → 보이는 요소 1개",
+     "7 do click ok 클릭 button \"👟 러닝/운동 실천\" 127x44px",
+     "8 expect hasClass ok .cunning-chips-wrap .btn-quick-chip:first-child → class=\"btn-quick-chip active-cunning\"",
+     "9 expect textContains ok #toast → 보이는 글자: [\"💡 예시 가이드가 입력창 힌트로 설정되었습니다 ✨\"]",
+     "10 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  }
+ ]
+}

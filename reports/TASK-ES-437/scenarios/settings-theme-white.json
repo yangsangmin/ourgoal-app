@@ -1,0 +1,58 @@
+{
+  "id": "settings-theme-white",
+  "title": "게스트로 설정 탭의 테마 카드 「화이트」를 누르면 옮긴 테마 적용(applyTheme — js/tabs/settings/theme-apply.js)이 불려 문서의 data-theme 이 white 로 바뀌고 이전 전과 같은 토스트가 뜬다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details.settings-group-accordion:has(.theme-card) > summary",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(.theme-card) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".theme-card[data-themeid=\"white\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".theme-card[data-themeid=\"white\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".theme-card[data-themeid=\"white\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "테마가 적용되었어요"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
