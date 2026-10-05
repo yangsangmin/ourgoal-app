@@ -578,3 +578,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통] core-confirm-es376 잘라 읽기가 인라인 합본을 읽음 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md
 - #TASK-ES-492 | INFRA | [인라인 기관 이전 3차] 맞춤 피드백 봇(설정 창·체크인 피드백 보여 주기로 책임 나눔) → 세포 2개, 동작 그대로(인라인 −1,051줄) | 코디네이터 지시 (2026-10-05, 기관 빌더), REQ docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md | 4단계(심사 청구)
 - #TASK-ES-482 | INFRA | [인라인 어려움 기관 묶음 · H3 빌더] Confetti·뱃지 컬렉션·전역 휴지통을 js/core 기관 세포 4개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md
+- #TASK-ES-498 | INFRA | [생성 지도 일괄 갱신 2회차] 생성 파일 4개를 main c1f0a72 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-05), REQ docs/specs/REQ-TASK-ES-498-GENERATED-MAPS-SYNC-2.md | 4단계(심사 청구)
