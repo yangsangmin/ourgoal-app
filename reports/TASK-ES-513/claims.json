@@ -1,0 +1,244 @@
+{
+ "task": "TASK-ES-513",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-513-INLINE-STAGE3.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「디바이스 세션 & 원격 로그아웃 유틸 (Req 1)」(getDeviceId·getDeviceLoginTime·setDeviceLoginTime·performLogout·checkRemoteSessionRevoked, 이메일 가입 처리기 등록 문)을 설정 탭 세포 js/tabs/settings/device-session.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 표지 H1). 게스트 화면으로 닿는 몫(설정 「로그아웃」 단추 → 옮긴 performLogout)은 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R3",
+   "text": "로그인한 뒤에만 도는 몫(로그인 때 이 기기 로그인 시각 기록 setDeviceLoginTime, 탭 전환 때 세션 확인의 서버 분기)은 테스트 계정 실계정 하네스로 기준·작업·기준을 읽기 전용으로 맞대고, 법정이 그 증거를 어떻게 평가하는지 받는다."
+  },
+  {
+   "id": "R4",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 신고서 등록."
+  },
+  {
+   "id": "R5",
+   "text": "인라인 잔여 3단계 설계 문서 docs/architecture/INLINE-STAGE3-DESIGN.md(유형별 집계·실계정 표준 절차·법정 증거 형식·FN_NAMES 판정·CELL_SPLIT 5 구분·병렬 구역과 PR 수 추정)와 도구(real-account-split-check.js·inline-stage3-classes.js)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 「데이터·계정」 묶음을 펼쳐 「로그아웃」을 누르면 로그인 화면이 보이고 「로그아웃되었습니다」 토스트가 뜨며 설정 화면이 닫히고 예외가 없다 — 옮긴 performLogout 이 그린다",
+   "touches": [
+    "js/tabs/settings/device-session.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-guest-logout.json"
+  },
+  {
+   "id": "C2",
+   "req": "R3",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "테스트 계정으로 로그인하면 옮긴 setDeviceLoginTime 이 이 기기 로그인 시각을 이전 전과 같이 기록하고, 로그인 상태의 탭 전환·설정·로그인 기기 목록·로그아웃 화면이 이전 전과 같다",
+   "touches": [
+    "js/tabs/settings/device-session.js",
+    "index.html"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 환경 변수(OG_APP_URL·OG_TEST_A_EMAIL·OG_TEST_A_PASSWORD)가 있는 이 PC 의 세션",
+    "how": [
+     "git archive origin/main 으로 기준 사본을 푼다",
+     "node docs/design/harness/module-split/real-account-split-check.js <기준 사본> docs/design/harness/module-split/real-account-stage3-pilot-steps.json base1 base1.json 을 돌리고, 같은 명령을 이 변경 트리(after)와 기준 사본(base2)으로 한 번씩 더 돌린다",
+     "node docs/design/harness/module-split/real-account-compare-inline-split-2.js base1.json after.json base2.json 비교.json 으로 base1VsAfter.differing 과 base1VsBase2.differing 이 0 인지 본다"
+    ],
+    "note": "작업자 실측(판정 아님): 기준1·작업·기준2 각 43값 비교에서 차이 0, pageerror 0, Supabase 쓰기 요청은 도구가 끊음(reports/TASK-ES-513/real-account-compare.json). 도달 실측: setDeviceLoginTime 은 테스트 계정 2회·게스트 0회(real-account-reach-A-base.json·real-account-reach-guest-base.json)."
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "테스트 계정 실계정 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-513/real-account-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-513/real-account-compare.json",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "테스트 계정 실계정 읽기 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-513/real-account-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-513/real-account-compare.json",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "도달 실측: 테스트 계정으로 로그인한 첫 단계까지 setDeviceLoginTime 이 2회 불린 것으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-513/real-account-reach-A-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-513/real-account-reach-A-base.json",
+    "path": "steps.0.calls.setDeviceLoginTime",
+    "equals": 2
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "도달 실측: 게스트로 같은 단계를 모두 지나도 setDeviceLoginTime 호출 기록이 없다",
+   "touches": [
+    "reports/TASK-ES-513/real-account-reach-guest-base.json"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "reports/TASK-ES-513/real-account-reach-guest-base.json",
+    "text": "\"setDeviceLoginTime\":"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-513/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-513/verify-inline-hard.json",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-513/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-513/verify-inline-hard.json",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 이후 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-513/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-513/verify-inline-hard.json",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-513/module-load-probe.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-513/module-load-probe.json",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/device-session 이 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"settings/device-session\""
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설계 문서가 실계정 증거의 법정 평가 형식(3-4절)과 병렬 구역(6절)을 담는다",
+   "touches": [
+    "docs/architecture/INLINE-STAGE3-DESIGN.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/INLINE-STAGE3-DESIGN.md",
+    "text": "### 3-4. 법정은 실계정 증거를 어떻게 받는가"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 분열 확인 표준 도구가 저장소에 있다",
+   "touches": [
+    "docs/design/harness/module-split/real-account-split-check.js"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "docs/design/harness/module-split/real-account-split-check.js"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "잔여 묶음 분류표 도구가 저장소에 있다",
+   "touches": [
+    "docs/design/harness/module-split/inline-stage3-classes.js"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "docs/design/harness/module-split/inline-stage3-classes.js"
+   }
+  }
+ ]
+}

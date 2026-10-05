@@ -1,0 +1,69 @@
+{
+ "id": "settings-guest-logout",
+ "title": "게스트로 설정 탭 「데이터·계정」 묶음을 펼쳐 「로그아웃」 단추를 누르면 앱 화면이 닫히고 로그인 화면이 보이며 「로그아웃되었습니다.」 토스트가 뜬다 — 옮긴 performLogout(js/tabs/settings/device-session.js)이 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#setGroupDataSummary",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#setGroupDataSummary"
+  },
+  {
+   "expect": "visible",
+   "selector": "#logoutBtn"
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#authScreen"
+  },
+  {
+   "do": "click",
+   "selector": "#logoutBtn"
+  },
+  {
+   "expect": "visible",
+   "selector": "#authScreen"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "로그아웃되었습니다"
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#screen-settings"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
