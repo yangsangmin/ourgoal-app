@@ -1,0 +1,133 @@
+{
+ "task": "TASK-ES-541",
+ "label": "인라인 3단계 구역 Z5 표준 1",
+ "slot": "Z56",
+ "newSlotBefore": "H0 시범 #TASK-ES-439",
+ "slots": [
+  "H0 시범 #TASK-ES-439",
+  "H1",
+  "H2",
+  "H3",
+  "H4",
+  "HO 기관"
+ ],
+ "cells": [
+  {
+   "key": "appLockPinFormat",
+   "file": "js/tabs/settings/app-lock-pin-format.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal App Lock PIN Format (설정 — 앱 잠금 PIN 해시 저장 형식 접두)",
+   "desc": [
+    "「[71] 앱 잠금 PIN (이 기기)」 묶음의 PIN 해시 저장 형식 접두(APP_LOCK_PIN_PREFIX). js/tabs/settings/app-lock-pin.js 가 해시를 만들고 검증할 때 L.APP_LOCK_PIN_PREFIX 로 읽는다. window 노출 문은 index.html 원래 자리에 있다."
+   ],
+   "take": [
+    {
+     "group": "[71] 앱 잠금 PIN (이 기기)",
+     "all": true
+    }
+   ]
+  },
+  {
+   "key": "goalConstants",
+   "file": "js/tabs/goals/goal-category-templates.js",
+   "kit": "OurgoalGoalsKit",
+   "kitVar": "_goalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+   "title": "OurGoal Goal Category Templates (목표 — 목표 종류별 기본 마일스톤·온보딩 프리셋·퀵 액션·결과 단위 상수)",
+   "desc": [
+    "「Goal category templates」 묶음의 상수 GOAL_TEMPLATES(새 목표 직접 설정 창의 종류 칸·템플릿 마일스톤)·ONBOARDING_PRESETS·QUICK_ACTIONS_BY_CAT, 「결과 기록 (체크박스 대신 수치 입력)」 묶음의 RESULT_UNITS.",
+    "ONBOARDING_PRESETS·QUICK_ACTIONS_BY_CAT·RESULT_UNITS 는 지금 부르는 곳이 0 이다(그대로 옮김 — 발견 목록)."
+   ],
+   "take": [
+    {
+     "group": "Goal category templates",
+     "names": [
+      "GOAL_TEMPLATES",
+      "ONBOARDING_PRESETS",
+      "QUICK_ACTIONS_BY_CAT"
+     ],
+     "keepRest": true
+    },
+    {
+     "group": "결과 기록 (체크박스 대신 수치 입력)",
+     "all": true
+    }
+   ]
+  },
+  {
+   "key": "authScreen",
+   "file": "js/tabs/settings/auth-screen-actions.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal Auth Screen Actions (설정 — 로그인 화면 탭 전환·비밀번호 찾기 창)",
+   "desc": [
+    "로그인 화면 「로그인/회원가입」 탭 단추 처리기 등록 문(bindAuthTabButtons — index.html 원래 자리에서 부른다, 「Goal category templates」 묶음 안의 로드 중 문)과 「P0: 비밀번호 찾기」 묶음의 openForgotPasswordModal(js/auth-safety.js 의 창으로 넘긴다)."
+   ],
+   "take": [
+    {
+     "group": "Goal category templates",
+     "names": [],
+     "wrap": [
+      "bindAuthTabButtons"
+     ],
+     "keepRest": true
+    },
+    {
+     "group": "P0: 비밀번호 찾기",
+     "all": true
+    }
+   ]
+  },
+  {
+   "key": "guideButtons",
+   "file": "js/tabs/settings/guide-buttons.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal Guide Buttons (설정 — 각 탭 활용법 허브·앱 기본 가이드 다시보기 단추)",
+   "desc": [
+    "설정 「도움말」 칸의 「각 탭 200% 활용법」 단추(#btnTabGuideHub → openTabGuideHubModal)와 「앱 기본 가이드 다시보기」 단추(#btnRestartGuide → startFirstLoginGuide) 처리기 등록 문 두 개(bindTabGuideHubButton·bindRestartGuideButton — index.html 원래 자리에서 부른다)."
+   ],
+   "take": [
+    {
+     "group": "각 탭 200% 활용법",
+     "all": true,
+     "wrap": [
+      "bindTabGuideHubButton"
+     ]
+    },
+    {
+     "group": "앱 활용 가이드 다시보기",
+     "all": true,
+     "wrap": [
+      "bindRestartGuideButton"
+     ]
+    }
+   ]
+  },
+  {
+   "key": "supportInquiry",
+   "file": "js/tabs/settings/support-inquiry-bind.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal Support Inquiry Buttons (설정 — 1:1 문의·지원 이메일 단추)",
+   "desc": [
+    "「1:1 고객 문의 / 버그 제보」 묶음의 처리기 등록 문 두 개: 설정·바닥글 문의 단추(#feedbackInquiryBtn·#footInquiryLink → openCustomerInquiryModal)(bindInquiryButtons), 바닥글 지원 이메일 단추(#footSupportEmailLink — 이메일 복사·토스트·문의 창)(bindSupportEmailLink). index.html 원래 자리에서 부른다."
+   ],
+   "take": [
+    {
+     "group": "1:1 고객 문의 / 버그 제보",
+     "all": true,
+     "wrap": [
+      "bindInquiryButtons",
+      "bindSupportEmailLink"
+     ]
+    }
+   ]
+  }
+ ]
+}
