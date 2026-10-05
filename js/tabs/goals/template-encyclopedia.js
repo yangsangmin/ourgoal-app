@@ -3,7 +3,7 @@
  *
  * 목표 탭 「템플릿」 하위 탭 화면(renderTemplateEncyclopediaScreen)과 루틴·팀·개인 템플릿 상수(ROUTINE_TEMPLATES_AI·ROUTINE_TEMPLATES_REAL·TEAM_TEMPLATES_AI·TEAM_TEMPLATES_REAL·PERSONAL_TEMPLATES_REAL).
  * 분류·종류·검색 상태 변수(_subtabTplDomain·_subtabTplType·_subtabTplCat·_subtabTplQuery)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다. window 노출 줄도 원래 자리에 그대로 있다.
- * #TASK-ES-481(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 15002~15059 · 15060~15103 · 15104~15190 · 15191~15242 · 15243~15252 · 15253~15731줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-481(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 15066~15123 · 15124~15167 · 15168~15254 · 15255~15306 · 15307~15316 · 15317~15795줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 15002~15059줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15066~15123줄(#TASK-ES-481 생성기 표지) ---- */
 
   // 루틴 AI 추천 템플릿 6선
   var ROUTINE_TEMPLATES_AI = [
@@ -74,7 +74,7 @@
       badge: '하루 마감'
     }
   ];
-  /* ---- 이전 전 index.html 15060~15103줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15124~15167줄(#TASK-ES-481 생성기 표지) ---- */
 
   // 루틴 실사용자 검증 템플릿 4선
   var ROUTINE_TEMPLATES_REAL = [
@@ -119,7 +119,7 @@
       memo: '호흡에 집중하며 발끝부터 정수리까지 이완하기'
     }
   ];
-  /* ---- 이전 전 index.html 15104~15190줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15168~15254줄(#TASK-ES-481 생성기 표지) ---- */
   // 팀 목표 AI 추천 템플릿 6선
   var TEAM_TEMPLATES_AI = [
     {
@@ -207,7 +207,7 @@
       ]
     }
   ];
-  /* ---- 이전 전 index.html 15191~15242줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15255~15306줄(#TASK-ES-481 생성기 표지) ---- */
 
   // 팀 목표 실사용자 공유 템플릿 4선
   var TEAM_TEMPLATES_REAL = [
@@ -260,7 +260,7 @@
       ]
     }
   ];
-  /* ---- 이전 전 index.html 15243~15252줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15307~15316줄(#TASK-ES-481 생성기 표지) ---- */
 
   // 개인 목표 실사용자 공유 템플릿 6선
   var PERSONAL_TEMPLATES_REAL = [
@@ -271,7 +271,7 @@
     { id: 'ru_toeic_900', title: '📘 토익 900점 8주 완성 단기 속성', author: '점수폭격기', copies: 320, category: '어학/학습', desc: '기출 어휘 1000제와 파트 5·7 시간단축 스킬 중심의 고득점 팩', msCount: 4 },
     { id: 'ru_mindful_detox', title: '🧘 마음 챙김 명상 & 디지털 디톡스', author: '힐링닥터', copies: 89, category: '마음/습관', desc: '스크린 타임 하루 2시간 이내로 줄이고 멘탈을 회복하는 4주 코스', msCount: 3 }
   ];
-  /* ---- 이전 전 index.html 15253~15731줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15317~15795줄(#TASK-ES-481 생성기 표지) ---- */
   function renderTemplateEncyclopediaScreen(){
     var tev = document.getElementById('templateEncyclopediaView');
     if(!tev) return;

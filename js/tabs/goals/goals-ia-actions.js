@@ -4,7 +4,7 @@
  * 목표 탭 하위 탭 단추(switchGoalsSubTab) · 성취 통계 기간 단추와 리포트(switchGoalStatPeriod·renderGoalStatsChart) · 추천 템플릿을 내 목표로 담기(adoptTemplateAsMyGoal).
  * 마크업 onclick 과 js/tabs/goals/render.js · js/sanctuary-v3-engine.js 가 window 이름으로 부른다 — window 노출 줄(window.currentGoalStatPeriod 초기값 포함)은 index.html 원래 자리에 그대로 있다.
  * 같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍·루틴 매트릭스 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer·renderRoutineMatrixGrid·toggleRoutineStamp)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓).
- * #TASK-ES-481(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 15758~15763 · 15894~15905 · 15906~15930 · 15933~15973줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-481(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 15822~15827 · 15958~15969 · 15970~15994 · 15997~16037줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,7 +16,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 15758~15763줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15822~15827줄(#TASK-ES-481 생성기 표지) ---- */
 
   function switchGoalsSubTab(tab){
     L.triggerHapticFeedback(12);
@@ -24,7 +24,7 @@
     L.renderGoalsScreen();
   }
 
-  /* ---- 이전 전 index.html 15894~15905줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15958~15969줄(#TASK-ES-481 생성기 표지) ---- */
   function switchGoalStatPeriod(period){
     L.triggerHapticFeedback(12);
     window.currentGoalStatPeriod = period;
@@ -37,7 +37,7 @@
     }
     renderGoalStatsChart(period);
   }
-  /* ---- 이전 전 index.html 15906~15930줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15970~15994줄(#TASK-ES-481 생성기 표지) ---- */
   function renderGoalStatsChart(period){
     var p = period || window.currentGoalStatPeriod || 'week';
     var container = document.getElementById('goalsStatChartContent');
@@ -64,7 +64,7 @@
     '</div>';
   }
 
-  /* ---- 이전 전 index.html 15933~15973줄(#TASK-ES-481 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 15997~16037줄(#TASK-ES-481 생성기 표지) ---- */
 
   function adoptTemplateAsMyGoal(title, category){
     L.triggerHapticFeedback(12);

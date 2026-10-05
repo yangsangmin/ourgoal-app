@@ -52,12 +52,12 @@ worktree `C:/dev/wt/inline-h2`(브랜치 `feat/2026-10-05-task-es-462-inline-h2`
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-기준 = origin/main 8472bbc(`git archive` 사본). 측정 파일은 `reports/TASK-ES-481/`.
+기준 = origin/main(`git archive` 사본). 작업 번호: 처음 TASK-ES-462 로 잡았으나 #767 이 같은 번호로 먼저 병합되어 TASK-ES-481 로 바꿨다. main 을 세 번 합쳤고 그때마다 index.html 은 main 판을 입력으로 생성기를 다시 돌려 만들었다(손으로 푼 충돌 0). 조작 비교·시험 비교는 origin/main 91d1496 기준, 마지막 합침(70d631a — #773·#774) 뒤에는 verify·모듈 로드 탐침(회귀 0)·시나리오 3개(기준·작업 통과)를 다시 쟀다. 측정 파일은 `reports/TASK-ES-481/`.
 
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |
 | 글자 동일 | `verify-inline-hard.js` | 옮긴 함수 6·상수 5 토큰열 동일, 표지 구간 줄 단위 동일, 남은 글자 197,160토큰 동일, 누수·미노출·setter 빠짐·남은 정의·안 가져온 사용·this/arguments 0, 처리기 657 = 642 + 15, 새 파일 118·765·49줄 (`verify-inline-hard-pr1.json` ok) |
-| 줄 수 | 생성기 메타 | index.html 28,282 → 27,470줄(−812, `gen-meta-pr1.json`) |
+| 줄 수 | 생성기 메타 | index.html −812줄(이번 판 줄 수는 `gen-meta-pr1.json` — main 이 움직이면 바뀐다) |
 | 원본 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0, 새 파일 3개 단독 로드 ok(전역 = 기존 키트 1개씩) (`module-load-probe.json`) |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` 로컬 | `goals-ia-actions`·`goals-template-encyclopedia`·`records-archive-toggle` 기준·작업 모두 통과, 약점 0 (`scenario-local.json`) |
 | 조작 전후(게스트) | `dom-compare-inline-h2.js` | 19단계 × 10칸 = 190값, 기준 대 후 0 · 기준 대 기준 0, 콘솔 오류 0/0/0 (`dom-compare-pr1.json`). 순서 바꿔(후 2회·기준 1회) 후 대 기준 0, 후 대 후 3칸(첫 3단계 저장값의 `maxBaseCrafts` 저장 시점 — 같은 앱 두 번 실행에서 갈리는 본질 변동, `dom-compare-pr1-reversed.json`) → 하네스가 그 키를 지우고 다시 잼. 하네스 시드에는 추천 템플릿 카드가 없어 담기는 `window.adoptTemplateAsMyGoal` 직접 호출(마크업 onclick 과 같은 경로)로 잼 |

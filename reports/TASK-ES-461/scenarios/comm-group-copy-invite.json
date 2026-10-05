@@ -1,0 +1,89 @@
+{
+  "id": "comm-group-copy-invite",
+  "title": "게스트로 소통 탭 「👥 팀」에서 새 팀 「목표 완주 크루」를 만들고 만든 팀 화면에서 「초대 링크 복사」를 누르면 「초대 링크가 복사되었어요!」 토스트가 뜬다 — 초대 링크 복사(copyGroupInviteLink·copyTextToClipboard·trackPeerInvite)를 소통 탭 세포 파일 js/tabs/comm/peer-invite.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#commBody [data-sub=\"group\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"group\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnHeroCreateTeamComm",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnHeroCreateTeamComm"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#tplMarathonSmall",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#tplMarathonSmall"
+    },
+    {
+      "do": "click",
+      "selector": "#gTopicMajor [data-major]:nth-child(1)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#gTopicSub [data-sub]:nth-child(1)",
+      "timeoutMs": 6000
+    },
+    {
+      "do": "click",
+      "selector": "#gTopicSub [data-sub]:nth-child(1)"
+    },
+    {
+      "do": "click",
+      "selector": "#grpSave"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#grpCopyLinkBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#grpCopyLinkBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "초대 링크가 복사되었어요!",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
