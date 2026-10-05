@@ -1,0 +1,373 @@
+{
+ "task": "TASK-ES-466",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 H1 어려움 네 묶음(Social Crew Pacing·목표 & 기록 선택 피드 공유 모달·아워골 평가해주기 90% 팝업·New goal modal)을 #762 생성기로 세포 4개에 글자 그대로 옮긴다 — 이름 참조만 L. 접두, 기존 탭 키트 사용(새 전역 0), window 노출·상태 변수 선언 원래 자리, 4줄 이상 로드 중 문은 bind 함수로 감싸 원래 자리에서 부름, 머리 이음매는 자리 표지 H1 아래."
+  },
+  {
+   "id": "R2",
+   "text": "홈 「동반자」 페이스메이커 라이브 위젯과 「응원 보내기」가 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R3",
+   "text": "소통 탭 「게시하기」의 피드 게시 창과 미리보기가 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R4",
+   "text": "홈 「오늘 목표」 창의 <아워골 평가해주기> 평가 창 열기·닫기가 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R5",
+   "text": "홈 「새 목표」 창과 「직접 설정할게요」 양식이 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R6",
+   "text": "동작 그대로를 측정한다 — 단독 로드 회귀 0, tests·scripts 시험 종료 코드 기준=작업, 게스트 조작 DOM 비교 차이 0."
+  },
+  {
+   "id": "R7",
+   "text": "세포 등록: modules.json(module-specs --write·손 칸 role), cell-descriptions.json 짧은 이름·하는 일. 생성 지도 3종은 main 판 그대로."
+  },
+  {
+   "id": "R8",
+   "text": "문서: REQ 8원칙, dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수·감싼 문 토큰 동일(L. 접두 제외)·덩어리 줄 동일·남은 글자 동일·누수 0·미노출 0·setter 빠짐 0·이중 처리기 0 검사가 ok",
+   "touches": [
+    "reports/TASK-ES-466/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이전 전 index.html IIFE 의 남은 문이 글자 그대로 같은 순서로 남았다(남은 글자 동일)",
+   "touches": [
+    "reports/TASK-ES-466/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "처리기 등록 수가 이전 전과 같다(이전 전 IIFE = 새 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-466/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정은 네 묶음을 자리 표지 H1 아래에 넣는다",
+   "touches": [
+    "docs/design/harness/module-split/inline-hard-h1-466.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-hard-h1-466.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H1"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 피드 공유 창 파일은 800줄 이하다(763줄)",
+   "touches": [
+    "reports/TASK-ES-466/gen-inline-hard-meta.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/gen-inline-hard-meta.json",
+    "type": "codeContains",
+    "text": "\"js/tabs/records/share-to-feed.js\": 763"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 「🏃 동반자」를 누르면 「페이스메이커 라이브」 위젯이 「오늘의 1호 완주자가 되어보세요!」 글과 함께 그려져 있고, 「응원 보내기」를 누르면 「오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요!」 토스트가 뜬다 — 옮긴 renderCrewPacingWidget·nudgeCrewMates",
+   "touches": [
+    "js/tabs/comm/crew-pacing.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/crew-pacing-nudge.json"
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 소통 탭 「게시하기」를 누르면 「피드에 내 목표 / 기록 게시하기」 창이 뜨고, 「👁️ 미리보기」를 누르면 「피드 게시 미리보기」가 펼쳐지며 단추가 「미리보기 닫기」로 바뀐다 — 옮긴 openShareToFeedModal",
+   "touches": [
+    "js/tabs/records/share-to-feed.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/share-to-feed-preview.json"
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 「🎯 오늘 목표」 창의 <아워골 평가해주기>를 누르면 「아워골 솔직 평가 & 피드백」 창이 뜨고(display flex), × 를 누르면 닫힌다(display none) — 옮긴 openAppEvaluationModal·closeAppEvaluationModal",
+   "touches": [
+    "js/tabs/settings/app-evaluation.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/app-evaluation-open-close.json"
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 「새 목표」를 누르면 목표설정 도우미 줄글 입력 창이 뜨고, 「직접 설정할게요」를 누르면 최종 목표·만들기·공개 범위가 있는 직접 설정 양식으로 바뀐다 — 옮긴 bindHomeAddGoal·promptNewGoal·showNewGoalManualForm",
+   "touches": [
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/settings/app-evaluation.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/new-goal-manual-form.json"
+  },
+  {
+   "id": "C10",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0",
+   "touches": [
+    "reports/TASK-ES-466/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 4개를 단독으로 실으면 오류 없이 기존 탭 키트 하나씩만 등록한다",
+   "touches": [
+    "reports/TASK-ES-466/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "newFilesAllOkOnlyExistingKits",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests·scripts 시험 126개 종료 코드가 기준과 작업에서 모두 같다",
+   "touches": [
+    "reports/TASK-ES-466/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 DOM 비교(20단계, 기준 대 작업) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-466/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/dom-compare.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 기준 앱 2회 게스트 조작 비교 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-466/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/dom-compare.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 형식 시나리오 4개를 로컬 법정 실행기로 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-466/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-466/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 피드 게시 창이 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/records/share-to-feed.js\","
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 동반자 페이스메이커가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/comm/crew-pacing.js\","
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 아워골 평가 창 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"settings/app-evaluation\": \"아워골 평가 창\""
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 새 목표 만들기 창 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"goals/new-goal-modal\": \"새 목표 만들기 창\""
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-466: 인라인 어려움 구역 H1 1차"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-466 | INFRA | [인라인 어려움 구역 H1 1차]"
+   }
+  }
+ ]
+}

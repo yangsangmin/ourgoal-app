@@ -3,7 +3,7 @@
  *
  * 기본 전문 템플릿 목록(DEFAULT_PRO_TEMPLATES) · 내 템플릿 합친 목록(getAllProTemplates) · 키로 찾기(getProTemplateByKey) · 날짜 꼬리표 YYMMDD(fmtYYMMDD) · 줄글 → 표 열 해석(parseNaturalLanguageTemplateSpec) · 키워드 → 템플릿 추천(recommendTemplateFromAI).
  * 묶음 「전문적(내 전용 템플릿) 기록하기 & 일정 연동」(850줄)을 책임 단위로 나눈 데이터·해석 쪽이다. 만들기·열 편집 모달은 js/tabs/records/pro-template-modals.js.
- * #TASK-ES-467(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 20507~20587 · 20588~20592 · 20593~20597 · 20598~20612 · 20613~20749 · 20750~20979줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-467(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 19166~19246 · 19247~19251 · 19252~19256 · 19257~19271 · 19272~19408 · 19409~19638줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 20507~20587줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19166~19246줄(#TASK-ES-467 생성기 표지) ---- */
   /* ============ 전문적(내 전용 템플릿) 기록하기 & 일정 연동 ============ */
   var DEFAULT_PRO_TEMPLATES = [
     {
@@ -97,19 +97,19 @@
       ]
     }
   ];
-  /* ---- 이전 전 index.html 20588~20592줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19247~19251줄(#TASK-ES-467 생성기 표지) ---- */
 
   function getAllProTemplates(){
     var custom = (L.state.profile && L.state.profile.settings && L.state.profile.settings.proTemplates) || [];
     return DEFAULT_PRO_TEMPLATES.concat(custom);
   }
-  /* ---- 이전 전 index.html 20593~20597줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19252~19256줄(#TASK-ES-467 생성기 표지) ---- */
 
   function getProTemplateByKey(key){
     var list = getAllProTemplates();
     return list.find(function(t){ return t.key === key || t.id === key; }) || list[0];
   }
-  /* ---- 이전 전 index.html 20598~20612줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19257~19271줄(#TASK-ES-467 생성기 표지) ---- */
 
   function fmtYYMMDD(dateVal){
     if(typeof dateVal === 'string'){
@@ -125,7 +125,7 @@
     var dd = L.pad(d.getDate());
     return yy + mm + dd;
   }
-  /* ---- 이전 전 index.html 20613~20749줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19272~19408줄(#TASK-ES-467 생성기 표지) ---- */
 
   /* 🧠 AI 줄글 속성 및 행/열 분석기 */
   function parseNaturalLanguageTemplateSpec(query, proseDesc, existingCols, existingRows){
@@ -263,7 +263,7 @@
       explanation: explanation
     };
   }
-  /* ---- 이전 전 index.html 20750~20979줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19409~19638줄(#TASK-ES-467 생성기 표지) ---- */
 
   function recommendTemplateFromAI(query, proseDesc){
     if(proseDesc && typeof proseDesc === 'string' && proseDesc.trim().length > 0){

@@ -1,0 +1,72 @@
+{
+  "id": "records-no-fake-streak",
+  "title": "기록이 하나도 없는 게스트가 기록 탭 「📈 히트맵·통계」를 누르면 히트맵 카드에 「0개 실천」만 보이고 「N일 연속 몰입」 줄이 없으며, 「🎬 위클리 리캡 카드」를 눌러도 스트릭 줄이 없다 — 고치기 전에는 기록 0건에도 가짜 「3일 연속 몰입」·「3일 연속 스트릭 달성」이 찍혔다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecModesWrap > button:nth-of-type(1)"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".s-heat-val",
+      "text": "0개 실천",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".s-heat-sub"
+    },
+    {
+      "do": "click",
+      "selector": "#sRecRecapBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#sRecapCanvasMock",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".s-rc-streak"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#sRecapCanvasMock",
+      "text": "OURGOAL WEEKLY RECAP"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

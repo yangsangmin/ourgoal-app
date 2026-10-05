@@ -77,6 +77,8 @@
           '<div class="m-title-col">' +
             '<span class="m-badge">등반 로드맵 (Mountain Trail)</span>' +
             '<h3 class="m-goal-title">' + T.escapeHtml(activeGoal.title) + '</h3>' +
+            /* [#TASK-ES-462] 목표 상세 서랍(#goalDetailDrawer · index.html openGoalDetailDrawer — 진척 막대·마일스톤 체크)을 부르는 곳이 없었다 → 트레일 머리에 「상세」 단추. 트레일 노드 누름 동작은 그대로 */
+            '<button type="button" class="btn btn-ghost btn-sm" id="sGoalDetailBtn" title="누르면: 진척도와 마일스톤 체크 목록이 오른쪽 서랍으로 열려요" data-goalid="' + T.escapeHtml(String(activeGoal.id)) + '" onclick="window.openGoalDetailDrawer(this.dataset.goalid);" style="align-self:flex-start;margin-top:6px;min-height:44px;padding:0 12px;font-size:0.8125rem;font-weight:700;border-radius:10px;">📋 상세 보기</button>' +
           '</div>' +
           '<div class="m-summit-badge">' +
             '<span>' + (pct >= 100 ? '🎉 정상 정복 완료!' : ('정상까지 ' + (100 - pct) + '% 남음 🏔️')) + '</span>' +

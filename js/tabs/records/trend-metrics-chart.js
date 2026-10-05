@@ -4,7 +4,7 @@
  * 측정지표 정의(TREND_METRICS: 몰입시간·실천횟수·달성률·스트릭) · 기록 탭 실천 추이 차트 칸 그리기와 지표 칩·기간 단추(renderWeekChart, #chartContainer).
  * window.TREND_METRICS 노출 줄은 index.html 원래 자리에 그대로 있다(같은 객체가 같은 순간에 달린다).
  * 같은 묶음의 여러 지표 SVG 그리기(renderMultiMetricSvg)와 그 노출 줄은 옮기지 않았다 — 시험지 tests/achievement-graph-multiset.test.js 가 index.html 에서 그 함수부터 노출 줄까지를 잘라 실행한다(합본 읽기로도 이어지는 구간이 끊긴다).
- * #TASK-ES-467(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 19909~19914 · 19973~20201줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-467(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 18568~18573 · 18632~18860줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,7 +16,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 19909~19914줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 18568~18573줄(#TASK-ES-467 생성기 표지) ---- */
   var TREND_METRICS = {
     duration: { key: 'duration', label: '몰입시간', unit: '분', color: '#3b82f6', getter: function(it){ return it.durationMinutes != null ? it.durationMinutes : Math.round((it.totalMs||0)/60000); } },
     count:    { key: 'count',    label: '실천횟수', unit: '회', color: '#10b981', getter: function(it){ return it.count || 0; } },
@@ -24,7 +24,7 @@
     streak:   { key: 'streak',   label: '스트릭',   unit: '일', color: '#f59e0b', getter: function(it){ return it.streak || 0; } }
   };
 
-  /* ---- 이전 전 index.html 19973~20201줄(#TASK-ES-467 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 18632~18860줄(#TASK-ES-467 생성기 표지) ---- */
 
   function renderWeekChart(recs){
     var container = document.getElementById('chartContainer');

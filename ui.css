@@ -16115,7 +16115,7 @@ button:not(:disabled):active,
   color: var(--brand, #3182f6) !important;
 }
 .pwa-step-grid {
-  display: grid !important;
+  /* [#TASK-ES-462] display 는 !important 로 묶지 않는다 — OS 탭(switchPwaOsTab)이 인라인 display 로 iOS·Android 단계 중 하나만 보이게 한다(기본은 마크업의 인라인 display:grid) */
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 8px !important;
   margin-bottom: 20px !important;
