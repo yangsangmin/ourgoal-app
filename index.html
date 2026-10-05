@@ -2253,7 +2253,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/checkin-helpers.js"></script><script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
@@ -2277,7 +2277,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/settings/sub-integrations.js"></script>
 <script src="js/tabs/settings/sub-data.js"></script>
 <script src="js/tabs/settings/theme-apply.js"></script><script src="js/tabs/settings/avatar-greeting.js"></script><script src="js/tabs/settings/account-entry.js"></script><script src="js/tabs/settings/guest-backup-nudge.js"></script><script src="js/tabs/settings/notion-sync.js"></script><script src="js/tabs/settings/comm-tour.js"></script><script src="js/tabs/settings/login-devices.js"></script><script src="js/tabs/settings/app-lock-pin.js"></script><script src="js/tabs/settings/dev-debug-gate.js"></script><script src="js/tabs/settings/guest-migration.js"></script><script src="js/tabs/settings/tab-guide.js"></script><script src="js/tabs/settings/onboarding.js"></script><script src="js/tabs/settings/app-defaults.js"></script><script src="js/tabs/settings/render.js"></script>
-<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/index.js"></script>
+<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/quick-actions.js"></script><script src="js/tabs/settings/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -2614,6 +2614,44 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.OurgoalAppScope.expose('index.html', {
     get groupState(){ return groupState; }
   });
+
+  /* [#TASK-ES-439] 인라인 어려움 묶음 이음매 자리 (docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 생성기 docs/design/harness/module-split/gen-inline-hard.js)
+     구역(H1~H4·HO 기관)마다 자기 자리 표지 바로 아래에 ① 가져오기(var X = _키트.X) ② 앱 스코프 통로(expose getter·setter)를 생성기가 넣는다.
+     자리가 서로 다른 줄이라 여러 빌더가 동시에 옮겨도 이 머리에서 병합 충돌이 나지 않는다(자리 표지는 지우지 않는다).
+     구획 주석(=== 줄)을 쓰지 않는다 — 지도(scripts/inline-script-map.js)의 묶음 번호가 밀리지 않게 1차 이음매 묶음에 붙는다. */
+  /* [어려움 이음매 자리 H0 시범 #TASK-ES-439] */
+  /* [#TASK-ES-439] js/tabs/settings/quick-actions.js · js/tabs/records/checkin-capture.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var paintSecurityCard = _settingsKit.paintSecurityCard;
+  var refreshSecurityStatus = _settingsKit.refreshSecurityStatus;
+  var killDeviceSession = _settingsKit.killDeviceSession;
+  var selectThemeSwatch = _settingsKit.selectThemeSwatch;
+  var bindCaptureLiveMeta = _recordsKit.bindCaptureLiveMeta;
+  var bindCaptureSave = _recordsKit.bindCaptureSave;
+  window.OurgoalAppScope.expose('index.html', {
+    get OfflineSyncManager(){ return OfflineSyncManager; },
+    get capInput(){ return capInput; },
+    get capturePhotoInput(){ return capturePhotoInput; },
+    get capturePhotoPreview(){ return capturePhotoPreview; },
+    get checkGuestBackupNudge(){ return checkGuestBackupNudge; },
+    get getRegisteredDevices(){ return getRegisteredDevices; },
+    get liveCount(){ return liveCount; },
+    get liveMeta(){ return liveMeta; },
+    get maybeGrantAvatarCraftBonus(){ return maybeGrantAvatarCraftBonus; },
+    get maybeGrantStreakFreeze(){ return maybeGrantStreakFreeze; },
+    get pendingCapturePhoto(){ return pendingCapturePhoto; }, set pendingCapturePhoto(v){ pendingCapturePhoto = v; },
+    get renderDailyQuestBar(){ return renderDailyQuestBar; },
+    get renderHomeGrassSummary(){ return renderHomeGrassSummary; },
+    get showCheckinFeedbackSheet(){ return showCheckinFeedbackSheet; },
+    get streakBadgeHtml(){ return streakBadgeHtml; },
+    get triggerFirstCheckinCelebrationModal(){ return triggerFirstCheckinCelebrationModal; },
+    get triggerFirstCheerResponse(){ return triggerFirstCheerResponse; },
+    get updateAppBadge(){ return updateAppBadge; }
+  });
+  /* [어려움 이음매 자리 H1] */
+  /* [어려움 이음매 자리 H2] */
+  /* [어려움 이음매 자리 H3] */
+  /* [어려움 이음매 자리 H4] */
+  /* [어려움 이음매 자리 HO 기관] */
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -11203,205 +11241,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var liveMeta = document.getElementById('captureLiveMeta');
   var liveCount = document.getElementById('captureCharCount');
   var capInput = document.getElementById('captureInput');
-
-  if(capInput && liveMeta){
-    capInput.addEventListener('input', function(){
-      var val = capInput.value.trim();
-      if(val.length > 0){
-        liveMeta.style.display = 'flex';
-        if(liveCount) liveCount.textContent = val.length + '자';
-      } else {
-        liveMeta.style.display = 'none';
-      }
-    });
-  }
-
-  document.getElementById('captureSave').addEventListener('click', async function(){
-    var saveBtn = document.getElementById('captureSave');
-    if(!saveBtn || saveBtn.disabled) return;
-    var t = document.getElementById('captureInput');
-    var text = t.value.trim();
-    if(!text && !pendingCapturePhoto) return;
-    if(!text && pendingCapturePhoto) text = '사진 인증';
-    saveBtn.disabled = true;
-    var origSaveBtnHtml = saveBtn.innerHTML;
-    saveBtn.textContent = '기록 중…';
-    try {
-      var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
-      var cat = goal ? goal.category : null;
-      var isFirst = (state.profile.records.length === 0);
-
-      // 테마 결정: 사용자가 고르는 창이 없으므로(#TASK-ES-367) 비강제 일상 테마
-      var themePayload = (typeof OurgoalThemeSystem !== 'undefined')
-        ? OurgoalThemeSystem.buildCheckinThemePayload(null)
-        : { theme: 'daily', subTheme: '', themeMetadata: null };
-
-      var notionRec = (typeof convertTextToNotionDbRecord === 'function')
-        ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
-        : null;
-      var recPhoto = pendingCapturePhoto || null;
-      var slEnergy = document.getElementById('sliderEnergy');
-      var slFocus = document.getElementById('sliderFocus');
-      var recEnergy = slEnergy ? parseInt(slEnergy.value, 10) : 80;
-      var recFocus = slFocus ? parseInt(slFocus.value, 10) : 80;
-      state.profile.records.unshift({
-        id: newId(),
-        type: 'note',
-        text: text,
-        photo: recPhoto,
-        startAt: nowISO(),
-        endAt: nowISO(),
-        createdAt: nowISO(),
-        category: cat,
-        visibility: 'private',
-        theme: themePayload.theme,
-        subTheme: themePayload.subTheme,
-        themeConfidence: 0.5,
-        themeMetadata: themePayload.themeMetadata,
-        notionDb: notionRec ? notionRec.notionSchema : null,
-        structured: notionRec || null,
-        energy: recEnergy,
-        focus: recFocus
-      });
-      t.value = '';
-      t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';
-      if(slEnergy) { slEnergy.value = 80; var ve = document.getElementById('valEnergy'); if(ve) ve.textContent = '80%'; }
-      if(slFocus) { slFocus.value = 80; var vf = document.getElementById('valFocus'); if(vf) vf.textContent = '80%'; }
-      var activeChips = document.querySelectorAll('.quick-checkin-chips .btn-quick-chip');
-      if(activeChips && activeChips.length){
-        activeChips.forEach(function(b){
-          b.style.borderColor = 'rgba(49,130,246,0.22)';
-          b.style.background = 'rgba(49,130,246,0.08)';
-          b.style.fontWeight = '600';
-        });
-      }
-      if(liveMeta) liveMeta.style.display = 'none';
-      pendingCapturePhoto = null;
-      if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
-      if(capturePhotoInput) capturePhotoInput.value = '';
-
-      var xpRes = awardXP(XP_RULES.checkin, '체크인');
-
-      var freezeGranted = maybeGrantStreakFreeze();
-      maybeGrantAvatarCraftBonus();
-      await saveProfile();
-      try {
-        if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
-          window.OurgoalEvents.emit('checkin:created', state.profile.records[0]);
-          window.OurgoalEvents.emit('record:saved', state.profile.records[0]);
-        }
-        if(window.OurgoalStore && typeof window.OurgoalStore.set === 'function'){
-          window.OurgoalStore.set('profile.records', state.profile.records);
-        }
-      } catch(evErr){ console.warn('[captureSave] OurgoalEvents error:', evErr); }
-
-      // 홈 화면 히트맵 및 스트릭 즉시 반영 (#TASK-ES-043)
-      renderHomeGrassSummary();
-      var streak = computeStreakDays();
-      updateAppBadge(streak);
-      var badgeEl = document.getElementById('streakBadge');
-      if(badgeEl) badgeEl.innerHTML = streak > 0 ? streakBadgeHtml(streak) : '';
-
-      try {
-        if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-      } catch(propErr) { console.warn('[captureSave] full view propagation error:', propErr); }
-
-      // 오프라인 상태일 경우 오프라인 동기화 큐에 보관 (가상유저 요청 P5)
-      if(typeof navigator !== 'undefined' && !navigator.onLine){
-        OfflineSyncManager.enqueue({ type: 'record', data: state.profile.records[0] });
-      }
-
-      track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
-      track('checkin_completed', { source: 'voice', goal_type: goal && goal.category, day_index: dayIndexSinceSignup() });
-      var isFirstCheckinCelebration = isFirst || (state.profile && state.profile.firstCheckinPending) || (state.profile && !state.profile.firstCheckinCelebrated);
-      if(isFirstCheckinCelebration){
-        if(state.profile){
-          state.profile.firstCheckinPending = false;
-          state.profile.firstCheckinCelebrated = true;
-        }
-        var tutBanner = document.getElementById('firstCheckinTutorialBanner');
-        if(tutBanner) tutBanner.style.display = 'none';
-        triggerFirstCheerResponse(goal, text);
-        if(typeof triggerFirstCheckinCelebrationModal === 'function'){
-          triggerFirstCheckinCelebrationModal(goal, text, function(){
-            var curRec = state.profile.records[0];
-            if(curRec && curRec.feedback){
-              showCheckinFeedbackSheet(curRec, curRec.feedback);
-            }
-          });
-        }
-      }
-      // [#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지
-      try {
-        if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
-      } catch(e){}
-      var checkinToastMsg = freezeGranted
-        ? '스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요'
-        : (notionRec
-            ? '오늘의 실천이 안전하게 기록되었어요 (' + notionRec.status + (notionRec.metric ? ' · ' + notionRec.metric : '') + ')'
-            : (recPhoto ? '사진과 함께 안전하게 기록했어요' : '오늘의 실천이 안전하게 기록되었어요'));
-      var cardBox = document.getElementById('captureCardBox');
-      if(cardBox){
-        cardBox.classList.remove('celebration-pulse-05s');
-        void cardBox.offsetWidth;
-        cardBox.classList.add('celebration-pulse-05s');
-        setTimeout(function(){ if(cardBox) cardBox.classList.remove('celebration-pulse-05s'); }, 500);
-      }
-      toast(checkinToastMsg + ' ✨ (+10 EXP)');
-      triggerHaptic(12);
-      var btnRect = saveBtn.getBoundingClientRect();
-      burstConfetti(btnRect.left+btnRect.width/2, btnRect.top, 8);
-      saveBtn.classList.remove('btn-cs-pulse');
-      void saveBtn.offsetWidth;
-      saveBtn.classList.add('btn-cs-pulse');
-      renderFeedbackSlot(null);
-      renderRecordFeedbackSlot(null);
-      renderLevelBadge();
-      if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
-      renderDailyQuestBar(true);
-
-      var newRec = state.profile.records[0];
-      var fb = null;
-      var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-      if(!isFirstCheckinCelebration){
-        renderFeedbackSlot('loading');
-        renderRecordFeedbackSlot('loading');
-        showCheckinFeedbackSheet(newRec, 'loading');
-      }
-      try {
-        fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
-      } catch(aiErr){
-        console.warn('AI feedback request failed, using instant celebration:', aiErr);
-      }
-      if(!fb){
-        fb = {
-          verdict: '실천 완료',
-          fact_insight: '오늘의 멋진 실천을 성공적으로 기록하셨습니다! 꾸준한 실천이 큰 성장을 만듭니다.',
-          next_action: '내일도 같은 시간에 목표를 이어가보세요!'
-        };
-      }
-      if(newRec && fb){
-        newRec.feedback = fb;
-        await saveProfile();
-      }
-      state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
-      renderFeedbackSlot(fb);
-      renderRecordFeedbackSlot(fb);
-      if(!isFirstCheckinCelebration){
-        showCheckinFeedbackSheet(newRec, fb);
-      }
-      if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
-        maybeShowGoalUpdateModal(targetGoal, fb);
-      }
-      sendToNotion(newRec, fb);
-    } finally {
-      if(saveBtn){
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = origSaveBtnHtml;
-      }
-    }
-  });
+  bindCaptureLiveMeta(); /* [#TASK-ES-439] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-capture.js 의 bindCaptureLiveMeta 로 옮김 — 원래 자리에서 부른다 */
+  bindCaptureSave(); /* [#TASK-ES-439] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-capture.js 의 bindCaptureSave 로 옮김 — 원래 자리에서 부른다 */
 
   /* [#TASK-ES-444] triggerFirstCheerResponse · scheduleCheerDelivery → js/tabs/comm/first-cheer.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
@@ -17721,65 +17562,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(typeof toast === 'function') toast('안전한 인앱 1:1 대화방이 연결되었습니다 💬');
   }
   window.openInAppDmSheet = openInAppDmSheet;
-
-  /* [#TASK-ES-346 SET-01] 보안 카드는 실제 상태만 보여 준다.
-     배지: 이 기기에 앱 잠금 PIN 이 설정돼 있을 때만 '설정됨'. 서버 2단계 인증은 없으므로 그런 표시를 하지 않는다. */
-  function paintSecurityCard(){
-    var settings = (state.profile && state.profile.settings) || {};
-    var pinOn = !!(settings.twoFactorAuth && settings.twoFactorPin);
-    var b = document.getElementById('badge2faStatus');
-    if(b){
-      b.textContent = pinOn ? '🔐 앱 잠금 PIN 설정됨 (이 기기)' : '앱 잠금 PIN 꺼짐';
-      b.setAttribute('data-applock', pinOn ? 'on' : 'off');
-    }
-    var nameEl = document.getElementById('securityCardDeviceName');
-    if(nameEl){
-      var dev = null;
-      try { dev = (typeof getRegisteredDevices === 'function') ? getRegisteredDevices()[0] : null; } catch(e){}
-      nameEl.textContent = '이 기기 (지금 사용 중)' + (dev && dev.name ? ' · ' + dev.name : '');
-    }
-    return pinOn;
-  }
+  /* [#TASK-ES-439] paintSecurityCard → js/tabs/settings/quick-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.paintSecurityCard = paintSecurityCard;
-
-  function refreshSecurityStatus(){
-    triggerHapticFeedback(12);
-    var pinOn = paintSecurityCard();
-    if(typeof toast === 'function') toast(pinOn ? '이 기기에 앱 잠금 PIN 이 설정돼 있어요.' : '이 기기에 앱 잠금 PIN 이 꺼져 있어요. 설정 > 계정 및 보안에서 켤 수 있어요.');
-  }
+  /* [#TASK-ES-439] refreshSecurityStatus → js/tabs/settings/quick-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.refreshSecurityStatus = refreshSecurityStatus;
-
-  /* 예전 판은 '원격 기기 세션이 차단되었습니다' 토스트만 띄웠다. 실제로 되는 '다른 기기 모두 로그아웃'으로 연결한다. */
-  function killDeviceSession(){
-    triggerHapticFeedback(12);
-    if(typeof openLogoutOtherDevicesConfirmModal === 'function') openLogoutOtherDevicesConfirmModal();
-  }
+  /* [#TASK-ES-439] killDeviceSession → js/tabs/settings/quick-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.killDeviceSession = killDeviceSession;
-
-  function selectThemeSwatch(themeId){
-    triggerHapticFeedback(12);
-    var swatches = ['btnThemeSwatchDark', 'btnThemeSwatchLight', 'btnThemeSwatchMidnight', 'btnThemeSwatchWarm'];
-    swatches.forEach(function(id){
-      var el = document.getElementById(id);
-      if(el) el.classList.remove('active');
-    });
-    var map = {
-      'dark': 'btnThemeSwatchDark',
-      'light': 'btnThemeSwatchLight',
-      'midnight': 'btnThemeSwatchMidnight',
-      'warm': 'btnThemeSwatchWarm'
-    };
-    var activeEl = document.getElementById(map[themeId]);
-    if(activeEl) activeEl.classList.add('active');
-
-    if(typeof setTheme === 'function') setTheme(themeId);
-    else document.documentElement.setAttribute('data-theme', themeId);
-
-    if(typeof toast === 'function') {
-      var names = { 'dark':'다크', 'light':'라이트', 'midnight':'미드나잇', 'warm':'웜' };
-      toast((names[themeId] || themeId) + ' 테마가 적용되었습니다 🎨');
-    }
-  }
+  /* [#TASK-ES-439] selectThemeSwatch → js/tabs/settings/quick-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.selectThemeSwatch = selectThemeSwatch;
 
   /* ==========================================================================

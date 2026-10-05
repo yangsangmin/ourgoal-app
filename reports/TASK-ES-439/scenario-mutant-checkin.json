@@ -1,0 +1,196 @@
+{
+ "scenario": "checkin-capture-save",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 3,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#captureInput → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureInput → placeholder=\"예: 오늘 마음을 단단히 먹은 일 한 줄을 자유롭게 적어보세요 ✍️\"",
+     "vacuous": true
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "type",
+     "ok": true,
+     "detail": "입력 textarea#captureInput \"\" 301x48px"
+    },
+    {
+     "i": 7,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureLiveMeta → style=\"display: flex;\"",
+     "vacuous": false
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#captureSave \"오늘 실천 완료 ✨ (+10 EXP)\" 231x52px"
+    },
+    {
+     "i": 9,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1500ms"
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureInput → placeholder=\"예: 오늘 실천한 멋진 일을 한 줄로 적어보세요\"",
+     "vacuous": false
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureLiveMeta → style=\"display: none;\"",
+     "vacuous": false
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": false,
+   "invalid": false,
+   "errors": [],
+   "failedStep": 10,
+   "failKind": "expect",
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 1,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#captureInput → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureInput → placeholder=\"예: 오늘 마음을 단단히 먹은 일 한 줄을 자유롭게 적어보세요 ✍️\"",
+     "vacuous": true
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "type",
+     "ok": true,
+     "detail": "입력 textarea#captureInput \"\" 301x48px"
+    },
+    {
+     "i": 7,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureLiveMeta → style=\"display: flex;\"",
+     "vacuous": false
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#captureSave \"오늘 실천 완료 ✨ (+10 EXP)\" 231x52px"
+    },
+    {
+     "i": 9,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1500ms"
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "attr",
+     "ok": false,
+     "detail": "#captureInput → placeholder=\"예: 오늘 마음을 단단히 먹은 일 한 줄을 자유롭게 적어보세요 ✍️\"",
+     "vacuous": false
+    }
+   ]
+  }
+ }
+}
