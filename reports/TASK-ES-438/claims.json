@@ -620,6 +620,70 @@
     "type": "codeContains",
     "text": "- #TASK-ES-438 | INFRA | [인라인 스크립트 세포화 구역 P2-1]"
    }
+  },
+  {
+   "id": "C40",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 탭 tab-check 기준 2회 사이(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-438/tab-compare-base-run1-base-run2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-438/tab-compare-base-run1-base-run2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 탭 tab-check 기준 1회차 대 후 2회차 다른 값 0(408값)",
+   "touches": [
+    "reports/TASK-ES-438/tab-compare-base-run1-after-run2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-438/tab-compare-base-run1-after-run2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 탭 tab-check 기준 2회차 대 후 2회차 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-438/tab-compare-base-run2-after-run2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-438/tab-compare-base-run2-after-run2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "후 1회차는 새 기록 시트(#modalSheet) 안쪽 높이 3값이 열리는 중 타이밍으로 달랐고 같은 트리 후 2회차와도 그 3값만 다르다(시간 변동 — 기록함)",
+   "touches": [
+    "reports/TASK-ES-438/tab-compare-after-run1-after-run2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-438/tab-compare-after-run1-after-run2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 3
+   }
   }
  ]
 }

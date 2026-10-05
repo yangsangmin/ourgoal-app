@@ -73,6 +73,6 @@
 | 조작 전후(게스트) | `dom-compare-inline-p2.js` 단계 묶음 1 | 33단계 × 13칸 = 429값, 기준 대 후 0, 기준 대 기준 0, 콘솔 오류 2/2/2(posthog 외부 스크립트 차단 — 기준과 같음). 지운 값: 시간·난수, 스톱워치 시계 글자, 실행 시각 근처 HH:MM |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` runScenario 로컬 | 5개 기준·후 모두 통과, 약점 0 |
 | 시험 | `npm test` · tests 110개 | smoke 443/0 · 무결성 38/38 · 버튼 943/943 기준=후, tests 종료 코드 전부 같음, 출력 차이는 기준 사본에 git 이력이 없어 건너뛴 이력 비교·세포 수뿐 |
-| 탭 실측 | `tab-check.js` 기준 2회(all)·후 1회(records) → `tab-compare.js` | `reports/TASK-ES-438/tab-compare-*.json` |
+| 탭 실측 | `tab-check.js records --deadclick off` 기준(0719592, main 합친 뒤) 2회·후 2회 → `tab-compare.js` | 기록 탭 24장 408값 — 기준1 대 기준2 0 · 기준1 대 후2 0 · 기준2 대 후2 0. 후 1회차는 새 기록 시트(modalSheet) 안쪽 높이 3값이 달랐고(열리는 중 타이밍) 같은 트리 후 2회차와도 그 3값만 달라 시간 변동으로 기록. 처음엔 all·Dead-Click 포함으로 재다 장당 2분 넘게 걸려 중단하고 기록 탭만 Dead-Click 끄고 다시 쟀다 |
 
 [4단계: 심사 청구]
