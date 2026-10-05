@@ -1145,6 +1145,59 @@
       ]
     },
     {
+      "id": "core/date-rollover",
+      "file": "js/core/date-rollover.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Date Rollover (기관 — 자정 날짜 변경 감지·홈/기록/캘린더 다시 그리기)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "core/deep-link-gateway",
+      "file": "js/core/deep-link-gateway.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Deep Link Gateway (기관 — 앱 진입 때 주소 쿼리 딥링크를 js/viral-sharing.js 에 넘기는 관문)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalViralSharing"
+      ]
+    },
+    {
       "id": "core/event-bus",
       "file": "js/core/event-bus.js",
       "layer": "core",
@@ -1503,6 +1556,32 @@
       "size": null,
       "kind": "organ",
       "role": "기관 — 연속 기록(computeStreakDays)·보호권(maybeGrantStreakFreeze·maybeApplyStreakFreeze·STREAK_FREEZE_MAX)·아바타 제작 보너스(maybeGrantAvatarCraftBonus)·배지 글자(streakBadgeHtml)·앱 아이콘 배지(updateAppBadge). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-486)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "core/supabase-auth",
+      "file": "js/core/supabase-auth.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Supabase Auth (기관 — 로그인 세션 토큰·인증 상태 감지·구글 OAuth 클라이언트 id)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -3096,9 +3175,9 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
+        "OurgoalRecordsKit",
         "OurgoalSanctuaryV3",
         "goalAchievement",
-        "openAddRecordModal",
         "restoreGoal",
         "setTab",
         "state",
@@ -3134,6 +3213,7 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalCalendarKit",
+        "OurgoalRecordsKit",
         "OurgoalSanctuaryV3Kit",
         "OurgoalTimeTracker",
         "calendarItemsByDate",
@@ -5319,6 +5399,32 @@
       ]
     },
     {
+      "id": "goals/routine-detail-modal",
+      "file": "js/tabs/goals/routine-detail-modal.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Routine Detail Modal (목표 — 데일리 루틴 상세 확인·편집 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "goals/routine-screen",
       "file": "js/tabs/goals/routine-screen.js",
       "layer": "tabs",
@@ -6701,6 +6807,35 @@
       ]
     },
     {
+      "id": "settings/account-actions",
+      "file": "js/tabs/settings/account-actions.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Account Actions (설정 — 이메일 로그인 제출·계정 데이터 다시 맞추기·로그아웃·초기화 단추·새 비밀번호 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [
+        "ui.confirm"
+      ],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalAuthSafety"
+      ]
+    },
+    {
       "id": "settings/account-entry",
       "file": "js/tabs/settings/account-entry.js",
       "layer": "tabs",
@@ -7165,6 +7300,32 @@
       ]
     },
     {
+      "id": "settings/notify-timer",
+      "file": "js/tabs/settings/notify-timer.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Notify Timer (설정 — 탭이 열려 있을 때의 체크인 알림 시계·알림 띠)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "settings/notion-sync",
       "file": "js/tabs/settings/notion-sync.js",
       "layer": "tabs",
@@ -7583,6 +7744,33 @@
       ]
     },
     {
+      "id": "settings/tester-entry",
+      "file": "js/tabs/settings/tester-entry.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Tester Entry (설정 — 2계정 상호작용 테스트용 테스터 B 직통 입장, 로컬 개발 주소 전용)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalDirectLoginGuard"
+      ]
+    },
+    {
       "id": "settings/theme-apply",
       "file": "js/tabs/settings/theme-apply.js",
       "layer": "tabs",
@@ -7608,6 +7796,33 @@
         "OurgoalAppScope",
         "OurgoalSanctuaryV3",
         "state"
+      ]
+    },
+    {
+      "id": "settings/web-push",
+      "file": "js/tabs/settings/web-push.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Web Push (설정 — 앱이 꺼져 있어도 오는 알림 구독·해제)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "atob"
       ]
     },
     {

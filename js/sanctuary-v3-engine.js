@@ -523,7 +523,7 @@
         '</div>' +
         '<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end;">' +
           '<button class="btn btn-ghost btn-sm" id="sHeatmapTimerCockpitBtn" type="button" style="display:none !important;" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" title="누르면: 전체화면 스톱워치로 지금부터 몰입 시간을 초 단위 측정해요">⏱️ 스톱워치 콕핏</button>' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();" title="누르면: 오늘 실천한 내용과 사진을 남겨 타임라인에 저장합니다">+ 새 기록 작성</button>' +
+          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(null);" title="누르면: 오늘 실천한 내용과 사진을 남겨 타임라인에 저장합니다">+ 새 기록 작성</button>' +
         '</div>' +
       '</div>';
     } else if (engine.activeRecMode === 'feed') {

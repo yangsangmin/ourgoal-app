@@ -38,7 +38,7 @@ index.html 인라인 IIFE 에 Z2 구역 묶음이 남아 있다. 「RENDER: 팀 
 
 ## 5. [원칙 ⑤] 절차
 
-worktree `C:/dev/wt/stage3-z2`(origin/main 417a777, #803 포함) → 도달 실측(`real-account-split-check.js --guest/계정 --count`) → 설정 → 생성기 → verify → 마지막 getter 줄 setter 점검(L047) → 신고서(module-specs --write · cell-descriptions 관련 세포 옆 · comm/user-blocks requires ui.confirm) → module-guard → 원본 단독 로드 → 게스트 시나리오 4개 기준·작업 → 테스트 계정·게스트 기준1/작업/기준2 비교 → tests 전후 → #808 병합 뒤 main 합치기 → PR → 판정.
+worktree `C:/dev/wt/stage3-z2`(처음 origin/main 417a777, #803 포함 — #808 병합 뒤 origin/main 을 합치고 index.html 은 main 판을 입력으로 생성기를 다시 돌림, L010) → 도달 실측(`real-account-split-check.js --guest/계정 --count`) → 설정 → 생성기 → verify → 마지막 getter 줄 setter 점검(L047) → 신고서(module-specs --write · cell-descriptions 관련 세포 옆 · comm/user-blocks requires ui.confirm) → module-guard → 원본 단독 로드 → 게스트 시나리오 4개 기준·작업 → 테스트 계정·게스트 기준1/작업/기준2 비교 → tests 전후 → #808 병합 뒤 main 합치기 → PR → 판정.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
@@ -63,7 +63,7 @@ worktree `C:/dev/wt/stage3-z2`(origin/main 417a777, #803 포함) → 도달 실�
 | 게스트 시나리오 | 4개 기준·작업 통과 (`scenario-local.json`) |
 | 도달 실측 | `real-account-reach-guest-base.json` · `real-account-reach-A-base.json` |
 | 게스트·실계정 조작 비교 | `guest-compare.json` · `real-account-compare.json` |
-| tests 전후 | `tests-compare.json` |
+| tests 전후 | 시험지 종료 코드 기준 = 작업 (`tests-compare.json` differing 0 — 합친 main 기준) |
 | 막힐 지점 | main 이동(L010 생성기 재실행) · #808 병합 전에는 team-goal-comment-fix 가 작업 트리에서 실패(선행 순서) |
 
 [4단계: 심사 청구]

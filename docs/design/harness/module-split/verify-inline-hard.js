@@ -154,6 +154,10 @@ iife.traverse({
   CallExpression(p) { const c = p.node.callee; if (c.type === 'MemberExpression' && c.property.name === 'expose' && p.node.arguments[1] && p.node.arguments[1].properties) for (const pr of p.node.arguments[1].properties) { if (pr.kind === 'get') getters.add(pr.key.name); if (pr.kind === 'set') setters.add(pr.key.name); } },
   VariableDeclarator(p) { const i = p.node.init; if (i && i.type === 'MemberExpression' && i.object.type === 'Identifier' && kitVars.has(i.object.name)) imported.add(p.node.id.name); },
 });
+// ⑧ 키트 변수 순서(#TASK-ES-521, 작업참고 L046): 가져오기 줄(var X = _키트.X)이 그 키트 변수 선언(var _키트 = window.K)보다 앞이면 로드 때 _키트 가 undefined 라 IIFE 머리가 멈춘다 — 이름·토큰 검사로는 안 잡혀 따로 잰다.
+const kitDeclAt = {}, importAt = [];
+iife.traverse({ VariableDeclarator(p) { const i = p.node.init, id = p.node.id.name; if (kitVars.has(id) && i && i.type === 'MemberExpression' && i.object.type === 'Identifier' && i.object.name === 'window') kitDeclAt[id] = Math.min(kitDeclAt[id] == null ? Infinity : kitDeclAt[id], p.node.start); if (i && i.type === 'MemberExpression' && i.object.type === 'Identifier' && kitVars.has(i.object.name)) importAt.push({ name: id, kit: i.object.name, start: p.node.start, line: p.node.loc.start.line + N.s }); } });
+const importBeforeKit = importAt.filter(x => !(kitDeclAt[x.kit] < x.start)).map(x => x.name + '@' + x.line + '(' + x.kit + ')');
 const leftDefs = [...cellNames].filter(n => { const b = iife.scope.bindings[n]; return b && (b.path.isFunctionDeclaration() || (b.path.isVariableDeclarator() && !imported.has(n))); });
 const usedInIndexNotImported = [];
 iife.traverse({ Identifier(p) {
@@ -164,6 +168,9 @@ iife.traverse({ Identifier(p) {
 } });
 const notExposed = [...usedL].filter(n => !getters.has(n)).sort();
 const noSetter = [...assignedL].filter(n => !setters.has(n)).sort();
+// ⑨ 마지막 노출이 getter 만(#TASK-ES-521, 작업참고 L047 — Z2 발견): 옮긴 코드가 대입하는 이름(L.X = …)은 index.html 에서 그 이름의 「마지막」 get X() 줄에도 set X(v) 가 있어야 한다.
+//   뒤쪽 expose 블록이 같은 이름을 getter 만으로 다시 노출하면 머리에 단 setter 를 덮어 부팅 때 「Cannot set property X … only a getter」로 멈춘다 — setters 집합(어디든 한 번)으로는 못 잡아 따로 잰다.
+const lastGetterNoSetter = [...assignedL].filter(n => { const g = 'get ' + n + '()'; let last = -1; N.lines.forEach((l, j) => { const at = l.indexOf(g); if (at >= 0 && !/[\w$]/.test(l[at - 1] || '')) last = j; }); return last >= 0 && !N.lines[last].includes('set ' + n + '(v)'); }).sort();
 // ⑥ 처리기 수
 const countL = (astRoot) => { let c = 0; traverse(astRoot, { CallExpression(p) { const x = p.node.callee; if (x.type === 'MemberExpression' && !x.computed && x.property.name === 'addEventListener') c++; }, AssignmentExpression(p) { const l = p.node.left; if (l.type === 'MemberExpression' && !l.computed && /^on[a-z]+$/.test(l.property.name)) c++; } }); return c; };
 const listeners = { origIIFE: countL(oast), newIIFE: countL(nast), cells: cellListeners };
@@ -176,12 +183,12 @@ const report = {
   equivalent: equiv.length > 0 && equiv.every(r => r.same), equiv, lineCheck, restSame, restDiff: restSame ? null : { i: restDiff, orig: origKeep.slice(restDiff - 3, restDiff + 6), neu: newKeep.slice(restDiff - 3, restDiff + 6) },
   tokens: { origRest: origKeep.length, newRest: newKeep.length },
   imported: [...imported].sort(), leftDefsInIndex: leftDefs, usedInIndexNotImported, usedL: [...usedL].sort(), notExposed, assignedL: [...assignedL].sort(), noSetter,
-  thisArgs, listeners, wrapCalls: callLines, callsOk, files,
+  thisArgs, listeners, wrapCalls: callLines, callsOk, importBeforeKit, lastGetterNoSetter, files,
 };
 report.ok = report.equivalent && lineCheck.length > 0 && lineCheck.every(x => x.diffLines === 0 && x.closeOk) && restSame && leftDefs.length === 0 && usedInIndexNotImported.length === 0
-  && notExposed.length === 0 && noSetter.length === 0 && thisArgs.length === 0 && listeners.same && callsOk
+  && notExposed.length === 0 && noSetter.length === 0 && thisArgs.length === 0 && listeners.same && callsOk && importBeforeKit.length === 0 && lastGetterNoSetter.length === 0
   && Object.values(files).every(x => x.leaksIIFEName.length === 0 && x.lines <= 800);
 console.log(JSON.stringify(report, null, 1));
-console.log(report.ok ? 'OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · 남은 정의 0 · 안 가져온 사용 0 · this/arguments 0 · 이중 처리기 0 · 800줄 이하' : 'FAIL');
+console.log(report.ok ? 'OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · 남은 정의 0 · 안 가져온 사용 0 · this/arguments 0 · 이중 처리기 0 · 키트 변수 뒤 가져오기 · 마지막 노출 setter · 800줄 이하' : 'FAIL');
 if (process.env.MODULE_SPLIT_OUT) fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT, 'verify-inline-hard.json'), JSON.stringify(report, null, 1));
 process.exitCode = report.ok ? 0 : 1;

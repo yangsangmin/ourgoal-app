@@ -28,7 +28,7 @@
   },
   {
    "id": "R7",
-   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 신고서 등록."
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 시험지 종료 코드 기준=작업, 신고서 등록."
   }
  ],
  "claims": [
@@ -295,6 +295,22 @@
     "type": "codeContains",
     "file": "docs/architecture/modules.json",
     "text": "\"id\": \"settings/widget-modal-opener\""
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 종료 코드가 기준과 작업에서 다른 것이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-545/tests-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/tests-compare.json",
+    "path": "differing",
+    "equals": 0
    }
   }
  ]

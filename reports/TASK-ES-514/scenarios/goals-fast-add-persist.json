@@ -1,0 +1,22 @@
+{
+  "id": "goals-fast-add-persist",
+  "title": "목표 1개가 있는 게스트가 목표 탭 맨 위 1줄 목표 추가 상자(#goalFastAddInput)에 「빠른추가 저장 확인 목표」를 적고 「추가」(#btnGoalFastAddSubmit)를 누르면 목표가 생기고, 새로 고쳐 다시 목표 탭에 들어와도 그 목표가 남아 있다 — 고치기 전에는 메모리에만 넣고 saveProfile 을 부르지 않아 새로 고치면 사라졌다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "expect": "notVisible", "selector": "#avatarGreetingModal", "timeoutMs": 8000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "click", "selector": "#goalTemplateHeroCard .template-quick-card:nth-child(1) .btn-quick-adopt-goal" },
+    { "expect": "visible", "selector": "#goalFastAddInput", "timeoutMs": 8000 },
+    { "do": "type", "selector": "#goalFastAddInput", "text": "빠른추가 저장 확인 목표" },
+    { "do": "click", "selector": "#btnGoalFastAddSubmit" },
+    { "expect": "textContains", "selector": "#screen-goals", "text": "빠른추가 저장 확인 목표", "timeoutMs": 5000 },
+    { "do": "wait", "ms": 1500 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "textContains", "selector": "#screen-goals", "text": "빠른추가 저장 확인 목표", "timeoutMs": 8000 },
+    { "expect": "noExceptions" }
+  ]
+}
