@@ -95,6 +95,7 @@
 - tab-check 6탭 전체(데드클릭 대표 장 포함): 기준1·기준2·후 각 2,520값 — 기준1 대 기준2 0 · 기준1 대 후 0 · 기준2 대 후 0(`tab-compare-*.json`, 기준 9a33acc · 후 = 9a33acc + 이 분열 8df27ba. main 합친 뒤 다시 돌리지 않은 이유: 합친 커밋이 바꾼 것은 통계 대시보드·템플릿 자료 세포이고 성소 코드·태그는 그대로 — 이 분열만 떼어 잰 값이다).
 - 게스트 조작 비교(`dom-compare-sanctuary.json`, 기준 6a76cc6): 83단계 중 82단계 실행(설정 탭 진입 1단계는 기준·후 모두 탭 전환 실패 — 하네스 한계), 1,162값 기준 대 후 0 · 기준 대 기준 0, 콘솔 오류 0/0.
 - 화면 시나리오(`scenarios/records-focus-timer-card.json`, 법정 실행기 로컬): 기준·작업 통과.
+- 판정 044AE1CE(돌려보냄 1회) 반영: 원본 이음매 줄을 글자로만 주장한 C3·C4·C5 는 철회(사유 기록)하고, 같은 이음매를 게스트 화면 시나리오 3개로 잰다 — C57 `scenarios/records-feed-past-archive.json`(기록 피드 분기) · C58 `scenarios/goals-mountain-trail.json`(목표 직접 만들기 → 마운틴 트레일 분기) · C59 `scenarios/calendar-month-shift.json`(▶ 다음 달 → shiftCal). 법정 실행기 로컬(기준 6a76cc6 사본 대 작업): 셋 다 기준·작업 통과(`scenario-local-*.json`).
 - npm test(`test-compare.json`, 기준 = origin/main 6a76cc6 분리 worktree): smoke 443/0 · 무결성 38/38 · 버튼 943/943 같음, smoke 제목·결과 487줄 같음, tests 107개 종료 코드·정규화 출력 같음. 다른 수는 모듈 가드 ④ 1 → 0(이 분열로 800줄 초과 js 가 0 이 됨)뿐.
 - 실계정(`real-account-sanctuary.json`, 테스트 계정 A, 로컬 127.0.0.2 + /api 운영 전달, 읽기 전용): 기준1·작업·기준2 화면 8곳·공개 객체 해시 같음, pageerror 0, 기록·목표 수 전후 같음(쓴 행 0).
 

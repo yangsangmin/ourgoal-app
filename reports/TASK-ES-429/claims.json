@@ -57,47 +57,23 @@
   {
    "id": "C3",
    "req": "R1",
-   "kind": "static",
-   "domain": "config",
+   "kind": "withdrawn",
    "statement": "기록 피드 분기 본문은 원본에서 세포 함수를 부르는 한 줄",
-   "touches": [
-    "js/sanctuary-v3-engine.js"
-   ],
-   "check": {
-    "file": "js/sanctuary-v3-engine.js",
-    "type": "codeContains",
-    "text": "      contentHtml = renderSanctuaryRecordsFeed(records, contentHtml); // [#TASK-ES-429] 분기 본문 → js/sanctuary-record-feed.js"
-   }
+   "withdrawnReason": "판정 044AE1CE: 걸린 파일 js/sanctuary-v3-engine.js 가 화면 분야라 하한이 「PC 화면에서 눌러 봄」인데 글자 확인으로 냈다. 같은 이음매(기록 피드 분기 본문을 부르는 한 줄)를 법정이 기준·작업 양쪽에서 돌리는 게스트 화면 시나리오 주장 C57(scenarios/records-feed-past-archive.json)로 잰다."
   },
   {
    "id": "C4",
    "req": "R1",
-   "kind": "static",
-   "domain": "config",
+   "kind": "withdrawn",
    "statement": "목표 트레일 분기 본문은 trailHtml 을 돌려받는 한 줄",
-   "touches": [
-    "js/sanctuary-v3-engine.js"
-   ],
-   "check": {
-    "file": "js/sanctuary-v3-engine.js",
-    "type": "codeContains",
-    "text": "      trailHtml = renderSanctuaryGoalTrail(activeGoal, trailHtml); // [#TASK-ES-429] 분기 본문 → js/sanctuary-goal-trail.js"
-   }
+   "withdrawnReason": "판정 044AE1CE: 걸린 파일 js/sanctuary-v3-engine.js 가 화면 분야라 하한이 「PC 화면에서 눌러 봄」인데 글자 확인으로 냈다. 같은 이음매(목표 트레일 분기 본문을 부르는 한 줄)를 게스트 화면 시나리오 주장 C58(scenarios/goals-mountain-trail.json)로 잰다."
   },
   {
    "id": "C5",
    "req": "R1",
-   "kind": "static",
-   "domain": "config",
+   "kind": "withdrawn",
    "statement": "달력 이동 메서드는 원본 객체 같은 자리에서 펼친다",
-   "touches": [
-    "js/sanctuary-v3-engine.js"
-   ],
-   "check": {
-    "file": "js/sanctuary-v3-engine.js",
-    "type": "codeContains",
-    "text": "    ..._sCalActions.methodsFrom_shiftCal, // [#TASK-ES-429] 메서드 shiftCal·selectToday·shiftWeek·shiftTimelineDay·selectCalDay → js/sanctuary-calendar-actions.js"
-   }
+   "withdrawnReason": "판정 044AE1CE: 걸린 파일 js/sanctuary-v3-engine.js 가 화면 분야라 하한이 「PC 화면에서 눌러 봄」인데 글자 확인으로 냈다. 같은 이음매(달력 이동 메서드를 원본 객체 같은 자리에서 펼침)를 게스트 화면 시나리오 주장 C59(scenarios/calendar-month-shift.json)로 잰다."
   },
   {
    "id": "C6",
@@ -900,6 +876,48 @@
     "index.html"
    ],
    "scenario": "scenarios/records-focus-timer-card.json"
+  },
+  {
+   "id": "C57",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 포커스 성소 모드 바의 「📝 실천 타임라인」을 누르면 피드 머리 「나의 체크인 & 회고 피드 (0건)」와 「등록된 기록이 없습니다.」 안내가 그려진다(원본의 feed 분기는 js/sanctuary-record-feed.js 의 renderSanctuaryRecordsFeed 를 부르는 한 줄 — 옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/sanctuary-record-feed.js",
+    "js/sanctuary-v3-engine.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-feed-past-archive.json"
+  },
+  {
+   "id": "C58",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표를 직접 설정해 만들면(「성소 트레일 확인」) 목표 탭 포커스 성소 칸에 그 목표의 마운틴 트레일(.mountain-trail-card·.trail-node, 제목 「성소 트레일 확인」)이 그려진다(원본의 「목표 있음」 분기는 js/sanctuary-goal-trail.js 의 renderSanctuaryGoalTrail 을 부르는 한 줄 — 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/sanctuary-goal-trail.js",
+    "js/sanctuary-v3-engine.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-mountain-trail.json"
+  },
+  {
+   "id": "C59",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭 포커스 성소 월간 달력의 ▶(다음 달)를 누르면 「…월로 이동했습니다.」 안내가 뜨고 달력 제목이 다시 그려진다(달 이동 shiftCal 은 js/sanctuary-calendar-actions.js 로 옮겨 원본 객체 같은 자리에서 펼침 — 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/sanctuary-calendar-actions.js",
+    "js/sanctuary-v3-engine.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/calendar-month-shift.json"
   }
  ]
 }
