@@ -1,0 +1,328 @@
+{
+ "task": "TASK-ES-495",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "홈 구성 「최근 히트맵 요약」 스위치(js/customize.js homeGrassSummaryCard)를 목록에서 제거한다. — 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달)"
+  },
+  {
+   "id": "R2",
+   "text": "챌린지 룸 세포 js/tabs/comm/challenge-room.js 를 소멸한다 — 연결 해제 → settings.challenges 저장 칸은 보존(읽기만 안 함) → 흔적 0 검사 → 신고서(modules.json·cell-descriptions.json)에서 삭제. — 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달)"
+  },
+  {
+   "id": "R3",
+   "text": "소통 숨은 허브 #commHubGrid 와 그 단추만 부르는 switchCommSubTab 을 정리하고, renderCommFeed 의 숨은 빠른 게시 띠 .comm-quick-strip/#feedQuickPostBtn 을 제거한다(보이는 #btnCommPostFeed 는 그대로). — 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달)"
+  },
+  {
+   "id": "R4",
+   "text": "보이는 가짜 피드백 — 무공해 응원 바 triggerFloatingReaction(전송 없음)·openInAppDmSheet(박힌 시트)를 제거한다. — 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달)"
+  },
+  {
+   "id": "R5",
+   "text": "각 항목: 지우기 전 실제 동작을 REQ 에 적고, 다른 곳에서 부르는지 전수 확인, 지운 뒤 흔적 0·숨김 게이트 기준선 --update 로 줄이기·hidden-entry-guard 통과·게스트 시나리오(사라졌음·남은 진입로 정상). 문서: dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 10,
+   "domain": "ui-behavior",
+   "statement": "게스트로 설정 「홈 구성 고르기」 창을 열면 「최근 히트맵 요약」 스위치가 없고, 「오늘의 카드」 스위치는 그대로 눌러 꺼진다",
+   "touches": [
+    "js/customize.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/home-layout-no-heatmap-switch.json"
+  },
+  {
+   "id": "C2",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 9,
+   "domain": "ui-behavior",
+   "statement": "게스트로 소통 탭 피드에 들어가면 숨은 허브 격자(#commHubGrid)·숨은 빠른 게시 띠(.comm-quick-strip·#feedQuickPostBtn)가 없고, 보이는 「피드 게시」(#btnCommPostFeed)는 눌러 게시 창이 열린다",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/comm-hub-strip-gone.json"
+  },
+  {
+   "id": "C3",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 7,
+   "domain": "ui-behavior",
+   "statement": "게스트로 소통 탭에 들어가면 전송 없는 무공해 응원 바(#commFloatingReactionDock)와 박힌 안심 DM 시트(#commProfileBottomSheet)가 없고, 「💬 DM」 칸은 눌러 켜진다",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/comm-fake-reaction-dm-gone.json"
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 챌린지 룸 세포가 없다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeNotContains",
+    "text": "\"id\": \"comm/challenge-room\""
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설명 파일에 챌린지 룸 세포가 없다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeNotContains",
+    "text": "comm/challenge-room"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "사용자 저장 칸 settings.challenges 기본값은 그대로 있다(데이터 보존)",
+   "touches": [
+    "js/tabs/settings/app-defaults.js"
+   ],
+   "check": {
+    "file": "js/tabs/settings/app-defaults.js",
+    "type": "codeContains",
+    "text": "challenges: []"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "숨김 게이트 허용 목록에서 옛 소통 허브 격자 묶음이 빠졌다(줄이는 방향 --update)",
+   "touches": [
+    "docs/architecture/hidden-entry-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/hidden-entry-baseline.json",
+    "type": "codeNotContains",
+    "text": "#btnCommHubFeed"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "숨김 게이트가 통과한다(허용 목록 밖 0)",
+   "touches": [
+    "reports/TASK-ES-495/hidden-entry-guard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-495/hidden-entry-guard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "숨은 처리기 요소가 57개다(이 PR 스냅샷 — 기준 사본 60)",
+   "touches": [
+    "reports/TASK-ES-495/hidden-entry-guard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-495/hidden-entry-guard.json",
+    "type": "jsonPath",
+    "path": "hiddenCount",
+    "equals": 57
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리 npm test 가 종료 코드 0 이다(전후 비교 스냅샷)",
+   "touches": [
+    "reports/TASK-ES-495/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-495/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리 smoke 443 통과·0 실패(고친 시험지 기준)",
+   "touches": [
+    "reports/TASK-ES-495/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-495/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 지우기 전 실제 동작(가짜 응원 바: 전송 코드 없음)이 적혀 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md",
+    "type": "codeContains",
+    "text": "**서버·상대에게 보내는 코드가 없다**"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-495 | FIX |"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-495:"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설정 빠른 동작 세포 머리 설명에서 지운 소통 허브 함수 이름을 걷고 지운 사실을 적었다(코드 변경 없음)",
+   "touches": [
+    "js/tabs/settings/quick-actions.js"
+   ],
+   "check": {
+    "file": "js/tabs/settings/quick-actions.js",
+    "type": "codeNotContains",
+    "text": "switchCommSubTab"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "홈 구성 자동 연동 시험지의 기대 목록에서 지운 히트맵 요약 스위치만 뺐다",
+   "touches": [
+    "tests/home-customizer-auto-sync.test.js"
+   ],
+   "check": {
+    "file": "tests/home-customizer-auto-sync.test.js",
+    "type": "codeNotContains",
+    "text": "'homeGrassSummaryCard',"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "index.html 에서 챌린지 룸 세포 script 태그를 뺐다(연결 해제)",
+   "touches": [
+    "index.html",
+    "js/tabs/comm/challenge-room.js"
+   ],
+   "check": {
+    "file": "index.html",
+    "type": "codeNotContains",
+    "text": "js/tabs/comm/challenge-room.js"
+   }
+  }
+ ],
+ "retire": [
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: 가상 페르소나 40인 및 유저 피드백 TOP 10 핵심 개선사항이 index.html에 모두 구현되어 있다",
+   "reason": "R2 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달) — 부르는 곳 0인 챌린지 룸 세포(openChallengeRoomModal·가상 방 데이터) 소멸. 「모달 함수 존재」「페이스메이커 페르소나 데이터 존재」 글자 단언을 「없다」로 바꿨다(작업 시험지 통과)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사항이 index.html에 구현되어 있다",
+   "reason": "R2 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달) — 챌린지 룸 가상 방 이름(윤다은·송하준·서예진)이 세포와 함께 사라져 「200 페르소나 다양성 챌린지 룸」 글자 단언을 「없다」로 바꿨다."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기 모달·게시하기 연동·모임원 DM바·동반자 소셜탭 무결성 검증",
+   "reason": "R3 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달) — 늘 숨어 있던(display:none !important) 피드 빠른 게시 단추 #feedQuickPostBtn 제거. 단언을 「#feedQuickPostBtn 없음 + 보이는 #btnCommPostFeed 있음」으로 바꿨다."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증",
+   "reason": "R3 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달) — 숨은 .comm-quick-strip 띠·#feedQuickPostBtn 제거. 두 글자 단언을 「없다」로 바꿨다(ui.css 규칙 단언은 그대로 통과)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·오늘 기록하기 잠금) 및 유령 항목 정리·정합성 고도화 검증",
+   "reason": "R1 상민님 승인 2026-10-05 『결심필요항목들 4건 모두 권장안으로 진행해』(오케스트레이터 전달) — 홈 구성 목록에서 「최근 히트맵 요약」 스위치 제거. 라벨·힌트 글자 단언을 「없다」로 바꿨다."
+  }
+ ]
+}

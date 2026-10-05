@@ -3,7 +3,7 @@
  *
  * 설정 탭 보안 카드 칠하기(paintSecurityCard) · 보안 상태 점검(refreshSecurityStatus) · 다른 기기 로그아웃 확인 창 열기(killDeviceSession) · 테마 견본 고르기(selectThemeSwatch).
  * window.paintSecurityCard 는 js/tabs/settings/sub-security.js 가 찾는다 — 노출 줄은 index.html 원래 자리에 그대로 있다.
- * 같은 묶음의 소통 허브 세 함수(switchCommSubTab·triggerFloatingReaction·openInAppDmSheet)는 옮기지 않았다 — 그 단추를 담은 #commHubGrid 가 마크업 인라인 은폐 스타일로 숨어 있어 게스트 화면에서 잴 수 없다(별도 티켓).
+ * 같은 묶음에 있던 숨은 소통 허브·응원 바·안심 DM 시트 함수 세 개는 #TASK-ES-495 에서 마크업과 함께 지웠다(상민님 승인 정리 4건).
  * #TASK-ES-439(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 17724~17742 · 17744~17749 · 17751~17756 · 17758~17782줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
