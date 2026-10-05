@@ -10,7 +10,7 @@ const assert = require('assert');
 const htmlPath = path.join(__dirname, '..', 'index.html');
 const cssPath = path.join(__dirname, '..', 'ui.css');
 
-const html = fs.readFileSync(htmlPath, 'utf8');
+const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(htmlPath, 'utf8')); // #TASK-ES-518: 인라인 합본(원문 맨 앞 + 세포) — 단언·기대값 그대로
 const css = fs.readFileSync(cssPath, 'utf8');
 
 // 1. 설정 탭 내 회원 탈퇴 버튼 배선

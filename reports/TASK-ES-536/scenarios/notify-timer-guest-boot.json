@@ -1,0 +1,54 @@
+{
+ "id": "notify-timer-guest-boot",
+ "title": "게스트로 앱에 들어가면(앱 진입이 옮긴 setupNotifyTimer 를 부른다) 홈이 보이고 알림 띠는 없으며, 설정 탭의 「알림」 스위치는 꺼진 상태로 보이고 예외가 없다 — js/tabs/settings/notify-timer.js",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "expect": "visible",
+   "selector": "#screen-home"
+  },
+  {
+   "expect": "count",
+   "selector": "#notifyBannerSlot .notify-banner",
+   "equals": 0
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#notifySwitch",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "notHasClass",
+   "selector": "#notifySwitch",
+   "className": "on"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
