@@ -1,0 +1,71 @@
+{
+ "id": "organ2-checkin-propagate",
+ "title": "게스트로 홈에서 체크인을 저장하고 피드백 창의 「기록 보러 가기」를 누르면 기록 탭에 방금 기록이 보인다 — 저장 뒤 4대 연계 뷰 동시 전파(dispatchFullViewPropagation, 4대 뷰 세포)가 이전 전과 같이 돈다",
+ "steps": [
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#captureInput",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "type",
+   "selector": "#captureInput",
+   "text": "전파 확인 기록 일곱"
+  },
+  {
+   "do": "click",
+   "selector": "#captureSave"
+  },
+  {
+   "do": "wait",
+   "ms": 2000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#firstCheckinDoneBtn",
+   "timeoutMs": 8000
+  },
+  {
+   "do": "click",
+   "selector": "#firstCheckinDoneBtn"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnCheckinAiGoRecords",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#btnCheckinAiGoRecords"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#screen-records",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#screen-records",
+   "text": "전파 확인 기록 일곱"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

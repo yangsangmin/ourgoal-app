@@ -1,0 +1,58 @@
+{
+ "id": "organ2-lockhub-card",
+ "title": "게스트로 일정 탭 「잠금화면」 허브 창을 열고 「잠금화면용 일정 카드 저장」을 누르면 저장 완료 토스트가 뜬다 — 옮긴 허브 창(openLockScreenHubModal)과 카드에 쓰는 연속 기록 일수(computeStreakDays, 연속 기록 세포)가 이전 전과 같이 돈다",
+ "steps": [
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"calendar\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"calendar\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#calLockScreenBtn",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#calLockScreenBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnDownloadLockscreenCard",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay",
+   "text": "잠금화면용 일정 카드 저장"
+  },
+  {
+   "do": "click",
+   "selector": "#btnDownloadLockscreenCard"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "잠금화면용 일정 카드가 갤러리에 저장되었어요"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
