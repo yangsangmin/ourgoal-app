@@ -363,6 +363,7 @@
     var avatarChar = (typeof rawAv === 'object' && rawAv ? rawAv.emoji : rawAv) || '🌱';
     ctx.font = '700 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
     ctx.fillStyle = '#38BDF8';
+    var streakDays = (typeof L.computeStreakDays === 'function') ? L.computeStreakDays() : 0; // #TASK-ES-431: 정의 안 된 이름이던 streakDays → 앱 스트릭 계산(computeStreakDays, app-scope 통로)
     ctx.fillText(avatarChar + ' 연속 ' + streakDays + '일째 실천 중 🔥', 540, 285);
     ctx.restore();
 

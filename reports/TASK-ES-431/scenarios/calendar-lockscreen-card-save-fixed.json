@@ -1,0 +1,58 @@
+{
+  "id": "calendar-lockscreen-card-save-fixed",
+  "title": "게스트로 일정 탭의 「잠금화면」 단추를 눌러 잠금화면 허브 창을 열고 「잠금화면용 일정 카드 저장」을 누르면 9:16 일정 카드가 그려져 저장 토스트 「잠금화면용 일정 카드가 갤러리에 저장되었어요」가 뜬다 — 고치기 전에는 그리기가 정의되지 않은 이름 streakDays 를 읽어 오류 토스트 「카드 생성 중 오류가 발생했습니다」로 끝났다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calLockScreenBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#calLockScreenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnDownloadLockscreenCard",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "잠금화면용 일정 카드 저장"
+    },
+    {
+      "do": "click",
+      "selector": "#btnDownloadLockscreenCard"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "잠금화면용 일정 카드가 갤러리에 저장되었어요"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
