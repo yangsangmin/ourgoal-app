@@ -1,0 +1,84 @@
+{
+ "id": "records-multi-metric-svg",
+ "title": "게스트로 기록 탭 「히트맵·통계」의 「실천추이」 차트에는 켜진 측정지표 2개(몰입시간·실천횟수)의 선 2개만 그려져 있고, 「달성률」 칩을 누르면 세 번째 선이 보라색(#8b5cf6)으로 더해진다 — 옮긴 renderMultiMetricSvg(js/tabs/records/trend-multi-metric-svg.js)가 이전 전과 같이 그린다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"records\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "button.s-rec-mode-btn[onclick*=\"heatmap\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "button.s-rec-mode-btn[onclick*=\"heatmap\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#recCarouselPills [data-recslide=\"0\"]",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#recCarouselPills [data-recslide=\"0\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#chartContainer svg.trend-multi-svg",
+   "timeoutMs": 15000
+  },
+  {
+   "expect": "attr",
+   "selector": "#chartContainer svg.trend-multi-svg path:nth-of-type(2)",
+   "name": "stroke",
+   "equals": "#10b981"
+  },
+  {
+   "expect": "notExists",
+   "selector": "#chartContainer svg.trend-multi-svg path:nth-of-type(3)"
+  },
+  {
+   "do": "click",
+   "selector": "#chartContainer [data-trendmetric=\"rate\"]"
+  },
+  {
+   "expect": "attr",
+   "selector": "#chartContainer svg.trend-multi-svg path:nth-of-type(3)",
+   "name": "stroke",
+   "equals": "#8b5cf6",
+   "timeoutMs": 4000
+  },
+  {
+   "expect": "hasClass",
+   "selector": "#chartContainer [data-trendmetric=\"rate\"]",
+   "className": "active"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
