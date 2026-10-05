@@ -725,7 +725,7 @@
    "check": {
     "type": "jsonPath",
     "file": "docs/architecture/module-baseline.json",
-    "path": "history.26.metrics.inlineScriptLines",
+    "path": "history.28.metrics.inlineScriptLines",
     "equals": 33385
    }
   },
@@ -802,6 +802,54 @@
     "type": "codeContains",
     "file": "docs/design/harness/module-split/real-account-inline-split-1.js",
     "text": "if (!/ogtest/i.test(env.OG_TEST_A_EMAIL) && !allow.includes(env.OG_TEST_A_EMAIL)) {"
+   }
+  },
+  {
+   "id": "C52",
+   "req": "R4",
+   "kind": "static",
+   "domain": "ui",
+   "statement": "6탭 tab-check 기준 1회차 대 후 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-423/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/tab-compare-base1-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C53",
+   "req": "R4",
+   "kind": "static",
+   "domain": "ui",
+   "statement": "6탭 tab-check 기준 2회 사이(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-423/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/tab-compare-base1-base2.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C54",
+   "req": "R4",
+   "kind": "static",
+   "domain": "ui",
+   "statement": "6탭 tab-check 기준 2회차 대 후 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-423/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/tab-compare-base2-after.json",
+    "path": "differingValues",
+    "equals": 0
    }
   }
  ]
