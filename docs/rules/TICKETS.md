@@ -596,6 +596,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-513 | INFRA | [인라인 3단계 설계·시범] 잔여 유형별 집계·실계정 표준 절차 설계, 시범 1묶음(디바이스 세션) 실계정 하네스로 재어 이동 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-513-INLINE-STAGE3.md | 4단계(심사 청구)
 - #TASK-ES-512 | INFRA | [헌법 버전 대장] v2026.10.06-SNOWBALL 행 추가 + 법령 전문 머리 현행 커널 버전 갱신(PR #800 병합 기록 1ce6c14 근거, 조문 본문 변경 0) | 코디네이터 세션 f747dcaa | 2026-10-06
 - #TASK-ES-517 | INFRA | [시험지 선행 · 인라인 3단계 Z2] 팀 목표 댓글 시험(team-goal-comment-fix)이 인라인 합본을 읽음(단언·기대값 그대로, 구간 절단 2개는 #803 몫) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-517-STAGE3-Z2-TEST-FIRST.md | 4단계(심사 청구)
+- #TASK-ES-521 | INFRA | [인라인 3단계 Z1 1차] Supabase·2계정 테스트·새 비밀번호 창·탈퇴 30일 유예(로그인 단추 처리기) 4묶음을 세포 3개로 이전(동작 그대로) + 검사기 키트 변수 순서 검사 | 오케스트레이터 배정 Z1(2026-10-06), REQ docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md | 4단계(심사 청구)
 - #TASK-ES-518 | INFRA | [시험지 선행 · 인라인 3단계 Z1 로그인·계정] 시험지 3개(탈퇴 창·구글 세션·보안 감사)가 인라인 합본을 읽음, 단언·기대값 0 변경 | 오케스트레이터 배정 Z1(2026-10-06), REQ docs/specs/REQ-TASK-ES-518-STAGE3-Z1-TEST-BUNDLE.md | 4단계(심사 청구)
 - #TASK-ES-514 | FIX | [숨김 조사 결함] 빠른 목표 추가 저장 · 템플릿백과사전 이중 처리기 · 성소 새 기록 중계 제거 · 숨김 기준선 사유 정정 | 코디네이터 세션 f747dcaa, REQ docs/specs/REQ-TASK-ES-514-HIDDEN-AUDIT-DEFECTS.md | 2026-10-06
 - #TASK-ES-531 | FIX | [홈 구성 단추 이중 처리기] #btnCustomHomeLayout 처리기 한 벌 + handle홈_Item31Action 의 open 의존성 연결(숨은 단추, 동작 동일) | 코디네이터 세션 f747dcaa, REQ docs/specs/REQ-TASK-ES-531-HOME-LAYOUT-SINGLE-HANDLER.md | 2026-10-06
