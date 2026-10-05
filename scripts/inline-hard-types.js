@@ -43,7 +43,7 @@ const OUT_JSON = path.join(ROOT, 'docs', 'architecture', 'inline-hard-types.json
 const PROBE = (() => { const p = path.join(ROOT, 'docs', 'architecture', 'inline-hard-test-probe.json'); if (!fs.existsSync(p)) return null; const j = JSON.parse(fs.readFileSync(p, 'utf8')); return j.source.indexSha256_12 === MAP.source.sha256_12 ? j : null; })();
 // 다른 시범·빌더에 배정된 묶음(제목 일부로 찾는다 — 묶음 번호는 앞 묶음이 사라지면 밀린다)
 // 앞이 '=' 이면 제목 전체가 같아야 한다
-const ASSIGNED = [['캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달', '안티그래비티 시범(2026-10-05 배정)'], ['=Enter app', '2차 빌더(2026-10-05 배정)'], ['=Render all', '2차 빌더(2026-10-05 배정)']];
+const ASSIGNED = [['캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달', '안티그래비티 시범(2026-10-05 배정)'], ['=RENDER: HOME', '안티그래비티 몫(2026-10-05 배정)'], ['=Enter app', '2차 빌더(2026-10-05 배정)'], ['=Render all', '2차 빌더(2026-10-05 배정)']];
 const DESIGN_MD = path.join(ROOT, 'docs', 'architecture', 'INLINE-HARD-SPLIT-DESIGN.md');
 
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n');

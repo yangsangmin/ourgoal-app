@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "a89ce00ff8a836281ddad4527f28a4e826813663",
-  "short": "a89ce00",
-  "committedAt": "2026-10-05T17:23:43+09:00",
-  "subject": "Merge pull request #746 from yangsangmin/fix/2026-10-05-task-es-431-lockscreen-streak"
+  "commit": "15811b8486d59fa678e3aab291080f931ad8638f",
+  "short": "15811b8",
+  "committedAt": "2026-10-05T18:46:32+09:00",
+  "subject": "[INFRA] #TASK-ES-439 refactor: 인라인 어려움 묶음 분열 설계 + 시범 — 유형 집계·시험지 선행 실측 도구, 표준 이음매 생성기·검사기, 체크인 저장 처리기·설정 빠른 동작 세포 이전(동작 그대로)"
  },
  "summary": {
-  "cells": 175,
-  "files": 174,
-  "jsLines": 52730,
+  "cells": 174,
+  "files": 173,
+  "jsLines": 53052,
   "kinds": {
    "organ": 29,
-   "tab": 47,
+   "tab": 46,
    "hybrid": 98,
    "future": 1
   },
-  "descriptionsHand": 175,
+  "descriptionsHand": 174,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -42,12 +42,12 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 33124,
-   "functionDecls": 651
+   "inlineScriptLines": 33178,
+   "functionDecls": 654
   },
   "health": {
-   "undifferentiatedLines": 33124,
-   "globalLinks": 281,
+   "undifferentiatedLines": 33178,
+   "globalLinks": 282,
    "oversizeCells": 1,
    "drawingSmallCells": {
     "drew": 7,
@@ -85,9 +85,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 47,
+   "count": 46,
    "large": 6,
-   "small": 41
+   "small": 40
   },
   {
    "key": "hybrid",
@@ -151,7 +151,7 @@
     "records/sub-timeline",
     "records/sub-timer"
    ],
-   "lines": 1321,
+   "lines": 1552,
    "over800": 0
   },
   {
@@ -181,7 +181,6 @@
     "comm/index",
     "comm/dm-ledger",
     "comm/feed-comments",
-    "comm/hub-actions",
     "comm/render",
     "comm/story-card-send",
     "comm/sub-companions",
@@ -207,7 +206,7 @@
     "settings/sub-profile",
     "settings/sub-security"
    ],
-   "lines": 1513,
+   "lines": 1604,
    "over800": 0
   },
   {
@@ -3397,7 +3396,6 @@
     "calendar/natural-schedule",
     "calendar/render",
     "comm/feed-comments",
-    "comm/hub-actions",
     "comm/render",
     "comm/story-card-send",
     "goals/goal-detail",
@@ -8398,44 +8396,6 @@
    ]
   },
   {
-   "id": "comm/hub-actions",
-   "file": "js/tabs/comm/hub-actions.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "comm",
-   "tabs": [
-    "comm"
-   ],
-   "name": "소통 허브 단추",
-   "nameSource": "hand",
-   "does": "소통 탭 허브에서 피드·동반자·팀 하위 탭을 바꾸고, 응원 반응을 띄우고, 1:1 안심 DM 시트를 연다",
-   "doesSource": "hand",
-   "header": [],
-   "lines": 0,
-   "over800": false,
-   "exposes": [],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [],
-   "reqs": [],
-   "prs": []
-  },
-  {
    "id": "comm/index",
    "file": "js/tabs/comm/index.js",
    "kind": "tab",
@@ -9743,10 +9703,17 @@
    "nameSource": "hand",
    "does": "홈 체크인 입력칸에 글자수를 보여 주고, 「기록」을 누르면 오늘 실천을 기록으로 저장한 뒤 XP·축하·AI 피드백을 이어 준다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Checkin Capture (기록 — 홈 체크인 입력 글자수 힌트·기록 저장 처리기)",
+    "홈 체크인 입력칸(#captureInput) 글자수 힌트 처리기와 「기록」 단추(#captureSave) 저장 처리기 — 기록 추가·XP·축하·AI 피드백·노션 전송까지 이전 전과 같은 순서로 돈다.",
+    "두 처리기는 index.html 로드 중 바로 걸리던 문이다. 본문을 bindCaptureLiveMeta · bindCaptureSave 로 감싸 옮기고, index.html 원래 자리에서 그 함수를 부른다(등록 순서 보존, 이중 처리기 0).",
+    "입력칸 요소를 담은 상태 변수(liveMeta · liveCount · capInput)와 사진 대기값(pendingCapturePhoto)은 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
+   ],
+   "lines": 231,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
    "calls": [
     "core/app-scope",
     "core/event-bus",
@@ -9755,7 +9722,9 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
    "emits": [
     "checkin:created",
     "record:saved"
@@ -9768,7 +9737,9 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
+   "tasks": [
+    "TASK-ES-439"
+   ],
    "reqs": [],
    "prs": []
   },
@@ -10236,17 +10207,26 @@
    "nameSource": "hand",
    "does": "설정의 보안 카드(앱 잠금 PIN 상태)를 칠하고 점검하며, 다른 기기 로그아웃 확인 창을 열고, 테마 견본을 고른다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Settings Quick Actions (설정 탭 — 보안 카드·테마 견본 빠른 동작)",
+    "설정 탭 보안 카드 칠하기(paintSecurityCard) · 보안 상태 점검(refreshSecurityStatus) · 다른 기기 로그아웃 확인 창 열기(killDeviceSession) · 테마 견본 고르기(selectThemeSwatch).",
+    "window.paintSecurityCard 는 js/tabs/settings/sub-security.js 가 찾는다 — 노출 줄은 index.html 원래 자리에 그대로 있다.",
+    "같은 묶음의 소통 허브 세 함수(switchCommSubTab·triggerFloatingReaction·openInAppDmSheet)는 옮기지 않았다 — 그 단추를 담은 #commHubGrid 가 인라인 display:none !important 로 숨어 있어 게스트 화면에서 잴 수 없다(별도 티켓)."
+   ],
+   "lines": 91,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -10256,7 +10236,9 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
+   "tasks": [
+    "TASK-ES-439"
+   ],
    "reqs": [],
    "prs": []
   },

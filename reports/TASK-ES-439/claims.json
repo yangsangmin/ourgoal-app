@@ -1,0 +1,564 @@
+{
+ "task": "TASK-ES-439",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "어려움 묶음이 어려운 이유를 유형별로 도구로 집계한다(묶음 수·줄 수) — scripts/inline-hard-types.js, 시험지 선행 필요는 scripts/inline-hard-test-probe.js 로 실측한다."
+  },
+  {
+   "id": "R2",
+   "text": "유형마다 동작 그대로 옮기는 표준 이음매를 설계 문서 docs/architecture/INLINE-HARD-SPLIT-DESIGN.md 에 법정 탐침·생성기·verify 근거와 함께 싣는다."
+  },
+  {
+   "id": "R3",
+   "text": "설정 파일로 움직이는 생성기(gen-inline-hard.js)·검사기(verify-inline-hard.js)·조작 비교 하네스와 구역 자리 표지를 만든다."
+  },
+  {
+   "id": "R4",
+   "text": "시범: 어려움 묶음 2개(체크인 입력 글자수 힌트·저장 처리기, PHASE 6 설정 빠른 동작)를 동작 그대로 옮기고 verify·단독 로드·게스트 시나리오·조작 비교·tab-check·npm test 로 잰다."
+  },
+  {
+   "id": "R5",
+   "text": "세포 등록(modules.json·cell-descriptions.json·cell-map.json·module-baseline.json)과 문서(REQ 8원칙, dev_log·TICKETS 각 1줄), 어려움 묶음 처리 순서·병렬 구역 제안."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "유형 집계 도구가 시험지 선행 실측 유형(F1m)을 따로 센다",
+   "touches": [
+    "scripts/inline-hard-types.js"
+   ],
+   "check": {
+    "file": "scripts/inline-hard-types.js",
+    "type": "codeContains",
+    "text": "['F1m', '시험지 선행 필요(실측)']"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "유형 집계 결과 파일 형식 이름이 기록되어 있다",
+   "touches": [
+    "docs/architecture/inline-hard-types.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-hard-types.json",
+    "type": "jsonPath",
+    "path": "schema",
+    "equals": "inline-hard-types/1"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "유형 집계가 병렬 구역 줄 구간 겹침 0 을 기록한다",
+   "touches": [
+    "docs/architecture/inline-hard-types.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-hard-types.json",
+    "type": "jsonPath",
+    "path": "zonesOverlap",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "시험지 선행 실측 도구가 기준 2회 모두 통과였던 시험지만 깨짐으로 센다",
+   "touches": [
+    "scripts/inline-hard-test-probe.js"
+   ],
+   "check": {
+    "file": "scripts/inline-hard-test-probe.js",
+    "type": "codeContains",
+    "text": "base1[t] === 0 && base2[t] === 0 && res[t] !== 0"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "시험지 선행 실측 결과 파일 형식 이름이 기록되어 있다",
+   "touches": [
+    "docs/architecture/inline-hard-test-probe.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-hard-test-probe.json",
+    "type": "jsonPath",
+    "path": "schema",
+    "equals": "inline-hard-test-probe/1"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준(origin/main) 어려움 묶음은 68개다",
+   "touches": [
+    "reports/TASK-ES-439/inline-hard-types-base.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/inline-hard-types-base.json",
+    "type": "jsonPath",
+    "path": "hard.groups",
+    "equals": 68
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준 실측에서 시험지 선행이 필요한 어려움 묶음은 30개다",
+   "touches": [
+    "reports/TASK-ES-439/inline-hard-test-probe-base.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/inline-hard-test-probe-base.json",
+    "type": "jsonPath",
+    "path": "summary.needTestFirst",
+    "equals": 30
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설계 문서에 공유 상태 재대입 표준 이음매 절이 있다",
+   "touches": [
+    "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md"
+   ],
+   "check": {
+    "file": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "type": "codeContains",
+    "text": "### 2-1. 공유 상태 재대입(A1·A2)"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설계 문서에 로드 중 문 표준 이음매 절이 있다",
+   "touches": [
+    "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md"
+   ],
+   "check": {
+    "file": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "type": "codeContains",
+    "text": "### 2-3. 로드 중 문(B2 이벤트 등록·B3 그 밖)"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설계 문서에 구역 자리 표지 절이 있다",
+   "touches": [
+    "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md"
+   ],
+   "check": {
+    "file": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "type": "codeContains",
+    "text": "## 3. 머리 이음매 자리 표지"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "생성기가 로드 중 문을 감쌀 수 없을 때(끌어올려지는 선언) 원래 자리에 둔다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "why.push('IIFE 로 끌어올려지는 선언 ' + n)"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "생성기가 옮긴 코드가 대입하는 이름에 setter 를 단다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "', set ' + n + '(v){ ' + n + ' = v; }'"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기가 이중 처리기 0 을 처리기 수 합으로 잰다",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-inline-hard.js",
+    "type": "codeContains",
+    "text": "listeners.same = listeners.origIIFE === listeners.newIIFE + listeners.cells"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "시범 설정이 구역 자리 H0 를 쓴다",
+   "touches": [
+    "docs/design/harness/module-split/inline-hard-pilot.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-hard-pilot.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H0"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "조작 비교 하네스가 체크인 저장을 두 번 누른다",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-compare-inline-hard.js",
+    "type": "codeContains",
+    "text": "['save-2', click('#captureSave'), 3500]"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지도 생성기가 1차 이음매 묶음도 이음매로 분류한다",
+   "touches": [
+    "scripts/inline-script-map.js"
+   ],
+   "check": {
+    "file": "scripts/inline-script-map.js",
+    "type": "codeContains",
+    "text": "const SEAM_RE = /모듈 이음매|TASK-ES-354 CORE-07|세포화 1차 이음매/;"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지도에서 이음매 묶음이 8개다",
+   "touches": [
+    "docs/architecture/inline-script-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-script-map.json",
+    "type": "jsonPath",
+    "path": "totals.seamGroups",
+    "equals": 8
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지도 문서가 다시 만들어졌다(묶음 189개, 이음매 8)",
+   "touches": [
+    "docs/architecture/INLINE-SCRIPT-MAP.md"
+   ],
+   "check": {
+    "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+    "type": "codeContains",
+    "text": "묶음 189개(이음매 8"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 토큰·줄·남은 글자 동일, 누수·미노출·setter 빠짐·이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-439/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자(옮긴 구간·이음매 줄 뺀 IIFE 토큰열)가 같다",
+   "touches": [
+    "reports/TASK-ES-439/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 세포 파일 단독 로드가 된다(법정 모듈 로드 탐침 로컬)",
+   "touches": [
+    "reports/TASK-ES-439/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-439/dom-compare-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/dom-compare-inline-hard.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-439/dom-compare-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/dom-compare-inline-hard.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests·scripts/test-* 종료 코드가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-439/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/test-compare.json",
+    "type": "jsonPath",
+    "path": "sameExitCodes",
+    "equals": true
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "체크인 시나리오 돌연변이(부르는 줄 지움)는 작업 쪽에서 실패한다",
+   "touches": [
+    "reports/TASK-ES-439/scenario-mutant-checkin.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-439/scenario-mutant-checkin.json",
+    "type": "jsonPath",
+    "path": "runs.work.passed",
+    "equals": false
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 체크인 저장 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/checkin-capture\""
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설명 파일에 새 세포의 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"settings/quick-actions\": \"설정 빠른 동작\""
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "세포지도에 새 세포가 있다",
+   "touches": [
+    "docs/architecture/cell-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-map.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/checkin-capture\""
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준선에 인라인 33,178줄이 기록되었다",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/module-baseline.json",
+    "type": "codeContains",
+    "text": "\"inlineScriptLines\": 33178"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-439 | INFRA |"
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-439:"
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "처리 순서 제안: 병렬 구역 4개",
+   "touches": [
+    "docs/architecture/inline-hard-types.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-hard-types.json",
+    "type": "jsonPath",
+    "path": "zones.length",
+    "equals": 4
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 체크인 입력칸에 글자를 넣으면 글자수 힌트가 켜지고(인라인 style), 「기록」을 누르면 입력칸 안내 문구가 바뀌고 힌트가 꺼지며 예외가 없다 — 옮긴 bindCaptureLiveMeta·bindCaptureSave 가 index.html 원래 자리에서 걸린다",
+   "touches": [
+    "js/tabs/records/checkin-capture.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/checkin-capture-save.json"
+  },
+  {
+   "id": "C34",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 「보안 상태 점검」을 누르면 앱 잠금 PIN 꺼짐 토스트가 뜨고 보안 배지가 off 로 칠해지며 예외가 없다 — 인라인 onclick 이 원래 자리의 window 노출 줄을 거쳐 옮긴 refreshSecurityStatus·paintSecurityCard 에 닿는다",
+   "touches": [
+    "js/tabs/settings/quick-actions.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-quick-actions.json"
+  }
+ ]
+}
