@@ -2506,6 +2506,215 @@
       ]
     },
     {
+      "id": "sanctuary-calendar-actions",
+      "file": "js/sanctuary-calendar-actions.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "일정 탭 성소 달력 조작 — 달·주·일 이동과 오늘·날짜 선택, 일정 추가·일자 허브·배경사진 창 열기, 일정 완료 토글(OurgoalSanctuaryV3 메서드). sanctuary-v3-engine.js 에서 분열(#TASK-ES-429)",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "openAddScheduleModal",
+        "openCalendarDayBgPickerModal",
+        "openCalendarDayEditHubModal",
+        "openCalendarManualEditModal",
+        "saveProfile",
+        "state",
+        "switchTab",
+        "toggleScheduleDone"
+      ]
+    },
+    {
+      "id": "sanctuary-calendar-views",
+      "file": "js/sanctuary-calendar-views.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "일정 탭 성소 달력의 월간 달력(renderSanctuaryCalendarMonth)과 일간 타임라인(renderSanctuaryCalendarTimeline) 그리기 — renderSanctuaryCalendar 의 두 분기 본문. sanctuary-v3-engine.js 에서 분열(#TASK-ES-429)",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalSanctuaryV3",
+        "state"
+      ]
+    },
+    {
+      "id": "sanctuary-focus-timer",
+      "file": "js/sanctuary-focus-timer.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "기록 탭 25분 뽀모도로 집중 타이머 — 타이머 카드 그리기(renderSanctuaryRecordsTimer)와 시작·멈춤·초기화·완료 기록 적립. sanctuary-v3-engine.js 에서 분열(#TASK-ES-429)",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalSanctuaryV3",
+        "calendarItemsByDate",
+        "playTimerBeep",
+        "saveProfile"
+      ]
+    },
+    {
+      "id": "sanctuary-goal-trail",
+      "file": "js/sanctuary-goal-trail.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "목표 탭 성소 마운틴 트레일 — 고른 목표의 마일스톤 길 그리기(renderSanctuaryGoalTrail)와 마일스톤·할 일 토글, 마일스톤 체크인 연결, 샘플 루틴 담기. sanctuary-v3-engine.js 에서 분열(#TASK-ES-429)",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalSanctuaryV3",
+        "dDay",
+        "saveProfile",
+        "triggerHaptic"
+      ]
+    },
+    {
+      "id": "sanctuary-peer-radar",
+      "file": "js/sanctuary-peer-radar.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "소통 탭 동반자 레이더 — 실제 러닝메이트 목록(getRealRunningMates)·아바타·레이더 접기·레이더 그리기(renderSanctuaryComm)와 응원·DM·상호작용·새로고침·동반자 찾기 메서드. sanctuary-v3-engine.js 에서 분열(#TASK-ES-429)",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalSanctuaryV3",
+        "OurgoalTeamInviteComm",
+        "state",
+        "triggerHaptic"
+      ]
+    },
+    {
+      "id": "sanctuary-record-feed",
+      "file": "js/sanctuary-record-feed.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "기록 탭 성소 피드(renderSanctuaryRecordsFeed)와 보관함(renderSanctuaryRecordsArchive) 그리기, 기간·쪽·직접 기간 고르기 메서드. sanctuary-v3-engine.js 에서 분열(#TASK-ES-429)",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalSanctuaryV3",
+        "goalAchievement",
+        "openAddRecordModal",
+        "restoreGoal",
+        "setTab",
+        "state",
+        "switchTab"
+      ]
+    },
+    {
       "id": "sanctuary-v3-engine",
       "file": "js/sanctuary-v3-engine.js",
       "layer": "legacy",
@@ -2534,30 +2743,53 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalCalendarKit",
-        "OurgoalTeamInviteComm",
+        "OurgoalSanctuaryV3Kit",
         "OurgoalTimeTracker",
-        "OurgoalViralSharing",
         "calendarItemsByDate",
-        "dDay",
-        "goalAchievement",
         "openAddRecordModal",
-        "openAddScheduleModal",
-        "openCalendarDayBgPickerModal",
-        "openCalendarDayEditHubModal",
         "openCalendarLockScreenModal",
         "openCalendarManualEditModal",
         "openMzShareCardModal",
-        "openWeeklyRecapModal",
-        "playTimerBeep",
         "promptNewGoal",
-        "restoreGoal",
-        "saveProfile",
         "setRecordsSegment",
         "setTab",
         "showScreen",
-        "switchTab",
-        "toggleScheduleDone",
-        "triggerHaptic"
+        "state",
+        "switchTab"
+      ]
+    },
+    {
+      "id": "sanctuary-weekly-recap",
+      "file": "js/sanctuary-weekly-recap.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "기록 탭 위클리 리캡 — 리캡 카드 그리기(renderSanctuaryRecordsRecap)와 리캡 이미지 저장·리캡 창 열기. sanctuary-v3-engine.js 에서 분열(#TASK-ES-429)",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalSanctuaryV3",
+        "OurgoalViralSharing",
+        "openWeeklyRecapModal",
+        "state"
       ]
     },
     {

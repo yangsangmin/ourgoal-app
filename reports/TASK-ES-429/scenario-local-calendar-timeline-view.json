@@ -1,0 +1,195 @@
+{
+ "scenario": "calendar-timeline-view",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 3,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#homeAddGoal → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-cal-mode-btn → 보이는 요소 3개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"타임라인\" 71x44px"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-timeline-card → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-timeline-header → 보이는 글자: [\"◀ 2026-10-05 타임라인 ▶ 오늘 실천 0건\"]",
+     "vacuous": false
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-cal-mode-btn:nth-of-type(3) → class=\"s-cal-mode-btn active\"",
+     "vacuous": false
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 3,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#homeAddGoal → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-cal-mode-btn → 보이는 요소 3개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"타임라인\" 71x44px"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-timeline-card → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-timeline-header → 보이는 글자: [\"◀ 2026-10-05 타임라인 ▶ 오늘 실천 0건\"]",
+     "vacuous": false
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#sanctuaryCalendarView .s-cal-mode-btn:nth-of-type(3) → class=\"s-cal-mode-btn active\"",
+     "vacuous": false
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  }
+ }
+}
