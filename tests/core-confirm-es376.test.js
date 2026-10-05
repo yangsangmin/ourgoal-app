@@ -9,6 +9,8 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+/* #TASK-ES-441 확인창 19곳 줄 세기는 인라인 합본(원문 맨 앞 + js/tabs 세포)에서 센다 — 확인창이 세포로 옮겨 가도 같은 줄을 찾는다 */
+const HTML_CELLS = require('./helpers/inline-bundle').withInlineCells(HTML);
 const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
 const C = require(path.join(ROOT, 'js/core/confirm.js'));
 
@@ -77,7 +79,7 @@ const SITES = [
 ];
 
 function countLine(line) {
-  const lines = HTML.split(/\r?\n/);
+  const lines = HTML_CELLS.split(/\r?\n/);
   return lines.filter(l => l === line).length;
 }
 

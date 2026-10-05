@@ -2,12 +2,12 @@
  * OurGoal PWA Install Guide (설정 — 홈 화면 추가 안내·키보드 가림 방지)
  *
  * #TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —
- *   renderIosPwaBanner · openIosPwaInstallGuideModal(이전 전 13018~13155줄 · 구획 「iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)」)
- *   initKeyboardShield(이전 전 22959~22978줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
- *   openPwaInstallGuideModal(이전 전 22985~22996줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
- *   closePwaInstallGuideModal(이전 전 22999~23003줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
- *   switchPwaOsTab(이전 전 23006~23023줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
- *   confirmPwaInstall(이전 전 23026~23033줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
+ *   renderIosPwaBanner · openIosPwaInstallGuideModal(이전 전 13052~13189줄 · 구획 「iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)」)
+ *   initKeyboardShield(이전 전 21724~21743줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
+ *   openPwaInstallGuideModal(이전 전 21750~21761줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
+ *   closePwaInstallGuideModal(이전 전 21764~21768줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
+ *   switchPwaOsTab(이전 전 21771~21788줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
+ *   confirmPwaInstall(이전 전 21791~21798줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)
  * 묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,
  * 같은 키트의 다른 세포 함수는 K.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓). 로드 중 바로 도는 문·최상위 변수는 index.html 원래 자리에 남았다.
  * index.html 은 IIFE 머리에서 이 키트의 함수 중 인라인에서 부르는 것을 같은 이름으로 가져와 부른다 — 부르는 쪽은 그대로다.

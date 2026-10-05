@@ -2,7 +2,7 @@
  * OurGoal Lock Screen Live Card (일정 탭 — 폰 잠금화면 실시간 정보 카드)
  *
  * #TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —
- *   buildLockScreenCardPayload · syncLockScreenLiveCard · closeLockScreenLiveCard(이전 전 11390~11635줄, 구획 주석 포함 · 구획 「[#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)」)
+ *   buildLockScreenCardPayload · syncLockScreenLiveCard · closeLockScreenLiveCard(이전 전 11424~11669줄, 구획 주석 포함 · 구획 「[#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)」)
  * 묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,
  * 같은 키트의 다른 세포 함수는 K.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓). 로드 중 바로 도는 문·최상위 변수는 index.html 원래 자리에 남았다.
  * index.html 은 IIFE 머리에서 이 키트의 함수 중 인라인에서 부르는 것을 같은 이름으로 가져와 부른다 — 부르는 쪽은 그대로다.

@@ -9,7 +9,7 @@ const TASK_TICKET_ID = 'TASK-ES-142';
 // 1. index.html 정적 파일 검증
 const indexHtmlPath = path.join(__dirname, '../index.html');
 assert.ok(fs.existsSync(indexHtmlPath), 'index.html must exist');
-const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 
 // 2. 홈 콕핏 첫 체크인 튜토리얼 배너 슬롯 검증
 assert.ok(indexHtml.includes('id="firstCheckinTutorialBanner"'), 'index.html must contain #firstCheckinTutorialBanner');

@@ -1,0 +1,386 @@
+{
+ "task": "TASK-ES-441",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-441-INLINE-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 글자에서 함수를 잘라 가거나 글자를 세는 시험지 11곳(tests 10개 + scripts/smoke-test.js 세 곳)이 「인라인 합본」(index.html 원문 맨 앞 + js/tabs 의 app-scope 통로 세포, 세포만 L. 접두 제거, tests/helpers/inline-bundle.js)을 읽는다. core-confirm 은 확인창 줄 세기만. 단언 문장·기대값·검사 수 변경 0, 제품 코드 0, 금고 파일 0."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 기준 대 작업 npm test 수치·tests 종료 코드 같음, 모의 이전 사본(P0 구역 전체 이전)에서 옛 시험지는 깨지고 새 시험지는 통과."
+  },
+  {
+   "id": "R3",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "인라인 합본 = index.html 원문(맨 앞) + js/tabs 의 app-scope 통로 세포(L. 접두 제거)",
+   "touches": [
+    "tests/helpers/inline-bundle.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/inline-bundle.js",
+    "text": "const src = [html, ...parts.map(readCell)].join('\\n');"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합본 맨 앞이 원문이 아니면 멈춘다",
+   "touches": [
+    "tests/helpers/inline-bundle.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/inline-bundle.js",
+    "text": "if (src.slice(0, html.length) !== html) throw new Error('인라인 합본 맨 앞이 index.html 원문이 아님');"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포 쪽은 생성기 접두 L. 만 뗀다",
+   "touches": [
+    "tests/helpers/inline-bundle.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/inline-bundle.js",
+    "text": "replace(/(^|[^A-Za-z0-9_$.])L\\.(?=[A-Za-z_$])/g, '$1')"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "계정 전환 격리 시험이 인라인 합본에서 함수를 잘라 온다",
+   "touches": [
+    "tests/account-switch-isolation.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/account-switch-isolation.test.js",
+    "text": "var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(HTML_PATH, 'utf8'));"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "직접 로그인 가드 시험이 인라인 합본에서 함수를 잘라 온다",
+   "touches": [
+    "tests/direct-login-guard.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/direct-login-guard.test.js",
+    "text": "var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(HTML_PATH, 'utf8'));"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "개발 호스트 게이트 시험이 인라인 합본에서 initDevDebugButtons 를 잘라 온다",
+   "touches": [
+    "tests/dev-host-gate.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/dev-host-gate.test.js",
+    "text": "var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(HTML_PATH, 'utf8'));"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기기 세션 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/device-session-control.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/device-session-control.test.js",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "로그아웃 범위 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/logout-scope-es399.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/logout-scope-es399.test.js",
+    "text": "const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'));"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "앱 잠금 PIN 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/two-factor-auth.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/two-factor-auth.test.js",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "온보딩 첫 체크인 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/onboarding-first-checkin.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/onboarding-first-checkin.test.js",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 탭 이름 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/records-tab-rename.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/records-tab-rename.test.js",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "일정-목표 동기화 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/schedule-goal-sync.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/schedule-goal-sync.test.js",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8'));"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "확인창 19곳 줄 세기만 인라인 합본에서 센다(기본 확인창 목록·태그 순서는 원문 그대로)",
+   "touches": [
+    "tests/core-confirm-es376.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/core-confirm-es376.test.js",
+    "text": "const lines = HTML_CELLS.split(/\\r?\\n/);"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke-test 가 FN_NAMES 추출 원본 뒤에 세포 글자를 붙인다(인라인이 맨 앞)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/smoke-test.js",
+    "text": "const fnSource = mainScript + (fs.existsSync(AVATAR_XP_JS) ? '\\n' + readAvatarFile(AVATAR_XP_JS) : '') + INLINE_CELLS_SRC;"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke-test 의 노션 DB 변환 시험이 인라인 + 세포 글자에서 함수를 잘라 온다",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/smoke-test.js",
+    "text": "const fnCode = extractFunction(mainScript + INLINE_CELLS_SRC, 'convertTextToNotionDbRecord');"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지금 커밋: npm test smoke 통과/실패 수가 기준과 같다(443/0)",
+   "touches": [
+    "reports/TASK-ES-441/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-441/test-compare.json",
+    "path": "npmTestAfter.smoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지금 커밋: 무결성 검사 38/38 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-441/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-441/test-compare.json",
+    "path": "npmTestAfter.integrity",
+    "equals": "38/38"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지금 커밋: tests 종료 코드가 기준과 다른 것은 기준 사본에 git 이 없어 기준 쪽만 실패하는 cell-map-export 1건뿐",
+   "touches": [
+    "reports/TASK-ES-441/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-441/test-compare.json",
+    "path": "exitCodeDiffering",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 사본에서 옛 시험지는 10곳 실패",
+   "touches": [
+    "reports/TASK-ES-441/mock-move.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-441/mock-move.json",
+    "path": "oldTestsFailing",
+    "equals": 10
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 사본에서 새 시험지는 10곳 모두 통과",
+   "touches": [
+    "reports/TASK-ES-441/mock-move.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-441/mock-move.json",
+    "path": "newTestsFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 사본 smoke: 옛 시험지 442/1 → 새 시험지 443/0",
+   "touches": [
+    "reports/TASK-ES-441/mock-move.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-441/mock-move.json",
+    "path": "newSmoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-441-INLINE-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/specs/REQ-TASK-ES-441-INLINE-TEST-BUNDLE.md",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "dev_log.md",
+    "text": "- 2026-10-05 TASK-ES-441: 시험지가 인라인 합본을 읽음"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "- #TASK-ES-441 | INFRA | [시험지 인라인 합본]"
+   }
+  }
+ ]
+}

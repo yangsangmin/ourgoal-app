@@ -15,16 +15,16 @@
   "subject": "[INFRA] #TASK-ES-444 refactor: 인라인 스크립트 세포화 P1 구역 2차 — 일정·소통·기록·설정 13묶음 함수를 세포 9개로 이전(인라인 −740줄, 동작 그대로)"
  },
  "summary": {
-  "cells": 188,
-  "files": 187,
-  "jsLines": 54039,
+  "cells": 196,
+  "files": 195,
+  "jsLines": 55422,
   "kinds": {
    "organ": 29,
-   "tab": 53,
+   "tab": 61,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 188,
+  "descriptionsHand": 196,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 32642,
-   "functionDecls": 635
+   "inlineScriptLines": 30848,
+   "functionDecls": 600
   },
   "health": {
-   "undifferentiatedLines": 32642,
+   "undifferentiatedLines": 30848,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 53,
+   "count": 61,
    "large": 6,
-   "small": 47
+   "small": 55
   },
   {
    "key": "hybrid",
@@ -120,16 +120,21 @@
    "desc": "개인·루틴·팀 목표와 마일스톤·할 일",
    "cells": [
     "goals/index",
+    "goals/ai-agent",
+    "goals/ai-local-fallback",
+    "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "goals/schedule-setup",
+    "goals/starter-goal",
     "goals/sub-personal",
     "goals/sub-routine",
     "goals/sub-team"
    ],
-   "lines": 2115,
+   "lines": 3058,
    "over800": 0
   },
   {
@@ -139,6 +144,8 @@
    "desc": "체크인 기록·시간 기록·회고·통계",
    "cells": [
     "records/index",
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
     "records/heatmap-summary",
     "records/period-ai-card",
     "records/photo-proof",
@@ -147,7 +154,7 @@
     "records/sub-timeline",
     "records/sub-timer"
    ],
-   "lines": 1465,
+   "lines": 1969,
    "over800": 0
   },
   {
@@ -157,7 +164,7 @@
    "desc": "달력·하루 상세·사진 일기·AI 일정 비서",
    "cells": [
     "calendar/index",
-    "calendar/day-bg-image",
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
@@ -167,7 +174,7 @@
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 1900,
+   "lines": 1836,
    "over800": 0
   },
   {
@@ -183,6 +190,7 @@
     "comm/feed-post-preview",
     "comm/first-cheer",
     "comm/render",
+    "comm/story-canvas",
     "comm/story-card-send",
     "comm/sub-companions",
     "comm/sub-crew",
@@ -1568,6 +1576,7 @@
     "data/avatar-personas/istp"
    ],
    "calledBy": [
+    "goals/ai-status",
     "home/sub-onescreen",
     "settings/render"
    ],
@@ -3380,7 +3389,9 @@
     "OurgoalModeration"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "goals/ai-agent"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -3441,7 +3452,7 @@
    "calls": [],
    "calledBy": [
     "avatar/xp",
-    "calendar/day-bg-image",
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
@@ -3452,12 +3463,20 @@
     "comm/feed-post-preview",
     "comm/first-cheer",
     "comm/render",
+    "comm/story-canvas",
     "comm/story-card-send",
+    "goals/ai-agent",
+    "goals/ai-local-fallback",
+    "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "goals/schedule-setup",
+    "goals/starter-goal",
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
     "records/heatmap-summary",
     "records/period-ai-card",
     "records/photo-proof",
@@ -6940,7 +6959,6 @@
     "OurgoalSanctuaryV3"
    ],
    "calls": [
-    "calendar/day-bg-image",
     "calendar/day-detail",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
@@ -8248,8 +8266,8 @@
    ]
   },
   {
-   "id": "calendar/day-bg-image",
-   "file": "js/tabs/calendar/day-bg-image.js",
+   "id": "calendar/day-bg-picker",
+   "file": "js/tabs/calendar/day-bg-picker.js",
    "kind": "tab",
    "kindName": "탭 세포(작은 세포)",
    "size": "small",
@@ -8257,33 +8275,21 @@
    "tabs": [
     "calendar"
    ],
-   "name": "일자별 배경 사진 줄이기",
+   "name": "일자별 배경 사진",
    "nameSource": "hand",
-   "does": "일정 탭 날짜 배경으로 고른 사진을 저장하기 좋게 줄인다(사진 지정 창은 아직 index.html)",
+   "does": "일정 탭에서 날짜마다 배경 사진을 골라 줄여 저장하고 지우는 창을 띄운다",
    "doesSource": "hand",
-   "header": [
-    "OurGoal Calendar Day Background Image (일정 탭 — 일자별 배경 사진 줄이기)",
-    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "compressCalendarBgImage(이전 전 10490~10528줄 · 구획 「[#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달」)",
-    "openCalendarDayBgPickerModal 은 시험지(core-confirm-es376)가 index.html 한 파일에서 그 안의 ui.confirm 줄을 세어 index.html 에 남았다."
-   ],
-   "lines": 64,
+   "header": [],
+   "lines": 0,
    "over800": false,
-   "exposes": [
-    "OurgoalCalendarKit"
-   ],
+   "exposes": [],
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [
-    "calendar/sub-day-detail",
-    "sanctuary-v3-engine"
-   ],
+   "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -8293,17 +8299,8 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [
-    "TASK-ES-153",
-    "TASK-ES-155",
-    "TASK-ES-423",
-    "TASK-ES-444"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-153-CALENDAR-DAY-BACKGROUND.md",
-    "docs/specs/REQ-TASK-ES-155-CALENDAR-BG-CHECK-ITITEM-FIX.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
-   ],
+   "tasks": [],
+   "reqs": [],
    "prs": []
   },
   {
@@ -8531,7 +8528,7 @@
    "header": [
     "OurGoal Lock Screen Live Card (일정 탭 — 폰 잠금화면 실시간 정보 카드)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "buildLockScreenCardPayload · syncLockScreenLiveCard · closeLockScreenLiveCard(이전 전 11390~11635줄, 구획 주석 포함 · 구획 「[#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)」)",
+    "buildLockScreenCardPayload · syncLockScreenLiveCard · closeLockScreenLiveCard(이전 전 11424~11669줄, 구획 주석 포함 · 구획 「[#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)」)",
     "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
    ],
    "lines": 272,
@@ -8567,7 +8564,8 @@
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-182-LOCKSCREEN-LIVE-SYNC.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -8733,7 +8731,6 @@
     "OurgoalCalendarDayDetail"
    ],
    "calls": [
-    "calendar/day-bg-image",
     "calendar/day-detail",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
@@ -8923,7 +8920,7 @@
    "header": [
     "OurGoal Challenge Room (소통 탭 — 소규모 챌린지 룸 창)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "openChallengeRoomModal(이전 전 14477~14572줄, 구획 주석 포함 · 구획 「소규모 챌린지 룸 모달 (가상유저 요청 P8/P17)」)",
+    "openChallengeRoomModal(이전 전 14511~14606줄, 구획 주석 포함 · 구획 「소규모 챌린지 룸 모달 (가상유저 요청 P8/P17)」)",
     "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
    ],
    "lines": 120,
@@ -8954,7 +8951,8 @@
     "TASK-ES-444"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -9105,7 +9103,7 @@
    "header": [
     "OurGoal Feed Post Preview (소통 탭 — 피드 게시 창 미리보기 토글)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "toggleFeedPostPreview(이전 전 17770~17806줄 · 구획 「[#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼」)",
+    "toggleFeedPostPreview(이전 전 17370~17406줄 · 구획 「[#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼」)",
     "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
    ],
    "lines": 61,
@@ -9138,7 +9136,8 @@
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-301-FEED-POST-PREVIEW-MODAL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -9159,7 +9158,7 @@
    "header": [
     "OurGoal First Cheer (소통 — 신규 유저 첫 응원 전달)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "triggerFirstCheerResponse · scheduleCheerDelivery(이전 전 15178~15214줄, 구획 주석 포함 · 구획 「신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002, TASK-ES-332)」)",
+    "triggerFirstCheerResponse · scheduleCheerDelivery(이전 전 15212~15248줄, 구획 주석 포함 · 구획 「신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002, TASK-ES-332)」)",
     "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
    ],
    "lines": 62,
@@ -9193,7 +9192,8 @@
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-332-PURGE-MOCK-PERSONAS-FOLLOWERS.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -9326,6 +9326,44 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "comm/story-canvas",
+   "file": "js/tabs/comm/story-canvas.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "갓생 스토리 카드 그림",
+   "nameSource": "hand",
+   "does": "갓생 카드 창에서 보여 주고 보낼 9:16 인스타 스토리 이미지를 캔버스로 그린다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "comm/story-card-send",
@@ -9570,6 +9608,152 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "goals/ai-agent",
+   "file": "js/tabs/goals/ai-agent.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 어시스턴트",
+   "nameSource": "hand",
+   "does": "목표 탭에서 말로 마일스톤·할 일 추가·변경을 요청하면 AI 제안(diff)을 받아 미리보기로 보여 주고 확인 뒤 반영한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal AI Agent (목표 탭 — 대화로 목표 관리·AI 생성 미리보기)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "goalAgentSnapshot · requestGoalAgentDiff · sanitizeAttachments(이전 전 18895~18949줄, 구획 주석 포함 · 구획 「대화로 목표 관리 (AI diff 제안 + 확인 후 반영)」)",
+    "renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep(이전 전 19514~19908줄 · 구획 「목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)」)"
+   ],
+   "lines": 526,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "content-moderation",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "goals/ai-local-fallback",
+   "file": "js/tabs/goals/ai-local-fallback.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 로컬 문장",
+   "nameSource": "hand",
+   "does": "서버 AI 가 없을 때 오늘의 미션과 마일스톤 완료 뒤 다음 행동 제안 문장을 로컬로 만든다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "goals/ai-status",
+   "file": "js/tabs/goals/ai-status.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 요약·미션",
+   "nameSource": "hand",
+   "does": "목표의 종합상황 요약·오늘의 미션 문장을 AI(실패 시 로컬 문장)로 만들고, 마일스톤을 끝내면 축하 창과 다음 행동 제안을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal AI Status (목표 탭 — 종합상황 요약·오늘의 미션·마일스톤 완료 축하)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "computeGoalStatusHash · localGoalStatusSummary · generateGoalStatusSummary(이전 전 20142~20191줄 · 구획 「현재 종합상황 (AI 요약)」)",
+    "milestonesForMission(이전 전 20240~20244줄 · 구획 「오늘의 미션」)"
+   ],
+   "lines": 161,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "avatar-system",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
   },
   {
    "id": "goals/goal-detail-events",
@@ -9962,6 +10146,99 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "goals/schedule-setup",
+   "file": "js/tabs/goals/schedule-setup.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 일정 설정",
+   "nameSource": "hand",
+   "does": "목표·마일스톤·할 일의 시작일·마감일을 정하는 일정 설정 창을 띄워 저장하고, 디데이·기간 알약을 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal Schedule Setup (목표 탭 — 3계층 일정 설정 창·디데이 표시)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "formatSchedulePillHtml · openScheduleSetupModal · applyScheduleUpdate(이전 전 20402~20630줄 · 구획 「목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #」)",
+    "openScheduleSetupModal = 목표·마일스톤·할일 일정 설정 바텀시트 · applyScheduleUpdate = 저장 · formatSchedulePillHtml = 디데이·기간 알약."
+   ],
+   "lines": 256,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-259",
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-259-GOALS-SCHEDULE-SYNC.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "goals/starter-goal",
+   "file": "js/tabs/goals/starter-goal.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "갓생 스타터 목표",
+   "nameSource": "hand",
+   "does": "새 사용자가 스타터 템플릿을 누르면 마일스톤이 채워진 목표를 바로 만든다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "goals/sub-personal",
@@ -10492,6 +10769,114 @@
    ]
   },
   {
+   "id": "records/ai-feedback-providers",
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "AI 피드백 공급자",
+   "nameSource": "hand",
+   "does": "기록 AI 피드백을 서버 AI·Gemini 로 요청하고, 실패하면 로컬 문장으로 대신한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record AI Feedback Providers (기록 탭 — Gemini·서버 AI 피드백 요청과 로컬 대체 문구)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "requestServerAIFeedback(이전 전 15624~15671줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)",
+    "requestGeminiFeedback(이전 전 15674~15716줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)"
+   ],
+   "lines": 211,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-225",
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-225-GEMINI-QUOTA-BACKOFF.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "records/ai-feedback",
+   "file": "js/tabs/records/ai-feedback.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "기록 AI 피드백",
+   "nameSource": "hand",
+   "does": "체크인 기록에 대한 AI 피드백을 요청하고(프롬프트·최근 기록·다가오는 일정 재료), 피드백 단계 막대를 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record AI Feedback (기록 탭 — 체크인 AI 피드백 요청·프롬프트)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "milestonesForAI(이전 전 15217~15225줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)",
+    "getUpcomingSchedulesForAI · getRecentCheckinsForAI · getLastFeedbackAdvice · initFeedbackTierBar · buildFeedbackPrompt · parseFeedbackJSON · requestAIFeedback(이전 전 15235~15484줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)"
+   ],
+   "lines": 293,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "records/heatmap-summary",
    "file": "js/tabs/records/heatmap-summary.js",
    "kind": "tab",
@@ -10508,7 +10893,7 @@
    "header": [
     "OurGoal Heatmap Summary Card (홈 — 최근 히트맵 요약 카드)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "renderHomeGrassSummary(이전 전 13434~13484줄, 구획 주석 포함 · 구획 「최근 히트맵 요약 카드 (가상유저 요청 P7/P9)」)",
+    "renderHomeGrassSummary(이전 전 13468~13518줄, 구획 주석 포함 · 구획 「최근 히트맵 요약 카드 (가상유저 요청 P7/P9)」)",
     "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
    ],
    "lines": 75,
@@ -10539,7 +10924,8 @@
     "TASK-ES-444"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -10686,7 +11072,7 @@
    "header": [
     "OurGoal Photo Proof (기록 — 사진 인증 줄이기·사진 보기 창)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "openPhotoViewerModal · compressImage(이전 전 14896~14939줄 · 구획 「사진 인증 & 뷰어 모달 (가상유저 요청 P1)」)",
+    "openPhotoViewerModal · compressImage(이전 전 14930~14973줄 · 구획 「사진 인증 & 뷰어 모달 (가상유저 요청 P1)」)",
     "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
    ],
    "lines": 69,
@@ -10717,7 +11103,8 @@
     "TASK-ES-444"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -10984,8 +11371,8 @@
    "header": [
     "OurGoal Adaptive UX (설정 — 적응형 화면 모드·망설임 기록)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "getUxMode · switchUxMode(이전 전 12726~12741줄 · 구획 「Adaptive UX Mode」)",
-    "renderAdaptiveModeBar(이전 전 12744~12754줄 · 구획 「Adaptive UX Mode」)"
+    "getUxMode · switchUxMode(이전 전 12760~12775줄 · 구획 「Adaptive UX Mode」)",
+    "renderAdaptiveModeBar(이전 전 12778~12788줄 · 구획 「Adaptive UX Mode」)"
    ],
    "lines": 64,
    "over800": false,
@@ -11017,7 +11404,8 @@
     "TASK-ES-444"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -11116,8 +11504,8 @@
    "header": [
     "OurGoal PWA Install Guide (설정 — 홈 화면 추가 안내·키보드 가림 방지)",
     "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
-    "renderIosPwaBanner · openIosPwaInstallGuideModal(이전 전 13018~13155줄 · 구획 「iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)」)",
-    "initKeyboardShield(이전 전 22959~22978줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)"
+    "renderIosPwaBanner · openIosPwaInstallGuideModal(이전 전 13052~13189줄 · 구획 「iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)」)",
+    "initKeyboardShield(이전 전 21724~21743줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)"
    ],
    "lines": 241,
    "over800": false,
@@ -11149,7 +11537,8 @@
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-234-IOS-PWA-GUIDE.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
