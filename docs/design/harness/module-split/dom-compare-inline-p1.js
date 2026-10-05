@@ -20,8 +20,8 @@ function serve(dir) {
     res.writeHead(200, { 'Content-Type': MIME[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     fs.createReadStream(f).pipe(res);
   });
-  const port = 5500 + Math.floor(Math.random() * 400);
-  return new Promise(r => s.listen(port, () => r({ s, base: 'http://127.0.0.1:' + port })));
+  // 빈 포트를 운영체제가 고른다(같은 PC 에서 다른 측정이 돌아도 포트가 부딪치지 않게)
+  return new Promise(r => s.listen(0, '127.0.0.1', () => r({ s, base: 'http://127.0.0.1:' + s.address().port })));
 }
 const click = sel => ({ evalFn: '(function(){ var el = document.querySelector(' + JSON.stringify(sel) + '); if(!el) return "missing"; el.click(); return "clicked:" + (el.textContent||"").trim().slice(0,12); })()' });
 const clickIn = sel => ({ evalFn: '(function(){ var root = document.querySelector("#modalOverlay"); var el = root && root.querySelector(' + JSON.stringify(sel) + '); if(!el) return "missing"; el.click(); return "clicked:" + (el.textContent||"").trim().slice(0,12) + "|" + JSON.stringify(el.dataset); })()' });
