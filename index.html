@@ -2226,7 +2226,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script>
-<script src="js/core/ui-helpers.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
+<script src="js/core/ui-helpers.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
 <script src="js/core/modal.js"></script>
@@ -2246,14 +2246,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/render.js"></script>
 <script src="js/tabs/goals/result-modal.js"></script>
 <script src="js/tabs/goals/team-goal-modals.js"></script><script src="js/tabs/goals/template-quick-import.js"></script><script src="js/tabs/goals/result-input.js"></script><script src="js/tabs/goals/prompt-encyclopedia.js"></script><script src="js/tabs/goals/notion-record-convert.js"></script><script src="js/tabs/goals/goal-math.js"></script><script src="js/tabs/goals/goal-export.js"></script>
-<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/new-goal-modal.js"></script><script src="js/tabs/goals/goals-ia-actions.js"></script><script src="js/tabs/goals/template-encyclopedia.js"></script><script src="js/tabs/goals/focus-autopilot.js"></script><script src="js/tabs/goals/index.js"></script>
+<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/new-goal-modal.js"></script><script src="js/tabs/goals/goals-ia-actions.js"></script><script src="js/tabs/goals/template-encyclopedia.js"></script><script src="js/tabs/goals/focus-autopilot.js"></script><script src="js/tabs/goals/goal-update-suggest.js"></script><script src="js/tabs/goals/attachments.js"></script><script src="js/tabs/goals/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
 <script src="js/tabs/records/sub-timeline.js"></script>
 <script src="js/tabs/records/sub-timer.js"></script>
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/checkin-helpers.js"></script><script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/external-import.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
@@ -2714,6 +2714,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get openSelectCompanionForStoryModal(){ return openSelectCompanionForStoryModal; },
     get openSelectTeamForStoryModal(){ return openSelectTeamForStoryModal; }
   });
+  /* [#TASK-ES-483] js/tabs/goals/goal-update-suggest.js · js/tabs/records/external-import.js · js/tabs/goals/attachments.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var maybeShowGoalUpdateModal = _goalsKit.maybeShowGoalUpdateModal;
+  var openHomeCustomizer = _recordsKit.openHomeCustomizer;
+  var bindImportExternalBtn = _recordsKit.bindImportExternalBtn;
+  var bindPersonalGuideBtn = _recordsKit.bindPersonalGuideBtn;
+  var renderAttachmentChipsHtml = _goalsKit.renderAttachmentChipsHtml;
+  var renderInlineAttachmentChips = _goalsKit.renderInlineAttachmentChips;
+  var openAttachmentViewer = _goalsKit.openAttachmentViewer;
+  var openAddAttachmentModal = _goalsKit.openAddAttachmentModal;
+  var wireAttachmentChipClicks = _goalsKit.wireAttachmentChipClicks;
+  var normalizeSequentialMilestoneDates = _goalsKit.normalizeSequentialMilestoneDates;
+  var applyGoalAgentOp = _goalsKit.applyGoalAgentOp;
+  window.OurgoalAppScope.expose('index.html', {
+    get EXTERNAL_DATA(){ return EXTERNAL_DATA; },
+    get btnShowGuide(){ return btnShowGuide; },
+    get sanitizeAttachments(){ return sanitizeAttachments; }
+  });
   /* [어려움 이음매 자리 H2] */
   /* [#TASK-ES-481] js/tabs/goals/goals-ia-actions.js · js/tabs/goals/template-encyclopedia.js · js/tabs/records/archive-toggle.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var switchGoalsSubTab = _goalsKit.switchGoalsSubTab;
@@ -2858,6 +2875,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get renderSettingsScreen(){ return renderSettingsScreen; },
     get screens(){ return screens; },
     get syncLockScreenLiveCard(){ return syncLockScreenLiveCard; }
+  });
+  /* [#TASK-ES-482] js/core/confetti.js · js/core/badges.js · js/core/trash-bin.js · js/core/gcal-sync.js — 가져오기 19개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var burstConfetti = _uiKit.burstConfetti;
+  var showUndoPrivacyToast = _uiKit.showUndoPrivacyToast;
+  var badgeContext = _uiKit.badgeContext;
+  var BADGES = _uiKit.BADGES;
+  var openHallOfFame = _uiKit.openHallOfFame;
+  var getTrashList = _uiKit.getTrashList;
+  var moveToTrash = _uiKit.moveToTrash;
+  var openTrashModal = _uiKit.openTrashModal;
+  var isGoogleCalendarConnected = _uiKit.isGoogleCalendarConnected;
+  var openGoogleCalendarConnectModal = _uiKit.openGoogleCalendarConnectModal;
+  var fetchGoogleCalendarEvents = _uiKit.fetchGoogleCalendarEvents;
+  var syncAllToGoogleCalendar = _uiKit.syncAllToGoogleCalendar;
+  var nextDayISO = _uiKit.nextDayISO;
+  var restoreGoogleToken = _uiKit.restoreGoogleToken;
+  var gcalTokenStatus = _uiKit.gcalTokenStatus;
+  var requestGoogleToken = _uiKit.requestGoogleToken;
+  var getGoogleAccessToken = _uiKit.getGoogleAccessToken;
+  var openGcalImportModal = _uiKit.openGcalImportModal;
+  var openGcalExportModal = _uiKit.openGcalExportModal;
+  window.OurgoalAppScope.expose('index.html', {
+    get gcalCurrentUid(){ return gcalCurrentUid; },
+    get gcalEventsKey(){ return gcalEventsKey; },
+    get purgeLegacySharedGcalKeys(){ return purgeLegacySharedGcalKeys; },
+    get pushCalendarEvent(){ return pushCalendarEvent; },
+    get toastTimer(){ return toastTimer; }, set toastTimer(v){ toastTimer = v; },
+    get totalCompletedMilestones(){ return totalCompletedMilestones; }
   });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
@@ -3135,32 +3180,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-471] parseAttribution · getSid · getAttribution · recordLanding · track · dayIndexSinceSignup · trackGoalCreated · fmtDuration · dDay → js/core/telemetry.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* [#TASK-ES-354 CORE-07] download → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   /* ============ Confetti ============ */
-  function burstConfetti(x, y, count){
-    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    count = count || 18;
-    var layer = document.getElementById('confettiLayer');
-    if(!layer){
-      layer = document.createElement('div');
-      layer.id = 'confettiLayer';
-      document.body.appendChild(layer);
-    }
-    var colors = ['#FF4F64','#FF9F1C','#1FC98E','#6C5CE7','#FFD166'];
-    for(var i=0;i<count;i++){
-      var p = document.createElement('div');
-      p.className = 'confetti-piece';
-      var angle = (Math.PI * 2 * i) / count + Math.random()*0.4;
-      var dist = 60 + Math.random()*90;
-      p.style.left = x + 'px';
-      p.style.top = y + 'px';
-      p.style.background = colors[i % colors.length];
-      p.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
-      p.style.setProperty('--dy', (Math.sin(angle)*dist + 60) + 'px');
-      p.style.setProperty('--rot', (Math.random()*720-360) + 'deg');
-      p.style.animationDelay = (Math.random()*0.08) + 's';
-      layer.appendChild(p);
-      (function(el){ setTimeout(function(){ el.remove(); }, 1100); })(p);
-    }
-  }
+  /* [#TASK-ES-482] burstConfetti → js/core/confetti.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   var toastTimer=null;
   function toast(msg){
@@ -3176,34 +3196,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.toast = toast;
     window.showToast = toast;
   }
-
-  /* #TASK-ES-333: 같은 테마 공개 안내 및 1초 되돌리기(나만 보기로 변경) 토스트 배선 */
-  function showUndoPrivacyToast(goalId){
-    var el = document.getElementById('toast');
-    if(!el) return;
-    el.innerHTML = '<span style="vertical-align:middle;">🏷️ 같은 테마 러너에게만 공유돼요</span> ' +
-      '<button id="btnUndoThemePrivacy" type="button" style="background:#fff;color:#1e293b;border:none;border-radius:6px;padding:3px 9px;font-size:12px;font-weight:700;margin-left:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.2);">🔒 나만 보기로 변경</button>';
-    el.classList.add('show');
-    clearTimeout(toastTimer);
-    var btn = el.querySelector('#btnUndoThemePrivacy');
-    if(btn){
-      btn.onclick = async function(e){
-        e.stopPropagation();
-        var target = (state.profile && state.profile.goals || []).find(function(g){ return g.id === goalId; });
-        if(target){
-          target.visibility = 'private';
-          await saveProfile();
-          if(typeof dispatchFullViewPropagation === 'function'){
-            dispatchFullViewPropagation('goal_update', { goalId: goalId });
-          } else {
-            renderAll();
-          }
-        }
-        toast('🔒 나만 보기로 변경되었어요');
-      };
-    }
-    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 5000);
-  }
+  /* [#TASK-ES-482] showUndoPrivacyToast → js/core/confetti.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.showUndoPrivacyToast = showUndoPrivacyToast;
   }
@@ -3392,47 +3385,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     p.goals.forEach(function(g){ (g.milestones||[]).forEach(function(m){ if(m.status==='done') n++; }); });
     return n;
   }
-  function badgeContext(p){
-    return {
-      records: p.records.length,
-      streak: computeStreakDays(),
-      msDone: totalCompletedMilestones(p),
-      level: levelForXP((p.settings.xp && p.settings.xp.total) || 0),
-      archived: p.goals.filter(function(g){ return !!g.archivedAt; }).length
-    };
-  }
-  var BADGES = [
-    { id:'first_record', icon:'✍️', label:'첫 발걸음', desc:'기록을 1개 이상 남기면', check:function(ctx){ return ctx.records>=1; } },
-    { id:'streak_3', icon:'🔥', label:'3일 연속', desc:'3일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=3; } },
-    { id:'streak_7', icon:'🔥🔥', label:'7일 연속', desc:'7일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=7; } },
-    { id:'streak_30', icon:'🔥🔥🔥', label:'30일 연속', desc:'30일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=30; } },
-    { id:'record_50', icon:'📚', label:'기록 마스터', desc:'기록을 50개 이상 남기면', check:function(ctx){ return ctx.records>=50; } },
-    { id:'ms_5', icon:'🎯', label:'마일스톤 헌터', desc:'마일스톤을 5개 이상 완료하면', check:function(ctx){ return ctx.msDone>=5; } },
-    { id:'ms_20', icon:'🏹', label:'마일스톤 정복자', desc:'마일스톤을 20개 이상 완료하면', check:function(ctx){ return ctx.msDone>=20; } },
-    { id:'level_5', icon:'⭐', label:'레벨 5', desc:'레벨 5를 달성하면', check:function(ctx){ return ctx.level>=5; } },
-    { id:'level_10', icon:'🌟', label:'레벨 10', desc:'레벨 10을 달성하면', check:function(ctx){ return ctx.level>=10; } },
-    { id:'first_finish', icon:'🏆', label:'첫 완주', desc:'목표를 1개 이상 완주(보관)하면', check:function(ctx){ return ctx.archived>=1; } }
-  ];
-  function openHallOfFame(){
-    var ctx = badgeContext(state.profile);
-    var unlocked = BADGES.filter(function(b){ return b.check(ctx); });
-    openModal(
-      '<h3>명예의 전당</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">'+unlocked.length+' / '+BADGES.length+'개 획득</p>' +
-      '<div class="badge-grid">' +
-        BADGES.map(function(b){
-          var on = b.check(ctx);
-          return '<div class="badge-tile'+(on?' on':'')+'">' +
-            '<div class="badge-icon">'+(on?b.icon:'🔒')+'</div>' +
-            '<div class="badge-label">'+escapeHtml(b.label)+'</div>' +
-            '<div class="badge-desc">'+escapeHtml(b.desc)+'</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-primary" id="hofClose" type="button">닫기</button></div>',
-      function(sheet){ sheet.querySelector('#hofClose').addEventListener('click', closeModal); }
-    );
-  }
+  /* [#TASK-ES-482] badgeContext · BADGES · openHallOfFame → js/core/badges.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   function defaultProfile(id, username, displayName){
     return {
@@ -4907,7 +4860,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var b = document.getElementById('offlineNoticeBanner');
     if(b) b.style.display = 'none';
     toast('온라인에 다시 연결되었어요. 오프라인 기록을 동기화합니다.');
-    OfflineSyncManager.flush();
+    OfflineSyncManager.syncOnline(); /* [#TASK-ES-490] 처리기 없는 flush() 가 보내지도 않고 큐를 비우던 것 → 저장 성공 뒤에만 비움·실패 시 유지·재시도 */
   });
   window.addEventListener('offline', function(){
     var b = document.getElementById('offlineNoticeBanner');
@@ -5949,313 +5902,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-437] sendToNotion → js/tabs/settings/notion-sync.js 로 옮김(인라인 스크립트 세포화 P0) */
   /* ============ 구글 캘린더 연동 ============ */
     /* ============ [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템 ============ */
-  function getTrashList(){
-    if(!state.profile) return [];
-    if(Array.isArray(state.profile.trash)) return state.profile.trash;
-    var uidVal = state.profile.id || 'guest';
-    var cached = [];
-    try { cached = JSON.parse(localStorage.getItem('ourgoal_trash_backup_' + uidVal) || '[]'); } catch(e){}
-    state.profile.trash = Array.isArray(cached) ? cached : [];
-    return state.profile.trash;
-  }
-
-  function autoPurgeExpiredTrash(){
-    if(!state.profile || !Array.isArray(state.profile.trash)) return;
-    var now = Date.now();
-    var beforeLen = state.profile.trash.length;
-    state.profile.trash = state.profile.trash.filter(function(item){
-      return item && item.expiresAt && item.expiresAt > now;
-    });
-    if(state.profile.trash.length !== beforeLen){
-      var uidVal = state.profile.id || 'guest';
-      try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
-      if(typeof saveProfile === 'function') saveProfile().catch(function(){});
-    }
-  }
-
-  async function moveToTrash(entityType, entityId, payload, source, title){
-    if(!state.profile) return;
-    autoPurgeExpiredTrash();
-    var trash = getTrashList();
-    var itemTitle = title || (payload && (payload.title || payload.text)) || '항목';
-    var expiresAt = Date.now() + (7 * 24 * 60 * 60 * 1000);
-
-    var snapshot = null;
-    try { snapshot = JSON.parse(JSON.stringify(payload)); } catch(e){ snapshot = payload; }
-
-    var trashItem = {
-      id: uid('trash'),
-      originalId: entityId,
-      entityType: entityType,
-      title: itemTitle,
-      payload: snapshot,
-      deletedAt: Date.now(),
-      expiresAt: expiresAt,
-      source: source || 'in_app'
-    };
-
-    trash.unshift(trashItem);
-    if(trash.length > 100) state.profile.trash = trash.slice(0, 100);
-
-    if(entityType === 'goal'){
-      state.profile.goals = (state.profile.goals || []).filter(function(g){ return g.id !== entityId; });
-      if(state.activeGoalId === entityId) state.activeGoalId = null;
-      var goal = { id: entityId };
-      try { await sb.from('goals').update({ deleted_at: new Date().toISOString() }).eq('id', goal.id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(entityType === 'schedule'){
-      state.profile.settings = state.profile.settings || {};
-      state.profile.settings.customSchedules = (state.profile.settings.customSchedules || []).filter(function(c){ return c.id !== entityId; });
-    } else if(entityType === 'record'){
-      state.profile.records = (state.profile.records || []).filter(function(r){ return r.id !== entityId; });
-      if(payload && payload.linkedScheduleId && state.profile.settings && state.profile.settings.customSchedules){
-        state.profile.settings.customSchedules = state.profile.settings.customSchedules.filter(function(c){
-          return c.id !== payload.linkedScheduleId && c.recordId !== entityId;
-        });
-      }
-      var id = entityId;
-      try { await sb.from('checkins').update({ deleted_at: new Date().toISOString() }).eq('id', id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(entityType === 'gcal'){
-      if(Array.isArray(state.gcalEventsCache)){
-        state.gcalEventsCache = state.gcalEventsCache.filter(function(e){ return e.id !== entityId; });
-        try { localStorage.setItem(gcalEventsKey(), JSON.stringify(state.gcalEventsCache)); } catch(e){}
-      }
-    }
-
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
-    await saveProfile();
-
-    if(typeof renderHome === 'function') renderHome();
-    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    if(typeof renderStatsScreen === 'function') renderStatsScreen();
-    if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
-
-    toastWithTrashUndo('🗑️ "' + escapeHtml(itemTitle) + '" 항목을 휴지통으로 이동했어요 (7일간 보관)', trashItem.id);
-    return trashItem;
-  }
-
-  async function restoreFromTrash(trashId){
-    if(!state.profile) return;
-    var trash = getTrashList();
-    var idx = trash.findIndex(function(x){ return x.id === trashId; });
-    if(idx === -1){ toast('복원할 항목을 찾을 수 없습니다.'); return; }
-    var item = trash[idx];
-    var payload = item.payload;
-
-    if(item.entityType === 'goal'){
-      payload.deleted_at = null;
-      state.profile.goals = state.profile.goals || [];
-      if(!state.profile.goals.some(function(g){ return g.id === payload.id; })){
-        state.profile.goals.push(payload);
-      }
-      try { await sb.from('goals').update({ deleted_at: null }).eq('id', payload.id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(item.entityType === 'schedule'){
-      state.profile.settings = state.profile.settings || {};
-      state.profile.settings.customSchedules = state.profile.settings.customSchedules || [];
-      if(payload.linkedGoalId){
-        var goalExists = (state.profile.goals || []).some(function(g){ return g.id === payload.linkedGoalId; });
-        if(!goalExists){
-          payload.linkedGoalId = null;
-          payload.linkedGoalTitle = null;
-        }
-      }
-      if(!state.profile.settings.customSchedules.some(function(c){ return c.id === payload.id; })){
-        state.profile.settings.customSchedules.push(payload);
-      }
-      if(isGoogleCalendarConnected()){
-        syncAllToGoogleCalendar(false).catch(function(){});
-      }
-    } else if(item.entityType === 'record'){
-      payload.deleted_at = null;
-      state.profile.records = state.profile.records || [];
-      if(!state.profile.records.some(function(r){ return r.id === payload.id; })){
-        state.profile.records.unshift(payload);
-      }
-      try { await sb.from('checkins').update({ deleted_at: null }).eq('id', payload.id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(item.entityType === 'gcal'){
-      state.gcalEventsCache = state.gcalEventsCache || [];
-      if(!state.gcalEventsCache.some(function(e){ return e.id === payload.id; })){
-        state.gcalEventsCache.push(payload);
-      }
-      if(isGoogleCalendarConnected()){
-        syncAllToGoogleCalendar(false).catch(function(){});
-      }
-    }
-
-    trash.splice(idx, 1);
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(trash)); } catch(e){}
-    await saveProfile();
-
-    if(typeof renderHome === 'function') renderHome();
-    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    if(typeof renderStatsScreen === 'function') renderStatsScreen();
-    if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
-
-    toast('✨ "' + escapeHtml(item.title) + '" 항목을 원래 위치로 원복했어요!');
-  }
-
-  async function permanentDeleteFromTrash(trashId){
-    if(!state.profile) return;
-    var trash = getTrashList();
-    var item = trash.find(function(x){ return x.id === trashId; });
-    if(!item) return;
-    if(!(await OurgoalCapabilities.call('ui.confirm', '"' + item.title + '" 항목을 영구 삭제할까요?\n더 이상 복구할 수 없습니다.'))) return;
-    state.profile.trash = trash.filter(function(x){ return x.id !== trashId; });
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
-    await saveProfile();
-    toast('항목을 완전히 영구 삭제했습니다');
-  }
-
-  async function emptyTrash(){
-    if(!state.profile) return;
-    var trash = getTrashList();
-    if(!trash.length){ toast('휴지통이 이미 비어 있습니다'); return; }
-    if(!(await OurgoalCapabilities.call('ui.confirm', '휴지통을 완전히 비울까요?\n보관 중인 ' + trash.length + '개 항목이 모두 영구 삭제되며 복구할 수 없습니다.'))) return;
-    state.profile.trash = [];
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify([])); } catch(e){}
-    await saveProfile();
-    toast('휴지통을 완전히 비웠습니다');
-  }
-
-  function toastWithTrashUndo(msg, trashId){
-    var prev = document.getElementById('trashUndoToast');
-    if(prev) prev.remove();
-    var bar = document.createElement('div');
-    bar.id = 'trashUndoToast';
-    bar.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:24px;font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;max-width:92vw;pointer-events:none;';
-    bar.innerHTML = '<span>' + msg + '</span><button type="button" id="btnTrashUndoAction" style="background:var(--brand);color:#fff;border:none;padding:4px 10px;border-radius:12px;font-size:.8125rem;font-weight:700;cursor:pointer;flex:0 0 auto;pointer-events:auto;">실행 취소</button>';
-    document.body.appendChild(bar);
-    var uBtn = bar.querySelector('#btnTrashUndoAction');
-    if(uBtn){
-      uBtn.onclick = async function(){
-        bar.remove();
-        await restoreFromTrash(trashId);
-      };
-    }
-    setTimeout(function(){ if(bar.parentNode) bar.remove(); }, 6000);
-  }
-
-  function openTrashModal(){
-    autoPurgeExpiredTrash();
-    var trash = getTrashList();
-    var activeFilter = 'all';
-
-    function renderModalContent(filter){
-      activeFilter = filter || activeFilter;
-      var filtered = trash.filter(function(it){
-        if(activeFilter === 'all') return true;
-        return it.entityType === activeFilter;
-      });
-
-      var typeIcon = function(t){
-        if(t === 'goal') return '🎯 목표';
-        if(t === 'schedule') return '📅 일정';
-        if(t === 'record') return '📝 기록';
-        if(t === 'gcal') return '🗓️ 구글';
-        return '📦 항목';
-      };
-
-      var listHtml = filtered.length ? (
-        '<div style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin:12px 0;">' +
-        filtered.map(function(item){
-          var remainingDays = Math.max(1, Math.ceil((item.expiresAt - Date.now()) / (86400000)));
-          var dDayText = (remainingDays <= 1) ? '<span style="color:var(--brand-strong);font-weight:700;font-size:.75rem;">오늘 자동삭제</span>' : ('<span class="dday-mini">D-' + remainingDays + '</span>');
-          var delDateStr = new Date(item.deletedAt).toLocaleDateString('ko-KR', { month:'short', day:'numeric' });
-          return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
-            '<div style="flex:1;min-width:0;">' +
-              '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap;">' +
-                '<span class="sched-goal-badge" style="font-size:.75rem;padding:1px 6px;">' + typeIcon(item.entityType) + '</span>' +
-                dDayText +
-                '<span class="faint" style="font-size:.75rem;">(' + delDateStr + ' 삭제)</span>' +
-              '</div>' +
-              '<div style="font-weight:700;font-size:.875rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
-                escapeHtml(item.title) +
-              '</div>' +
-            '</div>' +
-            '<div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">' +
-              '<button class="btn btn-primary btn-sm" data-trashrestore="' + item.id + '" type="button" style="font-size:.8125rem;padding:4px 8px;">원복</button>' +
-              '<button class="icon-btn" data-trashdel="' + item.id + '" type="button" title="영구 삭제" style="color:var(--brand-strong);font-size:1rem;padding:4px 6px;">×</button>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-        '</div>'
-      ) : (
-        '<div class="empty-state" style="padding:24px 10px;margin:14px 0;">' +
-          '<div class="e-icon">🗑️</div>' +
-          '<p style="margin:4px 0 0;font-size:.875rem;font-weight:700;">휴지통이 비어 있습니다</p>' +
-          '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">삭제된 목표, 일정, 기록은 7일간 안전하게 보관됩니다.</p>' +
-        '</div>'
-      );
-
-      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
-        '<h3 style="margin:0;display:flex;align-items:center;gap:6px;"><span>🗑️ 휴지통</span> <span class="faint" style="font-size:.875rem;font-weight:400;">(' + trash.length + '개 보관 중)</span></h3>' +
-        (trash.length ? '<button class="btn btn-ghost btn-sm" id="btnEmptyTrashAll" type="button" style="color:var(--brand-strong);font-size:.8125rem;padding:3px 8px;border-color:var(--rule);">휴지통 비우기</button>' : '') +
-      '</div>' +
-      '<p class="faint" style="font-size:.8125rem;margin:0 0 10px;">삭제된 항목은 7일 후 완전히 자동 삭제됩니다. 언제든 원래 위치로 원복할 수 있습니다.</p>' +
-      '<div class="format-toggle" id="trashFilterWrap" style="margin-bottom:10px;">' +
-        '<div class="format-opt' + (activeFilter==='all'?' active':'') + '" data-trashfilt="all">전체 (' + trash.length + ')</div>' +
-        '<div class="format-opt' + (activeFilter==='goal'?' active':'') + '" data-trashfilt="goal">🎯 목표</div>' +
-        '<div class="format-opt' + (activeFilter==='schedule'?' active':'') + '" data-trashfilt="schedule">📅 일정</div>' +
-        '<div class="format-opt' + (activeFilter==='record'?' active':'') + '" data-trashfilt="record">📝 기록</div>' +
-        '<div class="format-opt' + (activeFilter==='gcal'?' active':'') + '" data-trashfilt="gcal">🗓️ 구글</div>' +
-      '</div>' +
-      '<div id="trashListContentSlot">' + listHtml + '</div>' +
-      '<div class="modal-actions" style="margin-top:12px;">' +
-        '<button class="btn btn-ghost btn-sm" id="trashCloseBtn" type="button" style="width:100%;">닫기</button>' +
-      '</div>';
-    }
-
-    openModal(renderModalContent('all'), function(sheet){
-      function bindTrashEvents(){
-        var closeBtn = sheet.querySelector('#trashCloseBtn');
-        if(closeBtn) closeBtn.onclick = closeModal;
-
-        var emptyBtn = sheet.querySelector('#btnEmptyTrashAll');
-        if(emptyBtn){
-          emptyBtn.onclick = async function(){
-            await emptyTrash();
-            trash = getTrashList();
-            sheet.innerHTML = renderModalContent(activeFilter);
-            bindTrashEvents();
-          };
-        }
-
-        sheet.querySelectorAll('[data-trashfilt]').forEach(function(opt){
-          opt.onclick = function(){
-            var f = opt.dataset.trashfilt;
-            sheet.innerHTML = renderModalContent(f);
-            bindTrashEvents();
-          };
-        });
-
-        sheet.querySelectorAll('[data-trashrestore]').forEach(function(btn){
-          btn.onclick = async function(e){
-            e.stopPropagation();
-            var tid = btn.dataset.trashrestore;
-            await restoreFromTrash(tid);
-            trash = getTrashList();
-            sheet.innerHTML = renderModalContent(activeFilter);
-            bindTrashEvents();
-          };
-        });
-
-        sheet.querySelectorAll('[data-trashdel]').forEach(function(btn){
-          btn.onclick = async function(e){
-            e.stopPropagation();
-            var tid = btn.dataset.trashdel;
-            await permanentDeleteFromTrash(tid);
-            trash = getTrashList();
-            sheet.innerHTML = renderModalContent(activeFilter);
-            bindTrashEvents();
-          };
-        });
-      }
-      bindTrashEvents();
-    });
-  }
+  /* [#TASK-ES-482] getTrashList · autoPurgeExpiredTrash · moveToTrash · restoreFromTrash · permanentDeleteFromTrash · emptyTrash · toastWithTrashUndo · openTrashModal → js/core/trash-bin.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   var googleTokenClient = null;
   /* 캘린더 사용 가능 판단을 한 곳에: 앱 상수 우선, 비면 사용자가 설정에 넣은 ID로 폴백 (A2/R5/F4) */
@@ -6264,211 +5911,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var own = ((settings && settings.gcalClientId) || '').trim();
     return !!(app || own);
   }
-  function effectiveGcalClientId(){
-    var app = (GOOGLE_OAUTH_CLIENT_ID || '').trim();
-    if(app) return app;
-    return ((state.profile && state.profile.settings && state.profile.settings.gcalClientId) || '').trim();
-  }
-  function isGoogleCalendarConnected(){
-    var s = (state.profile && state.profile.settings) || {};
-    if(s.googleCalendarConnected) return true;
-    // [#TASK-ES-345 CAL-02] 현재 uid 의 설정·토큰 키만 본다(게스트 설정·이메일 _last·_last 토큰 폴백 제거).
-    var uid = gcalCurrentUid();
-    try {
-      var rawSet = localStorage.getItem('ourgoal_settings_' + uid);
-      if(rawSet){
-        var ps = JSON.parse(rawSet);
-        if(ps && ps.googleCalendarConnected){
-          if(state.profile && state.profile.settings){
-            state.profile.settings.googleCalendarConnected = true;
-            if(ps.googleCalendarEmail && !state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = ps.googleCalendarEmail;
-          }
-          return true;
-        }
-      }
-      var ownTok = localStorage.getItem('ourgoal_gcal_token_v1_' + uid);
-      if(ownTok){
-        if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
-        return true;
-      }
-    } catch(e){}
-    if(!state.googleToken && typeof restoreGoogleToken === 'function') restoreGoogleToken();
-    if(state.googleToken) {
-      if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
-      return true;
-    }
-    return false;
-  }
-  async function tryConnectGoogleCalendar(){
-    toast('구글 계정 연동 요청 중…');
-    try{
-      var token = await requestGoogleToken();
-      if(!token) throw new Error('no token');
-      state.profile.settings.googleCalendarConnected = true;
-      try{
-        var uRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', { headers:{ Authorization: 'Bearer ' + token } });
-        if(uRes.ok){
-          var uData = await uRes.json();
-          if(uData && uData.email) state.profile.settings.googleCalendarEmail = uData.email;
-        }
-      } catch(e){}
-      if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = '연동 완료';
-      if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken, state.profile.settings.googleCalendarEmail);
-      await saveProfile();
-      toast('구글 캘린더가 연동되었습니다 · 상호 동기화 중…');
-      try { await syncAllToGoogleCalendar(); } catch(e){}
-      if(state.activeTab==='calendar') renderCalendarScreen();
-      else if(state.activeTab==='settings') renderSettingsScreen();
-    } catch(err){
-      toast('구글 캘린더 연동에 실패했어요 · 설정을 확인해주세요');
-    }
-  }
-  function openGoogleCalendarConnectModal(){
-    var clientId = effectiveGcalClientId();
-    if(!clientId){
-      openModal(
-        '<h3>구글 캘린더 연동 설정</h3>' +
-        '<p class="faint" style="margin:-8px 0 14px;">구글 캘린더와 실시간 동기화하여 목표와 일정을 한곳에서 관리하세요.</p>' +
-        '<div class="field">' +
-          '<label>Google OAuth 클라이언트 ID</label>' +
-          '<input id="gcalPromptClientId" type="text" placeholder="예: xxxxxxxx.apps.googleusercontent.com" value="'+escapeHtml((state.profile.settings&&state.profile.settings.gcalClientId)||'')+'">' +
-        '</div>' +
-        '<p class="faint" style="font-size:.8125rem;">Google Cloud Console에서 발급한 웹 클라이언트 ID를 입력해주세요.</p>' +
-        '<div style="display:flex;gap:6px;margin:10px 0 14px;">' +
-          '<a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">구글 캘린더 열기 ↗</a>' +
-          '<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">GCP 콘솔 바로가기 ↗</a>' +
-        '</div>' +
-        '<div class="modal-actions">' +
-          '<button class="btn btn-ghost" id="gcalPromptCancel" type="button">취소</button>' +
-          '<button class="btn btn-primary" id="gcalPromptSave" type="button">저장 및 연결</button>' +
-        '</div>',
-        function(sheet){
-          sheet.querySelector('#gcalPromptCancel').onclick = closeModal;
-          sheet.querySelector('#gcalPromptSave').onclick = async function(){
-            var val = (sheet.querySelector('#gcalPromptClientId').value || '').trim();
-            if(!val){ toast('클라이언트 ID를 입력해주세요'); return; }
-            state.profile.settings.gcalClientId = val;
-            googleTokenClient = null;
-            await saveProfile();
-            closeModal();
-            tryConnectGoogleCalendar();
-          };
-        }
-      );
-    } else {
-      tryConnectGoogleCalendar();
-    }
-  }
-  async function fetchGoogleCalendarEvents(token){
-    if(!token){
-      try{ token = await getGoogleAccessToken(); } catch(e){ return []; }
-    }
-    if(!token) return [];
-    var now = new Date();
-    var timeMin = new Date(now.getFullYear(), now.getMonth()-2, 1).toISOString();
-    var timeMax = new Date(now.getFullYear(), now.getMonth()+6, 0).toISOString();
-    var url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin='+encodeURIComponent(timeMin)+
-      '&timeMax='+encodeURIComponent(timeMax)+'&singleEvents=true&orderBy=startTime&maxResults=250';
-    try{
-      var res = await fetch(url, { headers:{ Authorization:'Bearer '+token } });
-      if(!res.ok) return [];
-      var data = await res.json();
-      var sync = (state.profile && state.profile.settings && state.profile.settings.gcalSync) || { goals:{}, ms:{}, tasks:{}, custom:{} };
-      var ourEvIds = {};
-      if(sync.goals) Object.values(sync.goals).forEach(function(id){ ourEvIds[id]=true; });
-      if(sync.ms) Object.values(sync.ms).forEach(function(id){ ourEvIds[id]=true; });
-      if(sync.tasks) Object.values(sync.tasks).forEach(function(id){ ourEvIds[id]=true; });
-      if(sync.custom) Object.values(sync.custom).forEach(function(id){ ourEvIds[id]=true; });
-      var doneMap = (state.profile && state.profile.settings && state.profile.settings.gcalDoneEvents) || {};
-      var prevCache = state.gcalEventsCache || [];
-      prevCache.forEach(function(pe){ if(pe.id && pe.done) doneMap[pe.id] = true; });
-      var events = (data.items||[]).filter(function(e){
-        if(e.status === 'cancelled') return false;
-        if(ourEvIds[e.id]) return false;
-        return !!(e.start && (e.start.date || e.start.dateTime));
-      }).map(function(e){
-        var dStr = e.start.date || (e.start.dateTime ? e.start.dateTime.slice(0,10) : '');
-        var dtStr = e.start.dateTime ? toDateTimeLocalValue(e.start.dateTime) : (dStr + 'T09:00');
-        return {
-          id: e.id,
-          title: e.summary || '(제목 없음)',
-          date: e.start.dateTime ? dtStr : dStr,
-          dayKey: dStr,
-          kind: 'gcal',
-          goalTitle: e.description || '구글 캘린더',
-          htmlLink: e.htmlLink || 'https://calendar.google.com',
-          done: !!doneMap[e.id]
-        };
-      });
-      state.gcalEventsCache = events;
-      try{ localStorage.setItem(gcalEventsKey(), JSON.stringify(events)); } catch(e){}
-      return events;
-    } catch(e){
-      console.warn('구글 캘린더 일정 조회 실패:', e);
-      return [];
-    }
-  }
-  async function syncAllToGoogleCalendar(interactive){
-    if(!isGoogleCalendarConnected()){
-      if(interactive) openGoogleCalendarConnectModal();
-      return;
-    }
-    var token = await getGoogleAccessToken(interactive);
-    if(!token){
-      if(interactive) toast('구글 인증이 필요해요 · [지금 동기화]를 눌러주세요');
-      return;
-    }
-    if(interactive) toast('구글 캘린더 상호 동기화 중…');
-    try{
-      var count = 0;
-      var sync = state.profile.settings.gcalSync = state.profile.settings.gcalSync || { goals:{}, ms:{}, tasks:{}, imported:{} };
-      var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-      for(var i=0; i<goals.length; i++){
-        var g = goals[i];
-        if(g.dueDate){
-          var evId = await pushCalendarEvent(token, '' + g.title, g.dueDate, sync.goals[g.id]);
-          if(evId){ sync.goals[g.id] = evId; count++; }
-        }
-        var mss = g.milestones || [];
-        for(var j=0; j<mss.length; j++){
-          var m = mss[j];
-          if(m.dueDate && m.status !== 'done'){
-            var evIdM = await pushCalendarEvent(token, '· ' + m.title + ' (' + g.title + ')', m.dueDate, (sync.ms && sync.ms[m.id]));
-            if(evIdM){ sync.ms = sync.ms || {}; sync.ms[m.id] = evIdM; count++; }
-          }
-          var tks = m.tasks || [];
-          for(var k=0; k<tks.length; k++){
-            var t = tks[k];
-            if(t.dueDate && !t.done){
-              var evIdT = await pushCalendarEvent(token, '- ' + t.title + ' (' + m.title + ')', t.dueDate, (sync.tasks && sync.tasks[t.id]));
-              if(evIdT){ sync.tasks = sync.tasks || {}; sync.tasks[t.id] = evIdT; count++; }
-            }
-          }
-        }
-      }
-      var customSchedules = state.profile.settings.customSchedules || [];
-      sync.custom = sync.custom || {};
-      for(var c=0; c<customSchedules.length; c++){
-        var cs = customSchedules[c];
-        if(cs.date && !cs.done){
-          var evIdC = await pushCalendarEvent(token, '' + cs.title, cs.date, sync.custom[cs.id]);
-          if(evIdC){ sync.custom[cs.id] = evIdC; count++; }
-        }
-      }
-      await saveProfile();
-      var gEvents = await fetchGoogleCalendarEvents(token);
-      toast('구글 캘린더와 상호 동기화 완료 (내 일정 ' + count + '개 반영 · 구글 ' + gEvents.length + '개 공유)');
-      if(state.activeTab==='calendar') renderCalendarScreen();
-      else if(state.activeTab==='settings') renderSettingsScreen();
-    } catch(err){
-      toast('동기화에 실패했어요 · 다시 시도해주세요');
-    }
-  }
-  function nextDayISO(dateStr){
-    var d = new Date(dateStr+'T00:00:00');
-    d.setDate(d.getDate()+1);
-    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-  }
+  /* [#TASK-ES-482] effectiveGcalClientId · isGoogleCalendarConnected · tryConnectGoogleCalendar · openGoogleCalendarConnectModal · fetchGoogleCalendarEvents · syncAllToGoogleCalendar · nextDayISO → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   function saveGoogleToken(tokenObj){
     var optEmail = arguments[1];
     if(!tokenObj || !tokenObj.accessToken) return;
@@ -6494,39 +5937,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       sessionStorage.setItem('ourgoal_google_token', tokenObj.accessToken);
     } catch(e){}
   }
-  function restoreGoogleToken(){
-    try {
-      // [#TASK-ES-345 CAL-02] 현재 로그인 uid 키만 읽는다. _last 키 폴백과 "아무 ourgoal_gcal_token_v1_* 키" 탐색은
-      // 같은 기기의 다른 계정 토큰으로 그 계정의 일정을 읽게 만들던 결함이라 제거했다.
-      var uid = ensureGcalOwner();
-      purgeLegacySharedGcalKeys();
-      if(state.googleToken && state.googleToken.expiresAt > Date.now()) return state.googleToken;
-      var raw = localStorage.getItem('ourgoal_gcal_token_v1_' + uid);
-      if(!raw) return state.googleToken || null;
-      var parsed = JSON.parse(raw);
-      // 저장 당시 주인이 기록돼 있는데 현재 uid 와 다르면(키가 손으로 옮겨진 경우 등) 쓰지 않는다.
-      if(parsed && parsed.ownerUid && parsed.ownerUid !== uid) return state.googleToken || null;
-      if(parsed && parsed.accessToken){
-        state.googleToken = parsed;
-        if(parsed.expiresAt <= Date.now()){
-          parsed.isExpired = true;
-          state._lastExpiredGoogleToken = parsed;
-        }
-        if(parsed.email && state.profile && state.profile.settings){
-          state.profile.settings.googleCalendarConnected = true;
-          if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = parsed.email;
-        }
-        return parsed;
-      }
-    } catch(e){}
-    return state.googleToken || null;
-  }
-  // [#TASK-ES-345 CAL-02] 현재 계정 토큰 상태: 'valid' | 'expired' | 'missing'. 연동돼 있는데 valid 가 아니면 '다시 연결' 안내를 띄운다.
-  function gcalTokenStatus(){
-    var tok = restoreGoogleToken();
-    if(!tok || !tok.accessToken) return 'missing';
-    return tok.expiresAt > Date.now() ? 'valid' : 'expired';
-  }
+  /* [#TASK-ES-482] restoreGoogleToken · gcalTokenStatus → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.gcalTokenStatus = gcalTokenStatus;
     window.saveGoogleToken = saveGoogleToken;
@@ -6535,197 +5946,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.requestGoogleToken = requestGoogleToken;
     window.getGoogleAccessToken = getGoogleAccessToken;
   }
-  function ensureGoogleTokenClient(){
-    var clientId = effectiveGcalClientId();
-    if(!clientId){ toast('먼저 Google OAuth 클라이언트 ID를 입력해주세요'); return null; }
-    if(!window.google || !google.accounts || !google.accounts.oauth2){ toast('구글 로그인 스크립트를 불러오는 중이에요, 잠시 후 다시 시도해주세요'); return null; }
-    if(!googleTokenClient || googleTokenClient.__clientId !== clientId){
-      googleTokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: clientId,
-        scope: 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly',
-        callback: function(){}
-      });
-      googleTokenClient.__clientId = clientId;
-    }
-    return googleTokenClient;
-  }
-  function requestGoogleToken(options){
-    var opts = options || {};
-    return new Promise(function(resolve, reject){
-      var client = ensureGoogleTokenClient();
-      if(!client){
-        if(opts.silent) resolve(null);
-        else reject(new Error('no client'));
-        return;
-      }
-      client.callback = function(resp){
-        if(!resp || resp.error){
-          if(opts.silent){
-            resolve(null);
-            return;
-          }
-          reject(new Error(resp && resp.error || '인증 실패'));
-          return;
-        }
-        state.googleToken = { accessToken: resp.access_token, expiresAt: Date.now() + ((resp.expires_in||3300)*1000) };
-        var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
-        saveGoogleToken(state.googleToken, gEmail);
-        resolve(resp.access_token);
-      };
-      var hasSavedToken = !!restoreGoogleToken();
-      var isConnected = isGoogleCalendarConnected();
-      var reqOpts = { prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent' };
-      if(opts.silent) reqOpts.prompt = '';
-      var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
-      if(gEmail && gEmail.indexOf('@') !== -1) reqOpts.hint = gEmail;
-      try{ client.requestAccessToken(reqOpts); }
-      catch(e){
-        if(opts.silent) resolve(null);
-        else reject(e);
-      }
-    });
-  }
-  async function getGoogleAccessToken(interactive){
-    // [#TASK-ES-345 CAL-02] 다른 계정 토큰이 메모리에 남아 있으면 쓰지 않는다.
-    ensureGcalOwner();
-    if(!state.googleToken) restoreGoogleToken();
-    if(state.googleToken && state.googleToken.expiresAt > Date.now()+30000) return state.googleToken.accessToken;
-    var isConn = isGoogleCalendarConnected();
-    if(!interactive){
-      // [#TASK-ES-265] 백그라운드 호출 시 연동 계정이면 무인 Silent Refresh 시도
-      if(isConn){
-        try {
-          var silentTok = await requestGoogleToken({ silent: true });
-          if(silentTok) return silentTok;
-        } catch(e){}
-      }
-      if(!interactive) return null;
-    }
-    return requestGoogleToken({ silent: false });
-  }
-  async function openGcalImportModal(){
-    var token;
-    try{ token = await getGoogleAccessToken(); } catch(e){ toast('구글 인증에 실패했어요'); return; }
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    if(!goals.length){ toast('먼저 목표를 만들어주세요'); return; }
-    toast('일정을 불러오는 중…');
-    var timeMin = new Date().toISOString();
-    var timeMax = new Date(Date.now()+60*86400000).toISOString();
-    var url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin='+encodeURIComponent(timeMin)+
-      '&timeMax='+encodeURIComponent(timeMax)+'&singleEvents=true&orderBy=startTime&maxResults=25';
-    var res;
-    try{ res = await fetch(url, { headers:{ Authorization:'Bearer '+token } }); }
-    catch(e){ toast('일정을 불러오지 못했어요'); return; }
-    if(!res.ok){ toast('일정을 불러오지 못했어요 · 권한을 확인해주세요'); return; }
-    var data = await res.json();
-    var imported = state.profile.settings.gcalSync.imported || {};
-    var events = (data.items||[]).filter(function(e){ return e.status!=='cancelled' && (e.start.date || e.start.dateTime); }).map(function(e){
-      return { id:e.id, title:e.summary||'(제목 없음)', date:(e.start.date || (e.start.dateTime||'').slice(0,10)), already: !!imported[e.id] };
-    });
-    if(!events.length){ toast('앞으로 60일 안에 다가오는 일정이 없어요'); return; }
-    var sel = {}; events.forEach(function(e){ sel[e.id] = !e.already; });
-    openModal(
-      '<h3>캘린더 일정 불러오기</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">마일스톤으로 추가할 일정과, 담을 목표를 골라주세요.</p>' +
-      '<div class="field"><label>추가할 목표</label><select id="gcalTargetGoal">'+goals.map(function(g){ return '<option value="'+g.id+'">'+escapeHtml(g.title)+'</option>'; }).join('')+'</select></div>' +
-      '<div class="ms-list" style="margin-top:10px;">' +
-        events.map(function(e){
-          return '<div class="ms-row" data-gev="'+e.id+'" style="cursor:pointer;'+(e.already?'opacity:.55;':'')+'">' +
-            '<div class="ms-main">' +
-              '<div class="sel-check'+(sel[e.id]?' on':'')+'" data-gevchk="'+e.id+'">'+(sel[e.id]?'✓':'')+'</div>' +
-              '<div style="flex:1;min-width:0;"><div style="font-size:.875rem;font-weight:700;">'+escapeHtml(e.title)+'</div><div class="faint" style="font-size:.8125rem;">'+e.date+(e.already?' · 이미 가져왔어요':'')+'</div></div>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-ghost" id="gcalImpCancel" type="button">취소</button><button class="btn btn-primary" id="gcalImpConfirm" type="button">마일스톤으로 추가</button></div>',
-      function(sheet){
-        sheet.querySelector('#gcalImpCancel').addEventListener('click', closeModal);
-        sheet.querySelectorAll('[data-gev]').forEach(function(row){
-          row.addEventListener('click', function(){
-            var id = row.dataset.gev;
-            sel[id] = !sel[id];
-            var chk = row.querySelector('[data-gevchk]');
-            chk.classList.toggle('on', sel[id]);
-            chk.textContent = sel[id] ? '✓' : '';
-          });
-        });
-        sheet.querySelector('#gcalImpConfirm').addEventListener('click', async function(){
-          var gid = sheet.querySelector('#gcalTargetGoal').value;
-          var goal = state.profile.goals.find(function(g){ return g.id===gid; });
-          var picked = events.filter(function(e){ return sel[e.id]; });
-          if(!goal || !picked.length){ toast('일정을 선택해주세요'); return; }
-          picked.forEach(function(e){
-            goal.milestones.push({ id: uid('ms'), title: e.title, status:'todo', dueDate: e.date, tasks:[] });
-            state.profile.settings.gcalSync.imported[e.id] = true;
-          });
-          await saveProfile();
-          closeModal();
-          toast(picked.length+'개 일정을 "'+goal.title+'"의 마일스톤으로 추가했어요');
-          renderAll();
-        });
-      }
-    );
-  }
-  async function openGcalExportModal(){
-    var token;
-    try{ token = await getGoogleAccessToken(); } catch(e){ toast('구글 인증에 실패했어요'); return; }
-    var sync = state.profile.settings.gcalSync;
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    var items = [];
-    goals.forEach(function(g){
-      if(g.dueDate) items.push({ key:'goal:'+g.id, label:''+g.title, date:g.dueDate, kind:'goal', goal:g, already: sync.goals[g.id]||null });
-      g.milestones.forEach(function(m){
-        if(m.dueDate && m.status!=='done') items.push({ key:'ms:'+m.id, label:'· '+m.title+' ('+g.title+')', date:m.dueDate, kind:'ms', goal:g, ms:m, already: sync.ms[m.id]||null });
-      });
-    });
-    if(!items.length){ toast('캘린더에 반영할 마감일이 있는 목표·마일스톤이 없어요'); return; }
-    var sel = {}; items.forEach(function(it){ sel[it.key] = true; });
-    openModal(
-      '<h3>목표를 캘린더에 반영하기</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">마감일이 있는 목표·마일스톤을 구글 캘린더 일정으로 만들어요.</p>' +
-      '<div class="ms-list">' +
-        items.map(function(it){
-          return '<div class="ms-row" data-gxp="'+it.key+'" style="cursor:pointer;">' +
-            '<div class="ms-main">' +
-              '<div class="sel-check on" data-gxpchk="'+it.key+'"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
-              '<div style="flex:1;min-width:0;"><div style="font-size:.875rem;font-weight:700;">'+escapeHtml(it.label)+'</div><div class="faint" style="font-size:.8125rem;">'+it.date+(it.already?' · 이미 캘린더에 있어요 · 다시 반영하면 갱신돼요':'')+'</div></div>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-ghost" id="gcalExpCancel" type="button">취소</button><button class="btn btn-primary" id="gcalExpConfirm" type="button">캘린더에 반영</button></div>',
-      function(sheet){
-        sheet.querySelector('#gcalExpCancel').addEventListener('click', closeModal);
-        sheet.querySelectorAll('[data-gxp]').forEach(function(row){
-          row.addEventListener('click', function(){
-            var key = row.dataset.gxp;
-            sel[key] = !sel[key];
-            var chk = row.querySelector('[data-gxpchk]');
-            chk.classList.toggle('on', sel[key]);
-            chk.textContent = sel[key] ? '✓' : '';
-          });
-        });
-        sheet.querySelector('#gcalExpConfirm').addEventListener('click', async function(){
-          var picked = items.filter(function(it){ return sel[it.key]; });
-          if(!picked.length){ toast('반영할 항목을 선택해주세요'); return; }
-          closeModal();
-          toast('캘린더에 반영하는 중…');
-          var okCount = 0;
-          for(var i=0;i<picked.length;i++){
-            var it = picked[i];
-            var evId = await pushCalendarEvent(token, it.label, it.date, it.already);
-            if(evId){
-              if(it.kind==='goal') sync.goals[it.goal.id] = evId; else sync.ms[it.ms.id] = evId;
-              okCount++;
-            }
-          }
-          await saveProfile();
-          toast(okCount+'개 일정을 캘린더에 반영했어요');
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-482] ensureGoogleTokenClient · requestGoogleToken · getGoogleAccessToken · openGcalImportModal · openGcalExportModal → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   /* ============ 일정(캘린더) 탭 ============ */
   /* [#TASK-ES-360] WEEKDAYS_KR → js/tabs/calendar/render.js 로 옮김(일정 탭 세포) */
   function isoDate(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
@@ -9638,141 +8859,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-436] requestGeminiFeedback → js/tabs/records/ai-feedback-providers.js 로 옮김(인라인 스크립트 세포화 P1) */
   var DONE_KEYWORDS = ['완료','다 했','다했','끝냈','끝났','달성','마쳤','마무리','성공','clear','done'];
   /* [#TASK-ES-436] localFeedback → js/tabs/records/ai-feedback-providers.js 로 옮김(인라인 스크립트 세포화 P1) */
-  /* ============ 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안 ============ */
-  function findSuggestionTarget(goal, s){
-    if(s.type==='milestone'){
-      var m = goal.milestones.find(function(x){ return x.id===s.id; });
-      return m ? { milestone:m } : null;
-    }
-    if(s.type==='task'){
-      var found = null;
-      goal.milestones.forEach(function(m){ (m.tasks||[]).forEach(function(t){ if(t.id===s.id) found = { milestone:m, task:t }; }); });
-      return found;
-    }
-    return null;
-  }
-  function sanitizeSuggestions(goal, suggestions){
-    var STATUS_VALUES = ['todo','doing','done'];
-    return (suggestions||[]).filter(function(s){
-      if(!s || !s.type || !s.id || !s.field) return false;
-      var target = findSuggestionTarget(goal, s);
-      if(!target) return false;
-      if(s.field==='status') return s.type==='milestone' && STATUS_VALUES.indexOf(s.value)!==-1 && target.milestone.status!==s.value;
-      if(s.field==='done') return s.type==='task' && (s.value===true||s.value===false) && !!target.task.done!==!!s.value;
-      if(s.field==='result'){
-        var obj = s.type==='task' ? target.task : target.milestone;
-        return !!(obj.result && obj.result.target) && !isNaN(Number(s.value));
-      }
-      if(s.field==='note'){
-        var noteObj = s.type==='task' ? target.task : target.milestone;
-        var v = typeof s.value==='string' ? s.value.trim() : '';
-        return !!v && (!noteObj.result || noteObj.result.note!==v);
-      }
-      return false;
-    });
-  }
-  function describeSuggestion(goal, s){
-    var target = findSuggestionTarget(goal, s);
-    var name = s.type==='task' ? target.task.title : target.milestone.title;
-    var icon = s.field==='note' ? '📝' : (s.type==='task' ? '✅' : '🎯');
-    var label;
-    if(s.field==='status') label = (s.type==='milestone'?'마일스톤':'')+' "'+name+'" → '+(s.value==='done'?'완료로':(s.value==='doing'?'진행중으로':'시작 전으로'))+' 변경';
-    else if(s.field==='done') label = '할 일 "'+name+'" → '+(s.value?'완료 체크':'완료 해제');
-    else if(s.field==='note') label = '"'+name+'" 결과 메모 → "'+s.value+'"';
-    else label = '"'+name+'" 결과 수치 → '+s.value+'로 업데이트';
-    return { icon:icon, label:label, reason:s.reason||'' };
-  }
-  function applySuggestion(goal, s){
-    var target = findSuggestionTarget(goal, s);
-    if(!target) return false;
-    if(s.field==='status'){ target.milestone.status = s.value; return true; }
-    if(s.field==='done'){ target.task.done = !!s.value; return true; }
-    if(s.field==='result'){
-      var obj = s.type==='task' ? target.task : target.milestone;
-      obj.result.result = s.value;
-      if(Number(s.value) >= Number(obj.result.target)){
-        if(s.type==='task') obj.done = true; else obj.status = 'done';
-      }
-      return true;
-    }
-    if(s.field==='note'){
-      var noteObj = s.type==='task' ? target.task : target.milestone;
-      if(!noteObj.result) noteObj.result = { target:'', result:'', unit:'회', note:'' };
-      noteObj.result.note = s.value;
-      return true;
-    }
-    return false;
-  }
-  function maybeShowGoalUpdateModal(goal, fb){
-    if(!goal || !fb || state.profile.settings.autoUpdateSuggest===false) return;
-    var valid = sanitizeSuggestions(goal, fb.suggestions);
-    if(!valid.length) return;
-    openModal(
-      '<h3>진행 상황이 바뀐 것 같아요</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">방금 남긴 기록을 보고 AI가 발견한 변경사항이에요. 반영할 항목만 골라주세요.</p>' +
-      '<div class="ms-list">' +
-        valid.map(function(s, idx){
-          var d = describeSuggestion(goal, s);
-          return '<div class="ms-row" data-sugpick="'+idx+'" style="cursor:pointer;">' +
-            '<div class="ms-main">' +
-              '<div class="sel-check on" data-sugchk="'+idx+'"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
-              '<div style="flex:1;min-width:0;">' +
-                '<div style="font-size:.875rem;font-weight:700;">'+d.icon+' '+escapeHtml(d.label)+'</div>' +
-                (d.reason ? '<div class="faint" style="font-size:.8125rem;">'+escapeHtml(d.reason)+'</div>' : '') +
-              '</div>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-ghost" id="sugSkipBtn" type="button">그냥 둘게요</button><button class="btn btn-primary" id="sugApplyBtn" type="button">선택 반영하기</button></div>',
-      function(sheet){
-        var checked = valid.map(function(){ return true; });
-        sheet.querySelectorAll('[data-sugpick]').forEach(function(row){
-          row.addEventListener('click', function(){
-            var i = +row.dataset.sugpick;
-            checked[i] = !checked[i];
-            var chk = row.querySelector('[data-sugchk]');
-            chk.classList.toggle('on', checked[i]);
-            chk.textContent = checked[i] ? '✓' : '';
-          });
-        });
-        sheet.querySelector('#sugSkipBtn').addEventListener('click', closeModal);
-        sheet.querySelector('#sugApplyBtn').addEventListener('click', async function(){
-          var applied = [];
-          var newlyDoneMsCount = 0;
-          var newlyDoneMs = [];
-          valid.forEach(function(s, i){
-            if(!checked[i]) return;
-            var target = findSuggestionTarget(goal, s);
-            var wasMsDone = s.type==='milestone' && target && target.milestone.status==='done';
-            if(applySuggestion(goal, s)){
-              applied.push(describeSuggestion(goal, s));
-              if(s.type==='milestone' && target && !wasMsDone && target.milestone.status==='done'){
-                newlyDoneMsCount++;
-                newlyDoneMs.push(target.milestone);
-              }
-            }
-          });
-          if(!applied.length){ closeModal(); return; }
-          var lastXpRes = null;
-          for(var i=0;i<newlyDoneMsCount;i++) lastXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
-          await saveProfile();
-          closeModal();
-          var becameDone = applied.some(function(a){ return a.label.indexOf('완료')!==-1; });
-          if(becameDone && !newlyDoneMs.length){
-            if(navigator.vibrate) navigator.vibrate([12,40,24]);
-            var btnRect = document.getElementById('captureSave').getBoundingClientRect();
-            burstConfetti(btnRect.left+btnRect.width/2, btnRect.top);
-          }
-          toast(applied.length+'개 항목을 목표에 반영했어요 🎯');
-          renderAll();
-          renderLevelBadge();
-          if(lastXpRes && lastXpRes.leveledUp) showLevelUpBanner(levelForXP(lastXpRes.total));
-          if(newlyDoneMs.length) celebrateMilestoneDone(goal, newlyDoneMs[0]);
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-483] findSuggestionTarget · sanitizeSuggestions · describeSuggestion · applySuggestion · maybeShowGoalUpdateModal → js/tabs/goals/goal-update-suggest.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
 
   /* ============ 맞춤 피드백 봇 설정 ============ */
   function customFeedbackStatusSuffix(){
@@ -10870,72 +9957,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.toggleFeedPostPreview = toggleFeedPostPreview;
 
   /* ============ 외부 데이터 불러오기 (mock) ============ */
-  document.getElementById('importExternalBtn').addEventListener('click', function(){
-    openModal(
-      '<h3>외부 데이터 불러오기</h3>' +
-      '<p class="muted" style="margin:-8px 0 14px;">연동된 앱에서 오늘의 활동을 가져와요. 선택하면 기록 내용에 채워집니다.</p>' +
-      '<div class="ms-list">' +
-        EXTERNAL_DATA.map(function(d){
-          return '<div class="ms-row" data-ext="'+d.id+'" style="cursor:pointer;">' +
-            '<div class="ms-main">' +
-              '<div style="font-size:1.2rem;">'+d.icon+'</div>' +
-              '<div style="flex:1;">' +
-                '<div style="font-size:.9375rem;font-weight:600;">'+escapeHtml(d.text)+'</div>' +
-                '<div class="faint" style="font-size:.8125rem;">'+escapeHtml(d.src)+'</div>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<p class="faint" style="margin-top:12px;">지금은 샘플 데이터예요 · 실제 연동은 각 서비스의 API 인증이 필요해요</p>' +
-      '<div class="modal-actions" style="display:flex;flex-direction:column;gap:6px;">' +
-        '<button class="btn btn-primary btn-block" id="extOpenUniversalModalBtn" type="button">📥 CSV/줄글/1년치 추천샘플 대량 가져오기</button>' +
-        '<button class="btn btn-ghost btn-block" id="extCancel" type="button">닫기</button>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#extCancel').addEventListener('click', closeModal);
-        var uBtn = sheet.querySelector('#extOpenUniversalModalBtn');
-        if(uBtn){
-          uBtn.onclick = function(){
-            closeModal();
-            if(typeof OurgoalUniversalStats !== 'undefined'){
-              OurgoalUniversalStats.openUniversalImportModal({
-                openModal: openModal,
-                closeModal: closeModal,
-                toast: toast,
-                state: state,
-                saveProfile: saveProfile,
-                onDone: function(){ if(state) state.recordsSegment = 'stats'; renderRecordsScreen(); }
-              });
-            }
-          };
-        }
-        sheet.querySelectorAll('[data-ext]').forEach(function(row){
-          row.addEventListener('click', function(){
-            var d = EXTERNAL_DATA.find(function(x){ return x.id===row.dataset.ext; });
-            if(!d) return;
-            var input = document.getElementById('captureInput');
-            input.value = (input.value ? input.value.trim()+'\r\n' : '') + d.icon+' '+d.text;
-            closeModal();
-            input.focus();
-            toast(d.src+' 데이터를 불러왔어요');
-          });
-        });
-      }
-    );
-  });
-
-  function openHomeCustomizer(){ if(window.OurgoalCustomize && typeof window.OurgoalCustomize.open === 'function'){ OurgoalCustomize.open({ state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, track: track }); } else { var settingOpenBtn = document.getElementById('homeLayoutOpenBtn'); if(settingOpenBtn) settingOpenBtn.click(); } }
+  bindImportExternalBtn(); /* [#TASK-ES-483] 로드 중 문(앞 주석 포함) → js/tabs/records/external-import.js 의 bindImportExternalBtn 로 옮김 — 원래 자리에서 부른다 */
+  /* [#TASK-ES-483] openHomeCustomizer → js/tabs/records/external-import.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
   var btnCustomHome = document.getElementById('btnCustomHomeLayout'); if(btnCustomHome) btnCustomHome.addEventListener('click', openHomeCustomizer);
   var topBtnCustomHome = document.getElementById('topHomeLayoutBtn'); if(topBtnCustomHome) topBtnCustomHome.addEventListener('click', openHomeCustomizer);
   var topBtnGuide = document.getElementById('topHomeGuideBtn'); if(topBtnGuide){ topBtnGuide.addEventListener('click', function(){ if(window.showTabUsageGuide) showTabUsageGuide((state && state.activeTab) || 'home'); }); }
 
   var btnShowGuide = document.getElementById('btnShowPersonalGuideModal');
-  if(btnShowGuide){
-    btnShowGuide.addEventListener('click', function(){
-      openModal('개인 목표 200% 활용 가이드', renderPersonalGoalsEmptyGuideHtml());
-    });
-  }
+  bindPersonalGuideBtn(); /* [#TASK-ES-483] 로드 중 문(앞 주석 포함) → js/tabs/records/external-import.js 의 bindPersonalGuideBtn 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ [#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작용 ============ */
   var REAL_USER_TEMPLATES = [
@@ -11548,566 +10577,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
   /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
-  function renderAttachmentChipsHtml(attachments, targetKind, targetId, parentId){
-    if(!attachments || !attachments.length) return '';
-    return '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">' +
-      attachments.map(function(att, idx){
-        var icon = att.type === 'video' ? '🎥' : (att.type === 'image' ? '🖼️' : (att.type === 'text' ? '📝' : '🔗'));
-        var typeClass = 'type-' + (att.type || 'link');
-        return '<span class="att-chip att-chip-rich ' + typeClass + '" data-openatt="'+idx+'" data-attkind="'+targetKind+'" data-attid="'+targetId+'" data-attpid="'+(parentId||'')+'" title="'+escapeHtml(att.title||'')+'">' +
-          '<span style="font-size:.875rem;">' + icon + '</span> ' +
-          '<span style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(att.title || '참고자료') + '</span>' +
-        '</span>';
-      }).join('') +
-    '</div>';
-  }
-
-  /* [#TASK-ES-274] 인라인 목표/마일스톤/할일용 시각적 미니 칩 렌더러 */
-  function renderInlineAttachmentChips(attachments, targetKind, targetId, parentId){
-    if(!attachments || !attachments.length) return '';
-    return '<span class="att-chips-inline" style="display:inline-flex;flex-wrap:wrap;gap:4px;vertical-align:middle;">' +
-      attachments.map(function(att, idx){
-        var icon = att.type === 'video' ? '🎥' : (att.type === 'image' ? '🖼️' : (att.type === 'text' ? '📝' : '🔗'));
-        var typeClass = 'type-' + (att.type || 'link');
-        var safeTitle = escapeHtml(att.title || '참고자료');
-        return '<span class="att-chip att-chip-mini ' + typeClass + '" data-openatt="'+idx+'" data-attkind="'+targetKind+'" data-attid="'+targetId+'" data-attpid="'+(parentId||'')+'" title="'+safeTitle+' (클릭하여 열기)" role="button" tabindex="0">' +
-          '<span class="att-chip-mini-icon">' + icon + '</span>' +
-          '<span class="att-chip-mini-text">' + safeTitle + '</span>' +
-        '</span>';
-      }).join('') +
-    '</span>';
-  }
-
-  function openAttachmentViewer(att, onEdit, onDelete){
-    var contentHtml = '';
-    if(att.type === 'video'){
-      var ytMatch = (att.url||'').match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/i);
-      if(ytMatch){
-        contentHtml = '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:12px 0;">' +
-          '<iframe src="https://www.youtube.com/embed/'+ytMatch[1]+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px;" allowfullscreen></iframe>' +
-        '</div>';
-      } else {
-        var hasYtUrl = att.url && att.url.trim() && /^https?:\/\//i.test(att.url.trim());
-        contentHtml = '<div style="margin:12px 0;padding:16px;background:var(--card2);border-radius:12px;text-align:center;">' +
-          '<div style="font-size:2.5rem;margin-bottom:8px;">🎥</div>' +
-          '<p class="faint" style="margin:0 0 12px;font-size:.875rem;">유튜브에서 관련 영상 자료를 확인해보세요</p>' +
-          (hasYtUrl ? '<a href="'+escapeHtml(att.url)+'" target="_blank" rel="noopener" class="btn btn-primary btn-sm">유튜브에서 보기</a>' : '<button type="button" class="btn btn-ghost btn-sm" onclick="toast(\'등록된 영상 주소가 없습니다.\')" style="cursor:pointer;">영상 주소 없음</button>') +
-        '</div>';
-      }
-    } else if(att.type === 'image'){
-      contentHtml = '<div style="margin:12px 0;text-align:center;">' +
-        '<img src="'+escapeHtml(att.url)+'" style="max-width:100%;max-height:360px;border-radius:12px;object-fit:contain;border:1px solid var(--rule);" onerror="this.alt=\'이미지를 불러올 수 없어요\';">' +
-      '</div>';
-    } else if(att.type === 'text'){
-      contentHtml = '<div style="margin:12px 0;padding:14px;background:var(--card2);border-radius:12px;white-space:pre-wrap;line-height:1.6;font-size:.875rem;border:1px solid var(--rule);">' +
-        escapeHtml(att.note || att.url || '') +
-      '</div>';
-    } else {
-      var hasLinkUrl = att.url && att.url.trim() && /^https?:\/\//i.test(att.url.trim());
-      contentHtml = '<div style="margin:12px 0;padding:14px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--rule);">' +
-        '<span style="font-size:.875rem;word-break:break-all;color:var(--ink-soft);">'+escapeHtml(att.url || '링크 주소 없음')+'</span>' +
-        (hasLinkUrl ? '<a href="'+escapeHtml(att.url)+'" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="flex:0 0 auto;">열기</a>' : '<button type="button" class="btn btn-ghost btn-sm" onclick="toast(\'등록된 링크 주소가 없습니다.\')" style="flex:0 0 auto;cursor:pointer;">열기 불가</button>') +
-      '</div>';
-    }
-
-    openModal(
-      '<h3>'+(att.type==='video'?'🎥 ':(att.type==='image'?'🖼️ ':(att.type==='text'?'📝 ':'🔗 ')))+escapeHtml(att.title || '참고자료')+'</h3>' +
-      contentHtml +
-      (att.note && att.type !== 'text' ? '<p class="faint" style="font-size:.8125rem;margin:8px 0 14px;line-height:1.5;">'+escapeHtml(att.note)+'</p>' : '') +
-      '<div class="modal-actions">' +
-        (onDelete ? '<button class="btn btn-danger btn-sm" id="attDelConfirmBtn" type="button">삭제</button>' : '') +
-        '<button class="btn btn-primary btn-sm" id="attCloseBtn" type="button">닫기</button>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#attCloseBtn').addEventListener('click', closeModal);
-        var delBtn = sheet.querySelector('#attDelConfirmBtn');
-        if(delBtn){
-          delBtn.addEventListener('click', async function(){
-            if(!(await OurgoalCapabilities.call('ui.confirm', '이 참고자료를 삭제할까요?'))) return;
-            closeModal();
-            if(onDelete) await onDelete();
-          });
-        }
-      }
-    );
-  }
-
-  function openAddAttachmentModal(targetItem, onSaved, onCancel){
-    var draftAtt = { type: 'video', title: '', url: '', note: '' };
-    openModal(
-      '<h3>참고자료 첨부</h3>' +
-      '<p class="faint" style="margin:-8px 0 12px;">유튜브 영상, 이미지 파일, 텍스트 메모, 웹 링크를 등록하세요.</p>' +
-      '<!-- 스마트 툴바: 원클릭 클립보드 붙여넣기 및 4대 실천 퀵 프리셋 -->' +
-      '<div class="att-smart-toolbar">' +
-        '<button type="button" class="att-clipboard-btn" id="attClipboardBtn">' +
-          '<span>⚡</span> 클립보드에서 링크 바로 가져오기' +
-        '</button>' +
-        '<div style="font-size:.72rem;font-weight:700;color:var(--ink-soft);margin-top:2px;">실천 퀵 프리셋:</div>' +
-        '<div class="att-preset-group">' +
-          '<button type="button" class="att-preset-chip" data-attpreset="workout">🏋️ 운동 자세 영상</button>' +
-          '<button type="button" class="att-preset-chip" data-attpreset="study">📚 공식 문서·자료</button>' +
-          '<button type="button" class="att-preset-chip" data-attpreset="note">💡 핵심 요약 메모</button>' +
-          '<button type="button" class="att-preset-chip" data-attpreset="photo">📸 오답·결과 사진</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="format-toggle" id="attTypeToggle" style="margin-bottom:12px;">' +
-        '<div class="format-opt active" data-atttype="video">영상/유튜브</div>' +
-        '<div class="format-opt" data-atttype="image">이미지</div>' +
-        '<div class="format-opt" data-atttype="text">메모</div>' +
-        '<div class="format-opt" data-atttype="link">링크</div>' +
-      '</div>' +
-      '<div class="field"><label>제목 (필수)</label><input id="attTitleInput" type="text" placeholder="예: 미역국 끓이는 법 영상, 운동 폼 가이드"></div>' +
-      '<div id="attUrlField" class="field">' +
-        '<label>웹 주소 / 유튜브 링크</label>' +
-        '<input id="attUrlInput" type="url" placeholder="https://www.youtube.com/watch?v=...">' +
-      '</div>' +
-      '<!-- 실시간 스마트 비주얼 프리뷰 카드 -->' +
-      '<div id="attLivePreviewWrap" style="display:none;margin-bottom:12px;"></div>' +
-      '<div id="attImageField" style="display:none;margin-bottom:12px;">' +
-        '<label style="display:block;font-size:.8125rem;font-weight:700;margin-bottom:4px;">이미지 파일 선택</label>' +
-        '<div style="display:flex;gap:10px;align-items:center;">' +
-          '<div id="attImgPreview" style="width:60px;height:60px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;border:1px solid var(--rule);"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m21 16-5-5-8 8"/></svg></div>' +
-          '<div>' +
-            '<button class="btn btn-ghost btn-sm" id="attPickFileBtn" type="button">사진 선택하기</button>' +
-            '<input type="file" id="attFileInput" accept="image/*" style="display:none;">' +
-            '<div class="faint" style="font-size:.7rem;margin-top:3px;">또는 아래에 이미지 웹 주소를 입력하세요</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="field"><label>메모 / 설명 (선택)</label><textarea id="attNoteInput" rows="2" placeholder="기억해둘 핵심 내용이나 팁을 적어주세요" style="width:100%;box-sizing:border-box;border-radius:8px;padding:8px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);"></textarea></div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="attCancelBtn" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="attSaveBtn" type="button">첨부 추가</button>' +
-      '</div>',
-      function(sheet){
-        var urlField = sheet.querySelector('#attUrlField');
-        var imgField = sheet.querySelector('#attImageField');
-        var fileInput = sheet.querySelector('#attFileInput');
-        var preview = sheet.querySelector('#attImgPreview');
-        var urlInput = sheet.querySelector('#attUrlInput');
-        var titleInput = sheet.querySelector('#attTitleInput');
-        var noteInput = sheet.querySelector('#attNoteInput');
-        var previewWrap = sheet.querySelector('#attLivePreviewWrap');
-
-        function setType(typeKey){
-          draftAtt.type = typeKey;
-          sheet.querySelectorAll('#attTypeToggle .format-opt').forEach(function(o){
-            o.classList.toggle('active', o.dataset.atttype === typeKey);
-          });
-          if(typeKey === 'image'){
-            imgField.style.display = 'block';
-            urlField.style.display = 'block';
-            urlInput.placeholder = '또는 이미지 웹 주소 (https://...)';
-          } else if(typeKey === 'text'){
-            imgField.style.display = 'none';
-            urlField.style.display = 'none';
-            previewWrap.style.display = 'none';
-          } else if(typeKey === 'video'){
-            imgField.style.display = 'none';
-            urlField.style.display = 'block';
-            urlInput.placeholder = 'https://www.youtube.com/watch?v=...';
-          } else {
-            imgField.style.display = 'none';
-            urlField.style.display = 'block';
-            urlInput.placeholder = 'https://...';
-          }
-        }
-
-        function updateSmartPreview(rawUrl){
-          var url = (rawUrl || '').trim();
-          if(!url){
-            previewWrap.style.display = 'none';
-            return;
-          }
-          // 1. 유튜브 감지
-          var ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/i);
-          if(ytMatch){
-            setType('video');
-            var vid = ytMatch[1];
-            var thumbUrl = 'https://img.youtube.com/vi/' + vid + '/hqdefault.jpg';
-            previewWrap.innerHTML = '' +
-              '<div class="att-live-preview-box">' +
-                '<div class="att-preview-thumb-wrap">' +
-                  '<img src="' + thumbUrl + '" class="att-preview-thumb-img" onerror="this.src=\'\'">' +
-                  '<div class="att-yt-play-icon">▶</div>' +
-                '</div>' +
-                '<div class="att-preview-meta">' +
-                  '<span class="att-preview-badge att-badge-youtube">YouTube 영상</span>' +
-                  '<div class="att-preview-title">' + (titleInput.value.trim() || '유튜브 영상 자료') + '</div>' +
-                  '<div class="att-preview-sub">ID: ' + vid + ' · 재생 준비 완료</div>' +
-                '</div>' +
-              '</div>';
-            previewWrap.style.display = 'block';
-            if(!titleInput.value.trim()){
-              titleInput.placeholder = '유튜브 영상 제목을 입력해주세요';
-            }
-            return;
-          }
-          // 2. 이미지 URL 감지
-          if(url.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/i)){
-            setType('image');
-            previewWrap.innerHTML = '' +
-              '<div class="att-live-preview-box">' +
-                '<div class="att-preview-thumb-wrap">' +
-                  '<img src="' + escapeHtml(url) + '" class="att-preview-thumb-img">' +
-                '</div>' +
-                '<div class="att-preview-meta">' +
-                  '<span class="att-preview-badge att-badge-image">이미지 파일</span>' +
-                  '<div class="att-preview-title">' + (titleInput.value.trim() || '웹 이미지') + '</div>' +
-                  '<div class="att-preview-sub">온라인 이미지 링크 감지됨</div>' +
-                '</div>' +
-              '</div>';
-            previewWrap.style.display = 'block';
-            return;
-          }
-          // 3. 일반 웹 URL 감지
-          if(url.match(/^https?:\/\//i)){
-            if(draftAtt.type !== 'image' && draftAtt.type !== 'video'){
-              setType('link');
-            }
-            var domain = '';
-            try { domain = (new URL(url)).hostname; } catch(e){}
-            previewWrap.innerHTML = '' +
-              '<div class="att-live-preview-box">' +
-                '<div class="att-preview-thumb-wrap" style="background:var(--brand-soft);color:var(--brand);font-size:1.5rem;">' +
-                  '🔗' +
-                '</div>' +
-                '<div class="att-preview-meta">' +
-                  '<span class="att-preview-badge att-badge-web">' + (domain || '웹 레퍼런스') + '</span>' +
-                  '<div class="att-preview-title">' + (titleInput.value.trim() || domain || '참고 링크') + '</div>' +
-                  '<div class="att-preview-sub">' + escapeHtml(url) + '</div>' +
-                '</div>' +
-              '</div>';
-            previewWrap.style.display = 'block';
-            return;
-          }
-          previewWrap.style.display = 'none';
-        }
-
-        sheet.querySelectorAll('#attTypeToggle .format-opt').forEach(function(opt){
-          opt.addEventListener('click', function(){
-            setType(opt.dataset.atttype);
-            updateSmartPreview(urlInput.value);
-          });
-        });
-
-        // 실시간 URL 입력 리스너
-        urlInput.addEventListener('input', function(){
-          updateSmartPreview(urlInput.value);
-        });
-        urlInput.addEventListener('paste', function(){
-          setTimeout(function(){ updateSmartPreview(urlInput.value); }, 50);
-        });
-
-        // 클립보드 붙여넣기 퀵 액션
-        var clipBtn = sheet.querySelector('#attClipboardBtn');
-        if(clipBtn){
-          clipBtn.addEventListener('click', async function(){
-            try {
-              if(!navigator.clipboard || !navigator.clipboard.readText){
-                toast('브라우저 클립보드 권한을 확인해주세요. 주소를 직접 붙여넣어주세요.');
-                urlInput.focus();
-                return;
-              }
-              var text = await navigator.clipboard.readText();
-              text = (text || '').trim();
-              if(!text){
-                toast('클립보드가 비어있어요. 복사한 링크를 직접 입력해주세요.');
-                urlInput.focus();
-                return;
-              }
-              urlInput.value = text;
-              updateSmartPreview(text);
-              toast('클립보드 링크를 불러왔어요! ✨');
-            } catch(e){
-              toast('클립보드 링크를 직접 입력창에 붙여넣어주세요.');
-              urlInput.focus();
-            }
-          });
-        }
-
-        // 4대 실천 퀵 프리셋 ([#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화)
-        sheet.querySelectorAll('[data-attpreset]').forEach(function(btn){
-          btn.addEventListener('click', function(){
-            var p = btn.dataset.attpreset;
-            if(p === 'workout'){
-              setType('video');
-              titleInput.value = '';
-              titleInput.placeholder = '예: 운동 자세 & 폼 가이드 영상';
-              titleInput.dataset.presetTitle = '운동 자세 & 폼 가이드 영상';
-              noteInput.value = '';
-              noteInput.placeholder = '예: 호흡 타이밍과 세트별 자세 주의사항 체크하기';
-              noteInput.dataset.presetNote = '호흡 타이밍과 세트별 자세 주의사항 체크하기';
-              urlInput.placeholder = '유튜브 영상 링크를 붙여넣으세요';
-              toast('운동 자세 영상 프리셋을 적용했어요');
-            } else if(p === 'study'){
-              setType('link');
-              titleInput.value = '';
-              titleInput.placeholder = '예: 공식 문서 & 학습 레퍼런스';
-              titleInput.dataset.presetTitle = '공식 문서 & 학습 레퍼런스';
-              noteInput.value = '';
-              noteInput.placeholder = '예: 시험 및 프로젝트에 꼭 필요한 핵심 공식 문서';
-              noteInput.dataset.presetNote = '시험 및 프로젝트에 꼭 필요한 핵심 공식 문서';
-              urlInput.placeholder = '공식 가이드나 기술 블로그 링크 입력';
-              toast('공식 문서 프리셋을 적용했어요');
-            } else if(p === 'note'){
-              setType('text');
-              titleInput.value = '';
-              titleInput.placeholder = '예: 실천 핵심 요약 메모';
-              titleInput.dataset.presetTitle = '실천 핵심 요약 메모';
-              noteInput.value = '';
-              noteInput.placeholder = '예: 1. 시작 전 필수 준비사항\n2. 오늘의 핵심 실천 포인트';
-              noteInput.dataset.presetNote = '1. 시작 전 필수 준비사항\n2. 오늘의 핵심 실천 포인트';
-              toast('핵심 요약 메모 프리셋을 적용했어요');
-            } else if(p === 'photo'){
-              setType('image');
-              titleInput.value = '';
-              titleInput.placeholder = '예: 오답노트 & 결과 인증 사진';
-              titleInput.dataset.presetTitle = '오답노트 & 결과 인증 사진';
-              noteInput.value = '';
-              noteInput.placeholder = '예: 기억해둘 핵심 오답 분석 및 증빙';
-              noteInput.dataset.presetNote = '기억해둘 핵심 오답 분석 및 증빙';
-              toast('사진 인증 프리셋을 적용했어요');
-            }
-            urlInput.focus();
-          });
-        });
-
-        sheet.querySelector('#attPickFileBtn').addEventListener('click', function(){ fileInput.click(); });
-        fileInput.onchange = function(e){
-          var f = e.target.files[0];
-          if(!f) return;
-          resizeImageToDataUrl(f, 600, function(dataUrl){
-            if(!dataUrl){ toast('사진을 불러오지 못했어요'); return; }
-            draftAtt.url = dataUrl;
-            preview.innerHTML = '<img src="'+dataUrl+'" style="width:100%;height:100%;object-fit:cover;">';
-          });
-        };
-
-        sheet.querySelector('#attCancelBtn').addEventListener('click', function(){ closeModal(true); if(typeof onCancel === 'function') onCancel(); });
-        sheet.querySelector('#attSaveBtn').addEventListener('click', async function(){
-          var titleInp = sheet.querySelector('#attTitleInput');
-          var noteInp = sheet.querySelector('#attNoteInput');
-          var title = (titleInp ? titleInp.value.trim() : '') || (titleInp && titleInp.dataset.presetTitle) || (titleInp && titleInp.placeholder ? titleInp.placeholder.replace(/^예:\s*/, '') : '');
-          var url = (sheet.querySelector('#attUrlInput').value || '').trim();
-          var note = (noteInp ? noteInp.value.trim() : '') || (noteInp && noteInp.dataset.presetNote) || (noteInp && noteInp.placeholder ? noteInp.placeholder.replace(/^예:\s*/, '') : '');
-          if(!title){ toast('제목을 입력해주세요'); return; }
-          if(draftAtt.type !== 'text' && !url && !draftAtt.url){
-            toast('웹 주소나 사진 파일을 등록해주세요');
-            return;
-          }
-          if(url && !draftAtt.url) draftAtt.url = url;
-          draftAtt.title = title;
-          draftAtt.note = note;
-          draftAtt.id = uid('att');
-
-          targetItem.attachments = targetItem.attachments || [];
-          targetItem.attachments.push(draftAtt);
-          await saveProfile();
-          closeModal(true);
-          if(onSaved) onSaved();
-          toast('"'+title+'" 참고자료를 첨부했어요');
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-483] renderAttachmentChipsHtml · renderInlineAttachmentChips · openAttachmentViewer · openAddAttachmentModal → js/tabs/goals/attachments.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.openAddAttachmentModal = openAddAttachmentModal;
     window.openAttachmentViewer = openAttachmentViewer;
     window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;
     window.renderInlineAttachmentChips = renderInlineAttachmentChips;
   }
-
-  function wireAttachmentChipClicks(container){
-    if(!container) return;
-    container.querySelectorAll('.att-chip[data-openatt]').forEach(function(chip){
-      chip.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        var idx = parseInt(chip.dataset.openatt, 10);
-        var kind = chip.dataset.attkind;
-        var id = chip.dataset.attid;
-        var pid = chip.dataset.attpid;
-
-        var target = null;
-        var parentGoal = null;
-        if(kind === 'goal'){
-          target = state.profile.goals.find(function(g){ return g.id === id; });
-        } else if(kind === 'ms'){
-          state.profile.goals.forEach(function(g){
-            var found = (g.milestones||[]).find(function(m){ return m.id === id; });
-            if(found){ target = found; parentGoal = g; }
-          });
-        } else if(kind === 'task'){
-          state.profile.goals.forEach(function(g){
-            (g.milestones||[]).forEach(function(m){
-              var tf = (m.tasks||[]).find(function(t){ return t.id === id; });
-              if(tf){ target = tf; parentGoal = g; }
-            });
-          });
-        } else if(kind === 'custom'){
-          target = (state.profile.settings.customSchedules || []).find(function(c){ return c.id === id; });
-        }
-        if(!target || !target.attachments || !target.attachments[idx]) return;
-        var att = target.attachments[idx];
-        openAttachmentViewer(att, null, async function(){
-          target.attachments.splice(idx, 1);
-          await saveProfile();
-          renderAll();
-          if(state.activeTab === 'calendar' && typeof renderCalendarScreen === 'function') renderCalendarScreen();
-          var hubSheet = document.getElementById('modalSheet');
-          if(hubSheet && hubSheet.querySelector('#hubAddNewBtn') && state.calSelectedDate){
-            openCalendarDayEditHubModal(state.calSelectedDate);
-          }
-          toast('참고자료를 삭제했어요');
-        });
-      });
-    });
-  }
-
-  function normalizeSequentialMilestoneDates(milestones, goalDueDate){
-    if(!Array.isArray(milestones) || milestones.length <= 1) return milestones;
-    var today = dateKey(new Date());
-    var dues = milestones.map(function(m){ return m && m.dueDate; }).filter(Boolean);
-    var allSame = dues.length > 0 && dues.every(function(d){ return d === dues[0]; });
-    var mostlyMissing = dues.length <= Math.ceil(milestones.length * 0.3);
-    var hasSeq = milestones.some(function(m){ return m && m.title && /(?:day\s*\d+|\d+일차|\d+주차)/i.test(m.title); });
-    var hasValidDistinctDates = dues.length === milestones.length && !allSame;
-
-    if(!hasValidDistinctDates && (allSame || mostlyMissing || hasSeq)){
-      var totalSpan = goalDueDate ? Math.max(1, Math.round((new Date(goalDueDate+'T12:00:00') - new Date(today+'T12:00:00')) / 86400000)) : 30;
-      var isDaily = milestones.length >= 14 || milestones.some(function(m){ return m && m.title && /(?:day\s*\d+|\d+일차)/i.test(m.title); });
-      var isWeekly = !isDaily && milestones.some(function(m){ return m && m.title && /(?:\d+주차|주간)/i.test(m.title); });
-
-      milestones.forEach(function(m, idx){
-        if(!m) return;
-        var numMatch = (m.title||'').match(/(?:day\s*(\d+)|\b(\d+)일차)/i);
-        var itemIdx = numMatch ? (parseInt(numMatch[1]||numMatch[2], 10) - 1) : idx;
-        if(itemIdx < 0) itemIdx = idx;
-
-        var d = new Date(today + 'T12:00:00');
-        if(isDaily){
-          var offset = itemIdx + 1;
-          if(offset > totalSpan && goalDueDate) offset = totalSpan;
-          d.setDate(d.getDate() + offset);
-        } else if(isWeekly){
-          var wOffset = Math.min((itemIdx + 1) * 7, totalSpan);
-          d.setDate(d.getDate() + wOffset);
-        } else {
-          var step = Math.max(1, Math.round(((itemIdx + 1) / milestones.length) * totalSpan));
-          d.setDate(d.getDate() + step);
-        }
-        m.dueDate = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
-      });
-    }
-    return milestones;
-  }
-
-  function buildGoalFromAgentData(data){
-    var rawMilestones = (data.milestones||[]).map(function(m){
-      return {
-        id: uid('ms'),
-        title: m.title,
-        status: 'todo',
-        dueDate: m.dueDate || null,
-        attachments: sanitizeAttachments(m.attachments || []),
-        tasks: (m.tasks||[]).map(function(tk){
-          var tkTitle = typeof tk === 'string' ? tk : (tk && tk.title) || '';
-          var tkAtts = (tk && tk.attachments) || [];
-          var tkDue = (tk && tk.dueDate) || null;
-          return { id: uid('task'), title: tkTitle, done: false, dueDate: tkDue, attachments: sanitizeAttachments(tkAtts) };
-        })
-      };
-    });
-    var milestones = normalizeSequentialMilestoneDates(rawMilestones, data.dueDate);
-    return {
-      id: newId(),
-      title: data.title,
-      dueDate: data.dueDate || null,
-      category: 'etc',
-      topic: data.topicMajor ? (data.topicMajor+'/'+(data.topicMinor||'')) : '',
-      createdAt: nowISO(),
-      visibility: 'private',
-      archivedAt: null,
-      result: null,
-      attachments: sanitizeAttachments(data.attachments || []),
-      milestones: milestones
-    };
-  }
-  function applyGoalAgentOp(op){
-    var goals = state.profile.goals;
-    if(op.level==='goal'){
-      if(op.type==='CREATE'){
-        var newGoal = buildGoalFromAgentData(op.data);
-        goals.push(newGoal);
-        state.activeGoalId = newGoal.id;
-        trackGoalCreated(newGoal, 'goal_agent');
-        return true;
-      }
-      var goal = goals.find(function(g){ return g.id===op.goalId; });
-      if(!goal) return false;
-      if(op.type==='DELETE'){
-        state.profile.goals = goals.filter(function(g){ return g.id!==op.goalId; });
-        if(state.activeGoalId===op.goalId) state.activeGoalId = null;
-        return true;
-      }
-      if('title' in op.data) goal.title = op.data.title;
-      if('dueDate' in op.data) goal.dueDate = op.data.dueDate;
-      if('attachments' in op.data) goal.attachments = sanitizeAttachments(op.data.attachments);
-      return true;
-    }
-    var goal2 = goals.find(function(g){ return g.id===op.goalId; });
-    if(!goal2) return false;
-    if(op.level==='milestone'){
-      if(op.type==='CREATE'){
-        goal2.milestones.push({
-          id: uid('ms'),
-          title: op.data.title,
-          status: 'todo',
-          dueDate: op.data.dueDate || null,
-          attachments: sanitizeAttachments(op.data.attachments || []),
-          tasks: (op.data.tasks||[]).map(function(tk){
-            var tkTitle = typeof tk === 'string' ? tk : (tk && tk.title) || '';
-            var tkAtts = (tk && tk.attachments) || [];
-            var tkDue = (tk && tk.dueDate) || null;
-            return { id: uid('task'), title: tkTitle, done: false, dueDate: tkDue, attachments: sanitizeAttachments(tkAtts) };
-          })
-        });
-        return true;
-      }
-      var ms = goal2.milestones.find(function(m){ return m.id===op.milestoneId; });
-      if(!ms) return false;
-      if(op.type==='DELETE'){
-        goal2.milestones = goal2.milestones.filter(function(m){ return m.id!==op.milestoneId; });
-        return true;
-      }
-      if('title' in op.data) ms.title = op.data.title;
-      if('dueDate' in op.data) ms.dueDate = op.data.dueDate;
-      if('status' in op.data) ms.status = op.data.status;
-      if('attachments' in op.data) ms.attachments = sanitizeAttachments(op.data.attachments);
-      return true;
-    }
-    var ms2 = goal2.milestones.find(function(m){ return m.id===op.milestoneId; });
-    if(!ms2) return false;
-    if(op.type==='CREATE'){
-      var taskTitle = typeof op.data === 'string' ? op.data : (op.data && op.data.title) || '새 할 일';
-      var taskAtts = (op.data && op.data.attachments) || [];
-      var taskDue = (op.data && op.data.dueDate) || null;
-      ms2.tasks.push({ id: uid('task'), title: taskTitle, done: false, dueDate: taskDue, attachments: sanitizeAttachments(taskAtts) });
-      return true;
-    }
-    var task = ms2.tasks.find(function(t){ return t.id===op.taskId; });
-    if(!task) return false;
-    if(op.type==='DELETE'){
-      ms2.tasks = ms2.tasks.filter(function(t){ return t.id!==op.taskId; });
-      return true;
-    }
-    if('title' in op.data) task.title = op.data.title;
-    if('done' in op.data) task.done = op.data.done;
-    if('dueDate' in op.data) task.dueDate = op.data.dueDate;
-    if('attachments' in op.data) task.attachments = sanitizeAttachments(op.data.attachments);
-    return true;
-  }
+  /* [#TASK-ES-483] wireAttachmentChipClicks · normalizeSequentialMilestoneDates · buildGoalFromAgentData · applyGoalAgentOp → js/tabs/goals/attachments.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
   /* ============ 목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5) ============ */
   /* [#TASK-ES-436] renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep → js/tabs/goals/ai-agent.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.showGoalAgentReviewStep = showGoalAgentReviewStep;

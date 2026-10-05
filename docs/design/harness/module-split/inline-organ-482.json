@@ -1,0 +1,120 @@
+{
+  "task": "TASK-ES-482",
+  "slot": "HO",
+  "slots": [
+    "H0 시범 #TASK-ES-439",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "HO 기관"
+  ],
+  "cells": [
+    {
+      "key": "confetti",
+      "file": "js/core/confetti.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Confetti (기관 — 축하 꽃가루·공개 범위 되돌리기 토스트)",
+      "desc": [
+        "여러 탭이 부르는 축하 꽃가루(burstConfetti — #confettiLayer 에 조각을 뿌리고 1.1초 뒤 지움)와 목표 공개 범위 되돌리기 토스트(showUndoPrivacyToast).",
+        "같은 묶음의 토스트(toast)와 그 타이머(toastTimer)·window 노출 if 문은 옮기지 않았다 — toast 는 다른 함수와 타이머를 같이 쓴다(MODULE-SPLIT-PROTOCOL 1절)."
+      ],
+      "take": [
+        {
+          "group": "============ Confetti ============",
+          "names": [
+            "burstConfetti",
+            "showUndoPrivacyToast"
+          ],
+          "keepRest": true
+        }
+      ]
+    },
+    {
+      "key": "badges",
+      "file": "js/core/badges.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Badges (기관 — 뱃지 컬렉션·명예의 전당)",
+      "desc": [
+        "뱃지 판정 문맥(badgeContext) · 뱃지 목록(BADGES) · 명예의 전당 창(openHallOfFame).",
+        "같은 묶음의 완료 마일스톤 합(totalCompletedMilestones)은 smoke 시험지 FN_NAMES 라 남겼다. 같은 묶음의 프로필 불러오기 쪽(defaultProfile·resolveUniqueDisplayName·formatDisplayNameWithTag·ensureUserRow·loadProfile)과 앱 상태(state)는 로그인 뒤에만 도는 경로라 게스트 화면 시나리오로 잴 수 없어 이번에 옮기지 않았다."
+      ],
+      "take": [
+        {
+          "group": "뱃지 컬렉션 (명예의 전당)",
+          "names": [
+            "badgeContext",
+            "BADGES",
+            "openHallOfFame"
+          ],
+          "keepRest": true
+        }
+      ]
+    },
+    {
+      "key": "trash",
+      "file": "js/core/trash-bin.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Trash Bin (기관 — 전역 7일 유예 통합 휴지통)",
+      "desc": [
+        "휴지통 목록·7일 지난 항목 자동 비우기·휴지통으로 옮기기·되살리기·영구 삭제·비우기·되돌리기 토스트·휴지통 창(#TASK-ES-153)."
+      ],
+      "take": [
+        {
+          "group": "전역 7일 유예 통합 휴지통",
+          "names": [
+            "getTrashList",
+            "autoPurgeExpiredTrash",
+            "moveToTrash",
+            "restoreFromTrash",
+            "permanentDeleteFromTrash",
+            "emptyTrash",
+            "toastWithTrashUndo",
+            "openTrashModal"
+          ],
+          "keepRest": true
+        }
+      ]
+    },
+    {
+      "key": "gcal",
+      "file": "js/core/gcal-sync.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Google Calendar Sync (기관 — 구글 캘린더 연결·토큰·가져오기·내보내기)",
+      "desc": [
+        "구글 캘린더 클라이언트 id·연결 상태·연결 창·일정 읽기·전체 보내기·토큰 저장/복원/상태·토큰 받기·가져오기/내보내기 창.",
+        "같은 구획 주석 아래(휴지통 묶음)에 있던 것을 책임 단위로 나눴다. 토큰 클라이언트 상태 변수(googleTokenClient)와 window 노출 문은 원래 자리, 캘린더 사용 가능(calendarAvailable)은 smoke 시험지 FN_NAMES 라, 토큰 저장(saveGoogleToken)은 함수 최상위 arguments 를 써서(헌법 CELL_SPLIT 5) 남겼다."
+      ],
+      "take": [
+        {
+          "group": "전역 7일 유예 통합 휴지통",
+          "names": [
+            "effectiveGcalClientId",
+            "isGoogleCalendarConnected",
+            "tryConnectGoogleCalendar",
+            "openGoogleCalendarConnectModal",
+            "fetchGoogleCalendarEvents",
+            "syncAllToGoogleCalendar",
+            "nextDayISO",
+            "restoreGoogleToken",
+            "gcalTokenStatus",
+            "ensureGoogleTokenClient",
+            "requestGoogleToken",
+            "getGoogleAccessToken",
+            "openGcalImportModal",
+            "openGcalExportModal"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ]
+}

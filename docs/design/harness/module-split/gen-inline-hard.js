@@ -53,7 +53,7 @@ const headers = [];
 for (const st of top) for (const c of (st.node.leadingComments || [])) if (isHeader(c)) headers.push({ line: c.loc.start.line + off, endLine: c.loc.end.line + off, text: c.value, stmt: st });
 const groupRange = (title, pick) => {
   let hs = headers.filter(h => h.text.includes(title));
-  // [#TASK-ES-483] 설정 take.headerPick: 'nonEmpty' — 같은 글자의 구획 주석이 여럿이면(예: 「참고자료」 구획 주석이 두 줄 연달아) 최상위 문을 담은 것 하나만 고른다. 없으면 이전과 같이 멈춘다.
+  // [#TASK-ES-483] 설정 take.headerPick: 'nonEmpty' — 같은 글자의 구획 주석이 여럿이면(예: 「참고자료」 구획 주석이 두 줄 연달아) 최상위 문을 담은 것 하나만 고른다. 표시가 없으면 이전과 같이 멈춘다.
   if (hs.length > 1 && pick === 'nonEmpty') {
     const endOf = h => { const i = headers.indexOf(h); return i + 1 < headers.length ? headers[i + 1].line - 1 : eLine; };
     hs = hs.filter(h => top.some(st => H(st.node) >= h.line && HE(st.node) <= endOf(h)));
@@ -109,17 +109,15 @@ for (const c of CFG.cells) {
     let wrapK = 0;
     sts.forEach((st, k) => {
       const prevEnd = k ? HE(sts[k - 1].node) : r.start - 1;
-      // [#TASK-ES-483] 설정 take.sameLineKeep: true — 한 줄에 두 문이 있으면(예: `var b = …; if(b) b.addEventListener(…)`) 둘 다 원래 자리에 남길 때만 허용한다(옮기거나 감싸면 아래에서 멈춘다)
-      let sameLine = false;
-      if (k && H(st.node) === prevEnd) { if (!t.sameLineKeep) fail('두 문이 한 줄에: ' + H(st.node)); sameLine = true; }
+      const sharesPrevLine = !!(k && H(st.node) === prevEnd); // #TASK-ES-482: 한 줄에 두 문 — 둘 다 원래 자리에 남으면 문제없다(옮기는 문에 걸릴 때만 아래에서 멈춘다)
       const tail = lines[HE(st.node) - 1].slice(st.node.loc.end.column).trim();
-      if (tail && !tail.startsWith('//')) { const nx = sts[k + 1]; if (!(t.sameLineKeep && nx && H(nx.node) === HE(st.node))) fail('문 끝 줄 뒤에 다른 코드: ' + HE(st.node)); sameLine = true; }
+      const tailCode = !!(tail && !tail.startsWith('//'));
       // 앞 주석·빈 줄은 그 문을 따라간다(묶음 첫 문은 구획 주석부터)
-      const item = { cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? (sameLine && H(st.node) === prevEnd ? H(st.node) : prevEnd + 1) : r.start, names: [], sameLine };
+      const item = { cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? prevEnd + 1 : r.start, names: [], sharesPrevLine, tailCode };
       const mine = n => t.all || (t.names || []).includes(n);
       if (st.isFunctionDeclaration()) {
         const n = st.node.id.name; item.names = [n];
-        if (!mine(n)) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) item.why = '이번 범위 밖(keepRest) — 원래 자리'; return plan.push(item); }
+        if (!mine(n)) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) { item.why = '이번 범위 밖(keepRest) — 원래 자리'; item.keepRestOnly = true; } return plan.push(item); }
         const b = iScope.getBinding(n);
         if (smokeFn.has(n) && !smokeReadsCell(c.file)) fail('smoke-test FN_NAMES 함수 — 시험지 선행 PR 이 먼저(유형 F2): ' + n);
         if (b.constantViolations.length) fail('함수 이름 재대입(유형 H) — 개별 설계: ' + n);
@@ -129,7 +127,7 @@ for (const c of CFG.cells) {
         item.names = st.node.declarations.map(d => d.id.name);
         const movable = st.node.declarations.every(d => d.id.type === 'Identifier' && iScope.getBinding(d.id.name).constantViolations.length === 0 && isPureInit(d.init) && (!smokeFn.has(d.id.name) || smokeReadsCell(c.file)))
           && st.node.declarations.every(d => !d.init || !/Function|Arrow/.test(d.init.type) || topThisArgs(st) === 0);
-        if (!item.names.some(mine)) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) item.why = '이번 범위 밖(keepRest) — 원래 자리'; return plan.push(item); }
+        if (!item.names.some(mine)) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) { item.why = '이번 범위 밖(keepRest) — 원래 자리'; item.keepRestOnly = true; } return plan.push(item); }
         if (!item.names.every(mine)) fail('한 var 문의 이름을 일부만 가져감: ' + item.names.join(','));
         item.action = movable ? 'move' : 'keep';
         if (item.action === 'keep') item.why = '상태 변수(재대입 또는 실행되는 초기값) — 원래 자리에 두고 L getter/setter 로 읽는다';
@@ -140,7 +138,7 @@ for (const c of CFG.cells) {
         const lineCount = HE(st.node) - H(st.node) + 1;
         if (e && e.type === 'AssignmentExpression' && e.left.type === 'MemberExpression' && e.left.object.type === 'Identifier' && e.left.object.name === 'window' && lineCount <= 3) { item.action = 'keep'; item.why = 'window 노출 — 원래 자리(순서 보존)'; }
         else if (isWindowExposureBlock(st.node)) { item.action = 'keep'; item.why = 'window 노출 묶음(if 안 window.X = … 만) — 원래 자리(순서 보존, #TASK-ES-465)'; }
-        else if (!t.all && !(t.wrap || []).length) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) item.why = '이번 범위 밖(keepRest) — 원래 자리'; }
+        else if (!t.all && !(t.wrap || []).length) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) { item.why = '이번 범위 밖(keepRest) — 원래 자리'; item.keepRestOnly = true; } }
         else if (lineCount <= 3) { item.action = 'keep'; item.why = '3줄 이하 로드 중 문 — 원래 자리'; }
         else {
           const why = wrapSafe(st);
@@ -153,11 +151,17 @@ for (const c of CFG.cells) {
           }
         }
       }
-      if (item.sameLine && (item.action === 'move' || item.action === 'wrap')) fail('한 줄에 두 문이 있는 문은 원래 자리에만 둘 수 있다(sameLineKeep): ' + H(st.node));
       plan.push(item);
     });
     if ((t.wrap || []).length !== wrapK) fail('설정 wrap 이름 수(' + (t.wrap || []).length + ')와 감싼 문 수(' + wrapK + ')가 다르다: ' + t.group);
   }
+}
+// #TASK-ES-482: 한 줄을 나눠 쓰는 문(앞 문과 같은 줄에서 시작·끝 줄 뒤에 다른 코드)은 옮기거나 감쌀 수 없다 — 그 줄의 다른 문이 같이 딸려 가거나 잘린다. 둘 다 원래 자리면 통과
+for (const it of plan) {
+  const out = it.action === 'move' || it.action === 'wrap';
+  if (out && it.sharesPrevLine) fail('두 문이 한 줄에: ' + it.start);
+  if (out && it.tailCode) fail('문 끝 줄 뒤에 다른 코드: ' + it.end);
+  if (it.tailCode) { const nx = plan.find(x => x !== it && x.start === it.end && x.sharesPrevLine && (x.action === 'move' || x.action === 'wrap')); if (nx) fail('두 문이 한 줄에: ' + nx.start); }
 }
 // 같은 문을 두 세포가 가져가면 안 된다 · skip 은 다른 세포가 가져가야 한다
 const byStart = new Map();
@@ -166,7 +170,8 @@ const finalPlan = [];
 for (const [, its] of [...byStart].sort((a, b) => a[0] - b[0])) {
   const out = its.filter(i => i.action === 'move' || i.action === 'wrap');
   if (out.length > 1) fail('같은 문을 두 세포가 가져감: ' + its[0].start);
-  if (out.length && its.some(i => i.action === 'keep')) fail('한 세포는 옮기고 다른 세포는 남김: ' + its[0].start);
+  // #TASK-ES-482: 한 묶음을 여러 세포가 이름으로 나눠 가질 때, 다른 세포의 keepRest(「이번 범위 밖」) 남김은 그 문을 옮기는 세포에 양보한다. 그 밖의 남김(상태 변수·노출 문 등)과 겹치면 멈춘다
+  if (out.length && its.some(i => i.action === 'keep' && !(i.keepRestOnly))) fail('한 세포는 옮기고 다른 세포는 남김: ' + its[0].start);
   const real = out.length ? out : its.filter(i => i.action === 'keep').slice(0, 1);
   if (!real.length) { const s = its[0]; fail('어느 세포도 가져가지 않는 문(names 에 빠짐): ' + s.start + ' ' + (s.names.join(',') || s.st.node.type)); }
   finalPlan.push(real[0]);
