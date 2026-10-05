@@ -48,7 +48,7 @@ DOM `#btnLandingPreviewDirect` · `#appShell` · `#toast` · `#offlineNoticeBann
 | 원본 단독 로드 | 회귀 0, 새 파일 4개 단독 로드 ok (`module-load-probe.json`) |
 | 게스트 시나리오 | 4개 기준·작업 통과 (`scenario-local.json`) |
 | 게스트 조작 비교 | 7단계 기준1 대 작업 차이 0 · 기준1 대 기준2 0 (`guest-compare.json`) |
-| tests 전후 | `test-compare.json` |
+| tests 전후 | 작업 npm test 종료 0 · smoke 440/0(기준 같음) · 종료 코드가 갈린 시험지는 cell-map-export-es414 하나(기준 사본 이력 없음 — 회귀 아님) (`test-compare.json`) |
 | 막힐 지점 | #814 와 같은 설정·키트 태그 줄을 고쳐 먼저 병합된 쪽 뒤에 충돌 → main 판을 입력으로 생성기 재실행(L010) |
 
 [4단계: 심사 청구]
