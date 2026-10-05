@@ -250,6 +250,52 @@
     "type": "codeContains",
     "text": "- 2026-10-05 TASK-ES-495:"
    }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설정 빠른 동작 세포 머리 설명에서 지운 소통 허브 함수 이름을 걷고 지운 사실을 적었다(코드 변경 없음)",
+   "touches": [
+    "js/tabs/settings/quick-actions.js"
+   ],
+   "check": {
+    "file": "js/tabs/settings/quick-actions.js",
+    "type": "codeNotContains",
+    "text": "switchCommSubTab"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "홈 구성 자동 연동 시험지의 기대 목록에서 지운 히트맵 요약 스위치만 뺐다",
+   "touches": [
+    "tests/home-customizer-auto-sync.test.js"
+   ],
+   "check": {
+    "file": "tests/home-customizer-auto-sync.test.js",
+    "type": "codeNotContains",
+    "text": "'homeGrassSummaryCard',"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "index.html 에서 챌린지 룸 세포 script 태그를 뺐다(연결 해제)",
+   "touches": [
+    "index.html",
+    "js/tabs/comm/challenge-room.js"
+   ],
+   "check": {
+    "file": "index.html",
+    "type": "codeNotContains",
+    "text": "js/tabs/comm/challenge-room.js"
+   }
   }
  ],
  "retire": [

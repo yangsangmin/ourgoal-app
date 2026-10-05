@@ -1,0 +1,20 @@
+{
+  "id": "comm-group-create-modal",
+  "title": "게스트로 소통 탭 「👥 팀」에서 「+ 새 팀 개설하기」를 누르면 「정원·인증 주기·기간 제약 없는 자유로운 팀이에요」 안내가 있는 팀 만들기 창이 열리고, 「취소」를 누르면 창이 닫힌다 — 팀 목록·새 팀 만들기 창(renderCommGroups·promptNewGroup)을 소통 탭 세포 파일 js/tabs/comm/shared-groups.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "waitFor", "selector": "#commBody [data-sub=\"group\"]", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#commBody [data-sub=\"group\"]" },
+    { "do": "waitFor", "selector": "#btnHeroCreateTeamComm", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnHeroCreateTeamComm" },
+    { "expect": "visible", "selector": "#grpSave", "timeoutMs": 6000 },
+    { "expect": "textContains", "selector": "#modalOverlay", "text": "정원·인증 주기·기간 제약 없는 자유로운 팀이에요" },
+    { "do": "click", "selector": "#grpCancel" },
+    { "expect": "notVisible", "selector": "#grpSave", "timeoutMs": 6000 },
+    { "expect": "noExceptions" }
+  ]
+}
