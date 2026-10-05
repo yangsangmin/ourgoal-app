@@ -1,0 +1,114 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "reach-A",
+ "mode": "test-account-A",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · test account A (address hidden) · temporary browser profile · read-only",
+ "countNames": [
+  "setupNotifyTimer",
+  "showNotifyBanner",
+  "urlBase64ToUint8Array",
+  "syncPushSubscription",
+  "removePushSubscription",
+  "checkAndHandleDateRollover",
+  "setupDateRolloverWatcher",
+  "handleDeepLinkRouting"
+ ],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 첫 화면(앱 진입 때 알림 시계·푸시 구독·자정 워처가 돈다) #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "82a79f1a3906fb3f",
+   "opened": null,
+   "counts": {
+    "notifyBanner": 0
+   },
+   "calls": {
+    "handleDeepLinkRouting": 2,
+    "setupDateRolloverWatcher": 2,
+    "setupNotifyTimer": 2
+   }
+  },
+  {
+   "name": "② 기록 탭 #screen-records",
+   "present": true,
+   "visible": true,
+   "textHash": "ff03629c75f92c9b",
+   "textLen": 1062,
+   "attrsHash": "df8b43c4480f32c3",
+   "opened": null,
+   "calls": {
+    "handleDeepLinkRouting": 2,
+    "setupDateRolloverWatcher": 2,
+    "setupNotifyTimer": 2
+   }
+  },
+  {
+   "name": "③ 캘린더 탭 #screen-calendar",
+   "present": true,
+   "visible": true,
+   "textHash": "d38e70346bac9974",
+   "textLen": 391,
+   "attrsHash": "f92a6b9fe3159986",
+   "opened": null,
+   "calls": {
+    "handleDeepLinkRouting": 2,
+    "setupDateRolloverWatcher": 2,
+    "setupNotifyTimer": 2
+   }
+  },
+  {
+   "name": "④ 설정 탭(알림 스위치·체크인 시각) #screen-settings",
+   "present": true,
+   "visible": true,
+   "textHash": "3c77871f6233540b",
+   "textLen": 764,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null,
+   "counts": {
+    "notifySwitchOn": 0,
+    "notifySwitch": 1
+   },
+   "calls": {
+    "handleDeepLinkRouting": 2,
+    "setupDateRolloverWatcher": 2,
+    "setupNotifyTimer": 2
+   }
+  },
+  {
+   "name": "⑤ 다시 홈(탭 전환 뒤 다시 그리기) #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "82a79f1a3906fb3f",
+   "opened": null,
+   "counts": {
+    "notifyBanner": 0
+   },
+   "calls": {
+    "handleDeepLinkRouting": 2,
+    "setupDateRolloverWatcher": 2,
+    "setupNotifyTimer": 2
+   }
+  }
+ ],
+ "errors": [],
+ "loggedIn": true,
+ "entered": true,
+ "globals": "setupNotifyTimer/undefined,showNotifyBanner/undefined,urlBase64ToUint8Array/undefined,syncPushSubscription/undefined,removePushSubscription/undefined,checkAndHandleDateRollover/function,setupDateRolloverWatcher/function,handleDeepLinkRouting/function",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 4,
+  "POST /rest/v1/checkins": 4
+ }
+}

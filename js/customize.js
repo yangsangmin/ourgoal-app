@@ -258,7 +258,7 @@
 
       if (!modalOpened && root.OurgoalCustomize && typeof root.OurgoalCustomize.open === 'function') {
         try {
-          root.OurgoalCustomize.open();
+          root.OurgoalCustomize.open(appScopeDeps()); /* [#TASK-ES-531] 의존성 없이 부르면 deps.state 에서 예외 → 창이 안 열렸다 */
           modalOpened = true;
         } catch (oErr) {}
       }
@@ -389,6 +389,12 @@
         actionBtn.disabled = false;
       }
     }
+  }
+
+  /* [#TASK-ES-531] open 이 쓰는 의존성을 앱 스코프 통로(js/core/app-scope.js)에서 모은다 — 옛 기록 탭 openHomeCustomizer(#TASK-ES-515 에서 숨은 두 단추와 함께 지움)가 넘기던 것과 같은 6개 */
+  function appScopeDeps(){
+    var L = (root.OurgoalAppScope && root.OurgoalAppScope.scope) || {};
+    return { state: L.state, saveProfile: L.saveProfile, toast: L.toast, openModal: L.openModal, closeModal: L.closeModal, track: L.track };
   }
 
   root.OurgoalCustomize = {

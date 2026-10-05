@@ -73,9 +73,13 @@ for (const [prefix, what] of [
   ['  bindLandStartBtn(); /* [#TASK-ES-476]', 'call bindLandStartBtn'],
   ['  bindRecSegmentBar(); /* [#TASK-ES-474]', 'call bindRecSegmentBar'],
   ['  /* [#TASK-ES-483] openHomeCustomizer → js/tabs/records/external-import.js 로 옮김', 'openHomeCustomizer 이전 주석'],
-  ["  var btnCustomHome = document.getElementById('btnCustomHomeLayout');", 'btnCustomHome 등록'],
   ["  var topBtnCustomHome = document.getElementById('topHomeLayoutBtn');", 'topBtnCustomHome 등록'],
 ]) { const i = once(l => l.startsWith(prefix), what); L.splice(i, 1); }
+// #btnCustomHomeLayout 등록 줄 — #TASK-ES-531(#810)이 이중 처리기 한 벌을 지우며 그 자리에 설명 주석을 남겼다. 둘 중 있는 쪽을 지운다(단추가 사라지므로 설명도 무효)
+{
+  const i = once(l => l.startsWith("  var btnCustomHome = document.getElementById('btnCustomHomeLayout');") || l.startsWith('  /* [#TASK-ES-531] #btnCustomHomeLayout 의 addEventListener(openHomeCustomizer) 줄을 지움'), 'btnCustomHome 등록 또는 ES-531 주석');
+  L.splice(i, 1);
+}
 // ④ 함수 renderRoutineMatrixGrid ~ window.toggleRoutineStamp (+ 뒤 빈 줄)
 {
   const a = once(l => l === '  function renderRoutineMatrixGrid(){', 'fn renderRoutineMatrixGrid');
