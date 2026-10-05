@@ -579,3 +579,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-493 | INFRA | [인라인 어려움 구역 H2 2차] 목표 탭 루틴 하위 탭 화면·새 루틴 창, 팀 만들기 안내·활용 가이드·빠른 템플릿 프리셋을 js/tabs/goals/routine-screen.js · team-goals-guide.js 로 동작 그대로 이전(게스트 화면에서 열 수 없는 루틴 상세·팀 목표 편집·수준별 목표는 남김) | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-493-INLINE-H2-2.md | 4단계(심사 청구)
 - #TASK-ES-482 | INFRA | [인라인 어려움 기관 묶음 · H3 빌더] Confetti·뱃지 컬렉션·전역 휴지통을 js/core 기관 세포 4개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md
 - #TASK-ES-498 | INFRA | [생성 지도 일괄 갱신 2회차] 생성 파일 4개를 main c1f0a72 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-05), REQ docs/specs/REQ-TASK-ES-498-GENERATED-MAPS-SYNC-2.md | 4단계(심사 청구)
+- #TASK-ES-494 | FIX/버그 | [주간 집중 시간 가짜 25분 삭제] 상민님 승인 A안 — 진행 중 기록은 몰입에 안 셈, smoke 검사 기대값 사실화 | 상민님 승인 (2026-10-05), REQ docs/specs/REQ-TASK-ES-494-FOCUS-NO-FAKE-25.md
