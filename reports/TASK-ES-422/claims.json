@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-422",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-422-CELL-MAP-RESYNC-XP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "#736 병합 뒤 main 위에서 세포지도(cell-map.json)를 다시 만들고, modules.json 의 xp.award 능력 설명·sideEffect 를 코드 meta(서버 원장·게스트 기기)와 같게 고친 뒤 신고서를 재생성한다. 제품 코드·생성기 코드 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "다시 만든 세포지도의 기준 커밋은 #736 병합 커밋이다",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "source.short",
+        "equals": "f44e496"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "다시 만든 세포지도는 세포 161개를 담는다",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "summary.cells",
+        "equals": 161
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서의 xp.award 설명이 로그인 사용자는 서버 원장에 저장한다고 말한다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "저장은 로그인 세션 사용자는 서버 원장 user_ledger_docs[xp](기기 사본·대기열 ourgoal_ledger_cache_<uid>), 게스트·세션 없는 로그인은 state.profile.settings.xp(기기)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 옛 문구(저장은 기기만)가 남지 않는다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "docs/architecture/modules.json",
+        "text": "— 저장은 state.profile.settings.xp(기기). 0 보다 크면"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-422 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-422: 세포지도 다시 만들기"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-422 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-422 | INFRA | [세포지도 다시 만들기·xp.award 설명]"
+      }
+    }
+  ]
+}
