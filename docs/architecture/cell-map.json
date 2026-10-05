@@ -9,37 +9,33 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "265e16285350abed881fb9bfdde5bf577df2a0e9",
-  "short": "265e162",
-  "committedAt": "2026-10-05T14:28:46+09:00",
-  "subject": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)"
+  "commit": "08a2d4332f8d79d75dc02543e96e7f2eb4246842",
+  "short": "08a2d43",
+  "committedAt": "2026-10-05T14:54:52+09:00",
+  "subject": "[E2] #TASK-ES-428 refactor: 통계 세포 쪼개기 4차 — renderUniversalStatsDashboard(884줄)를 문맥 객체 D 구획 함수로 나눠 js/stats-dashboard*.js 3개로 동작 그대로 이전(1,614 → 732줄)"
  },
  "summary": {
-  "cells": 167,
-  "files": 166,
-  "jsLines": 51922,
+  "cells": 170,
+  "files": 169,
+  "jsLines": 52038,
   "kinds": {
    "organ": 29,
    "tab": 42,
-   "hybrid": 95,
+   "hybrid": 98,
    "future": 1
   },
-  "descriptionsHand": 167,
+  "descriptionsHand": 170,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
    "first": 12,
    "firstDate": "2026-10-04",
    "firstCommit": "bb343d3",
-   "now": 2,
+   "now": 1,
    "nowFiles": [
     {
      "file": "js/sanctuary-v3-engine.js",
      "lines": 1964
-    },
-    {
-     "file": "js/universal-stats.js",
-     "lines": 1614
     }
    ]
   },
@@ -52,7 +48,7 @@
   "health": {
    "undifferentiatedLines": 34007,
    "globalLinks": 282,
-   "oversizeCells": 2,
+   "oversizeCells": 1,
    "drawingSmallCells": {
     "drew": 7,
     "total": 22,
@@ -97,7 +93,7 @@
    "key": "hybrid",
    "name": "하이브리드",
    "desc": "여러 탭·여러 자리에 걸치는 세포",
-   "count": 95
+   "count": 98
   },
   {
    "key": "future",
@@ -258,6 +254,9 @@
    "cells": [
     "records-stats",
     "stats-charts",
+    "stats-dashboard-bind",
+    "stats-dashboard-view",
+    "stats-dashboard",
     "stats-data-grid",
     "stats-data-menu",
     "stats-differentiated",
@@ -273,8 +272,8 @@
     "stats-taxonomy",
     "universal-stats"
    ],
-   "lines": 7185,
-   "over800": 1
+   "lines": 7301,
+   "over800": 0
   },
   {
    "key": "family-team",
@@ -781,8 +780,8 @@
    "file": "js/universal-stats.js",
    "name": "universal-stats.js",
    "firstLines": 6092,
-   "nowLines": 1614,
-   "over800Now": true,
+   "nowLines": 732,
+   "over800Now": false,
    "steps": [
     {
      "date": "2026-10-04",
@@ -803,6 +802,11 @@
      "date": "2026-10-05",
      "commit": "d90b077",
      "lines": 1614
+    },
+    {
+     "date": "2026-10-05",
+     "commit": "890f7d5",
+     "lines": "≤800"
     }
    ],
    "parts": [
@@ -810,6 +814,21 @@
      "id": "stats-charts",
      "file": "js/stats-charts.js",
      "lines": 570
+    },
+    {
+     "id": "stats-dashboard",
+     "file": "js/stats-dashboard.js",
+     "lines": 241
+    },
+    {
+     "id": "stats-dashboard-bind",
+     "file": "js/stats-dashboard-bind.js",
+     "lines": 358
+    },
+    {
+     "id": "stats-dashboard-view",
+     "file": "js/stats-dashboard-view.js",
+     "lines": 399
     },
     {
      "id": "stats-data-grid",
@@ -5130,7 +5149,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/health",
@@ -5178,7 +5204,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/hobby",
@@ -5226,7 +5259,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/mind",
@@ -5274,7 +5314,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/relation",
@@ -5322,7 +5369,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/expert-templates/study",
@@ -5370,7 +5424,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "data/goal-templates/career",
@@ -5968,9 +6029,19 @@
      "goal.template"
     ]
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
    "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    },
     {
      "number": 211,
      "task": null,
@@ -6575,6 +6646,158 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "stats-dashboard-bind",
+   "file": "js/stats-dashboard-bind.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-stats",
+   "tabs": [
+    "records",
+    "goals"
+   ],
+   "name": "콕핏 버튼 동작",
+   "nameSource": "hand",
+   "does": "콕핏의 렌즈·종목·기간·지표 버튼과 접기·데이터 관리·툴팁 수정·전체화면 버튼이 눌리면 반응한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Stats Cell: 성취 분석 콕핏 동작 배선 — 접기·데이터 관리·숨은 앵커, 렌즈·분자/분모·모드·기간·스케일·측정 지표·종목 칩, 십자선·툴팁 수정·전체화면 (#TASK-ES-428 · 통계 세포 쪼개기 4차)",
+    "js/universal-stats.js(이전 전 1,614줄)의 renderUniversalStatsDashboard(884줄)에서 동작 그대로 옮겼다. 틀: docs/specs/MODULE-SPLIT-PROTOCOL.md 2절(섹션 소블록)",
+    "bindStatsHeaderActions · bindStatsControlActions · bindStatsChartInteractions",
+    "구획 함수는 이전 함수 본문의 최상위 문 묶음을 글자 그대로 옮긴 것이다. 구획끼리 같이 쓰던 지역 이름(인자·var)은 문맥 객체 D 의 칸(D.<이름>)으로 읽고 쓴다"
+   ],
+   "lines": 358,
+   "over800": false,
+   "exposes": [
+    "OurgoalUniversalStatsKit"
+   ],
+   "calls": [],
+   "calledBy": [
+    "universal-stats"
+   ],
+   "readsFromIndexHtml": [
+    "closeModal",
+    "openModal",
+    "toast"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-428"
+   ],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "stats-dashboard-view",
+   "file": "js/stats-dashboard-view.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-stats",
+   "tabs": [
+    "records",
+    "goals"
+   ],
+   "name": "콕핏 화면 그리기",
+   "nameSource": "hand",
+   "does": "콕핏의 머리·렌즈·종목 칩·차트·핵심 숫자·진단 리포트 화면을 만든다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Stats Cell: 성취 분석 콕핏 화면 글자 — 머리·렌즈·기간 컨트롤·종목 칩·측정 지표·차트·KPI·진단 리포트 HTML 을 만들고 그린다 (#TASK-ES-428 · 통계 세포 쪼개기 4차)",
+    "js/universal-stats.js(이전 전 1,614줄)의 renderUniversalStatsDashboard(884줄)에서 동작 그대로 옮겼다. 틀: docs/specs/MODULE-SPLIT-PROTOCOL.md 2절(섹션 소블록)",
+    "buildStatsHeaderHtml · buildStatsLensControlsHtml · buildStatsEntityChipsHtml · buildStatsChartHtml · buildStatsKpiHtml · mountStatsDashboardHtml",
+    "구획 함수는 이전 함수 본문의 최상위 문 묶음을 글자 그대로 옮긴 것이다. 구획끼리 같이 쓰던 지역 이름(인자·var)은 문맥 객체 D 의 칸(D.<이름>)으로 읽고 쓴다"
+   ],
+   "lines": 399,
+   "over800": false,
+   "exposes": [
+    "OurgoalUniversalStatsKit"
+   ],
+   "calls": [],
+   "calledBy": [
+    "universal-stats"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-428"
+   ],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "stats-dashboard",
+   "file": "js/stats-dashboard.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-stats",
+   "tabs": [
+    "records",
+    "goals"
+   ],
+   "name": "성취 분석 콕핏",
+   "nameSource": "hand",
+   "does": "성취 분석 콕핏 화면을 차례대로 그린다(기록이 없으면 예시 기록 불러오기 화면)",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Stats Cell: 성취 분석 콕핏 대시보드 조립자 — 머리(온톨로지)·문맥 객체 D·구획 차례 호출, 빈 화면(샘플 바로 불러오기·가져오기), 데이터 준비(렌즈·모드·종목·측정 지표·기간·시계열) (#TASK-ES-428 · 통계 세포 쪼개기 4차)",
+    "js/universal-stats.js(이전 전 1,614줄)의 renderUniversalStatsDashboard(884줄)에서 동작 그대로 옮겼다. 틀: docs/specs/MODULE-SPLIT-PROTOCOL.md 2절(섹션 소블록)",
+    "renderUniversalStatsDashboard · renderStatsEmptyState · prepareStatsDashboardData",
+    "조립자 renderUniversalStatsDashboard 는 이전 함수의 머리(인자 기본값·온톨로지)를 글자 그대로 두고, 공유 지역 이름을 담을 문맥 객체 D 를 만든 뒤"
+   ],
+   "lines": 241,
+   "over800": false,
+   "exposes": [
+    "OurgoalUniversalStatsKit"
+   ],
+   "calls": [],
+   "calledBy": [
+    "universal-stats"
+   ],
+   "readsFromIndexHtml": [
+    "closeModal",
+    "openModal",
+    "toast"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-428"
+   ],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "stats-data-grid",
@@ -12111,14 +12334,17 @@
     "기능:",
     "1. extractMetricsFromRecord: 어떤 데이터(자연어 줄글, 표, CSV, 외부 수치)든 자율 메트릭 추출"
    ],
-   "lines": 1614,
-   "over800": true,
+   "lines": 732,
+   "over800": false,
    "exposes": [
     "OurgoalUniversalStats"
    ],
    "calls": [
     "core/confirm",
     "stats-charts",
+    "stats-dashboard",
+    "stats-dashboard-bind",
+    "stats-dashboard-view",
     "stats-data-grid",
     "stats-data-menu",
     "stats-differentiated",
@@ -12136,8 +12362,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [
     "closeModal",
-    "openModal",
-    "toast"
+    "openModal"
    ],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
