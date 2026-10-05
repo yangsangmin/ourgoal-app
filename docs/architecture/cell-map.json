@@ -9,15 +9,15 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "c222c4debbde613de1da6fc50cc8274fe56aeada",
-  "short": "c222c4d",
-  "committedAt": "2026-10-05T18:53:45+09:00",
-  "subject": "Merge pull request #752 from yangsangmin/feat/2026-10-05-task-es-436-inline-p1-1"
+  "commit": "a35287e74e9d5edaeb903a225e9d2e177417a722",
+  "short": "a35287e",
+  "committedAt": "2026-10-05T19:36:14+09:00",
+  "subject": "[INFRA] #TASK-ES-453 refactor: 인라인 스크립트 세포화 P1 구역 3차 — refreshGoalStatusSummary(목표 종합상황 새로 고침)를 js/tabs/goals/ai-status-refresh.js 로 이전(동작 그대로)"
  },
  "summary": {
   "cells": 185,
   "files": 184,
-  "jsLines": 54458,
+  "jsLines": 54531,
   "kinds": {
    "organ": 29,
    "tab": 50,
@@ -133,7 +133,7 @@
     "goals/sub-routine",
     "goals/sub-team"
    ],
-   "lines": 3058,
+   "lines": 3131,
    "over800": 0
   },
   {
@@ -9361,17 +9361,26 @@
    "nameSource": "hand",
    "does": "목표가 바뀌었거나 날이 바뀌었을 때만 종합상황 AI 요약을 다시 받아 저장한다(같으면 다시 부르지 않음)",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Goal Status Refresh (목표 탭 — 종합상황 AI 요약 새로 고침)",
+    "#TASK-ES-453 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "refreshGoalStatusSummary(이전 전 19253~19300줄, 구획 주석 포함 · 구획 「현재 종합상황 (AI 요약)」)",
+    "#TASK-ES-436 에서 시험지(ai-conditional-call-optimization)가 index.html 한 파일만 읽어 남겼던 함수 — #TASK-ES-451 로 시험지가 인라인 합본을 읽게 되어 옮겼다."
+   ],
+   "lines": 73,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -9381,8 +9390,16 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436",
+    "TASK-ES-451",
+    "TASK-ES-453"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
    "prs": []
   },
   {
