@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "409f145bb896510d14897eb446806493e1057bc5",
-  "short": "409f145",
-  "committedAt": "2026-10-05T18:39:03+09:00",
-  "subject": "[INFRA] #TASK-ES-436 chore: Merge origin/main(#747·#748) — index.html·기준선·세포지도·신고서·인라인 지도는 main 판을 받고 같은 생성기로 다시 옮김(verify ok) · module-specs --write·module-guard --update·inline-script-map --write·cell-map-export 로 다시 만듦"
+  "commit": "75b87d418d25dfde18ad6a4ca687160f93fe742b",
+  "short": "75b87d4",
+  "committedAt": "2026-10-05T19:37:45+09:00",
+  "subject": "[INFRA] #TASK-ES-446 chore: Merge origin/main(#756·#757) — index.html 은 기록 탭 script 태그 줄을 합치고, 생성 파일은 main 판을 받아 module-specs --write·module-guard --update·inline-script-map --write 로 다시 만듦"
  },
  "summary": {
-  "cells": 184,
-  "files": 183,
-  "jsLines": 54458,
+  "cells": 201,
+  "files": 200,
+  "jsLines": 57172,
   "kinds": {
    "organ": 29,
-   "tab": 49,
+   "tab": 66,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 184,
+  "descriptionsHand": 201,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 32147,
-   "functionDecls": 629
+   "inlineScriptLines": 29970,
+   "functionDecls": 586
   },
   "health": {
-   "undifferentiatedLines": 32147,
+   "undifferentiatedLines": 29970,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 49,
+   "count": 66,
    "large": 6,
-   "small": 43
+   "small": 60
   },
   {
    "key": "hybrid",
@@ -121,6 +121,7 @@
    "cells": [
     "goals/index",
     "goals/ai-agent",
+    "goals/ai-local-fallback",
     "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
@@ -128,11 +129,12 @@
     "goals/render",
     "goals/result-modal",
     "goals/schedule-setup",
+    "goals/starter-goal",
     "goals/sub-personal",
     "goals/sub-routine",
     "goals/sub-team"
    ],
-   "lines": 3058,
+   "lines": 3142,
    "over800": 0
   },
   {
@@ -144,13 +146,20 @@
     "records/index",
     "records/ai-feedback",
     "records/ai-feedback-providers",
+    "records/heatmap-summary",
     "records/period-ai-card",
+    "records/photo-proof",
+    "records/pro-report-export",
+    "records/record-assistant",
+    "records/record-cards",
+    "records/record-heatmap-report",
     "records/render",
     "records/sub-retrospect",
     "records/sub-timeline",
-    "records/sub-timer"
+    "records/sub-timer",
+    "records/table-analytics-view"
    ],
-   "lines": 1825,
+   "lines": 3012,
    "over800": 0
   },
   {
@@ -160,15 +169,17 @@
    "desc": "달력·하루 상세·사진 일기·AI 일정 비서",
    "cells": [
     "calendar/index",
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
+    "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
     "calendar/sub-day-detail",
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 1564,
+   "lines": 2086,
    "over800": 0
   },
   {
@@ -178,15 +189,19 @@
    "desc": "피드·동반자·DM·크루",
    "cells": [
     "comm/index",
+    "comm/challenge-room",
     "comm/dm-ledger",
     "comm/feed-comments",
+    "comm/feed-post-preview",
+    "comm/first-cheer",
     "comm/render",
+    "comm/story-canvas",
     "comm/story-card-send",
     "comm/sub-companions",
     "comm/sub-crew",
     "comm/sub-feed"
    ],
-   "lines": 968,
+   "lines": 1584,
    "over800": 0
   },
   {
@@ -196,6 +211,8 @@
    "desc": "프로필·화면·알림·보안·연동·데이터",
    "cells": [
     "settings/index",
+    "settings/adaptive-ux",
+    "settings/pwa-install",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -204,7 +221,7 @@
     "settings/sub-profile",
     "settings/sub-security"
    ],
-   "lines": 1513,
+   "lines": 1818,
    "over800": 0
   },
   {
@@ -3440,14 +3457,21 @@
    "calls": [],
    "calledBy": [
     "avatar/xp",
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
+    "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
+    "comm/challenge-room",
     "comm/feed-comments",
+    "comm/feed-post-preview",
+    "comm/first-cheer",
     "comm/render",
+    "comm/story-canvas",
     "comm/story-card-send",
     "goals/ai-agent",
+    "goals/ai-local-fallback",
     "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
@@ -3455,10 +3479,20 @@
     "goals/render",
     "goals/result-modal",
     "goals/schedule-setup",
+    "goals/starter-goal",
     "records/ai-feedback",
     "records/ai-feedback-providers",
+    "records/heatmap-summary",
     "records/period-ai-card",
+    "records/photo-proof",
+    "records/pro-report-export",
+    "records/record-assistant",
+    "records/record-cards",
+    "records/record-heatmap-report",
     "records/render",
+    "records/table-analytics-view",
+    "settings/adaptive-ux",
+    "settings/pwa-install",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6254,6 +6288,7 @@
    ],
    "calls": [],
    "calledBy": [
+    "comm/first-cheer",
     "settings/render",
     "settings/sub-notify",
     "team-dm-inbox"
@@ -6572,7 +6607,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-calendar-views",
@@ -6628,7 +6670,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-focus-timer",
@@ -6688,7 +6737,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-goal-trail",
@@ -6747,7 +6803,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-peer-radar",
@@ -6804,7 +6867,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-record-feed",
@@ -6862,7 +6932,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-v3-engine",
@@ -6892,8 +6969,10 @@
     "OurgoalSanctuaryV3"
    ],
    "calls": [
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
+    "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
     "sanctuary-calendar-actions",
@@ -6939,24 +7018,38 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-201",
     "TASK-ES-231",
     "TASK-ES-232",
     "TASK-ES-241",
     "TASK-ES-246",
     "TASK-ES-331",
-    "TASK-ES-362"
+    "TASK-ES-362",
+    "TASK-ES-429",
+    "TASK-ES-433"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-201-ALL-TABS-UX-REMEDIATION.md",
     "docs/specs/REQ-TASK-ES-231-COMPANION-INVITE-SEARCH.md",
     "docs/specs/REQ-TASK-ES-232-LOCKSCREEN-SCHEDULE-CARD.md",
     "docs/specs/REQ-TASK-ES-241-CALENDAR-WEEK-THEME-CONTRAST.md",
     "docs/specs/REQ-TASK-ES-246-COMM-PEER-RADAR-SLIM-FOLD.md",
     "docs/specs/REQ-TASK-ES-331-HOME-TAB-REFINEMENT.md",
-    "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md"
+    "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md",
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
+    "docs/specs/REQ-TASK-ES-433-STORYCARD-ENTRY.md"
    ],
    "prs": [
+    {
+     "number": 748,
+     "task": "TASK-ES-433",
+     "title": "[FIX] #TASK-ES-433 fix: 갓생 카드 창 진입 단추 복원 — 홈 「내 성장 자랑하기」·「내 성장 확인하기」·기록 「📸 갓생 스토리카드」",
+     "date": "2026-10-05"
+    },
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    },
     {
      "number": 676,
      "task": "TASK-ES-362",
@@ -6992,18 +7085,6 @@
      "task": "TASK-ES-231",
      "title": "feat/2026-09-23-task-es-231-companion-invite-search",
      "date": "2026-09-23"
-    },
-    {
-     "number": 364,
-     "task": null,
-     "title": "[E2] #TASK-ES-202 feat: 기록/통계 5대 UX 전면 개편 (보관함 3개전면/5개페이징·1줄퀵독압축·히트맵4주일자요약·성취통계요약카드스위처·서브탭동기화)",
-     "date": "2026-09-21"
-    },
-    {
-     "number": 358,
-     "task": "TASK-ES-201",
-     "title": "[FIX] #TASK-ES-201 feat: 전수 6대 탭 상단 배너·모드 네비게이션 4대 결함 전수 일괄 정상화",
-     "date": "2026-09-21"
     }
    ]
   },
@@ -7063,7 +7144,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "stats-charts",
@@ -8189,6 +8277,66 @@
    ]
   },
   {
+   "id": "calendar/day-bg-picker",
+   "file": "js/tabs/calendar/day-bg-picker.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "calendar",
+   "tabs": [
+    "calendar"
+   ],
+   "name": "일자별 배경 사진",
+   "nameSource": "hand",
+   "does": "일정 탭에서 날짜마다 배경 사진을 골라 줄여 저장하고 지우는 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Calendar Day Background Picker (일정 탭 — 일자별 배경 사진 지정 창)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "compressCalendarBgImage · openCalendarDayBgPickerModal(이전 전 10524~10748줄 · 구획 「[#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 250,
+   "over800": false,
+   "exposes": [
+    "OurgoalCalendarKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "calendar/sub-day-detail",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCalendarKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-153",
+    "TASK-ES-155",
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-153-CALENDAR-DAY-BACKGROUND.md",
+    "docs/specs/REQ-TASK-ES-155-CALENDAR-BG-CHECK-ITITEM-FIX.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "calendar/day-detail",
    "file": "js/tabs/calendar/day-detail.js",
    "kind": "tab",
@@ -8397,6 +8545,64 @@
    ]
   },
   {
+   "id": "calendar/lockscreen-live",
+   "file": "js/tabs/calendar/lockscreen-live.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "calendar",
+   "tabs": [
+    "calendar"
+   ],
+   "name": "잠금화면 라이브 카드",
+   "nameSource": "hand",
+   "does": "오늘 일정·목표 요약을 폰 잠금화면 라이브 카드 내용으로 만들어 보내거나 닫는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Lock Screen Live Card (일정 탭 — 폰 잠금화면 실시간 정보 카드)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "buildLockScreenCardPayload · syncLockScreenLiveCard · closeLockScreenLiveCard(이전 전 11424~11669줄, 구획 주석 포함 · 구획 「[#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 272,
+   "over800": false,
+   "exposes": [
+    "OurgoalCalendarKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "calendar/sub-day-detail",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCalendarKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-182",
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-182-LOCKSCREEN-LIVE-SYNC.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "calendar/natural-schedule",
    "file": "js/tabs/calendar/natural-schedule.js",
    "kind": "tab",
@@ -8558,8 +8764,10 @@
     "OurgoalCalendarDayDetail"
    ],
    "calls": [
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
+    "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
     "core/event-bus"
@@ -8730,6 +8938,59 @@
    ]
   },
   {
+   "id": "comm/challenge-room",
+   "file": "js/tabs/comm/challenge-room.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "소규모 챌린지 룸",
+   "nameSource": "hand",
+   "does": "소규모 챌린지 룸 창을 띄워 참여 현황과 인증을 보여 준다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Challenge Room (소통 탭 — 소규모 챌린지 룸 창)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "openChallengeRoomModal(이전 전 14511~14606줄, 구획 주석 포함 · 구획 「소규모 챌린지 룸 모달 (가상유저 요청 P8/P17)」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 120,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "comm/dm-ledger",
    "file": "js/tabs/comm/dm-ledger.js",
    "kind": "tab",
@@ -8860,6 +9121,117 @@
    ]
   },
   {
+   "id": "comm/feed-post-preview",
+   "file": "js/tabs/comm/feed-post-preview.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "피드 게시 미리보기",
+   "nameSource": "hand",
+   "does": "피드 게시 창에서 올릴 글이 피드에 어떻게 보일지 미리보기를 켜고 끈다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Feed Post Preview (소통 탭 — 피드 게시 창 미리보기 토글)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "toggleFeedPostPreview(이전 전 17370~17406줄 · 구획 「[#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 61,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-301",
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-301-FEED-POST-PREVIEW-MODAL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "comm/first-cheer",
+   "file": "js/tabs/comm/first-cheer.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "첫 응원 전달",
+   "nameSource": "hand",
+   "does": "새 사용자가 첫 기록을 남기면 맞춤 응원이 잠시 뒤 도착하게 예약한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal First Cheer (소통 — 신규 유저 첫 응원 전달)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "triggerFirstCheerResponse · scheduleCheerDelivery(이전 전 15212~15248줄, 구획 주석 포함 · 구획 「신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002, TASK-ES-332)」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 62,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "notify-engine"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-332",
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-332-PURGE-MOCK-PERSONAS-FOLLOWERS.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "comm/index",
    "file": "js/tabs/comm/index.js",
    "kind": "tab",
@@ -8988,6 +9360,59 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "comm/story-canvas",
+   "file": "js/tabs/comm/story-canvas.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "갓생 스토리 카드 그림",
+   "nameSource": "hand",
+   "does": "갓생 카드 창에서 보여 주고 보낼 9:16 인스타 스토리 이미지를 캔버스로 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal MZ Story Canvas (소통 — 9:16 갓생 스토리 카드 그림)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "generateMzStoryCanvas(이전 전 13664~14012줄, 구획 주석 포함 · 구획 「MZ 9:16 인스타 스토리 고해상도 그래픽 캔버스 생성기 (Growth & Viral Loop)」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 373,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
   },
   {
    "id": "comm/story-card-send",
@@ -9285,6 +9710,66 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
+   "prs": [
+    {
+     "number": 752,
+     "task": "TASK-ES-436",
+     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "goals/ai-local-fallback",
+   "file": "js/tabs/goals/ai-local-fallback.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 로컬 문장",
+   "nameSource": "hand",
+   "does": "서버 AI 가 없을 때 오늘의 미션과 마일스톤 완료 뒤 다음 행동 제안 문장을 로컬로 만든다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal AI Local Fallback (목표 — 오늘의 미션·다음 행동 로컬 문장)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "localTodayMission(이전 전 19302~19307줄, 구획 주석 포함 · 구획 「오늘의 미션」)",
+    "localNextActionSuggestion(이전 전 19387~19391줄, 구획 주석 포함 · 구획 「마일스톤 완료 축하 모달 (AI 다음 행동 제안)」)"
+   ],
+   "lines": 38,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
    "prs": []
   },
   {
@@ -9339,7 +9824,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 752,
+     "task": "TASK-ES-436",
+     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "goals/goal-detail-events",
@@ -9785,6 +10277,66 @@
     "docs/specs/REQ-TASK-ES-259-GOALS-SCHEDULE-SYNC.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": [
+    {
+     "number": 752,
+     "task": "TASK-ES-436",
+     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "goals/starter-goal",
+   "file": "js/tabs/goals/starter-goal.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "갓생 스타터 목표",
+   "nameSource": "hand",
+   "does": "새 사용자가 스타터 템플릿을 누르면 마일스톤이 채워진 목표를 바로 만든다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Starter Goal (목표 — 신규 유저 10초 갓생 스타터 목표 만들기)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "quickCreateStarterGoal(이전 전 13232~13253줄 · 구획 「신규 유저 10초 활성화: 갓생 스타터 목표 템플릿」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 46,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -10369,7 +10921,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 752,
+     "task": "TASK-ES-436",
+     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "records/ai-feedback",
@@ -10421,6 +10980,66 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": [
+    {
+     "number": 752,
+     "task": "TASK-ES-436",
+     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "records/heatmap-summary",
+   "file": "js/tabs/records/heatmap-summary.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "최근 히트맵 요약",
+   "nameSource": "hand",
+   "does": "최근 실천 기록을 히트맵 요약 카드로 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Heatmap Summary Card (홈 — 최근 히트맵 요약 카드)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "renderHomeGrassSummary(이전 전 13468~13518줄, 구획 주석 포함 · 구획 「최근 히트맵 요약 카드 (가상유저 요청 P7/P9)」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 75,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
    ],
    "prs": []
   },
@@ -10549,6 +11168,279 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "records/photo-proof",
+   "file": "js/tabs/records/photo-proof.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "사진 인증·보기",
+   "nameSource": "hand",
+   "does": "체크인 사진을 올리기 전에 줄이고, 기록에 붙은 사진을 크게 보는 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Photo Proof (기록 — 사진 인증 줄이기·사진 보기 창)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "openPhotoViewerModal · compressImage(이전 전 14930~14973줄 · 구획 「사진 인증 & 뷰어 모달 (가상유저 요청 P1)」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 69,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "records/pro-report-export",
+   "file": "js/tabs/records/pro-report-export.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "AI 코칭·노션 내보내기",
+   "nameSource": "hand",
+   "does": "기록을 노션으로 보내고, AI 코칭 리포트 창과 노션 표 내보내기·복사 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Pro Report & Export (기록 탭 — 노션 푸시·AI 코칭 리포트·노션 표 내보내기)",
+    "#TASK-ES-446 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G141·G142·G143.",
+    "옮긴 선언(이전 전 줄): pushRecordToNotion(26620~26693) · openProCoachReportModal(26694~26855) · openProNotionExportModal(26856~26977)",
+    "pushRecordToNotion = 기록을 노션 데이터베이스로 바로 보내기, openProCoachReportModal = AI 프로 코칭 리포트·처방 창, openProNotionExportModal = 노션 표 내보내기·클립보드 복사 창."
+   ],
+   "lines": 384,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-446"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "records/record-assistant",
+   "file": "js/tabs/records/record-assistant.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "대화형 기록 비서",
+   "nameSource": "hand",
+   "does": "한 줄 말로 쓴 기록을 알아듣고 확인 창을 띄워 기록으로 저장한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record Assistant (기록 탭 — 대화형 기록 비서)",
+    "#TASK-ES-446 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G136.",
+    "옮긴 선언(이전 전 줄): parseConversationalRecord(25148~25205) · handleConversationalRecord(25206~25210) · openConversationalRecordConfirmModal(25211~25293)",
+    "parseConversationalRecord = 한 줄 말을 기록 값으로 풀기, handleConversationalRecord·openConversationalRecordConfirmModal = 확인 창을 띄우고 저장."
+   ],
+   "lines": 172,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-446"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "records/record-cards",
+   "file": "js/tabs/records/record-cards.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "기록 카드",
+   "nameSource": "hand",
+   "does": "기록 한 건을 카드로 그리고 카드의 수정·삭제·테마 바꾸기 단추를 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record Cards (기록 탭 — 기록 카드 그리기)",
+    "#TASK-ES-446 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G130.",
+    "옮긴 선언(이전 전 줄): buildRecordCardHtml(24195~24259)",
+    "buildRecordCardHtml = 기록 한 건 카드 HTML. 기록 목록·타임라인·하루 상세가 부른다(카드 단추 연결 wireRecordCards 는 시험지 core-confirm-es376 이 index.html 글자로 읽어 남음 — 시험지 선행 뒤 옮김)."
+   ],
+   "lines": 89,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-446"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "records/record-heatmap-report",
+   "file": "js/tabs/records/record-heatmap-report.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "기록 히트맵·리포트",
+   "nameSource": "hand",
+   "does": "기록 히트맵과 주간·월간 리포트(추이 그래프·카테고리 도넛)를 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record Heatmap & Report (기록 탭 — 히트맵·주간/월간 리포트 그림)",
+    "#TASK-ES-446 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G132·G133.",
+    "옮긴 선언(이전 전 줄): renderRecordHeatmap(24615~24761) · TOPIC_COLORS(24762~24764) · svgTrendChart(24765~24781) · svgCategoryDonut(24782~24797) · renderReportSummary(24798~24858)",
+    "renderRecordHeatmap = 기록 히트맵(칸 색 단계 heatmapLevel 은 시험지가 글자로 읽어 index.html 에 남음),"
+   ],
+   "lines": 277,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-446"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md"
+   ],
+   "prs": []
   },
   {
    "id": "records/render",
@@ -10797,6 +11689,116 @@
    ]
   },
   {
+   "id": "records/table-analytics-view",
+   "file": "js/tabs/records/table-analytics-view.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "표 기록 집계·차트",
+   "nameSource": "hand",
+   "does": "표 기록의 자동 집계 결과·일자별 성장 추이 차트·스톱워치 위젯을 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Table Analytics View (기록 탭 — 표 기록 집계·일자별 추이 차트 그림)",
+    "#TASK-ES-446 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G138·G139.",
+    "옮긴 선언(이전 전 줄): renderAnalyticsHtml(26317~26330) · renderTrendSvgChart(26441~26521)",
+    "renderAnalyticsHtml = 전문 템플릿 자동 집계 결과 HTML(집계 computeTableAnalytics 는 index.html 에 남음), renderTrendSvgChart = 일자별 성장 추이 SVG(자료 computeTrendChartData 는 남음),"
+   ],
+   "lines": 121,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-446"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "settings/adaptive-ux",
+   "file": "js/tabs/settings/adaptive-ux.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "적응형 화면 모드",
+   "nameSource": "hand",
+   "does": "간단·전문가 화면 모드 막대를 그리고 바꾸며, 망설임·연타 신호를 기록한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Adaptive UX (설정 — 적응형 화면 모드·망설임 기록)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "getUxMode · switchUxMode(이전 전 12760~12775줄 · 구획 「Adaptive UX Mode」)",
+    "renderAdaptiveModeBar(이전 전 12778~12788줄 · 구획 「Adaptive UX Mode」)"
+   ],
+   "lines": 64,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [
+    "_modalOpenAt"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "settings/index",
    "file": "js/tabs/settings/index.js",
    "kind": "tab",
@@ -10873,6 +11875,61 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "settings/pwa-install",
+   "file": "js/tabs/settings/pwa-install.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "홈 화면 설치 안내",
+   "nameSource": "hand",
+   "does": "iOS 홈 화면 추가 배너와 기기별 설치 안내 창을 띄우고, 입력할 때 키보드가 칸을 가리지 않게 한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal PWA Install Guide (설정 — 홈 화면 추가 안내·키보드 가림 방지)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "renderIosPwaBanner · openIosPwaInstallGuideModal(이전 전 13052~13189줄 · 구획 「iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)」)",
+    "initKeyboardShield(이전 전 21724~21743줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)"
+   ],
+   "lines": 241,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-234",
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-234-IOS-PWA-GUIDE.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
   },
   {
    "id": "settings/render",

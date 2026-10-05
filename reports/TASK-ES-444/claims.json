@@ -1,0 +1,498 @@
+{
+ "task": "TASK-ES-444",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "P1 구역 묶음(G075·G078·G081·G083·G084·G085·G087·G089·G091·G095·G097·G103·G125 와 1차에서 남긴 G114·G116 의 로컬 문장 함수)의 함수 선언 27개를 생성기(gen-inline-p1.js, 설정 inline-p1-444.json)로 글자 그대로 세포 12개로 옮긴다. 이름 참조만 L./K. 접두, 로드 중 문·최상위 변수는 원래 자리, 기존 키트 사용(새 전역 0), 새 파일 800줄 이하, 기능 추가·삭제 0."
+  },
+  {
+   "id": "R2",
+   "text": "index.html 인라인 순증가 0(옮긴 구간은 표지 주석 한 줄로), 새 script 태그는 그 탭 index.js 태그 앞 같은 줄, IIFE 머리 이음매에서 옮긴 함수를 같은 이름으로 가져와 부르는 쪽·window 노출 줄을 그대로 둔다."
+  },
+  {
+   "id": "R3",
+   "text": "동작 그대로를 측정한다 — 토큰·덩어리 줄·index.html 나머지 동일, 원본 단독 로드 회귀 0, 게스트 조작 DOM 비교 0, 법정 형식 게스트 화면 시나리오, npm test·tests 기준=후."
+  },
+  {
+   "id": "R4",
+   "text": "세포 등록: cell-descriptions.json 짧은 이름·하는 일, modules.json(module-specs --write), module-baseline.json(module-guard --update), cell-map.json·inline-script-map 재생성."
+  },
+  {
+   "id": "R5",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정: 잠금화면 라이브 카드 세포 정의",
+   "touches": [
+    "docs/design/harness/module-split/inline-p1-444.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-p1-444.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/calendar/lockscreen-live.js\""
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정: #TASK-ES-441 시험지 합본 읽기 뒤라 smoke FN_NAMES 함수도 옮긴다(smokeFromBundle)",
+   "touches": [
+    "docs/design/harness/module-split/inline-p1-444.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-p1-444.json",
+    "type": "codeContains",
+    "text": "\"smokeFromBundle\": true"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수 27개 토큰 동일·덩어리 줄 동일·index.html 나머지 그대로·누수 0 검사가 ok",
+   "touches": [
+    "reports/TASK-ES-444/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수 수는 27개",
+   "touches": [
+    "reports/TASK-ES-444/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "movedFunctions",
+    "equals": 27
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수 27개 모두 원본과 토큰열이 같다(L./K. 접두 제외)",
+   "touches": [
+    "reports/TASK-ES-444/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 파일 줄 수: 잠금화면 라이브 카드 272줄(800 이하)",
+   "touches": [
+    "reports/TASK-ES-444/gen-inline-p1-meta.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/gen-inline-p1-meta.json",
+    "type": "codeContains",
+    "text": "\"js/tabs/calendar/lockscreen-live.js\": 272"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 덩어리 20개 자리가 표지 주석으로 바뀌고 나머지 줄은 그대로다",
+   "touches": [
+    "reports/TASK-ES-444/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "restOfIndexSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이음매는 가져오기·getter 줄만 담는다",
+   "touches": [
+    "reports/TASK-ES-444/verify-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/verify-inline-p1.json",
+    "type": "jsonPath",
+    "path": "seamOnlyDeclsAndExpose",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0",
+   "touches": [
+    "reports/TASK-ES-444/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 DOM 비교(41단계×10칸, 기준 대 후) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-444/dom-compare-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/dom-compare-inline-p1.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 단계: 같은 그림 파일을 사진 인증·배경 사진 입력에 넣는다",
+   "touches": [
+    "docs/design/harness/module-split/dom-steps-inline-p1-444.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-steps-inline-p1-444.js",
+    "type": "codeContains",
+    "text": "['bg-picker-file', FILE_INTO('#calDayBgFileInput'), 2000],"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 형식 시나리오 4개를 로컬 법정 실행기로 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-444/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allPassedBoth",
+    "equals": true
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 108개 종료 코드가 기준과 작업에서 모두 같다",
+   "touches": [
+    "reports/TASK-ES-444/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test smoke 통과·실패 수가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-444/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 탭 「설치 안내」를 누르면 설치 안내 창이 뜨고, Android 탭 전환·「확인했습니다」가 이전 전과 같이 동작해 창이 닫히고 안내 토스트가 뜬다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/calendar/day-bg-picker.js",
+    "js/tabs/calendar/lockscreen-live.js",
+    "js/tabs/comm/challenge-room.js",
+    "js/tabs/comm/first-cheer.js",
+    "js/tabs/comm/feed-post-preview.js",
+    "js/tabs/records/photo-proof.js",
+    "js/tabs/records/heatmap-summary.js",
+    "js/tabs/settings/adaptive-ux.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/goals/starter-goal.js",
+    "js/tabs/goals/ai-local-fallback.js",
+    "js/tabs/comm/story-canvas.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-pwa-install-guide.json"
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 소통 탭 게시 창의 「미리보기」를 누르면 피드 게시 미리보기 카드가 보이고 단추가 「미리보기 닫기」로 바뀐다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/calendar/day-bg-picker.js",
+    "js/tabs/calendar/lockscreen-live.js",
+    "js/tabs/comm/challenge-room.js",
+    "js/tabs/comm/first-cheer.js",
+    "js/tabs/comm/feed-post-preview.js",
+    "js/tabs/records/photo-proof.js",
+    "js/tabs/records/heatmap-summary.js",
+    "js/tabs/settings/adaptive-ux.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/goals/starter-goal.js",
+    "js/tabs/goals/ai-local-fallback.js",
+    "js/tabs/comm/story-canvas.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/comm-feed-post-preview.json"
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 잠금화면 라이브 카드 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"calendar/lockscreen-live\": \"잠금화면 라이브 카드\","
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 홈 화면 설치 안내 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"settings/pwa-install\": \"홈 화면 설치 안내\","
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 사진 인증·보기 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/records/photo-proof.js\","
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 정본에 첫 응원 전달 세포가 실림",
+   "touches": [
+    "docs/architecture/cell-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-map.json",
+    "type": "codeContains",
+    "text": "\"id\": \"comm/first-cheer\""
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-444: 인라인 스크립트 세포화 P1 구역 2차"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-444 | INFRA | [인라인 스크립트 세포화 P1 구역 2차]"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 기준 앱 2회 게스트 조작 비교(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-444/dom-compare-inline-p1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-444/dom-compare-inline-p1.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: smoke 함수 안에 K. 접두가 생기면 멈춘다(합본 추출은 L. 만 뗀다)",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-p1.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-p1.js",
+    "type": "codeContains",
+    "text": "if (SMOKE.has(n)) throw new Error('smoke 함수 안에 K. 접두가 생김"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표가 없는 홈에서 「오늘 목표」 시트의 「매일 3km 러닝」 스타터를 누르면 목표가 만들어지고 「첫 갓생 목표가 시작되었어요」 토스트가 뜬다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/calendar/day-bg-picker.js",
+    "js/tabs/calendar/lockscreen-live.js",
+    "js/tabs/comm/challenge-room.js",
+    "js/tabs/comm/first-cheer.js",
+    "js/tabs/comm/feed-post-preview.js",
+    "js/tabs/records/photo-proof.js",
+    "js/tabs/records/heatmap-summary.js",
+    "js/tabs/settings/adaptive-ux.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/goals/starter-goal.js",
+    "js/tabs/goals/ai-local-fallback.js",
+    "js/tabs/comm/story-canvas.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/home-starter-goal.json"
+  },
+  {
+   "id": "C27",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 「갓생 스토리카드」를 누르면 갓생 카드 창과 9:16 캔버스가 보인다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/calendar/day-bg-picker.js",
+    "js/tabs/calendar/lockscreen-live.js",
+    "js/tabs/comm/challenge-room.js",
+    "js/tabs/comm/first-cheer.js",
+    "js/tabs/comm/feed-post-preview.js",
+    "js/tabs/records/photo-proof.js",
+    "js/tabs/records/heatmap-summary.js",
+    "js/tabs/settings/adaptive-ux.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/goals/starter-goal.js",
+    "js/tabs/goals/ai-local-fallback.js",
+    "js/tabs/comm/story-canvas.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-story-card-canvas.json"
+  },
+  {
+   "id": "C28",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 갓생 스토리 카드 그림 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"comm/story-canvas\": \"갓생 스토리 카드 그림\","
+   }
+  }
+ ]
+}
