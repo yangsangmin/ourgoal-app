@@ -1,0 +1,53 @@
+{
+  "id": "settings-logout-others",
+  "title": "게스트로 설정 탭 보안 묶음을 펼쳐 「다른 모든 기기에서 로그아웃」을 누르면 옮긴 확인 창 함수(openLogoutOtherDevicesConfirmModal — js/tabs/settings/login-devices.js)가 불려 이전 전과 같이 게스트 안내 토스트가 뜬다(게스트는 로그인 세션이 없어 창 대신 안내)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details.settings-group-accordion:has(#logoutOtherDevicesBtn) > summary",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#logoutOtherDevicesBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#logoutOtherDevicesBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#logoutOtherDevicesBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "게스트 체험 모드는 로그인 세션이 없어 다른 기기에서 로그아웃할 것이 없어요."
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -1,0 +1,338 @@
+{
+ "task": "TASK-ES-456",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-456-AGY-G076.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "인라인 G076 openCalendarDayEditHubModal(구획 주석 포함 묶음)을 글자 그대로 js/tabs/calendar/day-edit-hub.js 로 옮긴다(코드 이동: 안티그래비티). 이름 참조만 L. 접두, 기존 일정 키트 OurgoalCalendarKit 사용(새 전역 0), window 노출 줄은 index.html 원래 자리, 기능 추가·삭제 0."
+  },
+  {
+   "id": "R2",
+   "text": "검수(Claude): 안티그래비티 판의 결함(새 전역 키트로 허브 창이 안 뜸·문자열 empty-state 훼손·window 노출 자리)을 고치고 #744 검사기로 토큰 동일·누수 0·원본/새 세포 단독 로드를 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "동작 그대로를 측정한다 — npm test·tests 기준=작업, 달력 탭 tab-check 기준 대 작업 0, 게스트 조작 DOM 비교 0, 화면 동작은 게스트 화면 시나리오(기준·작업 모두 통과)."
+  },
+  {
+   "id": "R4",
+   "text": "세포 등록: cell-descriptions.json 짧은 이름·하는 일, modules.json(module-specs --write). 기준선·세포지도·인라인 지도는 새 규칙대로 main 판 그대로."
+  },
+  {
+   "id": "R5",
+   "text": "문서: REQ(8원칙 — 코드 이동은 안티그래비티, 검수·서류는 Claude 명시), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수 토큰 동일(L. 접두 제외)·덩어리 줄 동일·누수 0·남은 정의 0 검사가 ok",
+   "touches": [
+    "reports/TASK-ES-456/verify-inline-g076-456.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/verify-inline-g076-456.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 묶음 덩어리 줄이 이전 전 줄과 한 줄도 다르지 않다",
+   "touches": [
+    "reports/TASK-ES-456/verify-inline-g076-456.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/verify-inline-g076-456.json",
+    "type": "jsonPath",
+    "path": "lineCheck.0.diffLines",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포를 단독으로 실으면 기존 일정 키트 OurgoalCalendarKit 하나만 등록한다(안티그래비티 원판은 새 전역 _calendarKit)",
+   "touches": [
+    "reports/TASK-ES-456/cell-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/cell-load-probe.json",
+    "type": "jsonPath",
+    "path": "workRegistersOnlyExistingKit",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0",
+   "touches": [
+    "reports/TASK-ES-456/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기는 #744 검사기 복제이고 옮긴 묶음은 openCalendarDayEditHubModal 하나",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-g076-456.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-inline-g076-456.js",
+    "type": "codeContains",
+    "text": "  'js/tabs/calendar/day-edit-hub.js': ['openCalendarDayEditHubModal'],"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 108개 종료 코드가 기준과 작업에서 모두 같다",
+   "touches": [
+    "reports/TASK-ES-456/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test smoke 통과·실패 수가 기준과 같다(443/0)",
+   "touches": [
+    "reports/TASK-ES-456/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "달력 탭 tab-check 기준 대 작업 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-456/tab-compare-base1-work.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/tab-compare-base1-work.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "달력 탭 tab-check 기준 대 기준(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-456/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/tab-compare-base1-base2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 DOM 비교(14단계, 기준 대 작업) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-456/dom-compare-g076.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/dom-compare-g076.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 기준 앱 2회 게스트 조작 비교 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-456/dom-compare-g076.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/dom-compare-g076.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 단계: 오늘 칸 → 허브 → 새 일정 저장 → 연필 → 취소 → 완료 동그라미",
+   "touches": [
+    "docs/design/harness/module-split/dom-steps-g076-456.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-steps-g076-456.js",
+    "type": "codeContains",
+    "text": "['hub-toggle', clickIn('[data-hubtogglesched]'), 1500],"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 형식 시나리오 2개를 로컬 법정 실행기로 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-456/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-456/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allPassedBoth",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭에서 오늘 날짜 칸을 고르고 「📅 허브」를 누르면 「일정 관리」 허브 창이 「새 일정 추가」·「맞춤기록 작성」·「이날의 배경사진 고르기」와 함께 뜨고 「닫기」로 닫힌다(옮기기 전과 같은 동작 — 기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/calendar/day-edit-hub.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/calendar-day-hub-open.json"
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 허브 창의 「새 일정 추가」로 일정을 저장하면 「일정을 추가했어요」 토스트와 함께 허브 창이 그 일정을 목록에 담아 다시 뜨고, 연필(수정)을 누르면 「일정 수동 편집」으로 들어가며 「취소」로 허브 창에 돌아온다(기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/calendar/day-edit-hub.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/calendar-day-hub-add-edit.json"
+  },
+  {
+   "id": "C16",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 날짜 일정 관리 창 세포 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"calendar/day-edit-hub\": \"날짜 일정 관리 창\","
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 날짜 일정 관리 창 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/calendar/day-edit-hub.js\","
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서(코드 이동 안티그래비티·검수 Claude 명시)",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-456-AGY-G076.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-456-AGY-G076.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-456: 인라인 G076"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-456 | INFRA | [인라인 G076 허브 창 세포 이동 · 안티그래비티 검수]"
+   }
+  }
+ ]
+}
