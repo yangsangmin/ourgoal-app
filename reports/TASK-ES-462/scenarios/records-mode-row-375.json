@@ -1,0 +1,83 @@
+{
+  "id": "records-mode-row-375",
+  "title": "375px 화면에서 게스트가 기록 탭에 들어가면 성소 기록 모드 줄(#sRecModesWrap)이 화면 폭 안에서 세 칸 같은 너비(105px×3)로 나뉘고, 「📝 실천 타임라인」·「🎬 위클리 리캡 카드」 오른쪽 끝을 눌러도 눌려 리캡 카드가 열린다 — 고치기 전에는 칸이 minmax(min-content) 라 117+119+132px 로 늘어나 341px 칸을 넘쳐 오른쪽 단추가 화면 밖으로 잘렸다",
+  "viewport": {
+    "width": 375,
+    "height": 812
+  },
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "setViewport",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "style",
+      "selector": "#sRecModesWrap",
+      "prop": "grid-template-columns",
+      "equals": "105px 105px 105px"
+    },
+    {
+      "do": "click",
+      "selector": "#sRecModesWrap > button:nth-of-type(3)",
+      "position": "right"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#sRecModesWrap > button:nth-of-type(3)",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#sRecRecapBtn",
+      "position": "right"
+    },
+    {
+      "expect": "visible",
+      "selector": "#sRecapCanvasMock",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#sRecRecapBtn",
+      "className": "active"
+    },
+    {
+      "expect": "noHorizontalOverflow"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "settings-home-layout-level-badge-label",
+  "title": "게스트가 설정 「화면 & 홈 구성」을 펼쳐 「홈 구성 고르기」를 누르면 홈 구성 목록의 잠긴 항목이 「아바타 & 경험치 바」·「아바타 카드에 들어 있어요」로 화면 사실대로 보이고 항목은 그대로 있다 — 고치기 전에는 홈에서 내린(TASK-ES-140) 「아바타 & 레벨 배지」가 항상 켜짐으로 표시됐다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#kf1LayoutList",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#kf1LayoutList .toggle-row-locked",
+      "text": "아바타 & 경험치 바"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#kf1LayoutList .toggle-row-locked",
+      "text": "아바타 카드에 들어 있어요"
+    },
+    {
+      "expect": "count",
+      "selector": "#kf1LayoutList [data-kf1-id=\"levelBadgeRow\"]",
+      "equals": 1
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
