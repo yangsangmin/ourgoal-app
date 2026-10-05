@@ -1,0 +1,430 @@
+{
+  "task": "TASK-ES-406",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-406-TEAM-LEVEL-ACCORDION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "팀 카드의 「팀 수준별 목표 관리」 아코디언([data-tglevelaccordion])이 실제 클릭으로 펼쳐지지 않는 죽은 클릭의 원인 배선을 고친다: 사용자가 펼친 상태(저장값)를 접기 함수(collapseAllTeamGoalAccordions)가 존중하게 하거나, 접기가 렌더 직후 사용자 클릭을 덮지 않게. 다른 팀 아코디언(일괄 접기가 의도된 곳)의 동작은 그대로. CSS 은폐·!important 금지."
+    },
+    {
+      "id": "R2",
+      "text": "4위 1체: 클릭 → 펼침/접힘 → 저장값 일치 → 시각 피드백."
+    },
+    {
+      "id": "R3",
+      "text": "부품 시험(npm test 경로, process.exitCode): 클릭 1회 펼침, 2회 접힘, 다시 렌더 뒤 상태 유지. 기준 실패→작업 통과."
+    },
+    {
+      "id": "R4",
+      "text": "게스트 화면 시나리오로 법정이 기준·작업 양쪽 실행: 기준 실패(본문 안 보임), 작업 통과(본문 글자 보임 → 수준별 조 모달 열림)."
+    },
+    {
+      "id": "R5",
+      "text": "팀 탭 tab-check 기준·작업 비교(펼침 칸 외 차이 0)."
+    },
+    {
+      "id": "R6",
+      "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 12,
+      "domain": "ui-behavior",
+      "statement": "게스트로 목표 탭 「팀」에서 체험 팀에 들어가 「팀 수준별 목표 관리」 머리를 마우스로 한 번 누르면 본문에 「팀 통합 수준관리」 글자가 보이고(기준 커밋에서는 단계 12에서 본문이 보이지 않음), 다시 누르면 접히고, 또 누르면 펼쳐지며, 「🌐 팀 통합 수준관리」→ A조 「자세히보기」를 누르면 수준별 조 모달에 「수준별 목표 상세 관리」가 보인다",
+      "touches": [
+        "index.html",
+        "js/team-visibility-levels.js"
+      ],
+      "scenario": "scenarios/team-level-accordion.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 11,
+      "domain": "ui-behavior",
+      "statement": "게스트가 「팀 수준별 목표 관리」 머리를 눌러 펼친 뒤 「팀 연계」→「팀목표」 서브탭으로 돌아와 팀 목표 화면을 다시 그려도(렌더 직후 일괄 접기) 본문 글자가 계속 보인다 — 기준 커밋에서는 클릭 직후(단계 11) 본문이 보이지 않음",
+      "touches": [
+        "index.html",
+        "js/team-visibility-levels.js"
+      ],
+      "scenario": "scenarios/team-level-accordion-rerender.json"
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 11,
+      "domain": "ui-behavior",
+      "statement": "머리를 누르면 화살표에 rotated(펼침 표시)가 붙고 본문이 보이며, 다시 누르면 rotated 가 빠지고 본문이 사라진다 — 기준 커밋에서는 클릭 직후(단계 11) 화살표에 rotated 가 없음",
+      "touches": [
+        "index.html",
+        "js/team-visibility-levels.js"
+      ],
+      "scenario": "scenarios/team-level-accordion-feedback.json"
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 일괄 접기가 수준별 본문은 저장값이 펼침이면 접지 않음",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if (!isTeamLevelSectionOpen(el.getAttribute('data-tglevelbody'))) el.style.display = 'none';",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 일괄 접기가 판정을 모듈의 isLevelSectionOpen 에 맡김",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "OurgoalTeamVisibilityLevels.isLevelSectionOpen(gid)",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 일괄 접기가 펼친 수준별 머리의 화살표 rotated 는 남김(시각 피드백)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var levelHead = arrow.closest('[data-tglevelaccordion]');",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "토글은 지금 펼침이면 접힘(true), 접힘이면 펼침(false)을 저장(첫 클릭이 저장값 없음을 접힘으로 다시 저장하던 결함 수정)",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "p.settings.foldLevelSection[gid] = isLevelSectionOpen(gid);",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "펼침 판정은 저장값 foldLevelSection[gid] === false 하나",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "return fold[gid] === false;",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 노출 객체에 isLevelSectionOpen 키",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "isLevelSectionOpen: isLevelSectionOpen",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 index.html 의 collapseAllTeamGoalAccordions 원문을 꺼내 돌림",
+      "touches": [
+        "tests/team-level-accordion-es406.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "indexHtml.indexOf('  function collapseAllTeamGoalAccordions() {')",
+        "file": "tests/team-level-accordion-es406.test.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 결과는 process.exitCode 로 냄",
+      "touches": [
+        "tests/team-level-accordion-es406.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "process.exitCode = failures ? 1 : 0;",
+        "file": "tests/team-level-accordion-es406.test.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 경로(test-shipyard-modular.js)에서 부품 시험을 돌림",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "runNode('tests/team-level-accordion-es406.test.js');",
+        "file": "scripts/test-shipyard-modular.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 기준 사본 종료 코드 1",
+      "touches": [
+        "reports/TASK-ES-406/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/test-compare.json",
+        "path": "unitTest.base.exitCode",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 작업 종료 코드 0",
+      "touches": [
+        "reports/TASK-ES-406/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/test-compare.json",
+        "path": "unitTest.work.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 작업 9개 모두 성립",
+      "touches": [
+        "reports/TASK-ES-406/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/test-compare.json",
+        "path": "unitTest.work.ok",
+        "equals": 9
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test smoke 통과·실패 수 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-406/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/test-compare.json",
+        "path": "smokeIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/ 종료 코드 기준과 다른 파일 0",
+      "touches": [
+        "reports/TASK-ES-406/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/test-compare.json",
+        "path": "testsDir.exitCodeDiffersFromBase",
+        "equals": []
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 기준 사본은 단계 12에서 실패",
+      "touches": [
+        "reports/TASK-ES-406/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/scenario-local.json",
+        "path": "base.failedStep",
+        "equals": 12
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 작업은 시나리오 통과",
+      "touches": [
+        "reports/TASK-ES-406/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/scenario-local.json",
+        "path": "work.passed",
+        "equals": true
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 8원칙 원칙 ② 본질·원인·중심·핵심",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-406-TEAM-LEVEL-ACCORDION.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심",
+        "file": "docs/specs/REQ-TASK-ES-406-TEAM-LEVEL-ACCORDION.md"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- 2026-10-05 TASK-ES-406: 팀 카드 「팀 수준별 목표 관리」 아코디언 죽은 클릭 수정",
+        "file": "dev_log.md"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- #TASK-ES-406 | FIX/버그 | [팀 수준별 목표 관리 아코디언 죽은 클릭]",
+        "file": "docs/rules/TICKETS.md"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탭 실측 goals 기준1 대 작업 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-406/tab-compare-base1-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/tab-compare-base1-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탭 실측 goals 기준1 대 작업 비교한 값 수",
+      "touches": [
+        "reports/TASK-ES-406/tab-compare-base1-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/tab-compare-base1-after.json",
+        "path": "comparedValues",
+        "equals": 408
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탭 실측 goals 기준2 대 작업 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-406/tab-compare-base2-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/tab-compare-base2-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탭 실측 goals 기준1 대 기준2 다른 값 0(재현성)",
+      "touches": [
+        "reports/TASK-ES-406/tab-compare-base1-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-406/tab-compare-base1-base2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    }
+  ]
+}

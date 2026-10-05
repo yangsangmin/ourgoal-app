@@ -4173,12 +4173,65 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
+        "OurgoalTeamGoalsKit",
         "OurgoalTeamInviteComm",
-        "renderCommScreen",
-        "sb",
-        "setTab",
-        "state"
+        "require:./team-member-review.js",
+        "sb"
       ]
+    },
+    {
+      "id": "team-level-group-modal",
+      "file": "js/team-level-group-modal.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "수준별 조 상세 모달 — openLevelGroupDetailModal(팀 통합/목표별 수준 그룹의 목표·마일스톤·할 일 편집 바텀시트). team-visibility-levels.js 에서 분열(#TASK-ES-402)",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "team-linked-goals-screen",
+      "file": "js/team-linked-goals-screen.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "'팀 연계 개인목표' 워크스페이스 화면 — renderTeamLinkedGoalsScreen. team-linked-goals.js 에서 분열(#TASK-ES-402)",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
     },
     {
       "id": "team-linked-goals",
@@ -4213,6 +4266,7 @@
       "ownerKeys": [],
       "dependsOn": [
         "MOCK_GROUPS",
+        "OurgoalTeamGoalsKit",
         "dDay",
         "goalAchievement",
         "groupState",
@@ -4221,9 +4275,43 @@
         "require:./core/confirm.js",
         "require:./core/modal.js",
         "require:./core/toast.js",
+        "require:./team-linked-goals-screen.js",
         "saveProfile",
         "state",
         "triggerHaptic"
+      ]
+    },
+    {
+      "id": "team-member-review",
+      "file": "js/team-member-review.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "팀장의 팀원 점검 모달 — openLeaderStampSelectModal(확인 도장 선택)·openMemberProgressDetailModal(팀원 달성도 상세 점검). team-leader-check.js 에서 분열(#TASK-ES-402)",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalTeamInviteComm",
+        "renderCommScreen",
+        "sb",
+        "setTab",
+        "state"
       ]
     },
     {
@@ -4414,6 +4502,7 @@
       "ownerKeys": [],
       "dependsOn": [
         "MOCK_GROUPS",
+        "OurgoalTeamGoalsKit",
         "OurgoalTeamLeaderCheck",
         "OurgoalTeamLinkedGoals",
         "TEAM_COMMENTS_CACHE",
@@ -4426,6 +4515,7 @@
         "require:./core/confirm.js",
         "require:./core/modal.js",
         "require:./core/toast.js",
+        "require:./team-level-group-modal.js",
         "saveProfile",
         "state",
         "teamCommentsBlockHtml",

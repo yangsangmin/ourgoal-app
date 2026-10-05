@@ -83,6 +83,18 @@ function readTeamGoalsBundle(rootDir, name) {
   if (parts.length === 0) assert.strictEqual(src, raw, '팀 목표 합본 = js/' + name + ' (부품 파일이 없을 때)');
   return src;
 }
+// #TASK-ES-408 (시간기록 세포 쪼개기 선행): 시간기록 코드가 js/time-tracker.js 에서 시간기록 세포 키트(OurgoalTimeTrackerKit)에 함수를 담는 js/time-tracker-*.js 부품으로 옮겨 가도
+// 부재 단언이 옮긴 코드도 계속 보도록 '시간기록 합본' = js/time-tracker.js(원문 그대로, 맨 앞) + 부품(이름순, 생성기 접두 T.·K. 를 떼고) 를 읽는다. 단언·기대값은 그대로다.
+function readTimeTrackerBundle(rootDir) {
+  const dir = path.join(rootDir, 'js');
+  const raw = fs.readFileSync(path.join(dir, 'time-tracker.js'), 'utf8');
+  const parts = fs.readdirSync(dir).filter((n) => n.indexOf('time-tracker-') === 0 && n.endsWith('.js')).sort().map((n) => path.join(dir, n))
+    .filter((f) => fs.statSync(f).isFile() && fs.readFileSync(f, 'utf8').indexOf('OurgoalTimeTrackerKit') >= 0);
+  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\.(?=[A-Za-z_$])/g, '$1'))].join('\n');
+  assert.strictEqual(src.slice(0, raw.length), raw, '시간기록 합본 맨 앞 = js/time-tracker.js 원문');
+  if (parts.length === 0) assert.strictEqual(src, raw, '시간기록 합본 = js/time-tracker.js (부품 파일이 없을 때)');
+  return src;
+}
 const ROOT = path.join(__dirname, '..');
 const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
 const C = require(path.join(ROOT, 'js/core/confirm.js'));
@@ -355,6 +367,7 @@ function fakeDom() {
       const src = fs.readFileSync(path.join(ROOT, f), 'utf8').split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n');
       const scan = f === 'js/team-invite-comm.js' ? readTeamCommBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n')
         : TEAM_GOALS_KIT_SLOTS[path.basename(f)] ? readTeamGoalsBundle(ROOT, path.basename(f)).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n')
+        : f === 'js/time-tracker.js' ? readTimeTrackerBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n')
         : f === 'js/universal-stats.js' ? readStatsBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n')
         : f === 'js/avatar-system.js' ? readAvatarBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n') : src;
       assert.ok(!/(?:^|[^.\w$])confirm\(|\bwindow\.confirm\(/.test(scan), f + ': confirm( 직접 호출 없음');

@@ -1,0 +1,83 @@
+{
+  "id": "team-linked-goals-screen",
+  "title": "게스트로 목표 탭 「팀」에서 체험 팀을 시작하고 팀 목표를 「팀 연계 개인목표로 복사」하면 「팀 연계」 서브탭 워크스페이스에 그 목표 제목이 보이고, 「편집」(#btnToggleTlEdit)을 누르면 목표명 입력칸(#tlGoalTitleInput)과 「✓ 편집 완료」가 나타난다 — 워크스페이스 화면(renderTeamLinkedGoalsScreen)을 js/team-linked-goals-screen.js 로 옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeamLinked"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamLinkedGoalsView",
+      "text": "아직 참여 중인 팀 연계 개인목표가 없어요",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeam"
+    },
+    {
+      "do": "click",
+      "selector": "[data-tgexampletab=\"fitness\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#tgQuickJoinSampleBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-copyteamgoal]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeamLinked"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamLinkedGoalsView",
+      "text": "크루 전체 이번 달 와드 250회 정복",
+      "timeoutMs": 5000
+    },
+    {
+      "capture": "team-linked-workspace"
+    },
+    {
+      "do": "click",
+      "selector": "#btnToggleTlEdit"
+    },
+    {
+      "expect": "visible",
+      "selector": "#tlGoalTitleInput",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#btnToggleTlEdit",
+      "text": "편집 완료"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

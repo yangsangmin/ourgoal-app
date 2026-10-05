@@ -116,11 +116,12 @@
           .select('id, sender_id, sender_name, sender_avatar, message, created_at')
           .eq('group_id', gid)
           .eq('target_type', 'team_chat')
-          .order('created_at', { ascending: true })
+          .order('created_at', { ascending: false })
           .limit(100)
           .then(function(res){
             if(res && res.data && res.data.length){
-              gs.chatMessages = res.data.map(function(r){
+              // #TASK-ES-404: 최신 100건을 받아(위 desc + limit) 오래된→최신 순으로 그린다. 예전엔 오름차순 + limit 이라 100건이 넘으면 새 메시지가 안 나왔다
+              gs.chatMessages = res.data.slice().reverse().map(function(r){
                 return {
                   id: r.id,
                   sender: r.sender_name || '팀원',

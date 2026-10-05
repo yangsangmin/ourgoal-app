@@ -1,0 +1,986 @@
+{
+  "task": "TASK-ES-402",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-402-TEAM-SPLIT-3.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/team-visibility-levels.js·team-leader-check.js·team-linked-goals.js 에서 묶음 하나씩(openLevelGroupDetailModal / openLeaderStampSelectModal·openMemberProgressDetailModal / renderTeamLinkedGoalsScreen)을 js/team-level-group-modal.js·team-member-review.js·team-linked-goals-screen.js 로 글자 그대로 옮겨 세 원본 모두 800줄 이하. 노출 객체 키·순서·호출 순서·동작 그대로, 새 전역은 키트 OurgoalTeamGoalsKit 1개. index.html 은 원본 태그 앞 같은 줄(순증가 0줄). 신고서·모듈 가드 기준선은 도구로 갱신."
+    },
+    {
+      "id": "R2",
+      "text": "옮기기·검사·측정 도구(생성기·검사기·신고서 손 칸·게스트 조작 비교·실계정 확인)를 저장소에 남긴다."
+    },
+    {
+      "id": "R3",
+      "text": "전후 측정: git archive 기준 대비 토큰 동일·누수 0·노출 동일, npm test·tests 기준과 같음, 게스트 조작·탭 실측 기준 2회·후 1회 차이 0, 실계정(읽기만) 기준1·작업·기준2 같음, 게스트 화면 시나리오."
+    },
+    {
+      "id": "R4",
+      "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본 team-visibility-levels.js 가 옮긴 openLevelGroupDetailModal 을 키트 칸에서 같은 이름으로 가져옴",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var openLevelGroupDetailModal = _goalsKit.openLevelGroupDetailModal;",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "node 에서는 원본이 부품 js/team-level-group-modal.js 를 require",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  if(!_goalsKit && typeof require === 'function'){ _goalsKit = require('./team-level-group-modal.js'); }",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본 team-visibility-levels.js 에 openLevelGroupDetailModal 정의가 남지 않음",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "text": "function openLevelGroupDetailModal(",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 js/team-level-group-modal.js 는 키트 visibilityLevels 칸에 함수를 담음",
+      "touches": [
+        "js/team-level-group-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var K = KIT.visibilityLevels = KIT.visibilityLevels || {};",
+        "file": "js/team-level-group-modal.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품에 openLevelGroupDetailModal 정의",
+      "touches": [
+        "js/team-level-group-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  function openLevelGroupDetailModal(gid, lgId, tgid){",
+        "file": "js/team-level-group-modal.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품이 키트에 openLevelGroupDetailModal 을 담음",
+      "touches": [
+        "js/team-level-group-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  K.openLevelGroupDetailModal = openLevelGroupDetailModal;",
+        "file": "js/team-level-group-modal.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본 team-leader-check.js 가 옮긴 점검 모달 2개를 키트 칸에서 가져옴",
+      "touches": [
+        "js/team-leader-check.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var openMemberProgressDetailModal = _goalsKit.openMemberProgressDetailModal;",
+        "file": "js/team-leader-check.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "node 에서는 원본이 부품 js/team-member-review.js 를 require",
+      "touches": [
+        "js/team-leader-check.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  if(!_goalsKit && typeof require === 'function'){ _goalsKit = require('./team-member-review.js'); }",
+        "file": "js/team-leader-check.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본 team-leader-check.js 에 openMemberProgressDetailModal 정의가 남지 않음",
+      "touches": [
+        "js/team-leader-check.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "text": "function openMemberProgressDetailModal(",
+        "file": "js/team-leader-check.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 js/team-member-review.js 는 키트 leaderCheck 칸",
+      "touches": [
+        "js/team-member-review.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var K = KIT.leaderCheck = KIT.leaderCheck || {};",
+        "file": "js/team-member-review.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품에 확인 도장 선택 모달 정의",
+      "touches": [
+        "js/team-member-review.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  function openLeaderStampSelectModal(gid, memberName, deps){",
+        "file": "js/team-member-review.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품이 키트에 openMemberProgressDetailModal 을 담음",
+      "touches": [
+        "js/team-member-review.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  K.openMemberProgressDetailModal = openMemberProgressDetailModal;",
+        "file": "js/team-member-review.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본 team-linked-goals.js 가 renderTeamLinkedGoalsScreen 을 키트 칸에서 가져옴",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var renderTeamLinkedGoalsScreen = _goalsKit.renderTeamLinkedGoalsScreen;",
+        "file": "js/team-linked-goals.js"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "node 에서는 원본이 부품 js/team-linked-goals-screen.js 를 require",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  if(!_goalsKit && typeof require === 'function'){ _goalsKit = require('./team-linked-goals-screen.js'); }",
+        "file": "js/team-linked-goals.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본 team-linked-goals.js 에 renderTeamLinkedGoalsScreen 정의가 남지 않음",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "text": "function renderTeamLinkedGoalsScreen(",
+        "file": "js/team-linked-goals.js"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 js/team-linked-goals-screen.js 는 키트 linkedGoals 칸",
+      "touches": [
+        "js/team-linked-goals-screen.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var K = KIT.linkedGoals = KIT.linkedGoals || {};",
+        "file": "js/team-linked-goals-screen.js"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품이 키트에 renderTeamLinkedGoalsScreen 을 담음",
+      "touches": [
+        "js/team-linked-goals-screen.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  K.renderTeamLinkedGoalsScreen = renderTeamLinkedGoalsScreen;",
+        "file": "js/team-linked-goals-screen.js"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html: 부품 태그가 원본 태그 바로 앞 같은 줄(팀장 점검)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "<script src=\"js/team-member-review.js?v=20261005-es402\"></script><script src=\"js/team-leader-check.js\"></script>",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html: 부품 태그가 원본 태그 바로 앞 같은 줄(수준별 조 모달)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  <script src=\"js/components.js?v=20260917-es162\"></script><script src=\"js/records-stats.js?v=20260926-es276\"></script><script src=\"js/calendar-attachment.js?v=20260916-es125\"></script><script src=\"js/tab-guides.js?v=20260915-es102\"></script><script src=\"js/tabs/comm/dm-ledger.js?v=20261004-es366\"></script><script src=\"js/team-recruit.js?v=20261005-es382\"></script><script src=\"js/team-share.js?v=20261005-es397\"></script><script src=\"js/team-chat.js?v=20261005-es387\"></script><script src=\"js/team-templates.js?v=20261005-es387\"></script><script src=\"js/team-dm-inbox.js?v=20261005-es387\"></script><script src=\"js/team-dm-room.js?v=20261005-es397\"></script><script src=\"js/team-profile.js?v=20261005-es387\"></script><script src=\"js/team-companion-search.js?v=20261005-es387\"></script><script src=\"js/team-companions.js?v=20261005-es387\"></script><script src=\"js/team-auto-actions.js?v=20261005-es387\"></script><script src=\"js/team-invite-comm.js?v=20260916-es131\"></script><script src=\"js/team-linked-goals-screen.js?v=20261005-es402\"></script><script src=\"js/team-linked-goals.js?v=20260916-es105\"></script><script src=\"js/data/goal-templates/health.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/study.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/career.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/hobby.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/mind.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/relation.js?v=20261004-es364\"></script><script src=\"js/goal-templates-data.js?v=20260916-es101\"></script><script src=\"js/goal-edit-ux.js?v=20260916-es109\"></script><script src=\"js/team-level-group-modal.js?v=20261005-es402\"></script><script src=\"js/team-visibility-levels.js?v=20260916-es110\"></script><script src=\"js/viral-sharing.js?v=20260916-es121\"></script><script src=\"js/notify-engine.js?v=20260917-es152\"></script><script src=\"js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final\"></script>",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html: 부품 태그가 원본 태그 바로 앞 같은 줄(팀 연계 화면)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  <script src=\"js/components.js?v=20260917-es162\"></script><script src=\"js/records-stats.js?v=20260926-es276\"></script><script src=\"js/calendar-attachment.js?v=20260916-es125\"></script><script src=\"js/tab-guides.js?v=20260915-es102\"></script><script src=\"js/tabs/comm/dm-ledger.js?v=20261004-es366\"></script><script src=\"js/team-recruit.js?v=20261005-es382\"></script><script src=\"js/team-share.js?v=20261005-es397\"></script><script src=\"js/team-chat.js?v=20261005-es387\"></script><script src=\"js/team-templates.js?v=20261005-es387\"></script><script src=\"js/team-dm-inbox.js?v=20261005-es387\"></script><script src=\"js/team-dm-room.js?v=20261005-es397\"></script><script src=\"js/team-profile.js?v=20261005-es387\"></script><script src=\"js/team-companion-search.js?v=20261005-es387\"></script><script src=\"js/team-companions.js?v=20261005-es387\"></script><script src=\"js/team-auto-actions.js?v=20261005-es387\"></script><script src=\"js/team-invite-comm.js?v=20260916-es131\"></script><script src=\"js/team-linked-goals-screen.js?v=20261005-es402\"></script><script src=\"js/team-linked-goals.js?v=20260916-es105\"></script><script src=\"js/data/goal-templates/health.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/study.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/career.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/hobby.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/mind.js?v=20261004-es364\"></script><script src=\"js/data/goal-templates/relation.js?v=20261004-es364\"></script><script src=\"js/goal-templates-data.js?v=20260916-es101\"></script><script src=\"js/goal-edit-ux.js?v=20260916-es109\"></script><script src=\"js/team-level-group-modal.js?v=20261005-es402\"></script><script src=\"js/team-visibility-levels.js?v=20260916-es110\"></script><script src=\"js/viral-sharing.js?v=20260916-es121\"></script><script src=\"js/notify-engine.js?v=20260917-es152\"></script><script src=\"js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final\"></script>",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 새 세포(팀장 점검) 역할 기재",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "      \"role\": \"팀장의 팀원 점검 모달 — openLeaderStampSelectModal(확인 도장 선택)·openMemberProgressDetailModal(팀원 달성도 상세 점검). team-leader-check.js 에서 분열(#TASK-ES-402)\",",
+        "file": "docs/architecture/modules.json"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 가드 기준선에 ④ 800줄 초과 5개 기록",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "          \"count\": 5,",
+        "file": "docs/architecture/module-baseline.json"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기: 원본 스코프 이름을 T.<이름> 으로만 바꿔 옮김",
+      "touches": [
+        "docs/design/harness/module-split/gen-team-split-3.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "        const repl = 'T.' + nm;",
+        "file": "docs/design/harness/module-split/gen-team-split-3.js"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검사기: 토큰열 비교에서 T. 접두만 뗌",
+      "touches": [
+        "docs/design/harness/module-split/verify-team-split-3.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    if (vals[i] === 'T' && vals[i + 1] === '.' && /^[A-Za-z_$]/.test(vals[i + 2] || '')) { i += 1; continue; }",
+        "file": "docs/design/harness/module-split/verify-team-split-3.js"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서 손 칸은 원본 세포의 spans 를 읽어 적음",
+      "touches": [
+        "docs/design/harness/module-split/spec-team-split-3.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  c.spans = src.spans.slice();",
+        "file": "docs/design/harness/module-split/spec-team-split-3.js"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 비교: 단계마다 목표 화면·모달·저장값을 기록",
+      "touches": [
+        "docs/design/harness/module-split/dom-compare-team-3.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const FIELDS = ['note', 'modal', 'overlay', 'screen', 'ls', 'toast', 'confirm', 'activeScreen', 'goalsSubTab', 'api', 'newErrors', 'newDialogs'];",
+        "file": "docs/design/harness/module-split/dom-compare-team-3.js"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 확인은 테스트 계정 표식이 없으면 접속하지 않음",
+      "touches": [
+        "docs/design/harness/module-split/real-account-team-3.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if (!/ogtest/i.test(env.OG_TEST_A_EMAIL) && !allow.includes(env.OG_TEST_A_EMAIL)) { console.log('테스트 계정 표식 없음 — 접속 안 함'); process.exitCode = 3; return; }",
+        "file": "docs/design/harness/module-split/real-account-team-3.js"
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검사기 종합 ok",
+      "touches": [
+        "reports/TASK-ES-402/verify-team-split-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-team-split-3.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "visibilityLevels: 옮긴 함수 토큰열 동일(T. 접두·주석 제외)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "visibilityLevels.tokensSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "visibilityLevels: 원본 줄 수(옮긴 뒤)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "visibilityLevels.mainLinesAfter",
+        "equals": 554
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "visibilityLevels: 노출 객체 키·순서 동일(브라우저 순서)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "visibilityLevels.sameApiKeysAndOrder",
+        "equals": true
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "visibilityLevels: 새 window 이름은 키트 1개뿐",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "visibilityLevels.newWindowNames",
+        "equals": [
+          "OurgoalTeamGoalsKit"
+        ]
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "leaderCheck: 옮긴 함수 토큰열 동일(T. 접두·주석 제외)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "leaderCheck.tokensSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "leaderCheck: 원본 줄 수(옮긴 뒤)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "leaderCheck.mainLinesAfter",
+        "equals": 728
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "leaderCheck: 노출 객체 키·순서 동일(브라우저 순서)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "leaderCheck.sameApiKeysAndOrder",
+        "equals": true
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "leaderCheck: 새 window 이름은 키트 1개뿐",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "leaderCheck.newWindowNames",
+        "equals": [
+          "OurgoalTeamGoalsKit"
+        ]
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "linkedGoals: 옮긴 함수 토큰열 동일(T. 접두·주석 제외)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "linkedGoals.tokensSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "linkedGoals: 원본 줄 수(옮긴 뒤)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "linkedGoals.mainLinesAfter",
+        "equals": 602
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "linkedGoals: 노출 객체 키·순서 동일(브라우저 순서)",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "linkedGoals.sameApiKeysAndOrder",
+        "equals": true
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "linkedGoals: 새 window 이름은 키트 1개뿐",
+      "touches": [
+        "reports/TASK-ES-402/verify-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-summary.json",
+        "path": "linkedGoals.newWindowNames",
+        "equals": [
+          "OurgoalTeamGoalsKit"
+        ]
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 3개에 잔디 글자 0",
+      "touches": [
+        "reports/TASK-ES-402/verify-team-split-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/verify-team-split-3.json",
+        "path": "cellsWithJandi",
+        "equals": []
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test smoke 검사 제목 목록 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-402/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/test-compare.json",
+        "path": "smokeTitlesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test smoke 결과 목록 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-402/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/test-compare.json",
+        "path": "smokeResultsIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C44",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 smoke 통과·실패 수",
+      "touches": [
+        "reports/TASK-ES-402/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/test-compare.json",
+        "path": "work.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C45",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 smoke 통과·실패 수",
+      "touches": [
+        "reports/TASK-ES-402/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/test-compare.json",
+        "path": "base.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C46",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 무결성 검사",
+      "touches": [
+        "reports/TASK-ES-402/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/test-compare.json",
+        "path": "work.npmTest.integrity",
+        "equals": [
+          38,
+          38
+        ]
+      }
+    },
+    {
+      "id": "C47",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 버튼 배선",
+      "touches": [
+        "reports/TASK-ES-402/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/test-compare.json",
+        "path": "work.npmTest.buttons",
+        "equals": [
+          943,
+          943
+        ]
+      }
+    },
+    {
+      "id": "C48",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests 전부 + test-team-linked-goals 종료 코드 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-402/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/test-compare.json",
+        "path": "testsExitCodesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C49",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 비교: 기준 대 작업 다른 값",
+      "touches": [
+        "reports/TASK-ES-402/dom-compare-team-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/dom-compare-team-3.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C50",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 비교: 비교한 값 수",
+      "touches": [
+        "reports/TASK-ES-402/dom-compare-team-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/dom-compare-team-3.json",
+        "path": "comparedValues",
+        "equals": 1092
+      }
+    },
+    {
+      "id": "C51",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 비교: 기준 대 기준 다른 값",
+      "touches": [
+        "reports/TASK-ES-402/dom-compare-team-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/dom-compare-team-3.json",
+        "path": "baseVsBase.differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C52",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탭 실측 goals·comm 기준1 대 작업 다른 값",
+      "touches": [
+        "reports/TASK-ES-402/tab-compare-base1-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/tab-compare-base1-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C53",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탭 실측 goals·comm 기준1 대 기준2 다른 값",
+      "touches": [
+        "reports/TASK-ES-402/tab-compare-base1-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/tab-compare-base1-base2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C54",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정(읽기만) 기준1 대 작업 같음",
+      "touches": [
+        "reports/TASK-ES-402/real-account-team-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/real-account-team-3.json",
+        "path": "sameBase1After",
+        "equals": true
+      }
+    },
+    {
+      "id": "C55",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정(읽기만) 기준2 대 작업 같음",
+      "touches": [
+        "reports/TASK-ES-402/real-account-team-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/real-account-team-3.json",
+        "path": "sameBase2After",
+        "equals": true
+      }
+    },
+    {
+      "id": "C56",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 확인이 쓴 행 수",
+      "touches": [
+        "reports/TASK-ES-402/real-account-team-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/real-account-team-3.json",
+        "path": "rowsWritten",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C57",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "법정 모듈 로드 탐침(로컬) 회귀 목록",
+      "touches": [
+        "reports/TASK-ES-402/module-load-probe.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-402/module-load-probe.json",
+        "path": "regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C58",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 게스트로 목표 탭 「팀」에서 체험 팀을 시작하고 팀 목표를 「팀 연계 개인목표로 복사」하면 「팀 연계」 워크스페이스에 그 목표 제목이 보이고, 「편집」을 누르면 목표명 입력칸과 「✓ 편집 완료」가 나타난다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/team-linked-goals-screen.js",
+        "js/team-linked-goals.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/team-linked-goals-screen.json"
+    },
+    {
+      "id": "C59",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 8원칙 문서",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-402-TEAM-SPLIT-3.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)",
+        "file": "docs/specs/REQ-TASK-ES-402-TEAM-SPLIT-3.md"
+      }
+    },
+    {
+      "id": "C60",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- 2026-10-05 TASK-ES-402: 팀 세포 쪼개기 3차 — 생성기 gen-team-split-3.js 로 team-visibility-levels(837→554, openLevelGroupDetailModal → js/team-level-group-modal.js 331)·team-leader-check(975→728, openLeaderStampSelectModal·openMemberProgressDetailModal → js/team-member-review.js 286)·team-linked-goals(982→602, renderTeamLinkedGoalsScreen → js/team-linked-goals-screen.js 425)를 글자 그대로 이전(원본 이름 T. 접두만, 상태 원본 유지, 새 전역 키트 OurgoalTeamGoalsKit 1개, index.html 같은 줄 태그). 선행 시험지 #715(ES-403). 실측(판정 아님): 토큰 동일·누수 0·노출 키 동일, npm test 443/0·38/38·943/943 기준과 같음, tests 101개 종료 코드 같음, 게스트 조작 1,092값·탭 816값 차이 0, 실계정(읽기만) 기준1·작업·기준2 같음, 모듈 가드 ④ 8→5. 새로 본 기존 결함: 팀 수준별 목표 관리 아코디언이 진짜 클릭으로 펼쳐지지 않음(collapseAllTeamGoalAccordions 가 다시 접음, 기준도 같음). REQ docs/specs/REQ-TASK-ES-402-TEAM-SPLIT-3.md",
+        "file": "dev_log.md"
+      }
+    },
+    {
+      "id": "C61",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- #TASK-ES-402 | REFACTOR | [팀 세포 쪼개기 3차] team-visibility-levels·team-leader-check·team-linked-goals 에서 묶음 하나씩(수준별 조 상세 모달·팀원 점검 모달 2개·팀 연계 워크스페이스 화면)을 js/team-level-group-modal·team-member-review·team-linked-goals-screen.js 로 동작 그대로 이전(837·975·982 → 554·728·602줄) | 코디네이터 지시 (2026-10-05), 선행 #715(ES-403), REQ docs/specs/REQ-TASK-ES-402-TEAM-SPLIT-3.md | 4단계(심사 청구)",
+        "file": "docs/rules/TICKETS.md"
+      }
+    }
+  ]
+}

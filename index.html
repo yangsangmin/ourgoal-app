@@ -2285,7 +2285,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="/js/customize.js"></script>
 <script src="js/streaks.js"></script>
 <script src="js/template-credit.js"></script>
-<script src="js/team-leader-check.js"></script>
+<script src="js/team-member-review.js?v=20261005-es402"></script><script src="js/team-leader-check.js"></script>
 <script src="js/theme-system.js"></script>
 <script src="js/records-stats.js?v=20260914-es059b"></script>
   <script src="js/data/avatar-personas/intj.js?v=20261005-es386"></script>
@@ -2326,7 +2326,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/record-ledger.js?v=20261004-es344"></script>
   <script src="js/account-isolation.js?v=20261004-es365"></script>
   <script src="js/direct-login-guard.js?v=20261005-es373"></script><script src="js/google-session-guard.js?v=20261005-es373"></script>
-  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/tabs/comm/dm-ledger.js?v=20261004-es366"></script><script src="js/team-recruit.js?v=20261005-es382"></script><script src="js/team-share.js?v=20261005-es397"></script><script src="js/team-chat.js?v=20261005-es387"></script><script src="js/team-templates.js?v=20261005-es387"></script><script src="js/team-dm-inbox.js?v=20261005-es387"></script><script src="js/team-dm-room.js?v=20261005-es397"></script><script src="js/team-profile.js?v=20261005-es387"></script><script src="js/team-companion-search.js?v=20261005-es387"></script><script src="js/team-companions.js?v=20261005-es387"></script><script src="js/team-auto-actions.js?v=20261005-es387"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/data/goal-templates/health.js?v=20261004-es364"></script><script src="js/data/goal-templates/study.js?v=20261004-es364"></script><script src="js/data/goal-templates/career.js?v=20261004-es364"></script><script src="js/data/goal-templates/hobby.js?v=20261004-es364"></script><script src="js/data/goal-templates/mind.js?v=20261004-es364"></script><script src="js/data/goal-templates/relation.js?v=20261004-es364"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
+  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/tabs/comm/dm-ledger.js?v=20261004-es366"></script><script src="js/team-recruit.js?v=20261005-es382"></script><script src="js/team-share.js?v=20261005-es397"></script><script src="js/team-chat.js?v=20261005-es387"></script><script src="js/team-templates.js?v=20261005-es387"></script><script src="js/team-dm-inbox.js?v=20261005-es387"></script><script src="js/team-dm-room.js?v=20261005-es397"></script><script src="js/team-profile.js?v=20261005-es387"></script><script src="js/team-companion-search.js?v=20261005-es387"></script><script src="js/team-companions.js?v=20261005-es387"></script><script src="js/team-auto-actions.js?v=20261005-es387"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals-screen.js?v=20261005-es402"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/data/goal-templates/health.js?v=20261004-es364"></script><script src="js/data/goal-templates/study.js?v=20261004-es364"></script><script src="js/data/goal-templates/career.js?v=20261004-es364"></script><script src="js/data/goal-templates/hobby.js?v=20261004-es364"></script><script src="js/data/goal-templates/mind.js?v=20261004-es364"></script><script src="js/data/goal-templates/relation.js?v=20261004-es364"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-level-group-modal.js?v=20261005-es402"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
 <script>
 (function(){
   "use strict";
@@ -24895,7 +24895,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function collapseAllTeamGoalAccordions() {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') return; var isTeamLevelSectionOpen = function(gid){ return !!(gid && window.OurgoalTeamVisibilityLevels && typeof OurgoalTeamVisibilityLevels.isLevelSectionOpen === 'function' && OurgoalTeamVisibilityLevels.isLevelSectionOpen(gid)); };
     try {
       // 1. 마일스톤 목록 및 버튼 상태 접힘 정돈
       document.querySelectorAll('.ms-list, [data-tgmslist]').forEach(function(el){
@@ -24917,13 +24917,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       // 4. 수준별 목표 관리 아코디언 및 조별 아코디언 접힘 정돈
       document.querySelectorAll('.tg-accordion-body, [data-tglevelbody]').forEach(function(el){
-        el.style.display = 'none';
+        if (!isTeamLevelSectionOpen(el.getAttribute('data-tglevelbody'))) el.style.display = 'none';
       });
       document.querySelectorAll('.tg-lg-row-body, [data-tglgbody]').forEach(function(el){
         el.style.display = 'none';
       });
       document.querySelectorAll('.tg-accordion-arrow').forEach(function(arrow){
-        arrow.classList.remove('rotated');
+        var levelHead = arrow.closest('[data-tglevelaccordion]'); if (!levelHead || !isTeamLevelSectionOpen(levelHead.getAttribute('data-tglevelaccordion'))) arrow.classList.remove('rotated');
       });
 
       // 5. HTML5 details 태그 접힘 정돈

@@ -1,0 +1,90 @@
+{
+ "tool": "docs/design/harness/real-account-check.js --only (로컬 127.0.0.2 정적 서버 + /api 운영 전달)",
+ "label": "work",
+ "harness": "작업 트리 하네스(clickReal 수정)",
+ "note": "작업자 예비 증거, 판정 아님",
+ "summary": {
+  "통과": 6,
+  "실패": 0,
+  "못 함": 0
+ },
+ "scenarios": [
+  {
+   "id": "RA-CORE-LOGIN",
+   "status": "통과",
+   "evidence": {
+    "distinct": true
+   },
+   "failedStep": null
+  },
+  {
+   "id": "RA-CORE-SWITCH",
+   "status": "통과",
+   "evidence": {
+    "profileIsB": true,
+    "aTextOnB": 0
+   },
+   "failedStep": null
+  },
+  {
+   "id": "RA-COMM-03",
+   "status": "통과",
+   "evidence": {
+    "already": false,
+    "listedNow": true,
+    "afterReload": true,
+    "otherDevice": true
+   },
+   "failedStep": null
+  },
+  {
+   "id": "RA-COMM-04A",
+   "status": "통과",
+   "evidence": {
+    "arrivedOnB": 1
+   },
+   "failedStep": null
+  },
+  {
+   "id": "RA-COMM-04B",
+   "status": "통과",
+   "evidence": {
+    "whileBOff": {
+     "unread": true,
+     "read": false,
+     "detail": "전송 2026.10.05 오전 9:10:15 · 미확인 (1)"
+    },
+    "bOpened": true,
+    "afterBOpened": {
+     "unread": false,
+     "read": true,
+     "detail": "전송 2026.10.05 오전 9:10:15 · 도착 2026.10.05 오전 9:10:22 · 읽음 2026.10.05 오전 9:10:24"
+    }
+   },
+   "failedStep": null
+  },
+  {
+   "id": "RA-SET-01",
+   "status": "통과",
+   "evidence": {
+    "a2Out": true,
+    "a1Stays": true
+   },
+   "failedStep": null
+  }
+ ],
+ "cleanupLeftover": [
+  {
+   "by": "A",
+   "table": "team_ping_replies",
+   "rows": 2,
+   "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+  },
+  {
+   "by": "A",
+   "table": "team_pings",
+   "rows": 1,
+   "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+  }
+ ]
+}
