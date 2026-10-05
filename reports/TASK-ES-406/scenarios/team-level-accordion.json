@@ -1,0 +1,107 @@
+{
+  "id": "team-level-accordion",
+  "title": "게스트로 목표 탭 「팀」에서 체험 팀(운동 크루 1초 체험)에 들어가 팀 카드의 「팀 수준별 목표 관리」 머리(data-tglevelaccordion)를 마우스로 한 번 누르면 본문(data-tglevelbody)이 펼쳐져 「팀 통합 수준관리」 글자가 보이고, 다시 누르면 접히고, 또 누르면 펼쳐진다. 「🌐 팀 통합 수준관리」로 바꾸면 A조가 보이고 A조 「자세히보기」를 누르면 수준별 조 모달(#modalSheet)에 「수준별 목표 상세 관리」가 보인다 — 기준 커밋에서는 첫 클릭 뒤 본문이 보이지 않는다(단계 12)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeam"
+    },
+    {
+      "do": "click",
+      "selector": "[data-tgexampletab=\"fitness\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#tgQuickJoinSampleBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tglevelaccordion]",
+      "text": "팀 수준별 목표 관리",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#teamGoalsView [data-tglevelbody]"
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tglevelaccordion]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tglevelbody]",
+      "text": "팀 통합 수준관리",
+      "timeoutMs": 3000
+    },
+    {
+      "capture": "level-accordion-open"
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tglevelaccordion]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#teamGoalsView [data-tglevelbody]",
+      "timeoutMs": 3000
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tglevelaccordion]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tglevelbody]",
+      "text": "목표별 수준관리",
+      "timeoutMs": 3000
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tglevelmode=\"g0:team\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tglevelbody]",
+      "text": "A조",
+      "timeoutMs": 3000
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-openleveldetail=\"g0:lg_a_g0\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet",
+      "text": "수준별 목표 상세 관리",
+      "timeoutMs": 3000
+    },
+    {
+      "capture": "level-group-modal"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -404,6 +404,13 @@
     return switcherChipsHtml + singleGoalCardHtml + levelSectionHtml;
   }
 
+  // #TASK-ES-406: 저장값(foldLevelSection[gid] === false)만 「펼침」이다. 렌더(isLevelFolded)·토글·일괄 접기(collapseAllTeamGoalAccordions)가 이 한 판정을 같이 쓴다.
+  function isLevelSectionOpen(gid){
+    var p = getProfile();
+    var fold = (p.settings && p.settings.foldLevelSection) || {};
+    return fold[gid] === false;
+  }
+
   /* ------------------------------------------------------------
    * 4. 이벤트 바인딩 헬퍼
    * ------------------------------------------------------------ */
@@ -429,7 +436,7 @@
         var p = getProfile();
         p.settings = p.settings || {};
         p.settings.foldLevelSection = p.settings.foldLevelSection || {};
-        p.settings.foldLevelSection[gid] = !p.settings.foldLevelSection[gid];
+        p.settings.foldLevelSection[gid] = isLevelSectionOpen(gid);
         triggerHaptic(10);
         await saveProfile();
         renderTeamGoalsScreen();
@@ -543,7 +550,8 @@
     copyTeamLevelsToGoal: copyTeamLevelsToGoal,
     openLevelGroupDetailModal: openLevelGroupDetailModal,
     renderTeamCardContent: renderTeamCardContent,
-    bindEvents: bindEvents
+    bindEvents: bindEvents,
+    isLevelSectionOpen: isLevelSectionOpen
   };
 
   if(typeof module !== 'undefined' && module.exports){
