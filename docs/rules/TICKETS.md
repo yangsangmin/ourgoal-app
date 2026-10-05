@@ -576,3 +576,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-490 | FIX/버그 | [오프라인 큐 데이터 손실] 온라인 복귀 때 보내지 않고 비우던 큐 → 저장 성공 뒤에만 비움·실패 시 유지·재시도·알림 (25분 대체값은 smoke 검사가 고정 — 결심 요청) | 코디네이터 지시 (2026-10-05, 기관 빌더 #776 발견), REQ docs/specs/REQ-TASK-ES-490-OFFLINE-QUEUE-LOSS.md
 - #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통] core-confirm-es376 잘라 읽기가 인라인 합본을 읽음 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md
 - #TASK-ES-482 | INFRA | [인라인 어려움 기관 묶음 · H3 빌더] Confetti·뱃지 컬렉션·전역 휴지통을 js/core 기관 세포 4개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md
+- #TASK-ES-498 | INFRA | [생성 지도 일괄 갱신 2회차] 생성 파일 4개를 main c1f0a72 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-05), REQ docs/specs/REQ-TASK-ES-498-GENERATED-MAPS-SYNC-2.md | 4단계(심사 청구)
