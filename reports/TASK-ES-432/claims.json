@@ -1,0 +1,697 @@
+{
+  "task": "TASK-ES-432",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-432-INLINE-SPLIT-2.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "인라인 IIFE 의 「받은 응원 알림」 묶음(totalFeedCheers·checkSocialNotifications·showSocialNotifyBanner)을 생성기로 글자 그대로 js/tabs/comm/cheer-notify.js 로 옮긴다 — 게스트가 소통 탭 마니또를 시작하고 앱을 다시 열면 이전과 같이 홈에 「응원이 도착했어요」 띠가 뜨고 「확인하기」가 띠를 지우고 소통 탭으로 보낸다."
+    },
+    {
+      "id": "R2",
+      "text": "옮기기·검사·측정 도구(생성기·검사기·모듈 로드·시나리오 로컬 실행·게스트 조작 비교·시험 비교·실계정 읽기 확인과 비교·줄 수)를 저장소에 남긴다."
+    },
+    {
+      "id": "R3",
+      "text": "전후 측정 기록: git archive 기준 대비 토큰 동일·누수 0, 원본 단독 로드 회귀 0, 법정 시나리오 로컬 기준·작업 통과, 게스트 조작 비교 차이 0, tab-check 6탭 기준 2회·후 1회 차이 0, npm test·tests 같음, 실계정 읽기 전용 비교 차이 0, 인라인 줄이 늘지 않음."
+    },
+    {
+      "id": "R4",
+      "text": "세포 등록: modules.json(module-specs --write)·cell-descriptions.json 짧은 이름·하는 일. 생성 지도 3종(기준선·세포지도·인라인 지도)은 main 판 그대로 두고, 옮긴 뒤 다시 만든 인라인 지도는 측정 기록으로 남긴다."
+    },
+    {
+      "id": "R5",
+      "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트로 소통 탭 「마니또」에서 「마니또 시작하기」를 누르고 앱을 다시 열면, 옮긴 받은 응원 확인이 홈에 「응원이 도착했어요 · 마니또 응원 1개」 띠를 그리고, 「확인하기」를 누르면 띠가 사라지고 소통 탭이 열리며 예외가 없다 — 옮기기만 했으므로 기준 커밋에서도 같은 결과",
+      "touches": [
+        "index.html",
+        "js/tabs/comm/cheer-notify.js",
+        "reports/TASK-ES-432/scenarios/manito-reentry-cheer-banner.json"
+      ],
+      "scenario": "scenarios/manito-reentry-cheer-banner.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기: 옮길 세포·묶음 정의(구획 주석 글자로 찾음)",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-split-2.js",
+        "text": "    key: 'cheer', file: 'js/tabs/comm/cheer-notify.js', kit: 'OurgoalCommKit', kitVar: '_commKit',"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기: 새 script 태그는 그 탭 index.js 태그 바로 앞(앞선 태그가 붙어 있어도)",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-split-2.js",
+        "text": "  const hits = newHtmlLines.map((l, i) => [l, i]).filter(([l]) => l.includes(c.beforeTag));"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검사기: 옮긴 묶음의 파일·함수 목록",
+      "touches": [
+        "docs/design/harness/module-split/verify-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/verify-inline-split-2.js",
+        "text": "  'js/tabs/comm/cheer-notify.js': ['totalFeedCheers', 'checkSocialNotifications', 'showSocialNotifyBanner'],"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 확인: 법정 탐침을 읽기만 해서 기준·작업에 돌린다",
+      "touches": [
+        "docs/design/harness/module-split/module-load-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/module-load-inline-split-2.js",
+        "text": "const probe = require(path.resolve(WORK, 'court', 'probes', 'module-load.js'));"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시나리오 로컬 실행: 법정 실행기로 기준·작업 양쪽을 돌린다",
+      "touches": [
+        "docs/design/harness/module-split/scenario-local-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/scenario-local-inline-split-2.js",
+        "text": "    for (const [label, dir] of [['base', BASE], ['work', WORK]]) {"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 비교: 같은 기준 앱 2회와 후 1회를 맞댄다",
+      "touches": [
+        "docs/design/harness/module-split/dom-compare-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/dom-compare-inline-split-2.js",
+        "text": "  const ra = await run(A, 'base'), ra2 = await run(A, 'base-2'), rb = await run(B, 'after');"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 비교: 난수를 문서마다 같은 씨앗으로 고정",
+      "touches": [
+        "docs/design/harness/module-split/dom-compare-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/dom-compare-inline-split-2.js",
+        "text": "(function () { let x = 0x2f6b1d; Math.random = function () {"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시험 비교: 통과·실패 수가 같은지 따로 적는다",
+      "touches": [
+        "docs/design/harness/module-split/test-compare-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/test-compare-inline-split-2.js",
+        "text": "  passFailSame: ['smoke', 'integrity', 'buttons'].every(k =>"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 확인: 테스트 계정 표식 없으면 접속 안 함",
+      "touches": [
+        "docs/design/harness/module-split/real-account-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/real-account-inline-split-2.js",
+        "text": "if (!/ogtest/i.test(env.OG_TEST_A_EMAIL) && !allow.includes(env.OG_TEST_A_EMAIL)) {"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 비교: 기준1·후·기준2 를 서로 맞댄다",
+      "touches": [
+        "docs/design/harness/module-split/real-account-compare-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/real-account-compare-inline-split-2.js",
+        "text": "const out = { base1VsAfter: cmp(B1, A), base1VsBase2: cmp(B1, B2), base2VsAfter: cmp(B2, A),"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "줄 수 기록: 모듈 가드와 같은 측정(module-metrics)을 쓴다",
+      "touches": [
+        "docs/design/harness/module-split/line-counts-inline-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/line-counts-inline-split-2.js",
+        "text": "const metrics = root => JSON.parse(execFileSync(process.execPath, [path.resolve(WORK, 'scripts', 'module-metrics.js'), '--root', root]"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮긴 3개 함수 토큰 동일·덩어리 줄 동일·누수 0·미노출 0 검사가 ok",
+      "touches": [
+        "reports/TASK-ES-432/verify-inline-split-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/verify-inline-split-2.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮긴 3개 함수 토큰열이 기준과 같다",
+      "touches": [
+        "reports/TASK-ES-432/verify-inline-split-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/verify-inline-split-2.json",
+        "path": "equivalent",
+        "equals": true
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "법정 모듈 로드 탐침(로컬) 회귀 0",
+      "touches": [
+        "reports/TASK-ES-432/module-load-probe.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/module-load-probe.json",
+        "path": "regressionCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 세포 파일을 단독으로 불러도 오류 0",
+      "touches": [
+        "reports/TASK-ES-432/module-load-probe.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/module-load-probe.json",
+        "path": "newFilesStandaloneOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "법정 형식 시나리오가 기준·작업 모두 통과(로컬, 약점 0)",
+      "touches": [
+        "reports/TASK-ES-432/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/scenario-local.json",
+        "path": "allOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 DOM 비교(기준 대 후) 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/dom-compare-inline-split-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/dom-compare-inline-split-2.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "같은 기준 앱 2회 게스트 조작 비교(본질 변동) 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/dom-compare-inline-split-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/dom-compare-inline-split-2.json",
+        "path": "baseVsBaseDiffering",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test smoke·무결성·버튼 통과·실패 수와 종료 코드가 기준과 같다",
+      "touches": [
+        "reports/TASK-ES-432/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/test-compare.json",
+        "path": "passFailSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests 전부의 종료 코드가 기준과 같다",
+      "touches": [
+        "reports/TASK-ES-432/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/test-compare.json",
+        "path": "tests.exitCodesSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests 전부의 정규화한 출력이 기준과 같다",
+      "touches": [
+        "reports/TASK-ES-432/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/test-compare.json",
+        "path": "tests.outputsSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 읽기 전용 비교 기준1 대 후 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/real-account-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/real-account-compare.json",
+        "path": "base1VsAfter.differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 읽기 전용 비교 기준 2회 사이 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/real-account-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/real-account-compare.json",
+        "path": "base1VsBase2.differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 읽기 전용 비교 기준2 대 후 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/real-account-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/real-account-compare.json",
+        "path": "base2VsAfter.differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 기준1 실행: 기록 수 전후 같음",
+      "touches": [
+        "reports/TASK-ES-432/real-account-base1.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/real-account-base1.json",
+        "path": "recordsCountUnchanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 후 실행: 기록 수 전후 같음",
+      "touches": [
+        "reports/TASK-ES-432/real-account-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/real-account-after.json",
+        "path": "recordsCountUnchanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실계정 기준2 실행: 기록 수 전후 같음",
+      "touches": [
+        "reports/TASK-ES-432/real-account-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/real-account-base2.json",
+        "path": "recordsCountUnchanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 세포 파일 800줄 이하",
+      "touches": [
+        "reports/TASK-ES-432/line-counts.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/line-counts.json",
+        "path": "allAtMost800",
+        "equals": true
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이번 이전으로 index.html 인라인 줄이 늘지 않았다(줄어듦)",
+      "touches": [
+        "reports/TASK-ES-432/line-counts.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/line-counts.json",
+        "path": "inlineDecreased",
+        "equals": true
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "6탭 tab-check 기준 1회차 대 후 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/tab-compare-base1-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/tab-compare-base1-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "6탭 tab-check 기준 2회 사이(본질 변동) 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/tab-compare-base1-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/tab-compare-base1-base2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "6탭 tab-check 기준 2회차 대 후 다른 값 0",
+      "touches": [
+        "reports/TASK-ES-432/tab-compare-base2-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/tab-compare-base2-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tab-check 기준 1회차 기록",
+      "touches": [
+        "reports/TASK-ES-432/tab-check-base-run1.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/tab-check-base-run1.json",
+        "path": "tool",
+        "equals": "docs/design/harness/tab-check.js"
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tab-check 기준 2회차 기록",
+      "touches": [
+        "reports/TASK-ES-432/tab-check-base-run2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/tab-check-base-run2.json",
+        "path": "tool",
+        "equals": "docs/design/harness/tab-check.js"
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tab-check 후 기록",
+      "touches": [
+        "reports/TASK-ES-432/tab-check-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/tab-check-after.json",
+        "path": "tool",
+        "equals": "docs/design/harness/tab-check.js"
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 받은 응원 알림 세포가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"file\": \"js/tabs/comm/cheer-notify.js\","
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포지도 설명: 받은 응원 알림 짧은 이름",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "\"comm/cheer-notify\": \"받은 응원 알림\","
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포지도 설명: 받은 응원 알림 하는 일 한 줄",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "\"comm/cheer-notify\": \"앱에 들어올 때 내 글에 받은 응원·마니또 응원이 새로 있으면"
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮긴 뒤 다시 만든 인라인 지도(측정 기록)의 형식 이름",
+      "touches": [
+        "reports/TASK-ES-432/inline-script-map-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-432/inline-script-map-after.json",
+        "path": "schema",
+        "equals": "ourgoal.inline-script-map/1"
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 8원칙 문서",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-432-INLINE-SPLIT-2.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-432-INLINE-SPLIT-2.md",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-432: 인라인 스크립트 세포화 2차"
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-432 | INFRA | [인라인 스크립트 세포화 2차]"
+      }
+    }
+  ]
+}

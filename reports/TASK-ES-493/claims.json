@@ -1,0 +1,284 @@
+{
+ "task": "TASK-ES-493",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-493-INLINE-H2-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 H2 의 「데일리 루틴 서브탭」·「개인 목표 200% 활용 가이드」 묶음에서 게스트 화면으로 잴 수 있는 함수(루틴 화면·새 루틴 창, 팀 만들기 안내·활용 가이드·빠른 템플릿 프리셋)를 생성기(자리 H2)로 글자 그대로 세포 2개로 옮긴다."
+  },
+  {
+   "id": "R2",
+   "text": "옮긴 뒤 동작이 같음을 verify-inline-hard·모듈 로드 탐침·게스트 조작 비교·시험 기준/후 비교로 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "옮긴 세포마다 게스트 화면 시나리오로 이전 전과 같은 동작을 보인다."
+  },
+  {
+   "id": "R4",
+   "text": "세포 신고서·설명·REQ 8원칙·TICKETS·dev_log 를 갱신한다(생성 지도 3종은 커밋하지 않는다)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정이 구역 자리 H2 를 쓴다",
+   "touches": [
+    "docs/design/harness/module-split/inline-h2-pr2.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-h2-pr2.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H2"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 결과: 토큰·줄·남은 글자 동일, 누수·미노출·setter 빠짐·이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-493/verify-inline-hard-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/verify-inline-hard-pr2.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-493/verify-inline-hard-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/verify-inline-hard-pr2.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 결과: 이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-493/verify-inline-hard-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/verify-inline-hard-pr2.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 파일 2개 단독 로드가 되고 모듈 로드 회귀가 없다(법정 탐침 로컬)",
+   "touches": [
+    "reports/TASK-ES-493/module-load-probe-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/module-load-probe-pr2.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-493/dom-compare-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/dom-compare-pr2.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-493/dom-compare-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/dom-compare-pr2.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 커밋에서 npm test 가 종료 코드 0 으로 끝난다",
+   "touches": [
+    "reports/TASK-ES-493/test-compare-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/test-compare-pr2.json",
+    "type": "jsonPath",
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드가 기준과 다른 것은 git 이력 없는 기준 사본에서만 실패하는 세포지도 이력 비교 시험 1건뿐",
+   "touches": [
+    "reports/TASK-ES-493/test-compare-pr2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-493/test-compare-pr2.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff.length",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 루틴 하위 탭 화면 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/routine-screen\""
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 팀 만들기 안내 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/team-goals-guide\""
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일에 새 세포의 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"goals/routine-screen\": \"루틴 하위 탭 화면\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-493-INLINE-H2-2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-493-INLINE-H2-2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-493 | INFRA |"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-493:"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭 「루틴」을 누르면 「나의 데일리 루틴」 화면이 그려지고, 「+ 새 루틴」을 누르면 「새 데일리 루틴 추가」 창이 루틴 이름 입력칸과 함께 열리며 예외가 없다 — 옮긴 renderRoutineGoalsScreen·openAddRoutineModal 이 이전 전과 같이 돈다",
+   "touches": [
+    "js/tabs/goals/routine-screen.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-routine-screen.json"
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 탭 「팀목표」 빈 안내에서 예시 탭 「단체 여행」을 누르면 그 칩만 켜지고, 빠른 템플릿 「운동 크루」를 누르면 「새 팀 · 함께 목표 달성하기」 창이 열리며 예외가 없다 — 옮긴 renderTeamGoalsEmptyGuideHtml·wireTeamGoalsGuideEvents·getTeamGoalTemplatePreset 이 이전 전과 같이 돈다",
+   "touches": [
+    "js/tabs/goals/team-goals-guide.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-team-guide.json"
+  }
+ ]
+}
