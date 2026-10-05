@@ -128,13 +128,34 @@ function escapeRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// #TASK-ES-502: 「없으면 만들어 두는」 방어 초기화는 그 탭의 정의가 아니다 — 다른 곳(index.html 인라인 등)이 정의·주인인 전역을
+// 그 탭이 쓰기 전에 비어 있으면 채우는 것뿐이다. 두 꼴만 뺀다(같은 줄, 같은 이름):
+//   ① if(!window.X) window.X = …   (global·globalThis 도 같다, 공백 무관)
+//   ② window.X = window.X || …
+// 무조건 대입(window.X = function…·window.X = X)은 계속 그 탭의 정의로 센다.
+function isGuardedInit(text, at, len, name) {
+  const lineStart = text.lastIndexOf('\n', at - 1) + 1;
+  let lineEnd = text.indexOf('\n', at);
+  if (lineEnd < 0) lineEnd = text.length;
+  const before = text.slice(lineStart, at);
+  const after = text.slice(at + len, lineEnd);
+  const n = escapeRe(name);
+  const G = '(?:global|window|globalThis)\\s*\\.\\s*';
+  if (new RegExp('\\bif\\s*\\(\\s*!\\s*' + G + n + '\\s*\\)\\s*$').test(before)) return true;
+  if (new RegExp('^\\s*' + G + n + '\\s*\\|\\|').test(after)) return true;
+  return false;
+}
+
 // 탭 B 가 정의한 전역 심볼(global.X = / window.X = / var Ourgoal… =)
 function tabDefinedSymbols(texts) {
   const names = new Set();
   for (const t of texts) {
     let m;
     const re = /\b(?:global|window|globalThis)\s*\.\s*([A-Za-z_$][\w$]*)\s*=(?![=>])/g;
-    while ((m = re.exec(t))) names.add(m[1]);
+    while ((m = re.exec(t))) {
+      if (isGuardedInit(t, m.index, m[0].length, m[1])) continue;
+      names.add(m[1]);
+    }
   }
   return names;
 }
@@ -384,4 +405,4 @@ if (require.main === module) {
   else process.stdout.write(args.pretty ? text : JSON.stringify(doc) + '\n');
 }
 
-module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, MAX_LINES };
+module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, MAX_LINES };

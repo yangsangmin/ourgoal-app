@@ -29,7 +29,7 @@
 
 ## 5. [원칙 ⑤] 절차
 
-worktree `C:/dev/wt/inline-organ`(브랜치 `feat/2026-10-05-task-es-499-inline-organ-5`, push 로 번호 선점 — 처음 고른 497 은 다른 빌더가 먼저 써서 풀고 499 로) → main(5e24487) 위로 → 설정 → 생성 → verify → 모듈 로드 탐침 → 신고서·설명 → 게스트 시나리오 + 돌연변이 → 조작 비교 → 시험 → 1차 tab-check 결과 싣기 → main 합치기 → push → PR.
+main 이 이 PR 사이에 #792 로 움직여 index.html 은 main(e9614ea) 판을 입력으로 생성기를 다시 돌려 만들었다(verify ok·알림 센터 시나리오 기준·작업 통과·모듈 로드 회귀 0·npm test 0 을 다시 잼, 조작 비교·시험 종료 코드 비교는 바로 앞 기준 5e24487 값). worktree `C:/dev/wt/inline-organ`(브랜치 `feat/2026-10-05-task-es-499-inline-organ-5`, push 로 번호 선점 — 처음 고른 497 은 다른 빌더가 먼저 써서 풀고 499 로) → main(5e24487) 위로 → 설정 → 생성 → verify → 모듈 로드 탐침 → 신고서·설명 → 게스트 시나리오 + 돌연변이 → 조작 비교 → 시험 → 1차 tab-check 결과 싣기 → main 합치기 → push → PR.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 

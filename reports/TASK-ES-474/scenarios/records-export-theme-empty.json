@@ -1,0 +1,59 @@
+{
+  "id": "records-export-theme-empty",
+  "title": "게스트로 기록 탭 내보내기 단추(#exportRecordsBtn)를 누르면 「테마별 기록 DB 다운로드 & AI 분석 프롬프트」 창이 열리고, 기록이 없는 채 「AI 프롬프트 복사」를 누르면 「해당 테마에 기록이 없습니다.」 토스트가 뜬다 — 내보내기 창(openExportThemeModal)을 기록 세포 파일 js/tabs/records/export-theme.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#exportRecordsBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#exportRecordsBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#expThemeSel",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "테마별 기록 DB 다운로드 & AI 분석 프롬프트"
+    },
+    {
+      "do": "click",
+      "selector": "#mExpCopyPrompt"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "해당 테마에 기록이 없습니다.",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

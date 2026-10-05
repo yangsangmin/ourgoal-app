@@ -2,7 +2,7 @@
  * OurGoal Profile & Top Bar (기관 — 프로필 카드·편집 창·위 막대·알림 센터)
  *
  * 「프로필」 묶음: 아바타 글자·프로필 카드·프로필 편집 창·사진 줄이기, 모든 화면 위 막대(updateTopBar)와 알림 배지·알림 센터 창, 일정 알림 폴러. 일정 알림 폴러 시작 문은 bindScheduleReminderStart 로 감싸 index.html 원래 자리에서 부른다.
- * #TASK-ES-499(인라인 어려움 기관 묶음 이전 4차): index.html 인라인 IIFE 의 구간(이전 전 5379~5386 · 5387~5425 · 5426~5444 · 5445~5742 · 5746~5808 · 5810~5828 · 5832~5843 · 5844~5851 · 5852~5947줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-499(인라인 어려움 기관 묶음 이전 4차): index.html 인라인 IIFE 의 구간(이전 전 5436~5443 · 5444~5482 · 5483~5501 · 5502~5799 · 5803~5865 · 5867~5885 · 5889~5900 · 5901~5908 · 5909~6004줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 5379~5386줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5436~5443줄(#TASK-ES-499 생성기 표지) ---- */
   function avatarHtml(size){
     var p = L.state.profile;
     var s = size || 64;
@@ -23,7 +23,7 @@
     }
     return '<div class="profile-avatar" style="width:'+s+'px;height:'+s+'px;font-size:'+(s*0.42)+'px;">'+L.escapeHtml(p.displayName.slice(0,1))+'</div>';
   }
-  /* ---- 이전 전 index.html 5387~5425줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5444~5482줄(#TASK-ES-499 생성기 표지) ---- */
 
   function renderProfileCard(){
     var wrap = document.getElementById('profileCard');
@@ -63,7 +63,7 @@
     document.getElementById('editProfileBtn').addEventListener('click', openProfileEditor);
     document.getElementById('hallOfFameBtn').addEventListener('click', L.openHallOfFame);
   }
-  /* ---- 이전 전 index.html 5426~5444줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5483~5501줄(#TASK-ES-499 생성기 표지) ---- */
 
   function resizeImageToDataUrl(file, max, cb){
     var reader = new FileReader();
@@ -83,7 +83,7 @@
     reader.onerror = function(){ cb(null); };
     reader.readAsDataURL(file);
   }
-  /* ---- 이전 전 index.html 5445~5742줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5502~5799줄(#TASK-ES-499 생성기 표지) ---- */
 
   function openProfileEditor(existingDraft){
     var p = L.state.profile;
@@ -383,7 +383,7 @@
     );
   }
 
-  /* ---- 이전 전 index.html 5746~5808줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5803~5865줄(#TASK-ES-499 생성기 표지) ---- */
   function updateTopBar(){
     try {
       var p = L.state.profile;
@@ -448,7 +448,7 @@
     }
   }
 
-  /* ---- 이전 전 index.html 5810~5828줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5867~5885줄(#TASK-ES-499 생성기 표지) ---- */
 
   /* [#TASK-ES-168] 상단바 알림 배지 실시간 동기화 */
   function updateTopNotifBadge(){
@@ -469,7 +469,7 @@
     }
   }
 
-  /* ---- 이전 전 index.html 5832~5843줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5889~5900줄(#TASK-ES-499 생성기 표지) ---- */
 
   /* [#TASK-ES-316], [65] 일정 사전 알림 스마트 체커 루프 (1분 주기 및 앱 진입 시) */
   function startScheduleReminderPoller(){
@@ -482,7 +482,7 @@
     setTimeout(runCheck, 3000);
     window._schedReminderPoller = setInterval(runCheck, 60000);
   }
-  /* ---- 이전 전 index.html 5844~5851줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5901~5908줄(#TASK-ES-499 생성기 표지) ---- */
   function bindScheduleReminderStart() { /* [#TASK-ES-499] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(typeof window !== 'undefined'){
     window.startScheduleReminderPoller = startScheduleReminderPoller;
@@ -493,7 +493,7 @@
     }
   }
   } /* bindScheduleReminderStart */
-  /* ---- 이전 전 index.html 5852~5947줄(#TASK-ES-499 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5909~6004줄(#TASK-ES-499 생성기 표지) ---- */
 
   /* [#TASK-ES-168] 알림 센터 모달 열기 */
   function openNotificationCenterModal(){
