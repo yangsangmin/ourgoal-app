@@ -15,7 +15,7 @@ const SUITE_TASK = 'TASK-ES-265';
 console.log('[TEST] gcal-login-reconnect-fix.test.js: starting execution for ' + SUITE_TASK + '...');
 
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8')); // #TASK-ES-465: 인라인 합본(원문 맨 앞 + 세포) — 단언 그대로
 const trackPath = path.join(__dirname, '..', 'api', 'track.js');
 const trackJs = fs.readFileSync(trackPath, 'utf8');
 
