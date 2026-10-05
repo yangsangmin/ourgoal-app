@@ -573,6 +573,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-488 | INFRA | [시험지 선행 · 인라인 어려움 구역 H2] 루틴 상세·팀 목표 시험지 6개가 인라인 합본을 읽고, 확인창 시험의 「기본 확인창 2곳만」 검사가 원문+루틴 화면 세포를 읽음 — 단언·기대값·검사 수 그대로, 제품 코드 0 | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-488-INLINE-H2-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-478 | FIX/버그 | [남은 허상지표·위젯 시험 픽스처·소통 숨김 진입로 판정] 통계 카드 가짜 스트릭·리캡 가짜 25분 제거, desktop-widget-suite 픽스처 이름 정정 — 소통 허브·빠른 게시 띠는 중복·고장이라 복원하지 않고 보고, 응원 바·프로필 시트 가짜 전송 보고 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-478-HIDDEN-COMM-FAKE-METRICS.md
 - #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md
+- #TASK-ES-486 | INFRA | [인라인 기관 이전 2차] 잠금화면 허브(연속 기록·앱 배지 기관 몫 분리)·일정 탭 공용·4대 뷰 디스패처 → 세포 4개, 동작 그대로(인라인 −1,159줄) | 코디네이터 지시 (2026-10-05, 기관 빌더), REQ docs/specs/REQ-TASK-ES-486-INLINE-ORGAN-2.md | 4단계(심사 청구)
 - #TASK-ES-490 | FIX/버그 | [오프라인 큐 데이터 손실] 온라인 복귀 때 보내지 않고 비우던 큐 → 저장 성공 뒤에만 비움·실패 시 유지·재시도·알림 (25분 대체값은 smoke 검사가 고정 — 결심 요청) | 코디네이터 지시 (2026-10-05, 기관 빌더 #776 발견), REQ docs/specs/REQ-TASK-ES-490-OFFLINE-QUEUE-LOSS.md
 - #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통] core-confirm-es376 잘라 읽기가 인라인 합본을 읽음 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md
 - #TASK-ES-482 | INFRA | [인라인 어려움 기관 묶음 · H3 빌더] Confetti·뱃지 컬렉션·전역 휴지통을 js/core 기관 세포 4개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md

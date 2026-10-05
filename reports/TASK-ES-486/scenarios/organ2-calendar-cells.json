@@ -1,0 +1,47 @@
+{
+ "id": "organ2-calendar-cells",
+ "title": "게스트로 일정 탭을 열면 이번 달 달력 칸(날짜 숫자)과 날짜를 누를 수 있는 칸이 그려진다 — 옮긴 달력 칸 그리기(calCellHtml)·날짜별 일정 모음(calendarItemsByDate)이 이전 전과 같이 돈다",
+ "steps": [
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"calendar\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"calendar\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 1500
+  },
+  {
+   "expect": "exists",
+   "selector": "#screen-calendar .cal-daynum"
+  },
+  {
+   "expect": "exists",
+   "selector": "#screen-calendar [data-caldate]"
+  },
+  {
+   "expect": "hasClass",
+   "selector": "#screen-calendar [data-caldate]",
+   "className": "cal-cell"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
