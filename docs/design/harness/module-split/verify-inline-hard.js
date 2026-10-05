@@ -47,7 +47,7 @@ const equiv = [], lineCheck = [], movedRanges = [], files = {};
 const usedL = new Set(), assignedL = new Set(), cellNames = new Set(), wrapNames = new Set();
 let cellListeners = 0, thisArgs = [];
 for (const f of FILES) {
-  const src = fs.readFileSync(path.join(APP, f), 'utf8');
+  const src = fs.readFileSync(path.join(APP, f), 'utf8').replace(/\r\n/g, '\n'); // #TASK-ES-471: 체크아웃 줄 끝(CRLF)과 무관하게(여러 줄 템플릿 글자 토큰)
   const fl = src.replace(/\r\n/g, '\n').split('\n');
   const fast = parser.parse(src, { sourceType: 'script', tokens: true, ranges: true });
   const cbody = fast.program.body[0].expression.callee.body.body;

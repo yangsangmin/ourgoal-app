@@ -1,0 +1,165 @@
+{
+ "scenario": "organ-calendar-render",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 2,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"calendar\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#screen-calendar → class=\"screen active\"",
+     "vacuous": false
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#calLockScreenBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#calLockScreenBtn → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 2,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"calendar\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#screen-calendar → class=\"screen active\"",
+     "vacuous": false
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#calLockScreenBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#calLockScreenBtn → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  }
+ }
+}

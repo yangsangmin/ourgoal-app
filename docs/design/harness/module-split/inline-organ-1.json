@@ -1,0 +1,150 @@
+{
+  "task": "TASK-ES-471",
+  "slot": "HO",
+  "slots": [
+    "H0 시범 #TASK-ES-439",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "HO 기관"
+  ],
+  "cells": [
+    {
+      "key": "timeKeys",
+      "file": "js/core/time-keys.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Time Keys (기관 — 시간·날짜 키·id 도우미)",
+      "desc": [
+        "여러 탭이 같이 쓰는 시간 글자·날짜 키·고유 id 도우미(Utilities 묶음)와 표준 시간대 기준 날짜 키(#TASK-ES-264 묶음)."
+      ],
+      "take": [
+        {
+          "group": "Utilities",
+          "all": true
+        },
+        {
+          "group": "표준 시간대(한국 KST 00:00",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "telemetry",
+      "file": "js/core/telemetry.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Telemetry (기관 — 익명 이벤트 계측)",
+      "desc": [
+        "온보딩 퍼널·유입 채널·알림 클릭률 익명 이벤트 계측 도우미(계측 묶음)."
+      ],
+      "take": [
+        {
+          "group": "계측(익명 이벤트)",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "vuHelpers",
+      "file": "js/core/virtual-user-helpers.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Virtual-User Helpers (기관 — 가상유저 개선 10대 헬퍼)",
+      "desc": [
+        "「가상유저 개선 10대 핵심 헬퍼 함수」 묶음을 글자 그대로 옮겼다(고치지 않음 — 발견 사항은 #TASK-ES-471 REQ 에 적었다)."
+      ],
+      "take": [
+        {
+          "group": "가상유저 개선 10대 핵심 헬퍼 함수",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "gcalToken",
+      "file": "js/core/gcal-token.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Google Calendar Token (기관 — 구글 캘린더 토큰·일정 캐시 계정 격리)",
+      "desc": [
+        "구글 캘린더 토큰·일정 캐시를 계정(uid)별로 나눠 두는 도우미(#TASK-ES-345 CAL-02 묶음)."
+      ],
+      "take": [
+        {
+          "group": "CAL-02] 구글 캘린더 토큰",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "cockpit",
+      "file": "js/core/home-cockpit.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Home Cockpit (기관 — 홈 1초 조망 ↔ 체크인 콕핏)",
+      "desc": [
+        "홈 1초 조망·무저항 체크인 콕핏 8대 과업 묶음(#TASK-UIUX-PHASE3-HOME-COCKPIT). 여러 탭이 부르는 공용 부품이라 기관 칸에 둔다."
+      ],
+      "take": [
+        {
+          "group": "TASK-UIUX-PHASE3-HOME-COCKPIT",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "registryInit",
+      "file": "js/core/registry-init.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Registry Init (기관 — 조선소 블록 레지스트리 6대 메가블록 초기화)",
+      "desc": [
+        "조선소 블록 레지스트리에 6대 메가블록을 등록·초기화하는 묶음(헌법 제3조 제9항)."
+      ],
+      "take": [
+        {
+          "group": "조선소 블록 레지스트리 6대 메가블록 초기화",
+          "all": true,
+          "wrap": [
+            "bindNavButtonsClick"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "modalHelper",
+      "file": "js/core/modal-helper.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Modal Helper (기관 — 모달 도우미·안드로이드 뒤로가기 처리)",
+      "desc": [
+        "모달 열기·닫기 도우미와 안드로이드 하드웨어 뒤로가기 처리 묶음. 최상위 this/arguments 를 쓰는 함수는 헌법 CELL_SPLIT 5 에 따라 index.html 에 남겼다."
+      ],
+      "take": [
+        {
+          "group": "Modal helper & Android Hardware Back Handler",
+          "names": [
+            "closeModal",
+            "isModalDismissCooldown",
+            "openBottomSheetAlert",
+            "openBottomSheetConfirm"
+          ],
+          "wrap": [
+            "bindModalPopstateBack"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ],
+  "label": "인라인 어려움 기관 묶음 이전 1차"
+}

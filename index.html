@@ -2226,7 +2226,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script>
-<script src="js/core/ui-helpers.js"></script>
+<script src="js/core/ui-helpers.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
 <script src="js/core/modal.js"></script>
@@ -2745,6 +2745,63 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get startOnboarding(){ return startOnboarding; }
   });
   /* [어려움 이음매 자리 HO 기관] */
+  /* [#TASK-ES-471] js/core/time-keys.js · js/core/telemetry.js · js/core/virtual-user-helpers.js · js/core/gcal-token.js · js/core/home-cockpit.js · js/core/registry-init.js · js/core/modal-helper.js — 가져오기 42개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var _uiKit = window.OurgoalUiHelpers;
+  var uid = _uiKit.uid;
+  var newId = _uiKit.newId;
+  var pad = _uiKit.pad;
+  var nowISO = _uiKit.nowISO;
+  var fmtTime = _uiKit.fmtTime;
+  var fmtDateLabel = _uiKit.fmtDateLabel;
+  var getKSTDateKey = _uiKit.getKSTDateKey;
+  var getEffectiveStandardDateKey = _uiKit.getEffectiveStandardDateKey;
+  var dateKey = _uiKit.dateKey;
+  var getAttribution = _uiKit.getAttribution;
+  var recordLanding = _uiKit.recordLanding;
+  var track = _uiKit.track;
+  var dayIndexSinceSignup = _uiKit.dayIndexSinceSignup;
+  var trackGoalCreated = _uiKit.trackGoalCreated;
+  var fmtDuration = _uiKit.fmtDuration;
+  var dDay = _uiKit.dDay;
+  var triggerHaptic = _uiKit.triggerHaptic;
+  var triggerHapticFeedback = _uiKit.triggerHapticFeedback;
+  var reorderMilestones = _uiKit.reorderMilestones;
+  var filterFeedByCategory = _uiKit.filterFeedByCategory;
+  var calculateWeeklyFocusStats = _uiKit.calculateWeeklyFocusStats;
+  var OfflineSyncManager = _uiKit.OfflineSyncManager;
+  var purgeLegacySharedGcalKeys = _uiKit.purgeLegacySharedGcalKeys;
+  var gcalCurrentUid = _uiKit.gcalCurrentUid;
+  var gcalEventsKey = _uiKit.gcalEventsKey;
+  var ensureGcalOwner = _uiKit.ensureGcalOwner;
+  var loadLocalSettings = _uiKit.loadLocalSettings;
+  var saveLocalSettings = _uiKit.saveLocalSettings;
+  var switchHomeDate = _uiKit.switchHomeDate;
+  var initDimensionSliders = _uiKit.initDimensionSliders;
+  var initHomeCockpit = _uiKit.initHomeCockpit;
+  var renderQuickCheckinGuideChips = _uiKit.renderQuickCheckinGuideChips;
+  var saveProfile = _uiKit.saveProfile;
+  var initShipyardRegistry = _uiKit.initShipyardRegistry;
+  var setTab = _uiKit.setTab;
+  var switchTab = _uiKit.switchTab;
+  var bindNavButtonsClick = _uiKit.bindNavButtonsClick;
+  var isModalDismissCooldown = _uiKit.isModalDismissCooldown;
+  var closeModal = _uiKit.closeModal;
+  var openBottomSheetAlert = _uiKit.openBottomSheetAlert;
+  var openBottomSheetConfirm = _uiKit.openBottomSheetConfirm;
+  var bindModalPopstateBack = _uiKit.bindModalPopstateBack;
+  window.OurgoalAppScope.expose('index.html', {
+    get _modalDismissGraceUntil(){ return _modalDismissGraceUntil; }, set _modalDismissGraceUntil(v){ _modalDismissGraceUntil = v; },
+    get _modalHistoryPushed(){ return _modalHistoryPushed; }, set _modalHistoryPushed(v){ _modalHistoryPushed = v; },
+    get applyQuickCunningText(){ return applyQuickCunningText; },
+    get buildCSV(){ return buildCSV; },
+    get buildMarkdownExport(){ return buildMarkdownExport; },
+    get defaultSettings(){ return defaultSettings; },
+    get navButtons(){ return navButtons; },
+    get openWeeklyRecapModal(){ return openWeeklyRecapModal; },
+    get renderSettingsScreen(){ return renderSettingsScreen; },
+    get screens(){ return screens; },
+    get syncLockScreenLiveCard(){ return syncLockScreenLiveCard; }
+  });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -3011,152 +3068,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
    * SQL: docs/sql/2026-09-06-content-reports.sql (Supabase SQL Editor에서 1회 실행).
    */
 
-  /* ============ Utilities ============ */
-  function uid(p){ return (p||'id') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-  function newId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uid('id'); }
-  /* [#TASK-ES-354 CORE-07] escapeHtml → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
-  /* [#TASK-ES-354 CORE-07] a11ySwitch → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
-  function pad(n){ return n<10?'0'+n:''+n; }
-  function nowISO(){ return new Date().toISOString(); }
-  function fmtTime(iso){ if(!iso) return ''; var d=new Date(iso); return pad(d.getHours())+':'+pad(d.getMinutes()); }
-  function fmtDateLabel(iso){
-    var d = new Date(iso); if(!iso || isNaN(d.getTime())) d = new Date();
-    var today = new Date();
-    var yest = new Date(); yest.setDate(today.getDate()-1);
-    var sameDay = function(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); };
-    if(sameDay(d,today)) return '오늘';
-    if(sameDay(d,yest)) return '어제';
-    if(d.getFullYear() !== today.getFullYear()) return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
-    return (d.getMonth()+1)+'월 '+d.getDate()+'일';
-  }
-  function getKSTDateKey(iso){
-    var d = iso ? new Date(iso) : new Date();
-    if(isNaN(d.getTime())) d = new Date();
-    var kst = new Date(d.getTime() + (9 * 3600000));
-    return kst.getUTCFullYear() + '-' + pad(kst.getUTCMonth() + 1) + '-' + pad(kst.getUTCDate());
-  }
+  /* [#TASK-ES-471] uid · newId · pad · nowISO · fmtTime · fmtDateLabel · getKSTDateKey → js/core/time-keys.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* ============ [#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가 표준시 00:00) 기준 날짜 키 ============ */
-  function getEffectiveStandardDateKey(iso, tz){
-    var d = iso ? new Date(iso) : new Date();
-    if(isNaN(d.getTime())) d = new Date();
-    var targetTz = tz;
-    if(!targetTz && typeof state !== 'undefined' && state && state.profile && state.profile.settings && state.profile.settings.timezone){
-      targetTz = state.profile.settings.timezone;
-    }
-    if(!targetTz && typeof Intl !== 'undefined' && Intl.DateTimeFormat){
-      try { targetTz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e){}
-    }
-    if(targetTz){
-      try {
-        var fmt = new Intl.DateTimeFormat('en-CA', { timeZone: targetTz, year: 'numeric', month: '2-digit', day: '2-digit' });
-        var parts = fmt.format(d);
-        if(parts && parts.length === 10) return parts;
-      } catch(e){}
-    }
-    return getKSTDateKey(d.toISOString());
-  }
-  function dateKey(iso){ var d=new Date(iso); if(!iso || isNaN(d.getTime())) d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  /* [#TASK-ES-471] getEffectiveStandardDateKey · dateKey → js/core/time-keys.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.getKSTDateKey = getKSTDateKey;
     window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;
   }
-  /* ============ 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 ============
-     원칙: user_id는 저장하지 않고 기기별 익명 sid만 사용(개인정보 최소화). 계측 실패는 UX에 절대 영향을 주지 않는다. */
-  function parseAttribution(search){
-    var keys = ['utm_source','utm_medium','utm_campaign','ref'];
-    var out = {};
-    var q = String(search||'').replace(/^\?/, '');
-    if(!q) return out;
-    q.split('&').forEach(function(pair){
-      var i = pair.indexOf('=');
-      var rawK = i===-1 ? pair : pair.slice(0,i);
-      var rawV = i===-1 ? '' : pair.slice(i+1);
-      var k, v;
-      try{ k = decodeURIComponent(rawK).trim(); v = decodeURIComponent(rawV.replace(/\+/g,' ')).trim(); } catch(e){ return; }
-      if(keys.indexOf(k)===-1 || !v) return;
-      out[k] = v.slice(0,80);
-    });
-    return out;
-  }
-  function getSid(){
-    try{
-      var sid = localStorage.getItem('ourgoal_sid');
-      if(!sid){ sid = newId(); localStorage.setItem('ourgoal_sid', sid); }
-      return sid;
-    } catch(e){ return null; }
-  }
-  function getAttribution(search){
-    try{
-      var saved = localStorage.getItem('ourgoal_attrib');
-      if(saved) return JSON.parse(saved);
-      var fresh = parseAttribution(search === undefined ? location.search : search);
-      if(Object.keys(fresh).length){
-        fresh.landed_at = nowISO();
-        localStorage.setItem('ourgoal_attrib', JSON.stringify(fresh)); /* 첫 유입(first-touch)만 보존 */
-      }
-      return fresh;
-    } catch(e){ return {}; }
-  }
-  /* 랜딩 진입 처리 — 부트 IIFE 안에 있으면 테스트할 수 없어 이름 있는 함수로 뺀다 (AUD-8).
-     유입 저장과 landing_view 기록은 주기가 다르다:
-       - 유입(attribution)은 매 로드마다 확인한다. 첫 유입만 보존하되, 확인 자체를 거르면 안 된다.
-       - landing_view 는 하루 1회만 남긴다. 같은 사람이 하루에 열 번 들어와도 조회수가 부풀지 않게.
-     이 둘을 하나의 게이트에 묶으면, 오늘 이미 방문한 사람이 ?utm_source 를 달고 다시 들어와도
-     유입이 통째로 유실된다. 그래서 순서를 고정한다: 유입 먼저, 그 다음 하루 1회 게이트. */
-  function recordLanding(search, todayKey){
-    var attrib = {};
-    try{ attrib = getAttribution(search); } catch(e){ /* 계측 실패는 UX에 영향 없다 */ }
-    var viewed = false;
-    try{
-      if(localStorage.getItem('ourgoal_lv_day') !== todayKey){
-        localStorage.setItem('ourgoal_lv_day', todayKey);
-        viewed = true;
-      }
-    } catch(e){ /* 스토리지 접근 실패는 무시 */ }
-    if(viewed){ try{ track('landing_view', attrib); } catch(e){ } }
-    return { attrib: attrib, viewed: viewed };
-  }
-  function track(name, props){
-    try{
-      if(typeof window !== 'undefined' && window.posthog && typeof window.posthog.capture === 'function'){
-        window.posthog.capture(name, props || {});
-      }
-    } catch(e){ /* 계측 실패는 조용히 무시 */ }
-    try{
-      if(!sb || !name) return;
-      sb.from('events').insert({ sid: getSid(), name: name, props: props || {} }).then(function(){}, function(){});
-    } catch(e){ /* 계측 실패는 조용히 무시 */ }
-  }
-  function dayIndexSinceSignup(){
-    try{
-      var c = state.profile && state.profile.createdAt;
-      if(!c) return 0;
-      return Math.max(0, Math.floor((Date.now() - new Date(c).getTime()) / 86400000));
-    } catch(e){ return null; }
-  }
-  function trackGoalCreated(goal, source){
-    var goals = (state.profile && state.profile.goals) || [];
-    track('goal_created', { source: source, goal_type: goal && goal.category, category: goal && goal.category, first: goals.length<=1, day_index: dayIndexSinceSignup() });
-  }
-  function fmtDuration(ms){
-    if(ms<0) ms=0;
-    var mins = Math.round(ms/60000);
-    var h = Math.floor(mins/60), m = mins%60;
-    if(h<=0) return m+'분';
-    if(m<=0) return h+'시간';
-    return h+'시간 '+m+'분';
-  }
-  function dDay(dateStr){
-    if(!dateStr) return null;
-    var target = dateStr.indexOf('T')!==-1 ? new Date(dateStr) : new Date(dateStr+'T00:00:00');
-    if(isNaN(target.getTime())) return null;
-    var today = new Date(); today.setHours(0,0,0,0);
-    var tDay = new Date(target.getFullYear(), target.getMonth(), target.getDate());
-    var diff = Math.round((tDay-today)/86400000);
-    if(diff===0) return 'D-day';
-    if(diff>0) return 'D-'+diff;
-    return 'D+'+Math.abs(diff);
-  }
+  /* [#TASK-ES-471] parseAttribution · getSid · getAttribution · recordLanding · track · dayIndexSinceSignup · trackGoalCreated · fmtDuration · dDay → js/core/telemetry.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* [#TASK-ES-354 CORE-07] download → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   /* ============ Confetti ============ */
   function burstConfetti(x, y, count){
@@ -3250,200 +3169,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-437] applyAppSettings → js/tabs/settings/theme-apply.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* ============ 가상유저 개선 10대 핵심 헬퍼 함수 ============ */
-  function triggerHaptic(pattern){
-    var HAPTIC_PATTERNS = {
-      tap: 12,
-      light: 8,
-      checkin: [12, 35, 18],
-      streak: [20, 45, 30],
-      success: [15, 30, 25],
-      drag: 10,
-      warning: [25, 40, 25]
-    };
-    try{
-      if(typeof navigator !== 'undefined' && navigator && navigator.vibrate){
-        var p = pattern;
-        if(typeof pattern === 'string' && HAPTIC_PATTERNS[pattern]){
-          p = HAPTIC_PATTERNS[pattern];
-        } else if(p === undefined || p === null){
-          p = 12;
-        }
-        navigator.vibrate(p);
-        return true;
-      }
-    }catch(e){}
-    return false;
-  }
-
-  function triggerHapticFeedback(pattern){
-    return triggerHaptic(pattern || 12);
-  }
+  /* [#TASK-ES-471] triggerHaptic · triggerHapticFeedback → js/core/virtual-user-helpers.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   window.triggerHapticFeedback = triggerHapticFeedback;
-
-  function reorderMilestones(goal, fromIdx, toIdx){
-    if(!goal || !goal.milestones || !Array.isArray(goal.milestones)) return [];
-    var list = goal.milestones.slice();
-    if(fromIdx < 0 || fromIdx >= list.length || toIdx < 0 || toIdx >= list.length) return list;
-    var item = list.splice(fromIdx, 1)[0];
-    list.splice(toIdx, 0, item);
-    goal.milestones = list;
-    return list;
-  }
-
-  function filterFeedByCategory(items, categoryKey){
-    if(!categoryKey || categoryKey === 'all') return (items || []).slice();
-    var key = String(categoryKey).toLowerCase();
-    var validCategories = ['study','dev','workout','running','diet','career','sideproject','finance','life','morning','parenting','pet','relation','reading','hobby','mental','clean','travel'];
-    if(validCategories.indexOf(key) === -1) return (items || []).slice();
-    return (items || []).filter(function(item){
-      if(item.category && String(item.category).toLowerCase() === key) return true;
-      var text = ((item.goal || '') + ' ' + (item.action || '') + ' ' + (item.category || '')).toLowerCase();
-      if(key === 'study') return /토익|공부|시험|자격증|수험|독서실|회독|강의|leet|cpa|노무사|간호|국시|기출/.test(text);
-      if(key === 'dev') return /개발|코딩|깃허브|알고리즘|오픈소스|백준|디자인|ui|ux|saas|프론트|백엔드/.test(text);
-      if(key === 'workout') return /운동|헬스|러닝|체력|바디프로필|웨이트|필라테스|테니스|수영|인터벌|근력/.test(text);
-      if(key === 'running') return /러닝|달리기|마라톤|조깅|페이스트레이닝|10k|하프마라톤|풀코스/.test(text);
-      if(key === 'diet') return /식단|다이어트|칼로리|단백질|클린식단|간헐적단식|체중|샐러드/.test(text);
-      if(key === 'career') return /취업|인턴|이직|창업|매출|사업|마케터|세일즈|영업|스타트업|hr|포트폴리오|이력서|면접|직무|승진/.test(text);
-      if(key === 'sideproject') return /사이드프로젝트|창업|사업|매출|수익화|bm|출시|런칭|고객/.test(text);
-      if(key === 'finance') return /재테크|투자|주식|저축|가계부|부동산|예금|펀드|소비|자산/.test(text);
-      if(key === 'life') return /생활|습관|루틴|일상|규칙|절제|라이프|하루/.test(text);
-      if(key === 'morning') return /기상|모닝루틴|미라클모닝|새벽기상|기상인증|아침시간|수면패턴/.test(text);
-      if(key === 'parenting') return /육아|자녀|아이|등하원|이유식|부모|가정|어린이집|유치원/.test(text);
-      if(key === 'pet') return /반려동물|강아지|고양이|산책|반려견|반려묘|펫/.test(text);
-      if(key === 'relation') return /관계|인간관계|가족|친구|연애|결혼|소통|대화|부부/.test(text);
-      if(key === 'reading') return /독서|책|서평|인문|독서모임|완독|필사|리딩/.test(text);
-      if(key === 'hobby') return /음악|그림|공연|웹툰|댄스|사진|자작곡|뮤지컬|베이커리|로스팅|공예/.test(text);
-      if(key === 'mental') return /멘탈|마인드|명상|일기|감사|회고|스트레스|휴식|힐링|마음/.test(text);
-      if(key === 'clean') return /정리|청소|미니멀|비우기|청결|방청소|분리수거/.test(text);
-      if(key === 'travel') return /여행|아웃도어|등산|캠핑|트레킹|나들이|휴가/.test(text);
-      return false;
-    });
-  }
-
-  function calculateWeeklyFocusStats(records){
-    var now = new Date();
-    var sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
-    var recs = (records || []).filter(function(r){
-      return r && r.startAt && (new Date(r.startAt) >= sevenDaysAgo);
-    });
-    var totalSessions = recs.length;
-    var totalMins = 0;
-    var daysSet = {};
-    recs.forEach(function(r){
-      var k = dateKey(r.startAt);
-      daysSet[k] = true;
-      if(r.endAt && r.startAt){
-        var m = Math.round((new Date(r.endAt) - new Date(r.startAt)) / 60000);
-        if(m > 0 && m < 1440) totalMins += m;
-      } else {
-        totalMins += 25;
-      }
-    });
-    return {
-      totalSessions: totalSessions,
-      totalMinutes: totalMins,
-      activeDays: Object.keys(daysSet).length
-    };
-  }
-
-  function exportRecordsToCsv(records, themeKey){
-    var list = records || [];
-    if(themeKey && themeKey !== 'all'){
-      list = list.filter(function(r){ return (r.theme || 'daily') === themeKey; });
-    }
-    return '\uFEFF' + buildCSV(list);
-  }
-
-  function exportRecordsToMarkdown(records, themeKey, includePrompt){
-    var list = records || [];
-    if(themeKey && themeKey !== 'all'){
-      list = list.filter(function(r){ return (r.theme || 'daily') === themeKey; });
-    }
-    return buildMarkdownExport(list, themeKey || 'all', !!includePrompt);
-  }
-
-  var OfflineSyncManager = {
-    QUEUE_KEY: 'ourgoal_offline_sync_queue',
-    getQueue: function(){
-      try{
-        var raw = (typeof localStorage !== 'undefined' && localStorage) ? localStorage.getItem(this.QUEUE_KEY) : null;
-        return raw ? JSON.parse(raw) : [];
-      }catch(e){ return []; }
-    },
-    enqueue: function(action){
-      var q = this.getQueue();
-      var item = { id: (typeof uid === 'function' ? uid('act') : 'act_' + Date.now()), action: action, timestamp: (typeof nowISO === 'function' ? nowISO() : new Date().toISOString()) };
-      q.push(item);
-      try{ if(typeof localStorage !== 'undefined' && localStorage) localStorage.setItem(this.QUEUE_KEY, JSON.stringify(q)); }catch(e){}
-      return q.length;
-    },
-    clear: function(){
-      try{ if(typeof localStorage !== 'undefined' && localStorage) localStorage.removeItem(this.QUEUE_KEY); }catch(e){}
-    },
-    flush: async function(syncHandler){
-      var q = this.getQueue();
-      if(!q.length) return 0;
-      var count = q.length;
-      if(typeof syncHandler === 'function'){
-        for(var i=0; i<q.length; i++){
-          try { await syncHandler(q[i]); }catch(e){}
-        }
-      }
-      this.clear();
-      return count;
-    }
-  };
+  /* [#TASK-ES-471] reorderMilestones · filterFeedByCategory · calculateWeeklyFocusStats · exportRecordsToCsv · exportRecordsToMarkdown · OfflineSyncManager → js/core/virtual-user-helpers.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* ============ [#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정 격리 ============
      토큰·일정 캐시는 오직 "현재 로그인 uid" 키(ourgoal_gcal_token_v1_<uid>, ourgoal_gcal_events_<uid>)에서만 읽고 쓴다.
      예전의 계정 공용 키(_last 토큰, 이메일 _last, 접미사 없는 일정 캐시)는 다른 계정의 토큰·일정을 새 계정에 넘겨주던 통로라
      읽지 않고, 로드 때마다 지운다. 유일한 예외는 migrateGuestDataToUser 의 게스트 -> 회원 1회 이전(같은 사람이 같은 기기에서
      게스트로 쓰다가 가입한 경우)이며, 이전 직후 게스트 키를 지워 두 번 쓰이지 않게 한다. */
-  var GCAL_LEGACY_SHARED_KEYS = ['ourgoal_gcal_token_v1_last', 'ourgoal_gcal_email_last', 'ourgoal_gcal_events', 'ourgoal_google_token'];
-  function purgeLegacySharedGcalKeys(){
-    try {
-      for(var li = 0; li < GCAL_LEGACY_SHARED_KEYS.length; li++) localStorage.removeItem(GCAL_LEGACY_SHARED_KEYS[li]);
-    } catch(e){}
-  }
-  function gcalCurrentUid(){
-    return (state.profile && state.profile.id) || 'guest';
-  }
-  function gcalEventsKey(){
-    return 'ourgoal_gcal_events_' + gcalCurrentUid();
-  }
-  // 메모리에 남은 토큰·일정 캐시가 다른 계정 것이면 버린다(로그아웃 없이 계정을 바꾼 경우 포함).
-  function ensureGcalOwner(){
-    var uid = gcalCurrentUid();
-    if(state._gcalOwnerUid !== uid){
-      state.googleToken = null;
-      state._lastExpiredGoogleToken = null;
-      state.gcalEventsCache = null;
-      try { sessionStorage.removeItem('ourgoal_google_token'); } catch(e){}
-      state._gcalOwnerUid = uid;
-    }
-    return uid;
-  }
+  /* [#TASK-ES-471] GCAL_LEGACY_SHARED_KEYS · purgeLegacySharedGcalKeys · gcalCurrentUid · gcalEventsKey · ensureGcalOwner → js/core/gcal-token.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.purgeLegacySharedGcalKeys = purgeLegacySharedGcalKeys;
     window.ensureGcalOwner = ensureGcalOwner;
     window.gcalEventsKey = gcalEventsKey;
   }
-  function loadLocalSettings(userId){
-    try{
-      var raw = localStorage.getItem('ourgoal_settings_'+userId);
-      var s = raw ? Object.assign(defaultSettings(), JSON.parse(raw)) : defaultSettings();
-      // [#TASK-ES-345 CAL-02] 예전에는 연동 설정이 없으면 게스트·직전 사용자(ourgoal_current_user)·이메일 _last 에서
-      // 구글 캘린더 연동 설정을 복사해 왔다(#TASK-ES-265). 다른 계정의 연동 정보를 새 계정에 붙이는 통로라 제거한다.
-      // 게스트 -> 회원 전환은 migrateGuestDataToUser 가 명시적으로 처리한다.
-      purgeLegacySharedGcalKeys();
-      if(!s.privacy) s.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };
-      if(!s.customSchedules) s.customSchedules = [];
-      applyAppSettings(s);
-      return s;
-    } catch(e){ return defaultSettings(); }
-  }
-  function saveLocalSettings(userId, settings){
-    try{ localStorage.setItem('ourgoal_settings_'+userId, JSON.stringify(settings)); applyAppSettings(settings); } catch(e){}
-  }
+  /* [#TASK-ES-471] loadLocalSettings · saveLocalSettings → js/core/gcal-token.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
 
   /* ============ 구독 상태 (전체 기능 100% 완전 무료 제공) ============ */
   function subscriptionState(){
@@ -4131,243 +3871,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업 ============ */
   window._homeDateOffset = 0;
-  function switchHomeDate(offset){
-    window._homeDateOffset = offset;
-    if(typeof triggerHaptic === 'function') triggerHaptic(12);
-    var chips = document.querySelectorAll('.home-date-chip');
-    chips.forEach(function(c){
-      var o = parseInt(c.getAttribute('data-date-offset'), 10);
-      if(o === offset){
-        c.classList.add('active');
-      } else {
-        c.classList.remove('active');
-      }
-    });
-    var headline = document.getElementById('homeHeadlineSentence');
-    if(headline){
-      if(offset === -1){
-        headline.innerHTML = '어제 실천 기록을 <b>돌아보고 점검</b>해요 📅';
-      } else if(offset === 1){
-        headline.innerHTML = '내일의 도전을 <b>미리 계획하고 준비</b>해요 🚀';
-      } else {
-        headline.innerHTML = '오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨';
-      }
-    }
-  }
+  /* [#TASK-ES-471] switchHomeDate → js/core/home-cockpit.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   window.switchHomeDate = switchHomeDate;
-
-  function initDimensionSliders(){
-    var slEnergy = document.getElementById('sliderEnergy');
-    var valEnergy = document.getElementById('valEnergy');
-    if(slEnergy && valEnergy && !slEnergy._bound){
-      slEnergy._bound = true;
-      slEnergy.addEventListener('input', function(){
-        valEnergy.textContent = slEnergy.value + '%';
-        if(typeof triggerHaptic === 'function') triggerHaptic(8);
-      });
-    }
-    var slFocus = document.getElementById('sliderFocus');
-    var valFocus = document.getElementById('valFocus');
-    if(slFocus && valFocus && !slFocus._bound){
-      slFocus._bound = true;
-      slFocus.addEventListener('input', function(){
-        valFocus.textContent = slFocus.value + '%';
-        if(typeof triggerHaptic === 'function') triggerHaptic(8);
-      });
-    }
-  }
+  /* [#TASK-ES-471] initDimensionSliders → js/core/home-cockpit.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   window.initDimensionSliders = initDimensionSliders;
-
-  function initHomeCockpit(){
-    initDimensionSliders();
-    var inp = document.getElementById('captureInput');
-    if(inp && !inp.value){
-      inp.value = ''; // [공준 1: 무예단 원칙] 깨끗한 빈칸 보장
-    }
-    var btnY = document.getElementById('btnHomeDateYesterday');
-    if(btnY && !btnY._bound){
-      btnY._bound = true;
-      btnY.addEventListener('click', function(){ switchHomeDate(-1); });
-    }
-    var btnT = document.getElementById('btnHomeDateToday');
-    if(btnT && !btnT._bound){
-      btnT._bound = true;
-      btnT.addEventListener('click', function(){ switchHomeDate(0); });
-    }
-    var btnM = document.getElementById('btnHomeDateTomorrow');
-    if(btnM && !btnM._bound){
-      btnM._bound = true;
-      btnM.addEventListener('click', function(){ switchHomeDate(1); });
-    }
-  }
+  /* [#TASK-ES-471] initHomeCockpit → js/core/home-cockpit.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   window.initHomeCockpit = initHomeCockpit;
-
-  function renderQuickCheckinGuideChips(){
-    var wrap = document.querySelector('.quick-checkin-chips');
-    if(!wrap) return;
-    wrap.style.display = '';
-
-    var userGoals = (typeof state !== 'undefined' && state.profile && Array.isArray(state.profile.goals)) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
-    var chips = [];
-    if(userGoals.length > 0){
-      userGoals.slice(0, 5).forEach(function(g){
-        var snippet = (g.title || '').slice(0, 18);
-        var icon = g.icon || '🎯';
-        chips.push({
-          label: icon + ' ' + snippet,
-          text: icon + ' [' + (g.title || '목표') + '] 오늘 실천 미션 완수! 한 걸음 더 성장했어요 🔥'
-        });
-      });
-    }
-    // 기본 영감 칩 폴백 (최소 2개 유지)
-    if(chips.length < 2){
-      var fallbacks = [
-        { label: '👟 러닝/운동 실천', text: '👟 30분 유산소 운동 완주! 땀 흘리며 스트레스 해소 완료 🔥' },
-        { label: '📖 독서/학습 몰입', text: '📖 핵심 내용 30분 집중 독서 & 마인드셋 정리 완료 ✨' }
-      ];
-      for(var fi = 0; fi < fallbacks.length && chips.length < 2; fi++){
-        chips.push(fallbacks[fi]);
-      }
-    }
-
-    wrap.innerHTML = 
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-        '<span style="font-size:0.78rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:4px;">' +
-          '💡 <b>내 목표 맞춤 커닝페이퍼</b>' +
-        '</span>' +
-        '<span style="font-size:12.5px;color:var(--ink-soft);font-weight:500;">(탭하면 가이드 예시 힌트 설정 ⚡)</span>' +
-      '</div>' +
-      '<div class="cunning-chips-wrap" style="display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;">' +
-      chips.map(function(c){
-        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.78rem;padding:6px 14px;min-height:36px;border-radius:18px;background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.22);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:600;white-space:nowrap;flex-shrink:0;transition:all .15s ease;">' +
-          escapeHtml(c.label) +
-        '</button>';
-      }).join('') +
-      '</div>';
-
-    wrap.querySelectorAll('[data-cunningtext]').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.preventDefault();
-        wrap.querySelectorAll('[data-cunningtext]').forEach(function(b){
-          b.classList.remove('active-cunning');
-          b.style.borderColor = 'rgba(49,130,246,0.22)';
-          b.style.background = 'rgba(49,130,246,0.08)';
-          b.style.fontWeight = '600';
-        });
-        btn.classList.add('active-cunning');
-        btn.style.borderColor = 'var(--brand, #3182f6)';
-        btn.style.background = 'rgba(49,130,246,0.18)';
-        btn.style.fontWeight = '700';
-        applyQuickCunningText(btn.dataset.cunningtext);
-      });
-    });
-  }
-
-  async function saveProfile(){
-
-
-
-
-    if(!state.profile) return;
-    updateAppBadge(computeStreakDays()); /* 기록이 바뀌는 모든 경로(홈 체크인·기록 모달·온보딩)가 여기를 지나므로 배지는 여기서 갱신 */
-    var uidVal = state.profile.id;
-    try{
-      if(state.profile.guardianAnimal && state.profile.settings){
-        state.profile.settings.guardianAnimal = state.profile.guardianAnimal;
-        if(!Array.isArray(state.profile.settings.savedAvatars)) state.profile.settings.savedAvatars = [];
-        var existsGa = state.profile.settings.savedAvatars.some(function(a){ return a.id === 'guardian_' + (state.profile.guardianAnimal && state.profile.guardianAnimal.mbti); });
-        if(!existsGa){
-          state.profile.settings.savedAvatars.unshift({
-            id: 'guardian_' + state.profile.guardianAnimal.mbti,
-            name: state.profile.guardianAnimal.name,
-            emoji: state.profile.guardianAnimal.emoji,
-            mbti: state.profile.guardianAnimal.mbti,
-            cat: '수호동물',
-            createdAt: (typeof nowISO === 'function' ? nowISO() : new Date().toISOString())
-          });
-        }
-      }
-      var savedAvatarsPayload = (state.profile.settings && Array.isArray(state.profile.settings.savedAvatars)) ? state.profile.settings.savedAvatars : [];
-      var trashPayload = Array.isArray(state.profile.trash) ? state.profile.trash : [];
-      if(trashPayload.length){
-        try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(trashPayload)); } catch(e){}
-      }
-      var userUpsertObj = {
-        trash: trashPayload,
-        id: uidVal, username: state.profile.username, display_name: state.profile.displayName,
-        bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null,
-        interests: state.profile.interests || [],
-        region: state.profile.region || null, region_public: !!state.profile.regionPublic,
-        saved_avatars: savedAvatarsPayload
-      };
-      var uUpsertRes = await sb.from('users').upsert(userUpsertObj);
-      if(uUpsertRes && uUpsertRes.error){
-        if(/saved_avatars/i.test(uUpsertRes.error.message || '')){
-          delete userUpsertObj.saved_avatars;
-          uUpsertRes = await sb.from('users').upsert(userUpsertObj);
-        }
-        if(uUpsertRes && uUpsertRes.error && /interests|region|trash|saved_avatars/i.test(uUpsertRes.error.message || '')){
-          var minimalUser = {
-            id: uidVal, username: state.profile.username, display_name: state.profile.displayName,
-            bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null
-          };
-          await sb.from('users').upsert(minimalUser);
-        }
-      }
-      if(savedAvatarsPayload.length){
-        try { localStorage.setItem('ourgoal_saved_avatars_backup_' + uidVal, JSON.stringify(savedAvatarsPayload)); } catch(e){}
-      }
-
-      var goals = state.profile.goals || [];
-      try {
-        localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals));
-        localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
-        if(state.profile.calendarDayBackgrounds){
-          localStorage.setItem('ourgoal_cal_day_bg_' + uidVal, JSON.stringify(state.profile.calendarDayBackgrounds));
-        }
-      } catch(e){}
-      if(goals.length){
-        await sb.from('goals').upsert(goals.map(function(g){
-          return {
-            id:g.id, user_id:uidVal, title:g.title, category:g.category||null, due_date:g.dueDate||null,
-            visibility:g.visibility||'private', topic:g.topic||null, archived_at:g.archivedAt||null,
-            result:g.result||null, milestones:g.milestones||[]
-          };
-        }));
-      }
-
-      var recs = state.profile.records || [];
-      if(recs.length){
-        try {
-          localStorage.setItem('ourgoal_records_backup_' + uidVal, JSON.stringify(recs));
-        } catch(e){}
-        /* [#TASK-ES-344] REC-01: goalId·laps·durationMs·durationMinutes·visibility·isSample·title 을 meta(jsonb)에 담아 보낸다.
-           checkins.meta/theme/category 컬럼이 아직 없는 DB에서는 그 칸을 빼고 재시도해 기록 저장이 끊기지 않게 한다(upsertCheckinRows) */
-        /* [#TASK-ES-365] 주인 표시(user_id·ownerUid)가 지금 uid 와 다른 기록은 지금 계정 이름으로 올리지 않는다 */
-        var recRows = window.OurgoalAccountIsolation.ownRecordsOnly(recs, uidVal).map(function(r){
-          return window.OurgoalRecordLedger.toCheckinRow(r, uidVal);
-        });
-        if(recRows.length) await window.OurgoalRecordLedger.upsertCheckinRows(sb, recRows);
-      }
-      try {
-        localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
-          displayName: state.profile.displayName,
-          bio: state.profile.bio || '',
-          avatarUrl: state.profile.avatarUrl || '',
-          interests: state.profile.interests || [],
-          region: state.profile.region || '',
-          regionPublic: !!state.profile.regionPublic,
-          itItems: state.profile.itItems || []
-        }));
-      } catch(e){}
-      var compsPayload = state.profile.companions || [];
-      if(Array.isArray(compsPayload) && compsPayload.length){
-        try { localStorage.setItem('ourgoal_companions_backup_' + uidVal, JSON.stringify(compsPayload)); } catch(e){}
-      }
-    } catch(e){ console.warn('Supabase sync failed:', e); }
-    saveLocalSettings(uidVal, state.profile.settings);
-    try { if(typeof syncLockScreenLiveCard === 'function') syncLockScreenLiveCard(false); } catch(lsErr){}
-  }
+  /* [#TASK-ES-471] renderQuickCheckinGuideChips · saveProfile → js/core/home-cockpit.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){ window.loadProfile = loadProfile; window.saveProfile = saveProfile; }
 
   /* ============ 서버 관리자 API를 통한 기록 및 프로필 복구 (#TASK-ES-036) ============ */
@@ -6168,137 +5678,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항) ============ */
-  function initShipyardRegistry(){
-    if(!window.OurgoalRegistry) return;
-    if(window.OurgoalHomeMegaBlock && typeof window.OurgoalHomeMegaBlock.init === 'function'){
-      window.OurgoalHomeMegaBlock.init();
-    } else {
-      window.OurgoalRegistry.registerMegaBlock('home', {
-        name: '홈 탭',
-        containerId: 'screen-home',
-        mount: function(el, s, ev){ if(typeof renderHome === 'function') renderHome(); }
-      });
-    }
-    if(window.OurgoalGoalsMegaBlock && typeof window.OurgoalGoalsMegaBlock.init === 'function'){
-      window.OurgoalGoalsMegaBlock.init();
-    } else {
-      window.OurgoalRegistry.registerMegaBlock('goals', {
-        name: '목표 탭',
-        containerId: 'screen-goals',
-        mount: function(el, s, ev){ if(typeof renderGoalsScreen === 'function') renderGoalsScreen(); }
-      });
-    }
-    if(window.OurgoalCalendarMegaBlock && typeof window.OurgoalCalendarMegaBlock.init === 'function'){
-      window.OurgoalCalendarMegaBlock.init();
-    } else {
-      window.OurgoalRegistry.registerMegaBlock('calendar', {
-        name: '일정 캘린더 탭',
-        containerId: 'screen-calendar',
-        mount: function(el, s, ev){ if(typeof renderCalendarScreen === 'function') renderCalendarScreen(); }
-      });
-    }
-    if(window.OurgoalRecordsMegaBlock && typeof window.OurgoalRecordsMegaBlock.init === 'function'){
-      window.OurgoalRecordsMegaBlock.init();
-    } else {
-      window.OurgoalRegistry.registerMegaBlock('records', {
-        name: '기록/회고 탭',
-        containerId: 'screen-records',
-        mount: function(el, s, ev){ if(typeof renderRecordsScreen === 'function') renderRecordsScreen(); }
-      });
-    }
-    if(window.OurgoalCommMegaBlock && typeof window.OurgoalCommMegaBlock.init === 'function'){
-      window.OurgoalCommMegaBlock.init();
-    } else {
-      window.OurgoalRegistry.registerMegaBlock('comm', {
-        name: '동류 소통 탭',
-        containerId: 'screen-comm',
-        mount: function(el, s, ev){ if(typeof renderCommScreen === 'function') renderCommScreen(); }
-      });
-    }
-    if(window.OurgoalSettingsMegaBlock && typeof window.OurgoalSettingsMegaBlock.init === 'function'){
-      window.OurgoalSettingsMegaBlock.init();
-    } else {
-      window.OurgoalRegistry.registerMegaBlock('settings', {
-        name: '설정 탭',
-        containerId: 'screen-settings',
-        mount: function(el, s, ev){ if(typeof renderSettingsScreen === 'function') renderSettingsScreen(); }
-      });
-    }
-    window.OurgoalRegistry.markReady();
-  }
+  /* [#TASK-ES-471] initShipyardRegistry → js/core/registry-init.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   try { initShipyardRegistry(); } catch(e){ console.warn('[ShipyardRegistry] Init error:', e); }
-
-
-
-  function setTab(tab){
-    // [#UIUX-13] 탭별 독립 스크롤 위치 영속 메모리 저장
-    window._tabScrollMemory = window._tabScrollMemory || {};
-    if(state && state.activeTab){
-      window._tabScrollMemory[state.activeTab] = window.scrollY || document.documentElement.scrollTop || 0;
-    }
-
-    function updateTabDOM(){
-      state.activeTab = tab;
-      navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.tab===tab); });
-      screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-'+tab); });
-
-      // [#UIUX-13] 탭별 독립 스크롤 위치 복원 (처음 가는 탭은 맨 위 0, 보던 탭은 직전 위치 복원)
-      var targetScrollY = (window._tabScrollMemory && typeof window._tabScrollMemory[tab] === 'number') ? window._tabScrollMemory[tab] : 0;
-      window.scrollTo({top: targetScrollY, behavior:'auto'});
-
-      /* [#TASK-ES-353] 레지스트리 마운트가 실패(false)하면 레거시 렌더로 폴백 */
-      var mountedByRegistry = !!(window.OurgoalRegistry && window.OurgoalRegistry.isReady() && window.OurgoalRegistry.mount(tab, document.getElementById('screen-' + tab), state));
-      if(!mountedByRegistry){
-        if(tab==='home') renderHome();
-        if(tab==='goals') renderGoalsScreen();
-        if(tab==='calendar') renderCalendarScreen();
-        if(tab==='records') renderRecordsScreen();
-        if(tab==='comm') renderCommScreen();
-        if(tab==='settings') renderSettingsScreen();
-      }
-      if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
-        window.OurgoalEvents.emit('tab:changed', { tab: tab });
-      }
-      if(tab==='records' && typeof location !== 'undefined'){
-        try {
-          var recapParam = new URLSearchParams(window.location.search).get('recap');
-          if(recapParam === 'weekly' || (location.hash && location.hash.indexOf('recap=weekly') !== -1)){
-            setTimeout(function(){ if(typeof openWeeklyRecapModal==='function') openWeeklyRecapModal(); }, 350);
-          }
-        } catch(e){}
-      }
-      updatePrivacyBadges(); if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.handleTabChange(tab, state);
-      if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render) window.OurgoalSanctuaryV3.render(tab);
-      var topGuideBtn = document.getElementById('topHomeGuideBtn');
-      if(topGuideBtn){
-        var guideTabLabels = { home: '홈', goals: '목표', calendar: '일정', records: '기록/통계', comm: '소통', settings: '설정' };
-        var guideLabel = guideTabLabels[tab] || '홈';
-        topGuideBtn.title = '이 페이지 활용법 (' + guideLabel + ')';
-        topGuideBtn.setAttribute('aria-label', '이 페이지 활용법 (' + guideLabel + ')');
-      }
-    }
-    if(typeof document !== 'undefined' && typeof document.startViewTransition === 'function'){
-      document.startViewTransition(updateTabDOM);
-    } else {
-      updateTabDOM();
-    }
-  }
-  navButtons.forEach(function(b){
-    b.addEventListener('click', function(){
-      if(typeof window.triggerHaptic === 'function') window.triggerHaptic(12);
-      setTab(b.dataset.tab);
-    });
-  });
-  function switchTab(tab){ return setTab(tab); }
+  /* [#TASK-ES-471] setTab → js/core/registry-init.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
+  bindNavButtonsClick(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/registry-init.js 의 bindNavButtonsClick 로 옮김 — 원래 자리에서 부른다 */
+  /* [#TASK-ES-471] switchTab → js/core/registry-init.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){ window.setTab = setTab; window.switchTab = setTab; }
 
   /* ============ Modal helper & Android Hardware Back Handler ============ */
   var _modalHistoryPushed = false;
   var _modalDismissGraceUntil = 0;
-
-  function isModalDismissCooldown(){
-    return Date.now() < _modalDismissGraceUntil;
-  }
+  /* [#TASK-ES-471] isModalDismissCooldown → js/core/modal-helper.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
 
   function openModal(html, onMount){
     window._modalOpenAt = Date.now();
@@ -6352,71 +5742,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     } catch(e){}
   }
-
-  function closeModal(skipHistoryBack){
-    var overlay = document.getElementById('modalOverlay');
-    if(!overlay || !overlay.classList.contains('active')) return;
-    overlay.classList.remove('active');
-    var sheet = document.getElementById('modalSheet');
-    if(sheet) sheet.style.transform = '';
-    _modalDismissGraceUntil = Date.now() + 400; // 400ms 동안 빈 영역 탭 후속 고스트 클릭 완벽 방어
-
-    if(_modalHistoryPushed && !skipHistoryBack && typeof window!=='undefined' && window.history && history.back){
-      _modalHistoryPushed = false;
-      try { history.back(); } catch(e){}
-    } else {
-      _modalHistoryPushed = false;
-    }
-  }
-
-  // [#UIUX-20] 구형 중앙 팝업/얼럿/컨펌 전수 바텀시트 표준 흡수 엔진
-  function openBottomSheetAlert(title, message, okText, onOk){
-    var t = title || '알림';
-    var m = message || '';
-    var ok = okText || '확인';
-    var content = '<div class="sheet-alert-body" style="padding:10px 0 16px;text-align:center;">' +
-      '<h3 style="font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--ink);">' + t + '</h3>' +
-      '<p style="font-size:0.925rem;color:var(--ink-soft);line-height:1.5;margin-bottom:20px;white-space:pre-line;">' + m + '</p>' +
-      '<button type="button" class="btn btn-primary btn-block touch-target-44" id="btnSheetAlertOk" style="font-weight:700;">' + ok + '</button>' +
-      '</div>';
-    openModal(content, function(sheet){
-      var btn = sheet.querySelector('#btnSheetAlertOk');
-      if(btn) btn.onclick = function(){
-        if(typeof window.triggerHaptic === 'function') window.triggerHaptic(12);
-        closeModal();
-        if(typeof onOk === 'function') onOk();
-      };
-    });
-  }
-
-  function openBottomSheetConfirm(title, message, okText, cancelText, onOk, onCancel){
-    var t = title || '확인';
-    var m = message || '';
-    var ok = okText || '확인';
-    var cancel = cancelText || '취소';
-    var content = '<div class="sheet-confirm-body" style="padding:10px 0 16px;text-align:center;">' +
-      '<h3 style="font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--ink);">' + t + '</h3>' +
-      '<p style="font-size:0.925rem;color:var(--ink-soft);line-height:1.5;margin-bottom:20px;white-space:pre-line;">' + m + '</p>' +
-      '<div style="display:flex;gap:10px;">' +
-      '<button type="button" class="btn btn-ghost touch-target-44" id="btnSheetConfirmCancel" style="flex:1;font-weight:600;">' + cancel + '</button>' +
-      '<button type="button" class="btn btn-primary touch-target-44" id="btnSheetConfirmOk" style="flex:1;font-weight:700;">' + ok + '</button>' +
-      '</div>' +
-      '</div>';
-    openModal(content, function(sheet){
-      var bCancel = sheet.querySelector('#btnSheetConfirmCancel');
-      if(bCancel) bCancel.onclick = function(){
-        if(typeof window.triggerHaptic === 'function') window.triggerHaptic(12);
-        closeModal();
-        if(typeof onCancel === 'function') onCancel();
-      };
-      var bOk = sheet.querySelector('#btnSheetConfirmOk');
-      if(bOk) bOk.onclick = function(){
-        if(typeof window.triggerHaptic === 'function') window.triggerHaptic(12);
-        closeModal();
-        if(typeof onOk === 'function') onOk();
-      };
-    });
-  }
+  /* [#TASK-ES-471] closeModal · openBottomSheetAlert · openBottomSheetConfirm → js/core/modal-helper.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
 
   if(typeof window !== 'undefined'){
     window.openModal = openModal;
@@ -6424,15 +5750,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.openBottomSheetAlert = openBottomSheetAlert;
     window.openBottomSheetConfirm = openBottomSheetConfirm;
   }
-
-  if(typeof window!=='undefined' && window.addEventListener){
-    window.addEventListener('popstate', function(e){
-      var overlay = document.getElementById('modalOverlay');
-      if(overlay && overlay.classList.contains('active')){
-        closeModal(true);
-      }
-    });
-  }
+  bindModalPopstateBack(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/modal-helper.js 의 bindModalPopstateBack 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 이용약관 & 개인정보처리방침 모달 ============ */
   /* [#TASK-ES-437] showLegalModal → js/tabs/settings/account-entry.js 로 옮김(인라인 스크립트 세포화 P0) */
