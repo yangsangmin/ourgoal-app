@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "f57954a9259aa7602dfe422d043b7a8ba28b630e",
-  "short": "f57954a",
-  "committedAt": "2026-10-05T18:21:06+09:00",
-  "subject": "[FIX] #TASK-ES-433 chore: Merge origin/main(#747 성소 분열) — 기록 화면 modeNav 는 js/sanctuary-v3-engine.js 에 남아 #sRecStoryCardBtn 줄이 같은 자리에 그대로 합쳐짐, 신고서·기준선은 main 판을 받고 module-specs --write·module-guard --update 로 다시 만듦"
+  "commit": "eb9e6e4b1bb0c8707dc692f03b9b068c300c21c4",
+  "short": "eb9e6e4",
+  "committedAt": "2026-10-05T18:35:50+09:00",
+  "subject": "Merge pull request #748 from yangsangmin/fix/2026-10-05-task-es-433-storycard-entry"
  },
  "summary": {
-  "cells": 179,
-  "files": 178,
+  "cells": 188,
+  "files": 187,
   "jsLines": 53011,
   "kinds": {
    "organ": 29,
-   "tab": 44,
+   "tab": 53,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 179,
+  "descriptionsHand": 188,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 33382,
-   "functionDecls": 658
+   "inlineScriptLines": 32642,
+   "functionDecls": 635
   },
   "health": {
-   "undifferentiatedLines": 33382,
+   "undifferentiatedLines": 32642,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -62,7 +62,7 @@
     "modalBridge": 0,
     "recap": 3,
     "timer": 5,
-    "selfOverlay": 9,
+    "selfOverlay": 8,
     "nativeConfirm": 7
    },
    "dataDuplicates": 16,
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 44,
+   "count": 53,
    "large": 6,
-   "small": 38
+   "small": 47
   },
   {
    "key": "hybrid",
@@ -139,7 +139,9 @@
    "desc": "체크인 기록·시간 기록·회고·통계",
    "cells": [
     "records/index",
+    "records/heatmap-summary",
     "records/period-ai-card",
+    "records/photo-proof",
     "records/render",
     "records/sub-retrospect",
     "records/sub-timeline",
@@ -155,8 +157,10 @@
    "desc": "달력·하루 상세·사진 일기·AI 일정 비서",
    "cells": [
     "calendar/index",
+    "calendar/day-bg-image",
     "calendar/day-detail",
     "calendar/lockscreen-image",
+    "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
     "calendar/sub-day-detail",
@@ -173,8 +177,11 @@
    "desc": "피드·동반자·DM·크루",
    "cells": [
     "comm/index",
+    "comm/challenge-room",
     "comm/dm-ledger",
     "comm/feed-comments",
+    "comm/feed-post-preview",
+    "comm/first-cheer",
     "comm/render",
     "comm/story-card-send",
     "comm/sub-companions",
@@ -191,6 +198,8 @@
    "desc": "프로필·화면·알림·보안·연동·데이터",
    "cells": [
     "settings/index",
+    "settings/adaptive-ux",
+    "settings/pwa-install",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -3432,11 +3441,16 @@
    "calls": [],
    "calledBy": [
     "avatar/xp",
+    "calendar/day-bg-image",
     "calendar/day-detail",
     "calendar/lockscreen-image",
+    "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
+    "comm/challenge-room",
     "comm/feed-comments",
+    "comm/feed-post-preview",
+    "comm/first-cheer",
     "comm/render",
     "comm/story-card-send",
     "goals/goal-detail",
@@ -3444,8 +3458,12 @@
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "records/heatmap-summary",
     "records/period-ai-card",
+    "records/photo-proof",
     "records/render",
+    "settings/adaptive-ux",
+    "settings/pwa-install",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6241,6 +6259,7 @@
    ],
    "calls": [],
    "calledBy": [
+    "comm/first-cheer",
     "settings/render",
     "settings/sub-notify",
     "team-dm-inbox"
@@ -6559,7 +6578,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-calendar-views",
@@ -6615,7 +6641,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-focus-timer",
@@ -6675,7 +6708,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-goal-trail",
@@ -6734,7 +6774,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-peer-radar",
@@ -6791,7 +6838,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-record-feed",
@@ -6849,7 +6903,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "sanctuary-v3-engine",
@@ -6926,24 +6987,38 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-201",
     "TASK-ES-231",
     "TASK-ES-232",
     "TASK-ES-241",
     "TASK-ES-246",
     "TASK-ES-331",
-    "TASK-ES-362"
+    "TASK-ES-362",
+    "TASK-ES-429",
+    "TASK-ES-433"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-201-ALL-TABS-UX-REMEDIATION.md",
     "docs/specs/REQ-TASK-ES-231-COMPANION-INVITE-SEARCH.md",
     "docs/specs/REQ-TASK-ES-232-LOCKSCREEN-SCHEDULE-CARD.md",
     "docs/specs/REQ-TASK-ES-241-CALENDAR-WEEK-THEME-CONTRAST.md",
     "docs/specs/REQ-TASK-ES-246-COMM-PEER-RADAR-SLIM-FOLD.md",
     "docs/specs/REQ-TASK-ES-331-HOME-TAB-REFINEMENT.md",
-    "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md"
+    "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md",
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
+    "docs/specs/REQ-TASK-ES-433-STORYCARD-ENTRY.md"
    ],
    "prs": [
+    {
+     "number": 748,
+     "task": "TASK-ES-433",
+     "title": "[FIX] #TASK-ES-433 fix: 갓생 카드 창 진입 단추 복원 — 홈 「내 성장 자랑하기」·「내 성장 확인하기」·기록 「📸 갓생 스토리카드」",
+     "date": "2026-10-05"
+    },
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    },
     {
      "number": 676,
      "task": "TASK-ES-362",
@@ -6979,18 +7054,6 @@
      "task": "TASK-ES-231",
      "title": "feat/2026-09-23-task-es-231-companion-invite-search",
      "date": "2026-09-23"
-    },
-    {
-     "number": 364,
-     "task": null,
-     "title": "[E2] #TASK-ES-202 feat: 기록/통계 5대 UX 전면 개편 (보관함 3개전면/5개페이징·1줄퀵독압축·히트맵4주일자요약·성취통계요약카드스위처·서브탭동기화)",
-     "date": "2026-09-21"
-    },
-    {
-     "number": 358,
-     "task": "TASK-ES-201",
-     "title": "[FIX] #TASK-ES-201 feat: 전수 6대 탭 상단 배너·모드 네비게이션 4대 결함 전수 일괄 정상화",
-     "date": "2026-09-21"
     }
    ]
   },
@@ -7050,7 +7113,14 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 747,
+     "task": "TASK-ES-429",
+     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "stats-charts",
@@ -8176,6 +8246,44 @@
    ]
   },
   {
+   "id": "calendar/day-bg-image",
+   "file": "js/tabs/calendar/day-bg-image.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "calendar",
+   "tabs": [
+    "calendar"
+   ],
+   "name": "일자별 배경 사진 줄이기",
+   "nameSource": "hand",
+   "does": "일정 탭 날짜 배경으로 고른 사진을 저장하기 좋게 줄인다(사진 지정 창은 아직 index.html)",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
    "id": "calendar/day-detail",
    "file": "js/tabs/calendar/day-detail.js",
    "kind": "tab",
@@ -8382,6 +8490,44 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "calendar/lockscreen-live",
+   "file": "js/tabs/calendar/lockscreen-live.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "calendar",
+   "tabs": [
+    "calendar"
+   ],
+   "name": "잠금화면 라이브 카드",
+   "nameSource": "hand",
+   "does": "오늘 일정·목표 요약을 폰 잠금화면 라이브 카드 내용으로 만들어 보내거나 닫는다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "calendar/natural-schedule",
@@ -8717,6 +8863,44 @@
    ]
   },
   {
+   "id": "comm/challenge-room",
+   "file": "js/tabs/comm/challenge-room.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "소규모 챌린지 룸",
+   "nameSource": "hand",
+   "does": "소규모 챌린지 룸 창을 띄워 참여 현황과 인증을 보여 준다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
    "id": "comm/dm-ledger",
    "file": "js/tabs/comm/dm-ledger.js",
    "kind": "tab",
@@ -8845,6 +9029,83 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "comm/feed-post-preview",
+   "file": "js/tabs/comm/feed-post-preview.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "피드 게시 미리보기",
+   "nameSource": "hand",
+   "does": "피드 게시 창에서 올릴 글이 피드에 어떻게 보일지 미리보기를 켜고 끈다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "comm/first-cheer",
+   "file": "js/tabs/comm/first-cheer.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "첫 응원 전달",
+   "nameSource": "hand",
+   "does": "새 사용자가 첫 기록을 남기면 맞춤 응원이 잠시 뒤 도착하게 예약한다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope",
+    "notify-engine"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "comm/index",
@@ -10141,6 +10402,44 @@
    ]
   },
   {
+   "id": "records/heatmap-summary",
+   "file": "js/tabs/records/heatmap-summary.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "최근 히트맵 요약",
+   "nameSource": "hand",
+   "does": "최근 실천 기록을 히트맵 요약 카드로 그린다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
    "id": "records/index",
    "file": "js/tabs/records/index.js",
    "kind": "tab",
@@ -10265,6 +10564,44 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "records/photo-proof",
+   "file": "js/tabs/records/photo-proof.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "사진 인증·보기",
+   "nameSource": "hand",
+   "does": "체크인 사진을 올리기 전에 줄이고, 기록에 붙은 사진을 크게 보는 창을 띄운다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "records/render",
@@ -10513,6 +10850,46 @@
    ]
   },
   {
+   "id": "settings/adaptive-ux",
+   "file": "js/tabs/settings/adaptive-ux.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "적응형 화면 모드",
+   "nameSource": "hand",
+   "does": "간단·전문가 화면 모드 막대를 그리고 바꾸며, 망설임·연타 신호를 기록한다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [
+    "_modalOpenAt"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
    "id": "settings/index",
    "file": "js/tabs/settings/index.js",
    "kind": "tab",
@@ -10589,6 +10966,44 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "settings/pwa-install",
+   "file": "js/tabs/settings/pwa-install.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "홈 화면 설치 안내",
+   "nameSource": "hand",
+   "does": "iOS 홈 화면 추가 배너와 기기별 설치 안내 창을 띄우고, 입력할 때 키보드가 칸을 가리지 않게 한다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "settings/render",

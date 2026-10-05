@@ -2253,7 +2253,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
@@ -2261,14 +2261,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/calendar/day-detail.js"></script>
 <script src="js/tabs/calendar/natural-schedule.js"></script>
 <script src="js/tabs/calendar/render.js"></script>
-<script src="js/tabs/calendar/lockscreen-image.js"></script><script src="js/tabs/calendar/index.js"></script>
+<script src="js/tabs/calendar/lockscreen-image.js"></script><script src="js/tabs/calendar/day-bg-image.js"></script><script src="js/tabs/calendar/lockscreen-live.js"></script><script src="js/tabs/calendar/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Community Mega-Block & Sub-Blocks (소통 커뮤니티 메가블록 및 소블록 외판) -->
 <script src="js/tabs/comm/sub-feed.js"></script>
 <script src="js/tabs/comm/sub-companions.js"></script>
 <script src="js/tabs/comm/sub-crew.js"></script>
 <script src="js/tabs/comm/feed-comments.js"></script>
 <script src="js/tabs/comm/render.js"></script>
-<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/index.js"></script>
+<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/challenge-room.js"></script><script src="js/tabs/comm/first-cheer.js"></script><script src="js/tabs/comm/feed-post-preview.js"></script><script src="js/tabs/comm/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Settings Mega-Block & Sub-Blocks (설정 메가블록 및 소블록 외판) -->
 <script src="js/tabs/settings/sub-profile.js"></script>
 <script src="js/tabs/settings/sub-security.js"></script>
@@ -2277,7 +2277,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/settings/sub-integrations.js"></script>
 <script src="js/tabs/settings/sub-data.js"></script>
 <script src="js/tabs/settings/render.js"></script>
-<script src="js/tabs/settings/index.js"></script>
+<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -2560,6 +2560,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get renderCommManito(){ return renderCommManito; },
     get renderCommShare(){ return renderCommShare; },
     get sb(){ return sb; }
+  });
+
+  /* ============ [#TASK-ES-444] 인라인 스크립트 세포화 P1 이음매 2 — 일정 배경·잠금화면 라이브, 소통 창, 사진 인증, 설정(적응형 UX·PWA 설치) (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
+     ① 가져오기: js/tabs/calendar/day-bg-image.js · js/tabs/calendar/lockscreen-live.js · js/tabs/comm/challenge-room.js · js/tabs/comm/first-cheer.js · js/tabs/comm/feed-post-preview.js · js/tabs/records/photo-proof.js · js/tabs/records/heatmap-summary.js · js/tabs/settings/adaptive-ux.js · js/tabs/settings/pwa-install.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
+  var compressCalendarBgImage = _calendarKit.compressCalendarBgImage;
+  var buildLockScreenCardPayload = _calendarKit.buildLockScreenCardPayload;
+  var syncLockScreenLiveCard = _calendarKit.syncLockScreenLiveCard;
+  var closeLockScreenLiveCard = _calendarKit.closeLockScreenLiveCard;
+  var triggerFirstCheerResponse = _commKit.triggerFirstCheerResponse;
+  var toggleFeedPostPreview = _commKit.toggleFeedPostPreview;
+  var openPhotoViewerModal = _recordsKit.openPhotoViewerModal;
+  var compressImage = _recordsKit.compressImage;
+  var renderHomeGrassSummary = _recordsKit.renderHomeGrassSummary;
+  var switchUxMode = _settingsKit.switchUxMode;
+  var renderAdaptiveModeBar = _settingsKit.renderAdaptiveModeBar;
+  var _recordHesitation = _settingsKit._recordHesitation;
+  var renderIosPwaBanner = _settingsKit.renderIosPwaBanner;
+  var openIosPwaInstallGuideModal = _settingsKit.openIosPwaInstallGuideModal;
+  var initKeyboardShield = _settingsKit.initKeyboardShield;
+  var openPwaInstallGuideModal = _settingsKit.openPwaInstallGuideModal;
+  var closePwaInstallGuideModal = _settingsKit.closePwaInstallGuideModal;
+  var switchPwaOsTab = _settingsKit.switchPwaOsTab;
+  var confirmPwaInstall = _settingsKit.confirmPwaInstall;
+  window.OurgoalAppScope.expose('index.html', {
+    get SIM_PERSONAS(){ return SIM_PERSONAS; },
+    get _uxTelemetry(){ return _uxTelemetry; },
+    get announceToA11y(){ return announceToA11y; }
   });
 
   /* ============ [#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 소통 탭 #TASK-ES-379 와 같은 틀) ============
@@ -10487,45 +10515,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ [#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달 ============ */
-  function compressCalendarBgImage(file, callback){
-    if(!file) return callback(new Error('파일이 없습니다.'));
-    var reader = new FileReader();
-    reader.onload = function(e){
-      var rawResult = e.target.result;
-      var img = new Image();
-      img.onload = function(){
-        try {
-          var canvas = document.createElement('canvas');
-          var maxDim = 800;
-          var w = img.width || 800;
-          var h = img.height || 600;
-          if(w > maxDim || h > maxDim){
-            if(w > h){
-              h = Math.round((h * maxDim) / w);
-              w = maxDim;
-            } else {
-              w = Math.round((w * maxDim) / h);
-              h = maxDim;
-            }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          var compressed = canvas.toDataURL('image/jpeg', 0.82);
-          callback(null, compressed || rawResult);
-        } catch(err) {
-          callback(null, rawResult);
-        }
-      };
-      img.onerror = function(){
-        callback(null, rawResult);
-      };
-      img.src = rawResult;
-    };
-    reader.onerror = function(err){ callback(err); };
-    reader.readAsDataURL(file);
-  }
+  /* [#TASK-ES-444] compressCalendarBgImage → js/tabs/calendar/day-bg-image.js 로 옮김(인라인 스크립트 세포화 P1) */
 
   function openCalendarDayBgPickerModal(selectedDate, fromHub){
     var sel = selectedDate || state.calSelectedDate || isoDate(new Date());
@@ -11387,252 +11377,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* [#TASK-ES-423] lsDrawRoundRect · generateLockScreenCalendarImage → js/tabs/calendar/lockscreen-image.js 로 옮김(인라인 스크립트 세포화 1차 — 구획 주석 포함) */
 
-  /* =========================================================================
-     [#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)
-  ========================================================================= */
-  function buildLockScreenCardPayload(options){
-    var opts = Object.assign({
-      showMonthGrid: true,
-      showGoalRate: true,
-      showGoals: true,
-      showSchedules: true,
-      showDday: true,
-      showStreak: true
-    }, options || {});
-    if(opts.showGoalRate === undefined && opts.showGoals !== undefined){
-      opts.showGoalRate = opts.showGoals;
-    }
-    if(opts.showGoals === undefined && opts.showGoalRate !== undefined){
-      opts.showGoals = opts.showGoalRate;
-    }
-
-    var now = new Date();
-    var curYear = now.getFullYear();
-    var curMonth = now.getMonth();
-    var todayDate = now.getDate();
-    var todayKey = (typeof dateKey === 'function') ? dateKey(now) : now.toISOString().slice(0, 10);
-    var streak = (typeof computeStreakDays === 'function') ? computeStreakDays() : 0;
-
-    // 1. 오늘 일정 및 태스크 집계 (캘린더 맵)
-    var calMap = {};
-    var todayItems = [];
-    try {
-      if(typeof calendarItemsByDate === 'function'){
-        calMap = calendarItemsByDate() || {};
-        todayItems = calMap[todayKey] || [];
-      }
-    } catch(e){}
-
-    var totalScheds = todayItems.length;
-    var doneScheds = todayItems.filter(function(it){ return !!it.done; }).length;
-
-    // 미완료 일정 추출 (시간순 정렬 후 최대 3개)
-    var uncompleted = todayItems.filter(function(it){ return !it.done; });
-    uncompleted.sort(function(a, b){
-      var ta = (a.date && a.date.length > 10) ? a.date.slice(11, 16) : '99:99';
-      var tb = (b.date && b.date.length > 10) ? b.date.slice(11, 16) : '99:99';
-      return ta.localeCompare(tb);
-    });
-    var top3Items = uncompleted.slice(0, 3);
-    var schedules3 = top3Items.map(function(item){
-      var timePart = '';
-      if(item.date && item.date.length > 10){
-        timePart = '[' + item.date.slice(11, 16) + '] ';
-      }
-      return '🕒 ' + timePart + (item.title || '일정');
-    });
-    var nextText = schedules3.length ? schedules3[0] : '';
-
-    // 2. 오늘의 목표 및 달성률
-    var activeGoals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
-    var topGoal = activeGoals[0] || null;
-
-    // 핵심 D-Day
-    var ddayText = '';
-    if(opts.showDday && activeGoals.length){
-      var withDue = activeGoals.filter(function(g){ return g.dueDate; }).sort(function(a,b){ return new Date(a.dueDate) - new Date(b.dueDate); });
-      if(withDue.length && typeof dDay === 'function'){
-        var dd = dDay(withDue[0].dueDate);
-        if(dd){
-          var ddStr = (typeof dd === 'string') ? dd : (dd === 0 ? 'D-Day' : (dd > 0 ? 'D-' + dd : 'D+' + Math.abs(dd)));
-          ddayText = withDue[0].title + ' ' + ddStr;
-        }
-      }
-    }
-
-    // 오늘 체크인 수
-    var recs = (state.profile && state.profile.records) ? state.profile.records : [];
-    var todayRecs = recs.filter(function(r){
-      var d = r && (r.startAt || r.start_at || r.createdAt || r.created_at);
-      return d && (typeof dateKey === 'function' ? dateKey(d) : String(d).slice(0,10)) === todayKey;
-    });
-
-    // 달성률 계산
-    var ratePct = 0;
-    if(totalScheds > 0){
-      ratePct = Math.round((doneScheds / totalScheds) * 100);
-    } else if(todayRecs.length > 0){
-      ratePct = 100;
-    } else if(topGoal && typeof goalAchievement === 'function'){
-      ratePct = goalAchievement(topGoal);
-    }
-
-    // 3. 폰 화면비용 월간 달력 그리드 데이터 생성
-    var firstDayOfWeek = new Date(curYear, curMonth, 1).getDay(); // 0(일) ~ 6(토)
-    var lastDayOfMonth = new Date(curYear, curMonth + 1, 0).getDate();
-    var monthDates = [];
-    for(var p = 0; p < firstDayOfWeek; p++){
-      monthDates.push({ date: 0, isCurrent: false, hasSchedule: false, isToday: false });
-    }
-    for(var d = 1; d <= lastDayOfMonth; d++){
-      var ymd = curYear + '-' + String(curMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-      var hasSched = !!(calMap[ymd] && calMap[ymd].length > 0);
-      monthDates.push({
-        date: d,
-        isCurrent: true,
-        hasSchedule: hasSched,
-        isToday: (d === todayDate)
-      });
-    }
-
-    // 4. 알림 타이틀 & 바디 조립
-    var titleParts = ['[아워골 라이브]'];
-    if(opts.showGoalRate || opts.showGoals){
-      if(totalScheds > 0){
-        titleParts.push('오늘 일정 ' + doneScheds + '/' + totalScheds + ' (' + ratePct + '%)');
-      } else if(todayRecs.length > 0){
-        titleParts.push('오늘 체크인 완료 (' + ratePct + '%)');
-      } else {
-        titleParts.push('오늘 목표 달성률 ' + ratePct + '%');
-      }
-    }
-    if(opts.showStreak && streak > 0){
-      titleParts.push('🔥 ' + streak + '일 연속');
-    }
-    var notifTitle = titleParts.join(' ');
-
-    var bodyParts = [];
-    if(opts.showSchedules && schedules3.length){
-      bodyParts.push(schedules3.join(' · '));
-    }
-    if(topGoal && (opts.showGoalRate || opts.showGoals)){
-      bodyParts.push('🎯 ' + topGoal.title);
-    }
-    if(opts.showDday && ddayText){
-      bodyParts.push('⏳ ' + ddayText);
-    }
-    if(!bodyParts.length){
-      bodyParts.push('오늘도 나만의 소중한 목표를 향해 한 걸음 나아가세요! ✨');
-    }
-    var notifBody = bodyParts.join(' · ');
-
-    return {
-      title: notifTitle,
-      body: notifBody,
-      streak: streak,
-      ratePct: ratePct,
-      doneScheds: doneScheds,
-      totalScheds: totalScheds,
-      todayCheckins: todayRecs.length,
-      schedules3: schedules3,
-      nextSchedule: nextText,
-      ddayText: ddayText,
-      topGoalTitle: topGoal ? topGoal.title : '',
-      curYear: curYear,
-      curMonth: curMonth + 1,
-      todayDate: todayDate,
-      monthDates: monthDates,
-      tag: 'ourgoal-lockscreen-live'
-    };
-  }
-
-  async function syncLockScreenLiveCard(force){
-    if(!state.profile) return false;
-    var settings = state.profile.settings || {};
-    var lockLive = settings.lockScreenLive || null;
-    if(!lockLive){
-      try {
-        var saved = localStorage.getItem('ourgoal_lockscreen_live_v1');
-        if(saved) lockLive = JSON.parse(saved);
-      } catch(e){}
-    }
-    if((!lockLive || !lockLive.enabled) && !force){
-      return false;
-    }
-
-    var payload = buildLockScreenCardPayload(lockLive || {});
-
-    if(!state.profile.settings) state.profile.settings = {};
-    if(!state.profile.settings.lockScreenLive){
-      state.profile.settings.lockScreenLive = lockLive || { enabled: !!force, showGoals: true, showSchedules: true, showDday: true, showStreak: true };
-    }
-    state.profile.settings.lockScreenLive.lastSyncAt = (typeof nowISO === 'function') ? nowISO() : new Date().toISOString();
-    try {
-      localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(state.profile.settings.lockScreenLive));
-    } catch(e){}
-
-    if(typeof Notification === 'undefined'){
-      return false;
-    }
-
-    if(Notification.permission !== 'granted'){
-      return false;
-    }
-
-    var notifOptions = {
-      body: payload.body,
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
-      tag: payload.tag,
-      silent: true,
-      renotify: false,
-      requireInteraction: true,
-      data: {
-        url: '/?action=checkin',
-        source: 'lockscreen-live',
-        syncedAt: state.profile.settings.lockScreenLive.lastSyncAt
-      },
-      actions: [
-        { action: 'action-checkin', title: '⚡ 빠른 체크인' },
-        { action: 'action-calendar', title: '📅 일정 확인' }
-      ]
-    };
-
-    try {
-      if('serviceWorker' in navigator && navigator.serviceWorker.ready){
-        var reg = await Promise.race([
-          navigator.serviceWorker.ready,
-          new Promise(function(resolve){ setTimeout(function(){ resolve(null); }, 1500); })
-        ]);
-        if(reg && reg.showNotification){
-          await reg.showNotification(payload.title, notifOptions);
-          return true;
-        }
-      }
-    } catch(swErr){
-      console.warn('SW showNotification fallback:', swErr);
-    }
-
-    try {
-      new Notification(payload.title, notifOptions);
-      return true;
-    } catch(notifErr){
-      console.warn('Notification API fallback error:', notifErr);
-      return false;
-    }
-  }
-
-  async function closeLockScreenLiveCard(){
-    try {
-      if('serviceWorker' in navigator && navigator.serviceWorker.ready){
-        var reg = await navigator.serviceWorker.ready;
-        if(reg && reg.getNotifications){
-          var notifs = await reg.getNotifications({ tag: 'ourgoal-lockscreen-live' });
-          (notifs || []).forEach(function(n){ n.close(); });
-        }
-      }
-    } catch(e){}
-  }
+  /* [#TASK-ES-444] buildLockScreenCardPayload · syncLockScreenLiveCard · closeLockScreenLiveCard → js/tabs/calendar/lockscreen-live.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
   
   /* [#TASK-ES-423] generateLockScreenScheduleCardImage → js/tabs/calendar/lockscreen-image.js 로 옮김(인라인 스크립트 세포화 1차 — 구획 주석 포함) */
@@ -12723,35 +12468,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ Adaptive UX Mode ============ */
-  function getUxMode(){
-    try{ return localStorage.getItem('ourgoal_ux_mode') || 'minimal'; }catch(e){ return 'minimal'; }
-  }
-  function switchUxMode(mode){
-    try{
-      localStorage.setItem('ourgoal_ux_mode', mode);
-      document.body.setAttribute('data-ux-mode', mode);
-      var chips = document.querySelectorAll('#adaptiveModeSelector .mode-chip');
-      chips.forEach(function(c){
-        if(c.dataset.mode === mode) c.classList.add('active');
-        else c.classList.remove('active');
-      });
-      triggerHaptic(25);
-      if(window.announceToA11y) announceToA11y('UI 모드가 ' + (mode === 'minimal' ? '포커스 미니멀' : (mode === 'gamified' ? 'MZ 게이미피케이션' : '파워 분석가')) + '로 전환되었습니다.');
-    }catch(e){}
-  }
+  /* [#TASK-ES-444] getUxMode · switchUxMode → js/tabs/settings/adaptive-ux.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.switchUxMode = switchUxMode;
 
-  function renderAdaptiveModeBar(){
-    var bar = document.getElementById('adaptiveModeSelector');
-    if(!bar) return;
-    var mode = getUxMode();
-    document.body.setAttribute('data-ux-mode', mode);
-    var chips = bar.querySelectorAll('.mode-chip');
-    chips.forEach(function(c){
-      if(c.dataset.mode === mode) c.classList.add('active');
-      else c.classList.remove('active');
-    });
-  }
+  /* [#TASK-ES-444] renderAdaptiveModeBar → js/tabs/settings/adaptive-ux.js 로 옮김(인라인 스크립트 세포화 P1) */
 
   /* ============ Social Crew Pacing (#TASK-ES-228) ============ */
   function applyCrewPacingUI(activeCount, myCheckedToday, nick){
@@ -12994,12 +12714,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   };
   window._uxTelemetry = _uxTelemetry;
 
-  function _recordHesitation(targetName){
-    var openTime = window._modalOpenAt || Date.now();
-    var lat = Date.now() - openTime;
-    _uxTelemetry.hesitation.push({ target: targetName, latencyMs: lat, at: Date.now() });
-    if(_uxTelemetry.hesitation.length > 50) _uxTelemetry.hesitation.shift();
-  }
+  /* [#TASK-ES-444] _recordHesitation → js/tabs/settings/adaptive-ux.js 로 옮김(인라인 스크립트 세포화 P1) */
   window._recordHesitation = _recordHesitation;
 
   if (typeof document !== 'undefined') {
@@ -13015,144 +12730,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234) ============ */
-  function renderIosPwaBanner(){
-    var slot = document.getElementById('iosPwaSlot');
-    if(!slot) return;
-    var isIos = (typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent || ''));
-    var isStandalone = (typeof window !== 'undefined' && ((window.navigator && window.navigator.standalone) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)));
-    var dismissed = false;
-    try { dismissed = (typeof localStorage !== 'undefined' && localStorage.getItem('ios_pwa_dismissed') === '1'); } catch(e){}
-    if(!isIos || isStandalone || dismissed){
-      slot.innerHTML = '';
-      return;
-    }
-    slot.innerHTML = '<div class="ios-pwa-banner" style="margin:6px 0 12px;padding:14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:16px;animation:fadein .25s;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-        '<div style="font-weight:700;font-size:0.9375rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-          '<span style="font-size:1.1rem;">📲</span>' +
-          '<span>아이폰 Safari 홈 화면에 추가 & 실시간 알림</span>' +
-        '</div>' +
-        '<button id="iosPwaDismissBtn" type="button" style="background:none;border:none;color:var(--ink-muted);font-size:1.1rem;cursor:pointer;padding:6px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;" aria-label="닫기">✕</button>' +
-      '</div>' +
-      '<p style="font-size:0.8125rem;color:var(--ink-muted);margin:0 0 10px;line-height:1.45;">' +
-        '홈 화면에 추가하시면 앱스토어 설치 없이 <b>전체화면 앱</b>과 <b>100% 실시간 리마인더 푸시</b>를 받아보실 수 있습니다.' +
-      '</p>' +
-      '<div class="ios-pwa-steps" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">' +
-        '<div class="ios-pwa-step-card" style="background:var(--surface);padding:8px 6px;border-radius:10px;border:1px solid var(--rule);text-align:center;">' +
-          '<div style="font-size:0.75rem;font-weight:700;color:var(--primary);margin-bottom:2px;">1단계</div>' +
-          '<div style="font-size:0.75rem;color:var(--ink);line-height:1.3;">하단 중앙<br><b>[공유 ⎋]</b> 탭</div>' +
-        '</div>' +
-        '<div class="ios-pwa-step-card" style="background:var(--surface);padding:8px 6px;border-radius:10px;border:1px solid var(--rule);text-align:center;">' +
-          '<div style="font-size:0.75rem;font-weight:700;color:var(--primary);margin-bottom:2px;">2단계</div>' +
-          '<div style="font-size:0.75rem;color:var(--ink);line-height:1.3;">메뉴에서<br><b>[홈 화면에 추가 +]</b></div>' +
-        '</div>' +
-        '<div class="ios-pwa-step-card" style="background:var(--surface);padding:8px 6px;border-radius:10px;border:1px solid var(--rule);text-align:center;">' +
-          '<div style="font-size:0.75rem;font-weight:700;color:var(--primary);margin-bottom:2px;">3단계</div>' +
-          '<div style="font-size:0.75rem;color:var(--ink);line-height:1.3;">우측 상단<br><b>[추가]</b> 완료!</div>' +
-        '</div>' +
-      '</div>' +
-      '<button id="btnOpenIosPwaGuideModal" type="button" class="btn btn-secondary btn-block" style="font-size:0.8125rem;padding:8px 12px;width:100%;min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;">' +
-        '<span>📖 자세한 설치 & 푸시 알림 가이드 보기</span>' +
-      '</button>' +
-    '</div>';
-    var closeBtn = document.getElementById('iosPwaDismissBtn');
-    if(closeBtn){
-      closeBtn.onclick = function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        try { localStorage.setItem('ios_pwa_dismissed', '1'); } catch(e){}
-        slot.innerHTML = '';
-      };
-    }
-    var guideBtn = document.getElementById('btnOpenIosPwaGuideModal');
-    if(guideBtn){
-      guideBtn.onclick = function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
-        openIosPwaInstallGuideModal();
-      };
-    }
-  }
-
-  function openIosPwaInstallGuideModal(){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
-    var modalHtml = '<div style="padding:4px 0 12px;">' +
-      '<div style="text-align:center;margin-bottom:16px;">' +
-        '<div style="font-size:2.4rem;margin-bottom:6px;">📲</div>' +
-        '<h3 style="font-size:1.15rem;font-weight:800;color:var(--ink);margin:0 0 4px;">아이폰(iOS Safari) 앱 설치 가이드</h3>' +
-        '<p style="font-size:0.8125rem;color:var(--ink-muted);margin:0;">앱스토어 다운로드 없이 3초 만에 홈 화면에 추가하고 실시간 푸시를 받아보세요</p>' +
-      '</div>' +
-      '<div style="background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:14px;">' +
-        '<div style="font-size:0.875rem;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
-          '<span>✨ 왜 홈 화면에 추가해야 하나요?</span>' +
-        '</div>' +
-        '<ul style="margin:0;padding-left:18px;font-size:0.8125rem;color:var(--ink);line-height:1.6;">' +
-          '<li><b>iOS 16.4+ 정식 지원:</b> 사파리 웹 브라우저 대신 홈 화면 앱으로 실행할 때만 실시간 Web Push 리마인더가 완벽 작동합니다.</li>' +
-          '<li><b>풀스크린 몰입 경험:</b> 주소창이나 하단 툴바 없이 네이티브 앱처럼 쾌적하게 사용 가능합니다.</li>' +
-          '<li><b>초고속 로딩:</b> 오프라인 캐시가 적용되어 배터리와 데이터 소모를 획기적으로 줄여줍니다.</li>' +
-        '</ul>' +
-      '</div>' +
-      '<div style="margin-bottom:16px;">' +
-        '<div style="font-size:0.875rem;font-weight:700;color:var(--ink);margin-bottom:8px;">📌 3초 설치 순서</div>' +
-        '<div style="display:flex;flex-direction:column;gap:8px;">' +
-          '<div style="display:flex;align-items:center;gap:10px;background:var(--surface);padding:10px;border-radius:10px;border:1px solid var(--rule);">' +
-            '<span style="background:var(--primary);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">1</span>' +
-            '<div style="font-size:0.8125rem;color:var(--ink);line-height:1.4;">Safari 브라우저 하단 툴바의 <b>공유 버튼(⎋ 네모 위 화살표)</b>을 탭합니다.</div>' +
-          '</div>' +
-          '<div style="display:flex;align-items:center;gap:10px;background:var(--surface);padding:10px;border-radius:10px;border:1px solid var(--rule);">' +
-            '<span style="background:var(--primary);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">2</span>' +
-            '<div style="font-size:0.8125rem;color:var(--ink);line-height:1.4;">공유 시트 목록을 아래로 스크롤하여 <b>[홈 화면에 추가]</b>를 선택합니다.</div>' +
-          '</div>' +
-          '<div style="display:flex;align-items:center;gap:10px;background:var(--surface);padding:10px;border-radius:10px;border:1px solid var(--rule);">' +
-            '<span style="background:var(--primary);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">3</span>' +
-            '<div style="font-size:0.8125rem;color:var(--ink);line-height:1.4;">우측 상단의 <b>[추가]</b>를 누르면 아이폰 바탕화면에 아워골 앱 아이콘이 생성됩니다!</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div style="margin-bottom:16px;">' +
-        '<button id="btnRequestIosPushPermission" type="button" class="btn btn-primary btn-block" style="font-size:0.875rem;padding:10px 14px;width:100%;min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;">' +
-          '<span>🔔 푸시 알림 권한 지금 요청</span>' +
-        '</button>' +
-        '<div id="iosPushPermissionStatus" style="font-size:0.75rem;color:var(--ink-muted);text-align:center;margin-top:6px;">' +
-          '현재 알림 상태: ' + (typeof Notification !== 'undefined' ? (Notification.permission === 'granted' ? '✅ 허용됨' : (Notification.permission === 'denied' ? '🚫 차단됨 (iOS 설정 > Safari에서 변경)' : '⏳ 요청 대기')) : '지원 환경 확인 중') +
-        '</div>' +
-      '</div>' +
-      '<button id="btnCloseIosPwaGuideModal" type="button" class="btn btn-secondary btn-block" style="min-height:44px;width:100%;">닫기</button>' +
-    '</div>';
-
-    openModal(modalHtml, function(sheet){
-      var closeBtn = sheet.querySelector('#btnCloseIosPwaGuideModal');
-      if(closeBtn){
-        closeBtn.onclick = function(){
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-          closeModal();
-        };
-      }
-      var pushBtn = sheet.querySelector('#btnRequestIosPushPermission');
-      if(pushBtn){
-        pushBtn.onclick = function(){
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
-          if(typeof Notification === 'undefined'){
-            toast('이 브라우저는 웹 푸시를 지원하지 않습니다.');
-            return;
-          }
-          Notification.requestPermission().then(function(perm){
-            var statusEl = sheet.querySelector('#iosPushPermissionStatus');
-            if(perm === 'granted'){
-              toast('🔔 푸시 알림이 활성화되었습니다!');
-              if(statusEl) statusEl.textContent = '현재 알림 상태: ✅ 허용됨';
-            } else if(perm === 'denied'){
-              toast('푸시 알림 권한이 차단되었습니다. 설정에서 허용해주세요.');
-              if(statusEl) statusEl.textContent = '현재 알림 상태: 🚫 차단됨 (설정에서 변경)';
-            } else {
-              toast('푸시 알림 권한 요청이 보류되었습니다.');
-            }
-          }).catch(function(err){
-            console.error('[iOS PWA Push]', err);
-            toast('푸시 알림 권한 요청 중 오류가 발생했습니다.');
-          });
-        };
-      }
-    });
-  }
+  /* [#TASK-ES-444] renderIosPwaBanner · openIosPwaInstallGuideModal → js/tabs/settings/pwa-install.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal;
 
   /* ============ 신규 유저 10초 활성화: 갓생 스타터 목표 템플릿 ============ */
@@ -13431,57 +13009,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(window.OurgoalCustomize) OurgoalCustomize.apply(state.profile.settings); /* 앱을 내맘대로! (#TASK-ES-020) */
   }
 
-  /* ============ 최근 히트맵 요약 카드 (가상유저 요청 P7/P9) ============ */
-  function renderHomeGrassSummary(){
-    var card = document.getElementById('homeGrassSummaryCard');
-    if(!card) return;
-    card.style.display = 'none';
-    card.innerHTML = '';
-    return;
-    
-    var now = new Date();
-    var recDates = {};
-    var dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-    (state.profile.records || []).forEach(function(r){
-      if(r && r.startAt) recDates[dateKey(r.startAt)] = (recDates[dateKey(r.startAt)] || 0) + 1;
-    });
-
-    // [#UIUX-30] 홈 히트맵 14px 스케일업 & 4주(28일) 콤팩트 뷰
-    var cellsHtml = '';
-    for(var i=27; i>=0; i--){
-      var d = new Date(now.getTime() - i * 86400000);
-      var dk = dateKey(d);
-      var cnt = recDates[dk] || 0;
-      var isToday = (i === 0);
-      var dayName = dayNames[d.getDay()];
-      var bg = isToday ? 'linear-gradient(180deg, #F59E0B, #D97706)' : (cnt >= 2 ? 'linear-gradient(180deg, #10B981, #059669)' : (cnt > 0 ? 'rgba(16,185,129,0.65)' : 'rgba(255,255,255,0.06)'));
-      var shadow = isToday ? 'box-shadow:0 0 8px rgba(245,158,11,0.7);' : (cnt > 0 ? 'box-shadow:0 0 6px rgba(16,185,129,0.35);' : '');
-      var border = isToday ? 'border:1.5px solid #F59E0B;' : 'border:1px solid rgba(255,255,255,0.08);';
-      var todayCls = isToday ? ' heatmap-cell-today' : '';
-      cellsHtml += '<span class="heatmap-cell-14' + todayCls + '" title="' + dk + ' (' + dayName + '): ' + cnt + '회" style="background:' + bg + ';' + shadow + border + '"></span>';
-    }
-
-    var dayHeadersHtml = dayNames.map(function(dn, idx){
-      var isWknd = (idx === 0 || idx === 6);
-      return '<span style="font-size:0.62rem;color:' + (isWknd ? 'var(--ink-soft)' : 'var(--ink-faint)') + ';font-weight:700;">' + dn + '</span>';
-    }).join('');
-
-    card.innerHTML = '<div class="card home-cockpit-card" style="margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;backdrop-filter:blur(16px);">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:nowrap;">'
-      + '  <div style="display:flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;"><span style="font-size:1rem;">🔥</span><span style="font-size:0.88rem;font-weight:700;color:var(--ink);white-space:nowrap;">4주 활동 기록</span><span style="font-size:0.75rem;color:var(--ink-faint);white-space:nowrap;">(최근 히트맵)</span></div>'
-      + '  <span style="font-size:0.75rem;color:var(--brand);font-weight:700;background:rgba(16,185,129,0.12);padding:3px 8px;border-radius:12px;border:1px solid rgba(16,185,129,0.25);white-space:nowrap;flex-shrink:0;">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중 🔥') : '첫 기록 남기기 ✨') + '</span>'
-      + '</div>'
-      + '<div class="home-heatmap-4w-container" style="margin-bottom:12px;">'
-      + '  <div class="home-heatmap-4w-grid" style="margin-bottom:4px;">' + dayHeadersHtml + '</div>'
-      + '  <div class="home-heatmap-4w-grid">' + cellsHtml + '</div>'
-      + '</div>'
-      + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);justify-content:space-between;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;">'
-      + '  <div>최근 7일 체크인: <b style="color:var(--ink);">' + stats.totalSessions + '회</b></div>'
-      + '  <div>집중 일수: <b style="color:var(--ink);">' + stats.activeDays + '일</b></div>'
-      + '  <div>누적 집중: <b style="color:var(--ink);">' + stats.totalMinutes + '분</b></div>'
-      + '</div>'
-      + '</div>';
-  }
+  /* [#TASK-ES-444] renderHomeGrassSummary → js/tabs/records/heatmap-summary.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
   /* ============ 11인 외부 UI/UX 감시 및 개선팀 핵심 기능 구현 ============ */
   function announceToA11y(message){
@@ -14474,102 +14002,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* [#TASK-ES-423] openSelectCompanionForStoryModal · openSelectTeamForStoryModal → js/tabs/comm/story-card-send.js 로 옮김(인라인 스크립트 세포화 1차 — 구획 주석 포함) */
 
-  /* ============ 소규모 챌린지 룸 모달 (가상유저 요청 P8/P17) ============ */
-  function openChallengeRoomModal(){
-    var rooms = [
-      { id: 'cpa2026', host: '정지호', goal: '2026 CPA 1차 합격 (주 50시간)', members: 4, max: 6, tag: '수험/CPA', dday: 'D-128', icon: '📖' },
-      { id: 'devlaunch', host: '김도윤', goal: '1인 SaaS 사이드 프로젝트 출시', members: 5, max: 6, tag: '개발/출시', dday: 'D-45', icon: '💻' },
-      { id: 'miracle6', host: '이지민', goal: '평일 미라클 모닝 6시 기상 & 러닝', members: 6, max: 6, tag: '습관/러닝', dday: 'D-21', icon: '🏃' },
-      { id: 'fitbody', host: '박준서', goal: '주 4회 헬스 & 클린 식단 인증', members: 3, max: 6, tag: '운동/헬스', dday: 'D-60', icon: '🏋️' },
-      { id: 'portfolio', host: '최수아', goal: '매일 1시간 UI/UX 포트폴리오 작업', members: 4, max: 6, tag: '디자인/취업', dday: 'D-30', icon: '🎨' },
-      { id: 'adhdfocus', host: '윤다은', goal: 'ADHD 뽀모도로 25분 3회 집중 마일스톤', members: 5, max: 6, tag: '신경다양성/몰입', dday: 'D-14', icon: '⏱️' },
-      { id: 'nightnurse', host: '송하준', goal: '3교대 간호사 심야 루틴 & 수면 케어', members: 3, max: 6, tag: '교대/건강', dday: 'D-50', icon: '🌙' },
-      { id: 'triathlon', host: '서예진', goal: '철인 3종 완주 (수영·사이클·러닝)', members: 4, max: 6, tag: '트라이애슬론', dday: 'D-90', icon: '🚴' },
-      { id: 'indiegame', host: '권태호', goal: 'Steam 인디게임 데모 빌드 출시', members: 2, max: 6, tag: '게임개발', dday: 'D-75', icon: '🎮' },
-      { id: 'barista', host: '안소율', goal: '스페셜티 바리스타 자격증 취득', members: 4, max: 6, tag: '자격증/창업', dday: 'D-40', icon: '☕' }
-    ];
-
-    if(!state.profile.settings.challenges) state.profile.settings.challenges = [];
-    var joinedIds = state.profile.settings.challenges;
-
-    var listHtml = rooms.map(function(r){
-      var isJoined = joinedIds.indexOf(r.id) !== -1;
-      var isFull = r.members >= r.max && !isJoined;
-      return '<div class="challenge-room-card" style="margin-bottom:10px;padding:12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">'
-        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;">'
-        + '  <div>'
-        + '    <span style="font-size:0.75rem;padding:2px 6px;border-radius:6px;background:var(--surface-2);color:var(--ink);font-weight:700;">' + r.tag + '</span>'
-        + '    <span style="font-size:0.74rem;color:var(--ink-sub);margin-left:4px;">' + r.dday + '</span>'
-        + '    <h4 style="margin:4px 0 2px;font-size:0.92rem;color:var(--ink);">' + r.icon + ' ' + escapeHtml(r.goal) + '</h4>'
-        + '    <div style="font-size:0.78rem;color:var(--ink-sub);">페이스메이커: <b>' + r.host + '</b> · 참여 ' + (isJoined ? r.members : r.members) + '/' + r.max + '명</div>'
-        + '  </div>'
-        + '  <div>'
-        + (isJoined
-            ? '<button class="btn btn-ghost btn-sm" data-leavechallenge="' + r.id + '" style="font-size:0.76rem;color:var(--brand-strong);">참여중 (퇴장)</button>'
-            : (isFull
-                ? '<button class="btn btn-ghost btn-sm" disabled style="font-size:0.76rem;opacity:0.5;">정원마감</button>'
-                : '<button class="btn btn-primary btn-sm" data-joinchallenge="' + r.id + '" style="font-size:0.76rem;">참여하기</button>'))
-        + '  </div>'
-        + '</div>'
-        + '</div>';
-    }).join('');
-
-    openModal(
-      '<h3>소규모 챌린지 룸 (동료 페이스메이커)</h3>'
-      + '<p class="faint" style="margin:-8px 0 14px;">느슨하지만 강력한 4~6인 몰입 그룹에서 매일 인증하고 상호 자극을 받아보세요.</p>'
-      + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
-      + '  <button class="btn btn-ghost btn-sm" id="inviteFriendChallengeBtn" style="width:100%;border-radius:10px;">내 친구 초대 링크 복사하기</button>'
-      + '</div>'
-      + '<div style="max-height:55vh;overflow-y:auto;padding-right:2px;">'
-      + listHtml
-      + '</div>'
-      + '<div class="modal-actions" style="margin-top:14px;">'
-      + '  <button class="btn btn-ghost" id="challengeCloseBtn" type="button">닫기</button>'
-      + '</div>',
-      function(sheet){
-        sheet.querySelector('#challengeCloseBtn').onclick = closeModal;
-        var invBtn = sheet.querySelector('#inviteFriendChallengeBtn');
-        if(invBtn){
-          invBtn.onclick = function(){
-            var link = window.location.origin + window.location.pathname + '#challenge?invite=' + (state.profile.id || 'ourgoal');
-            if(navigator.clipboard && navigator.clipboard.writeText){
-              navigator.clipboard.writeText(link).then(function(){
-                toast('챌린지 초대 링크가 복사되었어요! 친구에게 공유해보세요.');
-              });
-            } else {
-              prompt('아래 링크를 복사하여 친구에게 공유하세요:', link);
-            }
-          };
-        }
-        sheet.querySelectorAll('[data-joinchallenge]').forEach(function(b){
-          b.onclick = async function(){
-            var cid = b.dataset.joinchallenge;
-            if(joinedIds.indexOf(cid) === -1){
-              joinedIds.push(cid);
-              await saveProfile();
-              toast('챌린지 룸에 입장했어요! 오늘 체크인으로 동료들에게 자극을 주세요.');
-              triggerHaptic(15);
-              closeModal();
-              openChallengeRoomModal();
-            }
-          };
-        });
-        sheet.querySelectorAll('[data-leavechallenge]').forEach(function(b){
-          b.onclick = async function(){
-            var cid = b.dataset.leavechallenge;
-            var idx = joinedIds.indexOf(cid);
-            if(idx !== -1){
-              joinedIds.splice(idx, 1);
-              await saveProfile();
-              toast('챌린지 룸에서 퇴장했어요.');
-              closeModal();
-              openChallengeRoomModal();
-            }
-          };
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-444] openChallengeRoomModal → js/tabs/comm/challenge-room.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
   /* ============ 원터치 퀵 루틴 칩 ============ */
   var qRoutineRow = document.getElementById('quickRoutineRow');
@@ -14893,50 +14326,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 사진 인증 & 뷰어 모달 (가상유저 요청 P1) ============ */
   var pendingCapturePhoto = null;
 
-  function openPhotoViewerModal(src){
-    if(!src) return;
-    var existing = document.getElementById('photoViewerModal');
-    if(existing) existing.remove();
-    var modal = document.createElement('div');
-    modal.id = 'photoViewerModal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);';
-    modal.innerHTML = '<div style="position:relative;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;align-items:center;">'
-      + '<img src="' + src + '" style="max-width:100%;max-height:85vh;border-radius:12px;object-fit:contain;" />'
-      + '<button type="button" id="photoViewerCloseBtn" style="margin-top:12px;background:#fff;color:var(--ink);border:none;border-radius:16px;padding:8px 24px;font-weight:700;cursor:pointer;">닫기</button>'
-      + '</div>';
-    modal.addEventListener('click', function(e){
-      if(e.target === modal || e.target.tagName === 'BUTTON' || (e.target && e.target.id === 'photoViewerCloseBtn')) modal.remove();
-    });
-    document.body.appendChild(modal);
-  }
-
-  function compressImage(file, maxDimension, quality, callback){
-    var reader = new FileReader();
-    reader.onload = function(e){
-      var img = new Image();
-      img.onload = function(){
-        var w = img.width, h = img.height;
-        if(w > maxDimension || h > maxDimension){
-          if(w > h){
-            h = Math.round((h * maxDimension) / w);
-            w = maxDimension;
-          } else {
-            w = Math.round((w * maxDimension) / h);
-            h = maxDimension;
-          }
-        }
-        var canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        var dataUrl = canvas.toDataURL('image/jpeg', quality || 0.82);
-        callback(dataUrl);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
+  /* [#TASK-ES-444] openPhotoViewerModal · compressImage → js/tabs/records/photo-proof.js 로 옮김(인라인 스크립트 세포화 P1) */
 
   var capturePhotoBtn = document.getElementById('capturePhotoBtn');
   var capturePhotoInput = document.getElementById('capturePhotoInput');
@@ -15175,43 +14565,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   });
 
-  /* ============ 신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002, TASK-ES-332) ============ */
-  function triggerFirstCheerResponse(goal, checkinText){
-    // [TASK-ES-332] 헌법 제4조 제1항 1호/7호 및 결심 490108 준수: 가짜 봇 응원 전면 차단
-    if(!state.profile || !state.profile.settings || state.profile.settings.virtualCheerEnabled === false) return;
-    var isLocalDev = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
-    if(!isLocalDev){
-      var matched = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS[0]);
-      if(!matched) return;
-      var cheerObj = {
-        personaName: matched.name,
-        avatar: matched.avatar,
-        message: matched.name + '님이 첫 체크인을 격려합니다'
-      };
-      scheduleCheerDelivery(cheerObj);
-      return;
-    }
-  }
-
-  function scheduleCheerDelivery(cheer){
-    // 신규 온보딩 체감: 4초 뒤 도착하여 유저에게 환영 메시지 전달
-    setTimeout(function(){
-      var msg = cheer.message || (cheer.personaName + '님이 첫 체크인을 응원합니다!');
-      toast('🔥 ' + msg, 5000);
-      if(window.OurgoalNotifyEngine && typeof window.OurgoalNotifyEngine.dispatchGlobalNotification === 'function'){
-        window.OurgoalNotifyEngine.dispatchGlobalNotification({
-          type: 'cheer',
-          title: '🔥 ' + (cheer.personaName ? cheer.personaName + '님의 응원' : '동류의 응원'),
-          body: msg,
-          senderName: cheer.personaName || '동류 러너',
-          targetTab: 'comm',
-          icon: '🔥'
-        });
-      } else if('Notification' in window && Notification.permission==='granted'){
-        new Notification('아워골 · ' + cheer.personaName + '님의 응원', { body: cheer.message });
-      }
-    }, 4000);
-  }
+  /* [#TASK-ES-444] triggerFirstCheerResponse · scheduleCheerDelivery → js/tabs/comm/first-cheer.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
   /* ============ AI feedback (best-effort; provider-aware; local fallback) ============ */
   function milestonesForAI(goal){
@@ -17767,43 +17121,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ==========================================================================
      [#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼
      ========================================================================== */
-  function toggleFeedPostPreview(customCaption, customGoalTitle){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    else if(typeof triggerHaptic === 'function') triggerHaptic(12);
-    var prevSlot = document.getElementById('sharePreviewSlot');
-    var prevBtn = document.getElementById('sharePreviewBtn');
-    var prevBody = document.getElementById('sharePreviewCardBody');
-    if(!prevSlot || !prevBody) return false;
-    var isShown = prevSlot.style.display !== 'none';
-    if(isShown){
-      prevSlot.style.display = 'none';
-      if(prevBtn) prevBtn.textContent = '👁️ 미리보기';
-      return false;
-    }
-    var caption = customCaption || (document.getElementById('shareCaptionInput') ? document.getElementById('shareCaptionInput').value.trim() : '') || '갓생 목표를 향해 한 걸음 더 나아가는 중!';
-    var goalTitle = customGoalTitle || '';
-    var p = (state && state.profile) || { displayName: '사용자' };
-    prevBody.innerHTML = 
-      '<div class="feed-card" style="box-shadow:none;border:1px solid var(--rule);padding:12px;border-radius:12px;background:var(--card);">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-          '<div style="display:flex;align-items:center;gap:8px;">' +
-            (typeof avatarHtml === 'function' ? avatarHtml(36) : '👤') +
-            '<div>' +
-              '<div style="font-weight:800;font-size:.875rem;color:var(--ink);">' + escapeHtml(p.displayName) + '</div>' +
-              '<div class="faint" style="font-size:.72rem;">방금 전 · <span class="tag" style="font-size:.65rem;padding:1px 5px;">공부·수험</span></div>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-        (goalTitle ? '<div style="font-weight:800;font-size:.9rem;color:var(--primary);margin-bottom:4px;">🎯 ' + escapeHtml(goalTitle) + '</div>' : '') +
-        '<p style="font-size:.84rem;color:var(--ink);margin:6px 0;line-height:1.45;white-space:pre-wrap;">' + escapeHtml(caption) + '</p>' +
-        '<div style="display:flex;gap:12px;margin-top:8px;padding-top:6px;border-top:1px solid var(--rule);font-size:.75rem;color:var(--ink-soft);">' +
-          '<span>❤️ 응원 0</span><span>💬 댓글 0</span>' +
-        '</div>' +
-      '</div>';
-    prevSlot.style.display = 'block';
-    if(prevBtn) prevBtn.textContent = '✕ 미리보기 닫기';
-    return true;
-  }
+  /* [#TASK-ES-444] toggleFeedPostPreview → js/tabs/comm/feed-post-preview.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.toggleFeedPostPreview = toggleFeedPostPreview;
 
   /* ============ 외부 데이터 불러오기 (mock) ============ */
@@ -22956,81 +22274,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      과업: #UIUX-57 ~ #UIUX-64
      ========================================================================== */
 
-  // 1. [#UIUX-57] [KEYBOARD-SHIELD] 가상 키보드 가림 방화벽
-  function initKeyboardShield(){
-    if(!window.visualViewport) return;
-    function handleViewportChange(){
-      var activeEl = document.activeElement;
-      if(activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')){
-        var offset = window.innerHeight - window.visualViewport.height;
-        if(offset > 120){
-          activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          document.body.classList.add('keyboard-shield-active');
-        } else {
-          document.body.classList.remove('keyboard-shield-active');
-        }
-      } else {
-        document.body.classList.remove('keyboard-shield-active');
-      }
-    }
-    window.visualViewport.addEventListener('resize', handleViewportChange);
-    window.visualViewport.addEventListener('scroll', handleViewportChange);
-  }
+  /* [#TASK-ES-444] initKeyboardShield → js/tabs/settings/pwa-install.js 로 옮김(인라인 스크립트 세포화 P1) */
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', initKeyboardShield);
   } else {
     initKeyboardShield();
   }
 
-  // 2. [#UIUX-62] [PWA-INSTALL] 크롬/사파리 홈화면 추가 3단계 카드뉴스 인앱 안내 모달
-  function openPwaInstallGuideModal(){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    var modal = document.getElementById('modalPwaInstallGuide');
-    if(modal) {
-      modal.style.display = 'flex';
-      // [#TASK-ES-138] 기기 UserAgent 분석 기반 OS 플랫폼 자동 스위칭 (iOS vs Android)
-      var ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent : '';
-      var isAndroid = /Android/i.test(ua);
-      switchPwaOsTab(isAndroid ? 'android' : 'ios');
-    }
-  }
+  /* [#TASK-ES-444] openPwaInstallGuideModal → js/tabs/settings/pwa-install.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.openPwaInstallGuideModal = openPwaInstallGuideModal;
 
-  function closePwaInstallGuideModal(){
-    triggerHapticFeedback(12);
-    var modal = document.getElementById('modalPwaInstallGuide');
-    if(modal) modal.style.display = 'none';
-  }
+  /* [#TASK-ES-444] closePwaInstallGuideModal → js/tabs/settings/pwa-install.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.closePwaInstallGuideModal = closePwaInstallGuideModal;
 
-  function switchPwaOsTab(os){
-    triggerHapticFeedback(12);
-    var btnIos = document.getElementById('btnPwaOsIos');
-    var btnAndroid = document.getElementById('btnPwaOsAndroid');
-    var iosSteps = document.getElementById('pwaGuideIosSteps');
-    var androidSteps = document.getElementById('pwaGuideAndroidSteps');
-    if(os === 'ios'){
-      if(btnIos) btnIos.classList.add('active');
-      if(btnAndroid) btnAndroid.classList.remove('active');
-      if(iosSteps) iosSteps.style.display = 'grid';
-      if(androidSteps) androidSteps.style.display = 'none';
-    } else {
-      if(btnIos) btnIos.classList.remove('active');
-      if(btnAndroid) btnAndroid.classList.add('active');
-      if(iosSteps) iosSteps.style.display = 'none';
-      if(androidSteps) androidSteps.style.display = 'grid';
-    }
-  }
+  /* [#TASK-ES-444] switchPwaOsTab → js/tabs/settings/pwa-install.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.switchPwaOsTab = switchPwaOsTab;
 
-  function confirmPwaInstall(){
-    triggerHapticFeedback(12);
-    closePwaInstallGuideModal();
-    try {
-      localStorage.setItem('ourgoal_pwa_guide_viewed', 'true');
-    } catch(e){}
-    if(typeof toast === 'function') toast('언제든 홈화면 아이콘으로 빠르게 접속하세요 📱✨');
-  }
+  /* [#TASK-ES-444] confirmPwaInstall → js/tabs/settings/pwa-install.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.confirmPwaInstall = confirmPwaInstall;
   /* ============ RENDER: GOALS ============ */
   /* [#TASK-ES-370] renderGoalsScreen → js/tabs/goals/render.js(머리·조립) · goal-detail.js(상세 마크업) · goal-detail-events.js(상세 이벤트) 로 옮김(목표 탭 세포) */

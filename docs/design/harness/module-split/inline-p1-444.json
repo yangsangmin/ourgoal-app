@@ -1,0 +1,155 @@
+{
+ "task": "TASK-ES-444",
+ "seamTitle": "인라인 스크립트 세포화 P1 이음매 2 — 일정 배경·잠금화면 라이브, 소통 창, 사진 인증, 설정(적응형 UX·PWA 설치)",
+ "seamAfter": "[#TASK-ES-379] 소통 탭 모듈 이음매 1차",
+ "cells": [
+  {
+   "key": "bg",
+   "file": "js/tabs/calendar/day-bg-image.js",
+   "kit": "OurgoalCalendarKit",
+   "kitVar": "_calendarKit",
+   "beforeTag": "<script src=\"js/tabs/calendar/index.js\"></script>",
+   "title": "OurGoal Calendar Day Background Image (일정 탭 — 일자별 배경 사진 줄이기)",
+   "name": "일자별 배경 사진 줄이기",
+   "does": "일정 탭 날짜 배경으로 고른 사진을 저장하기 좋게 줄인다(사진 지정 창은 아직 index.html)",
+   "groups": [
+    {
+     "header": "캘린더 일자별 배경 사진 지정 모달",
+     "keep": [
+      "openCalendarDayBgPickerModal"
+     ],
+     "keepWhy": "tests/core-confirm-es376.test.js 가 index.html 한 파일에서 이 함수 안의 ui.confirm 줄(캘린더 배경사진 초기화)을 센다"
+    }
+   ],
+   "desc": [
+    "openCalendarDayBgPickerModal 은 시험지(core-confirm-es376)가 index.html 한 파일에서 그 안의 ui.confirm 줄을 세어 index.html 에 남았다."
+   ]
+  },
+  {
+   "key": "live",
+   "file": "js/tabs/calendar/lockscreen-live.js",
+   "kit": "OurgoalCalendarKit",
+   "kitVar": "_calendarKit",
+   "beforeTag": "<script src=\"js/tabs/calendar/index.js\"></script>",
+   "title": "OurGoal Lock Screen Live Card (일정 탭 — 폰 잠금화면 실시간 정보 카드)",
+   "name": "잠금화면 라이브 카드",
+   "does": "오늘 일정·목표 요약을 폰 잠금화면 라이브 카드 내용으로 만들어 보내거나 닫는다",
+   "groups": [
+    {
+     "header": "폰 잠금화면 실시간 정보 연동 라이브 서비스"
+    }
+   ]
+  },
+  {
+   "key": "room",
+   "file": "js/tabs/comm/challenge-room.js",
+   "kit": "OurgoalCommKit",
+   "kitVar": "_commKit",
+   "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+   "title": "OurGoal Challenge Room (소통 탭 — 소규모 챌린지 룸 창)",
+   "name": "소규모 챌린지 룸",
+   "does": "소규모 챌린지 룸 창을 띄워 참여 현황과 인증을 보여 준다",
+   "groups": [
+    {
+     "header": "소규모 챌린지 룸 모달"
+    }
+   ]
+  },
+  {
+   "key": "cheer",
+   "file": "js/tabs/comm/first-cheer.js",
+   "kit": "OurgoalCommKit",
+   "kitVar": "_commKit",
+   "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+   "title": "OurGoal First Cheer (소통 — 신규 유저 첫 응원 전달)",
+   "name": "첫 응원 전달",
+   "does": "새 사용자가 첫 기록을 남기면 맞춤 응원이 잠시 뒤 도착하게 예약한다",
+   "groups": [
+    {
+     "header": "가상 페르소나 3분 내 맞춤 응원"
+    }
+   ]
+  },
+  {
+   "key": "prev",
+   "file": "js/tabs/comm/feed-post-preview.js",
+   "kit": "OurgoalCommKit",
+   "kitVar": "_commKit",
+   "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+   "title": "OurGoal Feed Post Preview (소통 탭 — 피드 게시 창 미리보기 토글)",
+   "name": "피드 게시 미리보기",
+   "does": "피드 게시 창에서 올릴 글이 피드에 어떻게 보일지 미리보기를 켜고 끈다",
+   "groups": [
+    {
+     "header": "피드 게시 모달 내 '미리보기' 토글"
+    }
+   ]
+  },
+  {
+   "key": "photo",
+   "file": "js/tabs/records/photo-proof.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal Photo Proof (기록 — 사진 인증 줄이기·사진 보기 창)",
+   "name": "사진 인증·보기",
+   "does": "체크인 사진을 올리기 전에 줄이고, 기록에 붙은 사진을 크게 보는 창을 띄운다",
+   "groups": [
+    {
+     "header": "사진 인증 & 뷰어 모달"
+    }
+   ]
+  },
+  {
+   "key": "grass",
+   "file": "js/tabs/records/heatmap-summary.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal Heatmap Summary Card (홈 — 최근 히트맵 요약 카드)",
+   "name": "최근 히트맵 요약",
+   "does": "최근 실천 기록을 히트맵 요약 카드로 그린다",
+   "groups": [
+    {
+     "header": "최근 히트맵 요약 카드"
+    }
+   ]
+  },
+  {
+   "key": "ux",
+   "file": "js/tabs/settings/adaptive-ux.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal Adaptive UX (설정 — 적응형 화면 모드·망설임 기록)",
+   "name": "적응형 화면 모드",
+   "does": "간단·전문가 화면 모드 막대를 그리고 바꾸며, 망설임·연타 신호를 기록한다",
+   "groups": [
+    {
+     "header": "Adaptive UX Mode"
+    },
+    {
+     "header": "UX Telemetry"
+    }
+   ]
+  },
+  {
+   "key": "pwa",
+   "file": "js/tabs/settings/pwa-install.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal PWA Install Guide (설정 — 홈 화면 추가 안내·키보드 가림 방지)",
+   "name": "홈 화면 설치 안내",
+   "does": "iOS 홈 화면 추가 배너와 기기별 설치 안내 창을 띄우고, 입력할 때 키보드가 칸을 가리지 않게 한다",
+   "groups": [
+    {
+     "header": "iOS 사파리 홈 화면 추가 안내 배너"
+    },
+    {
+     "header": "모바일 하드웨어 인터랙션 & 사용성 하드닝"
+    }
+   ]
+  }
+ ]
+}
