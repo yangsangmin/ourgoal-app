@@ -9,54 +9,46 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "8b179b645261f2b711913f20e740456e6327a97c",
-  "short": "8b179b6",
-  "committedAt": "2026-10-05T15:01:03+09:00",
-  "subject": "[INFRA] #TASK-ES-423 refactor: 인라인 스크립트 세포화 1차 — 책임 묶음 지도 + 잠금화면 이미지·갓생 카드 보내기 4묶음 세포 이전(동작 그대로)"
+  "commit": "08a2d4332f8d79d75dc02543e96e7f2eb4246842",
+  "short": "08a2d43",
+  "committedAt": "2026-10-05T14:54:52+09:00",
+  "subject": "[E2] #TASK-ES-428 refactor: 통계 세포 쪼개기 4차 — renderUniversalStatsDashboard(884줄)를 문맥 객체 D 구획 함수로 나눠 js/stats-dashboard*.js 3개로 동작 그대로 이전(1,614 → 732줄)"
  },
  "summary": {
-  "cells": 163,
-  "files": 162,
-  "jsLines": 52500,
+  "cells": 170,
+  "files": 169,
+  "jsLines": 52038,
   "kinds": {
    "organ": 29,
-   "tab": 44,
-   "hybrid": 89,
+   "tab": 42,
+   "hybrid": 98,
    "future": 1
   },
-  "descriptionsHand": 163,
+  "descriptionsHand": 170,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
    "first": 12,
    "firstDate": "2026-10-04",
    "firstCommit": "bb343d3",
-   "now": 3,
+   "now": 1,
    "nowFiles": [
-    {
-     "file": "js/goal-templates-registry.js",
-     "lines": 2815
-    },
     {
      "file": "js/sanctuary-v3-engine.js",
      "lines": 1964
-    },
-    {
-     "file": "js/universal-stats.js",
-     "lines": 1614
     }
    ]
   },
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 33385,
-   "functionDecls": 658
+   "inlineScriptLines": 34007,
+   "functionDecls": 663
   },
   "health": {
-   "undifferentiatedLines": 33385,
+   "undifferentiatedLines": 34007,
    "globalLinks": 282,
-   "oversizeCells": 3,
+   "oversizeCells": 1,
    "drawingSmallCells": {
     "drew": 7,
     "total": 22,
@@ -93,15 +85,15 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 44,
+   "count": 42,
    "large": 6,
-   "small": 38
+   "small": 36
   },
   {
    "key": "hybrid",
    "name": "하이브리드",
    "desc": "여러 탭·여러 자리에 걸치는 세포",
-   "count": 89
+   "count": 98
   },
   {
    "key": "future",
@@ -169,14 +161,13 @@
    "cells": [
     "calendar/index",
     "calendar/day-detail",
-    "calendar/lockscreen-image",
     "calendar/natural-schedule",
     "calendar/render",
     "calendar/sub-day-detail",
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 1563,
+   "lines": 1033,
    "over800": 0
   },
   {
@@ -189,12 +180,11 @@
     "comm/dm-ledger",
     "comm/feed-comments",
     "comm/render",
-    "comm/story-card-send",
     "comm/sub-companions",
     "comm/sub-crew",
     "comm/sub-feed"
    ],
-   "lines": 968,
+   "lines": 807,
    "over800": 0
   },
   {
@@ -264,6 +254,9 @@
    "cells": [
     "records-stats",
     "stats-charts",
+    "stats-dashboard-bind",
+    "stats-dashboard-view",
+    "stats-dashboard",
     "stats-data-grid",
     "stats-data-menu",
     "stats-differentiated",
@@ -279,8 +272,8 @@
     "stats-taxonomy",
     "universal-stats"
    ],
-   "lines": 7185,
-   "over800": 1
+   "lines": 7301,
+   "over800": 0
   },
   {
    "key": "family-team",
@@ -315,6 +308,12 @@
    "name": "목표 템플릿",
    "desc": "60가지 전문가 목표 견본과 복제 크레딧",
    "cells": [
+    "data/expert-templates/career",
+    "data/expert-templates/health",
+    "data/expert-templates/hobby",
+    "data/expert-templates/mind",
+    "data/expert-templates/relation",
+    "data/expert-templates/study",
     "data/goal-templates/career",
     "data/goal-templates/health",
     "data/goal-templates/hobby",
@@ -325,8 +324,8 @@
     "goal-templates-registry",
     "template-credit"
    ],
-   "lines": 6656,
-   "over800": 1
+   "lines": 6769,
+   "over800": 0
   },
   {
    "key": "family-time",
@@ -781,8 +780,8 @@
    "file": "js/universal-stats.js",
    "name": "universal-stats.js",
    "firstLines": 6092,
-   "nowLines": 1614,
-   "over800Now": true,
+   "nowLines": 732,
+   "over800Now": false,
    "steps": [
     {
      "date": "2026-10-04",
@@ -803,6 +802,11 @@
      "date": "2026-10-05",
      "commit": "d90b077",
      "lines": 1614
+    },
+    {
+     "date": "2026-10-05",
+     "commit": "890f7d5",
+     "lines": "≤800"
     }
    ],
    "parts": [
@@ -810,6 +814,21 @@
      "id": "stats-charts",
      "file": "js/stats-charts.js",
      "lines": 570
+    },
+    {
+     "id": "stats-dashboard",
+     "file": "js/stats-dashboard.js",
+     "lines": 241
+    },
+    {
+     "id": "stats-dashboard-bind",
+     "file": "js/stats-dashboard-bind.js",
+     "lines": 358
+    },
+    {
+     "id": "stats-dashboard-view",
+     "file": "js/stats-dashboard-view.js",
+     "lines": 399
     },
     {
      "id": "stats-data-grid",
@@ -1095,16 +1114,52 @@
    "file": "js/goal-templates-registry.js",
    "name": "goal-templates-registry.js",
    "firstLines": 2815,
-   "nowLines": 2815,
-   "over800Now": true,
+   "nowLines": 72,
+   "over800Now": false,
    "steps": [
     {
      "date": "2026-10-04",
      "commit": "bb343d3",
      "lines": 2815
+    },
+    {
+     "date": "2026-10-05",
+     "commit": "c7b85d1",
+     "lines": "≤800"
     }
    ],
-   "parts": []
+   "parts": [
+    {
+     "id": "data/expert-templates/career",
+     "file": "js/data/expert-templates/career.js",
+     "lines": 476
+    },
+    {
+     "id": "data/expert-templates/health",
+     "file": "js/data/expert-templates/health.js",
+     "lines": 476
+    },
+    {
+     "id": "data/expert-templates/hobby",
+     "file": "js/data/expert-templates/hobby.js",
+     "lines": 476
+    },
+    {
+     "id": "data/expert-templates/mind",
+     "file": "js/data/expert-templates/mind.js",
+     "lines": 476
+    },
+    {
+     "id": "data/expert-templates/relation",
+     "file": "js/data/expert-templates/relation.js",
+     "lines": 476
+    },
+    {
+     "id": "data/expert-templates/study",
+     "file": "js/data/expert-templates/study.js",
+     "lines": 476
+    }
+   ]
   },
   {
    "file": "js/sanctuary-v3-engine.js",
@@ -3333,12 +3388,10 @@
    "calledBy": [
     "avatar/xp",
     "calendar/day-detail",
-    "calendar/lockscreen-image",
     "calendar/natural-schedule",
     "calendar/render",
     "comm/feed-comments",
     "comm/render",
-    "comm/story-card-send",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
@@ -5051,6 +5104,336 @@
    ]
   },
   {
+   "id": "data/expert-templates/career",
+   "file": "js/data/expert-templates/career.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-templates",
+   "tabs": [
+    "goals",
+    "comm"
+   ],
+   "name": "전문가 커리어 템플릿",
+   "nameSource": "hand",
+   "does": "목표 문장에 맞춰 고르는 전문가 목표 템플릿 중 「커리어·머니」 분야 10종의 찾는 말·단계 자료",
+   "doesSource": "hand",
+   "header": [
+    "전문가 목표 템플릿 레지스트리 자료 — 커리어·머니 10종 (TPL-CAR-01~10)",
+    "#TASK-ES-425: js/goal-templates-registry.js 의 MATCH_RULES·TEMPLATE_MAP 에서 이 분야 줄을 글자 그대로 옮긴 자료만 있다(로직 없음).",
+    "조립자 js/goal-templates-registry.js 가 HLT→STD→CAR→HOB→MND→REL 순서로 이어 같은 MATCH_RULES 배열·TEMPLATE_MAP 객체를 만든다.",
+    "서버(api/goaltemplate.js 스마트 폴백)가 require 로 읽는다. 브라우저 script 태그로는 부르지 않는다."
+   ],
+   "lines": 476,
+   "over800": false,
+   "exposes": [],
+   "calls": [],
+   "calledBy": [
+    "goal-templates-registry"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": false,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "data/expert-templates/health",
+   "file": "js/data/expert-templates/health.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-templates",
+   "tabs": [
+    "goals",
+    "comm"
+   ],
+   "name": "전문가 운동·건강 템플릿",
+   "nameSource": "hand",
+   "does": "목표 문장에 맞춰 고르는 전문가 목표 템플릿 중 「운동·건강」 분야 10종의 찾는 말·단계 자료",
+   "doesSource": "hand",
+   "header": [
+    "전문가 목표 템플릿 레지스트리 자료 — 운동·건강 10종 (TPL-HLT-01~10)",
+    "#TASK-ES-425: js/goal-templates-registry.js 의 MATCH_RULES·TEMPLATE_MAP 에서 이 분야 줄을 글자 그대로 옮긴 자료만 있다(로직 없음).",
+    "조립자 js/goal-templates-registry.js 가 HLT→STD→CAR→HOB→MND→REL 순서로 이어 같은 MATCH_RULES 배열·TEMPLATE_MAP 객체를 만든다.",
+    "서버(api/goaltemplate.js 스마트 폴백)가 require 로 읽는다. 브라우저 script 태그로는 부르지 않는다."
+   ],
+   "lines": 476,
+   "over800": false,
+   "exposes": [],
+   "calls": [],
+   "calledBy": [
+    "goal-templates-registry"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": false,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "data/expert-templates/hobby",
+   "file": "js/data/expert-templates/hobby.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-templates",
+   "tabs": [
+    "goals",
+    "comm"
+   ],
+   "name": "전문가 취미 템플릿",
+   "nameSource": "hand",
+   "does": "목표 문장에 맞춰 고르는 전문가 목표 템플릿 중 「취미·창작」 분야 10종의 찾는 말·단계 자료",
+   "doesSource": "hand",
+   "header": [
+    "전문가 목표 템플릿 레지스트리 자료 — 취미·창작 10종 (TPL-HOB-01~10)",
+    "#TASK-ES-425: js/goal-templates-registry.js 의 MATCH_RULES·TEMPLATE_MAP 에서 이 분야 줄을 글자 그대로 옮긴 자료만 있다(로직 없음).",
+    "조립자 js/goal-templates-registry.js 가 HLT→STD→CAR→HOB→MND→REL 순서로 이어 같은 MATCH_RULES 배열·TEMPLATE_MAP 객체를 만든다.",
+    "서버(api/goaltemplate.js 스마트 폴백)가 require 로 읽는다. 브라우저 script 태그로는 부르지 않는다."
+   ],
+   "lines": 476,
+   "over800": false,
+   "exposes": [],
+   "calls": [],
+   "calledBy": [
+    "goal-templates-registry"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": false,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "data/expert-templates/mind",
+   "file": "js/data/expert-templates/mind.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-templates",
+   "tabs": [
+    "goals",
+    "comm"
+   ],
+   "name": "전문가 마음·습관 템플릿",
+   "nameSource": "hand",
+   "does": "목표 문장에 맞춰 고르는 전문가 목표 템플릿 중 「마음·습관」 분야 10종의 찾는 말·단계 자료",
+   "doesSource": "hand",
+   "header": [
+    "전문가 목표 템플릿 레지스트리 자료 — 마음·습관 10종 (TPL-MND-01~10)",
+    "#TASK-ES-425: js/goal-templates-registry.js 의 MATCH_RULES·TEMPLATE_MAP 에서 이 분야 줄을 글자 그대로 옮긴 자료만 있다(로직 없음).",
+    "조립자 js/goal-templates-registry.js 가 HLT→STD→CAR→HOB→MND→REL 순서로 이어 같은 MATCH_RULES 배열·TEMPLATE_MAP 객체를 만든다.",
+    "서버(api/goaltemplate.js 스마트 폴백)가 require 로 읽는다. 브라우저 script 태그로는 부르지 않는다."
+   ],
+   "lines": 476,
+   "over800": false,
+   "exposes": [],
+   "calls": [],
+   "calledBy": [
+    "goal-templates-registry"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": false,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "data/expert-templates/relation",
+   "file": "js/data/expert-templates/relation.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-templates",
+   "tabs": [
+    "goals",
+    "comm"
+   ],
+   "name": "전문가 관계·생활 템플릿",
+   "nameSource": "hand",
+   "does": "목표 문장에 맞춰 고르는 전문가 목표 템플릿 중 「관계·생활」 분야 10종의 찾는 말·단계 자료",
+   "doesSource": "hand",
+   "header": [
+    "전문가 목표 템플릿 레지스트리 자료 — 관계·생활 10종 (TPL-REL-01~10)",
+    "#TASK-ES-425: js/goal-templates-registry.js 의 MATCH_RULES·TEMPLATE_MAP 에서 이 분야 줄을 글자 그대로 옮긴 자료만 있다(로직 없음).",
+    "조립자 js/goal-templates-registry.js 가 HLT→STD→CAR→HOB→MND→REL 순서로 이어 같은 MATCH_RULES 배열·TEMPLATE_MAP 객체를 만든다.",
+    "서버(api/goaltemplate.js 스마트 폴백)가 require 로 읽는다. 브라우저 script 태그로는 부르지 않는다."
+   ],
+   "lines": 476,
+   "over800": false,
+   "exposes": [],
+   "calls": [],
+   "calledBy": [
+    "goal-templates-registry"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": false,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "data/expert-templates/study",
+   "file": "js/data/expert-templates/study.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-templates",
+   "tabs": [
+    "goals",
+    "comm"
+   ],
+   "name": "전문가 학습 템플릿",
+   "nameSource": "hand",
+   "does": "목표 문장에 맞춰 고르는 전문가 목표 템플릿 중 「학습·자격」 분야 10종의 찾는 말·단계 자료",
+   "doesSource": "hand",
+   "header": [
+    "전문가 목표 템플릿 레지스트리 자료 — 학습·자격 10종 (TPL-STD-01~10)",
+    "#TASK-ES-425: js/goal-templates-registry.js 의 MATCH_RULES·TEMPLATE_MAP 에서 이 분야 줄을 글자 그대로 옮긴 자료만 있다(로직 없음).",
+    "조립자 js/goal-templates-registry.js 가 HLT→STD→CAR→HOB→MND→REL 순서로 이어 같은 MATCH_RULES 배열·TEMPLATE_MAP 객체를 만든다.",
+    "서버(api/goaltemplate.js 스마트 폴백)가 require 로 읽는다. 브라우저 script 태그로는 부르지 않는다."
+   ],
+   "lines": 476,
+   "over800": false,
+   "exposes": [],
+   "calls": [],
+   "calledBy": [
+    "goal-templates-registry"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": false,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
+   "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "data/goal-templates/career",
    "file": "js/data/goal-templates/career.js",
    "kind": "hybrid",
@@ -5620,10 +6003,17 @@
    "does": "입력한 목표 문장에 맞는 전문가 목표 템플릿을 골라 주는 규칙 모음",
    "doesSource": "hand",
    "header": [],
-   "lines": 2815,
-   "over800": true,
+   "lines": 72,
+   "over800": false,
    "exposes": [],
-   "calls": [],
+   "calls": [
+    "data/expert-templates/career",
+    "data/expert-templates/health",
+    "data/expert-templates/hobby",
+    "data/expert-templates/mind",
+    "data/expert-templates/relation",
+    "data/expert-templates/study"
+   ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": false,
@@ -5639,9 +6029,19 @@
      "goal.template"
     ]
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-425"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
    "prs": [
+    {
+     "number": 739,
+     "task": "TASK-ES-425",
+     "title": "[E2] #TASK-ES-425 refactor: 전문가 목표 템플릿 레지스트리 세포 분열 — js/goal-templates-registry.js 2,815 → 72줄 + 분야 자료 세포 6개(동작 그대로)",
+     "date": "2026-10-05"
+    },
     {
      "number": 211,
      "task": null,
@@ -6084,7 +6484,6 @@
    ],
    "calls": [
     "calendar/day-detail",
-    "calendar/lockscreen-image",
     "calendar/natural-schedule",
     "calendar/render",
     "team-invite-comm",
@@ -6247,6 +6646,158 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "stats-dashboard-bind",
+   "file": "js/stats-dashboard-bind.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-stats",
+   "tabs": [
+    "records",
+    "goals"
+   ],
+   "name": "콕핏 버튼 동작",
+   "nameSource": "hand",
+   "does": "콕핏의 렌즈·종목·기간·지표 버튼과 접기·데이터 관리·툴팁 수정·전체화면 버튼이 눌리면 반응한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Stats Cell: 성취 분석 콕핏 동작 배선 — 접기·데이터 관리·숨은 앵커, 렌즈·분자/분모·모드·기간·스케일·측정 지표·종목 칩, 십자선·툴팁 수정·전체화면 (#TASK-ES-428 · 통계 세포 쪼개기 4차)",
+    "js/universal-stats.js(이전 전 1,614줄)의 renderUniversalStatsDashboard(884줄)에서 동작 그대로 옮겼다. 틀: docs/specs/MODULE-SPLIT-PROTOCOL.md 2절(섹션 소블록)",
+    "bindStatsHeaderActions · bindStatsControlActions · bindStatsChartInteractions",
+    "구획 함수는 이전 함수 본문의 최상위 문 묶음을 글자 그대로 옮긴 것이다. 구획끼리 같이 쓰던 지역 이름(인자·var)은 문맥 객체 D 의 칸(D.<이름>)으로 읽고 쓴다"
+   ],
+   "lines": 358,
+   "over800": false,
+   "exposes": [
+    "OurgoalUniversalStatsKit"
+   ],
+   "calls": [],
+   "calledBy": [
+    "universal-stats"
+   ],
+   "readsFromIndexHtml": [
+    "closeModal",
+    "openModal",
+    "toast"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-428"
+   ],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "stats-dashboard-view",
+   "file": "js/stats-dashboard-view.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-stats",
+   "tabs": [
+    "records",
+    "goals"
+   ],
+   "name": "콕핏 화면 그리기",
+   "nameSource": "hand",
+   "does": "콕핏의 머리·렌즈·종목 칩·차트·핵심 숫자·진단 리포트 화면을 만든다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Stats Cell: 성취 분석 콕핏 화면 글자 — 머리·렌즈·기간 컨트롤·종목 칩·측정 지표·차트·KPI·진단 리포트 HTML 을 만들고 그린다 (#TASK-ES-428 · 통계 세포 쪼개기 4차)",
+    "js/universal-stats.js(이전 전 1,614줄)의 renderUniversalStatsDashboard(884줄)에서 동작 그대로 옮겼다. 틀: docs/specs/MODULE-SPLIT-PROTOCOL.md 2절(섹션 소블록)",
+    "buildStatsHeaderHtml · buildStatsLensControlsHtml · buildStatsEntityChipsHtml · buildStatsChartHtml · buildStatsKpiHtml · mountStatsDashboardHtml",
+    "구획 함수는 이전 함수 본문의 최상위 문 묶음을 글자 그대로 옮긴 것이다. 구획끼리 같이 쓰던 지역 이름(인자·var)은 문맥 객체 D 의 칸(D.<이름>)으로 읽고 쓴다"
+   ],
+   "lines": 399,
+   "over800": false,
+   "exposes": [
+    "OurgoalUniversalStatsKit"
+   ],
+   "calls": [],
+   "calledBy": [
+    "universal-stats"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-428"
+   ],
+   "reqs": [],
+   "prs": []
+  },
+  {
+   "id": "stats-dashboard",
+   "file": "js/stats-dashboard.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-stats",
+   "tabs": [
+    "records",
+    "goals"
+   ],
+   "name": "성취 분석 콕핏",
+   "nameSource": "hand",
+   "does": "성취 분석 콕핏 화면을 차례대로 그린다(기록이 없으면 예시 기록 불러오기 화면)",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Stats Cell: 성취 분석 콕핏 대시보드 조립자 — 머리(온톨로지)·문맥 객체 D·구획 차례 호출, 빈 화면(샘플 바로 불러오기·가져오기), 데이터 준비(렌즈·모드·종목·측정 지표·기간·시계열) (#TASK-ES-428 · 통계 세포 쪼개기 4차)",
+    "js/universal-stats.js(이전 전 1,614줄)의 renderUniversalStatsDashboard(884줄)에서 동작 그대로 옮겼다. 틀: docs/specs/MODULE-SPLIT-PROTOCOL.md 2절(섹션 소블록)",
+    "renderUniversalStatsDashboard · renderStatsEmptyState · prepareStatsDashboardData",
+    "조립자 renderUniversalStatsDashboard 는 이전 함수의 머리(인자 기본값·온톨로지)를 글자 그대로 두고, 공유 지역 이름을 담을 문맥 객체 D 를 만든 뒤"
+   ],
+   "lines": 241,
+   "over800": false,
+   "exposes": [
+    "OurgoalUniversalStatsKit"
+   ],
+   "calls": [],
+   "calledBy": [
+    "universal-stats"
+   ],
+   "readsFromIndexHtml": [
+    "closeModal",
+    "openModal",
+    "toast"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-428"
+   ],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "stats-data-grid",
@@ -7273,62 +7824,6 @@
    ]
   },
   {
-   "id": "calendar/lockscreen-image",
-   "file": "js/tabs/calendar/lockscreen-image.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "calendar",
-   "tabs": [
-    "calendar"
-   ],
-   "name": "잠금화면 이미지",
-   "nameSource": "hand",
-   "does": "폰 잠금화면에 쓸 월간 달력 배경화면과 오늘 일정 카드(9:16) 이미지를 그린다",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Lock Screen Image (일정 탭 — 잠금화면 이미지 그리기)",
-    "#TASK-ES-423 (인라인 스크립트 세포화 1차): index.html 인라인 IIFE 의 잠금화면 캔버스 그리기 두 묶음을 동작 그대로 옮겼다.",
-    "lsDrawRoundRect · generateLockScreenCalendarImage(이전 전 11377~11654줄)",
-    "generateLockScreenScheduleCardImage(이전 전 11904~12126줄)"
-   ],
-   "lines": 530,
-   "over800": false,
-   "exposes": [
-    "OurgoalCalendarKit"
-   ],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [
-    "calendar/sub-day-detail",
-    "sanctuary-v3-engine"
-   ],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-379",
-    "TASK-ES-423"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
-   ],
-   "prs": []
-  },
-  {
    "id": "calendar/natural-schedule",
    "file": "js/tabs/calendar/natural-schedule.js",
    "kind": "tab",
@@ -7491,7 +7986,6 @@
    ],
    "calls": [
     "calendar/day-detail",
-    "calendar/lockscreen-image",
     "calendar/natural-schedule",
     "calendar/render",
     "core/event-bus"
@@ -7920,60 +8414,6 @@
      "date": "2026-10-05"
     }
    ]
-  },
-  {
-   "id": "comm/story-card-send",
-   "file": "js/tabs/comm/story-card-send.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "comm",
-   "tabs": [
-    "comm"
-   ],
-   "name": "갓생 카드 보내기",
-   "nameSource": "hand",
-   "does": "갓생 카드를 동반자에게 1:1로 보내거나 팀 단체방에 인증으로 올리는 창을 띄운다",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Story Card Send (소통 탭 — 갓생 카드 보내기 창)",
-    "#TASK-ES-423 (인라인 스크립트 세포화 1차): index.html 인라인 IIFE 의 MZ 갓생 카드 보내기 두 묶음을 동작 그대로 옮겼다.",
-    "openSelectCompanionForStoryModal(이전 전 14971~15033줄)",
-    "openSelectTeamForStoryModal(이전 전 15035~15105줄)"
-   ],
-   "lines": 161,
-   "over800": false,
-   "exposes": [
-    "OurgoalCommKit"
-   ],
-   "calls": [
-    "core/app-scope",
-    "template-credit"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-379",
-    "TASK-ES-423"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
-   ],
-   "prs": []
   },
   {
    "id": "comm/sub-companions",
@@ -11441,7 +11881,6 @@
    "calledBy": [
     "auth-safety",
     "comm/dm-ledger",
-    "comm/story-card-send",
     "credits",
     "goal-edit-ux",
     "settings/render",
@@ -11895,14 +12334,17 @@
     "기능:",
     "1. extractMetricsFromRecord: 어떤 데이터(자연어 줄글, 표, CSV, 외부 수치)든 자율 메트릭 추출"
    ],
-   "lines": 1614,
-   "over800": true,
+   "lines": 732,
+   "over800": false,
    "exposes": [
     "OurgoalUniversalStats"
    ],
    "calls": [
     "core/confirm",
     "stats-charts",
+    "stats-dashboard",
+    "stats-dashboard-bind",
+    "stats-dashboard-view",
     "stats-data-grid",
     "stats-data-menu",
     "stats-differentiated",
@@ -11920,8 +12362,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [
     "closeModal",
-    "openModal",
-    "toast"
+    "openModal"
    ],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
