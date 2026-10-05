@@ -1,0 +1,8 @@
+{"id":"crew-pacing-nudge","title":"게스트로 홈 「🏃 동반자」를 누르면 페이스메이커 라이브 위젯이 그려져 있고, 「응원 보내기」를 누르면 응원을 보냈다는 토스트가 뜬다 — 옮긴 renderCrewPacingWidget·nudgeCrewMates(js/tabs/comm/crew-pacing.js)가 이전 전과 같이 돈다","steps":[{"do":"goto","path":"/index.html"},{"do":"waitFor","selector":"#btnLandingPreviewDirect"},{"do":"click","selector":"#btnLandingPreviewDirect"},{"do":"waitFor","selector":"#captureInput","timeoutMs":15000},
+{"do":"click","selector":"#homeCompassCrew"},
+{"expect":"visible","selector":"#crewPacingWidget"},
+{"expect":"textContains","selector":"#crewPacingWidget","text":"페이스메이커 라이브"},
+{"expect":"textContains","selector":"#crewPacingWidget","text":"오늘의 1호 완주자가 되어보세요!"},
+{"do":"click","selector":"#btnNudgeCrewMates"},
+{"expect":"textContains","selector":"#toast","text":"오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요!"},
+{"expect":"noExceptions"}]}

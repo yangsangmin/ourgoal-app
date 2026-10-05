@@ -563,4 +563,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-455 | INFRA | [생성 지도 3종 일괄 갱신 · 추가] origin/main 4260afb 합침·재생성, 노션 요약 줄 「— 」 제거(cell-map-publish.js 한 줄) | 코디네이터 [기본값] (2026-10-05) | 4단계(심사 청구)
 - #TASK-ES-465 | INFRA | [시험지 기관 세포 합본] 인라인 어려움 기관 이전 선행 — 합본 도우미가 js/core 인라인 이전 세포도 읽음 + 시험지 4개 읽는 줄 합본으로, 단언·기대값·검사 수 그대로 · 어려움 집계 표 제목 표시 고침 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md | 4단계(심사 청구)
 - #TASK-ES-469 | INFRA | [시험지 인라인 합본 · 어려움 구역 H1 선행] app-evaluation-modal·feed-post-preview-modal 시험지 2개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md
+- #TASK-ES-466 | INFRA | [인라인 어려움 구역 H1 1차] 동반자 페이스·피드 게시 창·평가 창·새 목표 창 네 묶음을 세포 4개로 이전(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md
 - #TASK-ES-475 | INFRA | [시험지 선행 · 인라인 어려움 H3] achievement-graph-multiset 이 인라인 합본을 읽음(읽기 줄 1줄) | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-475-H3-TEST-BUNDLE.md
