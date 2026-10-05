@@ -1,0 +1,39 @@
+{
+  "task": "TASK-ES-416",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-416-DIRECTIVE-CONSTITUTION-ROW.md",
+  "requirements": [
+    { "id": "R1", "text": "K4 A: 지시함 표의 헌법 칸에 커널(실행 정본)과 법령 전문(상세)을 함께 적는 PR — 상민님 병합" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "지시함 표의 헌법 행이 커널 세 사본을 실행 정본으로 지목한다",
+      "touches": ["docs/directives/ACTIVE.md"],
+      "check": { "type": "codeContains", "file": "docs/directives/ACTIVE.md", "text": "| **헌법** — 실행 정본: 커널 `AGENTS.md` · `CLAUDE.md` · `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md`" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "지시함 표가 커널과 법령 전문이 다르면 커널을 따른다고 적는다",
+      "touches": ["docs/directives/ACTIVE.md"],
+      "check": { "type": "codeContains", "file": "docs/directives/ACTIVE.md", "text": "커널과 법령 전문이 다르게 말하면 커널을 따른다(2026-10-05 상민님 결심 K4 A, PR #727)" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "REQ 에 바꾼 위치 표가 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-416-DIRECTIVE-CONSTITUTION-ROW.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-416-DIRECTIVE-CONSTITUTION-ROW.md", "text": "# REQ/PLAN — TASK-ES-416 지시함 표의 헌법 칸" }
+    },
+    {
+      "id": "C4", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "dev_log 에 이 작업 한 줄이 있다",
+      "touches": ["dev_log.md"],
+      "check": { "type": "codeContains", "file": "dev_log.md", "text": "- 2026-10-05 TASK-ES-416: 지시함" }
+    },
+    {
+      "id": "C5", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "TICKETS 에 이 작업 티켓 줄이 있다",
+      "touches": ["docs/rules/TICKETS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/TICKETS.md", "text": "- #TASK-ES-416 | INFRA/지시함 |" }
+    }
+  ]
+}
