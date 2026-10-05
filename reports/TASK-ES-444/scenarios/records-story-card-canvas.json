@@ -1,0 +1,49 @@
+{
+  "id": "records-story-card-canvas",
+  "title": "게스트로 기록 탭 머리의 「갓생 스토리카드」를 누르면 갓생 카드 창이 뜨고 옮긴 9:16 스토리 그리기(generateMzStoryCanvas)가 창 안 캔버스를 그려 「오늘의 MZ 갓생 스토리 카드」 창과 캔버스가 보인다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecStoryCardBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecStoryCardBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "오늘의 MZ 갓생 스토리 카드",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "visible",
+      "selector": "#mzStoryCanvasEl"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

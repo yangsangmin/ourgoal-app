@@ -1,0 +1,53 @@
+{
+  "id": "home-starter-goal",
+  "title": "게스트로 목표가 없는 홈에서 「오늘 목표」 나침반을 눌러 펼친 시트의 「매일 3km 러닝」 스타터를 누르면 옮긴 스타터 목표 만들기(quickCreateStarterGoal)가 목표를 만들고 「첫 갓생 목표가 시작되었어요」 토스트를 띄운다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeCompassQuest",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "do": "waitFor",
+      "selector": "[data-starter=\"running\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "[data-starter=\"running\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "첫 갓생 목표가 시작되었어요"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

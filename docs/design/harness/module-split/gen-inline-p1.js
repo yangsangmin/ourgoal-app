@@ -82,7 +82,8 @@ for (const c of CFG.cells) {
       if (!st.isFunctionDeclaration()) return { st, move: false, why: st.isVariableDeclaration() ? '최상위 변수' : '로드 중 문(' + n.type + ')' };
       const name = n.id.name;
       if (keep.has(name)) return { st, name, move: false, why: '설정 keep: ' + (g.keepWhy || '') };
-      if (SMOKE.has(name)) return { st, name, move: false, why: 'smoke-test FN_NAMES' };
+      // #TASK-ES-441(#751) 뒤로 smoke-test 는 인라인 합본(원문 + js/tabs 세포, L. 접두 제거)에서 함수를 잘라 간다 — 설정이 smokeFromBundle 이면 옮겨도 같은 글자를 찾는다(K. 접두가 생기면 아래 검사에서 멈춘다)
+      if (SMOKE.has(name) && !CFG.smokeFromBundle) return { st, name, move: false, why: 'smoke-test FN_NAMES' };
       const b = iScope.getBinding(name);
       if (!b || b.constantViolations.length) return { st, name, move: false, why: '재대입/중복 선언' };
       if (fnTopUses(st)) return { st, name, move: false, why: '최상위 this/arguments' };
@@ -176,7 +177,7 @@ for (const n of MOVED_NAMES) {
       let repl;
       if (MOVED.has(nm)) {
         if (DECL_CELL[nm] === here) return;
-        if (CELL[DECL_CELL[nm]].kit === CELL[here].kit) repl = 'K.' + nm;
+        if (CELL[DECL_CELL[nm]].kit === CELL[here].kit) { repl = 'K.' + nm; if (SMOKE.has(n)) throw new Error('smoke 함수 안에 K. 접두가 생김(합본 추출이 L. 만 뗀다): ' + n + ' → ' + nm); }
         else { repl = 'L.' + nm; crossImports.add(nm); if (!bridged.has(nm)) bridged.set(nm, { assigned: false, kind: 'moved' }); }
       } else {
         repl = 'L.' + nm;

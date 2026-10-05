@@ -1,0 +1,70 @@
+{
+  "id": "settings-pwa-install-guide",
+  "title": "게스트로 설정 탭의 「설치 안내」를 누르면 옮긴 설치 안내 창(openPwaInstallGuideModal)이 뜨고, 「Android」 탭을 누르면 옮긴 탭 전환(switchPwaOsTab)이 그 탭을 활성으로 바꾸며, 「확인했습니다」를 누르면 옮긴 확인(confirmPwaInstall)이 창을 닫고 「홈화면 아이콘으로 빠르게 접속하세요」 토스트를 띄운다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnPwaInstallGuide",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#btnPwaInstallGuide"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalPwaInstallGuide"
+    },
+    {
+      "do": "click",
+      "selector": "#btnPwaOsAndroid"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnPwaOsAndroid",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnPwaOsIos",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#btnConfirmPwaInstall"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "홈화면 아이콘으로 빠르게 접속하세요"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalPwaInstallGuide"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
