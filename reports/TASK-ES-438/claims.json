@@ -548,33 +548,16 @@
   {
    "id": "C35",
    "req": "R4",
-   "kind": "static",
-   "domain": "config",
+   "kind": "withdrawn",
    "statement": "기준선: module-guard --update 로 인라인 32509",
-   "touches": [
-    "docs/architecture/module-baseline.json"
-   ],
-   "check": {
-    "file": "docs/architecture/module-baseline.json",
-    "type": "codeContains",
-    "text": "\"inlineScriptLines\": 32509,"
-   }
+   "withdrawnReason": "origin/main(#752 P1-1) 합치면서 기준선은 규칙대로 main 판을 받고 module-guard --update 로 다시 만들어, 합치기 전 32509 기록 줄이 기준선 이력에 남지 않음 — 합치기 전 측정은 reports/TASK-ES-438/test-compare.json(C28)에 그대로 있고, 합친 뒤 값은 C44"
   },
   {
    "id": "C36",
    "req": "R4",
-   "kind": "static",
-   "domain": "config",
+   "kind": "withdrawn",
    "statement": "인라인 지도를 이 PR 의 index.html 로 다시 만들었다(IIFE 32487줄)",
-   "touches": [
-    "docs/architecture/inline-script-map.json"
-   ],
-   "check": {
-    "file": "docs/architecture/inline-script-map.json",
-    "type": "jsonPath",
-    "path": "totals.iifeLines",
-    "equals": 32487
-   }
+   "withdrawnReason": "origin/main 합친 뒤 인라인 지도를 이 PR 의 index.html 로 다시 만들어 IIFE 줄 수가 바뀜(32487 → 31249) — 합친 뒤 값은 C45"
   },
   {
    "id": "C37",
@@ -683,6 +666,38 @@
     "type": "jsonPath",
     "path": "differingValues",
     "equals": 3
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "main 합친 뒤 module-guard --update 기준선 마지막 기록의 인라인 줄 31271",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/module-baseline.json",
+    "type": "jsonPath",
+    "path": "history.32.metrics.inlineScriptLines",
+    "equals": 31271
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "main 합친 뒤 인라인 지도를 이 PR 의 index.html 로 다시 만들었다(IIFE 31249줄)",
+   "touches": [
+    "docs/architecture/inline-script-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-script-map.json",
+    "type": "jsonPath",
+    "path": "totals.iifeLines",
+    "equals": 31249
    }
   }
  ]
