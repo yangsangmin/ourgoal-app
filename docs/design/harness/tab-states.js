@@ -23,6 +23,14 @@ async function clickReal(page, target) {
       el = [...pool].find(e => e.textContent.replace(/\s+/g, ' ').includes(t.text)) || null;
     }
     if (!el) return { found: false };
+    // [#TASK-ES-509] 접힌 <details> 의 내용(자기 summary 제외)은 그려지지 않는다 — getBoundingClientRect 는 0 이 아니라서
+    //   예전에는 "가려진 채 누름"(뒤에 깔린 요소를 가리킴)으로 잘못 적었다. 사람도 먼저 펼쳐야 보이므로 「보이지 않음(접힌 details)」으로 돌려준다.
+    for (let p = el.parentElement; p; p = p.parentElement) {
+      if (p.tagName === 'DETAILS' && !p.open && !(el.closest('summary') && el.closest('summary').parentElement === p)) {
+        const lab0 = (e) => e.id ? '#' + e.id : e.tagName.toLowerCase() + (typeof e.className === 'string' && e.className.trim() ? '.' + e.className.trim().split(/\s+/)[0] : '');
+        return { found: true, inClosedDetails: true, label: lab0(el), details: lab0(p) };
+      }
+    }
     el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
     { const q = el.getBoundingClientRect(); if (q.top < 0 || q.bottom > innerHeight) window.scrollTo({ top: scrollY + q.top - innerHeight / 2 + q.height / 2, behavior: 'instant' }); } // scrollIntoView 가 문서 스크롤을 못 옮기는 경우(설정 탭에서 실측) 문서 좌표로 다시 옮긴다
     const r = el.getBoundingClientRect();
@@ -32,6 +40,7 @@ async function clickReal(page, target) {
     return { found: true, x, y, w: r.width, h: r.height, covered: !!top && !el.contains(top), by: lab(top), label: lab(el) };
   }, target);
   if (!info.found) return { clicked: false, note: '누를 요소 없음: ' + JSON.stringify(target) };
+  if (info.inClosedDetails) return { clicked: false, hidden: 'details-closed', note: info.label + ' 보이지 않음(접힌 details ' + info.details + ' 안 — 먼저 펼쳐야 보인다)' };
   if (info.w < 1 || info.h < 1) return { clicked: false, note: info.label + ' 크기 0(보이지 않음)' };
   await sleep(150);
   await page.mouse.click(info.x, info.y);
@@ -46,6 +55,8 @@ const VISIBLE_FN = (sel) => {
   for (let x = e; x && x !== document.documentElement; x = x.parentElement) {
     const cs = getComputedStyle(x);
     if (x.hidden || cs.display === 'none' || cs.visibility === 'hidden') return false;
+    // [#TASK-ES-509] 접힌 details 의 내용(자기 summary 제외)은 보이지 않는다
+    if (x !== e && x.tagName === 'DETAILS' && !x.open && !(e.closest('summary') && e.closest('summary').parentElement === x)) return false;
   }
   const r = e.getBoundingClientRect();
   return r.width > 0 && r.height > 0;
@@ -189,4 +200,4 @@ async function goTab(page, tab) {
   return { ok: active === 'screen-' + tab, note: '활성 화면=' + active + (tries > 0 ? ' · 탭 버튼 다시 누름 ' + Math.min(tries, 2) + '회' : ''), retried: tries > 0 };
 }
 
-module.exports = { STATES, TAB_NOTES, boot, goTab, clickReal, sleep };
+module.exports = { STATES, TAB_NOTES, boot, goTab, clickReal, sleep, VISIBLE_FN };
