@@ -166,6 +166,7 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/comm-dm-ledger-es366.test.js'); // #TASK-ES-366 DM·동반자 서버 원장 통로(COMM-03·04)·동반자 자기 키만
   // #TASK-ES-404 DM 대화방은 최신 50건(60건 중 m11~m60)을 오름차순으로 · 팀 대화방 최신 100건 · 읽음 표시·실시간 수신 그대로
   runNode('tests/dm-latest-50-es404.test.js');
+  runNode('tests/team-level-accordion-es406.test.js'); // #TASK-ES-406 팀 수준별 목표 관리 아코디언: 클릭 1회 펼침·2회 접힘·다시 렌더 뒤 유지(일괄 접기가 저장값 존중)
   runNode('tests/direct-login-guard.test.js'); // #TASK-ES-368 CORE-13 빠른 복구 잠금(A 백업 기기에서 세션 없이/B 세션으로 복구 시 A 데이터 0건)
   runNode('tests/google-session-guard.test.js'); // #TASK-ES-373 CORE-14 구글 로그인 서버 검증 세션(위조·무서명 자격증명 입장 0, 검증 성공 시 세션 uid)
   runNode('tests/dev-host-gate.test.js'); // #TASK-ES-372 테스터 B 직통 입장은 로컬 개발 호스트에서만(운영 주소 ?debug=true 로 버튼 0개·직접 호출 입장 0회)

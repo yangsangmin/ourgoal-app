@@ -1,0 +1,55 @@
+{
+ "note": "작업자 PC 예비 실행(판정 아님). court/lib/scenario.js runScenario 를 그대로 불러 git archive 기준 사본(origin/main 0529229)과 작업 폴더를 각각 정적 서버로 띄워 돌림",
+ "scenario": "reports/TASK-ES-406/scenarios/team-level-accordion.json",
+ "base": {
+  "passed": false,
+  "failedStep": 12,
+  "failKind": "expect",
+  "exceptions": 0,
+  "steps": [
+   "1 ok /index.html",
+   "2 ok #btnLandingPreviewDirect → 보이는 요소 1개",
+   "3 ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+   "4 ok #homeAddGoal → 보이는 요소 1개",
+   "5 ok 클릭 button \"목표\" 57x50px",
+   "6 ok 클릭 button#btnGoalsSubTeam \"👥 팀목표\" 46x44px",
+   "7 ok 클릭 button \"🏋️ 운동 크루\" 101x44px",
+   "8 ok 클릭 button#tgQuickJoinSampleBtn \"👀 1초 체험\" 103x44px",
+   "9 ok #teamGoalsView [data-tglevelaccordion] → 보이는 글자: [\"팀 수준별 목표 관리 (A·B·C조 맞춤 · 0개 조) ▼\"]",
+   "10 ok #teamGoalsView [data-tglevelbody] → 보이는 요소 0개",
+   "11 ok 클릭 div \"팀 수준별 목표 관리 (A·B·C조 맞춤 · 0개 조)\" 297x69px",
+   "12 FAIL #teamGoalsView [data-tglevelbody] → 보이는 글자: []"
+  ]
+ },
+ "work": {
+  "passed": true,
+  "failedStep": null,
+  "failKind": null,
+  "exceptions": 0,
+  "steps": [
+   "1 ok /index.html",
+   "2 ok #btnLandingPreviewDirect → 보이는 요소 1개",
+   "3 ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+   "4 ok #homeAddGoal → 보이는 요소 1개",
+   "5 ok 클릭 button \"목표\" 57x50px",
+   "6 ok 클릭 button#btnGoalsSubTeam \"👥 팀목표\" 46x44px",
+   "7 ok 클릭 button \"🏋️ 운동 크루\" 101x44px",
+   "8 ok 클릭 button#tgQuickJoinSampleBtn \"👀 1초 체험\" 103x44px",
+   "9 ok #teamGoalsView [data-tglevelaccordion] → 보이는 글자: [\"팀 수준별 목표 관리 (A·B·C조 맞춤 · 0개 조) ▼\"]",
+   "10 ok #teamGoalsView [data-tglevelbody] → 보이는 요소 0개",
+   "11 ok 클릭 div \"팀 수준별 목표 관리 (A·B·C조 맞춤 · 0개 조)\" 297x69px",
+   "12 ok #teamGoalsView [data-tglevelbody] → 보이는 글자: [\"🎯 목표별 수준관리 (크루 전체 이번 달...) 🌐 팀 통합 수준관리 (기본 조) 💡 현재 선택된 목표 전용 조 목록입니다. 현재 선택된 \"]",
+   "13 ok team-level-accordion--level-accordion-open.png sha256=8ce15d982a5f80d2",
+   "14 ok 클릭 div \"팀 수준별 목표 관리 (A·B·C조 맞춤 · 0개 조)\" 297x69px",
+   "15 ok #teamGoalsView [data-tglevelbody] → 보이는 요소 0개",
+   "16 ok 클릭 div \"팀 수준별 목표 관리 (A·B·C조 맞춤 · 0개 조)\" 297x69px",
+   "17 ok #teamGoalsView [data-tglevelbody] → 보이는 글자: [\"🎯 목표별 수준관리 (크루 전체 이번 달...) 🌐 팀 통합 수준관리 (기본 조) 💡 현재 선택된 목표 전용 조 목록입니다. 현재 선택된 \"]",
+   "18 ok 클릭 button \"🌐 팀 통합 수준관리 (기본 조)\" 129x63px",
+   "19 ok #teamGoalsView [data-tglevelbody] → 보이는 글자: [\"🎯 목표별 수준관리 (크루 전체 이번 달...) 🌐 팀 통합 수준관리 (기본 조) 💡 팀 전반에 공통 적용되는 기본 조 목록입니다. A조 \"]",
+   "20 ok 클릭 button \"자세히보기\" 77x44px",
+   "21 ok #modalSheet → 보이는 글자: [\"✕ 수준별 목표 상세 관리 🏋️ 크로스핏 와드(WOD) 정복대 (팀 통합 기본 조) 달성률 33% 조/그룹 이름 (수정 가능) 이름 저장 요약\"]",
+   "22 ok team-level-accordion--level-group-modal.png sha256=cd430ebe4170086e",
+   "23 ok 행동 이후 미처리 예외 0건"
+  ]
+ }
+}
