@@ -1,0 +1,141 @@
+{
+ "runner": "court/lib/scenario.js runScenario 로컬(scenario-local-components.js), 기준 = origin/main eb9e6e4 git archive 사본, 작업 = 이 브랜치 HEAD git archive 사본",
+ "allPassedBoth": true,
+ "scenarios": {
+  "goals-schedule-setup-save": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 4,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 4,
+    "exceptions": [],
+    "steps": [
+     "1 goto ok /index.html",
+     "2 waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 waitFor ok .navbtn[data-tab=\"goals\"] → 보이는 요소 1개",
+     "5 click ok 클릭 button \"목표\" 57x50px",
+     "6 waitFor ok #sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal → 보이는 요소 1개",
+     "7 click ok 클릭 button \"+ 담기\" 62x44px",
+     "8 textContains ok #toast → 보이는 글자: [\"⚡ '10km 마라톤 완주 로드맵' 템플릿이 내 목표에 1초 만에 담겼습니다! 🎉\"]",
+     "9 waitFor ok #screen-goals button.schedule-pill-btn[data-schedlevel=\"ms\"][data-schedmsid$=\"_1\"] → 보이는 요소 1개",
+     "10 click ok 클릭 button \"📅 D-14\" 68x44px",
+     "11 waitFor ok #schedSaveBtn → 보이는 요소 1개",
+     "12 textContains ok #modalOverlay → 보이는 글자: [\"✕ 🗓️ 마일스톤 일정 설정 1단계 시작하기 (기초 세팅) 시작일 (선택) 종료/마감일 오늘 마감 내일 마감 오늘부터 1주일 오늘부터 1달 일\"]",
+     "13 click ok 클릭 button#schedPresetTomorrow \"내일 마감\" 68x44px",
+     "14 click ok 클릭 button#schedSaveBtn \"일정 저장\" 83x44px",
+     "15 textContains ok #toast → 보이는 글자: [\"일정이 저장되었습니다 ✨\"]",
+     "16 notVisible ok #schedSaveBtn → 보이는 요소 0개",
+     "17 noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  "goals-agent-send": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 2,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 2,
+    "exceptions": [],
+    "steps": [
+     "1 goto ok /index.html",
+     "2 waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 waitFor ok .navbtn[data-tab=\"goals\"] → 보이는 요소 1개",
+     "5 click ok 클릭 button \"목표\" 57x50px",
+     "6 waitFor ok #sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal → 보이는 요소 1개",
+     "7 click ok 클릭 button \"+ 담기\" 62x44px",
+     "8 textContains ok #toast → 보이는 글자: [\"⚡ '10km 마라톤 완주 로드맵' 템플릿이 내 목표에 1초 만에 담겼습니다! 🎉\"]",
+     "9 waitFor ok #btnToggleGoalAgent → 보이는 요소 1개",
+     "10 click ok 클릭 div#btnToggleGoalAgent \"✨ AI 목표 어시스턴트 (말로 마일스톤·할 일 추가)\" 289x42px",
+     "11 waitFor ok #goalAgentInput → 보이는 요소 1개",
+     "12 type ok 입력 input#goalAgentInput \"\" 214x48px",
+     "13 click ok 클릭 button#goalAgentSendBtn \"보내기\" 67x44px",
+     "14 textContains ok #toast → 보이는 글자: [\"요청을 처리하지 못했어요 · 다시 시도해주세요\"]",
+     "15 noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  "goals-milestone-celebrate": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 3,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 3,
+    "exceptions": [],
+    "steps": [
+     "1 goto ok /index.html",
+     "2 waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 waitFor ok .navbtn[data-tab=\"goals\"] → 보이는 요소 1개",
+     "5 click ok 클릭 button \"목표\" 57x50px",
+     "6 waitFor ok #sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal → 보이는 요소 1개",
+     "7 click ok 클릭 button \"+ 담기\" 62x44px",
+     "8 textContains ok #toast → 보이는 글자: [\"⚡ '10km 마라톤 완주 로드맵' 템플릿이 내 목표에 1초 만에 담겼습니다! 🎉\"]",
+     "9 waitFor ok #screen-goals .ms-status.doing → 보이는 요소 1개",
+     "10 click ok 클릭 div \"\" 22x22px",
+     "11 textContains ok #modalOverlay → 보이는 글자: [\"✕ 달성 · 마일스톤 돌파 마일스톤 돌파 달성! 🏆 대박! 마일스톤 정복을 축하해! 🏆 1단계 시작하기 (기초 세팅) 다음은 \\\"2단계 꾸준히\"]",
+     "12 textContains ok #modalOverlay → 보이는 글자: [\"✕ 달성 · 마일스톤 돌파 마일스톤 돌파 달성! 🏆 대박! 마일스톤 정복을 축하해! 🏆 1단계 시작하기 (기초 세팅) 다음은 \\\"2단계 꾸준히\"]",
+     "13 noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  "home-checkin-ai-feedback": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 1,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "nonVacuousExpects": 1,
+    "exceptions": [],
+    "steps": [
+     "1 goto ok /index.html",
+     "2 waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 waitFor ok .navbtn[data-tab=\"home\"] → 보이는 요소 1개",
+     "5 click ok 클릭 button \"홈\" 57x50px",
+     "6 waitFor ok #captureInput → 보이는 요소 1개",
+     "7 type ok 입력 textarea#captureInput \"\" 301x48px",
+     "8 click ok 클릭 button#captureSave \"오늘 실천 완료 ✨ (+10 EXP)\" 231x52px",
+     "9 textContains ok #toast → 보이는 글자: [\"AI 응답량이 많아 고품질 추천 엔진으로 즉시 보답해 드렸습니다 ✨\"]",
+     "10 noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  }
+ }
+}

@@ -1,0 +1,80 @@
+{
+  "id": "goals-schedule-setup-save",
+  "title": "게스트로 목표 탭 빈 화면에서 「10km 마라톤 완주 로드맵」 템플릿을 담은 뒤 첫 마일스톤의 일정 알약을 누르면 옮긴 일정 설정 창(openScheduleSetupModal)이 「마일스톤 일정 설정」으로 뜨고, 「내일 마감」→「일정 저장」을 누르면 옮긴 저장(applyScheduleUpdate)이 「일정이 저장되었습니다」 토스트를 띄우고 창이 닫힌다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "템플릿이 내 목표에"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-goals button.schedule-pill-btn[data-schedlevel=\"ms\"][data-schedmsid$=\"_1\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-goals button.schedule-pill-btn[data-schedlevel=\"ms\"][data-schedmsid$=\"_1\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#schedSaveBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "마일스톤 일정 설정"
+    },
+    {
+      "do": "click",
+      "selector": "#schedPresetTomorrow"
+    },
+    {
+      "do": "click",
+      "selector": "#schedSaveBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "일정이 저장되었습니다"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#schedSaveBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
