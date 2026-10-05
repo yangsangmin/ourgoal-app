@@ -560,3 +560,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-456 | INFRA | [인라인 G076 허브 창 세포 이동 · 안티그래비티 검수] openCalendarDayEditHubModal 을 js/tabs/calendar/day-edit-hub.js 로(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-456-AGY-G076.md
 - #TASK-ES-455 | INFRA | [생성 지도 3종 일괄 갱신] module-baseline·cell-map·inline-script-map(.md) 를 main 3232cc2 기준 재생성, 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-05), REQ docs/specs/REQ-TASK-ES-455-GENERATED-MAPS-SYNC.md | 4단계(심사 청구)
 - #TASK-ES-455 | INFRA | [생성 지도 3종 일괄 갱신 · 추가] origin/main 4260afb 합침·재생성, 노션 요약 줄 「— 」 제거(cell-map-publish.js 한 줄) | 코디네이터 [기본값] (2026-10-05) | 4단계(심사 청구)
+- #TASK-ES-469 | INFRA | [시험지 인라인 합본 · 어려움 구역 H1 선행] app-evaluation-modal·feed-post-preview-modal 시험지 2개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md
