@@ -1,0 +1,27 @@
+{
+  "id": "home-layout-switch-challenge-room",
+  "title": "게스트로 설정 탭 「홈 구성 고르기」에서 꺼져 있던 「내 성장 확인하기 버튼」 스위치를 켜고 홈에 가면 #homeChallengeRoomBtn 이 보이고, 누르면 기록 탭으로 간다 — 고치기 전에는 같은 숨김 규칙(.home-actions)에 갇혀 켜도 보이지 않았고, 누름 처리기도 목표가 있을 때만 걸렸다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "waitFor", "selector": "details:has(#homeLayoutOpenBtn) > summary", "timeoutMs": 10000 },
+    { "do": "click", "selector": "details:has(#homeLayoutOpenBtn) > summary" },
+    { "do": "waitFor", "selector": "#homeLayoutOpenBtn", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#homeLayoutOpenBtn" },
+    { "do": "waitFor", "selector": ".switch[data-kf1-id=\"homeChallengeRoomBtn\"]", "timeoutMs": 5000 },
+    { "expect": "attr", "selector": ".switch[data-kf1-id=\"homeChallengeRoomBtn\"]", "name": "aria-checked", "equals": "false" },
+    { "do": "click", "selector": ".switch[data-kf1-id=\"homeChallengeRoomBtn\"]" },
+    { "expect": "attr", "selector": ".switch[data-kf1-id=\"homeChallengeRoomBtn\"]", "name": "aria-checked", "equals": "true" },
+    { "do": "click", "selector": "#kf1DoneBtn" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"home\"]" },
+    { "expect": "visible", "selector": "#homeAddGoal", "timeoutMs": 10000 },
+    { "expect": "visible", "selector": "#homeChallengeRoomBtn", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#homeChallengeRoomBtn" },
+    { "expect": "hasClass", "selector": "#screen-records", "className": "active", "timeoutMs": 5000 },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"records\"]", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "id": "home-layout-switch-mz-share",
+  "title": "게스트로 설정 탭 「홈 구성 고르기」에서 「내 성장 자랑하기 버튼」 스위치를 끄고 홈에 가면 #mzShareBtn 이 사라지고, 다시 켜고 홈에 가면 보인다 — 고치기 전에는 4개 테마 공통 숨김 규칙(.home-actions, !important)이 이겨서 켜도 보이지 않는 죽은 스위치였다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]",
+      "name": "aria-checked",
+      "equals": "true"
+    },
+    {
+      "do": "click",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]"
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]",
+      "name": "aria-checked",
+      "equals": "false"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1DoneBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#mzShareBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]",
+      "name": "aria-checked",
+      "equals": "false"
+    },
+    {
+      "do": "click",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]"
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"mzShareBtn\"]",
+      "name": "aria-checked",
+      "equals": "true"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1DoneBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "visible",
+      "selector": "#mzShareBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
