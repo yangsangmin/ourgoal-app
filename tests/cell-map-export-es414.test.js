@@ -119,6 +119,16 @@ check('노션 본문: 두 번 만들면 같고, 되읽기 대조가 세포 전�
   assert.deepStrictEqual(broken.missing, [a.cells[0].id]);
 });
 
+// #TASK-ES-418 구조도 이름표: 세포마다 짧은 이름(손으로 쓴 것 우선 → 「하는 일」 첫 구절 → id)
+check('세포마다 짧은 이름표(name)가 있고, 손 이름이 없으면 하는 일 첫 구절·id 순으로 대신한다', () => {
+  for (const c of a.cells) assert.ok(typeof c.name === 'string' && c.name.trim().length > 0, `${c.id}: name`);
+  const dm = a.cells.find(c => c.id === 'team-dm-room');
+  assert.strictEqual(dm.name, 'DM 대화방');
+  assert.strictEqual(dm.nameSource, 'hand');
+  assert.strictEqual(exporter.shortName('', 'DM 대화방 화면 — 메시지 보기', 'x'), 'DM 대화방 화면');
+  assert.strictEqual(exporter.shortName(undefined, '홈 탭 전체를 총괄한다', 'home/index'), 'home/index');
+});
+
 const failed = results.filter(r => !r.ok);
 results.forEach(r => console.log((r.ok ? '  통과 ' : '  실패 ') + r.name + (r.ok ? '' : ' — ' + r.msg)));
 console.log(`cell-map-export 부품 시험: ${results.length - failed.length}/${results.length}`);
