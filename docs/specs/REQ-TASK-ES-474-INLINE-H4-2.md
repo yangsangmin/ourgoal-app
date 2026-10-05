@@ -42,7 +42,7 @@ DOM `#weeklyRecapBtn` · `#recMiniPulseBar` · `#btnRecapOpenCanvas` · `#btnRec
 | verify | ok · 토큰 동일 · 남은 글자 동일 · 이중 처리기 0 (`reports/TASK-ES-474/verify-inline-hard.json`) |
 | 새 파일 줄 수 | 621 · 310 · 666 (800 이하) |
 | 원본 단독 로드 | 회귀 0, 새 파일 3개 단독 로드 ok (`module-load-probe.json`) |
-| tests 전후 | 종료 코드 같음, npm test 통과·실패 수 같음, smoke 443/0 (`test-compare.json`) |
+| tests 전후 | 작업 npm test 종료 0 · smoke 443/0(기준 사본 같음). 종료 코드가 갈린 시험지 1개(tests/cell-map-export-es414.test.js)는 기준 사본이 git archive 로 풀어 이력이 없어 실패하고 작업 트리에서는 통과 — 회귀 아님 (`test-compare.json`) |
 | 게스트 조작 비교 | 21단계 기준 대 후 차이 0 · 기준 대 기준 0 (`dom-compare-inline-h4.json`) |
 | 게스트 시나리오 | 3개 기준·작업 통과 (`scenario-local.json`) |
 

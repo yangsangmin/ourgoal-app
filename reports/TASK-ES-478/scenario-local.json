@@ -1,0 +1,39 @@
+{
+ "task": "TASK-ES-478",
+ "note": "작업자 로컬 예비 실행(판정 아님). court/lib/scenario.js runScenario + static-server + 법정 호스트. 기준 = origin/main git archive 사본.",
+ "scenarios": {
+  "records-recap-real-duration": {
+   "base": {
+    "passed": false,
+    "failedStep": 15,
+    "failDetail": ".s-rc-metric → 보이는 요소 1개"
+   },
+   "work": {
+    "passed": true,
+    "provesBehavior": true
+   }
+  },
+  "records-stats-no-fake-streak": {
+   "base": {
+    "passed": false,
+    "failedStep": 10,
+    "failDetail": ".rec-stats-summary-card .rec-stats-summary-item → 보이는 요소 3개"
+   },
+   "work": {
+    "passed": true,
+    "provesBehavior": true
+   }
+  },
+  "records-stats-real-streak": {
+   "base": {
+    "passed": false,
+    "failedStep": 14,
+    "failDetail": ".rec-stats-summary-card → 보이는 글자: [\"총 몰입 시간 0분 포커스 스트릭 3일 연속 🔥 총 실천 횟수 1회 완주\"]"
+   },
+   "work": {
+    "passed": true,
+    "provesBehavior": true
+   }
+  }
+ }
+}

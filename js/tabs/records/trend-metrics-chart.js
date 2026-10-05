@@ -139,16 +139,16 @@
     }
 
     // [4단계 개편: 3대 핵심 요약 카드 및 엄지 스위처]
-    var streakVal = (L.state && L.state.profile && L.state.profile.streak) || 3;
-    var trendPulseCards = '<div class="rec-stats-summary-card" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">' +
+    var streakVal = (typeof L.computeStreakDays === 'function') ? (Number(L.computeStreakDays()) || 0) : 0; /* [#TASK-ES-478] 아무도 채우지 않는 profile.streak || 3(가짜 「3일 연속」) → 홈 스트릭과 같은 실제 값, 0 이면 칸을 뺀다 */
+    var trendPulseCards = '<div class="rec-stats-summary-card" style="display:grid;grid-template-columns:repeat(' + (streakVal > 0 ? 3 : 2) + ',1fr);gap:6px;margin-bottom:12px;">' +
       '<div class="rec-stats-summary-item" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:0.7rem;color:var(--ink-faint);">총 몰입 시간</div>' +
         '<div style="font-size:0.875rem;font-weight:800;color:var(--brand);margin-top:2px;">' + L.fmtDuration(tData.totalMs) + '</div>' +
       '</div>' +
-      '<div class="rec-stats-summary-item" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
+      (streakVal > 0 ? '<div class="rec-stats-summary-item" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:0.7rem;color:var(--ink-faint);">포커스 스트릭</div>' +
         '<div style="font-size:0.875rem;font-weight:800;color:#f59e0b;margin-top:2px;">' + streakVal + '일 연속 🔥</div>' +
-      '</div>' +
+      '</div>' : '') +
       '<div class="rec-stats-summary-item" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:0.7rem;color:var(--ink-faint);">총 실천 횟수</div>' +
         '<div style="font-size:0.875rem;font-weight:800;color:#38bdf8;margin-top:2px;">' + tData.totalCount + '회 완주</div>' +
