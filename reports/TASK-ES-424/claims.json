@@ -112,6 +112,21 @@
         "file": "docs/rules/TICKETS.md",
         "text": "- #TASK-ES-424 | FIX/버그 | [세포지도 --check 순환]"
       }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "갱신 절차 문서가 --check 는 도장을 빼고 내용만 비교한다고 적는다",
+      "touches": [
+        "scripts/cell-map-sync.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-sync.md",
+        "text": "   # --check 는 기준 커밋 도장(source.commit·short·committedAt·subject)을 빼고 내용만 비교한다(#TASK-ES-424)"
+      }
     }
   ]
 }
