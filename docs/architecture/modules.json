@@ -551,8 +551,8 @@
       "capabilities": [
         {
           "name": "xp.award",
-          "description": "EXP 를 지급한다(합계 더하기 + 이력 맨 앞에 기록, 200건 상한) — 저장은 state.profile.settings.xp(기기). 0 보다 크면 축하 팝업, 홈 링에 알림",
-          "sideEffect": "local",
+          "description": "EXP 를 지급한다(합계 더하기 + 이력 맨 앞에 기록, 200건 상한) — 저장은 로그인 세션 사용자는 서버 원장 user_ledger_docs[xp](기기 사본·대기열 ourgoal_ledger_cache_<uid>), 게스트·세션 없는 로그인은 state.profile.settings.xp(기기). 0 보다 크면 축하 팝업, 홈 링에 알림",
+          "sideEffect": "server",
           "needsConfirm": false,
           "input": {
             "amount": "number",
