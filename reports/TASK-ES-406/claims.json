@@ -47,17 +47,31 @@
       "req": "R1",
       "kind": "behavior",
       "change": "fix",
-      "symptom": 12,
+      "symptom": 11,
       "domain": "ui-behavior",
-      "statement": "렌더 직후 일괄 접기가 사용자가 펼친 수준별 본문을 다시 접지 않아, 첫 클릭 뒤 본문 글자가 화면에 남는다(기준 커밋에서는 단계 12에서 본문이 보이지 않음)",
+      "statement": "게스트가 「팀 수준별 목표 관리」 머리를 눌러 펼친 뒤 「팀 연계」→「팀목표」 서브탭으로 돌아와 팀 목표 화면을 다시 그려도(렌더 직후 일괄 접기) 본문 글자가 계속 보인다 — 기준 커밋에서는 클릭 직후(단계 11) 본문이 보이지 않음",
       "touches": [
         "index.html",
         "js/team-visibility-levels.js"
       ],
-      "scenario": "scenarios/team-level-accordion.json"
+      "scenario": "scenarios/team-level-accordion-rerender.json"
     },
     {
       "id": "C3",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 11,
+      "domain": "ui-behavior",
+      "statement": "머리를 누르면 화살표에 rotated(펼침 표시)가 붙고 본문이 보이며, 다시 누르면 rotated 가 빠지고 본문이 사라진다 — 기준 커밋에서는 클릭 직후(단계 11) 화살표에 rotated 가 없음",
+      "touches": [
+        "index.html",
+        "js/team-visibility-levels.js"
+      ],
+      "scenario": "scenarios/team-level-accordion-feedback.json"
+    },
+    {
+      "id": "C4",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -72,7 +86,7 @@
       }
     },
     {
-      "id": "C4",
+      "id": "C5",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -87,7 +101,7 @@
       }
     },
     {
-      "id": "C5",
+      "id": "C6",
       "req": "R2",
       "kind": "static",
       "domain": "config",
@@ -102,7 +116,7 @@
       }
     },
     {
-      "id": "C6",
+      "id": "C7",
       "req": "R2",
       "kind": "static",
       "domain": "config",
@@ -117,7 +131,7 @@
       }
     },
     {
-      "id": "C7",
+      "id": "C8",
       "req": "R2",
       "kind": "static",
       "domain": "config",
@@ -132,7 +146,7 @@
       }
     },
     {
-      "id": "C8",
+      "id": "C9",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -147,7 +161,7 @@
       }
     },
     {
-      "id": "C9",
+      "id": "C10",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -162,7 +176,7 @@
       }
     },
     {
-      "id": "C10",
+      "id": "C11",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -177,7 +191,7 @@
       }
     },
     {
-      "id": "C11",
+      "id": "C12",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -192,7 +206,7 @@
       }
     },
     {
-      "id": "C12",
+      "id": "C13",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -208,7 +222,7 @@
       }
     },
     {
-      "id": "C13",
+      "id": "C14",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -224,7 +238,7 @@
       }
     },
     {
-      "id": "C14",
+      "id": "C15",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -240,7 +254,7 @@
       }
     },
     {
-      "id": "C15",
+      "id": "C16",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -256,7 +270,7 @@
       }
     },
     {
-      "id": "C16",
+      "id": "C17",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -272,7 +286,7 @@
       }
     },
     {
-      "id": "C17",
+      "id": "C18",
       "req": "R4",
       "kind": "static",
       "domain": "config",
@@ -288,7 +302,7 @@
       }
     },
     {
-      "id": "C18",
+      "id": "C19",
       "req": "R4",
       "kind": "static",
       "domain": "config",
@@ -304,7 +318,7 @@
       }
     },
     {
-      "id": "C19",
+      "id": "C20",
       "req": "R6",
       "kind": "static",
       "domain": "config",
@@ -319,7 +333,7 @@
       }
     },
     {
-      "id": "C20",
+      "id": "C21",
       "req": "R6",
       "kind": "static",
       "domain": "config",
@@ -334,7 +348,7 @@
       }
     },
     {
-      "id": "C21",
+      "id": "C22",
       "req": "R6",
       "kind": "static",
       "domain": "config",
@@ -349,7 +363,7 @@
       }
     },
     {
-      "id": "C22",
+      "id": "C23",
       "req": "R5",
       "kind": "static",
       "domain": "config",
@@ -365,7 +379,7 @@
       }
     },
     {
-      "id": "C23",
+      "id": "C24",
       "req": "R5",
       "kind": "static",
       "domain": "config",
@@ -381,7 +395,7 @@
       }
     },
     {
-      "id": "C24",
+      "id": "C25",
       "req": "R5",
       "kind": "static",
       "domain": "config",
@@ -397,7 +411,7 @@
       }
     },
     {
-      "id": "C25",
+      "id": "C26",
       "req": "R5",
       "kind": "static",
       "domain": "config",
