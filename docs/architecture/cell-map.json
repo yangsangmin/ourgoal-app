@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "75b87d418d25dfde18ad6a4ca687160f93fe742b",
-  "short": "75b87d4",
-  "committedAt": "2026-10-05T19:37:45+09:00",
-  "subject": "[INFRA] #TASK-ES-446 chore: Merge origin/main(#756·#757) — index.html 은 기록 탭 script 태그 줄을 합치고, 생성 파일은 main 판을 받아 module-specs --write·module-guard --update·inline-script-map --write 로 다시 만듦"
+  "commit": "708e836d3f4c3d0262168812425d6db2d2e02c8d",
+  "short": "708e836",
+  "committedAt": "2026-10-05T20:00:53+09:00",
+  "subject": "[INFRA] #TASK-ES-439 chore: Merge origin/main(#754~#757) — index.html 충돌은 main 판을 입력으로 생성기를 다시 돌려 해결, 생성 파일은 main 판을 받아 module-specs --write·module-guard --update·inline-script-map --write 로 다시 만듦, 측정 다시 잼"
  },
  "summary": {
-  "cells": 201,
-  "files": 200,
-  "jsLines": 57172,
+  "cells": 203,
+  "files": 202,
+  "jsLines": 57494,
   "kinds": {
    "organ": 29,
-   "tab": 66,
+   "tab": 68,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 201,
+  "descriptionsHand": 203,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 29970,
-   "functionDecls": 586
+   "inlineScriptLines": 29759,
+   "functionDecls": 582
   },
   "health": {
-   "undifferentiatedLines": 29970,
+   "undifferentiatedLines": 29759,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 66,
+   "count": 68,
    "large": 6,
-   "small": 60
+   "small": 62
   },
   {
    "key": "hybrid",
@@ -146,6 +146,7 @@
     "records/index",
     "records/ai-feedback",
     "records/ai-feedback-providers",
+    "records/checkin-capture",
     "records/heatmap-summary",
     "records/period-ai-card",
     "records/photo-proof",
@@ -159,7 +160,7 @@
     "records/sub-timer",
     "records/table-analytics-view"
    ],
-   "lines": 3012,
+   "lines": 3243,
    "over800": 0
   },
   {
@@ -213,6 +214,7 @@
     "settings/index",
     "settings/adaptive-ux",
     "settings/pwa-install",
+    "settings/quick-actions",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -221,7 +223,7 @@
     "settings/sub-profile",
     "settings/sub-security"
    ],
-   "lines": 1818,
+   "lines": 1909,
    "over800": 0
   },
   {
@@ -3482,6 +3484,7 @@
     "goals/starter-goal",
     "records/ai-feedback",
     "records/ai-feedback-providers",
+    "records/checkin-capture",
     "records/heatmap-summary",
     "records/period-ai-card",
     "records/photo-proof",
@@ -3493,6 +3496,7 @@
     "records/table-analytics-view",
     "settings/adaptive-ux",
     "settings/pwa-install",
+    "settings/quick-actions",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -3712,6 +3716,7 @@
     "home/sub-heatmap",
     "home/sub-quest",
     "home/sub-today",
+    "records/checkin-capture",
     "records/index",
     "records/sub-retrospect",
     "records/sub-timeline",
@@ -3968,7 +3973,8 @@
     "core/event-bus"
    ],
    "calledBy": [
-    "core/registry"
+    "core/registry",
+    "records/checkin-capture"
    ],
    "readsFromIndexHtml": [
     "state"
@@ -6607,14 +6613,7 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": [
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "sanctuary-calendar-views",
@@ -6670,14 +6669,7 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": [
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "sanctuary-focus-timer",
@@ -6737,14 +6729,7 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": [
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "sanctuary-goal-trail",
@@ -6803,14 +6788,7 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": [
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "sanctuary-peer-radar",
@@ -6867,14 +6845,7 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": [
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "sanctuary-record-feed",
@@ -6932,14 +6903,7 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": [
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "sanctuary-v3-engine",
@@ -7018,38 +6982,24 @@
     "contributes": []
    },
    "tasks": [
+    "TASK-ES-201",
     "TASK-ES-231",
     "TASK-ES-232",
     "TASK-ES-241",
     "TASK-ES-246",
     "TASK-ES-331",
-    "TASK-ES-362",
-    "TASK-ES-429",
-    "TASK-ES-433"
+    "TASK-ES-362"
    ],
    "reqs": [
+    "docs/specs/REQ-TASK-ES-201-ALL-TABS-UX-REMEDIATION.md",
     "docs/specs/REQ-TASK-ES-231-COMPANION-INVITE-SEARCH.md",
     "docs/specs/REQ-TASK-ES-232-LOCKSCREEN-SCHEDULE-CARD.md",
     "docs/specs/REQ-TASK-ES-241-CALENDAR-WEEK-THEME-CONTRAST.md",
     "docs/specs/REQ-TASK-ES-246-COMM-PEER-RADAR-SLIM-FOLD.md",
     "docs/specs/REQ-TASK-ES-331-HOME-TAB-REFINEMENT.md",
-    "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md",
-    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
-    "docs/specs/REQ-TASK-ES-433-STORYCARD-ENTRY.md"
+    "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md"
    ],
    "prs": [
-    {
-     "number": 748,
-     "task": "TASK-ES-433",
-     "title": "[FIX] #TASK-ES-433 fix: 갓생 카드 창 진입 단추 복원 — 홈 「내 성장 자랑하기」·「내 성장 확인하기」·기록 「📸 갓생 스토리카드」",
-     "date": "2026-10-05"
-    },
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    },
     {
      "number": 676,
      "task": "TASK-ES-362",
@@ -7085,6 +7035,18 @@
      "task": "TASK-ES-231",
      "title": "feat/2026-09-23-task-es-231-companion-invite-search",
      "date": "2026-09-23"
+    },
+    {
+     "number": 364,
+     "task": null,
+     "title": "[E2] #TASK-ES-202 feat: 기록/통계 5대 UX 전면 개편 (보관함 3개전면/5개페이징·1줄퀵독압축·히트맵4주일자요약·성취통계요약카드스위처·서브탭동기화)",
+     "date": "2026-09-21"
+    },
+    {
+     "number": 358,
+     "task": "TASK-ES-201",
+     "title": "[FIX] #TASK-ES-201 feat: 전수 6대 탭 상단 배너·모드 네비게이션 4대 결함 전수 일괄 정상화",
+     "date": "2026-09-21"
     }
    ]
   },
@@ -7144,14 +7106,7 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
    ],
-   "prs": [
-    {
-     "number": 747,
-     "task": "TASK-ES-429",
-     "title": "[E2] #TASK-ES-429 refactor: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(동작 그대로, #745 대체)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "stats-charts",
@@ -9710,14 +9665,7 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
-   "prs": [
-    {
-     "number": 752,
-     "task": "TASK-ES-436",
-     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "goals/ai-local-fallback",
@@ -9824,14 +9772,7 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
-   "prs": [
-    {
-     "number": 752,
-     "task": "TASK-ES-436",
-     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "goals/goal-detail-events",
@@ -10278,14 +10219,7 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
-   "prs": [
-    {
-     "number": 752,
-     "task": "TASK-ES-436",
-     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "goals/starter-goal",
@@ -10921,14 +10855,7 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
-   "prs": [
-    {
-     "number": 752,
-     "task": "TASK-ES-436",
-     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "records/ai-feedback",
@@ -10981,14 +10908,63 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
    ],
-   "prs": [
-    {
-     "number": 752,
-     "task": "TASK-ES-436",
-     "title": "[INFRA] #TASK-ES-436 refactor: 인라인 스크립트 세포화 P1 구역 1차 — 목표 AI·일정 설정·기록 AI 피드백 8묶음 함수 28개 세포 이전(인라인 −1,235줄, 동작 그대로)",
-     "date": "2026-10-05"
-    }
-   ]
+   "prs": []
+  },
+  {
+   "id": "records/checkin-capture",
+   "file": "js/tabs/records/checkin-capture.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "체크인 저장",
+   "nameSource": "hand",
+   "does": "홈 체크인 입력칸에 글자수를 보여 주고, 「기록」을 누르면 오늘 실천을 기록으로 저장한 뒤 XP·축하·AI 피드백을 이어 준다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Checkin Capture (기록 — 홈 체크인 입력 글자수 힌트·기록 저장 처리기)",
+    "홈 체크인 입력칸(#captureInput) 글자수 힌트 처리기와 「기록」 단추(#captureSave) 저장 처리기 — 기록 추가·XP·축하·AI 피드백·노션 전송까지 이전 전과 같은 순서로 돈다.",
+    "두 처리기는 index.html 로드 중 바로 걸리던 문이다. 본문을 bindCaptureLiveMeta · bindCaptureSave 로 감싸 옮기고, index.html 원래 자리에서 그 함수를 부른다(등록 순서 보존, 이중 처리기 0).",
+    "입력칸 요소를 담은 상태 변수(liveMeta · liveCount · capInput)와 사진 대기값(pendingCapturePhoto)은 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
+   ],
+   "lines": 231,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/event-bus",
+    "core/store"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [
+    "checkin:created",
+    "record:saved"
+   ],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-439"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
+   ],
+   "prs": []
   },
   {
    "id": "records/heatmap-summary",
@@ -11928,6 +11904,57 @@
     "docs/specs/REQ-TASK-ES-234-IOS-PWA-GUIDE.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "settings/quick-actions",
+   "file": "js/tabs/settings/quick-actions.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "설정 빠른 동작",
+   "nameSource": "hand",
+   "does": "설정의 보안 카드(앱 잠금 PIN 상태)를 칠하고 점검하며, 다른 기기 로그아웃 확인 창을 열고, 테마 견본을 고른다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Settings Quick Actions (설정 탭 — 보안 카드·테마 견본 빠른 동작)",
+    "설정 탭 보안 카드 칠하기(paintSecurityCard) · 보안 상태 점검(refreshSecurityStatus) · 다른 기기 로그아웃 확인 창 열기(killDeviceSession) · 테마 견본 고르기(selectThemeSwatch).",
+    "window.paintSecurityCard 는 js/tabs/settings/sub-security.js 가 찾는다 — 노출 줄은 index.html 원래 자리에 그대로 있다.",
+    "같은 묶음의 소통 허브 세 함수(switchCommSubTab·triggerFloatingReaction·openInAppDmSheet)는 옮기지 않았다 — 그 단추를 담은 #commHubGrid 가 인라인 display:none !important 로 숨어 있어 게스트 화면에서 잴 수 없다(별도 티켓)."
+   ],
+   "lines": 91,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-439"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
    ],
    "prs": []
   },
@@ -13912,9 +13939,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalThemeSystem"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
