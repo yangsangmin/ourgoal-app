@@ -1,0 +1,45 @@
+{
+  "id": "core-gcal-sync",
+  "title": "게스트로 일정 탭의 구글 캘린더 「+ 연동」 배지를 누르면 구글 계정 연결을 시도하고(바깥 통신이 막힌 환경) 「구글 캘린더 연동에 실패했어요 · 설정을 확인해주세요」 토스트가 뜬다 — 구글 캘린더 연결 창·연결 시도·토큰 받기(openGoogleCalendarConnectModal·tryConnectGoogleCalendar·requestGoogleToken 등)를 기관 세포 js/core/gcal-sync.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calGcalMiniBadge",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#calGcalMiniBadge"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "구글 캘린더 연동에 실패했어요",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

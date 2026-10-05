@@ -2,7 +2,7 @@
  * OurGoal Streak & App Badge (기관 — 연속 기록·보호권·앱 아이콘 배지)
  *
  * 연속 기록 일수 계산·보호권(프리즈) 지급/사용·아바타 제작 보너스·연속 기록 배지 글자·앱 아이콘 배지 숫자(「폰 잠금화면에서 바로 보기 통합 허브 모달」 묶음 중 기관 몫).
- * #TASK-ES-486(인라인 어려움 기관 묶음 이전 2차): index.html 인라인 IIFE 의 구간(이전 전 8792~8799 · 8800~8820 · 8821~8830 · 8831~8831 · 8832~8841 · 8842~8856 · 8857~8868줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-486(인라인 어려움 기관 묶음 이전 2차): index.html 인라인 IIFE 의 구간(이전 전 7534~7541 · 7542~7562 · 7563~7572 · 7573~7573 · 7574~7583 · 7584~7598 · 7599~7610줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 8792~8799줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7534~7541줄(#TASK-ES-486 생성기 표지) ---- */
   function streakBadgeHtml(streak){
     var tier, flames;
     if(streak>=30){ tier='streak-t4'; flames='🔥🔥🔥'; }
@@ -23,7 +23,7 @@
     else { tier='streak-t1'; flames='🔥'; }
     return '<span class="streak-pill '+tier+'">'+flames+' '+streak+'일 연속</span>';
   }
-  /* ---- 이전 전 index.html 8800~8820줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7542~7562줄(#TASK-ES-486 생성기 표지) ---- */
   function computeStreakDays(){
     var recs = L.state.profile.records;
     var frozen = (L.state.profile.settings.streakFreeze && L.state.profile.settings.streakFreeze.usedDates) || [];
@@ -45,7 +45,7 @@
     }
     return streak;
   }
-  /* ---- 이전 전 index.html 8821~8830줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7563~7572줄(#TASK-ES-486 생성기 표지) ---- */
   /* PWA 앱 배지: 홈 화면 아이콘에 스트릭 일수 표시. 미지원 브라우저·비PWA에서는 no-op, 절대 throw하지 않는다 — 성장 백로그 P0 ⑥ */
   function updateAppBadge(streak){
     try{
@@ -56,9 +56,9 @@
       return true;
     } catch(e){ return false; }
   }
-  /* ---- 이전 전 index.html 8831~8831줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7573~7573줄(#TASK-ES-486 생성기 표지) ---- */
   var STREAK_FREEZE_MAX = 3;
-  /* ---- 이전 전 index.html 8832~8841줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7574~7583줄(#TASK-ES-486 생성기 표지) ---- */
   function maybeGrantStreakFreeze(){
     var sf = L.state.profile.settings.streakFreeze;
     if(!sf) return false;
@@ -69,7 +69,7 @@
     sf.available = Math.min(STREAK_FREEZE_MAX, sf.available + 1);
     return true;
   }
-  /* ---- 이전 전 index.html 8842~8856줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7584~7598줄(#TASK-ES-486 생성기 표지) ---- */
   function maybeApplyStreakFreeze(){
     var sf = L.state.profile.settings.streakFreeze;
     if(!sf || sf.available <= 0) return false;
@@ -85,7 +85,7 @@
     sf.usedDates.push(yKey);
     return true;
   }
-  /* ---- 이전 전 index.html 8857~8868줄(#TASK-ES-486 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7599~7610줄(#TASK-ES-486 생성기 표지) ---- */
   function maybeGrantAvatarCraftBonus(){
     if(!L.state.profile || !L.state.profile.settings) return false;
     var streak = computeStreakDays();

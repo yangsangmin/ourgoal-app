@@ -15,7 +15,7 @@ const ROOT = path.join(__dirname, '..');
 const levels = require(path.join(ROOT, 'js', 'team-visibility-levels.js'));
 const linkedExports = require(path.join(ROOT, 'js', 'team-linked-goals.js'));
 const linked = linkedExports.OurgoalTeamLinkedGoals || global.OurgoalTeamLinkedGoals;
-const indexHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'));
 
 let failures = 0;
 function check(title, fn) {
