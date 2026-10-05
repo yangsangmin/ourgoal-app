@@ -1,0 +1,234 @@
+{
+ "task": "TASK-ES-462",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md",
+ "requirements": [
+  {
+   "id": "R2",
+   "text": "PWA 설치 안내 창 switchPwaOsTab: 선택한 OS 단계만 보이게."
+  },
+  {
+   "id": "R3",
+   "text": "목표 탭 빈 화면 #goalTemplateHeroCard 한 번만."
+  },
+  {
+   "id": "R5",
+   "text": "관리자 복구 syncServerRecords 가 없는 renderHomeScreen 호출 → renderHome."
+  },
+  {
+   "id": "R6",
+   "text": "성소 위클리 리캡 카드(및 같은 가짜 값을 쓰는 기록 히트맵 카드)의 || 3 가짜 스트릭·하드코딩 Lv.1 → 실제 값, 없으면 표시 생략."
+  },
+  {
+   "id": "R7",
+   "text": "기록 탭 윗줄(성소 기록 모드 줄) 단추가 375px 에서 넘침 → 넘침 없이."
+  },
+  {
+   "id": "R8",
+   "text": "목표 0개 게스트 홈 「오늘 목표」 시트에 3대 퀘스트가 그려지게(renderHome 조기 반환)."
+  },
+  {
+   "id": "R10",
+   "text": "설정 홈 구성 목록의 레벨 배지 항목 문구를 화면 사실대로(배지 되살리기·항목 삭제 금지)."
+  },
+  {
+   "id": "R11",
+   "text": "목표 상세 서랍 #goalDetailDrawer 진입로(기존 카드 동작 유지) + 마일스톤 토글 저장 확인."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 10,
+   "domain": "ui-behavior",
+   "statement": "게스트가 설정 탭 「설치 안내」(#btnPwaInstallGuide)를 누르면 홈화면 추가 안내 창에 iOS 3단계만 보이고, 「🤖 Android (Chrome)」 탭을 누르면 Android 3단계만 보이며 iOS 단계는 사라진다 — 고치기 전에는 ui.css .pwa-step-grid 의 display:grid !important 가 인라인 display:none 을 이겨 두 OS 단계가 늘 함께 보였다",
+   "touches": [
+    "ui.css"
+   ],
+   "scenario": "scenarios/settings-pwa-os-tab-switch.json"
+  },
+  {
+   "id": "C2",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 8,
+   "domain": "ui-behavior",
+   "statement": "목표 0개 게스트가 목표 탭에 들어가면 「추천 목표 템플릿 백과사전」 카드(#goalTemplateHeroCard)가 문서에 하나만 있고(성소 목표 화면 안), 그 카드의 「+ 담기」를 누르면 목표가 생겨 카드가 사라진다 — 고치기 전에는 숨은 #personalGoalsEmptyGuideSlot 에 같은 id 카드가 하나 더 그려졌다",
+   "touches": [
+    "js/tabs/goals/render.js"
+   ],
+   "scenario": "scenarios/goals-template-hero-single.json"
+  },
+  {
+   "id": "C3",
+   "req": "R6",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 15,
+   "domain": "ui-behavior",
+   "statement": "게스트가 홈에서 한 줄 체크인을 저장한 뒤 기록 탭 「🎬 위클리 리캡 카드」를 누르면 리캡 카드의 스트릭 줄이 실제 값 「1일 연속 스트릭 달성 🔥」로 보인다(홈 스트릭과 같은 computeStreakDays) — 고치기 전에는 아무도 채우지 않는 profile.streak || 3 으로 늘 「3일 연속」이 찍혔다",
+   "touches": [
+    "js/sanctuary-weekly-recap.js"
+   ],
+   "scenario": "scenarios/records-recap-real-streak.json"
+  },
+  {
+   "id": "C4",
+   "req": "R6",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 10,
+   "domain": "ui-behavior",
+   "statement": "기록이 하나도 없는 게스트가 기록 탭 「📈 히트맵·통계」를 누르면 히트맵 카드에 「0개 실천」만 보이고 「N일 연속 몰입」 줄이 없으며, 「🎬 위클리 리캡 카드」를 눌러도 스트릭 줄이 없다 — 고치기 전에는 기록 0건에도 가짜 「3일 연속 몰입」·「3일 연속 스트릭 달성」이 찍혔다",
+   "touches": [
+    "js/sanctuary-weekly-recap.js",
+    "js/sanctuary-v3-engine.js"
+   ],
+   "scenario": "scenarios/records-no-fake-streak.json"
+  },
+  {
+   "id": "C5",
+   "req": "R7",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 9,
+   "domain": "ui-behavior",
+   "statement": "375px 화면에서 게스트가 기록 탭에 들어가면 성소 기록 모드 줄(#sRecModesWrap)이 화면 폭 안에서 세 칸 같은 너비(105px×3)로 나뉘고, 「📝 실천 타임라인」·「🎬 위클리 리캡 카드」 오른쪽 끝을 눌러도 눌려 리캡 카드가 열린다 — 고치기 전에는 칸이 minmax(min-content) 라 117+119+132px 로 늘어나 341px 칸을 넘쳐 오른쪽 단추가 화면 밖으로 잘렸다",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "scenario": "scenarios/records-mode-row-375.json"
+  },
+  {
+   "id": "C6",
+   "req": "R8",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 8,
+   "domain": "ui-behavior",
+   "statement": "목표가 하나도 없는 게스트가 홈 「🎯 오늘 목표」(#homeCompassQuest)를 누르면 시트에 「⚡ 오늘의 3대 퀘스트」(#dailyQuestBarWrap)가 바로 보이고, 퀘스트 「할일 1개 완료」 줄을 누르면 시트가 닫히고 목표 탭으로 간다 — 고치기 전에는 renderHome 이 목표 0개에서 조기 반환해 퀘스트 막대를 한 번도 그리지 않았다",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/home-sheet-zero-goals-quest.json"
+  },
+  {
+   "id": "C7",
+   "req": "R10",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 10,
+   "domain": "ui-behavior",
+   "statement": "게스트가 설정 「화면 & 홈 구성」을 펼쳐 「홈 구성 고르기」를 누르면 홈 구성 목록의 잠긴 항목이 「아바타 & 경험치 바」·「아바타 카드에 들어 있어요」로 화면 사실대로 보이고 항목은 그대로 있다 — 고치기 전에는 홈에서 내린(TASK-ES-140) 「아바타 & 레벨 배지」가 항상 켜짐으로 표시됐다",
+   "touches": [
+    "index.html",
+    "js/customize.js"
+   ],
+   "scenario": "scenarios/settings-home-layout-level-badge-label.json"
+  },
+  {
+   "id": "C8",
+   "req": "R11",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 8,
+   "domain": "ui-behavior",
+   "statement": "게스트가 목표 탭에서 추천 템플릿을 담아 목표를 만든 뒤 트레일 머리의 「📋 상세 보기」(#sGoalDetailBtn)를 누르면 오른쪽 목표 상세 서랍(#goalDetailDrawer)에 진척도와 「핵심 마일스톤」이 보이고, 첫 마일스톤 체크를 누르면 진척도가 0% 에서 올라가며, 새로 고쳐 다시 들어와도 그 체크가 남아 있다 — 고치기 전에는 서랍을 여는 단추가 없었고 서랍 체크는 저장하지 않았다",
+   "touches": [
+    "js/sanctuary-goal-trail.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-detail-drawer-entry.json"
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "로그인 사용자가 설정의 관리자 복구(서버 기록 강제 동기화)를 홈 탭에서 실행해 서버 기록·목표가 들어오면 syncServerRecords 가 예외 없이 true 를 돌려주고 renderHome 으로 홈을 다시 그린다(고치기 전에는 renderHomeScreen ReferenceError 가 catch 에 삼켜져 false·홈 미갱신). 작업자 측정: tests/sync-server-records-render-home.test.js — index.html 함수 본문을 글자 그대로 꺼내 실제 js/account-isolation.js 와 돌림, 기준 실패·작업 통과",
+   "touches": [
+    "index.html",
+    "tests/sync-server-records-render-home.test.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "who": "로그인 계정(Supabase 인증 토큰) + 실서버 /api/track(sync_records) — 게스트는 syncServerRecords 첫 줄들(getSupabaseAuthToken 없음)에서 false 로 돌아가 홈 분기에 닿지 않는다. 대신 노드 시험 tests/sync-server-records-render-home.test.js 로 함수 본문을 그대로 돌려 잼",
+    "how": [
+     "로그인 계정으로 홈 탭을 연다",
+     "설정의 관리자 복구(서버 기록 강제 동기화)를 실행한다",
+     "콘솔에 syncServerRecords failed 가 없고 홈이 서버 기록으로 다시 그려지는지 본다",
+     "또는 node tests/sync-server-records-render-home.test.js 가 기준에서 실패·작업에서 통과하는지 본다"
+    ],
+    "cannotBecause": "needs-login"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이번 변경으로 가짜 스트릭(profile.streak || 3)·하드코딩 Lv.1 글자 5곳이 지워지고 새로 생긴 곳은 0이다",
+   "touches": [
+    "reports/TASK-ES-462/constraints.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-462/constraints.json",
+    "path": "fakeStreakOrLevelAdded",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이번 변경(index.html·ui.css·js)의 추가된 줄에 !important 가 0줄이다(주석 제외) — PWA 단계는 !important 한 줄을 지워서 고쳤다",
+   "touches": [
+    "reports/TASK-ES-462/constraints.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-462/constraints.json",
+    "path": "addedLinesWithImportant",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "추가된 줄에 숨김 패턴(display:none·visibility:hidden·left:-9999px·.stash·opacity:0)이 0줄이다",
+   "touches": [
+    "reports/TASK-ES-462/constraints.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-462/constraints.json",
+    "path": "addedLinesWithHidingPattern",
+    "equals": 0
+   }
+  }
+ ],
+ "outOfScopeReports": {
+  "note": "보고만 — 이 PR 범위 아님(코드 변경 0, 주장 없음). 근거는 REQ 원칙 ④와 PR 본문, 별도 티켓 후보.",
+  "items": [
+   {
+    "id": "R1",
+    "text": "챌린지 룸 창 openChallengeRoomModal 미연결 — 방 10개가 하드코딩 가짜 사람·인원(GUARD_02·제13조)이라 진입로를 붙이지 않음"
+   },
+   {
+    "id": "R4",
+    "text": "가려진 버튼(#checkinFeedbackTierBar·#btnModeGamified 등) — 닫힌 details 안이라 생긴 측정 착시, 펼친 뒤 375·390·1280 기준에서도 진짜 마우스로 눌림(reports/TASK-ES-462/occlusion-check.json). 고칠 겹침 없음"
+   },
+   {
+    "id": "R9",
+    "text": "tests/desktop-widget-suite.test.js 실패 — 시험이 #TASK-ES-353 이전 renderCalendar 를 가짜 window 로 줌(제품은 renderCalendarScreen 이 맞음). 시험 안 고침"
+   }
+  ]
+ }
+}

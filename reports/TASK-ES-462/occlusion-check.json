@@ -1,0 +1,58 @@
+{
+ "task": "TASK-ES-462",
+ "note": "항목 4 측정(판정 아님, 주장 아님): 닫힌 details 를 펼친 뒤 법정 실행기의 진짜 마우스 클릭(elementFromPoint 검사 포함)이 기준 커밋에서 눌리는지. 기준 = origin/main 9258f117.",
+ "runs": {
+  "occl-1280": {
+   "basePassed": true,
+   "steps": [
+    "1280x800",
+    "클릭 summary \"🤖 AI 피드백 모드 설정 설정 열기 ▾\" 380x27px",
+    "클릭 button \"🔍 중간 (궤적분석)\" 112x44px",
+    "#checkinFeedbackTierBar [data-fbtier=\"medium\"] → class=\"tier-btn active\"",
+    "클릭 button \"설정\" 68x52px",
+    "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 404x78px",
+    "클릭 button#btnModeGamified \"게임\" 117x44px",
+    "#btnModeGamified → class=\"mode-chip active\"",
+    "클릭 button#btnModeAnalyst \"분석\" 117x44px",
+    "#btnModeAnalyst → class=\"mode-chip active\"",
+    "클릭 button#btnModeMinimal \"미니멀\" 131x44px",
+    "#btnModeMinimal → class=\"mode-chip active\""
+   ]
+  },
+  "occl-375": {
+   "basePassed": true,
+   "steps": [
+    "375x812",
+    "클릭 summary \"🤖 AI 피드백 모드 설정 설정 열기 ▾\" 315x27px",
+    "클릭 button \"🔍 중간 (궤적분석)\" 112x44px",
+    "#checkinFeedbackTierBar [data-fbtier=\"medium\"] → class=\"tier-btn active\"",
+    "클릭 button \"설정\" 57x50px",
+    "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px",
+    "클릭 button#btnModeGamified \"게임\" 95x44px",
+    "#btnModeGamified → class=\"mode-chip active\"",
+    "클릭 button#btnModeAnalyst \"분석\" 95x44px",
+    "#btnModeAnalyst → class=\"mode-chip active\"",
+    "클릭 button#btnModeMinimal \"미니멀\" 109x44px",
+    "#btnModeMinimal → class=\"mode-chip active\""
+   ]
+  },
+  "occl-390": {
+   "basePassed": true,
+   "steps": [
+    "390x844",
+    "클릭 summary \"🤖 AI 피드백 모드 설정 설정 열기 ▾\" 330x27px",
+    "클릭 button \"🔍 중간 (궤적분석)\" 112x44px",
+    "#checkinFeedbackTierBar [data-fbtier=\"medium\"] → class=\"tier-btn active\"",
+    "클릭 button \"설정\" 59x52px",
+    "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 354x96px",
+    "클릭 button#btnModeGamified \"게임\" 100x44px",
+    "#btnModeGamified → class=\"mode-chip active\"",
+    "클릭 button#btnModeAnalyst \"분석\" 100x44px",
+    "#btnModeAnalyst → class=\"mode-chip active\"",
+    "클릭 button#btnModeMinimal \"미니멀\" 114x44px",
+    "#btnModeMinimal → class=\"mode-chip active\""
+   ]
+  }
+ },
+ "cause": "닫힌 <details> 의 내용은 getBoundingClientRect 가 0 이 아니라 감사 도구가 보이는 요소로 셌고, 그 좌표 elementFromPoint 는 뒤 요소(#homeCompassCrew·하단 탭)를 돌려줬다. 펼치면 375·390·1280 모두 눌린다."
+}

@@ -1,0 +1,86 @@
+{
+  "id": "settings-pwa-os-tab-switch",
+  "title": "게스트가 설정 탭 「설치 안내」(#btnPwaInstallGuide)를 누르면 홈화면 추가 안내 창에 iOS 3단계만 보이고, 「🤖 Android (Chrome)」 탭을 누르면 Android 3단계만 보이며 iOS 단계는 사라진다 — 고치기 전에는 ui.css .pwa-step-grid 의 display:grid !important 가 인라인 display:none 을 이겨 두 OS 단계가 늘 함께 보였다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnPwaInstallGuide"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalPwaInstallGuide",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "visible",
+      "selector": "#pwaGuideIosSteps"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#pwaGuideAndroidSteps"
+    },
+    {
+      "do": "click",
+      "selector": "#btnPwaOsAndroid"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnPwaOsAndroid",
+      "className": "active"
+    },
+    {
+      "expect": "visible",
+      "selector": "#pwaGuideAndroidSteps"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#pwaGuideIosSteps"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#pwaGuideAndroidSteps",
+      "text": "앱 설치"
+    },
+    {
+      "do": "click",
+      "selector": "#btnPwaOsIos"
+    },
+    {
+      "expect": "visible",
+      "selector": "#pwaGuideIosSteps"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#pwaGuideAndroidSteps"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

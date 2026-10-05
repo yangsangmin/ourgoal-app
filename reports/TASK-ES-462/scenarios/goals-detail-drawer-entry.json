@@ -1,0 +1,102 @@
+{
+  "id": "goals-detail-drawer-entry",
+  "title": "게스트가 목표 탭에서 추천 템플릿을 담아 목표를 만든 뒤 트레일 머리의 「📋 상세 보기」(#sGoalDetailBtn)를 누르면 오른쪽 목표 상세 서랍(#goalDetailDrawer)에 진척도와 「핵심 마일스톤」이 보이고, 첫 마일스톤 체크를 누르면 진척도가 0% 에서 올라가며, 새로 고쳐 다시 들어와도 그 체크가 남아 있다 — 고치기 전에는 서랍을 여는 단추가 없었고 서랍 체크는 저장하지 않았다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#goalTemplateHeroCard .template-quick-card:nth-child(1) .btn-quick-adopt-goal"
+    },
+    {
+      "expect": "visible",
+      "selector": "#sGoalDetailBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#sGoalDetailBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#goalDetailDrawer",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDrawerBody",
+      "text": "핵심 마일스톤"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDrawerBody",
+      "text": "목표 진척도: 0%"
+    },
+    {
+      "do": "click",
+      "selector": "#goalDrawerBody > div:nth-of-type(2) > div:nth-of-type(1) > span:first-child"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDrawerBody > div:nth-of-type(2) > div:nth-of-type(1)",
+      "text": "✅"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#goalDrawerBody .goal-progress-fill[style*=\"width:0%\"]"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#sGoalDetailBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#goalDetailDrawer",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDrawerBody > div:nth-of-type(2) > div:nth-of-type(1)",
+      "text": "✅"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

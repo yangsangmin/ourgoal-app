@@ -173,7 +173,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
       </div>
       <div class="toss-headline" id="homeHeadlineSentence">오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨</div>
-      <div id="levelBadgeRow" data-home-widget="levelBadgeRow" data-widget-label="아바타 & 레벨 배지" data-widget-hint="내 아바타, 레벨, 경험치 바 (상단 고정)" data-widget-fixed="true"></div>
+      <div id="levelBadgeRow" data-home-widget="levelBadgeRow" data-widget-label="아바타 & 경험치 바" data-widget-hint="홈 맨 위 아바타 카드에 들어 있어요 — 따로 보이는 레벨 배지는 없어요(상단 고정)" data-widget-fixed="true"></div>
       <!-- 📦 [TASK-ES-304] 배선/검증 전용 슬롯 (화면 비침범 은폐) -->
       <div id="ogTaskWireSlot" style="display:none;" aria-hidden="true">
       <!-- 🧑‍🚀 [TASK-ES-278 / 노션 26] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현 -->
@@ -2678,7 +2678,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get wireCategoryPicker(){ return wireCategoryPicker; }
   });
   /* [어려움 이음매 자리 H2] */
-  /* [#TASK-ES-462] js/tabs/goals/goals-ia-actions.js · js/tabs/goals/template-encyclopedia.js · js/tabs/records/archive-toggle.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  /* [#TASK-ES-481] js/tabs/goals/goals-ia-actions.js · js/tabs/goals/template-encyclopedia.js · js/tabs/records/archive-toggle.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var switchGoalsSubTab = _goalsKit.switchGoalsSubTab;
   var switchGoalStatPeriod = _goalsKit.switchGoalStatPeriod;
   var renderGoalStatsChart = _goalsKit.renderGoalStatsChart;
@@ -4428,7 +4428,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
         } catch(e){}
         if(state.activeTab === 'records') renderRecordsScreen();
-        else if(state.activeTab === 'home') renderHomeScreen();
+        else if(state.activeTab === 'home') renderHome(); /* [#TASK-ES-462] 없는 renderHomeScreen 을 부르던 것 → 실제 홈 렌더 함수 */
         else if(state.activeTab === 'calendar') renderCalendarScreen();
         else if(state.activeTab === 'settings') renderSettingsScreen();
       }
@@ -9945,6 +9945,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           if(addBtn) addBtn.click();
         };
       }
+      renderTodayGlancePill(); renderDailyQuestBar(); if(window.OurgoalCustomize) OurgoalCustomize.apply(state.profile.settings); /* [#TASK-ES-462] 목표 0개여도 함수 끝과 같은 마무리(오늘 요약·3대 퀘스트·홈 구성 적용) — 조기 반환이 건너뛰던 것 */
       return;
     }
     var subGoals = goals.slice(1);
@@ -15018,7 +15019,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _subtabTplType = 'ai';         // 'ai' | 'real'
   var _subtabTplCat = 'all';
   var _subtabTplQuery = '';
-  /* [#TASK-ES-462] ROUTINE_TEMPLATES_AI · ROUTINE_TEMPLATES_REAL · TEAM_TEMPLATES_AI · TEAM_TEMPLATES_REAL · PERSONAL_TEMPLATES_REAL · renderTemplateEncyclopediaScreen → js/tabs/goals/template-encyclopedia.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
+  /* [#TASK-ES-481] ROUTINE_TEMPLATES_AI · ROUTINE_TEMPLATES_REAL · TEAM_TEMPLATES_AI · TEAM_TEMPLATES_REAL · PERSONAL_TEMPLATES_REAL · renderTemplateEncyclopediaScreen → js/tabs/goals/template-encyclopedia.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.renderTemplateEncyclopediaScreen = renderTemplateEncyclopediaScreen;
   window._subtabTplDomain = _subtabTplDomain;
   window._subtabTplType = _subtabTplType;
@@ -15045,7 +15046,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
   window.selectSmartTag = selectSmartTag;
-  /* [#TASK-ES-462] switchGoalsSubTab → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
+  /* [#TASK-ES-481] switchGoalsSubTab → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.switchGoalsSubTab = switchGoalsSubTab;
 
   function handleGoalFastAddSubmit(){
@@ -15125,6 +15126,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     g.progress = Math.round((doneCount / g.milestones.length) * 100);
     openGoalDetailDrawer(goalId);
     if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+    saveProfile().catch(function(e){ console.warn('[TASK-ES-462] 마일스톤 저장 실패', e); }); /* [#TASK-ES-462] 서랍 토글은 메모리만 바꾸고 저장하지 않았다 → 성소 트레일 토글과 같은 saveProfile(서버 goals upsert + 기기 사본) */
   }
   window.openGoalDetailDrawer = openGoalDetailDrawer;
   window.closeGoalDetailDrawer = closeGoalDetailDrawer;
@@ -15175,10 +15177,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.toggleRoutineStamp = toggleRoutineStamp;
 
   window.currentGoalStatPeriod = 'week';
-  /* [#TASK-ES-462] switchGoalStatPeriod · renderGoalStatsChart → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
+  /* [#TASK-ES-481] switchGoalStatPeriod · renderGoalStatsChart → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.switchGoalStatPeriod = switchGoalStatPeriod;
   window.renderGoalStatsChart = renderGoalStatsChart;
-  /* [#TASK-ES-462] adoptTemplateAsMyGoal → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
+  /* [#TASK-ES-481] adoptTemplateAsMyGoal → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.adoptTemplateAsMyGoal = adoptTemplateAsMyGoal;
 
   /* ============ [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS ============ */
@@ -15217,7 +15219,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
   window.switchRecFusionMode = switchRecFusionMode;
-  /* [#TASK-ES-462] toggleRecordArchive → js/tabs/records/archive-toggle.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
+  /* [#TASK-ES-481] toggleRecordArchive → js/tabs/records/archive-toggle.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.toggleRecordArchive = toggleRecordArchive;
 
   window._quickStopwatchRunning = false;
