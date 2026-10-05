@@ -1,0 +1,118 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "reach-guest-base",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [
+  "getDeviceId",
+  "getDeviceLoginTime",
+  "setDeviceLoginTime",
+  "performLogout",
+  "checkRemoteSessionRevoked"
+ ],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 첫 화면 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "67bb6583576d8d96",
+   "opened": null,
+   "calls": {
+    "getDeviceId": 2
+   }
+  },
+  {
+   "name": "② 기록 탭(탭 전환 때 원격 로그아웃 감지가 돈다) #screen-records",
+   "present": true,
+   "visible": true,
+   "textHash": "fc7bc23110582a5b",
+   "textLen": 558,
+   "attrsHash": "e1424b895461c1ae",
+   "opened": null,
+   "calls": {
+    "getDeviceId": 2
+   }
+  },
+  {
+   "name": "③ 설정 탭 #screen-settings",
+   "present": true,
+   "visible": true,
+   "textHash": "662cd8b7b3ecc669",
+   "textLen": 753,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null,
+   "counts": {
+    "logoutBtn": 1
+   },
+   "calls": {
+    "getDeviceId": 5,
+    "checkRemoteSessionRevoked": 1,
+    "getDeviceLoginTime": 1
+   }
+  },
+  {
+   "name": "④ 설정 로그인 기기 목록 #activeDevicesContainer",
+   "present": true,
+   "visible": true,
+   "textHash": "e3b0c44298fc1c14",
+   "textLen": 0,
+   "attrsHash": "576f6d74687b58a0",
+   "opened": null,
+   "calls": {
+    "getDeviceId": 5,
+    "checkRemoteSessionRevoked": 1,
+    "getDeviceLoginTime": 1
+   }
+  },
+  {
+   "name": "⑤ 로그아웃 단추 → 로그인 화면 #authScreen",
+   "present": true,
+   "visible": true,
+   "textHash": "5623bf98e1fcef26",
+   "textLen": 215,
+   "attrsHash": "122bfc4fc04d9022",
+   "opened": true,
+   "counts": {
+    "appShellActive": 0
+   },
+   "calls": {
+    "getDeviceId": 5,
+    "checkRemoteSessionRevoked": 1,
+    "getDeviceLoginTime": 1,
+    "performLogout": 1
+   }
+  },
+  {
+   "name": "⑥ 로그아웃 토스트 #toast",
+   "present": true,
+   "visible": true,
+   "textHash": "cf315476d56c9b87",
+   "textLen": 10,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": null,
+   "calls": {
+    "getDeviceId": 5,
+    "checkRemoteSessionRevoked": 1,
+    "getDeviceLoginTime": 1,
+    "performLogout": 1
+   }
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "getDeviceId/undefined,getDeviceLoginTime/undefined,setDeviceLoginTime/undefined,performLogout/undefined,checkRemoteSessionRevoked/undefined,bindSignupSubmit/undefined",
+ "recordsCountUnchanged": false,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 1
+ }
+}
