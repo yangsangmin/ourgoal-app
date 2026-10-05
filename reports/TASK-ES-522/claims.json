@@ -96,7 +96,7 @@
      "node docs/design/harness/module-split/real-account-split-check.js <기준 사본> docs/design/harness/module-split/real-account-stage3-z1-c-steps.json base1 base1.json 을 돌리고, 같은 명령을 이 변경 트리(after)와 기준 사본(base2)으로 한 번씩 더 돌린다",
      "node docs/design/harness/module-split/real-account-compare-inline-split-2.js base1.json after.json base2.json 비교.json 으로 base1VsAfter.differing 과 base1VsBase2.differing 이 0 인지 본다"
     ],
-    "note": "작업자 실측(판정 아님): 테스트 계정 A 8단계 기준1 대 작업 0 · 기준1 대 기준2 0 · pageerror 0, Supabase 쓰기 요청은 도구가 끊음(reports/TASK-ES-522/real-account-compare.json). 탈퇴 확정 단추는 누르지 않았다. 게스트 다시 맞추기도 loadProfile 을 부르지만 Supabase 라이브러리(외부)와 서버가 있어야 본문이 돈다 — 법정은 외부 통신을 막아 sb 가 없다(REQ 4절)."
+    "note": "작업자 실측(판정 아님): 테스트 계정 A 8단계 기준1 대 작업 0 · 기준1 대 기준2 0 · pageerror 0, Supabase 쓰기 요청은 도구가 끊음(reports/TASK-ES-522/real-account-compare.json). 탈퇴 확정 단추는 누르지 않았다. 게스트 다시 맞추기도 loadProfile 을 부르지만 Supabase 서버 응답이 있어야 본문이 돈다 — 법정은 라이브러리는 고정 사본으로 주지만 서버 통신을 막는다(REQ 4절)."
    }
   },
   {

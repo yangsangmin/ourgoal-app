@@ -19,8 +19,8 @@ Z1 남은 묶음 중 세 개를 옮긴다: 「뱃지 컬렉션 (명예의 전당
 - `js/tabs/settings/withdraw-modal.js`: 탈퇴 창 함수 4개. 「회원 탈퇴」 단추 한 줄 등록 문은 원래 자리(3줄 이하).
 
 ## 4. [원칙 ④] 재검토 — 한계(정직하게)
-- 게스트도 다시 맞추기 단추로 syncServerRecords·loadProfile·ensureUserRow 를 부른다(로컬 실측: 게스트 resync 뒤 loadProfile 1·ensureUserRow 1). 그러나 syncServerRecords 는 로그인 세션 토큰이 없으면 바로 끝나고, loadProfile·ensureUserRow 는 Supabase 라이브러리(외부 CDN)와 서버가 있어야 돈다 — 법정은 외부 통신을 막아 `sb` 가 없어 이 경로를 다시 돌릴 수 없다. 그래서 이 몫은 `needs-login` 과 실계정 비교로 낸다.
-- 법정과 같은 조건(외부 차단)의 게스트 다시 맞추기는 6초 뒤에도 단추가 잠긴 채였다(기준·작업 같음) — 법정 환경에서만 생기는 모양이라 결함 목록에는 「확인 필요」로만 적는다.
+- 게스트도 다시 맞추기 단추로 syncServerRecords·loadProfile·ensureUserRow 를 부른다(로컬 실측: 게스트 resync 뒤 loadProfile 1·ensureUserRow 1). 그러나 syncServerRecords 는 로그인 세션 토큰이 없으면 바로 끝나고, loadProfile·ensureUserRow 는 Supabase 서버 응답(users·goals·checkins 조회)이 있어야 본문이 돈다 — 법정은 Supabase 라이브러리는 고정 사본으로 주지만(court/config.json stubs) Supabase 서버 통신은 막아(allowHosts 0) 이 경로의 결과를 다시 만들 수 없다. 그래서 이 몫은 `needs-login` 과 실계정 비교로 낸다.
+- 법정과 같은 조건(법정 실행기 로컬 실행 — 라이브러리 고정 사본·서버 통신 차단)의 게스트 다시 맞추기는 6초 뒤에도 단추가 잠긴 채였다(기준·작업 같음) — 법정 환경에서만 생기는 모양이라 결함 목록에는 「확인 필요」로만 적는다.
 - 동명이인 태그(resolveUniqueDisplayName·formatDisplayNameWithTag)는 서버 users 조회가 있어야 결과가 나온다 — 실계정 비교에 포함(로그인 때 ensureUserRow 경로), 화면 단독 주장은 하지 않는다.
 - 탈퇴 확정(submitWithdrawAccount)은 누르지 않았다 — 토큰 동일·처리기 수 동일만.
 - 실계정 비교 결과는 법정이 다시 재지 않는다 — `static`(글자만) 기록 항목 + `needs-login` 로만 실린다(설계 3-4).
@@ -29,7 +29,7 @@ Z1 남은 묶음 중 세 개를 옮긴다: 「뱃지 컬렉션 (명예의 전당
 #804(시험지 선행) 병합 뒤 origin/main → 기준 사본(git archive) → 설정 → 생성기 → verify(⑧·⑨ 포함 판 — #811) → 원본 단독 로드 → 신고서·설명 → module-guard → tests 전부 종료 코드 → 도달 실측(--guest·계정 --count) → 실계정 기준1·작업·기준2 → 게스트 시나리오 로컬 → main 합치기 → PR.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
-- 반론 1 「게스트도 loadProfile 을 부르니 needs-login 은 L006 위반이다」 → 법정이 잴 수 있는지가 기준이다. 게스트 경로도 Supabase(외부)가 있어야 loadProfile 본문이 돈다 — 법정 화면에서는 `sb` 가 null 이라 같은 코드를 돌릴 수 없다. 게스트로 법정이 잴 수 있는 몫(명예의 전당이 부르는 totalCompletedMilestones, 탈퇴 창 열고 닫기)은 모두 시나리오로 냈다.
+- 반론 1 「게스트도 loadProfile 을 부르니 needs-login 은 L006 위반이다」 → 법정이 잴 수 있는지가 기준이다. 게스트 경로도 Supabase 서버 응답이 있어야 loadProfile 본문이 돈다 — 법정 화면은 Supabase 서버 통신을 막아(라이브러리는 고정 사본) 같은 결과를 만들 수 없고, 실측에서도 6초 안에 끝나지 않았다. 게스트로 법정이 잴 수 있는 몫(명예의 전당이 부르는 totalCompletedMilestones, 탈퇴 창 열고 닫기)은 모두 시나리오로 냈다.
 - 반론 2 「탈퇴 창을 실계정으로 여는 것도 위험하다」 → 창 열기·취소는 서버에 아무것도 보내지 않는다(코드 확인: 확정 단추 onclick 만 submitWithdrawAccount). 하네스는 Supabase 쓰기와 /api 의 track 밖 요청을 모두 끊는다.
 
 ## 7. [원칙 ⑦] 단계별 실행 — 식별자
