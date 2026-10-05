@@ -58,5 +58,5 @@
 | :-- | :-- | :-- |
 | 시나리오 4개 | court/lib/scenario.js 로컬 예비 실행(기준 사본·작업) | 기준: 모두 단추 `visible` 확인 단계에서 실패 · 작업: 4개 통과, 예외 0 |
 | 4테마 × 1280·375 | 헤드리스 Chrome, 단추 크기·가운데 점 elementFromPoint·하단 탭 위치·진짜 마우스 클릭 | 16칸 모두 크기>0·적중·하단 탭 위·카드 창 열림·탭 유지 |
-| tab-check 홈·기록 | 기준 2회·작업 1회 → tab-compare | `tab-compare.json` 참조 |
+| tab-check 홈·기록 | 기준 2회·작업 1회 → tab-compare | 기준끼리 881값 차이 0 · 기준↔작업 차이는 바뀐 칸뿐(홈 높이 +68px·숨은 조작 요소에서 #mzShareBtn 1줄 빠짐·!important 숨김 수 -1, 기록 높이 +52px, 새 단추 2개의 Dead-Click 후보), 설명 안 되는 차이 0, Dead-Click 수 기준과 같음 |
 | npm test | 기준·작업 | smoke 443/0 · 무결성 38/38 같음, 둘 다 종료 0 |
