@@ -9,10 +9,10 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "5e38f8759abb8e8535c8c0b25b1c250d975be285",
-  "short": "5e38f87",
-  "committedAt": "2026-10-05T17:36:30+09:00",
-  "subject": "Merge branch 'main' into feat/2026-10-05-task-es-429-sanctuary-split-v2"
+  "commit": "f57954a9259aa7602dfe422d043b7a8ba28b630e",
+  "short": "f57954a",
+  "committedAt": "2026-10-05T18:21:06+09:00",
+  "subject": "[FIX] #TASK-ES-433 chore: Merge origin/main(#747 성소 분열) — 기록 화면 modeNav 는 js/sanctuary-v3-engine.js 에 남아 #sRecStoryCardBtn 줄이 같은 자리에 그대로 합쳐짐, 신고서·기준선은 main 판을 받고 module-specs --write·module-guard --update 로 다시 만듦"
  },
  "summary": {
   "cells": 179,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 33385,
+   "inlineScriptLines": 33382,
    "functionDecls": 658
   },
   "health": {
-   "undifferentiatedLines": 33385,
+   "undifferentiatedLines": 33382,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -6905,6 +6905,7 @@
    "readsFromIndexHtml": [
     "calendarItemsByDate",
     "openCalendarManualEditModal",
+    "openMzShareCardModal",
     "promptNewGoal",
     "setRecordsSegment",
     "setTab",
@@ -8359,13 +8360,21 @@
    },
    "tasks": [
     "TASK-ES-379",
-    "TASK-ES-423"
+    "TASK-ES-423",
+    "TASK-ES-431"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-431-LOCKSCREEN-STREAK.md"
    ],
    "prs": [
+    {
+     "number": 746,
+     "task": "TASK-ES-431",
+     "title": "[FIX] #TASK-ES-431 fix: 잠금화면용 일정 카드 저장이 오류 토스트로 끝나던 것 — 정의 안 된 streakDays 를 computeStreakDays() 로 연결",
+     "date": "2026-10-05"
+    },
     {
      "number": 744,
      "task": "TASK-ES-423",

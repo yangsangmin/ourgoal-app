@@ -13426,14 +13426,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     });
 
-    var challengeBtn = document.getElementById('homeChallengeRoomBtn');
-    if(challengeBtn){
-      challengeBtn.onclick = function(){ setTab('records'); };
-    }
-    var mzBtn = document.getElementById('mzShareBtn');
-    if(mzBtn){
-      mzBtn.onclick = openMzShareCardModal;
-    }
     renderTodayGlancePill();
     renderDailyQuestBar();
     if(window.OurgoalCustomize) OurgoalCustomize.apply(state.profile.settings); /* 앱을 내맘대로! (#TASK-ES-020) */
@@ -18577,8 +18569,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     promptNewGoal();
   });
 
-  document.getElementById('mzShareBtn').addEventListener('click', function(){
-    setTab('comm');
+  /* [#TASK-ES-433] 홈 「내 성장 확인하기」·「내 성장 자랑하기」 처리기는 시작 때 한 벌씩 — renderHome 은 목표 0개면 일찍 끝나 거기서 걸던 처리기가 게스트에겐 없었다 */
+  var challengeBtn = document.getElementById('homeChallengeRoomBtn');
+  if(challengeBtn){
+    challengeBtn.onclick = function(){ setTab('records'); };
+  }
+  document.getElementById('mzShareBtn').addEventListener('click', function(){ /* [#TASK-ES-433] 처리기 한 벌: 「내 성장 자랑하기」 = 갓생 카드 창만 연다(소통 탭 이동 없음) */
+    openMzShareCardModal();
   });
 
   /* ============ New goal modal ============ */
