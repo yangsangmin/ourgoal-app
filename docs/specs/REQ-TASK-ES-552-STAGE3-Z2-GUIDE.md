@@ -1,7 +1,7 @@
 # REQ — #TASK-ES-552 인라인 3단계 Z2(팀·소통) 2차: 「개인 목표 200% 활용 가이드 & 템플릿 백과사전」 묶음 옮기기
 
 - 근거: 오케스트레이터 배정(2026-10-06, 구역 Z2 팀·소통) · 설계 `docs/architecture/INLINE-STAGE3-DESIGN.md` 2절 (가)·3절·4절·6절 · 헌법 v2026.10.06-SNOWBALL CELL_SPLIT·CELL_SPLIT_PROOF·claims_hygiene · 작업참고 `C:/dev/agent-knowledge/WORK-REFERENCE.md` 기준 PR #802(L001·L002·L006·L015·L016·L018·L045·L046·L047).
-- 선행: #803(#TASK-ES-519) — `collapseAllTeamGoalAccordions` 를 잘라 읽는 시험지 2개(team-fold-state-es409·team-level-accordion-es406)가 합본에서 같은 함수를 찾는다.
+- 선행: #803(#TASK-ES-519) — `collapseAllTeamGoalAccordions` 를 잘라 읽는 시험지 2개(team-fold-state-es409·team-level-accordion-es406)가 합본에서 같은 함수를 찾는다. · #828(#TASK-ES-567) — core-confirm-es376 의 「처리기는 confirm.js 뒤」 검사가 합본을 읽는다(index.html 에 남은 ui.confirm 처리기 2곳이 모두 이 PR 이 옮기는 openLevelGroupDetailModal·openTeamGoalEditModal 안이라, 생성 뒤 시험지 비교에서 실측으로 찾음).
 - 작업 유형(SNOWBALL): (가) 표준 — 생성기 이음매(L016)·게스트 시나리오(L001). 이탈 없음.
 
 ## 1. [원칙 ①] 문제 정확히 파악
