@@ -242,6 +242,11 @@
 ## 7. 시범 PR (이 PR)
 
 <!-- stage3-pilot:begin -->
+- 묶음: 「디바이스 세션 & 원격 로그아웃 유틸 (Req 1)」 → `js/tabs/settings/device-session.js`(설정 `docs/design/harness/module-split/inline-stage3-pilot.json`, 자리 H1, take.all + wrap `bindSignupSubmit`). 생성기: 옮김 5 · 감쌈 1 · index.html 99줄 감소(작업자 측정, 주장 아님).
+- 고른 이유: 3-1 실측에서 게스트 0·계정 1회 이상인 함수(`setDeviceLoginTime`·`loadProfile`·`ensureUserRow`)가 든 묶음 중 가장 작다(114줄). 「뱃지 컬렉션」(312줄)은 시험지 선행 2가 먼저다.
+- 증거 배치(설계 3-4 형식 그대로): 게스트 로그아웃 시나리오(behavior, 법정이 직접 잼) · 로그인 뒤 몫 `unverified needs-login`(재현 명령 + 작업자 실측 note) · 실계정 비교·도달 실측 결과 파일 `static` jsonPath · verify·단독 로드·신고서 `static`.
+- 작업자 측정(판정 아님): verify ok · 단독 로드 회귀 0 · tests 종료 코드 기준=작업 · npm test 종료 0 · 게스트 6단계 비교 차이 0 · 테스트 계정 6단계 기준1/작업/기준2 차이 0(43값) · 게스트 시나리오 기준·작업 통과.
+- 판정: PR #802 의 법정 댓글(`node court/chat.js 802`). 판정 글자는 이 문서에 옮기지 않는다(효력은 GitHub `court` 검사에만 있다).
 <!-- stage3-pilot:end -->
 
 ## 8. 막힌 점·다음
