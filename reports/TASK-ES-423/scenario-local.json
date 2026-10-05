@@ -1,0 +1,203 @@
+{
+ "scenario": "calendar-lockscreen-card-save",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 2,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"calendar\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#calLockScreenBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#calLockScreenBtn \"📱 잠금화면용 일정 카드 저장 9:16 배경 생성\" 304x44px"
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnDownloadLockscreenCard → 보이는 요소 1개"
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#modalOverlay → 보이는 글자: [\"✕ 📱 잠금화면용 일정 카드 저장 ✕ 오늘의 핵심 일정과 목표를 휴대폰 배경화면 비율(9:16) 이미지로 갤러리에 저장해요. 🖼️ 9:16 \"]"
+    },
+    {
+     "i": 10,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnDownloadLockscreenCard \"📱 잠금화면용 일정 카드 갤러리에 저장\" 305x44px"
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#toast → 보이는 글자: [\"카드 생성 중 오류가 발생했습니다. 다시 시도해주세요.\"]"
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "head": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 2,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"calendar\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#calLockScreenBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#calLockScreenBtn \"📱 잠금화면용 일정 카드 저장 9:16 배경 생성\" 304x44px"
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnDownloadLockscreenCard → 보이는 요소 1개"
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#modalOverlay → 보이는 글자: [\"✕ 📱 잠금화면용 일정 카드 저장 ✕ 오늘의 핵심 일정과 목표를 휴대폰 배경화면 비율(9:16) 이미지로 갤러리에 저장해요. 🖼️ 9:16 \"]"
+    },
+    {
+     "i": 10,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnDownloadLockscreenCard \"📱 잠금화면용 일정 카드 갤러리에 저장\" 305x44px"
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#toast → 보이는 글자: [\"카드 생성 중 오류가 발생했습니다. 다시 시도해주세요.\"]"
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  }
+ }
+}
