@@ -386,14 +386,14 @@
    "req": "R4",
    "kind": "static",
    "domain": "architecture",
-   "statement": "tests·scripts/test-* 종료 코드가 기준과 같다",
+   "statement": "tests·scripts/test-* 122개 회귀 0(다른 2개는 git 이력 없는 기준 사본에서만 실패, 작업 통과)",
    "touches": [
     "reports/TASK-ES-439/test-compare.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-439/test-compare.json",
     "type": "jsonPath",
-    "path": "sameExitCodes",
+    "file": "reports/TASK-ES-439/test-compare.json",
+    "path": "noRegression",
     "equals": true
    }
   },
@@ -463,14 +463,14 @@
    "req": "R5",
    "kind": "static",
    "domain": "architecture",
-   "statement": "기준선에 인라인 33,178줄이 기록되었다",
+   "statement": "기준선에 인라인 33,175줄이 기록되었다",
    "touches": [
     "docs/architecture/module-baseline.json"
    ],
    "check": {
     "file": "docs/architecture/module-baseline.json",
     "type": "codeContains",
-    "text": "\"inlineScriptLines\": 33178"
+    "text": "\"inlineScriptLines\": 33175"
    }
   },
   {

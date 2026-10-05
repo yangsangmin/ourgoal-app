@@ -1,0 +1,23 @@
+{
+  "id": "goals-mountain-trail",
+  "title": "게스트로 목표 탭의 「목표 추가」(#sAddGoalBtn) → 「직접 설정할게요」(#ngManualBtn) → 최종 목표(#mGoalTitle)에 「성소 트레일 확인」을 적고 「만들기」(#mSave)를 누르면 포커스 성소 목표 칸(#sanctuaryGoalsView)에 그 목표의 마운틴 트레일(.mountain-trail-card · 마디 .trail-node · 제목 .m-goal-title 「성소 트레일 확인」)이 그려진다 — 트레일 그리기(renderSanctuaryGoals 의 「목표 있음」 분기 본문)를 js/sanctuary-goal-trail.js 로 옮기고 원본은 그 함수를 부르는 한 줄이 됐으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "waitFor", "selector": "#sAddGoalBtn", "timeoutMs": 8000 },
+    { "do": "click", "selector": "#sAddGoalBtn" },
+    { "do": "waitFor", "selector": "#ngManualBtn", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#ngManualBtn" },
+    { "do": "waitFor", "selector": "#mGoalTitle", "timeoutMs": 5000 },
+    { "do": "type", "selector": "#mGoalTitle", "text": "성소 트레일 확인" },
+    { "do": "click", "selector": "#mSave" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#sanctuaryGoalsView .mountain-trail-card", "timeoutMs": 8000 },
+    { "expect": "textContains", "selector": "#sanctuaryGoalsView .m-goal-title", "text": "성소 트레일 확인" },
+    { "expect": "visible", "selector": "#sanctuaryGoalsView .trail-node" },
+    { "expect": "noExceptions" }
+  ]
+}

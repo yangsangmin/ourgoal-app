@@ -1,0 +1,17 @@
+{
+  "id": "comm-peer-radar-toggle",
+  "title": "게스트로 소통 탭에 들어가면 포커스 성소 동반자 레이더 카드(#sPeerRadarCard, 제목 「함께 달리는 러닝메이트 0명」)가 접힌 채 보이고, 「펼치기 ▾」(#peerRadarToggleBtn)를 누르면 다시 그려져 버튼 글자가 「접기 ▴」가 된다 — 레이더 그리기·접기(renderSanctuaryComm·toggleRadarCollapse)를 js/sanctuary-peer-radar.js 로 옮겼으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "expect": "textContains", "selector": "#sPeerRadarCard .s-radar-title", "text": "함께 달리는 러닝메이트 0명", "timeoutMs": 8000 },
+    { "expect": "textEquals", "selector": "#peerRadarToggleBtn", "text": "펼치기 ▾" },
+    { "do": "click", "selector": "#peerRadarToggleBtn" },
+    { "expect": "textEquals", "selector": "#peerRadarToggleBtn", "text": "접기 ▴", "timeoutMs": 5000 },
+    { "expect": "hasClass", "selector": "#sPeerRadarCard", "className": "slim-mode" },
+    { "expect": "noExceptions" }
+  ]
+}
