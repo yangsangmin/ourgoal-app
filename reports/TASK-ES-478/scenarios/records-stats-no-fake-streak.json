@@ -1,0 +1,55 @@
+{
+  "id": "records-stats-no-fake-streak",
+  "title": "기록이 하나도 없는 게스트가 기록 탭 「📈 히트맵·통계」를 누르면 실천 추이 요약 카드(.rec-stats-summary-card)에 「총 몰입 시간」·「총 실천 횟수」 두 칸만 보이고 「포커스 스트릭」 칸이 없다 — 고치기 전에는 아무도 채우지 않는 profile.streak || 3 으로 기록 0건에도 「3일 연속 🔥」 칸이 찍혔다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecModesWrap > button:nth-of-type(1)"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".rec-stats-summary-card",
+      "text": "총 실천 횟수",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "count",
+      "selector": ".rec-stats-summary-card .rec-stats-summary-item",
+      "equals": 2
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
