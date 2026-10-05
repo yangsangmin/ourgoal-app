@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-430",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-430-CELL-MAP-EXPERT-FAMILY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "세포지도 생성기 영역 규칙(FAMILIES)에서 data/expert-templates/* 세포를 「목표 템플릿」 영역에 넣는다. 시험 1건 추가(기존 단언 유지). 제품 코드 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "목표 템플릿 영역 규칙이 전문가 템플릿 자료 폴더도 받는다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "/^data\\/(goal|expert)-templates\\//.test(id)"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 전문가 템플릿 세포의 영역을 확인한다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  experts.forEach(c => assert.strictEqual(c.area, 'family-templates', c.id));"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "다시 만든 세포지도의 목표 템플릿 영역 세포 목록에 전문가 커리어 템플릿이 있다",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "areas.9.cells.0",
+        "equals": "data/expert-templates/career"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 에 8원칙 중 원칙 ② 본질·원인·중심·핵심 절이 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-430-CELL-MAP-EXPERT-FAMILY.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-430-CELL-MAP-EXPERT-FAMILY.md",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-430 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-430: 세포지도 전문가 템플릿 영역"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-430 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-430 | INFRA | [세포지도 전문가 템플릿 영역]"
+      }
+    }
+  ]
+}
