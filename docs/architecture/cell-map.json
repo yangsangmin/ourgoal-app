@@ -9,46 +9,41 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "5c020e508219dfce9f39067be71e63ba70113938",
-  "short": "5c020e5",
-  "committedAt": "2026-10-05T18:20:46+09:00",
-  "subject": "[INFRA] #TASK-ES-438 refactor: 인라인 스크립트 세포화 구역 P2-1 — 기록 탭 묶음(카드·히트맵·리포트·대화형 기록 비서·표 기록 차트·AI 코칭·노션 내보내기) 선언 14개를 js/tabs/records/ 세포 5개로 이전(인라인 −876줄, 동작 그대로)"
+  "commit": "5e38f8759abb8e8535c8c0b25b1c250d975be285",
+  "short": "5e38f87",
+  "committedAt": "2026-10-05T17:36:30+09:00",
+  "subject": "Merge branch 'main' into feat/2026-10-05-task-es-429-sanctuary-split-v2"
  },
  "summary": {
-  "cells": 177,
-  "files": 176,
-  "jsLines": 53773,
+  "cells": 179,
+  "files": 178,
+  "jsLines": 53011,
   "kinds": {
    "organ": 29,
-   "tab": 49,
-   "hybrid": 98,
+   "tab": 44,
+   "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 177,
+  "descriptionsHand": 179,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
    "first": 12,
    "firstDate": "2026-10-04",
    "firstCommit": "bb343d3",
-   "now": 1,
-   "nowFiles": [
-    {
-     "file": "js/sanctuary-v3-engine.js",
-     "lines": 1964
-    }
-   ]
+   "now": 0,
+   "nowFiles": []
   },
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 32509,
-   "functionDecls": 644
+   "inlineScriptLines": 33385,
+   "functionDecls": 658
   },
   "health": {
-   "undifferentiatedLines": 32509,
+   "undifferentiatedLines": 33385,
    "globalLinks": 282,
-   "oversizeCells": 1,
+   "oversizeCells": 0,
    "drawingSmallCells": {
     "drew": 7,
     "total": 22,
@@ -66,7 +61,7 @@
     "toast": 0,
     "modalBridge": 0,
     "recap": 3,
-    "timer": 4,
+    "timer": 5,
     "selfOverlay": 9,
     "nativeConfirm": 7
    },
@@ -85,15 +80,15 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 49,
+   "count": 44,
    "large": 6,
-   "small": 43
+   "small": 38
   },
   {
    "key": "hybrid",
    "name": "하이브리드",
    "desc": "여러 탭·여러 자리에 걸치는 세포",
-   "count": 98
+   "count": 105
   },
   {
    "key": "future",
@@ -145,17 +140,12 @@
    "cells": [
     "records/index",
     "records/period-ai-card",
-    "records/pro-report-export",
-    "records/record-assistant",
-    "records/record-cards",
-    "records/record-heatmap-report",
     "records/render",
     "records/sub-retrospect",
     "records/sub-timeline",
-    "records/sub-timer",
-    "records/table-analytics-view"
+    "records/sub-timer"
    ],
-   "lines": 2364,
+   "lines": 1321,
    "over800": 0
   },
   {
@@ -372,13 +362,20 @@
     "calendar-attachment",
     "customize",
     "goal-edit-ux",
+    "sanctuary-calendar-actions",
+    "sanctuary-calendar-views",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
+    "sanctuary-peer-radar",
+    "sanctuary-record-feed",
     "sanctuary-v3-engine",
+    "sanctuary-weekly-recap",
     "tab-guides",
     "theme-system",
     "viral-sharing"
    ],
-   "lines": 4446,
-   "over800": 1
+   "lines": 4727,
+   "over800": 0
   },
   {
    "key": "organ-core",
@@ -1172,8 +1169,8 @@
    "file": "js/sanctuary-v3-engine.js",
    "name": "sanctuary-v3-engine.js",
    "firstLines": 1969,
-   "nowLines": 1964,
-   "over800Now": true,
+   "nowLines": 715,
+   "over800Now": false,
    "steps": [
     {
      "date": "2026-10-04",
@@ -1184,9 +1181,50 @@
      "date": "2026-10-04",
      "commit": "cc6a587",
      "lines": 1964
+    },
+    {
+     "date": "2026-10-05",
+     "commit": "b9e33ff",
+     "lines": "≤800"
     }
    ],
-   "parts": []
+   "parts": [
+    {
+     "id": "sanctuary-calendar-actions",
+     "file": "js/sanctuary-calendar-actions.js",
+     "lines": 156
+    },
+    {
+     "id": "sanctuary-calendar-views",
+     "file": "js/sanctuary-calendar-views.js",
+     "lines": 256
+    },
+    {
+     "id": "sanctuary-focus-timer",
+     "file": "js/sanctuary-focus-timer.js",
+     "lines": 139
+    },
+    {
+     "id": "sanctuary-goal-trail",
+     "file": "js/sanctuary-goal-trail.js",
+     "lines": 183
+    },
+    {
+     "id": "sanctuary-peer-radar",
+     "file": "js/sanctuary-peer-radar.js",
+     "lines": 241
+    },
+    {
+     "id": "sanctuary-record-feed",
+     "file": "js/sanctuary-record-feed.js",
+     "lines": 382
+    },
+    {
+     "id": "sanctuary-weekly-recap",
+     "file": "js/sanctuary-weekly-recap.js",
+     "lines": 173
+    }
+   ]
   },
   {
    "file": "js/time-tracker.js",
@@ -3407,12 +3445,7 @@
     "goals/render",
     "goals/result-modal",
     "records/period-ai-card",
-    "records/pro-report-export",
-    "records/record-assistant",
-    "records/record-cards",
-    "records/record-heatmap-report",
     "records/render",
-    "records/table-analytics-view",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6469,6 +6502,356 @@
    ]
   },
   {
+   "id": "sanctuary-calendar-actions",
+   "file": "js/sanctuary-calendar-actions.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "home",
+    "records",
+    "calendar",
+    "settings"
+   ],
+   "name": "성소 달력 이동",
+   "nameSource": "hand",
+   "does": "일정 탭 포커스 성소 달력에서 달·주·날짜를 옮기고 일정 추가·하루 관리·배경사진 창을 열고 일정 완료를 바꾼다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Sanctuary Cell: 일정 탭 성소 달력 조작 — 달·주·일 이동과 오늘·날짜 선택, 일정 추가·일자 허브·배경사진 창 열기, 일정 완료 토글(OurgoalSanctuaryV3 메서드) (#TASK-ES-429 · 포커스 성소 엔진 세포 쪼개기)",
+    "js/sanctuary-v3-engine.js(1964줄)에서 동작 그대로 옮겼다(이전 전 줄 번호):",
+    "메서드 shiftCal·selectToday·shiftWeek·shiftTimelineDay·selectCalDay(1440~1515)",
+    "메서드 openAddScheduleModal·openDayHubModal·openBgPickerModal·toggleScheduleItem(1533~1584)"
+   ],
+   "lines": 156,
+   "over800": false,
+   "exposes": [
+    "OurgoalSanctuaryV3Kit"
+   ],
+   "calls": [],
+   "calledBy": [
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [
+    "openCalendarDayBgPickerModal",
+    "openCalendarDayEditHubModal",
+    "openCalendarManualEditModal",
+    "saveProfile",
+    "state",
+    "switchTab",
+    "toggleScheduleDone"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-429"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "sanctuary-calendar-views",
+   "file": "js/sanctuary-calendar-views.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "home",
+    "records",
+    "calendar",
+    "settings"
+   ],
+   "name": "성소 달력 그리기",
+   "nameSource": "hand",
+   "does": "일정 탭 포커스 성소 화면의 월간 달력과 하루 타임라인을 실제 일정으로 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Sanctuary Cell: 일정 탭 성소 달력의 월간 달력(renderSanctuaryCalendarMonth)과 일간 타임라인(renderSanctuaryCalendarTimeline) 그리기 — renderSanctuaryCalendar 의 두 분기 본문 (#TASK-ES-429 · 포커스 성소 엔진 세포 쪼개기)",
+    "js/sanctuary-v3-engine.js(1964줄)에서 동작 그대로 옮겼다(이전 전 줄 번호):",
+    "분기 본문 renderSanctuaryCalendarMonth(341~508)",
+    "분기 본문 renderSanctuaryCalendarTimeline(602~655)"
+   ],
+   "lines": 256,
+   "over800": false,
+   "exposes": [
+    "OurgoalSanctuaryV3Kit"
+   ],
+   "calls": [
+    "sanctuary-v3-engine"
+   ],
+   "calledBy": [
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [
+    "state"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-429"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "sanctuary-focus-timer",
+   "file": "js/sanctuary-focus-timer.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "home",
+    "records",
+    "calendar",
+    "settings"
+   ],
+   "name": "뽀모도로 타이머",
+   "nameSource": "hand",
+   "does": "기록 탭의 25분 뽀모도로 집중 타이머를 보여 주고 시작·멈춤·초기화·완료 기록 적립을 한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Sanctuary Cell: 기록 탭 25분 뽀모도로 집중 타이머 — 타이머 카드 그리기(renderSanctuaryRecordsTimer)와 시작·멈춤·초기화·완료 기록 적립 (#TASK-ES-429 · 포커스 성소 엔진 세포 쪼개기)",
+    "js/sanctuary-v3-engine.js(1964줄)에서 동작 그대로 옮겼다(이전 전 줄 번호):",
+    "분기 본문 renderSanctuaryRecordsTimer(1135~1170)",
+    "메서드 togglePomodoro·resetPomodoro·finishPomodoroSession(1671~1742)"
+   ],
+   "lines": 139,
+   "over800": false,
+   "exposes": [
+    "OurgoalSanctuaryV3Kit",
+    "state"
+   ],
+   "calls": [
+    "sanctuary-v3-engine"
+   ],
+   "calledBy": [
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [
+    "calendarItemsByDate",
+    "saveProfile"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "state"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-429"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "sanctuary-goal-trail",
+   "file": "js/sanctuary-goal-trail.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "home",
+    "records",
+    "calendar",
+    "settings"
+   ],
+   "name": "목표 마운틴 트레일",
+   "nameSource": "hand",
+   "does": "목표 탭 포커스 성소 화면에 고른 목표의 마일스톤 길을 그리고 마일스톤·할 일 완료와 샘플 루틴 담기를 처리한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Sanctuary Cell: 목표 탭 성소 마운틴 트레일 — 고른 목표의 마일스톤 길 그리기(renderSanctuaryGoalTrail)와 마일스톤·할 일 토글, 마일스톤 체크인 연결, 샘플 루틴 담기 (#TASK-ES-429 · 포커스 성소 엔진 세포 쪼개기)",
+    "js/sanctuary-v3-engine.js(1964줄)에서 동작 그대로 옮겼다(이전 전 줄 번호):",
+    "분기 본문 renderSanctuaryGoalTrail(218~283)",
+    "메서드 toggleMilestone·toggleTask·openMilestoneCheckin·transplantSampleRoutine(1585~1670)"
+   ],
+   "lines": 183,
+   "over800": false,
+   "exposes": [
+    "OurgoalSanctuaryV3Kit",
+    "state"
+   ],
+   "calls": [
+    "sanctuary-v3-engine"
+   ],
+   "calledBy": [
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [
+    "saveProfile"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "state"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-429"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "sanctuary-peer-radar",
+   "file": "js/sanctuary-peer-radar.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "home",
+    "records",
+    "calendar",
+    "settings"
+   ],
+   "name": "동반자 레이더",
+   "nameSource": "hand",
+   "does": "소통 탭에서 함께 달리는 동반자를 레이더 카드로 보여 주고 응원·대화·새로고침·동반자 찾기를 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Sanctuary Cell: 소통 탭 동반자 레이더 — 실제 러닝메이트 목록(getRealRunningMates)·아바타·레이더 접기·레이더 그리기(renderSanctuaryComm)와 응원·DM·상호작용·새로고침·동반자 찾기 메서드 (#TASK-ES-429 · 포커스 성소 엔진 세포 쪼개기)",
+    "js/sanctuary-v3-engine.js(1964줄)에서 동작 그대로 옮겼다(이전 전 줄 번호):",
+    "함수 renderPeerAvatarHtml·getRealRunningMates·toggleRadarCollapse·renderSanctuaryComm(1176~1317)",
+    "메서드 cheerPost·openPeerDm(1743~1755)"
+   ],
+   "lines": 241,
+   "over800": false,
+   "exposes": [
+    "OurgoalSanctuaryV3Kit"
+   ],
+   "calls": [
+    "sanctuary-v3-engine",
+    "team-invite-comm"
+   ],
+   "calledBy": [
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [
+    "state"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-429"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "sanctuary-record-feed",
+   "file": "js/sanctuary-record-feed.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "home",
+    "records",
+    "calendar",
+    "settings"
+   ],
+   "name": "성소 기록 피드",
+   "nameSource": "hand",
+   "does": "기록 탭 포커스 성소 화면의 내 기록 피드와 보관함을 기간·쪽별로 보여 준다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Sanctuary Cell: 기록 탭 성소 피드(renderSanctuaryRecordsFeed)와 보관함(renderSanctuaryRecordsArchive) 그리기, 기간·쪽·직접 기간 고르기 메서드 (#TASK-ES-429 · 포커스 성소 엔진 세포 쪼개기)",
+    "js/sanctuary-v3-engine.js(1964줄)에서 동작 그대로 옮겼다(이전 전 줄 번호):",
+    "분기 본문 renderSanctuaryRecordsFeed(782~972)",
+    "분기 본문 renderSanctuaryRecordsArchive(986~1107)"
+   ],
+   "lines": 382,
+   "over800": false,
+   "exposes": [
+    "OurgoalSanctuaryV3Kit"
+   ],
+   "calls": [
+    "sanctuary-v3-engine"
+   ],
+   "calledBy": [
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [
+    "setTab",
+    "state",
+    "switchTab"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-429"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "sanctuary-v3-engine",
    "file": "js/sanctuary-v3-engine.js",
    "kind": "hybrid",
@@ -6490,42 +6873,47 @@
     "더미 목데이터 0%, 100% 실제 데이터 원장(state.profile.goals, calendarItemsByDate, records) 바인딩",
     "72개 인터랙션 전수 실구현 및 20종 정본 그래픽 시안 1:1 완벽 일치 보장"
    ],
-   "lines": 1964,
-   "over800": true,
+   "lines": 715,
+   "over800": false,
    "exposes": [
-    "OurgoalSanctuaryV3",
-    "state"
+    "OurgoalSanctuaryV3"
    ],
    "calls": [
     "calendar/day-detail",
     "calendar/lockscreen-image",
     "calendar/natural-schedule",
     "calendar/render",
-    "team-invite-comm",
-    "time-tracker",
-    "viral-sharing"
+    "sanctuary-calendar-actions",
+    "sanctuary-calendar-views",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
+    "sanctuary-peer-radar",
+    "sanctuary-record-feed",
+    "sanctuary-weekly-recap",
+    "time-tracker"
    ],
    "calledBy": [
     "calendar/render",
-    "records/render"
+    "records/render",
+    "sanctuary-calendar-views",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
+    "sanctuary-peer-radar",
+    "sanctuary-record-feed",
+    "sanctuary-weekly-recap"
    ],
    "readsFromIndexHtml": [
     "calendarItemsByDate",
-    "openCalendarDayBgPickerModal",
-    "openCalendarDayEditHubModal",
     "openCalendarManualEditModal",
-    "openWeeklyRecapModal",
     "promptNewGoal",
-    "saveProfile",
     "setRecordsSegment",
     "setTab",
-    "switchTab",
-    "toggleScheduleDone"
+    "state",
+    "switchTab"
    ],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "OurgoalSanctuaryV3",
-    "state"
+    "OurgoalSanctuaryV3"
    ],
    "emits": [],
    "listens": [],
@@ -6604,6 +6992,64 @@
      "date": "2026-09-21"
     }
    ]
+  },
+  {
+   "id": "sanctuary-weekly-recap",
+   "file": "js/sanctuary-weekly-recap.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "home",
+    "records",
+    "calendar",
+    "settings"
+   ],
+   "name": "위클리 리캡",
+   "nameSource": "hand",
+   "does": "기록 탭에서 한 주 기록을 리캡 카드로 보여 주고 리캡 창 열기·이미지 저장을 한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Sanctuary Cell: 기록 탭 위클리 리캡 — 리캡 카드 그리기(renderSanctuaryRecordsRecap)와 리캡 이미지 저장·리캡 창 열기 (#TASK-ES-429 · 포커스 성소 엔진 세포 쪼개기)",
+    "js/sanctuary-v3-engine.js(1964줄)에서 동작 그대로 옮겼다(이전 전 줄 번호):",
+    "분기 본문 renderSanctuaryRecordsRecap(1109~1133)",
+    "메서드 downloadRecapImage·openWeeklyRecapModal(1756~1872)"
+   ],
+   "lines": 173,
+   "over800": false,
+   "exposes": [
+    "OurgoalSanctuaryV3Kit"
+   ],
+   "calls": [
+    "sanctuary-v3-engine",
+    "viral-sharing"
+   ],
+   "calledBy": [
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [
+    "openWeeklyRecapModal",
+    "state"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-429"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "prs": []
   },
   {
    "id": "stats-charts",
@@ -7913,21 +8359,13 @@
    },
    "tasks": [
     "TASK-ES-379",
-    "TASK-ES-423",
-    "TASK-ES-431"
+    "TASK-ES-423"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
-    "docs/specs/REQ-TASK-ES-431-LOCKSCREEN-STREAK.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
    ],
    "prs": [
-    {
-     "number": 746,
-     "task": "TASK-ES-431",
-     "title": "[FIX] #TASK-ES-431 fix: 잠금화면용 일정 카드 저장이 오류 토스트로 끝나던 것 — 정의 안 된 streakDays 를 computeStreakDays() 로 연결",
-     "date": "2026-10-05"
-    },
     {
      "number": 744,
      "task": "TASK-ES-423",
@@ -9820,226 +10258,6 @@
    ]
   },
   {
-   "id": "records/pro-report-export",
-   "file": "js/tabs/records/pro-report-export.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "records",
-   "tabs": [
-    "records"
-   ],
-   "name": "AI 코칭·노션 내보내기",
-   "nameSource": "hand",
-   "does": "기록을 노션으로 보내고, AI 코칭 리포트 창과 노션 표 내보내기·복사 창을 띄운다",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Pro Report & Export (기록 탭 — 노션 푸시·AI 코칭 리포트·노션 표 내보내기)",
-    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G141·G142·G143.",
-    "옮긴 선언(이전 전 줄): pushRecordToNotion(27858~27931) · openProCoachReportModal(27932~28093) · openProNotionExportModal(28094~28215)",
-    "pushRecordToNotion = 기록을 노션 데이터베이스로 바로 보내기, openProCoachReportModal = AI 프로 코칭 리포트·처방 창, openProNotionExportModal = 노션 표 내보내기·클립보드 복사 창."
-   ],
-   "lines": 384,
-   "over800": false,
-   "exposes": [
-    "OurgoalRecordsKit"
-   ],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-379",
-    "TASK-ES-423",
-    "TASK-ES-438"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
-    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
-   ],
-   "prs": []
-  },
-  {
-   "id": "records/record-assistant",
-   "file": "js/tabs/records/record-assistant.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "records",
-   "tabs": [
-    "records"
-   ],
-   "name": "대화형 기록 비서",
-   "nameSource": "hand",
-   "does": "한 줄 말로 쓴 기록을 알아듣고 확인 창을 띄워 기록으로 저장한다",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Record Assistant (기록 탭 — 대화형 기록 비서)",
-    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G136.",
-    "옮긴 선언(이전 전 줄): parseConversationalRecord(26386~26443) · handleConversationalRecord(26444~26448) · openConversationalRecordConfirmModal(26449~26531)",
-    "parseConversationalRecord = 한 줄 말을 기록 값으로 풀기, handleConversationalRecord·openConversationalRecordConfirmModal = 확인 창을 띄우고 저장."
-   ],
-   "lines": 172,
-   "over800": false,
-   "exposes": [
-    "OurgoalRecordsKit"
-   ],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-379",
-    "TASK-ES-423",
-    "TASK-ES-438"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
-    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
-   ],
-   "prs": []
-  },
-  {
-   "id": "records/record-cards",
-   "file": "js/tabs/records/record-cards.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "records",
-   "tabs": [
-    "records"
-   ],
-   "name": "기록 카드",
-   "nameSource": "hand",
-   "does": "기록 한 건을 카드로 그리고 카드의 수정·삭제·테마 바꾸기 단추를 연결한다",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Record Cards (기록 탭 — 기록 카드 그리기)",
-    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G130.",
-    "옮긴 선언(이전 전 줄): buildRecordCardHtml(25433~25497)",
-    "buildRecordCardHtml = 기록 한 건 카드 HTML. 기록 목록·타임라인·하루 상세가 부른다(카드 단추 연결 wireRecordCards 는 시험지 core-confirm-es376 이 index.html 글자로 읽어 남음 — 시험지 선행 뒤 옮김)."
-   ],
-   "lines": 89,
-   "over800": false,
-   "exposes": [
-    "OurgoalRecordsKit"
-   ],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-379",
-    "TASK-ES-423",
-    "TASK-ES-438"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
-    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
-   ],
-   "prs": []
-  },
-  {
-   "id": "records/record-heatmap-report",
-   "file": "js/tabs/records/record-heatmap-report.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "records",
-   "tabs": [
-    "records"
-   ],
-   "name": "기록 히트맵·리포트",
-   "nameSource": "hand",
-   "does": "기록 히트맵과 주간·월간 리포트(추이 그래프·카테고리 도넛)를 그린다",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Record Heatmap & Report (기록 탭 — 히트맵·주간/월간 리포트 그림)",
-    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G132·G133.",
-    "옮긴 선언(이전 전 줄): renderRecordHeatmap(25853~25999) · TOPIC_COLORS(26000~26002) · svgTrendChart(26003~26019) · svgCategoryDonut(26020~26035) · renderReportSummary(26036~26096)",
-    "renderRecordHeatmap = 기록 히트맵(칸 색 단계 heatmapLevel 은 시험지가 글자로 읽어 index.html 에 남음),"
-   ],
-   "lines": 277,
-   "over800": false,
-   "exposes": [
-    "OurgoalRecordsKit"
-   ],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-379",
-    "TASK-ES-423",
-    "TASK-ES-438"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
-    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
-   ],
-   "prs": []
-  },
-  {
    "id": "records/render",
    "file": "js/tabs/records/render.js",
    "kind": "tab",
@@ -10284,61 +10502,6 @@
      "date": "2026-10-04"
     }
    ]
-  },
-  {
-   "id": "records/table-analytics-view",
-   "file": "js/tabs/records/table-analytics-view.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "records",
-   "tabs": [
-    "records"
-   ],
-   "name": "표 기록 집계·차트",
-   "nameSource": "hand",
-   "does": "표 기록의 자동 집계 결과·일자별 성장 추이 차트·스톱워치 위젯을 그린다",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Table Analytics View (기록 탭 — 표 기록 집계·일자별 추이 차트 그림)",
-    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G138·G139.",
-    "옮긴 선언(이전 전 줄): renderAnalyticsHtml(27555~27568) · renderTrendSvgChart(27679~27759)",
-    "renderAnalyticsHtml = 전문 템플릿 자동 집계 결과 HTML(집계 computeTableAnalytics 는 index.html 에 남음), renderTrendSvgChart = 일자별 성장 추이 SVG(자료 computeTrendChartData 는 남음),"
-   ],
-   "lines": 121,
-   "over800": false,
-   "exposes": [
-    "OurgoalRecordsKit"
-   ],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-379",
-    "TASK-ES-423",
-    "TASK-ES-438"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
-    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
-   ],
-   "prs": []
   },
   {
    "id": "settings/index",
@@ -11373,7 +11536,7 @@
    ],
    "calledBy": [
     "comm/render",
-    "sanctuary-v3-engine",
+    "sanctuary-peer-radar",
     "team-dm-room",
     "team-leader-check",
     "team-member-review",
@@ -12934,7 +13097,7 @@
     "team-invite-comm"
    ],
    "calledBy": [
-    "sanctuary-v3-engine"
+    "sanctuary-weekly-recap"
    ],
    "readsFromIndexHtml": [
     "CREATOR_TEMPLATES",

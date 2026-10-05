@@ -1,0 +1,16 @@
+{
+  "id": "calendar-month-shift",
+  "title": "게스트로 일정 탭에 들어가 포커스 성소 월간 달력 머리의 ▶(다음 달, .s-month-header 의 둘째 .s-cal-arrow)를 누르면 「…월로 이동했습니다.」 안내가 뜨고 달력이 다시 그려진다 — 달 이동(OurgoalSanctuaryV3.shiftCal)을 js/sanctuary-calendar-actions.js 로 옮기고 원본 객체의 같은 자리에서 펼치게 했으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "do": "waitFor", "selector": "#sanctuaryCalendarView .s-month-header", "timeoutMs": 8000 },
+    { "do": "click", "selector": "#sanctuaryCalendarView .s-month-header .s-cal-arrow:nth-of-type(2)" },
+    { "expect": "textContains", "selector": "#toast", "text": "월로 이동했습니다.", "timeoutMs": 5000 },
+    { "expect": "visible", "selector": "#sanctuaryCalendarView .s-cal-month-title" },
+    { "expect": "noExceptions" }
+  ]
+}
