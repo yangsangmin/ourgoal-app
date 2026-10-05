@@ -321,15 +321,15 @@
       "req": "R1",
       "kind": "static",
       "domain": "config",
-      "statement": "main 합친 뒤 기준선 24번째 항목의 800줄 초과 js 파일 수 기록(universal-stats.js 1,614줄은 아직 800 초과)",
+      "statement": "main 합친 뒤 기준선 25번째 항목의 800줄 초과 js 파일 수 기록(universal-stats.js 1,614줄은 아직 800 초과)",
       "touches": [
         "docs/architecture/module-baseline.json"
       ],
       "check": {
         "type": "jsonPath",
         "file": "docs/architecture/module-baseline.json",
-        "path": "history.23.metrics.oversizeJsFiles.count",
-        "equals": 5
+        "path": "history.24.metrics.oversizeJsFiles.count",
+        "equals": 4
       }
     },
     {
@@ -699,6 +699,86 @@
     },
     {
       "id": "C45",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "최신 main 합친 뒤에도 토큰·API·window 이름·상수 동일성·원본 단독 로드·순수 함수 결과가 그 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-405/verify-stats-split-3-main.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-405/verify-stats-split-3-main.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C46",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "최신 main 합친 뒤에도 모든 도메인 샘플 80경우가 그 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-405/sample-boundary-stats-3-main.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-405/sample-boundary-stats-3-main.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C47",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "최신 main 합친 뒤에도 npm test 수치가 그 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-405/test-compare-main.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-405/test-compare-main.json",
+        "path": "sameNumbers",
+        "equals": true
+      }
+    },
+    {
+      "id": "C48",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "최신 main 합친 뒤에도 tests 출력이 그 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-405/test-compare-main.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-405/test-compare-main.json",
+        "path": "tests.outputsSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C49",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "최신 main 기준으로 다시 잰 게스트 통계 조작 비교도 차이 0 으로 기록",
+      "touches": [
+        "reports/TASK-ES-405/dom-compare-stats-3-main.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-405/dom-compare-stats-3-main.json",
+        "path": "differingExcludingNoise",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C50",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -713,7 +793,7 @@
       }
     },
     {
-      "id": "C46",
+      "id": "C51",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -728,7 +808,7 @@
       }
     },
     {
-      "id": "C47",
+      "id": "C52",
       "req": "R1",
       "kind": "static",
       "domain": "config",
