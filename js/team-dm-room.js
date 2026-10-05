@@ -112,11 +112,13 @@
       var res = await global.sb.from('team_ping_replies')
         .select('*')
         .eq('ping_id', threadId)
-        .order('created_at', { ascending: true })
+        .order('created_at', { ascending: false })
         .limit(50);
       if(res && res.data){
         var myId = (global.state && global.state.user && global.state.user.id) || (global.state && global.state.profile && global.state.profile.id);
-        person._thread = res.data.map(function(r){
+        // #TASK-ES-404: 최신 50건을 받아(위 desc + limit) 화면에는 오래된→최신 순으로 그린다. 예전엔 오름차순 + limit 이라 50건이 넘으면 가장 오래된 50건만 보여 새 메시지가 안 나왔다
+        var latestRows = res.data.slice().reverse();
+        person._thread = latestRows.map(function(r){
           var isMe = (r.sender_id === myId);
           var isRead = isMe ? (r.is_read === true || r.status === 'read') : true;
           var sentAt = r.sent_at || r.created_at || new Date().toISOString();

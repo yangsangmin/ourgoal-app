@@ -52,6 +52,25 @@ async function waitUntil(fn, ms, every){
   return null;
 }
 
+/* #TASK-ES-404: 누르기 전에 화면 가운데로 올리고, 그 점에 실제로 그 요소(또는 그 안쪽)가 있는지 확인한다.
+ * 화면 맨 아래 걸친 요소를 그냥 page.click 하면 고정된 하단 탭(.navbtn)이 그 점을 덮어 클릭이 하단 탭에 떨어졌다
+ * (RA-SET-01: 접힌 #setGroupAccountSummary 를 누르면 기록 탭으로 넘어가 설정 화면이 사라짐). 가려져 있으면 조금씩 올려 다시 잰다. */
+async function scrollClear(page, sel){
+  for (let i = 0; i < 4; i++) {
+    const clear = await page.evaluate((s, step) => {
+      const el = document.querySelector(s); if (!el) return null;
+      el.scrollIntoView({ block: 'center' });
+      if (step) window.scrollBy(0, step * 120);
+      const r = el.getBoundingClientRect(); if (!r.width || !r.height) return false;
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return !!(hit && (hit === el || el.contains(hit) || hit.contains(el) && hit.tagName === 'LABEL'));
+    }, sel, i).catch(() => null);
+    if (clear !== false) return clear;
+    await wait(150);
+  }
+  return false;
+}
+
 /* 보이면 누른다(접힌 details 는 그 summary 를 진짜로 눌러 연다). 못 찾으면 false */
 async function clickReal(page, sel, timeout){
   const found = await waitUntil(() => page.$(sel).then((h) => !!h), timeout || 8000, 300);
@@ -66,9 +85,10 @@ async function clickReal(page, sel, timeout){
       return '#' + sum.id;
     }, sel);
     if (!closed) break;
+    await scrollClear(page, closed); await wait(150);
     await page.click(closed).catch(() => {}); await wait(300);
   }
-  await page.evaluate((s) => { const el = document.querySelector(s); if (el) el.scrollIntoView({ block: 'center' }); }, sel);
+  await scrollClear(page, sel);
   await wait(150);
   try { await page.click(sel); return true; } catch (e) { return false; }
 }
