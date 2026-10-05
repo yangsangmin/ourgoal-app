@@ -82,11 +82,12 @@ assert.ok(typeof componentsModule.handle성취통계_Item56Action === 'function'
 console.log('4. components.js 액션 핸들러 및 원자적 트랜잭션 연동 검증 통과');
 
 // 5. renderMultiMetricSvg 함수 단위 테스트
-const startSvgIdx = html.indexOf('function renderMultiMetricSvg(');
+const svgSrc = require('./helpers/inline-bundle').cutFunctionWithExposure(fs.readFileSync(htmlPath, 'utf8'), 'function renderMultiMetricSvg(', 'window.renderMultiMetricSvg = renderMultiMetricSvg;'); /* #TASK-ES-519 함수 잘라 읽기 — 원래 자리면 원문 그대로, 세포로 옮겨 가면 함수는 합본(세포)에서 괄호 짝으로 자르고 노출 줄은 index.html 원래 자리에서 찾아 잇는다. 단언·기대값 그대로 */
+const startSvgIdx = svgSrc.indexOf('function renderMultiMetricSvg(');
 assert.ok(startSvgIdx !== -1, 'renderMultiMetricSvg 시작점 발견');
-const endSvgIdx = html.indexOf('window.renderMultiMetricSvg = renderMultiMetricSvg;', startSvgIdx);
+const endSvgIdx = svgSrc.indexOf('window.renderMultiMetricSvg = renderMultiMetricSvg;', startSvgIdx);
 assert.ok(endSvgIdx !== -1, 'renderMultiMetricSvg 종료점 발견');
-const svgFnCode = html.substring(startSvgIdx, endSvgIdx);
+const svgFnCode = svgSrc.substring(startSvgIdx, endSvgIdx);
 
 const TREND_METRICS = {
   duration: { key: 'duration', label: '몰입시간', unit: '분', color: '#3b82f6', getter: function(it){ return it.durationMinutes || 0; } },
