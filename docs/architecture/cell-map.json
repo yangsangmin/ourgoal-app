@@ -9,15 +9,15 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "a89ce00ff8a836281ddad4527f28a4e826813663",
-  "short": "a89ce00",
-  "committedAt": "2026-10-05T17:23:43+09:00",
-  "subject": "Merge pull request #746 from yangsangmin/fix/2026-10-05-task-es-431-lockscreen-streak"
+  "commit": "5c020e508219dfce9f39067be71e63ba70113938",
+  "short": "5c020e5",
+  "committedAt": "2026-10-05T18:20:46+09:00",
+  "subject": "[INFRA] #TASK-ES-438 refactor: 인라인 스크립트 세포화 구역 P2-1 — 기록 탭 묶음(카드·히트맵·리포트·대화형 기록 비서·표 기록 차트·AI 코칭·노션 내보내기) 선언 14개를 js/tabs/records/ 세포 5개로 이전(인라인 −876줄, 동작 그대로)"
  },
  "summary": {
   "cells": 177,
   "files": 176,
-  "jsLines": 52730,
+  "jsLines": 53773,
   "kinds": {
    "organ": 29,
    "tab": 49,
@@ -155,7 +155,7 @@
     "records/sub-timer",
     "records/table-analytics-view"
    ],
-   "lines": 1321,
+   "lines": 2364,
    "over800": 0
   },
   {
@@ -9833,17 +9833,26 @@
    "nameSource": "hand",
    "does": "기록을 노션으로 보내고, AI 코칭 리포트 창과 노션 표 내보내기·복사 창을 띄운다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Pro Report & Export (기록 탭 — 노션 푸시·AI 코칭 리포트·노션 표 내보내기)",
+    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G141·G142·G143.",
+    "옮긴 선언(이전 전 줄): pushRecordToNotion(27858~27931) · openProCoachReportModal(27932~28093) · openProNotionExportModal(28094~28215)",
+    "pushRecordToNotion = 기록을 노션 데이터베이스로 바로 보내기, openProCoachReportModal = AI 프로 코칭 리포트·처방 창, openProNotionExportModal = 노션 표 내보내기·클립보드 복사 창."
+   ],
+   "lines": 384,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -9853,8 +9862,16 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-438"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
+   ],
    "prs": []
   },
   {
@@ -9871,17 +9888,26 @@
    "nameSource": "hand",
    "does": "한 줄 말로 쓴 기록을 알아듣고 확인 창을 띄워 기록으로 저장한다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Record Assistant (기록 탭 — 대화형 기록 비서)",
+    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G136.",
+    "옮긴 선언(이전 전 줄): parseConversationalRecord(26386~26443) · handleConversationalRecord(26444~26448) · openConversationalRecordConfirmModal(26449~26531)",
+    "parseConversationalRecord = 한 줄 말을 기록 값으로 풀기, handleConversationalRecord·openConversationalRecordConfirmModal = 확인 창을 띄우고 저장."
+   ],
+   "lines": 172,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -9891,8 +9917,16 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-438"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
+   ],
    "prs": []
   },
   {
@@ -9909,17 +9943,26 @@
    "nameSource": "hand",
    "does": "기록 한 건을 카드로 그리고 카드의 수정·삭제·테마 바꾸기 단추를 연결한다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Record Cards (기록 탭 — 기록 카드 그리기)",
+    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G130.",
+    "옮긴 선언(이전 전 줄): buildRecordCardHtml(25433~25497)",
+    "buildRecordCardHtml = 기록 한 건 카드 HTML. 기록 목록·타임라인·하루 상세가 부른다(카드 단추 연결 wireRecordCards 는 시험지 core-confirm-es376 이 index.html 글자로 읽어 남음 — 시험지 선행 뒤 옮김)."
+   ],
+   "lines": 89,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -9929,8 +9972,16 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-438"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
+   ],
    "prs": []
   },
   {
@@ -9947,17 +9998,26 @@
    "nameSource": "hand",
    "does": "기록 히트맵과 주간·월간 리포트(추이 그래프·카테고리 도넛)를 그린다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Record Heatmap & Report (기록 탭 — 히트맵·주간/월간 리포트 그림)",
+    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G132·G133.",
+    "옮긴 선언(이전 전 줄): renderRecordHeatmap(25853~25999) · TOPIC_COLORS(26000~26002) · svgTrendChart(26003~26019) · svgCategoryDonut(26020~26035) · renderReportSummary(26036~26096)",
+    "renderRecordHeatmap = 기록 히트맵(칸 색 단계 heatmapLevel 은 시험지가 글자로 읽어 index.html 에 남음),"
+   ],
+   "lines": 277,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -9967,8 +10027,16 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-438"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
+   ],
    "prs": []
   },
   {
@@ -10231,17 +10299,26 @@
    "nameSource": "hand",
    "does": "표 기록의 자동 집계 결과·일자별 성장 추이 차트·스톱워치 위젯을 그린다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Table Analytics View (기록 탭 — 표 기록 집계·일자별 추이 차트 그림)",
+    "#TASK-ES-438 (인라인 스크립트 세포화 구역 P2): index.html 인라인 IIFE 에서 동작 그대로 옮겼다. 지도 묶음 G138·G139.",
+    "옮긴 선언(이전 전 줄): renderAnalyticsHtml(27555~27568) · renderTrendSvgChart(27679~27759)",
+    "renderAnalyticsHtml = 전문 템플릿 자동 집계 결과 HTML(집계 computeTableAnalytics 는 index.html 에 남음), renderTrendSvgChart = 일자별 성장 추이 SVG(자료 computeTrendChartData 는 남음),"
+   ],
+   "lines": 121,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -10251,8 +10328,16 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-379",
+    "TASK-ES-423",
+    "TASK-ES-438"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-438-INLINE-P2-1.md"
+   ],
    "prs": []
   },
   {
