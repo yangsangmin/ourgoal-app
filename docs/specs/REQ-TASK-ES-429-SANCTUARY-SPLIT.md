@@ -55,7 +55,7 @@
 - 키트: 새 전역 1개 `window.OurgoalSanctuaryV3Kit`(칸 7개: `peerRadar`·`calendarViews`·`calendarActions`·`goalTrail`·`recordFeed`·`weeklyRecap`·`focusTimer`). 세포 IIFE 인자 이름·부르는 식은 원본과 같은 `(function(window){ … })(window)`, 키트 등록은 `var root = window; root.OurgoalSanctuaryV3Kit = …`(모듈 가드 ③ 전역 직접 대입 수 불변 — 선례 components 와 같은 꼴).
 - 스코프 통로: 옮긴 코드가 읽는 원본 이름만(스코프 분석) 칸별 `scope` 에 getter — `engine`·`escapeHtml`·`getTodayStr`·`renderCalDayDetail`·`renderSanctuaryCalendar`·`renderSanctuaryGoals`·`renderSanctuaryRecords`. 대입하는 이름 0(setter 0).
 - `index.html`: 원본 태그 `<script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>` 바로 앞 같은 줄에 세포 태그 7개(순증가 0줄, 원본 태그 글자 그대로).
-- 신고서: `node scripts/module-specs.js --write` → `spec-sanctuary.js`(kind·spans 는 원본 세포 값 그대로, role 은 묶음 설명) → `module-specs --write` → `module-guard --update`(④ 800줄 초과 js 2 → 1). 세포지도: `docs/architecture/cell-descriptions.json` 에 이름·하는 일 7줄 + `node scripts/cell-map-export.js` 재생성.
+- 신고서: `node scripts/module-specs.js --write` → `spec-sanctuary.js`(kind·spans 는 원본 세포 값 그대로, role 은 묶음 설명) → `module-specs --write` → `module-guard --update`(④ 800줄 초과 js 1 → 0(main #743 합친 뒤)). 세포지도: `docs/architecture/cell-descriptions.json` 에 이름·하는 일 7줄 + `node scripts/cell-map-export.js` 재생성.
 - 대상 DOM ID(그리는 자리, 바뀌지 않음): `#sanctuaryGoalsView`·`#sanctuaryCalendarView`·`#sanctuaryRecordsView`·`#sanctuaryCommView`·`#sPeerRadarCard`·`#sPomodoroDisplay`·`#sFeedPastArchiveCard`·`#sArchivePastCard`.
 
 ## 4. [원칙 ④] 재검토 — 다른 길과 비교
@@ -85,9 +85,17 @@
 작업자 실측(판정 아님) — `reports/TASK-ES-429/*.json`:
 - `verify-sanctuary.json`: 토큰 동일(함수 4·메서드 28·분기 본문 7 전부), 누수 0, 원본에 남은 정의 0, window 이름 같음(+키트 1), `OurgoalSanctuaryV3` 키 41·순서·이름·글자 같음, standaloneOk(원본 단독 로드 성공·등록 전역 같음, 세포 7개 각각 단독 로드 성공), 동결 게이트 글자 20개 원본에 남음.
 - `module-load-probe.json`: 법정 탐침 로컬 실행 회귀 0.
-- tab-check·DOM 비교·npm test·실계정 수치는 아래 「측정 결과」에 적는다.
+- 아래 「측정 결과」.
 - 막히는 지점: 동결 게이트가 합본을 읽지 않으므로 다음 성소 분열도 게이트 글자 구간(모드 바·주간 분기·목표 0건 분기·openScheduleDetail)은 원본에 남겨야 한다. 시험지 선행 #741 이 병합되기 전에는 이 PR 의 법정 smoke 가 3개 실패한다(기준 시험지).
 
 ### 측정 결과
+- 기준: 처음 origin/main 9a33acc `git archive` 사본, main 이 #742·#743 으로 움직인 뒤 6a76cc6 사본(`js/sanctuary-v3-engine.js` 는 f020065 이후 main 에서 바뀌지 않음 — `git diff` 0).
+- `verify-sanctuary.json`(기준 6a76cc6): ok·standaloneOk·integrityGateOk 모두 참, 원본 715줄, 함수 4·메서드 28·분기 본문 7 토큰 동일.
+- `module-load-probe.json`(기준 6a76cc6): 법정 탐침 로컬 회귀 0, 새 세포 7개 단독 로드 성공.
+- tab-check 6탭 전체(데드클릭 대표 장 포함): 기준1·기준2·후 각 2,520값 — 기준1 대 기준2 0 · 기준1 대 후 0 · 기준2 대 후 0(`tab-compare-*.json`, 기준 9a33acc · 후 = 9a33acc + 이 분열 8df27ba. main 합친 뒤 다시 돌리지 않은 이유: 합친 커밋이 바꾼 것은 통계 대시보드·템플릿 자료 세포이고 성소 코드·태그는 그대로 — 이 분열만 떼어 잰 값이다).
+- 게스트 조작 비교(`dom-compare-sanctuary.json`, 기준 6a76cc6): 83단계 중 82단계 실행(설정 탭 진입 1단계는 기준·후 모두 탭 전환 실패 — 하네스 한계), 1,162값 기준 대 후 0 · 기준 대 기준 0, 콘솔 오류 0/0.
+- 화면 시나리오(`scenarios/records-focus-timer-card.json`, 법정 실행기 로컬): 기준·작업 통과.
+- npm test(`test-compare.json`, 기준 = origin/main 6a76cc6 분리 worktree): smoke 443/0 · 무결성 38/38 · 버튼 943/943 같음, smoke 제목·결과 487줄 같음, tests 107개 종료 코드·정규화 출력 같음. 다른 수는 모듈 가드 ④ 1 → 0(이 분열로 800줄 초과 js 가 0 이 됨)뿐.
+- 실계정(`real-account-sanctuary.json`, 테스트 계정 A, 로컬 127.0.0.2 + /api 운영 전달, 읽기 전용): 기준1·작업·기준2 화면 8곳·공개 객체 해시 같음, pageerror 0, 기록·목표 수 전후 같음(쓴 행 0).
 
 * **체크리스트 마감 규칙**: 본 작업계획서는 [4단계: 심사 청구]까지만 등록함.

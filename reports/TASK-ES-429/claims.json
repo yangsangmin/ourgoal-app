@@ -1,0 +1,905 @@
+{
+ "task": "TASK-ES-429",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "js/sanctuary-v3-engine.js(1,964줄)에서 레이더 함수 4·렌더 분기 본문 7·공개 객체 메서드 28을 js/sanctuary-*.js 세포 7개로 글자 그대로 옮긴다(원본 715줄, 세포 각 800줄 이하). 상태·도우미·라우터·렌더 머리와 if 사슬·객체 대입문·동결 게이트 글자 구간은 원본에. index.html 태그는 원본 태그 앞 같은 줄. 새 전역 = 키트 1개. 신고서·기준선·세포지도 갱신."
+  },
+  {
+   "id": "R2",
+   "text": "옮기기·검사·측정 도구(묶음 정의·생성기·검사기·신고서 손 칸·게스트 조작 비교·실계정 확인·시나리오 로컬 실행)를 저장소에 남긴다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 측정: git archive 기준 대비 토큰 동일·누수 0·노출 동일·원본 단독 로드, 법정 모듈 로드 탐침 회귀 0, tab-check 기준 2회·후 1회 차이 0, 게스트 조작 비교 차이 0, npm test·tests 기준과 같음, 실계정 읽기 전용 기준과 같음."
+  },
+  {
+   "id": "R4",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  },
+  {
+   "id": "R5",
+   "text": "게스트 화면: 기록 탭 포커스 성소 몰입 타이머 카드가 옮긴 타이머 분기 본문으로 기준과 같이 그려진다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 머리 이음매: 키트를 읽는다",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeContains",
+    "text": "  var _sKit = window.OurgoalSanctuaryV3Kit || {};"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 레이더 그리기를 같은 이름으로 가져온다",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeContains",
+    "text": "  var renderSanctuaryComm = _sRadar.renderSanctuaryComm;"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 피드 분기 본문은 원본에서 세포 함수를 부르는 한 줄",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeContains",
+    "text": "      contentHtml = renderSanctuaryRecordsFeed(records, contentHtml); // [#TASK-ES-429] 분기 본문 → js/sanctuary-record-feed.js"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "목표 트레일 분기 본문은 trailHtml 을 돌려받는 한 줄",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeContains",
+    "text": "      trailHtml = renderSanctuaryGoalTrail(activeGoal, trailHtml); // [#TASK-ES-429] 분기 본문 → js/sanctuary-goal-trail.js"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "달력 이동 메서드는 원본 객체 같은 자리에서 펼친다",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeContains",
+    "text": "    ..._sCalActions.methodsFrom_shiftCal, // [#TASK-ES-429] 메서드 shiftCal·selectToday·shiftWeek·shiftTimelineDay·selectCalDay → js/sanctuary-calendar-actions.js"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "this 를 쓰는 setCalMode 는 원본에 남음",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeContains",
+    "text": "        this.setRecMode('timer');"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "동결 게이트 글자(openScheduleDetail 인자)는 원본에 남음",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeContains",
+    "text": "        window.openCalendarManualEditModal(dt, editEvent || null, kind || 'custom');"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 레이더 함수 정의가 남지 않음",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-v3-engine.js",
+    "type": "codeNotContains",
+    "text": "  function getRealRunningMates() {"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 레이더 함수 글자 그대로",
+   "touches": [
+    "js/sanctuary-peer-radar.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-peer-radar.js",
+    "type": "codeContains",
+    "text": "  function getRealRunningMates() {"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 레이더 키트 칸",
+   "touches": [
+    "js/sanctuary-peer-radar.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-peer-radar.js",
+    "type": "codeContains",
+    "text": "  var K = KIT.peerRadar = KIT.peerRadar || {};"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 월간 달력 분기 함수",
+   "touches": [
+    "js/sanctuary-calendar-views.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-calendar-views.js",
+    "type": "codeContains",
+    "text": "  function renderSanctuaryCalendarMonth(contentHtml, itemsByDate) {"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 달력 이동 메서드 묶음",
+   "touches": [
+    "js/sanctuary-calendar-actions.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-calendar-actions.js",
+    "type": "codeContains",
+    "text": "  K.methodsFrom_shiftCal = {"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 목표 트레일 분기 함수",
+   "touches": [
+    "js/sanctuary-goal-trail.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-goal-trail.js",
+    "type": "codeContains",
+    "text": "  function renderSanctuaryGoalTrail(activeGoal, trailHtml) {"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 기록 피드 분기 함수",
+   "touches": [
+    "js/sanctuary-record-feed.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-record-feed.js",
+    "type": "codeContains",
+    "text": "  function renderSanctuaryRecordsFeed(records, contentHtml) {"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 리캡 메서드 묶음",
+   "touches": [
+    "js/sanctuary-weekly-recap.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-weekly-recap.js",
+    "type": "codeContains",
+    "text": "  K.methodsFrom_downloadRecapImage = {"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포: 타이머 분기 함수",
+   "touches": [
+    "js/sanctuary-focus-timer.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-focus-timer.js",
+    "type": "codeContains",
+    "text": "  function renderSanctuaryRecordsTimer(contentHtml) {"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포 IIFE 를 원본과 같은 식(window)으로 부름",
+   "touches": [
+    "js/sanctuary-focus-timer.js"
+   ],
+   "check": {
+    "file": "js/sanctuary-focus-timer.js",
+    "type": "codeContains",
+    "text": "})(window);"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "index.html: 원본 태그 앞 같은 줄에 세포 태그",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "file": "index.html",
+    "type": "codeContains",
+    "text": "<script src=\"js/sanctuary-focus-timer.js?v=20261005-es429\"></script><script src=\"js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final\"></script>"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서: 새 세포 등록",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/sanctuary-peer-radar.js\","
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준선: --update 로 낮춤(④ 800줄 초과 js 1 → 0)",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/module-baseline.json",
+    "type": "codeContains",
+    "text": "          \"count\": 0,"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 동반자 레이더 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "    \"sanctuary-peer-radar\": \"동반자 레이더\","
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 재생성: 새 세포 실림",
+   "touches": [
+    "docs/architecture/cell-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-map.json",
+    "type": "codeContains",
+    "text": "\"id\": \"sanctuary-focus-timer\","
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: 분기 본문 검사(바뀌는 지역 변수 하나 이하)",
+   "touches": [
+    "docs/design/harness/module-split/gen-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-sanctuary.js",
+    "type": "codeContains",
+    "text": "    if (writes.length > 1) throw new Error('본문이 바꾸는 렌더 함수 지역 변수가 둘 이상: ' + D.name + ' ' + writes.join(','));"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "묶음 정의: 레이더 세포",
+   "touches": [
+    "docs/design/harness/module-split/sanctuary-cells.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/sanctuary-cells.js",
+    "type": "codeContains",
+    "text": "  { kit: 'peerRadar', cell: 'js/sanctuary-peer-radar.js', imp: '_sRadar',"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서 손 칸 스크립트",
+   "touches": [
+    "docs/design/harness/module-split/spec-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/spec-sanctuary.js",
+    "type": "codeContains",
+    "text": "const FROM = 'js/sanctuary-v3-engine.js';"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기: 원본 단독 로드는 법정 탐침 loadOne",
+   "touches": [
+    "docs/design/harness/module-split/verify-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-sanctuary.js",
+    "type": "codeContains",
+    "text": "const { loadOne } = require(path.resolve(APP, 'court', 'probes', 'module-load.js'));"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교: 공개 객체 메서드를 this = 공개 객체로 부름",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-compare-sanctuary.js",
+    "type": "codeContains",
+    "text": "        try { const r = await fn.apply(o, args); return 'ret:' + JSON.stringify(r === undefined ? '<undefined>' : r).slice(0, 3000); } catch (e) { return 'threw:' + String(e).slice(0, 160); }"
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 확인: 모드만 바꾸는 메서드만 부름",
+   "touches": [
+    "docs/design/harness/module-split/real-account-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/real-account-sanctuary.js",
+    "type": "codeContains",
+    "text": "    for (const m of ['feed', 'archive', 'recap', 'timer']) {"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시나리오 로컬 실행기",
+   "touches": [
+    "docs/design/harness/module-split/scenario-local-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/scenario-local-sanctuary.js",
+    "type": "codeContains",
+    "text": "  for (const [label, dir] of [['base', BASE], ['work', WORK]]) {"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "토큰 동일·누수 0·노출 동일·standaloneOk 종합",
+   "touches": [
+    "reports/TASK-ES-429/verify-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/verify-sanctuary.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 단독 로드(법정 loadOne) 성공·등록 전역 같음, 세포 7개 단독 로드 성공",
+   "touches": [
+    "reports/TASK-ES-429/verify-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/verify-sanctuary.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "동결 무결성 게이트 글자 원본에 남음",
+   "touches": [
+    "reports/TASK-ES-429/verify-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/verify-sanctuary.json",
+    "type": "jsonPath",
+    "path": "integrityGateOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 715줄",
+   "touches": [
+    "reports/TASK-ES-429/verify-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/verify-sanctuary.json",
+    "type": "jsonPath",
+    "path": "mainLinesAfter",
+    "equals": 715
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "OurgoalSanctuaryV3 키·순서 같음",
+   "touches": [
+    "reports/TASK-ES-429/verify-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/verify-sanctuary.json",
+    "type": "jsonPath",
+    "path": "runtime.sameApiKeysAndOrder",
+    "equals": true
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침 회귀 0",
+   "touches": [
+    "reports/TASK-ES-429/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-429/dom-compare-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/dom-compare-sanctuary.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-429/dom-compare-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/dom-compare-sanctuary.json",
+    "type": "jsonPath",
+    "path": "baseVsBase.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tab-check 기준1 대 기준2 차이 0",
+   "touches": [
+    "reports/TASK-ES-429/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/tab-compare-base1-base2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tab-check 기준1 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-429/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/tab-compare-base1-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tab-check 기준2 대 후 차이 0(2,520값)",
+   "touches": [
+    "reports/TASK-ES-429/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/tab-compare-base2-after.json",
+    "type": "jsonPath",
+    "path": "comparedValues",
+    "equals": 2520
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tab-check 기준2 대 후 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-429/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/tab-compare-base2-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화면 시나리오 로컬: 작업 통과",
+   "touches": [
+    "reports/TASK-ES-429/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/scenario-local.json",
+    "type": "jsonPath",
+    "path": "runs.work.passed",
+    "equals": true
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 smoke 443 통과·0 실패",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 무결성 게이트 38/38",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.integrity",
+    "equals": [
+     38,
+     38
+    ]
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 버튼 배선 943/943",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.buttons",
+    "equals": [
+     943,
+     943
+    ]
+   }
+  },
+  {
+   "id": "C46",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 모듈 가드 ④ 0(800줄 초과 js 없음)",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.moduleGuard",
+    "equals": [
+     34007,
+     663,
+     282,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C47",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 검사 제목 같음",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "smokeTitlesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C48",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 정규화 출력 차이 0",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsOutputDiffAfterNormalize",
+    "equals": []
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 결과 같음",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "smokeResultsIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드 같음",
+   "touches": [
+    "reports/TASK-ES-429/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C51",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 기준1·작업·기준2 화면 해시 같음",
+   "touches": [
+    "reports/TASK-ES-429/real-account-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/real-account-sanctuary.json",
+    "type": "jsonPath",
+    "path": "sameAll",
+    "equals": true
+   }
+  },
+  {
+   "id": "C52",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 쓴 행 0",
+   "touches": [
+    "reports/TASK-ES-429/real-account-sanctuary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-429/real-account-sanctuary.json",
+    "type": "jsonPath",
+    "path": "work.rowsWritten",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C53",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
+    "type": "codeContains",
+    "text": "## 8. [원칙 ⑧] 성과 측정 · 막히는 지점"
+   }
+  },
+  {
+   "id": "C54",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-429: 포커스 성소 엔진 세포 분열 — js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(js/sanctuary-peer-radar·calendar-views·calendar-actions·goal-trail·record-feed·weekly-recap·focus-timer, 137~382줄). 레이더 함수 4·렌더 분기 본문 7·공개 객체 메서드 28을 생성기 gen-sanctuary.js 로 글자 그대로(바꾼 글자는 T. 접두뿐), 동결 무결성 게이트가 원본에서 찾는 글자 구간·상태·라우터·객체 대입문은 원본에. 새 전역 = 키트 OurgoalSanctuaryV3Kit 1개, index.html 순증가 0. 시험지 선행 #741(ES-426). 실측(판정 아님): 토큰 동일·누수 0·standaloneOk, 법정 탐침 회귀 0, tab-check 2,520값 차이 0, 게스트 조작 1,162값 차이 0, npm test 같음(모듈 가드 ④ 1 → 0), 실계정 읽기 전용 같음. 번호: ES-425 로 시작했으나 #739 가 같은 번호를 먼저 써 ES-429 로 옮김. REQ docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+   }
+  },
+  {
+   "id": "C55",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-429 | E2/세포 | [포커스 성소 엔진 세포 분열] js/sanctuary-v3-engine.js 1,964 → 715줄, 새 세포 7개(레이더·달력 그리기·달력 이동·목표 트레일·기록 피드·위클리 리캡·뽀모도로 타이머) — 동작 그대로, 기능 추가·삭제 0 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md | 4단계(심사 청구)"
+   }
+  },
+  {
+   "id": "C56",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 포커스 성소 모드 바의 「⏱️ 몰입 타이머」를 누르면 25분 뽀모도로 타이머 카드가 그려지고 시계(#sPomodoroDisplay)가 「25:00」으로 보인다(타이머 카드 그리기를 js/sanctuary-focus-timer.js 로 옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/sanctuary-focus-timer.js",
+    "js/sanctuary-v3-engine.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-focus-timer-card.json"
+  }
+ ]
+}
