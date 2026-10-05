@@ -1,0 +1,177 @@
+{
+ "scenario": "organ2-calendar-cells",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 0,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"calendar\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1500ms"
+    },
+    {
+     "i": 7,
+     "kind": "expect",
+     "name": "exists",
+     "ok": true,
+     "detail": "#screen-calendar .cal-daynum → 요소 42개"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "exists",
+     "ok": true,
+     "detail": "#screen-calendar [data-caldate] → 요소 42개"
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#screen-calendar [data-caldate] → class=\"cal-cell other-month\"",
+     "vacuous": true
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 0,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"calendar\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"일정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1500ms"
+    },
+    {
+     "i": 7,
+     "kind": "expect",
+     "name": "exists",
+     "ok": true,
+     "detail": "#screen-calendar .cal-daynum → 요소 42개"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "exists",
+     "ok": true,
+     "detail": "#screen-calendar [data-caldate] → 요소 42개"
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#screen-calendar [data-caldate] → class=\"cal-cell other-month\"",
+     "vacuous": true
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  }
+ }
+}
