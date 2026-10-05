@@ -84,7 +84,8 @@ as $targets$
     (18, 'feed_posts',        'user_id'),
     (19, 'checkins',          'user_id'),
     (20, 'goals',             'user_id'),
-    (21, 'users',             'id')
+    (21, 'user_ledger_docs',  'user_id'),
+    (22, 'users',             'id')
 $targets$;
 
 -- 잘못된 시각 문자열은 오류로 전체를 멈추지 않고 null(=대상 아님)로 읽는다.

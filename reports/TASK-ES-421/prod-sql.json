@@ -1,0 +1,24 @@
+{
+ "measuredAt": "2026-10-05T04:41:46.284Z",
+ "source": "Supabase Management API database/query (관리 토큰, 세션 실행) — 집계만",
+ "applied": [
+  "docs/sql/2026-10-05-xp-ledger.sql x2 (반복 실행 안전 확인)"
+ ],
+ "post": {
+  "policies": 3,
+  "policy_list": "uld_insert_own/INSERT/authenticated ; uld_select_own/SELECT/authenticated ; uld_update_own/UPDATE/authenticated",
+  "anon_grants": 0,
+  "authenticated_grants": "INSERT,SELECT,UPDATE",
+  "rls_on": true,
+  "in_purge_targets": 1,
+  "rows_total": 2,
+  "xp_rows": 2
+ },
+ "privileges": {
+  "anon_select": false,
+  "anon_insert": false,
+  "anon_update": false,
+  "authenticated_delete": false
+ },
+ "note": "rows_total 은 실계정 하네스가 만든 테스트 계정 A·B 행(이관 결과)이다. anon 이 실제로 보는 행 0 은 reports/TASK-ES-421/real-account-xp-ledger.json ⑥(REST 401·42501)."
+}

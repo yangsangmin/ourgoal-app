@@ -1,0 +1,130 @@
+{
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (AI·push·withdraw paths and sync_records·notion_push·inquiry blocked) · Supabase production · test accounts A·B (addresses hidden) · temporary browser profiles",
+ "steps": [
+  {
+   "name": "① 생성 준비: A 로그인 → 이관 확인(원장 활성) · 메모리 판 = 서버 판",
+   "ok": true,
+   "evidence": {
+    "status": {
+     "mode": "ledger",
+     "active": true,
+     "pending": 0
+    },
+    "serverTotal": 120,
+    "serverRev": 7,
+    "serverLog": 6,
+    "memTotal": 120,
+    "memLog": 6,
+    "xpEnumerable": false,
+    "lsSettingsHasXp": false,
+    "guestCopyHasXp": false,
+    "cacheKeys": 1,
+    "backupKeys": 1,
+    "level": 2,
+    "badgeLv": "Lv.220"
+   }
+  },
+  {
+   "name": "① 생성: 체크인(#captureSave) → 서버 원장 합계가 오르고 메모리 판 = 서버 판, 기기 설정·전체 사본에 xp 없음(쓰기 중단)",
+   "ok": true,
+   "evidence": {
+    "typed": true,
+    "clicked": true,
+    "gained": 40,
+    "firstReason": "데일리 퀘스트: 오늘 한 줄 체크인 (+30 EXP)",
+    "serverTotal": 160,
+    "serverRev": 9,
+    "serverLog": 8,
+    "memTotal": 160,
+    "memLog": 8,
+    "xpEnumerable": false,
+    "lsSettingsHasXp": false,
+    "guestCopyHasXp": false,
+    "cacheKeys": 1,
+    "backupKeys": 1,
+    "level": 2,
+    "badgeLv": "Lv.260"
+   }
+  },
+  {
+   "name": "② 기기 캐시 파기: localStorage·sessionStorage 전부 지움(원장 사본·이관 백업·로그인 세션 포함)",
+   "ok": true,
+   "evidence": {
+    "before": 17,
+    "after": 0
+   }
+  },
+  {
+   "name": "③ 리로드 + 다시 로그인",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "④ 서버에서 복원: 메모리 판 deepStrictEqual 파기 전 서버 판, 지금 서버 판도 같음(판 번호 그대로 = 덮어쓰기 없음), 레벨·홈 레벨 배지 글자 같음",
+   "ok": true,
+   "evidence": {
+    "deepStrictEqual": true,
+    "deepErr": null,
+    "revBefore": 9,
+    "serverTotal": 160,
+    "serverRev": 9,
+    "serverLog": 8,
+    "memTotal": 160,
+    "memLog": 8,
+    "xpEnumerable": false,
+    "lsSettingsHasXp": false,
+    "guestCopyHasXp": false,
+    "cacheKeys": 1,
+    "backupKeys": 1,
+    "level": 2,
+    "badgeLv": "Lv.260"
+   }
+  },
+  {
+   "name": "⑤ B 세션: A 원장 읽기 0행 · 남의 행 0 · A 행 고치기 0행 · A 이름으로 넣기 거부 · A 서버 판 그대로",
+   "ok": true,
+   "evidence": {
+    "sameAccount": false,
+    "readARows": 0,
+    "othersVisible": 0,
+    "updateARows": 0,
+    "insertAsA": "거부 42501",
+    "aRevAfter": 9,
+    "aTotalAfter": 160
+   }
+  },
+  {
+   "name": "⑥ 로그인 없는(anon) 읽기: 행 0(권한 거부 또는 빈 목록)",
+   "ok": true,
+   "evidence": {
+    "http": 401,
+    "rows": null,
+    "code": "42501"
+   }
+  },
+  {
+   "name": "⑦ 정리: 이번 실행이 checkins 에 올린 본인 표식 행을 지우고 다시 읽어 0건(EXP 원장은 남김)",
+   "ok": true,
+   "evidence": {
+    "found": 1,
+    "deleted": 1,
+    "leftover": 0,
+    "error": null
+   }
+  }
+ ],
+ "errors": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {
+   "/api/feedback": 1,
+   "/api/track#sync_records": 3
+  }
+ },
+ "summary": {
+  "ok": 8,
+  "failed": 0
+ }
+}
