@@ -1,0 +1,305 @@
+{
+ "task": "TASK-ES-520",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-520-STAGE3-Z4-B.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "인라인 묶음 「목표 보관(기록으로 옮기기)」(restoreGoal·goalAchievement·renderArchivedGoals, 보관 목표 기간·쪽 고르기 노출 문 2개)을 목표 탭 세포 js/tabs/goals/goal-archive.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 노출 문은 감싸 원래 자리에서 부름)."
+  },
+  {
+   "id": "R2",
+   "text": "인라인 묶음 「기록 히트맵 (GitHub 히트맵 스타일)」(HEATMAP_WEEKS·HEATMAP_LEVELS·heatmapLevel·filterRecordsByQuery)을 기록 탭 세포 js/tabs/records/record-heatmap-levels.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R3",
+   "text": "인라인 묶음 「전문 템플릿 실시간 자동 집계 엔진 (혁신 1)」(computeTableAnalytics)과 「📈 표 기록 기반 일자별 자동 성장 추이 차트」(computeTrendChartData)를 기록 탭 세포 js/tabs/records/table-analytics-engine.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R4",
+   "text": "인라인 묶음 「TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진」의 renderMultiMetricSvg 를 기록 탭 세포 js/tabs/records/trend-multi-metric-svg.js 로 동작 그대로 옮긴다(window 노출 줄 2개는 원래 자리)."
+  },
+  {
+   "id": "R5",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 신고서에 새 세포 4개 등록."
+  },
+  {
+   "id": "R6",
+   "text": "옮기기 전후 측정 기록(게스트 조작 기준1·작업·기준2 비교, tests 종료 코드 전후 비교)을 저장소 reports/TASK-ES-520/ 에 남긴다."
+  },
+  {
+   "id": "R7",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 목표를 하나 만들어 편집 모드에서 보관(결과 먼저 입력 → 한 줄 결과 저장)하고 기록 탭 「보관함」을 누르면 보관한 목표 카드(「총 1개 보관됨」, 달성률 100%)가 보이고, 「다시 진행하기」를 누르면 「목표를 다시 진행 중으로 되돌렸어요」 토스트와 함께 목표 탭으로 돌아간다 — 옮긴 renderArchivedGoals·goalAchievement·restoreGoal(js/tabs/goals/goal-archive.js)이 이전 전과 같이 동작한다",
+   "touches": [
+    "js/tabs/goals/goal-archive.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-archive-restore.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭 「빠른 기록」으로 기록을 하나 저장한 뒤 검색칸에 없는 낱말을 치면 「해당 테마 또는 검색 조건에 맞는 기록이 없어요」가 뜨고, 「히트맵·통계」의 오늘 칸이 가장 진한 색(rgb(31, 201, 142))으로 칠해진다 — 옮긴 filterRecordsByQuery·heatmapLevel·HEATMAP_LEVELS(js/tabs/records/record-heatmap-levels.js)가 이전 전과 같이 동작한다",
+   "touches": [
+    "js/tabs/records/record-heatmap-levels.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-heatmap-search.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 전문 템플릿 기록 창(헬스)을 열면 실시간 분석에 「총 세트 18 세트」가 보이고, 첫 줄 세트 칸을 「9세트」로 고치면 「22 세트」로 바뀌며, 성장 추이 차트의 「30일」을 누르면 그 단추가 켜진다 — 옮긴 computeTableAnalytics·computeTrendChartData(js/tabs/records/table-analytics-engine.js)가 이전 전과 같이 계산한다",
+   "touches": [
+    "js/tabs/records/table-analytics-engine.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-pro-analytics.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭 「히트맵·통계」의 「실천추이」 차트에는 켜진 측정지표 2개(몰입시간·실천횟수)의 선 2개만 그려져 있고, 「달성률」 칩을 누르면 세 번째 선이 보라색(#8b5cf6)으로 더해진다 — 옮긴 renderMultiMetricSvg(js/tabs/records/trend-multi-metric-svg.js)가 이전 전과 같이 그린다",
+   "touches": [
+    "js/tabs/records/trend-multi-metric-svg.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-multi-metric-svg.json"
+  },
+  {
+   "id": "C5",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-520/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-520/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-520/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-520/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 이후 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-520/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-520/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 4개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-520/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-520/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/goal-archive 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/goal-archive\""
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 records/record-heatmap-levels 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/record-heatmap-levels\""
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 records/table-analytics-engine 이 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/table-analytics-engine\""
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 records/trend-multi-metric-svg 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/trend-multi-metric-svg\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-520/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-520/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-520/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-520/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드가 기준 사본과 작업 트리에서 같다고 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-520/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-520/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitCodesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-520-STAGE3-Z4-B.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-520-STAGE3-Z4-B.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-520: 인라인 3단계 Z4 이동 1차"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-520 | INFRA | [인라인 3단계 Z4 이동 1차]"
+   }
+  }
+ ]
+}

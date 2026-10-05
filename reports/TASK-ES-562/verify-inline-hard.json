@@ -99,8 +99,8 @@
   {
    "file": "js/tabs/settings/app-lock-pin-format.js",
    "origLines": [
-    3782,
-    3787
+    3797,
+    3802
    ],
    "wrap": null,
    "diffLines": 0,
@@ -110,8 +110,8 @@
   {
    "file": "js/tabs/goals/goal-category-templates.js",
    "origLines": [
-    4298,
-    4305
+    4313,
+    4320
    ],
    "wrap": null,
    "diffLines": 0,
@@ -121,8 +121,8 @@
   {
    "file": "js/tabs/goals/goal-category-templates.js",
    "origLines": [
-    4306,
-    4314
+    4321,
+    4329
    ],
    "wrap": null,
    "diffLines": 0,
@@ -132,8 +132,8 @@
   {
    "file": "js/tabs/goals/goal-category-templates.js",
    "origLines": [
-    4315,
-    4322
+    4330,
+    4337
    ],
    "wrap": null,
    "diffLines": 0,
@@ -143,8 +143,8 @@
   {
    "file": "js/tabs/goals/goal-category-templates.js",
    "origLines": [
-    4860,
-    4861
+    4875,
+    4876
    ],
    "wrap": null,
    "diffLines": 0,
@@ -154,8 +154,8 @@
   {
    "file": "js/tabs/settings/auth-screen-actions.js",
    "origLines": [
-    4325,
-    4333
+    4340,
+    4348
    ],
    "wrap": "bindAuthTabButtons",
    "diffLines": 0,
@@ -165,8 +165,8 @@
   {
    "file": "js/tabs/settings/auth-screen-actions.js",
    "origLines": [
-    4341,
-    4345
+    4356,
+    4360
    ],
    "wrap": null,
    "diffLines": 0,
@@ -176,8 +176,8 @@
   {
    "file": "js/tabs/settings/guide-buttons.js",
    "origLines": [
-    4544,
-    4548
+    4559,
+    4563
    ],
    "wrap": "bindTabGuideHubButton",
    "diffLines": 0,
@@ -187,8 +187,8 @@
   {
    "file": "js/tabs/settings/guide-buttons.js",
    "origLines": [
-    4552,
-    4556
+    4567,
+    4571
    ],
    "wrap": "bindRestartGuideButton",
    "diffLines": 0,
@@ -198,8 +198,8 @@
   {
    "file": "js/tabs/settings/support-inquiry-bind.js",
    "origLines": [
-    4559,
-    4565
+    4574,
+    4580
    ],
    "wrap": "bindInquiryButtons",
    "diffLines": 0,
@@ -209,8 +209,8 @@
   {
    "file": "js/tabs/settings/support-inquiry-bind.js",
    "origLines": [
-    4567,
-    4576
+    4582,
+    4591
    ],
    "wrap": "bindSupportEmailLink",
    "diffLines": 0,
@@ -221,8 +221,8 @@
  "restSame": true,
  "restDiff": null,
  "tokens": {
-  "origRest": 82309,
-  "newRest": 82309
+  "origRest": 76975,
+  "newRest": 76975
  },
  "imported": [
   "APP_LOCK_PIN_PREFIX",
@@ -242,6 +242,8 @@
   "archiveGoal",
   "bindAppEvalBackdrop",
   "bindAppEvalSubmit",
+  "bindArchivedPageSetter",
+  "bindArchivedPeriodSetter",
   "bindAuthTabButtons",
   "bindAuthTesterBButton",
   "bindAvatarGrowthPromptSave",
@@ -293,6 +295,7 @@
   "getDeviceId",
   "getRegisteredDevices",
   "getTeamGoalTemplatePreset",
+  "goalAchievement",
   "goalProgress",
   "groupCheckedToday",
   "groupState",
@@ -355,6 +358,7 @@
   "removePushSubscription",
   "renderActiveDevicesList",
   "renderAdaptiveModeBar",
+  "renderArchivedGoals",
   "renderAttachmentChipsHtml",
   "renderGoalStatsChart",
   "renderGoalsScreen",
@@ -418,154 +422,162 @@
  "noSetter": [],
  "thisArgs": [],
  "listeners": {
-  "origIIFE": 230,
-  "newIIFE": 225,
+  "origIIFE": 229,
+  "newIIFE": 224,
   "cells": 5,
   "same": true
  },
  "wrapCalls": [
   {
-   "line": 3253,
+   "line": 3268,
    "fn": "bindSupabaseAuthStateListener"
   },
   {
-   "line": 3464,
+   "line": 3479,
    "fn": "bindAvatarLevelUpBackdrop"
   },
   {
-   "line": 3467,
+   "line": 3482,
    "fn": "bindAvatarGrowthPromptSave"
   },
   {
-   "line": 3470,
+   "line": 3485,
    "fn": "bindAvatarLevelUpShare"
   },
   {
-   "line": 3473,
+   "line": 3488,
    "fn": "bindAvatarLevelUpSaveImage"
   },
   {
-   "line": 3973,
+   "line": 3988,
    "fn": "bindLandNickQuickLink"
   },
   {
-   "line": 3974,
+   "line": 3989,
    "fn": "bindLandLoginLink"
   },
   {
-   "line": 3976,
+   "line": 3991,
    "fn": "bindLandGuestBtn"
   },
   {
-   "line": 3982,
+   "line": 3997,
    "fn": "bindLandTesterBButton"
   },
   {
-   "line": 3984,
+   "line": 3999,
    "fn": "bindAuthTesterBButton"
   },
   {
-   "line": 4314,
+   "line": 4329,
    "fn": "bindAuthTabButtons"
   },
   {
-   "line": 4317,
+   "line": 4332,
    "fn": "bindSignupSubmit"
   },
   {
-   "line": 4332,
+   "line": 4347,
    "fn": "bindLoginSubmit"
   },
   {
-   "line": 4335,
+   "line": 4350,
    "fn": "bindResyncAccountDataButton"
   },
   {
-   "line": 4336,
+   "line": 4351,
    "fn": "bindLogoutButton"
   },
   {
-   "line": 4337,
+   "line": 4352,
    "fn": "bindResetButton"
   },
   {
-   "line": 4521,
+   "line": 4536,
    "fn": "bindTabGuideHubButton"
   },
   {
-   "line": 4525,
+   "line": 4540,
    "fn": "bindRestartGuideButton"
   },
   {
-   "line": 4528,
+   "line": 4543,
    "fn": "bindInquiryButtons"
   },
   {
-   "line": 4530,
+   "line": 4545,
    "fn": "bindSupportEmailLink"
   },
   {
-   "line": 4698,
+   "line": 4713,
    "fn": "bindNavButtonsClick"
   },
   {
-   "line": 4767,
+   "line": 4782,
    "fn": "bindModalPopstateBack"
   },
   {
-   "line": 4835,
+   "line": 4850,
    "fn": "bindScheduleReminderStart"
   },
   {
-   "line": 6491,
+   "line": 6506,
    "fn": "bindCaptureLiveMeta"
   },
   {
-   "line": 6492,
+   "line": 6507,
    "fn": "bindCaptureSave"
   },
   {
-   "line": 6683,
+   "line": 6698,
    "fn": "bindImportExternalBtn"
   },
   {
-   "line": 6687,
+   "line": 6702,
    "fn": "bindPersonalGuideBtn"
   },
   {
-   "line": 7271,
+   "line": 7286,
    "fn": "bindAppEvalBackdrop"
   },
   {
-   "line": 7276,
+   "line": 7291,
    "fn": "bindAppEvalSubmit"
   },
   {
-   "line": 7277,
+   "line": 7292,
    "fn": "bindHomeAddGoal"
   },
   {
-   "line": 7294,
+   "line": 7309,
    "fn": "bindNewGoalStepExports"
   },
   {
-   "line": 12135,
+   "line": 7348,
+   "fn": "bindArchivedPeriodSetter"
+  },
+  {
+   "line": 7349,
+   "fn": "bindArchivedPageSetter"
+  },
+  {
+   "line": 11624,
    "fn": "bindRecTimeTrackerBtn"
   },
   {
-   "line": 12139,
+   "line": 11628,
    "fn": "bindRecPulseBar"
   },
   {
-   "line": 12140,
+   "line": 11629,
    "fn": "bindRecCarouselPills"
   },
   {
-   "line": 12141,
+   "line": 11630,
    "fn": "bindRecDocumentClick"
   },
   {
-   "line": 12596,
+   "line": 12085,
    "fn": "bindLoginRescueButtons"
   }
  ],
