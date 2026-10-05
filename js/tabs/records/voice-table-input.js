@@ -2,7 +2,7 @@
  * OurGoal Voice Table Input (기록 탭 — 음성 문장을 표 한 줄로 바꾸는 입력 창)
  *
  * 「CSV / 엑셀 양방향 연동」 묶음 중 음성 입력 책임: 한국어 음성 문장 → 표 행 파서(parseVoiceToTableRow — smoke-test FN_NAMES)·핸즈프리 음성 표 입력 창(openVoiceTableModal, 예시 문장 칩으로도 행을 더한다).
- * #TASK-ES-526(인라인 3단계 Z4 이동 3차(표 CSV·웨어러블·목표 연동 · 음성 표 입력 · 테마별 기록 CSV · 함께 목표 초대 글자)): index.html 인라인 IIFE 의 구간(이전 전 10980~11037 · 11038~11225줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-526(인라인 3단계 Z4 이동 3차(표 CSV·웨어러블·목표 연동 · 음성 표 입력 · 테마별 기록 CSV · 함께 목표 초대 글자)): index.html 인라인 IIFE 의 구간(이전 전 10937~10994 · 10995~11182줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 10980~11037줄(#TASK-ES-526 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10937~10994줄(#TASK-ES-526 생성기 표지) ---- */
 
   /* 🎙️ 한국어 자연어 음성 문장 -> 표 행 데이터 스마트 파서 */
   function parseVoiceToTableRow(transcript, curTpl, columns){
@@ -73,7 +73,7 @@
 
     return row;
   }
-  /* ---- 이전 전 index.html 11038~11225줄(#TASK-ES-526 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10995~11182줄(#TASK-ES-526 생성기 표지) ---- */
 
   /* 🎙️ 핸즈프리 실시간 음성 표 입력 모달 (Voice-to-Table) */
   function openVoiceTableModal(curTpl, columns, onInsertRow){

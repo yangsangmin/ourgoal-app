@@ -3,7 +3,7 @@
  *
  * 「CSV / 엑셀 양방향 연동 & 스마트워치 매핑 & 목표 3각 추적」 묶음 중 표 데이터 주고받기 책임: CSV 다운로드(downloadTableAsCsv)·CSV 글자 읽기(parseCsvText — smoke-test FN_NAMES, 인라인 합본에서 찾는다)·CSV 가져오기 창(openCsvImportModal)·스마트워치 데이터 창(openWearableSyncModal)·저장한 표 기록을 맞는 목표 진척에 반영(syncRecordToMatchingGoals).
  * 같은 묶음의 사진 표 채우기(compressImageForVision·AI 사진 분석 하루 한도·openVisionTableModal)와 마켓 템플릿 자료(CURATED_MARKET_TEMPLATES)는 index.html 원래 자리에 남겼다(#TASK-ES-526 REQ 4절).
- * #TASK-ES-526(인라인 3단계 Z4 이동 3차(표 CSV·웨어러블·목표 연동 · 음성 표 입력 · 테마별 기록 CSV · 함께 목표 초대 글자)): index.html 인라인 IIFE 의 구간(이전 전 10494~10523 · 10524~10554 · 10555~10602 · 10603~10655 · 10656~10701줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-526(인라인 3단계 Z4 이동 3차(표 CSV·웨어러블·목표 연동 · 음성 표 입력 · 테마별 기록 CSV · 함께 목표 초대 글자)): index.html 인라인 IIFE 의 구간(이전 전 10451~10480 · 10481~10511 · 10512~10559 · 10560~10612 · 10613~10658줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 10494~10523줄(#TASK-ES-526 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10451~10480줄(#TASK-ES-526 생성기 표지) ---- */
   /* 📤 CSV 다운로드 (Excel 호환 UTF-8 BOM) */
   function downloadTableAsCsv(curTpl, columns, rows){
     if(!columns || !columns.length) return;
@@ -46,7 +46,7 @@
     }, 200);
     L.toast('엑셀 호환 CSV 파일이 다운로드되었습니다!');
   }
-  /* ---- 이전 전 index.html 10524~10554줄(#TASK-ES-526 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10481~10511줄(#TASK-ES-526 생성기 표지) ---- */
 
   function parseCsvText(text){
     var lines = text.split(/\r?\n/).filter(function(l){ return l.trim().length > 0; });
@@ -78,7 +78,7 @@
     });
     return rows;
   }
-  /* ---- 이전 전 index.html 10555~10602줄(#TASK-ES-526 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10512~10559줄(#TASK-ES-526 생성기 표지) ---- */
 
   /* 📥 CSV 가져오기 모달 */
   function openCsvImportModal(curTpl, columns, onImport){
@@ -127,7 +127,7 @@
       };
     });
   }
-  /* ---- 이전 전 index.html 10603~10655줄(#TASK-ES-526 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10560~10612줄(#TASK-ES-526 생성기 표지) ---- */
 
   /* ⌚ 스마트워치 (Apple Health / Strava / Galaxy Watch) 데이터 연동 모달 */
   function openWearableSyncModal(curTpl, columns, onApply){
@@ -181,7 +181,7 @@
       });
     });
   }
-  /* ---- 이전 전 index.html 10656~10701줄(#TASK-ES-526 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10613~10658줄(#TASK-ES-526 생성기 표지) ---- */
 
   /* 🎯 목표-일정-맞춤기록 3각 자동 추적 엔진 (Auto Progress Sync) */
   function syncRecordToMatchingGoals(recObj, curTpl, columns, validRows){
