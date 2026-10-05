@@ -68,6 +68,31 @@ const TEAM_COMM_SRC = [TEAM_INVITE_COMM_RAW, ...TEAM_COMM_PART_FILES.map(readTea
 // 합본 맨 앞은 js/team-invite-comm.js 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
 assert.strictEqual(TEAM_COMM_SRC.slice(0, TEAM_INVITE_COMM_RAW.length), TEAM_INVITE_COMM_RAW, '팀 합본 맨 앞 = js/team-invite-comm.js 원문');
 if (TEAM_COMM_PART_FILES.length === 0) assert.strictEqual(TEAM_COMM_SRC, TEAM_INVITE_COMM_RAW, '팀 합본 = js/team-invite-comm.js (부품 파일이 없을 때)');
+// #TASK-ES-403 (팀 세포 쪼개기 3차 선행 — 시험지): 팀 목표 코드가 js/team-visibility-levels.js · js/team-leader-check.js · js/team-linked-goals.js 에서
+// js/team-*.js 세포(팀 목표 세포 키트 OurgoalTeamGoalsKit 의 원본별 칸에 함수를 담는 파일)로 옮겨 가도(동작 그대로) 같은 단언이 같은 코드를 찾도록,
+// 세 파일의 글자 검사는 '팀 목표 합본' = 원본(원문 그대로, 맨 앞) + 그 원본 칸의 키트 부품(이름순) 을 본다. 부품만 생성기 접두 T.·K. 를 떼고 읽는다(팀 합본과 같은 방식). 단언·기대값은 그대로다.
+// 부품 = js/ 바로 아래 team-*.js 중 원본 셋이 아니고, OurgoalTeamGoalsKit 표식과 그 원본 칸 대입(KIT.<칸> = )이 있는 파일. require 실행 경로는 그대로(원본 머리 이음매가 부품을 require 한다).
+const TEAM_GOALS_KIT_SLOTS = { 'team-visibility-levels.js': 'visibilityLevels', 'team-leader-check.js': 'leaderCheck', 'team-linked-goals.js': 'linkedGoals' };
+function teamGoalsPartFiles(origFile) {
+  const slot = TEAM_GOALS_KIT_SLOTS[path.basename(origFile)];
+  if (!slot) throw new Error('팀 목표 합본 대상 아님: ' + origFile);
+  return listJsTree(path.join(__dirname, '..', 'js'), false).filter(f => {
+    const n = path.basename(f);
+    if (n.indexOf('team-') !== 0 || TEAM_GOALS_KIT_SLOTS[n]) return false;
+    const t = fs.readFileSync(f, 'utf8');
+    return t.indexOf('OurgoalTeamGoalsKit') >= 0 && t.indexOf('KIT.' + slot + ' = ') >= 0;
+  });
+}
+function readTeamGoalsBundle(origFile) {
+  const raw = fs.readFileSync(origFile, 'utf8');
+  const parts = teamGoalsPartFiles(origFile);
+  const src = [raw, ...parts.map(readTeamPartFile)].join('\n');
+  // 합본 맨 앞은 원본 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
+  assert.strictEqual(src.slice(0, raw.length), raw, '팀 목표 합본 맨 앞 = ' + path.basename(origFile) + ' 원문');
+  if (parts.length === 0) assert.strictEqual(src, raw, '팀 목표 합본 = ' + path.basename(origFile) + ' (부품 파일이 없을 때)');
+  return src;
+}
+Object.keys(TEAM_GOALS_KIT_SLOTS).forEach(n => readTeamGoalsBundle(path.join(__dirname, '..', 'js', n)));
 // #TASK-ES-393 (통계 세포 쪼개기 1차 선행 — 시험지): 통계 코드가 js/universal-stats.js 에서 js/stats-*.js 세포(통계 세포 키트 OurgoalUniversalStatsKit 에 함수를 담는 파일)로 옮겨 가도(동작 그대로)
 // 같은 단언이 같은 코드를 찾도록, 통계 소스 글자 검사는 '통계 합본' = js/universal-stats.js(원문 그대로, 맨 앞) + 키트 부품 js/stats-*.js(이름순) 를 본다.
 // 쪼개기 생성기는 원본 스코프 이름을 S.<이름>, 키트를 K.<이름> 으로 바꿔 쓴다 — 부품만 그 접두를 떼고 읽는다(T.·K.·L.·AV. 와 같은 방식). 단언·기대값은 그대로다.
@@ -2851,7 +2876,7 @@ check('compliance: [#TASK-ES-029] 팀 목표 템플릿 개설·체험 분리 및
 check('compliance: [#TASK-ES-026] js/team-leader-check.js 가 존재하고 유효한 모듈 API를 노출한다', () => {
   const modPath = path.join(__dirname, '..', 'js', 'team-leader-check.js');
   assert.ok(fs.existsSync(modPath), '모듈 파일 존재');
-  const src = fs.readFileSync(modPath, 'utf8');
+  const src = readTeamGoalsBundle(modPath);
   assert.ok(src.includes('OurgoalTeamLeaderCheck'), 'OurgoalTeamLeaderCheck 객체 노출');
   assert.ok(src.includes('LEADER_STAMPS'), '4대 확인 도장 메타데이터 탑재');
   assert.ok(src.includes('calcGroupMembersProgress'), '팀원 달성도 집계 함수 탑재');
@@ -2898,7 +2923,7 @@ check('compliance: [#TASK-ES-027] js/team-leader-check.js 에 팀원 찌르기(2
 check('compliance: [#TASK-ES-027] index.html 이 마일스톤 및 팀 목표에 찌르기 버튼을 탑재하고 찌르기/DM 이벤트를 처리한다', () => {
   assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, \'teamgoal\''), '팀 목표 찌르기 버튼 호출');
   assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, \'milestone\''), '마일스톤 찌르기 버튼 호출');
-  const modSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
+  const modSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-leader-check.js'));
   assert.ok(modSrc.includes('[data-openping]'), '찌르기 모달 트리거 이벤트 바인딩');
   assert.ok(modSrc.includes('[data-openleaderdm]'), '1:1 DM 대화 모달 트리거 이벤트 바인딩');
 });
@@ -2906,7 +2931,7 @@ check('compliance: [#TASK-ES-027] index.html 이 마일스톤 및 팀 목표에 
 check('compliance: [#TASK-ES-026] js/team-leader-check.js 가 존재하고 유효한 모듈 API를 노출한다', () => {
   const modPath = path.join(__dirname, '..', 'js', 'team-leader-check.js');
   assert.ok(fs.existsSync(modPath), '모듈 파일 존재');
-  const src = fs.readFileSync(modPath, 'utf8');
+  const src = readTeamGoalsBundle(modPath);
   assert.ok(src.includes('OurgoalTeamLeaderCheck'), 'OurgoalTeamLeaderCheck 객체 노출');
   assert.ok(src.includes('LEADER_STAMPS'), '4대 확인 도장 메타데이터 탑재');
   assert.ok(src.includes('calcGroupMembersProgress'), '팀원 달성도 집계 함수 탑재');
@@ -4644,7 +4669,7 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
   assert.ok(indexHtml.includes('openTeamChatModal'), '팀 대화 버튼 클릭 핸들러 배선');
 
   // 5. 콕찌르기 양방향 답장 자동 배선 검증
-  const checkJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
+  const checkJs = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-leader-check.js'));
   assert.ok(checkJs.includes('handlePingSentAutoReply'), 'team-leader-check.js 내 찌르기 후 자동 답장 배선');
 
   // 6. 소통탭 피드 템플릿 아코디언 검증
@@ -4717,7 +4742,7 @@ check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 �
   // 2. team-linked-goals.js 모듈 파일 및 핵심 API 검증
   const modulePath = path.join(__dirname, '..', 'js', 'team-linked-goals.js');
   assert.ok(fs.existsSync(modulePath), 'js/team-linked-goals.js 파일 존재');
-  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+  const moduleContent = readTeamGoalsBundle(modulePath);
   assert.ok(moduleContent.includes('OurgoalTeamLinkedGoals'), 'OurgoalTeamLinkedGoals 전역 모듈 노출');
   assert.ok(moduleContent.includes('copyTeamGoalToPersonalLinked'), '팀 연계 개인목표 복사 참가 함수 탑재');
   assert.ok(moduleContent.includes('renderTeamLinkedGoalsScreen'), '팀 연계 개인목표 전용 워크스페이스 렌더러 탑재');
@@ -4841,7 +4866,7 @@ check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 
 
   // 3. js/team-linked-goals.js 연계 목표 편집 완료 배선 검증
   assert.ok(fs.existsSync(teamLinkedPath), 'js/team-linked-goals.js 파일이 존재해야 함');
-  const teamLinked = fs.readFileSync(teamLinkedPath, 'utf8');
+  const teamLinked = readTeamGoalsBundle(teamLinkedPath);
   assert.ok(teamLinked.includes("(editMode ? '✓ 편집 완료' : '편집')"), '팀 연계 목표 상단 토글이 [✓ 편집 완료]로 표시되어야 함');
   assert.ok(teamLinked.includes('id="btnTlDoneInline"'), '팀 연계 목표 하단 인라인 완료 버튼이 존재해야 함');
   assert.ok(teamLinked.includes('commitAndFinishTlEdit'), '팀 연계 목표 편집 완료 확정 함수가 배선되어 있어야 함');
@@ -4860,7 +4885,7 @@ check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 
 check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·마일스톤 접힘), 최초 대표 목표 1개 노출 & 스위처, 2계층 아코디언 및 ‘팀 통합 수준관리’ vs ‘목표별 수준관리’ 이원화 무결성 검증', () => {
   const teamVisPath = path.join(__dirname, '..', 'js', 'team-visibility-levels.js');
   assert.ok(fs.existsSync(teamVisPath), 'js/team-visibility-levels.js 파일이 존재해야 함');
-  const teamVisCode = fs.readFileSync(teamVisPath, 'utf8');
+  const teamVisCode = readTeamGoalsBundle(teamVisPath);
 
   // 1. 전용 독립 모듈 함수 노출 검증
   assert.ok(teamVisCode.includes('getGoalLevelGoals: getGoalLevelGoals'), '목표별 수준관리 조회 헬퍼 노출');
@@ -4950,7 +4975,7 @@ check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·�
 check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 가로 인라인 정돈, 달성률/게이지바 슬림화, 모바일 반응형 컴팩트 카드 및 아코디언 접힘) 무결성 검증', () => {
   const teamLinkedPath = path.join(__dirname, '..', 'js', 'team-linked-goals.js');
   assert.ok(fs.existsSync(teamLinkedPath), 'js/team-linked-goals.js 파일이 존재해야 함');
-  const teamLinkedCode = fs.readFileSync(teamLinkedPath, 'utf8');
+  const teamLinkedCode = readTeamGoalsBundle(teamLinkedPath);
 
   // 1. 1열 가로 인라인 구조 및 CSS 클래스 적용 검증
   assert.ok(teamLinkedCode.includes('class="tg-participant-row"'), '1열 인라인 참가자 행 클래스 적용');
@@ -6733,7 +6758,7 @@ check('compliance: [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWork
 check('compliance: [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 및 가짜 타이머 제거·직통 배선 검증', () => {
   const viralSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'viral-sharing.js'), 'utf8');
   const commSrc = TEAM_COMM_SRC;
-  const leaderSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
+  const leaderSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-leader-check.js'));
   const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6795,9 +6820,9 @@ check('compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·
 check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과제 9건([45]~[53]) 전수 구현 및 무결성 검증', () => {
   const indexHtml = APP_SRC;
   const statsSrc = STATS_SRC;
-  const teamLinkedSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-linked-goals.js'), 'utf8');
+  const teamLinkedSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-linked-goals.js'));
   const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
-  const teamLevelsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-visibility-levels.js'), 'utf8');
+  const teamLevelsSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-visibility-levels.js'));
 
   // [45] 성취통계 데이터 관리 옆 접기토글 먹통 수정
   assert.ok(statsSrc.includes('togIco.onclick = function(e){'), '[45] 성취통계 아코디언 토글 전용 클릭 핸들러 바인딩 확인');
@@ -6867,8 +6892,8 @@ check('compliance: [#TASK-ES-176] 팀 목표창 View ↔ Edit 완전 분리(A안
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const geuSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'goal-edit-ux.js'), 'utf8');
-  const tlgSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-linked-goals.js'), 'utf8');
-  const tvlSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-visibility-levels.js'), 'utf8');
+  const tlgSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-linked-goals.js'));
+  const tvlSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-visibility-levels.js'));
 
   // 1. 목표탭 & 소통탭 거대 60선 창 제거 및 템플릿백과사전 온전성
   assert.ok(indexHtml.includes('id="goalsTemplateAccordionSlot" style="display:none;"'), '목표 탭 대형 60선 아코디언 슬롯 숨김 처리 확인');

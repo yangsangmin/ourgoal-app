@@ -1,0 +1,142 @@
+{
+ "label": "base",
+ "runTag": "ogtest-es397-202610042225-kkn1",
+ "env": "local 127.0.0.2 static + /api forwarded to production · test accounts A·B (addresses hidden)",
+ "steps": [
+  {
+   "name": "B 로그인(uid 읽기)",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "A 로그인",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "① 대화방 열림(#dmInput·#dmSend)",
+   "ok": true,
+   "evidence": {
+    "opened": true
+   }
+  },
+  {
+   "name": "① 대화방 전송 → /api/push-dispatch 요청·응답",
+   "ok": false,
+   "evidence": {
+    "count": 1,
+    "requests": [
+     {
+      "method": "POST",
+      "hasBearer": false,
+      "bodyKeys": [
+       "body",
+       "tag",
+       "targetUserId",
+       "title",
+       "url"
+      ],
+      "targetUserIdIsPeer": true,
+      "receiverIdIsPeer": false,
+      "tagPrefix": "dm-dm_",
+      "status": 401,
+      "response": {
+       "keys": [
+        "error"
+       ],
+       "ok": null,
+       "sent": null,
+       "error": "unauthorized: missing bearer token"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "② 공유 창 열림·B 전송 버튼",
+   "ok": true,
+   "evidence": {
+    "companionAlready": false,
+    "button": true,
+    "error": null
+   }
+  },
+  {
+   "name": "② 피드 공유 DM → /api/push-dispatch 요청·응답",
+   "ok": false,
+   "evidence": {
+    "count": 1,
+    "requests": [
+     {
+      "method": "POST",
+      "hasBearer": false,
+      "bodyKeys": [
+       "body",
+       "receiver_id",
+       "sender_name",
+       "tag",
+       "title"
+      ],
+      "targetUserIdIsPeer": false,
+      "receiverIdIsPeer": true,
+      "tagPrefix": "dm-dm_",
+      "status": 401,
+      "response": {
+       "keys": [
+        "error"
+       ],
+       "ok": null,
+       "sent": null,
+       "error": "unauthorized: missing bearer token"
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "cleanup": {
+  "team_ping_replies": {
+   "deleted": 0,
+   "deleteError": null,
+   "left": 2
+  },
+  "team_pings": {
+   "deleted": 0,
+   "deleteError": null,
+   "left": 1
+  }
+ },
+ "probe": [
+  {
+   "method": "POST",
+   "hasBearer": true,
+   "bodyKeys": [
+    "body",
+    "tag",
+    "targetUserId",
+    "title",
+    "url"
+   ],
+   "targetUserIdIsPeer": true,
+   "receiverIdIsPeer": false,
+   "tagPrefix": "dm-pro",
+   "status": 401,
+   "response": {
+    "keys": [
+     "error"
+    ],
+    "ok": null,
+    "sent": null,
+    "error": "unauthorized"
+   }
+  }
+ ],
+ "summary": {
+  "ok": 4,
+  "failed": 2
+ }
+}

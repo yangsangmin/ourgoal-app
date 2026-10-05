@@ -271,17 +271,22 @@
                   created_at: new Date().toISOString()
                 });
 
+                // #TASK-ES-397: 받는 사람 칸을 서버가 읽는 targetUserId 로(예전 receiver_id 는 서버가 읽지 않았다), 로그인 세션 Bearer 를 붙여 보낸다(예전엔 머리글 없이 401). 토큰이 없으면 보내지 않는다
                 try {
-                  fetch('/api/push-dispatch', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      receiver_id: peerId,
-                      sender_name: myNick,
-                      title: '1:1 DM (피드 공유)',
-                      body: shareMsg.slice(0, 80),
-                      tag: 'dm-' + threadId
-                    })
+                  var dmLedger = global.OurgoalDmLedger;
+                  Promise.resolve(dmLedger && dmLedger.getAuthToken ? dmLedger.getAuthToken() : null).then(function(pushToken){
+                    if(!pushToken) return null;
+                    return fetch('/api/push-dispatch', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pushToken },
+                      body: JSON.stringify({
+                        targetUserId: peerId,
+                        title: '1:1 DM (피드 공유)',
+                        body: shareMsg.slice(0, 80),
+                        url: '/#comm',
+                        tag: 'dm-' + threadId
+                      })
+                    });
                   }).catch(function(){});
                 } catch(pe){}
               }

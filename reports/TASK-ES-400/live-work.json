@@ -1,0 +1,107 @@
+{
+ "label": "work",
+ "runTag": "ogtest-es400-202610042246-ouhf",
+ "env": "local 127.0.0.2 static + /api/push-subscribe = local handler of this copy (auth.getUser real Supabase, table in memory) · other /api forwarded to production · test accounts A·B (addresses hidden)",
+ "steps": [
+  {
+   "name": "B 로그인(uid 읽기)",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "A 로그인",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "① 앱 구독 등록 요청",
+   "ok": true,
+   "evidence": {
+    "call": "called",
+    "count": 1,
+    "requests": [
+     {
+      "method": "POST",
+      "hasBearer": true,
+      "bodyUserIdIs": "A",
+      "endpointMark": "ogtest-es400-202610042246-ouhf-a",
+      "status": 200,
+      "error": null
+     }
+    ],
+    "rowOwner": "A"
+   }
+  },
+  {
+   "name": "②-1 토큰 없이 B 이름으로 등록",
+   "ok": true,
+   "evidence": {
+    "status": 401,
+    "rowOwner": null
+   }
+  },
+  {
+   "name": "②-2 A 토큰으로 B 이름 등록",
+   "ok": true,
+   "evidence": {
+    "status": 403,
+    "rowOwner": null
+   }
+  },
+  {
+   "name": "②-3 A 토큰으로 B 구독 삭제",
+   "ok": true,
+   "evidence": {
+    "status": 403,
+    "bRowLeft": true
+   }
+  },
+  {
+   "name": "②-4 토큰 없이 B 구독 삭제",
+   "ok": true,
+   "evidence": {
+    "status": 401,
+    "bRowLeft": true
+   }
+  },
+  {
+   "name": "③ 앱 구독 해제 요청",
+   "ok": true,
+   "evidence": {
+    "call": "called",
+    "count": 1,
+    "requests": [
+     {
+      "method": "DELETE",
+      "hasBearer": true,
+      "bodyUserIdIs": null,
+      "endpointMark": "ogtest-es400-202610042246-ouhf-a",
+      "status": 200,
+      "error": null
+     }
+    ],
+    "rowLeft": null
+   }
+  },
+  {
+   "name": "④ 게스트 구독 등록 요청",
+   "ok": true,
+   "evidence": {
+    "guestEntered": true,
+    "call": "called",
+    "count": 0,
+    "requests": []
+   }
+  }
+ ],
+ "memRowsAtEnd": [
+  {
+   "owner": "B",
+   "mark": "<run>-b-seed"
+  }
+ ]
+}

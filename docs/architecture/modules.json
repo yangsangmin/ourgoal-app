@@ -97,9 +97,7 @@
       "owns": [],
       "capabilities": [],
       "planned": {
-        "provides": [
-          "xp.award"
-        ],
+        "provides": [],
         "contributes": []
       },
       "emits": [],
@@ -525,6 +523,76 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": []
+    },
+    {
+      "id": "avatar/xp",
+      "file": "js/avatar/xp.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal Avatar Cell: EXP·레벨 (#TASK-ES-395 · 아바타·EXP 쪼개기 PR-5, 설계 docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md 3-2절)",
+      "spans": [
+        "home",
+        "goals",
+        "records",
+        "comm",
+        "settings"
+      ],
+      "provides": [
+        "xp.award",
+        "xp.read"
+      ],
+      "requires": [],
+      "contributes": [],
+      "owns": [
+        "data.xp"
+      ],
+      "capabilities": [
+        {
+          "name": "xp.award",
+          "description": "EXP 를 지급한다(합계 더하기 + 이력 맨 앞에 기록, 200건 상한) — 저장은 state.profile.settings.xp(기기). 0 보다 크면 축하 팝업, 홈 링에 알림",
+          "sideEffect": "local",
+          "needsConfirm": false,
+          "input": {
+            "amount": "number",
+            "reason": "string"
+          },
+          "output": {
+            "total": "number",
+            "leveledUp": "boolean"
+          }
+        },
+        {
+          "name": "xp.read",
+          "description": "지금 EXP 합계와 레벨 진행(level·xp·into·span·pct)을 읽는다. 저장 칸이 없으면 0 으로 계산하고 만들지 않는다",
+          "sideEffect": "none",
+          "needsConfirm": false,
+          "output": {
+            "level": "number",
+            "xp": "number",
+            "into": "number",
+            "span": "number",
+            "pct": "number"
+          }
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "checkin.after"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalCapabilities",
+        "OurgoalHomeOneScreen",
+        "require:../core/capabilities.js"
+      ]
     },
     {
       "id": "calendar-attachment",
@@ -4039,6 +4107,7 @@
       "dependsOn": [
         "FEED_POSTS_CACHE",
         "MOCK_GROUPS",
+        "OurgoalDmLedger",
         "burstConfetti",
         "closeModal",
         "goalProgress",

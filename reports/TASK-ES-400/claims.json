@@ -1,0 +1,417 @@
+{
+ "task": "TASK-ES-400",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-400-PUSH-SUBSCRIBE-AUTH.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "api/push-subscribe.js POST·DELETE 는 sb.auth.getUser 로 검증한 로그인 사용자 토큰이 필수(없음 401), 대상 user_id 는 토큰 uid 로만, 본문 userId 가 다르면 403, 남의 구독 삭제 403."
+  },
+  {
+   "id": "R2",
+   "text": "index.html syncPushSubscription·removePushSubscription 은 로그인 세션 Bearer 를 붙이고 세션이 없으면 서버 요청을 하지 않는다."
+  },
+  {
+   "id": "R3",
+   "text": "부품 시험 기준 사본 실패 → 작업 통과, npm test 기준·작업 같음, 실계정 실측 전후 기록, 확인용 SELECT SQL."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버가 POST·DELETE 의 로그인 사용자를 Supabase 인증으로 확인하는 함수를 쓴다",
+   "touches": [
+    "api/push-subscribe.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "api/push-subscribe.js",
+    "text": "    var r = await sb.auth.getUser(token);"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버 POST 는 토큰 사용자가 없으면 401 로 끝낸다",
+   "touches": [
+    "api/push-subscribe.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "api/push-subscribe.js",
+    "text": "    var tokenUid = await resolveTokenUser(req, sb);"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버 POST 는 본문 userId 가 토큰 uid 와 다르면 403 이다",
+   "touches": [
+    "api/push-subscribe.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "api/push-subscribe.js",
+    "text": "    if (body.userId && String(body.userId) !== tokenUid) {"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "등록할 user_id 는 토큰 uid 로만 정한다",
+   "touches": [
+    "api/push-subscribe.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "api/push-subscribe.js",
+    "text": "    var userId = tokenUid;"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버 DELETE 는 endpoint 와 토큰 uid 가 함께 맞는 행만 지운다",
+   "touches": [
+    "api/push-subscribe.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "api/push-subscribe.js",
+    "text": "      var delRes = await sb.from('push_subscriptions').delete().eq('endpoint', endpoint).eq('user_id', delUid);"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "앱 구독 등록 요청에 로그인 세션 Bearer 가 붙는다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pushSubToken },"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "앱 구독 해제 요청에 로그인 세션 Bearer 가 붙고, 세션이 없으면 서버 요청을 하지 않는다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "      var pushUnsubToken = await getSupabaseAuthToken(); if(!pushUnsubToken) return;"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "새 부품 시험이 npm test 경로(test-shipyard-modular Test 6)에 등록되어 있다",
+   "touches": [
+    "scripts/test-shipyard-modular.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "  runNode('tests/push-subscribe-auth-es400.test.js');"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험이 토큰 없는 남의 userId 등록을 401 로 맞대어 본다",
+   "touches": [
+    "tests/push-subscribe-auth-es400.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/push-subscribe-auth-es400.test.js",
+    "text": "    const r = await call('POST', { userId: STRANGER, subscription: subOf(EP_NEW) }, null);"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험이 작업 트리에서 13건 모두 통과로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-400/unit-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/unit-work.json",
+    "path": "failed",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "같은 부품 시험이 기준 사본(수정 전 origin/main 의 git archive)에서는 8건 실패로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-400/unit-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/unit-base.json",
+    "path": "failed",
+    "equals": 8
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 전 실계정 실측에서 토큰 없이 B 이름으로 등록한 요청이 200 이었다",
+   "touches": [
+    "reports/TASK-ES-400/live-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/live-base.json",
+    "path": "steps.3.evidence.status",
+    "equals": 200
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 후 실계정 실측에서 토큰 없이 B 이름으로 등록한 요청은 401 이었다",
+   "touches": [
+    "reports/TASK-ES-400/live-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/live-work.json",
+    "path": "steps.3.evidence.status",
+    "equals": 401
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 후 실계정 실측에서 A 토큰으로 B 이름 등록은 403 이었다",
+   "touches": [
+    "reports/TASK-ES-400/live-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/live-work.json",
+    "path": "steps.4.evidence.status",
+    "equals": 403
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 후 실계정 실측에서 토큰 없이 B 구독 삭제는 401 이고 B 행이 남았다",
+   "touches": [
+    "reports/TASK-ES-400/live-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/live-work.json",
+    "path": "steps.6.evidence.bRowLeft",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 후 실계정 실측에서 앱 구독 등록 요청이 Bearer 를 붙였다",
+   "touches": [
+    "reports/TASK-ES-400/live-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/live-work.json",
+    "path": "steps.2.evidence.requests.0.hasBearer",
+    "equals": true
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 후 실측에서 게스트 구독 등록 요청은 0건이었다",
+   "touches": [
+    "reports/TASK-ES-400/live-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/live-work.json",
+    "path": "steps.8.evidence.count",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "실측 도구는 처리기를 로컬에서 직접 부르고 표는 메모리로 바꾼다(운영 DB 쓰기 0)",
+   "touches": [
+    "docs/design/harness/real-account-push-subscribe.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/real-account-push-subscribe.js",
+    "text": "  Module._load = function (request) { if (request === '@supabase/supabase-js') return { createClient: memClient }; return orig.apply(this, arguments); };"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "잘못 등록된 행 확인용 SQL 은 SELECT 만 담는다",
+   "touches": [
+    "docs/sql/2026-10-05-push-subscriptions-owner-check.sql"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/sql/2026-10-05-push-subscriptions-owner-check.sql",
+    "text": "from public.push_subscriptions;"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "REQ 에 8원칙이 원칙별 머리글로 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-400-PUSH-SUBSCRIBE-AUTH.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/specs/REQ-TASK-ES-400-PUSH-SUBSCRIBE-AUTH.md",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 및 반론 격파"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "티켓 1줄이 기록되어 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "- #TASK-ES-400 | E3/보안 | [푸시 구독 인증]"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "작업 기록 1줄이 기록되어 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "dev_log.md",
+    "text": "- 2026-10-05 TASK-ES-400: 푸시 구독 등록·삭제 인증"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험 작업 기록의 전체 건수가 13건이다",
+   "touches": [
+    "reports/TASK-ES-400/unit-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-400/unit-work.json",
+    "path": "total",
+    "equals": 13
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R1",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "배포 뒤 테스트 계정 A 가 알림을 켜면 운영 push_subscriptions 에 A 의 기기 행이 A uid 로 들어가고, 토큰 없는 등록 요청은 운영에서 401 이다",
+   "touches": [
+    "api/push-subscribe.js",
+    "index.html"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "병합·배포 뒤 테스트 계정 A·B 환경 변수가 있는 세션 또는 상민님",
+    "how": [
+     "병합·운영 배포 확인",
+     "테스트 계정 A 로 로그인해 설정에서 알림 켜기(브라우저 알림 권한 허용)",
+     "운영 /api/push-subscribe 에 토큰 없이 B 이름 POST → 401 인지 확인",
+     "Supabase SQL Editor 에서 A 의 push_subscriptions 행 user_id 확인(SELECT 만)"
+    ],
+    "note": "서버 변경은 병합 전이라 운영 /api 에 없고, 이 PC 에는 서비스 키가 없어 운영 표를 읽을 수 없다. 수정 후 실측은 이 사본의 처리기를 로컬에서 직접 불러 토큰 확인만 진짜 Supabase 인증으로 했고 표는 메모리였다(reports/TASK-ES-400/live-work.json)."
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R3",
+   "kind": "unverified",
+   "domain": "data",
+   "statement": "운영 표에 남의 이름으로 잘못 등록된 구독 행이 있는지",
+   "touches": [
+    "docs/sql/2026-10-05-push-subscriptions-owner-check.sql"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "상민님(Supabase SQL Editor)",
+    "how": [
+     "docs/sql/2026-10-05-push-subscriptions-owner-check.sql 의 SELECT 3개 실행",
+     "사용자별 기기 수가 비정상적으로 많거나 세션 기록보다 이른 행을 본다"
+    ],
+    "note": "표에는 기기 주인 정보가 없어 SELECT 결과는 단서일 뿐 확정이 아니다. 기존 행은 이 PR 에서 바꾸거나 지우지 않는다."
+   }
+  }
+ ]
+}
