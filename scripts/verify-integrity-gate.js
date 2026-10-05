@@ -763,8 +763,8 @@ check('[검증 16/16] [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터
   assert.ok(!html.includes('외부 공유 기능을 준비 중입니다'), '외부 공유 준비중 거짓말 토스트 잔존');
   assert.ok(!sanctuaryContent.includes('일정 추가 창을 준비 중입니다'), '성소 캘린더 일정 추가 준비중 토스트 잔존');
 
-  // 4. 완전 무료 선언 정식 모달 승화 검증
-  assert.ok(html.includes('아워골 완전 무료화 헌법 선언'), '아워골 완전 무료 선언 모달 마크업 누락');
+  // 4. [#TASK-ES-550] 상민님 결정(2026-10-06 「광고·구독 삭제 금고 변경 승인」)으로 페이월 자리 안내 모달(openPaywallModal)을 지웠다(#TASK-ES-516) — 없어야 한다
+  assert.ok(!html.includes('아워골 완전 무료화 헌법 선언') && !html.includes('function openPaywallModal('), '페이월 자리 안내 모달 잔존');
 });
 
 check('[검증 17/17] [#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 조형 정적 방화벽 검사', () => {

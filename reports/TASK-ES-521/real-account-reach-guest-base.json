@@ -1,0 +1,96 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "reach-guest",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [
+  "getSupabaseAuthToken",
+  "enterAsTesterB",
+  "openNewPasswordModal"
+ ],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "67bb6583576d8d96",
+   "opened": null,
+   "counts": {
+    "landTesterB": 0,
+    "authTesterB": 0
+   },
+   "calls": {
+    "getSupabaseAuthToken": 1
+   }
+  },
+  {
+   "name": "② 기록",
+   "present": true,
+   "visible": true,
+   "textHash": "fc7bc23110582a5b",
+   "textLen": 558,
+   "attrsHash": "e1424b895461c1ae",
+   "opened": null,
+   "calls": {
+    "getSupabaseAuthToken": 1
+   }
+  },
+  {
+   "name": "③ 설정",
+   "present": true,
+   "visible": true,
+   "textHash": "662cd8b7b3ecc669",
+   "textLen": 753,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null,
+   "counts": {
+    "resync": 1,
+    "reset": 1
+   },
+   "calls": {
+    "getSupabaseAuthToken": 1
+   }
+  },
+  {
+   "name": "④ 소통",
+   "present": true,
+   "visible": true,
+   "textHash": "c9bec303d60a8bd5",
+   "textLen": 372,
+   "attrsHash": "0582e23fc1b9f0f5",
+   "opened": null,
+   "calls": {
+    "getSupabaseAuthToken": 1
+   }
+  },
+  {
+   "name": "⑤ 목표",
+   "present": true,
+   "visible": true,
+   "textHash": "3c08e90fe9b18654",
+   "textLen": 345,
+   "attrsHash": "de8d692ed9f36ffb",
+   "opened": null,
+   "calls": {
+    "getSupabaseAuthToken": 1
+   }
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "getSupabaseAuthToken/function,enterAsTesterB/function,openNewPasswordModal/undefined,bindLoginSubmit/undefined",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 1
+ }
+}
