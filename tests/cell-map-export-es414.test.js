@@ -137,6 +137,26 @@ check('노션 본문 세포 펼침 제목이 짧은 이름 · id 순이고, 영�
   assert.ok(head.includes('DM 대화방, DM 받은 목록') || head.includes('DM 받은 목록'), '영역 표 세포 목록에 짧은 이름');
 });
 
+// #TASK-ES-424 --check: 내용이 같고 기준 커밋 도장(HEAD)만 다르면 최신, 내용이 다르면 갱신 필요
+check('저장본과 내용이 같고 기준 커밋 도장만 다르면 최신으로 본다(내용이 다르면 갱신 필요)', () => {
+  const built = exporter.serialize(a);
+  assert.deepStrictEqual(exporter.compareSaved(built, built), { fresh: true, stampOnly: false });
+  const stamped = JSON.parse(built);
+  stamped.source.commit = '0000000000000000000000000000000000000000';
+  stamped.source.short = '0000000';
+  stamped.source.committedAt = '2000-01-01T00:00:00+09:00';
+  stamped.source.subject = 'Merge pull request #0 from x/y';
+  assert.deepStrictEqual(exporter.compareSaved(exporter.serialize(stamped), built), { fresh: true, stampOnly: true });
+  assert.deepStrictEqual(exporter.compareSaved(exporter.serialize(stamped).replace(/\n/g, '\r\n'), built), { fresh: true, stampOnly: true });
+  const changed = JSON.parse(built);
+  changed.cells[0].lines = (changed.cells[0].lines || 0) + 1;
+  assert.strictEqual(exporter.compareSaved(exporter.serialize(changed), built).fresh, false);
+  const repo = JSON.parse(built);
+  repo.source.repo = 'other/repo';
+  assert.strictEqual(exporter.compareSaved(exporter.serialize(repo), built).fresh, false);
+  assert.strictEqual(exporter.compareSaved(null, built).fresh, false);
+});
+
 const failed = results.filter(r => !r.ok);
 results.forEach(r => console.log((r.ok ? '  통과 ' : '  실패 ') + r.name + (r.ok ? '' : ' — ' + r.msg)));
 console.log(`cell-map-export 부품 시험: ${results.length - failed.length}/${results.length}`);
