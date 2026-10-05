@@ -1,0 +1,50 @@
+{
+  "id": "home-checkin-ai-feedback",
+  "title": "게스트로 홈에서 체크인 문장을 입력하고 「오늘 실천 완료」를 누르면 옮긴 AI 피드백 요청(requestAIFeedback → 서버·Gemini 요청 실패 → 로컬 대체)이 불려 이전 전과 같은 「고품질 추천 엔진으로 즉시 보답」 토스트가 뜬다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "오늘 5km 달리기를 했다"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "고품질 추천 엔진으로",
+      "timeoutMs": 12000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

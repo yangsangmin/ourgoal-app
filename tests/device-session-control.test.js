@@ -15,7 +15,7 @@ assert.ok(TEST_TICKET_ID === '#TASK-ES-321', '#TASK-ES-321 단위 테스트 식�
 console.log('🧪 [#TASK-ES-321 / 노션 70] 로그인 기기 목록 확인 및 개별 세션 제어 단위 테스트 시작...');
 
 const indexHtmlPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 
 // 1. index.html 내 getRegisteredDevices 및 renderActiveDevicesList 구비 검증
 assert.ok(indexHtml.includes('function getRegisteredDevices()'), 'getRegisteredDevices 함수 선언 확인');

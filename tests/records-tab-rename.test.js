@@ -10,7 +10,7 @@ const SUITE_TASK = 'TASK-ES-260';
 console.log('[TEST] records-tab-rename.test.js: starting execution for ' + SUITE_TASK + '...');
 
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 const uiCssPath = path.join(__dirname, '..', 'ui.css');
 const uiCss = fs.readFileSync(uiCssPath, 'utf8');
 

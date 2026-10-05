@@ -12,7 +12,7 @@ var vm = require('vm');
 var ROOT = path.join(__dirname, '..');
 var htmlArg = process.argv.indexOf('--html');
 var HTML_PATH = htmlArg > -1 ? path.resolve(process.argv[htmlArg + 1]) : path.join(ROOT, 'index.html');
-var html = fs.readFileSync(HTML_PATH, 'utf8');
+var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(HTML_PATH, 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 var Guard = require('../js/direct-login-guard');
 var guardSrc = fs.readFileSync(path.join(ROOT, 'js', 'direct-login-guard.js'), 'utf8');
 
