@@ -1,0 +1,86 @@
+{
+ "id": "routine-detail-guest-edit",
+ "title": "게스트로 목표 탭 「루틴」의 모닝 루틴 카드를 누르면 「루틴 상세 & 편집」 창이 열리고, 이름을 고쳐 「저장하기」를 누르면 「루틴 설정이 저장되었습니다」 토스트와 함께 그 카드에 새 이름이 보인다 — 옮긴 openRoutineDetailModal(js/tabs/goals/routine-detail-modal.js)이 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"goals\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"goals\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnGoalsSubRoutine",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#btnGoalsSubRoutine"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnAddRoutineBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "visible",
+   "selector": ".routine-card[data-rtid=\"rt_morning\"]"
+  },
+  {
+   "do": "click",
+   "selector": ".routine-card[data-rtid=\"rt_morning\"]"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay",
+   "text": "루틴 상세 & 편집"
+  },
+  {
+   "expect": "visible",
+   "selector": "#inDetailRtTitle"
+  },
+  {
+   "do": "type",
+   "selector": "#inDetailRtTitle",
+   "text": "물 두 잔 마시기",
+   "clear": true
+  },
+  {
+   "do": "click",
+   "selector": "#btnSaveDetailRoutine"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "루틴 설정이 저장되었습니다"
+  },
+  {
+   "expect": "textContains",
+   "selector": ".routine-card[data-rtid=\"rt_morning\"]",
+   "text": "물 두 잔 마시기"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
