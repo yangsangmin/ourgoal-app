@@ -6,7 +6,7 @@
 
 ## 1. [원칙 ①] 문제 정확히 파악 — 지시 요지
 
-1. index.html 인라인 IIFE(기준 origin/main a89ce00 에서 모듈 가드 ① 33,385줄)는 아직 미분화 덩어리다. P1 구역 22묶음(약 3,000줄)을 세포 파일로 옮겨 인라인을 줄인다 — 속도 우선, PR 을 연달아.
+1. index.html 인라인 IIFE(기준 origin/main eb9e6e4 에서 모듈 가드 ① 33,382줄)는 아직 미분화 덩어리다. P1 구역 22묶음(약 3,000줄)을 세포 파일로 옮겨 인라인을 줄인다 — 속도 우선, PR 을 연달아.
 2. 옮기기는 생성기로 글자 그대로(이름 참조 `L.`·`K.` 접두만), 원본 결함도 그대로 옮기고 보고한다. 인라인 줄 순증가 0(줄어야 함).
 3. 매 PR: verify(토큰 동일·누수 0·원본 단독 로드), npm test, 옮긴 묶음 위주의 게스트 조작 DOM 비교, 쓰이는 탭 tab-check, 화면 동작 주장은 법정 형식 게스트 화면 시나리오. 새 세포마다 cell-descriptions.json 짧은 이름·하는 일 + modules.json(module-specs --write)·module-baseline.json(module-guard --update)·cell-map.json·inline-script-map 재생성.
 
@@ -44,7 +44,7 @@
 
 ## 5. [원칙 ⑤] 절차
 
-워크트리 `C:/dev/wt/inline-p1`(브랜치 `feat/2026-10-05-task-es-436-inline-p1-1`, 기준 origin/main a89ce00) → 1차 REQ·하네스·법정 판례 정독 → 생성기·검사기 일반화 → 설정 → 기준 사본 `git archive a89ce00` → 생성기 → verify → 법정 모듈 로드 탐침 → 시험 비교(시험지가 깨진 함수는 남김) → 등록 도구(`register-inline-p1.js`: cell-descriptions → module-specs --write → module-guard --update → inline-script-map --write → cell-map-export) → 게스트 조작 비교(기준 2회·후 1회) → 법정 형식 화면 시나리오 기준/후 → tab-check(기준 2회는 같은 main 커밋에서 재사용, 후는 홈·목표·기록) → 문서 → 커밋 → PR.
+워크트리 `C:/dev/wt/inline-p1`(브랜치 `feat/2026-10-05-task-es-436-inline-p1-1`, 기준 origin/main eb9e6e4) → 1차 REQ·하네스·법정 판례 정독 → 생성기·검사기 일반화 → 설정 → 기준 사본 `git archive eb9e6e4` → 생성기 → verify → 법정 모듈 로드 탐침 → 시험 비교(시험지가 깨진 함수는 남김) → 등록 도구(`register-inline-p1.js`: cell-descriptions → module-specs --write → module-guard --update → inline-script-map --write → cell-map-export) → 게스트 조작 비교(기준 2회·후 1회) → 법정 형식 화면 시나리오 기준/후 → tab-check(기준 2회는 같은 main 커밋에서 재사용, 후는 홈·목표·기록) → 문서 → 커밋 → PR.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
@@ -60,11 +60,11 @@
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-기준 = origin/main a89ce00(생성기·verify·조작 비교·시나리오는 `git archive` 사본, 시험 비교는 git 이력이 필요한 시험이 있어 같은 커밋의 분리 워크트리 `C:/dev/wt/inline-p1-base`). 결과 파일은 `reports/TASK-ES-436/`.
+기준 = origin/main eb9e6e4(생성기·verify·조작 비교·시나리오는 `git archive` 사본, 시험 비교는 git 이력이 필요한 시험이 있어 같은 커밋의 분리 워크트리 `C:/dev/wt/inline-p1-base`). 결과 파일은 `reports/TASK-ES-436/`.
 
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |
-| 인라인 줄 수 | `module-guard` ① | 33,385 → 32,150 (−1,235), ② 658 → 629, ③ 282 그대로, ④ 1 그대로 |
+| 인라인 줄 수 | `module-guard` ① | 33,382 → 32,147 (−1,235), ② 658 → 629, ③ 282 그대로, ④ 1 그대로 |
 | 글자 동일 | `verify-inline-p1.js` | 28개 함수 토큰열 동일(L./K. 접두 제외), 덩어리 13개(1,282줄) 줄 단위 동일, index.html 나머지 그대로, 누수 0·미노출 0·남은 정의 0·안 가져온 사용 0, 새 파일 526·161·256·293·211줄 |
 | 원본 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0 |
 | 조작 전후(게스트) | `dom-compare-inline-p1.js` | 25단계 × 10칸 = 250값, 기준 대 후 0, 기준 대 기준 0, 콘솔 오류 0/0/0 |

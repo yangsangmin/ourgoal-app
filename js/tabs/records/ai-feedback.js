@@ -2,8 +2,8 @@
  * OurGoal Record AI Feedback (기록 탭 — 체크인 AI 피드백 요청·프롬프트)
  *
  * #TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —
- *   milestonesForAI(이전 전 15225~15233줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)
- *   getUpcomingSchedulesForAI · getRecentCheckinsForAI · getLastFeedbackAdvice · initFeedbackTierBar · buildFeedbackPrompt · parseFeedbackJSON · requestAIFeedback(이전 전 15243~15492줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)
+ *   milestonesForAI(이전 전 15217~15225줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)
+ *   getUpcomingSchedulesForAI · getRecentCheckinsForAI · getLastFeedbackAdvice · initFeedbackTierBar · buildFeedbackPrompt · parseFeedbackJSON · requestAIFeedback(이전 전 15235~15484줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)
  * requestAIFeedback = 체크인 기록에 대한 AI 피드백(공급자별 요청 → 실패 시 로컬 문구) · buildFeedbackPrompt 등 프롬프트 재료.
  * 묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,
  * 같은 키트의 다른 세포 함수는 K.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓). 로드 중 바로 도는 문·최상위 변수는 index.html 원래 자리에 남았다.

@@ -2,9 +2,9 @@
  * OurGoal Goal AI Agent (목표 탭 — 대화로 목표 관리·AI 생성 미리보기)
  *
  * #TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —
- *   goalAgentSnapshot · requestGoalAgentDiff · sanitizeAttachments(이전 전 18898~18952줄, 구획 주석 포함 · 구획 「대화로 목표 관리 (AI diff 제안 + 확인 후 반영)」)
- *   renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep(이전 전 19517~19911줄 · 구획 「목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)」)
- *   sendGoalAgentMessage(이전 전 19913~19953줄 · 구획 「목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)」)
+ *   goalAgentSnapshot · requestGoalAgentDiff · sanitizeAttachments(이전 전 18895~18949줄, 구획 주석 포함 · 구획 「대화로 목표 관리 (AI diff 제안 + 확인 후 반영)」)
+ *   renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep(이전 전 19514~19908줄 · 구획 「목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)」)
+ *   sendGoalAgentMessage(이전 전 19910~19950줄 · 구획 「목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)」)
  * requestGoalAgentDiff = 목표 상태 요약을 AI 에 보내 바꿀 점(diff)을 받는다 · sendGoalAgentMessage = 대화 창 전송 → 로딩·검토 단계를 그린다.
  * 묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,
  * 같은 키트의 다른 세포 함수는 K.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓). 로드 중 바로 도는 문·최상위 변수는 index.html 원래 자리에 남았다.

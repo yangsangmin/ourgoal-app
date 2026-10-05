@@ -2,9 +2,9 @@
  * OurGoal Record AI Feedback Providers (기록 탭 — Gemini·서버 AI 피드백 요청과 로컬 대체 문구)
  *
  * #TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —
- *   requestServerAIFeedback(이전 전 15632~15679줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)
- *   requestGeminiFeedback(이전 전 15682~15724줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)
- *   localFeedback(이전 전 15726~15814줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)
+ *   requestServerAIFeedback(이전 전 15624~15671줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)
+ *   requestGeminiFeedback(이전 전 15674~15716줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)
+ *   localFeedback(이전 전 15718~15806줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)
  * GeminiQuotaDispatcher·PREMIUM_FEEDBACK_CATALOG 등 최상위 변수와 window 노출 문은 index.html 에 남았다.
  * 묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,
  * 같은 키트의 다른 세포 함수는 K.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓). 로드 중 바로 도는 문·최상위 변수는 index.html 원래 자리에 남았다.

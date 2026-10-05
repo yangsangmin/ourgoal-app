@@ -1,0 +1,18 @@
+{
+  "id": "records-story-card-entry",
+  "title": "게스트로 기록 탭에 들어가면 「📸 갓생 스토리카드」 단추가 보이고, 누르면 갓생 스토리 카드 창 「오늘의 MZ 갓생 스토리 카드」가 열린다 — 고치기 전에는 단추가 4개 테마 공통으로 숨긴 기록 탭 머리줄(#screen-records > .screen-head) 안에만 있어 한 번도 보인 적이 없었다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#sRecModesWrap", "timeoutMs": 15000 },
+    { "expect": "visible", "selector": "#sRecStoryCardBtn", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#sRecStoryCardBtn" },
+    { "expect": "textContains", "selector": "#modalOverlay", "text": "오늘의 MZ 갓생 스토리 카드", "timeoutMs": 5000 },
+    { "expect": "visible", "selector": "#mzStoryCanvasEl" },
+    { "expect": "hasClass", "selector": "#screen-records", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}

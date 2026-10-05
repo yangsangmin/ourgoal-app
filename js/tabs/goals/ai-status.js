@@ -2,10 +2,10 @@
  * OurGoal Goal AI Status (목표 탭 — 종합상황 요약·오늘의 미션·마일스톤 완료 축하)
  *
  * #TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —
- *   computeGoalStatusHash · localGoalStatusSummary · generateGoalStatusSummary(이전 전 20145~20194줄 · 구획 「현재 종합상황 (AI 요약)」)
- *   milestonesForMission(이전 전 20243~20247줄 · 구획 「오늘의 미션」)
- *   requestTodayMission(이전 전 20252~20267줄 · 구획 「오늘의 미션」)
- *   requestNextActionSuggestion · celebrateMilestoneDone(이전 전 20351~20402줄 · 구획 「마일스톤 완료 축하 모달 (AI 다음 행동 제안)」)
+ *   computeGoalStatusHash · localGoalStatusSummary · generateGoalStatusSummary(이전 전 20142~20191줄 · 구획 「현재 종합상황 (AI 요약)」)
+ *   milestonesForMission(이전 전 20240~20244줄 · 구획 「오늘의 미션」)
+ *   requestTodayMission(이전 전 20249~20264줄 · 구획 「오늘의 미션」)
+ *   requestNextActionSuggestion · celebrateMilestoneDone(이전 전 20348~20399줄 · 구획 「마일스톤 완료 축하 모달 (AI 다음 행동 제안)」)
  * smoke-test 가 인라인에서 잘라 가는 localTodayMission·localNextActionSuggestion 은 index.html 에 남았다.
  * refreshGoalStatusSummary 는 시험지(ai-conditional-call-optimization)가 index.html 한 파일에서 그 글자를 찾아 index.html 에 남았다.
  * 묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,
