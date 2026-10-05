@@ -1,0 +1,262 @@
+{
+ "task": "TASK-ES-486",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-486-INLINE-ORGAN-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "어려움 기관 묶음 3개(폰 잠금화면 통합 허브 모달 — 연속 기록·앱 배지 기관 몫과 허브 창으로 나눔, 일정(캘린더) 탭 공용, 4대 연계 뷰 디스패처)를 생성기(설정 inline-organ-2.json, 자리 HO)로 글자 그대로 세포 4개로 옮긴다. 새 전역 0, 노출 묶음 원래 자리."
+  },
+  {
+   "id": "R2",
+   "text": "동작 그대로를 측정한다 — verify, 단독 로드, 게스트 시나리오 3개 + 돌연변이, 게스트 조작 비교, 시험."
+  },
+  {
+   "id": "R3",
+   "text": "세포 등록(modules.json·cell-descriptions.json — 생성 지도 3종 커밋 0), REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭 「잠금화면」 허브 창을 열고 「잠금화면용 일정 카드 저장」을 누르면 저장 완료 토스트가 뜨고 예외가 없다 — 허브 창(잠금화면 허브 세포)·연속 기록 일수(연속 기록·앱 배지 세포)",
+   "touches": [
+    "js/tabs/calendar/lockscreen-hub.js",
+    "js/core/streak-badge.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/organ2-lockhub-card.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭을 열면 달력 칸(data-caldate, cal-cell)과 날짜 숫자가 그려지고 예외가 없다 — 달력 칸 그리기·날짜별 일정 모음(일정 모음·달력 칸 세포)",
+   "touches": [
+    "js/tabs/calendar/calendar-core.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/organ2-calendar-cells.json"
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈에서 체크인을 저장하고 「기록 보러 가기」를 누르면 기록 탭에 방금 기록이 보인다 — 저장 뒤 4대 연계 뷰 동시 전파(4대 뷰 세포)",
+   "touches": [
+    "js/core/view-dispatch.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/organ2-checkin-propagate.json"
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과 ok(토큰·줄·남은 글자 동일, 누수·미노출·setter 빠짐·이중 처리기 0)",
+   "touches": [
+    "reports/TASK-ES-486/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-486/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 세포 4개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-486/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-486/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "달력 칸 키트 이름을 지운 돌연변이는 달력 칸 시나리오에서 작업 쪽 실패",
+   "touches": [
+    "reports/TASK-ES-486/scenario-mutant-calendar-cells.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-486/scenario-mutant-calendar-cells.json",
+    "type": "jsonPath",
+    "path": "runs.work.passed",
+    "equals": false
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-486/dom-compare-inline-organ.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-486/dom-compare-inline-organ.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-486/dom-compare-inline-organ.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-486/dom-compare-inline-organ.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 종료 코드가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-486/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-486/test-compare.json",
+    "type": "jsonPath",
+    "path": "exitCodeDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "smoke 443/0",
+   "touches": [
+    "reports/TASK-ES-486/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-486/test-compare.json",
+    "type": "jsonPath",
+    "path": "npmAfter.smoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설정: 잠금화면 허브 묶음을 기관 몫·허브 창 몫으로 이름으로 나눈다",
+   "touches": [
+    "docs/design/harness/module-split/inline-organ-2.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-organ-2.json",
+    "type": "codeContains",
+    "text": "\"names\": [\"openLockScreenHubModal\"]"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 연속 기록·앱 배지 기관 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"core/streak-badge\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설명 파일에 잠금화면 허브 창 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"calendar/lockscreen-hub\": \"잠금화면 허브 창\""
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-486-INLINE-ORGAN-2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-486-INLINE-ORGAN-2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-486:"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-486 | INFRA |"
+   }
+  }
+ ]
+}

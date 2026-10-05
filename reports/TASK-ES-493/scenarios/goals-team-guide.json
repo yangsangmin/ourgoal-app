@@ -1,0 +1,8 @@
+{"id":"goals-team-guide","title":"게스트로 목표 탭 팀 목표 빈 안내에서 예시 탭 「단체 여행」을 누르면 그 칩이 켜지고, 빠른 템플릿 「운동 크루」를 누르면 「새 팀 · 함께 목표 달성하기」 창이 열린다 — 옮긴 wireTeamGoalsGuideEvents·renderTeamGoalsEmptyGuideHtml·getTeamGoalTemplatePreset 이 이전 전과 같이 돈다",
+"steps":[{"do":"goto","path":"/index.html"},{"do":"waitFor","selector":"#btnLandingPreviewDirect"},{"do":"click","selector":"#btnLandingPreviewDirect"},{"do":"waitFor","selector":".navbtn[data-tab=\"goals\"]","timeoutMs":15000},{"do":"click","selector":".navbtn[data-tab=\"goals\"]"},{"do":"waitFor","selector":"#btnGoalsSubTeam","timeoutMs":10000},{"do":"click","selector":"#btnGoalsSubTeam"},
+{"do":"click","selector":"#teamGoalsView [data-tgexampletab=\"travel\"]"},
+{"expect":"hasClass","selector":"#teamGoalsView [data-tgexampletab=\"travel\"]","className":"active"},
+{"expect":"notHasClass","selector":"#teamGoalsView [data-tgexampletab=\"workshop\"]","className":"active"},
+{"do":"click","selector":"#teamGoalsView [data-tgtplquick=\"fitness\"]"},
+{"expect":"textContains","selector":"#modalOverlay","text":"새 팀 · 함께 목표 달성하기"},
+{"expect":"noExceptions"}]}
