@@ -39,10 +39,11 @@ function fakeEl(attrs, display) {
 
 // index.html 의 collapseAllTeamGoalAccordions 원문을 꺼내 가짜 document 위에서 돌린다
 function loadCollapseAll(doc, win, state) {
-  const start = indexHtml.indexOf('  function collapseAllTeamGoalAccordions() {');
-  const end = indexHtml.indexOf('  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;');
+  const fnSrc = require('./helpers/inline-bundle').cutFunctionWithExposure(indexHtml, '  function collapseAllTeamGoalAccordions() {', '  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;'); // #TASK-ES-519 원래 자리면 원문 그대로, 세포로 옮겨 가면 함수는 합본(세포)에서 괄호 짝으로 자르고 노출 줄은 index.html 원래 자리에서 찾아 잇는다(단언 그대로)
+  const start = fnSrc.indexOf('  function collapseAllTeamGoalAccordions() {');
+  const end = fnSrc.indexOf('  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;');
   assert.ok(start > 0 && end > start, 'index.html 에 collapseAllTeamGoalAccordions 원문이 있다');
-  const src = indexHtml.slice(start, end);
+  const src = fnSrc.slice(start, end);
   return new Function('document', 'window', 'state', 'console', src + '\nreturn collapseAllTeamGoalAccordions;')(doc, win, state, console);
 }
 
