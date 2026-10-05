@@ -1,0 +1,48 @@
+{
+ "id": "settings-account-actions-login-empty",
+ "title": "로그인 화면에서 아이디·비밀번호를 비운 채 「로그인」을 누르면 「아이디와 비밀번호를 입력해주세요.」 안내가 뜨고 앱 화면으로 들어가지 않으며 예외가 없다 — 옮긴 이메일 로그인 제출 처리기(bindLoginSubmit, js/tabs/settings/account-actions.js)가 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#landLoginLink"
+  },
+  {
+   "do": "click",
+   "selector": "#landLoginLink"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#loginSubmit",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#loginSubmit"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#loginError",
+   "text": "아이디와 비밀번호를 입력해주세요."
+  },
+  {
+   "expect": "visible",
+   "selector": "#authScreen"
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#screen-home"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
