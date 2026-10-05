@@ -1,21 +1,20 @@
 /*
- * 아워골 — 템플릿 복제 크레딧 + 선택형 보상 광고 (KF-2 #TASK-ES-017, E3)
+ * 아워골 — 템플릿 복제 크레딧 (KF-2 #TASK-ES-017, E3)
  *
  * 규격: 「아워골 수익화 모델(정립/구현)」 §1·§2·§3, KF-2 요구사항정의서 v2.
  *   - 복제 수는 서버 실데이터(template_copies)만 표시한다. 값이 없거나 0이면 아무 숫자도 보이지 않는다.
  *   - 원작자 크레딧 구간 판정·적립은 서버 RPC(record_template_copy) 안에서만. 클라이언트는 결과만 본다.
- *   - 광고는 "광고 보고 크레딧 받기" 선택형 버튼 한 경로뿐. 복제 흐름 앞뒤에는 광고가 없다.
+ *   - 광고는 없다(#TASK-ES-516, 상민님 결정 2026-10-06).
  *   - 화면에 돈을 연상시키는 문구를 쓰지 않는다. 크레딧은 앱 안에서만 쓰인다.
  *
  * 서버가 아직 준비되지 않았을 때(테이블·RPC 없음: PGRST202/205, 42P01, 404)는 전부 조용히 실패하고
  * 복제 자체는 기존대로 동작한다. 오류 토스트를 띄우지 않는다.
  *
  * 사용(index.html 이 부팅 마지막에 init 으로 앱 핸들을 넘긴다):
- *   OurgoalTemplateCredit.init({ sb, getState, toast, playRewardedAd })
+ *   OurgoalTemplateCredit.init({ sb, getState, toast })
  *   OurgoalTemplateCredit.recordCopy(templateId, ownerUserId)   → Promise<{count,recorded,awarded}|null>
  *   OurgoalTemplateCredit.counts(templateIds)                   → Promise<object|null>  (id → 복제 수)
  *   OurgoalTemplateCredit.fillCounts(rootEl)                    → [data-tplcount] 배지를 서버값으로 채운다
- *   OurgoalTemplateCredit.renderAdOptIn(containerEl)            → 플래그·크레딧 둘 다 켜졌을 때만 버튼을 붙인다
  */
 (function (global) {
   'use strict';
@@ -23,7 +22,6 @@
   var deps = null;
   var serverOk = null;          /* null=모름, true=RPC 응답 확인, false=스키마 없음(이 세션 동안 호출 중단) */
   var countCache = {};
-  var lastAdAt = 0;
 
   function init(d) {
     deps = d || {};
@@ -120,60 +118,12 @@
     });
   }
 
-  function adFlagOn() {
-    var c = global.OURGOAL_CONFIG;
-    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 전면 배제 (직접 지시 전까지 절대 사용 금지)
-    // ENABLE_TEMPLATE_REWARDED_ADS 플래그가 설정되어도 상민님 승인 전까지 광고는 절대 비활성화(false) 유지
-    return false && !!(c && c.ENABLE_TEMPLATE_REWARDED_ADS);
-  }
-
-  /* 광고 완료 콜백에서만 호출. 액수는 서버 설정(ad_watched_amount, 기본 null → 0). 클라이언트 완료 신호는 위조 가능하므로
-     서버 검증(SSV) 전에는 관리자가 액수를 비워 두는 것이 정본 ⑧의 권고다. */
-  function awardAdCredit() {
-    var uid = currentUserId();
-    if (!uid || !global.OurgoalCredits) return Promise.resolve(0);
-    var key = 'ad_watched:' + uid + ':' + Date.now();
-    return global.OurgoalCredits.award('ad_watched', 'ad', 'opt_in', key).then(function (n) {
-      if (n > 0 && deps && typeof deps.toast === 'function') deps.toast('+' + n + ' 크레딧이 쌓였어요');
-      return n;
-    });
-  }
-
-  /* 설정 › 크레딧 섹션 아래에 선택형 버튼 하나. 플래그 OFF 이거나 크레딧이 꺼져 있으면 아무것도 붙이지 않는다. */
-  function renderAdOptIn(container) {
-    if (!container || !global.document) return Promise.resolve(false);
-    var old = container.querySelector('#creditAdOptInBtn');
-    if (old && old.parentNode) old.parentNode.removeChild(old);
-    if (!adFlagOn() || !global.OurgoalCredits) return Promise.resolve(false);
-    return global.OurgoalCredits.isEnabled().then(function (on) {
-      if (!on) return false;
-      var btn = global.document.createElement('button');
-      btn.type = 'button';
-      btn.id = 'creditAdOptInBtn';
-      btn.className = 'btn btn-ghost btn-sm';
-      btn.style.marginTop = '8px';
-      btn.textContent = '광고 보고 크레딧 받기';
-      btn.onclick = function () {
-        var now = Date.now();
-        if (now - lastAdAt < 3000) return; /* 연타 방지 */
-        lastAdAt = now;
-        if (deps && typeof deps.playRewardedAd === 'function') {
-          deps.playRewardedAd(null, function () { awardAdCredit(); });
-        }
-      };
-      container.appendChild(btn);
-      container.style.display = '';
-      return true;
-    });
-  }
-
   global.OurgoalTemplateCredit = {
     init: init,
     recordCopy: recordCopy,
     counts: counts,
     fillCounts: fillCounts,
-    renderAdOptIn: renderAdOptIn,
     badgeText: badgeText,
-    _reset: function () { serverOk = null; countCache = {}; lastAdAt = 0; }
+    _reset: function () { serverOk = null; countCache = {}; }
   };
 })(typeof window !== 'undefined' ? window : globalThis);
