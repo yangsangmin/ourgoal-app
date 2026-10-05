@@ -196,6 +196,17 @@ check('전문가 템플릿 자료 세포는 목표 템플릿 영역에 든다', 
   experts.forEach(c => assert.strictEqual(c.area, 'family-templates', c.id));
 });
 
+// #TASK-ES-455 800줄 초과 파일이 없으면 요약 줄 끝에 「— 」를 남기지 않고, 있으면 파일 목록 앞에 붙인다
+check('노션 요약 줄: 800줄 초과 파일이 0개면 「— 」 없이 끝나고, 있으면 「— 파일 줄수」가 붙는다', () => {
+  const line = m => publish.notionHead(m).split('\n').find(l => l.includes('800줄 넘는 세포'));
+  const none = JSON.parse(JSON.stringify(a));
+  none.summary.oversize.now = 0; none.summary.oversize.nowFiles = [];
+  assert.ok(/지금 \*\*0\*\*$/.test(line(none)), line(none));
+  const some = JSON.parse(JSON.stringify(a));
+  some.summary.oversize.now = 1; some.summary.oversize.nowFiles = [{ file: 'js/big.js', lines: 900 }];
+  assert.ok(/지금 \*\*1\*\* — big\.js 900줄$/.test(line(some)), line(some));
+});
+
 const failed = results.filter(r => !r.ok);
 results.forEach(r => console.log((r.ok ? '  통과 ' : '  실패 ') + r.name + (r.ok ? '' : ' — ' + r.msg)));
 console.log(`cell-map-export 부품 시험: ${results.length - failed.length}/${results.length}`);

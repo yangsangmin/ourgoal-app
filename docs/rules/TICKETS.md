@@ -554,3 +554,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-454 | INFRA | [시험지 인라인 합본 · G076 허브 창 선행] schedule-notification-setting 이 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-454-INLINE-TEST-BUNDLE-G076.md
 - #TASK-ES-451 | INFRA | [시험지 인라인 합본 읽기 P1 선행] ai-conditional-call-optimization 시험지가 인라인 합본을 읽어 refreshGoalStatusSummary 를 세포로 옮길 수 있게 함(지운 단언 0) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-451-INLINE-TEST-BUNDLE-P1.md
 - #TASK-ES-453 | INFRA | [인라인 스크립트 세포화 P1 구역 3차] refreshGoalStatusSummary 를 js/tabs/goals/ai-status-refresh.js 로 동작 그대로 이전(P1 구역 마지막 남은 함수) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-453-INLINE-P1-3.md
+- #TASK-ES-455 | INFRA | [생성 지도 3종 일괄 갱신] module-baseline·cell-map·inline-script-map(.md) 를 main 3232cc2 기준 재생성, 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-05), REQ docs/specs/REQ-TASK-ES-455-GENERATED-MAPS-SYNC.md | 4단계(심사 청구)
+- #TASK-ES-455 | INFRA | [생성 지도 3종 일괄 갱신 · 추가] origin/main 4260afb 합침·재생성, 노션 요약 줄 「— 」 제거(cell-map-publish.js 한 줄) | 코디네이터 [기본값] (2026-10-05) | 4단계(심사 청구)
