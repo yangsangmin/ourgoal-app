@@ -1,0 +1,59 @@
+{
+  "id": "settings-widget-modal",
+  "title": "게스트로 설정 탭의 「📱 바탕화면 위젯 설정」을 누르면 「📱 기기 바탕화면 위젯 설정 & 미리보기」 창이 뜬다 — 위젯 설정 창(openWidgetSettingsModal)을 설정 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details:has(#btnOpenWidgetModal) > summary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "details:has(#btnOpenWidgetModal) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnOpenWidgetModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnOpenWidgetModal"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "기기 바탕화면 위젯 설정",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

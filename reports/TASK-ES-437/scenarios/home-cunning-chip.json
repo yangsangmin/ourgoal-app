@@ -1,0 +1,49 @@
+{
+  "id": "home-cunning-chip",
+  "title": "게스트로 홈의 「내 목표 맞춤 커닝페이퍼」 칩을 누르면 옮긴 체크인 예시 문구 채우기(applyQuickCunningText — js/tabs/records/checkin-helpers.js)가 불려 이전 전과 같은 안내 토스트가 뜬다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".cunning-chips-wrap .btn-quick-chip:first-child",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".cunning-chips-wrap .btn-quick-chip:first-child"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".cunning-chips-wrap .btn-quick-chip:first-child",
+      "className": "active-cunning"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "예시 가이드가 입력창 힌트로 설정되었습니다"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -52,9 +52,10 @@ function sortKeys(x) { if (Array.isArray(x)) return x.map(sortKeys); if (x && ty
 function normLs(ls) {
   const o = {};
   for (const [k, v] of Object.entries(ls)) {
+    // lastStreakAwarded: 부팅 직후 저장 시점에 따라 같은 앱에서도 있다 없다 한다(기준 대 기준에서 확인) — 맞대지 않는다
     if (/^ph_/.test(k)) continue; // posthog 분석 SDK 상태(실행마다 무작위 id)
     let val = v;
-    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => key === 'bonusCraftCredits' ? undefined : (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
+    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => (key === 'bonusCraftCredits' || key === 'lastStreakAwarded') ? undefined : (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
     o[k] = VOL(val);
   }
   return o;
