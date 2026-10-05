@@ -29,7 +29,7 @@
         contentHtml = '<div class="s-feed-container">' +
           '<div class="s-feed-header">' +
             '<h4>나의 체크인 & 회고 피드 (0건)</h4>' +
-            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록</button>' +
+            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(null);">+ 새 기록</button>' +
           '</div>' +
           feedItemsHtml +
         '</div>';
@@ -205,7 +205,7 @@
         contentHtml = '<div class="s-feed-container">' +
           '<div class="s-feed-header">' +
             '<h4>나의 체크인 & 회고 피드 (' + records.length + '건)</h4>' +
-            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록</button>' +
+            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(null);">+ 새 기록</button>' +
           '</div>' +
           '<div style="font-size:0.75rem;font-weight:700;color:var(--ink-soft);margin-bottom:8px;">✍️ 최근 실천 3개 (최신순)</div>' +
           top3Html +
