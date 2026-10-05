@@ -50,4 +50,30 @@ function withInlineCells(html) {
   return src;
 }
 
-module.exports = { inlineCellFiles, withInlineCells, readCell };
+// #TASK-ES-519 (인라인 3단계 Z4 시험지 선행): 시험지가 index.html 에서 「함수 시작 ~ 원래 자리 window 노출 줄 앞」을 잘라 실행하는 경우.
+// 함수가 세포로 옮겨 가면 노출 줄은 index.html 원래 자리에 남고(생성기 표준 — 노출 순서 보존) 함수 글자는 합본 뒤쪽 세포에 있어, 합본 한 덩어리에서는 구간이 끊긴다.
+// - 원문에 함수가 있고 그 뒤에 노출 줄이 있으면(아직 원래 자리) 원문을 그대로 돌려준다 — 시험지의 잘라 읽기가 이전과 한 글자도 다르지 않다.
+// - 아니면 함수 글자를 합본의 세포 쪽에서 괄호 짝으로 잘라 오고(L. 만 뗀 글자 = 옮기기 전 글자), 노출 줄은 원문에 있을 때만 그 뒤에 잇는다.
+//   노출 줄이 원문에서 사라졌거나 함수가 어디에도 없으면 그 글자가 빠지므로 시험지의 「시작점·종료점 발견」 단언이 그대로 실패를 알린다(검사를 약하게 하지 않는다).
+// 돌려주는 글자의 맨 앞은 빈 줄이다(원문에서처럼 함수 시작 위치가 0 보다 크다).
+function cutFunctionWithExposure(html, head, exposure) {
+  const s = html.indexOf(head);
+  if (s >= 0 && html.indexOf(exposure, s) > s) return html;
+  const src = withInlineCells(html);
+  const start = src.indexOf(head, html.length);
+  if (start < 0) return html;
+  let i = src.indexOf('{', start), depth = 0, q = null, end = -1;
+  for (; i >= 0 && i < src.length; i++) {
+    const ch = src[i], nx = src[i + 1];
+    if (q) { if (ch === '\\') { i++; continue; } if (ch === q) q = null; continue; }
+    if (ch === '/' && nx === '/') { i = src.indexOf('\n', i); if (i < 0) break; continue; }
+    if (ch === '/' && nx === '*') { i = src.indexOf('*/', i) + 1; if (i <= 0) break; continue; }
+    if (ch === '\'' || ch === '"' || ch === '`') { q = ch; continue; }
+    if (ch === '{') depth++;
+    else if (ch === '}') { depth--; if (depth === 0) { end = i; break; } }
+  }
+  if (end < 0) return html;
+  return '\n' + src.slice(start, end + 1) + '\n' + (html.indexOf(exposure) >= 0 ? exposure : '');
+}
+
+module.exports = { inlineCellFiles, withInlineCells, readCell, cutFunctionWithExposure };
