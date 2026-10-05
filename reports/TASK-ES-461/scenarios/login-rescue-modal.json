@@ -1,0 +1,14 @@
+{
+  "id": "login-rescue-modal",
+  "title": "첫 화면 「로그인이 잘 안 되시나요? (1초 빠른 복구·입장)」 링크를 누르면 빠른 계정 복구 창이 열리고, 칸을 비운 채 「내 데이터 불러오고 바로 입장」을 누르면 「닉네임 또는 이메일을 입력해주세요.」 토스트가 뜬다 — 복구 창(openLoginRescueModal)과 링크 처리기 등록 문(bindLoginRescueButtons)을 설정 세포 파일 js/tabs/settings/session-entry.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#landRescueBtn" },
+    { "do": "click", "selector": "#landRescueBtn" },
+    { "expect": "visible", "selector": "#rescueDirectEnterBtn", "timeoutMs": 6000 },
+    { "expect": "visible", "selector": "#rescueIdentifierInput" },
+    { "do": "click", "selector": "#rescueDirectEnterBtn" },
+    { "expect": "textContains", "selector": "#toast", "text": "닉네임 또는 이메일을 입력해주세요.", "timeoutMs": 6000 },
+    { "expect": "noExceptions" }
+  ]
+}
