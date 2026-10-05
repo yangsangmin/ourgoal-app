@@ -547,3 +547,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-433 | FIX/버그 | [갓생 카드 창 진입 단추 복원] 홈 「내 성장 자랑하기」·「내 성장 확인하기」(4테마 공통 .home-actions 숨김)와 기록 「📸 갓생 스토리카드」(숨은 기록 머리줄)가 모든 사용자에게 안 보이던 것 — 숨김 선택자에서 .home-actions 제외·처리기 한 벌·성소 기록 화면에 #sRecStoryCardBtn, 게스트 시나리오 4개 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-433-STORYCARD-ENTRY.md
 - #TASK-ES-444 | INFRA | [인라인 스크립트 세포화 P1 구역 2차] 일정 배경 사진·잠금화면 라이브·챌린지 룸·첫 응원·피드 미리보기·스토리 캔버스·사진 인증·히트맵 요약·적응형 모드·설치 안내·스타터 목표·목표 로컬 문장 15묶음 함수 27개를 세포 12개로 동작 그대로 이전 | 코디네이터 지시 (2026-10-05, 상민님 "미분화 덩어리 분열 우선"), REQ docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md
 - #TASK-ES-447 | INFRA | [시험지 인라인 합본 · 구역 P2 선행] 시험지 4개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md
+- #TASK-ES-454 | INFRA | [시험지 인라인 합본 · G076 허브 창 선행] schedule-notification-setting 이 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-454-INLINE-TEST-BUNDLE-G076.md
