@@ -593,3 +593,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-497 | INFRA | [인라인 어려움 구역 H2 3차] 목표 탭 「팀목표」 하위 탭 화면(renderTeamGoalsScreen)을 js/tabs/goals/team-goals-screen.js 로 동작 그대로 이전(일괄 접기·수준별 목표·편집 창은 남김) | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-497-INLINE-H2-3.md | 4단계(심사 청구)
 - #TASK-ES-510 | INFRA | [헌법 개정 v2026.10.06-SNOWBALL] 작업참고 스노우볼 — 매 작업 전 최신 작업참고 읽기·유형 분류(표준/이탈/탐색)·불변층·PR 병합마다 경험칙 갱신. 상민님 「헌법 개정 승인」(2026-10-06), 병합은 상민님 | 심사 청구
 - #TASK-ES-511 | INFRA | [생성 지도 일괄 갱신 3회차] 생성 파일 4개를 main 8f76013 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-06), REQ docs/specs/REQ-TASK-ES-511-GENERATED-MAPS-SYNC-3.md | 4단계(심사 청구)
+- #TASK-ES-512 | INFRA | [헌법 버전 대장] v2026.10.06-SNOWBALL 행 추가 + 법령 전문 머리 현행 커널 버전 갱신(PR #800 병합 기록 1ce6c14 근거, 조문 본문 변경 0) | 코디네이터 세션 f747dcaa | 2026-10-06
