@@ -1,0 +1,234 @@
+{
+ "task": "TASK-ES-488",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-488-INLINE-H2-TEST-FIRST.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 H2 남은 묶음을 옮기면 깨지는 시험지 7개가 인라인 합본(index.html 원문 맨 앞 + js/tabs 앱 스코프 통로 세포, L. 접두 제거)을 읽는다. core-confirm 의 「기본 확인창 2곳만」 검사는 원문 + 옮겨 갈 루틴 화면 세포만. 단언·기대값·검사 수 변경 0, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 작업 트리 npm test·바꾼 시험지 통과, 모의 이전 사본에서 옛 시험지는 깨지고 새 시험지는 통과."
+  },
+  {
+   "id": "R3",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "루틴 상세 모달 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/routine-detail-modal.test.js"
+   ],
+   "check": {
+    "file": "tests/routine-detail-modal.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync("
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "팀 접힘 상태 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/team-fold-state-es409.test.js"
+   ],
+   "check": {
+    "file": "tests/team-fold-state-es409.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync("
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "팀 목표 안내 힌트 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/team-goal-guide-hint.test.js"
+   ],
+   "check": {
+    "file": "tests/team-goal-guide-hint.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync("
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "팀 레벨 관리 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/team-level-management.test.js"
+   ],
+   "check": {
+    "file": "tests/team-level-management.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync("
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "팀 할 일 펼치기 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/team-tasks-toggle-es410.test.js"
+   ],
+   "check": {
+    "file": "tests/team-tasks-toggle-es410.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync("
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "팀 목표 기본 접힘 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/team-goals-collapse-default.test.js"
+   ],
+   "check": {
+    "file": "tests/team-goals-collapse-default.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync("
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "확인창 시험의 「기본 확인창 2곳만」 검사가 원문 + 루틴 화면 세포를 읽는다",
+   "touches": [
+    "tests/core-confirm-es376.test.js"
+   ],
+   "check": {
+    "file": "tests/core-confirm-es376.test.js",
+    "type": "codeContains",
+    "text": "const lines = HTML_ROUTINE.split("
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리에서 바꾼 시험지 7개가 모두 통과한다",
+   "touches": [
+    "reports/TASK-ES-488/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-488/test-compare.json",
+    "type": "jsonPath",
+    "path": "changedTestsFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리 npm test smoke 443/0",
+   "touches": [
+    "reports/TASK-ES-488/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-488/test-compare.json",
+    "type": "jsonPath",
+    "path": "npmTestAfter.smoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 사본에서 옛 시험지는 7개 실패",
+   "touches": [
+    "reports/TASK-ES-488/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-488/mock-move.json",
+    "type": "jsonPath",
+    "path": "oldTestsFailing",
+    "equals": 7
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 사본에서 새 시험지는 모두 통과",
+   "touches": [
+    "reports/TASK-ES-488/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-488/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestsFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-488-INLINE-H2-TEST-FIRST.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-488-INLINE-H2-TEST-FIRST.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-488:"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-488 | INFRA |"
+   }
+  }
+ ]
+}
