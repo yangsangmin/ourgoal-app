@@ -5995,3 +5995,4 @@
 - 2026-10-05 TASK-ES-497: 인라인 어려움 구역 H2 3차 — 생성기(설정 inline-h2-pr3.json, 자리 H2)로 renderTeamGoalsScreen → js/tabs/goals/team-goals-screen.js(798줄, index.html −753줄). 게스트는 팀 0개라 빈 안내 분기만 화면으로 잼(작업자 측정). REQ docs/specs/REQ-TASK-ES-497-INLINE-H2-3.md
 - 2026-10-06 TASK-ES-510: 헌법 개정 v2026.10.06-SNOWBALL(작업참고 스노우볼 — 읽기 의무·유형 분류 표준/이탈/탐색·불변층·갱신 의무) 초안 PR, 상민님 「헌법 개정 승인」, 병합은 상민님
 - 2026-10-06 TASK-ES-511: 생성 지도 일괄 갱신 3회차 — 생성: 안티그래비티(커밋 2e0760d2, main 8f76013 위, 커밋 메시지 TASK-ES-AGY-MAPS 는 이 번호로 정정) / 검수·서류: Claude(cell-map --check 최신·module-guard 통과·인라인 지도 재생성 차이 0·로컬 git 설정 변경 없음). 제품 코드 변경 0. REQ docs/specs/REQ-TASK-ES-511-GENERATED-MAPS-SYNC-3.md
+- 2026-10-06 TASK-ES-512: 헌법 버전 대장에 v2026.10.06-SNOWBALL 행 추가, 법령 전문 머리 현행 커널 버전 갱신(직전 버전 줄 보존). 근거 PR #800 병합 기록 1ce6c14(병합자 yangsangmin, 00:38 KST). 금고 PR — 상민님 병합.
