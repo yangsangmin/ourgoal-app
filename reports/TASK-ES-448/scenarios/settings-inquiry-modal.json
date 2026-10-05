@@ -1,0 +1,59 @@
+{
+  "id": "settings-inquiry-modal",
+  "title": "게스트로 설정 탭 「데이터」 묶음을 펼치고 「1:1 문의 및 오류 제보」를 누르면 「1:1 고객 문의 및 오류 제보」 창이 뜬다 — 고객지원 문의 창(openCustomerInquiryModal)을 설정 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#setGroupDataSummary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#feedbackInquiryBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#feedbackInquiryBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "1:1 고객 문의 및 오류 제보",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
