@@ -12,7 +12,7 @@
   var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return null; });
 
   var WHITELIST = [
-    { id: 'levelBadgeRow',        label: '아바타 & 레벨 배지',      hint: '내 아바타, 레벨, 경험치 바 (상단 고정)', fixed: true },
+    { id: 'levelBadgeRow',        label: '아바타 & 경험치 바',      hint: '홈 맨 위 아바타 카드에 들어 있어요 — 따로 보이는 레벨 배지는 없어요(상단 고정)', fixed: true }, /* [#TASK-ES-462] 레벨 배지 줄은 TASK-ES-140 으로 홈에서 내렸다 — 목록 문구를 화면 사실대로 */
     { id: 'captureCardBox',       label: '오늘 기록하기',            hint: '1줄 체크인 입력창 (상단 고정)', fixed: true },
     { id: 'todayGlancePill',      label: '오늘 몰입 요약',          hint: '오늘 상태 한 줄' },
     { id: 'todayMissionCard',     label: '오늘의 카드',             hint: '뭘 할지 모르겠을 때 도움돼요(내 목표기반)' },

@@ -1,0 +1,65 @@
+{
+  "id": "home-sheet-zero-goals-quest",
+  "title": "목표가 하나도 없는 게스트가 홈 「🎯 오늘 목표」(#homeCompassQuest)를 누르면 시트에 「⚡ 오늘의 3대 퀘스트」(#dailyQuestBarWrap)가 바로 보이고, 퀘스트 「할일 1개 완료」 줄을 누르면 시트가 닫히고 목표 탭으로 간다 — 고치기 전에는 renderHome 이 목표 0개에서 조기 반환해 퀘스트 막대를 한 번도 그리지 않았다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "expect": "visible",
+      "selector": "#dailyQuestBarWrap",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#dailyQuestBarWrap",
+      "text": "오늘의 3대 퀘스트"
+    },
+    {
+      "do": "click",
+      "selector": "#questItemMilestone"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "visible",
+      "selector": "#screen-goals",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
