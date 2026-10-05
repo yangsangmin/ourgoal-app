@@ -3,7 +3,7 @@
  *
  * 첫 체크인 안내 배너(renderFirstCheckinTutorialBanner)와 첫 체크인 축하 창(triggerFirstCheckinCelebrationModal), 같은 분야 동료 러너 고르기·환영 도장 보내기(getPeerRunnersForCategory·sendFirstCheckinWelcomeStamps 등).
  * window 노출 세 줄은 index.html 원래 자리에 그대로 있다.
- * #TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 5641~5672 · 5673~5685 · 5686~5707 · 5709~5717 · 5718~5724 · 5725~5763 · 5765~5881줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 5151~5182 · 5183~5195 · 5196~5217 · 5219~5227 · 5228~5234 · 5235~5273 · 5275~5391줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 5641~5672줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5151~5182줄(#TASK-ES-476 생성기 표지) ---- */
   function renderFirstCheckinTutorialBanner(){
     var banner = document.getElementById('firstCheckinTutorialBanner');
     if(!banner) return;
@@ -48,7 +48,7 @@
       }, 300);
     }
   }
-  /* ---- 이전 전 index.html 5673~5685줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5183~5195줄(#TASK-ES-476 생성기 표지) ---- */
 
   /* [#TASK-ES-348] 동류 러너는 실원장(feed_posts → FEED_POSTS_CACHE)의 같은 분야 실제 회원만. 고정 명단·연속일수 하드코딩 없음.
    * 연속일수는 피드 글에 없는 값이라 표시하지 않는다. 0명이면 빈 배열 → 위젯을 그리지 않는다(침묵). */
@@ -62,7 +62,7 @@
     if(/운동|헬스|체력/.test(c)) return 'workout';
     return null;
   }
-  /* ---- 이전 전 index.html 5686~5707줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5196~5217줄(#TASK-ES-476 생성기 표지) ---- */
   function getPeerRunnersForCategory(category, posts){
     var cat = category || '운동';
     var src = Array.isArray(posts) ? posts : (Array.isArray(L.FEED_POSTS_CACHE) ? L.FEED_POSTS_CACHE : []);
@@ -86,7 +86,7 @@
     return out;
   }
 
-  /* ---- 이전 전 index.html 5709~5717줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5219~5227줄(#TASK-ES-476 생성기 표지) ---- */
 
   /* [#TASK-ES-352] 첫 체크인 축하 창 웰컴 응원 — 화면에 보인 실제 동류 회원에게 기존 마니또 응원 형식
    * (team_pings · group_id 'manito' · target_type 'manito_cheer' · ping_type 'welcome_cheer')으로 1명당 1행을 보낸다.
@@ -96,7 +96,7 @@
     var myId = L.state.profile ? String(L.state.profile.id || '') : '';
     return !!(L.sb && L.state.user && L.isValidRealUser(myId));
   }
-  /* ---- 이전 전 index.html 5718~5724줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5228~5234줄(#TASK-ES-476 생성기 표지) ---- */
   function firstCheckinWelcomeSentToday(){
     var s = L.state.profile && L.state.profile.settings;
     if(!s) return {};
@@ -104,7 +104,7 @@
     if(!s.welcomeStampSent || s.welcomeStampSent.date !== today) s.welcomeStampSent = { date: today, to: {} };
     return s.welcomeStampSent.to;
   }
-  /* ---- 이전 전 index.html 5725~5763줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5235~5273줄(#TASK-ES-476 생성기 표지) ---- */
   async function sendFirstCheckinWelcomeStamps(peers){
     var out = { sent: 0, already: 0, failed: 0, reason: '' };
     var myId = String(L.state.profile.id);
@@ -145,7 +145,7 @@
     return out;
   }
 
-  /* ---- 이전 전 index.html 5765~5881줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5275~5391줄(#TASK-ES-476 생성기 표지) ---- */
 
   function triggerFirstCheckinCelebrationModal(goal, checkinText, onDismiss){
     var av = (L.state.profile && L.state.profile.guardianAnimal) || { emoji: '🦉', name: '수호동물 부엉이' };
