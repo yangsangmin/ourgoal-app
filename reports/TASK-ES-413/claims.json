@@ -1,0 +1,60 @@
+{
+  "task": "TASK-ES-413",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-413-CONSTITUTION-CELL-AMENDMENT.md",
+  "requirements": [
+    { "id": "R1", "text": "아워골 구조를 세포골격으로 구성하기로 했으니 아워골 헌법도 그에 맞게 수정" },
+    { "id": "R2", "text": "헌법을 최종적으로 수정한 후 새로 생긴 상민님 지침·의도 중 헌법 개선에 필요한 부분을 적용" },
+    { "id": "R3", "text": "세포지도를 노션과 웹페이지에 연동해 실시간으로 확인, 아워골 프로젝트 컨트롤타워 허브 페이지의 최상단" },
+    { "id": "R4", "text": "이것이 다른 세션, 신규 세션에서도 지속되도록 헌법을 바꿈" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "헌법 커널에 세포골격 절(세포 종류 네 가지·꽂는 자리·신고서·래칫 기준선·생명주기)이 있다",
+      "touches": ["AGENTS.md"],
+      "check": { "type": "codeContains", "file": "AGENTS.md", "text": "<cell_skeleton id=\"CELL_SKELETON\">" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "세포 분열 PR 의 증명 하한(토큰 동일·원본 단독 로드·화면 차이 0)이 헌법 커널에 있다",
+      "touches": ["AGENTS.md"],
+      "check": { "type": "codeContains", "file": "AGENTS.md", "text": "<cell_split_proof_floor id=\"CELL_SPLIT_PROOF\">" }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "승인선 다섯 가지 밖의 선택은 [기본값] 으로 표시하고 계속한다는 조문이 있다",
+      "touches": ["AGENTS.md"],
+      "check": { "type": "codeContains", "file": "AGENTS.md", "text": "<clause id=\"5.4\">다섯 가지 밖의 선택" }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "작업계획서 미완 항목이 남아 있는 동안 멈추지 않는다는 조문이 있다",
+      "touches": ["AGENTS.md"],
+      "check": { "type": "codeContains", "file": "AGENTS.md", "text": "<clause id=\"12.4\">작업계획서의 미완 항목이 남아 있는 동안 멈추지 않는다." }
+    },
+    {
+      "id": "C5", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "세포지도 상시 연동 절이 웹·노션 두 곳과 허브 최상단을 정한다",
+      "touches": ["AGENTS.md"],
+      "check": { "type": "codeContains", "file": "AGENTS.md", "text": "<cell_map_live_sync id=\"CELL_MAP\">" }
+    },
+    {
+      "id": "C6", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "새로 열린 세션·다른 도구의 세션도 첫 턴에 세포지도 출처 커밋을 확인한다는 조문이 있다",
+      "touches": ["AGENTS.md"],
+      "check": { "type": "codeContains", "file": "AGENTS.md", "text": "<clause id=\"11.5\">이 의무는 새로 열린 세션·다른 도구의 세션에도 똑같이 적용된다." }
+    },
+    {
+      "id": "C7", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "CLAUDE.md 사본에도 같은 세포지도 조문이 있다(Claude Code 세션이 읽는 파일)",
+      "touches": ["CLAUDE.md"],
+      "check": { "type": "codeContains", "file": "CLAUDE.md", "text": "<clause id=\"11.3\">세포지도 상시 연동(CELL_MAP)" }
+    },
+    {
+      "id": "C8", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "REQ 에 헌법 내부 모순 정합 표와 결심 표가 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-413-CONSTITUTION-CELL-AMENDMENT.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-413-CONSTITUTION-CELL-AMENDMENT.md", "text": "| 번호 | 모순(무엇과 무엇이 부딪히나) | 정합안(이 초안이 한 것) | 결정 근거 |" }
+    }
+  ]
+}

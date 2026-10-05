@@ -186,6 +186,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/push-subscribe-auth-es400.test.js');
   // #TASK-ES-399 일반 로그아웃은 이 기기만(scope local) · 서버가 지운 세션('Auth session missing!'·401)은 로그아웃 화면으로 · 네트워크 오류·60초 유예는 그대로
   runNode('tests/logout-scope-es399.test.js');
+  // #TASK-ES-414 세포지도 생성기(scripts/cell-map-export.js): 두 번 만들어 바이트 같음 · 필수 칸 · 영역이 모든 세포를 한 번씩 · 분열 이력 12 → 지표
+  runNode('tests/cell-map-export-es414.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 
