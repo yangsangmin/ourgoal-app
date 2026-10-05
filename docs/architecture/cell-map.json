@@ -9,15 +9,15 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "2d8abb9a79cf326553c4ec329ffd2993dd7dca08",
-  "short": "2d8abb9",
-  "committedAt": "2026-10-05T18:53:57+09:00",
-  "subject": "[INFRA] #TASK-ES-444 refactor: 인라인 스크립트 세포화 P1 구역 2차 — 일정·소통·기록·설정 13묶음 함수를 세포 9개로 이전(인라인 −740줄, 동작 그대로)"
+  "commit": "be5acc6a8e212619cca63cbbf66b302c11e60256",
+  "short": "be5acc6",
+  "committedAt": "2026-10-05T19:10:03+09:00",
+  "subject": "[INFRA] #TASK-ES-444 chore: Merge origin/main(#752·#751) — index.html·세포지도·신고서·기준선·인라인 지도는 main 판을 받고 같은 생성기로 다시 옮김"
  },
  "summary": {
   "cells": 196,
   "files": 195,
-  "jsLines": 55422,
+  "jsLines": 56129,
   "kinds": {
    "organ": 29,
    "tab": 61,
@@ -134,7 +134,7 @@
     "goals/sub-routine",
     "goals/sub-team"
    ],
-   "lines": 3058,
+   "lines": 3142,
    "over800": 0
   },
   {
@@ -174,7 +174,7 @@
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 1836,
+   "lines": 2086,
    "over800": 0
   },
   {
@@ -196,7 +196,7 @@
     "comm/sub-crew",
     "comm/sub-feed"
    ],
-   "lines": 1211,
+   "lines": 1584,
    "over800": 0
   },
   {
@@ -6959,6 +6959,7 @@
     "OurgoalSanctuaryV3"
    ],
    "calls": [
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
@@ -8279,17 +8280,29 @@
    "nameSource": "hand",
    "does": "일정 탭에서 날짜마다 배경 사진을 골라 줄여 저장하고 지우는 창을 띄운다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Calendar Day Background Picker (일정 탭 — 일자별 배경 사진 지정 창)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "compressCalendarBgImage · openCalendarDayBgPickerModal(이전 전 10524~10748줄 · 구획 「[#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 250,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalCalendarKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "calendar/sub-day-detail",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalCalendarKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -8299,8 +8312,18 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-153",
+    "TASK-ES-155",
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-153-CALENDAR-DAY-BACKGROUND.md",
+    "docs/specs/REQ-TASK-ES-155-CALENDAR-BG-CHECK-ITITEM-FIX.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
    "prs": []
   },
   {
@@ -8731,6 +8754,7 @@
     "OurgoalCalendarDayDetail"
    ],
    "calls": [
+    "calendar/day-bg-picker",
     "calendar/day-detail",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
@@ -9341,17 +9365,26 @@
    "nameSource": "hand",
    "does": "갓생 카드 창에서 보여 주고 보낼 9:16 인스타 스토리 이미지를 캔버스로 그린다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal MZ Story Canvas (소통 — 9:16 갓생 스토리 카드 그림)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "generateMzStoryCanvas(이전 전 13664~14012줄, 구획 주석 포함 · 구획 「MZ 9:16 인스타 스토리 고해상도 그래픽 캔버스 생성기 (Growth & Viral Loop)」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 373,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalCommKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -9361,8 +9394,14 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
    "prs": []
   },
   {
@@ -9677,17 +9716,26 @@
    "nameSource": "hand",
    "does": "서버 AI 가 없을 때 오늘의 미션과 마일스톤 완료 뒤 다음 행동 제안 문장을 로컬로 만든다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Goal AI Local Fallback (목표 — 오늘의 미션·다음 행동 로컬 문장)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "localTodayMission(이전 전 19302~19307줄, 구획 주석 포함 · 구획 「오늘의 미션」)",
+    "localNextActionSuggestion(이전 전 19387~19391줄, 구획 주석 포함 · 구획 「마일스톤 완료 축하 모달 (AI 다음 행동 제안)」)"
+   ],
+   "lines": 38,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -9697,8 +9745,14 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
    "prs": []
   },
   {
@@ -10216,17 +10270,26 @@
    "nameSource": "hand",
    "does": "새 사용자가 스타터 템플릿을 누르면 마일스톤이 채워진 목표를 바로 만든다",
    "doesSource": "hand",
-   "header": [],
-   "lines": 0,
+   "header": [
+    "OurGoal Starter Goal (목표 — 신규 유저 10초 갓생 스타터 목표 만들기)",
+    "#TASK-ES-444 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "quickCreateStarterGoal(이전 전 13232~13253줄 · 구획 「신규 유저 10초 활성화: 갓생 스타터 목표 템플릿」)",
+    "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
+   ],
+   "lines": 46,
    "over800": false,
-   "exposes": [],
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -10236,8 +10299,14 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [],
-   "reqs": [],
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-444"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
    "prs": []
   },
   {
