@@ -11,7 +11,7 @@ console.log('[TEST] team-level-management.test.js: starting execution for ' + SU
 
 const teamVisModule = require('../js/team-visibility-levels.js');
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));
 const uiCssPath = path.join(__dirname, '..', 'ui.css');
 const uiCss = fs.readFileSync(uiCssPath, 'utf8');
 

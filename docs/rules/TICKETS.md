@@ -566,3 +566,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-469 | INFRA | [시험지 인라인 합본 · 어려움 구역 H1 선행] app-evaluation-modal·feed-post-preview-modal 시험지 2개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md
 - #TASK-ES-466 | INFRA | [인라인 어려움 구역 H1 1차] 동반자 페이스·피드 게시 창·평가 창·새 목표 창 네 묶음을 세포 4개로 이전(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md
 - #TASK-ES-475 | INFRA | [시험지 선행 · 인라인 어려움 H3] achievement-graph-multiset 이 인라인 합본을 읽음(읽기 줄 1줄) | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-475-H3-TEST-BUNDLE.md
+- #TASK-ES-478 | INFRA | [시험지 선행 · 인라인 어려움 구역 H2] 루틴 상세·팀 목표 시험지 6개가 인라인 합본을 읽고, 확인창 시험의 「기본 확인창 2곳만」 검사가 원문+루틴 화면 세포를 읽음 — 단언·기대값·검사 수 그대로, 제품 코드 0 | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-478-INLINE-H2-TEST-FIRST.md | 4단계(심사 청구)
