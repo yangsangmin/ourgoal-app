@@ -1,0 +1,197 @@
+{
+ "task": "TASK-ES-444",
+ "seamTitle": "인라인 스크립트 세포화 P1 이음매 2 — 일정 배경·잠금화면 라이브, 소통 창·스토리 캔버스, 사진 인증, 목표 스타터·로컬 문장, 설정(적응형 UX·PWA 설치)",
+ "seamAfter": "[#TASK-ES-379] 소통 탭 모듈 이음매 1차",
+ "cells": [
+  {
+   "key": "bg",
+   "file": "js/tabs/calendar/day-bg-picker.js",
+   "kit": "OurgoalCalendarKit",
+   "kitVar": "_calendarKit",
+   "beforeTag": "<script src=\"js/tabs/calendar/index.js\"></script>",
+   "title": "OurGoal Calendar Day Background Picker (일정 탭 — 일자별 배경 사진 지정 창)",
+   "name": "일자별 배경 사진",
+   "does": "일정 탭에서 날짜마다 배경 사진을 골라 줄여 저장하고 지우는 창을 띄운다",
+   "groups": [
+    {
+     "header": "캘린더 일자별 배경 사진 지정 모달"
+    }
+   ]
+  },
+  {
+   "key": "live",
+   "file": "js/tabs/calendar/lockscreen-live.js",
+   "kit": "OurgoalCalendarKit",
+   "kitVar": "_calendarKit",
+   "beforeTag": "<script src=\"js/tabs/calendar/index.js\"></script>",
+   "title": "OurGoal Lock Screen Live Card (일정 탭 — 폰 잠금화면 실시간 정보 카드)",
+   "name": "잠금화면 라이브 카드",
+   "does": "오늘 일정·목표 요약을 폰 잠금화면 라이브 카드 내용으로 만들어 보내거나 닫는다",
+   "groups": [
+    {
+     "header": "폰 잠금화면 실시간 정보 연동 라이브 서비스"
+    }
+   ]
+  },
+  {
+   "key": "room",
+   "file": "js/tabs/comm/challenge-room.js",
+   "kit": "OurgoalCommKit",
+   "kitVar": "_commKit",
+   "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+   "title": "OurGoal Challenge Room (소통 탭 — 소규모 챌린지 룸 창)",
+   "name": "소규모 챌린지 룸",
+   "does": "소규모 챌린지 룸 창을 띄워 참여 현황과 인증을 보여 준다",
+   "groups": [
+    {
+     "header": "소규모 챌린지 룸 모달"
+    }
+   ]
+  },
+  {
+   "key": "cheer",
+   "file": "js/tabs/comm/first-cheer.js",
+   "kit": "OurgoalCommKit",
+   "kitVar": "_commKit",
+   "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+   "title": "OurGoal First Cheer (소통 — 신규 유저 첫 응원 전달)",
+   "name": "첫 응원 전달",
+   "does": "새 사용자가 첫 기록을 남기면 맞춤 응원이 잠시 뒤 도착하게 예약한다",
+   "groups": [
+    {
+     "header": "가상 페르소나 3분 내 맞춤 응원"
+    }
+   ]
+  },
+  {
+   "key": "prev",
+   "file": "js/tabs/comm/feed-post-preview.js",
+   "kit": "OurgoalCommKit",
+   "kitVar": "_commKit",
+   "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+   "title": "OurGoal Feed Post Preview (소통 탭 — 피드 게시 창 미리보기 토글)",
+   "name": "피드 게시 미리보기",
+   "does": "피드 게시 창에서 올릴 글이 피드에 어떻게 보일지 미리보기를 켜고 끈다",
+   "groups": [
+    {
+     "header": "피드 게시 모달 내 '미리보기' 토글"
+    }
+   ]
+  },
+  {
+   "key": "photo",
+   "file": "js/tabs/records/photo-proof.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal Photo Proof (기록 — 사진 인증 줄이기·사진 보기 창)",
+   "name": "사진 인증·보기",
+   "does": "체크인 사진을 올리기 전에 줄이고, 기록에 붙은 사진을 크게 보는 창을 띄운다",
+   "groups": [
+    {
+     "header": "사진 인증 & 뷰어 모달"
+    }
+   ]
+  },
+  {
+   "key": "grass",
+   "file": "js/tabs/records/heatmap-summary.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal Heatmap Summary Card (홈 — 최근 히트맵 요약 카드)",
+   "name": "최근 히트맵 요약",
+   "does": "최근 실천 기록을 히트맵 요약 카드로 그린다",
+   "groups": [
+    {
+     "header": "최근 히트맵 요약 카드"
+    }
+   ]
+  },
+  {
+   "key": "ux",
+   "file": "js/tabs/settings/adaptive-ux.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal Adaptive UX (설정 — 적응형 화면 모드·망설임 기록)",
+   "name": "적응형 화면 모드",
+   "does": "간단·전문가 화면 모드 막대를 그리고 바꾸며, 망설임·연타 신호를 기록한다",
+   "groups": [
+    {
+     "header": "Adaptive UX Mode"
+    },
+    {
+     "header": "UX Telemetry"
+    }
+   ]
+  },
+  {
+   "key": "pwa",
+   "file": "js/tabs/settings/pwa-install.js",
+   "kit": "OurgoalSettingsKit",
+   "kitVar": "_settingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+   "title": "OurGoal PWA Install Guide (설정 — 홈 화면 추가 안내·키보드 가림 방지)",
+   "name": "홈 화면 설치 안내",
+   "does": "iOS 홈 화면 추가 배너와 기기별 설치 안내 창을 띄우고, 입력할 때 키보드가 칸을 가리지 않게 한다",
+   "groups": [
+    {
+     "header": "iOS 사파리 홈 화면 추가 안내 배너"
+    },
+    {
+     "header": "모바일 하드웨어 인터랙션 & 사용성 하드닝"
+    }
+   ]
+  },
+  {
+   "key": "starter",
+   "file": "js/tabs/goals/starter-goal.js",
+   "kit": "OurgoalGoalsKit",
+   "kitVar": "_goalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+   "title": "OurGoal Starter Goal (목표 — 신규 유저 10초 갓생 스타터 목표 만들기)",
+   "name": "갓생 스타터 목표",
+   "does": "새 사용자가 스타터 템플릿을 누르면 마일스톤이 채워진 목표를 바로 만든다",
+   "groups": [
+    {
+     "header": "신규 유저 10초 활성화: 갓생 스타터 목표 템플릿"
+    }
+   ]
+  },
+  {
+   "key": "local",
+   "file": "js/tabs/goals/ai-local-fallback.js",
+   "kit": "OurgoalGoalsKit",
+   "kitVar": "_goalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+   "title": "OurGoal Goal AI Local Fallback (목표 — 오늘의 미션·다음 행동 로컬 문장)",
+   "name": "목표 AI 로컬 문장",
+   "does": "서버 AI 가 없을 때 오늘의 미션과 마일스톤 완료 뒤 다음 행동 제안 문장을 로컬로 만든다",
+   "groups": [
+    {
+     "header": "오늘의 미션 ============"
+    },
+    {
+     "header": "마일스톤 완료 축하 모달 (AI 다음 행동 제안)"
+    }
+   ]
+  },
+  {
+   "key": "story",
+   "file": "js/tabs/comm/story-canvas.js",
+   "kit": "OurgoalCommKit",
+   "kitVar": "_commKit",
+   "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+   "title": "OurGoal MZ Story Canvas (소통 — 9:16 갓생 스토리 카드 그림)",
+   "name": "갓생 스토리 카드 그림",
+   "does": "갓생 카드 창에서 보여 주고 보낼 9:16 인스타 스토리 이미지를 캔버스로 그린다",
+   "groups": [
+    {
+     "header": "MZ 9:16 인스타 스토리 고해상도 그래픽 캔버스 생성기"
+    }
+   ]
+  }
+ ],
+ "smokeFromBundle": true
+}

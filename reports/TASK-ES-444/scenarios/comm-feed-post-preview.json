@@ -1,0 +1,58 @@
+{
+  "id": "comm-feed-post-preview",
+  "title": "게스트로 소통 탭에서 「게시하기」 창을 열고 「미리보기」를 누르면 옮긴 미리보기 토글(toggleFeedPostPreview)이 「피드 게시 미리보기」 카드를 보여 주고 단추 글자를 「미리보기 닫기」로 바꾼다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnCommPostFeed",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#btnCommPostFeed"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sharePreviewBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#sharePreviewBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#sharePreviewSlot",
+      "text": "피드 게시 미리보기"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#sharePreviewBtn",
+      "text": "미리보기 닫기"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
