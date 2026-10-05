@@ -1,0 +1,791 @@
+{
+ "task": "TASK-ES-425",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "js/goal-templates-registry.js(2,815줄)의 MATCH_RULES·TEMPLATE_MAP 을 템플릿 id 접두(HLT·STD·CAR·HOB·MND·REL)별 자료 세포 js/data/expert-templates/<분야>.js 6개로 줄 그대로 옮기고, 원본은 같은 순서로 같은 이름에 조립(함수·노출 줄 그대로). 신고서·세포 설명·세포지도·기준선 갱신."
+  },
+  {
+   "id": "R2",
+   "text": "옮기기·검사·신고서 손 칸 도구(생성기·검사기·손 칸 스크립트)를 저장소에 남긴다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 측정: git archive 기준 대비 노출 deepStrictEqual·토큰 동일·원본과 부품 단독 로드(원본은 기준과 같은 결과), 법정 모듈 로드 탐침 회귀 0, 목표 템플릿 화면 게스트 조작 비교·탭 실측 차이 0, api/goaltemplate.js 서버 폴백 여러 입력 같은 결과, npm test 기준과 같음."
+  },
+  {
+   "id": "R4",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 health 자료 세포를 require 로 읽어 조립한다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "    require('./data/expert-templates/health.js')"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 study 자료 세포를 require 로 읽어 조립한다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "    require('./data/expert-templates/study.js')"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 career 자료 세포를 require 로 읽어 조립한다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "    require('./data/expert-templates/career.js')"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 hobby 자료 세포를 require 로 읽어 조립한다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "    require('./data/expert-templates/hobby.js')"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 mind 자료 세포를 require 로 읽어 조립한다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "    require('./data/expert-templates/mind.js')"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 relation 자료 세포를 require 로 읽어 조립한다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "    require('./data/expert-templates/relation.js')"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본은 빈 배열에서 시작해 부품 규칙을 순서대로 push 한다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "    for (var j = 0; j < part.MATCH_RULES.length; j++) MATCH_RULES.push(part.MATCH_RULES[j]);"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본은 부품 지도 키를 순서대로 같은 객체에 단다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "      if (Object.prototype.hasOwnProperty.call(part.TEMPLATE_MAP, k)) TEMPLATE_MAP[k] = part.TEMPLATE_MAP[k];"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "require 가 없는 곳(탐침 vm)에서는 부품을 읽지 않는다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "  var parts = typeof require === 'function' ? ["
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 자료 항목이 남지 않는다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeNotContains",
+    "text": "  \"TPL-HLT-01\": {"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본에 규칙 패턴이 남지 않는다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeNotContains",
+    "text": "\"pattern\": \"(?:3대"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본이 고르기 함수를 그대로 가진다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "function findExpertTemplate(text) {"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 노출 줄이 그대로다",
+   "touches": [
+    "js/goal-templates-registry.js"
+   ],
+   "check": {
+    "file": "js/goal-templates-registry.js",
+    "type": "codeContains",
+    "text": "  formatScheduleBackgroundLayout: formatScheduleBackgroundLayout"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "health 자료 세포가 HLT 첫 항목을 가진다",
+   "touches": [
+    "js/data/expert-templates/health.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/health.js",
+    "type": "codeContains",
+    "text": "  \"TPL-HLT-01\": {"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "health 자료 세포가 node 에서만 module.exports 로 낸다",
+   "touches": [
+    "js/data/expert-templates/health.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/health.js",
+    "type": "codeContains",
+    "text": "if (typeof module !== 'undefined' && module.exports) module.exports = part;"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "study 자료 세포가 STD 첫 항목을 가진다",
+   "touches": [
+    "js/data/expert-templates/study.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/study.js",
+    "type": "codeContains",
+    "text": "  \"TPL-STD-01\": {"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "study 자료 세포가 node 에서만 module.exports 로 낸다",
+   "touches": [
+    "js/data/expert-templates/study.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/study.js",
+    "type": "codeContains",
+    "text": "if (typeof module !== 'undefined' && module.exports) module.exports = part;"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "career 자료 세포가 CAR 첫 항목을 가진다",
+   "touches": [
+    "js/data/expert-templates/career.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/career.js",
+    "type": "codeContains",
+    "text": "  \"TPL-CAR-01\": {"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "career 자료 세포가 node 에서만 module.exports 로 낸다",
+   "touches": [
+    "js/data/expert-templates/career.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/career.js",
+    "type": "codeContains",
+    "text": "if (typeof module !== 'undefined' && module.exports) module.exports = part;"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "hobby 자료 세포가 HOB 첫 항목을 가진다",
+   "touches": [
+    "js/data/expert-templates/hobby.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/hobby.js",
+    "type": "codeContains",
+    "text": "  \"TPL-HOB-01\": {"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "hobby 자료 세포가 node 에서만 module.exports 로 낸다",
+   "touches": [
+    "js/data/expert-templates/hobby.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/hobby.js",
+    "type": "codeContains",
+    "text": "if (typeof module !== 'undefined' && module.exports) module.exports = part;"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "mind 자료 세포가 MND 첫 항목을 가진다",
+   "touches": [
+    "js/data/expert-templates/mind.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/mind.js",
+    "type": "codeContains",
+    "text": "  \"TPL-MND-01\": {"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "mind 자료 세포가 node 에서만 module.exports 로 낸다",
+   "touches": [
+    "js/data/expert-templates/mind.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/mind.js",
+    "type": "codeContains",
+    "text": "if (typeof module !== 'undefined' && module.exports) module.exports = part;"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "relation 자료 세포가 REL 첫 항목을 가진다",
+   "touches": [
+    "js/data/expert-templates/relation.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/relation.js",
+    "type": "codeContains",
+    "text": "  \"TPL-REL-01\": {"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "relation 자료 세포가 node 에서만 module.exports 로 낸다",
+   "touches": [
+    "js/data/expert-templates/relation.js"
+   ],
+   "check": {
+    "file": "js/data/expert-templates/relation.js",
+    "type": "codeContains",
+    "text": "if (typeof module !== 'undefined' && module.exports) module.exports = part;"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 자료 세포가 hybrid 로 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/data/expert-templates/health.js\""
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포 설명에 새 세포 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"data/expert-templates/mind\": \"전문가 마음·습관 템플릿\""
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도에 새 세포가 실렸다",
+   "touches": [
+    "docs/architecture/cell-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-map.json",
+    "type": "codeContains",
+    "text": "\"id\": \"data/expert-templates/relation\""
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기가 접두 순서 끊김을 막는다",
+   "touches": [
+    "docs/design/harness/module-split/gen-expert-templates.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-expert-templates.js",
+    "type": "codeContains",
+    "text": "fail(what + ' 접두 ' + p + ' 가 끊겨 두 번 나온다')"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기가 노출 자료를 deepStrictEqual 로 잰다",
+   "touches": [
+    "docs/design/harness/module-split/verify-expert-templates.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-expert-templates.js",
+    "type": "codeContains",
+    "text": "  assert.deepStrictEqual(headMod.TEMPLATE_MAP, baseMod.TEMPLATE_MAP);"
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기가 법정 탐침 loadOne 을 쓴다",
+   "touches": [
+    "docs/design/harness/module-split/verify-expert-templates.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-expert-templates.js",
+    "type": "codeContains",
+    "text": "const { loadOne } = require(path.join(headDir, 'court/probes/module-load.js'));"
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서 손 칸 스크립트가 원본 세포 값을 읽는다",
+   "touches": [
+    "docs/design/harness/module-split/spec-expert-templates.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/spec-expert-templates.js",
+    "type": "codeContains",
+    "text": "  c.spans = src.spans.slice();"
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기 전체 통과",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "노출 4이름 deepStrictEqual·함수 글자 동일",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "checks.exports-deepStrictEqual.ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 줄이 기준 자료 줄과 글자 그대로 같다(2,760줄)",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "checks.moved-lines-identical.detail.movedLines",
+    "equals": 2760
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "토큰열 동일",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "checks.token-sequence-identical.ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 단독 로드 결과가 기준과 같은 오류(악화 0)",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "checks.standalone-load.detail.head.error",
+    "equals": "ReferenceError: module is not defined"
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "부품 단독 로드 오류 0(health 대표, 6개 모두 검사기 통과)",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "checks.standalone-load.detail.parts.health.ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "서버 폴백 27입력 같은 결과",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "checks.server-fallback-identical.detail.inputs",
+    "equals": 27
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본·부품 모두 800줄 이하",
+   "touches": [
+    "reports/TASK-ES-425/verify-expert-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/verify-expert-templates.json",
+    "type": "jsonPath",
+    "path": "checks.line-limits.ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침 회귀 0",
+   "touches": [
+    "reports/TASK-ES-425/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "목표 템플릿 화면 게스트 조작 비교 차이 0",
+   "touches": [
+    "reports/TASK-ES-425/dom-compare-templates.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/dom-compare-templates.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "목표 탭 실측 기준1 대 작업 차이 0",
+   "touches": [
+    "reports/TASK-ES-425/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/tab-compare-base1-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "목표 탭 실측 기준2 대 작업 차이 0",
+   "touches": [
+    "reports/TASK-ES-425/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/tab-compare-base2-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-425/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/test-compare.json",
+    "type": "jsonPath",
+    "path": "same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C46",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 443/0",
+   "touches": [
+    "reports/TASK-ES-425/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-425/test-compare.json",
+    "type": "jsonPath",
+    "path": "head.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C47",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 가드 기준선에서 800줄 초과 2개",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "file": "docs/architecture/module-baseline.json",
+    "type": "codeContains",
+    "text": "\"js/universal-stats.js\": 1614"
+   }
+  },
+  {
+   "id": "C48",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md",
+    "type": "codeContains",
+    "text": "## 8. [원칙 ⑧] 성과 측정"
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "TASK-ES-425: 전문가 목표 템플릿 레지스트리 세포 분열"
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "#TASK-ES-425 | E2 |"
+   }
+  }
+ ]
+}
