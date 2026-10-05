@@ -1,0 +1,793 @@
+{
+ "task": "TASK-ES-423",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 IIFE 의 책임 묶음 지도를 도구(scripts/inline-script-map.js, 결정적)로 만들어 docs/architecture/INLINE-SCRIPT-MAP.md·inline-script-map.json 에 싣는다 — 묶음별 줄 수·상태 읽기/변경/대입·window 노출·이벤트 처리기·로드 중 문·인라인 on*= 처리기·호출 관계·시험지 글자 의존·난이도 점수·권장 순서."
+  },
+  {
+   "id": "R2",
+   "text": "지도 권장 순서 상위의 4묶음(잠금화면 캔버스 G077·G079, 갓생 카드 보내기 창 G092·G093)을 생성기로 글자 그대로 js/tabs/calendar/lockscreen-image.js·js/tabs/comm/story-card-send.js 로 옮긴다. 이름 참조만 L. 접두, 새 전역 0, 기존 키트(OurgoalCalendarKit·OurgoalCommKit) 사용, 새 파일 800줄 이하, 기능 추가·삭제 0."
+  },
+  {
+   "id": "R3",
+   "text": "index.html 인라인 줄 순증가 0(줄어듦), 새 script 태그는 그 탭 index.js 태그 앞 같은 줄, IIFE 머리에서 옮긴 함수를 같은 이름으로 가져와 호출처·window 노출 줄을 그대로 둔다."
+  },
+  {
+   "id": "R4",
+   "text": "동작 그대로를 측정한다 — 토큰·덩어리 줄 동일, 원본 단독 로드 회귀 0, 게스트 조작 DOM 비교(기준 2회·후 1회) 0, tab-check 기준 2회·후 1회 0, 법정 형식 게스트 화면 시나리오, npm test·tests 107개 기준=후, 실계정 읽기 전용 비교."
+  },
+  {
+   "id": "R5",
+   "text": "세포 등록: modules.json(module-specs --write), cell-descriptions.json 짧은 이름·하는 일, cell-map.json 재생성, module-baseline.json(module-guard --update). 문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지도 생성기가 난이도 점수 가중치를 코드로 정한다",
+   "touches": [
+    "scripts/inline-script-map.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-script-map.js",
+    "text": "const W = { stateWrite: 4, stateMutate: 2, stateRead: 1, loadTime: 2, inlineHandler: 2, fanInGroup: 1, windowName: 1, externalFile: 1, testIndexOnly: 3, smokeFn: 5 };"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지도 문서에 권장 순서 표가 있다",
+   "touches": [
+    "docs/architecture/INLINE-SCRIPT-MAP.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+    "text": "## 3. 권장 순서 (안전한 것부터, 상위 30)"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지도 JSON 형식 이름이 기록되어 있다",
+   "touches": [
+    "docs/architecture/inline-script-map.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/inline-script-map.json",
+    "path": "schema",
+    "equals": "ourgoal.inline-script-map/1"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준(origin/main) 지도에서 IIFE 를 192묶음으로 나눴다",
+   "touches": [
+    "reports/TASK-ES-423/inline-script-map-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/inline-script-map-base.json",
+    "path": "totals.groups",
+    "equals": 192
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준 지도에서 인라인 window 전역 대입은 246줄이다(module-metrics ③ 282 중 index.html 몫 247 에서 posthog 머리 블록 1줄 제외)",
+   "touches": [
+    "reports/TASK-ES-423/inline-script-map-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/inline-script-map-base.json",
+    "path": "totals.windowAssignments",
+    "equals": 246
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "9:16 일정 카드 캔버스 그리기가 일정 탭 세포 파일에 선언되어 있다",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/lockscreen-image.js",
+    "text": "  async function generateLockScreenScheduleCardImage(records, goals, options){"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "월간 달력 배경화면 캔버스 그리기가 일정 탭 세포 파일에 선언되어 있다",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/lockscreen-image.js",
+    "text": "  async function generateLockScreenCalendarImage(targetYear, targetMonth, records, goals, options){"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "둥근 사각형 그리기 도우미가 같은 세포 파일에 있다",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/lockscreen-image.js",
+    "text": "  function lsDrawRoundRect(ctx, x, y, w, h, r, fill, stroke){"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "잠금화면 세포는 기존 일정 키트에 함수를 올린다(새 전역 0)",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/lockscreen-image.js",
+    "text": "  var K = global.OurgoalCalendarKit = global.OurgoalCalendarKit || {};"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "잠금화면 세포 키트 등록 줄",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/lockscreen-image.js",
+    "text": "  K.generateLockScreenScheduleCardImage = generateLockScreenScheduleCardImage;"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "일정 카드 그리기가 인라인 state 를 app-scope 통로로 읽는다",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/lockscreen-image.js",
+    "text": "    var theme = options.theme || (L.state && L.state.theme === 'white' ? 'light' : 'dark');"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "동반자 1:1 갓생 카드 전송 창이 소통 탭 세포 파일에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/story-card-send.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/story-card-send.js",
+    "text": "  function openSelectCompanionForStoryModal(compList, streak, userName, quote, canvasEl){"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "팀 단체방 갓생 카드 인증 창이 소통 탭 세포 파일에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/story-card-send.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/story-card-send.js",
+    "text": "  function openSelectTeamForStoryModal(myTeams, streak, userName, quote, canvasEl){"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "갓생 카드 세포는 기존 소통 키트에 함수를 올린다(새 전역 0)",
+   "touches": [
+    "js/tabs/comm/story-card-send.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/story-card-send.js",
+    "text": "  var K = global.OurgoalCommKit = global.OurgoalCommKit || {};"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "팀 채팅 낙관적 반영이 groupState 를 통로로 읽는다",
+   "touches": [
+    "js/tabs/comm/story-card-send.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/story-card-send.js",
+    "text": "              if(typeof L.groupState === 'function'){"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인에 lsDrawRoundRect 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function lsDrawRoundRect(ctx, x, y, w, h, r, fill, stroke){"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인에 generateLockScreenCalendarImage 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  async function generateLockScreenCalendarImage(targetYear, targetMonth, records, goals, options){"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인에 generateLockScreenScheduleCardImage 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  async function generateLockScreenScheduleCardImage(records, goals, options){"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인에 openSelectCompanionForStoryModal 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function openSelectCompanionForStoryModal(compList, streak, userName, quote, canvasEl){"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인에 openSelectTeamForStoryModal 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function openSelectTeamForStoryModal(myTeams, streak, userName, quote, canvasEl){"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: 옮길 세포·묶음 정의(구획 주석 글자로 찾음)",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-split-1.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/gen-inline-split-1.js",
+    "text": "    key: 'lock', file: 'js/tabs/calendar/lockscreen-image.js', kit: 'OurgoalCalendarKit', kitVar: '_calendarKit',"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기: 덩어리 줄(주석 포함) 맞대기까지 통과해야 ok",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-split-1.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/verify-inline-split-1.js",
+    "text": "const ok = report.equivalent && lineCheck.length === 4 && lineCheck.every(x => x.diffLines === 0 && x.origStartLine > 0) && leftDefs.length === 0 && usedInIndexNotImported.length === 0 && notExposed.length === 0 && kNotMoved.length === 0 && importedMissing.length === 0"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "IIFE 머리에서 옮긴 잠금화면 일정 카드 그리기를 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var generateLockScreenScheduleCardImage = _calendarKit.generateLockScreenScheduleCardImage;"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "IIFE 머리에서 옮긴 월간 달력 그리기를 같은 이름으로 가져온다(window 노출 줄은 원래 자리)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var generateLockScreenCalendarImage = _calendarKit.generateLockScreenCalendarImage;"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "IIFE 머리에서 옮긴 동반자 전송 창을 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var openSelectCompanionForStoryModal = _commKit.openSelectCompanionForStoryModal;"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "IIFE 머리에서 옮긴 팀 인증 창을 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var openSelectTeamForStoryModal = _commKit.openSelectTeamForStoryModal;"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 코드가 새로 읽는 인라인 이름 groupState 만 getter 로 더 노출한다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "    get groupState(){ return groupState; }"
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "잠금화면 세포 태그는 일정 탭 index.js 태그 앞 같은 줄(순증가 0줄)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/tabs/calendar/lockscreen-image.js\"></script><script src=\"js/tabs/calendar/index.js\"></script>"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "갓생 카드 세포 태그는 소통 탭 index.js 태그 앞 같은 줄(순증가 0줄)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/tabs/comm/story-card-send.js\"></script><script src=\"js/tabs/comm/index.js\"></script>"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "window.generateLockScreenCalendarImage 노출 줄은 원래 자리에 그대로 있다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "    window.generateLockScreenCalendarImage = generateLockScreenCalendarImage;"
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 5개 함수 토큰 동일·덩어리 줄 동일·누수 0 검사가 ok",
+   "touches": [
+    "reports/TASK-ES-423/verify-inline-split-1.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/verify-inline-split-1.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0 — 작업 쪽 정상 로드 모듈 수가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-423/module-load-probe.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/module-load-probe.json",
+    "path": "counts.headOk",
+    "equals": 71
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R4",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "게스트 조작 DOM 비교(27단계×10칸, 기준 대 후) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-423/dom-compare-inline-split-1.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/dom-compare-inline-split-1.json",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R4",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "같은 기준 앱 2회 게스트 조작 비교(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-423/dom-compare-inline-split-1.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/dom-compare-inline-split-1.json",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "tests 107개의 종료 코드가 기준과 작업에서 모두 같다",
+   "touches": [
+    "reports/TASK-ES-423/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/test-compare.json",
+    "path": "exitCodeDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "npm test smoke 통과/실패 수가 기준과 같다(443/0)",
+   "touches": [
+    "reports/TASK-ES-423/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/test-compare.json",
+    "path": "npmTestAfter.smoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R4",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "실계정 읽기 전용 비교(테스트 계정 A, 39값) 기준1 대 후 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-423/real-account-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/real-account-compare.json",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R4",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "실계정 읽기 전용 비교 기준 2회 사이(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-423/real-account-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-423/real-account-compare.json",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭 「잠금화면」 허브 창에서 「잠금화면용 일정 카드 저장」을 누르면 옮긴 일정 카드 그리기가 불리고 이전 전과 같은 토스트가 뜨며 예외가 없다 — 이전 전부터 그 그리기는 정의되지 않은 streakDays 를 읽어 오류 토스트로 끝나므로 같은 오류 토스트가 기대값이다(옮기기만 했으므로 기준 커밋에서도 같은 결과)",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js"
+   ],
+   "scenario": "scenarios/calendar-lockscreen-card-save.json"
+  },
+  {
+   "id": "C40",
+   "req": "R4",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "운영 테스트 계정으로 로그인한 상태에서 잠금화면 허브 창·일정 카드 저장 토스트·월간 달력 이미지·갓생 카드 보내기 빈 경로 토스트가 이전 전과 같다",
+   "touches": [
+    "js/tabs/calendar/lockscreen-image.js",
+    "js/tabs/comm/story-card-send.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+    "how": [
+     "PowerShell 에서 사용자 환경 변수를 자식에만 넘겨 node docs/design/harness/module-split/real-account-inline-split-1.js <앱 폴더> <이름> <결과.json> 을 기준 사본과 이 변경에 각각 돌린다",
+     "두 결과의 단계 해시·이미지 해시·토스트 해시가 같은지 맞댄다"
+    ],
+    "note": "작업자 실측(판정 아님): 로컬 127.0.0.2 정적 서버 + /api 운영 전달, 테스트 계정 A, 기준1·후·기준2 39값 차이 0, pageerror 0, 쓴 행 0(reports/TASK-ES-423/real-account-compare.json). 테스트 계정 A 에 동반자·참여 팀이 없어 두 보내기 창은 빈 경로(토스트)까지만 쟀고, 「전송」·「인증」은 team_pings 행을 쓰므로 누르지 않았다."
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 잠금화면 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "      \"file\": \"js/tabs/calendar/lockscreen-image.js\","
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 갓생 카드 보내기 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "      \"file\": \"js/tabs/comm/story-card-send.js\","
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 잠금화면 세포 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/cell-descriptions.json",
+    "text": "\"calendar/lockscreen-image\": \"잠금화면 이미지\","
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 갓생 카드 보내기 세포 하는 일 한 줄",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/cell-descriptions.json",
+    "text": "\"comm/story-card-send\": \"갓생 카드를 동반자에게 1:1로 보내거나 팀 단체방에 인증으로 올리는 창을 띄운다\","
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "모듈 가드 기준선의 인라인 스크립트 줄 수가 33385 로 낮아졌다(34007 에서 −622)",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/module-baseline.json",
+    "path": "history.26.metrics.inlineScriptLines",
+    "equals": 33385
+   }
+  },
+  {
+   "id": "C46",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C47",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "dev_log.md",
+    "text": "- 2026-10-05 TASK-ES-423: 인라인 스크립트 세포화 1차"
+   }
+  },
+  {
+   "id": "C48",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "- #TASK-ES-423 | INFRA | [인라인 스크립트 세포화 1차]"
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교가 두 앱에 같은 조작으로 동반자·참여 팀을 넣어 옮긴 두 창을 연다",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-inline-split-1.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/dom-compare-inline-split-1.js",
+    "text": "  ['story-open-empty', click('#recStoryCardBtn'), 1500],"
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실계정 확인: 테스트 계정 표식 없으면 접속 안 함",
+   "touches": [
+    "docs/design/harness/module-split/real-account-inline-split-1.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/real-account-inline-split-1.js",
+    "text": "if (!/ogtest/i.test(env.OG_TEST_A_EMAIL) && !allow.includes(env.OG_TEST_A_EMAIL)) {"
+   }
+  }
+ ]
+}
