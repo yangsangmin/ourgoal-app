@@ -1,0 +1,23 @@
+{
+  "id": "records-new-record-direct",
+  "title": "게스트가 기록 탭 「📈 히트맵·통계」의 「+ 새 기록 작성」을 누르면 새 기록 창(내용 칸 #rText·저장 #mSave)이 열리고, 「📝 실천 타임라인」 피드 머리의 「+ 새 기록」을 눌러도 같은 창이 열리며 콘솔 예외가 없다 — 두 단추는 숨은 #recAddBtn 을 대신 누르던 중계 대신 기록 키트의 openRecordModal(null) 을 직접 부른다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "expect": "notVisible", "selector": "#avatarGreetingModal", "timeoutMs": 8000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#sRecModesWrap", "timeoutMs": 15000 },
+    { "do": "click", "selector": "#sRecModesWrap > button:nth-of-type(1)" },
+    { "do": "click", "selector": "button[title^=\"누르면: 오늘 실천한 내용과 사진을 남겨\"]" },
+    { "expect": "visible", "selector": "#rText", "timeoutMs": 5000 },
+    { "expect": "visible", "selector": "#mSave" },
+    { "do": "click", "selector": "#mCancel" },
+    { "expect": "notVisible", "selector": "#rText", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#sRecModesWrap > button:nth-of-type(3)" },
+    { "do": "click", "selector": ".s-feed-header button.btn-primary" },
+    { "expect": "visible", "selector": "#rText", "timeoutMs": 5000 },
+    { "expect": "noExceptions" }
+  ]
+}
