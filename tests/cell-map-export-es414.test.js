@@ -129,6 +129,14 @@ check('세포마다 짧은 이름표(name)가 있고, 손 이름이 없으면 �
   assert.strictEqual(exporter.shortName(undefined, '홈 탭 전체를 총괄한다', 'home/index'), 'home/index');
 });
 
+// #TASK-ES-419 노션 본문 이름표: 세포 펼침 제목은 짧은 한국어 이름(굵게) · 코드 id, 목록도 짧은 이름
+check('노션 본문 세포 펼침 제목이 짧은 이름 · id 순이고, 영역 표의 세포 목록도 짧은 이름이다', () => {
+  const body = publish.notionParts(a).join('');
+  assert.ok(body.includes('<summary>**DM 대화방** · `team-dm-room` — '), 'DM 대화방 펼침 제목');
+  const head = publish.notionHead(a);
+  assert.ok(head.includes('DM 대화방, DM 받은 목록') || head.includes('DM 받은 목록'), '영역 표 세포 목록에 짧은 이름');
+});
+
 const failed = results.filter(r => !r.ok);
 results.forEach(r => console.log((r.ok ? '  통과 ' : '  실패 ') + r.name + (r.ok ? '' : ' — ' + r.msg)));
 console.log(`cell-map-export 부품 시험: ${results.length - failed.length}/${results.length}`);

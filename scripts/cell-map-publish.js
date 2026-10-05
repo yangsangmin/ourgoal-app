@@ -57,11 +57,21 @@ function kst(iso) {
   return `${k.getUTCFullYear()}-${p(k.getUTCMonth() + 1)}-${p(k.getUTCDate())} ${p(k.getUTCHours())}:${p(k.getUTCMinutes())} KST`;
 }
 
-function names(ids, byId) {
-  return ids.map(id => esc(id)).join(', ');
+// 세포 이름표: 짧은 한국어 이름(cell-map.json name, #TASK-ES-418) — 없으면 id
+let LABELS = {};
+function setLabels(map) {
+  LABELS = {};
+  (map.cells || []).forEach(c => { if (c.name) LABELS[c.id] = c.name; });
+}
+function label(id) {
+  return LABELS[id] || id;
+}
+function names(ids) {
+  return ids.map(id => esc(label(id))).join(', ');
 }
 
 function notionHead(map) {
+  setLabels(map);
   const s = map.summary;
   const src = map.source;
   const L = [];
@@ -108,7 +118,7 @@ function cellToggle(c) {
   const tabs = c.tabs.map(t => TAB_NAMES[t] || t).join('·');
   const flag = c.over800 ? ' <span color="red">800줄 초과</span>' : '';
   L.push(`\t<details>`);
-  L.push(`\t<summary>**${esc(c.id)}** — ${esc(c.does)}${flag}</summary>`);
+  L.push(`\t<summary>**${esc(label(c.id))}** · \`${c.id}\` — ${esc(c.does)}${flag}</summary>`);
   L.push(`\t\t${c.file ? '`' + c.file + '` · ' + num(c.lines) + '줄' : '파일 없음'} · ${esc(c.kindName)}${tabs ? ' · 탭: ' + esc(tabs) : ''}${c.doesSource === 'hand' ? '' : ' · 「하는 일」 설명 대기'}`);
   if (c.exposes.length) L.push(`\t\t노출 이름: ${c.exposes.map(x => '`' + x + '`').join(' ')}`);
   const by = c.calledBy.slice();
@@ -130,6 +140,7 @@ function cellToggle(c) {
 }
 
 function notionAreas(map) {
+  setLabels(map);
   const byId = new Map(map.cells.map(c => [c.id, c]));
   return map.areas.map(a => {
     const L = [`### ${esc(a.name)} — 세포 ${num(a.cells.length)}개 · ${num(a.lines)}줄 {toggle="true"}`];

@@ -1,0 +1,87 @@
+{
+  "task": "TASK-ES-419",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-419-NOTION-SHORT-NAMES.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "노션 세포지도 본문 생성기가 cell-map.json 의 짧은 한국어 이름(name)을 이름표로 쓰고 코드 id 는 보조로 둔다. 제품 코드 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "노션 본문 생성기가 세포 id 를 짧은 이름으로 바꿔 목록에 쓴다",
+      "touches": [
+        "scripts/cell-map-publish.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-publish.js",
+        "text": "  return ids.map(id => esc(label(id))).join(', ');"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "세포 펼침 제목은 짧은 이름을 굵게, 코드 id 를 뒤에 둔다",
+      "touches": [
+        "scripts/cell-map-publish.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-publish.js",
+        "text": "<summary>**${esc(label(c.id))}** · \\`${c.id}\\` — ${esc(c.does)}${flag}</summary>"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 DM 대화방 펼침 제목을 확인한다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  assert.ok(body.includes('<summary>**DM 대화방** · `team-dm-room` — '), 'DM 대화방 펼침 제목');"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-419 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-419: 노션 세포지도 이름표"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-419 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-419 | INFRA | [노션 세포지도 짧은 이름표]"
+      }
+    }
+  ]
+}
