@@ -4,7 +4,7 @@
  * 위클리 리캡 카드 그림·창(fitBigFont · generateWeeklyRecapImage · findBestMoment · openWeeklyRecapModal · openLegacyRecapCanvasModal) · 기록 추가 창(openRecordModal).
  * 기록 탭 로드 중 처리기 등록 문 다섯 개(시간 기록 단추 · 세그먼트 막대 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecSegmentBar · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).
  * 한 줄 등록 문 세 개와 상태 변수(btnOpenTt · staticPulseBar)는 원래 자리에 있다. weeklyRecapStats 는 smoke-test FN_NAMES 함수 — smoke-test 가 인라인 합본(js/tabs 세포 포함)에서 잘라 가므로(#TASK-ES-465) 같이 옮겼다.
- * #TASK-ES-474(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 20093~20110 · 20111~20119 · 20120~20200 · 20201~20225 · 20226~20339 · 20340~20483 · 20484~20580 · 20583~20589 · 20592~20599 · 20601~20606 · 20607~20612 · 20613~20702줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-474(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 19297~19314 · 19315~19323 · 19324~19404 · 19405~19429 · 19430~19543 · 19544~19687 · 19688~19784 · 19787~19793 · 19796~19803 · 19805~19810 · 19811~19816 · 19817~19906줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,7 +16,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 20093~20110줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19297~19314줄(#TASK-ES-474 생성기 표지) ---- */
   function weeklyRecapStats(records, now){
     now = now || new Date();
     var weekAgo = new Date(now.getTime() - 7*86400000);
@@ -35,7 +35,7 @@
     var topCategory = Object.keys(catTotals).sort(function(a,b){ return catTotals[b]-catTotals[a]; })[0] || null;
     return { count: count, totalMs: totalMs, topCategory: topCategory, topCategoryMs: topCategory ? catTotals[topCategory] : 0 };
   }
-  /* ---- 이전 전 index.html 20111~20119줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19315~19323줄(#TASK-ES-474 생성기 표지) ---- */
   function fitBigFont(ctx, text, maxWidth, baseSize, weight){
     var size = baseSize;
     ctx.font = weight+' '+Math.round(size)+'px "Noto Sans KR",sans-serif';
@@ -45,7 +45,7 @@
     }
     return size;
   }
-  /* ---- 이전 전 index.html 20120~20200줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19324~19404줄(#TASK-ES-474 생성기 표지) ---- */
   async function generateWeeklyRecapImage(stats, streakDays, options){
     options = Object.assign({
       includeCount: true,
@@ -127,7 +127,7 @@
     L.drawShareWatermark(ctx, dims, L.state.profile.id, '#fff');
     return canvas;
   }
-  /* ---- 이전 전 index.html 20201~20225줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19405~19429줄(#TASK-ES-474 생성기 표지) ---- */
 
   /* [#TASK-ES-336] 팩트 기반 최근 7일 베스트 실천 1선 자동 추출 알고리즘 (사진 > 몰입시간 > 글자수) */
   function findBestMoment(records, now){
@@ -153,7 +153,7 @@
       return bLen - aLen;
     })[0];
   }
-  /* ---- 이전 전 index.html 20226~20339줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19430~19543줄(#TASK-ES-474 생성기 표지) ---- */
 
   /* [#TASK-ES-336] 초경량 위클리 리캡 3초 요약 카드 모달 */
   async function openWeeklyRecapModal(){
@@ -268,7 +268,7 @@
       }
     });
   }
-  /* ---- 이전 전 index.html 20340~20483줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19544~19687줄(#TASK-ES-474 생성기 표지) ---- */
 
   /* 기존 스포티파이 랩드 스타일 공유 캔버스 생성 모달 보존 */
   async function openLegacyRecapCanvasModal(){
@@ -413,7 +413,7 @@
       }
     );
   }
-  /* ---- 이전 전 index.html 20484~20580줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19688~19784줄(#TASK-ES-474 생성기 표지) ---- */
 
   function openRecordModal(rec){
     var isNew = !rec;
@@ -512,7 +512,7 @@
     );
   }
 
-  /* ---- 이전 전 index.html 20583~20589줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19787~19793줄(#TASK-ES-474 생성기 표지) ---- */
   function bindRecTimeTrackerBtn() { /* [#TASK-ES-474] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnOpenTt){
     L.btnOpenTt.addEventListener('click', function(){
@@ -523,7 +523,7 @@
   }
   } /* bindRecTimeTrackerBtn */
 
-  /* ---- 이전 전 index.html 20592~20599줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19796~19803줄(#TASK-ES-474 생성기 표지) ---- */
   function bindRecSegmentBar() { /* [#TASK-ES-474] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
 
   // 세그먼트·펄스바·캐러셀 알약 정적 클릭 리스너 보장 (이벤트 유실 원천 방어)
@@ -535,7 +535,7 @@
   });
   } /* bindRecSegmentBar */
 
-  /* ---- 이전 전 index.html 20601~20606줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19805~19810줄(#TASK-ES-474 생성기 표지) ---- */
   function bindRecPulseBar() { /* [#TASK-ES-474] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.staticPulseBar){
     L.staticPulseBar.addEventListener('click', function(e){
@@ -544,7 +544,7 @@
     });
   }
   } /* bindRecPulseBar */
-  /* ---- 이전 전 index.html 20607~20612줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19811~19816줄(#TASK-ES-474 생성기 표지) ---- */
   function bindRecCarouselPills() { /* [#TASK-ES-474] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   document.querySelectorAll('#recCarouselPills [data-recslide]').forEach(function(btn){
     btn.addEventListener('click', function(e){
@@ -553,7 +553,7 @@
     });
   });
   } /* bindRecCarouselPills */
-  /* ---- 이전 전 index.html 20613~20702줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19817~19906줄(#TASK-ES-474 생성기 표지) ---- */
   function bindRecDocumentClick() { /* [#TASK-ES-474] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
 
   // 유니버설 데이터 가져오기, 활용가이드 및 템플릿 전역 클릭 리스너 보장 (이벤트 유실 원천 방어)

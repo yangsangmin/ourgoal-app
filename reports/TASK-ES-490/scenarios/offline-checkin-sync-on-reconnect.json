@@ -1,0 +1,69 @@
+{
+  "id": "offline-checkin-sync-on-reconnect",
+  "title": "게스트가 오프라인에서 한 줄 체크인을 저장하고 다시 온라인이 되면 「오프라인 기록 1건을 동기화했어요」가 뜬다(저장 성공 뒤에만 큐를 비움) — 고치기 전에는 온라인 복귀 때 처리기 없는 flush() 가 아무것도 보내지 않고 큐를 비워 동기화 알림이 없었다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "setOffline",
+      "offline": true
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "오프라인 스쿼트 30개"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "기록되었습니다",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#firstCheckinDoneBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#firstCheckinDoneBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "setOffline",
+      "offline": false
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "오프라인 기록 1건을 동기화했어요",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

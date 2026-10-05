@@ -6,7 +6,7 @@
   - 「전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)」 → `js/tabs/comm/shared-groups.js` (loadSharedGroups · renderCommGroups · renderGroupDetail · collectiveGaugeHtml · promptNewGroup)
   - 「캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명)」 함수 → `js/tabs/records/export-theme.js` (fetchSignedCalendarToken · buildWebCalUrl · buildICS · buildMarkdownExport · openExportThemeModal · exportAllCheckins)
   - 「위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용)」 → `js/tabs/records/weekly-recap.js` (weeklyRecapStats · fitBigFont · generateWeeklyRecapImage · findBestMoment · openWeeklyRecapModal · openLegacyRecapCanvasModal · openRecordModal · 로드 중 등록 문 5개 → bindRecTimeTrackerBtn · bindRecSegmentBar · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick). 결함 PR #767(가짜 연속·하드코딩 레벨 수정) 병합 뒤 main 판을 옮겼다.
-- 생성기 한 곳 고침: 「한 줄에 두 문」·「문 끝 줄 뒤 다른 코드」 검사를 그 문을 옮기거나 감쌀 때만 멈추게 했다(원래 자리에 남는 문은 그 줄을 손대지 않는다). 캘린더 묶음 끝의 `var shareContent = …; window.shareContent = shareContent;` 한 줄 때문에 묶음 전체가 멈추던 것을 푼다.
+- 생성기 한 곳 고침(main 합칠 때 같은 고침을 한 #TASK-ES-482 판으로 합침 — 결과 동일): 「한 줄에 두 문」·「문 끝 줄 뒤 다른 코드」 검사를 그 문을 옮기거나 감쌀 때만 멈추게 했다(원래 자리에 남는 문은 그 줄을 손대지 않는다). 캘린더 묶음 끝의 `var shareContent = …; window.shareContent = shareContent;` 한 줄 때문에 묶음 전체가 멈추던 것을 푼다.
 
 ## 1. [원칙 ①] 문제 정확히 파악
 세 묶음은 지도 등급 「어려움」(A2 내 상태를 남이 씀 · B1·B2·B3 로드 중 문 · D 큰 상수 · E 순환 · F1m 시험지 선행 · F2 smoke FN_NAMES · L 통로 밖 이름)이다. 공유 팀 묶음의 시험지 선행은 #770 으로 풀렸다(시험지 합본 읽기). 캘린더 묶음은 생성기가 한 줄 두 문에서 멈췄다.

@@ -1,0 +1,54 @@
+{
+  "id": "core-trash-bin",
+  "title": "게스트로 설정 탭 「데이터」 묶음을 펼치고 「🗑️ 휴지통」을 누르면 휴지통 창이 뜬다 — 전역 7일 유예 통합 휴지통(getTrashList·openTrashModal 등)을 기관 세포 js/core/trash-bin.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#setGroupDataSummary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnOpenTrashModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnOpenTrashModal"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet h3",
+      "text": "휴지통",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

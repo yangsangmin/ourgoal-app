@@ -64,14 +64,14 @@
    "req": "R4",
    "kind": "static",
    "domain": "config",
-   "statement": "생성기가 한 줄 두 문을 옮기거나 감싸는 문에서만 멈춘다",
+   "statement": "생성기는 한 줄 두 문을 옮기거나 감싸는 문에서만 멈춘다(main 의 #TASK-ES-482 판을 받아 씀 — 이 PR 의 같은 고침과 겹쳐 main 판으로 합침)",
    "touches": [
     "docs/design/harness/module-split/gen-inline-hard.js"
    ],
    "check": {
     "file": "docs/design/harness/module-split/gen-inline-hard.js",
     "type": "codeContains",
-    "text": "for (const it of plan) if (it.lineIssue && (it.action === 'move' || it.action === 'wrap')) fail(it.lineIssue);"
+    "text": "if (out && it.sharesPrevLine) fail('두 문이 한 줄에: ' + it.start);"
    }
   },
   {

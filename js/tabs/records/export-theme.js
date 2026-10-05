@@ -3,7 +3,7 @@
  *
  * 캘린더 구독 서명 토큰 받기(fetchSignedCalendarToken) · 구독 URL·iCalendar·마크다운 내보내기 순수 함수(buildWebCalUrl · buildICS · buildMarkdownExport) · 테마별 기록 내보내기 창(openExportThemeModal) · 전체 체크인 내보내기(exportAllCheckins).
  * 토큰 캐시(_cachedSignedCalendarToken)·MOCK_GROUPS·내보내기 단추 등록 한 줄·window 노출 줄·shareContent 줄은 원래 자리에 있다. 순수 함수 세 개는 smoke-test FN_NAMES 함수 — smoke-test 가 인라인 합본에서 잘라 간다(#TASK-ES-465).
- * #TASK-ES-474(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 20740~20757 · 20758~20765 · 20766~20833 · 20834~20855 · 20856~21010 · 21011~21014줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-474(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 19944~19961 · 19962~19969 · 19970~20037 · 20038~20059 · 20060~20214 · 20215~20218줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 20740~20757줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19944~19961줄(#TASK-ES-474 생성기 표지) ---- */
   async function fetchSignedCalendarToken() {
     if (L._cachedSignedCalendarToken) return L._cachedSignedCalendarToken;
     try {
@@ -34,7 +34,7 @@
     } catch(e) {}
     return 'demo';
   }
-  /* ---- 이전 전 index.html 20758~20765줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19962~19969줄(#TASK-ES-474 생성기 표지) ---- */
 
   function buildWebCalUrl(userIdOrToken, origin){
     origin = origin || (typeof window !== 'undefined' && window.location && window.location.origin ? window.location.origin : 'https://ourgoal-app.vercel.app');
@@ -43,7 +43,7 @@
     var tok = userIdOrToken || cached || 'demo';
     return 'webcal://' + base + '/api/calendar?token=' + encodeURIComponent(tok);
   }
-  /* ---- 이전 전 index.html 20766~20833줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 19970~20037줄(#TASK-ES-474 생성기 표지) ---- */
 
   function buildICS(records, goals){
     records = records || [];
@@ -112,7 +112,7 @@
     lines.push('END:VCALENDAR');
     return lines.join('\r\r\n');
   }
-  /* ---- 이전 전 index.html 20834~20855줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 20038~20059줄(#TASK-ES-474 생성기 표지) ---- */
 
   function buildMarkdownExport(recordsToExport, themeKey, includePrompt){
     var thObj = (typeof L.RECORD_THEMES !== 'undefined' && L.RECORD_THEMES[themeKey]) ? L.RECORD_THEMES[themeKey] : null;
@@ -135,7 +135,7 @@
 
     return lines.join('\r\n');
   }
-  /* ---- 이전 전 index.html 20856~21010줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 20060~20214줄(#TASK-ES-474 생성기 표지) ---- */
 
   function openExportThemeModal(){
     var currentFilter = (L.state && L.state.selectedRecordTheme && L.state.selectedRecordTheme !== 'all') ? L.state.selectedRecordTheme : 'all';
@@ -291,7 +291,7 @@
       }
     );
   }
-  /* ---- 이전 전 index.html 21011~21014줄(#TASK-ES-474 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 20215~20218줄(#TASK-ES-474 생성기 표지) ---- */
 
   function exportAllCheckins(){
     openExportThemeModal();
