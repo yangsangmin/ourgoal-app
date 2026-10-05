@@ -3,7 +3,7 @@
  *
  * 「소셜 로그인 (카카오 / 실제 구글 OAuth 연동)」 묶음: 카카오 OAuth 시작(startOAuthLogin — Supabase signInWithOAuth 로 카카오 동의 화면으로 넘어간다), 구글 로그인(startGoogleLogin·getGoogleTokenClient·initGoogleOneTap·handleGoogleUserSuccess·parseJwtPayload — 구글 단추는 #TASK-ES-108 카카오 단일화로 화면에서 숨겨져 있다), sha256Hex(이 묶음 안에서 부르는 곳 없음 — 그대로 옮김),
  * 랜딩·로그인 화면의 카카오·구글 단추 처리기 등록 문(bindKakaoLoginButtons·bindGoogleLoginButtons — index.html 원래 자리에서 부른다). 구글 토큰 클라이언트(_googleTokenClient)·One-Tap nonce(_googleOneTapNonce) 상태 변수는 원래 자리에 그대로 있다.
- * #TASK-ES-525(인라인 3단계 Z1 로그인·계정 3차): index.html 인라인 IIFE 의 구간(이전 전 4074~4092 · 4093~4106 · 4107~4184 · 4187~4224 · 4225~4275 · 4278~4311 · 4312~4369 · 4370~4373 · 4374~4377줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-525(인라인 3단계 Z1 로그인·계정 3차): index.html 인라인 IIFE 의 구간(이전 전 4029~4047 · 4048~4061 · 4062~4139 · 4142~4179 · 4180~4230 · 4233~4266 · 4267~4324 · 4325~4328 · 4329~4332줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalSettingsKit = global.OurgoalSettingsKit || {};
 
-  /* ---- 이전 전 index.html 4074~4092줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4029~4047줄(#TASK-ES-525 생성기 표지) ---- */
   async function sha256Hex(str){
     try {
       if(window.crypto && window.crypto.subtle && window.TextEncoder){
@@ -35,7 +35,7 @@
     var hex2 = Math.abs(h2).toString(16).padStart(8, '0');
     return (hex1 + hex2 + hex1 + hex2 + hex1 + hex2 + hex1 + hex2).slice(0, 64);
   }
-  /* ---- 이전 전 index.html 4093~4106줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4048~4061줄(#TASK-ES-525 생성기 표지) ---- */
 
   function parseJwtPayload(token){
     try {
@@ -50,7 +50,7 @@
       return null;
     }
   }
-  /* ---- 이전 전 index.html 4107~4184줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4062~4139줄(#TASK-ES-525 생성기 표지) ---- */
 
   async function handleGoogleUserSuccess(googleUser, accessToken){
     if(!googleUser || !googleUser.email){
@@ -130,7 +130,7 @@
     );
   }
 
-  /* ---- 이전 전 index.html 4187~4224줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4142~4179줄(#TASK-ES-525 생성기 표지) ---- */
   function getGoogleTokenClient(){
     if(!L._googleTokenClient && window.google && google.accounts && google.accounts.oauth2){
       var clientId = (L.GOOGLE_OAUTH_CLIENT_ID || '').trim();
@@ -169,7 +169,7 @@
     }
     return L._googleTokenClient;
   }
-  /* ---- 이전 전 index.html 4225~4275줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4180~4230줄(#TASK-ES-525 생성기 표지) ---- */
 
   function startGoogleLogin(){
     if(!window.google || !google.accounts){
@@ -222,7 +222,7 @@
     }
   }
 
-  /* ---- 이전 전 index.html 4278~4311줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4233~4266줄(#TASK-ES-525 생성기 표지) ---- */
   async function initGoogleOneTap(){
     if(window.google && google.accounts && google.accounts.id && L.GOOGLE_OAUTH_CLIENT_ID){
       try {
@@ -257,7 +257,7 @@
       }
     }
   }
-  /* ---- 이전 전 index.html 4312~4369줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4267~4324줄(#TASK-ES-525 생성기 표지) ---- */
 
   async function startOAuthLogin(provider){
     if(provider === 'google'){
@@ -316,14 +316,14 @@
       }
     }
   }
-  /* ---- 이전 전 index.html 4370~4373줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4325~4328줄(#TASK-ES-525 생성기 표지) ---- */
   function bindKakaoLoginButtons() { /* [#TASK-ES-525] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   ['landKakaoBtn','authKakaoBtn'].forEach(function(id){
     var el = document.getElementById(id);
     if(el) el.addEventListener('click', function(){ startOAuthLogin('kakao'); });
   });
   } /* bindKakaoLoginButtons */
-  /* ---- 이전 전 index.html 4374~4377줄(#TASK-ES-525 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4329~4332줄(#TASK-ES-525 생성기 표지) ---- */
   function bindGoogleLoginButtons() { /* [#TASK-ES-525] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   ['landGoogleBtn','authGoogleBtn'].forEach(function(id){
     var el = document.getElementById(id);

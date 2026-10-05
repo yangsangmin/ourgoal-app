@@ -1,0 +1,22 @@
+{
+  "task": "TASK-ES-523",
+  "label": "인라인 3단계 Z4 이동 2차(활용가이드·공개 범위 배지·스톱워치 시간 글자)",
+  "slot": "H4",
+  "slots": ["H0 시범 #TASK-ES-439", "H1", "H2", "H3", "H4", "HO 기관"],
+  "cells": [
+    { "key": "firstLoginGuide", "file": "js/tabs/settings/first-login-guide.js", "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit", "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal First Login Guide (설정 — 앱 활용 가이드 6쪽 안내 창)",
+      "desc": ["「최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합」 묶음 중 활용 가이드 책임: 첫 로그인 가이드 띄우기(maybeShowFirstLoginGuide)·6쪽 안내 창(startFirstLoginGuide — 설정 「앱 활용 가이드 다시보기」 #btnRestartGuide 가 부른다).",
+               "window.startFirstLoginGuide 노출 줄과 탭 단추·화면 목록(navButtons·screens — 로드 중 DOM 을 읽는 상태)은 index.html 원래 자리에 그대로 있다."],
+      "take": [ { "group": "최초 로그인 활용가이드", "names": ["maybeShowFirstLoginGuide", "startFirstLoginGuide"], "keepRest": true } ] },
+    { "key": "privacyBadges", "file": "js/tabs/settings/privacy-badges.js", "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit", "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Privacy Badges (설정 — 탭 머리 공개 범위 배지·공개 범위 고르기 창)",
+      "desc": ["「최초 로그인 활용가이드」 묶음 중 공개 범위 책임: 공개 범위 글자(getPrivacyLabel — smoke-test FN_NAMES, 인라인 합본에서 찾는다)·목표/일정/기록 탭 머리 배지 그리기(updatePrivacyBadges — #goalsPrivacyBadge·#calPrivacyBadge·#recPrivacyBadge)·공개 범위 고르기 창(openPrivacyPickerModal)."],
+      "take": [ { "group": "최초 로그인 활용가이드", "names": ["getPrivacyLabel", "updatePrivacyBadges", "openPrivacyPickerModal"], "keepRest": true } ] },
+    { "key": "stopwatchFormat", "file": "js/tabs/records/stopwatch-format.js", "kit": "OurgoalRecordsKit", "kitVar": "_recordsKit", "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Stopwatch Format (기록 탭 — 전문 템플릿 스톱워치 시간 글자)",
+      "desc": ["「⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯」 묶음에 남아 있던 formatStopwatchTime — 밀리초를 「분:초.10분의1초」(1시간 넘으면 시:분:초) 글자로 바꾼다(smoke-test FN_NAMES — 인라인 합본에서 찾는다). 스톱워치 위젯은 js/tabs/records/table-stopwatch.js.",
+               "window.renderStopwatchWidgetHtml · window.renderLapRowsHtml 노출 묶음은 index.html 원래 자리에 그대로 있다."],
+      "take": [ { "group": "인터벌 타이머 & 스톱워치 위젯", "all": true } ] }
+  ]
+}

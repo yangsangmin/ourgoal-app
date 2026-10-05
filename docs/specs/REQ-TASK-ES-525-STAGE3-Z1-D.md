@@ -38,7 +38,7 @@ DOM `#landKakaoBtn` · `#authKakaoBtn` · `#landGoogleBtn` · `#authGoogleBtn` �
 | verify | ok · 토큰 동일 · 남은 글자 동일 · 이중 처리기 0 · 키트 순서 0 · 마지막 getter setter 빠짐 0 (`reports/TASK-ES-525/verify-inline-hard.json`) |
 | 새 파일 줄 수 | 347 (800 이하) |
 | 원본 단독 로드 | 회귀 0 · 새 파일·settings/index·app-scope 단독 로드 ok (`module-load-probe.json`) |
-| tests 전후 | tests 전부 종료 코드 기준과 같음(git 이력 의존·기준 사본 시점 차이 제외). google-session-guard 6/6. 참고: origin/main d49234e 자체에서 verify-integrity-gate [검증 16/16] 「페이월 자리 안내 모달 잔존」 실패(이 PR 과 무관, 기준 HEAD 사본에서도 같음) |
+| tests 전후 | tests 전부 종료 코드 기준과 같음(git 이력 의존·기준 사본 시점 차이 제외). google-session-guard 6/6. 처음 측정한 main d49234e 에서는 verify-integrity-gate [검증 16/16] 「페이월 자리 안내 모달 잔존」이 main 자체로 실패했고(#818 이 #813 보다 먼저 병합된 순서 문제 — 오케스트레이터 공지), #813 병합 뒤 main 위 재생성판에서는 npm test 종료 0 |
 | 게스트 시나리오 | 1개 기준·작업 통과 (`scenario-local.json`) |
 | 실계정 조작 비교 | 테스트 계정 A 4단계 기준1 대 작업 0 · 기준1 대 기준2 0 · 30값 · pageerror 0 (`real-account-compare.json`) |
 | 막힐 지점 | #811·#522 와 같은 자리(HO) — 병합 순서대로 생성기 재실행(L010) |
