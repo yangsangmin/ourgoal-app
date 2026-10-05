@@ -45,6 +45,7 @@ DOM `#hallOfFameBtn` · `#modalSheet` · `#hofClose` · `#withdrawBtn` · `#with
 | 도달 실측 | 게스트: 홈부터 totalCompletedMilestones·syncServerRecords(토큰 없어 바로 끝남), 다시 맞추기 뒤 loadProfile·ensureUserRow, 탈퇴 단추 openWithdrawModal / 테스트 계정: 로그인 때 loadProfile·ensureUserRow 2 (`real-account-reach-guest-base.json`·`real-account-reach-A-base.json`) |
 | 게스트 시나리오 | 2개 기준·작업 통과 (`scenario-local.json`) |
 | 실계정 조작 비교 | 테스트 계정 A 8단계(로그인·홈·기록·설정·명예의 전당·다시 맞추기·탈퇴 창 열기/취소) 기준1 대 작업 0 · 기준1 대 기준2 0 · 56값 · pageerror 0 (`real-account-compare.json`) |
+| 쓰기 차단 수(비교 밖) | #811·#804 병합 뒤 main 위 재측정에서 작업 1회차만 끊은 users POST 가 7(기준 6) — 작업 2·3회차와 기준 3회차는 모두 6. 실행마다 흔들리는 자동 동기화 타이밍으로 보고 화면 비교 대상에서 뺀 값이다(서버에 나간 쓰기 0, 도구가 끊음) |
 | 막힐 지점 | #811 과 같은 자리(HO) — 먼저 병합되는 쪽 뒤에 생성기 재실행(L010) |
 
 [4단계: 심사 청구]

@@ -1,0 +1,18 @@
+{
+ "id": "core-supabase-auth-guest-boot",
+ "title": "게스트로 「로그인 없이 둘러보기」를 누르면 앱 화면(홈)이 열리고, 기록 탭으로 넘어가도 예외가 없다 — index.html 머리가 js/core/supabase-auth.js 에서 가져온 getSupabaseAuthToken·GOOGLE_OAUTH_CLIENT_ID·bindSupabaseAuthStateListener 로 로드되고(가져오기 실패면 인라인 스크립트가 멈춰 앱이 안 열린다), 홈에서 불리는 getSupabaseAuthToken 이 오류 없이 돈다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "expect": "notVisible", "selector": "#screen-home" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]", "timeoutMs": 15000 },
+  { "expect": "visible", "selector": "#screen-home" },
+  { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+  { "do": "waitFor", "selector": "#screen-records", "timeoutMs": 10000 },
+  { "expect": "visible", "selector": "#screen-records" },
+  { "expect": "notVisible", "selector": "#screen-home" },
+  { "expect": "noExceptions" }
+ ]
+}

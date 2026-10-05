@@ -86,8 +86,8 @@
   {
    "file": "js/core/profile-load.js",
    "origLines": [
-    3512,
-    3516
+    3518,
+    3522
    ],
    "wrap": null,
    "diffLines": 0,
@@ -97,8 +97,8 @@
   {
    "file": "js/core/profile-load.js",
    "origLines": [
-    3533,
-    3560
+    3539,
+    3566
    ],
    "wrap": null,
    "diffLines": 0,
@@ -108,8 +108,8 @@
   {
    "file": "js/core/profile-load.js",
    "origLines": [
-    3562,
-    3574
+    3568,
+    3580
    ],
    "wrap": null,
    "diffLines": 0,
@@ -119,8 +119,8 @@
   {
    "file": "js/core/profile-load.js",
    "origLines": [
-    3576,
-    3607
+    3582,
+    3613
    ],
    "wrap": null,
    "diffLines": 0,
@@ -130,8 +130,8 @@
   {
    "file": "js/core/profile-load.js",
    "origLines": [
-    3608,
-    3818
+    3614,
+    3824
    ],
    "wrap": null,
    "diffLines": 0,
@@ -141,8 +141,8 @@
   {
    "file": "js/core/server-records-sync.js",
    "origLines": [
-    3885,
-    3996
+    3891,
+    4002
    ],
    "wrap": null,
    "diffLines": 0,
@@ -152,8 +152,8 @@
   {
    "file": "js/tabs/settings/withdraw-modal.js",
    "origLines": [
-    4537,
-    4539
+    4416,
+    4418
    ],
    "wrap": null,
    "diffLines": 0,
@@ -163,8 +163,8 @@
   {
    "file": "js/tabs/settings/withdraw-modal.js",
    "origLines": [
-    4540,
-    4606
+    4419,
+    4485
    ],
    "wrap": null,
    "diffLines": 0,
@@ -174,8 +174,8 @@
   {
    "file": "js/tabs/settings/withdraw-modal.js",
    "origLines": [
-    4607,
-    4705
+    4486,
+    4584
    ],
    "wrap": null,
    "diffLines": 0,
@@ -185,8 +185,8 @@
   {
    "file": "js/tabs/settings/withdraw-modal.js",
    "origLines": [
-    4706,
-    4710
+    4585,
+    4589
    ],
    "wrap": null,
    "diffLines": 0,
@@ -197,11 +197,12 @@
  "restSame": true,
  "restDiff": null,
  "tokens": {
-  "origRest": 83593,
-  "newRest": 83593
+  "origRest": 80391,
+  "newRest": 80391
  },
  "imported": [
   "BADGES",
+  "GOOGLE_OAUTH_CLIENT_ID",
   "OfflineSyncManager",
   "_recordHesitation",
   "applyAppSettings",
@@ -210,6 +211,7 @@
   "badgeContext",
   "bindAppEvalBackdrop",
   "bindAppEvalSubmit",
+  "bindAuthTesterBButton",
   "bindAvatarGrowthPromptSave",
   "bindAvatarLevelUpBackdrop",
   "bindAvatarLevelUpSaveImage",
@@ -219,13 +221,19 @@
   "bindLandLoginLink",
   "bindLandNickQuickLink",
   "bindLandStartBtn",
+  "bindLandTesterBButton",
   "bindLoginRescueButtons",
+  "bindLoginSubmit",
+  "bindLogoutButton",
   "bindModalPopstateBack",
   "bindNavButtonsClick",
+  "bindResetButton",
+  "bindResyncAccountDataButton",
   "bindScheduleReminderStart",
   "bindSettingsHapticDelegate",
   "bindSettingsStaticHandlers",
   "bindSignupSubmit",
+  "bindSupabaseAuthStateListener",
   "burstConfetti",
   "calculateWeeklyFocusStats",
   "challengeTwoFactorModal",
@@ -249,6 +257,7 @@
   "dispatchFullViewPropagation",
   "ensureGcalOwner",
   "ensureUserRow",
+  "enterAsTesterB",
   "escapeKakaoInAppBrowser",
   "fbBotBubbleHtml",
   "fetchGoogleCalendarEvents",
@@ -266,7 +275,9 @@
   "getGoogleAccessToken",
   "getKSTDateKey",
   "getRegisteredDevices",
+  "getSupabaseAuthToken",
   "getTrashList",
+  "handleDeepLinkRouting",
   "initDevDebugButtons",
   "initDimensionSliders",
   "initHomeCockpit",
@@ -307,6 +318,7 @@
   "openItemReportModal",
   "openLoginRescueModal",
   "openLogoutOtherDevicesConfirmModal",
+  "openNewPasswordModal",
   "openNotificationCenterModal",
   "openNotificationSoftAskModal",
   "openProfileEditor",
@@ -325,6 +337,7 @@
   "recordLanding",
   "refreshCustomFeedbackButtons",
   "refreshSecurityStatus",
+  "removePushSubscription",
   "renderActiveDevicesList",
   "renderAdaptiveModeBar",
   "renderIosPwaBanner",
@@ -344,9 +357,12 @@
   "sendToNotion",
   "setDeviceLoginTime",
   "setTab",
+  "setupDateRolloverWatcher",
+  "setupNotifyTimer",
   "showCommTourModal",
   "showLegalModal",
   "showLevelUpBanner",
+  "showNotifyBanner",
   "showUndoPrivacyToast",
   "startOnboarding",
   "streakBadgeHtml",
@@ -355,6 +371,7 @@
   "switchTab",
   "switchUxMode",
   "syncAllToGoogleCalendar",
+  "syncPushSubscription",
   "syncServerRecords",
   "toggleAdvancedSettings",
   "totalCompletedMilestones",
@@ -397,114 +414,142 @@
  "noSetter": [],
  "thisArgs": [],
  "listeners": {
-  "origIIFE": 267,
-  "newIIFE": 263,
+  "origIIFE": 253,
+  "newIIFE": 249,
   "cells": 4,
   "same": true
  },
  "wrapCalls": [
   {
-   "line": 3503,
-   "fn": "bindAvatarLevelUpBackdrop"
-  },
-  {
-   "line": 3506,
-   "fn": "bindAvatarGrowthPromptSave"
+   "line": 3285,
+   "fn": "bindSupabaseAuthStateListener"
   },
   {
    "line": 3509,
-   "fn": "bindAvatarLevelUpShare"
+   "fn": "bindAvatarLevelUpBackdrop"
   },
   {
    "line": 3512,
+   "fn": "bindAvatarGrowthPromptSave"
+  },
+  {
+   "line": 3515,
+   "fn": "bindAvatarLevelUpShare"
+  },
+  {
+   "line": 3518,
    "fn": "bindAvatarLevelUpSaveImage"
   },
   {
-   "line": 3621,
+   "line": 3627,
    "fn": "bindLandNickQuickLink"
   },
   {
-   "line": 3622,
+   "line": 3628,
    "fn": "bindLandStartBtn"
   },
   {
-   "line": 3623,
+   "line": 3629,
    "fn": "bindLandLoginLink"
   },
   {
-   "line": 3625,
+   "line": 3631,
    "fn": "bindLandGuestBtn"
   },
   {
-   "line": 4028,
+   "line": 3637,
+   "fn": "bindLandTesterBButton"
+  },
+  {
+   "line": 3639,
+   "fn": "bindAuthTesterBButton"
+  },
+  {
+   "line": 4004,
    "fn": "bindSignupSubmit"
   },
   {
-   "line": 4637,
+   "line": 4023,
+   "fn": "bindLoginSubmit"
+  },
+  {
+   "line": 4026,
+   "fn": "bindResyncAccountDataButton"
+  },
+  {
+   "line": 4027,
+   "fn": "bindLogoutButton"
+  },
+  {
+   "line": 4028,
+   "fn": "bindResetButton"
+  },
+  {
+   "line": 4516,
    "fn": "bindNavButtonsClick"
   },
   {
-   "line": 4706,
+   "line": 4585,
    "fn": "bindModalPopstateBack"
   },
   {
-   "line": 4803,
+   "line": 4682,
    "fn": "bindScheduleReminderStart"
   },
   {
-   "line": 6459,
+   "line": 6338,
    "fn": "bindCaptureLiveMeta"
   },
   {
-   "line": 6460,
+   "line": 6339,
    "fn": "bindCaptureSave"
   },
   {
-   "line": 6651,
+   "line": 6530,
    "fn": "bindImportExternalBtn"
   },
   {
-   "line": 6658,
+   "line": 6537,
    "fn": "bindPersonalGuideBtn"
   },
   {
-   "line": 7242,
+   "line": 7121,
    "fn": "bindAppEvalBackdrop"
   },
   {
-   "line": 7247,
+   "line": 7126,
    "fn": "bindAppEvalSubmit"
   },
   {
-   "line": 7248,
+   "line": 7127,
    "fn": "bindHomeAddGoal"
   },
   {
-   "line": 7265,
+   "line": 7144,
    "fn": "bindNewGoalStepExports"
   },
   {
-   "line": 12501,
+   "line": 12218,
    "fn": "bindRecTimeTrackerBtn"
   },
   {
-   "line": 12504,
+   "line": 12221,
    "fn": "bindRecSegmentBar"
   },
   {
-   "line": 12506,
+   "line": 12223,
    "fn": "bindRecPulseBar"
   },
   {
-   "line": 12507,
+   "line": 12224,
    "fn": "bindRecCarouselPills"
   },
   {
-   "line": 12508,
+   "line": 12225,
    "fn": "bindRecDocumentClick"
   },
   {
-   "line": 13075,
+   "line": 12680,
    "fn": "bindLoginRescueButtons"
   }
  ],
