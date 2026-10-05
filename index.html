@@ -2226,7 +2226,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script>
-<script src="js/core/ui-helpers.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
+<script src="js/core/ui-helpers.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
 <script src="js/core/modal.js"></script>
@@ -2802,6 +2802,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get screens(){ return screens; },
     get syncLockScreenLiveCard(){ return syncLockScreenLiveCard; }
   });
+  /* [#TASK-ES-482] js/core/confetti.js · js/core/badges.js · js/core/trash-bin.js · js/core/gcal-sync.js — 가져오기 19개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var burstConfetti = _uiKit.burstConfetti;
+  var showUndoPrivacyToast = _uiKit.showUndoPrivacyToast;
+  var badgeContext = _uiKit.badgeContext;
+  var BADGES = _uiKit.BADGES;
+  var openHallOfFame = _uiKit.openHallOfFame;
+  var getTrashList = _uiKit.getTrashList;
+  var moveToTrash = _uiKit.moveToTrash;
+  var openTrashModal = _uiKit.openTrashModal;
+  var isGoogleCalendarConnected = _uiKit.isGoogleCalendarConnected;
+  var openGoogleCalendarConnectModal = _uiKit.openGoogleCalendarConnectModal;
+  var fetchGoogleCalendarEvents = _uiKit.fetchGoogleCalendarEvents;
+  var syncAllToGoogleCalendar = _uiKit.syncAllToGoogleCalendar;
+  var nextDayISO = _uiKit.nextDayISO;
+  var restoreGoogleToken = _uiKit.restoreGoogleToken;
+  var gcalTokenStatus = _uiKit.gcalTokenStatus;
+  var requestGoogleToken = _uiKit.requestGoogleToken;
+  var getGoogleAccessToken = _uiKit.getGoogleAccessToken;
+  var openGcalImportModal = _uiKit.openGcalImportModal;
+  var openGcalExportModal = _uiKit.openGcalExportModal;
+  window.OurgoalAppScope.expose('index.html', {
+    get gcalCurrentUid(){ return gcalCurrentUid; },
+    get gcalEventsKey(){ return gcalEventsKey; },
+    get purgeLegacySharedGcalKeys(){ return purgeLegacySharedGcalKeys; },
+    get pushCalendarEvent(){ return pushCalendarEvent; },
+    get toastTimer(){ return toastTimer; }, set toastTimer(v){ toastTimer = v; },
+    get totalCompletedMilestones(){ return totalCompletedMilestones; }
+  });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -3078,32 +3106,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-471] parseAttribution · getSid · getAttribution · recordLanding · track · dayIndexSinceSignup · trackGoalCreated · fmtDuration · dDay → js/core/telemetry.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* [#TASK-ES-354 CORE-07] download → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   /* ============ Confetti ============ */
-  function burstConfetti(x, y, count){
-    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    count = count || 18;
-    var layer = document.getElementById('confettiLayer');
-    if(!layer){
-      layer = document.createElement('div');
-      layer.id = 'confettiLayer';
-      document.body.appendChild(layer);
-    }
-    var colors = ['#FF4F64','#FF9F1C','#1FC98E','#6C5CE7','#FFD166'];
-    for(var i=0;i<count;i++){
-      var p = document.createElement('div');
-      p.className = 'confetti-piece';
-      var angle = (Math.PI * 2 * i) / count + Math.random()*0.4;
-      var dist = 60 + Math.random()*90;
-      p.style.left = x + 'px';
-      p.style.top = y + 'px';
-      p.style.background = colors[i % colors.length];
-      p.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
-      p.style.setProperty('--dy', (Math.sin(angle)*dist + 60) + 'px');
-      p.style.setProperty('--rot', (Math.random()*720-360) + 'deg');
-      p.style.animationDelay = (Math.random()*0.08) + 's';
-      layer.appendChild(p);
-      (function(el){ setTimeout(function(){ el.remove(); }, 1100); })(p);
-    }
-  }
+  /* [#TASK-ES-482] burstConfetti → js/core/confetti.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   var toastTimer=null;
   function toast(msg){
@@ -3119,34 +3122,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.toast = toast;
     window.showToast = toast;
   }
-
-  /* #TASK-ES-333: 같은 테마 공개 안내 및 1초 되돌리기(나만 보기로 변경) 토스트 배선 */
-  function showUndoPrivacyToast(goalId){
-    var el = document.getElementById('toast');
-    if(!el) return;
-    el.innerHTML = '<span style="vertical-align:middle;">🏷️ 같은 테마 러너에게만 공유돼요</span> ' +
-      '<button id="btnUndoThemePrivacy" type="button" style="background:#fff;color:#1e293b;border:none;border-radius:6px;padding:3px 9px;font-size:12px;font-weight:700;margin-left:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.2);">🔒 나만 보기로 변경</button>';
-    el.classList.add('show');
-    clearTimeout(toastTimer);
-    var btn = el.querySelector('#btnUndoThemePrivacy');
-    if(btn){
-      btn.onclick = async function(e){
-        e.stopPropagation();
-        var target = (state.profile && state.profile.goals || []).find(function(g){ return g.id === goalId; });
-        if(target){
-          target.visibility = 'private';
-          await saveProfile();
-          if(typeof dispatchFullViewPropagation === 'function'){
-            dispatchFullViewPropagation('goal_update', { goalId: goalId });
-          } else {
-            renderAll();
-          }
-        }
-        toast('🔒 나만 보기로 변경되었어요');
-      };
-    }
-    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 5000);
-  }
+  /* [#TASK-ES-482] showUndoPrivacyToast → js/core/confetti.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.showUndoPrivacyToast = showUndoPrivacyToast;
   }
@@ -3472,47 +3448,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     p.goals.forEach(function(g){ (g.milestones||[]).forEach(function(m){ if(m.status==='done') n++; }); });
     return n;
   }
-  function badgeContext(p){
-    return {
-      records: p.records.length,
-      streak: computeStreakDays(),
-      msDone: totalCompletedMilestones(p),
-      level: levelForXP((p.settings.xp && p.settings.xp.total) || 0),
-      archived: p.goals.filter(function(g){ return !!g.archivedAt; }).length
-    };
-  }
-  var BADGES = [
-    { id:'first_record', icon:'✍️', label:'첫 발걸음', desc:'기록을 1개 이상 남기면', check:function(ctx){ return ctx.records>=1; } },
-    { id:'streak_3', icon:'🔥', label:'3일 연속', desc:'3일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=3; } },
-    { id:'streak_7', icon:'🔥🔥', label:'7일 연속', desc:'7일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=7; } },
-    { id:'streak_30', icon:'🔥🔥🔥', label:'30일 연속', desc:'30일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=30; } },
-    { id:'record_50', icon:'📚', label:'기록 마스터', desc:'기록을 50개 이상 남기면', check:function(ctx){ return ctx.records>=50; } },
-    { id:'ms_5', icon:'🎯', label:'마일스톤 헌터', desc:'마일스톤을 5개 이상 완료하면', check:function(ctx){ return ctx.msDone>=5; } },
-    { id:'ms_20', icon:'🏹', label:'마일스톤 정복자', desc:'마일스톤을 20개 이상 완료하면', check:function(ctx){ return ctx.msDone>=20; } },
-    { id:'level_5', icon:'⭐', label:'레벨 5', desc:'레벨 5를 달성하면', check:function(ctx){ return ctx.level>=5; } },
-    { id:'level_10', icon:'🌟', label:'레벨 10', desc:'레벨 10을 달성하면', check:function(ctx){ return ctx.level>=10; } },
-    { id:'first_finish', icon:'🏆', label:'첫 완주', desc:'목표를 1개 이상 완주(보관)하면', check:function(ctx){ return ctx.archived>=1; } }
-  ];
-  function openHallOfFame(){
-    var ctx = badgeContext(state.profile);
-    var unlocked = BADGES.filter(function(b){ return b.check(ctx); });
-    openModal(
-      '<h3>명예의 전당</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">'+unlocked.length+' / '+BADGES.length+'개 획득</p>' +
-      '<div class="badge-grid">' +
-        BADGES.map(function(b){
-          var on = b.check(ctx);
-          return '<div class="badge-tile'+(on?' on':'')+'">' +
-            '<div class="badge-icon">'+(on?b.icon:'🔒')+'</div>' +
-            '<div class="badge-label">'+escapeHtml(b.label)+'</div>' +
-            '<div class="badge-desc">'+escapeHtml(b.desc)+'</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-primary" id="hofClose" type="button">닫기</button></div>',
-      function(sheet){ sheet.querySelector('#hofClose').addEventListener('click', closeModal); }
-    );
-  }
+  /* [#TASK-ES-482] badgeContext · BADGES · openHallOfFame → js/core/badges.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   function defaultProfile(id, username, displayName){
     return {
@@ -6411,313 +6347,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-437] sendToNotion → js/tabs/settings/notion-sync.js 로 옮김(인라인 스크립트 세포화 P0) */
   /* ============ 구글 캘린더 연동 ============ */
     /* ============ [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템 ============ */
-  function getTrashList(){
-    if(!state.profile) return [];
-    if(Array.isArray(state.profile.trash)) return state.profile.trash;
-    var uidVal = state.profile.id || 'guest';
-    var cached = [];
-    try { cached = JSON.parse(localStorage.getItem('ourgoal_trash_backup_' + uidVal) || '[]'); } catch(e){}
-    state.profile.trash = Array.isArray(cached) ? cached : [];
-    return state.profile.trash;
-  }
-
-  function autoPurgeExpiredTrash(){
-    if(!state.profile || !Array.isArray(state.profile.trash)) return;
-    var now = Date.now();
-    var beforeLen = state.profile.trash.length;
-    state.profile.trash = state.profile.trash.filter(function(item){
-      return item && item.expiresAt && item.expiresAt > now;
-    });
-    if(state.profile.trash.length !== beforeLen){
-      var uidVal = state.profile.id || 'guest';
-      try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
-      if(typeof saveProfile === 'function') saveProfile().catch(function(){});
-    }
-  }
-
-  async function moveToTrash(entityType, entityId, payload, source, title){
-    if(!state.profile) return;
-    autoPurgeExpiredTrash();
-    var trash = getTrashList();
-    var itemTitle = title || (payload && (payload.title || payload.text)) || '항목';
-    var expiresAt = Date.now() + (7 * 24 * 60 * 60 * 1000);
-
-    var snapshot = null;
-    try { snapshot = JSON.parse(JSON.stringify(payload)); } catch(e){ snapshot = payload; }
-
-    var trashItem = {
-      id: uid('trash'),
-      originalId: entityId,
-      entityType: entityType,
-      title: itemTitle,
-      payload: snapshot,
-      deletedAt: Date.now(),
-      expiresAt: expiresAt,
-      source: source || 'in_app'
-    };
-
-    trash.unshift(trashItem);
-    if(trash.length > 100) state.profile.trash = trash.slice(0, 100);
-
-    if(entityType === 'goal'){
-      state.profile.goals = (state.profile.goals || []).filter(function(g){ return g.id !== entityId; });
-      if(state.activeGoalId === entityId) state.activeGoalId = null;
-      var goal = { id: entityId };
-      try { await sb.from('goals').update({ deleted_at: new Date().toISOString() }).eq('id', goal.id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(entityType === 'schedule'){
-      state.profile.settings = state.profile.settings || {};
-      state.profile.settings.customSchedules = (state.profile.settings.customSchedules || []).filter(function(c){ return c.id !== entityId; });
-    } else if(entityType === 'record'){
-      state.profile.records = (state.profile.records || []).filter(function(r){ return r.id !== entityId; });
-      if(payload && payload.linkedScheduleId && state.profile.settings && state.profile.settings.customSchedules){
-        state.profile.settings.customSchedules = state.profile.settings.customSchedules.filter(function(c){
-          return c.id !== payload.linkedScheduleId && c.recordId !== entityId;
-        });
-      }
-      var id = entityId;
-      try { await sb.from('checkins').update({ deleted_at: new Date().toISOString() }).eq('id', id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(entityType === 'gcal'){
-      if(Array.isArray(state.gcalEventsCache)){
-        state.gcalEventsCache = state.gcalEventsCache.filter(function(e){ return e.id !== entityId; });
-        try { localStorage.setItem(gcalEventsKey(), JSON.stringify(state.gcalEventsCache)); } catch(e){}
-      }
-    }
-
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
-    await saveProfile();
-
-    if(typeof renderHome === 'function') renderHome();
-    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    if(typeof renderStatsScreen === 'function') renderStatsScreen();
-    if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
-
-    toastWithTrashUndo('🗑️ "' + escapeHtml(itemTitle) + '" 항목을 휴지통으로 이동했어요 (7일간 보관)', trashItem.id);
-    return trashItem;
-  }
-
-  async function restoreFromTrash(trashId){
-    if(!state.profile) return;
-    var trash = getTrashList();
-    var idx = trash.findIndex(function(x){ return x.id === trashId; });
-    if(idx === -1){ toast('복원할 항목을 찾을 수 없습니다.'); return; }
-    var item = trash[idx];
-    var payload = item.payload;
-
-    if(item.entityType === 'goal'){
-      payload.deleted_at = null;
-      state.profile.goals = state.profile.goals || [];
-      if(!state.profile.goals.some(function(g){ return g.id === payload.id; })){
-        state.profile.goals.push(payload);
-      }
-      try { await sb.from('goals').update({ deleted_at: null }).eq('id', payload.id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(item.entityType === 'schedule'){
-      state.profile.settings = state.profile.settings || {};
-      state.profile.settings.customSchedules = state.profile.settings.customSchedules || [];
-      if(payload.linkedGoalId){
-        var goalExists = (state.profile.goals || []).some(function(g){ return g.id === payload.linkedGoalId; });
-        if(!goalExists){
-          payload.linkedGoalId = null;
-          payload.linkedGoalTitle = null;
-        }
-      }
-      if(!state.profile.settings.customSchedules.some(function(c){ return c.id === payload.id; })){
-        state.profile.settings.customSchedules.push(payload);
-      }
-      if(isGoogleCalendarConnected()){
-        syncAllToGoogleCalendar(false).catch(function(){});
-      }
-    } else if(item.entityType === 'record'){
-      payload.deleted_at = null;
-      state.profile.records = state.profile.records || [];
-      if(!state.profile.records.some(function(r){ return r.id === payload.id; })){
-        state.profile.records.unshift(payload);
-      }
-      try { await sb.from('checkins').update({ deleted_at: null }).eq('id', payload.id).eq('user_id', state.profile.id); } catch(e){}
-    } else if(item.entityType === 'gcal'){
-      state.gcalEventsCache = state.gcalEventsCache || [];
-      if(!state.gcalEventsCache.some(function(e){ return e.id === payload.id; })){
-        state.gcalEventsCache.push(payload);
-      }
-      if(isGoogleCalendarConnected()){
-        syncAllToGoogleCalendar(false).catch(function(){});
-      }
-    }
-
-    trash.splice(idx, 1);
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(trash)); } catch(e){}
-    await saveProfile();
-
-    if(typeof renderHome === 'function') renderHome();
-    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    if(typeof renderStatsScreen === 'function') renderStatsScreen();
-    if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
-
-    toast('✨ "' + escapeHtml(item.title) + '" 항목을 원래 위치로 원복했어요!');
-  }
-
-  async function permanentDeleteFromTrash(trashId){
-    if(!state.profile) return;
-    var trash = getTrashList();
-    var item = trash.find(function(x){ return x.id === trashId; });
-    if(!item) return;
-    if(!(await OurgoalCapabilities.call('ui.confirm', '"' + item.title + '" 항목을 영구 삭제할까요?\n더 이상 복구할 수 없습니다.'))) return;
-    state.profile.trash = trash.filter(function(x){ return x.id !== trashId; });
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
-    await saveProfile();
-    toast('항목을 완전히 영구 삭제했습니다');
-  }
-
-  async function emptyTrash(){
-    if(!state.profile) return;
-    var trash = getTrashList();
-    if(!trash.length){ toast('휴지통이 이미 비어 있습니다'); return; }
-    if(!(await OurgoalCapabilities.call('ui.confirm', '휴지통을 완전히 비울까요?\n보관 중인 ' + trash.length + '개 항목이 모두 영구 삭제되며 복구할 수 없습니다.'))) return;
-    state.profile.trash = [];
-    var uidVal = state.profile.id || 'guest';
-    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify([])); } catch(e){}
-    await saveProfile();
-    toast('휴지통을 완전히 비웠습니다');
-  }
-
-  function toastWithTrashUndo(msg, trashId){
-    var prev = document.getElementById('trashUndoToast');
-    if(prev) prev.remove();
-    var bar = document.createElement('div');
-    bar.id = 'trashUndoToast';
-    bar.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:24px;font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;max-width:92vw;pointer-events:none;';
-    bar.innerHTML = '<span>' + msg + '</span><button type="button" id="btnTrashUndoAction" style="background:var(--brand);color:#fff;border:none;padding:4px 10px;border-radius:12px;font-size:.8125rem;font-weight:700;cursor:pointer;flex:0 0 auto;pointer-events:auto;">실행 취소</button>';
-    document.body.appendChild(bar);
-    var uBtn = bar.querySelector('#btnTrashUndoAction');
-    if(uBtn){
-      uBtn.onclick = async function(){
-        bar.remove();
-        await restoreFromTrash(trashId);
-      };
-    }
-    setTimeout(function(){ if(bar.parentNode) bar.remove(); }, 6000);
-  }
-
-  function openTrashModal(){
-    autoPurgeExpiredTrash();
-    var trash = getTrashList();
-    var activeFilter = 'all';
-
-    function renderModalContent(filter){
-      activeFilter = filter || activeFilter;
-      var filtered = trash.filter(function(it){
-        if(activeFilter === 'all') return true;
-        return it.entityType === activeFilter;
-      });
-
-      var typeIcon = function(t){
-        if(t === 'goal') return '🎯 목표';
-        if(t === 'schedule') return '📅 일정';
-        if(t === 'record') return '📝 기록';
-        if(t === 'gcal') return '🗓️ 구글';
-        return '📦 항목';
-      };
-
-      var listHtml = filtered.length ? (
-        '<div style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin:12px 0;">' +
-        filtered.map(function(item){
-          var remainingDays = Math.max(1, Math.ceil((item.expiresAt - Date.now()) / (86400000)));
-          var dDayText = (remainingDays <= 1) ? '<span style="color:var(--brand-strong);font-weight:700;font-size:.75rem;">오늘 자동삭제</span>' : ('<span class="dday-mini">D-' + remainingDays + '</span>');
-          var delDateStr = new Date(item.deletedAt).toLocaleDateString('ko-KR', { month:'short', day:'numeric' });
-          return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
-            '<div style="flex:1;min-width:0;">' +
-              '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap;">' +
-                '<span class="sched-goal-badge" style="font-size:.75rem;padding:1px 6px;">' + typeIcon(item.entityType) + '</span>' +
-                dDayText +
-                '<span class="faint" style="font-size:.75rem;">(' + delDateStr + ' 삭제)</span>' +
-              '</div>' +
-              '<div style="font-weight:700;font-size:.875rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
-                escapeHtml(item.title) +
-              '</div>' +
-            '</div>' +
-            '<div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">' +
-              '<button class="btn btn-primary btn-sm" data-trashrestore="' + item.id + '" type="button" style="font-size:.8125rem;padding:4px 8px;">원복</button>' +
-              '<button class="icon-btn" data-trashdel="' + item.id + '" type="button" title="영구 삭제" style="color:var(--brand-strong);font-size:1rem;padding:4px 6px;">×</button>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-        '</div>'
-      ) : (
-        '<div class="empty-state" style="padding:24px 10px;margin:14px 0;">' +
-          '<div class="e-icon">🗑️</div>' +
-          '<p style="margin:4px 0 0;font-size:.875rem;font-weight:700;">휴지통이 비어 있습니다</p>' +
-          '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">삭제된 목표, 일정, 기록은 7일간 안전하게 보관됩니다.</p>' +
-        '</div>'
-      );
-
-      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
-        '<h3 style="margin:0;display:flex;align-items:center;gap:6px;"><span>🗑️ 휴지통</span> <span class="faint" style="font-size:.875rem;font-weight:400;">(' + trash.length + '개 보관 중)</span></h3>' +
-        (trash.length ? '<button class="btn btn-ghost btn-sm" id="btnEmptyTrashAll" type="button" style="color:var(--brand-strong);font-size:.8125rem;padding:3px 8px;border-color:var(--rule);">휴지통 비우기</button>' : '') +
-      '</div>' +
-      '<p class="faint" style="font-size:.8125rem;margin:0 0 10px;">삭제된 항목은 7일 후 완전히 자동 삭제됩니다. 언제든 원래 위치로 원복할 수 있습니다.</p>' +
-      '<div class="format-toggle" id="trashFilterWrap" style="margin-bottom:10px;">' +
-        '<div class="format-opt' + (activeFilter==='all'?' active':'') + '" data-trashfilt="all">전체 (' + trash.length + ')</div>' +
-        '<div class="format-opt' + (activeFilter==='goal'?' active':'') + '" data-trashfilt="goal">🎯 목표</div>' +
-        '<div class="format-opt' + (activeFilter==='schedule'?' active':'') + '" data-trashfilt="schedule">📅 일정</div>' +
-        '<div class="format-opt' + (activeFilter==='record'?' active':'') + '" data-trashfilt="record">📝 기록</div>' +
-        '<div class="format-opt' + (activeFilter==='gcal'?' active':'') + '" data-trashfilt="gcal">🗓️ 구글</div>' +
-      '</div>' +
-      '<div id="trashListContentSlot">' + listHtml + '</div>' +
-      '<div class="modal-actions" style="margin-top:12px;">' +
-        '<button class="btn btn-ghost btn-sm" id="trashCloseBtn" type="button" style="width:100%;">닫기</button>' +
-      '</div>';
-    }
-
-    openModal(renderModalContent('all'), function(sheet){
-      function bindTrashEvents(){
-        var closeBtn = sheet.querySelector('#trashCloseBtn');
-        if(closeBtn) closeBtn.onclick = closeModal;
-
-        var emptyBtn = sheet.querySelector('#btnEmptyTrashAll');
-        if(emptyBtn){
-          emptyBtn.onclick = async function(){
-            await emptyTrash();
-            trash = getTrashList();
-            sheet.innerHTML = renderModalContent(activeFilter);
-            bindTrashEvents();
-          };
-        }
-
-        sheet.querySelectorAll('[data-trashfilt]').forEach(function(opt){
-          opt.onclick = function(){
-            var f = opt.dataset.trashfilt;
-            sheet.innerHTML = renderModalContent(f);
-            bindTrashEvents();
-          };
-        });
-
-        sheet.querySelectorAll('[data-trashrestore]').forEach(function(btn){
-          btn.onclick = async function(e){
-            e.stopPropagation();
-            var tid = btn.dataset.trashrestore;
-            await restoreFromTrash(tid);
-            trash = getTrashList();
-            sheet.innerHTML = renderModalContent(activeFilter);
-            bindTrashEvents();
-          };
-        });
-
-        sheet.querySelectorAll('[data-trashdel]').forEach(function(btn){
-          btn.onclick = async function(e){
-            e.stopPropagation();
-            var tid = btn.dataset.trashdel;
-            await permanentDeleteFromTrash(tid);
-            trash = getTrashList();
-            sheet.innerHTML = renderModalContent(activeFilter);
-            bindTrashEvents();
-          };
-        });
-      }
-      bindTrashEvents();
-    });
-  }
+  /* [#TASK-ES-482] getTrashList · autoPurgeExpiredTrash · moveToTrash · restoreFromTrash · permanentDeleteFromTrash · emptyTrash · toastWithTrashUndo · openTrashModal → js/core/trash-bin.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   var googleTokenClient = null;
   /* 캘린더 사용 가능 판단을 한 곳에: 앱 상수 우선, 비면 사용자가 설정에 넣은 ID로 폴백 (A2/R5/F4) */
@@ -6726,211 +6356,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var own = ((settings && settings.gcalClientId) || '').trim();
     return !!(app || own);
   }
-  function effectiveGcalClientId(){
-    var app = (GOOGLE_OAUTH_CLIENT_ID || '').trim();
-    if(app) return app;
-    return ((state.profile && state.profile.settings && state.profile.settings.gcalClientId) || '').trim();
-  }
-  function isGoogleCalendarConnected(){
-    var s = (state.profile && state.profile.settings) || {};
-    if(s.googleCalendarConnected) return true;
-    // [#TASK-ES-345 CAL-02] 현재 uid 의 설정·토큰 키만 본다(게스트 설정·이메일 _last·_last 토큰 폴백 제거).
-    var uid = gcalCurrentUid();
-    try {
-      var rawSet = localStorage.getItem('ourgoal_settings_' + uid);
-      if(rawSet){
-        var ps = JSON.parse(rawSet);
-        if(ps && ps.googleCalendarConnected){
-          if(state.profile && state.profile.settings){
-            state.profile.settings.googleCalendarConnected = true;
-            if(ps.googleCalendarEmail && !state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = ps.googleCalendarEmail;
-          }
-          return true;
-        }
-      }
-      var ownTok = localStorage.getItem('ourgoal_gcal_token_v1_' + uid);
-      if(ownTok){
-        if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
-        return true;
-      }
-    } catch(e){}
-    if(!state.googleToken && typeof restoreGoogleToken === 'function') restoreGoogleToken();
-    if(state.googleToken) {
-      if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
-      return true;
-    }
-    return false;
-  }
-  async function tryConnectGoogleCalendar(){
-    toast('구글 계정 연동 요청 중…');
-    try{
-      var token = await requestGoogleToken();
-      if(!token) throw new Error('no token');
-      state.profile.settings.googleCalendarConnected = true;
-      try{
-        var uRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', { headers:{ Authorization: 'Bearer ' + token } });
-        if(uRes.ok){
-          var uData = await uRes.json();
-          if(uData && uData.email) state.profile.settings.googleCalendarEmail = uData.email;
-        }
-      } catch(e){}
-      if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = '연동 완료';
-      if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken, state.profile.settings.googleCalendarEmail);
-      await saveProfile();
-      toast('구글 캘린더가 연동되었습니다 · 상호 동기화 중…');
-      try { await syncAllToGoogleCalendar(); } catch(e){}
-      if(state.activeTab==='calendar') renderCalendarScreen();
-      else if(state.activeTab==='settings') renderSettingsScreen();
-    } catch(err){
-      toast('구글 캘린더 연동에 실패했어요 · 설정을 확인해주세요');
-    }
-  }
-  function openGoogleCalendarConnectModal(){
-    var clientId = effectiveGcalClientId();
-    if(!clientId){
-      openModal(
-        '<h3>구글 캘린더 연동 설정</h3>' +
-        '<p class="faint" style="margin:-8px 0 14px;">구글 캘린더와 실시간 동기화하여 목표와 일정을 한곳에서 관리하세요.</p>' +
-        '<div class="field">' +
-          '<label>Google OAuth 클라이언트 ID</label>' +
-          '<input id="gcalPromptClientId" type="text" placeholder="예: xxxxxxxx.apps.googleusercontent.com" value="'+escapeHtml((state.profile.settings&&state.profile.settings.gcalClientId)||'')+'">' +
-        '</div>' +
-        '<p class="faint" style="font-size:.8125rem;">Google Cloud Console에서 발급한 웹 클라이언트 ID를 입력해주세요.</p>' +
-        '<div style="display:flex;gap:6px;margin:10px 0 14px;">' +
-          '<a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">구글 캘린더 열기 ↗</a>' +
-          '<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">GCP 콘솔 바로가기 ↗</a>' +
-        '</div>' +
-        '<div class="modal-actions">' +
-          '<button class="btn btn-ghost" id="gcalPromptCancel" type="button">취소</button>' +
-          '<button class="btn btn-primary" id="gcalPromptSave" type="button">저장 및 연결</button>' +
-        '</div>',
-        function(sheet){
-          sheet.querySelector('#gcalPromptCancel').onclick = closeModal;
-          sheet.querySelector('#gcalPromptSave').onclick = async function(){
-            var val = (sheet.querySelector('#gcalPromptClientId').value || '').trim();
-            if(!val){ toast('클라이언트 ID를 입력해주세요'); return; }
-            state.profile.settings.gcalClientId = val;
-            googleTokenClient = null;
-            await saveProfile();
-            closeModal();
-            tryConnectGoogleCalendar();
-          };
-        }
-      );
-    } else {
-      tryConnectGoogleCalendar();
-    }
-  }
-  async function fetchGoogleCalendarEvents(token){
-    if(!token){
-      try{ token = await getGoogleAccessToken(); } catch(e){ return []; }
-    }
-    if(!token) return [];
-    var now = new Date();
-    var timeMin = new Date(now.getFullYear(), now.getMonth()-2, 1).toISOString();
-    var timeMax = new Date(now.getFullYear(), now.getMonth()+6, 0).toISOString();
-    var url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin='+encodeURIComponent(timeMin)+
-      '&timeMax='+encodeURIComponent(timeMax)+'&singleEvents=true&orderBy=startTime&maxResults=250';
-    try{
-      var res = await fetch(url, { headers:{ Authorization:'Bearer '+token } });
-      if(!res.ok) return [];
-      var data = await res.json();
-      var sync = (state.profile && state.profile.settings && state.profile.settings.gcalSync) || { goals:{}, ms:{}, tasks:{}, custom:{} };
-      var ourEvIds = {};
-      if(sync.goals) Object.values(sync.goals).forEach(function(id){ ourEvIds[id]=true; });
-      if(sync.ms) Object.values(sync.ms).forEach(function(id){ ourEvIds[id]=true; });
-      if(sync.tasks) Object.values(sync.tasks).forEach(function(id){ ourEvIds[id]=true; });
-      if(sync.custom) Object.values(sync.custom).forEach(function(id){ ourEvIds[id]=true; });
-      var doneMap = (state.profile && state.profile.settings && state.profile.settings.gcalDoneEvents) || {};
-      var prevCache = state.gcalEventsCache || [];
-      prevCache.forEach(function(pe){ if(pe.id && pe.done) doneMap[pe.id] = true; });
-      var events = (data.items||[]).filter(function(e){
-        if(e.status === 'cancelled') return false;
-        if(ourEvIds[e.id]) return false;
-        return !!(e.start && (e.start.date || e.start.dateTime));
-      }).map(function(e){
-        var dStr = e.start.date || (e.start.dateTime ? e.start.dateTime.slice(0,10) : '');
-        var dtStr = e.start.dateTime ? toDateTimeLocalValue(e.start.dateTime) : (dStr + 'T09:00');
-        return {
-          id: e.id,
-          title: e.summary || '(제목 없음)',
-          date: e.start.dateTime ? dtStr : dStr,
-          dayKey: dStr,
-          kind: 'gcal',
-          goalTitle: e.description || '구글 캘린더',
-          htmlLink: e.htmlLink || 'https://calendar.google.com',
-          done: !!doneMap[e.id]
-        };
-      });
-      state.gcalEventsCache = events;
-      try{ localStorage.setItem(gcalEventsKey(), JSON.stringify(events)); } catch(e){}
-      return events;
-    } catch(e){
-      console.warn('구글 캘린더 일정 조회 실패:', e);
-      return [];
-    }
-  }
-  async function syncAllToGoogleCalendar(interactive){
-    if(!isGoogleCalendarConnected()){
-      if(interactive) openGoogleCalendarConnectModal();
-      return;
-    }
-    var token = await getGoogleAccessToken(interactive);
-    if(!token){
-      if(interactive) toast('구글 인증이 필요해요 · [지금 동기화]를 눌러주세요');
-      return;
-    }
-    if(interactive) toast('구글 캘린더 상호 동기화 중…');
-    try{
-      var count = 0;
-      var sync = state.profile.settings.gcalSync = state.profile.settings.gcalSync || { goals:{}, ms:{}, tasks:{}, imported:{} };
-      var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-      for(var i=0; i<goals.length; i++){
-        var g = goals[i];
-        if(g.dueDate){
-          var evId = await pushCalendarEvent(token, '' + g.title, g.dueDate, sync.goals[g.id]);
-          if(evId){ sync.goals[g.id] = evId; count++; }
-        }
-        var mss = g.milestones || [];
-        for(var j=0; j<mss.length; j++){
-          var m = mss[j];
-          if(m.dueDate && m.status !== 'done'){
-            var evIdM = await pushCalendarEvent(token, '· ' + m.title + ' (' + g.title + ')', m.dueDate, (sync.ms && sync.ms[m.id]));
-            if(evIdM){ sync.ms = sync.ms || {}; sync.ms[m.id] = evIdM; count++; }
-          }
-          var tks = m.tasks || [];
-          for(var k=0; k<tks.length; k++){
-            var t = tks[k];
-            if(t.dueDate && !t.done){
-              var evIdT = await pushCalendarEvent(token, '- ' + t.title + ' (' + m.title + ')', t.dueDate, (sync.tasks && sync.tasks[t.id]));
-              if(evIdT){ sync.tasks = sync.tasks || {}; sync.tasks[t.id] = evIdT; count++; }
-            }
-          }
-        }
-      }
-      var customSchedules = state.profile.settings.customSchedules || [];
-      sync.custom = sync.custom || {};
-      for(var c=0; c<customSchedules.length; c++){
-        var cs = customSchedules[c];
-        if(cs.date && !cs.done){
-          var evIdC = await pushCalendarEvent(token, '' + cs.title, cs.date, sync.custom[cs.id]);
-          if(evIdC){ sync.custom[cs.id] = evIdC; count++; }
-        }
-      }
-      await saveProfile();
-      var gEvents = await fetchGoogleCalendarEvents(token);
-      toast('구글 캘린더와 상호 동기화 완료 (내 일정 ' + count + '개 반영 · 구글 ' + gEvents.length + '개 공유)');
-      if(state.activeTab==='calendar') renderCalendarScreen();
-      else if(state.activeTab==='settings') renderSettingsScreen();
-    } catch(err){
-      toast('동기화에 실패했어요 · 다시 시도해주세요');
-    }
-  }
-  function nextDayISO(dateStr){
-    var d = new Date(dateStr+'T00:00:00');
-    d.setDate(d.getDate()+1);
-    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-  }
+  /* [#TASK-ES-482] effectiveGcalClientId · isGoogleCalendarConnected · tryConnectGoogleCalendar · openGoogleCalendarConnectModal · fetchGoogleCalendarEvents · syncAllToGoogleCalendar · nextDayISO → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   function saveGoogleToken(tokenObj){
     var optEmail = arguments[1];
     if(!tokenObj || !tokenObj.accessToken) return;
@@ -6956,39 +6382,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       sessionStorage.setItem('ourgoal_google_token', tokenObj.accessToken);
     } catch(e){}
   }
-  function restoreGoogleToken(){
-    try {
-      // [#TASK-ES-345 CAL-02] 현재 로그인 uid 키만 읽는다. _last 키 폴백과 "아무 ourgoal_gcal_token_v1_* 키" 탐색은
-      // 같은 기기의 다른 계정 토큰으로 그 계정의 일정을 읽게 만들던 결함이라 제거했다.
-      var uid = ensureGcalOwner();
-      purgeLegacySharedGcalKeys();
-      if(state.googleToken && state.googleToken.expiresAt > Date.now()) return state.googleToken;
-      var raw = localStorage.getItem('ourgoal_gcal_token_v1_' + uid);
-      if(!raw) return state.googleToken || null;
-      var parsed = JSON.parse(raw);
-      // 저장 당시 주인이 기록돼 있는데 현재 uid 와 다르면(키가 손으로 옮겨진 경우 등) 쓰지 않는다.
-      if(parsed && parsed.ownerUid && parsed.ownerUid !== uid) return state.googleToken || null;
-      if(parsed && parsed.accessToken){
-        state.googleToken = parsed;
-        if(parsed.expiresAt <= Date.now()){
-          parsed.isExpired = true;
-          state._lastExpiredGoogleToken = parsed;
-        }
-        if(parsed.email && state.profile && state.profile.settings){
-          state.profile.settings.googleCalendarConnected = true;
-          if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = parsed.email;
-        }
-        return parsed;
-      }
-    } catch(e){}
-    return state.googleToken || null;
-  }
-  // [#TASK-ES-345 CAL-02] 현재 계정 토큰 상태: 'valid' | 'expired' | 'missing'. 연동돼 있는데 valid 가 아니면 '다시 연결' 안내를 띄운다.
-  function gcalTokenStatus(){
-    var tok = restoreGoogleToken();
-    if(!tok || !tok.accessToken) return 'missing';
-    return tok.expiresAt > Date.now() ? 'valid' : 'expired';
-  }
+  /* [#TASK-ES-482] restoreGoogleToken · gcalTokenStatus → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.gcalTokenStatus = gcalTokenStatus;
     window.saveGoogleToken = saveGoogleToken;
@@ -6997,197 +6391,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.requestGoogleToken = requestGoogleToken;
     window.getGoogleAccessToken = getGoogleAccessToken;
   }
-  function ensureGoogleTokenClient(){
-    var clientId = effectiveGcalClientId();
-    if(!clientId){ toast('먼저 Google OAuth 클라이언트 ID를 입력해주세요'); return null; }
-    if(!window.google || !google.accounts || !google.accounts.oauth2){ toast('구글 로그인 스크립트를 불러오는 중이에요, 잠시 후 다시 시도해주세요'); return null; }
-    if(!googleTokenClient || googleTokenClient.__clientId !== clientId){
-      googleTokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: clientId,
-        scope: 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly',
-        callback: function(){}
-      });
-      googleTokenClient.__clientId = clientId;
-    }
-    return googleTokenClient;
-  }
-  function requestGoogleToken(options){
-    var opts = options || {};
-    return new Promise(function(resolve, reject){
-      var client = ensureGoogleTokenClient();
-      if(!client){
-        if(opts.silent) resolve(null);
-        else reject(new Error('no client'));
-        return;
-      }
-      client.callback = function(resp){
-        if(!resp || resp.error){
-          if(opts.silent){
-            resolve(null);
-            return;
-          }
-          reject(new Error(resp && resp.error || '인증 실패'));
-          return;
-        }
-        state.googleToken = { accessToken: resp.access_token, expiresAt: Date.now() + ((resp.expires_in||3300)*1000) };
-        var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
-        saveGoogleToken(state.googleToken, gEmail);
-        resolve(resp.access_token);
-      };
-      var hasSavedToken = !!restoreGoogleToken();
-      var isConnected = isGoogleCalendarConnected();
-      var reqOpts = { prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent' };
-      if(opts.silent) reqOpts.prompt = '';
-      var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
-      if(gEmail && gEmail.indexOf('@') !== -1) reqOpts.hint = gEmail;
-      try{ client.requestAccessToken(reqOpts); }
-      catch(e){
-        if(opts.silent) resolve(null);
-        else reject(e);
-      }
-    });
-  }
-  async function getGoogleAccessToken(interactive){
-    // [#TASK-ES-345 CAL-02] 다른 계정 토큰이 메모리에 남아 있으면 쓰지 않는다.
-    ensureGcalOwner();
-    if(!state.googleToken) restoreGoogleToken();
-    if(state.googleToken && state.googleToken.expiresAt > Date.now()+30000) return state.googleToken.accessToken;
-    var isConn = isGoogleCalendarConnected();
-    if(!interactive){
-      // [#TASK-ES-265] 백그라운드 호출 시 연동 계정이면 무인 Silent Refresh 시도
-      if(isConn){
-        try {
-          var silentTok = await requestGoogleToken({ silent: true });
-          if(silentTok) return silentTok;
-        } catch(e){}
-      }
-      if(!interactive) return null;
-    }
-    return requestGoogleToken({ silent: false });
-  }
-  async function openGcalImportModal(){
-    var token;
-    try{ token = await getGoogleAccessToken(); } catch(e){ toast('구글 인증에 실패했어요'); return; }
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    if(!goals.length){ toast('먼저 목표를 만들어주세요'); return; }
-    toast('일정을 불러오는 중…');
-    var timeMin = new Date().toISOString();
-    var timeMax = new Date(Date.now()+60*86400000).toISOString();
-    var url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin='+encodeURIComponent(timeMin)+
-      '&timeMax='+encodeURIComponent(timeMax)+'&singleEvents=true&orderBy=startTime&maxResults=25';
-    var res;
-    try{ res = await fetch(url, { headers:{ Authorization:'Bearer '+token } }); }
-    catch(e){ toast('일정을 불러오지 못했어요'); return; }
-    if(!res.ok){ toast('일정을 불러오지 못했어요 · 권한을 확인해주세요'); return; }
-    var data = await res.json();
-    var imported = state.profile.settings.gcalSync.imported || {};
-    var events = (data.items||[]).filter(function(e){ return e.status!=='cancelled' && (e.start.date || e.start.dateTime); }).map(function(e){
-      return { id:e.id, title:e.summary||'(제목 없음)', date:(e.start.date || (e.start.dateTime||'').slice(0,10)), already: !!imported[e.id] };
-    });
-    if(!events.length){ toast('앞으로 60일 안에 다가오는 일정이 없어요'); return; }
-    var sel = {}; events.forEach(function(e){ sel[e.id] = !e.already; });
-    openModal(
-      '<h3>캘린더 일정 불러오기</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">마일스톤으로 추가할 일정과, 담을 목표를 골라주세요.</p>' +
-      '<div class="field"><label>추가할 목표</label><select id="gcalTargetGoal">'+goals.map(function(g){ return '<option value="'+g.id+'">'+escapeHtml(g.title)+'</option>'; }).join('')+'</select></div>' +
-      '<div class="ms-list" style="margin-top:10px;">' +
-        events.map(function(e){
-          return '<div class="ms-row" data-gev="'+e.id+'" style="cursor:pointer;'+(e.already?'opacity:.55;':'')+'">' +
-            '<div class="ms-main">' +
-              '<div class="sel-check'+(sel[e.id]?' on':'')+'" data-gevchk="'+e.id+'">'+(sel[e.id]?'✓':'')+'</div>' +
-              '<div style="flex:1;min-width:0;"><div style="font-size:.875rem;font-weight:700;">'+escapeHtml(e.title)+'</div><div class="faint" style="font-size:.8125rem;">'+e.date+(e.already?' · 이미 가져왔어요':'')+'</div></div>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-ghost" id="gcalImpCancel" type="button">취소</button><button class="btn btn-primary" id="gcalImpConfirm" type="button">마일스톤으로 추가</button></div>',
-      function(sheet){
-        sheet.querySelector('#gcalImpCancel').addEventListener('click', closeModal);
-        sheet.querySelectorAll('[data-gev]').forEach(function(row){
-          row.addEventListener('click', function(){
-            var id = row.dataset.gev;
-            sel[id] = !sel[id];
-            var chk = row.querySelector('[data-gevchk]');
-            chk.classList.toggle('on', sel[id]);
-            chk.textContent = sel[id] ? '✓' : '';
-          });
-        });
-        sheet.querySelector('#gcalImpConfirm').addEventListener('click', async function(){
-          var gid = sheet.querySelector('#gcalTargetGoal').value;
-          var goal = state.profile.goals.find(function(g){ return g.id===gid; });
-          var picked = events.filter(function(e){ return sel[e.id]; });
-          if(!goal || !picked.length){ toast('일정을 선택해주세요'); return; }
-          picked.forEach(function(e){
-            goal.milestones.push({ id: uid('ms'), title: e.title, status:'todo', dueDate: e.date, tasks:[] });
-            state.profile.settings.gcalSync.imported[e.id] = true;
-          });
-          await saveProfile();
-          closeModal();
-          toast(picked.length+'개 일정을 "'+goal.title+'"의 마일스톤으로 추가했어요');
-          renderAll();
-        });
-      }
-    );
-  }
-  async function openGcalExportModal(){
-    var token;
-    try{ token = await getGoogleAccessToken(); } catch(e){ toast('구글 인증에 실패했어요'); return; }
-    var sync = state.profile.settings.gcalSync;
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    var items = [];
-    goals.forEach(function(g){
-      if(g.dueDate) items.push({ key:'goal:'+g.id, label:''+g.title, date:g.dueDate, kind:'goal', goal:g, already: sync.goals[g.id]||null });
-      g.milestones.forEach(function(m){
-        if(m.dueDate && m.status!=='done') items.push({ key:'ms:'+m.id, label:'· '+m.title+' ('+g.title+')', date:m.dueDate, kind:'ms', goal:g, ms:m, already: sync.ms[m.id]||null });
-      });
-    });
-    if(!items.length){ toast('캘린더에 반영할 마감일이 있는 목표·마일스톤이 없어요'); return; }
-    var sel = {}; items.forEach(function(it){ sel[it.key] = true; });
-    openModal(
-      '<h3>목표를 캘린더에 반영하기</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">마감일이 있는 목표·마일스톤을 구글 캘린더 일정으로 만들어요.</p>' +
-      '<div class="ms-list">' +
-        items.map(function(it){
-          return '<div class="ms-row" data-gxp="'+it.key+'" style="cursor:pointer;">' +
-            '<div class="ms-main">' +
-              '<div class="sel-check on" data-gxpchk="'+it.key+'"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
-              '<div style="flex:1;min-width:0;"><div style="font-size:.875rem;font-weight:700;">'+escapeHtml(it.label)+'</div><div class="faint" style="font-size:.8125rem;">'+it.date+(it.already?' · 이미 캘린더에 있어요 · 다시 반영하면 갱신돼요':'')+'</div></div>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-ghost" id="gcalExpCancel" type="button">취소</button><button class="btn btn-primary" id="gcalExpConfirm" type="button">캘린더에 반영</button></div>',
-      function(sheet){
-        sheet.querySelector('#gcalExpCancel').addEventListener('click', closeModal);
-        sheet.querySelectorAll('[data-gxp]').forEach(function(row){
-          row.addEventListener('click', function(){
-            var key = row.dataset.gxp;
-            sel[key] = !sel[key];
-            var chk = row.querySelector('[data-gxpchk]');
-            chk.classList.toggle('on', sel[key]);
-            chk.textContent = sel[key] ? '✓' : '';
-          });
-        });
-        sheet.querySelector('#gcalExpConfirm').addEventListener('click', async function(){
-          var picked = items.filter(function(it){ return sel[it.key]; });
-          if(!picked.length){ toast('반영할 항목을 선택해주세요'); return; }
-          closeModal();
-          toast('캘린더에 반영하는 중…');
-          var okCount = 0;
-          for(var i=0;i<picked.length;i++){
-            var it = picked[i];
-            var evId = await pushCalendarEvent(token, it.label, it.date, it.already);
-            if(evId){
-              if(it.kind==='goal') sync.goals[it.goal.id] = evId; else sync.ms[it.ms.id] = evId;
-              okCount++;
-            }
-          }
-          await saveProfile();
-          toast(okCount+'개 일정을 캘린더에 반영했어요');
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-482] ensureGoogleTokenClient · requestGoogleToken · getGoogleAccessToken · openGcalImportModal · openGcalExportModal → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   /* ============ 일정(캘린더) 탭 ============ */
   /* [#TASK-ES-360] WEEKDAYS_KR → js/tabs/calendar/render.js 로 옮김(일정 탭 세포) */
   function isoDate(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
