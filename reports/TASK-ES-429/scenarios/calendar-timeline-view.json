@@ -1,0 +1,17 @@
+{
+  "id": "calendar-timeline-view",
+  "title": "게스트로 일정 탭 포커스 성소 모드 바의 「타임라인」(셋째 .s-cal-mode-btn)을 누르면 성소 일정 칸(#sanctuaryCalendarView)에 오늘 일간 타임라인 카드(.s-timeline-card, 머리 「… 타임라인」)가 그려지고 그 버튼이 켜진다 — 타임라인 그리기(renderSanctuaryCalendar 의 timeline 분기 본문)를 js/sanctuary-calendar-views.js 로 옮기고 원본은 그 함수를 부르는 한 줄이 됐으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "do": "waitFor", "selector": "#sanctuaryCalendarView .s-cal-mode-btn", "timeoutMs": 8000 },
+    { "do": "click", "selector": "#sanctuaryCalendarView .s-cal-mode-btn:nth-of-type(3)" },
+    { "expect": "visible", "selector": "#sanctuaryCalendarView .s-timeline-card", "timeoutMs": 5000 },
+    { "expect": "textContains", "selector": "#sanctuaryCalendarView .s-timeline-header", "text": "타임라인" },
+    { "expect": "hasClass", "selector": "#sanctuaryCalendarView .s-cal-mode-btn:nth-of-type(3)", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}
