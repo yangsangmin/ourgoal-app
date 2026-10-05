@@ -596,3 +596,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-513 | INFRA | [인라인 3단계 설계·시범] 잔여 유형별 집계·실계정 표준 절차 설계, 시범 1묶음(디바이스 세션) 실계정 하네스로 재어 이동 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-513-INLINE-STAGE3.md | 4단계(심사 청구)
 - #TASK-ES-512 | INFRA | [헌법 버전 대장] v2026.10.06-SNOWBALL 행 추가 + 법령 전문 머리 현행 커널 버전 갱신(PR #800 병합 기록 1ce6c14 근거, 조문 본문 변경 0) | 코디네이터 세션 f747dcaa | 2026-10-06
 - #TASK-ES-519 | INFRA | [시험지 선행 · 인라인 3단계 Z4] 구간 절단 시험지 3개(renderMultiMetricSvg·collapseAllTeamGoalAccordions)가 세포 이전 뒤에도 같은 함수를 읽음 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md
+- #TASK-ES-515 | FIX | [숨김 기능 6건 소멸] 기록 달력 융합 칩·빠른 스톱워치(저장 없는 기록)·루틴 매트릭스(한 번도 안 그려진 껍데기)·옛 기록 세그먼트 막대·첫 화면 「이메일로 가입하기」·옛 홈 구성 단추 2개(이중 처리기) 제거, 살아 있는 setRecordsSegment·가입 양식·#landGuestBtn·설정 홈 구성은 유지 | 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달), REQ docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md | 4단계(심사 청구)
