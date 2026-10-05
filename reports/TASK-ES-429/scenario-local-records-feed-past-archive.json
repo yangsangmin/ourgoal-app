@@ -1,0 +1,211 @@
+{
+ "scenario": "records-feed-past-archive",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 4,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#homeAddGoal → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sRecModesWrap → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"📝 실천 타임라인\" 132x44px"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#sRecModesWrap .s-rec-mode-btn:nth-child(3) → class=\"s-rec-mode-btn active\"",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#sanctuaryRecordsView .s-feed-header → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#sanctuaryRecordsView .s-feed-header → 보이는 글자: [\"나의 체크인 & 회고 피드 (0건) + 새 기록\"]",
+     "vacuous": false
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#sanctuaryRecordsView .s-feed-container → 보이는 글자: [\"나의 체크인 & 회고 피드 (0건) + 새 기록 등록된 기록이 없습니다. 오늘의 첫 체크인과 회고를 남겨보세요.\"]",
+     "vacuous": false
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 4,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#homeAddGoal → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sRecModesWrap → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"📝 실천 타임라인\" 132x44px"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#sRecModesWrap .s-rec-mode-btn:nth-child(3) → class=\"s-rec-mode-btn active\"",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#sanctuaryRecordsView .s-feed-header → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#sanctuaryRecordsView .s-feed-header → 보이는 글자: [\"나의 체크인 & 회고 피드 (0건) + 새 기록\"]",
+     "vacuous": false
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#sanctuaryRecordsView .s-feed-container → 보이는 글자: [\"나의 체크인 & 회고 피드 (0건) + 새 기록 등록된 기록이 없습니다. 오늘의 첫 체크인과 회고를 남겨보세요.\"]",
+     "vacuous": false
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  }
+ }
+}
