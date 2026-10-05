@@ -118,7 +118,7 @@ function countLine(line) {
   await check('공용 확인창 통로가 index.html 인라인 스크립트보다 먼저 로드된다', () => {
     const conf0 = HTML.indexOf('<script src="js/core/confirm.js"></script>');
     const caps0 = HTML.indexOf('<script src="js/core/capabilities.js"></script>');
-    const inline0 = HTML_CELLS.indexOf("if(!(await OurgoalCapabilities.call('ui.confirm', "); // [#TASK-ES-563 시험지 선행] 읽는 범위만 인라인 합본(원문 맨 앞)으로
+    const inline0 = HTML_CELLS.indexOf("if(!(await OurgoalCapabilities.call('ui.confirm', "); // [#TASK-ES-567 시험지 선행] 읽는 범위만 인라인 합본(원문 맨 앞)으로
     assert.ok(caps0 > 0 && conf0 > caps0, 'capabilities.js → confirm.js 순서');
     assert.ok(inline0 > conf0, '처리기는 confirm.js 뒤');
     assert.strictEqual(caps.request('ui.confirm'), C.confirm, '통로가 등록돼 있다');
