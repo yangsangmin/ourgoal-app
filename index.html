@@ -2203,7 +2203,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/settings/sub-integrations.js"></script>
 <script src="js/tabs/settings/sub-data.js"></script>
 <script src="js/tabs/settings/theme-apply.js"></script><script src="js/tabs/settings/avatar-greeting.js"></script><script src="js/tabs/settings/account-entry.js"></script><script src="js/tabs/settings/guest-backup-nudge.js"></script><script src="js/tabs/settings/notion-sync.js"></script><script src="js/tabs/settings/comm-tour.js"></script><script src="js/tabs/settings/login-devices.js"></script><script src="js/tabs/settings/app-lock-pin.js"></script><script src="js/tabs/settings/dev-debug-gate.js"></script><script src="js/tabs/settings/guest-migration.js"></script><script src="js/tabs/settings/tab-guide.js"></script><script src="js/tabs/settings/onboarding.js"></script><script src="js/tabs/settings/app-defaults.js"></script><script src="js/tabs/settings/render.js"></script>
-<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/quick-actions.js"></script><script src="js/tabs/settings/app-evaluation.js"></script><script src="js/tabs/settings/session-entry.js"></script><script src="js/tabs/settings/avatar-levelup-modal.js"></script><script src="js/tabs/settings/inapp-landing.js"></script><script src="js/tabs/settings/feedback-bot-setup.js"></script><script src="js/tabs/settings/index.js"></script>
+<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/quick-actions.js"></script><script src="js/tabs/settings/app-evaluation.js"></script><script src="js/tabs/settings/session-entry.js"></script><script src="js/tabs/settings/avatar-levelup-modal.js"></script><script src="js/tabs/settings/inapp-landing.js"></script><script src="js/tabs/settings/feedback-bot-setup.js"></script><script src="js/tabs/settings/device-session.js"></script><script src="js/tabs/settings/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -2662,6 +2662,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get EXTERNAL_DATA(){ return EXTERNAL_DATA; },
     get btnShowGuide(){ return btnShowGuide; },
     get sanitizeAttachments(){ return sanitizeAttachments; }
+  });
+  /* [#TASK-ES-513] js/tabs/settings/device-session.js — 가져오기 5개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var getDeviceId = _settingsKit.getDeviceId;
+  var setDeviceLoginTime = _settingsKit.setDeviceLoginTime;
+  var performLogout = _settingsKit.performLogout;
+  var checkRemoteSessionRevoked = _settingsKit.checkRemoteSessionRevoked;
+  var bindSignupSubmit = _settingsKit.bindSignupSubmit;
+  window.OurgoalAppScope.expose('index.html', {
+    get ensureUserRow(){ return ensureUserRow; },
+    get getAttribution(){ return getAttribution; }
   });
   /* [어려움 이음매 자리 H2] */
   /* [#TASK-ES-481] js/tabs/goals/goals-ia-actions.js · js/tabs/goals/template-encyclopedia.js · js/tabs/records/archive-toggle.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -4353,117 +4363,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   });
 
-  /* ============ 디바이스 세션 & 원격 로그아웃 유틸 (Req 1) ============ */
-  function getDeviceId(){
-    try{
-      var id = localStorage.getItem('ourgoal_device_id');
-      if(!id){
-        id = 'dev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
-        localStorage.setItem('ourgoal_device_id', id);
-      }
-      return id;
-    }catch(e){
-      return 'dev_fallback';
-    }
-  }
-  function getDeviceLoginTime(){
-    try{
-      var t = parseInt(sessionStorage.getItem('ourgoal_login_at') || localStorage.getItem('ourgoal_login_at') || '0', 10);
-      return t || Date.now();
-    }catch(e){ return Date.now(); }
-  }
-  function setDeviceLoginTime(ts){
-    try{
-      var val = String(ts || Date.now());
-      sessionStorage.setItem('ourgoal_login_at', val);
-      localStorage.setItem('ourgoal_login_at', val);
-    }catch(e){}
-  }
-  async function performLogout(reasonMsg){
-    try { updateAppBadge(0); } catch(e){} try { if(typeof removePushSubscription === 'function') await Promise.race([removePushSubscription(), new Promise(function(r){ setTimeout(r, 3000); })]); } catch(e){} /* #TASK-ES-399 로그아웃 전(세션 있을 때) 이 기기 푸시 구독을 서버에서 해제 — 남으면 로그아웃한 기기로 이전 사용자 알림이 온다. 서비스 워커가 없으면 3초 뒤 그대로 진행 */
-    try { await sb.auth.signOut({ scope: 'local' }); } catch(e){} /* #TASK-ES-399 이 기기만 — 기본값 global 은 같은 계정의 다른 기기까지 끊는다. 다른 기기는 openLogoutOtherDevicesConfirmModal(others) */
-    try { state.googleToken = null; sessionStorage.removeItem('ourgoal_google_token'); } catch(e){}
-    try { if(window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); } catch(e){}
-    try {
-      localStorage.removeItem('ourgoal_guest_profile');
-      localStorage.removeItem('ourgoal_current_user');
-      /* [#TASK-ES-365] 계정 공용 키(전체 사본·직전 사용자·uid 없는 오프라인 대기열)를 정리한다. uid 별 백업은 그 주인만 읽으므로 남긴다 */
-      window.OurgoalAccountIsolation.clearSharedSessionCopies();
-    } catch(e){}
-    state.profile = null;
-    var shell = document.getElementById('appShell');
-    if(shell) shell.classList.remove('active');
-    var authScreen = document.getElementById('authScreen');
-    if(authScreen) authScreen.style.display = 'flex';
-    if(typeof initRememberedAuthFields === 'function') initRememberedAuthFields();
-    if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer = null; }
-    if(reasonMsg) toast(reasonMsg);
-  }
-  async function checkRemoteSessionRevoked(){
-    if(!state.profile || !state.profile.id) return false;
-    try{
-      var myDev = getDeviceId();
-      var myLogin = getDeviceLoginTime();
-
-      // 방금 로그인한 직후(60초 이내)에는 토큰 동기화 및 일시적 지연으로 인한 세션 튕김 오탐 방어
-      if(Date.now() - myLogin < 60000) return false;
-
-      // 1. Supabase Auth 사용자 세션 유효성 검사 (명백한 JWT 무효/만료·서버가 세션을 지운 'Auth session missing!'·401 일 때만 로그아웃 — #TASK-ES-399)
-      var uRes = await sb.auth.getUser();
-      if(uRes && uRes.error){
-        var eMsg = String(uRes.error.message || '').toLowerCase();
-        if(eMsg.indexOf('jwt') !== -1 || eMsg.indexOf('invalid') !== -1 || eMsg.indexOf('expired') !== -1 || eMsg.indexOf('session missing') !== -1 || Number(uRes.error.status) === 401){
-          await performLogout('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-          return true;
-        }
-        return false;
-      }
-
-      // 2. Auth 메타데이터의 원격 로그아웃 타임스탬프 대조
-      var meta = uRes && uRes.data && uRes.data.user && uRes.data.user.user_metadata;
-      var remoteLogoutAt = meta && meta.remote_logout_at ? Number(meta.remote_logout_at) : 0;
-      var keptDevId = (meta && meta.remote_logout_device_id) || '';
-      if(remoteLogoutAt && remoteLogoutAt > myLogin && keptDevId !== myDev){
-        await performLogout('다른 기기에서 모든 기기 원격 로그아웃이 실행되어 로그아웃되었습니다.');
-        return true;
-      }
-
-      // 3. 프로필 설정의 타임스탬프 폴백 대조
-      var sRemoteTs = state.profile.settings && state.profile.settings.remoteLogoutTimestamp;
-      var sKeptDev = state.profile.settings && state.profile.settings.remoteLogoutDeviceId;
-      if(sRemoteTs && Number(sRemoteTs) > myLogin && sKeptDev !== myDev){
-        await performLogout('다른 기기에서 모든 기기 원격 로그아웃이 실행되어 로그아웃되었습니다.');
-        return true;
-      }
-    }catch(e){}
-    return false;
-  }
-
-  document.getElementById('signupSubmit').addEventListener('click', async function(){
-    var u = document.getElementById('suUser').value.trim();
-    var name = document.getElementById('suName').value.trim();
-    var p1 = document.getElementById('suPass').value;
-    var p2 = document.getElementById('suPass2').value;
-    var errEl = document.getElementById('signupError');
-    errEl.textContent = '';
-    if(!u || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(u)){ errEl.textContent = '아이디 자리에 이메일 주소를 입력해주세요.'; return; }
-    if(!name){ errEl.textContent = '닉네임을 입력해주세요.'; return; }
-    if(!p1 || p1.length<4){ errEl.textContent = '비밀번호는 4자 이상으로 입력해주세요.'; return; }
-    if(p1!==p2){ errEl.textContent = '비밀번호가 서로 달라요.'; return; }
-
-    var res = await sb.auth.signUp({ email: u, password: p1 });
-    if(res.error){ errEl.textContent = res.error.message; return; }
-    if(!res.data.session){ errEl.textContent = '가입 확인 메일을 보냈어요. 메일함에서 확인 후 로그인해주세요.'; return; }
-
-    setDeviceLoginTime(Date.now());
-    await ensureUserRow(res.data.user.id, u, name);
-    track('signup', Object.assign({ method: 'email' }, getAttribution())); /* 즉시 세션 경로는 loadProfile을 거치지 않으므로 여기서 기록 */
-    track('signup_completed', Object.assign({ source: 'email', day_index: 0 }, getAttribution()));
-    state.profile = defaultProfile(res.data.user.id, u, name);
-    await saveProfile();
-    document.getElementById('authScreen').style.display = 'none';
-    startOnboarding();
-  });
+  /* [#TASK-ES-513] getDeviceId · getDeviceLoginTime · setDeviceLoginTime · performLogout · checkRemoteSessionRevoked → js/tabs/settings/device-session.js 로 옮김(인라인 3단계 시범 — 게스트로 못 재는 묶음(실계정 하네스) — 앞 주석 포함) */
+  bindSignupSubmit(); /* [#TASK-ES-513] 로드 중 문(앞 주석 포함) → js/tabs/settings/device-session.js 의 bindSignupSubmit 로 옮김 — 원래 자리에서 부른다 */
 
   /* [#TASK-ES-437] showLastAuthBadge · initRememberedAuthFields → js/tabs/settings/account-entry.js 로 옮김(인라인 스크립트 세포화 P0) */
 

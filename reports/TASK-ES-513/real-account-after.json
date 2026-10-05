@@ -1,0 +1,85 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "after",
+ "mode": "test-account-A",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · test account A (address hidden) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 첫 화면 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "82a79f1a3906fb3f",
+   "opened": null
+  },
+  {
+   "name": "② 기록 탭(탭 전환 때 원격 로그아웃 감지가 돈다) #screen-records",
+   "present": true,
+   "visible": true,
+   "textHash": "ff03629c75f92c9b",
+   "textLen": 1062,
+   "attrsHash": "df8b43c4480f32c3",
+   "opened": null
+  },
+  {
+   "name": "③ 설정 탭 #screen-settings",
+   "present": true,
+   "visible": true,
+   "textHash": "3c77871f6233540b",
+   "textLen": 764,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null,
+   "counts": {
+    "logoutBtn": 1
+   }
+  },
+  {
+   "name": "④ 설정 로그인 기기 목록 #activeDevicesContainer",
+   "present": true,
+   "visible": true,
+   "textHash": "e3b0c44298fc1c14",
+   "textLen": 0,
+   "attrsHash": "576f6d74687b58a0",
+   "opened": null
+  },
+  {
+   "name": "⑤ 로그아웃 단추 → 로그인 화면 #authScreen",
+   "present": true,
+   "visible": true,
+   "textHash": "391a45f9ec7b9e73",
+   "textLen": 235,
+   "attrsHash": "122bfc4fc04d9022",
+   "opened": true,
+   "counts": {
+    "appShellActive": 0
+   }
+  },
+  {
+   "name": "⑥ 로그아웃 토스트 #toast",
+   "present": true,
+   "visible": true,
+   "textHash": "cf315476d56c9b87",
+   "textLen": 10,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": null
+  }
+ ],
+ "errors": [],
+ "loggedIn": true,
+ "entered": true,
+ "globals": "getDeviceId/undefined,getDeviceLoginTime/undefined,setDeviceLoginTime/undefined,performLogout/undefined,checkRemoteSessionRevoked/undefined,bindSignupSubmit/undefined",
+ "recordsCountUnchanged": false,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 4,
+  "POST /rest/v1/checkins": 4
+ }
+}

@@ -1,0 +1,9 @@
+{"moved":["getDeviceId","getDeviceLoginTime","setDeviceLoginTime","performLogout","checkRemoteSessionRevoked","bindSignupSubmit"],
+ "steps":[
+ {"name":"① 홈 첫 화면 #screen-home","tab":"home","wait":1500,"read":"#screen-home"},
+ {"name":"② 기록 탭(탭 전환 때 원격 로그아웃 감지가 돈다) #screen-records","tab":"records","wait":2500,"read":"#screen-records"},
+ {"name":"③ 설정 탭 #screen-settings","tab":"settings","wait":2500,"read":"#screen-settings","count":{"logoutBtn":"#logoutBtn"}},
+ {"name":"④ 설정 로그인 기기 목록 #activeDevicesContainer","wait":500,"read":"#activeDevicesContainer"},
+ {"name":"⑤ 로그아웃 단추 → 로그인 화면 #authScreen","click":"#logoutBtn","wait":3500,"read":"#authScreen","count":{"appShellActive":"#appShell.active"}},
+ {"name":"⑥ 로그아웃 토스트 #toast","read":"#toast"}
+]}
