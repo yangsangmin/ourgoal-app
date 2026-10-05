@@ -1,0 +1,130 @@
+{
+  "id": "calendar-day-hub-add-edit",
+  "title": "게스트로 일정 탭 오늘 날짜 칸 → 「📅 허브」 → 「일정 관리」 허브 창 → 「새 일정 추가」로 제목을 넣고 저장하면 「일정을 추가했어요」 토스트와 함께 허브 창이 그 일정을 목록에 담아 다시 뜨고, 목록의 연필(수정) 단추를 누르면 「일정 수동 편집」 창으로 들어가며 「취소」를 누르면 허브 창으로 돌아온다 — 옮기기 전과 같은 동작",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-calendar .s-cal-day-cell.today",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-calendar .s-cal-day-cell.today"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "일정을 선택했습니다"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hubAddNewBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#hubAddNewBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calEditTitle",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "새 일정 추가"
+    },
+    {
+      "do": "type",
+      "selector": "#calEditTitle",
+      "text": "허브 확인 일정"
+    },
+    {
+      "do": "click",
+      "selector": "#calEditSaveBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "일정을 추가했어요",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hubAddNewBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "허브 확인 일정"
+    },
+    {
+      "expect": "count",
+      "selector": "#modalOverlay [data-hubedit]",
+      "min": 1
+    },
+    {
+      "do": "click",
+      "selector": "#modalOverlay [data-hubedit=\"0\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calEditCancelBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "일정 수동 편집"
+    },
+    {
+      "do": "click",
+      "selector": "#calEditCancelBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hubAddNewBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "허브 확인 일정"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
