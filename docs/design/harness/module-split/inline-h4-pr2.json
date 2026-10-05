@@ -1,0 +1,93 @@
+{
+  "task": "TASK-ES-474",
+  "slot": "H4",
+  "slots": [
+    "H0 시범 #TASK-ES-439",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "HO 기관"
+  ],
+  "cells": [
+    {
+      "key": "sharedGroups",
+      "file": "js/tabs/comm/shared-groups.js",
+      "kit": "OurgoalCommKit",
+      "kitVar": "_commKit",
+      "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+      "title": "OurGoal Comm Shared Groups (소통 탭 — 공유 팀 불러오기·팀 목록·팀 상세·새 팀 만들기 창)",
+      "desc": [
+        "서버 공유 팀 불러오기(loadSharedGroups) · 소통 탭 팀 목록(renderCommGroups) · 팀 상세(renderGroupDetail) · 함께 게이지(collectiveGaugeHtml) · 새 팀 만들기 창(promptNewGroup).",
+        "불러옴 표시(SHARED_GROUPS_LOADED)와 window 노출 두 줄(if 문)은 index.html 원래 자리에 그대로 있고 L getter·setter 로 읽고 쓴다."
+      ],
+      "take": [
+        {
+          "group": "전역 공유 팀 로더 & 렌더링",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "exportTheme",
+      "file": "js/tabs/records/export-theme.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Records Export Theme (기록 — 캘린더 구독·iCalendar·마크다운 내보내기·테마별 기록 내보내기 창)",
+      "desc": [
+        "캘린더 구독 서명 토큰 받기(fetchSignedCalendarToken) · 구독 URL·iCalendar·마크다운 내보내기 순수 함수(buildWebCalUrl · buildICS · buildMarkdownExport) · 테마별 기록 내보내기 창(openExportThemeModal) · 전체 체크인 내보내기(exportAllCheckins).",
+        "토큰 캐시(_cachedSignedCalendarToken)·MOCK_GROUPS·내보내기 단추 등록 한 줄·window 노출 줄·shareContent 줄은 원래 자리에 있다. 순수 함수 세 개는 smoke-test FN_NAMES 함수 — smoke-test 가 인라인 합본에서 잘라 간다(#TASK-ES-465)."
+      ],
+      "take": [
+        {
+          "group": "캘린더 실시간 구독 URL 생성기",
+          "names": [
+            "fetchSignedCalendarToken",
+            "openExportThemeModal",
+            "exportAllCheckins",
+            "buildWebCalUrl",
+            "buildICS",
+            "buildMarkdownExport"
+          ],
+          "keepRest": true
+        }
+      ]
+    },
+    {
+      "key": "weeklyRecap",
+      "file": "js/tabs/records/weekly-recap.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Records Weekly Recap (기록 탭 — 위클리 리캡 카드·기록 추가 창·기록 탭 정적 단추 처리기)",
+      "desc": [
+        "위클리 리캡 카드 그림·창(fitBigFont · generateWeeklyRecapImage · findBestMoment · openWeeklyRecapModal · openLegacyRecapCanvasModal) · 기록 추가 창(openRecordModal).",
+        "기록 탭 로드 중 처리기 등록 문 다섯 개(시간 기록 단추 · 세그먼트 막대 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecSegmentBar · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).",
+        "한 줄 등록 문 세 개와 상태 변수(btnOpenTt · staticPulseBar)는 원래 자리에 있다. weeklyRecapStats 는 smoke-test FN_NAMES 함수 — smoke-test 가 인라인 합본(js/tabs 세포 포함)에서 잘라 가므로(#TASK-ES-465) 같이 옮겼다."
+      ],
+      "take": [
+        {
+          "group": "위클리 리캡 카드 (스포티파이 랩드 스타일",
+          "names": [
+            "weeklyRecapStats",
+            "fitBigFont",
+            "generateWeeklyRecapImage",
+            "findBestMoment",
+            "openWeeklyRecapModal",
+            "openLegacyRecapCanvasModal",
+            "openRecordModal"
+          ],
+          "wrap": [
+            "bindRecTimeTrackerBtn",
+            "bindRecSegmentBar",
+            "bindRecPulseBar",
+            "bindRecCarouselPills",
+            "bindRecDocumentClick"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ]
+}
