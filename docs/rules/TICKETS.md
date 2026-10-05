@@ -530,3 +530,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-417 | INFRA | [세포지도 생성기 추적 파일만 읽기] scripts/cell-map-export.js 가 git 추적 파일만 읽어 미추적 문서로 인한 --check 오탐 제거, 부품 시험에 미추적 파일 불변 단언, 제품 코드 0 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-417-CELL-MAP-TRACKED.md | 4단계(심사 청구)
 - #TASK-ES-418 | INFRA | [세포지도 짧은 이름표] 구조도 노드 이름을 사용자가 알아보는 한국어 짧은 이름으로 — cell-descriptions.json names 150 · cell-map.json name 칸 · 대체 규칙(하는 일 첫 구절 → id), 제품 코드 변경 0 | 코디네이터 지시 (2026-10-05, 상민님 구조도 검토), REQ docs/specs/REQ-TASK-ES-418-CELL-SHORT-NAMES.md | 4단계(심사 청구)
 - #TASK-ES-420 | INFRA | [세포지도 다시 만들기] #732 병합 뒤 cell-map.json 재생성(161세포) + 새 세포 11개 짧은 이름, 제품 코드 변경 0 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-420-CELL-MAP-RESYNC.md | 4단계(심사 청구)
+- #TASK-ES-419 | INFRA | [노션 세포지도 짧은 이름표] 노션 본문 생성기가 짧은 한국어 이름을 이름표로(id 보조), 제품 코드 변경 0 | 코디네이터 지시 (2026-10-05, #733 병합 뒤 노션 갱신), REQ docs/specs/REQ-TASK-ES-419-NOTION-SHORT-NAMES.md | 4단계(심사 청구)
