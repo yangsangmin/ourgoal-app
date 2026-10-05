@@ -83,7 +83,7 @@ worktree `C:/dev/wt/inline-hard`(브랜치 `feat/2026-10-05-task-es-439-inline-h
 | 조작 전후(게스트) | `dom-compare-inline-hard.js` | 20단계 × 10칸 = 200값, 기준 대 후 0 · 기준 대 기준 0, 콘솔 오류 0/0/0. 순서 바꿔(후 2회·기준 1회) 다시 0 · 0 |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` 로컬 | `checkin-capture-save`·`settings-quick-actions` 기준·작업 모두 통과, 약점 0. 돌연변이(부르는 줄·노출 줄 지움) → 작업 쪽 실패(10·8단계) |
 | 시험 | `npm test` · tests 122개 | smoke 443/0 · 무결성 38/38 · 버튼 943/943 기준=후, 작업 npm test 종료 코드 0. tests·scripts/test-* 122개 중 120개 종료 코드 같음, 다른 2개(세포지도 이력 비교 시험·그것을 부르는 shipyard)는 git 이력 없는 기준 사본에서만 실패하고 작업은 통과(회귀 0) |
-| 탭 실측 | `tab-check.js home,settings,records` 기준 2회·후 1회 → `tab-compare.js` | TAB_CHECK_RESULT |
+| 탭 실측 | `tab-check.js home,settings` 기준 2회·후 1회 → `tab-compare.js` | 2탭 732값 — 기준1 대 기준2 0(본질 변동 0) · 기준1 대 후 0 · 기준2 대 후 0 (`tab-compare-*.json`) |
 | 처리 순서·구역 | `inline-hard-types.js`(이 PR 판) | 단계 1: 18묶음 · 2: 19 · 3: 12 · 4(기관): 18. 구역 H1 17묶음 · H2 13 · H3 5 · H4 9 · 기관 16(배정 7묶음 제외 — 2차 빌더 「Enter app」·「Render all」, 안티그래비티 5묶음), 겹침 0 |
 
 **예상 단계 수(추정, 측정 아님)**: 구역마다 시험지 선행 PR 1 + 이전 PR ⌈묶음 ÷ 4⌉ + 800줄 초과 묶음마다 1 → H1 6 · H2 6 · H3 6 · H4 4 = 22 PR, 기관 16묶음 각 1 PR → 합 약 38 PR. 근거: #423 1 PR 4묶음, 이번 1 PR 2묶음(측정 한 벌은 묶음 수와 무관). 구역 4명 병렬이면 가장 긴 구역 6 PR, 기관은 2명으로 나누면 8 PR 이 가장 긴 길.

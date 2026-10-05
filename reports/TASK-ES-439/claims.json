@@ -635,6 +635,38 @@
     "path": "assigned.length",
     "equals": 7
    }
+  },
+  {
+   "id": "C41",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tab-check 홈·설정 기준2 대 후 732값 차이 0",
+   "touches": [
+    "reports/TASK-ES-439/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-439/tab-compare-base2-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tab-check 기준1 대 기준2 차이 0(본질 변동 0)",
+   "touches": [
+    "reports/TASK-ES-439/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-439/tab-compare-base1-base2.json",
+    "path": "differingValues",
+    "equals": 0
+   }
   }
  ]
 }
