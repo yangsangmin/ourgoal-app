@@ -2246,7 +2246,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/render.js"></script>
 <script src="js/tabs/goals/result-modal.js"></script>
 <script src="js/tabs/goals/team-goal-modals.js"></script><script src="js/tabs/goals/template-quick-import.js"></script><script src="js/tabs/goals/result-input.js"></script><script src="js/tabs/goals/goal-export.js"></script>
-<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/index.js"></script>
+<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
 <script src="js/tabs/records/sub-timeline.js"></script>
 <script src="js/tabs/records/sub-timer.js"></script>
@@ -2522,6 +2522,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get toDateTimeLocalValue(){ return toDateTimeLocalValue; },
     get topicPill(){ return topicPill; },
     get wirePromptEncyclopediaEvents(){ return wirePromptEncyclopediaEvents; }
+  });
+
+  /* ============ [#TASK-ES-453] 인라인 스크립트 세포화 P1 이음매 3 — 목표 종합상황 AI 요약 새로 고침 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
+     ① 가져오기: js/tabs/goals/ai-status-refresh.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
+  var refreshGoalStatusSummary = _goalsKit.refreshGoalStatusSummary;
+  window.OurgoalAppScope.expose('index.html', {
+    get generateGoalStatusSummary(){ return generateGoalStatusSummary; }
   });
 
   /* ============ [#TASK-ES-375] 목표 탭 모듈 이음매 2차 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-370 과 같은 틀) ============
@@ -17375,54 +17383,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
-  /* ============ 현재 종합상황 (AI 요약) ============ */
-  /* [#TASK-ES-436] computeGoalStatusHash · localGoalStatusSummary · generateGoalStatusSummary → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
-  function refreshGoalStatusSummary(goal, hash){
-    if(!goal || !goal.id) return;
-    if(!state.goalStatusPending) state.goalStatusPending = {};
-    if(state.goalStatusPending[goal.id]) return;
-    var summaries = (state.profile && state.profile.settings && state.profile.settings.goalStatusSummaries) || {};
-    var existing = summaries[goal.id];
-    var todayKey = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : getKSTDateKey(nowISO());
-    if(existing && existing.text && existing.hash === hash && (!existing.dateKey || existing.dateKey === todayKey)) return;
-    state.goalStatusPending[goal.id] = true;
-    generateGoalStatusSummary(goal).then(async function(text){
-      delete state.goalStatusPending[goal.id];
-      if(!text) return;
-      if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
-    var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
-      state.profile.settings.goalStatusSummaries[goal.id] = { text: text, hash: hash, dateKey: getKSTDateKey(nowISO()), standardDateKey: todayKey, updatedAt: nowISO() };
-      await saveProfile();
-      if(state.activeGoalId===goal.id && state.activeTab==='goals' && !state.goalEditMode){
-        var el = document.getElementById('goalStatusText');
-        var badge = document.getElementById('goalStatusBadge');
-        var snip = document.getElementById('goalStatusSnippet');
-        if(el) el.textContent = text;
-        if(badge){
-          badge.textContent = '분석완료';
-          badge.style.background = 'rgba(16,185,129,.15)';
-          badge.style.color = '#10b981';
-          badge.style.borderColor = 'rgba(16,185,129,.3)';
-        }
-        if(snip){
-          snip.textContent = text.slice(0, 38) + (text.length > 38 ? '…' : '');
-        }
-      }
-    }).catch(function(){
-      delete state.goalStatusPending[goal.id];
-      if(state.activeGoalId===goal.id && state.activeTab==='goals' && !state.goalEditMode){
-        var badge = document.getElementById('goalStatusBadge');
-        var curSummaries = (state.profile && state.profile.settings && state.profile.settings.goalStatusSummaries) || {};
-        var c = curSummaries[goal.id];
-        if(badge && c && c.text){
-          badge.textContent = '분석완료';
-          badge.style.background = 'rgba(16,185,129,.15)';
-          badge.style.color = '#10b981';
-          badge.style.borderColor = 'rgba(16,185,129,.3)';
-        }
-      }
-    });
-  }
+  /* [#TASK-ES-453] refreshGoalStatusSummary → js/tabs/goals/ai-status-refresh.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
   /* [#TASK-ES-444] localTodayMission → js/tabs/goals/ai-local-fallback.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
   /* [#TASK-ES-436] requestTodayMission → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
