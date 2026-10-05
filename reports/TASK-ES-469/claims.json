@@ -1,0 +1,161 @@
+{
+ "task": "TASK-ES-469",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험지 2개(app-evaluation-modal·feed-post-preview-modal)가 index.html 대신 #751 인라인 합본(withInlineCells)을 읽는다. 단언·기대값·검사 수 0 변경, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "모의 이전(기준 사본에서 구역 H1 세 묶음을 gen-inline-hard.js 로 옮김)으로 기준 시험지는 깨지고 새 시험지는 기준과 같음을 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 app-evaluation-modal 이 index.html 대신 인라인 합본을 읽는다(읽기 줄만 바꿈)",
+   "touches": [
+    "tests/app-evaluation-modal.test.js"
+   ],
+   "check": {
+    "file": "tests/app-evaluation-modal.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 feed-post-preview-modal 이 index.html 대신 인라인 합본을 읽는다(읽기 줄만 바꿈)",
+   "touches": [
+    "tests/feed-post-preview-modal.test.js"
+   ],
+   "check": {
+    "file": "tests/feed-post-preview-modal.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8'));"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 기준 제품에서 기준 시험지와 종료 코드가 같다",
+   "touches": [
+    "reports/TASK-ES-469/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-469/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestsSameOnBaseProduct",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 모의 이전 제품에서 기준 시험지·기준 제품과 종료 코드·통과 줄·첫 오류가 같다",
+   "touches": [
+    "reports/TASK-ES-469/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-469/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestsSameOnMockMoved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 시험지는 모의 이전에서 2개가 깨진다(선행이 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-469/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-469/mock-move.json",
+    "type": "jsonPath",
+    "path": "baseTestsBreakOnMockMoved",
+    "equals": [
+     "tests/app-evaluation-modal.test.js",
+     "tests/feed-post-preview-modal.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 설정은 #762 생성기로 레벨업 팝업·평가 팝업·피드 공유 모달 세 묶음을 옮긴다",
+   "touches": [
+    "docs/design/harness/module-split/mock-move-inline-h1.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/mock-move-inline-h1.json",
+    "type": "codeContains",
+    "text": "\"group\": \"목표 & 기록 선택 피드 공유 모달\""
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-469: 시험지 2개(app-evaluation-modal·feed-post-preview-modal)"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-469 | INFRA | [시험지 인라인 합본 · 어려움 구역 H1 선행]"
+   }
+  }
+ ]
+}
