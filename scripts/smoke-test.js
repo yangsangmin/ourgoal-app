@@ -1745,6 +1745,9 @@ check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무
 
   // 5. 30일 리포트 페이월 제거 확인
   assert.strictEqual(html.includes("openPaywallModal('report30d')"), false, '30일 리포트 열람 시 페이월 제거');
+
+  // 6. [#TASK-ES-516] 구독 상태·페이월 모달·PRO 배지 코드 자체가 없다(상민님 결정 2026-10-06)
+  ['function subscriptionState(', 'function openPaywallModal(', 'renderProBadge', 'pro-badge'].forEach(n => assert.ok(!html.includes(n), n + ' 없음'));
 });
 
 check('compliance: 기록/달력 6대 UX 개선사항(기록 탭 AI 피드백, 히트맵 기간·횟수 시각화, 위클리 리캡 항목선택, 기간별 AI 피드백, 퀵도크 삭제, 일정 허브 모달 정상동작)이 모두 구현되어 있다', () => {
@@ -2417,18 +2420,14 @@ check('compliance: [PEER INVITE] 친구와 1:1 또는 5인 소그룹 마라톤 �
 
 /* ============ [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인 ============ */
 check('compliance: [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인(5초 카운트다운, 모달 안내, AdMob 및 Web fallback, app-ads.txt) 무결성 검증', () => {
-  assert.ok(html.includes('OURGOAL_CONFIG'), 'OURGOAL_CONFIG 설정 객체 존재');
-  assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '기본값 베타 테스트 100% 무료(false) 보장');
-  assert.ok(html.includes('다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다'), '상민님 지시 정확한 안내 문구 존재');
-  assert.ok(html.includes('startTemplateAdCountdown'), '5초 카운트다운 함수 존재');
-  assert.ok(html.includes('playRewardedAdVideo'), '보상형 광고 재생 함수 존재');
-  assert.ok(html.includes('showWebRewardedAdModal'), '웹 fallback 시뮬레이션 플레이어 존재');
-  assert.ok(html.includes('handleTemplateCloneWithAd'), '광고 연동 템플릿 복제 핸들러 존재');
-  assert.ok(html.includes('testTemplateAdFlow'), '테스트/시연용 즉시 실행 함수 존재');
-  const appAdsPath = path.join(__dirname, '..', 'app-ads.txt');
-  assert.ok(fs.existsSync(appAdsPath), 'app-ads.txt 파일 실재 확인');
-  const appAdsContent = fs.readFileSync(appAdsPath, 'utf8');
-  assert.ok(appAdsContent.includes('google.com'), 'app-ads.txt 구글 퍼블리셔 형식 준수 확인');
+  // [#TASK-ES-516] 상민님 결정(2026-10-06 「미분화덩어리에서 광고, 구독관련은 삭제해…」)으로 보상형 광고 파이프라인을 지웠다 — 「없다」로 고정
+  assert.ok(html.includes('OURGOAL_CONFIG'), 'OURGOAL_CONFIG 설정 객체 존재(크레딧 원장 플래그만)');
+  assert.ok(!html.includes('ENABLE_TEMPLATE_REWARDED_ADS'), '광고 플래그 없음');
+  assert.ok(!html.includes('5초 뒤 광고영상이 시작됩니다'), '광고 안내 문구 없음');
+  ['startTemplateAdCountdown', 'playRewardedAdVideo', 'showWebRewardedAdModal', 'handleTemplateCloneWithAd', 'testTemplateAdFlow',
+   'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled', 'ADMOB_REWARDED_AD_UNIT_ID', 'AD_DELAY_SECONDS'].forEach(n => assert.ok(!html.includes(n), n + ' 없음'));
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'app-ads.txt')), 'app-ads.txt(AdMob 게시자 선언) 없음');
+  assert.ok(html.includes('executeDirectTemplateClone(tpl, onSelectTemplate);'), '템플릿 복제는 본체가 바로 한다');
 });
 
 check('compliance: 오늘 같은 테마 실사용자 수 집계 RPC DDL(T01-S02, #TASK-ES-001)이 존재하고 유효하다', () => {
@@ -2705,19 +2704,21 @@ check('KF-2: js/template-credit.js 가 존재하고 문법이 유효하며 API 5
   assert.ok(fs.existsSync(p), 'js/template-credit.js 존재');
   const src = fs.readFileSync(p, 'utf8');
   new Function(src);
-  ['init', 'recordCopy', 'counts', 'fillCounts', 'renderAdOptIn'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn));
+  ['init', 'recordCopy', 'counts', 'fillCounts'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn));
+  assert.ok(!src.includes('renderAdOptIn'), '[#TASK-ES-516] 「광고 보고 크레딧 받기」 버튼 API 없음');
   assert.ok(!/현금|환전|₩|출금|상품권/.test(src), '화폐 문구 없음(정본 §2)');
   assert.ok(html.includes('<script src="js/template-credit.js"></script>'), 'index.html 이 모듈을 로드');
   assert.ok(html.includes('window.OurgoalTemplateCredit.init({ sb: sb'), '부팅 시 앱 핸들 주입');
 });
 check('KF-2: 복제 흐름에서 광고가 분리되고, 광고는 설정의 선택형 버튼 한 경로뿐이다 (정본 §3)', () => {
-  assert.ok(html.includes('var adsEnabled = !!forceAdFlow;'), '복제 흐름은 플래그와 무관하게 광고 없음');
-  assert.ok(!html.includes('var adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled();'), '구 강제 경로 제거');
-  assert.ok(html.includes('function playRewardedAdVideo(tpl, onComplete)'), '광고 완료 콜백 지원');
-  assert.ok(html.includes("OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock'))"), '선택형 버튼은 설정 › 크레딧 섹션에만');
+  // [#TASK-ES-516] 상민님 결정(2026-10-06)으로 광고 경로를 모두 지웠다 — 복제 흐름에도 설정에도 광고가 없다
+  assert.ok(!html.includes('adsEnabled'), '복제 흐름 광고 분기 없음');
+  assert.ok(!html.includes('playRewardedAdVideo'), '광고 재생 함수 없음');
+  assert.ok(!html.includes('renderAdOptIn'), '설정 › 크레딧 칸의 광고 버튼 호출 없음');
+  assert.ok(!html.includes('playRewardedAd:'), '템플릿 복제 크레딧 모듈에 광고 손잡이를 넘기지 않음');
   const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'template-credit.js'), 'utf8');
-  assert.ok(src.includes('ENABLE_TEMPLATE_REWARDED_ADS') && src.includes('isEnabled()'), '플래그와 크레딧 enabled 둘 다 켜져야 버튼 표시');
-  assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '광고 플래그 기본 OFF 유지');
+  assert.ok(!src.includes('ENABLE_TEMPLATE_REWARDED_ADS') && !src.includes('creditAdOptInBtn') && !src.includes('ad_watched'), '모듈에 광고 플래그·버튼·광고 적립 없음');
+  assert.ok(!html.includes('ENABLE_TEMPLATE_REWARDED_ADS'), '광고 플래그 없음');
 });
 check('KF-2: 마켓·기본 템플릿의 고정 복제 수·가상 크리에이터 표기가 화면에서 사라지고 서버 실데이터 배지만 남는다 (금지 6-1)', () => {
   assert.ok(!html.includes("t.downloads + '회 복제'"), '고정 downloads 문자열 표시 없음');
@@ -7528,8 +7529,8 @@ check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결�
   assert.ok(!indexHtml.includes('외부 공유 기능을 준비 중입니다'), '외부 공유 준비중 토스트 부재');
   assert.ok(!sanctuaryJs.includes('일정 추가 창을 준비 중입니다'), '성소 캘린더 준비중 토스트 부재');
 
-  // 4. 완전 무료 선언 공식 모달 승화 확인
-  assert.ok(indexHtml.includes('아워골 완전 무료화 헌법 선언'), '아워골 완전 무료 선언 모달 마크업 존재');
+  // 4. [#TASK-ES-516] 상민님 결정(2026-10-06)으로 구독·페이월 자리였던 「완전 무료 선언」 모달(openPaywallModal, 부르는 곳 0)을 지웠다 — 없다
+  assert.ok(!indexHtml.includes('아워골 완전 무료화 헌법 선언') && !indexHtml.includes('function openPaywallModal('), '페이월 자리 안내 모달 없음');
 });
 
 check('[#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 검증', () => {
