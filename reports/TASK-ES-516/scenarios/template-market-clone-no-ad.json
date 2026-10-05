@@ -1,0 +1,68 @@
+{
+  "id": "template-market-clone-no-ad",
+  "title": "게스트로 기록 탭 「📋 템플릿」 → 「템플릿 마켓」을 열어 「복제하기」를 누르면 광고 단계 없이 바로 「내 템플릿으로 복제 완료」 알림이 뜨고 마켓 창이 닫힌다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar button[onclick*=\"recProTemplateCard\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar button[onclick*=\"recProTemplateCard\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenMarketQuickBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenMarketQuickBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"]",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "내 템플릿으로 복제 완료",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notExists",
+      "selector": ".mkt-clone-btn",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
