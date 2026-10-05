@@ -231,12 +231,9 @@
     var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
     var doc = typeof document !== 'undefined' ? document : (win.document || null);
     var actionBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('og-task-31-action-btn') : null;
-    var customBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('btnCustomHomeLayout') : null;
+    /* [#TASK-ES-515] 홈 머리 옛 「나만의 홈 구성」 단추는 지웠다(상민님 승인 2026-10-06) — 잠금·풀기 대상은 이 단추 하나 */
     if (actionBtn) {
       actionBtn.disabled = true;
-    }
-    if (customBtn) {
-      customBtn.disabled = true;
     }
 
     // 1. [햅틱 진동 피드백] (12ms 체감 인터랙션)
@@ -313,9 +310,6 @@
     } finally {
       if (actionBtn) {
         actionBtn.disabled = false;
-      }
-      if (customBtn) {
-        customBtn.disabled = false;
       }
     }
   }

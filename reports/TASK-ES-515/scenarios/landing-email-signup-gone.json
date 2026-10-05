@@ -1,0 +1,34 @@
+{
+  "id": "landing-email-signup-gone",
+  "title": "첫 화면에 숨은 「이메일로 가입하기」(#landStartWrap·#landStartBtn)가 없고, 보이는 「카카오 없이 닉네임으로 1초 만에 바로 시작」은 눌러 닉네임 입장 창이 열린다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#landStartBtn"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#landStartWrap"
+    },
+    {
+      "do": "click",
+      "selector": "#landNickQuickLink"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalSheet",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

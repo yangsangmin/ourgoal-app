@@ -1,0 +1,30 @@
+{
+  "id": "landing-kakao-browse-ok",
+  "title": "첫 화면의 카카오 시작 단추가 보이고, 「로그인 없이 둘러보기」는 눌러 게스트로 앱(아래 탭 단추)에 들어간다 — 이메일 가입 단추를 지운 뒤 남은 진입로",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#landKakaoBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
