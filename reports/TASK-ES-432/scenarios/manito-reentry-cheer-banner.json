@@ -1,0 +1,85 @@
+{
+  "id": "manito-reentry-cheer-banner",
+  "title": "게스트로 소통 탭 「마니또」에서 「마니또 시작하기」를 누른 뒤 앱을 다시 열면, 들어갈 때 옮긴 받은 응원 알림(checkSocialNotifications·showSocialNotifyBanner — js/tabs/comm/cheer-notify.js)이 홈에 「응원이 도착했어요 · 마니또 응원 1개」 띠를 그리고, 「확인하기」를 누르면 띠가 사라지고 소통 탭으로 간다(이전 전과 같은 동작 — 옮기기만 했으므로 기준 커밋에서도 같은 결과)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#commBody [data-sub=\"manito\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"manito\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mnJoin",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#mnJoin"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "AI 마니또 3명이 배정됐어요"
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sbOpen",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#socialNotifySlot",
+      "text": "응원이 도착했어요"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#socialNotifySlot",
+      "text": "마니또 응원 1개"
+    },
+    {
+      "do": "click",
+      "selector": "#sbOpen"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#screen-comm",
+      "className": "active"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#socialNotifySlot .notify-banner"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -3,7 +3,7 @@
  *
  * 체크인 기록을 보고 AI(또는 로컬 규칙)가 낸 변경 제안을 거르고(sanitizeSuggestions·findSuggestionTarget) 설명하고(describeSuggestion) 반영하는(applySuggestion) 함수와 「진행 상황이 바뀐 것 같아요」 창(maybeShowGoalUpdateModal).
  * scripts/smoke-test.js 의 FN_NAMES 는 인라인 합본(js/tabs 세포 포함)에서 함수를 뽑으므로 이 세포에서 같은 함수를 찾는다.
- * #TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 7739~7751 · 7752~7771 · 7772~7782 · 7783~7803 · 7804~7873줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 7765~7777 · 7778~7797 · 7798~7808 · 7809~7829 · 7830~7899줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 7739~7751줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7765~7777줄(#TASK-ES-483 생성기 표지) ---- */
   /* ============ 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안 ============ */
   function findSuggestionTarget(goal, s){
     if(s.type==='milestone'){
@@ -29,7 +29,7 @@
     }
     return null;
   }
-  /* ---- 이전 전 index.html 7752~7771줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7778~7797줄(#TASK-ES-483 생성기 표지) ---- */
   function sanitizeSuggestions(goal, suggestions){
     var STATUS_VALUES = ['todo','doing','done'];
     return (suggestions||[]).filter(function(s){
@@ -50,7 +50,7 @@
       return false;
     });
   }
-  /* ---- 이전 전 index.html 7772~7782줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7798~7808줄(#TASK-ES-483 생성기 표지) ---- */
   function describeSuggestion(goal, s){
     var target = findSuggestionTarget(goal, s);
     var name = s.type==='task' ? target.task.title : target.milestone.title;
@@ -62,7 +62,7 @@
     else label = '"'+name+'" 결과 수치 → '+s.value+'로 업데이트';
     return { icon:icon, label:label, reason:s.reason||'' };
   }
-  /* ---- 이전 전 index.html 7783~7803줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7809~7829줄(#TASK-ES-483 생성기 표지) ---- */
   function applySuggestion(goal, s){
     var target = findSuggestionTarget(goal, s);
     if(!target) return false;
@@ -84,7 +84,7 @@
     }
     return false;
   }
-  /* ---- 이전 전 index.html 7804~7873줄(#TASK-ES-483 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7830~7899줄(#TASK-ES-483 생성기 표지) ---- */
   function maybeShowGoalUpdateModal(goal, fb){
     if(!goal || !fb || L.state.profile.settings.autoUpdateSuggest===false) return;
     var valid = sanitizeSuggestions(goal, fb.suggestions);
