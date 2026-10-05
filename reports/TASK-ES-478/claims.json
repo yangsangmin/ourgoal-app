@@ -1,0 +1,125 @@
+{
+ "task": "TASK-ES-478",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-478-HIDDEN-COMM-FAKE-METRICS.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "인라인 통계 요약 카드(index.html renderWeekChart)의 state.profile.streak || 3 가짜 스트릭 제거 — 실제 computeStreakDays, 0 이면 칸 생략"
+  },
+  {
+   "id": "R2",
+   "text": "위클리 리캡(js/sanctuary-weekly-recap.js)의 durationMinutes || 25 가짜 시간 제거 — 실제 durationMinutes 또는 endAt-startAt, 0 이면 줄 생략"
+  },
+  {
+   "id": "R3",
+   "text": "tests/desktop-widget-suite.test.js 낡은 가짜 window — 단언·기대값 그대로, 픽스처 이름만 제품(renderCalendarScreen)과 맞춤"
+  }
+ ],
+ "outOfScopeReports": {
+  "note": "보고만 — 코드 변경 0, 주장 없음. 근거는 REQ 원칙 ②·④",
+  "items": [
+   {
+    "id": "X1",
+    "text": "소통 허브 #commHubGrid 미복원 — 보이는 서브탭 칩과 중복, crew·team 은 없는 키라 빈 본문, renderFeedList·renderCrewScreen·renderTeamScreen 정의 없음"
+   },
+   {
+    "id": "X2",
+    "text": "빠른 게시 띠 미복원 — 보이는 #btnCommPostFeed 와 같은 openShareToFeedModal 을 여는 중복"
+   },
+   {
+    "id": "X3",
+    "text": "무공해 응원 바·프로필 시트(triggerFloatingReaction·openInAppDmSheet) — 실제 전송·연결 없이 성공 토스트. 배선 설계 또는 승인선 ③ 결심 필요"
+   }
+  ]
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 10,
+   "domain": "ui-behavior",
+   "statement": "기록이 하나도 없는 게스트가 기록 탭 「📈 히트맵·통계」를 누르면 실천 추이 요약 카드(.rec-stats-summary-card)에 「총 몰입 시간」·「총 실천 횟수」 두 칸만 보이고 「포커스 스트릭」 칸이 없다 — 고치기 전에는 아무도 채우지 않는 profile.streak || 3 으로 기록 0건에도 「3일 연속 🔥」 칸이 찍혔다",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/records-stats-no-fake-streak.json"
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 14,
+   "domain": "ui-behavior",
+   "statement": "게스트가 홈에서 한 줄 체크인을 저장한 뒤 기록 탭 「📈 히트맵·통계」를 누르면 실천 추이 요약 카드의 포커스 스트릭이 실제 값 「1일 연속」으로 보인다(홈 스트릭과 같은 computeStreakDays) — 고치기 전에는 profile.streak || 3 으로 「3일 연속」이 찍혔다",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/records-stats-real-streak.json"
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 15,
+   "domain": "ui-behavior",
+   "statement": "게스트가 홈에서 시간 없는 한 줄 체크인을 저장한 뒤 기록 탭 「🎬 위클리 리캡 카드」를 누르면 리캡 카드에 「누적 N시간 몰입」 줄이 없고 실제 스트릭 줄만 보인다 — 고치기 전에는 시간 없는 기록을 25분으로 지어 세어 「누적 0.4시간 몰입 완주!」가 찍혔다",
+   "touches": [
+    "js/sanctuary-weekly-recap.js"
+   ],
+   "scenario": "scenarios/records-recap-real-duration.json"
+  },
+  {
+   "id": "C4",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests/desktop-widget-suite.test.js 는 기준에서 종료 코드 1(4대 뷰 동시 전파 3 !== 4), 작업에서 0 이다 — 바꾼 줄은 가짜 window 이름 1줄, 단언 줄 변경 0·기대값 4 그대로(작업자 측정 기록)",
+   "touches": [
+    "tests/desktop-widget-suite.test.js",
+    "reports/TASK-ES-478/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-478/test-compare.json",
+    "path": "desktopWidgetSuite.assertLinesChanged",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이번 변경으로 가짜 지표 글자(profile.streak || 3 · durationMinutes || 25) 3곳이 지워지고 새로 생긴 곳은 0이다",
+   "touches": [
+    "reports/TASK-ES-478/constraints.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-478/constraints.json",
+    "path": "fakeMetricAdded",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "추가된 줄에 !important 가 0줄이다(주석 제외)",
+   "touches": [
+    "reports/TASK-ES-478/constraints.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-478/constraints.json",
+    "path": "addedLinesWithImportant",
+    "equals": 0
+   }
+  }
+ ]
+}
