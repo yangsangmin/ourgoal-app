@@ -424,7 +424,7 @@
         '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">보관함</button>' +
         '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">위클리 리캡</button>' +
       '</div>' +
-    '</div>';
+    '</div>' + '<div class="s-rec-quick-action-bar" style="display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:-4px 0 12px;"><button type="button" id="sRecStoryCardBtn" class="btn-ghost" title="누르면: 인스타·카톡 공유용 갓생 스토리 카드 창이 열립니다" onclick="if(typeof window.openMzShareCardModal===\'function\'){window.openMzShareCardModal();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:0.74rem;font-weight:600;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid var(--rule, rgba(255,255,255,0.08));color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;">📸 갓생 스토리카드</button></div>'; /* [#TASK-ES-433] 기록 탭 갓생 카드 창 진입 단추 — 옛 #recStoryCardBtn 은 4테마 공통 숨김 머리줄(#screen-records > .screen-head) 안에 있어 보인 적이 없다 */
 
     var records = (window.state && window.state.profile && window.state.profile.records) || [];
     var contentHtml = '';

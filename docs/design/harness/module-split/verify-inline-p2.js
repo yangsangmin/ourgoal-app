@@ -58,7 +58,7 @@ for (const [f, names] of Object.entries(MOVED)) {
     equiv.push({ name: n, file: f, kind: ofns[n].type, tokensOrig: a.length, tokensNew: b.length, same, firstDiff: same ? null : { i: at, orig: a.slice(at - 3, at + 5), neu: b.slice(at - 3, at + 5) } });
   }
   // ①-더: 덩어리 줄 맞대기(생성기 meta 의 덩어리 줄 범위 — 앞 빈 줄 제외 — 가 새 파일 본문에 접두만 뗀 채 연속으로 있는가)
-  const nl = src.split('\n').map(strip);
+  const nl = src.replace(/\r\n/g, '\n').split('\n').map(strip); // 체크아웃 줄바꿈(CRLF)과 무관하게 맞댄다
   for (const ch of META.chunks.filter(c => (MOVED[f] || []).includes(c.names[0]))) {
     let seg = origLines.slice(ch.start - 1, ch.end);
     while (seg.length && seg[0].trim() === '') seg = seg.slice(1);

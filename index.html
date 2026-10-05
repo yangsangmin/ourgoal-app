@@ -2246,14 +2246,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/render.js"></script>
 <script src="js/tabs/goals/result-modal.js"></script>
 <script src="js/tabs/goals/goal-export.js"></script>
-<script src="js/tabs/goals/index.js"></script>
+<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
 <script src="js/tabs/records/sub-timeline.js"></script>
 <script src="js/tabs/records/sub-timer.js"></script>
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
@@ -2571,6 +2571,40 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openSelectTeamForStoryModal = _commKit.openSelectTeamForStoryModal;
   window.OurgoalAppScope.expose('index.html', {
     get groupState(){ return groupState; }
+  });
+
+  /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
+     ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
+  var sanitizeAttachments = _goalsKit.sanitizeAttachments;
+  var showGoalAgentReviewStep = _goalsKit.showGoalAgentReviewStep;
+  var sendGoalAgentMessage = _goalsKit.sendGoalAgentMessage;
+  var computeGoalStatusHash = _goalsKit.computeGoalStatusHash;
+  var localGoalStatusSummary = _goalsKit.localGoalStatusSummary;
+  var generateGoalStatusSummary = _goalsKit.generateGoalStatusSummary;
+  var requestTodayMission = _goalsKit.requestTodayMission;
+  var celebrateMilestoneDone = _goalsKit.celebrateMilestoneDone;
+  var formatSchedulePillHtml = _goalsKit.formatSchedulePillHtml;
+  var openScheduleSetupModal = _goalsKit.openScheduleSetupModal;
+  var applyScheduleUpdate = _goalsKit.applyScheduleUpdate;
+  var milestonesForAI = _recordsKit.milestonesForAI;
+  var initFeedbackTierBar = _recordsKit.initFeedbackTierBar;
+  var requestAIFeedback = _recordsKit.requestAIFeedback;
+  var requestServerAIFeedback = _recordsKit.requestServerAIFeedback;
+  window.OurgoalAppScope.expose('index.html', {
+    get DONE_KEYWORDS(){ return DONE_KEYWORDS; },
+    get GeminiQuotaDispatcher(){ return GeminiQuotaDispatcher; },
+    get THEME_FEEDBACK_PROMPTS(){ return THEME_FEEDBACK_PROMPTS; },
+    get TOPICS(){ return TOPICS; },
+    get applyGoalAgentOp(){ return applyGoalAgentOp; },
+    get classifyRecordTheme(){ return classifyRecordTheme; },
+    get dispatchFullViewPropagation(){ return dispatchFullViewPropagation; },
+    get fbBotBubbleHtml(){ return fbBotBubbleHtml; },
+    get localNextActionSuggestion(){ return localNextActionSuggestion; },
+    get localTodayMission(){ return localTodayMission; },
+    get milestonesForAI(){ return milestonesForAI; },
+    get normalizeSequentialMilestoneDates(){ return normalizeSequentialMilestoneDates; },
+    get renderGoalsScreen(){ return renderGoalsScreen; }
   });
 
   /* ============ [#TASK-ES-438] 인라인 스크립트 세포화 P2-1 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀) ============
@@ -13452,14 +13486,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     });
 
-    var challengeBtn = document.getElementById('homeChallengeRoomBtn');
-    if(challengeBtn){
-      challengeBtn.onclick = function(){ setTab('records'); };
-    }
-    var mzBtn = document.getElementById('mzShareBtn');
-    if(mzBtn){
-      mzBtn.onclick = openMzShareCardModal;
-    }
     renderTodayGlancePill();
     renderDailyQuestBar();
     if(window.OurgoalCustomize) OurgoalCustomize.apply(state.profile.settings); /* 앱을 내맘대로! (#TASK-ES-020) */
@@ -15248,15 +15274,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ AI feedback (best-effort; provider-aware; local fallback) ============ */
-  function milestonesForAI(goal){
-    if(!goal || !Array.isArray(goal.milestones)) return [];
-    return goal.milestones.map(function(m){
-      return {
-        id: m.id, title: m.title, status: m.status, result: m.result || null,
-        tasks: (m.tasks||[]).map(function(t){ return { id:t.id, title:t.title, done:!!t.done, result:t.result||null }; })
-      };
-    });
-  }
+  /* [#TASK-ES-436] milestonesForAI → js/tabs/records/ai-feedback.js 로 옮김(인라인 스크립트 세포화 P1) */
   var THEME_FEEDBACK_PROMPTS = {
     mind: '이 기록은 [심리상태] 테마로 분류되었습니다. 사용자의 감정 상태, 멘탈 회복, 스트레스 관리 관점에서 깊이 공감하고 따뜻한 위로와 마인드셋 회복 조언을 포함하세요.',
     study: '이 기록은 [공부기록] 테마로 분류되었습니다. 학습 효율성, 복습 주기, 지식 습득의 깊이 관점에서 구체적이고 실천적인 학습 피드백을 제공하세요.',
@@ -15266,256 +15284,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     daily: '이 기록은 [일상/기타] 테마입니다. 작은 일상의 실천이 주는 의미와 가치를 격려하세요.'
   };
 
-  function getUpcomingSchedulesForAI(daysAhead){
-    daysAhead = daysAhead || 30;
-    var now = new Date();
-    var todayKey = dateKey(nowISO());
-    var limit = new Date(now.getTime() + daysAhead * 24 * 60 * 60 * 1000);
-    var limitKey = dateKey(limit.toISOString());
-    var itemsByDate = calendarItemsByDate();
-    var upcoming = [];
-
-    Object.keys(itemsByDate).sort().forEach(function(dKey){
-      if(dKey >= todayKey && dKey <= limitKey){
-        var items = itemsByDate[dKey] || [];
-        items.forEach(function(it){
-          if(!it.done){
-            var diffDays = Math.ceil((new Date(dKey).getTime() - new Date(todayKey).getTime()) / (24*60*60*1000));
-            var ddayStr = diffDays === 0 ? 'D-Day' : ('D-' + diffDays);
-            upcoming.push({
-              date: dKey,
-              dday: ddayStr,
-              diffDays: diffDays,
-              title: it.title,
-              kind: it.kind,
-              category: it.goalTitle || it.kind
-            });
-          }
-        });
-      }
-    });
-    return upcoming.slice(0, 15);
-  }
-
-  function getRecentCheckinsForAI(days){
-    days = days || 3;
-    if(!state.profile || !Array.isArray(state.profile.records)) return [];
-    var recs = state.profile.records;
-    var now = new Date();
-    var cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-    var cutoffKey = (typeof dateKey === 'function') ? dateKey(cutoff.toISOString()) : cutoff.toISOString().slice(0, 10);
-    var list = [];
-    for(var i = 0; i < recs.length; i++){
-      var r = recs[i];
-      if(!r) continue;
-      var d = r.startAt ? ((typeof dateKey === 'function') ? dateKey(r.startAt) : r.startAt.slice(0, 10)) : (r.date || '');
-      if(d && d >= cutoffKey){
-        list.push({
-          date: d,
-          text: (r.text || r.title || '').slice(0, 150),
-          theme: r.theme || 'daily'
-        });
-        if(list.length >= 8) break;
-      }
-    }
-    if(list.length === 0 && recs.length > 0){
-      return recs.slice(0, days).map(function(r){
-        return {
-          date: r.startAt ? ((typeof dateKey === 'function') ? dateKey(r.startAt) : r.startAt.slice(0, 10)) : (r.date || ''),
-          text: (r.text || r.title || '').slice(0, 150),
-          theme: r.theme || 'daily'
-        };
-      });
-    }
-    return list;
-  }
-
-  function getLastFeedbackAdvice(){
-    if(state.lastCapture && state.lastCapture.feedback){
-      var fb = state.lastCapture.feedback;
-      var act = fb.next_action || fb.nextAction || (fb.suggestions && fb.suggestions[0] && fb.suggestions[0].reason) || '';
-      if(act) return { actionSuggested: act, verdict: fb.verdict || '', createdAt: nowISO() };
-    }
-    if(state.profile && Array.isArray(state.profile.records)){
-      for(var i = 0; i < state.profile.records.length; i++){
-        var r = state.profile.records[i];
-        if(r && r.feedback){
-          var act2 = r.feedback.next_action || r.feedback.nextAction || (r.feedback.suggestions && r.feedback.suggestions[0] && r.feedback.suggestions[0].reason) || '';
-          if(act2) return { actionSuggested: act2, verdict: r.feedback.verdict || '', createdAt: r.startAt || r.createdAt || nowISO() };
-        }
-      }
-    }
-    return null;
-  }
-
-  function initFeedbackTierBar(){
-    var bar = document.getElementById('checkinFeedbackTierBar');
-    if(!bar) return;
-
-    var savedTier = null;
-    try {
-      savedTier = localStorage.getItem('ourgoal_ai_feedback_mode');
-    } catch(e){}
-    if(!savedTier && state.profile && state.profile.settings && state.profile.settings.aiFeedbackMode){
-      savedTier = state.profile.settings.aiFeedbackMode;
-    }
-    state.aiFeedbackMode = savedTier || state.aiFeedbackMode || 'default';
-
-    var btns = bar.querySelectorAll('.tier-btn');
-    var descTitle = document.getElementById('aiModeDescTitle');
-    var descBody = document.getElementById('aiModeDescBody');
-    var modeTag = document.getElementById('activeAiModeTag');
-
-    var modeInfo = {
-      default: {
-        title: '⚡ 기본 피드백 모드',
-        tag: '기본 모드',
-        body: '오늘 실천 팩트 + 최근 연계 + 내일 1가지 행동을 간결한 3문장으로 코칭합니다.'
-      },
-      medium: {
-        title: '🔍 중간 피드백 모드 (궤적 분석)',
-        tag: '중간 모드',
-        body: '최근 3~5일간의 실천 궤적을 비교 분석하고, 루틴 마찰점을 찾아 극복 전략을 피드백합니다.'
-      },
-      macro: {
-        title: '🎯 정밀 피드백 모드 (일정 추천)',
-        tag: '정밀 모드',
-        body: 'D-Day 목표 사각지대를 정밀 진단하고, 캘린더에 바로 등록할 수 있는 추천 일정을 제시합니다.'
-      }
-    };
-
-    function updateTierUI(selectedTier){
-      btns.forEach(function(b){
-        var isMatch = b.dataset.fbtier === selectedTier;
-        b.classList.toggle('active', isMatch);
-        if(isMatch){
-          b.style.background = 'var(--accent, #3182f6)';
-          b.style.color = '#fff';
-          b.style.fontWeight = '700';
-          b.style.boxShadow = '0 2px 8px rgba(49,130,246,0.35)';
-        } else {
-          b.style.background = 'transparent';
-          b.style.color = 'var(--ink-soft)';
-          b.style.fontWeight = '600';
-          b.style.boxShadow = 'none';
-        }
-      });
-      var cur = modeInfo[selectedTier] || modeInfo.default;
-      if(descTitle) descTitle.textContent = cur.title;
-      if(descBody) descBody.textContent = cur.body;
-      if(modeTag) modeTag.textContent = cur.tag;
-    }
-    updateTierUI(state.aiFeedbackMode);
-
-    btns.forEach(function(b){
-      b.onclick = function(e){
-        e.preventDefault();
-        var tier = b.dataset.fbtier || 'default';
-        state.aiFeedbackMode = tier;
-        try {
-          localStorage.setItem('ourgoal_ai_feedback_mode', tier);
-          if(state.profile && state.profile.settings){
-            state.profile.settings.aiFeedbackMode = tier;
-            if(typeof saveProfile === 'function') saveProfile();
-          }
-        } catch(err){}
-
-        updateTierUI(tier);
-        if(typeof triggerHaptic === 'function') triggerHaptic(15);
-        if(tier === 'default'){
-          toast('AI 기본 모드: 오늘 팩트 + 최근 연계 + 내일 1가지 행동 (3문장)');
-        } else if(tier === 'medium'){
-          toast('AI 중간 모드: 최근 3~5일 실천 궤적 + 루틴 마찰점 분석');
-        } else if(tier === 'macro'){
-          toast('AI 정밀 모드: D-Day 가상 레일 사각지대 진단 + 캘린더 일정 추천');
-        }
-      };
-    });
-  }
-
-  function buildFeedbackPrompt(goal, text, theme, upcomingSchedules, mode, recentRecords){
-    goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-    if(!Array.isArray(goal.milestones)) goal.milestones = [];
-    mode = mode || state.aiFeedbackMode || 'default';
-    recentRecords = recentRecords || getRecentCheckinsForAI(3);
-    var detectedTheme = theme || ((typeof classifyRecordTheme === 'function') ? classifyRecordTheme(text, goal ? goal.category : null).theme : 'daily');
-    var themeLens = THEME_FEEDBACK_PROMPTS[detectedTheme] || THEME_FEEDBACK_PROMPTS.daily;
-    var msJson = JSON.stringify(milestonesForAI(goal));
-    var settings = state.profile.settings;
-    var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
-    var personaBlock = custom ? ('[페르소나 지침]\r\n'+custom+'\r\n\r\n') : '';
-    var roleLine = custom
-      ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
-      : '당신은 목표 달성 코치입니다.';
-    var thLabel = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[detectedTheme]) ? RECORD_THEMES[detectedTheme].label : detectedTheme;
-
-    var recentBlock = '';
-    if(Array.isArray(recentRecords) && recentRecords.length > 0){
-      recentBlock = '\r\n\r\n[최근 3일 실천 기록 (연계 분석용)]\r\n' +
-        recentRecords.map(function(r){ return '- (' + r.date + ') ' + r.text; }).join('\r\n') +
-        '\r\n지침: 사용자의 최근 실천 흐름과 오늘 기록을 비교·연계하여 조언하세요.\r\n';
-    }
-
-    var modeInstruction = '';
-    if(mode === 'default'){
-      modeInstruction = '\r\n[모드: 기본 피드백] 오늘 기록 팩트 분석 + 어제/최근 연계 + 내일 1가지 행동 위주로 총 3문장 이내로 작성하세요.\r\n';
-    } else if(mode === 'medium'){
-      modeInstruction = '\r\n[모드: 중간 피드백] 최근 3~5일 실천 궤적과 루틴 마찰점을 분석하여 5~6문장으로 구체적인 피드백을 제공하세요.\r\n';
-    } else if(mode === 'macro'){
-      modeInstruction = '\r\n[모드: 정밀 피드백] D-Day 목표와 향후 30일 일정을 대조하여 사각지대를 진단하고 전략적 조언을 제공하세요.\r\n';
-    }
-
-    upcomingSchedules = upcomingSchedules || getUpcomingSchedulesForAI(30);
-    var schedSection = '';
-    if(Array.isArray(upcomingSchedules) && upcomingSchedules.length > 0){
-      var schedListStr = upcomingSchedules.map(function(s){
-        return '- [' + s.dday + ' / ' + s.date + '] ' + s.title + ' (관련: ' + (s.category||'일반') + ')';
-      }).join('\r\n');
-      schedSection = '\r\n\r\n[향후 30일간의 다가오는 일정 목록]\r\n' + schedListStr + '\r\n\r\n' +
-        '[일정 연계 피드백 지침 - 필수 준수]\r\n' +
-        '1. 사용자의 체크인/기록에 대한 피드백을 충실히 제공하면서, 위 [향후 30일간의 다가오는 일정 목록]을 확인하세요.\r\n' +
-        '2. 만약 이번 기록과 맥락상 관련이 있거나(예: 목표 준비 과정, 대회/발표/시험 대비 등), 사용자가 놓치기 쉽고 미리 계획/준비해야 할 중요한 임박 일정(D-3~D-7 이내 등)이 있다면 comment 끝에 자연스럽게 1~2문장의 일정 리마인드 및 준비 조언을 함께 포함하세요.\r\n' +
-        '3. ★ 절대 주의: 관련없는 피드백을 위한 피드백은 엄격히 금지합니다. 기록과 전혀 무관하고 급하지도 않은 일정을 억지로 끌어오거나 형식적인 참견을 하지 마세요. 연관된 일정이 없거나 특별히 챙길 것이 없을 때는 기록에 대한 본연의 코칭에만 집중하세요.';
-    }
-
-    return personaBlock + roleLine + ' [기록 테마 코칭 지침: ' + thLabel + ']\r\n' + themeLens + '\r\n\r\n' +
-      recentBlock + modeInstruction + '\r\n\r\n' +
-      '사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
-      '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\r\n\r\n' +
-      '[기록 테마]\r\n' + thLabel + '\r\n\r\n' +
-      '[사용자의 목표]\r\n최종 목표: ' + goal.title + '\r\n\r\n' +
-      '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\r\n' + msJson + '\r\n\r\n' +
-      '[방금 남긴 기록]\r\n"' + text + '"' +
-      schedSection + '\r\n\r\n' +
-      '아래 JSON 형식으로만 답하세요. 다른 텍스트나 코드블록, 마크다운 없이 순수 JSON만 출력하세요.\r\n' +
-      '근거가 확실하지 않으면 suggestions는 빈 배열로 두세요. 애매하면 절대 추측해서 제안하지 마세요.\r\n' +
-      '특히 기록에 특정 마일스톤·할 일과 관련된 구체적인 계획·방법·루틴(예: "주 3회 루틴 만들기" 항목에 대해 언제·어떻게 운동할지)이 담겨 있다면, ' +
-      'field를 "note"로 하고 value에 사용자가 말한 내용을 1~2문장으로 자연스럽게 정리해 그 항목의 결과 메모로 제안하세요(사용자의 표현을 존중하되 군더더기 없이 요약).\r\n' +
-      '{"verdict":"도움됨 또는 애매함 또는 도움안됨 중 하나",' +
-      '"comment":"1~2문장의 짧고 솔직한 피드백 (필요 시 자연스러운 다가오는 일정 리마인드 포함, 무관한 강제 피드백 금지)",' +
-      '"suggestions":[{"type":"milestone 또는 task","id":"위 목록에 있는 id 값 그대로",' +
-      '"field":"status 또는 done 또는 result 또는 note 중 하나",' +
-      '"value":"status면 todo/doing/done 중 하나, done이면 true/false, result면 result.target이 이미 있는 항목에 한해 새 숫자값, note면 기록 내용을 정리한 1~2문장 요약",' +
-      '"reason":"왜 이렇게 판단했는지 1문장"}]}';
-  }
-  function parseFeedbackJSON(raw){
-    var clean = raw.replace(/```json|```/g,'').trim();
-    var parsed = JSON.parse(clean);
-    if(!parsed || !parsed.verdict) throw new Error('bad shape');
-    if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
-    return parsed;
-  }
-  async function requestAIFeedback(goal, text, theme){
-    if(!goal){
-      goal = (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-    }
-    var provider = (state.profile.settings.aiProvider) || 'gemini';
-    if(provider==='gemini' && state.profile.settings.geminiKey){
-      var g = await requestGeminiFeedback(goal, text, theme);
-      if(g) return g;
-    }
-    return requestServerAIFeedback(goal, text, theme);
-  }
+  /* [#TASK-ES-436] getUpcomingSchedulesForAI · getRecentCheckinsForAI · getLastFeedbackAdvice · initFeedbackTierBar · buildFeedbackPrompt · parseFeedbackJSON · requestAIFeedback → js/tabs/records/ai-feedback.js 로 옮김(인라인 스크립트 세포화 P1) */
 
   /* ============ [#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐 ============ */
   var PREMIUM_FEEDBACK_CATALOG = {
@@ -15655,189 +15424,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.GeminiQuotaDispatcher = GeminiQuotaDispatcher;
   window.PREMIUM_FEEDBACK_CATALOG = PREMIUM_FEEDBACK_CATALOG;
 
-  async function requestServerAIFeedback(goal, text, theme){
-    return GeminiQuotaDispatcher.execute(
-      async function(){
-        goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-        if(!Array.isArray(goal.milestones)) goal.milestones = [];
-        var settings = state.profile.settings;
-        var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
-        var upcomingSchedules = getUpcomingSchedulesForAI(30);
-        var recentRecords = getRecentCheckinsForAI(3);
-        var lastAdvice = getLastFeedbackAdvice();
-        var mode = state.aiFeedbackMode || 'default';
-        var controller = new AbortController();
-        var timer = setTimeout(function(){ controller.abort(); }, 12000);
-        try{
-          var res = await fetch('/api/feedback', {
-            method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-            body: JSON.stringify({
-              goalTitle: goal.title,
-              milestones: milestonesForAI(goal),
-              text: text,
-              customPrompt: custom,
-              theme: theme,
-              geminiKey: settings.geminiKey || '',
-              upcomingSchedules: upcomingSchedules,
-              mode: mode,
-              recentRecords: recentRecords,
-              lastAdvice: lastAdvice
-            })
-          });
-          clearTimeout(timer);
-          if(!res.ok) throw new Error('server bad status ' + res.status);
-          var parsed = await res.json();
-          if(!parsed || !parsed.verdict) throw new Error('bad shape');
-          if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
-          parsed.source = (parsed.provider === 'local_smart' || parsed.provider === 'server_period_smart') ? 'local_enhanced' : 'gemini';
-          parsed.persona = !!custom;
-          parsed.feedbackMode = mode;
-          return parsed;
-        } catch(e){
-          clearTimeout(timer);
-          throw e;
-        }
-      },
-      function(){
-        return GeminiQuotaDispatcher.getPremiumFeedback(goal, text, theme, state.aiFeedbackMode);
-      }
-    );
-  }
+  /* [#TASK-ES-436] requestServerAIFeedback → js/tabs/records/ai-feedback-providers.js 로 옮김(인라인 스크립트 세포화 P1) */
   var requestClaudeFeedback = requestServerAIFeedback;
 
-  async function requestGeminiFeedback(goal, text, theme){
-    return GeminiQuotaDispatcher.execute(
-      async function(){
-        var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
-        var mode = state.aiFeedbackMode || 'default';
-        var recentRecords = getRecentCheckinsForAI(3);
-        var upcomingSchedules = getUpcomingSchedulesForAI(30);
-        var prompt = buildFeedbackPrompt(goal, text, theme, upcomingSchedules, mode, recentRecords);
-        var model = state.profile.settings.geminiModel || 'gemini-3.1-flash-lite';
-        var controller = new AbortController();
-        var timer = setTimeout(function(){ controller.abort(); }, 12000);
-        try{
-          var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent', {
-            method:'POST',
-            headers:{ 'Content-Type':'application/json', 'x-goog-api-key': state.profile.settings.geminiKey },
-            signal: controller.signal,
-            body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] })
-          });
-          clearTimeout(timer);
-          if(!res.ok){
-            var errBody = await res.text().catch(function(){ return ''; });
-            throw new Error('gemini bad status '+res.status+' '+errBody.slice(0,200));
-          }
-          var data = await res.json();
-          var raw = ((data.candidates||[])[0]||{}).content && data.candidates[0].content.parts
-            ? data.candidates[0].content.parts.map(function(p){ return p.text||''; }).join('\r\n')
-            : '';
-          if(!raw) throw new Error('empty gemini response');
-          var parsed = parseFeedbackJSON(raw);
-          parsed.source = 'gemini';
-          parsed.persona = geminiPersona;
-          parsed.feedbackMode = mode;
-          return parsed;
-        } catch(e){
-          clearTimeout(timer);
-          throw e;
-        }
-      },
-      function(){
-        return GeminiQuotaDispatcher.getPremiumFeedback(goal, text, theme, state.aiFeedbackMode);
-      }
-    );
-  }
+  /* [#TASK-ES-436] requestGeminiFeedback → js/tabs/records/ai-feedback-providers.js 로 옮김(인라인 스크립트 세포화 P1) */
   var DONE_KEYWORDS = ['완료','다 했','다했','끝냈','끝났','달성','마쳤','마무리','성공','clear','done'];
-  function localFeedback(goal, text, theme, upcomingSchedules){
-    goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-    if(!Array.isArray(goal.milestones)) goal.milestones = [];
-    var hay = text.toLowerCase();
-    var detectedTheme = theme || ((typeof classifyRecordTheme === 'function') ? classifyRecordTheme(text, goal ? goal.category : null).theme : 'daily');
-    var goalWords = Array.from(new Set((goal.title+' '+(goal.milestones||[]).map(function(m){return m.title;}).join(' ')).toLowerCase().split(/[^a-z0-9가-힣]+/i).filter(function(w){ return w.length>1; })));
-    var hit = goalWords.some(function(w){ return w && hay.indexOf(w)!==-1; });
-    var hasDoneKeyword = DONE_KEYWORDS.some(function(k){ return hay.indexOf(k.toLowerCase())!==-1; });
-    var suggestions = [];
-    (goal.milestones||[]).forEach(function(m){
-      var titleWords = m.title.toLowerCase().split(/[^a-z0-9가-힣]+/i).filter(function(w){ return w.length>1; });
-      var titleHit = titleWords.some(function(w){ return w && hay.indexOf(w)!==-1; });
-      if(!titleHit) return;
-      if(hasDoneKeyword && m.status!=='done'){
-        suggestions.push({ type:'milestone', id:m.id, field:'status', value:'done', reason:'기록에 "'+m.title+'"와(과) 완료를 암시하는 표현이 함께 있어요' });
-      } else if(m.status==='todo'){
-        suggestions.push({ type:'milestone', id:m.id, field:'status', value:'doing', reason:'기록에 "'+m.title+'" 관련 내용이 있어요' });
-      }
-    });
-
-    var mode = (state && state.aiFeedbackMode) || 'default';
-    var recentRecs = getRecentCheckinsForAI(3);
-    var comment = '';
-    // 기본(default), 중간(medium), 정밀(macro) 3대 맞춤 모드 분기
-    if(mode === 'macro'){
-      comment = '[정밀 진단] ' + (goal ? '"' + goal.title + '"의 D-Day 달성 궤적을 심층 분석했습니다. ' : '현재 목표의 D-Day 달성 궤적을 심층 분석했습니다. ') +
-        '실행 밀도는 안정권이나 후반부 마일스톤 병목 위험을 사전에 방지할 필요가 있습니다. ' +
-        '추천드린 중간 점검 일정을 캘린더에 연동하여 사각지대 없는 실행 레일을 유지하세요.';
-    } else if(mode === 'medium'){
-      var trendWord = (recentRecs.length >= 2) ? '최근 실천 리듬이 안정적으로 누적되고 있습니다. ' : '실천 루틴을 정착시키는 중요한 분기점입니다. ';
-      comment = '[페이스 조율] ' + trendWord + (hit ? '"' + goal.title + '" 실행의 마찰을 줄이고 호흡을 조절하기에 최적의 타이밍입니다. ' : '무리한 확장보다는 집중도와 피로도의 균형을 맞추어 루틴의 지속 가능성을 높여보세요. ') +
-        '현재 강도를 1주일간 유지하며 일상 속 정착을 권장합니다.';
-    } else {
-      var hitSentence = hit ? ('"' + goal.title + '"를 향한 소중한 실천을 충실히 완수하셨습니다.') : '오늘 계획된 실천을 훌륭히 수행하셨습니다.';
-      var trajSentence = (recentRecs.length > 0) ? ('최근 ' + recentRecs.length + '일간 이어진 꾸준함이 확실한 성장의 모멘텀이 되고 있어요. ') : '오늘의 첫 실천이 내일의 큰 성장을 만드는 소중한 씨앗입니다. ';
-      var nextSentence = '내일도 같은 시간대에 가벼운 1회 실천으로 이 좋은 리듬을 계속 이어가 보세요!';
-      comment = hitSentence + trajSentence + nextSentence;
-    }
-
-    // 향후 30일 일정 연계 피드백 (단, 관련없는 피드백을 위한 피드백은 절대 금지)
-    upcomingSchedules = upcomingSchedules || getUpcomingSchedulesForAI(30);
-    if(Array.isArray(upcomingSchedules) && upcomingSchedules.length > 0){
-      var relevantSched = upcomingSchedules.find(function(s){
-        var sTitle = (s.title || '').toLowerCase();
-        // 1) 이번 기록 텍스트에 해당 일정의 핵심 키워드가 직접적으로 들어간 경우
-        var words = sTitle.split(/[^a-z0-9가-힣]+/i).filter(function(w){ return w.length >= 2; });
-        var textMatch = words.some(function(w){ return hay.indexOf(w) !== -1; });
-        // 2) 또는 3일 이내 임박한 일정(D-Day ~ D-3)이며 사용자의 현재 목표/기록 테마와 밀접한 경우
-        var isUrgent = s.diffDays !== undefined && s.diffDays >= 0 && s.diffDays <= 3;
-        var categoryMatch = s.category && goal.title && (goal.title.indexOf(s.category) !== -1 || s.category.indexOf(goal.title) !== -1);
-        return textMatch || (isUrgent && (categoryMatch || hit));
-      });
-      if(relevantSched){
-        comment += ' 💡 (다가오는 일정 알림: ' + relevantSched.dday + ' "' + relevantSched.title + '" 일정도 잊지 말고 미리 챙겨보세요!)';
-      }
-    }
-
-    var verdict = '핵심 발견';
-    if(mode === 'macro') verdict = '정밀 진단';
-    else if(mode === 'medium') verdict = '페이스 조율';
-    else if(hit || hasDoneKeyword) verdict = '실천 완주';
-
-    var calAction = null;
-    if(mode === 'macro'){
-      calAction = {
-        has_suggestion: true,
-        suggested_date: new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10),
-        suggested_time: '14:00',
-        title: (goal ? goal.title.slice(0, 15) : '목표') + ' 정밀 점검 및 중간 회고',
-        duration_minutes: 60,
-        note: 'D-Day 가상 레일 점검을 위한 캘린더 추천 일정'
-      };
-    }
-
-    // 모드 및 상태 무결성 보존 객체 반환
-    return {
-      verdict: verdict,
-      comment: comment,
-      next_action: nextSentence,
-      nextAction: nextSentence,
-      fact_insight: hitSentence,
-      factInsight: hitSentence,
-      source: 'local',
-      theme: detectedTheme,
-      suggestions: suggestions,
-      feedbackMode: mode,
-      calendarAction: calAction
-    };
-  }
+  /* [#TASK-ES-436] localFeedback → js/tabs/records/ai-feedback-providers.js 로 옮김(인라인 스크립트 세포화 P1) */
   /* ============ 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안 ============ */
   function findSuggestionTarget(goal, s){
     if(s.type==='milestone'){
@@ -18603,8 +18195,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     promptNewGoal();
   });
 
-  document.getElementById('mzShareBtn').addEventListener('click', function(){
-    setTab('comm');
+  /* [#TASK-ES-433] 홈 「내 성장 확인하기」·「내 성장 자랑하기」 처리기는 시작 때 한 벌씩 — renderHome 은 목표 0개면 일찍 끝나 거기서 걸던 처리기가 게스트에겐 없었다 */
+  var challengeBtn = document.getElementById('homeChallengeRoomBtn');
+  if(challengeBtn){
+    challengeBtn.onclick = function(){ setTab('records'); };
+  }
+  document.getElementById('mzShareBtn').addEventListener('click', function(){ /* [#TASK-ES-433] 처리기 한 벌: 「내 성장 자랑하기」 = 갓생 카드 창만 연다(소통 탭 이동 없음) */
+    openMzShareCardModal();
   });
 
   /* ============ New goal modal ============ */
@@ -18921,61 +18518,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.showNewGoalChatStep = showNewGoalChatStep;
   }
 
-  /* ============ 대화로 목표 관리 (AI diff 제안 + 확인 후 반영) ============ */
-  function goalAgentSnapshot(){
-    return state.profile.goals.filter(function(g){ return !g.archivedAt; }).map(function(g){
-      return {
-        id: g.id, title: g.title, dueDate: g.dueDate || null,
-        milestones: (g.milestones||[]).map(function(m){
-          return {
-            id: m.id, title: m.title, status: m.status, dueDate: m.dueDate || null,
-            tasks: (m.tasks||[]).map(function(t){ return { id: t.id, title: t.title, done: !!t.done }; })
-          };
-        })
-      };
-    });
-  }
-  async function requestGoalAgentDiff(message){
-    var controller = new AbortController();
-    var timer = setTimeout(function(){ controller.abort(); }, 28000);
-    var settings = (state.profile && state.profile.settings) || {};
-    try{
-      var res = await fetch('/api/goalagent', {
-        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({
-          message: message,
-          goals: goalAgentSnapshot(),
-          today: new Date().toISOString().slice(0,10),
-          geminiKey: settings.geminiKey || ''
-        })
-      });
-      clearTimeout(timer);
-      if(!res.ok) {
-        var errBody = await res.json().catch(function(){ return {}; });
-        if(errBody.error === 'CONTENT_FILTER_REJECTED'){
-          return { ops: [], isBlocked: true, reply: errBody.message, detail: errBody.detail, support: errBody.support, notice: errBody.notice };
-        }
-        return { ops: [], reply: errBody.error || '요청을 처리하지 못했어요 · 다시 시도해주세요' };
-      }
-      var data = await res.json();
-      if(!data || !Array.isArray(data.ops)) return null;
-      return data;
-    } catch(e){ clearTimeout(timer); return null; }
-  }
-  function sanitizeAttachments(arr){
-    if(!Array.isArray(arr)) return [];
-    return arr.filter(function(a){ return a && (a.title || a.url || a.note); }).map(function(a){
-      var t = a.type || 'link';
-      if(t !== 'video' && t !== 'image' && t !== 'text' && t !== 'link') t = 'link';
-      return {
-        id: a.id || uid('att'),
-        type: t,
-        title: String(a.title || (t === 'video' ? '영상' : (t === 'image' ? '이미지' : (t === 'text' ? '메모' : '링크')))).slice(0, 100),
-        url: a.url ? String(a.url).slice(0, 500) : '',
-        note: a.note ? String(a.note).slice(0, 500) : ''
-      };
-    });
-  }
+  /* [#TASK-ES-436] goalAgentSnapshot · requestGoalAgentDiff · sanitizeAttachments → js/tabs/goals/ai-agent.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
 
   /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
   /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
@@ -19540,443 +19083,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return true;
   }
   /* ============ 목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5) ============ */
-  function renderGoalOpsFullPreviewHtml(ops){
-    if(!ops || !ops.length) return '<p class="faint">반영할 변경사항이 없습니다.</p>';
-    ops.forEach(function(op){
-      if(op && op.level==='goal' && op.type==='CREATE' && op.data && Array.isArray(op.data.milestones)){
-        normalizeSequentialMilestoneDates(op.data.milestones, op.data.dueDate);
-      }
-    });
-    var html = '<div class="scroll-preview-box">';
-    ops.forEach(function(op, opIdx){
-      var icon = op.type==='CREATE' ? '➕' : (op.type==='DELETE' ? '🗑' : '✏️');
-      var typeLabel = op.type==='CREATE' ? '새로 생성' : (op.type==='DELETE' ? '삭제' : '수정');
-      var levelLabel = op.level==='goal' ? '목표' : (op.level==='milestone' ? '마일스톤' : '할 일');
-
-      html += '<div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--rule);">';
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-        '<div style="font-weight:700;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-          '<span>'+icon+'</span>' +
-          '<span>'+levelLabel+' '+typeLabel+'</span>' +
-        '</div>' +
-        '<span class="faint" style="font-size:.8125rem;">'+escapeHtml(op.summary||'')+'</span>' +
-      '</div>';
-
-      if(op.level==='goal' && op.type==='CREATE' && op.data){
-        var gData = op.data;
-        html += '<div style="background:var(--card);padding:10px;border-radius:10px;border:1px solid var(--rule);">';
-        html += '<div style="font-weight:700;font-size:.9rem;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-          '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span><span>'+escapeHtml(gData.title||'새 목표')+'</span>' +
-          (gData.dueDate ? '<span class="dday-mini" style="margin-left:4px;">'+escapeHtml(gData.dueDate)+'</span>' : '') +
-        '</div>';
-        if(gData.topicMajor){
-          var tmInfo = TOPICS[gData.topicMajor];
-          html += '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+(tmInfo?tmInfo.icon+' '+tmInfo.label:gData.topicMajor)+(gData.topicMinor?' · '+escapeHtml(gData.topicMinor):'')+'</div>';
-        }
-        if(gData.attachments && gData.attachments.length){
-          html += '<div class="att-chips-wrap" style="margin-top:4px;">'+gData.attachments.map(function(a){
-            var aIco = a.type==='video'?'🎥':(a.type==='image'?'🖼️':(a.type==='text'?'📝':'🔗'));
-            return '<span class="att-chip" style="cursor:default;">'+aIco+' '+escapeHtml(a.title||'참고자료')+'</span>';
-          }).join('')+'</div>';
-        }
-        if(gData.milestones && gData.milestones.length){
-          html += '<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--rule);">';
-          html += '<div style="font-size:.8125rem;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">마일스톤 및 세부 할 일 ('+gData.milestones.length+'단계)</div>';
-          gData.milestones.forEach(function(m, mIdx){
-            html += '<div style="margin-bottom:6px;padding:6px 8px;background:var(--card2);border-radius:8px;">';
-            var msTitle = (m.title || '마일스톤').trim();
-            var cleanMsTitle = msTitle.replace(/^(?:(?:\d+|[일이삼사오육칠팔구십]+)단계[:\.\s]*|단계\s*\d+[:\.\s]*)/i, '').trim();
-            html += '<div style="font-size:.875rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
-              '<span>' + (mIdx+1) + '단계. ' + escapeHtml(cleanMsTitle || msTitle) + '</span>' +
-              (m.dueDate ? '<span class="faint" style="font-size:.7rem;white-space:nowrap;">'+escapeHtml(m.dueDate)+'</span>' : '') +
-            '</div>';
-            if(m.attachments && m.attachments.length){
-              html += '<div class="att-chips-wrap" style="margin-top:2px;">'+m.attachments.map(function(a){
-                var aIco = a.type==='video'?'🎥':(a.type==='image'?'🖼️':(a.type==='text'?'📝':'🔗'));
-                return '<span class="att-chip" style="cursor:default;font-size:.6875rem;padding:1px 5px;">'+aIco+' '+escapeHtml(a.title||'참고')+'</span>';
-              }).join('')+'</div>';
-            }
-            if(m.tasks && m.tasks.length){
-              html += '<div style="margin-top:4px;padding-left:8px;display:flex;flex-direction:column;gap:3px;">';
-              m.tasks.forEach(function(t){
-                var tTitle = typeof t==='string' ? t : (t&&t.title)||'';
-                var tDue = (t&&t.dueDate)||null;
-                html += '<div class="faint" style="font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
-                  '<span>' + escapeHtml(tTitle) + '</span>' +
-                  (tDue ? '<span style="font-size:.6875rem;white-space:nowrap;">'+escapeHtml(tDue)+'</span>' : '') +
-                '</div>';
-              });
-              html += '</div>';
-            }
-            html += '</div>';
-          });
-          html += '</div>';
-        }
-        html += '</div>';
-      } else if(op.level==='milestone' && op.type==='CREATE' && op.data){
-        var mData = op.data;
-        html += '<div style="background:var(--card);padding:8px 10px;border-radius:10px;border:1px solid var(--rule);">';
-        html += '<div style="font-weight:700;font-size:.875rem;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
-          '<span>' + escapeHtml(mData.title||'새 마일스톤') + '</span>' +
-          (mData.dueDate ? '<span class="faint" style="font-size:.8125rem;white-space:nowrap;">'+escapeHtml(mData.dueDate)+'</span>' : '') +
-        '</div>';
-        if(mData.tasks && mData.tasks.length){
-          html += '<div style="margin-top:4px;padding-left:8px;display:flex;flex-direction:column;gap:3px;">';
-          mData.tasks.forEach(function(t){
-            var tkTitle = typeof t==='string' ? t : (t&&t.title)||'';
-            html += '<div class="faint" style="font-size:.8125rem;">' + escapeHtml(tkTitle) + '</div>';
-          });
-          html += '</div>';
-        }
-        html += '</div>';
-      } else if(op.level==='task' && op.type==='CREATE' && op.data){
-        var tkTitle = typeof op.data==='string' ? op.data : (op.data&&op.data.title)||'새 할 일';
-        var tkDue = op.data&&op.data.dueDate;
-        html += '<div style="font-size:.875rem;padding:4px 8px;background:var(--card);border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
-          '<span>' + escapeHtml(tkTitle) + '</span>' +
-          (tkDue ? '<span class="faint" style="font-size:.8125rem;white-space:nowrap;">'+escapeHtml(tkDue)+'</span>' : '') +
-        '</div>';
-      } else if(op.type==='UPDATE' && op.data){
-        html += '<div style="font-size:.8125rem;color:var(--ink-soft);padding:4px 8px;background:var(--card);border-radius:6px;line-height:1.5;">';
-        if(op.data.title) html += '• 제목 변경: <b>' + escapeHtml(op.data.title) + '</b><br>';
-        if(op.data.dueDate) html += '• 일정/마감일 변경: <b>' + escapeHtml(op.data.dueDate) + '</b><br>';
-        if(op.data.status) html += '• 상태 변경: <b>' + escapeHtml(op.data.status) + '</b><br>';
-        if(op.data.attachments) html += '• 참고자료 업데이트: <b>' + op.data.attachments.length + '건</b><br>';
-        html += '</div>';
-      } else if(op.type==='DELETE'){
-        html += '<div class="faint" style="font-size:.8125rem;color:var(--brand-strong);">삭제 예정: ' + escapeHtml(op.summary||'해당 항목') + '</div>';
-      } else {
-        html += '<div class="faint" style="font-size:.8125rem;">' + escapeHtml(op.summary||'') + '</div>';
-      }
-      html += '</div>';
-    });
-    html += '</div>';
-    return html;
-  }
-
-  function showGoalAgentLoadingStep(){
-    openModal('<h3>이대로 반영할까요?</h3>' + fbBotBubbleHtml('<p class="faint" style="margin:0;">요청을 분석하는 중…</p>'), null);
-  }
-  function showGoalAgentReviewStep(diff, lastPrompt, revisionCount){
-    revisionCount = revisionCount || 0;
-    if(revisionCount >= 3){
-      var applied = 0;
-      diff.ops.forEach(function(op){ if(applyGoalAgentOp(op)) applied++; });
-      saveProfile().then(function(){
-        renderAll();
-        if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
-        openModal(
-          '<h3>목표설정 자동 반영 완료</h3>' +
-          '<div style="padding:14px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);margin:12px 0 16px;">' +
-            '<p style="margin:0;line-height:1.6;color:var(--ink);font-weight:700;font-size:.9rem;">' +
-              '3번 수정하여 일단 자동으로 목표설정 반영되었습니다. 편집을 통해 다시 수정하실 수 있습니다.' +
-            '</p>' +
-          '</div>' +
-          renderGoalOpsFullPreviewHtml(diff.ops) +
-          '<div class="modal-actions"><button class="btn btn-primary btn-block" id="gaAutoDoneBtn" type="button">확인</button></div>',
-          function(sheet){
-            sheet.querySelector('#gaAutoDoneBtn').addEventListener('click', closeModal);
-          }
-        );
-        toast('3번 수정으로 자동 반영되었습니다');
-      });
-      return;
-    }
-
-    // Check if this is a goal CREATE operation (#TASK-ES-236)
-    var createGoalOp = (diff && diff.ops || []).find(function(op){ return op && op.level === 'goal' && op.type === 'CREATE' && op.data; });
-
-    if(createGoalOp){
-      var gData = createGoalOp.data;
-      var rawMilestones = gData.milestones || [];
-      var revBadge = revisionCount > 0 ? '<span class="dday-pill" style="margin-left:6px;background:var(--sage-soft);color:var(--sage);font-size:.6875rem;">수정보완 '+revisionCount+'/3회</span>' : '';
-
-      var modalHtml = '<div class="ga-plan-preview-sheet">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-          '<h3 style="margin:0;font-size:1.1rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-            '<span>✨</span><span>제안된 목표 플랜 확인</span>' +
-          '</h3>' +
-          revBadge +
-        '</div>' +
-        '<p style="margin:0 0 12px;font-size:.8125rem;color:var(--ink-soft);line-height:1.45;">' +
-          (diff.reply ? escapeHtml(diff.reply) + '<br>' : '') +
-          '내 상황에 맞게 <b>목표 제목을 수정</b>하고 <b>필요한 단계(마일스톤)</b>만 골라 담아보세요.' +
-        '</p>' +
-
-        '<!-- 목표 제목 인라인 수정 -->' +
-        '<div style="margin-bottom:12px;">' +
-          '<label style="display:block;font-size:.78125rem;font-weight:700;color:var(--ink);margin-bottom:4px;">🎯 목표 제목 (터치하여 수정 가능)</label>' +
-          '<input id="gaGoalTitleInput" type="text" class="input-base" value="' + escapeHtml(gData.title || '') + '" style="width:100%;box-sizing:border-box;font-weight:700;font-size:.95rem;padding:8px 10px;border-radius:10px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);">' +
-        '</div>' +
-
-        '<!-- 실천 주기 선택 칩 -->' +
-        '<div style="margin-bottom:12px;">' +
-          '<label style="display:block;font-size:.78125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">📅 추천 실천 주기</label>' +
-          '<div class="goal-freq-chips" id="gaFreqChips">' +
-            '<button type="button" class="goal-freq-chip active" data-freq="매일">매일 실천</button>' +
-            '<button type="button" class="goal-freq-chip" data-freq="주 3회">주 3회 실천</button>' +
-            '<button type="button" class="goal-freq-chip" data-freq="주 5회">주 5회 실천</button>' +
-            '<button type="button" class="goal-freq-chip" data-freq="주말마다">주말마다 실천</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<!-- 마일스톤 단계 On/Off 선택 및 인라인 수정 -->' +
-        '<div style="margin-bottom:14px;">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-            '<label style="font-size:.78125rem;font-weight:700;color:var(--ink);">📌 실천 단계 선택 & 수정 (' + rawMilestones.length + '단계)</label>' +
-            '<span class="faint" style="font-size:.72rem;">체크 해제 시 해당 단계 제외</span>' +
-          '</div>' +
-          '<div id="gaMilestonesList" style="display:flex;flex-direction:column;gap:8px;max-height:240px;overflow-y:auto;padding-right:2px;">' +
-            rawMilestones.map(function(m, mIdx){
-              var mTitle = m.title || ('단계 ' + (mIdx+1));
-              return '<div class="ga-ms-card" id="gaMsCard_' + mIdx + '" style="padding:8px 10px;background:var(--card2);border:1px solid var(--rule);border-radius:10px;">' +
-                '<div style="display:flex;align-items:center;gap:8px;">' +
-                  '<input type="checkbox" id="gaMsCheck_' + mIdx + '" class="ga-ms-check" data-midx="' + mIdx + '" checked style="width:18px;height:18px;cursor:pointer;flex-shrink:0;">' +
-                  '<label for="gaMsCheck_' + mIdx + '" style="font-weight:700;font-size:.8125rem;color:var(--brand);flex-shrink:0;cursor:pointer;">' + (mIdx+1) + '단계</label>' +
-                  '<input type="text" class="ga-ms-title-inp" id="gaMsTitleInp_' + mIdx + '" data-midx="' + mIdx + '" value="' + escapeHtml(mTitle) + '" style="flex:1;min-width:0;font-size:.875rem;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);color:var(--ink);">' +
-                '</div>' +
-                (m.tasks && m.tasks.length ? '<div style="margin-top:4px;padding-left:26px;font-size:.75rem;color:var(--ink-soft);">' +
-                  m.tasks.map(function(t){ return '• ' + escapeHtml(typeof t==='string'?t:(t&&t.title)||''); }).join('  ') +
-                '</div>' : '') +
-              '</div>';
-            }).join('') +
-          '</div>' +
-        '</div>' +
-
-        '<!-- 추가 수정 입력 박스 -->' +
-        '<div id="gaReviseBox" style="display:none;margin-top:12px;padding:12px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);">' +
-          '<div style="font-weight:700;font-size:.8125rem;margin-bottom:6px;color:var(--ink);">보완하거나 다시 설명할 내용을 적어주세요 ('+(revisionCount+1)+'/3회)</div>' +
-          '<textarea id="gaReviseInput" rows="2" style="width:100%;box-sizing:border-box;border-radius:8px;padding:8px;font-size:.875rem;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);resize:vertical;" placeholder="예: 첫 번째 단계를 가볍게 줄여줘, 일정 시간을 오후 3시로 바꿔줘"></textarea>' +
-          '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;">' +
-            '<button class="btn btn-ghost btn-sm" id="gaReviseCancelBtn" type="button">닫기</button>' +
-            '<button class="btn btn-primary btn-sm" id="gaReviseSubmitBtn" type="button">수정 요청 전송</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="modal-actions" style="margin-top:14px;gap:8px;">' +
-          '<button class="btn btn-ghost" id="gaCancelBtn" type="button">취소</button>' +
-          '<button class="btn btn-ghost" id="gaReviseBtn" type="button" style="color:var(--ink);border-color:var(--ink);">추가수정 ('+(revisionCount+1)+'/3)</button>' +
-          '<button class="btn btn-primary" id="gaApplyBtn" type="button" style="font-weight:700;flex:1.5;">🎯 이 플랜으로 내 목표 만들기</button>' +
-        '</div>' +
-      '</div>';
-
-      openModal(modalHtml, function(sheet){
-        sheet.querySelector('#gaCancelBtn').addEventListener('click', function(){
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-          closeModal();
-        });
-
-        // 실천 주기 칩 인터랙션
-        var selectedFreq = '매일';
-        sheet.querySelectorAll('#gaFreqChips .goal-freq-chip').forEach(function(chip){
-          chip.addEventListener('click', function(){
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(10);
-            sheet.querySelectorAll('#gaFreqChips .goal-freq-chip').forEach(function(c){ c.classList.remove('active'); });
-            chip.classList.add('active');
-            selectedFreq = chip.dataset.freq || '매일';
-          });
-        });
-
-        // 단계 체크박스 인터랙션 (체크 해제 시 카드 음영 처리)
-        sheet.querySelectorAll('.ga-ms-check').forEach(function(chk){
-          chk.addEventListener('change', function(){
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(10);
-            var midx = chk.dataset.midx;
-            var card = sheet.querySelector('#gaMsCard_' + midx);
-            if(card){
-              card.classList.toggle('disabled', !chk.checked);
-            }
-          });
-        });
-
-        // 추가수정 버튼
-        var reviseBox = sheet.querySelector('#gaReviseBox');
-        var reviseBtn = sheet.querySelector('#gaReviseBtn');
-        if(reviseBtn){
-          reviseBtn.addEventListener('click', function(){
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            reviseBox.style.display = reviseBox.style.display === 'none' ? 'block' : 'none';
-            if(reviseBox.style.display === 'block'){
-              var ta = sheet.querySelector('#gaReviseInput');
-              if(ta) ta.focus();
-            }
-          });
-        }
-        var reviseCancelBtn = sheet.querySelector('#gaReviseCancelBtn');
-        if(reviseCancelBtn){
-          reviseCancelBtn.addEventListener('click', function(){ reviseBox.style.display = 'none'; });
-        }
-        var reviseSubmitBtn = sheet.querySelector('#gaReviseSubmitBtn');
-        if(reviseSubmitBtn){
-          reviseSubmitBtn.addEventListener('click', async function(){
-            var revText = (sheet.querySelector('#gaReviseInput').value || '').trim();
-            if(!revText){ toast('수정할 내용을 입력해주세요'); return; }
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            showGoalAgentLoadingStep();
-            var nextRev = revisionCount + 1;
-            var combinedPrompt = (lastPrompt ? lastPrompt + ' [추가수정보완 ' + nextRev + '회차]: ' : '') + revText;
-            var newDiff = await requestGoalAgentDiff(combinedPrompt);
-            if(!newDiff || !newDiff.ops.length){
-              closeModal();
-              toast((newDiff && newDiff.reply) || '수정 요청을 처리하지 못했어요 · 다시 시도해주세요');
-              return;
-            }
-            showGoalAgentReviewStep(newDiff, combinedPrompt, nextRev);
-          });
-        }
-
-        // 🎯 이 플랜으로 내 목표 만들기 최종 적용 버튼
-        sheet.querySelector('#gaApplyBtn').addEventListener('click', async function(){
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
-          var titleInp = sheet.querySelector('#gaGoalTitleInput');
-          var finalTitle = (titleInp ? titleInp.value.trim() : '') || gData.title || '새 목표';
-
-          var checkedMilestones = [];
-          rawMilestones.forEach(function(m, idx){
-            var chk = sheet.querySelector('#gaMsCheck_' + idx);
-            if(chk && chk.checked){
-              var titleEl = sheet.querySelector('#gaMsTitleInp_' + idx);
-              var customTitle = (titleEl ? titleEl.value.trim() : '') || m.title;
-              checkedMilestones.push(Object.assign({}, m, { title: customTitle }));
-            }
-          });
-
-          if(!checkedMilestones.length){
-            toast('최소 1개 이상의 단계를 선택해주세요');
-            return;
-          }
-
-          // 최종 데이터 반영
-          gData.title = finalTitle;
-          gData.milestones = checkedMilestones;
-          gData.topicMinor = selectedFreq;
-
-          var applied = 0;
-          diff.ops.forEach(function(op){ if(applyGoalAgentOp(op)) applied++; });
-          if(!applied){ closeModal(); toast('반영할 변경사항이 없어요'); return; }
-
-          await saveProfile();
-          closeModal();
-          renderAll();
-          if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
-          toast('🎯 "' + finalTitle + '" 목표가 등록되었어요! 등반을 시작해요 🏔️');
-        });
-      });
-      return;
-    }
-
-    // Default fallback for update/delete ops
-    var revBadge = revisionCount > 0 ? '<span class="dday-pill" style="margin-left:6px;background:var(--sage-soft);color:var(--sage);font-size:.6875rem;">수정보완 '+revisionCount+'/3회</span>' : '';
-    openModal(
-      '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-        '<h3 style="margin:0;">이대로 반영할까요?</h3>' +
-        revBadge +
-      '</div>' +
-      (diff.reply ? '<p class="faint" style="margin:8px 0 10px;font-size:.875rem;line-height:1.5;">'+escapeHtml(diff.reply)+'</p>' : '') +
-      '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">생성된 템플릿과 세부 마일스톤·할 일을 아래 스크롤로 모두 확인해보세요.</p>' +
-      renderGoalOpsFullPreviewHtml(diff.ops) +
-      '<div id="gaReviseBox" style="display:none;margin-top:12px;padding:12px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);">' +
-        '<div style="font-weight:700;font-size:.8125rem;margin-bottom:6px;color:var(--ink);">보완하거나 다시 설명할 내용을 적어주세요 ('+(revisionCount+1)+'/3회)</div>' +
-        '<textarea id="gaReviseInput" rows="2" style="width:100%;box-sizing:border-box;border-radius:8px;padding:8px;font-size:.875rem;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);resize:vertical;" placeholder="예: 첫 번째 단계를 가볍게 줄여줘, 일정 시간을 오후 3시로 바꿔줘, 관련 영상 링크 추가해줘"></textarea>' +
-        '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;">' +
-          '<button class="btn btn-ghost btn-sm" id="gaReviseCancelBtn" type="button">닫기</button>' +
-          '<button class="btn btn-primary btn-sm" id="gaReviseSubmitBtn" type="button">수정 요청 전송</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="modal-actions" style="margin-top:14px;gap:8px;">' +
-        '<button class="btn btn-ghost" id="gaCancelBtn" type="button">취소</button>' +
-        '<button class="btn btn-ghost" id="gaReviseBtn" type="button" style="color:var(--ink);border-color:var(--ink);">추가수정 ('+(revisionCount+1)+'/3)</button>' +
-        '<button class="btn btn-primary" id="gaApplyBtn" type="button">반영</button>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#gaCancelBtn').addEventListener('click', closeModal);
-        var reviseBox = sheet.querySelector('#gaReviseBox');
-        var reviseBtn = sheet.querySelector('#gaReviseBtn');
-        if(reviseBtn){
-          reviseBtn.addEventListener('click', function(){
-            reviseBox.style.display = reviseBox.style.display === 'none' ? 'block' : 'none';
-            if(reviseBox.style.display === 'block'){
-              var ta = sheet.querySelector('#gaReviseInput');
-              if(ta) ta.focus();
-            }
-          });
-        }
-        var reviseCancelBtn = sheet.querySelector('#gaReviseCancelBtn');
-        if(reviseCancelBtn){
-          reviseCancelBtn.addEventListener('click', function(){ reviseBox.style.display = 'none'; });
-        }
-        var reviseSubmitBtn = sheet.querySelector('#gaReviseSubmitBtn');
-        if(reviseSubmitBtn){
-          reviseSubmitBtn.addEventListener('click', async function(){
-            var revText = (sheet.querySelector('#gaReviseInput').value || '').trim();
-            if(!revText){ toast('수정할 내용을 입력해주세요'); return; }
-            showGoalAgentLoadingStep();
-            var nextRev = revisionCount + 1;
-            var combinedPrompt = (lastPrompt ? lastPrompt + ' [추가수정보완 ' + nextRev + '회차]: ' : '') + revText;
-            var newDiff = await requestGoalAgentDiff(combinedPrompt);
-            if(!newDiff || !newDiff.ops.length){
-              closeModal();
-              toast((newDiff && newDiff.reply) || '수정 요청을 처리하지 못했어요 · 다시 시도해주세요');
-              return;
-            }
-            showGoalAgentReviewStep(newDiff, combinedPrompt, nextRev);
-          });
-        }
-        sheet.querySelector('#gaApplyBtn').addEventListener('click', async function(){
-          var applied = 0;
-          diff.ops.forEach(function(op){ if(applyGoalAgentOp(op)) applied++; });
-          if(!applied){ closeModal(); toast('반영할 변경사항이 없어요'); return; }
-          await saveProfile();
-          closeModal();
-          renderAll();
-          if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
-          toast(applied+'개 변경사항을 반영했어요');
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-436] renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep → js/tabs/goals/ai-agent.js 로 옮김(인라인 스크립트 세포화 P1) */
   window.showGoalAgentReviewStep = showGoalAgentReviewStep;
-  async function sendGoalAgentMessage(customText){
-    var input = document.getElementById('goalAgentInput');
-    var text = (typeof customText === 'string' ? customText : (input ? input.value : '')).trim();
-    if(!text) return;
-    if(window.OurgoalModeration){
-      var modCheck = window.OurgoalModeration.check(text);
-      if(modCheck.flagged){
-        openModal(
-          '<div style="text-align:center;padding:12px 4px;">' +
-            '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
-            '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(modCheck.message) + '</h3>' +
-            '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(modCheck.detail) + '<br><br>' + escapeHtml(modCheck.support) + '<br><br><span style="color:var(--ink-muted, #71717a);font-size:.8125rem;display:inline-block;padding:6px 10px;background:rgba(0,0,0,0.03);border-radius:8px;">🌿 ' + escapeHtml(modCheck.notice || '무공해 플랫폼을 위한 강한 제어체계를 구축했습니다. 양해 부탁드립니다.') + '</span></p>' +
-            '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
-          '</div>',
-          function(){}
-        );
-        return;
-      }
-    }
-    if(input && typeof customText !== 'string') input.value = '';
-    showGoalAgentLoadingStep();
-    var diff = await requestGoalAgentDiff(text);
-    if(!diff || !diff.ops.length){
-      closeModal();
-      if(diff && diff.isBlocked){
-        openModal(
-          '<div style="text-align:center;padding:12px 4px;">' +
-            '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
-            '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(diff.reply) + '</h3>' +
-            '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(diff.detail) + '<br><br>' + escapeHtml(diff.support) + '<br><br><span style="color:var(--ink-muted, #71717a);font-size:.8125rem;display:inline-block;padding:6px 10px;background:rgba(0,0,0,0.03);border-radius:8px;">🌿 ' + escapeHtml(diff.notice || '무공해 플랫폼을 위한 강한 제어체계를 구축했습니다. 양해 부탁드립니다.') + '</span></p>' +
-            '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
-          '</div>',
-          function(){}
-        );
-      } else {
-        toast((diff && diff.reply) || '요청을 처리하지 못했어요 · 다시 시도해주세요');
-      }
-      return;
-    }
-    showGoalAgentReviewStep(diff, text, 0);
-  }
+  /* [#TASK-ES-436] sendGoalAgentMessage → js/tabs/goals/ai-agent.js 로 옮김(인라인 스크립트 세포화 P1) */
   var toggleAgentBtn = document.getElementById('btnToggleGoalAgent');
   if(toggleAgentBtn){
     toggleAgentBtn.addEventListener('click', function(){
@@ -20168,56 +19277,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ 현재 종합상황 (AI 요약) ============ */
-  function computeGoalStatusHash(goal){
-    var parts = [goal.title||'', goal.dueDate||'', JSON.stringify(goal.result||null)];
-    (goal.milestones||[]).forEach(function(m){
-      parts.push(m.id, m.title||'', m.status||'', m.dueDate||'', JSON.stringify(m.result||null));
-      (m.tasks||[]).forEach(function(t){ parts.push(t.id, t.title||'', t.done?'1':'0', t.dueDate||'', JSON.stringify(t.result||null)); });
-    });
-    var str = parts.join('|');
-    var h = 0;
-    for(var i=0;i<str.length;i++){ h = ((h<<5)-h + str.charCodeAt(i))|0; }
-    return String(h);
-  }
-  function localGoalStatusSummary(goal){
-    if(!goal) return '목표를 설정하고 첫 걸음을 시작해보세요.';
-    var ms = goal.milestones || [];
-    var total = ms.length;
-    if(!total) return '마일스톤을 추가하면 세부 단계별 진행 상황을 종합 분석해드려요.';
-    var done = ms.filter(function(m){ return m.status === 'done'; }).length;
-    var doing = ms.find(function(m){ return m.status === 'doing'; });
-    var pct = total ? Math.round((done / total) * 100) : 0;
-    var ddayInfo = goal.dueDate ? ('마감 ' + dDay(goal.dueDate)) : '마감일 미설정';
-
-    if(pct === 100){
-      return '🎉 모든 마일스톤(' + total + '개)을 완수한 상태입니다! 최종 결과와 회고를 정리하며 다음 성장을 준비해보세요.';
-    }
-    if(doing){
-      return '현재 "' + doing.title + '" 마일스톤에 집중하고 있으며, 전체 공정률은 ' + pct + '%(' + done + '/' + total + ' 완수, ' + ddayInfo + ')입니다. 계획에 맞추어 다음 단계를 차근차근 진행해보세요.';
-    }
-    if(done > 0){
-      var next = ms.find(function(m){ return m.status !== 'done'; });
-      var nextTitle = next ? ('다음으로 "' + next.title + '"') : '다음 단계';
-      return '지금까지 ' + done + '개 마일스톤을 성공적으로 달성했습니다(진행률 ' + pct + '%). ' + nextTitle + '를 시작해보세요!';
-    }
-    return '목표 착수 단계입니다(진행률 0%). 첫 번째 마일스톤인 "' + ms[0].title + '"부터 작은 행동으로 실행을 개시해보세요!';
-  }
-  async function generateGoalStatusSummary(goal){
-    var controller = new AbortController();
-    var timer = setTimeout(function(){ controller.abort(); }, 28000);
-    try{
-      var res = await fetch('/api/goalstatus', {
-        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForAI(goal), dueDate: goal.dueDate||null, goalResult: goal.result||null })
-      });
-      clearTimeout(timer);
-      if(!res.ok) return localGoalStatusSummary(goal);
-      var data = await res.json();
-      var text = data && data.summary ? String(data.summary).trim() : '';
-      if(!text || text.length<30 || text.length>300) return localGoalStatusSummary(goal);
-      return text;
-    } catch(e){ clearTimeout(timer); return localGoalStatusSummary(goal); }
-  }
+  /* [#TASK-ES-436] computeGoalStatusHash · localGoalStatusSummary · generateGoalStatusSummary → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
   function refreshGoalStatusSummary(goal, hash){
     if(!goal || !goal.id) return;
     if(!state.goalStatusPending) state.goalStatusPending = {};
@@ -20266,31 +19326,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ 오늘의 미션 ============ */
-  function milestonesForMission(goal){
-    return goal.milestones.filter(function(m){ return m.status!=='done'; }).map(function(m){
-      return { title: m.title, status: m.status, tasks: (m.tasks||[]).filter(function(t){ return !t.done; }).map(function(t){ return { title: t.title }; }) };
-    });
-  }
+  /* [#TASK-ES-436] milestonesForMission → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
   function localTodayMission(goal){
     var open = goal.milestones.find(function(m){ return m.status!=='done'; });
     return open ? '오늘은 "'+open.title+'" 마일스톤을 위해 작게 한 걸음 내딛어보세요.' : '오늘은 그동안의 기록을 돌아보며 다음 목표를 그려보세요.';
   }
-  async function requestTodayMission(goal){
-    var controller = new AbortController();
-    var timer = setTimeout(function(){ controller.abort(); }, 28000);
-    try{
-      var res = await fetch('/api/todaymission', {
-        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForMission(goal) })
-      });
-      clearTimeout(timer);
-      if(!res.ok) return localTodayMission(goal);
-      var data = await res.json();
-      var text = data && data.mission ? String(data.mission).trim() : '';
-      if(!text || text.length<6 || text.length>80) return localTodayMission(goal);
-      return text;
-    } catch(e){ clearTimeout(timer); return localTodayMission(goal); }
-  }
+  /* [#TASK-ES-436] requestTodayMission → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
   /* ============ [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 ============ */
   function computeTodayMissionHash(g){
     var baseHash = typeof computeGoalStatusHash === 'function' ? computeGoalStatusHash(g) : String(g.title||'');
@@ -20374,289 +19415,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var next = goal.milestones.find(function(m){ return m.id!==completedId && m.status!=='done'; });
     return next ? '다음은 "'+next.title+'" 마일스톤을 시작해볼까요?' : '모든 마일스톤을 마쳤어요! 목표 결과를 기록해보세요.';
   }
-  async function requestNextActionSuggestion(goal, completedMs){
-    var remaining = goal.milestones.filter(function(m){ return m.id!==completedMs.id; })
-      .map(function(m){ return { title:m.title, status:m.status }; });
-    var controller = new AbortController();
-    var timer = setTimeout(function(){ controller.abort(); }, 28000);
-    try{
-      var res = await fetch('/api/nextaction', {
-        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ goalTitle: goal.title, completedTitle: completedMs.title, remaining: remaining })
-      });
-      clearTimeout(timer);
-      if(!res.ok) return { suggestion: localNextActionSuggestion(goal, completedMs.id), fallback: true };
-      var data = await res.json();
-      var text = data && data.suggestion ? String(data.suggestion).trim() : '';
-      if(!text || text.length<8 || text.length>80) return { suggestion: localNextActionSuggestion(goal, completedMs.id), fallback: true };
-      return { suggestion: text, fallback: false };
-    } catch(e){ clearTimeout(timer); return { suggestion: localNextActionSuggestion(goal, completedMs.id), fallback: true }; }
-  }
-  function celebrateMilestoneDone(goal, ms){
-    if(navigator.vibrate) navigator.vibrate([12,40,24]);
-    burstConfetti(window.innerWidth/2, window.innerHeight/3);
-    var avatarSvg = (window.OurgoalAvatar && window.OurgoalAvatar.getDynamicAvatarSvg) ?
-      window.OurgoalAvatar.getDynamicAvatarSvg('milestone_break', (state.profile && state.profile.settings && state.profile.settings.customAvatarUrl) || (state.profile && state.profile.level) || 1, { size: 84 }) :
-      '';
-    var greetingTxt = (window.OurgoalAvatar && window.OurgoalAvatar.DYNAMIC_SITUATIONS) ?
-      window.OurgoalAvatar.DYNAMIC_SITUATIONS.milestone_break.greeting :
-      '대박! 마일스톤 정복을 축하해! 🏆';
-    openModal(
-      '<div style="text-align:center;padding:8px 0;">' +
-        (avatarSvg ? '<div style="display:flex;justify-content:center;margin-bottom:12px;">' + avatarSvg + '</div>' : '') +
-        '<h3 style="margin:0 0 6px;font-size:1.1875rem;font-weight:900;color:var(--ink);">마일스톤 돌파 달성! 🏆</h3>' +
-        '<div style="font-size:0.875rem;font-weight:700;color:var(--primary);margin-bottom:10px;">' + greetingTxt + '</div>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:0.9375rem;"><b style="color:var(--ink);">' + escapeHtml(ms.title) + '</b></p>' +
-        '<p class="faint" id="naText" style="margin:0 0 16px;">다음 행동을 생각하는 중...</p>' +
-        '<div id="naNotice" style="display:none;font-size:12px;color:var(--ink-soft);margin:-10px 0 14px;line-height:1.4;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' +
-        '<div class="modal-actions"><button class="btn btn-primary" id="naOk" type="button" style="min-height:38px;">확인</button></div>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#naOk').addEventListener('click', closeModal);
-        requestNextActionSuggestion(goal, ms).then(function(res){
-          var el = sheet.querySelector('#naText');
-          var notice = sheet.querySelector('#naNotice');
-          if(res && typeof res === 'object'){
-            if(el) el.textContent = '' + (res.suggestion || '');
-            if(notice && res.fallback) notice.style.display = 'block';
-          } else {
-            if(el) el.textContent = '' + res;
-          }
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-436] requestNextActionSuggestion · celebrateMilestoneDone → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
 
   /* ============ 목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #TASK-ES-135) ============ */
-  function formatSchedulePillHtml(item, level, goalId, msId, taskId){
-    var sDate = (item && item.startDate) ? String(item.startDate).slice(0, 10) : '';
-    var dDate = (item && item.dueDate) ? String(item.dueDate).slice(0, 10) : '';
-    var gid = goalId || '';
-    var mid = msId || '';
-    var tid = taskId || '';
-    if(!sDate && !dDate){
-      return '<button type="button" class="schedule-pill-btn empty" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 설정">📅 일정 설정</button>';
-    }
-    if(sDate && dDate && sDate !== dDate){
-      var sParts = sDate.split('-');
-      var dParts = dDate.split('-');
-      var sText = sParts[0] + '.' + parseInt(sParts[1], 10) + '.' + parseInt(sParts[2], 10) + '.';
-      var dText = dParts[0] + '.' + parseInt(dParts[1], 10) + '.' + parseInt(dParts[2], 10) + '.';
-      var rangeText = sText + '~' + dText;
-      return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 기간: '+rangeText+' (클릭하여 수정)">📅 '+rangeText+'</button>';
-    }
-    var singleDate = dDate || sDate;
-    var dText = dDay(singleDate);
-    return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="마감일 '+singleDate+' (클릭하여 수정)">📅 '+dText+'</button>';
-  }
-
-  function openScheduleSetupModal(levelOrOpts, maybeGid, maybeMsId, maybeTid){
-    var opts = (typeof levelOrOpts === 'object' && levelOrOpts !== null) ? levelOrOpts : {
-      level: levelOrOpts,
-      gid: maybeGid,
-      msId: maybeMsId,
-      tid: maybeTid
-    };
-    var level = opts.level;
-    var gid = opts.gid;
-    var msId = opts.msId;
-    var tid = opts.tid;
-    var title = opts.title || '';
-    var sVal = opts.startDate ? opts.startDate.slice(0, 10) : '';
-    var dVal = opts.dueDate ? opts.dueDate.slice(0, 10) : '';
-    var sTime = (opts.startDate && opts.startDate.length > 10) ? opts.startDate.slice(11, 16) : '09:00';
-    var dTime = (opts.dueDate && opts.dueDate.length > 10) ? opts.dueDate.slice(11, 16) : '18:00';
-
-    if((!title || !sVal || !dVal) && state.profile && state.profile.goals){
-      var g = state.profile.goals.find(function(x){ return x.id === gid; });
-      if(g){
-        if(level === 'goal'){
-          if(!title) title = g.title;
-          if(!sVal && g.startDate) sVal = String(g.startDate).slice(0, 10);
-          if(!dVal && g.dueDate) dVal = String(g.dueDate).slice(0, 10);
-          if(g.startDate && String(g.startDate).length > 10) sTime = String(g.startDate).slice(11, 16);
-          if(g.dueDate && String(g.dueDate).length > 10) dTime = String(g.dueDate).slice(11, 16);
-        } else if(level === 'ms'){
-          var m = (g.milestones || []).find(function(x){ return x.id === msId; });
-          if(m){
-            if(!title) title = m.title;
-            if(!sVal && m.startDate) sVal = String(m.startDate).slice(0, 10);
-            if(!dVal && m.dueDate) dVal = String(m.dueDate).slice(0, 10);
-            if(m.startDate && String(m.startDate).length > 10) sTime = String(m.startDate).slice(11, 16);
-            if(m.dueDate && String(m.dueDate).length > 10) dTime = String(m.dueDate).slice(11, 16);
-          }
-        } else if(level === 'task'){
-          var m = (g.milestones || []).find(function(x){ return x.id === msId; });
-          if(m){
-            var t = (m.tasks || []).find(function(x){ return x.id === tid; });
-            if(t){
-              if(!title) title = t.title;
-              if(!sVal && t.startDate) sVal = String(t.startDate).slice(0, 10);
-              if(!dVal && t.dueDate) dVal = String(t.dueDate).slice(0, 10);
-              if(t.startDate && String(t.startDate).length > 10) sTime = String(t.startDate).slice(11, 16);
-              if(t.dueDate && String(t.dueDate).length > 10) dTime = String(t.dueDate).slice(11, 16);
-            }
-          }
-        }
-      }
-    }
-    var levelLabel = level === 'goal' ? '목표' : (level === 'ms' ? '마일스톤' : '할 일');
-    var html = '<div class="schedule-setup-modal" style="padding:6px 2px;">' +
-      '<h3 style="margin:0 0 6px;font-size:1.1rem;font-weight:700;">🗓️ ' + escapeHtml(levelLabel) + ' 일정 설정</h3>' +
-      '<p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 14px;word-break:break-all;">' + escapeHtml(title) + '</p>' +
-      '<div style="margin-bottom:12px;">' +
-        '<label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;color:var(--ink-soft);">시작일 (선택)</label>' +
-        '<div style="display:flex;gap:6px;">' +
-          '<input type="date" id="schedInpStart" class="input" value="' + sVal + '" style="flex:2;padding:8px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;">' +
-          '<input type="time" id="schedInpStartTime" class="input" value="' + sTime + '" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;">' +
-        '</div>' +
-      '</div>' +
-      '<div style="margin-bottom:14px;">' +
-        '<label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;color:var(--ink-soft);">종료/마감일</label>' +
-        '<div style="display:flex;gap:6px;">' +
-          '<input type="date" id="schedInpEnd" class="input" value="' + dVal + '" style="flex:2;padding:8px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;">' +
-          '<input type="time" id="schedInpEndTime" class="input" value="' + dTime + '" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;">' +
-        '</div>' +
-      '</div>' +
-      '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px;">' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="schedPresetToday" style="font-size:.72rem;padding:3px 8px;">오늘 마감</button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="schedPresetTomorrow" style="font-size:.72rem;padding:3px 8px;">내일 마감</button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="schedPreset1W" style="font-size:.72rem;padding:3px 8px;">오늘부터 1주일</button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="schedPreset1M" style="font-size:.72rem;padding:3px 8px;">오늘부터 1달</button>' +
-      '</div>' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;">' +
-        (sVal || dVal ? '<button type="button" class="btn btn-danger btn-sm" id="schedDeleteBtn" style="font-size:.8rem;padding:7px 12px;">일정 삭제</button>' : '<div></div>') +
-        '<div style="display:flex;gap:6px;">' +
-          '<button type="button" class="btn btn-ghost btn-sm" id="schedCancelBtn" style="font-size:.8rem;padding:7px 12px;">취소</button>' +
-          '<button type="button" class="btn btn-primary btn-sm" id="schedSaveBtn" style="font-size:.8rem;padding:7px 14px;background:var(--brand);font-weight:700;">일정 저장</button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-    openModal(html);
-    var todayStr = new Date().toISOString().slice(0, 10);
-    var pToday = document.getElementById('schedPresetToday');
-    if(pToday) pToday.onclick = function(){
-      document.getElementById('schedInpStart').value = todayStr;
-      document.getElementById('schedInpEnd').value = todayStr;
-    };
-    var pTomorrow = document.getElementById('schedPresetTomorrow');
-    if(pTomorrow){
-      var tm = new Date(); tm.setDate(tm.getDate()+1);
-      pTomorrow.onclick = function(){
-        document.getElementById('schedInpStart').value = todayStr;
-        document.getElementById('schedInpEnd').value = tm.toISOString().slice(0, 10);
-      };
-    }
-    var p1W = document.getElementById('schedPreset1W');
-    if(p1W){
-      var w1 = new Date(); w1.setDate(w1.getDate()+7);
-      p1W.onclick = function(){
-        document.getElementById('schedInpStart').value = todayStr;
-        document.getElementById('schedInpEnd').value = w1.toISOString().slice(0, 10);
-      };
-    }
-    var p1M = document.getElementById('schedPreset1M');
-    if(p1M){
-      var m1 = new Date(); m1.setMonth(m1.getMonth()+1);
-      p1M.onclick = function(){
-        document.getElementById('schedInpStart').value = todayStr;
-        document.getElementById('schedInpEnd').value = m1.toISOString().slice(0, 10);
-      };
-    }
-    var cancelBtn = document.getElementById('schedCancelBtn');
-    if(cancelBtn) cancelBtn.onclick = closeModal;
-    var delBtn = document.getElementById('schedDeleteBtn');
-    if(delBtn){
-      delBtn.onclick = async function(){
-        await applyScheduleUpdate(level, gid, msId, tid, null, null);
-        closeModal();
-        toast('일정을 삭제했습니다');
-      };
-    }
-    var saveBtn = document.getElementById('schedSaveBtn');
-    if(saveBtn){
-      saveBtn.onclick = async function(){
-        var sDate = document.getElementById('schedInpStart').value;
-        var sTime = document.getElementById('schedInpStartTime').value || '09:00';
-        var eDate = document.getElementById('schedInpEnd').value;
-        var eTime = document.getElementById('schedInpEndTime').value || '18:00';
-        if(!sDate && !eDate){
-          toast('시작일이나 마감일을 선택해주세요');
-          return;
-        }
-        var startISO = sDate ? (sDate + 'T' + sTime + ':00') : null;
-        var endISO = eDate ? (eDate + 'T' + eTime + ':00') : startISO;
-        if(startISO && endISO && startISO > endISO){
-          var tmp = startISO; startISO = endISO; endISO = tmp;
-        }
-        await applyScheduleUpdate(level, gid, msId, tid, startISO, endISO);
-        closeModal();
-        toast('일정이 저장되었습니다 ✨');
-      };
-    }
-  }
-
-  async function applyScheduleUpdate(level, gid, msId, tid, startISO, endISO){
-    if(!state.profile || !state.profile.goals) return;
-    var goal = state.profile.goals.find(function(g){ return g.id === gid; });
-    if(!goal) return;
-    var targetTitle = goal.title;
-    var targetId = gid;
-    if(level === 'goal'){
-      goal.startDate = startISO;
-      goal.dueDate = endISO;
-      targetTitle = goal.title;
-      targetId = goal.id;
-    } else if(level === 'ms'){
-      var ms = (goal.milestones || []).find(function(m){ return m.id === msId; });
-      if(ms){
-        ms.startDate = startISO;
-        ms.dueDate = endISO;
-        targetTitle = ms.title;
-        targetId = ms.id;
-      }
-    } else if(level === 'task'){
-      var ms = (goal.milestones || []).find(function(m){ return m.id === msId; });
-      if(ms){
-        var task = (ms.tasks || []).find(function(t){ return t.id === tid; });
-        if(task){
-          task.startDate = startISO;
-          task.dueDate = endISO;
-          targetTitle = task.title;
-          targetId = task.id;
-        }
-      }
-    }
-    if(!state.profile.settings) state.profile.settings = {};
-    if(!Array.isArray(state.profile.settings.customSchedules)) state.profile.settings.customSchedules = [];
-    var schedules = state.profile.settings.customSchedules;
-    var schedIdx = schedules.findIndex(function(s){ return s.linkedId === targetId || s.id === ('sched_' + targetId); });
-    if(schedIdx >= 0) schedules.splice(schedIdx, 1);
-    if(endISO){
-      schedules.push({
-        id: 'sched_' + targetId,
-        linkedId: targetId,
-        linkedLevel: level,
-        linkedGoalId: gid,
-        linkedGoalTitle: goal.title,
-        linkedMsId: (level === 'ms' || level === 'task') ? msId : null,
-        linkedTaskId: (level === 'task') ? tid : null,
-        linkedTaskTitle: (level === 'task') ? targetTitle : null,
-        title: targetTitle,
-        startDate: startISO || endISO,
-        dueDate: endISO,
-        date: endISO,
-        category: goal.topic || '일정',
-        createdAt: new Date().toISOString()
-      });
-    }
-    await saveProfile();
-    renderGoalsScreen();
-    renderCalendarScreen();
-    if(typeof renderHome === 'function') renderHome();
-    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    if(typeof renderStatsScreen === 'function') renderStatsScreen();
-  }
+  /* [#TASK-ES-436] formatSchedulePillHtml · openScheduleSetupModal · applyScheduleUpdate → js/tabs/goals/schedule-setup.js 로 옮김(인라인 스크립트 세포화 P1) */
   if(typeof window !== 'undefined'){
     window.formatSchedulePillHtml = formatSchedulePillHtml;
     window.openScheduleSetupModal = openScheduleSetupModal;
