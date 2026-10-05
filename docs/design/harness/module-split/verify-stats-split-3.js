@@ -2,7 +2,7 @@
 // 통계 세포 쪼개기 3차(#TASK-ES-405) 검사 — 2차 verify-stats-split-2.js 와 같은 기준에 구획 분할·상수 공장 맞대기를 더했다.
 //  ① 글자(토큰열, 차이 허용: 'S.'·'K.' 접두뿐)
 //     - 함수 단위로 옮긴 함수: 이전 전 원본의 함수 = 새 파일의 함수
-//     - 카탈로그 상수 6개: 이전 전 `var X = <값>;` 의 <값> = 공장 함수 `return <값>;` 의 <값>, 원본에 남은 선언 = `var X = createX();`
+//     - 카탈로그 상수 6개: 옮기지 않는다 — 원본에 남은 `var X = <값>;` 이 이전 전과 같다(부품은 S.X getter 로 같은 객체를 읽는다)
 //     - 구획 6개: 이전 전 generateDomainSample 의 `if(domainKey === '<키>'){ … }` 블록 본문 = 구획 함수 본문
 //     - 조립자 generateDomainSample: 이전 전 함수에서 구획 블록 본문을 `<구획 함수>(<인자>);` 로 바꾼 토큰열 = 새 함수
 //     - 원본에 남은 최상위 함수(renderUniversalStatsDashboard 등)·공개 API 객체·차등 모델 별칭 2줄·꼬리 문: 이전 전과 같다
@@ -26,13 +26,13 @@ const FN_MOVED = {
   'js/stats-fullscreen.js': ['openStatsFullscreenModal'],
   'js/stats-differentiated.js': ['computeDifferentiatedAnalysis', 'renderDifferentiatedReportCard', 'openDifferentiatedMetricConfigModal'],
 };
-const CONSTS = [['METRIC_CONFIGS', 'createMetricConfigs'], ['SAMPLE_THEMES', 'createSampleThemes'], ['THEME_METRIC_SPECS', 'createThemeMetricSpecs'], ['RAW_52W_POWERLIFTING_DATA', 'createRaw52wPowerliftingData'], ['DOMAINS', 'createDomains'], ['METRIC_DIFFERENTIATED_MODELS', 'createMetricDifferentiatedModels']];
+const CONSTS = [['METRIC_CONFIGS'], ['SAMPLE_THEMES'], ['THEME_METRIC_SPECS'], ['RAW_52W_POWERLIFTING_DATA'], ['DOMAINS'], ['METRIC_DIFFERENTIATED_MODELS']];
 const SECTIONS = { hyrox: ['pushHyroxSample', 'js/stats-sample-fitness.js'], running: ['pushRunningSample', 'js/stats-sample-fitness.js'], big3: ['pushBig3Sample', 'js/stats-sample-fitness.js'], study: ['pushStudySample', 'js/stats-sample-growth.js'], coding: ['pushCodingSample', 'js/stats-sample-growth.js'], sales: ['pushSalesSample', 'js/stats-sample-growth.js'] };
-const NEW_FILES = ['js/stats-catalog.js', 'js/stats-samples.js', 'js/stats-sample-fitness.js', 'js/stats-sample-growth.js', 'js/stats-ontology.js', 'js/stats-export.js', 'js/stats-fullscreen.js', 'js/stats-differentiated.js'];
+const NEW_FILES = ['js/stats-samples.js', 'js/stats-sample-fitness.js', 'js/stats-sample-growth.js', 'js/stats-ontology.js', 'js/stats-export.js', 'js/stats-fullscreen.js', 'js/stats-differentiated.js'];
 const PREV_PARTS = ['js/stats-taxonomy.js', 'js/stats-data-grid.js', 'js/stats-lenses.js', 'js/stats-metrics.js', 'js/stats-charts.js', 'js/stats-import.js', 'js/stats-data-menu.js'];
 const PREV_FNS = ['openTaxonomyManagerModal', 'openUniversalDataGrid', 'openRowEditModal', 'computeCrossRatioSeries', 'renderCrossRatioSvg', 'renderRadarSvg', 'computeCadenceData', 'renderCadenceSvg', 'generateStatisticalDiagnosticReport',
   'ensureMetricConfig', 'extractMetricsFromRecord', 'discoverActiveMetrics', 'aggregateMetricTimeSeries', 'renderUniversalSvgChart', 'aggregateMultiSeries', 'calcNiceStep', 'renderMultiSeriesSvg', 'normalizeHistoricalDate', 'parseCsvToUniversalRecords', 'openUniversalImportModal', 'openGuideModal', 'openDataManagementModal'];
-const ALL = [].concat(...Object.values(FN_MOVED), 'generateDomainSample', CONSTS.map(c => c[1]), Object.values(SECTIONS).map(s => s[0]));
+const ALL = [].concat(...Object.values(FN_MOVED), 'generateDomainSample', Object.values(SECTIONS).map(s => s[0]));
 const read = f => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
 const val = t => (t.type.label === 'name' || t.type.keyword) ? String(t.value) : (t.value !== undefined ? t.type.label + ':' + String(t.value) : t.type.label);
 const norm = toks => {
@@ -57,13 +57,10 @@ const fileAst = {}; for (const f of NEW_FILES) fileAst[f] = P(path.join(APP, f))
 const nf = f => topFns(fileAst[f]);
 for (const [f, names] of Object.entries(FN_MOVED)) for (const n of names) equiv.push(Object.assign({ file: f }, cmp('fn ' + n, toks(oast, ofns[n].start, ofns[n].end), toks(fileAst[f], nf(f)[n].start, nf(f)[n].end))));
 const oTop = iifeBody(oast), mTop = iifeBody(mastT);
-for (const [name, fac] of CONSTS) {
+for (const [name] of CONSTS) {
   const od = oTop.find(x => x.type === 'VariableDeclaration' && x.declarations[0].id.name === name);
-  const fn = nf('js/stats-catalog.js')[fac];
-  const ret = fn.body.body.length === 1 && fn.body.body[0].type === 'ReturnStatement' ? fn.body.body[0].argument : null;
-  equiv.push(Object.assign({ file: 'js/stats-catalog.js' }, cmp('const ' + name + ' → ' + fac, toks(oast, od.declarations[0].init.start, od.declarations[0].init.end), ret ? toks(fileAst['js/stats-catalog.js'], ret.start, ret.end) : [])));
   const md = mTop.find(x => x.type === 'VariableDeclaration' && x.declarations[0].id.name === name);
-  equiv.push(Object.assign({ file: MAIN }, cmp('main var ' + name, norm(parser.parse('var ' + name + ' = ' + fac + '();', { tokens: true }).tokens.filter(t => t.type.label !== 'eof')), md ? toks(mastT, md.start, md.end) : [])));
+  equiv.push(Object.assign({ file: MAIN }, cmp('main const ' + name, toks(oast, od.start, od.end), md ? toks(mastT, md.start, md.end) : ['<없음>'])));
 }
 // 구획: 이전 전 사슬에서 블록을 찾는다
 const ogds = ofns.generateDomainSample;
@@ -188,6 +185,9 @@ const firstMC = after.OurgoalUniversalStats.METRIC_CONFIGS;
 vm.runInContext(read(path.join(APP, MAIN)), after.__ctx, { filename: MAIN });
 const freshPerRun = after.OurgoalUniversalStats.METRIC_CONFIGS !== firstMC && KIT.scope.METRIC_CONFIGS === after.OurgoalUniversalStats.METRIC_CONFIGS && JSON.stringify(firstMC) === JSON.stringify(after.OurgoalUniversalStats.METRIC_CONFIGS);
 vm.runInContext(read(path.join(BASE, MAIN)), before.__ctx, { filename: MAIN }); // 양쪽 같은 상태로
+// 원본 혼자 읽혀도(부품 없이 — 법정 모듈 로드 탐침과 같은 조건) 멈추지 않고 공개 API 를 등록하는가(이전 전과 같음)
+const standalone = (() => { const w = mkWin(); w.document = undefined; try { const ctx = vm.createContext(w); vm.runInContext(read(path.join(APP, MAIN)), ctx, { filename: MAIN }); return { ok: true, api: !!w.OurgoalUniversalStats }; } catch (e) { return { ok: false, error: String(e && e.message || e) }; } })();
+const standaloneOk = standalone.ok && standalone.api;
 // ④ 순수 함수
 const B = before.OurgoalUniversalStats, A = after.OurgoalUniversalStats;
 const genSample = U => U.generateDomainSample('big3').concat(U.generateDomainSample('running'), U.generateDomainSample('study'), U.generateDomainSample('hyrox'), U.generateDomainSample('coding'), U.generateDomainSample('sales'));
@@ -225,13 +225,13 @@ const mainLines = read(path.join(APP, MAIN)).split('\n').length - 1;
 const report = {
   equivalent: equiv.every(r => r.same), equivCount: equiv.length, equiv, prevPartsUnchanged, loadOrderAfter: orderAfter, exposed: [...exposed].sort(), imported: [...imported].sort(), notImported, leftFunctionDefsInMain: leftDefs, remainingMainFunctions: remainingFns, files, mainLines,
   usedT: [...usedT].sort(), notExposed, exposedUnused, usedK: [...usedK].sort(), kNotDefined, bridgeThis, bridgeThisFree,
-  constants, aliasKept, freshPerRun, sampleSame, ontologySame, pureCases, pureSame, jandiInParts: jandi,
+  constants, aliasKept, freshPerRun, standalone, standaloneOk, sampleSame, ontologySame, pureCases, pureSame, jandiInParts: jandi,
   runtime: { apiKeys: apiA.length, sameApiKeysAndOrder: sameApi, movedFunctionsAreKitFunctions: movedSame, windowNamesBefore: globalsB.length, sameWindowNames: sameGlobals, newWindowNames: globalsA.filter(k => !globalsB.includes(k)), scopeGettersResolve: scopeOk },
 };
 const ok = report.equivalent && prevPartsUnchanged && leftDefs.length === 0 && notImported.length === 0 && notExposed.length === 0 && exposedUnused.length === 0 && kNotDefined.length === 0 && bridgeThisFree
-  && Object.values(files).every(x => x.leaksIIFEName.length === 0 && x.lines <= 800) && sameApi && movedSame && sameGlobals && scopeOk && Object.values(constants).every(c => c.ok) && aliasKept && freshPerRun && pureSame && Object.values(jandi).every(x => x === 0);
+  && Object.values(files).every(x => x.leaksIIFEName.length === 0 && x.lines <= 800) && sameApi && movedSame && sameGlobals && scopeOk && Object.values(constants).every(c => c.ok) && aliasKept && freshPerRun && standaloneOk && pureSame && Object.values(jandi).every(x => x === 0);
 report.ok = ok;
-console.log(JSON.stringify({ ok, equivalent: report.equivalent, equivCount: equiv.length, prevPartsUnchanged, leftDefs, notImported, notExposed, exposedUnused, kNotDefined, bridgeThisFree, constantsOk: Object.values(constants).every(c => c.ok), aliasKept, freshPerRun, pureSame, runtime: report.runtime, mainLines, files: Object.fromEntries(Object.entries(files).map(([k, v]) => [k, v.lines + (v.leaksIIFEName.length ? ' LEAK ' + v.leaksIIFEName : '')])) }, null, 1));
+console.log(JSON.stringify({ ok, equivalent: report.equivalent, equivCount: equiv.length, prevPartsUnchanged, leftDefs, notImported, notExposed, exposedUnused, kNotDefined, bridgeThisFree, constantsOk: Object.values(constants).every(c => c.ok), aliasKept, freshPerRun, standaloneOk, pureSame, runtime: report.runtime, mainLines, files: Object.fromEntries(Object.entries(files).map(([k, v]) => [k, v.lines + (v.leaksIIFEName.length ? ' LEAK ' + v.leaksIIFEName : '')])) }, null, 1));
 for (const r of equiv) if (!r.same) console.log('DIFF', JSON.stringify(r));
 for (const [k, v] of Object.entries(pureCases)) if (!v.same || v.size <= 4) console.log('DIFF', k, JSON.stringify(v));
 for (const [k, v] of Object.entries(constants)) if (!v.ok) console.log('DIFF const', k, JSON.stringify(v));

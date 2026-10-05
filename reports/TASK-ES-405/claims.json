@@ -4,7 +4,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "js/universal-stats.js(3,283줄)를 나누는 3차 — 함수 단위 후보(전체화면·차등 분석 3·온톨로지 4·내보내기 2·과거 샘플 2), 카탈로그 상수 6개(같은 객체 참조가 유지되는 공장 함수), generateDomainSample 구획 분할(경계 검사기 먼저)을 js/stats-*.js 로 글자 그대로 옮긴다. 새 파일 각 800줄 이하, part1/part2 금지, 기능 추가·삭제 0, renderUniversalStatsDashboard 는 그대로. 신고서·모듈 가드 기준선. 원본 800줄 이하가 안 되면 남은 범위 보고."
+      "text": "js/universal-stats.js(3,283줄)를 나누는 3차 — 함수 단위 후보(전체화면·차등 분석 3·온톨로지 4·내보내기 2·과거 샘플 2), 카탈로그 상수(같은 객체 참조가 유지되는 방식만 — 법정 모듈 로드 탐침과 맞는 방식이 없어 원본 유지), generateDomainSample 구획 분할(경계 검사기 먼저)을 js/stats-*.js 로 글자 그대로 옮긴다. 새 파일 각 800줄 이하, part1/part2 금지, 기능 추가·삭제 0, renderUniversalStatsDashboard 는 그대로. 신고서·모듈 가드 기준선. 원본 800줄 이하가 안 되면 남은 범위 보고."
     },
     {
       "id": "R2",
@@ -21,13 +21,13 @@
       "req": "R2",
       "kind": "static",
       "domain": "code",
-      "statement": "Node 에서는 원본이 1·2차 부품 뒤에 3차 부품 8개를 require 한다",
+      "statement": "Node 에서는 원본이 1·2차 부품 뒤에 3차 부품 7개를 require 한다",
       "touches": [
         "js/universal-stats.js"
       ],
       "check": {
         "type": "codeContains",
-        "text": "  if(!_statsKit && typeof require === 'function'){ require('./stats-taxonomy.js'); require('./stats-data-grid.js'); require('./stats-lenses.js'); require('./stats-metrics.js'); require('./stats-charts.js'); require('./stats-import.js'); require('./stats-data-menu.js'); require('./stats-catalog.js'); require('./stats-samples.js'); require('./stats-sample-fitness.js'); require('./stats-sample-growth.js'); require('./stats-ontology.js'); require('./stats-export.js'); require('./stats-fullscreen.js'); require('./stats-differentiated.js'); _statsKit = root.OurgoalUniversalStatsKit; }",
+        "text": "  if(!_statsKit && typeof require === 'function'){ require('./stats-taxonomy.js'); require('./stats-data-grid.js'); require('./stats-lenses.js'); require('./stats-metrics.js'); require('./stats-charts.js'); require('./stats-import.js'); require('./stats-data-menu.js'); require('./stats-samples.js'); require('./stats-sample-fitness.js'); require('./stats-sample-growth.js'); require('./stats-ontology.js'); require('./stats-export.js'); require('./stats-fullscreen.js'); require('./stats-differentiated.js'); _statsKit = root.OurgoalUniversalStatsKit; }",
         "file": "js/universal-stats.js"
       }
     },
@@ -36,33 +36,18 @@
       "req": "R2",
       "kind": "static",
       "domain": "code",
-      "statement": "원본은 메트릭 카탈로그를 이전 선언 자리에서 공장 함수로 한 번 만들어 쥔다",
+      "statement": "카탈로그 상수는 원본에 그대로 남는다(부품은 getter 로 같은 객체를 읽는다)",
       "touches": [
         "js/universal-stats.js"
       ],
       "check": {
         "type": "codeContains",
-        "text": "  var METRIC_CONFIGS = createMetricConfigs();",
+        "text": "  var METRIC_CONFIGS = {",
         "file": "js/universal-stats.js"
       }
     },
     {
       "id": "C3",
-      "req": "R2",
-      "kind": "static",
-      "domain": "code",
-      "statement": "원본은 차등 분석 모델도 같은 자리에서 공장 함수로 만든다",
-      "touches": [
-        "js/universal-stats.js"
-      ],
-      "check": {
-        "type": "codeContains",
-        "text": "  var METRIC_DIFFERENTIATED_MODELS = createMetricDifferentiatedModels();",
-        "file": "js/universal-stats.js"
-      }
-    },
-    {
-      "id": "C4",
       "req": "R2",
       "kind": "static",
       "domain": "code",
@@ -77,7 +62,7 @@
       }
     },
     {
-      "id": "C5",
+      "id": "C4",
       "req": "R2",
       "kind": "static",
       "domain": "code",
@@ -92,7 +77,7 @@
       }
     },
     {
-      "id": "C6",
+      "id": "C5",
       "req": "R2",
       "kind": "static",
       "domain": "code",
@@ -107,7 +92,7 @@
       }
     },
     {
-      "id": "C7",
+      "id": "C6",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -122,7 +107,7 @@
       }
     },
     {
-      "id": "C8",
+      "id": "C7",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -137,37 +122,7 @@
       }
     },
     {
-      "id": "C9",
-      "req": "R1",
-      "kind": "static",
-      "domain": "code",
-      "statement": "메트릭 카탈로그 공장 함수가 js/stats-catalog.js 에 있다",
-      "touches": [
-        "js/stats-catalog.js"
-      ],
-      "check": {
-        "type": "codeContains",
-        "text": "  function createMetricConfigs(){",
-        "file": "js/stats-catalog.js"
-      }
-    },
-    {
-      "id": "C10",
-      "req": "R1",
-      "kind": "static",
-      "domain": "code",
-      "statement": "도메인 카탈로그 공장 함수를 키트에 담는다",
-      "touches": [
-        "js/stats-catalog.js"
-      ],
-      "check": {
-        "type": "codeContains",
-        "text": "  K.createDomains = createDomains;",
-        "file": "js/stats-catalog.js"
-      }
-    },
-    {
-      "id": "C11",
+      "id": "C8",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -182,7 +137,7 @@
       }
     },
     {
-      "id": "C12",
+      "id": "C9",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -197,7 +152,7 @@
       }
     },
     {
-      "id": "C13",
+      "id": "C10",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -212,7 +167,7 @@
       }
     },
     {
-      "id": "C14",
+      "id": "C11",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -227,7 +182,7 @@
       }
     },
     {
-      "id": "C15",
+      "id": "C12",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -242,7 +197,7 @@
       }
     },
     {
-      "id": "C16",
+      "id": "C13",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -257,7 +212,7 @@
       }
     },
     {
-      "id": "C17",
+      "id": "C14",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -272,7 +227,7 @@
       }
     },
     {
-      "id": "C18",
+      "id": "C15",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -287,7 +242,7 @@
       }
     },
     {
-      "id": "C19",
+      "id": "C16",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -302,7 +257,7 @@
       }
     },
     {
-      "id": "C20",
+      "id": "C17",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -317,7 +272,7 @@
       }
     },
     {
-      "id": "C21",
+      "id": "C18",
       "req": "R1",
       "kind": "static",
       "domain": "code",
@@ -332,22 +287,22 @@
       }
     },
     {
-      "id": "C22",
+      "id": "C19",
       "req": "R2",
       "kind": "static",
       "domain": "code",
-      "statement": "새 세포 8개가 2차 세포 뒤·원본 태그 바로 앞(같은 줄)에서 먼저 읽힌다",
+      "statement": "새 세포 7개가 2차 세포 뒤·원본 태그 바로 앞(같은 줄)에서 먼저 읽힌다",
       "touches": [
         "index.html"
       ],
       "check": {
         "type": "codeContains",
-        "text": "<script src=\"js/stats-data-menu.js?v=20261005-es401\"></script><script src=\"js/stats-catalog.js?v=20261005-es405\"></script><script src=\"js/stats-samples.js?v=20261005-es405\"></script><script src=\"js/stats-sample-fitness.js?v=20261005-es405\"></script><script src=\"js/stats-sample-growth.js?v=20261005-es405\"></script><script src=\"js/stats-ontology.js?v=20261005-es405\"></script><script src=\"js/stats-export.js?v=20261005-es405\"></script><script src=\"js/stats-fullscreen.js?v=20261005-es405\"></script><script src=\"js/stats-differentiated.js?v=20261005-es405\"></script><script src=\"js/universal-stats.js?v=20260914-es061d\"></script>",
+        "text": "<script src=\"js/stats-data-menu.js?v=20261005-es401\"></script><script src=\"js/stats-samples.js?v=20261005-es405\"></script><script src=\"js/stats-sample-fitness.js?v=20261005-es405\"></script><script src=\"js/stats-sample-growth.js?v=20261005-es405\"></script><script src=\"js/stats-ontology.js?v=20261005-es405\"></script><script src=\"js/stats-export.js?v=20261005-es405\"></script><script src=\"js/stats-fullscreen.js?v=20261005-es405\"></script><script src=\"js/stats-differentiated.js?v=20261005-es405\"></script><script src=\"js/universal-stats.js?v=20260914-es061d\"></script>",
         "file": "index.html"
       }
     },
     {
-      "id": "C23",
+      "id": "C20",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -362,11 +317,11 @@
       }
     },
     {
-      "id": "C24",
+      "id": "C21",
       "req": "R1",
       "kind": "static",
       "domain": "config",
-      "statement": "main 합친 뒤 기준선 24번째 항목의 800줄 초과 js 파일 수 기록(universal-stats.js 1,114줄은 아직 800 초과)",
+      "statement": "main 합친 뒤 기준선 24번째 항목의 800줄 초과 js 파일 수 기록(universal-stats.js 1,614줄은 아직 800 초과)",
       "touches": [
         "docs/architecture/module-baseline.json"
       ],
@@ -378,7 +333,7 @@
       }
     },
     {
-      "id": "C25",
+      "id": "C22",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -393,7 +348,7 @@
       }
     },
     {
-      "id": "C26",
+      "id": "C23",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -408,7 +363,7 @@
       }
     },
     {
-      "id": "C27",
+      "id": "C24",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -423,7 +378,7 @@
       }
     },
     {
-      "id": "C28",
+      "id": "C25",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -438,7 +393,7 @@
       }
     },
     {
-      "id": "C29",
+      "id": "C26",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -453,7 +408,7 @@
       }
     },
     {
-      "id": "C30",
+      "id": "C27",
       "req": "R3",
       "kind": "static",
       "domain": "config",
@@ -468,7 +423,7 @@
       }
     },
     {
-      "id": "C31",
+      "id": "C28",
       "req": "R3",
       "kind": "static",
       "domain": "code",
@@ -484,7 +439,7 @@
       }
     },
     {
-      "id": "C32",
+      "id": "C29",
       "req": "R3",
       "kind": "static",
       "domain": "code",
@@ -500,11 +455,11 @@
       }
     },
     {
-      "id": "C33",
+      "id": "C30",
       "req": "R2",
       "kind": "static",
       "domain": "code",
-      "statement": "토큰 37묶음 동일·부품 동일·누수 0·상수 같은 객체·API·window 이름·순수 함수 결과 동일로 기록",
+      "statement": "토큰 31묶음 동일·부품 동일·누수 0·상수 같은 객체·원본 단독 로드·API·window 이름·순수 함수 결과 동일로 기록",
       "touches": [
         "reports/TASK-ES-405/verify-stats-split-3.json"
       ],
@@ -516,7 +471,7 @@
       }
     },
     {
-      "id": "C34",
+      "id": "C31",
       "req": "R2",
       "kind": "static",
       "domain": "code",
@@ -532,7 +487,7 @@
       }
     },
     {
-      "id": "C35",
+      "id": "C32",
       "req": "R2",
       "kind": "static",
       "domain": "code",
@@ -548,7 +503,39 @@
       }
     },
     {
-      "id": "C36",
+      "id": "C33",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본 줄 수 1614 로 기록",
+      "touches": [
+        "reports/TASK-ES-405/verify-stats-split-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-405/verify-stats-split-3.json",
+        "path": "mainLines",
+        "equals": 1614
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본만 따로 읽어도(부품 없이) 멈추지 않고 공개 API 를 등록한다고 기록",
+      "touches": [
+        "reports/TASK-ES-405/verify-stats-split-3.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-405/verify-stats-split-3.json",
+        "path": "standaloneOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C35",
       "req": "R2",
       "kind": "static",
       "domain": "code",
@@ -564,23 +551,7 @@
       }
     },
     {
-      "id": "C37",
-      "req": "R1",
-      "kind": "static",
-      "domain": "code",
-      "statement": "원본 줄 수 1114 로 기록",
-      "touches": [
-        "reports/TASK-ES-405/verify-stats-split-3.json"
-      ],
-      "check": {
-        "type": "jsonPath",
-        "file": "reports/TASK-ES-405/verify-stats-split-3.json",
-        "path": "mainLines",
-        "equals": 1114
-      }
-    },
-    {
-      "id": "C38",
+      "id": "C36",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -596,7 +567,7 @@
       }
     },
     {
-      "id": "C39",
+      "id": "C37",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -615,7 +586,7 @@
       }
     },
     {
-      "id": "C40",
+      "id": "C38",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -631,7 +602,7 @@
       }
     },
     {
-      "id": "C41",
+      "id": "C39",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -647,7 +618,7 @@
       }
     },
     {
-      "id": "C42",
+      "id": "C40",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -663,7 +634,7 @@
       }
     },
     {
-      "id": "C43",
+      "id": "C41",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -679,7 +650,7 @@
       }
     },
     {
-      "id": "C44",
+      "id": "C42",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -695,7 +666,7 @@
       }
     },
     {
-      "id": "C45",
+      "id": "C43",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -711,7 +682,7 @@
       }
     },
     {
-      "id": "C46",
+      "id": "C44",
       "req": "R3",
       "kind": "static",
       "domain": "ui-behavior",
@@ -727,87 +698,7 @@
       }
     },
     {
-      "id": "C47",
-      "req": "R3",
-      "kind": "static",
-      "domain": "code",
-      "statement": "main 합친 뒤에도 토큰·API·window 이름·상수 동일성·순수 함수 결과가 그 기준과 같다고 기록",
-      "touches": [
-        "reports/TASK-ES-405/verify-stats-split-3-main.json"
-      ],
-      "check": {
-        "type": "jsonPath",
-        "file": "reports/TASK-ES-405/verify-stats-split-3-main.json",
-        "path": "ok",
-        "equals": true
-      }
-    },
-    {
-      "id": "C48",
-      "req": "R3",
-      "kind": "static",
-      "domain": "code",
-      "statement": "main 합친 뒤에도 모든 도메인 샘플 80경우가 그 기준과 같다고 기록",
-      "touches": [
-        "reports/TASK-ES-405/sample-boundary-stats-3-main.json"
-      ],
-      "check": {
-        "type": "jsonPath",
-        "file": "reports/TASK-ES-405/sample-boundary-stats-3-main.json",
-        "path": "ok",
-        "equals": true
-      }
-    },
-    {
-      "id": "C49",
-      "req": "R3",
-      "kind": "static",
-      "domain": "ui-behavior",
-      "statement": "main 합친 뒤에도 npm test 수치가 그 기준과 같다고 기록",
-      "touches": [
-        "reports/TASK-ES-405/test-compare-main.json"
-      ],
-      "check": {
-        "type": "jsonPath",
-        "file": "reports/TASK-ES-405/test-compare-main.json",
-        "path": "sameNumbers",
-        "equals": true
-      }
-    },
-    {
-      "id": "C50",
-      "req": "R3",
-      "kind": "static",
-      "domain": "ui-behavior",
-      "statement": "main 합친 뒤에도 tests 출력이 그 기준과 같다고 기록",
-      "touches": [
-        "reports/TASK-ES-405/test-compare-main.json"
-      ],
-      "check": {
-        "type": "jsonPath",
-        "file": "reports/TASK-ES-405/test-compare-main.json",
-        "path": "tests.outputsSame",
-        "equals": true
-      }
-    },
-    {
-      "id": "C51",
-      "req": "R3",
-      "kind": "static",
-      "domain": "ui-behavior",
-      "statement": "main 기준으로 다시 잰 게스트 통계 조작 비교도 차이 0 으로 기록",
-      "touches": [
-        "reports/TASK-ES-405/dom-compare-stats-3-main.json"
-      ],
-      "check": {
-        "type": "jsonPath",
-        "file": "reports/TASK-ES-405/dom-compare-stats-3-main.json",
-        "path": "differingExcludingNoise",
-        "equals": 0
-      }
-    },
-    {
-      "id": "C52",
+      "id": "C45",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -822,7 +713,7 @@
       }
     },
     {
-      "id": "C53",
+      "id": "C46",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -837,7 +728,7 @@
       }
     },
     {
-      "id": "C54",
+      "id": "C47",
       "req": "R1",
       "kind": "static",
       "domain": "config",

@@ -2,9 +2,9 @@
 // 통계 세포 쪼개기 3차 생성기(#TASK-ES-405): js/universal-stats.js(이전 전 3,283줄 — 1차 #TASK-ES-392·2차 #TASK-ES-401 이음매가 있는 판)를 더 나눈다.
 // 손으로 옮기지 않는다. 두 단계다.
 //  가 단계(글자 변형 — 토큰은 그대로, 검사기 verify-stats-split-3.js 가 맞댄다)
-//   ① 카탈로그 상수 6개: `var X = <값>;` → `var X = createX();` + `function createX(){ return <값>; }`.
-//      공장 함수는 원본 IIFE 가 돌 때 그 자리에서 한 번 불려 새 객체를 만든다 — 이전처럼 원본 IIFE 실행마다 새 객체 하나, 원본 변수 X 가 그 객체를 쥐고
-//      부품은 S.X getter 로 바로 그 객체를 읽는다(같은 객체 참조). 값 안의 원본 스코프 이름은 S.<이름> 으로 읽는다(읽는 시점이 이전과 같다 — 공장은 이전 자리에서 불린다).
+//   ① 카탈로그 상수(METRIC_CONFIGS·SAMPLE_THEMES·THEME_METRIC_SPECS·RAW_52W_POWERLIFTING_DATA·DOMAINS·METRIC_DIFFERENTIATED_MODELS)는 옮기지 않는다.
+//      원본이 읽힐 때 바로 그 값을 쓴다(공개 API 객체·별칭 줄) — 공장 함수로 옮기면 원본 혼자 읽힐 때(법정 모듈 로드 탐침 court/probes/module-load.js 는 파일마다 따로 돌린다)
+//      공장이 없어 원본이 멈춘다(실측: TypeError createMetricConfigs is not a function). 그래서 원본에 두고 부품은 S.<이름> getter 로 같은 객체를 읽는다(2차와 같음).
 //   ② generateDomainSample(970줄) 구획 분할: if/else-if 사슬 중 큰 도메인 구획 6개(hyrox·running·big3·study·coding·sales)의 블록 본문을 하위 함수로 떼고
 //      그 자리에는 하위 함수 호출 한 줄을 둔다. 공유 변수(domainKey·now·records — 재대입 0)는 인자로 넘긴다. 틀 2절 경계 조건을 정적으로 검사한다:
 //      문을 가르지 않음(블록 본문 줄 전체) · 구획의 지역 var 는 그 구획 안에서만 선언·사용(사슬 조건식·꼬리·다른 떼는 구획에서 안 씀 — 구획끼리는 한 번에 하나만 돈다)
@@ -26,14 +26,6 @@ const OLD_MARK = /\[#TASK-ES-(392|401)\]/;
 const code0 = fs.readFileSync(SRC, 'utf8').replace(/\r\n/g, '\n');
 const lines0 = code0.split('\n');
 
-const CONSTS = [
-  ['METRIC_CONFIGS', 'createMetricConfigs'],
-  ['SAMPLE_THEMES', 'createSampleThemes'],
-  ['THEME_METRIC_SPECS', 'createThemeMetricSpecs'],
-  ['RAW_52W_POWERLIFTING_DATA', 'createRaw52wPowerliftingData'],
-  ['DOMAINS', 'createDomains'],
-  ['METRIC_DIFFERENTIATED_MODELS', 'createMetricDifferentiatedModels'],
-];
 const SECTIONS = [
   ['hyrox', 'pushHyroxSample'],
   ['running', 'pushRunningSample'],
@@ -51,31 +43,6 @@ traverse(ast0, { FunctionExpression(p) { if (!iife0) iife0 = p; } });
 const top0 = iife0.get('body').get('body');
 const multiLineStringIn = (a, b) => ast0.tokens.some(t => t.start >= a && t.end <= b && t.loc.start.line !== t.loc.end.line && t.type.label !== 'CommentBlock' && (t.type.label === 'string' || t.type.label === 'template' || t.type.label === '`'));
 const repl = []; // { from, to, lines } — 원본 줄 from..to 를 lines 로 바꾼다
-
-for (const [name, fac] of CONSTS) {
-  const s = top0.find(x => x.isVariableDeclaration() && x.node.declarations.length === 1 && x.node.declarations[0].id.name === name);
-  if (!s) throw new Error('상수 선언 없음 ' + name);
-  if (s.node.kind !== 'var') throw new Error('var 아님 ' + name);
-  const b = iife0.scope.getBinding(name);
-  if (b.constantViolations.length) throw new Error('상수 재대입 ' + name);
-  if (iife0.scope.getBinding(fac)) throw new Error('공장 이름 충돌 ' + fac);
-  const init = s.node.declarations[0].init;
-  const L1 = s.node.loc.start.line, L2 = s.node.loc.end.line;
-  const lead = lines0[L1 - 1].slice(0, s.node.loc.start.column);
-  if (!/^ +$/.test(lead) || code0.slice(s.node.start, init.start) !== 'var ' + name + ' = ') throw new Error('선언 머리 꼴 다름 ' + name);
-  if (lines0[L2 - 1].slice(s.node.loc.end.column).trim() !== '') throw new Error('선언 끝 뒤 글자 ' + name);
-  if (code0.slice(init.end, s.node.end) !== ';') throw new Error('선언 끝 꼴 ' + name);
-  if (multiLineStringIn(init.start, init.end)) throw new Error('여러 줄 문자열 — 들여쓰기 못 바꿈 ' + name);
-  let topThis = 0;
-  s.traverse({ ThisExpression(p) { if (p.getFunctionParent() === iife0) topThis++; }, Identifier(p) { if (p.node.name === 'arguments' && p.getFunctionParent() === iife0) topThis++; } });
-  if (topThis) throw new Error('상수 값 최상위 this/arguments ' + name);
-  const initLines = code0.slice(init.start, init.end).split('\n');
-  const out = [lead + 'var ' + name + ' = ' + fac + '();', '  function ' + fac + '(){', '    return ' + initLines[0]];
-  for (const l of initLines.slice(1)) out.push(l ? '  ' + l : l);
-  out[out.length - 1] += ';';
-  out.push('  }');
-  repl.push({ from: L1, to: L2, lines: out, kind: 'const', name, fac });
-}
 
 const gds = top0.find(x => x.isFunctionDeclaration() && x.node.id.name === 'generateDomainSample');
 const fnScope = gds.scope;
@@ -173,7 +140,6 @@ const code = mid.join('\n');
 const lines = code.split('\n');
 const ast = parser.parse(code, { sourceType: 'script', ranges: true });
 const CELLS = {
-  'js/stats-catalog.js': ['카탈로그 상수 공장 — 메트릭 카탈로그·샘플 테마·테마 지표 규격·52주 원시 데이터·도메인·차등 분석 모델(원본 IIFE 가 제자리에서 한 번 불러 같은 객체를 쥔다)', CONSTS.map(c => c[1])],
   'js/stats-samples.js': ['샘플 생성 — 도메인별 1년치 샘플(조립자: 작은 구획은 그대로, 큰 구획 6개는 하위 함수 호출)·52주 파워리프팅·1920년대 역도 샘플(generateDomainSample · generate52WeekPowerliftingSample · generate1920sOlympicStrengthSample)', ['generateDomainSample', 'generate52WeekPowerliftingSample', 'generate1920sOlympicStrengthSample']],
   'js/stats-sample-fitness.js': ['도메인 샘플 구획 — 운동(하이록스·러닝·3대운동) 1년치 기록 생성(pushHyroxSample · pushRunningSample · pushBig3Sample)', ['pushHyroxSample', 'pushRunningSample', 'pushBig3Sample']],
   'js/stats-sample-growth.js': ['도메인 샘플 구획 — 성장(공부·코딩·영업) 1년치 기록 생성(pushStudySample · pushCodingSample · pushSalesSample)', ['pushStudySample', 'pushCodingSample', 'pushSalesSample']],
@@ -297,10 +263,7 @@ for (const [f, [role, names]] of Object.entries(CELLS)) {
   const bl = BLOCKS.filter(b => b.file === f);
   const got = bl.flatMap(b => b.names);
   if (JSON.stringify(got.slice().sort()) !== JSON.stringify(names.slice().sort())) throw new Error('블록 함수 목록 다름 ' + f + ': ' + got.join(','));
-  const how = f === 'js/stats-catalog.js'
-    ? [' * 이전 전 `var <이름> = <값>;` 의 <값>을 글자 그대로 `function create<이름>(){ return <값>; }` 에 담았다(들여쓰기 2칸만 더함). 원본은 이전 자리에서 `var <이름> = create<이름>();` 로 한 번 불러',
-      ' * 새 객체를 쥐고, 부품은 S.<이름> getter 로 바로 그 객체를 읽는다(같은 객체 참조 — 이전처럼 원본 IIFE 실행마다 새 객체 하나).']
-    : SECTION_FILES.has(f)
+  const how = SECTION_FILES.has(f)
       ? [' * generateDomainSample(js/stats-samples.js)의 `if(domainKey === \'<키>\'){ … }` 블록 본문을 글자 그대로 옮긴 구획 함수다(들여쓰기 2칸만 뺌). 조립자는 그 자리에서 이 함수를 부른다.',
         ' * 공유 변수(domainKey·now·records — 재대입 없음)는 인자로 받는다. 구획의 지역 var 는 이 구획 안에서만 선언·사용된다(경계 조건 — 생성기가 검사, sample-boundary-stats-3.js 가 모든 도메인 출력을 맞댄다).']
       : [' * 함수 단위로 글자 그대로 옮겼다.'];
@@ -349,7 +312,7 @@ if (reqIdx < 0 || reqIdx > 40) throw new Error('require 줄 없음');
 mainOut[reqIdx] = mainOut[reqIdx].replace(' _statsKit = root.OurgoalUniversalStatsKit; }', ' ' + NEW_FILES.map(f => "require('./" + path.basename(f) + "');").join(' ') + ' _statsKit = root.OurgoalUniversalStatsKit; }');
 const noteIdx = mainOut.findIndex(l => l.includes('[#TASK-ES-401] 2차:'));
 if (noteIdx < 0 || noteIdx > reqIdx) throw new Error('2차 이음매 주석 없음');
-mainOut.splice(noteIdx + 1, 0, '     [' + TAG_TASK + '] 3차: ' + NEW_FILES.join(' · ') + ' 도 같은 이음매로 가져온다. 카탈로그 상수는 공장 함수(create<이름>)를 이전 자리에서 불러 같은 객체를 쥔다. */');
+mainOut.splice(noteIdx + 1, 0, '     [' + TAG_TASK + '] 3차: ' + NEW_FILES.join(' · ') + ' 도 같은 이음매로 가져온다(카탈로그 상수는 원본에 두고 getter 로 노출). */');
 mainOut[noteIdx] = mainOut[noteIdx].replace(/ \*\/$/, '');
 let lastImp = -1;
 for (let i = 0; i < 80; i++) if (/^  var (\w+) = _statsKit\.\1;$/.test(mainOut[i])) lastImp = i;
