@@ -1,0 +1,995 @@
+{
+ "task": "TASK-ES-442",
+ "scriptHtmlLines": [
+  2331,
+  31554
+ ],
+ "moved": {
+  "js/tabs/settings/login-devices.js": [
+   "getRegisteredDevices",
+   "renderActiveDevicesList",
+   "openLogoutOtherDevicesConfirmModal"
+  ],
+  "js/tabs/settings/app-lock-pin.js": [
+   "isHashedAppLockPin",
+   "appLockCryptoAvailable",
+   "sha256HexAppLock",
+   "hashAppLockPin",
+   "verifyAppLockPin",
+   "openTwoFactorSetupModal",
+   "openTwoFactorDisableModal",
+   "challengeTwoFactorModal"
+  ],
+  "js/tabs/settings/dev-debug-gate.js": [
+   "initDevDebugButtons"
+  ],
+  "js/tabs/settings/guest-migration.js": [
+   "migrateGuestDataToUser"
+  ],
+  "js/tabs/settings/tab-guide.js": [
+   "renderTabGuideContent",
+   "openTabGuideHubModal",
+   "TAB_GUIDE_DATA"
+  ],
+  "js/tabs/settings/onboarding.js": [
+   "startOnboarding",
+   "ONBOARDING_AVATARS"
+  ],
+  "js/tabs/goals/prompt-encyclopedia.js": [
+   "getUserPrompts",
+   "getLikedPromptIds",
+   "getPromptLikesMap",
+   "openAddUserPromptModal",
+   "renderPromptEncyclopediaHtml",
+   "wirePromptEncyclopediaEvents"
+  ],
+  "js/tabs/goals/notion-record-convert.js": [
+   "convertTextToNotionDbRecord"
+  ],
+  "js/tabs/calendar/schedule-done-toggle.js": [
+   "toggleScheduleDone"
+  ],
+  "js/tabs/goals/goal-math.js": [
+   "goalProgress",
+   "msCounts",
+   "resultPct"
+  ],
+  "js/tabs/settings/app-defaults.js": [
+   "defaultSettings"
+  ]
+ },
+ "movedKinds": {
+  "getRegisteredDevices": "fn",
+  "renderActiveDevicesList": "fn",
+  "openLogoutOtherDevicesConfirmModal": "fn",
+  "isHashedAppLockPin": "fn",
+  "appLockCryptoAvailable": "fn",
+  "sha256HexAppLock": "fn",
+  "hashAppLockPin": "fn",
+  "verifyAppLockPin": "fn",
+  "openTwoFactorSetupModal": "fn",
+  "openTwoFactorDisableModal": "fn",
+  "challengeTwoFactorModal": "fn",
+  "initDevDebugButtons": "fn",
+  "migrateGuestDataToUser": "fn",
+  "renderTabGuideContent": "fn",
+  "openTabGuideHubModal": "fn",
+  "TAB_GUIDE_DATA": "var",
+  "startOnboarding": "fn",
+  "ONBOARDING_AVATARS": "var",
+  "getUserPrompts": "fn",
+  "getLikedPromptIds": "fn",
+  "getPromptLikesMap": "fn",
+  "openAddUserPromptModal": "fn",
+  "renderPromptEncyclopediaHtml": "fn",
+  "wirePromptEncyclopediaEvents": "fn",
+  "convertTextToNotionDbRecord": "fn",
+  "toggleScheduleDone": "fn",
+  "goalProgress": "fn",
+  "msCounts": "fn",
+  "resultPct": "fn",
+  "defaultSettings": "fn"
+ },
+ "chunks": [
+  {
+   "cell": "js/tabs/settings/app-defaults.js",
+   "group": "Storage (Supabase: goals & checkins; localStorage: settings)",
+   "names": [
+    "defaultSettings"
+   ],
+   "start": 3000,
+   "end": 3017,
+   "lines": 18,
+   "whole": true
+  },
+  {
+   "cell": "js/tabs/settings/login-devices.js",
+   "group": "[70] 활성 로그인 기기 목록 실시간 렌더링 & 개별 세션 로그아웃",
+   "names": [
+    "getRegisteredDevices",
+    "renderActiveDevicesList"
+   ],
+   "start": 3861,
+   "end": 3950,
+   "lines": 90,
+   "whole": true
+  },
+  {
+   "cell": "js/tabs/settings/login-devices.js",
+   "group": "[70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달",
+   "names": [
+    "openLogoutOtherDevicesConfirmModal"
+   ],
+   "start": 3953,
+   "end": 4048,
+   "lines": 96,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "isHashedAppLockPin"
+   ],
+   "start": 4058,
+   "end": 4060,
+   "lines": 3,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "appLockCryptoAvailable"
+   ],
+   "start": 4061,
+   "end": 4063,
+   "lines": 3,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "sha256HexAppLock"
+   ],
+   "start": 4064,
+   "end": 4067,
+   "lines": 4,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "hashAppLockPin"
+   ],
+   "start": 4068,
+   "end": 4077,
+   "lines": 10,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "verifyAppLockPin"
+   ],
+   "start": 4078,
+   "end": 4101,
+   "lines": 24,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "openTwoFactorSetupModal"
+   ],
+   "start": 4107,
+   "end": 4160,
+   "lines": 54,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "openTwoFactorDisableModal"
+   ],
+   "start": 4162,
+   "end": 4203,
+   "lines": 42,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/app-lock-pin.js",
+   "group": "[71] 앱 잠금 PIN (이 기기)",
+   "names": [
+    "challengeTwoFactorModal"
+   ],
+   "start": 4205,
+   "end": 4277,
+   "lines": 73,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/prompt-encyclopedia.js",
+   "group": "[78 / 89] 데이터분석 프롬프트 백과사전",
+   "names": [
+    "getUserPrompts"
+   ],
+   "start": 4290,
+   "end": 4301,
+   "lines": 12,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/prompt-encyclopedia.js",
+   "group": "[78 / 89] 데이터분석 프롬프트 백과사전",
+   "names": [
+    "getLikedPromptIds"
+   ],
+   "start": 4303,
+   "end": 4314,
+   "lines": 12,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/prompt-encyclopedia.js",
+   "group": "[78 / 89] 데이터분석 프롬프트 백과사전",
+   "names": [
+    "getPromptLikesMap"
+   ],
+   "start": 4316,
+   "end": 4322,
+   "lines": 7,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/prompt-encyclopedia.js",
+   "group": "[78 / 89] 데이터분석 프롬프트 백과사전",
+   "names": [
+    "openAddUserPromptModal"
+   ],
+   "start": 4324,
+   "end": 4413,
+   "lines": 90,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/prompt-encyclopedia.js",
+   "group": "[78 / 89] 데이터분석 프롬프트 백과사전",
+   "names": [
+    "renderPromptEncyclopediaHtml"
+   ],
+   "start": 4415,
+   "end": 4606,
+   "lines": 192,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/prompt-encyclopedia.js",
+   "group": "[78 / 89] 데이터분석 프롬프트 백과사전",
+   "names": [
+    "wirePromptEncyclopediaEvents"
+   ],
+   "start": 4608,
+   "end": 4750,
+   "lines": 143,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/dev-debug-gate.js",
+   "group": "[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼",
+   "names": [
+    "initDevDebugButtons"
+   ],
+   "start": 5324,
+   "end": 5338,
+   "lines": 15,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/guest-migration.js",
+   "group": "[#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시",
+   "names": [
+    "migrateGuestDataToUser"
+   ],
+   "start": 5658,
+   "end": 5870,
+   "lines": 213,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/tab-guide.js",
+   "group": "[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법",
+   "names": [
+    "TAB_GUIDE_DATA"
+   ],
+   "start": 6322,
+   "end": 6458,
+   "lines": 137,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/tab-guide.js",
+   "group": "[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법",
+   "names": [
+    "renderTabGuideContent"
+   ],
+   "start": 6460,
+   "end": 6498,
+   "lines": 39,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/tab-guide.js",
+   "group": "[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법",
+   "names": [
+    "openTabGuideHubModal"
+   ],
+   "start": 6500,
+   "end": 6576,
+   "lines": 77,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/onboarding.js",
+   "group": "Onboarding (first-time, after signup)",
+   "names": [
+    "ONBOARDING_AVATARS"
+   ],
+   "start": 6756,
+   "end": 6777,
+   "lines": 22,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/settings/onboarding.js",
+   "group": "Onboarding (first-time, after signup)",
+   "names": [
+    "startOnboarding"
+   ],
+   "start": 6779,
+   "end": 6986,
+   "lines": 208,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/goal-math.js",
+   "group": "Goal math",
+   "names": [
+    "goalProgress",
+    "msCounts"
+   ],
+   "start": 7822,
+   "end": 7832,
+   "lines": 11,
+   "whole": true
+  },
+  {
+   "cell": "js/tabs/goals/goal-math.js",
+   "group": "결과 기록 (체크박스 대신 수치 입력)",
+   "names": [
+    "resultPct"
+   ],
+   "start": 7872,
+   "end": 7879,
+   "lines": 8,
+   "whole": false
+  },
+  {
+   "cell": "js/tabs/goals/notion-record-convert.js",
+   "group": "AI 결과 입력 -> Notion DB 구조화 변환기",
+   "names": [
+    "convertTextToNotionDbRecord"
+   ],
+   "start": 7882,
+   "end": 7958,
+   "lines": 77,
+   "whole": true
+  },
+  {
+   "cell": "js/tabs/calendar/schedule-done-toggle.js",
+   "group": "[#TASK-ES-151 & #TASK-ES-253] 일정 체크 완료 토글",
+   "names": [
+    "toggleScheduleDone"
+   ],
+   "start": 9657,
+   "end": 9854,
+   "lines": 198,
+   "whole": true
+  }
+ ],
+ "markers": [
+  {
+   "names": [
+    "defaultSettings"
+   ],
+   "lines": [
+    3000,
+    3017
+   ],
+   "file": "js/tabs/settings/app-defaults.js"
+  },
+  {
+   "names": [
+    "getRegisteredDevices",
+    "renderActiveDevicesList"
+   ],
+   "lines": [
+    3861,
+    3950
+   ],
+   "file": "js/tabs/settings/login-devices.js"
+  },
+  {
+   "names": [
+    "openLogoutOtherDevicesConfirmModal"
+   ],
+   "lines": [
+    3953,
+    4048
+   ],
+   "file": "js/tabs/settings/login-devices.js"
+  },
+  {
+   "names": [
+    "isHashedAppLockPin",
+    "appLockCryptoAvailable",
+    "sha256HexAppLock",
+    "hashAppLockPin",
+    "verifyAppLockPin"
+   ],
+   "lines": [
+    4058,
+    4101
+   ],
+   "file": "js/tabs/settings/app-lock-pin.js"
+  },
+  {
+   "names": [
+    "openTwoFactorSetupModal",
+    "openTwoFactorDisableModal",
+    "challengeTwoFactorModal"
+   ],
+   "lines": [
+    4107,
+    4277
+   ],
+   "file": "js/tabs/settings/app-lock-pin.js"
+  },
+  {
+   "names": [
+    "getUserPrompts",
+    "getLikedPromptIds",
+    "getPromptLikesMap",
+    "openAddUserPromptModal",
+    "renderPromptEncyclopediaHtml",
+    "wirePromptEncyclopediaEvents"
+   ],
+   "lines": [
+    4290,
+    4750
+   ],
+   "file": "js/tabs/goals/prompt-encyclopedia.js"
+  },
+  {
+   "names": [
+    "initDevDebugButtons"
+   ],
+   "lines": [
+    5324,
+    5338
+   ],
+   "file": "js/tabs/settings/dev-debug-gate.js"
+  },
+  {
+   "names": [
+    "migrateGuestDataToUser"
+   ],
+   "lines": [
+    5658,
+    5870
+   ],
+   "file": "js/tabs/settings/guest-migration.js"
+  },
+  {
+   "names": [
+    "TAB_GUIDE_DATA",
+    "renderTabGuideContent",
+    "openTabGuideHubModal"
+   ],
+   "lines": [
+    6322,
+    6576
+   ],
+   "file": "js/tabs/settings/tab-guide.js"
+  },
+  {
+   "names": [
+    "ONBOARDING_AVATARS",
+    "startOnboarding"
+   ],
+   "lines": [
+    6756,
+    6986
+   ],
+   "file": "js/tabs/settings/onboarding.js"
+  },
+  {
+   "names": [
+    "goalProgress",
+    "msCounts"
+   ],
+   "lines": [
+    7822,
+    7832
+   ],
+   "file": "js/tabs/goals/goal-math.js"
+  },
+  {
+   "names": [
+    "resultPct"
+   ],
+   "lines": [
+    7872,
+    7879
+   ],
+   "file": "js/tabs/goals/goal-math.js"
+  },
+  {
+   "names": [
+    "convertTextToNotionDbRecord"
+   ],
+   "lines": [
+    7882,
+    7958
+   ],
+   "file": "js/tabs/goals/notion-record-convert.js"
+  },
+  {
+   "names": [
+    "toggleScheduleDone"
+   ],
+   "lines": [
+    9657,
+    9854
+   ],
+   "file": "js/tabs/calendar/schedule-done-toggle.js"
+  }
+ ],
+ "imports": {
+  "js/tabs/settings/login-devices.js": [
+   "getRegisteredDevices",
+   "renderActiveDevicesList",
+   "openLogoutOtherDevicesConfirmModal"
+  ],
+  "js/tabs/settings/app-lock-pin.js": [
+   "isHashedAppLockPin",
+   "verifyAppLockPin",
+   "openTwoFactorSetupModal",
+   "openTwoFactorDisableModal",
+   "challengeTwoFactorModal"
+  ],
+  "js/tabs/settings/dev-debug-gate.js": [
+   "initDevDebugButtons"
+  ],
+  "js/tabs/settings/guest-migration.js": [
+   "migrateGuestDataToUser"
+  ],
+  "js/tabs/settings/tab-guide.js": [
+   "openTabGuideHubModal"
+  ],
+  "js/tabs/settings/onboarding.js": [
+   "startOnboarding"
+  ],
+  "js/tabs/goals/prompt-encyclopedia.js": [
+   "renderPromptEncyclopediaHtml",
+   "wirePromptEncyclopediaEvents"
+  ],
+  "js/tabs/goals/notion-record-convert.js": [
+   "convertTextToNotionDbRecord"
+  ],
+  "js/tabs/calendar/schedule-done-toggle.js": [
+   "toggleScheduleDone"
+  ],
+  "js/tabs/goals/goal-math.js": [
+   "goalProgress",
+   "msCounts",
+   "resultPct"
+  ],
+  "js/tabs/settings/app-defaults.js": [
+   "defaultSettings"
+  ]
+ },
+ "outsideRefs": {
+  "getRegisteredDevices": [
+   19731,
+   19731
+  ],
+  "renderActiveDevicesList": [
+   2393
+  ],
+  "openLogoutOtherDevicesConfirmModal": [
+   2382,
+   4049,
+   19748,
+   19748
+  ],
+  "isHashedAppLockPin": [
+   4104
+  ],
+  "verifyAppLockPin": [
+   4103
+  ],
+  "openTwoFactorSetupModal": [
+   2388,
+   4280
+  ],
+  "openTwoFactorDisableModal": [
+   2387,
+   4281
+  ],
+  "challengeTwoFactorModal": [
+   4282,
+   6628,
+   6629
+  ],
+  "initDevDebugButtons": [
+   5340,
+   5342,
+   5344
+  ],
+  "migrateGuestDataToUser": [
+   5871,
+   6084,
+   6085,
+   31013,
+   31014,
+   31113,
+   31114
+  ],
+  "openTabGuideHubModal": [
+   6577,
+   6582
+  ],
+  "startOnboarding": [
+   6020,
+   6987,
+   31028
+  ],
+  "renderPromptEncyclopediaHtml": [
+   2512
+  ],
+  "wirePromptEncyclopediaEvents": [
+   2524
+  ],
+  "convertTextToNotionDbRecord": [
+   2536,
+   13185,
+   13186
+  ],
+  "toggleScheduleDone": [
+   2479,
+   9962,
+   11280
+  ],
+  "goalProgress": [
+   2539,
+   11966,
+   11966,
+   12044,
+   12044,
+   14586,
+   14586,
+   14825,
+   14854,
+   15391,
+   15402,
+   27921,
+   28311
+  ],
+  "msCounts": [
+   12045
+  ],
+  "resultPct": [
+   2518,
+   17161,
+   17165,
+   17207
+  ],
+  "defaultSettings": [
+   3215,
+   3215,
+   3224,
+   3567
+  ]
+ },
+ "skipped": [],
+ "bridged": [
+  {
+   "n": "APP_LOCK_PIN_PREFIX",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "MOCK_GROUPS",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "USER_SESSION_CHANNEL",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "_promptEncyclopediaOpen",
+   "assigned": true,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "_promptTabState",
+   "assigned": true,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "awardXP",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "closeModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "dayIndexSinceSignup",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "enterApp",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "escapeHtml",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "gcalEventsKey",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "getDeviceId",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "isValidRealUser",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "isoDate",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "nowISO",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "openModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "openProfileEditor",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "performLogout",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "purgeLegacySharedGcalKeys",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "renderCalendarScreen",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderFirstCheckinTutorialBanner",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "renderGoalsScreen",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderHome",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderRecordsScreen",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderSettingsScreen",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "saveLocalSettings",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "saveProfile",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "sb",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "setDeviceLoginTime",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "state",
+   "assigned": false,
+   "kind": "var",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "switchTab",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "toast",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "track",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "triggerHaptic",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "triggerHapticFeedback",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "uid",
+   "assigned": false,
+   "kind": "hoisted",
+   "moved": false,
+   "alreadyExposedBefore": true
+  }
+ ],
+ "newlyExposed": [
+  "APP_LOCK_PIN_PREFIX",
+  "USER_SESSION_CHANNEL",
+  "_promptEncyclopediaOpen",
+  "_promptTabState",
+  "enterApp",
+  "gcalEventsKey",
+  "getDeviceId",
+  "performLogout",
+  "purgeLegacySharedGcalKeys",
+  "renderFirstCheckinTutorialBanner",
+  "renderSettingsScreen",
+  "setDeviceLoginTime"
+ ],
+ "edits": 349,
+ "htmlLinesBefore": 31593,
+ "htmlLinesAfter": 29757,
+ "files": {
+  "js/tabs/settings/login-devices.js": 214,
+  "js/tabs/settings/app-lock-pin.js": 258,
+  "js/tabs/settings/dev-debug-gate.js": 39,
+  "js/tabs/settings/guest-migration.js": 237,
+  "js/tabs/settings/tab-guide.js": 283,
+  "js/tabs/settings/onboarding.js": 257,
+  "js/tabs/goals/prompt-encyclopedia.js": 495,
+  "js/tabs/goals/notion-record-convert.js": 101,
+  "js/tabs/calendar/schedule-done-toggle.js": 222,
+  "js/tabs/goals/goal-math.js": 47,
+  "js/tabs/settings/app-defaults.js": 42
+ }
+}

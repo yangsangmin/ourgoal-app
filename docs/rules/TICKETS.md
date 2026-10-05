@@ -550,3 +550,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-444 | INFRA | [인라인 스크립트 세포화 P1 구역 2차] 일정 배경 사진·잠금화면 라이브·챌린지 룸·첫 응원·피드 미리보기·스토리 캔버스·사진 인증·히트맵 요약·적응형 모드·설치 안내·스타터 목표·목표 로컬 문장 15묶음 함수 27개를 세포 12개로 동작 그대로 이전 | 코디네이터 지시 (2026-10-05, 상민님 "미분화 덩어리 분열 우선"), REQ docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md
 - #TASK-ES-447 | INFRA | [시험지 인라인 합본 · 구역 P2 선행] 시험지 4개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md
 - #TASK-ES-451 | INFRA | [시험지 인라인 합본 읽기 P1 선행] ai-conditional-call-optimization 시험지가 인라인 합본을 읽어 refreshGoalStatusSummary 를 세포로 옮길 수 있게 함(지운 단언 0) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-451-INLINE-TEST-BUNDLE-P1.md
+- #TASK-ES-442 | INFRA | [인라인 스크립트 세포화 P0 구역 2차] 시험지 합본(#751) 뒤 P0 나머지 13묶음 28함수·상수 var 2개를 js/tabs/settings·goals·calendar 세포 11개로 동작 그대로 이전(index.html −1,836줄) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md | 4단계(심사 청구)
