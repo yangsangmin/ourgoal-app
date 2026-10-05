@@ -1,0 +1,158 @@
+{
+ "task": "TASK-ES-516",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 미분화 덩어리의 광고 묶음(「아워골 앱 환경설정 및 보상형 광고 파이프라인」 광고 상수, 「템플릿 복제 보상형 광고(Rewarded Ad) 파이프라인」 광고 함수)과 그것만 부르는 진입 흔적(설정 「광고 보고 크레딧 받기」, 부팅 광고 손잡이, app-ads.txt)을 지운다. 템플릿 복제 등 돈과 무관한 기능은 동작 그대로."
+  },
+  {
+   "id": "R2",
+   "text": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 구독 묶음(「구독 상태」 subscriptionState, 「안내 모달」 openPaywallModal·renderProBadge)과 그것만 부르는 흔적(상단 바·enterApp 호출, PRO 배지·요금 칸 CSS, 새 계정 구독 기본값)을 지운다."
+  },
+  {
+   "id": "R3",
+   "text": "사용자 데이터 칸(이미 저장된 settings.subscription·제작권 지갑 maxBaseCrafts/bonusCraftCredits/lastStreakAwarded·크레딧 원장)은 지우지 않고 보존한다 — 읽는 코드만 없앤다(GUARD_03)."
+  },
+  {
+   "id": "R4",
+   "text": "흔적 0·신고서(modules.json·cell-descriptions.json) 갱신·문서(REQ 8원칙, dev_log·TICKETS 각 1줄)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "광고 함수를 지운 뒤에도 게스트로 기록 탭 「📋 템플릿」→「템플릿 마켓」을 열어 「복제하기」를 누르면 광고 단계 없이 바로 「내 템플릿으로 복제 완료」 알림이 보이고 마켓 창이 닫힌다(예외 없음) — 마켓 cloneTemplate 이 복제 본체 executeDirectTemplateClone 을 바로 부른다",
+   "touches": [
+    "index.html",
+    "js/template-credit.js"
+   ],
+   "scenario": "scenarios/template-market-clone-no-ad.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "구독 상태·안내 모달·PRO 배지 코드를 지운 뒤에도 게스트로 앱에 들어가 설정 탭을 누르면 설정 화면이 열리고(enterApp·상단 바 그리기에서 예외 없음), PRO 배지 요소와 「광고 보고 크레딧 받기」 단추(#creditAdOptInBtn)는 없다",
+   "touches": [
+    "index.html",
+    "js/core/profile-topbar.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/app-defaults.js",
+    "ui.css",
+    "js/template-credit.js"
+   ],
+   "scenario": "scenarios/settings-no-pro-no-ad.json"
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "AdMob 게시자 선언 파일 app-ads.txt 를 지웠다(지운 파일 기록)",
+   "touches": [
+    "app-ads.txt",
+    "reports/TASK-ES-516/removed-files.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-516/removed-files.json",
+    "type": "jsonPath",
+    "path": "removed.0.path",
+    "equals": "app-ads.txt"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서의 템플릿 크레딧 세포 역할에서 「선택형 보상 광고」가 빠졌다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeNotContains",
+    "text": "선택형 보상 광고"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포 설명 파일에서 템플릿 크레딧 세포의 「보상 광고」 설명이 빠졌다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeNotContains",
+    "text": "원할 때만 보상 광고를 본다"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 보존한 사용자 데이터 칸(settings.subscription 저장값·제작권 지갑·크레딧 원장)과 보존 근거(Object.assign 병합)를 적었다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
+    "type": "codeContains",
+    "text": "보존한 사용자 데이터 칸(GUARD_03)"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 를 8원칙 섹션으로 적고 지우기 전 각 묶음이 하던 일을 1절 표에 적었다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증·반론 격파"
+   }
+  }
+ ],
+ "retire": [
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인(5초 카운트다운, 모달 안내, AdMob 및 Web fallback, app-ads.txt) 무결성 검증",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 보상형 광고 파이프라인(광고 플래그·안내 문구·광고 함수 6개·시연 전역·app-ads.txt)을 지웠다. 「있다」 글자 단언을 「없다」로 바꿨다(작업 시험지 통과)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "KF-2: js/template-credit.js 가 존재하고 문법이 유효하며 API 5종을 노출한다 (#TASK-ES-017)",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 템플릿 복제 크레딧 모듈의 「광고 보고 크레딧 받기」 API renderAdOptIn 을 지웠다. API 단언을 4종(init·recordCopy·counts·fillCounts)+renderAdOptIn 없음으로 바꿨다(나머지 단언 그대로)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "KF-2: 복제 흐름에서 광고가 분리되고, 광고는 설정의 선택형 버튼 한 경로뿐이다 (정본 §3)",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 남아 있던 광고 경로(설정 선택형 버튼·광고 재생 함수·광고 플래그)까지 모두 지웠다. 「광고는 한 경로뿐」을 「광고 경로 없음」 단언으로 바꿨다."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 구독·페이월 자리였던 「아워골 완전 무료화 헌법 선언」 안내 모달(openPaywallModal, 제품 안 부르는 곳 0)을 지웠다. 4번 단계 「모달 마크업 존재」를 「없다」로 바꿨다(1~3번 단계 그대로)."
+  },
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "check": "[검증 16/16] [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 정적 방화벽 검사",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 같은 안내 모달(openPaywallModal, 부르는 곳 0)을 지워 「아워골 완전 무료 선언 모달 마크업」 글자 단언이 깨진다. verify-integrity-gate.js 는 정적 린터라 고치지 않았다(오케스트레이터 지시) — 폐기 사유만 적는다."
+  }
+ ]
+}
