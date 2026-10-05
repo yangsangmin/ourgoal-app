@@ -174,14 +174,14 @@
    "req": "R1",
    "kind": "static",
    "domain": "architecture",
-   "statement": "생성기: 다른 세포의 keepRest 남김은 옮기기에 진다(진짜 남김과 겹치면 멈춤)",
+   "statement": "생성기(main 판, H3 와 같은 고침): 묶음을 나눌 때 다른 세포의 keepRest 남김은 옮기기에 양보한다(진짜 남김과 겹치면 멈춤)",
    "touches": [
     "docs/design/harness/module-split/gen-inline-hard.js"
    ],
    "check": {
     "file": "docs/design/harness/module-split/gen-inline-hard.js",
     "type": "codeContains",
-    "text": "!/keepRest/.test(i.why || '')"
+    "text": "!(i.keepRestOnly)"
    }
   },
   {
