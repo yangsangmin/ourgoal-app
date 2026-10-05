@@ -7208,7 +7208,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 외부 데이터 불러오기 (mock) ============ */
   bindImportExternalBtn(); /* [#TASK-ES-483] 로드 중 문(앞 주석 포함) → js/tabs/records/external-import.js 의 bindImportExternalBtn 로 옮김 — 원래 자리에서 부른다 */
   /* [#TASK-ES-483] openHomeCustomizer → js/tabs/records/external-import.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
-  var btnCustomHome = document.getElementById('btnCustomHomeLayout'); if(btnCustomHome) btnCustomHome.addEventListener('click', openHomeCustomizer);
+  /* [#TASK-ES-531] #btnCustomHomeLayout 의 addEventListener(openHomeCustomizer) 줄을 지움 — 단추의 인라인 onclick(handle홈_Item31Action)과 이중 처리기라 한 번 누르면 OurgoalCustomize.open 이 2번 불렸다(1번은 의존성 없이 불려 예외를 삼킴). 처리기는 인라인 한 벌, 창은 js/customize.js 가 앱 스코프 의존성으로 연다 */
   var topBtnCustomHome = document.getElementById('topHomeLayoutBtn'); if(topBtnCustomHome) topBtnCustomHome.addEventListener('click', openHomeCustomizer);
   var topBtnGuide = document.getElementById('topHomeGuideBtn'); if(topBtnGuide){ topBtnGuide.addEventListener('click', function(){ if(window.showTabUsageGuide) showTabUsageGuide((state && state.activeTab) || 'home'); }); }
 
