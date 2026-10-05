@@ -595,6 +595,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-511 | INFRA | [생성 지도 일괄 갱신 3회차] 생성 파일 4개를 main 8f76013 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-06), REQ docs/specs/REQ-TASK-ES-511-GENERATED-MAPS-SYNC-3.md | 4단계(심사 청구)
 - #TASK-ES-513 | INFRA | [인라인 3단계 설계·시범] 잔여 유형별 집계·실계정 표준 절차 설계, 시범 1묶음(디바이스 세션) 실계정 하네스로 재어 이동 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-513-INLINE-STAGE3.md | 4단계(심사 청구)
 - #TASK-ES-512 | INFRA | [헌법 버전 대장] v2026.10.06-SNOWBALL 행 추가 + 법령 전문 머리 현행 커널 버전 갱신(PR #800 병합 기록 1ce6c14 근거, 조문 본문 변경 0) | 코디네이터 세션 f747dcaa | 2026-10-06
+- #TASK-ES-517 | INFRA | [시험지 선행 · 인라인 3단계 Z2] 팀 목표 댓글 시험(team-goal-comment-fix)이 인라인 합본을 읽음(단언·기대값 그대로, 구간 절단 2개는 #803 몫) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-517-STAGE3-Z2-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-521 | INFRA | [인라인 3단계 Z1 1차] Supabase·2계정 테스트·새 비밀번호 창·탈퇴 30일 유예(로그인 단추 처리기) 4묶음을 세포 3개로 이전(동작 그대로) + 검사기 키트 변수 순서 검사 | 오케스트레이터 배정 Z1(2026-10-06), REQ docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md | 4단계(심사 청구)
 - #TASK-ES-518 | INFRA | [시험지 선행 · 인라인 3단계 Z1 로그인·계정] 시험지 3개(탈퇴 창·구글 세션·보안 감사)가 인라인 합본을 읽음, 단언·기대값 0 변경 | 오케스트레이터 배정 Z1(2026-10-06), REQ docs/specs/REQ-TASK-ES-518-STAGE3-Z1-TEST-BUNDLE.md | 4단계(심사 청구)
 - #TASK-ES-514 | FIX | [숨김 조사 결함] 빠른 목표 추가 저장 · 템플릿백과사전 이중 처리기 · 성소 새 기록 중계 제거 · 숨김 기준선 사유 정정 | 코디네이터 세션 f747dcaa, REQ docs/specs/REQ-TASK-ES-514-HIDDEN-AUDIT-DEFECTS.md | 2026-10-06
@@ -604,6 +605,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-527 | INFRA | [시험지 선행 · 인라인 3단계 Z3·기관] push-subscribe-auth-es400·core-confirm-es376 읽는 범위만 넓힘(단언·기대값 0 변경) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-527-STAGE3-Z3O-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-519 | INFRA | [시험지 선행 · 인라인 3단계 Z4] 구간 절단 시험지 3개(renderMultiMetricSvg·collapseAllTeamGoalAccordions)가 세포 이전 뒤에도 같은 함수를 읽음 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md
 - #TASK-ES-515 | FIX | [숨김 기능 6건 소멸] 기록 달력 융합 칩·빠른 스톱워치(저장 없는 기록)·루틴 매트릭스(한 번도 안 그려진 껍데기)·옛 기록 세그먼트 막대·첫 화면 「이메일로 가입하기」·옛 홈 구성 단추 2개(이중 처리기) 제거, 살아 있는 setRecordsSegment·가입 양식·#landGuestBtn·설정 홈 구성은 유지 | 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달), REQ docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md | 4단계(심사 청구)
+- #TASK-ES-516 | FIX | [돈 묶음 소멸] 미분화 덩어리의 광고·구독 묶음 4개(광고 상수·구독 상태·페이월 안내 모달·PRO 배지·템플릿 복제 보상형 광고 함수)와 진입 흔적 삭제, 데이터 칸 보존(상민님 2026-10-06 「광고, 구독관련은 삭제해」), 선행 #806 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md | 4단계(심사 청구)
 - #TASK-ES-537 | INFRA | [인라인 3단계 기관] 루틴 상세·편집 창 세포 이동(생성기, 자리 HO), Modal helper·Confetti 옮길 문 0 확인 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md | 4단계(심사 청구)
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
 - #TASK-ES-550 | INFRA | [금고 단독] 무결성 게이트 「[검증 16/16] [#TASK-ES-192]」 4단계를 「페이월 자리 안내 모달 없음」으로(#813 직후 병합, 상민님 「광고·구독 삭제 금고 변경 승인」) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-550-MONEY-INTEGRITY-GATE.md | 4단계(심사 청구)
