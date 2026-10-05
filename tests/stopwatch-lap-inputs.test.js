@@ -12,7 +12,7 @@ console.log('[TEST START] stopwatch-lap-inputs (#TASK-ES-306)');
 
 const htmlPath = path.join(__dirname, '..', 'index.html');
 const cssPath = path.join(__dirname, '..', 'ui.css');
-const html = fs.readFileSync(htmlPath, 'utf8');
+const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(htmlPath, 'utf8')); /* #TASK-ES-447 인라인 합본(원문 맨 앞 + js/tabs 세포) — 스톱워치 위젯이 기록 탭 세포로 옮겨 가도 같은 글자를 찾는다 */
 const css = fs.readFileSync(cssPath, 'utf8');
 
 // 1. HTML 마크업 및 필수 클래스/함수 존재 검증
