@@ -93,6 +93,20 @@ function readTeamGoalsBundle(origFile) {
   return src;
 }
 Object.keys(TEAM_GOALS_KIT_SLOTS).forEach(n => readTeamGoalsBundle(path.join(__dirname, '..', 'js', n)));
+// #TASK-ES-408 (시간기록 세포 쪼개기 선행 — 시험지): 시간기록 코드가 js/time-tracker.js 에서 js/time-tracker-*.js 세포(시간기록 세포 키트 OurgoalTimeTrackerKit 에 함수를 담는 파일)로 옮겨 가도(동작 그대로)
+// 같은 단언이 같은 코드를 찾도록, 시간기록 소스 글자 검사는 '시간기록 합본' = js/time-tracker.js(원문 그대로, 맨 앞) + 키트 부품 js/time-tracker-*.js(이름순) 를 본다.
+// 쪼개기 생성기는 원본 스코프 이름을 T.<이름>, 키트를 K.<이름> 으로 바꿔 쓴다 — 부품만 그 접두를 떼고 읽는다(팀 합본 readTeamPartFile 과 같은 방식). 단언·기대값은 그대로다.
+const TIME_TRACKER_JS = path.join(__dirname, '..', 'js', 'time-tracker.js');
+function isTimeTrackerPartFile(f) {
+  const n = path.basename(f);
+  return n.indexOf('time-tracker-') === 0 && fs.readFileSync(f, 'utf8').indexOf('OurgoalTimeTrackerKit') >= 0;
+}
+const TIME_TRACKER_PART_FILES = listJsTree(path.join(__dirname, '..', 'js'), false).filter(isTimeTrackerPartFile);
+const TIME_TRACKER_RAW = fs.readFileSync(TIME_TRACKER_JS, 'utf8');
+const TIME_TRACKER_SRC = [TIME_TRACKER_RAW, ...TIME_TRACKER_PART_FILES.map(readTeamPartFile)].join('\n');
+// 합본 맨 앞은 js/time-tracker.js 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
+assert.strictEqual(TIME_TRACKER_SRC.slice(0, TIME_TRACKER_RAW.length), TIME_TRACKER_RAW, '시간기록 합본 맨 앞 = js/time-tracker.js 원문');
+if (TIME_TRACKER_PART_FILES.length === 0) assert.strictEqual(TIME_TRACKER_SRC, TIME_TRACKER_RAW, '시간기록 합본 = js/time-tracker.js (부품 파일이 없을 때)');
 // #TASK-ES-393 (통계 세포 쪼개기 1차 선행 — 시험지): 통계 코드가 js/universal-stats.js 에서 js/stats-*.js 세포(통계 세포 키트 OurgoalUniversalStatsKit 에 함수를 담는 파일)로 옮겨 가도(동작 그대로)
 // 같은 단언이 같은 코드를 찾도록, 통계 소스 글자 검사는 '통계 합본' = js/universal-stats.js(원문 그대로, 맨 앞) + 키트 부품 js/stats-*.js(이름순) 를 본다.
 // 쪼개기 생성기는 원본 스코프 이름을 S.<이름>, 키트를 K.<이름> 으로 바꿔 쓴다 — 부품만 그 접두를 떼고 읽는다(T.·K.·L.·AV. 와 같은 방식). 단언·기대값은 그대로다.
@@ -4312,7 +4326,7 @@ check('compliance: [#TASK-ES-090] 아워골 기록탭 지금부터 시간기록(
   assert.ok(uiCss.includes('min-aspect-ratio'), '폴더블 정방형 화면비 미디어쿼리가 존재해야 함');
 
   // 3. time-tracker.js 핵심 엔진 및 4위 1체 배선 검증
-  const trackerJs = fs.readFileSync(trackerJsPath, 'utf8');
+  const trackerJs = TIME_TRACKER_SRC;
   assert.ok(trackerJs.includes('btnTtActionStart'), '스톱워치 시작 버튼 핸들러가 배선되어 있어야 함');
   assert.ok(trackerJs.includes('btnTtActionLap'), '스톱워치 구간기록(Lap) 버튼 핸들러가 배선되어 있어야 함');
   assert.ok(trackerJs.includes('btnTtActionPause'), '스톱워치 일시중지 버튼 핸들러가 배선되어 있어야 함');
@@ -6821,7 +6835,7 @@ check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과�
   const indexHtml = APP_SRC;
   const statsSrc = STATS_SRC;
   const teamLinkedSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-linked-goals.js'));
-  const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
+  const trackerSrc = TIME_TRACKER_SRC;
   const teamLevelsSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-visibility-levels.js'));
 
   // [45] 성취통계 데이터 관리 옆 접기토글 먹통 수정
@@ -6869,7 +6883,7 @@ check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과�
 check('compliance: [#TASK-ES-175] 기록 탭 시간기록 카드 슬림화([47]) 및 스톱워치 구간기록 시간창 자동 상단 이동([44]) & 입력창 모던 정돈([55]) 무결성 검증', () => {
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
+  const trackerSrc = TIME_TRACKER_SRC;
 
   // 1. [47] 기록 탭 메인 화면 지금부터 시간기록 배너 카드 슬림화 및 한 줄 설명 반영
   assert.ok(indexHtml.includes('id="recTimeTrackerActionCard"'), '[47] 기록 탭에 recTimeTrackerActionCard가 존재해야 함');

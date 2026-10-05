@@ -1,0 +1,451 @@
+{
+ "task": "TASK-ES-408",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-408-TIME-TRACKER-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "scripts/smoke-test.js(3곳: ES-090·ES-174·ES-175)와 tests 2개(core-modal·core-confirm 부재 단언)가 js/time-tracker.js 글자를 「시간기록 합본」(원본 원문 맨 앞 + js/ 바로 아래 OurgoalTimeTrackerKit 표식이 있는 time-tracker-*.js 부품, 이름순, 부품만 T.·K. 접두 제거)에서 읽는다. 단언 문장·기대값·검사 수 변경 0, 제품 코드 0, 금고 파일 0. 합본 맨 앞 = 원문 단언."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 기준 대 작업 npm test 수치·smoke 검사 제목·결과 동일, tests 종료 코드·정규화 출력 동일, 모의 이전 트리에서 기준 시험지는 깨지고 새 시험지는 통과."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시간기록 부품 = js/ 바로 아래 time-tracker-*.js 중 OurgoalTimeTrackerKit 표식이 있는 파일",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  return n.indexOf('time-tracker-') === 0 && fs.readFileSync(f, 'utf8').indexOf('OurgoalTimeTrackerKit') >= 0;",
+    "file": "scripts/smoke-test.js"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시간기록 합본 = 원본 원문(맨 앞) + 부품(T.·K. 접두 제거)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "const TIME_TRACKER_SRC = [TIME_TRACKER_RAW, ...TIME_TRACKER_PART_FILES.map(readTeamPartFile)].join('\\n');",
+    "file": "scripts/smoke-test.js"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합본 맨 앞 = 원본 원문 단언(check 밖 — 검사 수 불변)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "assert.strictEqual(TIME_TRACKER_SRC.slice(0, TIME_TRACKER_RAW.length), TIME_TRACKER_RAW, '시간기록 합본 맨 앞 = js/time-tracker.js 원문');",
+    "file": "scripts/smoke-test.js"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "부품이 없으면 합본 = 원문 단언",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "if (TIME_TRACKER_PART_FILES.length === 0) assert.strictEqual(TIME_TRACKER_SRC, TIME_TRACKER_RAW, '시간기록 합본 = js/time-tracker.js (부품 파일이 없을 때)');",
+    "file": "scripts/smoke-test.js"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "ES-090 시간기록 글자 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  const trackerJs = TIME_TRACKER_SRC;",
+    "file": "scripts/smoke-test.js"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "ES-174·ES-175 시간기록 글자 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  const trackerSrc = TIME_TRACKER_SRC;",
+    "file": "scripts/smoke-test.js"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "ES-090 의 원본 파일 존재 단언은 그대로",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  assert.ok(fs.existsSync(trackerJsPath), 'js/time-tracker.js 파일이 존재해야 함');",
+    "file": "scripts/smoke-test.js"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "core-modal: function openModal 부재 단언의 time-tracker 칸이 합본을 봄",
+   "touches": [
+    "tests/core-modal-es363.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "      const src = TEAM_GOALS_KIT_SLOTS[f + '.js'] ? readTeamGoalsBundle(ROOT, f + '.js') : f === 'time-tracker' ? readTimeTrackerBundle(ROOT) : fs.readFileSync(path.join(ROOT, 'js', f + '.js'), 'utf8');",
+    "file": "tests/core-modal-es363.test.js"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "core-modal: open/close 노출 키 존재 단언은 원본 한 파일 그대로",
+   "touches": [
+    "tests/core-modal-es363.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "    const tt = fs.readFileSync(path.join(ROOT, 'js/time-tracker.js'), 'utf8');",
+    "file": "tests/core-modal-es363.test.js"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "core-confirm: confirm( 부재 단언의 time-tracker 칸이 합본을 봄",
+   "touches": [
+    "tests/core-confirm-es374.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "        : f === 'js/time-tracker.js' ? readTimeTrackerBundle(ROOT).split(/\\r?\\n/).filter(l => !/^\\s*(\\/\\/|\\/?\\*)/.test(l)).join('\\n')",
+    "file": "tests/core-confirm-es374.test.js"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 2개의 합본 함수: 부품 = 표식이 있는 time-tracker-*.js, 원문 맨 앞",
+   "touches": [
+    "tests/core-confirm-es374.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "  assert.strictEqual(src.slice(0, raw.length), raw, '시간기록 합본 맨 앞 = js/time-tracker.js 원문');",
+    "file": "tests/core-confirm-es374.test.js"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 합본 부품 선택(core-modal)",
+   "touches": [
+    "tests/core-modal-es363.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "    .filter((f) => fs.statSync(f).isFile() && fs.readFileSync(f, 'utf8').indexOf('OurgoalTimeTrackerKit') >= 0);",
+    "file": "tests/core-modal-es363.test.js"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 smoke 검사 제목 목록 동일",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "smokeTitlesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 smoke 결과 목록 동일",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "smokeResultsIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 smoke 443 통과 0 실패",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 smoke 443 통과 0 실패",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "base.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 무결성 38/38",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "work.npmTest.integrity",
+    "equals": [
+     38,
+     38
+    ]
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 버튼 943/943",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "work.npmTest.buttons",
+    "equals": [
+     943,
+     943
+    ]
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 npm test 수치 같음",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "sameNumbers",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 102개 + test-time-tracker-lifecycle 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 정규화 출력 차이 0",
+   "touches": [
+    "reports/TASK-ES-408/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/test-compare.json",
+    "path": "testsOutputDiffAfterNormalize",
+    "equals": []
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 기준 시험지 440/443",
+   "touches": [
+    "reports/TASK-ES-408/mock-move.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/mock-move.json",
+    "path": "oldSheet.smoke",
+    "equals": [
+     440,
+     3
+    ]
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지 443/443",
+   "touches": [
+    "reports/TASK-ES-408/mock-move.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/mock-move.json",
+    "path": "newSheet.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지 npm test 종료 0",
+   "touches": [
+    "reports/TASK-ES-408/mock-move.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-408/mock-move.json",
+    "path": "newSheet.npmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-408-TIME-TRACKER-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "## 8. [원칙 ⑧] 성과 측정 · 막히는 지점",
+    "file": "docs/specs/REQ-TASK-ES-408-TIME-TRACKER-TEST-BUNDLE.md"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-408: 시간기록 세포 쪼개기(ES-407) 선행 시험지 — scripts/smoke-test.js 3곳(ES-090·ES-174·ES-175)과 tests 2개(core-modal·core-confirm 부재 단언)가 js/time-tracker.js 글자를 「시간기록 합본」(원본 원문 맨 앞 + OurgoalTimeTrackerKit 표식이 있는 js/time-tracker-*.js 부품, T.·K. 접두 제거)에서 읽음. 단언·기대값·검사 수 0 변경, 제품 코드 0, 금고 0. 실측(판정 아님): 기준 대 작업 smoke 443/0·38/38·943/943 같음, tests 103개 종료 코드·정규화 출력 같음, 모의 이전 기준 시험지 440/443 → 새 시험지 443/443. 기존 결함: scripts/test-time-tracker-lifecycle.js 가 기준에서도 실패(eval 안 require 경로). REQ docs/specs/REQ-TASK-ES-408-TIME-TRACKER-TEST-BUNDLE.md",
+    "file": "dev_log.md"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "text": "- #TASK-ES-408 | INFRA/시험 | [시간기록 세포 쪼개기 선행 시험지] smoke-test.js 3곳·tests 2개(부재 단언)가 시간기록 합본(원본 원문 + OurgoalTimeTrackerKit 부품 js/time-tracker-*.js, T.·K. 접두 제거)을 읽음 — 단언·기대값·검사 수 0 변경, 제품 코드 0 | 코디네이터 지시 (2026-10-05, ES-407 선행), REQ docs/specs/REQ-TASK-ES-408-TIME-TRACKER-TEST-BUNDLE.md | 4단계(심사 청구)",
+    "file": "docs/rules/TICKETS.md"
+   }
+  }
+ ]
+}
