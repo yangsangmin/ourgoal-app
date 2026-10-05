@@ -1,0 +1,174 @@
+{
+ "task": "TASK-ES-502",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-502-CROSS-TAB-GUARDED-INIT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "모듈 가드 ⑤ 측정기(scripts/module-metrics.js tabDefinedSymbols)가 같은 줄·같은 이름의 방어 초기화(if(!window.X) window.X = … / window.X = window.X || …)를 그 탭의 전역 정의로 세지 않는다. 무조건 대입은 계속 센다."
+  },
+  {
+   "id": "R2",
+   "text": "그 구분을 새 시험지로 고정한다(오탐 0건·진짜 참조 잡힘·지금 저장소 ⑤ 0). 기존 단언 변경 0, 기준선·생성 지도 커밋 0."
+  },
+  {
+   "id": "R3",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정기가 조건부 방어 초기화를 건너뛴다",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "file": "scripts/module-metrics.js",
+    "type": "codeContains",
+    "text": "if (isGuardedInit(t, m.index, m[0].length, m[1])) continue;"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "방어 초기화 ① 꼴(if(!window.X) window.X =)을 알아본다",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "file": "scripts/module-metrics.js",
+    "type": "codeContains",
+    "text": "if (new RegExp('\\\\bif\\\\s*\\\\(\\\\s*!\\\\s*' + G + n + '\\\\s*\\\\)\\\\s*$').test(before)) return true;"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지가 진짜 탭 간 참조(무조건 window.Y = function…)를 여전히 1건 잡는지 단언한다",
+   "touches": [
+    "tests/cross-tab-guarded-init-es502.test.js"
+   ],
+   "check": {
+    "file": "tests/cross-tab-guarded-init-es502.test.js",
+    "type": "codeContains",
+    "text": "assert.strictEqual(hits.length, 1);"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "고친 뒤 새 시험지 통과(종료 코드 0)",
+   "touches": [
+    "reports/TASK-ES-502/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-502/metric-check.json",
+    "type": "jsonPath",
+    "path": "testAfterExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "고치기 전 측정기로는 새 시험지가 실패(종료 코드 1)",
+   "touches": [
+    "reports/TASK-ES-502/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-502/metric-check.json",
+    "type": "jsonPath",
+    "path": "testBeforeExit",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지금 저장소 ⑤ 탭 간 직접 참조 0",
+   "touches": [
+    "reports/TASK-ES-502/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-502/metric-check.json",
+    "type": "jsonPath",
+    "path": "crossTabRefsMainNow",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정기의 다른 출력은 고치기 전과 같다",
+   "touches": [
+    "reports/TASK-ES-502/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-502/metric-check.json",
+    "type": "jsonPath",
+    "path": "metricsOtherFieldsSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-502-CROSS-TAB-GUARDED-INIT.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-502-CROSS-TAB-GUARDED-INIT.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-502:"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-502 | INFRA |"
+   }
+  }
+ ]
+}
