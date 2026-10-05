@@ -1,6 +1,6 @@
 {
- "task": "TASK-ES-462",
- "requirementsSource": "docs/specs/REQ-TASK-ES-462-INLINE-H2.md",
+ "task": "TASK-ES-481",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
  "requirements": [
   {
    "id": "R1",
@@ -43,10 +43,10 @@
    "domain": "config",
    "statement": "검사기 결과: 토큰·줄·남은 글자 동일, 누수·미노출·setter 빠짐·이중 처리기 0",
    "touches": [
-    "reports/TASK-ES-462/verify-inline-hard-pr1.json"
+    "reports/TASK-ES-481/verify-inline-hard-pr1.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/verify-inline-hard-pr1.json",
+    "file": "reports/TASK-ES-481/verify-inline-hard-pr1.json",
     "type": "jsonPath",
     "path": "ok",
     "equals": true
@@ -59,10 +59,10 @@
    "domain": "config",
    "statement": "검사기 결과: 남은 글자(옮긴 구간·이음매 줄 뺀 IIFE 토큰열)가 같다",
    "touches": [
-    "reports/TASK-ES-462/verify-inline-hard-pr1.json"
+    "reports/TASK-ES-481/verify-inline-hard-pr1.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/verify-inline-hard-pr1.json",
+    "file": "reports/TASK-ES-481/verify-inline-hard-pr1.json",
     "type": "jsonPath",
     "path": "restSame",
     "equals": true
@@ -75,10 +75,10 @@
    "domain": "config",
    "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 새 IIFE + 새 세포)",
    "touches": [
-    "reports/TASK-ES-462/verify-inline-hard-pr1.json"
+    "reports/TASK-ES-481/verify-inline-hard-pr1.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/verify-inline-hard-pr1.json",
+    "file": "reports/TASK-ES-481/verify-inline-hard-pr1.json",
     "type": "jsonPath",
     "path": "listeners.same",
     "equals": true
@@ -91,10 +91,10 @@
    "domain": "config",
    "statement": "새 세포 파일 3개 단독 로드가 되고 모듈 로드 회귀가 없다(법정 탐침 로컬)",
    "touches": [
-    "reports/TASK-ES-462/module-load-probe.json"
+    "reports/TASK-ES-481/module-load-probe.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/module-load-probe.json",
+    "file": "reports/TASK-ES-481/module-load-probe.json",
     "type": "jsonPath",
     "path": "standaloneOk",
     "equals": true
@@ -107,10 +107,10 @@
    "domain": "config",
    "statement": "게스트 조작 비교 기준 대 후 차이 0",
    "touches": [
-    "reports/TASK-ES-462/dom-compare-pr1.json"
+    "reports/TASK-ES-481/dom-compare-pr1.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/dom-compare-pr1.json",
+    "file": "reports/TASK-ES-481/dom-compare-pr1.json",
     "type": "jsonPath",
     "path": "differing",
     "equals": 0
@@ -123,10 +123,10 @@
    "domain": "config",
    "statement": "게스트 조작 비교 기준 대 기준 차이 0",
    "touches": [
-    "reports/TASK-ES-462/dom-compare-pr1.json"
+    "reports/TASK-ES-481/dom-compare-pr1.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/dom-compare-pr1.json",
+    "file": "reports/TASK-ES-481/dom-compare-pr1.json",
     "type": "jsonPath",
     "path": "baseVsBaseDiffering",
     "equals": 0
@@ -139,10 +139,10 @@
    "domain": "config",
    "statement": "작업 커밋에서 npm test 가 종료 코드 0 으로 끝난다(smoke·무결성·버튼 수치는 기준과 같음)",
    "touches": [
-    "reports/TASK-ES-462/test-compare-pr1.json"
+    "reports/TASK-ES-481/test-compare-pr1.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/test-compare-pr1.json",
+    "file": "reports/TASK-ES-481/test-compare-pr1.json",
     "type": "jsonPath",
     "path": "work.npmExit",
     "equals": 0
@@ -155,10 +155,10 @@
    "domain": "config",
    "statement": "tests 종료 코드가 기준과 다른 것은 git 이력 없는 기준 사본에서만 실패하는 세포지도 이력 비교 시험 1건뿐",
    "touches": [
-    "reports/TASK-ES-462/test-compare-pr1.json"
+    "reports/TASK-ES-481/test-compare-pr1.json"
    ],
    "check": {
-    "file": "reports/TASK-ES-462/test-compare-pr1.json",
+    "file": "reports/TASK-ES-481/test-compare-pr1.json",
     "type": "jsonPath",
     "path": "tests.exitDiff.length",
     "equals": 1
@@ -231,10 +231,10 @@
    "domain": "config",
    "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
    "touches": [
-    "docs/specs/REQ-TASK-ES-462-INLINE-H2.md"
+    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md"
    ],
    "check": {
-    "file": "docs/specs/REQ-TASK-ES-462-INLINE-H2.md",
+    "file": "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
     "type": "codeContains",
     "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
    }
@@ -251,7 +251,7 @@
    "check": {
     "file": "docs/rules/TICKETS.md",
     "type": "codeContains",
-    "text": "- #TASK-ES-462 | INFRA |"
+    "text": "- #TASK-ES-481 | INFRA |"
    }
   },
   {
@@ -266,7 +266,7 @@
    "check": {
     "file": "dev_log.md",
     "type": "codeContains",
-    "text": "- 2026-10-05 TASK-ES-462:"
+    "text": "- 2026-10-05 TASK-ES-481:"
    }
   },
   {

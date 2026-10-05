@@ -1,5 +1,5 @@
 'use strict';
-// 인라인 어려움 묶음 구역 H2(#TASK-ES-462 ~) DOM·저장값·토스트 전후 비교 — #TASK-ES-439 dom-compare-inline-hard.js 의 틀을 그대로 쓴다:
+// 인라인 어려움 묶음 구역 H2(#TASK-ES-481 ~) DOM·저장값·토스트 전후 비교 — #TASK-ES-439 dom-compare-inline-hard.js 의 틀을 그대로 쓴다:
 // 이전 전(base)과 이전 후(after) 앱을 같은 순서로 조작하고 단계마다 활성 화면 HTML·모달·localStorage·토스트·내려받기·콘솔 오류·옮긴 이름의 window 노출 여부를 기록해 맞댄다.
 // 단계는 PR 마다 다른 단계 파일(dom-steps-inline-h2-*.js)에서 읽는다. 같은 기준 앱 2회로 본질 변동을 먼저 잰다.
 // 로컬 정적 서버 + 헤드리스 Chrome + shots-lib 게스트 시드·Supabase 목(원격·실계정 없음). 시간·난수 값만 지운다.
@@ -45,7 +45,7 @@ async function snapshot(page) {
   }, SPEC.globals);
 }
 const VOL = x => x == null ? x : String(x).replace(/data:image\/png;base64,[A-Za-z0-9+\/=]+/g, () => 'data:image/png;<canvas>').replace(/dev_\d+_[a-z0-9]+/g, 'dev_<id>').replace(/(firstLogin|lastActive)(\W*):\d+/g, '$1$2:<t>')
-  .replace(/\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z/g, '<iso>').replace(/\b1[789]\d{11}\b/g, '<ms>').replace(/_1[789]\d{11}(?!\d)/g, '_<ms>') /* #TASK-ES-462: 마일스톤·일정 id 의 지금 시각(m_<ms>_1 — 같은 앱 두 번 실행에서도 갈린다) */
+  .replace(/\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z/g, '<iso>').replace(/\b1[789]\d{11}\b/g, '<ms>').replace(/_1[789]\d{11}(?!\d)/g, '_<ms>') /* #TASK-ES-481: 마일스톤·일정 id 의 지금 시각(m_<ms>_1 — 같은 앱 두 번 실행에서도 갈린다) */
   .replace(/(\W)seed(\W*):\d+/g, '$1seed$2:<rnd>').replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g, '<uuid>')
   .replace(/\b(ms|t|task|g|goal|fc|qr|c)_[a-z0-9]{8,}/g, '$1_<uid>')
   .replace(/\d{4}-\d\d-\d\dT\d\d:\d\d(?![:\d])/g, '<dtl>').replace(/(lsSim(?:StatusTime|ClockTime)\\*"[^>]*>)\d{1,2}:\d\d/g, '$1<hh:mm>').replace(/>\d{1,2}:\d\d</g, '><hh:mm><' /* #TASK-ES-439: 기록 카드·최근 기록 줄의 시각(분 단위 지금 시각 — 같은 앱 두 번 실행에서도 바뀐다) */).replace(/127\.0\.0\.1:\d+/g, '127.0.0.1:<port>').replace(/(mnPreviewName\\*"?>)[^<]+/g, '$1<anon>');
@@ -55,7 +55,7 @@ function normLs(ls) {
   for (const [k, v] of Object.entries(ls)) {
     if (/^ph_/.test(k)) continue; // posthog 분석 SDK 상태(실행마다 무작위 id)
     let val = v;
-    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => key === 'bonusCraftCredits' ? undefined : key === 'maxBaseCrafts' ? undefined /* #TASK-ES-462: 저장 시점이 실행마다 다르다(같은 작업 앱 두 번 실행에서 첫 3단계만 갈림 — dom-compare-pr1-reversed.json) */ : (key === 'lastStreakAwarded' && x === 0) ? undefined /* #TASK-ES-439: 기본값 0 이 저장되는 시점이 실행마다 다르다(같은 앱 두 번 실행에서도 갈림 — 기준 대 기준·후 대 후 모두 측정) */ : (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
+    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => key === 'bonusCraftCredits' ? undefined : key === 'maxBaseCrafts' ? undefined /* #TASK-ES-481: 저장 시점이 실행마다 다르다(같은 작업 앱 두 번 실행에서 첫 3단계만 갈림 — dom-compare-pr1-reversed.json) */ : (key === 'lastStreakAwarded' && x === 0) ? undefined /* #TASK-ES-439: 기본값 0 이 저장되는 시점이 실행마다 다르다(같은 앱 두 번 실행에서도 갈림 — 기준 대 기준·후 대 후 모두 측정) */ : (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
     o[k] = VOL(val);
   }
   return o;

@@ -1,4 +1,4 @@
-# REQ — #TASK-ES-462 index.html 인라인 「어려움」 구역 H2 분열 (1차: 목표 탭 IA 동작 · 템플릿 백과사전 · 기록 아카이브 펼치기)
+# REQ — #TASK-ES-481 index.html 인라인 「어려움」 구역 H2 분열 (1차: 목표 탭 IA 동작 · 템플릿 백과사전 · 기록 아카이브 펼치기)
 
 - 근거: 상민님 원문(2026-10-05) "미분화 덩어리 분열 작업을 우선순위로 해야하지 않나?" · 코디네이터 배정(구역 H2 빌더) · 헌법 v2026.10.05-CELL 세포골격 절(CELL_SKELETON · CELL_SPLIT · CELL_SPLIT_PROOF · claims_hygiene) · 설계 `docs/architecture/INLINE-HARD-SPLIT-DESIGN.md`(#TASK-ES-439, PR #762) · `docs/specs/MODULE-SPLIT-PROTOCOL.md`.
 - 범위(이 PR): 구역 H2 7묶음 중 1단계 3묶음 — 「[UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA」 · 「[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템」 · 「[PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS」. 기능 추가·삭제 0, 마크업·CSS 이동 0, 동결 파일 0, 시험 기대값 변경 0, retire 0, 생성 지도 3종 커밋 0(main 판 그대로 — 일괄 갱신은 코디네이터).
@@ -48,11 +48,11 @@ worktree `C:/dev/wt/inline-h2`(브랜치 `feat/2026-10-05-task-es-462-inline-h2`
 
 - DOM: `#btnGoalsSubPersonal`·`#btnGoalsSubStats`·`#btnGoalsSubTemplate`, `#btnGoalPeriodWeek`·`Month`·`Year`, `#goalsStatChartContent`, `.btn-quick-adopt-goal`, `#templateEncyclopediaView`, `#encyclDomainPersonal`·`Routine`·`Team`, `#subtabTplBtnAi`·`Real`, `#btnRecViewAllArchive`, `#toast`. 남김: `#goalFastAddInput`·`.smart-tag-chip`·`#routineMatrixGrid`·`#goalDetailDrawer`·`#recCalFuseSwitcher`·`#quickStopwatchBar`·`#btnExportRecordsCsv`.
 - 함수: 3절 표. `OurgoalAppScope.expose`, `OurgoalGoalsKit`, `OurgoalRecordsKit`.
-- 파일: `index.html`, `js/tabs/goals/goals-ia-actions.js`, `js/tabs/goals/template-encyclopedia.js`, `js/tabs/records/archive-toggle.js`, `docs/architecture/modules.json`·`cell-descriptions.json`, `docs/design/harness/module-split/inline-h2-pr1.json`·`dom-compare-inline-h2.js`·`dom-steps-inline-h2-pr1.js`, `reports/TASK-ES-462/*`.
+- 파일: `index.html`, `js/tabs/goals/goals-ia-actions.js`, `js/tabs/goals/template-encyclopedia.js`, `js/tabs/records/archive-toggle.js`, `docs/architecture/modules.json`·`cell-descriptions.json`, `docs/design/harness/module-split/inline-h2-pr1.json`·`dom-compare-inline-h2.js`·`dom-steps-inline-h2-pr1.js`, `reports/TASK-ES-481/*`.
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-기준 = origin/main 8472bbc(`git archive` 사본). 측정 파일은 `reports/TASK-ES-462/`.
+기준 = origin/main 8472bbc(`git archive` 사본). 측정 파일은 `reports/TASK-ES-481/`.
 
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |

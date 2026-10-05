@@ -1,5 +1,5 @@
 'use strict';
-// 구역 H2 첫 PR(#TASK-ES-462) 조작 단계 — 옮긴 함수가 불리는 곳을 차례로 누른다:
+// 구역 H2 첫 PR(#TASK-ES-481) 조작 단계 — 옮긴 함수가 불리는 곳을 차례로 누른다:
 //   목표 탭 개인 하위 탭(switchGoalsSubTab) → 첫 추천 템플릿 「담기」(adoptTemplateAsMyGoal) → 성취통계 하위 탭(renderGoalStatsChart) → 기간 월간·연간·주간(switchGoalStatPeriod)
 //   → 템플릿 하위 탭(renderTemplateEncyclopediaScreen) → 루틴·팀·개인 도메인, 실사용자·AI 출처 전환(분류 상태 변수 setter) → 기록 탭 「이전 기록 전체 보기」 두 번(toggleRecordArchive)
 module.exports = ({ click }) => ({
