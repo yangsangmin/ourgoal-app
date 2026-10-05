@@ -70,7 +70,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <div class="auth-anonymity-badge" id="landAnonymityBadge" style="display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 0 10px;padding:7px 12px;background:rgba(254,229,0,0.12);border:1px solid rgba(254,229,0,0.35);border-radius:10px;font-size:.78rem;color:var(--ink-soft);line-height:1.35;text-align:center;"><span>🔒</span><span><b>카톡 실명 걱정 No!</b> 닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요</span></div>
     <span class="land-login-link" style="margin-top:4px;"><a href="javascript:void(0)" id="landNickQuickLink" style="color:var(--brand);font-weight:700;font-size:.825rem;text-decoration:underline;">카카오 없이 닉네임으로 1초 만에 바로 시작 ›</a></span>
     <span class="land-login-link" id="landTesterBWrap" style="display:none;margin-top:4px;"><a href="javascript:void(0)" id="landTesterBBtn" style="color:#6366f1;font-weight:700;font-size:.825rem;text-decoration:none;">🧪 2계정 테스트 빠른 입장 (테스터 B)</a></span>
-    <span class="land-login-link" id="landStartWrap" style="display:none;" aria-hidden="true"><b id="landStartBtn">이메일로 가입하기</b></span>
     <span class="land-login-link" style="display:none;" aria-hidden="true"><b id="landGuestBtn" style="color:var(--brand);cursor:pointer;">로그인 없이 바로 둘러보기 ›</b></span>
     <span class="land-login-link">이미 계정이 있으신가요? <b id="landLoginLink">로그인</b></span>
     <span class="land-login-link" style="margin-top:6px;"><a href="javascript:void(0)" id="landRescueBtn" style="color:var(--ink-faint);font-size:.75rem;text-decoration:underline;">로그인이 잘 안 되시나요? (1초 빠른 복구·입장)</a></span>
@@ -138,7 +137,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <div id="appShell">
   <div class="topbar">
     <div class="brand">아워골</div>
-    <div class="topbar-right"><!-- [#TASK-ES-282] 전 탭 상위 중복 홈구성 버튼(#topHomeLayoutBtn, #topbarActions) 완전 소거/은폐 --><div class="topbar-actions" id="topbarActions" style="display:none !important;"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="display:none !important;visibility:hidden;pointer-events:none;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성" aria-hidden="true" tabindex="-1">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn topbar-guide-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);background:rgba(99,102,241,0.08);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법" aria-label="이 페이지 활용법">💡 이 페이지 활용법</button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:56px;height:56px;"><!-- [TASK-ES-283 compat: id="topAvatar" style="width:52px;height:52px;"] [TASK-ES-174 compat: style="width:46px;height:46px;"] --></div></button></div>
+    <div class="topbar-right"><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn topbar-guide-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);background:rgba(99,102,241,0.08);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법" aria-label="이 페이지 활용법">💡 이 페이지 활용법</button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:56px;height:56px;"><!-- [TASK-ES-283 compat: id="topAvatar" style="width:52px;height:52px;"] [TASK-ES-174 compat: style="width:46px;height:46px;"] --></div></button></div>
   </div>
   <!-- [#UIUX-15] 상단 네트워크 오프라인/온라인 상태 인디케이터 배지 -->
   <div id="networkStatusBanner" class="network-status-banner" style="display:none;" role="status" aria-live="polite">
@@ -167,10 +166,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="sanctuaryHomeSlot"></div>
       <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2></div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
-          <button type="button" class="btn btn-ghost btn-sm" id="btnCustomHomeLayout" onclick="if(window.handle홈_Item31Action) { handle홈_Item31Action(event); } else if(window.openHomeCustomizer) { window.openHomeCustomizer(); }" style="font-size:.78125rem;padding:3px 9px;white-space:nowrap;color:var(--ink-soft);border-color:var(--rule);">나만의 홈 구성</button>
-          <span style="font-size:.6875rem;color:var(--ink-faint);line-height:1;">필요없는 창 지우기</span>
-        </div>
       </div>
       <div class="toss-headline" id="homeHeadlineSentence">오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨</div>
       <div id="levelBadgeRow" data-home-widget="levelBadgeRow" data-widget-label="아바타 & 경험치 바" data-widget-hint="홈 맨 위 아바타 카드에 들어 있어요 — 따로 보이는 레벨 배지는 없어요(상단 고정)" data-widget-fixed="true"></div>
@@ -858,8 +853,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div class="toss-quest-board">
         <div id="sanctuaryGoalsView"></div>
         <div id="routineGoalsView" style="display:none;">
-          <!-- [#UIUX-38] 루틴 요일별 실천 매트릭스 그리드 뷰 -->
-          <div class="routine-matrix-grid" id="routineMatrixGrid"></div>
         </div>
         <div id="personalGoalsView">
           <!-- [#UIUX-34] [공준 2: 인지 순행 원칙] 1줄 목표 추가 상자 -->
@@ -1013,27 +1006,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
       <div id="recFeedbackSlot" style="display:none;"></div>
 
-      <!-- [#UIUX-42] [CALENDAR-MERGE] 캘린더 ↔ 기록 타임라인 1초 공간 융합 스위처 -->
-      <div class="rec-cal-fuse-switcher" id="recCalFuseSwitcher">
-        <button id="btnRecViewSwitchTimeline" class="rec-fuse-chip active" type="button" onclick="switchRecFusionMode('timeline')">📝 타임라인</button>
-        <button id="btnRecViewSwitchCalendar" class="rec-fuse-chip" type="button" onclick="switchRecFusionMode('calendar')">📅 달력 공간</button>
-      </div>
-
-      <!-- [#UIUX-46] [TIMER-INSPECTION] 초정밀 스톱워치 퀵 측정 바 -->
-      <div class="quick-stopwatch-bar" id="quickStopwatchBar">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:1.1rem;">⏱️</span>
-          <span class="quick-stopwatch-time" id="quickStopwatchDisplay">00:00:00</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <button id="btnFastStopwatchStart" class="btn-quick-stopwatch start" type="button" onclick="handleQuickStopwatchToggle()">측정 시작</button>
-          <button id="btnFastStopwatchSave" class="btn-quick-stopwatch save" type="button" onclick="handleQuickStopwatchSaveRecord()">체크인 연계</button>
-        </div>
-      </div>
-
-      <!-- [#UIUX-42] 인라인 캘린더 융합 뷰 슬롯 -->
-      <div id="recInlineCalendarSlot" style="display:none;margin-bottom:14px;"></div>
-
       <!-- [TOSS RECORDS TAB INNOVATION] 이번 주 몰입 요약 원카드 (#TASK-ES-215) -->
       <div class="toss-record-hero-card" id="recHeroCard">
         <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -1064,19 +1036,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             ⏱️ 시간 측정
           </button>
         </div>
-      </div>
-
-      <!-- 3분할 세그먼트 바 (내 기록 / 성취 통계 / 보관함) -->
-      <div class="rec-segment-bar" id="recSegmentBar">
-        <button type="button" class="rec-seg-btn active" data-recseg="feed" id="recSegFeedBtn">
-          <span>✍️ 내 기록</span><span class="rec-seg-count" id="recSegCount">0</span>
-        </button>
-        <button type="button" class="rec-seg-btn" data-recseg="stats" id="recSegStatsBtn">
-          <span>📊 성취 통계</span>
-        </button>
-        <button type="button" class="rec-seg-btn" data-recseg="archive" id="recSegArchiveBtn">
-          <span>📦 보관함</span>
-        </button>
       </div>
 
       <!-- [VIEW 1: FEED] 내 기록 뷰 -->
@@ -2478,7 +2437,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get renderPersonalGoalsEmptyGuideHtml(){ return renderPersonalGoalsEmptyGuideHtml; },
     get renderPromptEncyclopediaHtml(){ return renderPromptEncyclopediaHtml; },
     get renderRoutineGoalsScreen(){ return renderRoutineGoalsScreen; },
-    get renderRoutineMatrixGrid(){ return renderRoutineMatrixGrid; },
     get renderTeamGoalsScreen(){ return renderTeamGoalsScreen; },
     get renderTemplateEncyclopediaScreen(){ return renderTemplateEncyclopediaScreen; },
     get reorderMilestones(){ return reorderMilestones; },
@@ -2681,7 +2639,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var escapeKakaoInAppBrowser = _settingsKit.escapeKakaoInAppBrowser;
   var checkKakaoInAppBrowser = _settingsKit.checkKakaoInAppBrowser;
   var bindLandNickQuickLink = _settingsKit.bindLandNickQuickLink;
-  var bindLandStartBtn = _settingsKit.bindLandStartBtn;
   var bindLandLoginLink = _settingsKit.bindLandLoginLink;
   var bindLandGuestBtn = _settingsKit.bindLandGuestBtn;
   var renderFirstCheckinTutorialBanner = _recordsKit.renderFirstCheckinTutorialBanner;
@@ -2710,7 +2667,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   });
   /* [#TASK-ES-483] js/tabs/goals/goal-update-suggest.js · js/tabs/records/external-import.js · js/tabs/goals/attachments.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var maybeShowGoalUpdateModal = _goalsKit.maybeShowGoalUpdateModal;
-  var openHomeCustomizer = _recordsKit.openHomeCustomizer;
   var bindImportExternalBtn = _recordsKit.bindImportExternalBtn;
   var bindPersonalGuideBtn = _recordsKit.bindPersonalGuideBtn;
   var renderAttachmentChipsHtml = _goalsKit.renderAttachmentChipsHtml;
@@ -2872,7 +2828,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openLegacyRecapCanvasModal = _recordsKit.openLegacyRecapCanvasModal;
   var openRecordModal = _recordsKit.openRecordModal;
   var bindRecTimeTrackerBtn = _recordsKit.bindRecTimeTrackerBtn;
-  var bindRecSegmentBar = _recordsKit.bindRecSegmentBar;
   var bindRecPulseBar = _recordsKit.bindRecPulseBar;
   var bindRecCarouselPills = _recordsKit.bindRecCarouselPills;
   var bindRecDocumentClick = _recordsKit.bindRecDocumentClick;
@@ -4016,7 +3971,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   var landNickQuickLink = document.getElementById('landNickQuickLink');
   bindLandNickQuickLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandNickQuickLink 로 옮김 — 원래 자리에서 부른다 */
-  bindLandStartBtn(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandStartBtn 로 옮김 — 원래 자리에서 부른다 */
   bindLandLoginLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandLoginLink 로 옮김 — 원래 자리에서 부른다 */
   var landGuestBtn = document.getElementById('landGuestBtn');
   bindLandGuestBtn(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandGuestBtn 로 옮김 — 원래 자리에서 부른다 */
@@ -6727,9 +6681,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 외부 데이터 불러오기 (mock) ============ */
   bindImportExternalBtn(); /* [#TASK-ES-483] 로드 중 문(앞 주석 포함) → js/tabs/records/external-import.js 의 bindImportExternalBtn 로 옮김 — 원래 자리에서 부른다 */
-  /* [#TASK-ES-483] openHomeCustomizer → js/tabs/records/external-import.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
-  /* [#TASK-ES-531] #btnCustomHomeLayout 의 addEventListener(openHomeCustomizer) 줄을 지움 — 단추의 인라인 onclick(handle홈_Item31Action)과 이중 처리기라 한 번 누르면 OurgoalCustomize.open 이 2번 불렸다(1번은 의존성 없이 불려 예외를 삼킴). 처리기는 인라인 한 벌, 창은 js/customize.js 가 앱 스코프 의존성으로 연다 */
-  var topBtnCustomHome = document.getElementById('topHomeLayoutBtn'); if(topBtnCustomHome) topBtnCustomHome.addEventListener('click', openHomeCustomizer);
   var topBtnGuide = document.getElementById('topHomeGuideBtn'); if(topBtnGuide){ topBtnGuide.addEventListener('click', function(){ if(window.showTabUsageGuide) showTabUsageGuide((state && state.activeTab) || 'home'); }); }
 
   var btnShowGuide = document.getElementById('btnShowPersonalGuideModal');
@@ -8096,50 +8047,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.closeGoalDetailDrawer = closeGoalDetailDrawer;
   window.toggleMilestoneInDrawer = toggleMilestoneInDrawer;
 
-  function renderRoutineMatrixGrid(){
-    var gridEl = document.getElementById('routineMatrixGrid');
-    if(!gridEl) return;
-    var routines = state.profile.routines || state.routines || [];
-    var days = ['월', '화', '수', '목', '금', '토', '일'];
-    var todayIdx = (new Date().getDay() + 6) % 7;
-    var headerHtml = '<div class="routine-matrix-header">' +
-      '<span style="text-align:left;font-weight:700;">루틴 목록</span>' +
-      days.map(function(d, i){
-        return '<span style="' + (i === todayIdx ? 'color:var(--brand);font-weight:700;' : '') + '">' + d + '</span>';
-      }).join('') +
-    '</div>';
-
-    if(routines.length === 0){
-      gridEl.innerHTML = headerHtml + '<div style="padding:16px;text-align:center;color:var(--ink-soft);font-size:0.85rem;">등록된 반복 루틴이 없습니다. 루틴을 추가해보세요 🌱</div>';
-      return;
-    }
-
-    var rowsHtml = routines.map(function(r){
-      var rTitle = r.title || r.name || '루틴';
-      var stampsHtml = days.map(function(d, i){
-        var isToday = (i === todayIdx);
-        var isDone = (r.streak > 0 && i <= todayIdx);
-        return '<div class="routine-stamp-cell' + (isDone ? ' stamp-done' : '') + (isToday ? ' stamp-today' : '') + '" onclick="toggleRoutineStamp(\'' + (r.id || '') + '\',' + i + ')">' +
-          (isDone ? '✓' : '') +
-        '</div>';
-      }).join('');
-
-      return '<div class="routine-matrix-row">' +
-        '<div class="routine-name-cell">' + escapeHtml(rTitle) + '</div>' +
-        stampsHtml +
-      '</div>';
-    }).join('');
-
-    gridEl.innerHTML = headerHtml + rowsHtml;
-  }
-  function toggleRoutineStamp(routineId, dayIdx){
-    triggerHapticFeedback(12);
-    if(typeof toast === 'function') toast('루틴 실천이 기록되었습니다! 🔄');
-    renderRoutineMatrixGrid();
-  }
-  window.renderRoutineMatrixGrid = renderRoutineMatrixGrid;
-  window.toggleRoutineStamp = toggleRoutineStamp;
-
   window.currentGoalStatPeriod = 'week';
   /* [#TASK-ES-481] switchGoalStatPeriod · renderGoalStatsChart → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.switchGoalStatPeriod = switchGoalStatPeriod;
@@ -8148,127 +8055,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.adoptTemplateAsMyGoal = adoptTemplateAsMyGoal;
 
   /* ============ [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS ============ */
-  function switchRecFusionMode(mode){
-    triggerHapticFeedback(12);
-    if(!state) state = {};
-    state.recordsFusionMode = mode;
-    var chipTimeline = document.getElementById('btnRecViewSwitchTimeline');
-    var chipCalendar = document.getElementById('btnRecViewSwitchCalendar');
-    var inlineCalSlot = document.getElementById('recInlineCalendarSlot');
-
-    if(mode === 'calendar'){
-      if(chipTimeline) chipTimeline.classList.remove('active');
-      if(chipCalendar) chipCalendar.classList.add('active');
-      if(inlineCalSlot){
-        inlineCalSlot.style.display = 'block';
-        inlineCalSlot.innerHTML = '<div class="card cal-diary-preview-dialog" style="padding:14px;border-radius:16px;">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
-            '<div style="font-weight:700;font-size:0.95rem;color:var(--ink);">📅 융합 달력 공간 (76px 와이드 셀 & 사진일기)</div>' +
-            '<button type="button" class="btn btn-ghost btn-sm" onclick="setTab(\'calendar\')" style="font-size:0.8rem;color:var(--brand);font-weight:700;">전체 달력 이동 ›</button>' +
-          '</div>' +
-          '<div id="recInlineCalGridSlot"></div>' +
-        '</div>';
-        var calGrid = document.getElementById('calGrid');
-        var inlineGrid = document.getElementById('recInlineCalGridSlot');
-        if(calGrid && inlineGrid){
-          inlineGrid.innerHTML = calGrid.innerHTML;
-        }
-      }
-      if(typeof toast === 'function') toast('달력 공간과 기록이 융합되었습니다 📅');
-    } else {
-      if(chipTimeline) chipTimeline.classList.add('active');
-      if(chipCalendar) chipCalendar.classList.remove('active');
-      if(inlineCalSlot) inlineCalSlot.style.display = 'none';
-      if(typeof toast === 'function') toast('타임라인 뷰로 전환되었습니다 📝');
-    }
-  }
-  window.switchRecFusionMode = switchRecFusionMode;
   /* [#TASK-ES-481] toggleRecordArchive → js/tabs/records/archive-toggle.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.toggleRecordArchive = toggleRecordArchive;
-
-  window._quickStopwatchRunning = false;
-  window._quickStopwatchElapsed = 0;
-  window._quickStopwatchTimerId = null;
-
-  function handleQuickStopwatchToggle(){
-    triggerHapticFeedback(12);
-    var startBtn = document.getElementById('btnFastStopwatchStart');
-    var dispEl = document.getElementById('quickStopwatchDisplay');
-    if(!window._quickStopwatchRunning){
-      window._quickStopwatchRunning = true;
-      if(startBtn){
-        startBtn.textContent = '일시 정지';
-        startBtn.classList.remove('start');
-        startBtn.style.background = '#ef4444';
-        startBtn.style.color = '#ffffff';
-      }
-      var startTime = Date.now() - (window._quickStopwatchElapsed * 1000);
-      window._quickStopwatchTimerId = setInterval(function(){
-        window._quickStopwatchElapsed = Math.floor((Date.now() - startTime) / 1000);
-        var s = window._quickStopwatchElapsed;
-        var hrs = String(Math.floor(s / 3600)).padStart(2, '0');
-        var mins = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
-        var secs = String(s % 60).padStart(2, '0');
-        if(dispEl) dispEl.textContent = hrs + ':' + mins + ':' + secs;
-      }, 500);
-      if(typeof toast === 'function') toast('초정밀 스톱워치 측정을 시작합니다 ⏱️');
-    } else {
-      window._quickStopwatchRunning = false;
-      clearInterval(window._quickStopwatchTimerId);
-      if(startBtn){
-        startBtn.textContent = '측정 재개';
-        startBtn.classList.add('start');
-        startBtn.style.background = '';
-        startBtn.style.color = '';
-      }
-      if(typeof toast === 'function') toast('스톱워치 측정이 일시 정지되었습니다 ⏸️');
-    }
-  }
-  window.handleQuickStopwatchToggle = handleQuickStopwatchToggle;
-
-  function handleQuickStopwatchSaveRecord(){
-    triggerHapticFeedback(12);
-    var elapsedSec = window._quickStopwatchElapsed || 0;
-    if(elapsedSec < 5 && !window._quickStopwatchRunning){
-      if(typeof toast === 'function') toast('5초 이상 측정 후 체크인에 연계할 수 있습니다 🌱');
-      return;
-    }
-    if(window._quickStopwatchRunning){
-      window._quickStopwatchRunning = false;
-      clearInterval(window._quickStopwatchTimerId);
-    }
-    var mins = Math.max(1, Math.round(elapsedSec / 60));
-    var newRec = {
-      id: 'rec_sw_' + Date.now(),
-      text: '스톱워치 몰입 실천 (' + mins + '분)',
-      theme: 'focus',
-      subTheme: '집중',
-      startAt: new Date(Date.now() - elapsedSec * 1000).toISOString(),
-      endAt: new Date().toISOString(),
-      duration: elapsedSec,
-      createdAt: new Date().toISOString()
-    };
-    if(!state) state = {};
-    if(!state.profile) state.profile = {};
-    if(!state.profile.records) state.profile.records = [];
-    state.profile.records.unshift(newRec);
-
-    window._quickStopwatchElapsed = 0;
-    var dispEl = document.getElementById('quickStopwatchDisplay');
-    if(dispEl) dispEl.textContent = '00:00:00';
-    var startBtn = document.getElementById('btnFastStopwatchStart');
-    if(startBtn){
-      startBtn.textContent = '측정 시작';
-      startBtn.classList.add('start');
-      startBtn.style.background = '';
-      startBtn.style.color = '';
-    }
-
-    if(typeof toast === 'function') toast('스톱워치 기록이 체크인에 연계되었습니다! ⏱️');
-    if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
-    else renderRecordsScreen();
-  }
-  window.handleQuickStopwatchSaveRecord = handleQuickStopwatchSaveRecord;
 
   function exportRecordsCsv(){
     triggerHapticFeedback(12);
@@ -12347,7 +12135,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   bindRecTimeTrackerBtn(); /* [#TASK-ES-474] 로드 중 문(앞 주석 포함) → js/tabs/records/weekly-recap.js 의 bindRecTimeTrackerBtn 로 옮김 — 원래 자리에서 부른다 */
   document.getElementById('weeklyRecapBtn').addEventListener('click', function(){ openWeeklyRecapModal(); });
   document.getElementById('recSearchInput').addEventListener('input', function(){ renderRecordsScreen(); });
-  bindRecSegmentBar(); /* [#TASK-ES-474] 로드 중 문(앞 주석 포함) → js/tabs/records/weekly-recap.js 의 bindRecSegmentBar 로 옮김 — 원래 자리에서 부른다 */
   var staticPulseBar = document.getElementById('recMiniPulseBar');
   bindRecPulseBar(); /* [#TASK-ES-474] 로드 중 문(앞 주석 포함) → js/tabs/records/weekly-recap.js 의 bindRecPulseBar 로 옮김 — 원래 자리에서 부른다 */
   bindRecCarouselPills(); /* [#TASK-ES-474] 로드 중 문(앞 주석 포함) → js/tabs/records/weekly-recap.js 의 bindRecCarouselPills 로 옮김 — 원래 자리에서 부른다 */

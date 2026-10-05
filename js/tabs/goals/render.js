@@ -96,7 +96,7 @@
     if(statv) statv.style.display = (L.state.goalsSubTab==='stats') ? '' : 'none';
 
     if(L.state.goalsSubTab==='stats'){ L.renderGoalStatsChart(); return; }
-    if(L.state.goalsSubTab==='routine'){ L.renderRoutineGoalsScreen(); L.renderRoutineMatrixGrid(); return; }
+    if(L.state.goalsSubTab==='routine'){ L.renderRoutineGoalsScreen(); return; } /* [#TASK-ES-515] 루틴 화면이 그리는 칸을 덮어써 한 번도 그려지지 않던 루틴 매트릭스 호출을 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」) */
     if(L.state.goalsSubTab==='team'){ L.renderTeamGoalsScreen(); return; }
     if(L.state.goalsSubTab==='teamLinked'){ if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen(); return; }
     if(L.state.goalsSubTab==='templateEncyclopedia'){ L.renderTemplateEncyclopediaScreen(); return; }
