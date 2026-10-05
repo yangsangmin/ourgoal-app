@@ -1,0 +1,33 @@
+{
+ "task": "TASK-ES-458",
+ "note": "작업자 측정(판정 아님). 정적판 scripts/hidden-entry-guard.js 와 시험 tests/hidden-entry-guard.test.js 를 실행한 종료 코드. 「일부러 숨긴 사본」 = 이 브랜치 커밋을 git archive 로 푼 사본의 ui.css 끝에 4테마 `#sanctuaryBellBtn { display: none !important }` 규칙을 더한 것(npm test 사본에는 이 브랜치의 새 파일 4개를 함께 넣음).",
+ "staticGuardOnBranch": {
+  "exitCode": 0,
+  "lines": [
+   "[숨김 게이트] 숨은 처리기 요소 60개 · 허용 목록 밖 0개",
+   "✓ 숨김 게이트 통과"
+  ]
+ },
+ "staticGuardOnHiddenCopy": {
+  "exitCode": 1,
+  "flagsBell": true,
+  "lines": [
+   "[숨김 게이트] 숨은 처리기 요소 61개 · 허용 목록 밖 1개",
+   "  ✖ 새로 숨은 처리기 요소 #sanctuaryBellBtn ← [data-theme=\"focus-sanctuary\"] #sanctuaryBellBtn @ui.css:16922 | [data-theme=\"black\"] #sanctuaryBellBtn @ui.css:16922 | [data-theme=\"white\"] #sanctuaryBellBtn @ui.css:16922"
+  ]
+ },
+ "testFileOnBranch": {
+  "exitCode": 0,
+  "lines": [
+   "13개 통과, 0개 실패"
+  ]
+ },
+ "testFileOnHiddenCopy": {
+  "exitCode": 1,
+  "lines": [
+   "  FAIL · 지금 저장소: 숨은 처리기 요소가 모두 허용 목록 안에 있고 허용 목록 형식이 맞다(가드 통과)",
+   "  FAIL · 지금 저장소 CLI: 종료 코드 0"
+  ]
+ },
+ "npmTestRegistration": "scripts/test-shipyard-modular.js 의 runNode 목록(npm test 마지막 단계) — tests/ 는 자동으로 줍지 않는다"
+}

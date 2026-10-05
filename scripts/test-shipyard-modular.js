@@ -191,6 +191,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/cell-map-export-es414.test.js');
   // #TASK-ES-431 잠금화면용 9:16 일정 카드 그리기: 정의 안 된 streakDays → computeStreakDays() 값(예외 없이 캔버스·스트릭 줄 글자, 통로에 없으면 0일)
   runNode('tests/lockscreen-card-streak-es431.test.js');
+  // #TASK-ES-458 숨김 게이트 정적판(scripts/hidden-entry-guard.js): 지금 저장소 통과 · 일부러 숨긴 픽스처(4테마 !important·조상 인라인·클래스·id 없는 onclick) 실패 · 허용 목록 사유 20자
+  runNode('tests/hidden-entry-guard.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

@@ -1,0 +1,170 @@
+{
+ "scenario": "settings-quick-actions",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 1,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"settings\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"설정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnSettingsSecurityRefresh → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnSettingsSecurityRefresh \"🔄 보안 상태 점검\" 132x44px"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#toast → 보이는 글자: [\"이 기기에 앱 잠금 PIN 이 꺼져 있어요. 설정 > 계정 및 보안에서 켤 수 있어요.\"]",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#badge2faStatus → data-applock=\"off\"",
+     "vacuous": true
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": false,
+   "invalid": false,
+   "errors": [],
+   "failedStep": 8,
+   "failKind": "expect",
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [
+    {
+     "text": "ReferenceError: refreshSecurityStatus is not defined",
+     "url": "/index.html",
+     "line": 1420
+    }
+   ],
+   "nonVacuousExpects": 0,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"settings\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"설정\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnSettingsSecurityRefresh → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnSettingsSecurityRefresh \"🔄 보안 상태 점검\" 132x44px"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": false,
+     "detail": "#toast → 보이는 글자: []",
+     "vacuous": false
+    }
+   ]
+  }
+ }
+}
