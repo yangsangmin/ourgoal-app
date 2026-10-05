@@ -137,15 +137,31 @@
    "req": "R2",
    "kind": "static",
    "domain": "architecture",
-   "statement": "tests 와 시험 스크립트 종료 코드가 기준과 같다",
+   "statement": "작업 커밋에서 npm test 가 종료 코드 0 으로 끝난다(smoke·무결성·버튼 수치는 기준과 같음)",
    "touches": [
     "reports/TASK-ES-462/test-compare-pr1.json"
    ],
    "check": {
     "file": "reports/TASK-ES-462/test-compare-pr1.json",
     "type": "jsonPath",
-    "path": "tests.exitCodesSame",
-    "equals": true
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 종료 코드가 기준과 다른 것은 git 이력 없는 기준 사본에서만 실패하는 세포지도 이력 비교 시험 1건뿐",
+   "touches": [
+    "reports/TASK-ES-462/test-compare-pr1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-462/test-compare-pr1.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff.length",
+    "equals": 1
    }
   },
   {

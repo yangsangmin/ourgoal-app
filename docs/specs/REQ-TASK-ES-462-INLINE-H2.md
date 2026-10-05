@@ -60,7 +60,7 @@ worktree `C:/dev/wt/inline-h2`(브랜치 `feat/2026-10-05-task-es-462-inline-h2`
 | 줄 수 | 생성기 메타 | index.html 28,282 → 27,470줄(−812, `gen-meta-pr1.json`) |
 | 원본 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0, 새 파일 3개 단독 로드 ok(전역 = 기존 키트 1개씩) (`module-load-probe.json`) |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` 로컬 | `goals-ia-actions`·`goals-template-encyclopedia`·`records-archive-toggle` 기준·작업 모두 통과, 약점 0 (`scenario-local.json`) |
-| 조작 전후(게스트) | `dom-compare-inline-h2.js` | `dom-compare-pr1.json` |
-| 시험 | `test-compare-inline-p2.js` | `test-compare-pr1.json` |
+| 조작 전후(게스트) | `dom-compare-inline-h2.js` | 19단계 × 10칸 = 190값, 기준 대 후 0 · 기준 대 기준 0, 콘솔 오류 0/0/0 (`dom-compare-pr1.json`). 순서 바꿔(후 2회·기준 1회) 후 대 기준 0, 후 대 후 3칸(첫 3단계 저장값의 `maxBaseCrafts` 저장 시점 — 같은 앱 두 번 실행에서 갈리는 본질 변동, `dom-compare-pr1-reversed.json`) → 하네스가 그 키를 지우고 다시 잼. 하네스 시드에는 추천 템플릿 카드가 없어 담기는 `window.adoptTemplateAsMyGoal` 직접 호출(마크업 onclick 과 같은 경로)로 잼 |
+| 시험 | `test-compare-inline-p2.js` | smoke 443/0 · 무결성 38/38 · 버튼 943/943 기준=후, 작업 npm test 종료 코드 0(기준 사본은 git 이력이 없어 세포지도 이력 비교 시험이 실패해 1). tests 111개 중 종료 코드가 다른 것은 그 1건뿐, 출력이 다른 3건은 git 이력이 있어야 도는 원본 대조 검사가 작업 쪽에서 더 돈 것(`test-compare-pr1.json`) |
 
 [4단계: 심사 청구]
