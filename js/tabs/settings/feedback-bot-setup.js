@@ -2,7 +2,7 @@
  * OurGoal Feedback Bot Setup (설정 — 맞춤 피드백 봇 설정 창)
  *
  * 「맞춤 피드백 봇 설정」 묶음 중 설정 창 몫: 프리셋 읽기·저장, 맞춤 프롬프트 만들기, 설정 창 열기·닫기·그리기, 말풍선 글자(fbBotBubbleHtml). 홈·설정 단추의 클릭 등록 줄은 index.html 원래 자리(한 줄씩).
- * #TASK-ES-492(인라인 어려움 기관 묶음 이전 3차): index.html 인라인 IIFE 의 구간(이전 전 8832~8835 · 8836~8842 · 8843~8869 · 8870~8882 · 8883~8894 · 8896~8907 · 8909~8926 · 8927~8932 · 8933~9417 · 9418~9421줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-492(인라인 어려움 기관 묶음 이전 3차): index.html 인라인 IIFE 의 구간(이전 전 7861~7864 · 7865~7871 · 7872~7898 · 7899~7911 · 7912~7923 · 7925~7936 · 7938~7955 · 7956~7961 · 7962~8446 · 8447~8450줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,12 +14,12 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalSettingsKit = global.OurgoalSettingsKit || {};
 
-  /* ---- 이전 전 index.html 8832~8835줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7861~7864줄(#TASK-ES-492 생성기 표지) ---- */
   function customFeedbackStatusSuffix(){
     var s = L.state.profile.settings;
     return (s.customFeedbackActive && s.customFeedbackPrompt) ? ' · 사용 중' : '';
   }
-  /* ---- 이전 전 index.html 8836~8842줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7865~7871줄(#TASK-ES-492 생성기 표지) ---- */
   function refreshCustomFeedbackButtons(){
     var suffix = customFeedbackStatusSuffix();
     var a = document.getElementById('customFeedbackStatus');
@@ -27,7 +27,7 @@
     if(a) a.textContent = suffix;
     if(b) b.textContent = suffix;
   }
-  /* ---- 이전 전 index.html 8843~8869줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7872~7898줄(#TASK-ES-492 생성기 표지) ---- */
   function getSavedFeedbackPresets(){
     if(!L.state.profile) L.state.profile = {};
     if(!L.state.profile.settings) L.state.profile.settings = {};
@@ -55,7 +55,7 @@
     }
     return s.savedFeedbackPresets;
   }
-  /* ---- 이전 전 index.html 8870~8882줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7899~7911줄(#TASK-ES-492 생성기 표지) ---- */
   async function persistFeedbackPresets(presets){
     if(!L.state.profile) L.state.profile = {};
     if(!L.state.profile.settings) L.state.profile.settings = {};
@@ -69,7 +69,7 @@
     } catch(e){}
     await L.saveProfile();
   }
-  /* ---- 이전 전 index.html 8883~8894줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7912~7923줄(#TASK-ES-492 생성기 표지) ---- */
 
   function openFeedbackSetup(){
     L.state.prevScreenTab = L.state.activeTab || 'home';
@@ -83,7 +83,7 @@
     renderFeedbackSetup();
   }
 
-  /* ---- 이전 전 index.html 8896~8907줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7925~7936줄(#TASK-ES-492 생성기 표지) ---- */
   function closeFeedbackSetup(){
     if(L.state.fbSetup && L.state.fbSetup.step && L.state.fbSetup.step !== 'status'){
       L.state.fbSetup.step = 'status';
@@ -97,7 +97,7 @@
     L.setTab(L.state.prevScreenTab || 'home');
   }
 
-  /* ---- 이전 전 index.html 8909~8926줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7938~7955줄(#TASK-ES-492 생성기 표지) ---- */
   async function generateCustomFeedbackPrompt(description){
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
@@ -116,14 +116,14 @@
       return null;
     }
   }
-  /* ---- 이전 전 index.html 8927~8932줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7956~7961줄(#TASK-ES-492 생성기 표지) ---- */
   function fbBotBubbleHtml(inner){
     return '<div class="card" style="display:flex;gap:12px;align-items:flex-start;">' +
       '<div style="font-size:1.6rem;flex:0 0 auto;line-height:1;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></div>' +
       '<div style="flex:1;min-width:0;">' + inner + '</div>' +
     '</div>';
   }
-  /* ---- 이전 전 index.html 8933~9417줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7962~8446줄(#TASK-ES-492 생성기 표지) ---- */
   function renderFeedbackSetup(){
     var body = document.getElementById('fbSetupBody');
     var st = L.state.fbSetup;
@@ -609,7 +609,7 @@
       return;
     }
   }
-  /* ---- 이전 전 index.html 9418~9421줄(#TASK-ES-492 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8447~8450줄(#TASK-ES-492 생성기 표지) ---- */
   function openFeedbackSetupGated(){
     if(L.isModalDismissCooldown()) return;
     openFeedbackSetup();
