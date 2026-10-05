@@ -1,18 +1,20 @@
 /**
  * OurGoal Calendar Day Edit Hub Modal (일정 관리 허브 모달)
  *
- * #TASK-ES-G076-AGY (인라인 스크립트 세포화: index.html 인라인 IIFE 내 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 묶음을 옮김, 수정 없음)
- *   openCalendarDayEditHubModal (원전 줄 10719~10898)
+ * #TASK-ES-456 (인라인 스크립트 세포화: index.html 인라인 IIFE 내 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 묶음을 옮김, 수정 없음 — 코드 이동 안티그래비티, 검수 Claude)
+ *   openCalendarDayEditHubModal (이전 전 main 194ed83 index.html 10753~10928줄)
  *   openCalendarDayEditHubModal = 캘린더 날짜 클릭 시 나타나는 일정 관리 허브 모달창 (일정 수정, 상태 변경 등).
  *
  * 묶음(선두의 구획 주석 포함) 글자 그대로 떼어 바꾼 것은 이름 참조뿐이다(인라인 스코프 이름은 L.<이름>). 버그를 그대로 떼어 고치는 것은 별도 티켓.
- * index.html 의 IIFE 상단에서 기존에 노출되어 있던 함수 모음 객체에 연결한다 (부르는 쪽은 그대로다).
+ * index.html 의 IIFE 상단 이음매(#TASK-ES-423)가 일정 키트 OurgoalCalendarKit(index.html 안 이름 _calendarKit)에서 같은 이름으로 가져온다(부르는 쪽은 그대로다). window.openCalendarDayEditHubModal 노출은 index.html 원래 자리에 그대로 있다.
  * 지침: docs/architecture/INLINE-SCRIPT-MAP.md(scripts/inline-script-map.js). 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
  */
 (function(global) {
   'use strict';
-  var K = global._calendarKit = global._calendarKit || {};
-  var L = typeof OurgoalAppScope !== 'undefined' ? OurgoalAppScope.expose() : {};
+  // L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수(state·toast·openModal …)를 getter 로 읽는 통로(모든 탭 공용). 값은 읽을 때마다 살아 있는 값이다.
+  var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
+  // 탭 키트: 같은 탭 파일끼리 서로 부르는 함수 묶음(이미 있는 일정 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다)
+  var K = global.OurgoalCalendarKit = global.OurgoalCalendarKit || {};
 
   /* ============ 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 ============ */
   function openCalendarDayEditHubModal(selectedDate){
@@ -54,7 +56,7 @@
       }).join('') +
       '</div>'
     ) : (
-      '<div class="empty-L.state" style="padding:18px 10px;margin-bottom:14px;"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p style="margin:4px 0 0;font-size:.875rem;">이 날짜에 등록된 일정이 없습니다.</p></div>'
+      '<div class="empty-state" style="padding:18px 10px;margin-bottom:14px;"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p style="margin:4px 0 0;font-size:.875rem;">이 날짜에 등록된 일정이 없습니다.</p></div>'
     );
     var dayRecs = (L.state.profile && L.state.profile.records) ? L.state.profile.records.filter(function(r){
       return (r.startAt || r.createdAt || r.date || '').slice(0, 10) === sel;
@@ -190,9 +192,6 @@
         L.wireAttachmentChipClicks(sheet);
       }
     );
-  }
-  if(typeof window !== 'undefined'){
-    window.openCalendarDayEditHubModal = openCalendarDayEditHubModal;
   }
 
   K.openCalendarDayEditHubModal = openCalendarDayEditHubModal;

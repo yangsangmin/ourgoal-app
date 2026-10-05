@@ -2604,11 +2604,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   });
 
   /* ============ [#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 소통 탭 #TASK-ES-379 와 같은 틀) ============
-     ① 가져오기: js/tabs/calendar/lockscreen-image.js · js/tabs/comm/story-card-send.js 로 옮긴 함수 중 이 스코프에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 일정·소통 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ① 가져오기: js/tabs/calendar/lockscreen-image.js · js/tabs/comm/story-card-send.js(+ #TASK-ES-456 js/tabs/calendar/day-edit-hub.js) 로 옮긴 함수 중 이 스코프에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 일정·소통 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). */
   var generateLockScreenCalendarImage = _calendarKit.generateLockScreenCalendarImage;
   var generateLockScreenScheduleCardImage = _calendarKit.generateLockScreenScheduleCardImage;
-    var openCalendarDayEditHubModal = _calendarKit.openCalendarDayEditHubModal;
+  var openCalendarDayEditHubModal = _calendarKit.openCalendarDayEditHubModal;
   var openSelectCompanionForStoryModal = _commKit.openSelectCompanionForStoryModal;
   var openSelectTeamForStoryModal = _commKit.openSelectTeamForStoryModal;
   window.OurgoalAppScope.expose('index.html', {
@@ -9868,7 +9868,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.openCalendarDayBgPickerModal = openCalendarDayBgPickerModal;
   }
 
-    /* [#TASK-ES-G076-AGY] openCalendarDayEditHubModal => js/tabs/calendar/day-edit-hub.js 로 이동 (인라인 스크립트 세포화, 구획 주석 포함) */
+  /* [#TASK-ES-456] openCalendarDayEditHubModal → js/tabs/calendar/day-edit-hub.js 로 옮김(인라인 스크립트 세포화 — 구획 주석 포함, 코드 이동 안티그래비티) */
+  if(typeof window !== 'undefined'){
+    window.openCalendarDayEditHubModal = openCalendarDayEditHubModal;
+  }
   /* ============ 캘린더 수동 일정 편집 모달 (Req 2 & #TASK-ES-253) ============ */
   function openCalendarManualEditModal(selectedDate, eventItem, kind, draft){
     var isNew = !eventItem;
