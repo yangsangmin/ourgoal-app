@@ -1,0 +1,40 @@
+'use strict';
+// #TASK-ES-411 공통 UI 컴포넌트 세포 쪼개기 — 묶음 정의(생성기·검사기·신고서 스크립트가 같이 읽는다).
+// 묶음 경계 = 직통 핸들러 이름의 탭 머리말(handle<탭>_ItemNNAction). 그 핸들러만 부르는 작은 함수(접기·미리보기·예시 카드 등)는 같은 묶음에 둔다.
+// 원본에 남기는 것: escapeHtml · OurgoalComponents(5대 컴포넌트 + task23ModularComponent 등 객체) · handle전체공통_Item23Action(컴포넌트 모듈화 허브 — 그 객체의 task23 과 한 짝)
+//   · 별칭 var handle팀목표_Item51Action · 닫기 클릭 위임 · OurgoalComponents.X = X / window.X = X / module.exports.X = X 노출 줄(자리·순서 그대로).
+module.exports = [
+  { kit: 'home', cell: 'js/components-home-actions.js', imp: '_cHome',
+    role: '홈 탭 직통 핸들러 — 오늘의 퀘스트 할일 미션(33)·홈 목표현황판 지표 정리(34)·평가 상시 안내 문구(66)',
+    names: ['handle홈탭_Item33Action', 'handle홈탭_Item34Action', 'handle홈탭_Item66Action'] },
+  { kit: 'record', cell: 'js/components-record-actions.js', imp: '_cRecord',
+    role: '기록·스톱워치 직통 핸들러 — 갓생 스토리카드 다각화(35)·스톱워치 구간 활동기록·초기화 2중 확인(44)·시간기록 모달 간소화(47, toggleTimeRecordModalCompact)',
+    names: ['handle기록스톱워치_Item35Action', 'handle기록스톱워치_Item44Action', 'handle기록스톱워치_Item47Action', 'toggleTimeRecordModalCompact'] },
+  { kit: 'team', cell: 'js/components-team-actions.js', imp: '_cTeam',
+    role: '팀 목표 직통 핸들러 — AI 동반자 제거(37)·마니또 AI 1명 제한(39)·팀 연계 목표 예시 카드(46, toggleTeamLinkedGoalExample)·팀 목표 댓글(49, sendTeamGoalComment·toggleTeamGoalCommentSection)·팀 목표 아코디언 접기(52, collapseAllTeamGoalAccordions·toggleTeamGoalAccordionCollapse)·팀 만들기 제약 정리(68)',
+    names: ['handle팀목표_Item37Action', 'handle팀목표_Item39Action', 'handle팀목표_Item46Action', 'toggleTeamLinkedGoalExample', 'handle팀목표_Item49Action', 'sendTeamGoalComment', 'toggleTeamGoalCommentSection', 'handle팀목표_Item52Action', 'collapseAllTeamGoalAccordions', 'toggleTeamGoalAccordionCollapse', 'handle팀목표_Item68Action'] },
+  { kit: 'feed', cell: 'js/components-feed-actions.js', imp: '_cFeed',
+    role: '소통 직통 핸들러 — 공유 대상 선택(57)·사진 첨부(58)·카테고리 다양화(59)·AI 봇 축소(61, blendFeedWithAiBotRule)·기록 다짐 문구(63, generateRecordPledgeMessage)·DM 전송·읽음 표시(67)·피드 글 미리보기(51, openFeedPostPreviewModal·toggleFeedPostPreview)',
+    names: ['handle소통_Item57Action', 'handle소통_Item58Action', 'handle소통_Item59Action', 'blendFeedWithAiBotRule', 'handle소통_Item61Action', 'generateRecordPledgeMessage', 'handle소통_Item63Action', 'handle소통_Item67Action', 'handle소통_Item51Action', 'openFeedPostPreviewModal', 'toggleFeedPostPreview'] },
+  { kit: 'goal', cell: 'js/components-goal-actions.js', imp: '_cGoal',
+    role: '목표 탭 직통 핸들러 — 일정 배경사진 2장(40)·AI 추천 템플릿 60선 창 제거(64)·목표 템플릿 백과사전(53, openGoalTemplateEncyclopediaModal·copyUserGoalTemplate)',
+    names: ['handle목표탭_Item40Action', 'handle목표탭_Item64Action', 'handle목표탭_Item53Action', 'openGoalTemplateEncyclopediaModal', 'copyUserGoalTemplate'] },
+  { kit: 'avatar', cell: 'js/components-avatar-actions.js', imp: '_cAvatar',
+    role: '아바타 직통 핸들러 — 레벨업 대사(41)·경험치 축하 팝업(42)·아바타 아이콘 일괄 확대(48, enlargeAvatarIconsBatch)',
+    names: ['handle아바타_Item41Action', 'handle아바타_Item42Action', 'handle아바타_Item48Action', 'enlargeAvatarIconsBatch'] },
+  { kit: 'stats', cell: 'js/components-stats-actions.js', imp: '_cStats',
+    role: '성취 통계 직통 핸들러 — 측정지표 다중 선택(43, toggleAchievementMetricFilter)·다중 지표 그래프(56)·껍데기 버튼 정리(60)·데이터 관리 접기 토글(45, toggleDataManagementSection)',
+    names: ['toggleAchievementMetricFilter', 'handle성취통계_Item43Action', 'handle성취통계_Item56Action', 'handle성취통계_Item60Action', 'handle성취통계_Item45Action', 'toggleDataManagementSection'] },
+  { kit: 'auth', cell: 'js/components-auth-actions.js', imp: '_cAuth',
+    role: '인증 직통 핸들러 — 중복 닉네임 방지 고유 태그(69)·로그인 기기 목록·세션 제어(70)·2단계 인증(71)',
+    names: ['handle인증_Item69Action', 'handle인증_Item70Action', 'handle인증_Item71Action'] },
+  { kit: 'settings', cell: 'js/components-settings-actions.js', imp: '_cSettings',
+    role: '설정 직통 핸들러 — 설정창 개편(38)·테마 4종(79, handle테마_Item79Action)·설정 섹션 접기(50, collapseAllSettingsSections·toggleSettingsSectionCollapse)',
+    names: ['handle전체공통_Item38Action', 'handle설정_Item79Action', 'handle테마_Item79Action', 'handle전체공통_Item50Action', 'collapseAllSettingsSections', 'toggleSettingsSectionCollapse'] },
+  { kit: 'widget', cell: 'js/components-widget-actions.js', imp: '_cWidget',
+    role: '바탕화면 위젯 직통 핸들러 — 일정·목표·기록 3종 위젯(62, getWidgetRenderSpec)',
+    names: ['getWidgetRenderSpec', 'handle전체공통_Item62Action'] },
+  { kit: 'schedule', cell: 'js/components-schedule-actions.js', imp: '_cSchedule',
+    role: '일정 직통 핸들러 — 일정 편집 사전 알림 설정(65)',
+    names: ['handle일정_Item65Action'] },
+];

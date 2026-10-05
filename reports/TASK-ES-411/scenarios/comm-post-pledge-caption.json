@@ -1,0 +1,15 @@
+{
+  "id": "comm-post-pledge-caption",
+  "title": "게스트로 소통 탭의 「게시하기」(#btnCommPostFeed)를 누르면 게시 모달이 열리고, 한마디 입력칸(#shareCaptionInput)의 안내 글자가 최신 실천기록으로 만든 다짐 문구(generateRecordPledgeMessage — 기록·목표가 없는 게스트는 「예: 오늘도 목표를 향해 한 걸음 내딛습니다. 모두 함께 힘내요! ✨」, index.html 의 대체 문구는 「모두 파이팅해요!」라 다르다)로 보인다 — 다짐 문구 함수를 js/components-feed-actions.js 로 옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "click", "selector": "#btnCommPostFeed" },
+    { "expect": "visible", "selector": "#shareCaptionInput", "timeoutMs": 5000 },
+    { "expect": "attr", "selector": "#shareCaptionInput", "name": "placeholder", "equals": "예: 오늘도 목표를 향해 한 걸음 내딛습니다. 모두 함께 힘내요! ✨" },
+    { "expect": "noExceptions" }
+  ]
+}
