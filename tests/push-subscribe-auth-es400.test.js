@@ -116,7 +116,8 @@ function extractFn(src, name) {
   return src.slice(at, end + 4);
 }
 function loadApp(withSession) {
-  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
+  /* #TASK-ES-527 인라인 3단계 Z3 선행: 두 함수를 인라인 합본(원문 맨 앞 + js/tabs 세포 + js/core 이전 세포, 생성기 접두 L. 만 뗌)에서 꺼낸다 — Web Push 묶음이 세포로 옮겨 가도 같은 글자를 찾는다. 단언·기대값 그대로 */
+  const src = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')).replace(/\r\n/g, '\n');
   const code = extractFn(src, 'syncPushSubscription') + '\n' + extractFn(src, 'removePushSubscription');
   const requests = [];
   const subscription = {

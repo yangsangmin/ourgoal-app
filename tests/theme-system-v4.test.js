@@ -12,7 +12,7 @@ const indexHtmlPath = path.join(ROOT_DIR, 'index.html');
 const uiCssPath = path.join(ROOT_DIR, 'ui.css');
 const componentsJsPath = path.join(ROOT_DIR, 'js', 'components.js');
 
-const html = fs.readFileSync(indexHtmlPath, 'utf8');
+const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));
 const css = fs.readFileSync(uiCssPath, 'utf8');
 const components = require(componentsJsPath);
 
