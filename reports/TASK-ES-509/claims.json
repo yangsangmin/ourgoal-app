@@ -1,0 +1,38 @@
+{
+ "task": "TASK-ES-509",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-509-HARNESS-CLOSED-DETAILS.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "감사 하네스(docs/design/harness tab-states.js clickReal·VISIBLE_FN, audit.js vis)가 접힌 details 안 요소를 보이지 않음으로 거름 — 오탐 0, 진짜 가려진 단추는 계속 검출, 기존 단언 변경 0"
+  }
+ ],
+ "outOfScopeReports": {
+  "note": "보고만 — 금고",
+  "items": [
+   {
+    "id": "X1",
+    "text": "court/lib/scenario.js 의 vis 도 접힌 details 조상을 보지 않아 같은 오탐을 낸다(금고 — 「금고 변경 승인」 필요)"
+   }
+  ]
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests/harness-closed-details.test.js 는 기준 하네스에서 종료 코드 1(접힌 details 안 단추를 보이는 것으로 셈), 작업 하네스에서 0 이다 — 접힌 details 오탐 0, 덮개로 가린 단추는 여전히 가려짐으로 검출, 기존 단언 변경 0(작업자 측정 기록)",
+   "touches": [
+    "tests/harness-closed-details.test.js",
+    "reports/TASK-ES-509/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-509/test-compare.json",
+    "path": "harnessClosedDetails.falsePositiveClosedDetailsWork",
+    "equals": 0
+   }
+  }
+ ]
+}
