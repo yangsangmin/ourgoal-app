@@ -1,0 +1,145 @@
+{
+ "task": "TASK-ES-489",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험지 tests/core-confirm-es376.test.js 의 sliceFunction 이 index.html 원문 대신 같은 파일의 인라인 합본(HTML_CELLS)에서 함수를 잘라 온다. 단언·기대값·검사 수 0 변경, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "실제 이동 제품(#TASK-ES-482 작업 트리)으로 기준 시험지는 깨지고 새 시험지는 기준과 같음을 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "sliceFunction 이 합본에서 함수 시작 글자를 찾는다",
+   "touches": [
+    "tests/core-confirm-es376.test.js"
+   ],
+   "check": {
+    "file": "tests/core-confirm-es376.test.js",
+    "type": "codeContains",
+    "text": "const start = HTML_CELLS.indexOf(head);"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "sliceFunction 이 합본에서 잘라 돌려준다",
+   "touches": [
+    "tests/core-confirm-es376.test.js"
+   ],
+   "check": {
+    "file": "tests/core-confirm-es376.test.js",
+    "type": "codeContains",
+    "text": "return HTML_CELLS.slice(start, i + 1);"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 기준 제품에서 기준 시험지와 종료 코드·출력 줄 수·첫 오류가 같다",
+   "touches": [
+    "reports/TASK-ES-489/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-489/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnBaseProduct",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 시험지는 실제 이동 제품에서 깨진다(선행이 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-489/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-489/real-move.json",
+    "type": "jsonPath",
+    "path": "baseTestBreaksOnMoved",
+    "equals": [
+     "tests/core-confirm-es376.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 실제 이동 제품에서 기준 시험지·기준 제품과 같다",
+   "touches": [
+    "reports/TASK-ES-489/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-489/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnMoved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-489: 시험지 tests/core-confirm-es376.test.js"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통]"
+   }
+  }
+ ]
+}

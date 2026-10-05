@@ -40,6 +40,18 @@
     } catch (e) {}
     return null;
   }
+  // [#TASK-ES-478] 기록 하나의 실제 몰입 시간(ms). durationMinutes 가 있으면 그것, 없으면 endAt-startAt(앱의 다른 화면과 같은 계산), 둘 다 없으면 0 — 시간 없는 기록을 25분으로 지어 세지 않는다.
+  function realDurationMs(r) {
+    if (!r) return 0;
+    var m = Number(r.durationMinutes);
+    if (isFinite(m) && m > 0) return m * 60000;
+    if (r.endAt && r.startAt) {
+      var d = new Date(r.endAt).getTime() - new Date(r.startAt).getTime();
+      if (isFinite(d) && d > 0) return d;
+    }
+    return 0;
+  }
+  K.realDurationMs = realDurationMs;
   K.realStreakDays = realStreakDays;
   K.realLevel = realLevel;
 
@@ -49,7 +61,7 @@
       var streakVal = realStreakDays(); // [#TASK-ES-462] 없으면 null — 가짜 「3일」 대신 줄을 뺀다
       var levelVal = realLevel();
       var totalMinutes = 0;
-      records.forEach(function(r) { totalMinutes += (r.durationMinutes || 25); });
+      records.forEach(function(r) { totalMinutes += realDurationMs(r) / 60000; }); // [#TASK-ES-478] 가짜 기본 25분 제거
       var totalHours = Math.round(totalMinutes / 60 * 10) / 10;
 
       contentHtml = '<div class="s-recap-share-card">' +
@@ -61,7 +73,7 @@
           '<div class="s-rc-top">OURGOAL WEEKLY RECAP</div>' +
           '<div class="s-rc-main">' +
             '<div class="s-rc-avatar">🦉' + (levelVal ? ' Lv.' + levelVal : '') + '</div>' +
-            '<div class="s-rc-metric">누적 ' + totalHours + '시간 몰입 완주!</div>' +
+            (totalHours > 0 ? '<div class="s-rc-metric">누적 ' + totalHours + '시간 몰입 완주!</div>' : '') +
             (streakVal ? '<div class="s-rc-streak">' + streakVal + '일 연속 스트릭 달성 🔥</div>' : '') +
           '</div>' +
           '<div class="s-rc-foot">우리들의 목표 성소 · ourgoal.kr</div>' +
@@ -83,7 +95,7 @@
         var streakVal = realStreakDays(); // [#TASK-ES-462] 실제 스트릭(없으면 null)
         var levelVal = realLevel();
         var totalMs = 0;
-        allRecs.forEach(function(r) { totalMs += ((r.durationMinutes || 25) * 60000); });
+        allRecs.forEach(function(r) { totalMs += realDurationMs(r); }); // [#TASK-ES-478] 가짜 기본 25분 제거
 
         var canvas = document.createElement('canvas');
         canvas.width = 1080;
@@ -141,7 +153,7 @@
         ctx.fillText(nick + (levelVal ? ' · Lv.' + levelVal : '') + ' 성소 탐험가', 540, 680);
 
         // 메트릭 1: 누적 몰입 시간
-        var hoursStr = (Math.round(totalMs / 3600000 * 10) / 10) + '시간';
+        var hoursStr = totalMs > 0 ? (Math.round(totalMs / 3600000 * 10) / 10) + '시간' : '기록 시작';
         ctx.fillStyle = '#f8fafc';
         ctx.font = '900 84px sans-serif';
         ctx.fillText(hoursStr, 540, 890);
