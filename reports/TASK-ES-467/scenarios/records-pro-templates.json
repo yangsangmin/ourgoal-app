@@ -1,0 +1,68 @@
+{
+  "id": "records-pro-templates",
+  "title": "게스트로 기록 탭 「템플릿」 칸의 전문 템플릿 기록 창을 열면 템플릿 고르기 칸에 기본 전문 템플릿 「헬스」가 있고, 「공부」로 바꾸면 표 머리가 그 템플릿의 열로 바뀐다 — 기본 전문 템플릿 목록·목록 합치기·키로 찾기(DEFAULT_PRO_TEMPLATES·getAllProTemplates·getProTemplateByKey)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#proTplSelect",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTplSelect",
+      "text": "헬스"
+    },
+    {
+      "do": "select",
+      "selector": "#proTplSelect",
+      "value": "study"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTable thead tr",
+      "text": "과목/주제"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

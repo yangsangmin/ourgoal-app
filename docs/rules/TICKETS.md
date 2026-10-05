@@ -564,3 +564,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-465 | INFRA | [시험지 기관 세포 합본] 인라인 어려움 기관 이전 선행 — 합본 도우미가 js/core 인라인 이전 세포도 읽음 + 시험지 4개 읽는 줄 합본으로, 단언·기대값·검사 수 그대로 · 어려움 집계 표 제목 표시 고침 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md | 4단계(심사 청구)
 - #TASK-ES-469 | INFRA | [시험지 인라인 합본 · 어려움 구역 H1 선행] app-evaluation-modal·feed-post-preview-modal 시험지 2개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md
 - #TASK-ES-475 | INFRA | [시험지 선행 · 인라인 어려움 H3] achievement-graph-multiset 이 인라인 합본을 읽음(읽기 줄 1줄) | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-475-H3-TEST-BUNDLE.md
+- #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md
