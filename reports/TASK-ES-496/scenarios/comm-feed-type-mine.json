@@ -1,0 +1,19 @@
+{
+  "id": "comm-feed-type-mine",
+  "title": "게스트로 소통 탭 「📰 피드」에서 「내 소통」 칸을 누르면 그 칸이 켜지고 「전체 피드」 칸이 꺼진다 — 피드 목록 그리기와 그 칸 처리기(renderCommFeed·feedPostHtml)를 소통 탭 세포 파일 js/tabs/comm/feed-list.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "waitFor", "selector": "#commBody [data-sub=\"feed\"]", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#commBody [data-sub=\"feed\"]" },
+    { "do": "waitFor", "selector": "#commSubBody [data-feedtype=\"mine\"]", "timeoutMs": 8000 },
+    { "expect": "hasClass", "selector": "#commSubBody [data-feedtype=\"all\"]", "className": "active" },
+    { "do": "click", "selector": "#commSubBody [data-feedtype=\"mine\"]" },
+    { "expect": "hasClass", "selector": "#commSubBody [data-feedtype=\"mine\"]", "className": "active", "timeoutMs": 6000 },
+    { "expect": "notHasClass", "selector": "#commSubBody [data-feedtype=\"all\"]", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}
