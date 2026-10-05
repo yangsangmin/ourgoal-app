@@ -1,0 +1,339 @@
+{
+ "task": "TASK-ES-458",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-458-HIDDEN-GATE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "숨김 검사기(sweep.js 기반): 처리기(onclick·리스너)가 있는 요소가 늘 숨김(display:none !important·인라인 숨김)에만 있고 보이는 진입로가 0 이면 실패."
+  },
+  {
+   "id": "R2",
+   "text": "현재 main 의 남은 대상은 허용 목록(사유 1줄씩 — 상민님 지시로 숨김 TASK-ES-139·140 등)에 넣고, 새로 생기는 것만 막는 「증가 금지」 방식(module-guard 처럼)."
+  },
+  {
+   "id": "R3",
+   "text": "npm test 에서 도는 빠른 정적판(ui.css·index.html 의 새 !important 숨김이 처리기 id 를 덮는지) + 느린 브라우저판은 수동 스크립트."
+  },
+  {
+   "id": "R4",
+   "text": "동결 파일(court/**·.github/workflows/**·package.json scripts·essence-gate·verify-integrity-gate) 수정 금지 — tests/ 아래 새 시험 파일을 npm test 가 자동으로 줍는지 확인."
+  },
+  {
+   "id": "R5",
+   "text": "증명: 시험 파일 존재·고의로 숨긴 픽스처에서 실패·현재 main 에서 통과(스크립트 실행). 전체 수치 주장 금지, REQ 8원칙·dev_log·TICKETS."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "정적판 시험 파일 tests/hidden-entry-guard.test.js 가 있다",
+   "touches": [
+    "tests/hidden-entry-guard.test.js"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "tests/hidden-entry-guard.test.js"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "정적판 검사기 scripts/hidden-entry-guard.js 가 있다",
+   "touches": [
+    "scripts/hidden-entry-guard.js"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "scripts/hidden-entry-guard.js"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "브라우저판(수동) docs/design/harness/hidden-entry-sweep.js 가 있다",
+   "touches": [
+    "docs/design/harness/hidden-entry-sweep.js"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "docs/design/harness/hidden-entry-sweep.js"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 는 tests/ 를 자동으로 줍지 않아, npm test 마지막 단계 scripts/test-shipyard-modular.js 의 runNode 목록(동결 아님)에 새 시험을 등록했다",
+   "touches": [
+    "scripts/test-shipyard-modular.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "runNode('tests/hidden-entry-guard.test.js');"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이 브랜치(현재 main + 새 파일)에서 정적판이 통과한다(종료 0)",
+   "touches": [
+    "reports/TASK-ES-458/guard-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/guard-check.json",
+    "path": "staticGuardOnBranch.exitCode",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "일부러 숨긴 사본(ui.css 에 4테마 #sanctuaryBellBtn display:none !important)에서 정적판이 실패하고 #sanctuaryBellBtn 을 새로 숨은 처리기 요소로 이름 댄다",
+   "touches": [
+    "reports/TASK-ES-458/guard-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/guard-check.json",
+    "path": "staticGuardOnHiddenCopy.flagsBell",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 파일이 이 브랜치에서 통과한다(종료 0)",
+   "touches": [
+    "reports/TASK-ES-458/guard-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/guard-check.json",
+    "path": "testFileOnBranch.exitCode",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 시험 파일이 일부러 숨긴 사본에서 실패한다(종료 1)",
+   "touches": [
+    "reports/TASK-ES-458/guard-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/guard-check.json",
+    "path": "testFileOnHiddenCopy.exitCode",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지금 허용 목록으로 ES-433 고치기 전 커밋(0719592)을 정적판에 넣으면 #mzShareBtn(.home-actions 숨김)을 잡아 실패한다",
+   "touches": [
+    "reports/TASK-ES-458/replay.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/replay.json",
+    "path": "es433BeforeCaught",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "브라우저판을 main 에서 허용 목록을 만든 실행과 따로 다시 열어도 통과한다(진입 실패 0)",
+   "touches": [
+    "reports/TASK-ES-458/sweep-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/sweep-check.json",
+    "path": "mainSecondRun.ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "브라우저판이 일부러 숨긴 사본에서 실패하고 #sanctuaryBellBtn 을 보이는 진입로 0 인 새 요소로 이름 댄다",
+   "touches": [
+    "reports/TASK-ES-458/sweep-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/sweep-check.json",
+    "path": "hiddenCopy.flagsBell",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "정적판 허용 목록은 묶음마다 사유가 있다(예: 검증 전용 배선 슬롯 TASK-ES-304)",
+   "touches": [
+    "docs/architecture/hidden-entry-baseline.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/hidden-entry-baseline.json",
+    "text": "「배선용 테스트 카드 일괄 은폐」"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "브라우저판 허용 목록에 상민님 지시 TASK-ES-140(레벨 배지 줄) 사유가 있다",
+   "touches": [
+    "docs/architecture/hidden-entry-sweep-baseline.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/hidden-entry-sweep-baseline.json",
+    "text": "상민님 지시 TASK-ES-140"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "정적판은 사유 20자 미만 허용 묶음을 실패시킨다(증가는 --allow --reason 으로만)",
+   "touches": [
+    "scripts/hidden-entry-guard.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/hidden-entry-guard.js",
+    "text": "const MIN_REASON = 20;"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test smoke 통과/실패 수가 기준과 같다(443/0)",
+   "touches": [
+    "reports/TASK-ES-458/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/test-compare.json",
+    "path": "npmTestAfter.smoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 무결성 검사 수가 기준과 같다(38/38)",
+   "touches": [
+    "reports/TASK-ES-458/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-458/test-compare.json",
+    "path": "npmTestAfter.integrity",
+    "equals": "38/38"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 원칙 ② 본질·원인·중심·핵심",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-458-HIDDEN-GATE.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/specs/REQ-TASK-ES-458-HIDDEN-GATE.md",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "dev_log.md",
+    "text": "- 2026-10-05 TASK-ES-458: 숨김 게이트"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "- #TASK-ES-458 | INFRA/시험 | [숨김 게이트]"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R1",
+   "kind": "unverified",
+   "domain": "config",
+   "statement": "로그인한 사용자 화면에서도 브라우저판이 같은 기준으로 진입로 0 인 숨은 처리기 요소를 잡는다",
+   "touches": [
+    "docs/design/harness/hidden-entry-sweep.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "실계정 하네스(docs/design/harness/real-account-check.js)를 쓰는 세션",
+    "how": [
+     "테스트 계정으로 로그인한 페이지에 hidden-entry-sweep.js 의 INSTRUMENT·COLLECT 를 붙인다",
+     "6탭 상태를 돌며 모은다",
+     "--from 으로 판정한다"
+    ]
+   }
+  }
+ ]
+}
