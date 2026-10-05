@@ -1,0 +1,68 @@
+{
+  "task": "TASK-ES-483",
+  "slot": "H1",
+  "slots": [],
+  "cells": [
+    {
+      "key": "goalUpdateSuggest",
+      "file": "js/tabs/goals/goal-update-suggest.js",
+      "kit": "OurgoalGoalsKit",
+      "kitVar": "_goalsKit",
+      "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+      "title": "OurGoal Goal Update Suggest (목표 — 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안)",
+      "desc": [
+        "체크인 기록을 보고 AI(또는 로컬 규칙)가 낸 변경 제안을 거르고(sanitizeSuggestions·findSuggestionTarget) 설명하고(describeSuggestion) 반영하는(applySuggestion) 함수와 「진행 상황이 바뀐 것 같아요」 창(maybeShowGoalUpdateModal).",
+        "scripts/smoke-test.js 의 FN_NAMES 는 인라인 합본(js/tabs 세포 포함)에서 함수를 뽑으므로 이 세포에서 같은 함수를 찾는다."
+      ],
+      "take": [
+        {
+          "group": "기록 기반 목표·마일스톤·할 일 자동 업데이트 제안",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "externalImport",
+      "file": "js/tabs/records/external-import.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal External Import (기록 — 외부 데이터 불러오기 (mock) · 홈 구성 열기)",
+      "desc": [
+        "기록 입력의 「외부 기록 불러오기」 단추(#importExternalBtn) 처리기 — 샘플 데이터(EXTERNAL_DATA, 이름 그대로 mock) 목록 창과 CSV/줄글 대량 가져오기 창 열기, 홈 구성 열기(openHomeCustomizer), 「개인 목표 200% 활용 가이드」 단추 처리기.",
+        "처리기 등록 문 두 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. 한 줄에 두 문인 홈 구성·가이드 단추 등록 세 줄은 원래 자리에 그대로 있다. 샘플(mock) 데이터는 고치지 않고 그대로 옮겼다."
+      ],
+      "take": [
+        {
+          "group": "외부 데이터 불러오기 (mock)",
+          "all": true,
+          "sameLineKeep": true,
+          "wrap": [
+            "bindImportExternalBtn",
+            "bindPersonalGuideBtn"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "attachments",
+      "file": "js/tabs/goals/attachments.js",
+      "kit": "OurgoalGoalsKit",
+      "kitVar": "_goalsKit",
+      "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+      "title": "OurGoal Attachments (목표 — 참고자료 첨부: 유튜브/영상·이미지·텍스트 메모·웹링크)",
+      "desc": [
+        "목표·일정의 참고자료 첨부 창(openAddAttachmentModal)·보기 창(openAttachmentViewer)·칩 그리기·칩 누르기 연결, 목표 도우미 결과 반영(applyGoalAgentOp·buildGoalFromAgentData·normalizeSequentialMilestoneDates).",
+        "window 노출 묶음(if 안 window.X = …)은 index.html 원래 자리에 그대로 있다(js/calendar-attachment.js 등이 그 이름을 찾는다)."
+      ],
+      "take": [
+        {
+          "group": "참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크)",
+          "all": true,
+          "headerPick": "nonEmpty"
+        }
+      ]
+    }
+  ],
+  "label": "인라인 어려움 구역 H1 3차"
+}

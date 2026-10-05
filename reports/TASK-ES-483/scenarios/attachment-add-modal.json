@@ -1,0 +1,75 @@
+{
+ "id": "attachment-add-modal",
+ "title": "게스트로 일정 탭 오늘 날짜 칸 → 「📅 허브」 → 「새 일정 추가」 → 일정 편집 창의 참고자료 첨부 단추를 누르면 「참고자료 첨부」 창이 제목·링크 입력칸과 함께 뜬다 — 옮긴 openAddAttachmentModal(js/tabs/goals/attachments.js)이 원래 자리의 window 노출을 거쳐 이전 전과 같이 불린다",
+ "steps": [
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#captureInput",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"calendar\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#screen-calendar .s-cal-day-cell.today",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#screen-calendar .s-cal-day-cell.today"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#hubAddNewBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#hubAddNewBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#calEditAddAttBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#calEditAddAttBtn"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay",
+   "text": "참고자료 첨부"
+  },
+  {
+   "expect": "visible",
+   "selector": "#attTitleInput"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

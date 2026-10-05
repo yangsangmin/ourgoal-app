@@ -51,8 +51,13 @@ const smokeReadsCell = file => smokeUsesBundle && (file.startsWith('js/tabs/') |
 const isHeader = c => c.type === 'CommentBlock' && /^\s*=+/.test(c.value);
 const headers = [];
 for (const st of top) for (const c of (st.node.leadingComments || [])) if (isHeader(c)) headers.push({ line: c.loc.start.line + off, endLine: c.loc.end.line + off, text: c.value, stmt: st });
-const groupRange = title => {
-  const hs = headers.filter(h => h.text.includes(title));
+const groupRange = (title, pick) => {
+  let hs = headers.filter(h => h.text.includes(title));
+  // [#TASK-ES-483] 설정 take.headerPick: 'nonEmpty' — 같은 글자의 구획 주석이 여럿이면(예: 「참고자료」 구획 주석이 두 줄 연달아) 최상위 문을 담은 것 하나만 고른다. 없으면 이전과 같이 멈춘다.
+  if (hs.length > 1 && pick === 'nonEmpty') {
+    const endOf = h => { const i = headers.indexOf(h); return i + 1 < headers.length ? headers[i + 1].line - 1 : eLine; };
+    hs = hs.filter(h => top.some(st => H(st.node) >= h.line && HE(st.node) <= endOf(h)));
+  }
   if (hs.length !== 1) fail('구획 주석이 ' + hs.length + '개: ' + title);
   const i = headers.indexOf(hs[0]);
   return { start: hs[0].line, hEnd: hs[0].endLine, end: i + 1 < headers.length ? headers[i + 1].line - 1 : eLine };
@@ -99,16 +104,18 @@ const cellByKey =Object.fromEntries(CFG.cells.map(c => [c.key, c]));
 const plan = []; // { cell, action: move|wrap|keep, st, start, end, segStart, names, wrapName, why }
 for (const c of CFG.cells) {
   for (const t of c.take) {
-    const r = groupRange(t.group);
+    const r = groupRange(t.group, t.headerPick);
     const sts = top.filter(s => H(s.node) >= r.start && HE(s.node) <= r.end);
     let wrapK = 0;
     sts.forEach((st, k) => {
       const prevEnd = k ? HE(sts[k - 1].node) : r.start - 1;
-      if (k && H(st.node) === prevEnd) fail('두 문이 한 줄에: ' + H(st.node));
+      // [#TASK-ES-483] 설정 take.sameLineKeep: true — 한 줄에 두 문이 있으면(예: `var b = …; if(b) b.addEventListener(…)`) 둘 다 원래 자리에 남길 때만 허용한다(옮기거나 감싸면 아래에서 멈춘다)
+      let sameLine = false;
+      if (k && H(st.node) === prevEnd) { if (!t.sameLineKeep) fail('두 문이 한 줄에: ' + H(st.node)); sameLine = true; }
       const tail = lines[HE(st.node) - 1].slice(st.node.loc.end.column).trim();
-      if (tail && !tail.startsWith('//')) fail('문 끝 줄 뒤에 다른 코드: ' + HE(st.node));
+      if (tail && !tail.startsWith('//')) { const nx = sts[k + 1]; if (!(t.sameLineKeep && nx && H(nx.node) === HE(st.node))) fail('문 끝 줄 뒤에 다른 코드: ' + HE(st.node)); sameLine = true; }
       // 앞 주석·빈 줄은 그 문을 따라간다(묶음 첫 문은 구획 주석부터)
-      const item = { cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? prevEnd + 1 : r.start, names: [] };
+      const item = { cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? (sameLine && H(st.node) === prevEnd ? H(st.node) : prevEnd + 1) : r.start, names: [], sameLine };
       const mine = n => t.all || (t.names || []).includes(n);
       if (st.isFunctionDeclaration()) {
         const n = st.node.id.name; item.names = [n];
@@ -146,6 +153,7 @@ for (const c of CFG.cells) {
           }
         }
       }
+      if (item.sameLine && (item.action === 'move' || item.action === 'wrap')) fail('한 줄에 두 문이 있는 문은 원래 자리에만 둘 수 있다(sameLineKeep): ' + H(st.node));
       plan.push(item);
     });
     if ((t.wrap || []).length !== wrapK) fail('설정 wrap 이름 수(' + (t.wrap || []).length + ')와 감싼 문 수(' + wrapK + ')가 다르다: ' + t.group);
