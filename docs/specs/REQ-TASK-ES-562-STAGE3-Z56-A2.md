@@ -50,7 +50,7 @@ DOM `#twoFactorSwitch` · `#twoFaPinInput` · `#btnSave2Fa` · `#twoFactorPinCon
 | 원본 단독 로드 | 회귀 0, 새 파일 5개 단독 로드 ok (`module-load-probe.json`) |
 | 게스트 시나리오 | 5개 기준·작업 통과 (`scenario-local.json`) |
 | 게스트 조작 비교 | 10단계 기준1 대 작업 차이 0 · 기준1 대 기준2 0 (`guest-compare.json`) |
-| tests 전후 | (주장 아님 — 기록) |
+| tests 전후 | 작업 npm test 종료 0 · 종료 코드가 기준과 갈린 시험지는 cell-map-export-es414 하나(기준 사본 이력 없음) — 기록(`test-compare.json`), main 이 움직이면 바뀌는 값이라 주장하지 않음(L002) |
 | 막힐 지점 | 다른 빌더 병합으로 index.html 충돌 → main 판을 입력으로 생성기 재실행(L010) |
 
 [4단계: 심사 청구]
