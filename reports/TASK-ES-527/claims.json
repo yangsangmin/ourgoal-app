@@ -1,0 +1,164 @@
+{
+ "task": "TASK-ES-527",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-527-STAGE3-Z3O-TEST-FIRST.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험지 tests/push-subscribe-auth-es400.test.js 의 loadApp 이 index.html 원문 대신 인라인 합본(withInlineCells)에서 syncPushSubscription·removePushSubscription 을 꺼낸다. 단언·기대값·검사 수 0 변경, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "시험지 tests/core-confirm-es376.test.js 의 루틴 삭제 확인창 세는 범위(HTML_ROUTINE)에 js/tabs/goals/routine-detail-modal.js(있을 때만, L. 만 뗌)를 더한다. 기대값(2곳) 그대로."
+  },
+  {
+   "id": "R3",
+   "text": "실제 이동 제품(Z3·기관 설정으로 생성기를 돌린 사본)으로 기준 시험지는 깨지고 새 시험지는 기준과 같음을 잰다."
+  },
+  {
+   "id": "R4",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "loadApp 이 인라인 합본에서 두 함수를 꺼낸다",
+   "touches": [
+    "tests/push-subscribe-auth-es400.test.js"
+   ],
+   "check": {
+    "file": "tests/push-subscribe-auth-es400.test.js",
+    "type": "codeContains",
+    "text": "const src = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')).replace("
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "루틴 삭제 확인창 세는 범위에 루틴 상세 창 세포 파일을 더한다",
+   "touches": [
+    "tests/core-confirm-es376.test.js"
+   ],
+   "check": {
+    "file": "tests/core-confirm-es376.test.js",
+    "type": "codeContains",
+    "text": "const ROUTINE_DETAIL_CELL = path.join(ROOT, 'js', 'tabs', 'goals', 'routine-detail-modal.js');"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 기준 제품에서 기준 시험지와 종료 코드·출력 줄 수·첫 오류가 같다(두 시험지 모두)",
+   "touches": [
+    "reports/TASK-ES-527/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-527/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnBaseProduct",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 시험지 둘은 실제 이동 제품에서 깨진다(선행이 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-527/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-527/real-move.json",
+    "type": "jsonPath",
+    "path": "baseTestBreaksOnMoved",
+    "equals": [
+     "tests/push-subscribe-auth-es400.test.js",
+     "tests/core-confirm-es376.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 실제 이동 제품에서 기준 시험지·기준 제품과 같다(두 시험지 모두)",
+   "touches": [
+    "reports/TASK-ES-527/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-527/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnMoved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-527-STAGE3-Z3O-TEST-FIRST.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-527-STAGE3-Z3O-TEST-FIRST.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-527: 시험지 선행(인라인 3단계 Z3·기관)"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-527 | INFRA | [시험지 선행 · 인라인 3단계 Z3·기관]"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "4칸 측정 도구가 저장소에 있다",
+   "touches": [
+    "docs/design/harness/module-split/real-move-test-stage3-z3o.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/real-move-test-stage3-z3o.js",
+    "type": "fileExists"
+   }
+  }
+ ]
+}
