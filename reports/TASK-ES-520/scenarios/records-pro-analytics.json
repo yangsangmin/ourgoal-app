@@ -1,0 +1,94 @@
+{
+ "id": "records-pro-analytics",
+ "title": "게스트로 전문 템플릿 기록 창(헬스)을 열면 실시간 분석에 「총 세트 18 세트」가 보이고, 첫 줄 세트 칸을 「9세트」로 고치면 「22 세트」로 바뀌며, 성장 추이 차트의 「30일」을 누르면 그 단추가 켜진다 — 옮긴 computeTableAnalytics·computeTrendChartData(js/tabs/records/table-analytics-engine.js)가 이전 전과 같이 계산한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"records\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#recQuickDockBar",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#recQuickDockBar > button:nth-child(4)"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#recOpenProTemplateBtn",
+   "timeoutMs": 8000
+  },
+  {
+   "do": "click",
+   "selector": "#recOpenProTemplateBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#proAnalyticsBanner",
+   "timeoutMs": 10000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#proAnalyticsBanner",
+   "text": "18 세트"
+  },
+  {
+   "do": "type",
+   "selector": "#proTableBody tr:first-child .pro-tpl-cell-input[data-col=\"2\"]",
+   "text": "9세트",
+   "clear": true
+  },
+  {
+   "expect": "textContains",
+   "selector": "#proAnalyticsBanner",
+   "text": "22 세트",
+   "timeoutMs": 4000
+  },
+  {
+   "expect": "notHasClass",
+   "selector": "#proTrendChartWrap .pro-trend-filter-chip[data-period=\"30\"]",
+   "className": "active"
+  },
+  {
+   "do": "click",
+   "selector": "#proTrendChartWrap .pro-trend-filter-chip[data-period=\"30\"]"
+  },
+  {
+   "expect": "hasClass",
+   "selector": "#proTrendChartWrap .pro-trend-filter-chip[data-period=\"30\"]",
+   "className": "active"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#proTrendChartWrap",
+   "text": "성장률"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
