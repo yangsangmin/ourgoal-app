@@ -1,7 +1,7 @@
 # REQ — #TASK-ES-437 index.html 인라인 스크립트 세포화 P0 구역 1차: 시험지가 글자로 잘라 가지 않는 19묶음 24선언을 세포 10개로 이전
 
 - 근거: 헌법 v2026.10.05-CELL 세포골격 절(CELL_SKELETON·CELL_SPLIT·CELL_SPLIT_PROOF), `docs/specs/MODULE-SPLIT-PROTOCOL.md`, 1차 선례 #TASK-ES-423(#744 — 지도·생성기·검사기·게스트 비교 틀). 상민님 원문(2026-10-05): "미분화 덩어리 분열 작업을 우선순위로 해야하지 않나? 지금 왜 적극적으로 진행하지 않는것 같지?"
-- 범위: 인라인 지도(`docs/architecture/inline-script-map.json`, 기준 main a89ce00)의 **P0 구역**(약 2565~10488행, 36묶음) 중, 옮겨도 기준 시험지(tests 109개·npm test)가 그대로 통과하는 19묶음의 함수 선언 24개를 세포 파일 10개로 글자 그대로 옮긴다. 기능 추가·삭제 0, 마크업·CSS 이동 0, 동결 파일 0, 시험지·기대값 변경 0, retire 0.
+- 범위: 인라인 지도(`docs/architecture/inline-script-map.json`, 기준 main a89ce00)의 **P0 구역**(약 2565~10488행, 36묶음) 중, 옮겨도 기준 시험지(tests 108개·npm test)가 그대로 통과하는 19묶음의 함수 선언 24개를 세포 파일 10개로 글자 그대로 옮긴다. 기능 추가·삭제 0, 마크업·CSS 이동 0, 동결 파일 0, 시험지·기대값 변경 0, retire 0.
 
 ## 1. [원칙 ①] 문제 정확히 파악 — 지시 요지
 
@@ -13,7 +13,7 @@
 
 - **본질**: 설정·목표·기록 기능 24개가 3만 줄 IIFE 한 스코프에 묻혀 있어, 어느 하나를 고쳐도 같은 파일·같은 스코프를 만진다. 세포로 떼어 책임 단위 파일(800줄 이하)로 만드는 것이 목표다.
 - **원인**: 묶음 안에 함수 선언과 로드 중 문(window 노출·`if(document.readyState…)`·`var x = document.getElementById…`)이 섞여 있고, 일부 시험지는 index.html 글자에서 함수 본문을 잘라(`extractFunction`) 가짜 환경에서 실행한다. 이 둘 때문에 묶음을 통째로 옮기는 1차 틀이 P0 구역에 그대로 맞지 않았다.
-- **중심**: (가) 함수 선언(앞에 붙은 주석 포함)만 옮기고 문은 제자리 — MODULE-SPLIT-PROTOCOL 3절 (나) 시험지가 잘라 가는 함수 식별 — 구역 전체를 시험 삼아 옮긴 사본(모의 이전)으로 tests 109개를 돌려 깨지는 시험을 측정으로 찾았다.
+- **중심**: (가) 함수 선언(앞에 붙은 주석 포함)만 옮기고 문은 제자리 — MODULE-SPLIT-PROTOCOL 3절 (나) 시험지가 잘라 가는 함수 식별 — 구역 전체를 시험 삼아 옮긴 사본(모의 이전)으로 tests 108개를 돌려 깨지는 시험을 측정으로 찾았다.
 - **핵심**: 설정 파일로 도는 생성기 `gen-inline-p0.js` + 검사기 `verify-inline-p0.js`. 모의 이전에서 깨진 시험 11개(account-switch-isolation·direct-login-guard·dev-host-gate·device-session-control·logout-scope-es399·two-factor-auth·core-confirm-es376·onboarding-first-checkin·records-tab-rename·schedule-goal-sync·smoke-test 의 convertTextToNotionDbRecord)가 글자를 잘라 가는 함수의 묶음은 이번에서 뺐다.
 
 ## 3. [원칙 ③] 해결방식
@@ -55,13 +55,13 @@
 
 ## 5. [원칙 ⑤] 절차
 
-워크트리 `C:/dev/wt/inline-p0`(브랜치 `feat/2026-10-05-task-es-437-inline-p0-1`, 기준 origin/main a89ce00) → 헌법 세포골격 절·분열 규칙·1차 선례 정독 → 생성기·검사기 일반화 → 구역 전체 모의 이전으로 시험지 의존 측정 → 깨지지 않는 묶음만 설정 → 생성 → verify → 모듈 로드 탐침 → `npm test`·tests 109개 기준/후 → 게스트 조작 비교(기준 2회·후 1회) → 법정 형식 화면 시나리오 4개 기준/후 → 신고서·설명·가드·지도 → 커밋 → 세포지도 재생성 → PR → 법정.
+워크트리 `C:/dev/wt/inline-p0`(브랜치 `feat/2026-10-05-task-es-437-inline-p0-1`, 기준 origin/main a89ce00) → 헌법 세포골격 절·분열 규칙·1차 선례 정독 → 생성기·검사기 일반화 → 구역 전체 모의 이전으로 시험지 의존 측정 → 깨지지 않는 묶음만 설정 → 생성 → verify → 모듈 로드 탐침 → `npm test`·tests 108개 기준/후 → 게스트 조작 비교(기준 2회·후 1회) → 법정 형식 화면 시나리오 4개 기준/후 → 신고서·설명·가드·지도 → 커밋 → 세포지도 재생성 → PR → 법정.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
 - 반론 1: "함수 선언(끌어올림)이 IIFE 머리의 `var` 가져오기로 바뀌면, 그 줄보다 먼저 부르는 곳이 `undefined` 를 받는다." → 이음매는 Supabase 구획 앞, 즉 IIFE 맨 앞의 이음매들과 테마 초기화 `try` 뒤다. 그 앞에는 getter 정의·키트 가져오기·`data-theme` 초기화뿐이고 옮긴 함수를 부르는 문이 없다(스코프 분석: 옮긴 이름을 부르는 곳은 모두 이음매보다 뒤). 측정: 게스트 조작 비교 콘솔 오류 기준·후 같음, 모듈 로드 탐침 회귀 0.
 - 반론 2: "묶음 일부만 옮기면 window 노출 줄이 옮긴 함수보다 먼저 돌아 `undefined` 를 노출한다." → 노출 줄은 원래 자리(이음매보다 뒤)에서 가져온 같은 이름을 읽으므로 같은 함수가 달린다. 측정: 게스트 조작 비교의 `globals` 칸(옮긴 24개 이름의 `typeof window[이름]`)이 기준과 같다.
-- 반론 3: "모의 이전으로 고른 '안 깨지는 묶음'도 법정의 기준 시험지에서 깨질 수 있다." → 기준 사본(a89ce00 `git archive`)과 작업 트리에 tests 109개·npm test 를 같은 방식으로 돌려 종료 코드를 맞댔다. 다른 것은 module-guard(기준선 갱신 전 측정 — 갱신 뒤 통과)·cell-map-export(기준 사본에 git 이 없어 기준 쪽만 실패)뿐이다.
+- 반론 3: "모의 이전으로 고른 '안 깨지는 묶음'도 법정의 기준 시험지에서 깨질 수 있다." → 기준 사본(a89ce00 `git archive`)과 작업 트리에 tests 108개·npm test 를 같은 방식으로 돌려 종료 코드를 맞댔다. 다른 것은 module-guard(기준선 갱신 전 측정 — 갱신 뒤 통과)·cell-map-export(기준 사본에 git 이 없어 기준 쪽만 실패)뿐이다.
 
 ## 7. [원칙 ⑦] 단계별 실행 — 식별자
 
@@ -78,8 +78,8 @@
 | 인라인 줄 수 | `module-guard` ① | 33,385 → 32,661 (−724), ② 함수 선언 658 → 630, ③ 282 그대로 |
 | 글자 동일 | `verify-inline-p0.js` | 옮긴 24선언 토큰열 동일(L. 접두 제외), 덩어리 23개 줄 단위 동일(주석 포함, 777줄), 누수 0·미노출 0·남은 정의 0·안 가져온 사용 0, 새 파일 10개 모두 800줄 이하 (`verify-inline-p0.json` ok) |
 | 원본 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0 (`module-load-probe.json`) |
-| 시험 | `npm test` · tests 109개 | smoke 443/0 · 무결성 38/38 기준=후, 109개 종료 코드 같음(다른 것: module-guard 는 기준선 갱신 전 측정, cell-map-export 는 기준 사본 git 없음) — `test-compare.json` |
-| 조작 전후(게스트) | `dom-compare-inline-p0.js` 세트 1 | `dom-compare-inline-p0-1.json` |
+| 시험 | `npm test` · tests 108개 | smoke 443/0 · 무결성 38/38 기준=후, 108개 종료 코드 같음(다른 것: cell-map-export 는 기준 사본에 git 이 없어 기준 쪽만 실패) — `test-compare.json` |
+| 조작 전후(게스트) | `dom-compare-inline-p0.js` 세트 1 | 38단계 × 10칸 = 380값, 기준 대 후 0 · 기준 대 기준 0, 콘솔 오류 0/0/0 (`dom-compare-inline-p0-1.json`) |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` runScenario 로컬 | 4개 기준·후 모두 통과, 약점 0 — `scenario-local.json` |
 
 [4단계: 심사 청구]
