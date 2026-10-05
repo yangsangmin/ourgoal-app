@@ -60,7 +60,7 @@
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-기준 = origin/main a89ce00(`git archive` 사본). 결과 파일은 `reports/TASK-ES-436/`.
+기준 = origin/main a89ce00(생성기·verify·조작 비교·시나리오는 `git archive` 사본, 시험 비교는 git 이력이 필요한 시험이 있어 같은 커밋의 분리 워크트리 `C:/dev/wt/inline-p1-base`). 결과 파일은 `reports/TASK-ES-436/`.
 
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |
@@ -69,7 +69,7 @@
 | 원본 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0 |
 | 조작 전후(게스트) | `dom-compare-inline-p1.js` | 25단계 × 10칸 = 250값, 기준 대 후 0, 기준 대 기준 0, 콘솔 오류 0/0/0 |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` runScenario 로컬 | 4개(일정 저장·AI 어시스턴트 전송·마일스톤 축하·체크인 AI 피드백) 기준·후 모두 통과 |
-| 시험 | `npm test` · tests 108개 | smoke 443/0 · 무결성 38/38 · 버튼 943/943 기준=후, 종료 코드 108개 같음 — `test-compare.json` |
+| 시험 | `npm test` · tests 108개 | npm test 종료 0/0, smoke 443/0 · 무결성 38/38 · 버튼 943/943 기준=후, 108개 종료 코드 같음·정규화 출력 차이 0 — `test-compare.json` |
 | 탭 실측 | `tab-check.js` | `tab-compare-*.json` (아래 주장) |
 
 [4단계: 심사 청구]
