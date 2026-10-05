@@ -3,7 +3,7 @@
  *
  * 「뱃지 컬렉션 (명예의 전당)」 묶음에 남아 있던 프로필 쪽: 로그인·다시 맞추기 때 서버·이 기기 백업에서 프로필을 불러와 합치기(loadProfile), 서버 users 행이 없으면 만들기(ensureUserRow), 동명이인 고유 태그 붙이기·표시(resolveUniqueDisplayName·formatDisplayNameWithTag), 완료 마일스톤 합(totalCompletedMilestones — smoke 시험지 FN_NAMES, 합본으로 찾는다).
  * 기본 프로필(defaultProfile — 함수 끝 줄에 노출 문이 붙어 있어 옮기면 그 줄이 잘린다)·앱 상태(state)·window 노출 줄은 원래 자리에 그대로 있다.
- * #TASK-ES-522(인라인 3단계 Z1 로그인·계정 2차): index.html 인라인 IIFE 의 구간(이전 전 3518~3522 · 3539~3566 · 3568~3580 · 3582~3613 · 3614~3824줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-522(인라인 3단계 Z1 로그인·계정 2차): index.html 인라인 IIFE 의 구간(이전 전 3504~3508 · 3525~3552 · 3554~3566 · 3568~3599 · 3600~3810줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,14 +15,14 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 3518~3522줄(#TASK-ES-522 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3504~3508줄(#TASK-ES-522 생성기 표지) ---- */
   function totalCompletedMilestones(p){
     var n = 0;
     p.goals.forEach(function(g){ (g.milestones||[]).forEach(function(m){ if(m.status==='done') n++; }); });
     return n;
   }
 
-  /* ---- 이전 전 index.html 3539~3566줄(#TASK-ES-522 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3525~3552줄(#TASK-ES-522 생성기 표지) ---- */
 
   // [#TASK-ES-320], [69] 카카오 로그인 일원화 동명이인 가입/중복 닉네임 방지 고유 태그 부여
   async function resolveUniqueDisplayName(baseName, userId){
@@ -52,7 +52,7 @@
     return cleaned;
   }
 
-  /* ---- 이전 전 index.html 3568~3580줄(#TASK-ES-522 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3554~3566줄(#TASK-ES-522 생성기 표지) ---- */
 
   // 닉네임과 고유 태그 분리 렌더러 (거부감 없는 자연스러운 시인성 보장)
   function formatDisplayNameWithTag(name){
@@ -67,7 +67,7 @@
     return '<span class="display-name-base">' + (typeof L.escapeHtml === 'function' ? L.escapeHtml(str) : str) + '</span>';
   }
 
-  /* ---- 이전 전 index.html 3582~3613줄(#TASK-ES-522 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3568~3599줄(#TASK-ES-522 생성기 표지) ---- */
 
   async function ensureUserRow(userId, username, displayName, extra){
     var found = null;
@@ -100,7 +100,7 @@
     } catch(e){}
     return { row: row, isNew: !localProf };
   }
-  /* ---- 이전 전 index.html 3614~3824줄(#TASK-ES-522 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3600~3810줄(#TASK-ES-522 생성기 표지) ---- */
 
   async function loadProfile(userId, username, newUserExtra, provider){
     var safeUsername = String(username || (newUserExtra && newUserExtra.display_name) || userId || 'user').trim();
