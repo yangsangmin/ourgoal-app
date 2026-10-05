@@ -3,7 +3,7 @@
  *
  * 「RENDER: 팀 목표」 묶음 중 숨김·차단 몫: 신고 자동 숨김 거르기(filterHidden) · 차단한 사용자의 글·댓글 거르기(filterBlockedPosts) · 차단 여부(isUserBlocked) · 차단·해제(blockUser·unblockUser — 프로필 settings.blockedUsers + 서버 user_blocks) · 설정 「차단한 사용자 관리」 창(openBlockedUsersModal).
  * filterHidden·filterBlockedPosts 는 smoke-test FN_NAMES 다 — 시험지가 인라인 합본(js/tabs/**)에서 같은 함수를 찾는다(#TASK-ES-465).
- * #TASK-ES-545(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서): index.html 인라인 IIFE 의 구간(이전 전 8071~8074 · 8128~8142 · 8143~8148 · 8149~8174 · 8175~8191 · 8192~8223줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-545(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서): index.html 인라인 IIFE 의 구간(이전 전 7435~7438 · 7492~7506 · 7507~7512 · 7513~7538 · 7539~7555 · 7556~7587줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,13 +15,13 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalCommKit = global.OurgoalCommKit || {};
 
-  /* ---- 이전 전 index.html 8071~8074줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7435~7438줄(#TASK-ES-545 생성기 표지) ---- */
   /* 숨김 처리된 게시물·댓글 제외(신고 자동 숨김) — 성장 백로그 P0 5 */
   function filterHidden(list){
     return (list || []).filter(function(x){ return !!x && !x.hidden; });
   }
 
-  /* ---- 이전 전 index.html 8128~8142줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7492~7506줄(#TASK-ES-545 생성기 표지) ---- */
 
   /* 차단된 사용자의 게시물·댓글 제외 (TASK-CB-004) */
   function filterBlockedPosts(posts, blockedList){
@@ -37,14 +37,14 @@
       return !uid || !map[uid];
     });
   }
-  /* ---- 이전 전 index.html 8143~8148줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7507~7512줄(#TASK-ES-545 생성기 표지) ---- */
 
   function isUserBlocked(userId){
     if(!userId) return false;
     var list = (L.state.profile && L.state.profile.settings && L.state.profile.settings.blockedUsers) || [];
     return list.some(function(b){ return (typeof b === 'string' ? b : (b && b.id)) === userId; });
   }
-  /* ---- 이전 전 index.html 8149~8174줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7513~7538줄(#TASK-ES-545 생성기 표지) ---- */
 
   async function blockUser(userId, userName){
     if(!userId) return;
@@ -71,7 +71,7 @@
       L.renderTeamGoalsScreen();
     }
   }
-  /* ---- 이전 전 index.html 8175~8191줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7539~7555줄(#TASK-ES-545 생성기 표지) ---- */
 
   async function unblockUser(userId){
     var settings = L.state.profile.settings;
@@ -89,7 +89,7 @@
       L.renderTeamGoalsScreen();
     }
   }
-  /* ---- 이전 전 index.html 8192~8223줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7556~7587줄(#TASK-ES-545 생성기 표지) ---- */
 
   function openBlockedUsersModal(){
     var list = (L.state.profile.settings && L.state.profile.settings.blockedUsers) || [];

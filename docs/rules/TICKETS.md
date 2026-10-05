@@ -605,6 +605,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-527 | INFRA | [시험지 선행 · 인라인 3단계 Z3·기관] push-subscribe-auth-es400·core-confirm-es376 읽는 범위만 넓힘(단언·기대값 0 변경) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-527-STAGE3-Z3O-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-519 | INFRA | [시험지 선행 · 인라인 3단계 Z4] 구간 절단 시험지 3개(renderMultiMetricSvg·collapseAllTeamGoalAccordions)가 세포 이전 뒤에도 같은 함수를 읽음 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md
 - #TASK-ES-545 | INFRA | [인라인 3단계 Z2 1차] 「RENDER: 팀 목표」·「DM & 동반자」 묶음을 세포 4개(goals/team-comments·comm/user-blocks·goals/goal-order·settings/widget-modal-opener)로 옮김 — 게스트 시나리오 4 + 로그인 뒤 몫 실계정 비교 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-545-STAGE3-Z2-TEAM.md | 4단계(심사 청구)
+- #TASK-ES-548 | INFRA | [인라인 3단계 구역 Z5 표준 2] 앱 진입(enterApp·등록 문 6)·수동 일정 편집 창·화면 사용 계측·스타터 목표 템플릿 4묶음을 세포 4개로 동작 그대로 이전(기관 세포는 자리 HO — L046) | 오케스트레이터 배정 구역 Z5+Z6 (2026-10-06), REQ docs/specs/REQ-TASK-ES-548-STAGE3-Z56-B.md | 4단계(심사 청구)
 - #TASK-ES-520 | INFRA | [인라인 3단계 Z4 이동 1차] 목표 보관·히트맵·표 집계/추이·여러 지표 SVG 다섯 묶음을 세포 4개로 동작 그대로 이전 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-520-STAGE3-Z4-B.md
 - #TASK-ES-515 | FIX | [숨김 기능 6건 소멸] 기록 달력 융합 칩·빠른 스톱워치(저장 없는 기록)·루틴 매트릭스(한 번도 안 그려진 껍데기)·옛 기록 세그먼트 막대·첫 화면 「이메일로 가입하기」·옛 홈 구성 단추 2개(이중 처리기) 제거, 살아 있는 setRecordsSegment·가입 양식·#landGuestBtn·설정 홈 구성은 유지 | 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달), REQ docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md | 4단계(심사 청구)
 - #TASK-ES-523 | INFRA | [인라인 3단계 Z4 이동 2차] 활용가이드·공개 범위 배지·스톱워치 시간 글자를 세포 3개로 동작 그대로 이전 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md
@@ -612,5 +613,6 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-537 | INFRA | [인라인 3단계 기관] 루틴 상세·편집 창 세포 이동(생성기, 자리 HO), Modal helper·Confetti 옮길 문 0 확인 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md | 4단계(심사 청구)
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
 - #TASK-ES-550 | INFRA | [금고 단독] 무결성 게이트 「[검증 16/16] [#TASK-ES-192]」 4단계를 「페이월 자리 안내 모달 없음」으로(#813 직후 병합, 상민님 「광고·구독 삭제 금고 변경 승인」) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-550-MONEY-INTEGRITY-GATE.md | 4단계(심사 청구)
+- #TASK-ES-563 | INFRA | [생성 지도 일괄 갱신 4회차] 생성 파일 4개를 main 2313ad6 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-06), REQ docs/specs/REQ-TASK-ES-563-GENERATED-MAPS-SYNC-4.md | 4단계(심사 청구)
 - #TASK-ES-526 | INFRA | [인라인 3단계 Z4 이동 3차] 표 CSV·음성 표 입력·테마별 기록 CSV·초대 글자를 세포 4개로 동작 그대로 이전 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-526-STAGE3-Z4-D.md
 - #TASK-ES-562 | INFRA | [인라인 3단계 구역 Z5 표준 1 — 다시 냄, #814 대체] 앱 잠금 PIN 형식·목표 종류 상수·로그인 화면 동작·가이드 단추·문의 단추 7묶음을 세포 5개로 동작 그대로 이전(자리 표지 Z56) | 오케스트레이터 배정 구역 Z5+Z6 (2026-10-06), REQ docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md | 4단계(심사 청구)

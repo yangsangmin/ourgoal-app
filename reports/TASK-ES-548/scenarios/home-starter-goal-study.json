@@ -1,0 +1,73 @@
+{
+ "id": "home-starter-goal-study",
+ "title": "게스트로 홈 「오늘의 퀘스트」 나침반을 눌러 목표가 없을 때 뜨는 갓생 스타터 「매일 1시간 몰입」 단추를 누르면 「첫 갓생 목표가 시작되었어요!」 토스트가 뜨고 목표 「매일 1시간 몰입 & 자격증 합격」이 생긴다 — 옮긴 STARTER_GOAL_TEMPLATES(js/tabs/goals/starter-goal-templates.js)의 제목",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#homeCompassQuest",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#homeCompassQuest"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "do": "click",
+   "selector": ".starter-goal-btn[data-starter=\"study\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 1000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "첫 갓생 목표가 시작되었어요"
+  },
+  {
+   "do": "back"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"goals\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 1000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#screen-goals",
+   "text": "매일 1시간 몰입 & 자격증 합격"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
