@@ -1,0 +1,11 @@
+{"moved":["totalCompletedMilestones","resolveUniqueDisplayName","formatDisplayNameWithTag","ensureUserRow","loadProfile","syncServerRecords","openWithdrawModal","closeWithdrawModal","submitWithdrawAccount","withdrawAccount"],
+ "steps":[
+ {"name":"① 로그인(프로필 불러오기 loadProfile·ensureUserRow) 뒤 홈 #screen-home","tab":"home","wait":1500,"read":"#screen-home"},
+ {"name":"② 기록 탭 #screen-records","tab":"records","wait":2500,"read":"#screen-records"},
+ {"name":"③ 설정 탭 #screen-settings","tab":"settings","wait":2500,"read":"#screen-settings","count":{"withdrawBtn":"#withdrawBtn","resyncBtn":"#resyncAccountDataBtn"}},
+ {"name":"④ 명예의 전당(totalCompletedMilestones) #modalSheet","click":"#hallOfFameBtn","wait":1500,"read":"#modalSheet","close":"#hofClose"},
+ {"name":"⑤ 내 데이터 다시 맞추기(syncServerRecords·loadProfile) → 토스트 #toast","click":"#resyncAccountDataBtn","wait":6000,"read":"#toast"},
+ {"name":"⑥ 다시 맞춘 뒤 설정 #screen-settings","wait":500,"read":"#screen-settings"},
+ {"name":"⑦ 회원 탈퇴 안내 창 열기(확정 단추는 누르지 않음) #withdrawModal","click":"#withdrawBtn","wait":1500,"read":"#withdrawModal","count":{"confirmDisabled":"#withdrawConfirmBtn[disabled]"},"close":"#withdrawCancelBtn"},
+ {"name":"⑧ 취소 뒤 창 닫힘","wait":800,"read":"#screen-settings","count":{"withdrawModalOpen":"#withdrawModal"}}
+]}
