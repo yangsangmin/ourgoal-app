@@ -5,7 +5,7 @@ const path = require('path');
 console.log('[TEST] schedule-goal-sync.test.js: #TASK-ES-253 bidirectional schedule-goal sync suite starting...');
 
 // 1. Static codebase inspection
-const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
 // REQ-1 & REQ-2: Modal subtask selector & field persistence
