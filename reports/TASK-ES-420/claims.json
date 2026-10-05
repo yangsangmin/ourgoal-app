@@ -1,0 +1,122 @@
+{
+  "task": "TASK-ES-420",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-420-CELL-MAP-RESYNC.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "#732 병합 뒤 main 위에서 세포지도(cell-map.json)를 다시 만들고, 새 세포 11개의 짧은 한국어 이름을 cell-descriptions.json 에 채운다. 제품 코드·생성기 코드 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "다시 만든 세포지도는 세포 161개를 담는다",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "summary.cells",
+        "equals": 161
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "다시 만든 세포지도의 지금 800줄 초과는 3개다",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "summary.oversize.now",
+        "equals": 3
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "다시 만든 세포지도의 기준 커밋은 #732 병합 커밋이다",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "source.short",
+        "equals": "4fe01ac"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 세포 바탕화면 위젯 핸들러의 짧은 이름이 있다",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-descriptions.json",
+        "path": "names.components-widget-actions",
+        "equals": "바탕화면 위젯"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 세포 로그인 보안 핸들러의 짧은 이름이 있다",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-descriptions.json",
+        "path": "names.components-auth-actions",
+        "equals": "로그인 보안 버튼"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-420 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-420: 세포지도 다시 만들기"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-420 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-420 | INFRA | [세포지도 다시 만들기]"
+      }
+    }
+  ]
+}
