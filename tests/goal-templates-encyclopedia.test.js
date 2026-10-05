@@ -3,6 +3,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 const SUITE_NAME = 'goal-templates-encyclopedia';
 
@@ -11,7 +12,7 @@ function runTests() {
 
   const rootDir = path.resolve(__dirname, '..');
   const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
-  const componentsJs = fs.readFileSync(path.join(rootDir, 'js/components.js'), 'utf8');
+  const componentsJs = readComponentsBundle();
   const uiCss = fs.readFileSync(path.join(rootDir, 'ui.css'), 'utf8');
 
   // 1. index.html 마크업 및 전체화면 모달/버튼 검증

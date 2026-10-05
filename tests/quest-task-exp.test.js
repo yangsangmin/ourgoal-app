@@ -4,13 +4,14 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle, componentsLoadOrder } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 const SUITE_NAME = 'quest-task-exp';
 
 async function runTests() {
   const rootDir = path.resolve(__dirname, '..');
   const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf-8');
-  const compJs = fs.readFileSync(path.join(rootDir, 'js', 'components.js'), 'utf-8');
+  const compJs = readComponentsBundle();
   const uiCss = fs.readFileSync(path.join(rootDir, 'ui.css'), 'utf-8');
 
   // 1. index.html 오늘의 퀘스트 2번 미션 '할일 1개 완료' 및 '+10 EXP' 검증
@@ -66,7 +67,8 @@ async function runTests() {
 
   const vm = require('vm');
   vm.createContext(context);
-  vm.runInContext(compJs, context);
+  // #TASK-ES-412: 브라우저와 같은 순서(키트 부품 → js/components.js)로 읽는다. 부품이 없으면 js/components.js 하나(이전과 같은 글자).
+  componentsLoadOrder().forEach(function (f) { vm.runInContext(fs.readFileSync(f, 'utf-8'), context); });
 
   assert(typeof context.window.handle홈탭_Item33Action === 'function', 'handle홈탭_Item33Action must be a function in context');
 

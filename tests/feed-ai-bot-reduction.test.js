@@ -6,6 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 const assert = require('assert');
 
 console.log('[TEST START] feed-ai-bot-reduction (#TASK-ES-312)');
@@ -15,7 +16,7 @@ const htmlPath = path.join(rootDir, 'index.html');
 const jsCompPath = path.join(rootDir, 'js', 'components.js');
 
 const html = fs.readFileSync(htmlPath, 'utf8');
-const jsComp = fs.readFileSync(jsCompPath, 'utf8');
+const jsComp = readComponentsBundle();
 
 // 1. index.html 피드 및 사진인증 내 AI 봇 1개 축소 및 20명 초과 시 전면 제거 로직 검증
 assert.ok(html.includes('!virtualCheerEnabled || realCount > 20'), 'index.html: 실 유저 20명 초과 시 AI 전면 제거 분기 확인');

@@ -13,6 +13,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 const indexHtmlPath = path.join(__dirname, '..', 'index.html');
 const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
@@ -21,7 +22,7 @@ const recordsStatsJsPath = path.join(__dirname, '..', 'js', 'records-stats.js');
 const recordsStatsJs = fs.readFileSync(recordsStatsJsPath, 'utf8');
 
 const componentsJsPath = path.join(__dirname, '..', 'js', 'components.js');
-const componentsJs = fs.readFileSync(componentsJsPath, 'utf8');
+const componentsJs = readComponentsBundle();
 
 test('#TASK-ES-143 온보딩 후속 E3 동류 러너 매칭 & 첫 웰컴 스탬프 발송 검증', (t) => {
   assert.ok(indexHtml.includes('function getPeerRunnersForCategory('), 'getPeerRunnersForCategory 함수가 정의되어 있어야 함');
