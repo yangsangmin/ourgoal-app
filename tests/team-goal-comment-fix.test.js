@@ -11,7 +11,7 @@ function runTests() {
   console.log(`[TEST START] ${SUITE_NAME}`);
 
   const rootDir = path.resolve(__dirname, '..');
-  const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
+  const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8'));
   const componentsJs = readComponentsBundle();
   const uiCss = fs.readFileSync(path.join(rootDir, 'ui.css'), 'utf8');
 
