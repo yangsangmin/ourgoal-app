@@ -1,0 +1,166 @@
+{
+ "scenario": "organ-tab-switch",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 4,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"records\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#screen-records → class=\"screen active\"",
+     "vacuous": false
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"목표\" 57x50px"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#screen-goals → class=\"screen active\"",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "notHasClass",
+     "ok": true,
+     "detail": "#screen-records → class=\"screen\"",
+     "vacuous": false
+    },
+    {
+     "i": 10,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"홈\" 57x50px"
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#screen-home → class=\"screen home-onescreen active\"",
+     "vacuous": false
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": false,
+   "invalid": false,
+   "errors": [],
+   "failedStep": 6,
+   "failKind": "expect",
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 0,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"records\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": false,
+     "detail": "#screen-records → class=\"screen\"",
+     "vacuous": false
+    }
+   ]
+  }
+ }
+}

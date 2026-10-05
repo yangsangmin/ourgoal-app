@@ -1,0 +1,163 @@
+{
+ "scenario": "organ-checkin-save",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 1,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#captureInput → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "type",
+     "ok": true,
+     "detail": "입력 textarea#captureInput \"\" 301x48px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#captureSave \"오늘 실천 완료 ✨ (+10 EXP)\" 231x52px"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1500ms"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureInput → placeholder=\"예: 오늘 실천한 멋진 일을 한 줄로 적어보세요\"",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 1,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#captureInput → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "type",
+     "ok": true,
+     "detail": "입력 textarea#captureInput \"\" 301x48px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#captureSave \"오늘 실천 완료 ✨ (+10 EXP)\" 231x52px"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1500ms"
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "attr",
+     "ok": true,
+     "detail": "#captureInput → placeholder=\"예: 오늘 실천한 멋진 일을 한 줄로 적어보세요\"",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  }
+ }
+}
