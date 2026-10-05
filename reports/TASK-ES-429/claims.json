@@ -111,23 +111,9 @@
   {
    "id": "C7",
    "req": "R1",
-   "kind": "unverified",
-   "domain": "ui-behavior",
+   "kind": "withdrawn",
    "statement": "위클리 리캡 성소 화면(recap 분기 본문 renderSanctuaryRecordsRecap)과 리캡 메서드(downloadRecapImage·openWeeklyRecapModal)를 js/sanctuary-weekly-recap.js 로 옮겨도 이전과 같이 그려지고 동작한다",
-   "touches": [
-    "js/sanctuary-weekly-recap.js",
-    "js/sanctuary-v3-engine.js",
-    "index.html"
-   ],
-   "unverified": {
-    "reason": "tool-cannot-measure",
-    "who": "게스트 화면에서 이 성소 리캡 모드로 가는 버튼(setRecMode('recap'))은 원본 모드 바의 display:none !important 숨김 칸 안에만 있어 사람이 누를 수 없고(보이는 「🐾 이번 주 리캡」 #btnOpenWeeklyRecap 은 index.html 의 다른 함수 openWeeklyRecapModal 을 부른다), 법정 시나리오는 보이는 요소만 누르고 스크립트 실행 단계가 없다. 작업자 게스트 조작 비교(dom-compare-sanctuary.js)가 공개 객체 메서드를 직접 불러 기준·작업을 맞댔다.",
-    "how": [
-     "기록 탭에서 window.OurgoalSanctuaryV3.setRecMode('recap') 를 부른다",
-     "#sanctuaryRecordsView 의 리캡 카드 HTML 을 기준·작업에서 맞댄다",
-     "window.OurgoalSanctuaryV3.openWeeklyRecapModal() 를 불러 모달 HTML 을 맞댄다 — reports/TASK-ES-429/dom-compare-sanctuary.json 단계 api-setRecMode-recap·api-openWeeklyRecapModal"
-    ]
-   }
+   "withdrawnReason": "게스트에게 성소 위클리 리캡 진입 단추가 display:none !important 숨김 칸 안에만 있어 화면에서 누를 수 없음 — 보이는 「이번 주 리캡」은 index.html 다른 함수. 동작 동일성은 verify 토큰 동일·게스트 조작 비교로 측정, 숨김 사고는 별도 조사 티켓"
   },
   {
    "id": "C8",
