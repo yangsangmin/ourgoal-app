@@ -2,7 +2,7 @@
  * OurGoal Mic Permission Guide (기록 — 마이크 권한 자가 진단·허용 안내 창)
  *
  * 「🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227)」 묶음의 openMicPermissionGuideModal. window 노출 문은 원래 자리.
- * #TASK-ES-556(인라인 3단계 구역 Z6 표준 3): index.html 인라인 IIFE 의 구간(이전 전 6235~6468줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-556(인라인 3단계 구역 Z6 표준 3): index.html 인라인 IIFE 의 구간(이전 전 5536~5769줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 6235~6468줄(#TASK-ES-556 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5536~5769줄(#TASK-ES-556 생성기 표지) ---- */
   function openMicPermissionGuideModal(context){
     var existing = document.getElementById('micPermissionGuideModal');
     if(existing) existing.remove();

@@ -2,7 +2,7 @@
  * OurGoal AI Feedback Catalog (기록 — 테마별 피드백 지시문·로컬 피드백 문구·Gemini 쿼터 큐·완료 낱말)
  *
  * 「AI feedback (best-effort; provider-aware; local fallback)」 묶음의 THEME_FEEDBACK_PROMPTS, 「[#TASK-ES-225] Gemini API 분당 쿼터 방어」 묶음의 PREMIUM_FEEDBACK_CATALOG·GeminiQuotaDispatcher·DONE_KEYWORDS. window 노출 문과 상태 변수 requestClaudeFeedback 은 원래 자리.
- * #TASK-ES-556(인라인 3단계 구역 Z6 표준 3): index.html 인라인 IIFE 의 구간(이전 전 6589~6598 · 6603~6644 · 6645~6736 · 6742~6744줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-556(인라인 3단계 구역 Z6 표준 3): index.html 인라인 IIFE 의 구간(이전 전 5890~5899 · 5904~5945 · 5946~6037 · 6043~6045줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
 
-  /* ---- 이전 전 index.html 6589~6598줄(#TASK-ES-556 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5890~5899줄(#TASK-ES-556 생성기 표지) ---- */
   /* ============ AI feedback (best-effort; provider-aware; local fallback) ============ */
   /* [#TASK-ES-436] milestonesForAI → js/tabs/records/ai-feedback.js 로 옮김(인라인 스크립트 세포화 P1) */
   var THEME_FEEDBACK_PROMPTS = {
@@ -26,7 +26,7 @@
     daily: '이 기록은 [일상/기타] 테마입니다. 작은 일상의 실천이 주는 의미와 가치를 격려하세요.'
   };
 
-  /* ---- 이전 전 index.html 6603~6644줄(#TASK-ES-556 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5904~5945줄(#TASK-ES-556 생성기 표지) ---- */
   var PREMIUM_FEEDBACK_CATALOG = {
     study: [
       { verdict: '학습 몰입', headline: '개념 이해와 체화가 확실히 이루어졌습니다 📚', fact_insight: '오늘 기록된 학습 내용에서 깊은 집중과 이해도가 돋보입니다.', continuity: '매일의 학습 누적이 강력한 시험/과제 합격의 밑거름이 됩니다.', next_action: '취침 전 오늘 공부한 핵심 키워드 3가지만 머릿속으로 떠올려보세요.' },
@@ -69,7 +69,7 @@
       { verdict: '지속 가능한 삶', headline: '무리하지 않고 내일도 달릴 수 있는 균형을 찾았습니다 🌿', fact_insight: '과열되지도 지치지도 않는 황금률의 페이스를 유지했습니다.', continuity: '오래 달리는 사람이 결국 가장 멀리 도달하는 법입니다.', next_action: '내일의 나를 믿고 오늘 하루의 마침표를 기분 좋게 찍으세요.' }
     ]
   };
-  /* ---- 이전 전 index.html 6645~6736줄(#TASK-ES-556 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 5946~6037줄(#TASK-ES-556 생성기 표지) ---- */
 
   var GeminiQuotaDispatcher = {
     backoffDelays: [1000, 2000, 4000],
@@ -163,7 +163,7 @@
     }
   };
 
-  /* ---- 이전 전 index.html 6742~6744줄(#TASK-ES-556 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 6043~6045줄(#TASK-ES-556 생성기 표지) ---- */
 
   /* [#TASK-ES-436] requestGeminiFeedback → js/tabs/records/ai-feedback-providers.js 로 옮김(인라인 스크립트 세포화 P1) */
   var DONE_KEYWORDS = ['완료','다 했','다했','끝냈','끝났','달성','마쳤','마무리','성공','clear','done'];

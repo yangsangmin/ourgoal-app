@@ -1,8 +1,9 @@
 /**
  * OurGoal In-App Browser & Landing Entry (설정 — 카카오톡 인앱 브라우저 감지·첫 화면 진입 단추)
  *
- * 카카오톡 인앱 브라우저 감지·외부 브라우저로 빠져나가기 배너(checkKakaoInAppBrowser·escapeKakaoInAppBrowser)와 첫 화면 단추 처리기(닉네임 빠른 입장·이메일 가입·로그인·둘러보기).
- * 첫 화면 단추 처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다.
+ * 카카오톡 인앱 브라우저 감지·외부 브라우저로 빠져나가기 배너(checkKakaoInAppBrowser·escapeKakaoInAppBrowser)와 첫 화면 단추 처리기(닉네임 빠른 입장·로그인·둘러보기).
+ * #TASK-ES-515: 늘 숨어 있던(display:none) 첫 화면 「이메일로 가입하기」 단추의 처리기를 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」).
+ * 첫 화면 단추 처리기 등록 문 세 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다.
  * #TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4018~4072 · 4073~4138 · 4144~4149 · 4150~4155 · 4156~4161 · 4163~4174줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
@@ -148,15 +149,6 @@
     });
   }
   } /* bindLandNickQuickLink */
-  /* ---- 이전 전 index.html 4150~4155줄(#TASK-ES-476 생성기 표지) ---- */
-  function bindLandStartBtn() { /* [#TASK-ES-476] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
-  document.getElementById('landStartBtn').addEventListener('click', function(){
-    document.getElementById('landingScreen').style.display = 'none';
-    document.getElementById('authScreen').style.display = 'flex';
-    if(typeof L.initRememberedAuthFields === 'function') L.initRememberedAuthFields();
-    document.querySelector('[data-authtab="signup"]').click();
-  });
-  } /* bindLandStartBtn */
   /* ---- 이전 전 index.html 4156~4161줄(#TASK-ES-476 생성기 표지) ---- */
   function bindLandLoginLink() { /* [#TASK-ES-476] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   document.getElementById('landLoginLink').addEventListener('click', function(){
@@ -186,7 +178,6 @@
   K.escapeKakaoInAppBrowser = escapeKakaoInAppBrowser;
   K.checkKakaoInAppBrowser = checkKakaoInAppBrowser;
   K.bindLandNickQuickLink = bindLandNickQuickLink;
-  K.bindLandStartBtn = bindLandStartBtn;
   K.bindLandLoginLink = bindLandLoginLink;
   K.bindLandGuestBtn = bindLandGuestBtn;
 

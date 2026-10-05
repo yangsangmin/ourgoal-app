@@ -1,0 +1,76 @@
+{
+ "id": "goals-new-goal-category-chips",
+ "title": "게스트로 홈 「새 목표」 → 「직접 설정할게요」를 누르면 목표 종류 칸 6개(공부·운동·사업·시험·여행·기타)와 직접 입력 칸이 보이고, 「공부」 칸을 누르면 그 칸이 켜진다 — 옮긴 GOAL_TEMPLATES(js/tabs/goals/goal-category-templates.js)로 그린 칸",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#homeAddGoal",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#homeAddGoal"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#ngManualBtn"
+  },
+  {
+   "do": "click",
+   "selector": "#ngManualBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#mCatGrid"
+  },
+  {
+   "expect": "count",
+   "selector": "#mCatGrid .cat-chip",
+   "equals": 7
+  },
+  {
+   "expect": "textContains",
+   "selector": "#mCatGrid [data-cat=\"study\"]",
+   "text": "공부"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#mCatGrid [data-cat=\"travel\"]",
+   "text": "여행"
+  },
+  {
+   "do": "click",
+   "selector": "#mCatGrid [data-cat=\"study\"]"
+  },
+  {
+   "expect": "hasClass",
+   "selector": "#mCatGrid [data-cat=\"study\"]",
+   "className": "active"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

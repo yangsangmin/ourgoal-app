@@ -24,10 +24,7 @@
     if(viewFeed) viewFeed.style.display = (seg === 'feed' ? 'block' : 'none');
     if(viewStats) viewStats.style.display = (seg === 'stats' ? 'block' : 'none');
     if(viewArchive) viewArchive.style.display = (seg === 'archive' ? 'block' : 'none');
-
-    document.querySelectorAll('#recSegmentBar [data-recseg]').forEach(function(btn){
-      btn.classList.toggle('active', btn.dataset.recseg === seg);
-    });
+    /* [#TASK-ES-515] 늘 숨어 있던 옛 세그먼트 막대의 단추 강조 동기화 줄을 막대와 함께 지웠다(상민님 승인 2026-10-06). 보기 전환·성소 기록 모드 동기화는 그대로 */
 
     if (window.OurgoalSanctuaryV3 && typeof window.OurgoalSanctuaryV3.getActiveRecMode === 'function') {
       var curMode = window.OurgoalSanctuaryV3.getActiveRecMode();
@@ -235,17 +232,11 @@
     setRecordsSegment(L.state.recordsSegment || 'feed', true);
     setRecordsSlide(L.state.recordsSlide || 0, true);
 
-    var segCountEl = document.getElementById('recSegCount');
-    if(segCountEl) segCountEl.textContent = allRecs.length;
-
-    // 미니 펄스 바 & 세그먼트 버튼 & 캐러셀 알약 탭 이벤트 리스너 연결
+    // 미니 펄스 바 & 캐러셀 알약 탭 이벤트 리스너 연결
     var pulseBar = document.getElementById('recMiniPulseBar');
     if(pulseBar){
       pulseBar.onclick = function(){ setRecordsSegment('stats'); };
     }
-    document.querySelectorAll('#recSegmentBar [data-recseg]').forEach(function(btn){
-      btn.onclick = function(){ setRecordsSegment(btn.dataset.recseg); };
-    });
     document.querySelectorAll('#recCarouselPills [data-recslide]').forEach(function(btn){
       btn.onclick = function(){ setRecordsSlide(parseInt(btn.dataset.recslide, 10)); };
     });

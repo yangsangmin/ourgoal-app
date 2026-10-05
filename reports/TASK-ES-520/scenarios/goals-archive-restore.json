@@ -1,0 +1,161 @@
+{
+ "id": "goals-archive-restore",
+ "title": "게스트로 목표를 하나 만들어 편집 모드에서 보관(결과 먼저 입력 → 한 줄 결과 저장)하고 기록 탭 「보관함」을 누르면 보관한 목표 카드(「총 1개 보관됨」, 달성률 100%)가 보이고, 「다시 진행하기」를 누르면 「목표를 다시 진행 중으로 되돌렸어요」 토스트와 함께 목표 탭으로 돌아간다 — 옮긴 renderArchivedGoals·goalAchievement·restoreGoal(js/tabs/goals/goal-archive.js)이 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"home\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#homeAddGoal",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#homeAddGoal"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#ngManualBtn"
+  },
+  {
+   "do": "click",
+   "selector": "#ngManualBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#mGoalTitle"
+  },
+  {
+   "do": "type",
+   "selector": "#mGoalTitle",
+   "text": "세포 이전 보관 확인 목표"
+  },
+  {
+   "do": "click",
+   "selector": "#mSave"
+  },
+  {
+   "do": "wait",
+   "ms": 1200
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"goals\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#goalEditToggle",
+   "timeoutMs": 8000
+  },
+  {
+   "do": "click",
+   "selector": "#goalEditToggle"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#goalArchiveBtn",
+   "timeoutMs": 5000
+  },
+  {
+   "do": "click",
+   "selector": "#goalArchiveBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#rsAiQuickInput",
+   "timeoutMs": 5000
+  },
+  {
+   "do": "type",
+   "selector": "#rsAiQuickInput",
+   "text": "목표 절반 정도 해냄"
+  },
+  {
+   "do": "click",
+   "selector": "#rsSave"
+  },
+  {
+   "expect": "hasClass",
+   "selector": ".navbtn[data-tab=\"records\"]",
+   "className": "active",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay",
+   "text": "완주를 축하해요",
+   "timeoutMs": 5000
+  },
+  {
+   "do": "click",
+   "selector": "#modalOverlay .modal-sheet-close"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "do": "waitFor",
+   "selector": "#sRecArchiveBtn",
+   "timeoutMs": 8000
+  },
+  {
+   "do": "click",
+   "selector": "#sRecArchiveBtn"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#archivedGoals",
+   "text": "총 1개 보관됨",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#archivedGoals .archive-pct",
+   "text": "100%"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#archivedGoals .archive-card",
+   "text": "세포 이전 보관 확인 목표"
+  },
+  {
+   "do": "click",
+   "selector": "#archivedGoals [data-restore]"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "목표를 다시 진행 중으로 되돌렸어요",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "hasClass",
+   "selector": ".navbtn[data-tab=\"goals\"]",
+   "className": "active"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

@@ -54,8 +54,8 @@
   {
    "file": "js/tabs/home/home-render.js",
    "origLines": [
-    5852,
-    6064
+    5153,
+    5365
    ],
    "wrap": null,
    "diffLines": 0,
@@ -65,8 +65,8 @@
   {
    "file": "js/tabs/records/mic-permission-guide.js",
    "origLines": [
-    6235,
-    6468
+    5536,
+    5769
    ],
    "wrap": null,
    "diffLines": 0,
@@ -76,8 +76,8 @@
   {
    "file": "js/tabs/records/ai-feedback-catalog.js",
    "origLines": [
-    6589,
-    6598
+    5890,
+    5899
    ],
    "wrap": null,
    "diffLines": 0,
@@ -87,8 +87,8 @@
   {
    "file": "js/tabs/records/ai-feedback-catalog.js",
    "origLines": [
-    6603,
-    6644
+    5904,
+    5945
    ],
    "wrap": null,
    "diffLines": 0,
@@ -98,8 +98,8 @@
   {
    "file": "js/tabs/records/ai-feedback-catalog.js",
    "origLines": [
-    6645,
-    6736
+    5946,
+    6037
    ],
    "wrap": null,
    "diffLines": 0,
@@ -109,8 +109,8 @@
   {
    "file": "js/tabs/records/ai-feedback-catalog.js",
    "origLines": [
-    6742,
-    6744
+    6043,
+    6045
    ],
    "wrap": null,
    "diffLines": 0,
@@ -121,12 +121,14 @@
  "restSame": true,
  "restDiff": null,
  "tokens": {
-  "origRest": 79024,
-  "newRest": 79024
+  "origRest": 62143,
+  "newRest": 62143
  },
  "imported": [
   "DONE_KEYWORDS",
   "GeminiQuotaDispatcher",
+  "HEATMAP_LEVELS",
+  "HEATMAP_WEEKS",
   "PREMIUM_FEEDBACK_CATALOG",
   "THEME_FEEDBACK_PROMPTS",
   "TREND_METRICS",
@@ -139,8 +141,8 @@
   "bindRecCarouselPills",
   "bindRecDocumentClick",
   "bindRecPulseBar",
-  "bindRecSegmentBar",
   "bindRecTimeTrackerBtn",
+  "buildCSV",
   "buildICS",
   "buildMarkdownExport",
   "buildRecordCardHtml",
@@ -148,22 +150,28 @@
   "checkStreakFreeze",
   "closeCheckinFeedbackSheet",
   "compressImage",
+  "computeTableAnalytics",
+  "computeTrendChartData",
+  "downloadTableAsCsv",
   "exportAllCheckins",
   "fetchSignedCalendarToken",
+  "filterRecordsByQuery",
   "findBestMoment",
   "fmtYYMMDD",
   "formatStopwatchTime",
   "generateWeeklyRecapImage",
+  "getAIAnalysisPrompt",
   "getAllProTemplates",
   "getPeerRunnersForCategory",
   "getProTemplateByKey",
   "handleConversationalRecord",
+  "heatmapLevel",
   "initFeedbackTierBar",
   "instantShareCheckinToFeed",
   "milestonesForAI",
   "openCreateCustomTemplateModal",
+  "openCsvImportModal",
   "openExportThemeModal",
-  "openHomeCustomizer",
   "openLegacyRecapCanvasModal",
   "openMicPermissionGuideModal",
   "openPhotoViewerModal",
@@ -172,6 +180,8 @@
   "openRecordModal",
   "openShareToFeedModal",
   "openTemplateColumnEditModal",
+  "openVoiceTableModal",
+  "openWearableSyncModal",
   "openWeeklyRecapModal",
   "parseNaturalLanguageTemplateSpec",
   "playTimerBeep",
@@ -183,6 +193,7 @@
   "renderHome",
   "renderHomeGrassSummary",
   "renderLapRowsHtml",
+  "renderMultiMetricSvg",
   "renderRecordFeedbackSlot",
   "renderRecordHeatmap",
   "renderRecordsScreen",
@@ -196,6 +207,7 @@
   "setRecordsSegment",
   "setRecordsSlide",
   "showCheckinFeedbackSheet",
+  "syncRecordToMatchingGoals",
   "timeAgoStr",
   "toggleRecordArchive",
   "triggerFirstCheckinCelebrationModal",
@@ -250,142 +262,190 @@
  "noSetter": [],
  "thisArgs": [],
  "listeners": {
-  "origIIFE": 231,
-  "newIIFE": 215,
+  "origIIFE": 192,
+  "newIIFE": 176,
   "cells": 16,
   "same": true
  },
  "wrapCalls": [
   {
-   "line": 3303,
+   "line": 3328,
    "fn": "bindSupabaseAuthStateListener"
   },
   {
-   "line": 3514,
+   "line": 3539,
    "fn": "bindAvatarLevelUpBackdrop"
   },
   {
-   "line": 3517,
+   "line": 3542,
    "fn": "bindAvatarGrowthPromptSave"
   },
   {
-   "line": 3520,
+   "line": 3545,
    "fn": "bindAvatarLevelUpShare"
   },
   {
-   "line": 3523,
+   "line": 3548,
    "fn": "bindAvatarLevelUpSaveImage"
   },
   {
-   "line": 4028,
+   "line": 4048,
    "fn": "bindLandNickQuickLink"
   },
   {
-   "line": 4029,
-   "fn": "bindLandStartBtn"
-  },
-  {
-   "line": 4030,
+   "line": 4049,
    "fn": "bindLandLoginLink"
   },
   {
-   "line": 4032,
+   "line": 4051,
    "fn": "bindLandGuestBtn"
   },
   {
-   "line": 4038,
+   "line": 4057,
    "fn": "bindLandTesterBButton"
   },
   {
-   "line": 4040,
+   "line": 4059,
    "fn": "bindAuthTesterBButton"
   },
   {
-   "line": 4405,
+   "line": 4389,
+   "fn": "bindAuthTabButtons"
+  },
+  {
+   "line": 4392,
    "fn": "bindSignupSubmit"
   },
   {
-   "line": 4424,
+   "line": 4407,
    "fn": "bindLoginSubmit"
   },
   {
-   "line": 4427,
+   "line": 4410,
    "fn": "bindResyncAccountDataButton"
   },
   {
-   "line": 4428,
+   "line": 4411,
    "fn": "bindLogoutButton"
   },
   {
-   "line": 4429,
+   "line": 4412,
    "fn": "bindResetButton"
   },
   {
-   "line": 4813,
+   "line": 4596,
+   "fn": "bindTabGuideHubButton"
+  },
+  {
+   "line": 4600,
+   "fn": "bindRestartGuideButton"
+  },
+  {
+   "line": 4603,
+   "fn": "bindInquiryButtons"
+  },
+  {
+   "line": 4605,
+   "fn": "bindSupportEmailLink"
+  },
+  {
+   "line": 4618,
+   "fn": "bindFocusResync"
+  },
+  {
+   "line": 4619,
+   "fn": "bindVisibilityResync"
+  },
+  {
+   "line": 4620,
+   "fn": "bindRemoteLogoutStorageListener"
+  },
+  {
+   "line": 4621,
+   "fn": "startRemoteSessionPoll"
+  },
+  {
+   "line": 4622,
+   "fn": "bindOnlineSync"
+  },
+  {
+   "line": 4623,
+   "fn": "bindOfflineNotice"
+  },
+  {
+   "line": 4653,
    "fn": "bindNavButtonsClick"
   },
   {
-   "line": 4882,
+   "line": 4722,
    "fn": "bindModalPopstateBack"
   },
   {
-   "line": 4951,
+   "line": 4790,
    "fn": "bindScheduleReminderStart"
   },
   {
-   "line": 6162,
+   "line": 5166,
+   "fn": "bindRageTapTelemetry"
+  },
+  {
+   "line": 5463,
    "fn": "bindCaptureLiveMeta"
   },
   {
-   "line": 6163,
+   "line": 5464,
    "fn": "bindCaptureSave"
   },
   {
-   "line": 6210,
+   "line": 5511,
    "fn": "bindImportExternalBtn"
   },
   {
-   "line": 6217,
+   "line": 5515,
    "fn": "bindPersonalGuideBtn"
   },
   {
-   "line": 6801,
+   "line": 6099,
    "fn": "bindAppEvalBackdrop"
   },
   {
-   "line": 6806,
+   "line": 6104,
    "fn": "bindAppEvalSubmit"
   },
   {
-   "line": 6807,
+   "line": 6105,
    "fn": "bindHomeAddGoal"
   },
   {
-   "line": 6824,
+   "line": 6122,
    "fn": "bindNewGoalStepExports"
   },
   {
-   "line": 11828,
+   "line": 6161,
+   "fn": "bindArchivedPeriodSetter"
+  },
+  {
+   "line": 6162,
+   "fn": "bindArchivedPageSetter"
+  },
+  {
+   "line": 9985,
    "fn": "bindRecTimeTrackerBtn"
   },
   {
-   "line": 11831,
-   "fn": "bindRecSegmentBar"
-  },
-  {
-   "line": 11833,
+   "line": 9989,
    "fn": "bindRecPulseBar"
   },
   {
-   "line": 11834,
+   "line": 9990,
    "fn": "bindRecCarouselPills"
   },
   {
-   "line": 11835,
+   "line": 9991,
    "fn": "bindRecDocumentClick"
   },
   {
-   "line": 12290,
+   "line": 10394,
    "fn": "bindLoginRescueButtons"
   }
  ],

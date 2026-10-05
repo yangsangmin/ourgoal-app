@@ -1,0 +1,71 @@
+{
+ "id": "calendar-manual-add-event",
+ "title": "게스트로 일정 탭에서 「일정 추가」를 누르면 「새 일정 추가」 창이 열리고, 제목을 넣어 저장하면 「일정을 추가했어요」 토스트가 뜬다 — 옮긴 openCalendarManualEditModal(js/tabs/calendar/manual-edit-modal.js)",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"calendar\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#calAddManualBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#calAddManualBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#calEditTitle"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay.active h3",
+   "text": "새 일정 추가"
+  },
+  {
+   "do": "type",
+   "selector": "#calEditTitle",
+   "text": "Z56 수동 일정"
+  },
+  {
+   "do": "click",
+   "selector": "#calEditSaveBtn"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "일정을 추가했어요"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": "goals-routine-matrix-gone",
+  "title": "첫 화면부터 한 번도 그려진 적 없던 루틴 매트릭스 칸(#routineMatrixGrid) 마크업이 없고, 게스트 목표 탭의 「🔄 루틴」 하위 탭은 눌러 루틴 화면이 보인다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#routineMatrixGrid"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnGoalsSubRoutine",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubRoutine"
+    },
+    {
+      "expect": "visible",
+      "selector": "#routineGoalsView [data-rtchk]",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
