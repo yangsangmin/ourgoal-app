@@ -5,7 +5,7 @@ const path = require('path');
 
 console.log('[TEST START] routine-detail-modal (#TASK-ES-305)');
 
-const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8'));
 const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
 // 1. openRoutineDetailModal 함수 및 모달 마크업 요소 확인
