@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "8f76013180971bd616d02af40dec8578c791de83",
-  "short": "8f760131",
-  "committedAt": "2026-10-06T00:23:49+09:00",
-  "subject": "Merge pull request #798 from yangsangmin/feat/2026-10-06-task-es-496-inline-h4-3"
+  "commit": "2313ad6b3d7bc0b387cd1385104d78fd7734384e",
+  "short": "2313ad6b",
+  "committedAt": "2026-10-06T03:08:11+09:00",
+  "subject": "Merge pull request #812 from yangsangmin/fix/2026-10-06-task-es-515-hidden-cleanup"
  },
  "summary": {
-  "cells": 284,
-  "files": 283,
-  "jsLines": 78734,
+  "cells": 296,
+  "files": 295,
+  "jsLines": 79860,
   "kinds": {
-   "organ": 43,
-   "tab": 135,
+   "organ": 46,
+   "tab": 144,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 284,
+  "descriptionsHand": 296,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,12 +37,12 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 11794,
-   "functionDecls": 205
+   "inlineScriptLines": 10746,
+   "functionDecls": 158
   },
   "health": {
-   "undifferentiatedLines": 11794,
-   "globalLinks": 277,
+   "undifferentiatedLines": 10746,
+   "globalLinks": 261,
    "oversizeCells": 0,
    "drawingSmallCells": {
     "drew": 7,
@@ -61,7 +61,7 @@
     "toast": 0,
     "modalBridge": 0,
     "recap": 3,
-    "timer": 5,
+    "timer": 4,
     "selfOverlay": 9,
     "nativeConfirm": 7
    },
@@ -74,15 +74,15 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 43
+   "count": 46
   },
   {
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 135,
+   "count": 144,
    "large": 6,
-   "small": 129
+   "small": 138
   },
   {
    "key": "hybrid",
@@ -138,6 +138,7 @@
     "goals/render",
     "goals/result-input",
     "goals/result-modal",
+    "goals/routine-detail-modal",
     "goals/routine-screen",
     "goals/schedule-setup",
     "goals/starter-goal",
@@ -153,7 +154,7 @@
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 9034,
+   "lines": 9223,
    "over800": 0
   },
   {
@@ -184,6 +185,7 @@
     "records/record-heatmap-report",
     "records/render",
     "records/share-to-feed",
+    "records/stopwatch-format",
     "records/sub-retrospect",
     "records/sub-timeline",
     "records/sub-timer",
@@ -192,7 +194,7 @@
     "records/trend-metrics-chart",
     "records/weekly-recap"
    ],
-   "lines": 7333,
+   "lines": 7347,
    "over800": 0
   },
   {
@@ -258,6 +260,7 @@
    "desc": "프로필·화면·알림·보안·연동·데이터",
    "cells": [
     "settings/index",
+    "settings/account-actions",
     "settings/account-entry",
     "settings/adaptive-ux",
     "settings/app-defaults",
@@ -267,14 +270,18 @@
     "settings/avatar-levelup-modal",
     "settings/comm-tour",
     "settings/dev-debug-gate",
+    "settings/device-session",
     "settings/feedback-bot-setup",
+    "settings/first-login-guide",
     "settings/guest-backup-nudge",
     "settings/guest-migration",
     "settings/inapp-landing",
     "settings/login-devices",
     "settings/notify-soft-ask",
+    "settings/notify-timer",
     "settings/notion-sync",
     "settings/onboarding",
+    "settings/privacy-badges",
     "settings/pwa-install",
     "settings/quick-actions",
     "settings/render",
@@ -287,10 +294,12 @@
     "settings/sub-security",
     "settings/support-modals",
     "settings/tab-guide",
+    "settings/tester-entry",
     "settings/theme-apply",
+    "settings/web-push",
     "settings/widget-settings-modal"
    ],
-   "lines": 5626,
+   "lines": 6451,
    "over800": 0
   },
   {
@@ -412,7 +421,7 @@
     "goal-templates-registry",
     "template-credit"
    ],
-   "lines": 6769,
+   "lines": 6719,
    "over800": 0
   },
   {
@@ -479,6 +488,8 @@
     "core/capabilities",
     "core/confetti",
     "core/confirm",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -491,6 +502,7 @@
     "core/slots",
     "core/store",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/toast",
@@ -499,7 +511,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 4338,
+   "lines": 4486,
    "over800": 0
   },
   {
@@ -1493,6 +1505,7 @@
    "calls": [],
    "calledBy": [
     "core/home-cockpit",
+    "settings/device-session",
     "settings/guest-migration",
     "settings/session-entry"
    ],
@@ -1550,6 +1563,7 @@
     "template-credit"
    ],
    "calledBy": [
+    "settings/account-actions",
     "settings/account-entry"
    ],
    "readsFromIndexHtml": [
@@ -3579,6 +3593,8 @@
     "comm/story-card-send",
     "core/badges",
     "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/gcal-sync",
     "core/gcal-token",
     "core/home-cockpit",
@@ -3586,6 +3602,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -3609,6 +3626,7 @@
     "goals/render",
     "goals/result-input",
     "goals/result-modal",
+    "goals/routine-detail-modal",
     "goals/routine-screen",
     "goals/schedule-setup",
     "goals/starter-goal",
@@ -3641,11 +3659,13 @@
     "records/record-heatmap-report",
     "records/render",
     "records/share-to-feed",
+    "records/stopwatch-format",
     "records/table-analytics-view",
     "records/table-stopwatch",
     "records/trend-metrics-chart",
     "records/weekly-recap",
     "sanctuary-weekly-recap",
+    "settings/account-actions",
     "settings/account-entry",
     "settings/adaptive-ux",
     "settings/app-defaults",
@@ -3655,14 +3675,18 @@
     "settings/avatar-levelup-modal",
     "settings/comm-tour",
     "settings/dev-debug-gate",
+    "settings/device-session",
     "settings/feedback-bot-setup",
+    "settings/first-login-guide",
     "settings/guest-backup-nudge",
     "settings/guest-migration",
     "settings/inapp-landing",
     "settings/login-devices",
     "settings/notify-soft-ask",
+    "settings/notify-timer",
     "settings/notion-sync",
     "settings/onboarding",
+    "settings/privacy-badges",
     "settings/pwa-install",
     "settings/quick-actions",
     "settings/render",
@@ -3675,7 +3699,9 @@
     "settings/sub-security",
     "settings/support-modals",
     "settings/tab-guide",
+    "settings/tester-entry",
     "settings/theme-apply",
+    "settings/web-push",
     "settings/widget-settings-modal"
    ],
    "readsFromIndexHtml": [],
@@ -3969,6 +3995,141 @@
      "task": "TASK-ES-374",
      "title": "[E1] #TASK-ES-374 refactor: 기본 확인창 confirm() → 앱 바텀시트 1단계 — 공용 확인창 통로(ui.confirm)로 index.html 밖 15곳",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/date-rollover",
+   "file": "js/core/date-rollover.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "자정 날짜 변경 감지",
+   "nameSource": "hand",
+   "does": "앱을 켜 둔 채 자정이 지나 날짜가 바뀌면 알아채고 오늘의 미션 카드와 홈·기록·캘린더를 새 날짜로 다시 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Date Rollover (기관 — 자정 날짜 변경 감지·홈/기록/캘린더 다시 그리기)",
+    "「[#TASK-ES-264] 자정(00:00 KST / 현지 표준시) 날짜 변경 감지 및 자동 동기화 워처」 묶음의 함수 둘: 날짜 키가 바뀌었는지 보고 바뀌면 오늘의 미션 카드·홈/기록/캘린더를 다시 그리는 checkAndHandleDateRollover, 화면 복귀·포커스·1분 간격에 그것을 거는 setupDateRolloverWatcher(renderAll 이 부른다).",
+    "마지막으로 본 날짜 키(_lastObservedDateKey)는 다시 대입되는 상태 변수라 index.html 원래 자리에 두고 L getter/setter 로 읽는다. 날짜가 실제로 바뀌는 분기는 자정까지 기다려야 해서 화면 시나리오로 잴 수 없다(법정 실행기는 시계를 바꿀 수 없다 — 시간대 고정만).",
+    "#TASK-ES-536(인라인 3단계 Z3 — 알림·시간·주소): index.html 인라인 IIFE 의 구간(이전 전 13584~13599 · 13600~13615줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 59,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "_dateRolloverInterval",
+    "checkAndHandleDateRollover",
+    "setupDateRolloverWatcher"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers",
+    "setupDateRolloverWatcher"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-264",
+    "TASK-ES-536"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-264-AI-CONDITIONAL-CALL-OPTIMIZATION.md",
+    "docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md"
+   ],
+   "prs": [
+    {
+     "number": 816,
+     "task": "TASK-ES-536",
+     "title": "[INFRA] #TASK-ES-536 feat: 인라인 3단계 Z3 — Notifications·Web Push·자정 날짜 변경·딥링크 관문 → 세포 4개(동작 그대로, 자리 HO)",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
+   "id": "core/deep-link-gateway",
+   "file": "js/core/deep-link-gateway.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "딥링크 관문",
+   "nameSource": "hand",
+   "does": "초대·피드·템플릿·완주 인증서 링크로 들어오면 그 주소를 공유 모듈에 넘겨 맞는 창을 띄우게 한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Deep Link Gateway (기관 — 앱 진입 때 주소 쿼리 딥링크를 js/viral-sharing.js 에 넘기는 관문)",
+    "「통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임)」 묶음의 관문 함수 handleDeepLinkRouting — window.OurgoalViralSharing 이 있으면 그 handleDeepLinkRouting 을 부른다. 첫 화면(랜딩)·게스트 진입 끝에서 checkAndHandlePeerInviteUrl 이름으로 불린다.",
+    "같은 묶음의 별칭 var checkAndHandlePeerInviteUrl(실행되는 초기값)·마니또 window 노출 문은 원래 자리에 둔다. 주소에 초대·피드·템플릿·인증서 쿼리가 붙은 경로는 법정 실행기가 쿼리 붙은 주소로 이동할 수 없어 화면 시나리오로 잴 수 없다.",
+    "#TASK-ES-536(인라인 3단계 Z3 — 알림·시간·주소): index.html 인라인 IIFE 의 구간(이전 전 13366~13366줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 26,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope",
+    "viral-sharing"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-536"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md"
+   ],
+   "prs": [
+    {
+     "number": 816,
+     "task": "TASK-ES-536",
+     "title": "[INFRA] #TASK-ES-536 feat: 인라인 3단계 Z3 — Notifications·Web Push·자정 날짜 변경·딥링크 관문 → 세포 4개(동작 그대로, 자리 HO)",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -4403,7 +4564,7 @@
     "#TASK-ES-499(인라인 어려움 기관 묶음 이전 4차): index.html 인라인 IIFE 의 구간(이전 전 5436~5443 · 5444~5482 · 5483~5501 · 5502~5799 · 5803~5865 · 5867~5885 · 5889~5900 · 5901~5908 · 5909~6004줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 607,
+   "lines": 606,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers",
@@ -4439,12 +4600,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-499"
+    "TASK-ES-499",
+    "TASK-ES-516"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-499-INLINE-ORGAN-4.md"
+    "docs/specs/REQ-TASK-ES-499-INLINE-ORGAN-4.md",
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
    ],
    "prs": [
+    {
+     "number": 813,
+     "task": "TASK-ES-516",
+     "title": "[FIX] #TASK-ES-516 돈(광고·구독) 묶음 소멸 — 보상형 광고·구독 상태·페이월 안내 모달·PRO 배지 삭제, 데이터 칸 보존 (상민님 「광고, 구독관련은 삭제해」 오케스트레이터 전달 · 시험 폐기 「금고 변경 승인」)",
+     "date": "2026-10-06"
+    },
     {
      "number": 793,
      "task": "TASK-ES-499",
@@ -4771,6 +4940,70 @@
      "task": "TASK-ES-486",
      "title": "[INFRA] #TASK-ES-486 refactor: 인라인 어려움 기관 묶음 이전 2차 — 잠금화면 허브(연속 기록·앱 배지 분리)·일정 탭 공용·4대 뷰 디스패처를 세포 4개로(동작 그대로, 인라인 −1,159줄)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/supabase-auth",
+   "file": "js/core/supabase-auth.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "로그인 세션 토큰·인증 감지",
+   "nameSource": "hand",
+   "does": "로그인 세션 토큰을 꺼내 서버 호출에 붙이고, 로그인·토큰 갱신을 감지해 세션 복구 입장을 부르며, 구글 OAuth 공개 클라이언트 id 를 둔다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Supabase Auth (기관 — 로그인 세션 토큰·인증 상태 감지·구글 OAuth 클라이언트 id)",
+    "「Supabase」 묶음 중 로그인 세션 토큰 꺼내기(getSupabaseAuthToken — 여러 탭의 서버 호출이 Authorization 헤더에 쓴다), 구글 OAuth 공개 클라이언트 id(GOOGLE_OAUTH_CLIENT_ID), 인증 상태 변화 감지 등록 문(bindSupabaseAuthStateListener — 로그인·토큰 갱신 때 세션 복구 입장을 부른다, index.html 원래 자리에서 부른다).",
+    "Supabase 주소·공개 키(SUPABASE_URL·SUPABASE_ANON_KEY)·클라이언트(sb)·대기 세션(_pendingAuthSession)·window 노출 줄은 원래 자리에 그대로 있다 — 주소·키는 실계정 하네스(docs/design/harness/real-account-steps.js)가 index.html 에서 읽는다.",
+    "#TASK-ES-521(인라인 3단계 Z1 로그인·계정 1차): index.html 인라인 IIFE 의 구간(이전 전 3253~3264 · 3265~3280 · 3282~3285줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 64,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-521"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md"
+   ],
+   "prs": [
+    {
+     "number": 811,
+     "task": "TASK-ES-521",
+     "title": "[INFRA] #TASK-ES-521 refactor: 인라인 3단계 Z1 1차 — Supabase·2계정 테스트·새 비밀번호 창·탈퇴 30일 유예 묶음 세포 3개로 이전(동작 그대로) + 검사기 키트 변수 순서 검사",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -5278,8 +5511,7 @@
     "template-credit"
    ],
    "calledBy": [
-    "helpful-reason",
-    "template-credit"
+    "helpful-reason"
    ],
    "readsFromIndexHtml": [
     "OURGOAL_CONFIG"
@@ -5332,7 +5564,6 @@
     "core/confirm"
    ],
    "calledBy": [
-    "records/external-import",
     "settings/render"
    ],
    "readsFromIndexHtml": [],
@@ -5360,7 +5591,9 @@
     "TASK-ES-353",
     "TASK-ES-374",
     "TASK-ES-462",
-    "TASK-ES-495"
+    "TASK-ES-495",
+    "TASK-ES-515",
+    "TASK-ES-531"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-141-GUEST-MIGRATION-COMM-CENTER-PWA.md",
@@ -5368,9 +5601,23 @@
     "docs/specs/REQ-TASK-ES-353-EVENT-BUS.md",
     "docs/specs/REQ-TASK-ES-374-CONFIRM-SHEET.md",
     "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md",
-    "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md"
+    "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
+    "docs/specs/REQ-TASK-ES-531-HOME-LAYOUT-SINGLE-HANDLER.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
+    {
+     "number": 810,
+     "task": "TASK-ES-531",
+     "title": "[FIX] #TASK-ES-531 「나만의 홈 구성」 단추 이중 처리기 한 벌 (open 호출 2→1, 동작 동일)",
+     "date": "2026-10-06"
+    },
     {
      "number": 795,
      "task": "TASK-ES-495",
@@ -5406,12 +5653,6 @@
      "task": null,
      "title": "[E1] #TASK-ES-146 feat: 평가 배너·목표만 이격·스톱워치 표 안내·팀가이드 소멸 문구·아바타 레벨업 완결 (#TASK-ES-146~#TASK-ES-150)",
      "date": "2026-09-17"
-    },
-    {
-     "number": 188,
-     "task": null,
-     "title": "[INFRA] #TASK-ES-062 feat: 아워골 전면 무결성 보장 및 2중 8원칙 작업 절대 규칙 제정 및 에이전트 강제 집행 시스템 구축",
-     "date": "2026-09-14"
     }
    ]
   },
@@ -7041,13 +7282,12 @@
    "calls": [],
    "calledBy": [
     "settings/dev-debug-gate",
-    "settings/session-entry"
+    "settings/session-entry",
+    "settings/tester-entry"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalDirectLoginGuard"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -8066,6 +8306,32 @@
     "OurgoalSanctuaryV3Kit"
    ],
    "calls": [
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
+    "records/archive-toggle",
+    "records/checkin-capture",
+    "records/checkin-feedback",
+    "records/checkin-helpers",
+    "records/export-theme",
+    "records/external-import",
+    "records/first-checkin-tutorial",
+    "records/heatmap-summary",
+    "records/period-ai-card",
+    "records/photo-proof",
+    "records/pro-report-export",
+    "records/pro-template-modals",
+    "records/pro-templates",
+    "records/record-assistant",
+    "records/record-card-wire",
+    "records/record-cards",
+    "records/record-heatmap-report",
+    "records/render",
+    "records/share-to-feed",
+    "records/stopwatch-format",
+    "records/table-analytics-view",
+    "records/table-stopwatch",
+    "records/trend-metrics-chart",
+    "records/weekly-recap",
     "sanctuary-v3-engine"
    ],
    "calledBy": [
@@ -8088,12 +8354,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-429"
+    "TASK-ES-429",
+    "TASK-ES-514"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
+    "docs/specs/REQ-TASK-ES-514-HIDDEN-AUDIT-DEFECTS.md"
    ],
    "prs": [
+    {
+     "number": 807,
+     "task": "TASK-ES-514",
+     "title": "[FIX] #TASK-ES-514 숨김 조사 결함 — 빠른 목표 추가 저장 · 템플릿백과사전 처리기 한 벌 · 성소 새 기록 중계 제거 · 숨김 기준선 사유 정정",
+     "date": "2026-10-06"
+    },
     {
      "number": 747,
      "task": "TASK-ES-429",
@@ -8140,6 +8414,32 @@
     "calendar/natural-schedule",
     "calendar/render",
     "calendar/schedule-done-toggle",
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
+    "records/archive-toggle",
+    "records/checkin-capture",
+    "records/checkin-feedback",
+    "records/checkin-helpers",
+    "records/export-theme",
+    "records/external-import",
+    "records/first-checkin-tutorial",
+    "records/heatmap-summary",
+    "records/period-ai-card",
+    "records/photo-proof",
+    "records/pro-report-export",
+    "records/pro-template-modals",
+    "records/pro-templates",
+    "records/record-assistant",
+    "records/record-card-wire",
+    "records/record-cards",
+    "records/record-heatmap-report",
+    "records/render",
+    "records/share-to-feed",
+    "records/stopwatch-format",
+    "records/table-analytics-view",
+    "records/table-stopwatch",
+    "records/trend-metrics-chart",
+    "records/weekly-recap",
     "sanctuary-calendar-actions",
     "sanctuary-calendar-views",
     "sanctuary-focus-timer",
@@ -8187,26 +8487,32 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-241",
     "TASK-ES-246",
     "TASK-ES-331",
     "TASK-ES-362",
     "TASK-ES-429",
     "TASK-ES-433",
     "TASK-ES-440",
-    "TASK-ES-462"
+    "TASK-ES-462",
+    "TASK-ES-514"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-241-CALENDAR-WEEK-THEME-CONTRAST.md",
     "docs/specs/REQ-TASK-ES-246-COMM-PEER-RADAR-SLIM-FOLD.md",
     "docs/specs/REQ-TASK-ES-331-HOME-TAB-REFINEMENT.md",
     "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md",
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
     "docs/specs/REQ-TASK-ES-433-STORYCARD-ENTRY.md",
     "docs/specs/REQ-TASK-ES-440-HIDDEN-RESTORE.md",
-    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md"
+    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md",
+    "docs/specs/REQ-TASK-ES-514-HIDDEN-AUDIT-DEFECTS.md"
    ],
    "prs": [
+    {
+     "number": 807,
+     "task": "TASK-ES-514",
+     "title": "[FIX] #TASK-ES-514 숨김 조사 결함 — 빠른 목표 추가 저장 · 템플릿백과사전 처리기 한 벌 · 성소 새 기록 중계 제거 · 숨김 기준선 사유 정정",
+     "date": "2026-10-06"
+    },
     {
      "number": 767,
      "task": "TASK-ES-462",
@@ -8247,12 +8553,6 @@
      "number": 414,
      "task": "TASK-ES-246",
      "title": "feat/2026-09-23-task-es-246-comm-peer-radar-slim-fold",
-     "date": "2026-09-23"
-    },
-    {
-     "number": 409,
-     "task": "TASK-ES-241",
-     "title": "feat/2026-09-23-task-es-241-calendar-week-theme-contrast",
      "date": "2026-09-23"
     }
    ]
@@ -12451,9 +12751,9 @@
     "OurGoal Goals IA Actions (목표 탭 — 하위 탭 전환·성취 통계 기간·템플릿을 내 목표로 담기)",
     "목표 탭 하위 탭 단추(switchGoalsSubTab) · 성취 통계 기간 단추와 리포트(switchGoalStatPeriod·renderGoalStatsChart) · 추천 템플릿을 내 목표로 담기(adoptTemplateAsMyGoal).",
     "마크업 onclick 과 js/tabs/goals/render.js · js/sanctuary-v3-engine.js 가 window 이름으로 부른다 — window 노출 줄(window.currentGoalStatPeriod 초기값 포함)은 index.html 원래 자리에 그대로 있다.",
-    "같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍·루틴 매트릭스 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer·renderRoutineMatrixGrid·toggleRoutineStamp)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓)."
+    "같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓)."
    ],
-   "lines": 118,
+   "lines": 119,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit",
@@ -12479,12 +12779,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-481"
+    "TASK-ES-481",
+    "TASK-ES-515"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md"
+    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
     {
      "number": 781,
      "task": "TASK-ES-481",
@@ -12788,15 +13096,23 @@
     "TASK-ES-354",
     "TASK-ES-360",
     "TASK-ES-370",
-    "TASK-ES-462"
+    "TASK-ES-462",
+    "TASK-ES-515"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md",
     "docs/specs/REQ-TASK-ES-360-CALENDAR-CELL.md",
     "docs/specs/REQ-TASK-ES-370-GOALS-CELL.md",
-    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md"
+    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
     {
      "number": 767,
      "task": "TASK-ES-462",
@@ -12938,6 +13254,68 @@
      "task": "TASK-ES-375",
      "title": "[E1] #TASK-ES-375 refactor: 목표 탭 결과 입력 모달·내보내기/보관 묶음을 js/tabs/goals/ 세포 2개로 동작 그대로 이전",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "goals/routine-detail-modal",
+   "file": "js/tabs/goals/routine-detail-modal.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "루틴 상세·편집 창",
+   "nameSource": "hand",
+   "does": "루틴 카드나 「수정」을 누르면 카테고리·이름·연결 목표·시간·알림·반복 요일·메모를 고치는 창을 열고, 저장·삭제를 처리한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Routine Detail Modal (목표 — 데일리 루틴 상세 확인·편집 창)",
+    "「[#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달」 묶음에 남아 있던 루틴 상세·편집 창(openRoutineDetailModal — 카테고리·이름·연결 목표·시간·알림·반복 요일·메모 편집, 저장·삭제·취소). 같은 묶음의 루틴 화면·추가 창은 #TASK-ES-493 이 js/tabs/goals/routine-screen.js 로 옮겼다.",
+    "window 노출 if 문은 index.html 원래 자리에 그대로 있다.",
+    "#TASK-ES-537(인라인 3단계 기관 — 데일리 루틴 상세·편집 창): index.html 인라인 IIFE 의 구간(이전 전 8463~8625줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 188,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-172",
+    "TASK-ES-493",
+    "TASK-ES-537"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-172-NOTEPAD-PENDING-ALL.md",
+    "docs/specs/REQ-TASK-ES-493-INLINE-H2-2.md",
+    "docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md"
+   ],
+   "prs": [
+    {
+     "number": 817,
+     "task": "TASK-ES-537",
+     "title": "[INFRA] #TASK-ES-537 feat: 인라인 3단계 기관 — 루틴 상세·편집 창 → js/tabs/goals/routine-detail-modal.js(동작 그대로, 자리 HO) · Modal helper·Confetti 옮길 문 0",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -14179,7 +14557,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14241,7 +14622,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14291,7 +14675,7 @@
     "OurGoal Records Archive Toggle (기록 탭 — 이전 기록 아카이브 펼치기·접기)",
     "기록 탭 「이전 기록 전체 보기」 아카이브 펼치기·접기(toggleRecordArchive).",
     "마크업 onclick 이 window 이름으로 부른다 — window 노출 줄은 index.html 원래 자리에 그대로 있다.",
-    "같은 묶음의 달력 융합 칩·빠른 스톱워치 함수(switchRecFusionMode·handleQuickStopwatchToggle·handleQuickStopwatchSaveRecord)는 그 단추(#recCalFuseSwitcher·#quickStopwatchBar)가 ui.css 의 숨김 규칙으로 게스트 화면에 보이지 않고, CSV 내보내기(exportRecordsCsv)는 내려받기 뒤 토스트를 게스트 화면 시나리오로 확인하지 못해 옮기지 않았다(별도 티켓)."
+    "같은 묶음에 있던 달력 융합 칩·빠른 스톱워치 함수는 #TASK-ES-515 에서 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」). CSV 내보내기(exportRecordsCsv)는 내려받기 뒤 토스트를 게스트 화면 시나리오로 확인하지 못해 옮기지 않았다(별도 티켓)."
    ],
    "lines": 49,
    "over800": false,
@@ -14301,7 +14685,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14317,12 +14704,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-481"
+    "TASK-ES-481",
+    "TASK-ES-515"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md"
+    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
     {
      "number": 781,
      "task": "TASK-ES-481",
@@ -14361,7 +14756,10 @@
     "core/event-bus",
     "core/store"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14423,7 +14821,10 @@
     "avatar-system",
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14481,7 +14882,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14539,7 +14943,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14586,21 +14993,23 @@
    "does": "체크인 입력의 「외부 기록 불러오기」로 샘플 활동 목록(연동 전 샘플)이나 CSV·줄글 대량 가져오기 창을 열고, 고른 활동을 입력칸에 채운다",
    "doesSource": "hand",
    "header": [
-    "OurGoal External Import (기록 — 외부 데이터 불러오기 (mock) · 홈 구성 열기)",
-    "기록 입력의 「외부 기록 불러오기」 단추(#importExternalBtn) 처리기 — 샘플 데이터(EXTERNAL_DATA, 이름 그대로 mock) 목록 창과 CSV/줄글 대량 가져오기 창 열기, 홈 구성 열기(openHomeCustomizer), 「개인 목표 200% 활용 가이드」 단추 처리기.",
-    "처리기 등록 문 두 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. 한 줄에 두 문인 홈 구성·가이드 단추 등록 세 줄은 원래 자리에 그대로 있다. 샘플(mock) 데이터는 고치지 않고 그대로 옮겼다.",
-    "#TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 7969~8022 · 8023~8024 · 8030~8034줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+    "OurGoal External Import (기록 — 외부 데이터 불러오기 (mock))",
+    "기록 입력의 「외부 기록 불러오기」 단추(#importExternalBtn) 처리기 — 샘플 데이터(EXTERNAL_DATA, 이름 그대로 mock) 목록 창과 CSV/줄글 대량 가져오기 창 열기, 「개인 목표 200% 활용 가이드」 단추 처리",
+    "#TASK-ES-515: 늘 숨어 있던 홈 머리 「나만의 홈 구성」·상단바 「⚙️ 홈구성」 단추만 부르던 홈 구성 열기 처리기를 두 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」). 홈 구성은 설정 「홈 구성 고르기」(#homeLayoutOpenBtn)가 연다.기.",
+    "처리기 등록 문 두 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. 한 줄에 두 문인 가이드 단추 등록 줄은 원래 자리에 그대로 있다. 샘플(mock) 데이터는 고치지 않고 그대로 옮겼다."
    ],
-   "lines": 95,
+   "lines": 91,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
    ],
    "calls": [
-    "core/app-scope",
-    "customize"
+    "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14616,12 +15025,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-483"
+    "TASK-ES-483",
+    "TASK-ES-515"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md"
+    "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
     {
      "number": 788,
      "task": "TASK-ES-483",
@@ -14658,7 +15075,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14716,7 +15136,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14844,7 +15267,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14902,7 +15328,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -14962,7 +15391,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15025,7 +15457,10 @@
     "content-moderation",
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15083,7 +15518,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15141,7 +15579,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15203,7 +15644,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15265,7 +15709,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15327,7 +15774,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15381,7 +15831,7 @@
     "setRecordsSegment(세그먼트 전환) · setRecordsSlide(지표 캐러셀) · renderRecordsScreen(기록 화면 전체 렌더)",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>, 다른 기록 파일 함수는 K.<이름>. 버그도 그대로 옮겼다."
    ],
-   "lines": 639,
+   "lines": 630,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit",
@@ -15391,7 +15841,10 @@
     "core/app-scope",
     "sanctuary-v3-engine"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15409,12 +15862,20 @@
     ]
    },
    "tasks": [
-    "TASK-ES-358"
+    "TASK-ES-358",
+    "TASK-ES-515"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-358-RECORDS-CELL.md"
+    "docs/specs/REQ-TASK-ES-358-RECORDS-CELL.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
     {
      "number": 671,
      "task": "TASK-ES-358",
@@ -15452,7 +15913,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15480,6 +15944,67 @@
      "task": "TASK-ES-466",
      "title": "[INFRA] #TASK-ES-466 refactor: 인라인 어려움 구역 H1 1차 — 네 묶음을 세포 4개로 이전(index.html −1,343줄, 동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "records/stopwatch-format",
+   "file": "js/tabs/records/stopwatch-format.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "스톱워치 시간 글자",
+   "nameSource": "hand",
+   "does": "전문 템플릿 스톱워치의 흐른 시간을 「분:초.1/10초」 글자로 바꾼다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Stopwatch Format (기록 탭 — 전문 템플릿 스톱워치 시간 글자)",
+    "「⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯」 묶음에 남아 있던 formatStopwatchTime — 밀리초를 「분:초.10분의1초」(1시간 넘으면 시:분:초) 글자로 바꾼다(smoke-test FN_NAMES — 인라인 합본에서 찾는다). 스톱워치 위젯은 js/tabs/records/table-stopwatch.js.",
+    "window.renderStopwatchWidgetHtml · window.renderLapRowsHtml 노출 묶음은 index.html 원래 자리에 그대로 있다.",
+    "#TASK-ES-523(인라인 3단계 Z4 이동 2차(활용가이드·공개 범위 배지·스톱워치 시간 글자)): index.html 인라인 IIFE 의 구간(이전 전 10472~10485줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 39,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-523"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md"
+   ],
+   "prs": [
+    {
+     "number": 820,
+     "task": "TASK-ES-523",
+     "title": "[INFRA] #TASK-ES-523 refactor: 인라인 3단계 Z4 이동 2차 — 활용가이드·공개 범위 배지·스톱워치 시간 글자를 세포 3개로(동작 그대로)",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -15695,7 +16220,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15757,7 +16285,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15821,7 +16352,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15876,10 +16410,10 @@
    "header": [
     "OurGoal Records Weekly Recap (기록 탭 — 위클리 리캡 카드·기록 추가 창·기록 탭 정적 단추 처리기)",
     "위클리 리캡 카드 그림·창(fitBigFont · generateWeeklyRecapImage · findBestMoment · openWeeklyRecapModal · openLegacyRecapCanvasModal) · 기록 추가 창(openRecordModal).",
-    "기록 탭 로드 중 처리기 등록 문 다섯 개(시간 기록 단추 · 세그먼트 막대 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecSegmentBar · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).",
-    "한 줄 등록 문 세 개와 상태 변수(btnOpenTt · staticPulseBar)는 원래 자리에 있다. weeklyRecapStats 는 smoke-test FN_NAMES 함수 — smoke-test 가 인라인 합본(js/tabs 세포 포함)에서 잘라 가므로(#TASK-ES-465) 같이 옮겼다."
+    "기록 탭 로드 중 처리기 등록 문 네 개(시간 기록 단추 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).",
+    "#TASK-ES-515: 늘 숨어 있던 옛 세그먼트 막대의 등록 문(처리기)을 막대와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」)."
    ],
-   "lines": 666,
+   "lines": 654,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -15887,7 +16421,10 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15904,18 +16441,87 @@
    },
    "tasks": [
     "TASK-ES-465",
-    "TASK-ES-474"
+    "TASK-ES-474",
+    "TASK-ES-515"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md",
-    "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md"
+    "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
     {
      "number": 785,
      "task": "TASK-ES-474",
      "title": "[INFRA] #TASK-ES-474 refactor: 인라인 어려움 구역 H4 2차 — 공유 팀 화면·기록 내보내기·위클리 리캡 3묶음 세포 이전",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/account-actions",
+   "file": "js/tabs/settings/account-actions.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "로그인 제출·로그아웃·초기화 단추",
+   "nameSource": "hand",
+   "does": "이메일 로그인 제출, 계정 데이터 다시 맞추기, 로그아웃, 계정 초기화 단추를 처리하고 비밀번호 복구 링크로 오면 새 비밀번호 창을 연다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Account Actions (설정 — 이메일 로그인 제출·계정 데이터 다시 맞추기·로그아웃·초기화 단추·새 비밀번호 창)",
+    "「P0: 새 비밀번호 입력 모달」 묶음(openNewPasswordModal — 비밀번호 복구 링크로 들어왔을 때 OurgoalAuthSafety 창을 연다)과 「P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크」 묶음의 단추 처리기 등록 문 4개:",
+    "이메일 로그인 제출(bindLoginSubmit — 로그인 뒤 기기 로그인 시각·아이디 기억·프로필 불러오기·게스트 기록 합치기·탈퇴 유예 복구 확인), 계정 데이터 다시 맞추기(bindResyncAccountDataButton), 로그아웃(bindLogoutButton), 계정 초기화(bindResetButton). 모두 index.html 원래 자리에서 부른다(등록 순서 보존).",
+    "다시 맞추기 단추 변수(resyncBtn)와 탈퇴 단추 한 줄 등록은 원래 자리에 그대로 있다."
+   ],
+   "lines": 146,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "auth-safety",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [
+    "ui.confirm"
+   ],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-521"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md"
+   ],
+   "prs": [
+    {
+     "number": 811,
+     "task": "TASK-ES-521",
+     "title": "[INFRA] #TASK-ES-521 refactor: 인라인 3단계 Z1 1차 — Supabase·2계정 테스트·새 비밀번호 창·탈퇴 30일 유예 묶음 세포 3개로 이전(동작 그대로) + 검사기 키트 변수 순서 검사",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -16084,12 +16690,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-442"
+    "TASK-ES-442",
+    "TASK-ES-516"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md",
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
    ],
    "prs": [
+    {
+     "number": 813,
+     "task": "TASK-ES-516",
+     "title": "[FIX] #TASK-ES-516 돈(광고·구독) 묶음 소멸 — 보상형 광고·구독 상태·페이월 안내 모달·PRO 배지 삭제, 데이터 칸 보존 (상민님 「광고, 구독관련은 삭제해」 오케스트레이터 전달 · 시험 폐기 「금고 변경 승인」)",
+     "date": "2026-10-06"
+    },
     {
      "number": 764,
      "task": "TASK-ES-442",
@@ -16455,6 +17069,65 @@
    ]
   },
   {
+   "id": "settings/device-session",
+   "file": "js/tabs/settings/device-session.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "기기 세션·로그아웃",
+   "nameSource": "hand",
+   "does": "이 기기 id·로그인 시각을 기억하고, 로그아웃과 다른 기기에서 실행한 원격 로그아웃 감지를 맡는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Device Session (설정 — 이 기기 식별·로그인 시각·로그아웃·원격 로그아웃 감지)",
+    "「디바이스 세션 & 원격 로그아웃 유틸 (Req 1)」 묶음 전체: 이 기기 id(getDeviceId)·로그인 시각 읽기/쓰기(getDeviceLoginTime·setDeviceLoginTime)·이 기기 로그아웃(performLogout)·다른 기기에서 실행한 원격 로그아웃 감지(checkRemoteSessionRevoked), 그리고 이메일 가입 단추 처리기 등록 문(bindSignupSubmit — index.html 원래 자리에서 부른다).",
+    "setDeviceLoginTime·performLogout 은 로그인한 뒤에만 도는 경로라 게스트 화면으로 잴 수 없다 — 테스트 계정 실계정 하네스(docs/design/harness/module-split/real-account-split-check.js)로 기준·작업을 읽기 전용으로 맞댔다(#TASK-ES-513 시범).",
+    "#TASK-ES-513(인라인 3단계 시범 — 게스트로 못 재는 묶음(실계정 하네스)): index.html 인라인 IIFE 의 구간(이전 전 4402~4414 · 4415~4420 · 4421~4427 · 4428~4447 · 4448~4486 · 4487~4512줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 148,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "account-isolation",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-513"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-513-INLINE-STAGE3.md"
+   ],
+   "prs": [
+    {
+     "number": 802,
+     "task": "TASK-ES-513",
+     "title": "[INFRA] #TASK-ES-513 feat: 인라인 잔여 3단계 설계 + 시범 — 디바이스 세션 묶음을 실계정 하네스로 재어 이동",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
    "id": "settings/feedback-bot-setup",
    "file": "js/tabs/settings/feedback-bot-setup.js",
    "kind": "tab",
@@ -16509,6 +17182,64 @@
      "task": "TASK-ES-492",
      "title": "[INFRA] #TASK-ES-492 refactor: 인라인 어려움 기관 묶음 이전 3차 — 맞춤 피드백 봇을 설정 창·체크인 피드백 세포 2개로 책임 나눠 옮김(동작 그대로, 인라인 −1,051줄)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/first-login-guide",
+   "file": "js/tabs/settings/first-login-guide.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "앱 활용 가이드",
+   "nameSource": "hand",
+   "does": "설정 「앱 활용 가이드 다시보기」로 6쪽 기능 안내 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal First Login Guide (설정 — 앱 활용 가이드 6쪽 안내 창)",
+    "「최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합」 묶음 중 활용 가이드 책임: 첫 로그인 가이드 띄우기(maybeShowFirstLoginGuide)·6쪽 안내 창(startFirstLoginGuide — 설정 「앱 활용 가이드 다시보기」 #btnRestartGuide 가 부른다).",
+    "window.startFirstLoginGuide 노출 줄과 탭 단추·화면 목록(navButtons·screens — 로드 중 DOM 을 읽는 상태)은 index.html 원래 자리에 그대로 있다.",
+    "#TASK-ES-523(인라인 3단계 Z4 이동 2차(활용가이드·공개 범위 배지·스톱워치 시간 글자)): index.html 인라인 IIFE 의 구간(이전 전 4787~4794 · 4795~4995줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 236,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-523"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md"
+   ],
+   "prs": [
+    {
+     "number": 820,
+     "task": "TASK-ES-523",
+     "title": "[INFRA] #TASK-ES-523 refactor: 인라인 3단계 Z4 이동 2차 — 활용가이드·공개 범위 배지·스톱워치 시간 글자를 세포 3개로(동작 그대로)",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -16646,15 +17377,15 @@
    ],
    "name": "인앱 브라우저·첫 화면 단추",
    "nameSource": "hand",
-   "does": "카카오톡 인앱 브라우저면 외부 브라우저로 나가는 배너를 띄우고, 첫 화면의 닉네임 빠른 입장·가입·로그인·둘러보기 단추를 처리한다",
+   "does": "카카오톡 인앱 브라우저면 외부 브라우저로 나가는 배너를 띄우고, 첫 화면의 닉네임 빠른 입장·로그인·둘러보기 단추를 처리한다",
    "doesSource": "hand",
    "header": [
     "OurGoal In-App Browser & Landing Entry (설정 — 카카오톡 인앱 브라우저 감지·첫 화면 진입 단추)",
-    "카카오톡 인앱 브라우저 감지·외부 브라우저로 빠져나가기 배너(checkKakaoInAppBrowser·escapeKakaoInAppBrowser)와 첫 화면 단추 처리기(닉네임 빠른 입장·이메일 가입·로그인·둘러보기).",
-    "첫 화면 단추 처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다.",
-    "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4018~4072 · 4073~4138 · 4144~4149 · 4150~4155 · 4156~4161 · 4163~4174줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+    "카카오톡 인앱 브라우저 감지·외부 브라우저로 빠져나가기 배너(checkKakaoInAppBrowser·escapeKakaoInAppBrowser)와 첫 화면 단추 처리기(닉네임 빠른 입장·로그인·둘러보기).",
+    "#TASK-ES-515: 늘 숨어 있던(display:none) 첫 화면 「이메일로 가입하기」 단추의 처리기를 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」).",
+    "첫 화면 단추 처리기 등록 문 세 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다."
    ],
-   "lines": 196,
+   "lines": 187,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -16678,12 +17409,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-476"
+    "TASK-ES-476",
+    "TASK-ES-515"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md"
+    "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
    ],
    "prs": [
+    {
+     "number": 812,
+     "task": "TASK-ES-515",
+     "title": "[FIX] #TASK-ES-515 숨김 기능 6건 소멸 — 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달)",
+     "date": "2026-10-06"
+    },
     {
      "number": 775,
      "task": "TASK-ES-476",
@@ -16891,6 +17630,64 @@
    ]
   },
   {
+   "id": "settings/notify-timer",
+   "file": "js/tabs/settings/notify-timer.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "앱 안 체크인 알림",
+   "nameSource": "hand",
+   "does": "앱을 열어 둔 동안 정한 체크인 시각이 되면 알림과 「질문이 도착했어요」 띠를 띄우고, 띠의 「기록하기」로 홈 기록 입력칸에 데려간다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Notify Timer (설정 — 탭이 열려 있을 때의 체크인 알림 시계·알림 띠)",
+    "「Notifications (best-effort, tab must be open)」 묶음 전체: 체크인 알림 시각마다 20초 간격으로 확인해 알림·띠를 띄우는 시계(setupNotifyTimer)와 앱 안 알림 띠(showNotifyBanner — #notifyBannerSlot, 「기록하기」 누르면 홈 기록 입력칸으로).",
+    "게스트도 설정 「알림」 스위치(setupNotifyTimer)와 「테스트 알림」 단추(showNotifyBanner)로 닿는다. 시계가 체크인 시각에 맞춰 울리는 경로는 그 시각까지 기다려야 해서(법정 시험 한 번 3분) 화면 시나리오로 잴 수 없다.",
+    "#TASK-ES-536(인라인 3단계 Z3 — 알림·시간·주소): index.html 인라인 IIFE 의 구간(이전 전 13491~13510 · 13511~13521줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 58,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-536"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md"
+   ],
+   "prs": [
+    {
+     "number": 816,
+     "task": "TASK-ES-536",
+     "title": "[INFRA] #TASK-ES-536 feat: 인라인 3단계 Z3 — Notifications·Web Push·자정 날짜 변경·딥링크 관문 → 세포 4개(동작 그대로, 자리 HO)",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
    "id": "settings/notion-sync",
    "file": "js/tabs/settings/notion-sync.js",
    "kind": "tab",
@@ -17005,6 +17802,64 @@
      "task": "TASK-ES-442",
      "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/privacy-badges",
+   "file": "js/tabs/settings/privacy-badges.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "공개 범위 배지",
+   "nameSource": "hand",
+   "does": "목표·일정·기록 탭 머리의 공개 범위 배지를 그리고, 누르면 공개 범위(전체·팀원·나만 보기)를 고르는 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Privacy Badges (설정 — 탭 머리 공개 범위 배지·공개 범위 고르기 창)",
+    "「최초 로그인 활용가이드」 묶음 중 공개 범위 책임: 공개 범위 글자(getPrivacyLabel — smoke-test FN_NAMES, 인라인 합본에서 찾는다)·목표/일정/기록 탭 머리 배지 그리기(updatePrivacyBadges — #goalsPrivacyBadge·#calPrivacyBadge·#recPrivacyBadge)·공개 범위 고르기 창(openPrivacyPickerModal).",
+    "#TASK-ES-523(인라인 3단계 Z4 이동 2차(활용가이드·공개 범위 배지·스톱워치 시간 글자)): index.html 인라인 IIFE 의 구간(이전 전 5000~5004 · 5005~5034 · 5035~5068줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 97,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-523"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md"
+   ],
+   "prs": [
+    {
+     "number": 820,
+     "task": "TASK-ES-523",
+     "title": "[INFRA] #TASK-ES-523 refactor: 인라인 3단계 Z4 이동 2차 — 활용가이드·공개 범위 배지·스톱워치 시간 글자를 세포 3개로(동작 그대로)",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -17166,6 +18021,8 @@
     "core/app-scope",
     "core/badges",
     "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/gcal-sync",
     "core/gcal-token",
     "core/home-cockpit",
@@ -17173,6 +18030,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -17186,8 +18044,7 @@
     "settings/sub-integrations",
     "settings/sub-notify",
     "settings/sub-profile",
-    "settings/sub-security",
-    "template-credit"
+    "settings/sub-security"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
@@ -17205,12 +18062,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-354"
+    "TASK-ES-354",
+    "TASK-ES-516"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md"
+    "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md",
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
    ],
    "prs": [
+    {
+     "number": 813,
+     "task": "TASK-ES-516",
+     "title": "[FIX] #TASK-ES-516 돈(광고·구독) 묶음 소멸 — 보상형 광고·구독 상태·페이월 안내 모달·PRO 배지 삭제, 데이터 칸 보존 (상민님 「광고, 구독관련은 삭제해」 오케스트레이터 전달 · 시험 폐기 「금고 변경 승인」)",
+     "date": "2026-10-06"
+    },
     {
      "number": 666,
      "task": "TASK-ES-354",
@@ -17309,6 +18174,8 @@
     "core/app-scope",
     "core/badges",
     "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -17317,6 +18184,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -17397,6 +18265,8 @@
     "core/app-scope",
     "core/badges",
     "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -17405,6 +18275,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -17479,6 +18350,8 @@
     "core/badges",
     "core/confetti",
     "core/confirm",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -17487,6 +18360,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -17577,6 +18451,8 @@
     "core/app-scope",
     "core/badges",
     "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -17585,6 +18461,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -17658,6 +18535,8 @@
     "core/app-scope",
     "core/badges",
     "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -17666,6 +18545,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -17746,6 +18626,8 @@
     "core/app-scope",
     "core/badges",
     "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -17754,6 +18636,7 @@
     "core/profile-topbar",
     "core/registry-init",
     "core/streak-badge",
+    "core/supabase-auth",
     "core/telemetry",
     "core/time-keys",
     "core/trash-bin",
@@ -17933,6 +18816,67 @@
    ]
   },
   {
+   "id": "settings/tester-entry",
+   "file": "js/tabs/settings/tester-entry.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "테스터 B 직통 입장",
+   "nameSource": "hand",
+   "does": "로컬 개발 주소에서만 2계정 상호작용 테스트용 테스터 B 계정으로 바로 들어가게 한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Tester Entry (설정 — 2계정 상호작용 테스트용 테스터 B 직통 입장, 로컬 개발 주소 전용)",
+    "「2계정 상호작용 테스트 (테스터 B 직통 입장: #TASK-ES-169)」 묶음: 테스터 B 직통 입장(enterAsTesterB — 로컬 개발 주소에서만 연다)과 랜딩·로그인 화면의 테스터 B 단추 처리기 등록 문(bindLandTesterBButton·bindAuthTesterBButton — 단추가 화면에 있을 때만 건다, index.html 원래 자리에서 부른다).",
+    "단추 요소 변수(landTesterBBtn·authTesterBBtn)와 window 노출 줄은 원래 자리에 그대로 있다.",
+    "#TASK-ES-521(인라인 3단계 Z1 로그인·계정 1차): index.html 인라인 IIFE 의 구간(이전 전 4027~4047 · 4050~4055 · 4057~4062줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 68,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "direct-login-guard"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-169",
+    "TASK-ES-521"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-169.md",
+    "docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md"
+   ],
+   "prs": [
+    {
+     "number": 811,
+     "task": "TASK-ES-521",
+     "title": "[INFRA] #TASK-ES-521 refactor: 인라인 3단계 Z1 1차 — Supabase·2계정 테스트·새 비밀번호 창·탈퇴 30일 유예 묶음 세포 3개로 이전(동작 그대로) + 검사기 키트 변수 순서 검사",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
    "id": "settings/theme-apply",
    "file": "js/tabs/settings/theme-apply.js",
    "kind": "tab",
@@ -17990,6 +18934,64 @@
      "task": "TASK-ES-437",
      "title": "[INFRA] #TASK-ES-437 refactor: 인라인 스크립트 세포화 P0 구역 1차(#749 대체) — 19묶음 24선언을 세포 10개로 이전(인라인 −724줄, 동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/web-push",
+   "file": "js/tabs/settings/web-push.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "웹 푸시 구독",
+   "nameSource": "hand",
+   "does": "앱이 꺼져 있어도 체크인 알림이 오도록 로그인한 이 기기의 푸시 구독을 서버에 등록하고, 로그아웃·알림 끄기 때 해제한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Web Push (설정 — 앱이 꺼져 있어도 오는 알림 구독·해제)",
+    "「Web Push (앱이 꺼져 있어도 오는 알림)」 묶음 전체: VAPID 공개키 변환(urlBase64ToUint8Array)·서버 푸시 구독 등록(syncPushSubscription — 로그인 세션 토큰이 있을 때만 Bearer 로)·구독 해제(removePushSubscription).",
+    "서버 구독 등록은 알림 권한 허용 + 로그인 세션이 있어야 돌고, 실제 푸시 도착은 기기에서만 확인된다 — 앱 쪽 요청 모양은 tests/push-subscribe-auth-es400.test.js 가 옮긴 함수 글자를 노드에서 돌려 잰다.",
+    "#TASK-ES-536(인라인 3단계 Z3 — 알림·시간·주소): index.html 인라인 IIFE 의 구간(이전 전 13522~13530 · 13531~13558 · 13559~13573줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 81,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-536"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md"
+   ],
+   "prs": [
+    {
+     "number": 816,
+     "task": "TASK-ES-536",
+     "title": "[INFRA] #TASK-ES-536 feat: 인라인 3단계 Z3 — Notifications·Web Push·자정 날짜 변경·딥링크 관문 → 세포 4개(동작 그대로, 자리 HO)",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -19448,23 +20450,21 @@
    ],
    "name": "템플릿 크레딧",
    "nameSource": "hand",
-   "does": "템플릿을 복제하면 원작자에게 크레딧을 주고, 원할 때만 보상 광고를 본다",
+   "does": "템플릿 복제 수를 서버에 기록하고, 마켓 카드에 실제 복제 수 배지를 채운다(광고 없음)",
    "doesSource": "hand",
    "header": [
-    "아워골 — 템플릿 복제 크레딧 + 선택형 보상 광고 (KF-2 #TASK-ES-017, E3)",
+    "아워골 — 템플릿 복제 크레딧 (KF-2 #TASK-ES-017, E3)",
     "규격: 「아워골 수익화 모델(정립/구현)」 §1·§2·§3, KF-2 요구사항정의서 v2.",
     "- 복제 수는 서버 실데이터(template_copies)만 표시한다. 값이 없거나 0이면 아무 숫자도 보이지 않는다.",
     "- 원작자 크레딧 구간 판정·적립은 서버 RPC(record_template_copy) 안에서만. 클라이언트는 결과만 본다."
    ],
-   "lines": 179,
+   "lines": 129,
    "over800": false,
    "exposes": [
     "OurgoalTemplateCredit",
     "sb"
    ],
-   "calls": [
-    "credits"
-   ],
+   "calls": [],
    "calledBy": [
     "auth-safety",
     "comm/dm-ledger",
@@ -19473,7 +20473,6 @@
     "goal-edit-ux",
     "goals/team-goals-screen",
     "settings/guest-migration",
-    "settings/render",
     "team-chat",
     "team-companion-search",
     "team-companions",
@@ -19486,9 +20485,7 @@
     "team-share",
     "team-templates"
    ],
-   "readsFromIndexHtml": [
-    "OURGOAL_CONFIG"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
     "OurgoalTemplateCredit",
@@ -19504,10 +20501,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-017"
+    "TASK-ES-017",
+    "TASK-ES-516"
    ],
-   "reqs": [],
-   "prs": []
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
+   ],
+   "prs": [
+    {
+     "number": 813,
+     "task": "TASK-ES-516",
+     "title": "[FIX] #TASK-ES-516 돈(광고·구독) 묶음 소멸 — 보상형 광고·구독 상태·페이월 안내 모달·PRO 배지 삭제, 데이터 칸 보존 (상민님 「광고, 구독관련은 삭제해」 오케스트레이터 전달 · 시험 폐기 「금고 변경 승인」)",
+     "date": "2026-10-06"
+    }
+   ]
   },
   {
    "id": "theme-system",
@@ -20070,6 +21077,7 @@
     "team-invite-comm"
    ],
    "calledBy": [
+    "core/deep-link-gateway",
     "sanctuary-weekly-recap"
    ],
    "readsFromIndexHtml": [
