@@ -1,0 +1,88 @@
+{
+  "id": "records-pro-template-modals",
+  "title": "게스트로 전문 템플릿 기록 창에서 「표 속성 편집」을 누르면 표 속성(열) 편집 창이 뜨고 「표에 적용」하면 「표 속성을 변경했어요」 토스트가 뜨며, 기록 탭 「+ 템플릿 만들기」를 누르면 「내 전용 템플릿 생성하기」 창이 뜬다 — 표 열 편집·내 전용 템플릿 만들기 모달(openTemplateColumnEditModal·openCreateCustomTemplateModal)을 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#proEditColsBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#proEditColsBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#colEditConfirm",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "attr",
+      "selector": "#colEditList .col-edit-input[data-colidx=\"1\"]",
+      "name": "value",
+      "equals": "운동종목"
+    },
+    {
+      "do": "click",
+      "selector": "#colEditConfirm"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "표 속성을 변경했어요",
+      "timeoutMs": 4000
+    },
+    {
+      "do": "click",
+      "selector": "#recCreateCustomTplQuickBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet h3",
+      "text": "내 전용 템플릿 생성하기",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
