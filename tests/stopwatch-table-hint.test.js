@@ -10,7 +10,7 @@ const SUITE_TASK = 'TASK-ES-257';
 console.log('[TEST] stopwatch-table-hint.test.js: starting execution for ' + SUITE_TASK + '...');
 
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8')); /* #TASK-ES-447 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 
 // 1. 소스 정적 검증: 스톱워치 안내 힌트 문구, ID, 속성 및 window 바인딩
 {
