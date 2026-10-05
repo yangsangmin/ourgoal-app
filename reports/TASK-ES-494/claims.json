@@ -1,0 +1,32 @@
+{
+ "task": "TASK-ES-494",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-494-FOCUS-NO-FAKE-25.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "상민님 승인(2026-10-05 「주간 집중 시간 A안으로 진행해」): calculateWeeklyFocusStats endAt 누락 25분 기본값 삭제(진행 중 기록은 몰입 0분) + smoke 검사 기대값 25→0·이름 사실화"
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 18,
+   "domain": "ui-behavior",
+   "statement": "게스트가 기록 탭에서 「진행 중」(종료 시간 없음) 기록을 하나 남긴 뒤 홈 「🎯 오늘 목표」를 열면 오늘 요약(#todayGlancePill)의 몰입은 0분이라 「오늘 기록 1회 · 25분 집중 추천」으로 보이고 지어낸 「0시간 25분 몰입」은 없다 — 고치기 전에는 calculateWeeklyFocusStats 가 종료 시간 없는 기록을 25분 몰입으로 셌다(상민님 승인 A안)",
+   "touches": [
+    "js/core/virtual-user-helpers.js"
+   ],
+   "scenario": "scenarios/home-glance-ongoing-zero-focus.json"
+  }
+ ],
+ "retire": [
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "calculateWeeklyFocusStats: endAt 누락 기록은 기본 몰입시간(25분)을 반영한다",
+   "reason": "상민님 승인 2026-10-05 「주간 집중 시간 A안으로 진행해」 — 25분 기본값(허상지표)을 삭제하므로 기대값 25 를 0 으로, 이름을 「…누락 기록은 몰입시간에 넣지 않는다」로 사실화. totalSessions 단언·검사 수 그대로"
+  }
+ ]
+}

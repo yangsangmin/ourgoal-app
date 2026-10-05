@@ -1481,13 +1481,13 @@ check('reorderMilestones: 동일 인덱스 이동 시 배열 순서를 그대로
   assert.strictEqual(goal.milestones[1].id, 'b');
 });
 
-check('calculateWeeklyFocusStats: endAt 누락 기록은 기본 몰입시간(25분)을 반영한다', () => {
+check('calculateWeeklyFocusStats: endAt 누락 기록은 몰입시간에 넣지 않는다', () => {
   const now = new Date();
   const d = new Date(now.getTime() - 10000).toISOString();
   const records = [{ startAt: d }]; // endAt 없음
   const stats = fns.calculateWeeklyFocusStats(records);
   assert.strictEqual(stats.totalSessions, 1);
-  assert.strictEqual(stats.totalMinutes, 25, '기본 25분 산정');
+  assert.strictEqual(stats.totalMinutes, 0, '진행 중 기록은 몰입 0분(#TASK-ES-494 상민님 승인 — 25분 기본값 삭제)');
 });
 
 check('exportRecordsToMarkdown: 본문 내 파이프 기호(|)와 줄바꿈을 안전하게 이스케이프한다', () => {

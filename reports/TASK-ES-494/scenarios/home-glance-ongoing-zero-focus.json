@@ -1,0 +1,92 @@
+{
+  "id": "home-glance-ongoing-zero-focus",
+  "title": "게스트가 기록 탭에서 「진행 중」(종료 시간 없음) 기록을 하나 남긴 뒤 홈 「🎯 오늘 목표」를 열면 오늘 요약(#todayGlancePill)의 몰입은 0분이라 「오늘 기록 1회 · 25분 집중 추천」으로 보이고 지어낸 「0시간 25분 몰입」은 없다 — 고치기 전에는 calculateWeeklyFocusStats 가 종료 시간 없는 기록을 25분 몰입으로 셌다(상민님 승인 A안)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnColdstartCreateRecord"
+    },
+    {
+      "do": "type",
+      "selector": "#rText",
+      "text": "독서 진행 중"
+    },
+    {
+      "expect": "attr",
+      "selector": "#rEnd",
+      "name": "disabled",
+      "equals": ""
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#mSave",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeCompassQuest",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#todayGlancePill",
+      "text": "오늘 기록 1회",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#todayGlancePill",
+      "text": "25분 집중 추천"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
