@@ -1,0 +1,193 @@
+{
+ "task": "TASK-ES-519",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험지 3개(achievement-graph-multiset·team-fold-state-es409·team-level-accordion-es406)의 「함수 시작 ~ 원래 자리 노출 줄」 잘라 읽기가 합본 도우미 cutFunctionWithExposure 의 반환 글자를 읽는다. 단언·기대값·검사 수 0 변경, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "기준 제품·모의 이동 제품 × 기준·새 시험지 4칸과 노출 줄을 지운 이동 제품 1칸을 재어 기록한다."
+  },
+  {
+   "id": "R3",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합본 도우미에 함수 시작과 노출 줄을 나눠 찾는 함수가 있다",
+   "touches": [
+    "tests/helpers/inline-bundle.js"
+   ],
+   "check": {
+    "file": "tests/helpers/inline-bundle.js",
+    "type": "codeContains",
+    "text": "function cutFunctionWithExposure(html, head, exposure) {"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정지표 다중 렌더 시험지가 도우미 반환 글자에서 함수를 자른다",
+   "touches": [
+    "tests/achievement-graph-multiset.test.js"
+   ],
+   "check": {
+    "file": "tests/achievement-graph-multiset.test.js",
+    "type": "codeContains",
+    "text": "const svgFnCode = svgSrc.substring(startSvgIdx, endSvgIdx);"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "팀 접힘 상태 시험지가 도우미 반환 글자에서 함수를 자른다",
+   "touches": [
+    "tests/team-fold-state-es409.test.js"
+   ],
+   "check": {
+    "file": "tests/team-fold-state-es409.test.js",
+    "type": "codeContains",
+    "text": "const src = fnSrc.slice(start, end);"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "수준별 아코디언 시험지가 도우미 반환 글자에서 함수를 자른다",
+   "touches": [
+    "tests/team-level-accordion-es406.test.js"
+   ],
+   "check": {
+    "file": "tests/team-level-accordion-es406.test.js",
+    "type": "codeContains",
+    "text": "const src = fnSrc.slice(start, end);"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 기준 제품에서 기준 시험지와 종료 코드·출력 줄 수·첫 오류가 같다",
+   "touches": [
+    "reports/TASK-ES-519/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-519/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnBaseProduct",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 시험지 3개는 모의 이동 제품에서 깨진다(선행이 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-519/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-519/real-move.json",
+    "type": "jsonPath",
+    "path": "baseTestBreaksOnMoved",
+    "equals": [
+     "tests/achievement-graph-multiset.test.js",
+     "tests/team-fold-state-es409.test.js",
+     "tests/team-level-accordion-es406.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 모의 이동 제품에서 기준 시험지·기준 제품과 같다",
+   "touches": [
+    "reports/TASK-ES-519/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-519/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnMoved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "노출 줄을 지운 이동 제품에서 새 시험지는 하나도 통과하지 않는다(검사 세기 유지)",
+   "touches": [
+    "reports/TASK-ES-519/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-519/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestPassesWithoutExposure",
+    "equals": []
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-519: 시험지 선행(인라인 3단계 Z4)"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-519 | INFRA | [시험지 선행 · 인라인 3단계 Z4]"
+   }
+  }
+ ]
+}
