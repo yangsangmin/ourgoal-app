@@ -1,7 +1,7 @@
 # REQ — #TASK-ES-478 소통 숨김 진입로 판정 · 남은 허상지표 제거 · 위젯 시험 픽스처
 
 - 근거: 코디네이터 지시(2026-10-05, #TASK-ES-462 #767 병합 뒤 2차).
-- 범위(바꾼 파일): `index.html`(인라인 통계 요약 카드 4줄), `js/sanctuary-weekly-recap.js`, `tests/desktop-widget-suite.test.js`(가짜 window 이름 1줄), `reports/TASK-ES-478/**`.
+- 범위(바꾼 파일): `js/tabs/records/trend-metrics-chart.js`(통계 요약 카드 — main 합칠 때 #TASK-ES-467 이 renderWeekChart 를 이 세포로 옮겨 같은 수정을 세포에서 다시 얹음, index.html 변경 0), `js/sanctuary-weekly-recap.js`, `tests/desktop-widget-suite.test.js`(가짜 window 이름 1줄), `reports/TASK-ES-478/**`.
 - 범위 밖(보고만 — 코드 변경 0): 소통 허브 `#commHubGrid` 복원, 소통 피드 빠른 게시 띠 복원, 무공해 응원 바·프로필 시트의 가짜 전송.
 
 ## 1. [원칙 ①] 문제 정확히 파악 — 지시 요지

@@ -1,0 +1,391 @@
+{
+ "task": "TASK-ES-467",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "인라인 어려움 구역 H3 의 「TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진」과 「전문적(내 전용 템플릿) 기록하기 & 일정 연동」(850줄, 책임 단위로 나눔)을 기록 탭 세포 3개(js/tabs/records/trend-metrics-chart·pro-templates·pro-template-modals)로 글자 그대로 옮긴다(시험지가 원문에서 잘라 실행하는 renderMultiMetricSvg 는 남김). 새 전역 0, 새 파일 800줄 이하, 기능 추가·삭제 0. 옮긴 화면이 게스트에게 이전과 같이 그려지고 동작한다. 「템플릿 복제 보상형 광고」 묶음은 광고·돈 승인선이라 옮기지 않는다."
+  },
+  {
+   "id": "R2",
+   "text": "설정·생성기 수정(smoke 합본 읽기일 때 F2 정지를 풀기)·게스트 조작 비교 하네스를 저장소에 남긴다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 측정(git archive 기준 origin/main): verify 토큰·덩어리 줄 동일·누수 0·원본에서 구간 사라짐, 법정 모듈 로드 탐침 회귀 0, 게스트 조작 비교 기준 2회·후 1회 차이 0, 시험 기준과 같음, 화면 시나리오 기준·작업 통과. main 이 움직이면 바뀌는 전체 수치는 주장하지 않는다."
+  },
+  {
+   "id": "R4",
+   "text": "세포 신고서(modules.json)·세포지도 설명(cell-descriptions.json)·REQ 8원칙·dev_log·TICKETS 각 1줄. 생성 지도 3종은 커밋하지 않는다(오케스트레이터 일괄 갱신)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 「📈 히트맵·통계」의 「📊 실천추이」 차트에서 꺼져 있던 측정지표 「달성률」 칩을 누르면 켜지고, 「월간」을 누르면 월간 단추가 켜지며 예외가 없다 — 옮긴 TREND_METRICS·renderWeekChart 가 index.html 에 남은 renderMultiMetricSvg 를 통로로 불러 그린다",
+   "touches": [
+    "js/tabs/records/trend-metrics-chart.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-trend-metrics.json"
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 전문 템플릿 기록 창을 열면 템플릿 고르기 칸에 「헬스」가 있고, 「공부」로 바꾸면 표 머리에 「과목/주제」 열이 그려지며 예외가 없다 — 옮긴 DEFAULT_PRO_TEMPLATES·getAllProTemplates·getProTemplateByKey",
+   "touches": [
+    "js/tabs/records/pro-templates.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-pro-templates.json"
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 전문 템플릿 기록 창의 「표 속성 편집」 창에 열 「운동종목」이 있고 「표에 적용」하면 「표 속성을 변경했어요」 토스트가 뜨며, 「+ 템플릿 만들기」를 누르면 「내 전용 템플릿 생성하기」 창이 뜬다 — 옮긴 openTemplateColumnEditModal·openCreateCustomTemplateModal",
+   "touches": [
+    "js/tabs/records/pro-template-modals.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-pro-template-modals.json"
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "생성기: smoke 가 인라인 합본(inline-bundle)에서 FN_NAMES 를 뽑으면 js/tabs/** 세포(합본이 기관 칸도 읽으면 js/core 세포)로 옮기는 FN_NAMES 함수에서 멈추지 않는다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "const smokeReadsCell = file => smokeUsesBundle && (file.startsWith("
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설정: 구역 자리 H3",
+   "touches": [
+    "docs/design/harness/module-split/inline-h3-467.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-h3-467.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H3"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설정: 850줄 묶음의 화면 쪽(모달 두 함수)을 따로 나눈 세포",
+   "touches": [
+    "docs/design/harness/module-split/inline-h3-467.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-h3-467.json",
+    "type": "jsonPath",
+    "path": "cells.2.file",
+    "equals": "js/tabs/records/pro-template-modals.js"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 단계: 표 속성 편집 적용 뒤 기록 창 남음 여부를 잰다",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-inline-h3.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-compare-inline-h3.js",
+    "type": "codeContains",
+    "text": "['cols-after', {"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "토큰·덩어리 줄·남은 글자 동일·누수 0·노출·이중 처리기 0 종합",
+   "touches": [
+    "reports/TASK-ES-467/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "옮긴 구간 토큰열 동일(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-467/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "옮긴 선언이 index.html 인라인에 남지 않았다",
+   "touches": [
+    "reports/TASK-ES-467/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "leftDefsInIndex",
+    "equals": []
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "index.html 에서 쓰는 옮긴 이름은 모두 키트에서 가져온다",
+   "touches": [
+    "reports/TASK-ES-467/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "usedInIndexNotImported",
+    "equals": []
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "법정 모듈 로드 탐침 회귀 0",
+   "touches": [
+    "reports/TASK-ES-467/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressionCount",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 세포 파일 3개 단독 로드 성공",
+   "touches": [
+    "reports/TASK-ES-467/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "newFilesStandaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-467/dom-compare-inline-h3.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/dom-compare-inline-h3.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-467/dom-compare-inline-h3.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/dom-compare-inline-h3.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "smoke·무결성·버튼 통과·실패 수 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-467/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/test-compare.json",
+    "type": "jsonPath",
+    "path": "passFailSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-467/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitCodesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "시나리오 로컬 3개 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-467/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-467/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서: 측정지표 추이 차트 세포",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/tabs/records/trend-metrics-chart.js\","
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서: 전문 템플릿 목록·해석 세포",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/tabs/records/pro-templates.js\","
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "세포지도 설명: 전문 템플릿 만들기·열 편집 창 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "    \"records/pro-template-modals\": \"전문 템플릿 만들기·열 편집 창\","
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-467: 인라인 어려움 구역 H3"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3]"
+   }
+  }
+ ]
+}

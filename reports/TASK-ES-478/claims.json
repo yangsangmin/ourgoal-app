@@ -4,7 +4,7 @@
  "requirements": [
   {
    "id": "R1",
-   "text": "인라인 통계 요약 카드(index.html renderWeekChart)의 state.profile.streak || 3 가짜 스트릭 제거 — 실제 computeStreakDays, 0 이면 칸 생략"
+   "text": "인라인 통계 요약 카드(renderWeekChart — #TASK-ES-467 로 js/tabs/records/trend-metrics-chart.js 로 옮겨짐)의 state.profile.streak || 3 가짜 스트릭 제거 — 실제 computeStreakDays, 0 이면 칸 생략"
   },
   {
    "id": "R2",
@@ -42,7 +42,7 @@
    "domain": "ui-behavior",
    "statement": "기록이 하나도 없는 게스트가 기록 탭 「📈 히트맵·통계」를 누르면 실천 추이 요약 카드(.rec-stats-summary-card)에 「총 몰입 시간」·「총 실천 횟수」 두 칸만 보이고 「포커스 스트릭」 칸이 없다 — 고치기 전에는 아무도 채우지 않는 profile.streak || 3 으로 기록 0건에도 「3일 연속 🔥」 칸이 찍혔다",
    "touches": [
-    "index.html"
+    "js/tabs/records/trend-metrics-chart.js"
    ],
    "scenario": "scenarios/records-stats-no-fake-streak.json"
   },
@@ -55,7 +55,7 @@
    "domain": "ui-behavior",
    "statement": "게스트가 홈에서 한 줄 체크인을 저장한 뒤 기록 탭 「📈 히트맵·통계」를 누르면 실천 추이 요약 카드의 포커스 스트릭이 실제 값 「1일 연속」으로 보인다(홈 스트릭과 같은 computeStreakDays) — 고치기 전에는 profile.streak || 3 으로 「3일 연속」이 찍혔다",
    "touches": [
-    "index.html"
+    "js/tabs/records/trend-metrics-chart.js"
    ],
    "scenario": "scenarios/records-stats-real-streak.json"
   },
