@@ -2213,7 +2213,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/render.js"></script>
 <script src="js/tabs/goals/result-modal.js"></script>
 <script src="js/tabs/goals/team-goal-modals.js"></script><script src="js/tabs/goals/template-quick-import.js"></script><script src="js/tabs/goals/result-input.js"></script><script src="js/tabs/goals/prompt-encyclopedia.js"></script><script src="js/tabs/goals/notion-record-convert.js"></script><script src="js/tabs/goals/goal-math.js"></script><script src="js/tabs/goals/goal-export.js"></script>
-<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/new-goal-modal.js"></script><script src="js/tabs/goals/goals-ia-actions.js"></script><script src="js/tabs/goals/template-encyclopedia.js"></script><script src="js/tabs/goals/focus-autopilot.js"></script><script src="js/tabs/goals/routine-screen.js"></script><script src="js/tabs/goals/team-goals-guide.js"></script><script src="js/tabs/goals/goal-update-suggest.js"></script><script src="js/tabs/goals/attachments.js"></script><script src="js/tabs/goals/team-goals-screen.js"></script><script src="js/tabs/goals/index.js"></script>
+<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/new-goal-modal.js"></script><script src="js/tabs/goals/goals-ia-actions.js"></script><script src="js/tabs/goals/template-encyclopedia.js"></script><script src="js/tabs/goals/focus-autopilot.js"></script><script src="js/tabs/goals/routine-screen.js"></script><script src="js/tabs/goals/team-goals-guide.js"></script><script src="js/tabs/goals/goal-update-suggest.js"></script><script src="js/tabs/goals/attachments.js"></script><script src="js/tabs/goals/team-goals-screen.js"></script><script src="js/tabs/goals/routine-detail-modal.js"></script><script src="js/tabs/goals/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
 <script src="js/tabs/records/sub-timeline.js"></script>
 <script src="js/tabs/records/sub-timer.js"></script>
@@ -3045,6 +3045,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get isWithinDND(){ return isWithinDND; },
     get renderTodayMissionCard(){ return renderTodayMissionCard; }
   });
+  /* [#TASK-ES-537] js/tabs/goals/routine-detail-modal.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var openRoutineDetailModal = _goalsKit.openRoutineDetailModal;
   /* [#TASK-ES-521] js/core/supabase-auth.js · js/tabs/settings/tester-entry.js · js/tabs/settings/account-actions.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var getSupabaseAuthToken = _uiKit.getSupabaseAuthToken;
   var GOOGLE_OAUTH_CLIENT_ID = _uiKit.GOOGLE_OAUTH_CLIENT_ID;
@@ -8325,169 +8327,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.SHIFT_WORK_PRESETS = SHIFT_WORK_PRESETS;
 
   /* ============ [#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달 ============ */
-  /* [#TASK-ES-493] renderRoutineGoalsScreen → js/tabs/goals/routine-screen.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-
-  /**
-   * 루틴 상세 확인 및 편집 모달 (목표탭 벤치마킹 #TASK-ES-305)
-   */
-  function openRoutineDetailModal(routineId){
-    var routines = (state.profile && state.profile.settings && state.profile.settings.routines) || [];
-    var target = routines.find(function(r){ return r.id === routineId; });
-    if(!target) return;
-
-    var selectedDays = (target.days && target.days.slice()) || [1,2,3,4,5,6,7];
-    var compCount = (target.completedDates && target.completedDates.length) || 0;
-    var isDoneToday = target.completedDates && target.completedDates.indexOf(dateKey(new Date())) !== -1;
-    var currentCat = target.category || '🌱 생활·습관';
-    var routineCategories = ['🏃 운동·건강', '📚 공부·성장', '💼 커리어·업무', '🧘 마음·멘탈', '🌱 생활·습관'];
-    var activeGoals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
-
-    var modalHtml = '' +
-      '<div class="routine-detail-modal-box" style="padding:2px 0;">' +
-        '<div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
-          '<div style="display:flex;align-items:center;gap:8px;">' +
-            '<span style="font-size:1.25rem;">🎯</span>' +
-            '<h3 style="margin:0;font-size:1.1rem;font-weight:800;color:var(--ink);">루틴 상세 & 편집 (목표 벤치마킹)</h3>' +
-          '</div>' +
-          '<span class="badge" style="font-size:.75rem;padding:3px 8px;border-radius:8px;background:' + (isDoneToday ? 'rgba(34,197,94,0.15)' : 'rgba(99,102,241,0.12)') + ';color:' + (isDoneToday ? '#16a34a' : 'var(--brand)') + ';font-weight:700;">' +
-            (isDoneToday ? '✓ 오늘 완수됨' : '진행 대기 중') +
-          '</span>' +
-        '</div>' +
-        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">' +
-          '<div>' +
-            '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);">누적 실천 성취</div>' +
-            '<div class="faint" style="font-size:.75rem;">설정 이후 꾸준히 실천한 총 완수 일수</div>' +
-          '</div>' +
-          '<div style="font-size:1.15rem;font-weight:800;color:var(--brand);font-family:monospace;">총 ' + compCount + '일</div>' +
-        '</div>' +
-        '<div style="margin-bottom:12px;">' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">루틴 카테고리 (목표 연계)</label>' +
-          '<div id="detailRtCategoryPicker" style="display:flex;flex-wrap:wrap;gap:6px;">' +
-            routineCategories.map(function(cat){
-              var isCatSel = (cat === currentCat);
-              return '<button type="button" class="btn btn-sm btn-ghost routine-cat-chip' + (isCatSel ? ' active' : '') + '" data-cat="' + cat + '" style="padding:5px 10px;font-size:.78125rem;font-weight:700;border-radius:8px;border:1px solid ' + (isCatSel ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isCatSel ? 'var(--brand)' : 'var(--surface-2)') + ';color:' + (isCatSel ? '#fff' : 'var(--ink)') + ';">' + cat + '</button>';
-            }).join('') +
-          '</div>' +
-        '</div>' +
-        '<div style="margin-bottom:12px;">' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">루틴 이름</label>' +
-          '<input type="text" id="inDetailRtTitle" value="' + escapeHtml(target.title) + '" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;font-weight:600;" placeholder="실천할 루틴 이름을 입력하세요">' +
-        '</div>' +
-        '<div style="margin-bottom:12px;">' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">연결 상위 목표 (선택)</label>' +
-          '<select id="inDetailRtLinkedGoalId" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;font-size:.84375rem;">' +
-            '<option value="">선택 안 함 (독립 루틴)</option>' +
-            activeGoals.map(function(g){
-              var isGoalSel = (g.id === target.linkedGoalId);
-              return '<option value="' + g.id + '"' + (isGoalSel ? ' selected' : '') + '>🎯 ' + escapeHtml(g.title) + '</option>';
-            }).join('') +
-          '</select>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">' +
-          '<div>' +
-            '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림/실천 시간</label>' +
-            '<input type="time" id="inDetailRtTime" value="' + (target.time || '08:00') + '" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
-          '</div>' +
-          '<div>' +
-            '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림 수신</label>' +
-            '<label style="display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--surface-2);cursor:pointer;font-size:.8125rem;color:var(--ink);">' +
-              '<input type="checkbox" id="inDetailRtNotify" ' + (target.notify !== false ? 'checked' : '') + '> <span>🔔 푸시 알림</span>' +
-            '</label>' +
-          '</div>' +
-        '</div>' +
-        '<div style="margin-bottom:12px;">' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">반복 요일</label>' +
-          '<div style="display:flex;gap:4px;" id="detailRoutineDaysPicker">' +
-            ['월','화','수','목','금','토','일'].map(function(d, i){
-              var isDayActive = selectedDays.indexOf(i+1) !== -1;
-              return '<button type="button" class="btn btn-sm btn-ghost r-detail-day-btn" data-day="' + (i+1) + '" style="flex:1;padding:6px 0;font-size:.8125rem;font-weight:700;border:1px solid ' + (isDayActive ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isDayActive ? 'var(--brand)' : 'transparent') + ';color:' + (isDayActive ? '#fff' : 'var(--ink)') + ';border-radius:8px;">' + d + '</button>';
-            }).join('') +
-          '</div>' +
-        '</div>' +
-        '<div style="margin-bottom:16px;">' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">실천 팁 & 상세 메모 (선택)</label>' +
-          '<textarea id="inDetailRtMemo" placeholder="예: 미온수 500ml 준비, 가벼운 목/허리 스트레칭 5분" style="width:100%;box-sizing:border-box;min-height:65px;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);resize:vertical;">' + escapeHtml(target.memo || '') + '</textarea>' +
-        '</div>' +
-        '<div class="modal-actions" style="display:flex;gap:8px;align-items:center;">' +
-          '<button class="btn btn-ghost" id="btnDeleteDetailRoutine" type="button" style="color:#ef4444;font-weight:700;">삭제</button>' +
-          '<div style="flex:1;"></div>' +
-          '<button class="btn btn-ghost" id="btnCancelDetailRoutine" type="button">취소</button>' +
-          '<button class="btn btn-primary" id="btnSaveDetailRoutine" type="button" style="font-weight:700;padding:8px 18px;">저장하기</button>' +
-        '</div>' +
-      '</div>';
-
-    openModal(modalHtml, function(sheet){
-      sheet.querySelector('#btnCancelDetailRoutine').onclick = closeModal;
-
-      // 카테고리 칩 선택 이벤트
-      sheet.querySelectorAll('.routine-cat-chip').forEach(function(chip){
-        chip.onclick = function(){
-          currentCat = chip.getAttribute('data-cat');
-          sheet.querySelectorAll('.routine-cat-chip').forEach(function(c){
-            var isThis = (c.getAttribute('data-cat') === currentCat);
-            c.style.background = isThis ? 'var(--brand)' : 'var(--surface-2)';
-            c.style.color = isThis ? '#fff' : 'var(--ink)';
-            c.style.borderColor = isThis ? 'var(--brand)' : 'var(--rule)';
-          });
-        };
-      });
-
-      sheet.querySelectorAll('.r-detail-day-btn').forEach(function(btn){
-        btn.onclick = function(){
-          var day = parseInt(btn.getAttribute('data-day'), 10);
-          var idx = selectedDays.indexOf(day);
-          if(idx !== -1){
-            if(selectedDays.length > 1){
-              selectedDays.splice(idx, 1);
-              btn.style.background = 'transparent';
-              btn.style.color = 'var(--ink)';
-              btn.style.borderColor = 'var(--rule)';
-            }
-          } else {
-            selectedDays.push(day);
-            selectedDays.sort();
-            btn.style.background = 'var(--brand)';
-            btn.style.color = '#fff';
-            btn.style.borderColor = 'var(--brand)';
-          }
-        };
-      });
-
-      sheet.querySelector('#btnDeleteDetailRoutine').onclick = async function(){
-        if(!confirm('이 루틴을 삭제하시겠습니까?')) return;
-        state.profile.settings.routines = routines.filter(function(r){ return r.id !== routineId; });
-        await saveProfile();
-        closeModal();
-        toast('루틴이 삭제되었습니다.');
-        renderRoutineGoalsScreen();
-        if(typeof renderAll === 'function') renderAll();
-      };
-
-      sheet.querySelector('#btnSaveDetailRoutine').onclick = async function(){
-        var newTitle = sheet.querySelector('#inDetailRtTitle').value.trim();
-        if(!newTitle){ toast('루틴 이름을 입력해주세요.'); return; }
-        var newLinkedGoalId = sheet.querySelector('#inDetailRtLinkedGoalId').value || null;
-        var newTime = sheet.querySelector('#inDetailRtTime').value;
-        var newNotify = sheet.querySelector('#inDetailRtNotify').checked;
-        var newMemo = sheet.querySelector('#inDetailRtMemo').value.trim();
-
-        target.title = newTitle;
-        target.category = currentCat;
-        target.linkedGoalId = newLinkedGoalId;
-        target.time = newTime;
-        target.days = selectedDays;
-        target.notify = newNotify;
-        target.memo = newMemo;
-
-        await saveProfile();
-        closeModal();
-        if(typeof triggerHaptic === 'function') triggerHaptic(12);
-        toast('루틴 설정이 저장되었습니다! ✨');
-        renderRoutineGoalsScreen();
-        if(typeof renderAll === 'function') renderAll();
-      };
-    });
-  }
+  /* [#TASK-ES-537] openRoutineDetailModal → js/tabs/goals/routine-detail-modal.js 로 옮김(인라인 3단계 기관 — 데일리 루틴 상세·편집 창 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.openRoutineDetailModal = openRoutineDetailModal;
     window.renderRoutineGoalsScreen = renderRoutineGoalsScreen;
