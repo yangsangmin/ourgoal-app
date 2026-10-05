@@ -46,7 +46,7 @@ worktree `C:/dev/wt/inline-h2`(브랜치 `feat/2026-10-05-task-es-497-inline-h2-
 
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |
-| 글자 동일 | `verify-inline-hard.js` | 옮긴 함수 1개 토큰열 동일, 표지 구간 줄 단위 동일, 남은 글자 100369토큰 동일, 누수·미노출·setter 빠짐·남은 정의·안 가져온 사용·this/arguments 0, 처리기 355 = 312 + 43, 새 파일 798줄 (`verify-inline-hard-pr3.json` ok) |
+| 글자 동일 | `verify-inline-hard.js` | 옮긴 함수 1개 토큰열 동일, 표지 구간 줄 단위 동일, 남은 글자 96307토큰 동일, 누수·미노출·setter 빠짐·남은 정의·안 가져온 사용·this/arguments 0, 처리기 333 = 290 + 43, 새 파일 798줄 (`verify-inline-hard-pr3.json` ok — 마지막 합침 89254e4 기준 값) |
 | 줄 수 | 생성기 메타 | index.html −753줄 (`gen-meta-pr3.json`) |
 | 원본 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0, 새 파일 단독 로드 ok (`module-load-probe-pr3.json`) |
 | 화면 시나리오 | `court/lib/scenario.js` 로컬 | `goals-team-screen` 기준·작업 통과, 약점 0 (`scenario-local.json`) |
