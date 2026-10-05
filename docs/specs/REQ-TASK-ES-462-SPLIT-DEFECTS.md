@@ -2,7 +2,7 @@
 
 - 근거: 코디네이터 지시(2026-10-05) — 인라인 스크립트 세포화(#TASK-ES-436~456)·성소 엔진 분열(#TASK-ES-429) 중 발견된 기존 결함 9건 + 추가 2건(홈 구성 레벨 배지 문구, 목표 상세 서랍 진입로). 모두 분열 전부터 있던 결함이다(분열 PR 은 "버그도 그대로 옮긴다"는 규칙이라 그때 고치지 않았다).
 - 범위(바꾼 파일): `ui.css`(1곳), `js/tabs/goals/render.js`, `js/sanctuary-weekly-recap.js`, `js/sanctuary-v3-engine.js`, `js/sanctuary-goal-trail.js`, `js/customize.js`, `index.html`(인라인 스크립트 3줄 + 마크업 속성 1줄), `tests/sync-server-records-render-home.test.js`(새 시험), `reports/TASK-ES-462/**`.
-- 범위 밖(보고만): 챌린지 룸 창 연결(1), 가려진 버튼(4), desktop-widget-suite 시험(9), 같은 허상 스트릭이 남은 인라인 통계 카드 1곳(index.html `streakVal … || 3`, 인라인 분열 빌더 구역).
+- 범위 밖(보고만 — 이 PR 의 지시 항목이 아님, `claims.json` requirements 에서 내리고 `outOfScopeReports` 로 옮김, 별도 티켓 후보): 챌린지 룸 창 연결(1), 가려진 버튼(4), desktop-widget-suite 시험(9), 같은 허상 스트릭이 남은 인라인 통계 카드 1곳(index.html `streakVal … || 3`, 인라인 분열 빌더 구역).
 
 ## 1. [원칙 ①] 문제 정확히 파악 — 지시 요지
 

@@ -3,20 +3,12 @@
  "requirementsSource": "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md",
  "requirements": [
   {
-   "id": "R1",
-   "text": "챌린지 룸 창 openChallengeRoomModal 부르는 곳 0 — 동작 확인 뒤 연결 또는 보고. [보고] 방 10개가 하드코딩 가짜 사람·인원이라 연결하지 않음(GUARD_02·제13조)."
-  },
-  {
    "id": "R2",
    "text": "PWA 설치 안내 창 switchPwaOsTab: 선택한 OS 단계만 보이게."
   },
   {
    "id": "R3",
    "text": "목표 탭 빈 화면 #goalTemplateHeroCard 한 번만."
-  },
-  {
-   "id": "R4",
-   "text": "가려진 버튼(#checkinFeedbackTierBar·#btnModeGamified 등) elementFromPoint 실측·겹침 원인 수정. [보고] 닫힌 details 안이라 생긴 측정 착시 — 펼친 뒤 기준에서도 눌림(occlusion-check.json)."
   },
   {
    "id": "R5",
@@ -33,10 +25,6 @@
   {
    "id": "R8",
    "text": "목표 0개 게스트 홈 「오늘 목표」 시트에 3대 퀘스트가 그려지게(renderHome 조기 반환)."
-  },
-  {
-   "id": "R9",
-   "text": "tests/desktop-widget-suite.test.js main 실패 원인. [보고] 시험이 낡음(#TASK-ES-353 이후 renderCalendarScreen) — 시험 안 고침."
   },
   {
    "id": "R10",
@@ -225,5 +213,22 @@
     "equals": 0
    }
   }
- ]
+ ],
+ "outOfScopeReports": {
+  "note": "보고만 — 이 PR 범위 아님(코드 변경 0, 주장 없음). 근거는 REQ 원칙 ④와 PR 본문, 별도 티켓 후보.",
+  "items": [
+   {
+    "id": "R1",
+    "text": "챌린지 룸 창 openChallengeRoomModal 미연결 — 방 10개가 하드코딩 가짜 사람·인원(GUARD_02·제13조)이라 진입로를 붙이지 않음"
+   },
+   {
+    "id": "R4",
+    "text": "가려진 버튼(#checkinFeedbackTierBar·#btnModeGamified 등) — 닫힌 details 안이라 생긴 측정 착시, 펼친 뒤 375·390·1280 기준에서도 진짜 마우스로 눌림(reports/TASK-ES-462/occlusion-check.json). 고칠 겹침 없음"
+   },
+   {
+    "id": "R9",
+    "text": "tests/desktop-widget-suite.test.js 실패 — 시험이 #TASK-ES-353 이전 renderCalendar 를 가짜 window 로 줌(제품은 renderCalendarScreen 이 맞음). 시험 안 고침"
+   }
+  ]
+ }
 }
