@@ -11,13 +11,14 @@
  *   · docs/architecture/cell-descriptions.json(「이 세포가 하는 일」 한 줄) · js/** 실제 파일(줄 수·머리 주석·노출 이름·require)
  *   · index.html(누가 부르는지·스크립트 태그) · js/core/slots.js(꽂는 자리 15곳) · docs/specs/REQ-TASK-ES-*.md
  *   · git 이력(첫 부모 줄기의 병합 PR 번호·작업 번호·기준 커밋 — git 이 없으면 빈 값)
- * 결정적이다: 같은 커밋·같은 작업 트리 → 같은 바이트. 현재 시각을 쓰지 않는다(갱신 시각 = 기준 커밋 시각).
+ * 결정적이다: git 이 추적하는 파일만 읽는다(#TASK-ES-417 — 미추적 파일 무시). 같은 커밋 → 어느 작업 폴더에서든 같은 바이트. 현재 시각을 쓰지 않는다(갱신 시각 = 기준 커밋 시각).
  * 화면: 세포지도 웹페이지(claude.ai artifact)와 노션 「아워골 세포지도 (실시간)」가 이 파일 하나를 읽는다. 절차: scripts/cell-map-sync.md
  */
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { spawnSync } = require('child_process');
 const metrics = require('./module-metrics');
 
@@ -178,7 +179,7 @@ function splitHistory(baseline, cells, linesByFile) {
   return { first: { date: first.date, commit: first.commit, count: first.metrics.oversizeJsFiles.count }, items };
 }
 
-function build(root) {
+function buildFrom(root, gitRoot) {
   const spec = readJson(root, 'docs/architecture/modules.json', { cells: [] });
   const baseline = readJson(root, 'docs/architecture/module-baseline.json', { history: [] });
   const descDoc = readJson(root, 'docs/architecture/cell-descriptions.json', { cells: {} });
@@ -187,7 +188,7 @@ function build(root) {
   const indexScriptCode = metrics.blankCommentOnlyLines(metrics.inlineScripts(indexHtml).map(s => s.body).join('\n'));
   const loadedByIndex = new Set(allMatches(indexHtml, /<script[^>]*\bsrc="([^"?#]+)/).map(s => s.replace(/^\.\//, '')));
   const slotsMod = require(path.join(root, 'js', 'core', 'slots.js'));
-  const prs = mergedPrs(root);
+  const prs = mergedPrs(gitRoot);
   const reqs = reqFiles(root);
   const m = metrics.measure(root);
 
@@ -301,7 +302,7 @@ function build(root) {
 
   return {
     schema: SCHEMA,
-    source: Object.assign({ repo: 'yangsangmin/ourgoal-app', generator: 'scripts/cell-map-export.js', basisPaths: BASIS_PATHS }, basisCommit(root)),
+    source: Object.assign({ repo: 'yangsangmin/ourgoal-app', generator: 'scripts/cell-map-export.js', basisPaths: BASIS_PATHS }, basisCommit(gitRoot)),
     summary: {
       cells: outCells.length,
       files: outCells.filter(c => c.file).length,
@@ -341,6 +342,37 @@ function build(root) {
   };
 }
 
+/** 생성기가 읽는 경로(모두 이 아래만 읽는다) — module-metrics 가 재는 js/**·index.html·ui.js·docs/specs 원장 설계서 포함 */
+const INPUT_PATHS = ['js', 'index.html', 'ui.js', 'docs/architecture', 'docs/specs'];
+
+/** git 이 추적하는 입력 파일 목록(작업 트리에 실제로 있는 것만). git 이 없으면 null */
+function trackedInputs(root) {
+  const out = git(root, ['ls-files', '-z', '--'].concat(INPUT_PATHS));
+  if (out === null) return null;
+  return out.split('\0').filter(Boolean).filter(f => fs.existsSync(path.join(root, f))).sort();
+}
+
+/**
+ * 저장소 root 의 세포지도. 추적 파일만 임시 폴더에 옮겨 놓고 거기서 읽는다 —
+ * 다른 세션이 남긴 미추적 문서·코드는 출력에 들어가지 않는다(같은 커밋·같은 추적 파일 내용 → 같은 바이트).
+ * git 이 없으면 작업 트리를 그대로 읽는다.
+ */
+function build(root) {
+  const files = trackedInputs(root);
+  if (files === null) return buildFrom(root, root);
+  const snap = fs.mkdtempSync(path.join(os.tmpdir(), 'cell-map-'));
+  try {
+    for (const f of files) {
+      const dest = path.join(snap, f);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.copyFileSync(path.join(root, f), dest);
+    }
+    return buildFrom(snap, root);
+  } finally {
+    fs.rmSync(snap, { recursive: true, force: true });
+  }
+}
+
 function serialize(doc) {
   return JSON.stringify(doc, null, 1) + '\n';
 }
@@ -365,4 +397,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { build, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };
+module.exports = { build, buildFrom, trackedInputs, INPUT_PATHS, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };

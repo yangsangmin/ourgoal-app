@@ -1,0 +1,166 @@
+{
+  "task": "TASK-ES-417",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-417-CELL-MAP-TRACKED.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "세포지도 생성기는 git 추적 파일만 읽는다 — 같은 커밋이면 어느 작업 폴더에서 돌려도 같은 바이트(미추적 파일 무시)."
+    },
+    {
+      "id": "R2",
+      "text": "결정성 시험에 「미추적 파일을 만들어도 출력 불변」 단언을 더한다(기존 단언 삭제·완화 없음). 제품 코드 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "입력 파일 목록을 git ls-files 로 얻는다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "  const out = git(root, ['ls-files', '-z', '--'].concat(INPUT_PATHS));"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "추적 파일만 임시 폴더에 옮겨 그 폴더를 읽고, git 이력은 원래 저장소에서 읽는다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "    return buildFrom(snap, root);"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "임시 폴더는 끝나면 지운다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "    fs.rmSync(snap, { recursive: true, force: true });"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "병합 PR 목록은 gitRoot 에서 읽는다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "  const prs = mergedPrs(gitRoot);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "test",
+      "statement": "시험이 미추적 REQ 파일을 만든 뒤에도 build 출력이 기존과 같다고 단언한다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "    assert.strictEqual(exporter.serialize(exporter.build(root)), exporter.serialize(a));"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "test",
+      "statement": "대조군: 작업 트리를 그대로 읽으면 미추적 REQ 가 들어간다고 단언한다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "    assert.ok(raw.includes(extraReq), '대조군: 작업 트리를 그대로 읽으면 미추적 REQ 가 들어간다');"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "갱신 절차 문서에 추적 파일만 읽는다는 문장이 있다",
+      "touches": [
+        "scripts/cell-map-sync.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-sync.md",
+        "text": "생성기는 git 이 추적하는 파일만 읽는다(#TASK-ES-417)"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 원칙 ② 에 본질·원인·중심·핵심이 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-417-CELL-MAP-TRACKED.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-417-CELL-MAP-TRACKED.md",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-417 한 줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-417: 세포지도 생성기 미추적 파일 오탐 수정"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-417 한 줄(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-417 | INFRA | [세포지도 생성기 추적 파일만 읽기]"
+      }
+    }
+  ]
+}

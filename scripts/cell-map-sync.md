@@ -47,4 +47,4 @@
 ## 알려진 한계 (측정 2026-10-05)
 
 - 웹페이지(claude.ai artifact) 안에서 jsDelivr 로 `fetch` 하면 **「Failed to fetch」** 로 막힌다(같은 페이지를 로컬 파일로 열면 같은 주소가 응답한다 — artifact 보안 규칙이 외부 주소 읽기를 막는 것으로 판단). 그래서 웹페이지의 실제 갱신 경로는 3단계(페이지 저장본)다. jsDelivr 시도는 남겨 두어, 규칙이 풀리면 바로 저장소 main 을 실시간으로 읽는다.
-- 저장소의 `cell-map.json` 은 다른 PR 이 자동으로 고치지 않는다(npm test 가 다른 PR 에 지도 갱신을 강제하지 않게 일부러 뺐다 — 모든 PR 이 같은 파일을 고치면 충돌이 난다). 갱신은 위 절차로 한다. 지금 지도가 낡았는지는 `node scripts/cell-map-export.js --check` 가 알려 준다.
+- 저장소의 `cell-map.json` 은 다른 PR 이 자동으로 고치지 않는다(npm test 가 다른 PR 에 지도 갱신을 강제하지 않게 일부러 뺐다 — 모든 PR 이 같은 파일을 고치면 충돌이 난다). 갱신은 위 절차로 한다. 지금 지도가 낡았는지는 `node scripts/cell-map-export.js --check` 가 알려 준다. 생성기는 git 이 추적하는 파일만 읽는다(#TASK-ES-417) — 다른 세션이 작업 폴더에 남긴 미추적 문서·코드는 지도와 --check 결과에 들어가지 않는다.
