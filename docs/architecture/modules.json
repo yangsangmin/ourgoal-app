@@ -2097,6 +2097,33 @@
       ]
     },
     {
+      "id": "stats-charts",
+      "file": "js/stats-charts.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "통계 차트 — 다형성 단일 지표 SVG 차트와 7-Tier 다중 시계열 집계·SVG 차트(renderUniversalSvgChart·aggregateMultiSeries·calcNiceStep·renderMultiSeriesSvg). universal-stats.js 에서 분열(#TASK-ES-401)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
       "id": "stats-data-grid",
       "file": "js/stats-data-grid.js",
       "layer": "legacy",
@@ -2127,6 +2154,65 @@
       ]
     },
     {
+      "id": "stats-data-menu",
+      "file": "js/stats-data-menu.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "통계 데이터 관리 — 데이터 관리 통합 메뉴 모달·활용 가이드 모달(openDataManagementModal·openGuideModal). universal-stats.js 에서 분열(#TASK-ES-401)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal",
+        "saveProfile",
+        "toast"
+      ]
+    },
+    {
+      "id": "stats-import",
+      "file": "js/stats-import.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "통계 가져오기 — 과거 일자 정규화·CSV 인제스터·가져오기 모달(normalizeHistoricalDate·parseCsvToUniversalRecords·openUniversalImportModal). universal-stats.js 에서 분열(#TASK-ES-401)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
       "id": "stats-lenses",
       "file": "js/stats-lenses.js",
       "layer": "legacy",
@@ -2134,6 +2220,33 @@
       "size": null,
       "kind": "hybrid",
       "role": "통계 분석 렌즈 — 교차 비율·레이더·요일 리듬 차트와 통계 진단 리포트(순수 함수 6개). universal-stats.js 에서 분열(#TASK-ES-392)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "stats-metrics",
+      "file": "js/stats-metrics.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "통계 메트릭 — 레코드에서 메트릭 자율 추출·활성 메트릭 탐색·시계열 집계·미등록 메트릭 등록(ensureMetricConfig·extractMetricsFromRecord·discoverActiveMetrics·aggregateMetricTimeSeries). universal-stats.js 에서 분열(#TASK-ES-401)",
       "spans": [
         "records",
         "goals"
@@ -4256,10 +4369,13 @@
         "closeModal",
         "openModal",
         "require:./core/confirm.js",
+        "require:./stats-charts.js",
         "require:./stats-data-grid.js",
+        "require:./stats-data-menu.js",
+        "require:./stats-import.js",
         "require:./stats-lenses.js",
+        "require:./stats-metrics.js",
         "require:./stats-taxonomy.js",
-        "saveProfile",
         "toast"
       ]
     },
