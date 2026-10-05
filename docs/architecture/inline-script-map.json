@@ -2,10 +2,10 @@
  "schema": "ourgoal.inline-script-map/1",
  "source": {
   "file": "index.html",
-  "sha256_12": "ca497e3c3626",
+  "sha256_12": "a14498235367",
   "iifeHtmlLines": [
    2331,
-   35693
+   35486
   ],
   "otherInlineBlocks": [
    {
@@ -13,7 +13,7 @@
     "lines": 8
    },
    {
-    "startLine": 35696,
+    "startLine": 35489,
     "lines": 16
    }
   ]
@@ -31,30 +31,30 @@
   "smokeFn": 5
  },
  "totals": {
-  "iifeLines": 33363,
+  "iifeLines": 33156,
   "groups": 189,
-  "seamGroups": 7,
-  "movableGroups": 161,
-  "functions": 547,
-  "vars": 178,
+  "seamGroups": 8,
+  "movableGroups": 160,
+  "functions": 543,
+  "vars": 184,
   "windowAssignments": 246,
-  "listeners": 443,
+  "listeners": 441,
   "onProps": 362,
-  "loadTime": 323,
+  "loadTime": 324,
   "inlineHandlerNames": 46,
   "tiers": {
    "빈 구획": 21,
-   "이음매(옮기지 않음)": 7,
-   "보통": 62,
-   "어려움": 68,
-   "쉬움": 31
+   "이음매(옮기지 않음)": 8,
+   "어려움": 67,
+   "쉬움": 31,
+   "보통": 62
   },
   "tierLines": {
    "빈 구획": 467,
-   "이음매(옮기지 않음)": 241,
-   "보통": 8158,
-   "어려움": 23414,
-   "쉬움": 1083
+   "이음매(옮기지 않음)": 302,
+   "어려움": 23158,
+   "쉬움": 1083,
+   "보통": 8146
   }
  },
  "recommendedOrder": [
@@ -79,6 +79,7 @@
   "G009",
   "G061",
   "G018",
+  "G068",
   "G028",
   "G060",
   "G103",
@@ -86,7 +87,6 @@
   "G030",
   "G092",
   "G023",
-  "G068",
   "G040",
   "G153",
   "G143",
@@ -98,24 +98,24 @@
   "G142",
   "G084",
   "G095",
+  "G070",
   "G097",
   "G098",
   "G163",
   "G141",
-  "G070",
   "G176",
   "G036",
   "G138",
   "G029",
   "G172",
   "G114",
-  "G007",
   "G111",
   "G074",
   "G167",
   "G155",
   "G130",
   "G160",
+  "G096",
   "G078",
   "G139",
   "G154",
@@ -126,11 +126,11 @@
   "G063",
   "G133",
   "G148",
+  "G021",
   "G014",
   "G168",
   "G093",
   "G025",
-  "G021",
   "G140",
   "G158",
   "G171",
@@ -139,11 +139,11 @@
   "G015",
   "G087",
   "G039",
-  "G038",
   "G026",
   "G048",
   "G075",
   "G132",
+  "G038",
   "G157",
   "G117",
   "G152",
@@ -177,9 +177,9 @@
   "G020",
   "G041",
   "G110",
-  "G055",
   "G178",
   "G090",
+  "G055",
   "G164",
   "G076",
   "G052",
@@ -194,31 +194,30 @@
   "G106",
   "G150",
   "G145",
-  "G096",
   "G011",
+  "G124",
   "G175",
   "G162",
   "G122",
   "G123",
-  "G124",
   "G147",
   "G019",
   "G072",
   "G086",
-  "G069",
   "G012",
+  "G069",
   "G105",
   "G101",
   "G058",
   "G128",
-  "G079",
   "G010",
-  "G112",
+  "G079",
   "G016",
+  "G112",
   "G059",
   "G022",
-  "G013",
-  "G031"
+  "G031",
+  "G013"
  ],
  "groups": [
   {
@@ -1189,27 +1188,44 @@
    "id": "G007",
    "title": "[#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 소통 탭 #TASK-ES-379 와 같은 틀)",
    "start": 2565,
-   "end": 2583,
-   "lines": 19,
-   "seam": false,
-   "tier": "보통",
-   "score": 12,
+   "end": 2625,
+   "lines": 61,
+   "seam": true,
+   "tier": "이음매(옮기지 않음)",
+   "score": 27,
    "functions": [],
    "vars": [
+    "bindCaptureLiveMeta",
+    "bindCaptureSave",
     "generateLockScreenCalendarImage",
     "generateLockScreenScheduleCardImage",
+    "killDeviceSession",
     "openSelectCompanionForStoryModal",
-    "openSelectTeamForStoryModal"
+    "openSelectTeamForStoryModal",
+    "paintSecurityCard",
+    "refreshSecurityStatus",
+    "selectThemeSwatch"
    ],
    "stateReads": [
+    "OfflineSyncManager",
     "_calendarKit",
-    "_commKit"
+    "_commKit",
+    "_recordsKit",
+    "_settingsKit",
+    "capInput",
+    "capturePhotoInput",
+    "capturePhotoPreview",
+    "liveCount",
+    "liveMeta",
+    "pendingCapturePhoto"
    ],
    "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
+   "stateWrites": [
+    "pendingCapturePhoto"
+   ],
+   "loadTime": 3,
    "loadTimeKinds": {
-    "호출": 1,
+    "호출": 2,
     "TryStatement": 1
    },
    "windowAssignments": 0,
@@ -1220,7 +1236,51 @@
    "fanIn": [],
    "fanOut": [
     {
+     "id": "G079",
+     "refs": 4
+    },
+    {
+     "id": "G101",
+     "refs": 2
+    },
+    {
+     "id": "G023",
+     "refs": 1
+    },
+    {
+     "id": "G038",
+     "refs": 1
+    },
+    {
+     "id": "G055",
+     "refs": 1
+    },
+    {
+     "id": "G087",
+     "refs": 1
+    },
+    {
+     "id": "G088",
+     "refs": 1
+    },
+    {
+     "id": "G097",
+     "refs": 1
+    },
+    {
+     "id": "G098",
+     "refs": 1
+    },
+    {
+     "id": "G100",
+     "refs": 1
+    },
+    {
      "id": "G160",
+     "refs": 1
+    },
+    {
+     "id": "G175",
      "refs": 1
     }
    ],
@@ -1242,8 +1302,8 @@
   {
    "id": "G008",
    "title": "Supabase",
-   "start": 2584,
-   "end": 2622,
+   "start": 2626,
+   "end": 2664,
    "lines": 39,
    "seam": false,
    "tier": "어려움",
@@ -1325,8 +1385,8 @@
   {
    "id": "G009",
    "title": "아워골 앱 환경설정 및 보상형 광고 파이프라인 (TASK-ES-013)",
-   "start": 2623,
-   "end": 2651,
+   "start": 2665,
+   "end": 2693,
    "lines": 29,
    "seam": false,
    "tier": "쉬움",
@@ -1365,12 +1425,12 @@
   {
    "id": "G010",
    "title": "Utilities",
-   "start": 2652,
-   "end": 2675,
+   "start": 2694,
+   "end": 2717,
    "lines": 24,
    "seam": false,
    "tier": "어려움",
-   "score": 118,
+   "score": 117,
    "functions": [
     "fmtDateLabel",
     "fmtTime",
@@ -1486,10 +1546,6 @@
     },
     {
      "id": "G072",
-     "refs": 4
-    },
-    {
-     "id": "G096",
      "refs": 4
     },
     {
@@ -1705,8 +1761,8 @@
   {
    "id": "G011",
    "title": "[#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가 표준시 00:00) 기준 날짜 키",
-   "start": 2676,
-   "end": 2700,
+   "start": 2718,
+   "end": 2742,
    "lines": 25,
    "seam": false,
    "tier": "어려움",
@@ -1908,12 +1964,12 @@
   {
    "id": "G012",
    "title": "계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률",
-   "start": 2701,
-   "end": 2798,
+   "start": 2743,
+   "end": 2840,
    "lines": 98,
    "seam": false,
    "tier": "어려움",
-   "score": 79,
+   "score": 78,
    "functions": [
     "dDay",
     "dayIndexSinceSignup",
@@ -1966,10 +2022,6 @@
     },
     {
      "id": "G080",
-     "refs": 3
-    },
-    {
-     "id": "G096",
      "refs": 3
     },
     {
@@ -2113,12 +2165,12 @@
   {
    "id": "G013",
    "title": "Confetti",
-   "start": 2799,
-   "end": 2872,
+   "start": 2841,
+   "end": 2914,
    "lines": 74,
    "seam": false,
    "tier": "어려움",
-   "score": 194,
+   "score": 196,
    "functions": [
     "burstConfetti",
     "showUndoPrivacyToast",
@@ -2205,10 +2257,6 @@
      "refs": 10
     },
     {
-     "id": "G124",
-     "refs": 10
-    },
-    {
      "id": "G143",
      "refs": 10
     },
@@ -2274,6 +2322,10 @@
     },
     {
      "id": "G121",
+     "refs": 6
+    },
+    {
+     "id": "G124",
      "refs": 6
     },
     {
@@ -2422,10 +2474,6 @@
     },
     {
      "id": "G094",
-     "refs": 2
-    },
-    {
-     "id": "G096",
      "refs": 2
     },
     {
@@ -2605,6 +2653,8 @@
     "js/reactions.js",
     "js/records-stats.js",
     "js/sanctuary-v3-engine.js",
+    "js/stats-dashboard-bind.js",
+    "js/stats-dashboard.js",
     "js/stats-data-grid.js",
     "js/stats-data-menu.js",
     "js/stats-import.js",
@@ -2622,8 +2672,10 @@
     "js/tabs/goals/render.js",
     "js/tabs/goals/result-modal.js",
     "js/tabs/home/sub-onescreen.js",
+    "js/tabs/records/checkin-capture.js",
     "js/tabs/records/period-ai-card.js",
     "js/tabs/records/render.js",
+    "js/tabs/settings/quick-actions.js",
     "js/tabs/settings/render.js",
     "js/tabs/settings/sub-appearance.js",
     "js/tabs/settings/sub-data.js",
@@ -2652,7 +2704,6 @@
     "js/time-tracker-lap-memo.js",
     "js/time-tracker-review.js",
     "js/time-tracker.js",
-    "js/universal-stats.js",
     "js/viral-sharing.js"
    ],
    "testFiles": [
@@ -2664,8 +2715,8 @@
   {
    "id": "G014",
    "title": "Storage (Supabase: goals & checkins; localStorage: settings)",
-   "start": 2873,
-   "end": 2890,
+   "start": 2915,
+   "end": 2932,
    "lines": 18,
    "seam": false,
    "tier": "보통",
@@ -2716,8 +2767,8 @@
   {
    "id": "G015",
    "title": "8대 화면 스타일 (테마) 정의",
-   "start": 2891,
-   "end": 2942,
+   "start": 2933,
+   "end": 2984,
    "lines": 52,
    "seam": false,
    "tier": "보통",
@@ -2784,12 +2835,12 @@
   {
    "id": "G016",
    "title": "가상유저 개선 10대 핵심 헬퍼 함수",
-   "start": 2943,
-   "end": 3086,
+   "start": 2985,
+   "end": 3128,
    "lines": 144,
    "seam": false,
    "tier": "어려움",
-   "score": 128,
+   "score": 129,
    "functions": [
     "calculateWeeklyFocusStats",
     "exportRecordsToCsv",
@@ -2897,10 +2948,6 @@
      "refs": 6
     },
     {
-     "id": "G124",
-     "refs": 6
-    },
-    {
      "id": "G123",
      "refs": 5
     },
@@ -2945,7 +2992,7 @@
      "refs": 3
     },
     {
-     "id": "G096",
+     "id": "G124",
      "refs": 3
     },
     {
@@ -3047,7 +3094,9 @@
     "js/tabs/comm/render.js",
     "js/tabs/goals/goal-detail-events.js",
     "js/tabs/goals/render.js",
+    "js/tabs/records/checkin-capture.js",
     "js/tabs/records/render.js",
+    "js/tabs/settings/quick-actions.js",
     "js/tabs/settings/render.js",
     "js/tabs/settings/sub-data.js",
     "js/tabs/settings/sub-security.js",
@@ -3093,8 +3142,8 @@
   {
    "id": "G017",
    "title": "[#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정 격리",
-   "start": 3087,
-   "end": 3138,
+   "start": 3129,
+   "end": 3180,
    "lines": 52,
    "seam": false,
    "tier": "어려움",
@@ -3217,8 +3266,8 @@
   {
    "id": "G018",
    "title": "구독 상태 (전체 기능 100% 완전 무료 제공)",
-   "start": 3139,
-   "end": 3146,
+   "start": 3181,
+   "end": 3188,
    "lines": 8,
    "seam": false,
    "tier": "쉬움",
@@ -3253,8 +3302,8 @@
   {
    "id": "G019",
    "title": "XP/레벨 시스템",
-   "start": 3147,
-   "end": 3252,
+   "start": 3189,
+   "end": 3294,
    "lines": 106,
    "seam": false,
    "tier": "어려움",
@@ -3315,10 +3364,6 @@
      "refs": 1
     },
     {
-     "id": "G096",
-     "refs": 1
-    },
-    {
      "id": "G100",
      "refs": 1
     },
@@ -3367,6 +3412,7 @@
     "js/tabs/goals/result-modal.js",
     "js/tabs/home/sub-onescreen.js",
     "js/tabs/home/sub-quest.js",
+    "js/tabs/records/checkin-capture.js",
     "js/tabs/settings/render.js"
    ],
    "testFiles": [
@@ -3402,8 +3448,8 @@
   {
    "id": "G020",
    "title": "[#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드",
-   "start": 3253,
-   "end": 3411,
+   "start": 3295,
+   "end": 3453,
    "lines": 159,
    "seam": false,
    "tier": "어려움",
@@ -3472,12 +3518,12 @@
   {
    "id": "G021",
    "title": "#TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트)",
-   "start": 3412,
-   "end": 3531,
+   "start": 3454,
+   "end": 3573,
    "lines": 120,
    "seam": false,
    "tier": "보통",
-   "score": 20,
+   "score": 19,
    "functions": [
     "closeAvatarGreetingPopup",
     "openAvatarGreetingPopup",
@@ -3524,10 +3570,6 @@
      "refs": 1
     },
     {
-     "id": "G096",
-     "refs": 1
-    },
-    {
      "id": "G100",
      "refs": 1
     }
@@ -3562,12 +3604,12 @@
   {
    "id": "G022",
    "title": "뱃지 컬렉션 (명예의 전당)",
-   "start": 3532,
-   "end": 3881,
+   "start": 3574,
+   "end": 3923,
    "lines": 350,
    "seam": false,
    "tier": "어려움",
-   "score": 173,
+   "score": 177,
    "functions": [
     "badgeContext",
     "defaultProfile",
@@ -3719,6 +3761,9 @@
     "js/notify-engine.js",
     "js/records-stats.js",
     "js/sanctuary-v3-engine.js",
+    "js/stats-dashboard-bind.js",
+    "js/stats-dashboard-view.js",
+    "js/stats-dashboard.js",
     "js/stats-data-grid.js",
     "js/stats-data-menu.js",
     "js/stats-fullscreen.js",
@@ -3755,6 +3800,7 @@
     "js/tabs/home/sub-onescreen.js",
     "js/tabs/home/sub-quest.js",
     "js/tabs/home/sub-today.js",
+    "js/tabs/records/checkin-capture.js",
     "js/tabs/records/index.js",
     "js/tabs/records/period-ai-card.js",
     "js/tabs/records/render.js",
@@ -3762,6 +3808,7 @@
     "js/tabs/records/sub-timeline.js",
     "js/tabs/records/sub-timer.js",
     "js/tabs/settings/index.js",
+    "js/tabs/settings/quick-actions.js",
     "js/tabs/settings/render.js",
     "js/tabs/settings/sub-appearance.js",
     "js/tabs/settings/sub-data.js",
@@ -3787,7 +3834,6 @@
     "js/time-tracker-review.js",
     "js/time-tracker-screen.js",
     "js/time-tracker.js",
-    "js/universal-stats.js",
     "js/viral-sharing.js"
    ],
    "testFiles": [
@@ -3837,8 +3883,8 @@
   {
    "id": "G023",
    "title": "[70] 활성 로그인 기기 목록 실시간 렌더링 & 개별 세션 로그아웃",
-   "start": 3882,
-   "end": 3972,
+   "start": 3924,
+   "end": 4014,
    "lines": 91,
    "seam": false,
    "tier": "쉬움",
@@ -3863,11 +3909,11 @@
    "inlineHandlers": [],
    "fanIn": [
     {
-     "id": "G124",
-     "refs": 2
+     "id": "G001",
+     "refs": 1
     },
     {
-     "id": "G001",
+     "id": "G007",
      "refs": 1
     },
     {
@@ -3906,8 +3952,8 @@
   {
    "id": "G024",
    "title": "[70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달",
-   "start": 3973,
-   "end": 4071,
+   "start": 4015,
+   "end": 4113,
    "lines": 99,
    "seam": false,
    "tier": "보통",
@@ -3937,10 +3983,6 @@
    "fanIn": [
     {
      "id": "G023",
-     "refs": 2
-    },
-    {
-     "id": "G124",
      "refs": 2
     },
     {
@@ -3975,6 +4017,7 @@
     }
    ],
    "externalFiles": [
+    "js/tabs/settings/quick-actions.js",
     "js/tabs/settings/sub-security.js"
    ],
    "testFiles": [
@@ -3992,8 +4035,8 @@
   {
    "id": "G025",
    "title": "[71] 앱 잠금 PIN (이 기기) — 설정·해제·앱 진입 확인",
-   "start": 4072,
-   "end": 4306,
+   "start": 4114,
+   "end": 4348,
    "lines": 235,
    "seam": false,
    "tier": "보통",
@@ -4083,8 +4126,8 @@
   {
    "id": "G026",
    "title": "[78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용)",
-   "start": 4307,
-   "end": 4773,
+   "start": 4349,
+   "end": 4815,
    "lines": 467,
    "seam": false,
    "tier": "보통",
@@ -4168,8 +4211,8 @@
   {
    "id": "G027",
    "title": "[80] 템플릿백과사전 1초 자동이식 선택 연동 및 로드맵-목표상태 동기화",
-   "start": 4774,
-   "end": 4815,
+   "start": 4816,
+   "end": 4857,
    "lines": 42,
    "seam": false,
    "tier": "쉬움",
@@ -4232,8 +4275,8 @@
   {
    "id": "G028",
    "title": "[82] 팀 목표 내 '팀 연계 개인목표' 생성 모달",
-   "start": 4816,
-   "end": 4878,
+   "start": 4858,
+   "end": 4920,
    "lines": 63,
    "seam": false,
    "tier": "쉬움",
@@ -4298,8 +4341,8 @@
   {
    "id": "G029",
    "title": "[83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능",
-   "start": 4879,
-   "end": 4994,
+   "start": 4921,
+   "end": 5036,
    "lines": 116,
    "seam": false,
    "tier": "보통",
@@ -4360,8 +4403,8 @@
   {
    "id": "G030",
    "title": "[88] 오늘의 3초 체크인 목표 버튼 선택 시 플레이스홀더(백그라운드 가이드) 예시 문구 렌더링",
-   "start": 4995,
-   "end": 5011,
+   "start": 5037,
+   "end": 5053,
    "lines": 17,
    "seam": false,
    "tier": "쉬움",
@@ -4413,12 +4456,12 @@
   {
    "id": "G031",
    "title": "[#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업",
-   "start": 5012,
-   "end": 5252,
+   "start": 5054,
+   "end": 5294,
    "lines": 241,
    "seam": false,
    "tier": "어려움",
-   "score": 195,
+   "score": 196,
    "functions": [
     "initDimensionSliders",
     "initHomeCockpit",
@@ -4550,10 +4593,6 @@
     },
     {
      "id": "G091",
-     "refs": 2
-    },
-    {
-     "id": "G096",
      "refs": 2
     },
     {
@@ -4796,6 +4835,8 @@
     "js/notify-engine.js",
     "js/reactions.js",
     "js/sanctuary-v3-engine.js",
+    "js/stats-dashboard-bind.js",
+    "js/stats-dashboard.js",
     "js/stats-data-grid.js",
     "js/stats-data-menu.js",
     "js/stats-import.js",
@@ -4814,6 +4855,7 @@
     "js/tabs/home/index.js",
     "js/tabs/home/sub-onescreen.js",
     "js/tabs/home/sub-today.js",
+    "js/tabs/records/checkin-capture.js",
     "js/tabs/records/period-ai-card.js",
     "js/tabs/records/render.js",
     "js/tabs/settings/render.js",
@@ -4838,8 +4880,7 @@
     "js/team-share.js",
     "js/team-templates.js",
     "js/team-visibility-levels.js",
-    "js/time-tracker-review.js",
-    "js/universal-stats.js"
+    "js/time-tracker-review.js"
    ],
    "testFiles": [
     "scripts/smoke-test.js",
@@ -4882,8 +4923,8 @@
   {
    "id": "G032",
    "title": "서버 관리자 API를 통한 기록 및 프로필 복구 (#TASK-ES-036)",
-   "start": 5253,
-   "end": 5365,
+   "start": 5295,
+   "end": 5407,
    "lines": 113,
    "seam": false,
    "tier": "어려움",
@@ -4965,8 +5006,8 @@
   {
    "id": "G033",
    "title": "Landing",
-   "start": 5366,
-   "end": 5366,
+   "start": 5408,
+   "end": 5408,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -4993,8 +5034,8 @@
   {
    "id": "G034",
    "title": "[#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저 감지 및 Android Chrome 자동 탈출 & iOS Safari 플로팅 가이드 배너",
-   "start": 5367,
-   "end": 5525,
+   "start": 5409,
+   "end": 5567,
    "lines": 159,
    "seam": false,
    "tier": "어려움",
@@ -5091,8 +5132,8 @@
   {
    "id": "G035",
    "title": "2계정 상호작용 테스트 (테스터 B 직통 입장: #TASK-ES-169)",
-   "start": 5526,
-   "end": 5563,
+   "start": 5568,
+   "end": 5605,
    "lines": 38,
    "seam": false,
    "tier": "어려움",
@@ -5163,8 +5204,8 @@
   {
    "id": "G036",
    "title": "[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬/디버그 격리",
-   "start": 5564,
-   "end": 5586,
+   "start": 5606,
+   "end": 5628,
    "lines": 23,
    "seam": false,
    "tier": "보통",
@@ -5206,8 +5247,8 @@
   {
    "id": "G037",
    "title": "소셜 로그인 (카카오 / 실제 구글 OAuth 연동)",
-   "start": 5587,
-   "end": 5892,
+   "start": 5629,
+   "end": 5934,
    "lines": 306,
    "seam": false,
    "tier": "어려움",
@@ -5311,12 +5352,12 @@
   {
    "id": "G038",
    "title": "[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 계정 통합",
-   "start": 5893,
-   "end": 5981,
+   "start": 5935,
+   "end": 6023,
    "lines": 89,
    "seam": false,
    "tier": "보통",
-   "score": 22,
+   "score": 23,
    "functions": [
     "checkGuestBackupNudge",
     "openGuestBackupNudgeModal"
@@ -5345,12 +5386,12 @@
      "refs": 2
     },
     {
-     "id": "G096",
+     "id": "G175",
      "refs": 2
     },
     {
-     "id": "G175",
-     "refs": 2
+     "id": "G007",
+     "refs": 1
     }
    ],
    "fanOut": [
@@ -5375,7 +5416,9 @@
      "refs": 1
     }
    ],
-   "externalFiles": [],
+   "externalFiles": [
+    "js/tabs/records/checkin-capture.js"
+   ],
    "testFiles": [
     "scripts/smoke-test.js",
     "scripts/verify-all-clicks.js",
@@ -5396,8 +5439,8 @@
   {
    "id": "G039",
    "title": "[#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시 게스트 데이터 100% 무손실 비파괴 합집합(Union Merge) 이관",
-   "start": 5982,
-   "end": 6197,
+   "start": 6024,
+   "end": 6239,
    "lines": 216,
    "seam": false,
    "tier": "보통",
@@ -5474,8 +5517,8 @@
   {
    "id": "G040",
    "title": "Goal category templates",
-   "start": 6198,
-   "end": 6239,
+   "start": 6240,
+   "end": 6281,
    "lines": 42,
    "seam": false,
    "tier": "쉬움",
@@ -5527,8 +5570,8 @@
   {
    "id": "G041",
    "title": "디바이스 세션 & 원격 로그아웃 유틸 (Req 1)",
-   "start": 6240,
-   "end": 6351,
+   "start": 6282,
+   "end": 6393,
    "lines": 112,
    "seam": false,
    "tier": "어려움",
@@ -5657,8 +5700,8 @@
   {
    "id": "G042",
    "title": "P0: 최근 로그인 뱃지 & 아이디 저장 & 로그인 유지",
-   "start": 6352,
-   "end": 6364,
+   "start": 6394,
+   "end": 6406,
    "lines": 13,
    "seam": false,
    "tier": "보통",
@@ -5720,8 +5763,8 @@
   {
    "id": "G043",
    "title": "P0: 비밀번호 찾기 (이메일 재설정 링크 발송)",
-   "start": 6365,
-   "end": 6374,
+   "start": 6407,
+   "end": 6416,
    "lines": 10,
    "seam": false,
    "tier": "쉬움",
@@ -5757,8 +5800,8 @@
   {
    "id": "G044",
    "title": "P0: 새 비밀번호 입력 모달 (비밀번호 복구 링크 수신 시)",
-   "start": 6375,
-   "end": 6381,
+   "start": 6417,
+   "end": 6423,
    "lines": 7,
    "seam": false,
    "tier": "쉬움",
@@ -5794,8 +5837,8 @@
   {
    "id": "G045",
    "title": "P0: 설정 화면 내 비밀번호 변경 모달",
-   "start": 6382,
-   "end": 6388,
+   "start": 6424,
+   "end": 6430,
    "lines": 7,
    "seam": false,
    "tier": "쉬움",
@@ -5831,8 +5874,8 @@
   {
    "id": "G046",
    "title": "P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크",
-   "start": 6389,
-   "end": 6493,
+   "start": 6431,
+   "end": 6535,
    "lines": 105,
    "seam": false,
    "tier": "보통",
@@ -5922,8 +5965,8 @@
   {
    "id": "G047",
    "title": "회원 탈퇴 전용 안내 모달 및 법적책임·데이터분실 사전 안내 (#TASK-ES-158)",
-   "start": 6494,
-   "end": 6670,
+   "start": 6536,
+   "end": 6712,
    "lines": 177,
    "seam": false,
    "tier": "어려움",
@@ -6009,8 +6052,8 @@
   {
    "id": "G048",
    "title": "[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 (최신 기능 전면 동기화)",
-   "start": 6671,
-   "end": 6935,
+   "start": 6713,
+   "end": 6977,
    "lines": 265,
    "seam": false,
    "tier": "보통",
@@ -6082,8 +6125,8 @@
   {
    "id": "G049",
    "title": "앱 활용 가이드 다시보기",
-   "start": 6936,
-   "end": 6943,
+   "start": 6978,
+   "end": 6985,
    "lines": 8,
    "seam": false,
    "tier": "쉬움",
@@ -6122,8 +6165,8 @@
   {
    "id": "G050",
    "title": "1:1 고객 문의 / 버그 제보 (#TASK-ES-178)",
-   "start": 6944,
-   "end": 6963,
+   "start": 6986,
+   "end": 7005,
    "lines": 20,
    "seam": false,
    "tier": "보통",
@@ -6171,8 +6214,8 @@
   {
    "id": "G051",
    "title": "이용약관 / 개인정보처리방침 열람 리스너",
-   "start": 6964,
-   "end": 6973,
+   "start": 7006,
+   "end": 7015,
    "lines": 10,
    "seam": false,
    "tier": "빈 구획",
@@ -6208,8 +6251,8 @@
   {
    "id": "G052",
    "title": "Enter app",
-   "start": 6974,
-   "end": 7102,
+   "start": 7016,
+   "end": 7144,
    "lines": 129,
    "seam": false,
    "tier": "어려움",
@@ -6373,8 +6416,8 @@
   {
    "id": "G053",
    "title": "스트릭 프리즈 (연속기록 보호권)",
-   "start": 7103,
-   "end": 7113,
+   "start": 7145,
+   "end": 7155,
    "lines": 11,
    "seam": false,
    "tier": "쉬움",
@@ -6425,8 +6468,8 @@
   {
    "id": "G054",
    "title": "Onboarding (first-time, after signup) — 16종 동물 아바타 & 직관적 안착 융합",
-   "start": 7114,
-   "end": 7347,
+   "start": 7156,
+   "end": 7389,
    "lines": 234,
    "seam": false,
    "tier": "보통",
@@ -6520,12 +6563,12 @@
   {
    "id": "G055",
    "title": "3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출",
-   "start": 7348,
-   "end": 7591,
+   "start": 7390,
+   "end": 7633,
    "lines": 244,
    "seam": false,
    "tier": "어려움",
-   "score": 37,
+   "score": 38,
    "functions": [
     "canSendFirstCheckinWelcome",
     "firstCheckinWelcomeSentToday",
@@ -6570,8 +6613,8 @@
      "refs": 2
     },
     {
-     "id": "G096",
-     "refs": 2
+     "id": "G007",
+     "refs": 1
     }
    ],
    "fanOut": [
@@ -6608,7 +6651,9 @@
      "refs": 2
     }
    ],
-   "externalFiles": [],
+   "externalFiles": [
+    "js/tabs/records/checkin-capture.js"
+   ],
    "testFiles": [
     "scripts/smoke-test.js",
     "scripts/verify-all-clicks.js",
@@ -6634,8 +6679,8 @@
   {
    "id": "G056",
    "title": "온보딩 직후 소통 기능 짧은 투어 (첫 목표 생성 시 1회)",
-   "start": 7592,
-   "end": 7611,
+   "start": 7634,
+   "end": 7653,
    "lines": 20,
    "seam": false,
    "tier": "쉬움",
@@ -6680,8 +6725,8 @@
   {
    "id": "G057",
    "title": "최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합",
-   "start": 7612,
-   "end": 7895,
+   "start": 7654,
+   "end": 7937,
    "lines": 284,
    "seam": false,
    "tier": "어려움",
@@ -6772,8 +6817,8 @@
   {
    "id": "G058",
    "title": "조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항)",
-   "start": 7896,
-   "end": 8020,
+   "start": 7938,
+   "end": 8062,
    "lines": 125,
    "seam": false,
    "tier": "어려움",
@@ -6981,12 +7026,12 @@
   {
    "id": "G059",
    "title": "Modal helper & Android Hardware Back Handler",
-   "start": 8021,
-   "end": 8162,
+   "start": 8063,
+   "end": 8204,
    "lines": 142,
    "seam": false,
    "tier": "어려움",
-   "score": 135,
+   "score": 137,
    "functions": [
     "closeModal",
     "isModalDismissCooldown",
@@ -7310,6 +7355,8 @@
     "js/helpful-reason.js",
     "js/reactions.js",
     "js/records-stats.js",
+    "js/stats-dashboard-bind.js",
+    "js/stats-dashboard.js",
     "js/stats-data-grid.js",
     "js/stats-data-menu.js",
     "js/stats-differentiated.js",
@@ -7363,8 +7410,8 @@
   {
    "id": "G060",
    "title": "이용약관 & 개인정보처리방침 모달",
-   "start": 8163,
-   "end": 8211,
+   "start": 8205,
+   "end": 8253,
    "lines": 49,
    "seam": false,
    "tier": "쉬움",
@@ -7413,8 +7460,8 @@
   {
    "id": "G061",
    "title": "안내 모달 (전체 기능 100% 완전 무료 제공)",
-   "start": 8212,
-   "end": 8239,
+   "start": 8254,
+   "end": 8281,
    "lines": 28,
    "seam": false,
    "tier": "쉬움",
@@ -7467,8 +7514,8 @@
   {
    "id": "G062",
    "title": "Gauge SVG",
-   "start": 8240,
-   "end": 8254,
+   "start": 8282,
+   "end": 8296,
    "lines": 15,
    "seam": false,
    "tier": "쉬움",
@@ -7506,8 +7553,8 @@
   {
    "id": "G063",
    "title": "Goal math",
-   "start": 8255,
-   "end": 8265,
+   "start": 8297,
+   "end": 8307,
    "lines": 11,
    "seam": false,
    "tier": "보통",
@@ -7571,8 +7618,8 @@
   {
    "id": "G064",
    "title": "목표 일정 리스케일링",
-   "start": 8266,
-   "end": 8300,
+   "start": 8308,
+   "end": 8342,
    "lines": 35,
    "seam": false,
    "tier": "쉬움",
@@ -7610,8 +7657,8 @@
   {
    "id": "G065",
    "title": "하이브리드 목표 대시보드 (2개 이상 병행 시)",
-   "start": 8301,
-   "end": 8328,
+   "start": 8343,
+   "end": 8370,
    "lines": 28,
    "seam": false,
    "tier": "쉬움",
@@ -7655,8 +7702,8 @@
   {
    "id": "G066",
    "title": "결과 기록 (체크박스 대신 수치 입력)",
-   "start": 8329,
-   "end": 8357,
+   "start": 8371,
+   "end": 8399,
    "lines": 29,
    "seam": false,
    "tier": "보통",
@@ -7707,8 +7754,8 @@
   {
    "id": "G067",
    "title": "AI 결과 입력 비서 (Req 7)",
-   "start": 8358,
-   "end": 8471,
+   "start": 8400,
+   "end": 8513,
    "lines": 114,
    "seam": false,
    "tier": "쉬움",
@@ -7775,12 +7822,12 @@
   {
    "id": "G068",
    "title": "AI 결과 입력 -> Notion DB 구조화 변환기",
-   "start": 8472,
-   "end": 8551,
+   "start": 8514,
+   "end": 8593,
    "lines": 80,
    "seam": false,
    "tier": "쉬움",
-   "score": 8,
+   "score": 7,
    "functions": [
     "convertTextToNotionDbRecord"
    ],
@@ -7796,10 +7843,6 @@
    "onProps": 0,
    "inlineHandlers": [],
    "fanIn": [
-    {
-     "id": "G096",
-     "refs": 2
-    },
     {
      "id": "G005",
      "refs": 1
@@ -7826,8 +7869,8 @@
   {
    "id": "G069",
    "title": "프로필",
-   "start": 8552,
-   "end": 9124,
+   "start": 8594,
+   "end": 9166,
    "lines": 573,
    "seam": false,
    "tier": "어려움",
@@ -8031,12 +8074,12 @@
   {
    "id": "G070",
    "title": "Notion 실시간 동기화 (Direct API & Webhook)",
-   "start": 9125,
-   "end": 9168,
+   "start": 9167,
+   "end": 9210,
    "lines": 44,
    "seam": false,
    "tier": "보통",
-   "score": 11,
+   "score": 10,
    "functions": [
     "sendToNotion"
    ],
@@ -8056,10 +8099,6 @@
    "fanIn": [
     {
      "id": "G001",
-     "refs": 1
-    },
-    {
-     "id": "G096",
      "refs": 1
     },
     {
@@ -8096,8 +8135,8 @@
   {
    "id": "G071",
    "title": "구글 캘린더 연동",
-   "start": 9169,
-   "end": 9169,
+   "start": 9211,
+   "end": 9211,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -8124,8 +8163,8 @@
   {
    "id": "G072",
    "title": "[#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템",
-   "start": 9170,
-   "end": 9947,
+   "start": 9212,
+   "end": 9989,
    "lines": 778,
    "seam": false,
    "tier": "어려움",
@@ -8318,8 +8357,8 @@
   {
    "id": "G073",
    "title": "일정(캘린더) 탭",
-   "start": 9948,
-   "end": 10289,
+   "start": 9990,
+   "end": 10331,
    "lines": 342,
    "seam": false,
    "tier": "어려움",
@@ -8478,8 +8517,8 @@
   {
    "id": "G074",
    "title": "[#TASK-ES-151 & #TASK-ES-253] 일정 체크 완료 토글 및 목표 양방향 동기화",
-   "start": 10290,
-   "end": 10488,
+   "start": 10332,
+   "end": 10530,
    "lines": 199,
    "seam": false,
    "tier": "보통",
@@ -8557,8 +8596,8 @@
   {
    "id": "G075",
    "title": "[#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달",
-   "start": 10489,
-   "end": 10718,
+   "start": 10531,
+   "end": 10760,
    "lines": 230,
    "seam": false,
    "tier": "보통",
@@ -8649,8 +8688,8 @@
   {
    "id": "G076",
    "title": "캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달",
-   "start": 10719,
-   "end": 10898,
+   "start": 10761,
+   "end": 10940,
    "lines": 180,
    "seam": false,
    "tier": "어려움",
@@ -8779,8 +8818,8 @@
   {
    "id": "G077",
    "title": "캘린더 수동 일정 편집 모달 (Req 2 & #TASK-ES-253)",
-   "start": 10899,
-   "end": 11389,
+   "start": 10941,
+   "end": 11431,
    "lines": 491,
    "seam": false,
    "tier": "어려움",
@@ -8888,8 +8927,8 @@
   {
    "id": "G078",
    "title": "[#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)",
-   "start": 11390,
-   "end": 11639,
+   "start": 11432,
+   "end": 11681,
    "lines": 250,
    "seam": false,
    "tier": "보통",
@@ -8972,8 +9011,8 @@
   {
    "id": "G079",
    "title": "[#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달",
-   "start": 11640,
-   "end": 12468,
+   "start": 11682,
+   "end": 12510,
    "lines": 829,
    "seam": false,
    "tier": "어려움",
@@ -9030,8 +9069,8 @@
      "refs": 6
     },
     {
-     "id": "G096",
-     "refs": 5
+     "id": "G007",
+     "refs": 4
     },
     {
      "id": "G080",
@@ -9192,6 +9231,7 @@
    ],
    "testFiles": [
     "scripts/smoke-test.js",
+    "scripts/test-shipyard-modular.js",
     "scripts/verify-all-clicks.js",
     "scripts/verify-integrity-gate.js",
     "tests/account-switch-isolation.test.js",
@@ -9232,8 +9272,8 @@
   {
    "id": "G080",
    "title": "5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001)",
-   "start": 12469,
-   "end": 12724,
+   "start": 12511,
+   "end": 12766,
    "lines": 256,
    "seam": false,
    "tier": "어려움",
@@ -9344,8 +9384,8 @@
   {
    "id": "G081",
    "title": "Adaptive UX Mode",
-   "start": 12725,
-   "end": 12755,
+   "start": 12767,
+   "end": 12797,
    "lines": 31,
    "seam": false,
    "tier": "쉬움",
@@ -9398,8 +9438,8 @@
   {
    "id": "G082",
    "title": "Social Crew Pacing (#TASK-ES-228)",
-   "start": 12756,
-   "end": 12988,
+   "start": 12798,
+   "end": 13030,
    "lines": 233,
    "seam": false,
    "tier": "어려움",
@@ -9485,8 +9525,8 @@
   {
    "id": "G083",
    "title": "UX Telemetry (Hesitation & Rage Tap)",
-   "start": 12989,
-   "end": 13016,
+   "start": 13031,
+   "end": 13058,
    "lines": 28,
    "seam": false,
    "tier": "보통",
@@ -9525,8 +9565,8 @@
   {
    "id": "G084",
    "title": "iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)",
-   "start": 13017,
-   "end": 13157,
+   "start": 13059,
+   "end": 13199,
    "lines": 141,
    "seam": false,
    "tier": "보통",
@@ -9586,8 +9626,8 @@
   {
    "id": "G085",
    "title": "신규 유저 10초 활성화: 갓생 스타터 목표 템플릿",
-   "start": 13158,
-   "end": 13220,
+   "start": 13200,
+   "end": 13262,
    "lines": 63,
    "seam": false,
    "tier": "쉬움",
@@ -9632,8 +9672,8 @@
   {
    "id": "G086",
    "title": "RENDER: HOME",
-   "start": 13221,
-   "end": 13441,
+   "start": 13263,
+   "end": 13483,
    "lines": 221,
    "seam": false,
    "tier": "어려움",
@@ -9890,8 +9930,8 @@
   {
    "id": "G087",
    "title": "최근 히트맵 요약 카드 (가상유저 요청 P7/P9)",
-   "start": 13442,
-   "end": 13493,
+   "start": 13484,
+   "end": 13535,
    "lines": 52,
    "seam": false,
    "tier": "보통",
@@ -9914,11 +9954,11 @@
    "inlineHandlers": [],
    "fanIn": [
     {
-     "id": "G086",
+     "id": "G007",
      "refs": 1
     },
     {
-     "id": "G096",
+     "id": "G086",
      "refs": 1
     }
    ],
@@ -9952,8 +9992,8 @@
   {
    "id": "G088",
    "title": "11인 외부 UI/UX 감시 및 개선팀 핵심 기능 구현",
-   "start": 13494,
-   "end": 13637,
+   "start": 13536,
+   "end": 13679,
    "lines": 144,
    "seam": false,
    "tier": "어려움",
@@ -9983,11 +10023,11 @@
      "refs": 2
     },
     {
-     "id": "G081",
+     "id": "G007",
      "refs": 1
     },
     {
-     "id": "G096",
+     "id": "G081",
      "refs": 1
     }
    ],
@@ -10051,8 +10091,8 @@
   {
    "id": "G089",
    "title": "MZ 9:16 인스타 스토리 고해상도 그래픽 캔버스 생성기 (Growth & Viral Loop)",
-   "start": 13638,
-   "end": 13987,
+   "start": 13680,
+   "end": 14029,
    "lines": 350,
    "seam": false,
    "tier": "보통",
@@ -10096,8 +10136,8 @@
   {
    "id": "G090",
    "title": "1순위 대표 목표 AI 초집중 모드 (Focus Auto-Pilot)",
-   "start": 13988,
-   "end": 14484,
+   "start": 14030,
+   "end": 14526,
    "lines": 497,
    "seam": false,
    "tier": "어려움",
@@ -10219,8 +10259,8 @@
   {
    "id": "G091",
    "title": "소규모 챌린지 룸 모달 (가상유저 요청 P8/P17)",
-   "start": 14485,
-   "end": 14581,
+   "start": 14527,
+   "end": 14623,
    "lines": 97,
    "seam": false,
    "tier": "쉬움",
@@ -10271,8 +10311,8 @@
   {
    "id": "G092",
    "title": "원터치 퀵 루틴 칩",
-   "start": 14582,
-   "end": 14592,
+   "start": 14624,
+   "end": 14634,
    "lines": 11,
    "seam": false,
    "tier": "쉬움",
@@ -10309,8 +10349,8 @@
   {
    "id": "G093",
    "title": "🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227)",
-   "start": 14593,
-   "end": 14829,
+   "start": 14635,
+   "end": 14871,
    "lines": 237,
    "seam": false,
    "tier": "보통",
@@ -10375,8 +10415,8 @@
   {
    "id": "G094",
    "title": "음성 체크인 (Web Speech API)",
-   "start": 14830,
-   "end": 14900,
+   "start": 14872,
+   "end": 14942,
    "lines": 71,
    "seam": false,
    "tier": "빈 구획",
@@ -10419,8 +10459,8 @@
   {
    "id": "G095",
    "title": "사진 인증 & 뷰어 모달 (가상유저 요청 P1)",
-   "start": 14901,
-   "end": 14981,
+   "start": 14943,
+   "end": 15023,
    "lines": 81,
    "seam": false,
    "tier": "보통",
@@ -10469,12 +10509,12 @@
   {
    "id": "G096",
    "title": "체크인 입력 글자수 힌트 (#TASK-ES-367: 열 수 없던 활동 테마 선택 창·배지 제거, 승인 2026-10-04)",
-   "start": 14982,
-   "end": 15185,
-   "lines": 204,
+   "start": 15024,
+   "end": 15030,
+   "lines": 7,
    "seam": false,
-   "tier": "어려움",
-   "score": 52,
+   "tier": "보통",
+   "score": 15,
    "functions": [],
    "vars": [
     "capInput",
@@ -10482,135 +10522,30 @@
     "liveMeta"
    ],
    "stateReads": [
-    "OfflineSyncManager",
-    "XP_RULES",
-    "awardXP",
-    "capturePhotoInput",
-    "capturePhotoPreview",
-    "levelForXP",
-    "pendingCapturePhoto",
-    "state"
+    "bindCaptureLiveMeta",
+    "bindCaptureSave"
    ],
-   "stateMutates": [
-    "capturePhotoInput",
-    "capturePhotoPreview",
-    "state"
-   ],
-   "stateWrites": [
-    "pendingCapturePhoto"
-   ],
+   "stateMutates": [],
+   "stateWrites": [],
    "loadTime": 5,
    "loadTimeKinds": {
     "var 초기값 실행": 3,
-    "IfStatement": 1,
-    "호출": 1
+    "호출": 2
    },
    "windowAssignments": 0,
    "windowNames": [],
-   "listeners": 2,
+   "listeners": 0,
    "onProps": 0,
    "inlineHandlers": [],
    "fanIn": [],
-   "fanOut": [
-    {
-     "id": "G101",
-     "refs": 9
-    },
-    {
-     "id": "G079",
-     "refs": 5
-    },
-    {
-     "id": "G010",
-     "refs": 4
-    },
-    {
-     "id": "G012",
-     "refs": 3
-    },
-    {
-     "id": "G016",
-     "refs": 3
-    },
-    {
-     "id": "G013",
-     "refs": 2
-    },
-    {
-     "id": "G031",
-     "refs": 2
-    },
-    {
-     "id": "G038",
-     "refs": 2
-    },
-    {
-     "id": "G055",
-     "refs": 2
-    },
-    {
-     "id": "G068",
-     "refs": 2
-    },
-    {
-     "id": "G175",
-     "refs": 2
-    },
-    {
-     "id": "G019",
-     "refs": 1
-    },
-    {
-     "id": "G021",
-     "refs": 1
-    },
-    {
-     "id": "G070",
-     "refs": 1
-    },
-    {
-     "id": "G087",
-     "refs": 1
-    },
-    {
-     "id": "G088",
-     "refs": 1
-    },
-    {
-     "id": "G097",
-     "refs": 1
-    },
-    {
-     "id": "G098",
-     "refs": 1
-    },
-    {
-     "id": "G100",
-     "refs": 1
-    }
-   ],
+   "fanOut": [],
    "externalFiles": [],
    "testFiles": [
     "scripts/smoke-test.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/account-switch-isolation.test.js",
-    "tests/core-confirm-es376.test.js",
-    "tests/direct-login-guard.test.js",
-    "tests/hide-home-debug-cards.test.js",
-    "tests/home-customizer-auto-sync.test.js",
     "tests/module-guard.test.js",
-    "tests/onboarding-first-checkin.test.js",
-    "tests/record-ledger-sync.test.js",
     "tests/theme-system-v4.test.js"
    ],
    "testIndexOnly": [
-    "tests/account-switch-isolation.test.js",
-    "tests/core-confirm-es376.test.js",
-    "tests/direct-login-guard.test.js",
-    "tests/hide-home-debug-cards.test.js",
-    "tests/home-customizer-auto-sync.test.js",
-    "tests/onboarding-first-checkin.test.js",
-    "tests/record-ledger-sync.test.js",
     "tests/theme-system-v4.test.js"
    ],
    "smokeFnNames": []
@@ -10618,8 +10553,8 @@
   {
    "id": "G097",
    "title": "신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002, TASK-ES-332)",
-   "start": 15186,
-   "end": 15223,
+   "start": 15031,
+   "end": 15068,
    "lines": 38,
    "seam": false,
    "tier": "보통",
@@ -10644,11 +10579,11 @@
    "inlineHandlers": [],
    "fanIn": [
     {
-     "id": "G080",
+     "id": "G007",
      "refs": 1
     },
     {
-     "id": "G096",
+     "id": "G080",
      "refs": 1
     }
    ],
@@ -10675,8 +10610,8 @@
   {
    "id": "G098",
    "title": "AI feedback (best-effort; provider-aware; local fallback)",
-   "start": 15224,
-   "end": 15493,
+   "start": 15069,
+   "end": 15338,
    "lines": 270,
    "seam": false,
    "tier": "보통",
@@ -10715,11 +10650,11 @@
      "refs": 10
     },
     {
-     "id": "G086",
+     "id": "G007",
      "refs": 1
     },
     {
-     "id": "G096",
+     "id": "G086",
      "refs": 1
     },
     {
@@ -10783,8 +10718,8 @@
   {
    "id": "G099",
    "title": "[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
-   "start": 15494,
-   "end": 15814,
+   "start": 15339,
+   "end": 15659,
    "lines": 321,
    "seam": false,
    "tier": "보통",
@@ -10854,8 +10789,8 @@
   {
    "id": "G100",
    "title": "기록 기반 목표·마일스톤·할 일 자동 업데이트 제안",
-   "start": 15815,
-   "end": 15950,
+   "start": 15660,
+   "end": 15795,
    "lines": 136,
    "seam": false,
    "tier": "어려움",
@@ -10886,7 +10821,7 @@
    "inlineHandlers": [],
    "fanIn": [
     {
-     "id": "G096",
+     "id": "G007",
      "refs": 1
     },
     {
@@ -10947,12 +10882,12 @@
   {
    "id": "G101",
    "title": "맞춤 피드백 봇 설정",
-   "start": 15951,
-   "end": 17035,
+   "start": 15796,
+   "end": 16880,
    "lines": 1085,
    "seam": false,
    "tier": "어려움",
-   "score": 81,
+   "score": 82,
    "functions": [
     "closeCheckinFeedbackSheet",
     "closeFeedbackSetup",
@@ -11013,10 +10948,6 @@
    ],
    "fanIn": [
     {
-     "id": "G096",
-     "refs": 9
-    },
-    {
      "id": "G159",
      "refs": 4
     },
@@ -11038,6 +10969,10 @@
     },
     {
      "id": "G002",
+     "refs": 2
+    },
+    {
+     "id": "G007",
      "refs": 2
     },
     {
@@ -11111,7 +11046,9 @@
      "refs": 1
     }
    ],
-   "externalFiles": [],
+   "externalFiles": [
+    "js/tabs/records/checkin-capture.js"
+   ],
    "testFiles": [
     "scripts/smoke-test.js",
     "scripts/test-shipyard-modular.js",
@@ -11148,8 +11085,8 @@
   {
    "id": "G102",
    "title": "목표 & 기록 선택 피드 공유 모달 (전면 고도화)",
-   "start": 17036,
-   "end": 17774,
+   "start": 16881,
+   "end": 17619,
    "lines": 739,
    "seam": false,
    "tier": "어려움",
@@ -11279,8 +11216,8 @@
   {
    "id": "G103",
    "title": "[#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼",
-   "start": 17775,
-   "end": 17816,
+   "start": 17620,
+   "end": 17661,
    "lines": 42,
    "seam": false,
    "tier": "쉬움",
@@ -11332,8 +11269,8 @@
   {
    "id": "G104",
    "title": "외부 데이터 불러오기 (mock)",
-   "start": 17817,
-   "end": 17884,
+   "start": 17662,
+   "end": 17729,
    "lines": 68,
    "seam": false,
    "tier": "어려움",
@@ -11410,8 +11347,8 @@
   {
    "id": "G105",
    "title": "[#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작용",
-   "start": 17885,
-   "end": 18452,
+   "start": 17730,
+   "end": 18297,
    "lines": 568,
    "seam": false,
    "tier": "어려움",
@@ -11542,8 +11479,8 @@
   {
    "id": "G106",
    "title": "[#TASK-ES-146] 아워골 평가해주기 90% 팝업",
-   "start": 18453,
-   "end": 18583,
+   "start": 18298,
+   "end": 18428,
    "lines": 131,
    "seam": false,
    "tier": "어려움",
@@ -11630,8 +11567,8 @@
   {
    "id": "G107",
    "title": "New goal modal",
-   "start": 18584,
-   "end": 18897,
+   "start": 18429,
+   "end": 18742,
    "lines": 314,
    "seam": false,
    "tier": "어려움",
@@ -11750,8 +11687,8 @@
   {
    "id": "G108",
    "title": "대화로 목표 관리 (AI diff 제안 + 확인 후 반영)",
-   "start": 18898,
-   "end": 18953,
+   "start": 18743,
+   "end": 18798,
    "lines": 56,
    "seam": false,
    "tier": "보통",
@@ -11805,8 +11742,8 @@
   {
    "id": "G109",
    "title": "참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크)",
-   "start": 18954,
-   "end": 18954,
+   "start": 18799,
+   "end": 18799,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -11833,8 +11770,8 @@
   {
    "id": "G110",
    "title": "참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크)",
-   "start": 18955,
-   "end": 19515,
+   "start": 18800,
+   "end": 19360,
    "lines": 561,
    "seam": false,
    "tier": "어려움",
@@ -11969,8 +11906,8 @@
   {
    "id": "G111",
    "title": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
-   "start": 19516,
-   "end": 19973,
+   "start": 19361,
+   "end": 19818,
    "lines": 458,
    "seam": false,
    "tier": "보통",
@@ -12053,12 +11990,12 @@
   {
    "id": "G112",
    "title": "목표 보관(기록으로 옮기기)",
-   "start": 19974,
-   "end": 20143,
+   "start": 19819,
+   "end": 19988,
    "lines": 170,
    "seam": false,
    "tier": "어려움",
-   "score": 128,
+   "score": 132,
    "functions": [
     "goalAchievement",
     "renderArchivedGoals",
@@ -12167,6 +12104,9 @@
     "js/notify-engine.js",
     "js/records-stats.js",
     "js/sanctuary-v3-engine.js",
+    "js/stats-dashboard-bind.js",
+    "js/stats-dashboard-view.js",
+    "js/stats-dashboard.js",
     "js/stats-data-grid.js",
     "js/stats-data-menu.js",
     "js/stats-fullscreen.js",
@@ -12203,6 +12143,7 @@
     "js/tabs/home/sub-onescreen.js",
     "js/tabs/home/sub-quest.js",
     "js/tabs/home/sub-today.js",
+    "js/tabs/records/checkin-capture.js",
     "js/tabs/records/index.js",
     "js/tabs/records/period-ai-card.js",
     "js/tabs/records/render.js",
@@ -12210,6 +12151,7 @@
     "js/tabs/records/sub-timeline.js",
     "js/tabs/records/sub-timer.js",
     "js/tabs/settings/index.js",
+    "js/tabs/settings/quick-actions.js",
     "js/tabs/settings/render.js",
     "js/tabs/settings/sub-appearance.js",
     "js/tabs/settings/sub-data.js",
@@ -12235,7 +12177,6 @@
     "js/time-tracker-review.js",
     "js/time-tracker-screen.js",
     "js/time-tracker.js",
-    "js/universal-stats.js",
     "js/viral-sharing.js"
    ],
    "testFiles": [
@@ -12255,8 +12196,8 @@
   {
    "id": "G113",
    "title": "현재 종합상황 (AI 요약)",
-   "start": 20144,
-   "end": 20241,
+   "start": 19989,
+   "end": 20086,
    "lines": 98,
    "seam": false,
    "tier": "보통",
@@ -12339,8 +12280,8 @@
   {
    "id": "G114",
    "title": "오늘의 미션",
-   "start": 20242,
-   "end": 20267,
+   "start": 20087,
+   "end": 20112,
    "lines": 26,
    "seam": false,
    "tier": "보통",
@@ -12385,8 +12326,8 @@
   {
    "id": "G115",
    "title": "[#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화",
-   "start": 20268,
-   "end": 20345,
+   "start": 20113,
+   "end": 20190,
    "lines": 78,
    "seam": false,
    "tier": "어려움",
@@ -12472,8 +12413,8 @@
   {
    "id": "G116",
    "title": "마일스톤 완료 축하 모달 (AI 다음 행동 제안)",
-   "start": 20346,
-   "end": 20403,
+   "start": 20191,
+   "end": 20248,
    "lines": 58,
    "seam": false,
    "tier": "보통",
@@ -12538,8 +12479,8 @@
   {
    "id": "G117",
    "title": "목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #TASK-ES-135)",
-   "start": 20404,
-   "end": 20643,
+   "start": 20249,
+   "end": 20488,
    "lines": 240,
    "seam": false,
    "tier": "보통",
@@ -12635,8 +12576,8 @@
   {
    "id": "G118",
    "title": "[#TASK-ES-220] [생각 메모장 91번] 교대근무자 가변형 루틴 프리셋 & 자동 스케줄러",
-   "start": 20644,
-   "end": 20965,
+   "start": 20489,
+   "end": 20810,
    "lines": 322,
    "seam": false,
    "tier": "어려움",
@@ -12722,8 +12663,8 @@
   {
    "id": "G119",
    "title": "[#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달",
-   "start": 20966,
-   "end": 21666,
+   "start": 20811,
+   "end": 21511,
    "lines": 701,
    "seam": false,
    "tier": "어려움",
@@ -12832,8 +12773,8 @@
   {
    "id": "G120",
    "title": "RENDER: TEMPLATE ENCYCLOPEDIA SUBTAB (#TASK-ES-187)",
-   "start": 21667,
-   "end": 21669,
+   "start": 21512,
+   "end": 21514,
    "lines": 3,
    "seam": false,
    "tier": "쉬움",
@@ -12863,8 +12804,8 @@
   {
    "id": "G121",
    "title": "[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템",
-   "start": 21670,
-   "end": 22413,
+   "start": 21515,
+   "end": 22258,
    "lines": 744,
    "seam": false,
    "tier": "어려움",
@@ -12981,8 +12922,8 @@
   {
    "id": "G122",
    "title": "[UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA (#TASK-UIUX-PHASE4-GOALS)",
-   "start": 22414,
-   "end": 22647,
+   "start": 22259,
+   "end": 22492,
    "lines": 234,
    "seam": false,
    "tier": "어려움",
@@ -13077,8 +13018,8 @@
   {
    "id": "G123",
    "title": "[PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS",
-   "start": 22648,
-   "end": 22828,
+   "start": 22493,
+   "end": 22673,
    "lines": 181,
    "seam": false,
    "tier": "어려움",
@@ -13166,24 +13107,24 @@
   {
    "id": "G124",
    "title": "[PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTIONS",
-   "start": 22829,
-   "end": 22956,
-   "lines": 128,
+   "start": 22674,
+   "end": 22749,
+   "lines": 76,
    "seam": false,
    "tier": "어려움",
-   "score": 63,
+   "score": 56,
    "functions": [
-    "killDeviceSession",
     "openInAppDmSheet",
-    "paintSecurityCard",
-    "refreshSecurityStatus",
-    "selectThemeSwatch",
     "switchCommSubTab",
     "triggerFloatingReaction"
    ],
    "vars": [],
    "stateReads": [
+    "killDeviceSession",
+    "paintSecurityCard",
+    "refreshSecurityStatus",
     "renderCommScreen",
+    "selectThemeSwatch",
     "state"
    ],
    "stateMutates": [
@@ -13210,10 +13151,7 @@
    "listeners": 0,
    "onProps": 0,
    "inlineHandlers": [
-    "killDeviceSession",
     "openInAppDmSheet",
-    "refreshSecurityStatus",
-    "selectThemeSwatch",
     "switchCommSubTab",
     "triggerFloatingReaction"
    ],
@@ -13221,48 +13159,36 @@
    "fanOut": [
     {
      "id": "G013",
-     "refs": 10
-    },
-    {
-     "id": "G016",
      "refs": 6
     },
     {
-     "id": "G023",
-     "refs": 2
-    },
-    {
-     "id": "G024",
-     "refs": 2
+     "id": "G016",
+     "refs": 3
     }
    ],
    "externalFiles": [
+    "js/tabs/settings/quick-actions.js",
     "js/tabs/settings/sub-security.js"
    ],
    "testFiles": [
-    "scripts/smoke-test.js",
     "tests/account-switch-isolation.test.js",
     "tests/dev-host-gate.test.js",
     "tests/direct-login-guard.test.js",
-    "tests/google-session-guard.test.js",
-    "tests/stopwatch-lap-inputs.test.js",
-    "tests/theme-system-v4.test.js"
+    "tests/google-session-guard.test.js"
    ],
    "testIndexOnly": [
     "tests/account-switch-isolation.test.js",
     "tests/dev-host-gate.test.js",
     "tests/direct-login-guard.test.js",
-    "tests/google-session-guard.test.js",
-    "tests/stopwatch-lap-inputs.test.js",
-    "tests/theme-system-v4.test.js"
+    "tests/google-session-guard.test.js"
    ],
    "smokeFnNames": []
   },
   {
    "id": "G125",
    "title": "[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝",
-   "start": 22957,
-   "end": 23037,
+   "start": 22750,
+   "end": 22830,
    "lines": 81,
    "seam": false,
    "tier": "보통",
@@ -13321,8 +13247,8 @@
   {
    "id": "G126",
    "title": "RENDER: GOALS",
-   "start": 23038,
-   "end": 23040,
+   "start": 22831,
+   "end": 22833,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -13349,8 +13275,8 @@
   {
    "id": "G127",
    "title": "RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만)",
-   "start": 23041,
-   "end": 23300,
+   "start": 22834,
+   "end": 23093,
    "lines": 260,
    "seam": false,
    "tier": "어려움",
@@ -13510,8 +13436,8 @@
   {
    "id": "G128",
    "title": "개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135)",
-   "start": 23301,
-   "end": 25256,
+   "start": 23094,
+   "end": 25049,
    "lines": 1956,
    "seam": false,
    "tier": "어려움",
@@ -13718,8 +13644,8 @@
   {
    "id": "G129",
    "title": "[#TASK-ES-299] 팀 목표 댓글 작성 및 전송 직통 헬퍼 & 전역 이벤트 위임 (먹통 방어 100%)",
-   "start": 25257,
-   "end": 25433,
+   "start": 25050,
+   "end": 25226,
    "lines": 177,
    "seam": false,
    "tier": "보통",
@@ -13809,8 +13735,8 @@
   {
    "id": "G130",
    "title": "RENDER: RECORDS",
-   "start": 25434,
-   "end": 25545,
+   "start": 25227,
+   "end": 25338,
    "lines": 112,
    "seam": false,
    "tier": "보통",
@@ -13894,8 +13820,8 @@
   {
    "id": "G131",
    "title": "TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진",
-   "start": 25546,
-   "end": 25840,
+   "start": 25339,
+   "end": 25633,
    "lines": 295,
    "seam": false,
    "tier": "어려움",
@@ -13986,8 +13912,8 @@
   {
    "id": "G132",
    "title": "기록 히트맵 (GitHub 히트맵 스타일)",
-   "start": 25841,
-   "end": 26000,
+   "start": 25634,
+   "end": 25793,
    "lines": 160,
    "seam": false,
    "tier": "보통",
@@ -14053,8 +13979,8 @@
   {
    "id": "G133",
    "title": "주간/월간 리포트 (SVG 추이 + 카테고리 분포)",
-   "start": 26001,
-   "end": 26112,
+   "start": 25794,
+   "end": 25905,
    "lines": 112,
    "seam": false,
    "tier": "보통",
@@ -14127,8 +14053,8 @@
   {
    "id": "G134",
    "title": "5대 테마 원형 라이프 밸런스 휠 (SVG Pie Chart)",
-   "start": 26113,
-   "end": 26114,
+   "start": 25906,
+   "end": 25907,
    "lines": 2,
    "seam": false,
    "tier": "빈 구획",
@@ -14157,8 +14083,8 @@
   {
    "id": "G135",
    "title": "[#TASK-ES-233] 3일 실천 완성 나의 6각 성장 차트 미리보기 SVG 렌더러",
-   "start": 26115,
-   "end": 26386,
+   "start": 25908,
+   "end": 26179,
    "lines": 272,
    "seam": false,
    "tier": "어려움",
@@ -14253,8 +14179,8 @@
   {
    "id": "G136",
    "title": "대화형 기록 비서 (Req 1)",
-   "start": 26387,
-   "end": 26532,
+   "start": 26180,
+   "end": 26325,
    "lines": 146,
    "seam": false,
    "tier": "보통",
@@ -14364,8 +14290,8 @@
   {
    "id": "G137",
    "title": "전문적(내 전용 템플릿) 기록하기 & 일정 연동",
-   "start": 26533,
-   "end": 27382,
+   "start": 26326,
+   "end": 27175,
    "lines": 850,
    "seam": false,
    "tier": "어려움",
@@ -14450,8 +14376,8 @@
   {
    "id": "G138",
    "title": "전문 템플릿 실시간 자동 집계 엔진 (혁신 1)",
-   "start": 27383,
-   "end": 27569,
+   "start": 27176,
+   "end": 27362,
    "lines": 187,
    "seam": false,
    "tier": "보통",
@@ -14503,8 +14429,8 @@
   {
    "id": "G139",
    "title": "📈 표 기록 기반 일자별 자동 성장 추이 차트 (Visual Trend Chart)",
-   "start": 27570,
-   "end": 27760,
+   "start": 27363,
+   "end": 27553,
    "lines": 191,
    "seam": false,
    "tier": "보통",
@@ -14571,8 +14497,8 @@
   {
    "id": "G140",
    "title": "⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯 (In-Table Stopwatch)",
-   "start": 27761,
-   "end": 27858,
+   "start": 27554,
+   "end": 27651,
    "lines": 98,
    "seam": false,
    "tier": "보통",
@@ -14635,8 +14561,8 @@
   {
    "id": "G141",
    "title": "🔄 Notion 데이터베이스 실시간 자동 푸시 (Notion Direct Push)",
-   "start": 27859,
-   "end": 27932,
+   "start": 27652,
+   "end": 27725,
    "lines": 74,
    "seam": false,
    "tier": "보통",
@@ -14696,8 +14622,8 @@
   {
    "id": "G142",
    "title": "AI 프로 코칭 리포트 & 처방 모달 (혁신 3)",
-   "start": 27933,
-   "end": 28094,
+   "start": 27726,
+   "end": 27887,
    "lines": 162,
    "seam": false,
    "tier": "보통",
@@ -14772,8 +14698,8 @@
   {
    "id": "G143",
    "title": "Notion 실제 표 내보내기 & 클립보드 복사 모달 (혁신 4)",
-   "start": 28095,
-   "end": 28216,
+   "start": 27888,
+   "end": 28009,
    "lines": 122,
    "seam": false,
    "tier": "보통",
@@ -14835,8 +14761,8 @@
   {
    "id": "G144",
    "title": "CSV / 엑셀 양방향 연동 & 스마트워치 매핑 & 목표 3각 추적",
-   "start": 28217,
-   "end": 29080,
+   "start": 28010,
+   "end": 28873,
    "lines": 864,
    "seam": false,
    "tier": "어려움",
@@ -14923,8 +14849,8 @@
   {
    "id": "G145",
    "title": "템플릿 복제 보상형 광고(Rewarded Ad) 파이프라인 (TASK-ES-013)",
-   "start": 29081,
-   "end": 30459,
+   "start": 28874,
+   "end": 30252,
    "lines": 1379,
    "seam": false,
    "tier": "어려움",
@@ -15127,8 +15053,8 @@
   {
    "id": "G146",
    "title": "[#TASK-ES-358] 기록 탭 렌더 → js/tabs/records/period-ai-card.js · render.js 로 옮김",
-   "start": 30460,
-   "end": 30495,
+   "start": 30253,
+   "end": 30288,
    "lines": 36,
    "seam": false,
    "tier": "빈 구획",
@@ -15226,8 +15152,8 @@
   {
    "id": "G147",
    "title": "위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용)",
-   "start": 30496,
-   "end": 31107,
+   "start": 30289,
+   "end": 30900,
    "lines": 612,
    "seam": false,
    "tier": "어려움",
@@ -15411,8 +15337,8 @@
   {
    "id": "G148",
    "title": "테마별 기록 DB 다운로드 & 외부 AI 분석 프롬프트 번들 (TASK-OG-001)",
-   "start": 31108,
-   "end": 31140,
+   "start": 30901,
+   "end": 30933,
    "lines": 33,
    "seam": false,
    "tier": "보통",
@@ -15472,8 +15398,8 @@
   {
    "id": "G149",
    "title": "RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11)",
-   "start": 31141,
-   "end": 31141,
+   "start": 30934,
+   "end": 30934,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -15500,8 +15426,8 @@
   {
    "id": "G150",
    "title": "캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명)",
-   "start": 31142,
-   "end": 31420,
+   "start": 30935,
+   "end": 31213,
    "lines": 279,
    "seam": false,
    "tier": "어려움",
@@ -15617,8 +15543,8 @@
   {
    "id": "G151",
    "title": "RENDER: COMM",
-   "start": 31421,
-   "end": 31421,
+   "start": 31214,
+   "end": 31214,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -15645,8 +15571,8 @@
   {
    "id": "G152",
    "title": "200인 가상 페르소나 자율 활동 데이터 (20대~50대 남녀 각 100인씩 총 200인)",
-   "start": 31422,
-   "end": 31619,
+   "start": 31215,
+   "end": 31412,
    "lines": 198,
    "seam": false,
    "tier": "보통",
@@ -15726,8 +15652,8 @@
   {
    "id": "G153",
    "title": "카테고리 (대범위 · 중범위)",
-   "start": 31620,
-   "end": 31639,
+   "start": 31413,
+   "end": 31432,
    "lines": 20,
    "seam": false,
    "tier": "쉬움",
@@ -15792,8 +15718,8 @@
   {
    "id": "G154",
    "title": "지역 (시/도 · 시군구)",
-   "start": 31640,
-   "end": 31785,
+   "start": 31433,
+   "end": 31578,
    "lines": 146,
    "seam": false,
    "tier": "보통",
@@ -15863,8 +15789,8 @@
   {
    "id": "G155",
    "title": "플랫폼 맞춤 공유 카드",
-   "start": 31786,
-   "end": 31992,
+   "start": 31579,
+   "end": 31785,
    "lines": 207,
    "seam": false,
    "tier": "보통",
@@ -15946,8 +15872,8 @@
   {
    "id": "G156",
    "title": "목표 완주 인증서 (기존 공유 캔버스 인프라 재사용)",
-   "start": 31993,
-   "end": 32292,
+   "start": 31786,
+   "end": 32085,
    "lines": 300,
    "seam": false,
    "tier": "어려움",
@@ -16052,8 +15978,8 @@
   {
    "id": "G157",
    "title": "크리에이터 템플릿 (#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)",
-   "start": 32293,
-   "end": 32341,
+   "start": 32086,
+   "end": 32134,
    "lines": 49,
    "seam": false,
    "tier": "보통",
@@ -16146,8 +16072,8 @@
   {
    "id": "G158",
    "title": "소통 피드 (Supabase feed_posts, 실시간 동기화)",
-   "start": 32342,
-   "end": 32403,
+   "start": 32135,
+   "end": 32196,
    "lines": 62,
    "seam": false,
    "tier": "보통",
@@ -16223,8 +16149,8 @@
   {
    "id": "G159",
    "title": "피드 상호소통 댓글 & 리액션 헬퍼 (#TASK-ES-133 서버 DB 실시간 동기화)",
-   "start": 32404,
-   "end": 33037,
+   "start": 32197,
+   "end": 32830,
    "lines": 634,
    "seam": false,
    "tier": "어려움",
@@ -16361,8 +16287,8 @@
   {
    "id": "G160",
    "title": "팀 참여 상태 (localStorage 유지)",
-   "start": 33038,
-   "end": 33057,
+   "start": 32831,
+   "end": 32850,
    "lines": 20,
    "seam": false,
    "tier": "보통",
@@ -16454,8 +16380,8 @@
   {
    "id": "G161",
    "title": "전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)",
-   "start": 33058,
-   "end": 33649,
+   "start": 32851,
+   "end": 33442,
    "lines": 592,
    "seam": false,
    "tier": "어려움",
@@ -16609,8 +16535,8 @@
   {
    "id": "G162",
    "title": "[PEER INVITE] '함께 목표' 방 초대 루프 (웹 무설치 즉시 수락)",
-   "start": 33650,
-   "end": 33917,
+   "start": 33443,
+   "end": 33710,
    "lines": 268,
    "seam": false,
    "tier": "어려움",
@@ -16743,8 +16669,8 @@
   {
    "id": "G163",
    "title": "통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임)",
-   "start": 33918,
-   "end": 34009,
+   "start": 33711,
+   "end": 33802,
    "lines": 92,
    "seam": false,
    "tier": "보통",
@@ -16830,8 +16756,8 @@
   {
    "id": "G164",
    "title": "마니또 실 유저 익명 응원 연동 (#TASK-ES-133, #TASK-ES-145)",
-   "start": 34010,
-   "end": 34469,
+   "start": 33803,
+   "end": 34262,
    "lines": 460,
    "seam": false,
    "tier": "어려움",
@@ -16968,8 +16894,8 @@
   {
    "id": "G165",
    "title": "DM & 동반자 소통 시스템 (TASK-ES-105)",
-   "start": 34470,
-   "end": 34478,
+   "start": 34263,
+   "end": 34271,
    "lines": 9,
    "seam": false,
    "tier": "쉬움",
@@ -17005,8 +16931,8 @@
   {
    "id": "G166",
    "title": "웹알림 소프트 애스크 (TASK-RD-T020)",
-   "start": 34479,
-   "end": 34526,
+   "start": 34272,
+   "end": 34319,
    "lines": 48,
    "seam": false,
    "tier": "쉬움",
@@ -17056,8 +16982,8 @@
   {
    "id": "G167",
    "title": "고객지원 & FAQ 모달 (Req 10)",
-   "start": 34527,
-   "end": 34571,
+   "start": 34320,
+   "end": 34364,
    "lines": 45,
    "seam": false,
    "tier": "보통",
@@ -17121,8 +17047,8 @@
   {
    "id": "G168",
    "title": "잇템 불법/유해 링크 3초 퀵 신고 모달 (#TASK-ES-179)",
-   "start": 34572,
-   "end": 34829,
+   "start": 34365,
+   "end": 34622,
    "lines": 258,
    "seam": false,
    "tier": "보통",
@@ -17188,8 +17114,8 @@
   {
    "id": "G169",
    "title": "[#TASK-ES-354 CORE-07·SET-07] 설정 탭 렌더 → js/tabs/settings/render.js · sub-*.js 로 옮김",
-   "start": 34830,
-   "end": 34839,
+   "start": 34623,
+   "end": 34632,
    "lines": 10,
    "seam": true,
    "tier": "이음매(옮기지 않음)",
@@ -17236,8 +17162,8 @@
   {
    "id": "G170",
    "title": "방해금지 시간대(DND, 조용한 시간) 판별 순수 함수 (TASK-BG-7)",
-   "start": 34840,
-   "end": 34860,
+   "start": 34633,
+   "end": 34653,
    "lines": 21,
    "seam": false,
    "tier": "쉬움",
@@ -17279,8 +17205,8 @@
   {
    "id": "G171",
    "title": "맥락 기반 다이내믹 알림 문구 생성",
-   "start": 34861,
-   "end": 34912,
+   "start": 34654,
+   "end": 34705,
    "lines": 52,
    "seam": false,
    "tier": "보통",
@@ -17347,8 +17273,8 @@
   {
    "id": "G172",
    "title": "Notifications (best-effort, tab must be open)",
-   "start": 34913,
-   "end": 34943,
+   "start": 34706,
+   "end": 34736,
    "lines": 31,
    "seam": false,
    "tier": "보통",
@@ -17422,8 +17348,8 @@
   {
    "id": "G173",
    "title": "Web Push (앱이 꺼져 있어도 오는 알림)",
-   "start": 34944,
-   "end": 34995,
+   "start": 34737,
+   "end": 34788,
    "lines": 52,
    "seam": false,
    "tier": "어려움",
@@ -17498,8 +17424,8 @@
   {
    "id": "G174",
    "title": "받은 응원 알림 (실제 내 게시물 응원 수 + 마니또 받은 응원함)",
-   "start": 34996,
-   "end": 35029,
+   "start": 34789,
+   "end": 34822,
    "lines": 34,
    "seam": false,
    "tier": "쉬움",
@@ -17555,12 +17481,12 @@
   {
    "id": "G175",
    "title": "4대 연계 뷰 원자적 동시 전파 디스패처 (헌법 제1조 제4항 제5호 & 제15조 제6항 제3호)",
-   "start": 35030,
-   "end": 35074,
+   "start": 34823,
+   "end": 34867,
    "lines": 45,
    "seam": false,
    "tier": "어려움",
-   "score": 56,
+   "score": 57,
    "functions": [
     "dispatchFullViewPropagation"
    ],
@@ -17609,10 +17535,6 @@
      "refs": 2
     },
     {
-     "id": "G096",
-     "refs": 2
-    },
-    {
      "id": "G101",
      "refs": 2
     },
@@ -17631,6 +17553,10 @@
     {
      "id": "G176",
      "refs": 2
+    },
+    {
+     "id": "G007",
+     "refs": 1
     }
    ],
    "fanOut": [
@@ -17658,6 +17584,7 @@
     "js/tabs/home/sub-heatmap.js",
     "js/tabs/home/sub-quest.js",
     "js/tabs/home/sub-today.js",
+    "js/tabs/records/checkin-capture.js",
     "js/tabs/records/sub-retrospect.js",
     "js/tabs/records/sub-timeline.js",
     "js/tabs/records/sub-timer.js"
@@ -17690,8 +17617,8 @@
   {
    "id": "G176",
    "title": "[#TASK-ES-264] 자정(00:00 KST / 현지 표준시) 날짜 변경 감지 및 자동 동기화 워처",
-   "start": 35075,
-   "end": 35109,
+   "start": 34868,
+   "end": 34902,
    "lines": 35,
    "seam": false,
    "tier": "보통",
@@ -17758,8 +17685,8 @@
   {
    "id": "G177",
    "title": "Render all",
-   "start": 35110,
-   "end": 35122,
+   "start": 34903,
+   "end": 34915,
    "lines": 13,
    "seam": false,
    "tier": "어려움",
@@ -17899,8 +17826,8 @@
   {
    "id": "G178",
    "title": "세션 복구 및 안전 앱 진입 유틸",
-   "start": 35123,
-   "end": 35356,
+   "start": 34916,
+   "end": 35149,
    "lines": 234,
    "seam": false,
    "tier": "어려움",
@@ -18026,8 +17953,8 @@
   {
    "id": "G179",
    "title": "#TASK-AUTH-P0-SAFETY: 로그인/계정 보안 패키지 모듈 연결",
-   "start": 35357,
-   "end": 35369,
+   "start": 35150,
+   "end": 35162,
    "lines": 13,
    "seam": false,
    "tier": "빈 구획",
@@ -18080,8 +18007,8 @@
   {
    "id": "G180",
    "title": "Boot",
-   "start": 35370,
-   "end": 35597,
+   "start": 35163,
+   "end": 35390,
    "lines": 228,
    "seam": false,
    "tier": "빈 구획",
@@ -18177,8 +18104,8 @@
   {
    "id": "G181",
    "title": "#TASK-ES-015 FIX: 공용 크레딧 모듈(js/credits.js)에 앱 sb 주입",
-   "start": 35598,
-   "end": 35600,
+   "start": 35391,
+   "end": 35393,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -18211,8 +18138,8 @@
   {
    "id": "G182",
    "title": "KF-7 #TASK-ES-014: 반응 4종 모듈(js/reactions.js)에 앱 핸들 연결",
-   "start": 35601,
-   "end": 35614,
+   "start": 35394,
+   "end": 35407,
    "lines": 14,
    "seam": false,
    "tier": "빈 구획",
@@ -18277,8 +18204,8 @@
   {
    "id": "G183",
    "title": "KF-4 #TASK-ES-018: 카테고리별 도움이 된 글 슬롯 모듈(js/top-helpful.js)",
-   "start": 35615,
-   "end": 35619,
+   "start": 35408,
+   "end": 35412,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -18311,8 +18238,8 @@
   {
    "id": "G184",
    "title": "KF-5 #TASK-ES-016: 도움돼요 이유 모듈(js/helpful-reason.js)에 앱 핸들 연결",
-   "start": 35620,
-   "end": 35628,
+   "start": 35413,
+   "end": 35421,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -18368,8 +18295,8 @@
   {
    "id": "G185",
    "title": "#TASK-ES-105: 팀 초대 및 소통/DM/동반자 모듈(js/team-invite-comm.js) 연결",
-   "start": 35629,
-   "end": 35636,
+   "start": 35422,
+   "end": 35429,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -18446,8 +18373,8 @@
   {
    "id": "G186",
    "title": "#TASK-ES-105: 팀 연계 개인목표 및 상호 체크 모듈(js/team-linked-goals.js) 연결",
-   "start": 35637,
-   "end": 35645,
+   "start": 35430,
+   "end": 35438,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -18537,8 +18464,8 @@
   {
    "id": "G187",
    "title": "KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결",
-   "start": 35646,
-   "end": 35650,
+   "start": 35439,
+   "end": 35443,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -18581,12 +18508,12 @@
   {
    "id": "G188",
    "title": "PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118)",
-   "start": 35651,
-   "end": 35693,
+   "start": 35444,
+   "end": 35486,
    "lines": 43,
    "seam": false,
    "tier": "빈 구획",
-   "score": 120,
+   "score": 122,
    "functions": [],
    "vars": [],
    "stateReads": [
@@ -18677,6 +18604,8 @@
     "js/reactions.js",
     "js/records-stats.js",
     "js/sanctuary-v3-engine.js",
+    "js/stats-dashboard-bind.js",
+    "js/stats-dashboard.js",
     "js/stats-data-grid.js",
     "js/stats-data-menu.js",
     "js/stats-differentiated.js",

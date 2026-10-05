@@ -77,7 +77,7 @@ for (const st of top) {
 }
 for (let i = 0; i < groups.length; i++) groups[i].end = i + 1 < groups.length ? groups[i + 1].start - 1 : eLine; // `})();` 줄까지
 groups.forEach((g, i) => { g.id = 'G' + String(i).padStart(3, '0'); g.lines = g.end - g.start + 1; });
-const SEAM_RE = /모듈 이음매|TASK-ES-354 CORE-07/;
+const SEAM_RE = /모듈 이음매|TASK-ES-354 CORE-07|세포화 1차 이음매/; // #TASK-ES-439: 1차 이음매(#TASK-ES-423) 묶음도 이음매다(인라인 어려움 이음매 자리 표지가 이 묶음 안에 붙는다)
 groups.forEach(g => { g.seam = SEAM_RE.test(g.title); });
 
 // ── 최상위 선언 → 묶음
