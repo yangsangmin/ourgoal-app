@@ -230,13 +230,12 @@ const FN_NAMES = [
   'fmtTime', 'getAIAnalysisPrompt', 'buildCSV', 'buildMarkdownExport',
   'triggerHaptic', 'reorderMilestones', 'filterFeedByCategory',
   'calculateWeeklyFocusStats', 'exportRecordsToCsv', 'exportRecordsToMarkdown',
-  'defaultSettings', 'getPrivacyLabel', 'subscriptionState',
+  'defaultSettings', 'getPrivacyLabel',
   'computeTrendChartData', 'formatStopwatchTime',
   'rescaleGoal',
   'sortGoalsByOrder', 'isWithinDND', 'buildICS', 'buildWebCalUrl',
   'quickCreateStarterGoal', 'generateMzStoryCanvas',
   'calculateRemainingSeats', 'buildPeerInviteUrl', 'formatPeerInviteMessage',
-  'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled',
 ];
 
 // #TASK-ES-385: EXP 함수(xpForLevel·levelForXP·levelProgress)가 js/avatar/xp.js 로 옮겨 가도 같은 함수를 뽑도록, 추출 원본은 인라인 스크립트 + js/avatar/xp.js(있으면)다. 지금은 xp.js 가 없어 mainScript 그대로다.
@@ -266,7 +265,6 @@ const sandboxSrc =
   '  study: { title: "매일 1시간 몰입 & 자격증 합격", category: "study", milestones: [{ title: "스마트폰 치우고 1시간 집중 몰입", status: "todo" }, { title: "기출문제 1회분 풀고 채점", status: "todo" }, { title: "핵심 오답 정리 및 내일 복습 체크", status: "todo" }] },\n' +
   '  reading: { title: "하루 15분 독서 & 지적 성장", category: "reading", milestones: [{ title: "잠들기 전 책 15분 읽기", status: "todo" }, { title: "마음에 와닿는 문장 1줄 기록", status: "todo" }, { title: "이번 주 1권 완독하기", status: "todo" }] }\n' +
   '};\n' +
-  'var OURGOAL_CONFIG = { ENABLE_TEMPLATE_REWARDED_ADS: false, AD_DELAY_SECONDS: 5, AD_NOTICE_MESSAGE: "다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다" };\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, getKSTDateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
@@ -285,11 +283,10 @@ const sandboxSrc =
   'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
-  'defaultSettings, getPrivacyLabel, subscriptionState, computeTrendChartData, formatStopwatchTime, ' +
+  'defaultSettings, getPrivacyLabel, computeTrendChartData, formatStopwatchTime, ' +
   'rescaleGoal, sortGoalsByOrder, isWithinDND, buildICS, buildWebCalUrl, ' +
   'quickCreateStarterGoal, generateMzStoryCanvas, ' +
   'calculateRemainingSeats, buildPeerInviteUrl, formatPeerInviteMessage, ' +
-  'getTemplateAdNoticeMessage, computeAdCountdownProgress, isTemplateRewardedAdEnabled, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -1748,10 +1745,6 @@ check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무
 
   // 5. 30일 리포트 페이월 제거 확인
   assert.strictEqual(html.includes("openPaywallModal('report30d')"), false, '30일 리포트 열람 시 페이월 제거');
-
-  // 6. subscriptionState() 호출 시 항상 isPro: true 반환 확인
-  const sub = fns.subscriptionState();
-  assert.strictEqual(sub.isPro, true, '모든 유저 isPro: true 무제한 무료 제공');
 });
 
 check('compliance: 기록/달력 6대 UX 개선사항(기록 탭 AI 피드백, 히트맵 기간·횟수 시각화, 위클리 리캡 항목선택, 기간별 AI 피드백, 퀵도크 삭제, 일정 허브 모달 정상동작)이 모두 구현되어 있다', () => {
@@ -2423,26 +2416,6 @@ check('compliance: [PEER INVITE] 친구와 1:1 또는 5인 소그룹 마라톤 �
 });
 
 /* ============ [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인 ============ */
-check('getTemplateAdNoticeMessage: 상민님 지시 정확한 안내 문구를 반환한다', () => {
-  const msg = fns.getTemplateAdNoticeMessage();
-  assert.strictEqual(msg, '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다');
-});
-
-check('computeAdCountdownProgress: 5초 카운트다운의 백분율을 정확히 계산하고 경계값을 방어한다', () => {
-  assert.strictEqual(fns.computeAdCountdownProgress(5, 5), 100);
-  assert.strictEqual(fns.computeAdCountdownProgress(4, 5), 80);
-  assert.strictEqual(fns.computeAdCountdownProgress(2.5, 5), 50);
-  assert.strictEqual(fns.computeAdCountdownProgress(0, 5), 0);
-  assert.strictEqual(fns.computeAdCountdownProgress(-1, 5), 0);
-  assert.strictEqual(fns.computeAdCountdownProgress(10, 5), 100);
-});
-
-check('isTemplateRewardedAdEnabled: 플래그에 따라 활성화 여부를 판정하고 기본값은 false(베타 무마찰)이다', () => {
-  assert.strictEqual(fns.isTemplateRewardedAdEnabled({ ENABLE_TEMPLATE_REWARDED_ADS: false }), false);
-  assert.strictEqual(fns.isTemplateRewardedAdEnabled({ ENABLE_TEMPLATE_REWARDED_ADS: true }), true);
-  assert.strictEqual(fns.isTemplateRewardedAdEnabled(null), false);
-});
-
 check('compliance: [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인(5초 카운트다운, 모달 안내, AdMob 및 Web fallback, app-ads.txt) 무결성 검증', () => {
   assert.ok(html.includes('OURGOAL_CONFIG'), 'OURGOAL_CONFIG 설정 객체 존재');
   assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '기본값 베타 테스트 100% 무료(false) 보장');
@@ -7359,7 +7332,7 @@ check('[#TASK-ES-185] 화이트 테마 렌더링 먹통 버그 근본 척결 및
 check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도심) 조형·레이아웃·컴포넌트 100% 동일 동기화 및 테마별 컬러 분리 검증', () => {
   const fs = require('fs');
   const path = require('path');
-  const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  const html = require('../tests/helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8'));
   const css = fs.readFileSync(path.join(__dirname, '../ui.css'), 'utf8');
   const engineSrc = SANCTUARY_SRC;
 

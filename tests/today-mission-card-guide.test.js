@@ -10,7 +10,7 @@ const SUITE_TASK = 'TASK-ES-262';
 console.log('[TEST] today-mission-card-guide.test.js: starting execution for ' + SUITE_TASK + '...');
 
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));
 const uiCssPath = path.join(__dirname, '..', 'ui.css');
 const uiCss = fs.readFileSync(uiCssPath, 'utf8');
 
