@@ -47,7 +47,7 @@ worktree `C:/dev/wt/inline-h2`(브랜치 `feat/2026-10-05-task-es-493-inline-h2-
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-기준 = origin/main cb0328d(`git archive` 사본). 그 뒤 main(aa354e2)을 합쳤다 — index.html 은 main 판을 입력으로 생성기를 다시 돌려 만들었고(손으로 푼 충돌 0), verify·모듈 로드 탐침(회귀 0)·시나리오 2개(기준·작업 통과)를 다시 쟀다. 조작 비교·시험 비교는 cb0328d 기준 값이다.
+기준 = origin/main cb0328d(`git archive` 사본). 그 뒤 main(aa354e2 · c0f5637)을 합쳤다 — index.html 은 main 판을 입력으로 생성기를 다시 돌려 만들었고(손으로 푼 충돌 0), verify·모듈 로드 탐침(회귀 0)·시나리오 2개(기준·작업 통과)를 다시 쟀다. 조작 비교·시험 비교는 cb0328d 기준 값이다.
 
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |

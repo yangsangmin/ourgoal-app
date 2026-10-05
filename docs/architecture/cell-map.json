@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "e5fe2bbbc25817935bef984611e68091bc9cf1c9",
-  "short": "e5fe2bbb",
-  "committedAt": "2026-10-05T20:17:56+09:00",
-  "subject": "[INFRA] #TASK-ES-455 chore: Merge origin/main(#763 4050d60) — 생성 지도 3종은 main 판을 받고 이어서 다시 만든다"
+  "commit": "c1f0a72fdc450d7385b330f47d257680c17d2941",
+  "short": "c1f0a72f",
+  "committedAt": "2026-10-05T22:48:13+09:00",
+  "subject": "Merge pull request #775 from yangsangmin/feat/2026-10-05-task-es-476-inline-h1-2"
  },
  "summary": {
-  "cells": 224,
-  "files": 223,
-  "jsLines": 59802,
+  "cells": 267,
+  "files": 266,
+  "jsLines": 70798,
   "kinds": {
-   "organ": 29,
-   "tab": 89,
+   "organ": 40,
+   "tab": 121,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 224,
+  "descriptionsHand": 267,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 28157,
-   "functionDecls": 514
+   "inlineScriptLines": 19093,
+   "functionDecls": 314
   },
   "health": {
-   "undifferentiatedLines": 28157,
+   "undifferentiatedLines": 19093,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,15 +74,15 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 29
+   "count": 40
   },
   {
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 89,
+   "count": 121,
    "large": 6,
-   "small": 83
+   "small": 115
   },
   {
    "key": "hybrid",
@@ -124,9 +124,15 @@
     "goals/ai-local-fallback",
     "goals/ai-status",
     "goals/ai-status-refresh",
+    "goals/focus-autopilot",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
+    "goals/goal-math",
+    "goals/goals-ia-actions",
+    "goals/new-goal-modal",
+    "goals/notion-record-convert",
+    "goals/prompt-encyclopedia",
     "goals/render",
     "goals/result-input",
     "goals/result-modal",
@@ -138,10 +144,11 @@
     "goals/team-goal-modals",
     "goals/team-goal-prompt",
     "goals/team-state",
+    "goals/template-encyclopedia",
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 4055,
+   "lines": 6452,
    "over800": 0
   },
   {
@@ -153,23 +160,30 @@
     "records/index",
     "records/ai-feedback",
     "records/ai-feedback-providers",
+    "records/archive-toggle",
+    "records/checkin-capture",
     "records/checkin-helpers",
+    "records/first-checkin-tutorial",
     "records/heatmap-summary",
     "records/period-ai-card",
     "records/photo-proof",
     "records/pro-report-export",
+    "records/pro-template-modals",
+    "records/pro-templates",
     "records/record-assistant",
     "records/record-card-wire",
     "records/record-cards",
     "records/record-heatmap-report",
     "records/render",
+    "records/share-to-feed",
     "records/sub-retrospect",
     "records/sub-timeline",
     "records/sub-timer",
     "records/table-analytics-view",
-    "records/table-stopwatch"
+    "records/table-stopwatch",
+    "records/trend-metrics-chart"
    ],
-   "lines": 3240,
+   "lines": 5736,
    "over800": 0
   },
   {
@@ -181,15 +195,17 @@
     "calendar/index",
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
+    "calendar/schedule-done-toggle",
     "calendar/sub-day-detail",
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 2086,
+   "lines": 2510,
    "over800": 0
   },
   {
@@ -200,12 +216,16 @@
    "cells": [
     "comm/index",
     "comm/challenge-room",
+    "comm/crew-pacing",
     "comm/dm-ledger",
     "comm/feed-comments",
     "comm/feed-post-preview",
     "comm/feed-posts-sync",
     "comm/first-cheer",
+    "comm/goal-certificate-share",
     "comm/manito-basics",
+    "comm/manito-real",
+    "comm/peer-invite",
     "comm/render",
     "comm/sample-data",
     "comm/share-card",
@@ -215,7 +235,7 @@
     "comm/sub-crew",
     "comm/sub-feed"
    ],
-   "lines": 2118,
+   "lines": 3484,
    "over800": 0
   },
   {
@@ -227,13 +247,24 @@
     "settings/index",
     "settings/account-entry",
     "settings/adaptive-ux",
+    "settings/app-defaults",
+    "settings/app-evaluation",
+    "settings/app-lock-pin",
     "settings/avatar-greeting",
+    "settings/avatar-levelup-modal",
     "settings/comm-tour",
+    "settings/dev-debug-gate",
     "settings/guest-backup-nudge",
+    "settings/guest-migration",
+    "settings/inapp-landing",
+    "settings/login-devices",
     "settings/notify-soft-ask",
     "settings/notion-sync",
+    "settings/onboarding",
     "settings/pwa-install",
+    "settings/quick-actions",
     "settings/render",
+    "settings/session-entry",
     "settings/sub-appearance",
     "settings/sub-data",
     "settings/sub-integrations",
@@ -241,10 +272,11 @@
     "settings/sub-profile",
     "settings/sub-security",
     "settings/support-modals",
+    "settings/tab-guide",
     "settings/theme-apply",
     "settings/widget-settings-modal"
    ],
-   "lines": 2765,
+   "lines": 4994,
    "over800": 0
   },
   {
@@ -419,7 +451,7 @@
     "theme-system",
     "viral-sharing"
    ],
-   "lines": 4729,
+   "lines": 4771,
    "over800": 0
   },
   {
@@ -429,17 +461,28 @@
    "desc": "신호망·등록부·상태·능력·꽂는 자리·공용 통로",
    "cells": [
     "core/app-scope",
+    "core/badges",
     "core/capabilities",
+    "core/confetti",
     "core/confirm",
     "core/event-bus",
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
     "core/modal",
+    "core/registry-init",
     "core/registry",
     "core/slots",
     "core/store",
+    "core/telemetry",
+    "core/time-keys",
     "core/toast",
-    "core/ui-helpers"
+    "core/trash-bin",
+    "core/ui-helpers",
+    "core/virtual-user-helpers"
    ],
-   "lines": 1513,
+   "lines": 3555,
    "over800": 0
   },
   {
@@ -1252,7 +1295,7 @@
     {
      "id": "sanctuary-goal-trail",
      "file": "js/sanctuary-goal-trail.js",
-     "lines": 183
+     "lines": 185
     },
     {
      "id": "sanctuary-peer-radar",
@@ -1267,7 +1310,7 @@
     {
      "id": "sanctuary-weekly-recap",
      "file": "js/sanctuary-weekly-recap.js",
-     "lines": 173
+     "lines": 213
     }
    ]
   },
@@ -1431,7 +1474,11 @@
     "OurgoalAccountIsolation"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "core/home-cockpit",
+    "settings/guest-migration",
+    "settings/session-entry"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -1609,6 +1656,7 @@
     "goals/ai-status",
     "home/sub-onescreen",
     "settings/avatar-greeting",
+    "settings/avatar-levelup-modal",
     "settings/render"
    ],
    "readsFromIndexHtml": [],
@@ -2608,7 +2656,9 @@
     "OurgoalCalendarAttachment"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "calendar/day-edit-hub"
+   ],
    "readsFromIndexHtml": [
     "openAddAttachmentModal",
     "openAttachmentViewer",
@@ -3326,7 +3376,6 @@
     "collapseAllSettingsSections",
     "collapseAllTeamGoalAccordions",
     "copyUserGoalTemplate",
-    "generateRecordPledgeMessage",
     "openGoalTemplateEncyclopediaModal",
     "sendTeamGoalComment",
     "toggleFeedPostPreview"
@@ -3421,13 +3470,13 @@
    ],
    "calls": [],
    "calledBy": [
-    "goals/ai-agent"
+    "goals/ai-agent",
+    "goals/new-goal-modal",
+    "records/pro-template-modals"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalModeration"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -3485,28 +3534,51 @@
     "avatar/xp",
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
+    "calendar/schedule-done-toggle",
     "comm/challenge-room",
+    "comm/crew-pacing",
     "comm/feed-comments",
     "comm/feed-post-preview",
     "comm/feed-posts-sync",
     "comm/first-cheer",
+    "comm/goal-certificate-share",
     "comm/manito-basics",
+    "comm/manito-real",
+    "comm/peer-invite",
     "comm/render",
     "comm/sample-data",
     "comm/share-card",
     "comm/story-canvas",
     "comm/story-card-send",
+    "core/badges",
+    "core/confetti",
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
+    "core/virtual-user-helpers",
     "goals/ai-agent",
     "goals/ai-local-fallback",
     "goals/ai-status",
     "goals/ai-status-refresh",
+    "goals/focus-autopilot",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
+    "goals/goal-math",
+    "goals/goals-ia-actions",
+    "goals/new-goal-modal",
+    "goals/notion-record-convert",
+    "goals/prompt-encyclopedia",
     "goals/render",
     "goals/result-input",
     "goals/result-modal",
@@ -3515,31 +3587,51 @@
     "goals/team-goal-modals",
     "goals/team-goal-prompt",
     "goals/team-state",
+    "goals/template-encyclopedia",
     "goals/template-quick-import",
     "goals/topic-region-picker",
     "records/ai-feedback",
     "records/ai-feedback-providers",
+    "records/archive-toggle",
+    "records/checkin-capture",
     "records/checkin-helpers",
+    "records/first-checkin-tutorial",
     "records/heatmap-summary",
     "records/period-ai-card",
     "records/photo-proof",
     "records/pro-report-export",
+    "records/pro-template-modals",
+    "records/pro-templates",
     "records/record-assistant",
     "records/record-card-wire",
     "records/record-cards",
     "records/record-heatmap-report",
     "records/render",
+    "records/share-to-feed",
     "records/table-analytics-view",
     "records/table-stopwatch",
+    "records/trend-metrics-chart",
+    "sanctuary-weekly-recap",
     "settings/account-entry",
     "settings/adaptive-ux",
+    "settings/app-defaults",
+    "settings/app-evaluation",
+    "settings/app-lock-pin",
     "settings/avatar-greeting",
+    "settings/avatar-levelup-modal",
     "settings/comm-tour",
+    "settings/dev-debug-gate",
     "settings/guest-backup-nudge",
+    "settings/guest-migration",
+    "settings/inapp-landing",
+    "settings/login-devices",
     "settings/notify-soft-ask",
     "settings/notion-sync",
+    "settings/onboarding",
     "settings/pwa-install",
+    "settings/quick-actions",
     "settings/render",
+    "settings/session-entry",
     "settings/sub-appearance",
     "settings/sub-data",
     "settings/sub-integrations",
@@ -3547,6 +3639,7 @@
     "settings/sub-profile",
     "settings/sub-security",
     "settings/support-modals",
+    "settings/tab-guide",
     "settings/theme-apply",
     "settings/widget-settings-modal"
    ],
@@ -3578,6 +3671,70 @@
      "task": "TASK-ES-358",
      "title": "[E2] #TASK-ES-358 refactor: 기록 탭 렌더 7함수를 js/tabs/records/ 세포로 동작 그대로 이전",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "core/badges",
+   "file": "js/core/badges.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "뱃지·명예의 전당",
+   "nameSource": "hand",
+   "does": "뱃지 획득 조건을 판정하고 명예의 전당 창에 획득·잠긴 뱃지를 보여 준다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Badges (기관 — 뱃지 컬렉션·명예의 전당)",
+    "뱃지 판정 문맥(badgeContext) · 뱃지 목록(BADGES) · 명예의 전당 창(openHallOfFame).",
+    "같은 묶음의 완료 마일스톤 합(totalCompletedMilestones)은 smoke 시험지 FN_NAMES 라 남겼다. 같은 묶음의 프로필 불러오기 쪽(defaultProfile·resolveUniqueDisplayName·formatDisplayNameWithTag·ensureUserRow·loadProfile)과 앱 상태(state)는 로그인 뒤에만 도는 경로라 게스트 화면 시나리오로 잴 수 없어 이번에 옮기지 않았다.",
+    "#TASK-ES-482(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3475~3483 · 3484~3495 · 3496~3515줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 70,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-482"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md"
+   ],
+   "prs": [
+    {
+     "number": 784,
+     "task": "TASK-ES-482",
+     "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
+     "date": "2026-10-05"
     }
    ]
   },
@@ -3639,6 +3796,70 @@
      "task": "TASK-ES-356",
      "title": "[INFRA] #TASK-ES-356 feat: CORE-08 세포 골격 — 모듈 청사진·능력 등록부·꽂는 자리 15곳·신고서·래칫 가드·건강 지표·스캐폴드",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "core/confetti",
+   "file": "js/core/confetti.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "축하 꽃가루",
+   "nameSource": "hand",
+   "does": "축하 순간에 화면에 꽃가루 조각을 뿌리고, 목표 공개 범위를 「나만 보기」로 되돌리는 토스트를 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Confetti (기관 — 축하 꽃가루·공개 범위 되돌리기 토스트)",
+    "여러 탭이 부르는 축하 꽃가루(burstConfetti — #confettiLayer 에 조각을 뿌리고 1.1초 뒤 지움)와 목표 공개 범위 되돌리기 토스트(showUndoPrivacyToast).",
+    "같은 묶음의 토스트(toast)와 그 타이머(toastTimer)·window 노출 if 문은 옮기지 않았다 — toast 는 다른 함수와 타이머를 같이 쓴다(MODULE-SPLIT-PROTOCOL 1절).",
+    "#TASK-ES-482(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3081~3106 · 3122~3149줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 82,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-482"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md"
+   ],
+   "prs": [
+    {
+     "number": 784,
+     "task": "TASK-ES-482",
+     "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
+     "date": "2026-10-05"
     }
    ]
   },
@@ -3751,8 +3972,10 @@
     "comm/sub-crew",
     "comm/sub-feed",
     "core/registry",
+    "core/registry-init",
     "core/slots",
     "core/store",
+    "goals/focus-autopilot",
     "goals/index",
     "goals/sub-personal",
     "goals/sub-routine",
@@ -3761,6 +3984,7 @@
     "home/sub-heatmap",
     "home/sub-quest",
     "home/sub-today",
+    "records/checkin-capture",
     "records/index",
     "records/sub-retrospect",
     "records/sub-timeline",
@@ -3799,6 +4023,268 @@
      "task": "TASK-ES-353",
      "title": "[INFRA] #TASK-ES-353 CORE-04 변경 이벤트 단일화·리스너 중복 방지 (HOME-18·GOALS-22 흡수)",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "core/gcal-sync",
+   "file": "js/core/gcal-sync.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "구글 캘린더 연결",
+   "nameSource": "hand",
+   "does": "구글 캘린더 연결 창·연결 상태·토큰을 다루고 일정을 불러오거나 목표를 캘린더에 보낸다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Google Calendar Sync (기관 — 구글 캘린더 연결·토큰·가져오기·내보내기)",
+    "구글 캘린더 클라이언트 id·연결 상태·연결 창·일정 읽기·전체 보내기·토큰 저장/복원/상태·토큰 받기·가져오기/내보내기 창.",
+    "같은 구획 주석 아래(휴지통 묶음)에 있던 것을 책임 단위로 나눴다. 토큰 클라이언트 상태 변수(googleTokenClient)와 window 노출 문은 원래 자리, 캘린더 사용 가능(calendarAvailable)은 smoke 시험지 FN_NAMES 라, 토큰 저장(saveGoogleToken)은 함수 최상위 arguments 를 써서(헌법 CELL_SPLIT 5) 남겼다.",
+    "#TASK-ES-482(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 6729~6733 · 6734~6763 · 6764~6787 · 6788~6823 · 6824~6872 · 6873~6928 · 6929~6933 · 6959~6985 · 6986~6991 · 7000~7013 · 7014~7049 · 7050~7067 · 7068~7131 · 7132~7190줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 482,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-482"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md"
+   ],
+   "prs": [
+    {
+     "number": 784,
+     "task": "TASK-ES-482",
+     "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/gcal-token",
+   "file": "js/core/gcal-token.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "구글 캘린더 토큰 격리",
+   "nameSource": "hand",
+   "does": "구글 캘린더 토큰과 일정 캐시를 계정마다 따로 두고, 예전 공용 키를 지운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Google Calendar Token (기관 — 구글 캘린더 토큰·일정 캐시 계정 격리)",
+    "구글 캘린더 토큰·일정 캐시를 계정(uid)별로 나눠 두는 도우미(#TASK-ES-345 CAL-02 묶음).",
+    "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 3337~3337 · 3338~3342 · 3343~3345 · 3346~3348 · 3349~3360 · 3366~3379 · 3380~3382줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 78,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-345",
+    "TASK-ES-471"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-345-GCAL-TOKEN-ISOLATION.md",
+    "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md"
+   ],
+   "prs": [
+    {
+     "number": 776,
+     "task": "TASK-ES-471",
+     "title": "[INFRA] #TASK-ES-471 refactor: 인라인 어려움 기관 묶음 이전 1차 — 공용 부품 8묶음을 js/core 세포 7개로(동작 그대로, 인라인 −682줄)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/home-cockpit",
+   "file": "js/core/home-cockpit.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "홈 콕핏",
+   "nameSource": "hand",
+   "does": "홈에서 오늘을 1초에 보고, 체크인 입력칸·기분 슬라이더·날짜 바꾸기·프로필 저장을 맡는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Home Cockpit (기관 — 홈 1초 조망 ↔ 체크인 콕핏)",
+    "홈 1초 조망·무저항 체크인 콕핏 8대 과업 묶음(#TASK-UIUX-PHASE3-HOME-COCKPIT). 여러 탭이 부르는 공용 부품이라 기관 칸에 둔다.",
+    "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 4070~4092 · 4094~4114 · 4116~4138 · 4140~4200 · 4201~4306줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 269,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "_homeDateOffset"
+   ],
+   "calls": [
+    "account-isolation",
+    "core/app-scope",
+    "record-ledger"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers",
+    "_homeDateOffset"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-471"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md"
+   ],
+   "prs": [
+    {
+     "number": 776,
+     "task": "TASK-ES-471",
+     "title": "[INFRA] #TASK-ES-471 refactor: 인라인 어려움 기관 묶음 이전 1차 — 공용 부품 8묶음을 js/core 세포 7개로(동작 그대로, 인라인 −682줄)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/modal-helper",
+   "file": "js/core/modal-helper.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "모달 도우미",
+   "nameSource": "hand",
+   "does": "모달 닫기·하단 알림/확인 시트를 띄우고, 안드로이드 뒤로가기로 열린 모달을 닫는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Modal Helper (기관 — 모달 도우미·안드로이드 뒤로가기 처리)",
+    "모달 열기·닫기 도우미와 안드로이드 하드웨어 뒤로가기 처리 묶음. 최상위 this/arguments 를 쓰는 함수는 헌법 CELL_SPLIT 5 에 따라 index.html 에 남겼다.",
+    "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 6234~6237 · 6291~6306 · 6307~6326 · 6327~6355 · 6363~6371줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 114,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-471"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md"
+   ],
+   "prs": [
+    {
+     "number": 776,
+     "task": "TASK-ES-471",
+     "title": "[INFRA] #TASK-ES-471 refactor: 인라인 어려움 기관 묶음 이전 1차 — 공용 부품 8묶음을 js/core 세포 7개로(동작 그대로, 인라인 −682줄)",
+     "date": "2026-10-05"
     }
    ]
   },
@@ -3864,6 +4350,83 @@
    ]
   },
   {
+   "id": "core/registry-init",
+   "file": "js/core/registry-init.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "블록 레지스트리 시작",
+   "nameSource": "hand",
+   "does": "6대 메가블록을 조선소 레지스트리에 올리고, 아래 탭 단추로 탭을 바꾼다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Registry Init (기관 — 조선소 블록 레지스트리 6대 메가블록 초기화)",
+    "조선소 블록 레지스트리에 6대 메가블록을 등록·초기화하는 묶음(헌법 제3조 제9항).",
+    "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 6107~6164 · 6166~6221 · 6222~6227 · 6228~6228줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 154,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "_tabScrollMemory"
+   ],
+   "calls": [
+    "calendar/index",
+    "comm/index",
+    "core/app-scope",
+    "core/event-bus",
+    "core/registry",
+    "goal-edit-ux",
+    "goals/index",
+    "home/index",
+    "records/index",
+    "sanctuary-v3-engine",
+    "settings/index"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [
+    "tab:changed"
+   ],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-471"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md"
+   ],
+   "prs": [
+    {
+     "number": 776,
+     "task": "TASK-ES-471",
+     "title": "[INFRA] #TASK-ES-471 refactor: 인라인 어려움 기관 묶음 이전 1차 — 공용 부품 8묶음을 js/core 세포 7개로(동작 그대로, 인라인 −682줄)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "core/registry",
    "file": "js/core/registry.js",
    "kind": "organ",
@@ -3894,6 +4457,7 @@
    "calledBy": [
     "calendar/index",
     "comm/index",
+    "core/registry-init",
     "goals/index",
     "home/index",
     "records/index",
@@ -3901,9 +4465,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRegistry"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "block:error",
     "registry:ready"
@@ -4017,7 +4579,9 @@
     "core/event-bus"
    ],
    "calledBy": [
-    "core/registry"
+    "core/registry",
+    "goals/focus-autopilot",
+    "records/checkin-capture"
    ],
    "readsFromIndexHtml": [
     "state"
@@ -4040,6 +4604,138 @@
    "tasks": [],
    "reqs": [],
    "prs": []
+  },
+  {
+   "id": "core/telemetry",
+   "file": "js/core/telemetry.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "익명 계측",
+   "nameSource": "hand",
+   "does": "온보딩 퍼널·유입 채널·알림 클릭률을 개인정보 없이 익명 이벤트로 센다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Telemetry (기관 — 익명 이벤트 계측)",
+    "온보딩 퍼널·유입 채널·알림 클릭률 익명 이벤트 계측 도우미(계측 묶음).",
+    "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 2999~3016 · 3017~3023 · 3024~3035 · 3036~3054 · 3055~3065 · 3066~3072 · 3073~3076 · 3077~3084 · 3085~3095줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 137,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [
+    "posthog"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-471"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md"
+   ],
+   "prs": [
+    {
+     "number": 776,
+     "task": "TASK-ES-471",
+     "title": "[INFRA] #TASK-ES-471 refactor: 인라인 어려움 기관 묶음 이전 1차 — 공용 부품 8묶음을 js/core 세포 7개로(동작 그대로, 인라인 −682줄)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/time-keys",
+   "file": "js/core/time-keys.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "시간·날짜 키",
+   "nameSource": "hand",
+   "does": "시간 글자·날짜 키·고유 id 를 만들고, 한국 KST 00:00(다른 나라는 현지 표준시) 기준 오늘 날짜 키를 정한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Time Keys (기관 — 시간·날짜 키·id 도우미)",
+    "여러 탭이 같이 쓰는 시간 글자·날짜 키·고유 id 도우미(Utilities 묶음)와 표준 시간대 기준 날짜 키(#TASK-ES-264 묶음).",
+    "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 2950~2951 · 2952~2952 · 2953~2955 · 2956~2956 · 2957~2957 · 2958~2967 · 2968~2973 · 2975~2993 · 2994~2994줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 85,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-264",
+    "TASK-ES-471"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-264-AI-CONDITIONAL-CALL-OPTIMIZATION.md",
+    "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md"
+   ],
+   "prs": [
+    {
+     "number": 776,
+     "task": "TASK-ES-471",
+     "title": "[INFRA] #TASK-ES-471 refactor: 인라인 어려움 기관 묶음 이전 1차 — 공용 부품 8묶음을 js/core 세포 7개로(동작 그대로, 인라인 −682줄)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "core/toast",
@@ -4106,6 +4802,72 @@
    ]
   },
   {
+   "id": "core/trash-bin",
+   "file": "js/core/trash-bin.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "통합 휴지통",
+   "nameSource": "hand",
+   "does": "지운 기록·목표를 7일 동안 휴지통에 보관하고 되살리기·영구 삭제·비우기와 휴지통 창을 제공한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Trash Bin (기관 — 전역 7일 유예 통합 휴지통)",
+    "휴지통 목록·7일 지난 항목 자동 비우기·휴지통으로 옮기기·되살리기·영구 삭제·비우기·되돌리기 토스트·휴지통 창(#TASK-ES-153).",
+    "#TASK-ES-482(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 6414~6422 · 6423~6436 · 6437~6497 · 6498~6558 · 6559~6571 · 6572~6583 · 6584~6601 · 6602~6720줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 345,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-153",
+    "TASK-ES-482"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-153-CALENDAR-DAY-BACKGROUND.md",
+    "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md"
+   ],
+   "prs": [
+    {
+     "number": 784,
+     "task": "TASK-ES-482",
+     "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "core/ui-helpers",
    "file": "js/core/ui-helpers.js",
    "kind": "organ",
@@ -4164,6 +4926,78 @@
      "task": "TASK-ES-354",
      "title": "[INFRA] #TASK-ES-354 CORE-07 모듈 분할 공통 틀 + 설정 탭 시범 이전(SET-07) — 동작 그대로 옮기기",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "core/virtual-user-helpers",
+   "file": "js/core/virtual-user-helpers.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "공용 헬퍼 10종",
+   "nameSource": "hand",
+   "does": "진동 피드백·마일스톤 순서 바꾸기·피드 분야 거르기·주간 집중 통계·기록 CSV/마크다운 내보내기·오프라인 동기화 대기열을 제공한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Virtual-User Helpers (기관 — 가상유저 개선 10대 헬퍼)",
+    "「가상유저 개선 10대 핵심 헬퍼 함수」 묶음을 글자 그대로 옮겼다(고치지 않음 — 발견 사항은 #TASK-ES-471 REQ 에 적었다).",
+    "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 3189~3212 · 3213~3216 · 3218~3227 · 3228~3257 · 3258~3283 · 3284~3291 · 3292~3299 · 3300~3331줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 226,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-471",
+    "TASK-ES-490"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md",
+    "docs/specs/REQ-TASK-ES-490-OFFLINE-QUEUE-LOSS.md"
+   ],
+   "prs": [
+    {
+     "number": 783,
+     "task": "TASK-ES-490",
+     "title": "[FIX] #TASK-ES-490 오프라인 동기화 큐 데이터 손실(GUARD_03) — 실패 시 큐 유지·재시도·알림",
+     "date": "2026-10-05"
+    },
+    {
+     "number": 776,
+     "task": "TASK-ES-471",
+     "title": "[INFRA] #TASK-ES-471 refactor: 인라인 어려움 기관 묶음 이전 1차 — 공용 부품 8묶음을 js/core 세포 7개로(동작 그대로, 인라인 −682줄)",
+     "date": "2026-10-05"
     }
    ]
   },
@@ -4277,15 +5111,23 @@
     "TASK-ES-141",
     "TASK-ES-173",
     "TASK-ES-353",
-    "TASK-ES-374"
+    "TASK-ES-374",
+    "TASK-ES-462"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-141-GUEST-MIGRATION-COMM-CENTER-PWA.md",
     "docs/specs/REQ-TASK-ES-173-home-customization-lock-and-clean.md",
     "docs/specs/REQ-TASK-ES-353-EVENT-BUS.md",
-    "docs/specs/REQ-TASK-ES-374-CONFIRM-SHEET.md"
+    "docs/specs/REQ-TASK-ES-374-CONFIRM-SHEET.md",
+    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md"
    ],
    "prs": [
+    {
+     "number": 767,
+     "task": "TASK-ES-462",
+     "title": "[FIX] #TASK-ES-462 분열 중 발견된 기존 결함 묶음 (PWA OS 탭·이중 id·가짜 스트릭/레벨·375 넘침·목표 0개 퀘스트·복구 홈 갱신·레벨 배지 문구·목표 상세 서랍)",
+     "date": "2026-10-05"
+    },
     {
      "number": 690,
      "task": "TASK-ES-374",
@@ -5942,7 +6784,10 @@
     "OurgoalDirectLoginGuard"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "settings/dev-debug-gate",
+    "settings/session-entry"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -6019,6 +6864,7 @@
     "template-credit"
    ],
    "calledBy": [
+    "core/registry-init",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/render"
@@ -6090,6 +6936,7 @@
     "data/goal-templates/study"
    ],
    "calledBy": [
+    "goals/template-encyclopedia",
     "team-templates",
     "viral-sharing"
    ],
@@ -6492,7 +7339,9 @@
     "OurgoalRecordLedger"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "core/home-cockpit"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -6818,7 +7667,7 @@
     "분기 본문 renderSanctuaryGoalTrail(218~283)",
     "메서드 toggleMilestone·toggleTask·openMilestoneCheckin·transplantSampleRoutine(1585~1670)"
    ],
-   "lines": 183,
+   "lines": 185,
    "over800": false,
    "exposes": [
     "OurgoalSanctuaryV3Kit",
@@ -6831,6 +7680,7 @@
     "sanctuary-v3-engine"
    ],
    "readsFromIndexHtml": [
+    "openGoalDetailDrawer",
     "saveProfile"
    ],
    "loadedByIndexHtml": true,
@@ -6847,12 +7697,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-429"
+    "TASK-ES-429",
+    "TASK-ES-462"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
+    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md"
    ],
    "prs": [
+    {
+     "number": 767,
+     "task": "TASK-ES-462",
+     "title": "[FIX] #TASK-ES-462 분열 중 발견된 기존 결함 묶음 (PWA OS 탭·이중 id·가짜 스트릭/레벨·375 넘침·목표 0개 퀘스트·복구 홈 갱신·레벨 배지 문구·목표 상세 서랍)",
+     "date": "2026-10-05"
+    },
     {
      "number": 747,
      "task": "TASK-ES-429",
@@ -7020,10 +7878,12 @@
    "calls": [
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
+    "calendar/schedule-done-toggle",
     "sanctuary-calendar-actions",
     "sanctuary-calendar-views",
     "sanctuary-focus-timer",
@@ -7035,6 +7895,8 @@
    ],
    "calledBy": [
     "calendar/render",
+    "core/registry-init",
+    "goals/new-goal-modal",
     "records/render",
     "sanctuary-calendar-views",
     "sanctuary-focus-timer",
@@ -7068,26 +7930,38 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-231",
-    "TASK-ES-232",
     "TASK-ES-241",
     "TASK-ES-246",
     "TASK-ES-331",
     "TASK-ES-362",
     "TASK-ES-429",
-    "TASK-ES-433"
+    "TASK-ES-433",
+    "TASK-ES-440",
+    "TASK-ES-462"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-231-COMPANION-INVITE-SEARCH.md",
-    "docs/specs/REQ-TASK-ES-232-LOCKSCREEN-SCHEDULE-CARD.md",
     "docs/specs/REQ-TASK-ES-241-CALENDAR-WEEK-THEME-CONTRAST.md",
     "docs/specs/REQ-TASK-ES-246-COMM-PEER-RADAR-SLIM-FOLD.md",
     "docs/specs/REQ-TASK-ES-331-HOME-TAB-REFINEMENT.md",
     "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md",
     "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
-    "docs/specs/REQ-TASK-ES-433-STORYCARD-ENTRY.md"
+    "docs/specs/REQ-TASK-ES-433-STORYCARD-ENTRY.md",
+    "docs/specs/REQ-TASK-ES-440-HIDDEN-RESTORE.md",
+    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md"
    ],
    "prs": [
+    {
+     "number": 767,
+     "task": "TASK-ES-462",
+     "title": "[FIX] #TASK-ES-462 분열 중 발견된 기존 결함 묶음 (PWA OS 탭·이중 id·가짜 스트릭/레벨·375 넘침·목표 0개 퀘스트·복구 홈 갱신·레벨 배지 문구·목표 상세 서랍)",
+     "date": "2026-10-05"
+    },
+    {
+     "number": 763,
+     "task": "TASK-ES-440",
+     "title": "[FIX] #TASK-ES-440 fix: 숨김에 갇힌 살아 있는 기능 복원 — 알림 센터(성소 종 죽은 클릭)·보관함·위클리 리캡 카드·앱 평가·오늘의 카드·3대 퀘스트·홈 구성 스위치",
+     "date": "2026-10-05"
+    },
     {
      "number": 748,
      "task": "TASK-ES-433",
@@ -7123,18 +7997,6 @@
      "task": "TASK-ES-241",
      "title": "feat/2026-09-23-task-es-241-calendar-week-theme-contrast",
      "date": "2026-09-23"
-    },
-    {
-     "number": 400,
-     "task": "TASK-ES-232",
-     "title": "feat/2026-09-23-task-es-232-lockscreen-schedule-card-download",
-     "date": "2026-09-23"
-    },
-    {
-     "number": 399,
-     "task": "TASK-ES-231",
-     "title": "feat/2026-09-23-task-es-231-companion-invite-search",
-     "date": "2026-09-23"
     }
    ]
   },
@@ -7161,12 +8023,13 @@
     "분기 본문 renderSanctuaryRecordsRecap(1109~1133)",
     "메서드 downloadRecapImage·openWeeklyRecapModal(1756~1872)"
    ],
-   "lines": 173,
+   "lines": 213,
    "over800": false,
    "exposes": [
     "OurgoalSanctuaryV3Kit"
    ],
    "calls": [
+    "core/app-scope",
     "sanctuary-v3-engine",
     "viral-sharing"
    ],
@@ -7174,6 +8037,7 @@
     "sanctuary-v3-engine"
    ],
    "readsFromIndexHtml": [
+    "levelProgress",
     "openWeeklyRecapModal",
     "state"
    ],
@@ -7189,12 +8053,28 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-429"
+    "TASK-ES-429",
+    "TASK-ES-462",
+    "TASK-ES-478"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md"
+    "docs/specs/REQ-TASK-ES-429-SANCTUARY-SPLIT.md",
+    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md",
+    "docs/specs/REQ-TASK-ES-478-HIDDEN-COMM-FAKE-METRICS.md"
    ],
    "prs": [
+    {
+     "number": 777,
+     "task": "TASK-ES-478",
+     "title": "[FIX] #TASK-ES-478 남은 허상지표 제거·위젯 시험 픽스처 정정 · 소통 허브/빠른 게시 띠는 중복·고장이라 보고",
+     "date": "2026-10-05"
+    },
+    {
+     "number": 767,
+     "task": "TASK-ES-462",
+     "title": "[FIX] #TASK-ES-462 분열 중 발견된 기존 결함 묶음 (PWA OS 탭·이중 id·가짜 스트릭/레벨·375 넘침·목표 0개 퀘스트·복구 홈 갱신·레벨 배지 문구·목표 상세 서랍)",
+     "date": "2026-10-05"
+    },
     {
      "number": 747,
      "task": "TASK-ES-429",
@@ -8463,6 +9343,70 @@
    ]
   },
   {
+   "id": "calendar/day-edit-hub",
+   "file": "js/tabs/calendar/day-edit-hub.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "calendar",
+   "tabs": [
+    "calendar"
+   ],
+   "name": "날짜 일정 관리 창",
+   "nameSource": "hand",
+   "does": "달력에서 날짜를 누르면 뜨는 그날 일정의 완료·수정·삭제·첨부 관리 창(일정 수정/관리 허브)을 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Calendar Day Edit Hub Modal (일정 관리 허브 모달)",
+    "#TASK-ES-456 (인라인 스크립트 세포화: index.html 인라인 IIFE 내 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 묶음을 옮김, 수정 없음 — 코드 이동 안티그래비티, 검수 Claude)",
+    "openCalendarDayEditHubModal (이전 전 main 194ed83 index.html 10753~10928줄)",
+    "openCalendarDayEditHubModal = 캘린더 날짜 클릭 시 나타나는 일정 관리 허브 모달창 (일정 수정, 상태 변경 등)."
+   ],
+   "lines": 202,
+   "over800": false,
+   "exposes": [
+    "OurgoalCalendarKit"
+   ],
+   "calls": [
+    "calendar-attachment",
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "calendar/sub-day-detail",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCalendarKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-456"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-456-AGY-G076.md"
+   ],
+   "prs": [
+    {
+     "number": 765,
+     "task": "TASK-ES-456",
+     "title": "[INFRA] #TASK-ES-456 refactor: 인라인 G076 「캘린더 날짜 클릭 일정 수정/관리 허브 모달」을 js/tabs/calendar/day-edit-hub.js 세포로 이동(동작 그대로) — 코드 이동 안티그래비티, 검수·서류 Claude",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "calendar/index",
    "file": "js/tabs/calendar/index.js",
    "kind": "tab",
@@ -8494,15 +9438,15 @@
     "core/event-bus",
     "core/registry"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "core/registry-init"
+   ],
    "readsFromIndexHtml": [
     "renderCalendarScreen",
     "state"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarMegaBlock"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "block:error",
     "calendar:mounted"
@@ -8804,6 +9748,70 @@
    ]
   },
   {
+   "id": "calendar/schedule-done-toggle",
+   "file": "js/tabs/calendar/schedule-done-toggle.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "calendar",
+   "tabs": [
+    "calendar"
+   ],
+   "name": "일정 완료 체크",
+   "nameSource": "hand",
+   "does": "일정 완료를 켜고 끄며 이어진 목표·마일스톤·할 일 진행과 양방향으로 맞춘다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Schedule Done Toggle (일정 탭 — 일정 완료 체크·목표 양방향 동기화)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "toggleScheduleDone — 「[#TASK-ES-151 & #TASK-ES-253] 일정 체크 완료 토글」(이전 전 9657~9854줄, 구획 주석 포함)",
+    "일정 체크 완료를 켜고 끄며 연결된 목표 진행과 양방향으로 맞춘다."
+   ],
+   "lines": 222,
+   "over800": false,
+   "exposes": [
+    "OurgoalCalendarKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "calendar/sub-day-detail",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCalendarKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-151",
+    "TASK-ES-253",
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-253-SCHEDULE-GOAL-SYNC.md",
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "calendar/sub-day-detail",
    "file": "js/tabs/calendar/sub-day-detail.js",
    "kind": "tab",
@@ -8830,10 +9838,12 @@
    "calls": [
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
     "calendar/render",
+    "calendar/schedule-done-toggle",
     "core/event-bus"
    ],
    "calledBy": [
@@ -9057,6 +10067,66 @@
      "number": 756,
      "task": "TASK-ES-444",
      "title": "[INFRA] #TASK-ES-444 refactor: 인라인 스크립트 세포화 P1 구역 2차 — 일정·소통·기록·설정·목표 15묶음 함수 27개 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "comm/crew-pacing",
+   "file": "js/tabs/comm/crew-pacing.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "동반자 페이스메이커",
+   "nameSource": "hand",
+   "does": "홈 「동반자」 창에 오늘 먼저 실천한 동반자 페이스(페이스메이커 라이브)를 그리고, 「응원 보내기」·「오늘 체크인」 단추를 처리한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Crew Pacing (소통 — 홈 「동반자」 페이스메이커 라이브 위젯·응원 보내기)",
+    "홈 「🏃 동반자」 창의 페이스메이커 라이브 위젯 그리기(renderCrewPacingWidget·applyCrewPacingUI)와 「응원 보내기」(nudgeCrewMates)·「오늘 체크인」(focusHomeCheckinInput) 동작.",
+    "window 노출 네 줄은 index.html 원래 자리에 그대로 있다(인라인 onclick·바깥 파일이 그 이름을 찾는다).",
+    "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 9722~9858 · 9859~9921 · 9922~9940 · 9941~9948줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 258,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [
+    "_recordHesitation"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-466"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md"
+   ],
+   "prs": [
+    {
+     "number": 772,
+     "task": "TASK-ES-466",
+     "title": "[INFRA] #TASK-ES-466 refactor: 인라인 어려움 구역 H1 1차 — 네 묶음을 세포 4개로 이전(index.html −1,343줄, 동작 그대로)",
      "date": "2026-10-05"
     }
    ]
@@ -9308,7 +10378,14 @@
     "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "comm/first-cheer",
@@ -9374,6 +10451,65 @@
    ]
   },
   {
+   "id": "comm/goal-certificate-share",
+   "file": "js/tabs/comm/goal-certificate-share.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "인증서·공유 화면",
+   "nameSource": "hand",
+   "does": "목표 완주 인증서 그림을 만들고, 소통 탭 「공유」 화면에서 담을 목표·기록·마일스톤과 올릴 곳을 고르게 한 뒤 소통 카드를 만들어 피드·외부 SNS 로 내보낸다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal Certificate & Share (소통 탭 — 목표 완주 인증서 그림·공유 하위 화면 렌더)",
+    "목표 완주 인증서 그림 만들기(generateGoalCertificateImage) · 소통 탭 공유 하위 화면 그리기(renderCommShare).",
+    "index.html 「목표 완주 인증서 (기존 공유 캔버스 인프라 재사용)」 묶음 전체를 옮겼다.",
+    "#TASK-ES-461(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 23695~23748 · 23749~23993줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 326,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "team-invite-comm"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-461"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-461-INLINE-H4-1.md"
+   ],
+   "prs": [
+    {
+     "number": 773,
+     "task": "TASK-ES-461",
+     "title": "[INFRA] #TASK-ES-461 refactor: 인라인 어려움 구역 H4 1차 — 인증서·공유, 세션 복구, 마니또 실 유저, 함께 목표 초대 4묶음 세포 이전",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "comm/index",
    "file": "js/tabs/comm/index.js",
    "kind": "tab",
@@ -9405,14 +10541,14 @@
     "core/event-bus",
     "core/registry"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "core/registry-init"
+   ],
    "readsFromIndexHtml": [
     "state"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommMegaBlock"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "block:error",
     "comm:mounted"
@@ -9495,7 +10631,132 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "comm/manito-real",
+   "file": "js/tabs/comm/manito-real.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "마니또 실 유저",
+   "nameSource": "hand",
+   "does": "소통 탭 「마니또」 화면에서 익명 이름을 뽑아 참여하게 하고, 짝·보낸 응원·연속·서로 응원·받은 응원함을 보여 주며 익명 대화를 연다(게스트는 AI 마니또, 실 유저는 서버 마니또 자료)",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Comm Manito Real Users (소통 탭 — 마니또 실 유저 익명 응원·짝·받은 응원함·마니또 화면)",
+    "실 유저 판별(isValidRealUser) · 서버 마니또 자료 불러오기(loadServerManitoData) · 짝·보낸 응원·연속·서로 응원·받은 응원함(manitoPartners · manitoSentToday · manitoStreak · manitoMutualCount · manitoInbox) · 마니또 화면(renderCommManito) · 마니또 대화(renderManitoDm).",
+    "서버 자료 캐시(REAL_MANITO_PARTNERS_CACHE · REAL_MANITO_INBOX_CACHE · MANITO_SERVER_LOADED)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다. window.isValidRealUser 노출 줄도 원래 자리에 있다.",
+    "#TASK-ES-461(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 25556~25569 · 25571~25632 · 25633~25677 · 25678~25681 · 25682~25690 · 25691~25693 · 25694~25714 · 25715~25961 · 25962~26010줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 496,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [
+    "ui.confirm"
+   ],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-461"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-461-INLINE-H4-1.md"
+   ],
+   "prs": [
+    {
+     "number": 773,
+     "task": "TASK-ES-461",
+     "title": "[INFRA] #TASK-ES-461 refactor: 인라인 어려움 구역 H4 1차 — 인증서·공유, 세션 복구, 마니또 실 유저, 함께 목표 초대 4묶음 세포 이전",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "comm/peer-invite",
+   "file": "js/tabs/comm/peer-invite.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "함께 목표 초대",
+   "nameSource": "hand",
+   "does": "팀 상세에서 초대 링크를 복사하거나 카카오톡으로 보내고, 초대 링크로 들어온 사람에게 초대 받은 화면을 보여 줘 웹에서 바로 수락하게 한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Comm Peer Invite (소통 탭 — '함께 목표' 방 초대 링크 복사·카카오 공유·초대 수락·초대 받은 화면)",
+    "클립보드 복사(copyTextToClipboard · fallbackCopyText) · 초대 기록(trackPeerInvite) · 카카오 공유(shareGroupToKakao) · 초대 링크 복사(copyGroupInviteLink) · 초대 성공 창(openPeerInviteSuccessModal) · 초대 수락(acceptPeerInvite) · 초대 받은 화면(showPeerInviteLandingModal).",
+    "같은 묶음의 순수 함수 세 개(calculateRemainingSeats · buildPeerInviteUrl · formatPeerInviteMessage)는 scripts/smoke-test.js FN_NAMES 가 잘라 가는 함수라 생성기 규칙(유형 F2)대로 index.html 에 남겼다.",
+    "#TASK-ES-461(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 25275~25281 · 25282~25293 · 25314~25330 · 25331~25354 · 25355~25361 · 25362~25402 · 25403~25476 · 25477~25540줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 286,
+   "over800": false,
+   "exposes": [
+    "OurgoalCommKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCommKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-461"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-461-INLINE-H4-1.md"
+   ],
+   "prs": [
+    {
+     "number": 773,
+     "task": "TASK-ES-461",
+     "title": "[INFRA] #TASK-ES-461 refactor: 인라인 어려움 구역 H4 1차 — 인증서·공유, 세션 복구, 마니또 실 유저, 함께 목표 초대 4묶음 세포 이전",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "comm/render",
@@ -9613,7 +10874,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "comm/share-card",
@@ -9668,7 +10936,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "comm/story-canvas",
@@ -10221,6 +11496,70 @@
    ]
   },
   {
+   "id": "goals/focus-autopilot",
+   "file": "js/tabs/goals/focus-autopilot.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "초집중 모드·스토리 카드",
+   "nameSource": "hand",
+   "does": "대표 목표 AI 초집중 모드 창과 홈 「내 성장 자랑하기」의 MZ 갓생 스토리 카드 창을 연다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Focus Auto-Pilot & MZ Story Card (목표 — 1순위 대표 목표 AI 초집중 모드·MZ 갓생 스토리 카드)",
+    "대표 목표 초집중 모드 창(openFocusAutoPilotModal)과 홈 「내 성장 자랑하기」로 여는 「오늘의 MZ 갓생 스토리 카드」 창(openMzShareCardModal).",
+    "초집중 타이머 상태 변수(focusTimerInterval·focusTimerSeconds·focusTimerRunning)와 FEED_POSTS_CACHE 는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다.",
+    "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 9594~9726 · 9727~10083줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 517,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/event-bus",
+    "core/store",
+    "team-invite-comm"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [
+    "checkin:created",
+    "record:saved"
+   ],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-476"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md"
+   ],
+   "prs": [
+    {
+     "number": 775,
+     "task": "TASK-ES-476",
+     "title": "[INFRA] #TASK-ES-476 refactor: 인라인 어려움 구역 H1 2차 — 네 묶음을 세포 4개로 이전(index.html −969줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "goals/goal-detail-events",
    "file": "js/tabs/goals/goal-detail-events.js",
    "kind": "tab",
@@ -10409,6 +11748,124 @@
    ]
   },
   {
+   "id": "goals/goal-math",
+   "file": "js/tabs/goals/goal-math.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 진행률 계산",
+   "nameSource": "hand",
+   "does": "목표 진행률, 마일스톤 완료·전체 수, 결과 수치 달성률을 계산한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal Math (목표 탭 — 진행률·마일스톤 수·결과 달성률 계산)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "goalProgress · msCounts — 「Goal math」(이전 전 7822~7832줄, 구획 주석 포함)",
+    "resultPct — 「결과 기록 (체크박스 대신 수치 입력)」(이전 전 7872~7879줄)"
+   ],
+   "lines": 47,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "goals/goals-ia-actions",
+   "file": "js/tabs/goals/goals-ia-actions.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 하위 탭·성취 통계",
+   "nameSource": "hand",
+   "does": "목표 탭 하위 탭(개인·루틴·팀·템플릿·통계)을 바꾸고, 성취 통계의 주간·월간·연간 리포트를 그리며, 추천 템플릿을 내 목표로 바로 담는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goals IA Actions (목표 탭 — 하위 탭 전환·성취 통계 기간·템플릿을 내 목표로 담기)",
+    "목표 탭 하위 탭 단추(switchGoalsSubTab) · 성취 통계 기간 단추와 리포트(switchGoalStatPeriod·renderGoalStatsChart) · 추천 템플릿을 내 목표로 담기(adoptTemplateAsMyGoal).",
+    "마크업 onclick 과 js/tabs/goals/render.js · js/sanctuary-v3-engine.js 가 window 이름으로 부른다 — window 노출 줄(window.currentGoalStatPeriod 초기값 포함)은 index.html 원래 자리에 그대로 있다.",
+    "같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍·루틴 매트릭스 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer·renderRoutineMatrixGrid·toggleRoutineStamp)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓)."
+   ],
+   "lines": 118,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit",
+    "currentGoalStatPeriod"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit",
+    "currentGoalStatPeriod"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-481"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md"
+   ],
+   "prs": [
+    {
+     "number": 781,
+     "task": "TASK-ES-481",
+     "title": "[INFRA] #TASK-ES-481 refactor: 인라인 어려움 구역 H2 1차 — 목표 탭 IA 동작·템플릿 백과사전·기록 아카이브 펼치기 세포 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "goals/index",
    "file": "js/tabs/goals/index.js",
    "kind": "tab",
@@ -10440,15 +11897,15 @@
     "goals/sub-routine",
     "goals/sub-team"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "core/registry-init"
+   ],
    "readsFromIndexHtml": [
     "renderGoalsScreen",
     "state"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsMegaBlock"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "block:error",
     "goals:mounted"
@@ -10477,6 +11934,184 @@
    ]
   },
   {
+   "id": "goals/new-goal-modal",
+   "file": "js/tabs/goals/new-goal-modal.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "새 목표 만들기 창",
+   "nameSource": "hand",
+   "does": "「새 목표」 창에서 줄글로 원하는 바를 적으면 목표 템플릿을 만들어 주고, 직접 설정·검토 단계를 거쳐 목표를 만든다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal New Goal Modal (목표 — 새 목표 만들기 창)",
+    "「새 목표」 창(promptNewGoal) — 줄글 입력 → 목표설정 도우미 템플릿 만들기, 직접 설정 양식, 검토 단계(showNewGoal*), 로컬 템플릿(localGoalTemplate·generateGoalTemplate).",
+    "showNewGoal* 를 window 에 다는 로드 중 문은 bindNewGoalStepExports 로 감싸 index.html 원래 자리에서 부른다.",
+    "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 14145~14148 · 14152~14194 · 14195~14219 · 14220~14279 · 14280~14282 · 14283~14359 · 14360~14452 · 14453~14456줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 351,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit",
+    "showNewGoalChatStep",
+    "showNewGoalManualForm"
+   ],
+   "calls": [
+    "content-moderation",
+    "core/app-scope",
+    "sanctuary-v3-engine"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-466"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md"
+   ],
+   "prs": [
+    {
+     "number": 772,
+     "task": "TASK-ES-466",
+     "title": "[INFRA] #TASK-ES-466 refactor: 인라인 어려움 구역 H1 1차 — 네 묶음을 세포 4개로 이전(index.html −1,343줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "goals/notion-record-convert",
+   "file": "js/tabs/goals/notion-record-convert.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "노션 기록 변환",
+   "nameSource": "hand",
+   "does": "자연어 결과 글에서 상태·달성률·수치를 뽑아 노션 DB 기록 형태로 바꾼다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Notion Record Convert (목표 탭 — 결과 글을 노션 DB 기록으로 변환)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "convertTextToNotionDbRecord — 「AI 결과 입력 -> Notion DB 구조화 변환기」(이전 전 7882~7958줄, 구획 주석 포함)",
+    "자연어 결과 글에서 상태·달성률·수치를 뽑아 노션 DB 프로퍼티 형태로 바꾼다."
+   ],
+   "lines": 101,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "goals/prompt-encyclopedia",
+   "file": "js/tabs/goals/prompt-encyclopedia.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "데이터분석 프롬프트 백과사전",
+   "nameSource": "hand",
+   "does": "목표 상세의 데이터분석 프롬프트 백과사전 — 실사용·AI 맞춤 목록, 사용자 프롬프트 등록 창, 도움돼요·복사·삭제를 다룬다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Prompt Encyclopedia (목표 탭 — 데이터분석 프롬프트 백과사전)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "getUserPrompts — 「[78 / 89] 데이터분석 프롬프트 백과사전」(이전 전 4290~4301줄)",
+    "getLikedPromptIds — 「[78 / 89] 데이터분석 프롬프트 백과사전」(이전 전 4303~4314줄)"
+   ],
+   "lines": 495,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "goals/render",
    "file": "js/tabs/goals/render.js",
    "kind": "tab",
@@ -10496,7 +12131,7 @@
     "800줄을 넘어 책임 단위 세 구간으로 나눴다(docs/specs/MODULE-SPLIT-PROTOCOL.md 0절 2 · 2절):",
     "이 파일 renderGoalsScreen = 머리(이전 전 24186~24379줄: 서브탭 칩·서브탭 분기·목표 칩·편집 토글·빈 상태) + 아래 두 구간을 원래 순서로 부르는 조립자"
    ],
-   "lines": 225,
+   "lines": 228,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -10524,14 +12159,22 @@
    "tasks": [
     "TASK-ES-354",
     "TASK-ES-360",
-    "TASK-ES-370"
+    "TASK-ES-370",
+    "TASK-ES-462"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md",
     "docs/specs/REQ-TASK-ES-360-CALENDAR-CELL.md",
-    "docs/specs/REQ-TASK-ES-370-GOALS-CELL.md"
+    "docs/specs/REQ-TASK-ES-370-GOALS-CELL.md",
+    "docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md"
    ],
    "prs": [
+    {
+     "number": 767,
+     "task": "TASK-ES-462",
+     "title": "[FIX] #TASK-ES-462 분열 중 발견된 기존 결함 묶음 (PWA OS 탭·이중 id·가짜 스트릭/레벨·375 넘침·목표 0개 퀘스트·복구 홈 갱신·레벨 배지 문구·목표 상세 서랍)",
+     "date": "2026-10-05"
+    },
     {
      "number": 689,
      "task": "TASK-ES-370",
@@ -11091,7 +12734,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "goals/team-state",
@@ -11146,7 +12796,76 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "goals/template-encyclopedia",
+   "file": "js/tabs/goals/template-encyclopedia.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "템플릿 백과사전",
+   "nameSource": "hand",
+   "does": "템플릿 백과사전에서 개인·루틴·팀 템플릿을 AI 추천/실사용자로 나눠 보여 주고, 검색·분류·내 목표로 담기를 맡는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Template Encyclopedia (목표 탭 — 템플릿 백과사전 3대 분류·AI/실사용자 템플릿 화면)",
+    "목표 탭 「템플릿」 하위 탭 화면(renderTemplateEncyclopediaScreen)과 루틴·팀·개인 템플릿 상수(ROUTINE_TEMPLATES_AI·ROUTINE_TEMPLATES_REAL·TEAM_TEMPLATES_AI·TEAM_TEMPLATES_REAL·PERSONAL_TEMPLATES_REAL).",
+    "분류·종류·검색 상태 변수(_subtabTplDomain·_subtabTplType·_subtabTplCat·_subtabTplQuery)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다. window 노출 줄도 원래 자리에 그대로 있다.",
+    "#TASK-ES-481(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 14384~14441 · 14442~14485 · 14486~14572 · 14573~14624 · 14625~14634 · 14635~15113줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 765,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "goal-templates-data",
+    "team-invite-comm"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [
+    "CREATOR_TEMPLATES"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-481"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md"
+   ],
+   "prs": [
+    {
+     "number": 781,
+     "task": "TASK-ES-481",
+     "title": "[INFRA] #TASK-ES-481 refactor: 인라인 어려움 구역 H2 1차 — 목표 탭 IA 동작·템플릿 백과사전·기록 아카이브 펼치기 세포 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "goals/template-quick-import",
@@ -11259,7 +12978,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "home/index",
@@ -11294,15 +13020,15 @@
     "home/sub-quest",
     "home/sub-today"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "core/registry-init"
+   ],
    "readsFromIndexHtml": [
     "initHomeCockpit",
     "state"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalHomeMegaBlock"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "block:error",
     "home:mounted"
@@ -11450,14 +13176,22 @@
    "tasks": [
     "TASK-ES-339",
     "TASK-ES-340",
-    "TASK-ES-341"
+    "TASK-ES-341",
+    "TASK-ES-440"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-339-SHELL-HARDENING.md",
     "docs/specs/REQ-TASK-ES-340-CORE-INTERACTION.md",
-    "docs/specs/REQ-TASK-ES-341-HOME-EXP-NICKNAME.md"
+    "docs/specs/REQ-TASK-ES-341-HOME-EXP-NICKNAME.md",
+    "docs/specs/REQ-TASK-ES-440-HIDDEN-RESTORE.md"
    ],
    "prs": [
+    {
+     "number": 763,
+     "task": "TASK-ES-440",
+     "title": "[FIX] #TASK-ES-440 fix: 숨김에 갇힌 살아 있는 기능 복원 — 알림 센터(성소 종 죽은 클릭)·보관함·위클리 리캡 카드·앱 평가·오늘의 카드·3대 퀘스트·홈 구성 스위치",
+     "date": "2026-10-05"
+    },
     {
      "number": 652,
      "task": "TASK-ES-341",
@@ -11725,6 +13459,127 @@
    ]
   },
   {
+   "id": "records/archive-toggle",
+   "file": "js/tabs/records/archive-toggle.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "이전 기록 펼치기",
+   "nameSource": "hand",
+   "does": "기록 탭 아래 「이전 기록 전체 보기」로 지난 기록 아카이브를 펼치고 접는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Records Archive Toggle (기록 탭 — 이전 기록 아카이브 펼치기·접기)",
+    "기록 탭 「이전 기록 전체 보기」 아카이브 펼치기·접기(toggleRecordArchive).",
+    "마크업 onclick 이 window 이름으로 부른다 — window 노출 줄은 index.html 원래 자리에 그대로 있다.",
+    "같은 묶음의 달력 융합 칩·빠른 스톱워치 함수(switchRecFusionMode·handleQuickStopwatchToggle·handleQuickStopwatchSaveRecord)는 그 단추(#recCalFuseSwitcher·#quickStopwatchBar)가 ui.css 의 숨김 규칙으로 게스트 화면에 보이지 않고, CSV 내보내기(exportRecordsCsv)는 내려받기 뒤 토스트를 게스트 화면 시나리오로 확인하지 못해 옮기지 않았다(별도 티켓)."
+   ],
+   "lines": 49,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-481"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-481-INLINE-H2.md"
+   ],
+   "prs": [
+    {
+     "number": 781,
+     "task": "TASK-ES-481",
+     "title": "[INFRA] #TASK-ES-481 refactor: 인라인 어려움 구역 H2 1차 — 목표 탭 IA 동작·템플릿 백과사전·기록 아카이브 펼치기 세포 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "records/checkin-capture",
+   "file": "js/tabs/records/checkin-capture.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "체크인 저장",
+   "nameSource": "hand",
+   "does": "홈 체크인 입력칸에 글자수를 보여 주고, 「기록」을 누르면 오늘 실천을 기록으로 저장한 뒤 XP·축하·AI 피드백을 이어 준다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Checkin Capture (기록 — 홈 체크인 입력 글자수 힌트·기록 저장 처리기)",
+    "홈 체크인 입력칸(#captureInput) 글자수 힌트 처리기와 「기록」 단추(#captureSave) 저장 처리기 — 기록 추가·XP·축하·AI 피드백·노션 전송까지 이전 전과 같은 순서로 돈다.",
+    "두 처리기는 index.html 로드 중 바로 걸리던 문이다. 본문을 bindCaptureLiveMeta · bindCaptureSave 로 감싸 옮기고, index.html 원래 자리에서 그 함수를 부른다(등록 순서 보존, 이중 처리기 0).",
+    "입력칸 요소를 담은 상태 변수(liveMeta · liveCount · capInput)와 사진 대기값(pendingCapturePhoto)은 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
+   ],
+   "lines": 231,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/event-bus",
+    "core/store"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [
+    "checkin:created",
+    "record:saved"
+   ],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-439"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
+   ],
+   "prs": [
+    {
+     "number": 762,
+     "task": "TASK-ES-439",
+     "title": "[INFRA] #TASK-ES-439 refactor: 인라인 어려움 묶음 분열 설계 + 시범 — 유형 집계·시험지 선행 실측, 표준 이음매 생성기·검사기·구역 자리 표지, 체크인 저장 처리기·설정 빠른 동작 세포 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "records/checkin-helpers",
    "file": "js/tabs/records/checkin-helpers.js",
    "kind": "tab",
@@ -11778,6 +13633,64 @@
      "number": 754,
      "task": "TASK-ES-437",
      "title": "[INFRA] #TASK-ES-437 refactor: 인라인 스크립트 세포화 P0 구역 1차(#749 대체) — 19묶음 24선언을 세포 10개로 이전(인라인 −724줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "records/first-checkin-tutorial",
+   "file": "js/tabs/records/first-checkin-tutorial.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "첫 체크인 축하",
+   "nameSource": "hand",
+   "does": "첫 체크인 안내 배너를 그리고, 첫 체크인을 남기면 축하 창과 같은 분야 동료의 환영 도장을 보여 준다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal First Check-in Tutorial (기록 — 첫 체크인 튜토리얼 가이드 및 축하 연출)",
+    "첫 체크인 안내 배너(renderFirstCheckinTutorialBanner)와 첫 체크인 축하 창(triggerFirstCheckinCelebrationModal), 같은 분야 동료 러너 고르기·환영 도장 보내기(getPeerRunnersForCategory·sendFirstCheckinWelcomeStamps 등).",
+    "window 노출 세 줄은 index.html 원래 자리에 그대로 있다.",
+    "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 5171~5202 · 5203~5215 · 5216~5237 · 5239~5247 · 5248~5254 · 5255~5293 · 5295~5411줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 278,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-476"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md"
+   ],
+   "prs": [
+    {
+     "number": 775,
+     "task": "TASK-ES-476",
+     "title": "[INFRA] #TASK-ES-476 refactor: 인라인 어려움 구역 H1 2차 — 네 묶음을 세포 4개로 이전(index.html −969줄, 동작 그대로)",
      "date": "2026-10-05"
     }
    ]
@@ -11874,15 +13787,15 @@
     "records/sub-timeline",
     "records/sub-timer"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "core/registry-init"
+   ],
    "readsFromIndexHtml": [
     "renderRecordsScreen",
     "state"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsMegaBlock"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "block:error",
     "records:mounted"
@@ -12091,6 +14004,123 @@
    ]
   },
   {
+   "id": "records/pro-template-modals",
+   "file": "js/tabs/records/pro-template-modals.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 만들기·열 편집 창",
+   "nameSource": "hand",
+   "does": "내 전용 전문 템플릿을 줄글 추천과 표 미리보기로 만드는 창과, 표의 열(속성)을 추가·변경·삭제하는 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Records Pro Template Modals (기록 탭 — 내 전용 템플릿 만들기·표 열 편집 모달)",
+    "내 전용 템플릿 만들기 모달(openCreateCustomTemplateModal — 줄글 추천·표 미리보기) · 표 속성(열) 편집 모달(openTemplateColumnEditModal).",
+    "묶음 「전문적(내 전용 템플릿) 기록하기 & 일정 연동」(850줄)을 책임 단위로 나눈 화면 쪽이다. 데이터·해석은 js/tabs/records/pro-templates.js.",
+    "#TASK-ES-467(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 19639~19945 · 19946~20014줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 403,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "content-moderation",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-467"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md"
+   ],
+   "prs": [
+    {
+     "number": 774,
+     "task": "TASK-ES-467",
+     "title": "[INFRA] #TASK-ES-467 refactor: 인라인 어려움 구역 H3 — 측정지표 추이 차트·전문 템플릿 묶음을 기록 탭 세포 3개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "records/pro-templates",
+   "file": "js/tabs/records/pro-templates.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 목록·해석",
+   "nameSource": "hand",
+   "does": "기본 전문 템플릿 목록과 내 템플릿을 합쳐 주고, 키로 템플릿을 찾고, 날짜 꼬리표(YYMMDD)를 만들고, 줄글·키워드로 표 열을 추천한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Records Pro Templates (기록 탭 — 전문 템플릿 목록·조회·날짜 꼬리표·줄글 해석·AI 추천)",
+    "기본 전문 템플릿 목록(DEFAULT_PRO_TEMPLATES) · 내 템플릿 합친 목록(getAllProTemplates) · 키로 찾기(getProTemplateByKey) · 날짜 꼬리표 YYMMDD(fmtYYMMDD) · 줄글 → 표 열 해석(parseNaturalLanguageTemplateSpec) · 키워드 → 템플릿 추천(recommendTemplateFromAI).",
+    "묶음 「전문적(내 전용 템플릿) 기록하기 & 일정 연동」(850줄)을 책임 단위로 나눈 데이터·해석 쪽이다. 만들기·열 편집 모달은 js/tabs/records/pro-template-modals.js.",
+    "#TASK-ES-467(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 19166~19246 · 19247~19251 · 19252~19256 · 19257~19271 · 19272~19408 · 19409~19638줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 508,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-467"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md"
+   ],
+   "prs": [
+    {
+     "number": 774,
+     "task": "TASK-ES-467",
+     "title": "[INFRA] #TASK-ES-467 refactor: 인라인 어려움 구역 H3 — 측정지표 추이 차트·전문 템플릿 묶음을 기록 탭 세포 3개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "records/record-assistant",
    "file": "js/tabs/records/record-assistant.js",
    "kind": "tab",
@@ -12205,7 +14235,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "records/record-cards",
@@ -12390,6 +14427,66 @@
      "task": "TASK-ES-358",
      "title": "[E2] #TASK-ES-358 refactor: 기록 탭 렌더 7함수를 js/tabs/records/ 세포로 동작 그대로 이전",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "records/share-to-feed",
+   "file": "js/tabs/records/share-to-feed.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "피드 게시 창",
+   "nameSource": "hand",
+   "does": "내 목표·실천 기록·AI 피드백·사진·카테고리를 골라 소통 피드에 게시하는 창을 열고, 미리보기와 게시를 처리한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Share To Feed (기록 — 목표 & 기록 선택 피드 공유 모달)",
+    "소통 탭 「게시하기」·기록 탭 기간 AI 카드 등에서 여는 피드 게시 창(openShareToFeedModal) — 목표·기록·AI 피드백·사진·카테고리 고르기, 미리보기, 게시.",
+    "기록 탭 세포(js/tabs/records/period-ai-card.js)도 이 창을 부르므로 기록 탭 키트에 둔다(탭 간 직접 참조 0). 게시 뒤 가상 응원·답글 연출(addSimulatedCheerAndReplyToPost)도 같은 묶음이다. FEED_POSTS_CACHE 는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다.",
+    "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 12628~12631 · 12632~13363줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 763,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit",
+    "openShareToFeedModal"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit",
+    "openShareToFeedModal"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-466"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md"
+   ],
+   "prs": [
+    {
+     "number": 772,
+     "task": "TASK-ES-466",
+     "title": "[INFRA] #TASK-ES-466 refactor: 인라인 어려움 구역 H1 1차 — 네 묶음을 세포 4개로 이전(index.html −1,343줄, 동작 그대로)",
+     "date": "2026-10-05"
     }
    ]
   },
@@ -12694,7 +14791,80 @@
     "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "records/trend-metrics-chart",
+   "file": "js/tabs/records/trend-metrics-chart.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "실천 추이 차트",
+   "nameSource": "hand",
+   "does": "기록 탭 통계의 실천 추이 차트를 그리고, 측정지표(몰입시간·실천횟수·달성률·스트릭) 칩과 기간(주간~연간) 단추로 다시 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Records Trend Metrics Chart (기록 탭 — 측정지표 정의·실천 추이 차트 그리기)",
+    "측정지표 정의(TREND_METRICS: 몰입시간·실천횟수·달성률·스트릭) · 기록 탭 실천 추이 차트 칸 그리기와 지표 칩·기간 단추(renderWeekChart, #chartContainer).",
+    "window.TREND_METRICS 노출 줄은 index.html 원래 자리에 그대로 있다(같은 객체가 같은 순간에 달린다).",
+    "같은 묶음의 여러 지표 SVG 그리기(renderMultiMetricSvg)와 그 노출 줄은 옮기지 않았다 — 시험지 tests/achievement-graph-multiset.test.js 가 index.html 에서 그 함수부터 노출 줄까지를 잘라 실행한다(합본 읽기로도 이어지는 구간이 끊긴다)."
+   ],
+   "lines": 264,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-467",
+    "TASK-ES-478"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md",
+    "docs/specs/REQ-TASK-ES-478-HIDDEN-COMM-FAKE-METRICS.md"
+   ],
+   "prs": [
+    {
+     "number": 777,
+     "task": "TASK-ES-478",
+     "title": "[FIX] #TASK-ES-478 남은 허상지표 제거·위젯 시험 픽스처 정정 · 소통 허브/빠른 게시 띠는 중복·고장이라 보고",
+     "date": "2026-10-05"
+    },
+    {
+     "number": 774,
+     "task": "TASK-ES-467",
+     "title": "[INFRA] #TASK-ES-467 refactor: 인라인 어려움 구역 H3 — 측정지표 추이 차트·전문 템플릿 묶음을 기록 탭 세포 3개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "settings/account-entry",
@@ -12818,6 +14988,180 @@
    ]
   },
   {
+   "id": "settings/app-defaults",
+   "file": "js/tabs/settings/app-defaults.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "설정 기본값",
+   "nameSource": "hand",
+   "does": "처음 쓰는 사람의 설정 기본값(알림·테마·글자 크기 등)을 만든다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal App Defaults (설정 탭 — 설정 기본값)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "defaultSettings — 「Storage (Supabase: goals & checkins; localStorage: settings)」(이전 전 3000~3017줄, 구획 주석 포함)",
+    "처음 쓰는 사람의 설정 기본값(알림·테마·글자 크기 등)을 만든다."
+   ],
+   "lines": 42,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/app-evaluation",
+   "file": "js/tabs/settings/app-evaluation.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "아워골 평가 창",
+   "nameSource": "hand",
+   "does": "홈 「오늘 목표」 창의 <아워골 평가해주기> 단추로 점수·장단점·요청을 적어 보내는 평가 창을 열고 닫고 제출한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal App Evaluation (설정 — 아워골 평가해주기 90% 팝업)",
+    "홈 「🎯 오늘 목표」 창의 <아워골 평가해주기> 단추로 여는 평가 창 열기·닫기·초기화(openAppEvaluationModal·closeAppEvaluationModal·resetAppEvaluationForm)와 배경 누르기 닫기·제출 처리기.",
+    "같은 묶음 끝의 홈 「새 목표」 단추 처리기(#homeAddGoal → promptNewGoal)도 로드 중 문이라 함께 감싸 옮겼다. 처리기 등록은 index.html 원래 자리에서 bind 함수를 불러 순서가 같다.",
+    "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 14009~14013 · 14014~14018 · 14031~14035 · 14036~14042 · 14046~14128 · 14129~14133줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 153,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-466"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md"
+   ],
+   "prs": [
+    {
+     "number": 772,
+     "task": "TASK-ES-466",
+     "title": "[INFRA] #TASK-ES-466 refactor: 인라인 어려움 구역 H1 1차 — 네 묶음을 세포 4개로 이전(index.html −1,343줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/app-lock-pin",
+   "file": "js/tabs/settings/app-lock-pin.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "앱 잠금 PIN",
+   "nameSource": "hand",
+   "does": "이 기기 앱 잠금 PIN 을 해시로 저장·확인하고, 켜기·끄기 창과 앱을 열 때 PIN 확인 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal App Lock PIN (설정 탭 — 이 기기 앱 잠금 PIN)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "isHashedAppLockPin — 「[71] 앱 잠금 PIN (이 기기)」(이전 전 4058~4060줄)",
+    "appLockCryptoAvailable — 「[71] 앱 잠금 PIN (이 기기)」(이전 전 4061~4063줄)"
+   ],
+   "lines": 258,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "settings/avatar-greeting",
    "file": "js/tabs/settings/avatar-greeting.js",
    "kind": "tab",
@@ -12880,6 +15224,65 @@
    ]
   },
   {
+   "id": "settings/avatar-levelup-modal",
+   "file": "js/tabs/settings/avatar-levelup-modal.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "레벨업 팝업",
+   "nameSource": "hand",
+   "does": "레벨이 오르면 「LEVEL UP!」 대형 팝업을 띄우고, 성장 성향 키워드 저장(부적절한 단어 거름)·공유·이미지 저장을 처리한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Avatar Level-Up Modal (설정 — 아바타 레벨업 대형 팝업 & 성장 성향 키워드)",
+    "레벨이 오르면 뜨는 「LEVEL UP!」 대형 팝업 열기·닫기(openAvatarLevelUpModal·closeAvatarLevelUpModal)와 성장 성향 키워드 저장(유해 단어 거름 filterHarmfulWords)·공유·이미지 저장 처리기.",
+    "처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. window 노출 두 줄·단추 요소 변수 선언·3줄 이하 등록은 원래 자리에 그대로 있다.",
+    "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3323~3330 · 3331~3373 · 3374~3378 · 3388~3392 · 3395~3418 · 3421~3434 · 3437~3479줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 191,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "avatar-system",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-476"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md"
+   ],
+   "prs": [
+    {
+     "number": 775,
+     "task": "TASK-ES-476",
+     "title": "[INFRA] #TASK-ES-476 refactor: 인라인 어려움 구역 H1 2차 — 네 묶음을 세포 4개로 이전(index.html −969줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "settings/comm-tour",
    "file": "js/tabs/settings/comm-tour.js",
    "kind": "tab",
@@ -12933,6 +15336,67 @@
      "number": 754,
      "task": "TASK-ES-437",
      "title": "[INFRA] #TASK-ES-437 refactor: 인라인 스크립트 세포화 P0 구역 1차(#749 대체) — 19묶음 24선언을 세포 10개로 이전(인라인 −724줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/dev-debug-gate",
+   "file": "js/tabs/settings/dev-debug-gate.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "개발 디버그 버튼 격리",
+   "nameSource": "hand",
+   "does": "로컬 개발 주소에서 ?debug=true 일 때만 테스터 버튼을 보이고 운영에서는 지운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Dev Debug Gate (설정 탭 — 개발 디버그 버튼 격리)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "initDevDebugButtons — 「[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼」(이전 전 5324~5338줄)",
+    "로컬 개발 호스트에서 ?debug=true 일 때만 테스터 버튼을 보이고, 운영에서는 지운다."
+   ],
+   "lines": 39,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "direct-login-guard"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-223",
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-223-PURGE-DEV-DEBUG-BUTTONS.md",
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
      "date": "2026-10-05"
     }
    ]
@@ -12998,6 +15462,126 @@
    ]
   },
   {
+   "id": "settings/guest-migration",
+   "file": "js/tabs/settings/guest-migration.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "게스트 기록 합치기",
+   "nameSource": "hand",
+   "does": "로그인할 때 둘러보기(게스트)로 쓴 기록을 계정 기록과 합집합으로 합쳐 서버에 올린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Guest Migration (설정 탭 — 게스트 기록을 계정으로 합치기)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "migrateGuestDataToUser — 「[#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시」(이전 전 5658~5870줄)",
+    "로그인 때 둘러보기(게스트) 기록을 계정 기록과 합집합으로 합쳐 서버에 올린다."
+   ],
+   "lines": 237,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "account-isolation",
+    "core/app-scope",
+    "template-credit"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-224",
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-224-GUEST-BACKUP-NUDGE.md",
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/inapp-landing",
+   "file": "js/tabs/settings/inapp-landing.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "인앱 브라우저·첫 화면 단추",
+   "nameSource": "hand",
+   "does": "카카오톡 인앱 브라우저면 외부 브라우저로 나가는 배너를 띄우고, 첫 화면의 닉네임 빠른 입장·가입·로그인·둘러보기 단추를 처리한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal In-App Browser & Landing Entry (설정 — 카카오톡 인앱 브라우저 감지·첫 화면 진입 단추)",
+    "카카오톡 인앱 브라우저 감지·외부 브라우저로 빠져나가기 배너(checkKakaoInAppBrowser·escapeKakaoInAppBrowser)와 첫 화면 단추 처리기(닉네임 빠른 입장·이메일 가입·로그인·둘러보기).",
+    "첫 화면 단추 처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다.",
+    "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4018~4072 · 4073~4138 · 4144~4149 · 4150~4155 · 4156~4161 · 4163~4174줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 196,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-476"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md"
+   ],
+   "prs": [
+    {
+     "number": 775,
+     "task": "TASK-ES-476",
+     "title": "[INFRA] #TASK-ES-476 refactor: 인라인 어려움 구역 H1 2차 — 네 묶음을 세포 4개로 이전(index.html −969줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "settings/index",
    "file": "js/tabs/settings/index.js",
    "kind": "tab",
@@ -13032,14 +15616,14 @@
     "settings/sub-profile",
     "settings/sub-security"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "core/registry-init"
+   ],
    "readsFromIndexHtml": [
     "state"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsMegaBlock"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "block:error",
     "settings:mounted"
@@ -13072,6 +15656,64 @@
      "task": "TASK-ES-353",
      "title": "[INFRA] #TASK-ES-353 CORE-04 변경 이벤트 단일화·리스너 중복 방지 (HOME-18·GOALS-22 흡수)",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "settings/login-devices",
+   "file": "js/tabs/settings/login-devices.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "로그인 기기 목록",
+   "nameSource": "hand",
+   "does": "설정 보안에서 이 기기 로그인 목록을 그리고, 다른 모든 기기 로그아웃 전 확인 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Login Devices (설정 탭 — 로그인 기기 목록·다른 기기 로그아웃 창)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "getRegisteredDevices · renderActiveDevicesList — 「[70] 활성 로그인 기기 목록 실시간 렌더링 & 개별 세션 로그아웃」(이전 전 3861~3950줄, 구획 주석 포함)",
+    "openLogoutOtherDevicesConfirmModal — 「[70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달」(이전 전 3953~4048줄)"
+   ],
+   "lines": 214,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
     }
    ]
   },
@@ -13128,7 +15770,14 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "settings/notion-sync",
@@ -13184,6 +15833,66 @@
      "number": 754,
      "task": "TASK-ES-437",
      "title": "[INFRA] #TASK-ES-437 refactor: 인라인 스크립트 세포화 P0 구역 1차(#749 대체) — 19묶음 24선언을 세포 10개로 이전(인라인 −724줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/onboarding",
+   "file": "js/tabs/settings/onboarding.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "첫 가입 온보딩",
+   "nameSource": "hand",
+   "does": "첫 가입 뒤 16종 동물 아바타를 고르고 첫 목표에 안착하는 온보딩 화면을 이끈다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Onboarding (설정 탭 — 첫 가입 온보딩)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "ONBOARDING_AVATARS — 「Onboarding (first-time, after signup)」(이전 전 6756~6777줄)",
+    "startOnboarding — 「Onboarding (first-time, after signup)」(이전 전 6779~6986줄)"
+   ],
+   "lines": 257,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit",
+    "startOnboarding"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit",
+    "startOnboarding"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
      "date": "2026-10-05"
     }
    ]
@@ -13251,6 +15960,64 @@
    ]
   },
   {
+   "id": "settings/quick-actions",
+   "file": "js/tabs/settings/quick-actions.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "설정 빠른 동작",
+   "nameSource": "hand",
+   "does": "설정의 보안 카드(앱 잠금 PIN 상태)를 칠하고 점검하며, 다른 기기 로그아웃 확인 창을 열고, 테마 견본을 고른다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Settings Quick Actions (설정 탭 — 보안 카드·테마 견본 빠른 동작)",
+    "설정 탭 보안 카드 칠하기(paintSecurityCard) · 보안 상태 점검(refreshSecurityStatus) · 다른 기기 로그아웃 확인 창 열기(killDeviceSession) · 테마 견본 고르기(selectThemeSwatch).",
+    "window.paintSecurityCard 는 js/tabs/settings/sub-security.js 가 찾는다 — 노출 줄은 index.html 원래 자리에 그대로 있다.",
+    "같은 묶음의 소통 허브 세 함수(switchCommSubTab·triggerFloatingReaction·openInAppDmSheet)는 옮기지 않았다 — 그 단추를 담은 #commHubGrid 가 마크업 인라인 은폐 스타일로 숨어 있어 게스트 화면에서 잴 수 없다(별도 티켓)."
+   ],
+   "lines": 91,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-439"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
+   ],
+   "prs": [
+    {
+     "number": 762,
+     "task": "TASK-ES-439",
+     "title": "[INFRA] #TASK-ES-439 refactor: 인라인 어려움 묶음 분열 설계 + 시범 — 유형 집계·시험지 선행 실측, 표준 이음매 생성기·검사기·구역 자리 표지, 체크인 저장 처리기·설정 빠른 동작 세포 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "settings/render",
    "file": "js/tabs/settings/render.js",
    "kind": "tab",
@@ -13278,7 +16045,18 @@
    "calls": [
     "avatar-system",
     "core/app-scope",
+    "core/badges",
+    "core/confetti",
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
     "core/ui-helpers",
+    "core/virtual-user-helpers",
     "customize",
     "notify-engine",
     "settings/sub-appearance",
@@ -13320,6 +16098,66 @@
    ]
   },
   {
+   "id": "settings/session-entry",
+   "file": "js/tabs/settings/session-entry.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "세션 복구 입장",
+   "nameSource": "hand",
+   "does": "저장된 로그인 세션을 되살려 앱에 들어가고, 로그인이 잘 안 될 때 빠른 복구 창(닉네임·이메일로 불러오기, 세션 초기화)을 연다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Session Entry (설정 — 세션 복구·직접 로그인·로그인 빠른 복구 창)",
+    "세션 복구 뒤 앱 입장(restoreSessionAndEnter) · 아이디 직접 로그인(loginWithDirectIdentifier) · 로그인 빠른 복구 창(openLoginRescueModal · rescueLoginSession).",
+    "랜딩·로그인 화면의 「로그인이 잘 안 되시나요?」·「로그인 문제 해결」 링크 처리기 등록 문은 bindLoginRescueButtons 로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).",
+    "입장 중 표시(_isEnteringApp)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
+   ],
+   "lines": 268,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "account-isolation",
+    "core/app-scope",
+    "direct-login-guard"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-461"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-461-INLINE-H4-1.md"
+   ],
+   "prs": [
+    {
+     "number": 773,
+     "task": "TASK-ES-461",
+     "title": "[INFRA] #TASK-ES-461 refactor: 인라인 어려움 구역 H4 1차 — 인증서·공유, 세션 복구, 마니또 실 유저, 함께 목표 초대 4묶음 세포 이전",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
    "id": "settings/sub-appearance",
    "file": "js/tabs/settings/sub-appearance.js",
    "kind": "tab",
@@ -13347,8 +16185,19 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/badges",
+    "core/confetti",
     "core/event-bus",
-    "core/ui-helpers"
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
+    "core/ui-helpers",
+    "core/virtual-user-helpers"
    ],
    "calledBy": [
     "settings/index",
@@ -13421,8 +16270,19 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/badges",
+    "core/confetti",
     "core/event-bus",
-    "core/ui-helpers"
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
+    "core/ui-helpers",
+    "core/virtual-user-helpers"
    ],
    "calledBy": [
     "settings/index",
@@ -13488,9 +16348,20 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/badges",
+    "core/confetti",
     "core/confirm",
     "core/event-bus",
-    "core/ui-helpers"
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
+    "core/ui-helpers",
+    "core/virtual-user-helpers"
    ],
    "calledBy": [
     "settings/index",
@@ -13573,8 +16444,19 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/badges",
+    "core/confetti",
     "core/event-bus",
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
     "core/ui-helpers",
+    "core/virtual-user-helpers",
     "notify-engine"
    ],
    "calledBy": [
@@ -13640,8 +16522,19 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/badges",
+    "core/confetti",
     "core/event-bus",
-    "core/ui-helpers"
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
+    "core/ui-helpers",
+    "core/virtual-user-helpers"
    ],
    "calledBy": [
     "settings/index",
@@ -13714,8 +16607,19 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/badges",
+    "core/confetti",
     "core/event-bus",
-    "core/ui-helpers"
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/registry-init",
+    "core/telemetry",
+    "core/time-keys",
+    "core/trash-bin",
+    "core/ui-helpers",
+    "core/virtual-user-helpers"
    ],
    "calledBy": [
     "settings/index",
@@ -13815,7 +16719,78 @@
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/tab-guide",
+   "file": "js/tabs/settings/tab-guide.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "탭 활용법 허브",
+   "nameSource": "hand",
+   "does": "각 탭 200% 활용법과 실제 사용 사례를 탭별로 골라 보는 창을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Tab Guide (설정 탭 — 탭별 200% 활용법 창)",
+    "#TASK-ES-442 (인라인 스크립트 세포화 P0 구역): index.html 인라인 IIFE 에서 아래 묶음의 선언을 동작 그대로 옮겼다.",
+    "TAB_GUIDE_DATA — 「[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법」(이전 전 6322~6458줄)",
+    "renderTabGuideContent — 「[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법」(이전 전 6460~6498줄)"
+   ],
+   "lines": 283,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-160",
+    "TASK-ES-166",
+    "TASK-ES-180",
+    "TASK-ES-442"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-160-guide-hub-showcases.md",
+    "docs/specs/REQ-TASK-ES-166-avatar-guide-hub-first.md",
+    "docs/specs/REQ-TASK-ES-180-NOTEPAD-BATCH-AND-GUIDE-RENEWAL.md",
+    "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md"
+   ],
+   "prs": [
+    {
+     "number": 764,
+     "task": "TASK-ES-442",
+     "title": "[INFRA] #TASK-ES-442 refactor: 인라인 스크립트 세포화 P0 구역 2차 — 13묶음 30선언을 세포 11개로 이전(index.html −1,836줄, 동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "settings/theme-apply",
@@ -13935,7 +16910,14 @@
     "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 760,
+     "task": "TASK-ES-448",
+     "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
+     "date": "2026-10-05"
+    }
+   ]
   },
   {
    "id": "team-auto-actions",
@@ -14379,8 +17361,11 @@
     "template-credit"
    ],
    "calledBy": [
+    "comm/goal-certificate-share",
     "comm/render",
+    "goals/focus-autopilot",
     "goals/team-goal-modals",
+    "goals/template-encyclopedia",
     "sanctuary-peer-radar",
     "team-dm-room",
     "team-leader-check",
@@ -15342,6 +18327,7 @@
     "comm/story-card-send",
     "credits",
     "goal-edit-ux",
+    "settings/guest-migration",
     "settings/render",
     "team-chat",
     "team-companion-search",
@@ -15407,9 +18393,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalThemeSystem"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],

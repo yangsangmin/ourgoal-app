@@ -569,6 +569,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-471 | INFRA | [인라인 기관 이전 1차] 공용 부품 8묶음(홈 콕핏·Utilities·Modal helper·가상유저 10대 헬퍼·표준 시간대·조선소 레지스트리 초기화·계측·구글 캘린더 토큰 격리) → js/core 세포 7개, 동작 그대로(인라인 −682줄) | 코디네이터 지시 (2026-10-05, 기관 빌더), REQ docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md | 4단계(심사 청구)
 - #TASK-ES-466 | INFRA | [인라인 어려움 구역 H1 1차] 동반자 페이스·피드 게시 창·평가 창·새 목표 창 네 묶음을 세포 4개로 이전(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md
 - #TASK-ES-475 | INFRA | [시험지 선행 · 인라인 어려움 H3] achievement-graph-multiset 이 인라인 합본을 읽음(읽기 줄 1줄) | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-475-H3-TEST-BUNDLE.md
+- #TASK-ES-476 | INFRA | [인라인 어려움 구역 H1 2차] 레벨업 팝업·인앱 브라우저·첫 화면 단추·첫 체크인 축하·초집중 모드·스토리 카드 네 묶음을 세포 4개로 이전(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md
 - #TASK-ES-488 | INFRA | [시험지 선행 · 인라인 어려움 구역 H2] 루틴 상세·팀 목표 시험지 6개가 인라인 합본을 읽고, 확인창 시험의 「기본 확인창 2곳만」 검사가 원문+루틴 화면 세포를 읽음 — 단언·기대값·검사 수 그대로, 제품 코드 0 | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-488-INLINE-H2-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-478 | FIX/버그 | [남은 허상지표·위젯 시험 픽스처·소통 숨김 진입로 판정] 통계 카드 가짜 스트릭·리캡 가짜 25분 제거, desktop-widget-suite 픽스처 이름 정정 — 소통 허브·빠른 게시 띠는 중복·고장이라 복원하지 않고 보고, 응원 바·프로필 시트 가짜 전송 보고 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-478-HIDDEN-COMM-FAKE-METRICS.md
 - #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md
@@ -576,3 +577,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통] core-confirm-es376 잘라 읽기가 인라인 합본을 읽음 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md
 - #TASK-ES-493 | INFRA | [인라인 어려움 구역 H2 2차] 목표 탭 루틴 하위 탭 화면·새 루틴 창, 팀 만들기 안내·활용 가이드·빠른 템플릿 프리셋을 js/tabs/goals/routine-screen.js · team-goals-guide.js 로 동작 그대로 이전(게스트 화면에서 열 수 없는 루틴 상세·팀 목표 편집·수준별 목표는 남김) | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-493-INLINE-H2-2.md | 4단계(심사 청구)
 - #TASK-ES-482 | INFRA | [인라인 어려움 기관 묶음 · H3 빌더] Confetti·뱃지 컬렉션·전역 휴지통을 js/core 기관 세포 4개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md
+- #TASK-ES-498 | INFRA | [생성 지도 일괄 갱신 2회차] 생성 파일 4개를 main c1f0a72 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-05), REQ docs/specs/REQ-TASK-ES-498-GENERATED-MAPS-SYNC-2.md | 4단계(심사 청구)
