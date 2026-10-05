@@ -45,7 +45,7 @@ const OUT_JSON = path.join(ROOT, 'docs', 'architecture', 'inline-hard-types.json
 const PROBE = (() => { const p = path.join(ROOT, 'docs', 'architecture', 'inline-hard-test-probe.json'); if (!fs.existsSync(p)) return null; const j = JSON.parse(fs.readFileSync(p, 'utf8')); return j.source.indexSha256_12 === MAP.source.sha256_12 ? j : null; })();
 // 다른 시범·빌더에 배정된 묶음(제목 일부로 찾는다 — 묶음 번호는 앞 묶음이 사라지면 밀린다)
 // 앞이 '=' 이면 제목 전체가 같아야 한다
-const ASSIGNED = [['캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달', '안티그래비티 시범(2026-10-05 배정)'], ['=RENDER: HOME', '안티그래비티 몫(2026-10-05 배정)'], ['5대 테마 온톨로지 & 경량 AI 분류기', '안티그래비티 몫(2026-10-05 배정)'], ['11인 외부 UI/UX 감시 및 개선팀 핵심 기능', '안티그래비티 몫(2026-10-05 배정)'], ['서버 관리자 API를 통한 기록 및 프로필 복구', '안티그래비티 몫(2026-10-05 배정)'], ['=Enter app', '2차 빌더(2026-10-05 배정)'], ['=Render all', '2차 빌더(2026-10-05 배정)']];
+const ASSIGNED = [['캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달', '안티그래비티 시범(2026-10-05 배정)'], ['=RENDER: HOME', '안티그래비티 몫(2026-10-05 배정)'], ['5대 테마 온톨로지 & 경량 AI 분류기', '안티그래비티 몫(2026-10-05 배정)'], ['11인 외부 UI/UX 감시 및 개선팀 핵심 기능', '안티그래비티 몫(2026-10-05 배정)'], ['서버 관리자 API를 통한 기록 및 프로필 복구', '안티그래비티 몫(2026-10-05 배정)'], ['체크인 입력 글자수 힌트 (#TASK-ES-367', '#TASK-ES-439 시범(PR #762 — 처리기 두 개를 옮기고 상태 변수 선언만 남음)'], ['#TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTIONS', '#TASK-ES-439 시범(PR #762 — 설정 네 함수 옮김, 소통 허브 세 함수는 숨은 UI 라 남김)'], ['=Enter app', '2차 빌더(2026-10-05 배정)'], ['=Render all', '2차 빌더(2026-10-05 배정)']];
 const DESIGN_MD = path.join(ROOT, 'docs', 'architecture', 'INLINE-HARD-SPLIT-DESIGN.md');
 
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n');

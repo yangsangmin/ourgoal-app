@@ -1,0 +1,65 @@
+{
+  "id": "records-archive-entry",
+  "title": "게스트로 기록 탭에 들어가면 성소 기록 화면 모드 줄 둘째 줄에 「🗂️ 보관함」 단추(#sRecArchiveBtn)가 보이고, 누르면 보관함 화면(보관한 목표가 없으면 「보관된 목표가 없습니다」)이 열리며 단추가 눌린 상태가 된다 — 고치기 전에는 보관함 단추가 인라인 display:none !important 숨김 칸 안에만 있어 보관한 목표를 볼 길이 없었다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "visible",
+      "selector": "#sRecArchiveBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecArchiveBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#sanctuaryRecordsView",
+      "text": "보관된 목표가 없습니다",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#sRecArchiveBtn",
+      "className": "active"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

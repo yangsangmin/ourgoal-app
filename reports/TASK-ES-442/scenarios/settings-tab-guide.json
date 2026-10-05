@@ -1,0 +1,62 @@
+{
+  "id": "settings-tab-guide",
+  "title": "게스트로 설정 탭 고객지원 묶음을 펼쳐 탭 활용법 허브 단추를 누르면 옮긴 허브 창(openTabGuideHubModal — js/tabs/settings/tab-guide.js)이 열리고, 「목표」 탭 단추를 누르면 옮긴 탭별 내용(renderTabGuideContent·TAB_GUIDE_DATA)이 목표 탭 활용법으로 바뀐다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details.settings-group-accordion:has(#btnTabGuideHub) > summary",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#btnTabGuideHub) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnTabGuideHub",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnTabGuideHub"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".guide-tab-nav-btn[data-tabkey=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".guide-tab-nav-btn[data-tabkey=\"goals\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "템플릿백과사전 (실사용 유저 사전 & AI 60선)"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

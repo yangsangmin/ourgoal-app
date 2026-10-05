@@ -7,7 +7,7 @@
 //   홈 3초 체크인 예시 문구(window.applyQuickCunningText) · 레벨업 띠(앱 스코프 통로 showLevelUpBanner) · 노션 보내기 꺼짐 경로(통로 sendToNotion) · 비밀번호 변경 창(통로 openChangePasswordModal) · 탭 왕복.
 //   부르는 이름은 모두 이전 전 앱에도 같은 이름으로 있는 window 노출·앱 스코프 통로다(두 앱에 같은 조작).
 // 로컬 정적 서버 + 헤드리스 Chrome + shots-lib 게스트 시드·Supabase 목(원격·실계정 없음). 시간·난수 값만 지운다(세트 2 부터: 앱 잠금 PIN 해시는 무작위 소금이라 <pinhash>, 저장공간 추정치 navigator.storage.estimate 는 실행마다 달라 <usage>). 같은 기준 앱 2회로 본질 변동을 먼저 잰다.
-// 세트 2(#TASK-ES-442)는 SETS 의 2 머리 주석에 적었다.
+// 세트 2(#TASK-ES-442)는 SETS 의 2 머리 주석에 적었다. 저장값 lastStreakAwarded·maxBaseCrafts(아바타 제작권 지갑 칸 — 로드 중 비동기 순서에 따라 기준 앱끼리도 생기거나 안 생김, 같은 기준 2회에서 실측)는 bonusCraftCredits 처럼 지운다.
 // 사용: NODE_PATH=C:/dev/ourgoal-app/node_modules node dom-compare-inline-p0.js <baseApp> <afterApp> <out.json> <세트 번호>
 const http = require('http'), fs = require('fs'), path = require('path');
 const HARN = path.join(__dirname, '..') + '/';
@@ -160,7 +160,7 @@ function normLs(ls) {
   for (const [k, v] of Object.entries(ls)) {
     if (/^ph_/.test(k)) continue; // posthog 분석 SDK 상태(실행마다 무작위 id)
     let val = v;
-    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => key === 'bonusCraftCredits' ? undefined : (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
+    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => (key === 'bonusCraftCredits' || key === 'lastStreakAwarded' || key === 'maxBaseCrafts') ? undefined : (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
     o[k] = VOL(val);
   }
   return o;

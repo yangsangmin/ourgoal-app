@@ -107,7 +107,7 @@
    "req": "R1",
    "kind": "static",
    "domain": "architecture",
-   "statement": "기준(origin/main) 어려움 묶음은 54개다",
+   "statement": "기준(origin/main, 이 PR 스냅샷) 어려움 묶음은 55개다",
    "touches": [
     "reports/TASK-ES-439/inline-hard-types-base.json"
    ],
@@ -115,7 +115,7 @@
     "file": "reports/TASK-ES-439/inline-hard-types-base.json",
     "type": "jsonPath",
     "path": "hard.groups",
-    "equals": 54
+    "equals": 55
    }
   },
   {
@@ -123,7 +123,7 @@
    "req": "R1",
    "kind": "static",
    "domain": "architecture",
-   "statement": "기준 실측에서 시험지 선행이 필요한 어려움 묶음은 12개다",
+   "statement": "기준 실측(이 PR 스냅샷)에서 시험지 선행이 필요한 어려움 묶음은 12개다",
    "touches": [
     "reports/TASK-ES-439/inline-hard-test-probe-base.json"
    ],
@@ -275,13 +275,13 @@
    "req": "R3",
    "kind": "static",
    "domain": "architecture",
-   "statement": "지도에서 이음매 묶음이 8개다",
+   "statement": "이 PR 판 지도 스냅샷에서 이음매 묶음이 8개다(1차 이음매 묶음 포함)",
    "touches": [
-    "docs/architecture/inline-script-map.json"
+    "reports/TASK-ES-439/snapshot-inline-script-map.json"
    ],
    "check": {
-    "file": "docs/architecture/inline-script-map.json",
     "type": "jsonPath",
+    "file": "reports/TASK-ES-439/snapshot-inline-script-map.json",
     "path": "totals.seamGroups",
     "equals": 8
    }
@@ -448,13 +448,13 @@
    "req": "R5",
    "kind": "static",
    "domain": "architecture",
-   "statement": "세포지도에 새 세포가 있다",
+   "statement": "이 PR 판 세포지도 스냅샷에 새 세포가 있다",
    "touches": [
-    "docs/architecture/cell-map.json"
+    "reports/TASK-ES-439/snapshot-cell-map.json"
    ],
    "check": {
-    "file": "docs/architecture/cell-map.json",
     "type": "codeContains",
+    "file": "reports/TASK-ES-439/snapshot-cell-map.json",
     "text": "\"id\": \"records/checkin-capture\""
    }
   },
@@ -463,14 +463,14 @@
    "req": "R5",
    "kind": "static",
    "domain": "architecture",
-   "statement": "기준선에 인라인 27,946줄이 기록되었다",
+   "statement": "이 PR 판 기준선 스냅샷에 인라인 26,110줄이 기록되었다",
    "touches": [
-    "docs/architecture/module-baseline.json"
+    "reports/TASK-ES-439/snapshot-module-baseline.json"
    ],
    "check": {
-    "file": "docs/architecture/module-baseline.json",
     "type": "codeContains",
-    "text": "\"inlineScriptLines\": 27946"
+    "file": "reports/TASK-ES-439/snapshot-module-baseline.json",
+    "text": "\"inlineScriptLines\": 26110"
    }
   },
   {
@@ -625,7 +625,7 @@
    "req": "R5",
    "kind": "static",
    "domain": "architecture",
-   "statement": "처리 순서 제안이 지금 어려움으로 남은 배정 6묶음(2차 빌더·안티그래비티)을 구역에서 뺀다",
+   "statement": "처리 순서 제안이 배정 8묶음(시범 2·2차 빌더 2·안티그래비티 4)을 구역에서 뺀다",
    "touches": [
     "docs/architecture/inline-hard-types.json"
    ],
@@ -633,7 +633,7 @@
     "file": "docs/architecture/inline-hard-types.json",
     "type": "jsonPath",
     "path": "assigned.length",
-    "equals": 6
+    "equals": 8
    }
   },
   {
