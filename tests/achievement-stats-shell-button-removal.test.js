@@ -6,6 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 const assert = require('assert');
 
 console.log('[TEST START] achievement-stats-shell-button-removal (#TASK-ES-311)');
@@ -33,7 +34,7 @@ const jsCompPath = path.join(rootDir, 'js', 'components.js');
 
 const html = fs.readFileSync(htmlPath, 'utf8');
 const uStats = readStatsBundle(rootDir);
-const jsComp = fs.readFileSync(jsCompPath, 'utf8');
+const jsComp = readComponentsBundle();
 
 // 1. universal-stats.js 및 index.html 미작동 껍데기 버튼 및 라벨 부재(Zero Dead Click) 검증
 assert.ok(!uStats.includes('uLinkGoalBtn'), 'universal-stats.js: uLinkGoalBtn 미존재 확인');

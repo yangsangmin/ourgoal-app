@@ -5,11 +5,12 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 // 1. 소스 정적 마크업 및 구조 검증
 const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
 const notifyEngineJs = fs.readFileSync(path.join(__dirname, '../js/notify-engine.js'), 'utf8');
-const componentsJs = fs.readFileSync(path.join(__dirname, '../js/components.js'), 'utf8');
+const componentsJs = readComponentsBundle();
 
 // [검증 1] openCalendarManualEditModal 내 사전 알림 토글 및 울릴 시간 선택/커스텀 입력 요소 확인
 assert.ok(indexHtml.includes('id="calEditNotifySwitch"'), 'calEditNotifySwitch 토글 스위치 존재');
