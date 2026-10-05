@@ -14,6 +14,47 @@
 
 (function(global) {
   'use strict';
+
+  /* ============ [#TASK-ES-407] 시간기록 세포 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md) ============
+     ① 가져오기: 부품으로 옮긴 함수를 이 스코프에서 같은 이름으로 쓴다(브라우저는 index.html 이 부품을 먼저 읽고, node 는 아래 require).
+     ② 스코프 통로: 옮긴 코드가 읽는 이 스코프의 이름만 OurgoalTimeTrackerKit.<칸>.scope 에 getter 로 노출한다(목록은 스코프 분석으로 뽑았다). */
+  var _ttKit = global.OurgoalTimeTrackerKit || {};
+  var _ttScreen = _ttKit.screen;
+  if(!_ttScreen && typeof require === 'function'){ _ttScreen = require('./time-tracker-screen.js'); }
+  _ttScreen = _ttScreen || {};
+  var _ttLapMemo = _ttKit.lapMemo;
+  if(!_ttLapMemo && typeof require === 'function'){ _ttLapMemo = require('./time-tracker-lap-memo.js'); }
+  _ttLapMemo = _ttLapMemo || {};
+  var _ttReview = _ttKit.review;
+  if(!_ttReview && typeof require === 'function'){ _ttReview = require('./time-tracker-review.js'); }
+  _ttReview = _ttReview || {};
+  var initDOM = _ttScreen.initDOM;
+  var bindEvents = _ttScreen.bindEvents;
+  Object.defineProperties(_ttScreen.scope || (_ttScreen.scope = {}), Object.getOwnPropertyDescriptors({
+    get adjustTimerUnit(){ return adjustTimerUnit; },
+    get askConfirm(){ return askConfirm; },
+    get closeTrackerOverlay(){ return closeTrackerOverlay; },
+    get handleCloseAttempt(){ return handleCloseAttempt; },
+    get handleSaveRecord(){ return handleSaveRecord; },
+    get handleScreenResize(){ return handleScreenResize; },
+    get hideCancelDialog(){ return hideCancelDialog; },
+    get showCancelDialog(){ return showCancelDialog; },
+    get switchMode(){ return switchMode; },
+    get tracker(){ return tracker; },
+    get updateTimerDisplay(){ return updateTimerDisplay; }
+  }));
+  var openLapMemoModal = _ttLapMemo.openLapMemoModal;
+  Object.defineProperties(_ttLapMemo.scope || (_ttLapMemo.scope = {}), Object.getOwnPropertyDescriptors({
+    get renderLapsList(){ return renderLapsList; },
+    get tracker(){ return tracker; }
+  }));
+  var openReviewView = _ttReview.openReviewView;
+  var handleSaveRecord = _ttReview.handleSaveRecord;
+  Object.defineProperties(_ttReview.scope || (_ttReview.scope = {}), Object.getOwnPropertyDescriptors({
+    get closeTrackerOverlay(){ return closeTrackerOverlay; },
+    get formatTime(){ return formatTime; },
+    get tracker(){ return tracker; }
+  }));
   var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return null; });
   // 내부 상태 객체
   var tracker = {
@@ -120,294 +161,7 @@
     }
   }
 
-  /**
-   * DOM 생성 및 1회 초기화
-   */
-  function initDOM() {
-    if (document.getElementById('timeTrackerOverlay')) return;
-
-    var overlay = document.createElement('div');
-    overlay.id = 'timeTrackerOverlay';
-    overlay.className = 'tt-overlay hidden';
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', '지금부터 시간기록 몰입 화면');
-
-    overlay.innerHTML = 
-      '<div class="tt-wrapper" id="ttWrapper">' +
-        '<!-- 헤더 -->' +
-        '<header class="tt-header">' +
-          '<div class="tt-mode-tabs">' +
-            '<button type="button" class="tt-mode-tab active" id="ttTabStopwatch">⏱️ 스톱워치</button>' +
-            '<button type="button" class="tt-mode-tab" id="ttTabTimer">⏳ 타이머</button>' +
-          '</div>' +
-          '<div class="tt-header-actions">' +
-            '<button type="button" class="tt-icon-btn" id="btnTtRotateToggle" title="가로/세로 화면 회전 토글" aria-label="화면 회전">' +
-              '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                '<path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>' +
-              '</svg>' +
-            '</button>' +
-            '<button type="button" class="tt-icon-btn" id="btnTtClose" title="닫기" aria-label="닫기">' +
-              '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>' +
-              '</svg>' +
-            '</button>' +
-          '</div>' +
-        '</header>' +
-
-        '<!-- [뷰 A] 타이머/스톱워치 측정 뷰 -->' +
-        '<main class="tt-body" id="ttMeasureView">' +
-          '<div class="tt-clock-card">' +
-            '<div class="tt-status-badge" id="ttStatusBadge">' +
-              '<span class="tt-status-dot"></span><span id="ttStatusText">측정 대기</span>' +
-            '</div>' +
-            '<div class="tt-digits" id="ttDigits">00:00:00</div>' +
-            '<div class="tt-digits-sub" id="ttDigitsSub">.00</div>' +
-          '</div>' +
-
-          '<!-- 타이머 모드 전용 시간 설정 컨트롤러 -->' +
-          '<div class="tt-timer-setup" id="ttTimerSetup" style="display:none;">' +
-            '<div class="tt-timer-presets">' +
-              '<button type="button" class="tt-preset-chip" data-tsec="300">+5분</button>' +
-              '<button type="button" class="tt-preset-chip" data-tsec="600">+10분</button>' +
-              '<button type="button" class="tt-preset-chip active" data-tsec="1500">25분 (뽀모도로)</button>' +
-              '<button type="button" class="tt-preset-chip" data-tsec="1800">+30분</button>' +
-              '<button type="button" class="tt-preset-chip" data-tsec="3600">+1시간</button>' +
-              '<button type="button" class="tt-preset-chip" id="btnTtTimerResetPreset" style="color:#f87171;">리셋</button>' +
-            '</div>' +
-            '<div class="tt-timer-adjusters">' +
-              '<div class="tt-adjust-unit">' +
-                '<button type="button" class="tt-adjust-btn" id="btnTtTimerHourUp">▲</button>' +
-                '<div class="tt-adjust-val" id="ttTimerValHour">00</div>' +
-                '<button type="button" class="tt-adjust-btn" id="btnTtTimerHourDown">▼</button>' +
-                '<span class="tt-adjust-label">시간</span>' +
-              '</div>' +
-              '<div class="tt-adjust-sep">:</div>' +
-              '<div class="tt-adjust-unit">' +
-                '<button type="button" class="tt-adjust-btn" id="btnTtTimerMinUp">▲</button>' +
-                '<div class="tt-adjust-val" id="ttTimerValMin">25</div>' +
-                '<button type="button" class="tt-adjust-btn" id="btnTtTimerMinDown">▼</button>' +
-                '<span class="tt-adjust-label">분</span>' +
-              '</div>' +
-              '<div class="tt-adjust-sep">:</div>' +
-              '<div class="tt-adjust-unit">' +
-                '<button type="button" class="tt-adjust-btn" id="btnTtTimerSecUp">▲</button>' +
-                '<div class="tt-adjust-val" id="ttTimerValSec">00</div>' +
-                '<button type="button" class="tt-adjust-btn" id="btnTtTimerSecDown">▼</button>' +
-                '<span class="tt-adjust-label">초</span>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-
-          '<!-- 구간 메모 작성 인라인 컨테이너 (#TASK-ES-172, [44], [55]) -->' +
-          '<div class="tt-lap-memo-container" id="ttLapMemoContainer" style="display:none;"></div>' +
-
-          '<!-- 구간기록 목록 -->' +
-          '<div class="tt-laps-wrapper" id="ttLapsWrapper" style="display:none;">' +
-            '<div id="ttLapsList"></div>' +
-          '</div>' +
-        '</main>' +
-
-        '<!-- [뷰 B] 세션 종료 후 기록 작성 뷰 (Review) -->' +
-        '<div class="tt-review-view" id="ttReviewView" style="display:none;">' +
-          '<div class="tt-review-summary-card">' +
-            '<div class="tt-form-label" style="color:#94a3b8;" id="ttReviewHeaderTitle">방금 완료한 시간 기록</div>' +
-            '<div class="tt-review-total-time" id="ttReviewTotalTime">00:00:00</div>' +
-            '<div style="font-size:12px;color:#cbd5e1;" id="ttReviewLapCount">총 0개 구간 기록됨</div>' +
-          '</div>' +
-
-          '<div class="tt-form-group">' +
-            '<label class="tt-form-label" for="ttActivityTitle">오늘 어떤 활동을 하셨나요? <span style="color:#f87171;">*</span></label>' +
-            '<input type="text" class="tt-input" id="ttActivityTitle" placeholder="예: 코딩 개발, 자격증 공부, 독서, 헬스 운동, 여행준비 등">' +
-          '</div>' +
-
-          '<div class="tt-form-group" id="ttReviewLapsGroup" style="display:none;">' +
-            '<label class="tt-form-label">구간별 활동 상세 기록</label>' +
-            '<div class="tt-review-laps-list" id="ttReviewLapsList"></div>' +
-          '</div>' +
-
-          '<div class="tt-review-actions">' +
-            '<button type="button" class="tt-btn tt-btn-danger" id="btnTtCancelReview">취소</button>' +
-            '<button type="button" class="tt-btn tt-btn-success" id="btnTtSaveRecord">내 기록에 저장</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<!-- 컨트롤 바 -->' +
-        '<footer class="tt-controls" id="ttControls">' +
-          '<!-- 상태에 따라 동적 렌더링 -->' +
-        '</footer>' +
-      '</div>' +
-
-      '<!-- 취소 확인 2중 안전 경고 팝업 -->' +
-      '<div class="tt-dialog-backdrop hidden" id="ttCancelConfirmDialog" style="display:none;">' +
-        '<div class="tt-dialog-box">' +
-          '<div class="tt-dialog-icon">⚠️</div>' +
-          '<div class="tt-dialog-title">정말 취소하시겠습니까?</div>' +
-          '<div class="tt-dialog-desc">이번 세션의 시간기록과 연계된 기록이 모두 삭제됩니다. 정말 취소하시겠습니까?</div>' +
-          '<div class="tt-dialog-actions">' +
-            '<button type="button" class="tt-btn tt-btn-secondary" id="btnTtCancelNo">취소 안함</button>' +
-            '<button type="button" class="tt-btn tt-btn-danger" id="btnTtCancelYes">정말 취소</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-
-    document.body.appendChild(overlay);
-
-    // DOM 캐싱
-    tracker.dom = {
-      overlay: overlay,
-      wrapper: document.getElementById('ttWrapper'),
-      measureView: document.getElementById('ttMeasureView'),
-      lapMemoContainer: document.getElementById('ttLapMemoContainer'),
-      reviewView: document.getElementById('ttReviewView'),
-      digits: document.getElementById('ttDigits'),
-      digitsSub: document.getElementById('ttDigitsSub'),
-      statusBadge: document.getElementById('ttStatusBadge'),
-      statusText: document.getElementById('ttStatusText'),
-      lapsWrapper: document.getElementById('ttLapsWrapper'),
-      lapsList: document.getElementById('ttLapsList'),
-      controls: document.getElementById('ttControls'),
-      rotateBtn: document.getElementById('btnTtRotateToggle'),
-      closeBtn: document.getElementById('btnTtClose'),
-      tabStopwatch: document.getElementById('ttTabStopwatch'),
-      tabTimer: document.getElementById('ttTabTimer'),
-      timerSetup: document.getElementById('ttTimerSetup'),
-      valHour: document.getElementById('ttTimerValHour'),
-      valMin: document.getElementById('ttTimerValMin'),
-      valSec: document.getElementById('ttTimerValSec'),
-      btnHourUp: document.getElementById('btnTtTimerHourUp'),
-      btnHourDown: document.getElementById('btnTtTimerHourDown'),
-      btnMinUp: document.getElementById('btnTtTimerMinUp'),
-      btnMinDown: document.getElementById('btnTtTimerMinDown'),
-      btnSecUp: document.getElementById('btnTtTimerSecUp'),
-      btnSecDown: document.getElementById('btnTtTimerSecDown'),
-      btnResetPreset: document.getElementById('btnTtTimerResetPreset'),
-      reviewHeaderTitle: document.getElementById('ttReviewHeaderTitle'),
-      reviewTotalTime: document.getElementById('ttReviewTotalTime'),
-      reviewLapCount: document.getElementById('ttReviewLapCount'),
-      activityTitle: document.getElementById('ttActivityTitle'),
-      reviewLapsGroup: document.getElementById('ttReviewLapsGroup'),
-      reviewLapsList: document.getElementById('ttReviewLapsList'),
-      cancelReviewBtn: document.getElementById('btnTtCancelReview'),
-      saveRecordBtn: document.getElementById('btnTtSaveRecord'),
-      confirmDialog: document.getElementById('ttCancelConfirmDialog'),
-      confirmNoBtn: document.getElementById('btnTtCancelNo'),
-      confirmYesBtn: document.getElementById('btnTtCancelYes')
-    };
-
-    bindEvents();
-  }
-
-  /**
-   * 4위 1체 이벤트 리스너 바인딩
-   */
-  function bindEvents() {
-    var d = tracker.dom;
-
-    // 1. 모드 탭 (스톱워치 / 타이머 전환)
-    d.tabStopwatch.onclick = async function() {
-      if (tracker.mode === 'stopwatch') return;
-      if (tracker.state !== 'idle') {
-        if (!(await askConfirm('현재 측정을 초기화하고 스톱워치로 변경하시겠습니까?'))) return;
-      }
-      switchMode('stopwatch');
-    };
-
-    d.tabTimer.onclick = async function() {
-      if (tracker.mode === 'timer') return;
-      if (tracker.state !== 'idle') {
-        if (!(await askConfirm('현재 측정을 초기화하고 타이머로 변경하시겠습니까?'))) return;
-      }
-      switchMode('timer');
-    };
-
-    // 2. 타이머 퀵 프리셋 버튼 바인딩
-    d.timerSetup.querySelectorAll('[data-tsec]').forEach(function(btn) {
-      btn.onclick = function() {
-        var sec = parseInt(btn.dataset.tsec, 10);
-        if (sec === 1500) {
-          // 뽀모도로(25분)는 즉시 25분 세팅
-          tracker.timerTargetSeconds = 1500;
-        } else {
-          tracker.timerTargetSeconds = Math.min(86399, tracker.timerTargetSeconds + sec);
-        }
-        updateTimerDisplay();
-        d.timerSetup.querySelectorAll('.tt-preset-chip').forEach(function(c){ c.classList.remove('active'); });
-        btn.classList.add('active');
-      };
-    });
-
-    d.btnResetPreset.onclick = function() {
-      tracker.timerTargetSeconds = 0;
-      updateTimerDisplay();
-      d.timerSetup.querySelectorAll('.tt-preset-chip').forEach(function(c){ c.classList.remove('active'); });
-    };
-
-    // 3. 타이머 시/분/초 증감 조절기
-    d.btnHourUp.onclick = function() { adjustTimerUnit(3600); };
-    d.btnHourDown.onclick = function() { adjustTimerUnit(-3600); };
-    d.btnMinUp.onclick = function() { adjustTimerUnit(60); };
-    d.btnMinDown.onclick = function() { adjustTimerUnit(-60); };
-    d.btnSecUp.onclick = function() { adjustTimerUnit(10); };
-    d.btnSecDown.onclick = function() { adjustTimerUnit(-10); };
-
-    // 4. 화면 회전 수동 토글
-    d.rotateBtn.onclick = function() {
-      tracker.forcedLandscape = !tracker.forcedLandscape;
-      if (tracker.forcedLandscape) {
-        d.wrapper.classList.add('tt-forced-landscape');
-        d.rotateBtn.style.color = '#60a5fa';
-        d.rotateBtn.style.background = 'rgba(59,130,246,0.2)';
-      } else {
-        d.wrapper.classList.remove('tt-forced-landscape');
-        d.rotateBtn.style.color = '';
-        d.rotateBtn.style.background = '';
-      }
-    };
-
-    // 5. 닫기 버튼
-    d.closeBtn.onclick = function() {
-      handleCloseAttempt();
-    };
-
-    // 6. 작성 취소 버튼 -> 경고 팝업
-    d.cancelReviewBtn.onclick = function() {
-      showCancelDialog();
-    };
-
-    // 7. 경고 팝업: 취소 안함
-    d.confirmNoBtn.onclick = function() {
-      hideCancelDialog();
-    };
-
-    // 8. 경고 팝업: 정말 취소
-    d.confirmYesBtn.onclick = function() {
-      hideCancelDialog();
-      closeTrackerOverlay();
-    };
-
-    // 9. 내 기록에 저장 버튼
-    d.saveRecordBtn.onclick = function() {
-      handleSaveRecord();
-    };
-
-    // 10. ESC 키 가드
-    window.addEventListener('keydown', function(e) {
-      if (!tracker.isOpen) return;
-      if (e.key === 'Escape') {
-        if (tracker.dom.lapMemoContainer && tracker.dom.lapMemoContainer.style.display !== 'none') {
-          tracker.dom.lapMemoContainer.style.display = 'none';
-          tracker.dom.lapMemoContainer.innerHTML = '';
-          if (tracker.dom.measureView) tracker.dom.measureView.classList.remove('tt-memo-active');
-          return;
-        }
-        handleCloseAttempt();
-      }
-    });
-
-    // 11. 기기 실제 회전 감지
-    window.addEventListener('resize', handleScreenResize);
-  }
+  /* [#TASK-ES-407] initDOM · bindEvents → js/time-tracker-screen.js 로 옮김(동작 그대로). 이 IIFE 맨 위에서 같은 이름으로 가져온다. */
 
   /**
    * 타이머 증감 헬퍼
@@ -766,95 +520,7 @@
     renderLapsList();
   }
 
-  /**
-   * 실시간 구간별 활동기록 작성 인라인 패널 (시간 정지 없음, 시간창 자연스럽게 상단 이동, #TASK-ES-172, [44], [55])
-   */
-  function openLapMemoModal(lap) {
-    if (!lap) return;
-
-    // 이전 구형 모달 잔재가 있으면 제거
-    var oldModal = document.getElementById('ttLapMemoModal');
-    if (oldModal && oldModal.parentNode) {
-      oldModal.parentNode.removeChild(oldModal);
-    }
-
-    var container = tracker.dom.lapMemoContainer || document.getElementById('ttLapMemoContainer');
-    if (!container) return;
-
-    // 1. 상민님 의도: 구간 누르면 자연스럽게 시간창을 위로 올림 (초시계 가림 0%)
-    if (tracker.dom.measureView) {
-      tracker.dom.measureView.classList.add('tt-memo-active');
-    }
-
-    // 2. 모던 퀵 태그 목록
-    var quickTags = ['🏃 러닝', '📚 공부', '💻 코딩', '📖 독서', '☕ 휴식', '🎯 몰입', '💪 운동'];
-
-    container.innerHTML = 
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-        '<div style="display:flex;align-items:center;gap:8px;">' +
-          '<span class="tt-lap-num">구간 ' + lap.lapNum + '</span>' +
-          '<h4 style="margin:0;font-size:.95rem;color:#fff;font-weight:800;">+' + lap.formattedDuration + ' <span style="font-size:.75rem;color:#94a3b8;font-weight:500;">(누적 ' + lap.formattedSplit + ')</span></h4>' +
-        '</div>' +
-        '<span style="display:inline-flex;align-items:center;gap:4px;font-size:.68rem;background:rgba(34,197,94,0.15);color:#4ade80;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(34,197,94,0.3);">' +
-          '<span style="width:5px;height:5px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 5px #22c55e;"></span>측정 중' +
-        '</span>' +
-      '</div>' +
-      '<p style="font-size:.75rem;color:#94a3b8;margin:0 0 8px;line-height:1.3;">시간별로 세부 내용을 작성할 수 있어요 (시간은 멈추지 않습니다)</p>' +
-      '<div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:5px;margin-bottom:8px;" class="no-scrollbar">' +
-        quickTags.map(function(tag){
-          return '<button type="button" class="btn-quick-lap-tag">' + tag + '</button>';
-        }).join('') +
-      '</div>' +
-      '<textarea id="ttLapMemoInput" style="width:100%;box-sizing:border-box;height:54px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:8px 10px;color:#fff;font-size:.8125rem;resize:none;margin-bottom:10px;outline:none;line-height:1.35;" placeholder="예: 3km 러닝, 핵심 비즈니스 로직 작성 등">' + (lap.text || '') + '</textarea>' +
-      '<div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;">' +
-        '<button type="button" class="btn btn-ghost btn-xs" id="btnTtLapMemoCancel" style="padding:6px 12px;border-radius:8px;color:#94a3b8;font-weight:600;font-size:.75rem;">취소</button>' +
-        '<button type="button" class="btn btn-primary btn-xs" id="btnTtLapMemoSave" style="padding:6px 16px;border-radius:8px;background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);color:#fff;border:none;font-weight:700;font-size:.75rem;box-shadow:0 2px 8px rgba(99,102,241,0.4);">저장</button>' +
-      '</div>';
-
-    container.style.maxWidth = '340px';
-    container.style.display = 'block';
-
-    var txt = container.querySelector('#ttLapMemoInput');
-    if (txt) {
-      txt.focus();
-      txt.onfocus = function(){ txt.style.borderColor = '#6366f1'; txt.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.2)'; };
-      txt.onblur = function(){ txt.style.borderColor = 'rgba(255,255,255,0.18)'; txt.style.boxShadow = 'none'; };
-    }
-
-    container.querySelectorAll('.btn-quick-lap-tag').forEach(function(btn){
-      btn.onclick = function(){
-        if (!txt) return;
-        var tag = btn.textContent;
-        if (txt.value.trim()) {
-          txt.value = txt.value.trim() + ' ' + tag;
-        } else {
-          txt.value = tag;
-        }
-        btn.style.background = 'rgba(99,102,241,0.3)';
-        btn.style.borderColor = '#6366f1';
-        btn.style.color = '#fff';
-      };
-    });
-
-    container.querySelector('#btnTtLapMemoCancel').onclick = function() {
-      container.style.display = 'none';
-      container.innerHTML = '';
-      if (tracker.dom.measureView) {
-        tracker.dom.measureView.classList.remove('tt-memo-active');
-      }
-    };
-
-    container.querySelector('#btnTtLapMemoSave').onclick = function() {
-      lap.text = (txt ? txt.value.trim() : '');
-      container.style.display = 'none';
-      container.innerHTML = '';
-      if (tracker.dom.measureView) {
-        tracker.dom.measureView.classList.remove('tt-memo-active');
-      }
-      renderLapsList();
-      if (typeof toast === 'function') toast('구간 ' + lap.lapNum + ' 활동 내용이 저장되었습니다.');
-    };
-  }
+  /* [#TASK-ES-407] openLapMemoModal → js/time-tracker-lap-memo.js 로 옮김(동작 그대로). 이 IIFE 맨 위에서 같은 이름으로 가져온다. */
 
   /**
    * 2중 초기화 확인 안전 모달 (#TASK-ES-172)
@@ -1020,163 +686,7 @@
     openReviewView(finalElapsed);
   }
 
-  /**
-   * 세션 종료 후 기록 작성 화면 진입
-   */
-  function openReviewView(elapsedMs) {
-    var d = tracker.dom;
-    d.measureView.style.display = 'none';
-    d.controls.style.display = 'none';
-    d.reviewView.style.display = 'flex';
-
-    var f = formatTime(elapsedMs);
-    var modeBadgeText = tracker.mode === 'timer' ? '⏳ 타이머 완료' : '⏱️ 스톱워치 기록';
-    d.reviewHeaderTitle.textContent = modeBadgeText + ' (' + f.timeStr + ')';
-    d.reviewTotalTime.textContent = f.timeStr;
-    d.reviewLapCount.textContent = '총 ' + tracker.laps.length + '개 구간 측정 완료';
-
-    // 구간별 작성 내용이 있으면 활동명 기본값 설정 및 프리필
-    var hasLapNotes = tracker.laps.some(function(l){ return l.text && l.text.trim(); });
-    if (hasLapNotes && !d.activityTitle.value) {
-      d.activityTitle.value = tracker.mode === 'timer' ? '집중 타이머 세션' : '스톱워치 몰입 세션';
-    } else if (!d.activityTitle.value) {
-      d.activityTitle.value = '';
-    }
-    d.activityTitle.focus();
-
-    // 구간별 작성 필드 렌더링
-    var lapsList = d.reviewLapsList;
-    lapsList.innerHTML = '';
-
-    if (tracker.laps.length > 0) {
-      d.reviewLapsGroup.style.display = 'block';
-      var quickReviewTags = ['🏃 러닝', '📚 공부', '💻 코딩', '📖 독서', '☕ 휴식', '🎯 몰입', '💪 운동'];
-      tracker.laps.forEach(function(lap) {
-        var card = document.createElement('div');
-        card.className = 'tt-review-lap-card';
-        var safeVal = (lap.text || '').replace(/"/g, '&quot;');
-        card.innerHTML = 
-          '<div class="tt-review-lap-head">' +
-            '<div style="display:flex;align-items:center;gap:7px;">' +
-              '<span class="tt-review-lap-badge">구간 ' + lap.lapNum + '</span>' +
-              '<span class="tt-review-lap-time" style="font-weight:800;color:#e2e8f0;">+' + lap.formattedDuration + '</span>' +
-            '</div>' +
-            '<span class="tt-review-lap-split" style="font-size:0.75rem;color:#94a3b8;font-family:ui-monospace,SF Mono,monospace;">누적 ' + lap.formattedSplit + '</span>' +
-          '</div>' +
-          '<div style="display:flex;gap:4px;margin-bottom:8px;overflow-x:auto;" class="no-scrollbar">' +
-            quickReviewTags.map(function(tag){
-              return '<button type="button" class="btn-lap-card-tag">' + tag + '</button>';
-            }).join('') +
-          '</div>' +
-          '<input type="text" class="tt-input tt-lap-input" data-lap-idx="' + (lap.lapNum - 1) + '" ' +
-                 'value="' + safeVal + '" ' +
-                 'placeholder="' + lap.lapNum + '구간 집중 활동 입력 (예: 1단원 문제풀이, UI 코딩 등)">';
-
-        var inEl = card.querySelector ? card.querySelector('.tt-lap-input') : null;
-        if (card.querySelectorAll) {
-          card.querySelectorAll('.btn-lap-card-tag').forEach(function(chip){
-            chip.onclick = function(){
-              if(!inEl) return;
-              if(inEl.value.trim()){
-                inEl.value = inEl.value.trim() + ' ' + chip.textContent;
-              } else {
-                inEl.value = chip.textContent;
-              }
-              chip.style.background = 'rgba(99,102,241,0.25)';
-              chip.style.borderColor = '#6366f1';
-              chip.style.color = '#fff';
-            };
-          });
-        }
-        lapsList.appendChild(card);
-      });
-    } else {
-      d.reviewLapsGroup.style.display = 'none';
-    }
-  }
-
-  /**
-   * 7. 내 기록에 영속 저장 (Save to records)
-   */
-  function handleSaveRecord() {
-    var d = tracker.dom;
-    var title = d.activityTitle.value.trim();
-    if (!title) {
-      if (typeof toast === 'function') toast('어떤 활동을 하셨는지 입력해주세요.');
-      d.activityTitle.focus();
-      return;
-    }
-
-    // 구간별 입력값 수집
-    var lapInputs = d.reviewLapsList.querySelectorAll('.tt-lap-input');
-    lapInputs.forEach(function(input) {
-      var idx = parseInt(input.dataset.lapIdx, 10);
-      if (tracker.laps[idx]) {
-        tracker.laps[idx].text = input.value.trim();
-      }
-    });
-
-    var totalMs = tracker.mode === 'timer' ? tracker.timerElapsedMs : tracker.elapsedBeforePause;
-    var formatted = formatTime(totalMs);
-    var now = new Date();
-    var startTime = new Date(now.getTime() - totalMs);
-
-    var modeTag = tracker.mode === 'timer' ? '⏳ 타이머' : '⏱️ 스톱워치';
-    var textBody = modeTag + ' [' + formatted.timeStr + '] ' + title;
-    if (tracker.laps.length > 0) {
-      textBody += '\n\n[구간별 상세 내역]';
-      tracker.laps.forEach(function(l) {
-        var lapDesc = l.text ? (' - ' + l.text) : '';
-        textBody += '\n• 구간 ' + l.lapNum + ' (' + l.formattedDuration + ')' + lapDesc;
-      });
-    }
-
-    // 레코드 객체 생성
-    var newRecord = {
-      id: 'rec_tt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-      type: 'time_record',
-      mode: tracker.mode,
-      category: '시간기록',
-      theme: 'growth',
-      subTheme: tracker.mode === 'timer' ? 'timer_focus' : 'time_tracker',
-      themeConfidence: 0.99,
-      text: textBody,
-      title: title,
-      startAt: startTime.toISOString(),
-      endAt: now.toISOString(),
-      durationMs: totalMs,
-      totalSeconds: formatted.totalSeconds,
-      formattedTime: formatted.timeStr,
-      laps: tracker.laps.slice(),
-      createdAt: now.toISOString()
-    };
-
-    // 전역 상태에 무손실 저장
-    if (typeof state !== 'undefined') {
-      if (!state.profile) state.profile = {};
-      if (!Array.isArray(state.profile.records)) state.profile.records = [];
-      state.profile.records.unshift(newRecord);
-
-      if (typeof saveProfile === 'function') {
-        saveProfile();
-      } else if (typeof saveState === 'function') {
-        saveState();
-      }
-
-      if (typeof renderRecordsScreen === 'function') {
-        renderRecordsScreen();
-      }
-      if (typeof renderHome === 'function') {
-        renderHome();
-      }
-    }
-
-    if (typeof toast === 'function') {
-      toast('시간 기록이 내 기록에 성공적으로 저장되었습니다! 🎉');
-    }
-
-    closeTrackerOverlay();
-  }
+  /* [#TASK-ES-407] openReviewView · handleSaveRecord → js/time-tracker-review.js 로 옮김(동작 그대로). 이 IIFE 맨 위에서 같은 이름으로 가져온다. */
 
   /**
    * 모달 열기

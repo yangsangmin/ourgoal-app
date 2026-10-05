@@ -1,0 +1,104 @@
+{
+  "id": "team-participants-arrow",
+  "title": "게스트가 체험 팀에 들어가면 「참가 팀원 달성 현황」 목록이 펼쳐져 보이고 화살표에도 rotated(펼침 표시)가 붙어 있으며, 머리를 누르면 목록이 접히고 rotated 가 빠지고, 다시 누르면 둘 다 돌아온다 — 기준 커밋에서는 목록이 보이는데 화살표에 rotated 가 없다(단계 10)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeam"
+    },
+    {
+      "do": "click",
+      "selector": "[data-tgexampletab=\"fitness\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#tgQuickJoinSampleBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tgparttoggle]",
+      "text": "참가 팀원 달성 현황",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#teamGoalsView [data-tgparttoggle] .tg-accordion-arrow",
+      "className": "rotated",
+      "timeoutMs": 3000
+    },
+    {
+      "expect": "visible",
+      "selector": "#teamGoalsView [data-tgpartlist]"
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tgparttoggle]"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#teamGoalsView [data-tgparttoggle] .tg-accordion-arrow",
+      "className": "rotated",
+      "timeoutMs": 3000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#teamGoalsView [data-tgpartlist]"
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tgparttoggle]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#teamGoalsView [data-tgparttoggle] .tg-accordion-arrow",
+      "className": "rotated",
+      "timeoutMs": 3000
+    },
+    {
+      "expect": "visible",
+      "selector": "#teamGoalsView [data-tgpartlist]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeamLinked"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeam"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#teamGoalsView [data-tgparttoggle] .tg-accordion-arrow",
+      "className": "rotated",
+      "timeoutMs": 3000
+    },
+    {
+      "expect": "visible",
+      "selector": "#teamGoalsView [data-tgpartlist]"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

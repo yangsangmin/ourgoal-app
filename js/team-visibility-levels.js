@@ -411,6 +411,13 @@
     return fold[gid] === false;
   }
 
+  // #TASK-ES-409: 마일스톤 목록은 저장값(unfoldMsList[tgid])이 참일 때만 「펼침」이다. 렌더와 일괄 접기(collapseAllTeamGoalAccordions)가 같은 저장값을 따른다.
+  function isMsListOpen(tgid){
+    var p = getProfile();
+    var unfold = (p.settings && p.settings.unfoldMsList) || {};
+    return !!unfold[tgid];
+  }
+
   /* ------------------------------------------------------------
    * 4. 이벤트 바인딩 헬퍼
    * ------------------------------------------------------------ */
@@ -551,7 +558,8 @@
     openLevelGroupDetailModal: openLevelGroupDetailModal,
     renderTeamCardContent: renderTeamCardContent,
     bindEvents: bindEvents,
-    isLevelSectionOpen: isLevelSectionOpen
+    isLevelSectionOpen: isLevelSectionOpen,
+    isMsListOpen: isMsListOpen
   };
 
   if(typeof module !== 'undefined' && module.exports){

@@ -4555,6 +4555,87 @@
       "dependsOn": []
     },
     {
+      "id": "time-tracker-lap-memo",
+      "file": "js/time-tracker-lap-memo.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "시간기록 구간 메모 패널 — openLapMemoModal(측정 중 구간을 누르면 여는 인라인 메모, 퀵 태그·취소·저장). time-tracker.js 에서 분열(#TASK-ES-407)",
+      "spans": [
+        "records",
+        "calendar"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "time-tracker-review",
+      "file": "js/time-tracker-review.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "시간기록 기록 작성·내 기록 저장 — openReviewView(활동명·구간별 내용 작성 화면)·handleSaveRecord(state.profile.records 저장). time-tracker.js 에서 분열(#TASK-ES-407)",
+      "spans": [
+        "records",
+        "calendar"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "time-tracker-screen",
+      "file": "js/time-tracker-screen.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "시간기록 몰입 화면 만들기·버튼 배선 — initDOM(전체화면 덮개 #timeTrackerOverlay DOM 1회 생성)·bindEvents(모드 탭·프리셋·조절기·회전·닫기·취소·저장·ESC·회전 감지). time-tracker.js 에서 분열(#TASK-ES-407)",
+      "spans": [
+        "records",
+        "calendar"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
       "id": "time-tracker",
       "file": "js/time-tracker.js",
       "layer": "legacy",
@@ -4585,8 +4666,12 @@
       "ownerKeys": [],
       "dependsOn": [
         "AudioContext",
+        "OurgoalTimeTrackerKit",
         "cancelAnimationFrame",
         "require:./core/confirm.js",
+        "require:./time-tracker-lap-memo.js",
+        "require:./time-tracker-review.js",
+        "require:./time-tracker-screen.js",
         "webkitAudioContext"
       ]
     },

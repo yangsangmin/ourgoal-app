@@ -1,0 +1,291 @@
+{
+  "task": "TASK-ES-410",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-410-TEAM-TASKS-TOGGLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "먼저 측정: 기준 코드에서 게스트로 팀 목표 카드의 세부 할 일 버튼 [data-tgtoggletasks] 을 눌러 실제로 안 펼쳐지는지(화면) 확인 — 결함이면 #723(TASK-ES-409) 방식으로 수정(카드 쪽 처리기를 지우지 말고 모듈이 있으면 양보). 일괄 접기(collapseAllTeamGoalAccordions)가 저장된 펼침을 덮는지도 확인."
+    },
+    {
+      "id": "R2",
+      "text": "같은 이중 처리기가 다른 팀 카드 버튼에도 있는지 data-tg* 선택자를 index.html 과 js/team-*.js 양쪽에서 대조해 목록화, 같은 결함은 같이 고치고 범위 명시."
+    },
+    {
+      "id": "R3",
+      "text": "부품 시험(npm test 경로, process.exitCode): 기준 실패 → 작업 통과."
+    },
+    {
+      "id": "R4",
+      "text": "증명: 게스트 화면 시나리오로 법정이 기준·작업 양쪽 실행 — 기준 실패, 작업 통과. 법정은 보이는 글자·속성만 읽음. needs-real-device 금지."
+    },
+    {
+      "id": "R5",
+      "text": "REQ 8원칙·dev_log·TICKETS 각 1줄. CSS 은폐·!important 금지, index.html 인라인 순증가 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 15,
+      "domain": "ui-behavior",
+      "statement": "게스트가 체험 팀(2026 하반기 전략 워크숍 TF) 목표 카드에서 마일스톤 목록을 연 뒤 1단계 마일스톤의 「세부 할 일 2/2 ▼」를 한 번 누르면 세부 할 일 상자가 보이고 화살표가 ▲ 가 되며(기준 커밋에서는 단계 15에서 상자가 보이지 않음), 한 번 더 누르면 상자가 사라지고 ▼ 로 돌아온다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/team-subtask-toggle.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 카드의 세부 할 일 손잡이는 모듈이 같은 버튼을 묶을 때 비킴(이중 뒤집기 해소)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if(!box || window.OurgoalTeamVisibilityLevels) return;",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 index.html 카드의 [data-tgtoggletasks] 손잡이 원문과 모듈 bindEvents 를 같은 버튼에 걸어 클릭",
+      "touches": [
+        "tests/team-tasks-toggle-es410.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "loadIndexTasksHandler()(a.root, { OurgoalTeamVisibilityLevels: levels });",
+        "file": "tests/team-tasks-toggle-es410.test.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 모듈이 없을 때 카드 손잡이 혼자 뒤집는 대체 경로도 잼",
+      "touches": [
+        "tests/team-tasks-toggle-es410.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "loadIndexTasksHandler()(b.root, {});",
+        "file": "tests/team-tasks-toggle-es410.test.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 경로(test-shipyard-modular.js)에서 부품 시험을 돌림",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "runNode('tests/team-tasks-toggle-es410.test.js');",
+        "file": "scripts/test-shipyard-modular.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 기준 사본 종료 코드 1",
+      "touches": [
+        "reports/TASK-ES-410/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/test-compare.json",
+        "path": "unitTest.base.exitCode",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 기준 사본 실패 항목은 A1(클릭 1회 펼침)",
+      "touches": [
+        "reports/TASK-ES-410/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/test-compare.json",
+        "path": "unitTest.base.failed",
+        "equals": [
+          "A1"
+        ]
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 작업 종료 코드 0",
+      "touches": [
+        "reports/TASK-ES-410/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/test-compare.json",
+        "path": "unitTest.work.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 작업 5개 모두 성립",
+      "touches": [
+        "reports/TASK-ES-410/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/test-compare.json",
+        "path": "unitTest.work.ok",
+        "equals": 5
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test smoke·무결성 통과·실패 수 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-410/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/test-compare.json",
+        "path": "smokeIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/ 종료 코드 기준과 다른 파일 0",
+      "touches": [
+        "reports/TASK-ES-410/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/test-compare.json",
+        "path": "testsDir.exitCodeDiffersFromBase",
+        "equals": []
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 기준 사본은 단계 15(상자 보임)에서 실패",
+      "touches": [
+        "reports/TASK-ES-410/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/scenario-local.json",
+        "path": "team-subtask-toggle.base.failedStep",
+        "equals": 15
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 작업 통과",
+      "touches": [
+        "reports/TASK-ES-410/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-410/scenario-local.json",
+        "path": "team-subtask-toggle.work.passed",
+        "equals": true
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 에 data-tg* 이중 처리기 대조표",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-410-TEAM-TASKS-TOGGLE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "### 이중 처리기 대조표 (data-tg* · 팀 카드 버튼)",
+        "file": "docs/specs/REQ-TASK-ES-410-TEAM-TASKS-TOGGLE.md"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 8원칙 원칙 ② 본질·원인·중심·핵심",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-410-TEAM-TASKS-TOGGLE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심",
+        "file": "docs/specs/REQ-TASK-ES-410-TEAM-TASKS-TOGGLE.md"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- 2026-10-05 TASK-ES-410: 팀 목표 카드 「세부 할 일」 버튼 죽은 클릭 해소",
+        "file": "dev_log.md"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- #TASK-ES-410 | FIX/버그 | [팀 목표 카드 세부 할 일 버튼 이중 손잡이]",
+        "file": "docs/rules/TICKETS.md"
+      }
+    }
+  ]
+}
