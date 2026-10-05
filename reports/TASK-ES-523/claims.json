@@ -1,0 +1,273 @@
+{
+ "task": "TASK-ES-523",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "인라인 묶음 「최초 로그인 활용가이드」의 활용 가이드 책임(maybeShowFirstLoginGuide·startFirstLoginGuide)을 설정 탭 세포 js/tabs/settings/first-login-guide.js 로 동작 그대로 옮긴다(window 노출 줄·navButtons·screens 는 원래 자리)."
+  },
+  {
+   "id": "R2",
+   "text": "같은 묶음의 공개 범위 책임(getPrivacyLabel·updatePrivacyBadges·openPrivacyPickerModal)을 설정 탭 세포 js/tabs/settings/privacy-badges.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R3",
+   "text": "인라인 묶음 「⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯」의 formatStopwatchTime 을 기록 탭 세포 js/tabs/records/stopwatch-format.js 로 동작 그대로 옮긴다(window 노출 묶음은 원래 자리)."
+  },
+  {
+   "id": "R4",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 신고서에 새 세포 3개 등록."
+  },
+  {
+   "id": "R5",
+   "text": "옮기기 전후 측정 기록(게스트 조작 기준1·작업·기준2 비교, tests 종료 코드 전후 비교)을 저장소 reports/TASK-ES-523/ 에 남긴다."
+  },
+  {
+   "id": "R6",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 설정 탭 「데이터 백업 & 고급 설정」 묶음을 펼쳐 「앱 기본 가이드 다시보기」를 누르면 홈 화면 위에 「1 / 4 · 🏠 홈 화면」 안내가 뜨고, 「다음」을 누르면 목표 탭으로 넘어가며 「2 / 4 · 🎯 목표 탭」 안내가, 닫기(✕)를 누르면 안내가 사라진다 — 옮긴 startFirstLoginGuide(js/tabs/settings/first-login-guide.js)가 이전 전과 같이 동작한다",
+   "touches": [
+    "js/tabs/settings/first-login-guide.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-guide-restart.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 일정 탭 머리의 공개 범위 배지(「나만 보기」)를 누르면 「일정 공개 범위 설정」 창이 뜨고, 「팀원 공개」를 고르면 「일정 공개 범위를 팀원(으)로 변경했어요」 토스트가 뜨며 배지 글자가 「팀원」으로 바뀐다 — 옮긴 updatePrivacyBadges·openPrivacyPickerModal·getPrivacyLabel(js/tabs/settings/privacy-badges.js)이 이전 전과 같이 동작한다",
+   "touches": [
+    "js/tabs/settings/privacy-badges.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/calendar-privacy-badge.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 전문 템플릿 기록 창의 스톱워치는 「00:00.0」에서 시작하고, 시작을 누르고 약 1초 뒤 멈추면 「00:01.x」 꼴의 흐른 시간이 보인다 — 옮긴 formatStopwatchTime(js/tabs/records/stopwatch-format.js)이 이전 전과 같이 시간 글자를 만든다",
+   "touches": [
+    "js/tabs/records/stopwatch-format.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-pro-stopwatch.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-523/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-523/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-523/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-523/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 이후 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-523/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-523/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 3개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-523/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-523/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/first-login-guide 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/first-login-guide\""
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/privacy-badges 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/privacy-badges\""
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 records/stopwatch-format 이 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/stopwatch-format\""
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-523/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-523/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-523/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-523/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests/*.test.js 종료 코드가 기준 사본과 작업 트리에서 같다고 기록되어 있다(npm test 없이 파일마다 번갈아 실행)",
+   "touches": [
+    "reports/TASK-ES-523/tests-exit-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-523/tests-exit-compare.json",
+    "type": "jsonPath",
+    "path": "exitCodesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-523: 인라인 3단계 Z4 이동 2차"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-523 | INFRA | [인라인 3단계 Z4 이동 2차]"
+   }
+  }
+ ]
+}
