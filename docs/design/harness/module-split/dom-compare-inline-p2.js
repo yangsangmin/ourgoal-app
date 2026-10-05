@@ -59,7 +59,9 @@ const VOL = x => x == null ? x : String(x).replace(/data:image\/png;base64,[A-Za
   .replace(/(\W)seed(\W*):\d+/g, '$1seed$2:<rnd>').replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g, '<uuid>')
   .replace(/\b(ms|t|task|g|goal|fc|qr|c|guest)_[a-z0-9]{8,}/g, '$1_<uid>')
   .replace(/\d{4}-\d\d-\d\dT\d\d:\d\d(?![:\d])/g, '<dtl>').replace(/127\.0\.0\.1:\d+/g, '127.0.0.1:<port>')
-  .replace(/(mnPreviewName\\*"?>)[^<]+/g, '$1<anon>').replace(/(anonName\\*"\s*:\s*\\*")[^"\\]+/g, '$1<anon>').replace(/(러너|탐험가|도전자|여행자|꿈나무) #\d+/g, '$1 #<n>').replace(/guest-[a-z0-9]{6,}/g, 'guest-<id>').replace(/\d\d:\d\d\.\d/g, '<sw>').replace(NOW_RE || /(?!)/g, '<now>');
+  .replace(/(mnPreviewName\\*"?>)[^<]+/g, '$1<anon>').replace(/(anonName\\*"\s*:\s*\\*")[^"\\]+/g, '$1<anon>').replace(/(러너|탐험가|도전자|여행자|꿈나무) #\d+/g, '$1 #<n>').replace(/guest-[a-z0-9]{6,}/g, 'guest-<id>').replace(/\d\d:\d\d\.\d/g, '<sw>').replace(NOW_RE || /(?!)/g, '<now>')
+  // 브라우저 저장소 추정치(navigator.storage.estimate — 내려받은 스크립트 캐시 크기에 따라 달라진다, #TASK-ES-448 추가)
+  .replace(/약 [\d.]+ ?(B|KB|MB|GB) 사용 중/g, '약 <n> 사용 중');
 function sortKeys(x) { if (Array.isArray(x)) return x.map(sortKeys); if (x && typeof x === 'object') { const o = {}; for (const k of Object.keys(x).sort()) o[k] = sortKeys(x[k]); return o; } return x; }
 function normLs(ls) {
   const o = {};

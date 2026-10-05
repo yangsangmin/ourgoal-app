@@ -1,0 +1,41 @@
+{
+  "id": "home-external-data",
+  "title": "게스트로 홈 체크인 칸의 외부 기록 불러오기(#importExternalBtn)를 누르면 「외부 데이터 불러오기」 창에 예시 활동 「10km 러닝 43분 페이스 달성」이 보인다 — 예시 자료(EXTERNAL_DATA 등)를 소통 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#importExternalBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#importExternalBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "10km 러닝 43분 페이스 달성",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

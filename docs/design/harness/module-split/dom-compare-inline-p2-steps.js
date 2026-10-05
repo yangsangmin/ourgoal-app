@@ -91,11 +91,26 @@ module.exports = ({ click, seedRecords, closeModal }) => {
     ['goal-manual', click('#ngManualBtn'), 800],
     ['goal-major', click('#mTopicMajor [data-major]'), 400],
     ['goal-close', closeModal(), 400],
+    // #TASK-ES-448 추가: 기록 카드 단추 연결(record-card-wire) · 표 기록 스톱워치(table-stopwatch) · 위젯 설정 창(widget-settings-modal 은 위 set-widget)
+    ['rec-seed', seedRecords('p2b', [{ d: 0, h: 9, min: 45, theme: 'study', text: '아침 영어 공부', category: 'study' }, { d: 1, h: 20, min: 60, theme: 'workout', text: '헬스장 가슴운동', category: 'health' }])],
+    ['rec-enter', { goTab: 'records' }],
+    ['card-edit', click('.screen.active .rec-card [data-recedit]'), 600],
+    ['card-edit-close', closeModal(), 400],
+    ['card-theme', click('.screen.active .rec-card [data-rectheme]'), 600],
+    ['card-theme-close', closeModal(), 400],
+    ['card-del', click('.screen.active .rec-card [data-recdel]'), 1000],
+    ['card-del-close', closeModal(), 400],
+    ['pro-open', click('#recOpenProTemplateBtn'), 1000],
+    ['sw-start', click('#swStartPauseBtn'), 1300],
+    ['sw-lap', click('#swLapBtn'), 400],
+    ['sw-pause', click('#swStartPauseBtn'), 400],
+    ['sw-reset', click('#swResetBtn'), 400],
+    ['pro-close', closeModal(), 400],
     ['reopen', { reload: true }, 1500],
     ['focus', ev('(function(){ window.dispatchEvent(new Event("focus")); return "focus"; })()'), 400],
     ['tab-roundtrip', { tabRoundTrip: true }],
   ];
-  G['2'] = ['TOPICS', 'MOCK_GROUPS', 'CREATOR_TEMPLATES', 'shareContent', 'cloneTemplate', 'openCustomerInquiryModal', 'openItemReportModal', 'openFaqModal', 'openWidgetSettingsModal', 'handleDeepLinkRouting', 'checkAndHandleDateRollover', 'setupDateRolloverWatcher', 'MANITO_WELCOME_STAMPS', 'MANITO_STAMP_COOLDOWN', 'sendTeamGoalComment', 'groupState', 'genAnonName'];
+  G['2'] = ['wireRecordCards', 'renderStopwatchWidgetHtml', 'renderLapRowsHtml', 'playTimerBeep', 'STOPWATCH_STATE', 'openWidgetSettingsModal', 'TOPICS', 'MOCK_GROUPS', 'CREATOR_TEMPLATES', 'shareContent', 'cloneTemplate', 'openCustomerInquiryModal', 'openItemReportModal', 'openFaqModal', 'openWidgetSettingsModal', 'handleDeepLinkRouting', 'checkAndHandleDateRollover', 'setupDateRolloverWatcher', 'MANITO_WELCOME_STAMPS', 'MANITO_STAMP_COOLDOWN', 'sendTeamGoalComment', 'groupState', 'genAnonName'];
   S.globals = G;
   return S;
 };
