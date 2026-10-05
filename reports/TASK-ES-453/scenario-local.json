@@ -1,0 +1,27 @@
+{
+ "runner": "court/lib/scenario.js runScenario 로컬, 기준 = origin/main 8f9ac9c git archive, 작업 = 이 브랜치 커밋 git archive",
+ "allPassedBoth": true,
+ "scenarios": {
+  "goals-status-summary-refresh": {
+   "base": {
+    "passed": true
+   },
+   "work": {
+    "passed": true,
+    "steps": [
+     "1 goto ok /index.html",
+     "2 waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 waitFor ok .navbtn[data-tab=\"goals\"] → 보이는 요소 1개",
+     "5 click ok 클릭 button \"목표\" 57x50px",
+     "6 waitFor ok #sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal → 보이는 요소 1개",
+     "7 click ok 클릭 button \"+ 담기\" 62x44px",
+     "8 waitFor ok #goalStatusToggleBtn → 보이는 요소 1개",
+     "9 click ok 클릭 div#goalStatusToggleBtn \"🤖 현상태 분석 AI 조언 분석완료 현재 \"1단계 시\" 319x73px",
+     "10 textContains ok #goalStatusText → 보이는 글자: [\"현재 \\\"1단계 시작하기 (기초 세팅)\\\" 마일스톤에 집중하고 있으며, 전체 공정률은 0%(0/2 완수, 마감 D-30)입니다. 계획에 맞추어 다음\"]",
+     "11 noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  }
+ }
+}

@@ -551,3 +551,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-447 | INFRA | [시험지 인라인 합본 · 구역 P2 선행] 시험지 4개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md
 - #TASK-ES-454 | INFRA | [시험지 인라인 합본 · G076 허브 창 선행] schedule-notification-setting 이 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-454-INLINE-TEST-BUNDLE-G076.md
 - #TASK-ES-451 | INFRA | [시험지 인라인 합본 읽기 P1 선행] ai-conditional-call-optimization 시험지가 인라인 합본을 읽어 refreshGoalStatusSummary 를 세포로 옮길 수 있게 함(지운 단언 0) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-451-INLINE-TEST-BUNDLE-P1.md
+- #TASK-ES-453 | INFRA | [인라인 스크립트 세포화 P1 구역 3차] refreshGoalStatusSummary 를 js/tabs/goals/ai-status-refresh.js 로 동작 그대로 이전(P1 구역 마지막 남은 함수) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-453-INLINE-P1-3.md
