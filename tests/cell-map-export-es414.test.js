@@ -157,6 +157,35 @@ check('저장본과 내용이 같고 기준 커밋 도장만 다르면 최신으
   assert.strictEqual(exporter.compareSaved(null, built).fresh, false);
 });
 
+// #TASK-ES-427 병합 이력 칸(prs 와 거기서 온 tasks·reqs)만 다르면 최신 · 게시는 새로 만든 판(게시 시점 이력)을 쓴다
+check('병합 이력 칸(prs·그 PR 의 작업 번호·REQ)만 다르면 최신으로 보고, 게시는 새로 만든 판을 쓴다', () => {
+  const built = exporter.serialize(a);
+  const withPr = a.cells.find(c => c.prs.length && c.prs[0].task);
+  assert.ok(withPr, 'PR 이 걸린 세포가 있다');
+  const older = JSON.parse(built);
+  const oc = older.cells.find(c => c.id === withPr.id);
+  const dropTask = oc.prs[0].task;
+  oc.prs = oc.prs.slice(1);
+  if (!oc.prs.some(p => p.task === dropTask)) {
+    oc.tasks = oc.tasks.filter(t => t !== dropTask);
+    oc.reqs = oc.reqs.filter(r => r.indexOf('REQ-' + dropTask) < 0);
+  }
+  older.source.short = '0000000';
+  const olderText = exporter.serialize(older);
+  assert.deepStrictEqual(exporter.compareSaved(olderText, built), { fresh: true, stampOnly: true, historyOnly: true });
+  const pub = publish.mapForPublish(olderText, built);
+  assert.strictEqual(pub.ok, true);
+  assert.strictEqual(pub.refreshed, true);
+  assert.deepStrictEqual(pub.map.cells.find(c => c.id === withPr.id).prs, withPr.prs);
+  const changed = JSON.parse(olderText);
+  changed.cells.find(c => c.id === withPr.id).lines += 1;
+  assert.strictEqual(exporter.compareSaved(exporter.serialize(changed), built).fresh, false);
+  assert.strictEqual(publish.mapForPublish(exporter.serialize(changed), built).ok, false);
+  const extraTask = JSON.parse(built);
+  extraTask.cells.find(c => c.id === withPr.id).header = ['다른 머리 주석'];
+  assert.strictEqual(exporter.compareSaved(exporter.serialize(extraTask), built).fresh, false);
+});
+
 const failed = results.filter(r => !r.ok);
 results.forEach(r => console.log((r.ok ? '  통과 ' : '  실패 ') + r.name + (r.ok ? '' : ' — ' + r.msg)));
 console.log(`cell-map-export 부품 시험: ${results.length - failed.length}/${results.length}`);

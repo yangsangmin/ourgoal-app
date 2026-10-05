@@ -8,6 +8,8 @@
  *   node scripts/cell-map-export.js --check    — 저장된 cell-map.json 이 지금 코드로 만든 것과 같은지 출력(종료 코드 0, 판정 아님)
  *                                               기준 커밋 도장(source.commit·short·committedAt·subject)은 비교에서 뺀다(#TASK-ES-424) —
  *                                               지도 갱신 PR 을 병합하면 병합 커밋이 도장을 바꿔 내용이 같아도 다시 「갱신 필요」가 되던 순환을 끊는다.
+ *                                               병합 이력에서 나오는 칸(세포별 prs, 그 PR 들에서 온 tasks·reqs)도 비교에서 뺀다(#TASK-ES-427) —
+ *                                               PR 번호는 병합 뒤에만 생겨 구조 PR 마다 후속 갱신이 생기던 것을 끊는다. 게시(cell-map-publish --root)는 게시 시점 이력으로 다시 계산해 싣는다.
  *
  * 입력(모두 저장소 안): docs/architecture/modules.json(세포 신고서) · docs/architecture/module-baseline.json(분열 이력)
  *   · docs/architecture/cell-descriptions.json(「이 세포가 하는 일」 한 줄) · js/** 실제 파일(줄 수·머리 주석·노출 이름·require)
@@ -400,9 +402,41 @@ function withoutStamp(doc) {
   return copy;
 }
 
+/** 병합 이력에서 나오는 세포 칸(#TASK-ES-427) — PR 번호는 병합 뒤에만 생기므로 내용 비교에서 뺀다 */
+const HISTORY_FIELDS = ['prs'];
+
 /**
- * 저장본이 지금 코드로 만든 것과 같은가 — 도장(source.commit·short·committedAt·subject)만 다르면 같다고 본다.
- * 돌려주는 값: { fresh, stampOnly } — stampOnly 는 내용은 같고 도장만 다를 때 true
+ * 두 지도에서 병합 이력으로 생긴 부분을 같은 방식으로 걷어 낸다.
+ * 세포마다 prs 를 지우고, 양쪽 어느 한쪽의 prs 에서 온 작업 번호(tasks)와 그 REQ(reqs)를 양쪽 모두에서 지운다.
+ * (머리 주석에서 온 작업 번호도 같은 번호면 같이 지워지지만, 머리 주석이 바뀌면 header 칸이 달라져 여전히 잡힌다.)
+ */
+function withoutHistoryPair(savedDoc, builtDoc) {
+  const a = JSON.parse(JSON.stringify(savedDoc));
+  const b = JSON.parse(JSON.stringify(builtDoc));
+  const prTasks = new Map();
+  for (const d of [a, b]) {
+    for (const c of d.cells || []) {
+      const set = prTasks.get(c.id) || new Set();
+      (c.prs || []).forEach(p => { if (p && p.task) set.add(p.task); });
+      prTasks.set(c.id, set);
+    }
+  }
+  const reqOf = t => new RegExp('REQ-' + t.replace(/[-]/g, '\\-') + '\\b');
+  for (const d of [a, b]) {
+    for (const c of d.cells || []) {
+      const drop = prTasks.get(c.id) || new Set();
+      HISTORY_FIELDS.forEach(k => { delete c[k]; });
+      if (Array.isArray(c.tasks)) c.tasks = c.tasks.filter(t => !drop.has(t));
+      if (Array.isArray(c.reqs)) c.reqs = c.reqs.filter(r => ![...drop].some(t => reqOf(t).test(r)));
+    }
+  }
+  return { saved: a, built: b };
+}
+
+/**
+ * 저장본이 지금 코드로 만든 것과 같은가.
+ * 도장(source.commit·short·committedAt·subject, #TASK-ES-424)과 병합 이력 칸(prs 와 거기서 온 tasks·reqs, #TASK-ES-427)만 다르면 같다고 본다.
+ * 돌려주는 값: { fresh, stampOnly } — stampOnly 는 도장·이력 칸만 다를 때 true. 이력 칸(prs 등)이 다를 때만 historyOnly: true 가 붙는다
  */
 function compareSaved(savedText, builtText) {
   if (savedText === null || savedText === undefined) return { fresh: false, stampOnly: false };
@@ -410,8 +444,11 @@ function compareSaved(savedText, builtText) {
   if (a === builtText) return { fresh: true, stampOnly: false };
   let saved;
   try { saved = JSON.parse(a); } catch (e) { return { fresh: false, stampOnly: false }; }
-  const same = serialize(withoutStamp(saved)) === serialize(withoutStamp(JSON.parse(builtText)));
-  return { fresh: same, stampOnly: same };
+  const built = JSON.parse(builtText);
+  if (serialize(withoutStamp(saved)) === serialize(withoutStamp(built))) return { fresh: true, stampOnly: true };
+  const pair = withoutHistoryPair(withoutStamp(saved), withoutStamp(built));
+  const same = serialize(pair.saved) === serialize(pair.built);
+  return same ? { fresh: true, stampOnly: true, historyOnly: true } : { fresh: false, stampOnly: false };
 }
 
 if (require.main === module) {
@@ -427,7 +464,8 @@ if (require.main === module) {
     const r = compareSaved(saved, text);
     if (r.fresh && r.stampOnly) {
       const was = JSON.parse(saved.replace(/\r\n/g, '\n')).source || {};
-      console.log(`세포지도 최신: 내용이 같다(기준 커밋 도장만 다름: 저장본 ${was.short} · 지금 ${JSON.parse(text).source.short} — 다시 만들 필요 없음)`);
+      const what = r.historyOnly ? '기준 커밋 도장·병합 이력(PR 목록)만 다름' : '기준 커밋 도장만 다름';
+      console.log(`세포지도 최신: 내용이 같다(${what}: 저장본 ${was.short} · 지금 ${JSON.parse(text).source.short} — 다시 만들 필요 없음, 게시는 cell-map-publish --root 로 이력을 새로 계산)`);
     } else {
       console.log(r.fresh ? '세포지도 최신: 저장본과 지금 코드로 만든 것이 같다' : '세포지도 갱신 필요: node scripts/cell-map-export.js 를 실행한다');
     }
@@ -440,4 +478,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { build, buildFrom, shortName, compareSaved, withoutStamp, STAMP_FIELDS, trackedInputs, INPUT_PATHS, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };
+module.exports = { build, buildFrom, shortName, compareSaved, withoutStamp, withoutHistoryPair, STAMP_FIELDS, HISTORY_FIELDS, trackedInputs, INPUT_PATHS, serialize, headerLines, OUT_PATH, SCHEMA, TABS, FAMILIES };

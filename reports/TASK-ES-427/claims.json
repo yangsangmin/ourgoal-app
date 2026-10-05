@@ -1,0 +1,162 @@
+{
+  "task": "TASK-ES-427",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-427-CELL-MAP-HISTORY-FIELDS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "세포지도 --check 는 병합 이력에서 파생되는 칸(세포별 prs 와 거기서 온 tasks·reqs)을 도장처럼 비교에서 빼고, 웹·노션 게시(cell-map-publish)는 게시 시점의 이력으로 prs 를 새로 계산해 싣는다. 시험 추가(기존 단언 유지). 제품 코드 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "비교에서 빼는 이력 칸은 세포별 prs 다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "const HISTORY_FIELDS = ['prs'];"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "어느 한쪽 prs 에서 온 작업 번호는 양쪽 tasks 에서 같이 뺀다",
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "      if (Array.isArray(c.tasks)) c.tasks = c.tasks.filter(t => !drop.has(t));"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "게시 재료는 --root 를 주면 그 저장소에서 새로 만든 판을 쓴다",
+      "touches": [
+        "scripts/cell-map-publish.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-publish.js",
+        "text": "    const built = exporter.serialize(exporter.build(path.resolve(repoRoot)));"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "새로 만든 판이 저장본과 내용이 다르면 게시하지 않는다",
+      "touches": [
+        "scripts/cell-map-publish.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-publish.js",
+        "text": "  if (!r.fresh) return { ok: false, map: null, refreshed: false };"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 이력 칸만 다른 저장본을 최신으로 본다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  assert.deepStrictEqual(exporter.compareSaved(olderText, built), { fresh: true, stampOnly: true, historyOnly: true });"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 게시 판의 PR 목록이 새로 계산된 것인지 본다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  assert.deepStrictEqual(pub.map.cells.find(c => c.id === withPr.id).prs, withPr.prs);"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "갱신 절차 2단계가 --root 로 게시 재료를 만든다",
+      "touches": [
+        "scripts/cell-map-sync.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-sync.md",
+        "text": "   node scripts/cell-map-publish.js --root . --db-out <임시>/db --notion-out <임시>/notion --stored-at <지금 ISO 시각>"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-427 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-427: 세포지도 병합 이력 칸"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-427 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-427 | FIX/버그 | [세포지도 병합 이력 칸]"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 에 8원칙 중 원칙 ② 본질·원인·중심·핵심 절이 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-427-CELL-MAP-HISTORY-FIELDS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-427-CELL-MAP-HISTORY-FIELDS.md",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+      }
+    }
+  ]
+}
