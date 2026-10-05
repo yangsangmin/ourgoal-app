@@ -166,14 +166,15 @@
     "tests/sync-server-records-render-home.test.js"
    ],
    "unverified": {
-    "reason": "needs-live-server",
-    "who": "로그인 계정 + 실서버 /api/track(sync_records)·Supabase 토큰이 있는 환경, 또는 노드 시험 tests/sync-server-records-render-home.test.js",
+    "reason": "tool-cannot-measure",
+    "who": "로그인 계정(Supabase 인증 토큰) + 실서버 /api/track(sync_records) — 게스트는 syncServerRecords 첫 줄들(getSupabaseAuthToken 없음)에서 false 로 돌아가 홈 분기에 닿지 않는다. 대신 노드 시험 tests/sync-server-records-render-home.test.js 로 함수 본문을 그대로 돌려 잼",
     "how": [
      "로그인 계정으로 홈 탭을 연다",
      "설정의 관리자 복구(서버 기록 강제 동기화)를 실행한다",
      "콘솔에 syncServerRecords failed 가 없고 홈이 서버 기록으로 다시 그려지는지 본다",
      "또는 node tests/sync-server-records-render-home.test.js 가 기준에서 실패·작업에서 통과하는지 본다"
-    ]
+    ],
+    "cannotBecause": "needs-login"
    }
   },
   {
