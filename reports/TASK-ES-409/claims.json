@@ -1,0 +1,570 @@
+{
+  "task": "TASK-ES-409",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-409-ARROW-LIFECYCLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "팀 참가 팀원 현황([data-tgparttoggle]) 목록은 일괄 접기(index.html collapseAllTeamGoalAccordions)가 접지 않는데 화살표 rotated 만 떼어 「목록 펼침·화살표 접힘」으로 보이던 것을, #721 방식(저장값을 따르게)으로 화살표가 목록 상태와 일치하게. CSS 은폐·!important 금지, index.html 인라인 줄 수 증가 0."
+    },
+    {
+      "id": "R2",
+      "text": "마일스톤 .ms-list(저장값 unfoldMsList 를 일괄 접기가 무시)는 의도 여부를 코드·커밋 이력으로 확인: 사용자가 펼친 상태가 저장되는데 렌더마다 접히는 것이면 같은 방식으로 고친다."
+    },
+    {
+      "id": "R3",
+      "text": "부품 시험(npm test 경로, process.exitCode): 기준 실패 → 작업 통과."
+    },
+    {
+      "id": "R4",
+      "text": "scripts/test-time-tracker-lifecycle.js 가 eval 로 돌릴 때 require 가 scripts/ 기준으로 풀려 MODULE_NOT_FOUND — 시험 도구의 경로 해석만 고쳐 기준 코드에서 통과(단언·기대값 그대로, 지운 단언 0). npm test 경로 여부 보고(없으면 등록하지 않음)."
+    },
+    {
+      "id": "R5",
+      "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+    },
+    {
+      "id": "R6",
+      "text": "증명: 게스트 화면 시나리오(reports/TASK-ES-406/scenarios 선례)로 법정이 기준·작업 양쪽 실행 — 기준 실패, 작업 통과. 법정은 보이는 글자·속성만 읽음. needs-real-device 금지. 수명주기 시험지는 기준 실패 → 작업 통과 출력."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 10,
+      "domain": "ui-behavior",
+      "statement": "게스트로 목표 탭 「팀목표」에서 체험 팀(운동 크루)에 들어가면 「참가 팀원 달성 현황」 목록이 보이고 화살표에 rotated(펼침 표시)가 붙어 있으며(기준 커밋에서는 단계 10에서 rotated 가 없음), 머리를 누르면 목록이 사라지고 rotated 가 빠지고, 다시 누르면 둘 다 돌아오며, 「팀연계」→「팀목표」로 다시 그린 뒤에도 rotated 와 목록이 그대로다",
+      "touches": [
+        "index.html",
+        "js/team-linked-goals.js"
+      ],
+      "scenario": "scenarios/team-participants-arrow.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 12,
+      "domain": "ui-behavior",
+      "statement": "게스트가 체험 팀의 「마일스톤 펼치기 ▼」를 한 번 누르면 마일스톤 목록이 보이고 버튼이 「마일스톤 접기 ▲」가 되며(기준 커밋에서는 단계 12에서 목록이 보이지 않음), 「팀연계」→「팀목표」로 다시 그린 뒤에도 목록과 「마일스톤 접기」 글자가 남고, 다시 누르면 접힌다",
+      "touches": [
+        "index.html",
+        "js/team-visibility-levels.js"
+      ],
+      "scenario": "scenarios/team-milestone-list-rerender.json"
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 일괄 접기의 화살표 줄: 참가 팀원 머리 안 화살표는 저장값 판정대로 rotated 를 맞춤",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var partHead = arrow.closest('[data-tgparttoggle]'); if (partHead) return arrow.classList.toggle('rotated', isTeamParticipantsOpen(String(partHead.getAttribute('data-tgparttoggle')).split(':')[1]));",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 일괄 접기가 참가 팀원 판정을 모듈의 isParticipantsOpen 에 맡김",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "window.OurgoalTeamLinkedGoals.isParticipantsOpen(tgid)",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 일괄 접기가 펼침 저장된 마일스톤 목록은 접지 않음",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if (!state.teamGoalEditMode && !isTeamMsListOpen(el.getAttribute('data-tgmslist'))) el.style.display = 'none';",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 일괄 접기의 마일스톤 버튼 글자가 저장값을 따름",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "btn.textContent = isTeamMsListOpen(btn.getAttribute('data-tgfoldlist')) ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼';",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 카드의 마일스톤 손잡이는 모듈이 같은 버튼을 묶을 때 비킴(이중 뒤집기 해소)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if(!list || window.OurgoalTeamVisibilityLevels) return;",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "참가 팀원 렌더가 판정 함수 하나를 씀",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var isFolded = !isParticipantsOpen(tg.id);",
+        "file": "js/team-linked-goals.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "참가 팀원 펼침 판정: 저장값 foldParticipants[tgid] 가 참이 아니면 펼침",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "return !fold[tgid];",
+        "file": "js/team-linked-goals.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 노출 객체에 isParticipantsOpen 키",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "isParticipantsOpen: isParticipantsOpen",
+        "file": "js/team-linked-goals.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "마일스톤 펼침 판정: 저장값 unfoldMsList[tgid] 가 참일 때만",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "return !!unfold[tgid];",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 노출 객체에 isMsListOpen 키",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "isMsListOpen: isMsListOpen",
+        "file": "js/team-visibility-levels.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시험지가 eval 한 원본의 require 를 원본 파일 기준으로 풂",
+      "touches": [
+        "scripts/test-time-tracker-lifecycle.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const require = Module.createRequire(timeTrackerFile);",
+        "file": "scripts/test-time-tracker-lifecycle.js"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시험지가 원본 파일 경로를 한 이름으로 두고 그 경로로 읽기·require 해석을 함께 함",
+      "touches": [
+        "scripts/test-time-tracker-lifecycle.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const timeTrackerFile = path.join(__dirname, '..', 'js', 'time-tracker.js');",
+        "file": "scripts/test-time-tracker-lifecycle.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 index.html 카드의 [data-tgfoldlist] 손잡이 원문과 모듈 bindEvents 를 같은 버튼에 걸어 클릭",
+      "touches": [
+        "tests/team-fold-state-es409.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "loadIndexFoldHandler()(tgEl, win, state, async () => {});",
+        "file": "tests/team-fold-state-es409.test.js"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 js/team-linked-goals.js 실물을 불러 돌림",
+      "touches": [
+        "tests/team-fold-state-es409.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const linked = linkedExports.OurgoalTeamLinkedGoals || global.OurgoalTeamLinkedGoals;",
+        "file": "tests/team-fold-state-es409.test.js"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 경로(test-shipyard-modular.js)에서 부품 시험을 돌림",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "runNode('tests/team-fold-state-es409.test.js');",
+        "file": "scripts/test-shipyard-modular.js"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 기준 사본 종료 코드 1",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "unitTest.base.exitCode",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 작업 종료 코드 0",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "unitTest.work.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 작업 11개 모두 성립",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "unitTest.work.ok",
+        "equals": 11
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "수명주기 시험지 기준 종료 코드 1",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "lifecycle.base.exitCode",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "수명주기 시험지 기준 MODULE_NOT_FOUND",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "lifecycle.base.moduleNotFound",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "수명주기 시험지 작업 종료 코드 0",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "lifecycle.work.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "수명주기 시험지 단언 호출 수 기준 37",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "lifecycle.assertCalls.base",
+        "equals": 37
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "수명주기 시험지 단언 호출 수 작업 37(지운 단언 0)",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "lifecycle.assertCalls.work",
+        "equals": 37
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "수명주기 시험지는 npm test 경로 밖(등록 안 함)",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "lifecycle.inNpmTest",
+        "equals": []
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test smoke·무결성 통과·실패 수 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "smokeIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/ 종료 코드 기준과 다른 파일 0",
+      "touches": [
+        "reports/TASK-ES-409/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/test-compare.json",
+        "path": "testsDir.exitCodeDiffersFromBase",
+        "equals": []
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 참가 팀원 화살표 기준 사본은 단계 10에서 실패",
+      "touches": [
+        "reports/TASK-ES-409/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/scenario-local.json",
+        "path": "team-participants-arrow.base.failedStep",
+        "equals": 10
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 참가 팀원 화살표 작업 통과",
+      "touches": [
+        "reports/TASK-ES-409/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/scenario-local.json",
+        "path": "team-participants-arrow.work.passed",
+        "equals": true
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 마일스톤 기준 사본은 단계 12에서 실패",
+      "touches": [
+        "reports/TASK-ES-409/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/scenario-local.json",
+        "path": "team-milestone-list-rerender.base.failedStep",
+        "equals": 12
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 예비 실행: 마일스톤 작업 통과",
+      "touches": [
+        "reports/TASK-ES-409/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-409/scenario-local.json",
+        "path": "team-milestone-list-rerender.work.passed",
+        "equals": true
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 8원칙 원칙 ② 본질·원인·중심·핵심",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-409-ARROW-LIFECYCLE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심",
+        "file": "docs/specs/REQ-TASK-ES-409-ARROW-LIFECYCLE.md"
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- 2026-10-05 TASK-ES-409: 팀 카드 접기 표시가 저장값을 따르게",
+        "file": "dev_log.md"
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- #TASK-ES-409 | FIX/버그 | [참가 팀원 현황 화살표·마일스톤 접기 저장값·시간기록 수명주기 시험지 경로]",
+        "file": "docs/rules/TICKETS.md"
+      }
+    }
+  ]
+}

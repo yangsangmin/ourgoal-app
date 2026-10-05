@@ -24895,14 +24895,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function collapseAllTeamGoalAccordions() {
-    if (typeof document === 'undefined') return; var isTeamLevelSectionOpen = function(gid){ return !!(gid && window.OurgoalTeamVisibilityLevels && typeof OurgoalTeamVisibilityLevels.isLevelSectionOpen === 'function' && OurgoalTeamVisibilityLevels.isLevelSectionOpen(gid)); };
+    if (typeof document === 'undefined') return; var isTeamLevelSectionOpen = function(gid){ return !!(gid && window.OurgoalTeamVisibilityLevels && typeof OurgoalTeamVisibilityLevels.isLevelSectionOpen === 'function' && OurgoalTeamVisibilityLevels.isLevelSectionOpen(gid)); }; var isTeamMsListOpen = function(tgid){ return !!(tgid && window.OurgoalTeamVisibilityLevels && typeof window.OurgoalTeamVisibilityLevels.isMsListOpen === 'function' && window.OurgoalTeamVisibilityLevels.isMsListOpen(tgid)); }; var isTeamParticipantsOpen = function(tgid){ return !!(tgid && window.OurgoalTeamLinkedGoals && typeof window.OurgoalTeamLinkedGoals.isParticipantsOpen === 'function' && window.OurgoalTeamLinkedGoals.isParticipantsOpen(tgid)); };
     try {
       // 1. 마일스톤 목록 및 버튼 상태 접힘 정돈
       document.querySelectorAll('.ms-list, [data-tgmslist]').forEach(function(el){
-        if (!state.teamGoalEditMode) el.style.display = 'none';
+        if (!state.teamGoalEditMode && !isTeamMsListOpen(el.getAttribute('data-tgmslist'))) el.style.display = 'none';
       });
       document.querySelectorAll('.tg-fold-btn, [data-tgfoldlist]').forEach(function(btn){
-        btn.textContent = '마일스톤 펼치기 ▼';
+        btn.textContent = isTeamMsListOpen(btn.getAttribute('data-tgfoldlist')) ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼';
       });
 
       // 2. 세부 할 일 박스 접힘 정돈
@@ -24923,7 +24923,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         el.style.display = 'none';
       });
       document.querySelectorAll('.tg-accordion-arrow').forEach(function(arrow){
-        var levelHead = arrow.closest('[data-tglevelaccordion]'); if (!levelHead || !isTeamLevelSectionOpen(levelHead.getAttribute('data-tglevelaccordion'))) arrow.classList.remove('rotated');
+        var partHead = arrow.closest('[data-tgparttoggle]'); if (partHead) return arrow.classList.toggle('rotated', isTeamParticipantsOpen(String(partHead.getAttribute('data-tgparttoggle')).split(':')[1])); var levelHead = arrow.closest('[data-tglevelaccordion]'); if (!levelHead || !isTeamLevelSectionOpen(levelHead.getAttribute('data-tglevelaccordion'))) arrow.classList.remove('rotated');
       });
 
       // 5. HTML5 details 태그 접힘 정돈
@@ -25546,7 +25546,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           btn.addEventListener('click', async function(){
             var id = btn.dataset.tgfoldlist;
             var list = tgEl.querySelector('[data-tgmslist="'+id+'"]');
-            if(!list) return;
+            if(!list || window.OurgoalTeamVisibilityLevels) return; // #TASK-ES-409: 모듈 bindEvents 가 같은 버튼을 이미 묶는다(두 손잡이가 한 번씩 뒤집어 펼침이 바로 접히던 죽은 클릭)
             var isHidden = list.style.display === 'none';
             list.style.display = isHidden ? 'block' : 'none';
             btn.textContent = isHidden ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼';

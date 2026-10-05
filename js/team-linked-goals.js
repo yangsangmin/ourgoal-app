@@ -298,7 +298,7 @@
       '</button>';
 
     var participants = getTeamGoalParticipants(g.id, tg);
-    var isFolded = !!(p.settings && p.settings.foldParticipants && p.settings.foldParticipants[tg.id]);
+    var isFolded = !isParticipantsOpen(tg.id);
     var participantsRows = participants.map(function(item){
       var isMe = item.isMe;
       var pActionsHtml = isMe ?
@@ -354,6 +354,13 @@
       teamLinkedBtnHtml: teamLinkedBtnHtml,
       participantsSectionHtml: participantsSectionHtml
     };
+  }
+
+  // #TASK-ES-409: 참가 팀원 달성 현황 목록은 저장값 foldParticipants[tgid] 가 참이 아니면 「펼침」이다(기본 펼침). 렌더·일괄 접기(collapseAllTeamGoalAccordions)의 화살표가 이 한 판정을 같이 쓴다.
+  function isParticipantsOpen(tgid){
+    var p = getProfile();
+    var fold = (p.settings && p.settings.foldParticipants) || {};
+    return !fold[tgid];
   }
 
   /* ------------------------------------------------------------
@@ -594,7 +601,8 @@
     renderTeamGoalCardSections: renderTeamGoalCardSections,
     bindTeamGoalEvents: bindTeamGoalEvents,
     openTeamGoalMemberDmModal: openTeamGoalMemberDmModal,
-    syncWithTeamGoals: syncWithTeamGoals
+    syncWithTeamGoals: syncWithTeamGoals,
+    isParticipantsOpen: isParticipantsOpen
   };
 
   global.OurgoalTeamLinkedGoals = OurgoalTeamLinkedGoals;

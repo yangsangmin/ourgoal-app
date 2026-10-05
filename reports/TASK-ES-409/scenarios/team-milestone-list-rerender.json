@@ -1,0 +1,98 @@
+{
+  "id": "team-milestone-list-rerender",
+  "title": "게스트가 체험 팀의 「마일스톤 펼치기 ▼」를 눌러 마일스톤 목록을 펼친 뒤 「팀연계」→「팀목표」로 돌아와 팀 목표 화면을 다시 그려도 목록이 계속 보이고 버튼 글자가 「마일스톤 접기 ▲」로 남는다 — 기준 커밋에서는 다시 그린 뒤 목록이 접힌다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeam"
+    },
+    {
+      "do": "click",
+      "selector": "[data-tgexampletab=\"fitness\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#tgQuickJoinSampleBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tgfoldlist]",
+      "text": "마일스톤 펼치기",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#teamGoalsView [data-tgmslist]"
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tgfoldlist]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#teamGoalsView [data-tgmslist]",
+      "timeoutMs": 3000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tgfoldlist]",
+      "text": "마일스톤 접기"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeamLinked"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeam"
+    },
+    {
+      "expect": "visible",
+      "selector": "#teamGoalsView [data-tgmslist]",
+      "timeoutMs": 3000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tgfoldlist]",
+      "text": "마일스톤 접기"
+    },
+    {
+      "do": "click",
+      "selector": "#teamGoalsView [data-tgfoldlist]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#teamGoalsView [data-tgmslist]",
+      "timeoutMs": 3000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#teamGoalsView [data-tgfoldlist]",
+      "text": "마일스톤 펼치기"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
