@@ -100,11 +100,12 @@ for (const c of CFG.cells) {
     let wrapK = 0;
     sts.forEach((st, k) => {
       const prevEnd = k ? HE(sts[k - 1].node) : r.start - 1;
-      if (k && H(st.node) === prevEnd) fail('두 문이 한 줄에: ' + H(st.node));
+      // #TASK-ES-474: 한 줄에 두 문·문 끝 줄 뒤 다른 코드는 그 문을 옮기거나 감쌀 때만 멈춘다(원래 자리에 남는 문이면 그 줄은 손대지 않으므로 그대로 둔다)
+      const sharedLine = (k && H(st.node) === prevEnd) ? '두 문이 한 줄에: ' + H(st.node) : null;
       const tail = lines[HE(st.node) - 1].slice(st.node.loc.end.column).trim();
-      if (tail && !tail.startsWith('//')) fail('문 끝 줄 뒤에 다른 코드: ' + HE(st.node));
+      const tailCode = (tail && !tail.startsWith('//')) ? '문 끝 줄 뒤에 다른 코드: ' + HE(st.node) : null;
       // 앞 주석·빈 줄은 그 문을 따라간다(묶음 첫 문은 구획 주석부터)
-      const item = { cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? prevEnd + 1 : r.start, names: [] };
+      const item = { lineIssue: sharedLine || tailCode, cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? prevEnd + 1 : r.start, names: [] };
       const mine = n => t.all || (t.names || []).includes(n);
       if (st.isFunctionDeclaration()) {
         const n = st.node.id.name; item.names = [n];
@@ -146,6 +147,7 @@ for (const c of CFG.cells) {
     if ((t.wrap || []).length !== wrapK) fail('설정 wrap 이름 수(' + (t.wrap || []).length + ')와 감싼 문 수(' + wrapK + ')가 다르다: ' + t.group);
   }
 }
+for (const it of plan) if (it.lineIssue && (it.action === 'move' || it.action === 'wrap')) fail(it.lineIssue);
 // 같은 문을 두 세포가 가져가면 안 된다 · skip 은 다른 세포가 가져가야 한다
 const byStart = new Map();
 for (const it of plan) { const k = it.start; if (!byStart.has(k)) byStart.set(k, []); byStart.get(k).push(it); }

@@ -1,0 +1,311 @@
+{
+ "task": "TASK-ES-474",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 어려움 묶음 「전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)」을 소통 탭 세포 js/tabs/comm/shared-groups.js 로 동작 그대로 옮긴다(생성기 글자 그대로)."
+  },
+  {
+   "id": "R2",
+   "text": "「캘린더 실시간 구독 URL 생성기」 묶음의 함수(서명 토큰·구독 URL·iCalendar·마크다운·내보내기 창)를 js/tabs/records/export-theme.js 로 동작 그대로 옮긴다 — 상태·노출·한 줄 문은 원래 자리."
+  },
+  {
+   "id": "R3",
+   "text": "「위클리 리캡 카드」 묶음을 js/tabs/records/weekly-recap.js 로 동작 그대로 옮긴다 — 로드 중 등록 문은 함수로 감싸 원래 자리에서 부른다(결함 PR #767 병합 뒤 main 판)."
+  },
+  {
+   "id": "R4",
+   "text": "생성기가 원래 자리에 남는 문의 한 줄 두 문에서 멈추지 않게 하고(옮기거나 감싸는 문은 그대로 멈춤), 증명(verify·단독 로드·tests 전후·게스트 조작 비교)과 세포 등록·문서(REQ 8원칙, dev_log·TICKETS 각 1줄)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 소통 탭 「👥 팀」에서 「+ 새 팀 개설하기」를 누르면 자유로운 팀 안내가 있는 팀 만들기 창이 열리고 「취소」로 닫히며 예외가 없다 — 옮긴 renderCommGroups·promptNewGroup 이 처리한다",
+   "touches": [
+    "js/tabs/comm/shared-groups.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/comm-group-create-modal.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 내보내기 단추를 누르면 테마별 기록 내보내기 창이 열리고, 기록 없이 「AI 프롬프트 복사」를 누르면 기록 없음 토스트가 뜨며 예외가 없다 — 옮긴 openExportThemeModal 이 처리한다",
+   "touches": [
+    "js/tabs/records/export-theme.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-export-theme-empty.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 기록 탭 미니 성취 펄스 막대를 눌러 성취 통계로 가 위클리 리캡 「만들기」를 누르면 리캡 창이 열리고 「×」로 닫히며 예외가 없다 — 원래 자리에서 부르는 bindRecPulseBar 와 옮긴 openWeeklyRecapModal 이 처리한다",
+   "touches": [
+    "js/tabs/records/weekly-recap.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-weekly-recap-open.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기가 한 줄 두 문을 옮기거나 감싸는 문에서만 멈춘다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "for (const it of plan) if (it.lineIssue && (it.action === 'move' || it.action === 'wrap')) fail(it.lineIssue);"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-474/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-474/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-474/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-474/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-474/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-474/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 세포 파일 3개 단독 로드가 된다(법정 모듈 로드 탐침 로컬)",
+   "touches": [
+    "reports/TASK-ES-474/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-474/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 종료 코드가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-474/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-474/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitCodesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "npm test 통과·실패 수가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-474/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-474/test-compare.json",
+    "type": "jsonPath",
+    "path": "passFailSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-474/dom-compare-inline-h4.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-474/dom-compare-inline-h4.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 공유 팀 화면 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"comm/shared-groups\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 기록 내보내기 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/export-theme\""
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 위클리 리캡 세포가 올라 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/weekly-recap\""
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설명 파일에 새 세포의 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"records/weekly-recap\": \"위클리 리캡\""
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정이 자리 표지 H4 를 쓴다",
+   "touches": [
+    "docs/design/harness/module-split/inline-h4-pr2.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-h4-pr2.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H4"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-474 | INFRA |"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-474:"
+   }
+  }
+ ]
+}
