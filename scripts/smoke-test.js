@@ -7359,7 +7359,7 @@ check('[#TASK-ES-185] 화이트 테마 렌더링 먹통 버그 근본 척결 및
 check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도심) 조형·레이아웃·컴포넌트 100% 동일 동기화 및 테마별 컬러 분리 검증', () => {
   const fs = require('fs');
   const path = require('path');
-  const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  const html = require('../tests/helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8'));
   const css = fs.readFileSync(path.join(__dirname, '../ui.css'), 'utf8');
   const engineSrc = SANCTUARY_SRC;
 
