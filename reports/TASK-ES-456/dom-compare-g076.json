@@ -1,0 +1,205 @@
+{
+ "env": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)",
+ "steps": [
+  "cal-enter",
+  "cal-today",
+  "hub-open",
+  "hub-add",
+  "edit-type",
+  "edit-save",
+  "hub-edit0",
+  "edit-cancel",
+  "hub-toggle",
+  "hub-toggle-back",
+  "hub-close",
+  "hub-reopen",
+  "hub-close2",
+  "tab-roundtrip"
+ ],
+ "notes": [
+  "cal-enter => tab:calendar:ok / tab:calendar:ok",
+  "cal-today => clicked:5 / clicked:5",
+  "hub-open => clicked:📅 허브 / clicked:📅 허브",
+  "hub-add => clicked:+ 새 일정 추가|{} / clicked:+ 새 일정 추가|{}",
+  "edit-type => value / value",
+  "edit-save => clicked:저장|{} / clicked:저장|{}",
+  "hub-edit0 => clicked:|{\"hubedit\":\"0\"} / clicked:|{\"hubedit\":\"0\"}",
+  "edit-cancel => clicked:취소|{} / clicked:취소|{}",
+  "hub-toggle => clicked:|{\"hubtogglesched\":\"custom:sched_<uid>::\"} / clicked:|{\"hubtogglesched\":\"custom:sched_<uid>::\"}",
+  "hub-toggle-back => clicked:✓|{\"hubtogglesched\":\"custom:sched_<uid>::\"} / clicked:✓|{\"hubtogglesched\":\"custom:sched_<uid>::\"}",
+  "hub-close => clicked:닫기|{} / clicked:닫기|{}",
+  "hub-reopen => clicked:📅 허브 / clicked:📅 허브",
+  "hub-close2 => closed / closed",
+  "tab-roundtrip => roundtrip / roundtrip"
+ ],
+ "comparedFields": 140,
+ "digestAfter": [
+  {
+   "step": "cal-enter",
+   "note": "tab:calendar:ok",
+   "toast": "toast|⚡ 데일리 퀘스트 완수! +40 EXP 획득",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "cal-today",
+   "note": "clicked:5",
+   "toast": "toast show|2026-10-05 일정을 선택했습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "hub-open",
+   "note": "clicked:📅 허브",
+   "toast": "toast|2026-10-05 일정을 선택했습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "hub-add",
+   "note": "clicked:+ 새 일정 추가|{}",
+   "toast": "toast|2026-10-05 일정을 선택했습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "edit-type",
+   "note": "value",
+   "toast": "toast|2026-10-05 일정을 선택했습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "edit-save",
+   "note": "clicked:저장|{}",
+   "toast": "toast|일정을 추가했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "hub-edit0",
+   "note": "clicked:|{\"hubedit\":\"0\"}",
+   "toast": "toast|일정을 추가했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "edit-cancel",
+   "note": "clicked:취소|{}",
+   "toast": "toast|일정을 추가했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "hub-toggle",
+   "note": "clicked:|{\"hubtogglesched\":\"custom:sched_<uid>::\"}",
+   "toast": "toast|일정을 완료했어요! 🎯 (+10 EXP)",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "hub-toggle-back",
+   "note": "clicked:✓|{\"hubtogglesched\":\"custom:sched_<uid>::\"}",
+   "toast": "toast|일정을 미완료로 변경했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "hub-close",
+   "note": "clicked:닫기|{}",
+   "toast": "toast|일정을 미완료로 변경했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" onclick=\"if",
+   "newErrors": []
+  },
+  {
+   "step": "hub-reopen",
+   "note": "clicked:📅 허브",
+   "toast": "toast|일정을 미완료로 변경했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "hub-close2",
+   "note": "closed",
+   "toast": "toast|일정을 미완료로 변경했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-calendar",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" onclick=\"if",
+   "newErrors": []
+  },
+  {
+   "step": "tab-roundtrip",
+   "note": "roundtrip",
+   "toast": "toast|일정을 미완료로 변경했어요",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-records",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" onclick=\"if",
+   "newErrors": []
+  }
+ ],
+ "differing": 0,
+ "diffs": [],
+ "baseVsBaseDiffering": 0,
+ "baseVsBase": [],
+ "errorsBase": [],
+ "errorsBase2": [],
+ "errorsAfter": [],
+ "bootBase": [
+  "#avatarGreetingModal: 오늘은 뭘 했냐? 내자신"
+ ],
+ "bootAfter": [
+  "#avatarGreetingModal: 오늘은 뭘 했냐? 내자신"
+ ],
+ "kitsBase": {
+  "OurgoalCalendarKit": "buildLockScreenCardPayload,calShift,calWeekStart,closeLockScreenLiveCard,compressCalendarBgImage,executeCalAgentNaturalSchedule,generateLockScreenCalendarImage,generateLockScreenScheduleCardImage,lsDrawRoundRect,openCalendarDayBgPickerModal,parseNaturalScheduleText,refreshCalDayDetail,renderCalDayDetail,renderCalendarScreen,syncLockScreenLiveCard",
+  "OurgoalCommKit": "generateMzStoryCanvas,getFeedComments,handleUserCommentSubmit,loadServerFeedComments,openChallengeRoomModal,openSelectCompanionForStoryModal,openSelectTeamForStoryModal,renderCommCompanions,renderCommDM,renderCommScreen,scheduleCheerDelivery,setFeedComments,toggleFeedPostPreview,toggleFeedReaction,triggerFirstCheerResponse",
+  "OurgoalGoalsKit": "applyScheduleUpdate,archiveGoal,buildGoalSnapshot,celebrateMilestoneDone,computeGoalStatusHash,exportGoalSnapshot,formatDateTimeBadge,formatSchedulePillHtml,gaugeSvg,generateGoalStatusSummary,goalAgentSnapshot,goalSnapshotSummary,hybridDashboardHtml,importTemplateInstantly,localGoalStatusSummary,localNextActionSuggestion,localTodayMission,milestonesForMission,openAiResultAssistantModal,openGoalCertificateModal,openResultModal,openScheduleSetupModal,openTeamInviteModal,openTeamLinkedPersonalGoalModal,quickCreateStarterGoal,refreshGoalStatusSummary,renderGoalDetailBody,renderGoalOpsFullPreviewHtml,renderGoalsScreen,requestGoalAgentDiff,requestNextActionSuggestion,requestTodayMission,resultBadgeHtml,resultLineHtml,sanitizeAttachments,sendGoalAgentMessage,showGoalAgentLoadingStep,showGoalAgentReviewStep,templateMilestones,wireGoalDetailEvents",
+  "OurgoalRecordsKit": "TOPIC_COLORS,applyQuickCunningText,buildFeedbackPrompt,buildRecordCardHtml,checkStreakFreeze,compressImage,generateLocalPeriodFeedback,generatePeriodAIFeedback,getLastFeedbackAdvice,getRecentCheckinsForAI,getUpcomingSchedulesForAI,handleConversationalRecord,initFeedbackTierBar,initPeriodAiCard,localFeedback,milestonesForAI,openConversationalRecordConfirmModal,openPhotoViewerModal,openProCoachReportModal,openProNotionExportModal,parseConversationalRecord,parseFeedbackJSON,pushRecordToNotion,renderAnalyticsHtml,renderHomeGrassSummary,renderPeriodFeedbackResult,renderRecordHeatmap,renderRecordsScreen,renderReportSummary,renderTrendSvgChart,requestAIFeedback,requestGeminiFeedback,requestServerAIFeedback,setRecordsSegment,setRecordsSlide,svgCategoryDonut,svgTrendChart",
+  "OurgoalSettingsKit": "_recordHesitation,applyAppSettings,applyTheme,bindSettingsHapticDelegate,bindSettingsStaticHandlers,checkGuestBackupNudge,checkPendingDeletionRestore,closeAvatarGreetingPopup,closePwaInstallGuideModal,collapseAllSettingsSections,confirmPwaInstall,formatStorageBytes,getUxMode,initKeyboardShield,initRememberedAuthFields,openAvatarGreetingPopup,openChangePasswordModal,openGuestBackupNudgeModal,openIosPwaInstallGuideModal,openPwaInstallGuideModal,paintCacheUsage,renderAdaptiveModeBar,renderIosPwaBanner,renderSettingsHeroCard,renderSettingsScreen,sendToNotion,showCommTourModal,showLastAuthBadge,showLegalModal,showLevelUpBanner,switchPwaOsTab,switchUxMode,toggleAdvancedSettings"
+ },
+ "kitsAfter": {
+  "OurgoalCalendarKit": "buildLockScreenCardPayload,calShift,calWeekStart,closeLockScreenLiveCard,compressCalendarBgImage,executeCalAgentNaturalSchedule,generateLockScreenCalendarImage,generateLockScreenScheduleCardImage,lsDrawRoundRect,openCalendarDayBgPickerModal,openCalendarDayEditHubModal,parseNaturalScheduleText,refreshCalDayDetail,renderCalDayDetail,renderCalendarScreen,syncLockScreenLiveCard",
+  "OurgoalCommKit": "generateMzStoryCanvas,getFeedComments,handleUserCommentSubmit,loadServerFeedComments,openChallengeRoomModal,openSelectCompanionForStoryModal,openSelectTeamForStoryModal,renderCommCompanions,renderCommDM,renderCommScreen,scheduleCheerDelivery,setFeedComments,toggleFeedPostPreview,toggleFeedReaction,triggerFirstCheerResponse",
+  "OurgoalGoalsKit": "applyScheduleUpdate,archiveGoal,buildGoalSnapshot,celebrateMilestoneDone,computeGoalStatusHash,exportGoalSnapshot,formatDateTimeBadge,formatSchedulePillHtml,gaugeSvg,generateGoalStatusSummary,goalAgentSnapshot,goalSnapshotSummary,hybridDashboardHtml,importTemplateInstantly,localGoalStatusSummary,localNextActionSuggestion,localTodayMission,milestonesForMission,openAiResultAssistantModal,openGoalCertificateModal,openResultModal,openScheduleSetupModal,openTeamInviteModal,openTeamLinkedPersonalGoalModal,quickCreateStarterGoal,refreshGoalStatusSummary,renderGoalDetailBody,renderGoalOpsFullPreviewHtml,renderGoalsScreen,requestGoalAgentDiff,requestNextActionSuggestion,requestTodayMission,resultBadgeHtml,resultLineHtml,sanitizeAttachments,sendGoalAgentMessage,showGoalAgentLoadingStep,showGoalAgentReviewStep,templateMilestones,wireGoalDetailEvents",
+  "OurgoalRecordsKit": "TOPIC_COLORS,applyQuickCunningText,buildFeedbackPrompt,buildRecordCardHtml,checkStreakFreeze,compressImage,generateLocalPeriodFeedback,generatePeriodAIFeedback,getLastFeedbackAdvice,getRecentCheckinsForAI,getUpcomingSchedulesForAI,handleConversationalRecord,initFeedbackTierBar,initPeriodAiCard,localFeedback,milestonesForAI,openConversationalRecordConfirmModal,openPhotoViewerModal,openProCoachReportModal,openProNotionExportModal,parseConversationalRecord,parseFeedbackJSON,pushRecordToNotion,renderAnalyticsHtml,renderHomeGrassSummary,renderPeriodFeedbackResult,renderRecordHeatmap,renderRecordsScreen,renderReportSummary,renderTrendSvgChart,requestAIFeedback,requestGeminiFeedback,requestServerAIFeedback,setRecordsSegment,setRecordsSlide,svgCategoryDonut,svgTrendChart",
+  "OurgoalSettingsKit": "_recordHesitation,applyAppSettings,applyTheme,bindSettingsHapticDelegate,bindSettingsStaticHandlers,checkGuestBackupNudge,checkPendingDeletionRestore,closeAvatarGreetingPopup,closePwaInstallGuideModal,collapseAllSettingsSections,confirmPwaInstall,formatStorageBytes,getUxMode,initKeyboardShield,initRememberedAuthFields,openAvatarGreetingPopup,openChangePasswordModal,openGuestBackupNudgeModal,openIosPwaInstallGuideModal,openPwaInstallGuideModal,paintCacheUsage,renderAdaptiveModeBar,renderIosPwaBanner,renderSettingsHeroCard,renderSettingsScreen,sendToNotion,showCommTourModal,showLastAuthBadge,showLegalModal,showLevelUpBanner,switchPwaOsTab,switchUxMode,toggleAdvancedSettings"
+ }
+}
