@@ -569,3 +569,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-466 | INFRA | [인라인 어려움 구역 H1 1차] 동반자 페이스·피드 게시 창·평가 창·새 목표 창 네 묶음을 세포 4개로 이전(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md
 - #TASK-ES-475 | INFRA | [시험지 선행 · 인라인 어려움 H3] achievement-graph-multiset 이 인라인 합본을 읽음(읽기 줄 1줄) | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-475-H3-TEST-BUNDLE.md
 - #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md
+- #TASK-ES-490 | FIX/버그 | [오프라인 큐 데이터 손실] 온라인 복귀 때 보내지 않고 비우던 큐 → 저장 성공 뒤에만 비움·실패 시 유지·재시도·알림 (25분 대체값은 smoke 검사가 고정 — 결심 요청) | 코디네이터 지시 (2026-10-05, 기관 빌더 #776 발견), REQ docs/specs/REQ-TASK-ES-490-OFFLINE-QUEUE-LOSS.md

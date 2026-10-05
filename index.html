@@ -5133,7 +5133,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var b = document.getElementById('offlineNoticeBanner');
     if(b) b.style.display = 'none';
     toast('온라인에 다시 연결되었어요. 오프라인 기록을 동기화합니다.');
-    OfflineSyncManager.flush();
+    OfflineSyncManager.syncOnline(); /* [#TASK-ES-490] 처리기 없는 flush() 가 보내지도 않고 큐를 비우던 것 → 저장 성공 뒤에만 비움·실패 시 유지·재시도 */
   });
   window.addEventListener('offline', function(){
     var b = document.getElementById('offlineNoticeBanner');
