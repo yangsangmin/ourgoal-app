@@ -60,6 +60,7 @@
 ## 9. 화면 측정
 - `tab-check.js` 기록·목표 기준(git archive) 2회·후 1회 → `tab-compare-base1-base2.json`·`tab-compare-base1-after.json`.
 - `dom-compare-stats-2.js` 게스트 조작 40단계(1차 24단계 + 데이터 관리 메뉴 → 가져오기 모달 → 테마 탭·샘플 카드·CSV/텍스트 탭·텍스트 붙여넣기·융합 → 렌즈 → 1초 샘플 로드 → 활용 가이드(공개 API, 화면 버튼은 #TASK-ES-126 에서 빠짐)·닫기 → 탭 왕복), 단계마다 9칸 = 360칸 → `dom-compare-stats-2.json`. 난수는 같은 씨앗으로 고정, 화면 글자 시:분(`>HH:MM<`)은 지움(기준 2회에서 4칸 실측한 본질 변동).
+- main(#711·#713·#714·#715·#716) 합친 뒤 다시 잼: `js/universal-stats.js`·`js/stats-*.js` 는 main 에서 안 바뀜. 기준선은 main 판을 받고 `module-specs --write`·`module-guard --update` 로 다시 만듦(④ 8). 그 기준(main git archive·detach 트리) 대 합친 트리: `verify-stats-split-2-main.json`·`test-compare-main.json`(tests 103개)·`dom-compare-stats-2-main.json`. tab-check·로그인 비교는 합치기 전 기준에서만 쟀다.
 - 로그인 상태: `real-account-stats-2.js` — 로컬 127.0.0.2 + /api 운영 전달, 테스트 계정 A, 읽기 전용 13단계(융합·샘플 로드·저장 안 누름) 단계마다 화면·모달 정규화 HTML sha256·바이트 → `real-account-stats.json`(주소·계정·기록 내용 미기록).
 
 ## 10. 남은 범위 (3차 이후, `js/universal-stats.js` 3,283줄)
