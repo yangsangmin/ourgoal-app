@@ -32,7 +32,7 @@ assert.ok(TEST_TICKET_ID === '#TASK-ES-320', '#TASK-ES-320 단위 테스트 식�
 console.log('🧪 [#TASK-ES-320 / 노션 69] 동명이인 중복 방지 고유 태그 및 동반자 매칭 단위 테스트 시작...');
 
 const indexHtmlPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8')); // #TASK-ES-465: 인라인 합본 — 단언 그대로
 
 // 1. index.html 내 resolveUniqueDisplayName 및 충돌 방지 루프 검증
 assert.ok(indexHtml.includes('async function resolveUniqueDisplayName('), 'resolveUniqueDisplayName 함수 선언 확인');

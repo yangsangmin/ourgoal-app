@@ -12,7 +12,7 @@ function runTest() {
   assert.ok(fs.existsSync(htmlPath), 'index.html 파일이 존재해야 합니다.');
   assert.ok(fs.existsSync(cssPath), 'ui.css 파일이 존재해야 합니다.');
 
-  const html = fs.readFileSync(htmlPath, 'utf8');
+  const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(htmlPath, 'utf8')); // #TASK-ES-465: 인라인 합본 — 단언 그대로
   const css = fs.readFileSync(cssPath, 'utf8');
 
   // 1. #topHomeGuideBtn 요소 존재 검증
