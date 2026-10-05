@@ -41,8 +41,8 @@ DOM `#landRescueBtn` · `#authRescueBtn` · `#rescueDirectEnterBtn` · `#commSub
 | verify | ok · 토큰 동일 · 남은 글자 동일 · 이중 처리기 0 (`reports/TASK-ES-461/verify-inline-hard.json`) |
 | 새 파일 줄 수 | 326 · 268 · 496 · 286 (800 이하) |
 | 원본 단독 로드 | 회귀 0, 새 파일 4개 단독 로드 ok (`module-load-probe.json`) |
-| tests 전후 | 종료 코드 같음, npm test 통과·실패 수 같음 (`test-compare.json`) |
-| 게스트 조작 비교 | `dom-compare-inline-h4.json` |
+| tests 전후 | 작업 npm test 종료 0 · smoke 443/0(기준 사본 같음). 종료 코드가 갈린 시험지 1개(tests/cell-map-export-es414.test.js)는 기준 사본이 git archive 로 풀어 이력이 없어 실패하고 작업 트리에서는 통과 — 회귀 아님 (`test-compare.json`) |
+| 게스트 조작 비교 | 17단계 기준 대 후 차이 0 · 기준 대 기준 0 (`dom-compare-inline-h4.json`), 뒤집어 잼(작업 2회·기준 1회)도 0 (`dom-compare-inline-h4-reversed.json`). main 합친 뒤 첫 실행 한 번은 아바타 인사 창 타이밍으로 갈렸고 다시 잰 두 번은 0 |
 | 게스트 시나리오 | 4개 기준·작업 (`scenario-local.json`) |
 
 [4단계: 심사 청구]

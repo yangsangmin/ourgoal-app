@@ -4,7 +4,7 @@
  * 세션 복구 뒤 앱 입장(restoreSessionAndEnter) · 아이디 직접 로그인(loginWithDirectIdentifier) · 로그인 빠른 복구 창(openLoginRescueModal · rescueLoginSession).
  * 랜딩·로그인 화면의 「로그인이 잘 안 되시나요?」·「로그인 문제 해결」 링크 처리기 등록 문은 bindLoginRescueButtons 로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).
  * 입장 중 표시(_isEnteringApp)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다.
- * #TASK-ES-461(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 27675~27736 · 27737~27824 · 27825~27874 · 27875~27899 · 27900~27906줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-461(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 26332~26393 · 26394~26481 · 26482~26531 · 26532~26556 · 26557~26563줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,7 +16,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalSettingsKit = global.OurgoalSettingsKit || {};
 
-  /* ---- 이전 전 index.html 27675~27736줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 26332~26393줄(#TASK-ES-461 생성기 표지) ---- */
   async function restoreSessionAndEnter(session){
     if(!session || !session.user) return false;
     if(L._isEnteringApp) return true;
@@ -79,7 +79,7 @@
       L._isEnteringApp = false;
     }
   }
-  /* ---- 이전 전 index.html 27737~27824줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 26394~26481줄(#TASK-ES-461 생성기 표지) ---- */
   async function loginWithDirectIdentifier(rawId, extraOpt){
     var idVal = String(rawId || '').trim();
     if(!idVal){
@@ -168,7 +168,7 @@
       return false;
     }
   }
-  /* ---- 이전 전 index.html 27825~27874줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 26482~26531줄(#TASK-ES-461 생성기 표지) ---- */
   function openLoginRescueModal(customNotice){
     try {
       L.sb.auth.signOut({ scope: 'local' });
@@ -219,7 +219,7 @@
       }
     );
   }
-  /* ---- 이전 전 index.html 27875~27899줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 26532~26556줄(#TASK-ES-461 생성기 표지) ---- */
   async function rescueLoginSession(){
     try {
       L.toast('로그인 상태를 깨끗이 정리하고 재시도 중입니다…');
@@ -245,7 +245,7 @@
       window.location.reload();
     }, 600);
   }
-  /* ---- 이전 전 index.html 27900~27906줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 26557~26563줄(#TASK-ES-461 생성기 표지) ---- */
   function bindLoginRescueButtons() { /* [#TASK-ES-461] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   ['landRescueBtn', 'authRescueBtn'].forEach(function(id){
     var el = document.getElementById(id);

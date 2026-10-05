@@ -3,7 +3,7 @@
  *
  * 실 유저 판별(isValidRealUser) · 서버 마니또 자료 불러오기(loadServerManitoData) · 짝·보낸 응원·연속·서로 응원·받은 응원함(manitoPartners · manitoSentToday · manitoStreak · manitoMutualCount · manitoInbox) · 마니또 화면(renderCommManito) · 마니또 대화(renderManitoDm).
  * 서버 자료 캐시(REAL_MANITO_PARTNERS_CACHE · REAL_MANITO_INBOX_CACHE · MANITO_SERVER_LOADED)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다. window.isValidRealUser 노출 줄도 원래 자리에 있다.
- * #TASK-ES-461(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 26899~26912 · 26914~26975 · 26976~27020 · 27021~27024 · 27025~27033 · 27034~27036 · 27037~27057 · 27058~27304 · 27305~27353줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-461(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 25556~25569 · 25571~25632 · 25633~25677 · 25678~25681 · 25682~25690 · 25691~25693 · 25694~25714 · 25715~25961 · 25962~26010줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalCommKit = global.OurgoalCommKit || {};
 
-  /* ---- 이전 전 index.html 26899~26912줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25556~25569줄(#TASK-ES-461 생성기 표지) ---- */
 
   /* 실제 인증 가입 회원(Supabase Auth UUID) 정밀 식별기 (#TASK-ES-145) */
   function isValidRealUser(id){
@@ -31,7 +31,7 @@
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
   }
 
-  /* ---- 이전 전 index.html 26914~26975줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25571~25632줄(#TASK-ES-461 생성기 표지) ---- */
 
   async function loadServerManitoData(){
     try {
@@ -94,7 +94,7 @@
       console.warn('[Manito] server sync warn:', e);
     }
   }
-  /* ---- 이전 전 index.html 26976~27020줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25633~25677줄(#TASK-ES-461 생성기 표지) ---- */
 
   /* 관심 카테고리 기반 익명 파트너 (실 유저 풀 우선 매칭 + 콜드스타트 투명 AI 동반자) */
   function manitoPartners(){
@@ -140,12 +140,12 @@
     }
     return out;
   }
-  /* ---- 이전 전 index.html 27021~27024줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25678~25681줄(#TASK-ES-461 생성기 표지) ---- */
   function manitoSentToday(pid){
     var today = L.dateKey(L.nowISO());
     return L.manitoState().sent.filter(function(x){ return x.to===pid && x.date===today; }).map(function(x){ return x.stamp; });
   }
-  /* ---- 이전 전 index.html 27025~27033줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25682~25690줄(#TASK-ES-461 생성기 표지) ---- */
   function manitoStreak(){
     var days = {};
     L.manitoState().sent.forEach(function(x){ days[x.date] = true; });
@@ -155,11 +155,11 @@
     }
     return streak;
   }
-  /* ---- 이전 전 index.html 27034~27036줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25691~25693줄(#TASK-ES-461 생성기 표지) ---- */
   function manitoMutualCount(pid){
     return L.manitoState().sent.filter(function(x){ return x.to===pid; }).length;
   }
-  /* ---- 이전 전 index.html 27037~27057줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25694~25714줄(#TASK-ES-461 생성기 표지) ---- */
   /* 받은 응원함 (실제 수신함 우선 표출 + 기본 환영 응원) */
   function manitoInbox(){
     var ms = L.manitoState();
@@ -181,7 +181,7 @@
     });
     return items;
   }
-  /* ---- 이전 전 index.html 27058~27304줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25715~25961줄(#TASK-ES-461 생성기 표지) ---- */
 
   function renderCommManito(body){
     if(!L.MANITO_SERVER_LOADED){
@@ -429,7 +429,7 @@
       renderCommManito(body);
     });
   }
-  /* ---- 이전 전 index.html 27305~27353줄(#TASK-ES-461 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 25962~26010줄(#TASK-ES-461 생성기 표지) ---- */
 
   function renderManitoDm(body, pid){
     var ms = L.manitoState();
