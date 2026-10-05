@@ -1,0 +1,176 @@
+{
+ "task": "TASK-ES-442",
+ "seamBefore": "  /* ============ Supabase ============ */",
+ "cells": [
+  {
+   "file": "js/tabs/settings/login-devices.js",
+   "kit": "OurgoalSettingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/render.js\"></script>",
+   "title": "OurGoal Login Devices (설정 탭 — 로그인 기기 목록·다른 기기 로그아웃 창)",
+   "desc": [
+    "설정 > 보안의 활성 로그인 기기 목록 그리기·개별 세션 로그아웃, 「다른 모든 기기 로그아웃」 전 확인 창."
+   ],
+   "groups": [
+    {
+     "header": "[70] 활성 로그인 기기 목록 실시간 렌더링 & 개별 세션 로그아웃"
+    },
+    {
+     "header": "[70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달"
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/settings/app-lock-pin.js",
+   "kit": "OurgoalSettingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/render.js\"></script>",
+   "title": "OurGoal App Lock PIN (설정 탭 — 이 기기 앱 잠금 PIN)",
+   "desc": [
+    "앱 잠금 PIN 해시·확인, 설정·해제 창, 앱 진입 때 PIN 확인 창."
+   ],
+   "groups": [
+    {
+     "header": "[71] 앱 잠금 PIN (이 기기)"
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/settings/dev-debug-gate.js",
+   "kit": "OurgoalSettingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/render.js\"></script>",
+   "title": "OurGoal Dev Debug Gate (설정 탭 — 개발 디버그 버튼 격리)",
+   "desc": [
+    "로컬 개발 호스트에서 ?debug=true 일 때만 테스터 버튼을 보이고, 운영에서는 지운다."
+   ],
+   "groups": [
+    {
+     "header": "[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼"
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/settings/guest-migration.js",
+   "kit": "OurgoalSettingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/render.js\"></script>",
+   "title": "OurGoal Guest Migration (설정 탭 — 게스트 기록을 계정으로 합치기)",
+   "desc": [
+    "로그인 때 둘러보기(게스트) 기록을 계정 기록과 합집합으로 합쳐 서버에 올린다."
+   ],
+   "groups": [
+    {
+     "header": "[#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시"
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/settings/tab-guide.js",
+   "kit": "OurgoalSettingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/render.js\"></script>",
+   "title": "OurGoal Tab Guide (설정 탭 — 탭별 200% 활용법 창)",
+   "desc": [
+    "각 탭 활용법·우수 사용사례 허브 창과 탭별 내용 그리기."
+   ],
+   "groups": [
+    {
+     "header": "[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법",
+     "moveVars": [
+      "TAB_GUIDE_DATA"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/settings/onboarding.js",
+   "kit": "OurgoalSettingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/render.js\"></script>",
+   "title": "OurGoal Onboarding (설정 탭 — 첫 가입 온보딩)",
+   "desc": [
+    "첫 가입 뒤 16종 동물 아바타 고르기·첫 목표 안착 온보딩."
+   ],
+   "groups": [
+    {
+     "header": "Onboarding (first-time, after signup)",
+     "moveVars": [
+      "ONBOARDING_AVATARS"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/goals/prompt-encyclopedia.js",
+   "kit": "OurgoalGoalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/goal-export.js\"></script>",
+   "title": "OurGoal Prompt Encyclopedia (목표 탭 — 데이터분석 프롬프트 백과사전)",
+   "desc": [
+    "목표 상세의 데이터분석 프롬프트 백과사전 — 실사용·AI 맞춤 목록 그리기, 사용자 프롬프트 등록 창, 도움돼요·복사·피드 게시 이벤트."
+   ],
+   "groups": [
+    {
+     "header": "[78 / 89] 데이터분석 프롬프트 백과사전"
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/goals/notion-record-convert.js",
+   "kit": "OurgoalGoalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/goal-export.js\"></script>",
+   "title": "OurGoal Notion Record Convert (목표 탭 — 결과 글을 노션 DB 기록으로 변환)",
+   "desc": [
+    "자연어 결과 글에서 상태·달성률·수치를 뽑아 노션 DB 프로퍼티 형태로 바꾼다."
+   ],
+   "groups": [
+    {
+     "header": "AI 결과 입력 -> Notion DB 구조화 변환기"
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/calendar/schedule-done-toggle.js",
+   "kit": "OurgoalCalendarKit",
+   "beforeTag": "<script src=\"js/tabs/calendar/render.js\"></script>",
+   "title": "OurGoal Schedule Done Toggle (일정 탭 — 일정 완료 체크·목표 양방향 동기화)",
+   "desc": [
+    "일정 체크 완료를 켜고 끄며 연결된 목표 진행과 양방향으로 맞춘다."
+   ],
+   "groups": [
+    {
+     "header": "[#TASK-ES-151 & #TASK-ES-253] 일정 체크 완료 토글"
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/goals/goal-math.js",
+   "kit": "OurgoalGoalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/goal-export.js\"></script>",
+   "title": "OurGoal Goal Math (목표 탭 — 진행률·마일스톤 수·결과 달성률 계산)",
+   "desc": [
+    "목표 진행률, 마일스톤 완료/전체 수, 결과 수치 달성률을 계산한다."
+   ],
+   "groups": [
+    {
+     "header": "Goal math"
+    },
+    {
+     "header": "결과 기록 (체크박스 대신 수치 입력)",
+     "names": [
+      "resultPct"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "js/tabs/settings/app-defaults.js",
+   "kit": "OurgoalSettingsKit",
+   "beforeTag": "<script src=\"js/tabs/settings/render.js\"></script>",
+   "title": "OurGoal App Defaults (설정 탭 — 설정 기본값)",
+   "desc": [
+    "처음 쓰는 사람의 설정 기본값(알림·테마·글자 크기 등)을 만든다."
+   ],
+   "groups": [
+    {
+     "header": "Storage (Supabase: goals & checkins; localStorage: settings)"
+    }
+   ]
+  }
+ ],
+ "allowSmoke": true
+}

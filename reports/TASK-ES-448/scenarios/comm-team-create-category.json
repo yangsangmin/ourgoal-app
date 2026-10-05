@@ -1,0 +1,85 @@
+{
+  "id": "comm-team-create-category",
+  "title": "게스트로 소통 탭 「👥 팀」에서 「+ 새 팀 개설하기」를 누르고 추천 「🔥 목표 완주 크루」와 카테고리 대범위(💪 운동·건강)를 고르면 중범위 칸(#gTopicSub)이 열리고, 「팀 만들기」를 누르면 새 팀이 팀 목록에 그려진다 — 카테고리 고르기(categoryPickerHtml·wireCategoryPicker·TOPICS)와 팀 참여 상태(groupState·groupCheckedToday·groupStreak)를 목표 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#commBody [data-sub=\"group\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"group\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnHeroCreateTeamComm",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnHeroCreateTeamComm"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#tplMarathonSmall",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#tplMarathonSmall"
+    },
+    {
+      "do": "click",
+      "selector": "#gTopicMajor [data-major]:nth-child(1)"
+    },
+    {
+      "expect": "visible",
+      "selector": "#gTopicSub [data-sub]:nth-child(1)",
+      "timeoutMs": 6000
+    },
+    {
+      "do": "click",
+      "selector": "#gTopicSub [data-sub]:nth-child(1)"
+    },
+    {
+      "do": "click",
+      "selector": "#grpSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#screen-comm",
+      "text": "목표 완주 크루",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -155,7 +155,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div class="sanctuary-top-bar" id="sanctuaryTopBar">
         <h1 class="sanctuary-app-title">아워골</h1>
         <div class="sanctuary-top-right">
-          <button type="button" class="sanctuary-bell-btn" id="sanctuaryBellBtn" aria-label="알림" title="알림 확인" onclick="if(typeof openNotifyModal==='function')openNotifyModal();">
+          <button type="button" class="sanctuary-bell-btn" id="sanctuaryBellBtn" aria-label="알림" title="알림 확인" onclick="if(typeof window.openNotificationCenterModal==='function')window.openNotificationCenterModal();">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
             <span class="sanctuary-bell-dot"></span>
           </button>
@@ -2245,22 +2245,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/goal-detail-events.js"></script>
 <script src="js/tabs/goals/render.js"></script>
 <script src="js/tabs/goals/result-modal.js"></script>
-<script src="js/tabs/goals/team-goal-modals.js"></script><script src="js/tabs/goals/template-quick-import.js"></script><script src="js/tabs/goals/result-input.js"></script><script src="js/tabs/goals/goal-export.js"></script>
-<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/index.js"></script>
+<script src="js/tabs/goals/team-goal-modals.js"></script><script src="js/tabs/goals/template-quick-import.js"></script><script src="js/tabs/goals/result-input.js"></script><script src="js/tabs/goals/prompt-encyclopedia.js"></script><script src="js/tabs/goals/notion-record-convert.js"></script><script src="js/tabs/goals/goal-math.js"></script><script src="js/tabs/goals/goal-export.js"></script>
+<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
 <script src="js/tabs/records/sub-timeline.js"></script>
 <script src="js/tabs/records/sub-timer.js"></script>
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/checkin-helpers.js"></script><script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
 <script src="js/tabs/calendar/sub-photo-diary.js"></script>
 <script src="js/tabs/calendar/day-detail.js"></script>
 <script src="js/tabs/calendar/natural-schedule.js"></script>
-<script src="js/tabs/calendar/render.js"></script>
+<script src="js/tabs/calendar/schedule-done-toggle.js"></script><script src="js/tabs/calendar/render.js"></script>
 <script src="js/tabs/calendar/lockscreen-image.js"></script><script src="js/tabs/calendar/day-bg-picker.js"></script><script src="js/tabs/calendar/lockscreen-live.js"></script><script src="js/tabs/calendar/day-edit-hub.js"></script><script src="js/tabs/calendar/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Community Mega-Block & Sub-Blocks (소통 커뮤니티 메가블록 및 소블록 외판) -->
 <script src="js/tabs/comm/sub-feed.js"></script>
@@ -2268,7 +2268,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/comm/sub-crew.js"></script>
 <script src="js/tabs/comm/feed-comments.js"></script>
 <script src="js/tabs/comm/render.js"></script>
-<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/challenge-room.js"></script><script src="js/tabs/comm/first-cheer.js"></script><script src="js/tabs/comm/feed-post-preview.js"></script><script src="js/tabs/comm/story-canvas.js"></script><script src="js/tabs/comm/index.js"></script>
+<script src="js/tabs/comm/story-card-send.js"></script><script src="js/tabs/comm/challenge-room.js"></script><script src="js/tabs/comm/first-cheer.js"></script><script src="js/tabs/comm/feed-post-preview.js"></script><script src="js/tabs/comm/story-canvas.js"></script><script src="js/tabs/comm/sample-data.js"></script><script src="js/tabs/comm/share-card.js"></script><script src="js/tabs/comm/feed-posts-sync.js"></script><script src="js/tabs/comm/manito-basics.js"></script><script src="js/tabs/comm/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Settings Mega-Block & Sub-Blocks (설정 메가블록 및 소블록 외판) -->
 <script src="js/tabs/settings/sub-profile.js"></script>
 <script src="js/tabs/settings/sub-security.js"></script>
@@ -2276,8 +2276,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/settings/sub-notify.js"></script>
 <script src="js/tabs/settings/sub-integrations.js"></script>
 <script src="js/tabs/settings/sub-data.js"></script>
-<script src="js/tabs/settings/theme-apply.js"></script><script src="js/tabs/settings/avatar-greeting.js"></script><script src="js/tabs/settings/account-entry.js"></script><script src="js/tabs/settings/guest-backup-nudge.js"></script><script src="js/tabs/settings/notion-sync.js"></script><script src="js/tabs/settings/comm-tour.js"></script><script src="js/tabs/settings/render.js"></script>
-<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/index.js"></script>
+<script src="js/tabs/settings/theme-apply.js"></script><script src="js/tabs/settings/avatar-greeting.js"></script><script src="js/tabs/settings/account-entry.js"></script><script src="js/tabs/settings/guest-backup-nudge.js"></script><script src="js/tabs/settings/notion-sync.js"></script><script src="js/tabs/settings/comm-tour.js"></script><script src="js/tabs/settings/login-devices.js"></script><script src="js/tabs/settings/app-lock-pin.js"></script><script src="js/tabs/settings/dev-debug-gate.js"></script><script src="js/tabs/settings/guest-migration.js"></script><script src="js/tabs/settings/tab-guide.js"></script><script src="js/tabs/settings/onboarding.js"></script><script src="js/tabs/settings/app-defaults.js"></script><script src="js/tabs/settings/render.js"></script>
+<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -2673,6 +2673,63 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get resizeImageToDataUrl(){ return resizeImageToDataUrl; }
   });
 
+  /* ============ [#TASK-ES-448] 인라인 스크립트 세포화 P2-2 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀) ============
+     ① 가져오기: js/tabs/comm/sample-data.js · js/tabs/goals/topic-region-picker.js · js/tabs/comm/share-card.js · js/tabs/comm/feed-posts-sync.js · js/tabs/goals/team-state.js · js/tabs/goals/team-goal-prompt.js · js/tabs/comm/manito-basics.js · js/tabs/settings/notify-soft-ask.js · js/tabs/settings/support-modals.js · js/tabs/settings/widget-settings-modal.js · js/tabs/records/record-card-wire.js · js/tabs/records/table-stopwatch.js 로 옮긴 이름 중 이 스코프에서 쓰는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). */
+  var SIM_PERSONAS = _commKit.SIM_PERSONAS;
+  var MOCK_PEOPLE = _commKit.MOCK_PEOPLE;
+  var daysFromNow = _commKit.daysFromNow;
+  var EXTERNAL_DATA = _commKit.EXTERNAL_DATA;
+  var CREATOR_TEMPLATES = _commKit.CREATOR_TEMPLATES;
+  var VISIBILITY_LABELS = _commKit.VISIBILITY_LABELS;
+  var TOPICS = _goalsKit.TOPICS;
+  var topicLabel = _goalsKit.topicLabel;
+  var topicPill = _goalsKit.topicPill;
+  var regionPickerHtml = _goalsKit.regionPickerHtml;
+  var wireRegionPicker = _goalsKit.wireRegionPicker;
+  var categoryPickerHtml = _goalsKit.categoryPickerHtml;
+  var wireCategoryPicker = _goalsKit.wireCategoryPicker;
+  var SHARE_PLATFORMS = _commKit.SHARE_PLATFORMS;
+  var drawShareWatermark = _commKit.drawShareWatermark;
+  var buildInviteLinkSuffix = _commKit.buildInviteLinkSuffix;
+  var scRoundRect = _commKit.scRoundRect;
+  var scWrapLines = _commKit.scWrapLines;
+  var scDrawLines = _commKit.scDrawLines;
+  var generateShareImage = _commKit.generateShareImage;
+  var ensureFeedPostsLoaded = _commKit.ensureFeedPostsLoaded;
+  var setupFeedPostsRealtime = _commKit.setupFeedPostsRealtime;
+  var groupState = _goalsKit.groupState;
+  var groupCheckedToday = _goalsKit.groupCheckedToday;
+  var groupStreak = _goalsKit.groupStreak;
+  var promptNewTeamGoal = _goalsKit.promptNewTeamGoal;
+  var MANITO_EMOJI = _commKit.MANITO_EMOJI;
+  var MANITO_WELCOME_STAMPS = _commKit.MANITO_WELCOME_STAMPS;
+  var MANITO_STAMPS = _commKit.MANITO_STAMPS;
+  var sendManitoWelcomeStamp = _commKit.sendManitoWelcomeStamp;
+  var hashStr = _commKit.hashStr;
+  var manitoState = _commKit.manitoState;
+  var manitoMajors = _commKit.manitoMajors;
+  var genAnonName = _commKit.genAnonName;
+  var openNotificationSoftAskModal = _settingsKit.openNotificationSoftAskModal;
+  var openCustomerInquiryModal = _settingsKit.openCustomerInquiryModal;
+  var openItemReportModal = _settingsKit.openItemReportModal;
+  var openFaqModal = _settingsKit.openFaqModal;
+  var openWidgetSettingsModal = _settingsKit.openWidgetSettingsModal;
+  var wireRecordCards = _recordsKit.wireRecordCards;
+  var playTimerBeep = _recordsKit.playTimerBeep;
+  var renderStopwatchWidgetHtml = _recordsKit.renderStopwatchWidgetHtml;
+  var renderLapRowsHtml = _recordsKit.renderLapRowsHtml;
+  window.OurgoalAppScope.expose('index.html', {
+    get FEED_POSTS_CACHE(){ return FEED_POSTS_CACHE; }, set FEED_POSTS_CACHE(v){ FEED_POSTS_CACHE = v; },
+    get MOCK_GROUPS(){ return MOCK_GROUPS; },
+    get daysFromNow(){ return daysFromNow; },
+    get getFeedComments(){ return getFeedComments; },
+    get openRecordModal(){ return openRecordModal; },
+    get openTemplateEncyclopediaModal(){ return openTemplateEncyclopediaModal; },
+    get openThemePickerModal(){ return openThemePickerModal; },
+    get setFeedComments(){ return setFeedComments; }
+  });
+
   try{
     var _initTh = localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary';
     if(_initTh === 'dark') _initTh = 'black';
@@ -2715,6 +2772,44 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get maybeGrantStreakFreeze(){ return maybeGrantStreakFreeze; },
     get openAvatarLevelUpModal(){ return openAvatarLevelUpModal; },
     get startOAuthLogin(){ return startOAuthLogin; }
+  });
+
+  /* ============ [#TASK-ES-442] 인라인 스크립트 세포화 P0 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 과 같은 틀) ============
+     ① 가져오기: js/tabs/settings/login-devices.js · js/tabs/settings/app-lock-pin.js · js/tabs/settings/dev-debug-gate.js · js/tabs/settings/guest-migration.js · js/tabs/settings/tab-guide.js · js/tabs/settings/onboarding.js · js/tabs/goals/prompt-encyclopedia.js · js/tabs/goals/notion-record-convert.js · js/tabs/calendar/schedule-done-toggle.js · js/tabs/goals/goal-math.js · js/tabs/settings/app-defaults.js 로 옮긴 선언 중 이 스코프에서 쓰는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
+  var getRegisteredDevices = _settingsKit.getRegisteredDevices;
+  var renderActiveDevicesList = _settingsKit.renderActiveDevicesList;
+  var openLogoutOtherDevicesConfirmModal = _settingsKit.openLogoutOtherDevicesConfirmModal;
+  var isHashedAppLockPin = _settingsKit.isHashedAppLockPin;
+  var verifyAppLockPin = _settingsKit.verifyAppLockPin;
+  var openTwoFactorSetupModal = _settingsKit.openTwoFactorSetupModal;
+  var openTwoFactorDisableModal = _settingsKit.openTwoFactorDisableModal;
+  var challengeTwoFactorModal = _settingsKit.challengeTwoFactorModal;
+  var initDevDebugButtons = _settingsKit.initDevDebugButtons;
+  var migrateGuestDataToUser = _settingsKit.migrateGuestDataToUser;
+  var openTabGuideHubModal = _settingsKit.openTabGuideHubModal;
+  var startOnboarding = _settingsKit.startOnboarding;
+  var renderPromptEncyclopediaHtml = _goalsKit.renderPromptEncyclopediaHtml;
+  var wirePromptEncyclopediaEvents = _goalsKit.wirePromptEncyclopediaEvents;
+  var convertTextToNotionDbRecord = _goalsKit.convertTextToNotionDbRecord;
+  var toggleScheduleDone = _calendarKit.toggleScheduleDone;
+  var goalProgress = _goalsKit.goalProgress;
+  var msCounts = _goalsKit.msCounts;
+  var resultPct = _goalsKit.resultPct;
+  var defaultSettings = _settingsKit.defaultSettings;
+  window.OurgoalAppScope.expose('index.html', {
+    get APP_LOCK_PIN_PREFIX(){ return APP_LOCK_PIN_PREFIX; },
+    get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; },
+    get _promptEncyclopediaOpen(){ return _promptEncyclopediaOpen; }, set _promptEncyclopediaOpen(v){ _promptEncyclopediaOpen = v; },
+    get _promptTabState(){ return _promptTabState; }, set _promptTabState(v){ _promptTabState = v; },
+    get enterApp(){ return enterApp; },
+    get gcalEventsKey(){ return gcalEventsKey; },
+    get getDeviceId(){ return getDeviceId; },
+    get performLogout(){ return performLogout; },
+    get purgeLegacySharedGcalKeys(){ return purgeLegacySharedGcalKeys; },
+    get renderFirstCheckinTutorialBanner(){ return renderFirstCheckinTutorialBanner; },
+    get renderSettingsScreen(){ return renderSettingsScreen; },
+    get setDeviceLoginTime(){ return setDeviceLoginTime; }
   });
 
   /* ============ Supabase ============ */
@@ -3006,24 +3101,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.showUndoPrivacyToast = showUndoPrivacyToast;
   }
 
-  /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
-  function defaultSettings(){
-    return {
-      checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"gemini", geminiKey:"", geminiModel:"gemini-3.1-flash-lite",
-      notionSync:false, notionWebhookUrl:"", notionApiKey:"", notionDatabaseId:"", notionAutoPush:false, autoUpdateSuggest:true, virtualCheerEnabled:false,
-      gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} },
-      googleCalendarConnected:false, googleCalendarEmail:"", gcalAutoSync:true,
-      privacy: { goals:"private", calendar:"private", records:"private", stats:"private" },
-      theme: "focus-sanctuary", fontSize: "normal", dataSaver: false, twoFactorAuth: false,
-      quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00",
-      notifTeamVerify: true, notifCheers: true, notifDday: true, notifStreak: true,
-      onlineStatus: true, customSchedules: [],
-      customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, feedComments:{}, myFeedPosts:[], contentReports:{}, todayMissions:{},
-      streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] },
-      highContrast: false, challenges: [],
-      hasSeenGuide:false, subscription:{ isPro:true, plan:'free_all', expiresAt:null, billingKey:null }, maxBaseCrafts:3, bonusCraftCredits:0, lastStreakAwarded:0
-    };
-  }
+  /* [#TASK-ES-442] defaultSettings → js/tabs/settings/app-defaults.js 로 옮김(인라인 스크립트 세포화 P0) */
   /* ============ 8대 화면 스타일 (테마) 정의 ============ */
   var THEMES = [
     { id: 'focus-sanctuary', name: '성소 (Sanctuary)', label: '포커스 (Focus)', desc: '오로라 에메랄드 다크 테마', preview: '#0B0F17', metaColor: '#0B0F17' },
@@ -3867,194 +3945,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   
-  /* ============ [70] 활성 로그인 기기 목록 실시간 렌더링 & 개별 세션 로그아웃 ============ */
-  /* [#TASK-ES-346 SET-01] 아워골은 다른 기기의 접속 목록·위치를 수집하지 않는다.
-     이 목록은 이 기기의 localStorage 에만 있으므로 "지금 쓰는 이 기기" 한 대만 사실대로 보여 준다.
-     예전 판이 처음 열 때 만들어 저장해 둔 실재하지 않는 기기 2대(와 위치 문구)는 읽을 때 이 기기 한 대로 정리한다. */
-  function getRegisteredDevices(){
-    var uidVal = (state.profile && state.profile.id) || 'guest';
-    var myDevId = getDeviceId();
-    var key = 'ourgoal_registered_devices_' + uidVal;
-    var raw = null;
-    try { raw = JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){}
-    var ua = navigator.userAgent;
-    var os = /iPhone|iPad/i.test(ua) ? 'iOS' : /Android/i.test(ua) ? 'Android' : /Macintosh/i.test(ua) ? 'macOS' : 'Windows';
-    var browser = /Chrome/i.test(ua) ? 'Chrome' : /Safari/i.test(ua) ? 'Safari' : /Firefox/i.test(ua) ? 'Firefox' : 'Browser';
-    var mine = null;
-    if(Array.isArray(raw)){
-      raw.forEach(function(d){ if(d && d.id === myDevId) mine = d; });
-    }
-    var cleaned = [{
-      id: myDevId,
-      name: os + ' ' + browser,
-      platform: os,
-      isCurrent: true,
-      firstLogin: (mine && mine.firstLogin) || Date.now(),
-      lastActive: Date.now(),
-      ipHint: null, /* 위치·IP 는 수집하지 않는다 */
-      revoked: false
-    }];
-    try { localStorage.setItem(key, JSON.stringify(cleaned)); } catch(e){}
-    return cleaned;
-  }
-
-  function renderActiveDevicesList(){
-    var container = document.getElementById('activeDevicesContainer');
-    var badge = document.getElementById('activeDeviceCountBadge');
-    if(!container) return;
-    var devices = getRegisteredDevices();
-    if(badge){
-      /* 다른 기기 수는 알 수 없으므로 기기 수를 지어내지 않는다 */
-      badge.textContent = '이 기기만 표시';
-    }
-
-    container.innerHTML = devices.map(function(d){
-      var isRevoked = !!d.revoked;
-      var timeAgo = d.isCurrent ? '지금 접속 중' : (isRevoked ? (d.revokedAt ? '원격 차단됨 (' + new Date(d.revokedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ')' : '원격 로그아웃됨') : (Math.round((Date.now() - d.lastActive) / 3600000) + '시간 전 활동'));
-      var statusBadge = d.isCurrent
-        ? '<span class="dday-pill" style="font-size:.65rem;background:rgba(99,102,241,0.15);color:var(--brand-strong);border:1px solid rgba(99,102,241,0.3);font-weight:700;">🟢 현재 기기</span>'
-        : (isRevoked
-            ? '<span class="dday-pill" style="font-size:.65rem;background:rgba(235,87,87,0.15);color:var(--red);border:1px solid rgba(235,87,87,0.3);font-weight:700;">🔴 원격 차단됨</span>'
-            : '<span class="dday-pill" style="font-size:.65rem;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);font-weight:700;">🟢 정상 연결 중</span>');
-
-      var cardStyle = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;font-size:.8125rem;transition:all .2s ease;' +
-        (d.isCurrent
-          ? 'background:var(--card2);border:1.5px solid var(--brand);'
-          : (isRevoked
-              ? 'background:var(--surface-2);border:1px dashed var(--rule);opacity:.6;'
-              : 'background:var(--card);border:1px solid var(--rule);'));
-
-      return '<div class="active-device-card" id="deviceCard_' + escapeHtml(d.id) + '" style="' + cardStyle + '">' +
-        '<div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">' +
-          '<span style="font-size:1.3rem;">' + (d.platform==='Mobile'?'📱':(d.platform==='Tablet'?'📟':'💻')) + '</span>' +
-          '<div style="min-width:0;flex:1;">' +
-            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-              '<span style="font-weight:700;color:var(--ink);">' + escapeHtml(d.name) + '</span>' +
-              statusBadge +
-            '</div>' +
-            '<div class="faint" style="font-size:.72rem;margin-top:2px;">' + escapeHtml(d.ipHint || '위치 정보 수집 안 함') + ' · ' + timeAgo + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div>' +
-          (d.isCurrent
-            ? '<span class="faint" style="font-size:.72rem;color:var(--brand);font-weight:700;">(이 기기)</span>'
-            : (isRevoked
-                ? '<button class="btn btn-ghost btn-xs" type="button" disabled style="font-size:.72rem;opacity:.5;border-color:var(--rule);">차단 완료</button>'
-                : '<button class="btn btn-ghost btn-xs btn-revoke-device" data-devid="' + escapeHtml(d.id) + '" data-devname="' + escapeHtml(d.name) + '" type="button" style="font-size:.72rem;color:var(--red);border-color:rgba(235,87,87,0.3);font-weight:700;">원격 로그아웃</button>')) +
-        '</div>' +
-      '</div>';
-    }).join('');
-
-    container.querySelectorAll('.btn-revoke-device').forEach(function(btn){
-      btn.addEventListener('click', async function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        var devId = btn.dataset.devid;
-        var devName = btn.dataset.devname || '기기';
-        /* [#TASK-ES-346 SET-01] 기기 한 대만 골라 끊는 서버 기능은 없다(예전 판의 방송은 받는 쪽이 없었다).
-           끊었다고 말하거나 '차단됨'으로 표시하지 않고, 실제로 동작하는 일괄 로그아웃으로 안내한다. */
-        toast('‘' + devName + '’ 한 대만 골라 로그아웃하는 기능은 아직 없어요. "다른 모든 기기에서 로그아웃"을 이용해 주세요.');
-        if(typeof openLogoutOtherDevicesConfirmModal === 'function') openLogoutOtherDevicesConfirmModal();
-      });
-    });
-  }
+  /* [#TASK-ES-442] getRegisteredDevices · renderActiveDevicesList → js/tabs/settings/login-devices.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* ============ [70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달 ============ */
-  function openLogoutOtherDevicesConfirmModal(){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    /* [#TASK-ES-346 SET-01] 다른 기기 목록은 수집하지 않으므로 목록으로 막지 않는다.
-       실제 동작은 Supabase 의 sb.auth.signOut({ scope: 'others' }) — 이 기기를 뺀 모든 로그인 세션을 서버에서 해제한다. */
-    if(!state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0){
-      toast('게스트 체험 모드는 로그인 세션이 없어 다른 기기에서 로그아웃할 것이 없어요.');
-      return;
-    }
-
-    var modalHtml = 
-      '<h3>📱 다른 모든 기기 원격 로그아웃 확인</h3>' +
-      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">지금 쓰는 이 기기를 뺀, 이 계정으로 로그인된 모든 기기의 로그인을 해제해요. 아워골은 다른 기기 목록을 수집하지 않아 몇 대가 해제될지는 보여 드릴 수 없어요.</p>' +
-      '<div style="padding:10px 12px;background:rgba(235,87,87,0.06);border:1px dashed rgba(235,87,87,0.3);border-radius:10px;margin-bottom:14px;font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
-        '⚠️ 해제된 기기에서 다시 쓰려면 다시 로그인해야 해요. 그 기기에 이미 열려 있는 화면은 다음에 서버와 연결을 확인할 때 로그아웃돼요.' +
-      '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="btnCancelLogoutOtherModal" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnConfirmLogoutOtherModal" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">다른 기기 모두 로그아웃</button>' +
-      '</div>';
-
-    openModal(modalHtml, function(sheet){
-      var btnCancel = sheet.querySelector('#btnCancelLogoutOtherModal');
-      var btnConfirm = sheet.querySelector('#btnConfirmLogoutOtherModal');
-      if(btnCancel){
-        btnCancel.addEventListener('click', function(){ closeModal(); });
-      }
-      if(btnConfirm){
-        btnConfirm.addEventListener('click', async function(){
-          btnConfirm.disabled = true;
-          btnConfirm.textContent = '원격 로그아웃 처리 중…';
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-
-          var myDevId = getDeviceId();
-          var nowTs = Date.now();
-          var uidVal = (state.profile && state.profile.id) || 'guest';
-
-          // 1. (삭제됨 #TASK-ES-346) 이 기기에 저장된 가짜 기기 목록에 '차단됨'을 찍던 단계 — 다른 기기 목록은 수집하지 않는다.
-
-          // 2. Supabase Auth others 세션 무효화 — 실패하면 '로그아웃했다'고 말하지 않는다
-          var signOutOthersError = null;
-          try {
-            var soRes = await sb.auth.signOut({ scope: 'others' });
-            if(soRes && soRes.error) signOutOthersError = soRes.error;
-          } catch(e){ signOutOthersError = e; }
-          if(signOutOthersError){
-            console.warn('signOut others error:', signOutOthersError);
-            btnConfirm.disabled = false;
-            btnConfirm.textContent = '다른 기기 모두 로그아웃';
-            toast('다른 기기 로그아웃에 실패했어요. 네트워크를 확인하고 다시 시도해 주세요.');
-            return;
-          }
-
-          // 3. Auth 메타데이터 갱신
-          try {
-            await sb.auth.updateUser({
-              data: {
-                remote_logout_at: nowTs,
-                remote_logout_device_id: myDevId
-              }
-            });
-          } catch(e){ console.warn('updateUser metadata warning:', e); }
-
-          // 4. 프로필 설정 저장 및 현재 기기 로그인 시간 갱신
-          if(state.profile && state.profile.settings){
-            state.profile.settings.remoteLogoutTimestamp = nowTs;
-            state.profile.settings.remoteLogoutDeviceId = myDevId;
-            setDeviceLoginTime(nowTs);
-            try { await saveProfile(); } catch(e){}
-          }
-
-          // 5. 활성 접속 기기에 실시간 브로드캐스트 전송
-          try {
-            if(USER_SESSION_CHANNEL){
-              await USER_SESSION_CHANNEL.send({
-                type: 'broadcast',
-                event: 'remote_logout',
-                payload: {
-                  keptDeviceId: myDevId,
-                  timestamp: nowTs,
-                  userId: (state.profile && state.profile.id) || ''
-                }
-              });
-            }
-          } catch(e){}
-
-          // 6. 로컬스토리지 스토리지 이벤트 전송
-          try { localStorage.setItem('ourgoal_remote_logout_trigger', nowTs + '_' + myDevId); } catch(e){}
-
-          // 7. 실시간 화면 갱신 (끄면 꺼지는 시각적 피드백 보장!)
-          closeModal();
-          renderActiveDevicesList();
-          toast('이 기기를 뺀 모든 기기의 로그인을 해제했어요.');
-        });
-      }
-    });
-  }
+  /* [#TASK-ES-442] openLogoutOtherDevicesConfirmModal → js/tabs/settings/login-devices.js 로 옮김(인라인 스크립트 세포화 P0) */
   if(typeof window !== 'undefined'){ window.openLogoutOtherDevicesConfirmModal = openLogoutOtherDevicesConfirmModal; }
 
   /* ============ [71] 앱 잠금 PIN (이 기기) — 설정·해제·앱 진입 확인 ============ */
@@ -4064,226 +3958,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      소금 = 설정 당시 uid + 무작위 16바이트 → 게스트→회원 이전 뒤에도 같은 값으로 검증된다.
      예전 판이 평문 4자리로 저장한 PIN 은 첫 검증 성공 때 해시로 바꿔 저장한다(잠김 방지). */
   var APP_LOCK_PIN_PREFIX = 'sha256v1$';
-  function isHashedAppLockPin(v){
-    return typeof v === 'string' && v.indexOf(APP_LOCK_PIN_PREFIX) === 0;
-  }
-  function appLockCryptoAvailable(){
-    return !!(window.crypto && window.crypto.subtle && typeof window.crypto.subtle.digest === 'function' && typeof TextEncoder === 'function');
-  }
-  async function sha256HexAppLock(text){
-    var buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-    return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
-  }
-  async function hashAppLockPin(pin, salt){
-    if(!salt){
-      var rnd = new Uint8Array(16);
-      window.crypto.getRandomValues(rnd);
-      var uidPart = (state.profile && state.profile.id) || 'guest';
-      salt = uidPart + ':' + Array.prototype.map.call(rnd, function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
-    }
-    var hex = await sha256HexAppLock(salt + '|' + String(pin));
-    return APP_LOCK_PIN_PREFIX + salt + '$' + hex;
-  }
-  /* 입력한 PIN 이 저장값과 맞는지 확인한다. 평문 저장값이 맞으면 해시로 이전해 저장한다. */
-  async function verifyAppLockPin(entered){
-    var settings = (state.profile && state.profile.settings) || {};
-    var stored = settings.twoFactorPin || '';
-    if(!stored || !/^[0-9]{4}$/.test(String(entered || ''))) return false;
-    if(isHashedAppLockPin(stored)){
-      if(!appLockCryptoAvailable()) return false;
-      var body = stored.slice(APP_LOCK_PIN_PREFIX.length);
-      var cut = body.lastIndexOf('$');
-      if(cut < 0) return false;
-      var salt = body.slice(0, cut);
-      var recomputed = await hashAppLockPin(entered, salt);
-      return recomputed === stored;
-    }
-    /* 예전 평문 저장값 */
-    if(String(entered) !== String(stored)) return false;
-    if(appLockCryptoAvailable()){
-      try {
-        settings.twoFactorPin = await hashAppLockPin(entered);
-        await saveProfile();
-      } catch(e){ console.warn('[app-lock] 평문 PIN 해시 이전 실패(다음 검증 때 다시 시도):', e); }
-    }
-    return true;
-  }
+  /* [#TASK-ES-442] isHashedAppLockPin · appLockCryptoAvailable · sha256HexAppLock · hashAppLockPin · verifyAppLockPin → js/tabs/settings/app-lock-pin.js 로 옮김(인라인 스크립트 세포화 P0) */
   if(typeof window !== 'undefined'){
     window.verifyAppLockPin = verifyAppLockPin;
     window.isHashedAppLockPin = isHashedAppLockPin;
   }
 
-  function openTwoFactorSetupModal(){
-    var settings = (state.profile && state.profile.settings) || {};
-    var isEnabled = !!(settings.twoFactorAuth && settings.twoFactorPin);
-
-    openModal(
-      '<h3>🔐 앱 잠금 PIN (이 기기)</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">이 기기에서 아워골을 새로 열 때 물어볼 4자리 PIN 을 정해요.</p>' +
-      '<div class="field">' +
-        '<label>4자리 PIN</label>' +
-        '<input type="password" id="twoFaPinInput" maxlength="4" placeholder="숫자 4자리 입력" pattern="[0-9]*" inputmode="numeric" style="letter-spacing:6px;font-size:1.25rem;text-align:center;font-weight:700;">' +
-      '</div>' +
-      '<div class="field">' +
-        '<label>PIN 확인</label>' +
-        '<input type="password" id="twoFaPinConfirm" maxlength="4" placeholder="다시 한 번 입력" pattern="[0-9]*" inputmode="numeric" style="letter-spacing:6px;font-size:1.25rem;text-align:center;font-weight:700;">' +
-      '</div>' +
-      '<div style="margin:10px 0;padding:10px 12px;background:var(--card2);border-radius:10px;font-size:.78125rem;color:var(--ink-soft);line-height:1.45;">' +
-        '※ 이 기기에서만 적용돼요. 브라우저(앱)를 닫았다가 다시 열면 PIN 을 물어봐요. 다른 기기에는 적용되지 않고, 로그인 비밀번호나 서버 2단계 인증을 대신하지 않아요. PIN 은 원문이 아닌 해시값으로만 이 기기에 저장돼요.' +
-      '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="btnCancel2Fa" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnSave2Fa" type="button">' + (isEnabled ? 'PIN 변경 저장' : '앱 잠금 켜기') + '</button>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#btnCancel2Fa').addEventListener('click', closeModal);
-        sheet.querySelector('#btnSave2Fa').addEventListener('click', async function(){
-          var pin1 = sheet.querySelector('#twoFaPinInput').value.trim();
-          var pin2 = sheet.querySelector('#twoFaPinConfirm').value.trim();
-          if(!/^[0-9]{4}$/.test(pin1)){
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('PIN 은 숫자 4자리로 입력해주세요.');
-            return;
-          }
-          if(pin1 !== pin2){
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('PIN 이 일치하지 않습니다.');
-            return;
-          }
-          if(!appLockCryptoAvailable()){
-            toast('이 환경에서는 PIN 을 안전하게(해시로) 저장할 수 없어 앱 잠금을 켤 수 없어요.');
-            return;
-          }
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-          if(!state.profile.settings) state.profile.settings = {};
-          state.profile.settings.twoFactorPin = await hashAppLockPin(pin1);
-          state.profile.settings.twoFactorAuth = true;
-          sessionStorage.setItem('ourgoal_2fa_verified', 'true');
-          await saveProfile();
-          closeModal();
-          renderSettingsScreen();
-          toast('이 기기에 앱 잠금 PIN 을 설정했어요. 🔐');
-        });
-      }
-    );
-  }
-
-  function openTwoFactorDisableModal(onSuccess){
-    var settings = (state.profile && state.profile.settings) || {};
-
-    openModal(
-      '<h3>🔐 앱 잠금 PIN 끄기</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">앱 잠금을 끄려면 지금 설정된 4자리 PIN 을 입력해주세요.</p>' +
-      '<div class="field">' +
-        '<label>현재 PIN</label>' +
-        '<input type="password" id="disable2FaPinInput" maxlength="4" placeholder="••••" pattern="[0-9]*" inputmode="numeric" autofocus style="letter-spacing:8px;font-size:1.4rem;text-align:center;font-weight:700;">' +
-      '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="btnCancelDisable2Fa" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnConfirmDisable2Fa" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">앱 잠금 끄기</button>' +
-      '</div>',
-      function(sheet){
-        var pinInp = sheet.querySelector('#disable2FaPinInput');
-        sheet.querySelector('#btnCancelDisable2Fa').addEventListener('click', closeModal);
-        sheet.querySelector('#btnConfirmDisable2Fa').addEventListener('click', async function(){
-          var entered = pinInp ? pinInp.value.trim() : '';
-          var ok = settings.twoFactorPin ? await verifyAppLockPin(entered) : true;
-          if(!ok){
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('PIN 이 일치하지 않습니다.');
-            if(pinInp){
-              pinInp.value = '';
-              pinInp.focus();
-            }
-            return;
-          }
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-          settings.twoFactorAuth = false;
-          settings.twoFactorPin = '';
-          sessionStorage.removeItem('ourgoal_2fa_verified');
-          await saveProfile();
-          closeModal();
-          renderSettingsScreen();
-          toast('이 기기의 앱 잠금 PIN 을 껐어요.');
-          if(onSuccess) onSuccess();
-        });
-      }
-    );
-  }
-
-  function challengeTwoFactorModal(onSuccess){
-    var settings = (state.profile && state.profile.settings) || {};
-    if(!settings.twoFactorAuth || !settings.twoFactorPin){
-      if(onSuccess) onSuccess();
-      return;
-    }
-    if(sessionStorage.getItem('ourgoal_2fa_verified') === 'true'){
-      if(onSuccess) onSuccess();
-      return;
-    }
-
-    openModal(
-      '<h3>🔐 앱 잠금 PIN</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">이 기기에 설정하신 4자리 앱 잠금 PIN 을 입력해주세요.</p>' +
-      '<div class="field">' +
-        '<input type="password" id="challenge2FaPin" maxlength="4" placeholder="••••" pattern="[0-9]*" inputmode="numeric" autofocus style="letter-spacing:10px;font-size:1.6rem;text-align:center;font-weight:700;margin:10px 0;">' +
-      '</div>' +
-      '<div class="modal-actions" style="display:flex;gap:8px;">' +
-        '<button class="btn btn-ghost" id="btn2FaLogout" type="button" style="flex:1;">로그아웃</button>' +
-        '<button class="btn btn-primary" id="btnVerify2FaChallenge" type="button" style="flex:2;font-weight:700;">잠금 해제</button>' +
-      '</div>',
-      function(sheet){
-        var pinInput = sheet.querySelector('#challenge2FaPin');
-        var verifyBtn = sheet.querySelector('#btnVerify2FaChallenge');
-        var logoutBtn = sheet.querySelector('#btn2FaLogout');
-        var verifying = false;
-
-        if(logoutBtn){
-          logoutBtn.addEventListener('click', function(){
-            closeModal();
-            performLogout();
-          });
-        }
-
-        async function doVerify(){
-          if(verifying) return;
-          verifying = true;
-          var entered = pinInput ? pinInput.value.trim() : '';
-          var ok = false;
-          try { ok = await verifyAppLockPin(entered); } catch(e){ ok = false; }
-          verifying = false;
-          if(ok){
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            sessionStorage.setItem('ourgoal_2fa_verified', 'true');
-            closeModal();
-            toast('앱 잠금을 풀었어요. 환영합니다! ✨');
-            if(onSuccess) onSuccess();
-          } else {
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('PIN 이 올바르지 않습니다.');
-            if(pinInput){
-              pinInput.value = '';
-              pinInput.focus();
-            }
-          }
-        }
-
-        if(verifyBtn){
-          verifyBtn.addEventListener('click', doVerify);
-        }
-        if(pinInput){
-          pinInput.addEventListener('keydown', function(e){
-            if(e.key === 'Enter') doVerify();
-          });
-          pinInput.addEventListener('input', function(){
-            if(pinInput.value.length === 4){
-              setTimeout(doVerify, 150);
-            }
-          });
-        }
-      }
-    );
-  }
+  /* [#TASK-ES-442] openTwoFactorSetupModal · openTwoFactorDisableModal · challengeTwoFactorModal → js/tabs/settings/app-lock-pin.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   if(typeof window !== 'undefined'){
     window.openTwoFactorSetupModal = openTwoFactorSetupModal;
@@ -4296,467 +3977,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _promptTabState = 'real';
   var _promptEncyclopediaOpen = false;
 
-  function getUserPrompts(){
-    if(!state.profile) return [];
-    if(!Array.isArray(state.profile.userPrompts)){
-      try {
-        var cached = localStorage.getItem('ourgoal_shared_prompts');
-        state.profile.userPrompts = cached ? JSON.parse(cached) : [];
-      } catch(e){
-        state.profile.userPrompts = [];
-      }
-    }
-    return state.profile.userPrompts;
-  }
-
-  function getLikedPromptIds(){
-    if(!state.profile) return [];
-    if(!Array.isArray(state.profile.likedPromptIds)){
-      try {
-        var cached = localStorage.getItem('ourgoal_liked_prompt_ids');
-        state.profile.likedPromptIds = cached ? JSON.parse(cached) : [];
-      } catch(e){
-        state.profile.likedPromptIds = [];
-      }
-    }
-    return state.profile.likedPromptIds;
-  }
-
-  function getPromptLikesMap(){
-    if(!state.profile) return {};
-    if(!state.profile.promptLikesMap || typeof state.profile.promptLikesMap !== 'object'){
-      state.profile.promptLikesMap = {};
-    }
-    return state.profile.promptLikesMap;
-  }
-
-  function openAddUserPromptModal(){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    var modalHtml =
-      '<div style="padding:4px 0;">' +
-        '<div class="faint" style="font-size:.78rem;margin-bottom:12px;">내가 직접 외부 AI에 넣어 효과를 본 데이터분석 프롬프트를 공유해주세요.</div>' +
-        '<div style="margin-bottom:10px;">' +
-          '<label style="display:block;font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:4px;">프롬프트 제목 <span style="color:var(--danger);">*</span></label>' +
-          '<input type="text" id="newUserPromptTitle" class="input" placeholder="예: [러닝/체중] 주간 페이스 및 칼로리 상관분석" style="width:100%;box-sizing:border-box;font-size:.84rem;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);">' +
-        '</div>' +
-        '<div style="margin-bottom:10px;">' +
-          '<label style="display:block;font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:4px;">대상 목표 분류</label>' +
-          '<select id="newUserPromptCategory" class="input" style="width:100%;box-sizing:border-box;font-size:.84rem;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);">' +
-            '<option value="운동/건강">🏃 운동/건강</option>' +
-            '<option value="커리어/공부">💼 커리어/공부</option>' +
-            '<option value="생활습관/루틴">🌱 생활습관/루틴</option>' +
-            '<option value="마음챙김/멘탈">🧘 마음챙김/멘탈</option>' +
-            '<option value="자산관리/재테크">💰 자산관리/재테크</option>' +
-            '<option value="기타">✨ 기타</option>' +
-          '</select>' +
-        '</div>' +
-        '<div style="margin-bottom:10px;">' +
-          '<label style="display:block;font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:4px;">활용 팁 / 한줄 요약</label>' +
-          '<input type="text" id="newUserPromptDesc" class="input" placeholder="예: 목표 달성률과 함께 복사해서 ChatGPT에 넣으면 다음 주 플랜 도출" style="width:100%;box-sizing:border-box;font-size:.84rem;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);">' +
-        '</div>' +
-        '<div style="margin-bottom:14px;">' +
-          '<label style="display:block;font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:4px;">프롬프트 본문 <span style="color:var(--danger);">*</span></label>' +
-          '<textarea id="newUserPromptContent" class="input" rows="4" placeholder="예: 다음은 나의 아워골 목표 데이터입니다...\n이 데이터로 3가지 병목을 진단하고 다음 주 실행계획을 알려주세요." style="width:100%;box-sizing:border-box;font-size:.8125rem;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);font-family:monospace;resize:vertical;"></textarea>' +
-        '</div>' +
-        '<div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">' +
-          '<button type="button" class="btn btn-ghost" id="btnCloseUserPromptModal" style="font-size:.84rem;padding:6px 14px;">취소</button>' +
-          '<button type="button" class="btn btn-primary" id="btnSubmitUserPrompt" style="font-size:.84rem;padding:6px 16px;font-weight:700;">🚀 등록하기</button>' +
-        '</div>' +
-      '</div>';
-
-    openModal({
-      title: '나만의 프롬프트 올리기 🚀',
-      body: modalHtml,
-      onMount: function(sheet){
-        var cancelBtn = sheet.querySelector('#btnCloseUserPromptModal');
-        if(cancelBtn) cancelBtn.addEventListener('click', function(){ closeModal(); });
-        var submitBtn = sheet.querySelector('#btnSubmitUserPrompt');
-        if(submitBtn){
-          submitBtn.addEventListener('click', async function(){
-            var tInp = sheet.querySelector('#newUserPromptTitle');
-            var cInp = sheet.querySelector('#newUserPromptCategory');
-            var dInp = sheet.querySelector('#newUserPromptDesc');
-            var pInp = sheet.querySelector('#newUserPromptContent');
-            var title = (tInp ? tInp.value : '').trim();
-            var category = (cInp ? cInp.value : '기타').trim();
-            var desc = (dInp ? dInp.value : '').trim();
-            var prompt = (pInp ? pInp.value : '').trim();
-            if(!title){
-              toast('프롬프트 제목을 입력해주세요.');
-              if(tInp) tInp.focus();
-              return;
-            }
-            if(!prompt){
-              toast('프롬프트 본문을 입력해주세요.');
-              if(pInp) pInp.focus();
-              return;
-            }
-            var newPrompt = {
-              id: 'up_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-              title: title,
-              category: category,
-              desc: desc || (category + ' 맞춤형 프롬프트'),
-              prompt: prompt,
-              authorName: (state.profile && state.profile.displayName) || '익명의 달성가',
-              authorAvatar: (state.profile && state.profile.avatar && state.profile.avatar.emoji) || '🌱',
-              createdAt: new Date().toISOString(),
-              likes: 0
-            };
-            if(!state.profile.userPrompts) state.profile.userPrompts = [];
-            state.profile.userPrompts.unshift(newPrompt);
-            try {
-              localStorage.setItem('ourgoal_shared_prompts', JSON.stringify(state.profile.userPrompts));
-            } catch(e){}
-            await saveProfile();
-            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('나만의 프롬프트가 성공적으로 등록되었습니다! 🎉');
-            closeModal();
-            _promptTabState = 'real';
-            _promptEncyclopediaOpen = true;
-            renderGoalsScreen();
-            if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-          });
-        }
-      }
-    });
-  }
-
-  function renderPromptEncyclopediaHtml(context){
-    var goals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
-    var goalTitles = goals.map(function(g){ return g.title; }).join(', ') || '러닝 10km 완주, 자격증 취득';
-
-    var realPrompts = [
-      {
-        id: 'preset_real_0',
-        baseLikes: 14,
-        title: '📊 목표 달성률 정밀 진단 및 병목 분석',
-        desc: '현재 진행 중인 목표의 완료율과 지연 요인을 진단하고 주간 실행 계획을 도출합니다.',
-        prompt: '다음은 나의 아워골 목표 데이터입니다:\n[목표 목록: ' + goalTitles + ']\n이 목표들을 분석해서 (1) 가장 지연될 위험이 높은 병목 지점, (2) 이번 주에 반드시 끝내야 할 최우선 과제 3가지, (3) 일일 실천 행동 가이드를 작성해주세요.'
-      },
-      {
-        id: 'preset_real_1',
-        baseLikes: 21,
-        title: '⚡ 정체기 돌파 및 동기부여 행동 전략',
-        desc: '반복되는 슬럼프나 정체기를 극복하기 위한 행동경제학 기반 실천 프롬프트입니다.',
-        prompt: '내가 현재 진행 중인 목표는 다음과 같습니다: [' + goalTitles + ']. 최근 며칠간 실천 의욕이 떨어지고 정체기를 겪고 있습니다. 심리학 및 행동경제학적 관점에서 (1) 2분 마이크로 루틴 설계, (2) 즉각적 보상 메커니즘, (3) 실패 방지 환경 재설계 3가지를 제안해주세요.'
-      },
-      {
-        id: 'preset_real_2',
-        baseLikes: 18,
-        title: '🎯 마일스톤 데드라인 역산 최적화',
-        desc: '최종 목표 완료일부터 오늘까지 날짜를 역산하여 단계별 마일스톤을 재배치합니다.',
-        prompt: '내 목표 [' + goalTitles + ']를 성공적으로 완수하기 위해 오늘부터 D-Day까지 역산 일정(Backcasting) 계획표를 작성해주세요. 각 마일스톤별 필수 산출물과 주간 마감일 체크리스트를 표 형태로 정리해주세요.'
-      },
-      {
-        id: 'preset_real_3',
-        baseLikes: 9,
-        title: '📈 주간 실천 루틴 상관관계 분석',
-        desc: '운동, 독서, 업무 등 시간대별 실천 패턴의 상관관계를 심층 분석합니다.',
-        prompt: '나의 목표와 최근 실천 내역을 바탕으로, 하루 중 어느 시간대에 어떤 활동을 배치했을 때 완수 성공률이 가장 높은지 최적의 하루 시간표(타임블록)를 설계해주세요.'
-      }
-    ];
-
-    var aiPrompts = [
-      {
-        id: 'preset_ai_0',
-        baseLikes: 25,
-        title: '🤖 아워골 AI 목표 요약 및 넥스트 마일스톤 제안',
-        desc: '내 실제 등록 목표에 최적화된 다음 단계 추천 마일스톤입니다.',
-        prompt: '아워골 유저 [' + ((state.profile && state.profile.displayName) || '유저') + ']님의 현재 목표: [' + goalTitles + ']. 각 목표별로 현재 수준에서 난이도를 1단계 높여 성취감을 극대화할 수 있는 차기 마일스톤 2개씩을 추천해주세요.'
-      },
-      {
-        id: 'preset_ai_1',
-        baseLikes: 17,
-        title: '💡 관심 카테고리 맞춤형 습관 루틴 팩',
-        desc: '프로필 관심사 기반으로 100일 챌린지 루틴을 설계합니다.',
-        prompt: '나의 관심 분야는 [' + (((state.profile && state.profile.interests) || []).join(', ') || '운동, 자기계발') + ']입니다. 아워골 앱에서 매일 3초 체크인으로 실천할 수 있는 100일 습관 루틴 5가지를 구체적인 실행 지침과 함께 알려주세요.'
-      },
-      {
-        id: 'preset_ai_2',
-        baseLikes: 19,
-        title: '📝 주간 회고(KPT) 자동 작성 템플릿',
-        desc: 'Keep, Problem, Try 프레임워크로 한 주간의 성과를 돌아봅니다.',
-        prompt: '이번 주에 실천한 목표 [' + goalTitles + ']를 바탕으로 KPT(Keep-유지할 점, Problem-아쉬운 점, Try-다음 주 시도할 점) 회고 보고서를 작성해주세요. 다음 주 액션 플랜을 일자별로 제시해주세요.'
-      },
-      {
-        id: 'preset_ai_3',
-        baseLikes: 32,
-        title: '🏆 개인 맞춤형 명예의 전당 수상 소감 생성',
-        desc: '목표 달성 시 SNS나 아워골 피드에 공유할 감동적인 달성 스토리입니다.',
-        prompt: '내가 [' + goalTitles + '] 목표를 끈기 있게 완수했다고 가정하고, 인스타그램이나 커뮤니티에 동료들과 공유할 300자 내외의 솔직하고 감동적인 완주 회고 소감을 작성해주세요.'
-      }
-    ];
-
-    var userList = getUserPrompts();
-    var likedIds = getLikedPromptIds();
-    var likesMap = getPromptLikesMap();
-
-    function renderPromptCard(item, isUserCreated){
-      var isLiked = likedIds.indexOf(item.id) !== -1;
-      var currentLikes = (typeof likesMap[item.id] === 'number') ? likesMap[item.id] : ((item.likes !== undefined) ? item.likes : (item.baseLikes || 0));
-      var isOwner = isUserCreated && (item.authorName === ((state.profile && state.profile.displayName) || '익명의 달성가'));
-
-      var metaHeader = '';
-      if(isUserCreated){
-        metaHeader =
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:4px;">' +
-            '<div style="display:flex;align-items:center;gap:6px;">' +
-              '<span style="font-size:1.05rem;">' + (item.authorAvatar || '🌱') + '</span>' +
-              '<span style="font-size:.78rem;font-weight:700;color:var(--ink);">' + escapeHtml(item.authorName || '동반자') + '</span>' +
-              '<span style="font-size:.6875rem;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.1);color:var(--primary);font-weight:600;">' + escapeHtml(item.category || '실사용') + '</span>' +
-            '</div>' +
-            (isOwner ? '<button type="button" class="btn btn-ghost btn-xs btn-del-prompt" data-delpromptid="' + item.id + '" style="color:var(--danger);font-size:.72rem;padding:2px 6px;border:none;">🗑️ 삭제</button>' : '') +
-          '</div>';
-      }
-
-      var likeBtnStyle = isLiked ?
-        'background:rgba(49,130,246,0.16) !important;color:#3182f6 !important;border:1px solid rgba(49,130,246,0.45) !important;font-weight:700 !important;' :
-        'background:var(--card2) !important;color:var(--ink-soft) !important;border:1px solid var(--rule) !important;';
-
-      return '<div class="user-prompt-card" style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:10px;">' +
-        metaHeader +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:8px;">' +
-          '<span style="font-weight:700;font-size:.875rem;color:var(--ink);line-height:1.3;">' + escapeHtml(item.title) + '</span>' +
-          '<button type="button" class="btn btn-ghost btn-xs btn-copy-prompt" data-pcontent="' + escapeHtml(item.prompt) + '" style="font-size:.75rem;color:var(--brand);border-color:rgba(108,92,231,0.3);white-space:nowrap;flex-shrink:0;">📋 복사하기</button>' +
-        '</div>' +
-        '<div class="faint" style="font-size:.78125rem;margin-bottom:8px;">' + escapeHtml(item.desc) + '</div>' +
-        '<div style="background:var(--card2);padding:8px 10px;border-radius:8px;font-size:.75rem;color:var(--ink-soft);font-family:monospace;white-space:pre-wrap;max-height:80px;overflow-y:auto;border:1px dashed var(--rule);margin-bottom:8px;">' +
-          escapeHtml(item.prompt) +
-        '</div>' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-          '<button type="button" class="btn btn-xs btn-like-prompt' + (isLiked ? ' liked' : '') + '" data-promptid="' + item.id + '" style="font-size:.72rem;padding:3px 9px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;min-height:24px;' + likeBtnStyle + '">' +
-            '<span style="font-size:.82rem;">' + (isLiked ? '👍' : '👍🏻') + '</span>' +
-            '<span>도움돼요 <b style="' + (isLiked ? 'color:#3182f6;' : '') + '">(' + currentLikes + ')</b></span>' +
-          '</button>' +
-          (isUserCreated ? '<span class="faint" style="font-size:.6875rem;">유저 검증 팁</span>' : '<span class="faint" style="font-size:.6875rem;">아워골 공식 큐레이션</span>') +
-        '</div>' +
-      '</div>';
-    }
-
-    var contentListHtml = '';
-    if(_promptTabState === 'real'){
-      var userCardsHtml = '';
-      if(userList.length === 0){
-        userCardsHtml =
-          '<div class="empty-prompt-notice" style="padding:18px 14px;text-align:center;background:var(--card);border:1px dashed var(--rule);border-radius:12px;margin-bottom:12px;">' +
-            '<div style="font-size:1.3rem;margin-bottom:4px;">💡</div>' +
-            '<div style="font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:4px;">아직 등록된 사용자 프롬프트가 없습니다.</div>' +
-            '<div class="faint" style="font-size:.75rem;margin-bottom:10px;">내가 검증한 효과적인 데이터분석 프롬프트를 첫 번째로 공유해 보세요!</div>' +
-            '<button type="button" class="btn btn-primary btn-xs" id="btnEmptyAddPrompt" style="font-size:.75rem;padding:4px 12px;font-weight:700;">➕ 첫 프롬프트 공유하기</button>' +
-          '</div>';
-      } else {
-        userCardsHtml = userList.map(function(item){ return renderPromptCard(item, true); }).join('');
-      }
-
-      var presetCardsHtml = realPrompts.map(function(item){ return renderPromptCard(item, false); }).join('');
-
-      contentListHtml =
-        '<div style="margin-bottom:12px;">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-            '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">👥 사용자 공유 실사용 프롬프트</span>' +
-            '<span class="faint" style="font-size:.72rem;">' + userList.length + '건</span>' +
-          '</div>' +
-          userCardsHtml +
-        '</div>' +
-        '<div style="margin-top:14px;">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-            '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">⭐ 아워골 큐레이션 실사용 프리셋</span>' +
-            '<span class="faint" style="font-size:.72rem;">공식 추천 4종</span>' +
-          '</div>' +
-          presetCardsHtml +
-        '</div>';
-    } else {
-      contentListHtml =
-        '<div style="margin-bottom:12px;">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-            '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">🤖 아워골 AI 목표 맞춤 프롬프트</span>' +
-            '<span class="faint" style="font-size:.72rem;">4종</span>' +
-          '</div>' +
-          aiPrompts.map(function(item){ return renderPromptCard(item, false); }).join('') +
-        '</div>';
-    }
-
-    var drawerHtml =
-      '<div id="promptEncyclopediaDrawer" style="' + (_promptEncyclopediaOpen ? 'margin-top:14px;display:block;' : 'display:none;') + '">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
-          '<div style="display:flex;gap:4px;background:var(--card);padding:3px;border-radius:10px;border:1px solid var(--rule);flex:1;min-width:0;">' +
-            '<button type="button" class="btn-prompt-tab" data-ptab="real" style="flex:1;text-align:center;padding:6px 6px;font-size:.75rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='real'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">실사용 (' + (userList.length + realPrompts.length) + ')</button>' +
-            '<button type="button" class="btn-prompt-tab" data-ptab="ai" style="flex:1;text-align:center;padding:6px 6px;font-size:.75rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='ai'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">AI 맞춤 (' + aiPrompts.length + ')</button>' +
-          '</div>' +
-          '<button type="button" class="btn btn-primary btn-sm" id="btnAddUserPrompt" style="flex-shrink:0;font-size:.75rem;font-weight:700;padding:6px 12px;border-radius:10px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">' +
-            '<span>➕</span> 나만의 프롬프트 올리기' +
-          '</button>' +
-        '</div>' +
-        '<div style="padding:8px 12px;background:rgba(108,92,231,0.06);border-left:3px solid var(--brand);border-radius:6px;margin-bottom:12px;font-size:.78125rem;color:var(--ink-soft);">' +
-          '✨ <b>안내:</b> 프롬프트를 복사해서 외부 AI(ChatGPT, Claude, Gemini 등)에 붙여넣어 내 목표 데이터를 정밀 분석하세요! 도움이 된 프롬프트에는 <b>도움돼요 👍</b>를 눌러주세요.' +
-        '</div>' +
-        contentListHtml +
-      '</div>';
-
-    return '<div class="prompt-encyclopedia-card" style="margin-top:20px;padding:14px 16px;background:var(--card2);border:1px solid var(--rule);border-radius:16px;">' +
-      '<div id="btnTogglePromptAccordion" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:8px;">' +
-        '<div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">' +
-          '<span style="font-size:1.2rem;flex-shrink:0;">🧠</span>' +
-          '<div style="display:flex;flex-direction:column;min-width:0;">' +
-            '<span style="font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">데이터분석 프롬프트 백과사전</span>' +
-            '<span class="faint" style="font-size:.72rem;">(외부 AI 분석 · 유저 피드)</span>' +
-          '</div>' +
-        '</div>' +
-        '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
-          '<button type="button" class="btn btn-primary btn-xs" id="btnHeaderAddUserPrompt" style="font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;">' +
-            '<span>➕</span> 올리기' +
-          '</button>' +
-          '<span style="font-size:.75rem;color:var(--brand);font-weight:600;padding-left:2px;white-space:nowrap;">' + (_promptEncyclopediaOpen ? '접기' : '펼쳐보기') + '</span>' +
-          '<span id="promptAccordionChevron" style="font-size:.75rem;color:var(--ink-soft);transition:transform .2s ease;' + (_promptEncyclopediaOpen ? 'transform:rotate(180deg);' : '') + '">▼</span>' +
-        '</div>' +
-      '</div>' +
-      drawerHtml +
-    '</div>';
-  }
-
-  function wirePromptEncyclopediaEvents(root){
-    if(!root) return;
-    var toggleBtn = root.querySelector('#btnTogglePromptAccordion');
-    if(toggleBtn){
-      toggleBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        _promptEncyclopediaOpen = !_promptEncyclopediaOpen;
-        renderGoalsScreen();
-        if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-      });
-    }
-
-    var headerAddBtn = root.querySelector('#btnHeaderAddUserPrompt');
-    if(headerAddBtn){
-      headerAddBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        _promptEncyclopediaOpen = true;
-        openAddUserPromptModal();
-      });
-    }
-
-    var addBtn = root.querySelector('#btnAddUserPrompt');
-    if(addBtn){
-      addBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        openAddUserPromptModal();
-      });
-    }
-
-    var emptyAddBtn = root.querySelector('#btnEmptyAddPrompt');
-    if(emptyAddBtn){
-      emptyAddBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        openAddUserPromptModal();
-      });
-    }
-
-    root.querySelectorAll('.btn-prompt-tab').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        _promptTabState = btn.dataset.ptab;
-        _promptEncyclopediaOpen = true;
-        renderGoalsScreen();
-        if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-      });
-    });
-
-    root.querySelectorAll('.btn-copy-prompt').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        var text = btn.dataset.pcontent;
-        navigator.clipboard.writeText(text).then(function(){
-          toast('프롬프트가 클립보드에 복사되었습니다! 외부 AI에 붙여넣어보세요 📋');
-        }).catch(function(){
-          toast('프롬프트 복사에 실패했습니다.');
-        });
-      });
-    });
-
-    root.querySelectorAll('.btn-like-prompt').forEach(function(btn){
-      btn.addEventListener('click', async function(e){
-        e.stopPropagation();
-        var pid = btn.dataset.promptid;
-        if(!pid) return;
-        var likedIds = getLikedPromptIds();
-        var likesMap = getPromptLikesMap();
-        var idx = likedIds.indexOf(pid);
-
-        // Find baseline likes
-        var currentLikes = (typeof likesMap[pid] === 'number') ? likesMap[pid] : 0;
-        if(typeof likesMap[pid] !== 'number'){
-          var userPrompts = getUserPrompts();
-          var foundUp = userPrompts.find(function(u){ return u.id === pid; });
-          if(foundUp){
-            currentLikes = foundUp.likes || 0;
-          } else {
-            var presetMap = {
-              'preset_real_0': 14, 'preset_real_1': 21, 'preset_real_2': 18, 'preset_real_3': 9,
-              'preset_ai_0': 25, 'preset_ai_1': 17, 'preset_ai_2': 19, 'preset_ai_3': 32
-            };
-            currentLikes = presetMap[pid] || 0;
-          }
-        }
-
-        if(idx !== -1){
-          // Unlike
-          likedIds.splice(idx, 1);
-          currentLikes = Math.max(0, currentLikes - 1);
-          likesMap[pid] = currentLikes;
-          var uList = getUserPrompts();
-          var targetUp = uList.find(function(u){ return u.id === pid; });
-          if(targetUp) targetUp.likes = currentLikes;
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-          toast('도움돼요 추천을 취소했습니다.');
-        } else {
-          // Like
-          likedIds.push(pid);
-          currentLikes += 1;
-          likesMap[pid] = currentLikes;
-          var uList = getUserPrompts();
-          var targetUp = uList.find(function(u){ return u.id === pid; });
-          if(targetUp) targetUp.likes = currentLikes;
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-          toast('이 프롬프트를 추천했습니다! 👍');
-        }
-
-        try {
-          localStorage.setItem('ourgoal_liked_prompt_ids', JSON.stringify(likedIds));
-          localStorage.setItem('ourgoal_shared_prompts', JSON.stringify(state.profile.userPrompts || []));
-        } catch(err){}
-
-        await saveProfile();
-        _promptEncyclopediaOpen = true;
-        renderGoalsScreen();
-        if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-      });
-    });
-
-    root.querySelectorAll('.btn-del-prompt').forEach(function(btn){
-      btn.addEventListener('click', async function(e){
-        e.stopPropagation();
-        var delId = btn.dataset.delpromptid;
-        if(!delId) return;
-        if(!(await OurgoalCapabilities.call('ui.confirm', '등록하신 프롬프트를 삭제하시겠습니까?'))) return;
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        var uList = getUserPrompts();
-        var filtered = uList.filter(function(u){ return u.id !== delId; });
-        state.profile.userPrompts = filtered;
-        try {
-          localStorage.setItem('ourgoal_shared_prompts', JSON.stringify(filtered));
-        } catch(err){}
-        await saveProfile();
-        toast('프롬프트가 삭제되었습니다.');
-        _promptEncyclopediaOpen = true;
-        renderGoalsScreen();
-        if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-      });
-    });
-  }
+  /* [#TASK-ES-442] getUserPrompts · getLikedPromptIds · getPromptLikesMap · openAddUserPromptModal · renderPromptEncyclopediaHtml · wirePromptEncyclopediaEvents → js/tabs/goals/prompt-encyclopedia.js 로 옮김(인라인 스크립트 세포화 P0) */
 
 
   /* ============ [80] 템플릿백과사전 1초 자동이식 선택 연동 및 로드맵-목표상태 동기화 ============ */
@@ -5330,21 +4551,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ [#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬/디버그 격리 ============ */
-  function initDevDebugButtons(){
-    var forceDebug = typeof arguments[0] === 'boolean' ? arguments[0] : false;
-    var isExplicitDebug = (typeof location !== 'undefined') && (location.search && location.search.indexOf('debug=true') !== -1);
-    var isLocal = (typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || window.OurgoalDirectLoginGuard.isLocalDevHost(location.hostname));
-    var isDev = isLocal && (forceDebug || isExplicitDebug);
-    var lWrap = document.getElementById('landTesterBWrap');
-    var aWrap = document.getElementById('authTesterBWrap');
-    if(isDev){
-      if(lWrap) lWrap.style.display = 'block';
-      if(aWrap) aWrap.style.display = 'block';
-    } else {
-      if(lWrap) lWrap.remove();
-      if(aWrap) aWrap.remove();
-    }
-  }
+  /* [#TASK-ES-442] initDevDebugButtons → js/tabs/settings/dev-debug-gate.js 로 옮김(인라인 스크립트 세포화 P0) */
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', initDevDebugButtons);
   } else {
@@ -5664,219 +4871,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.checkGuestBackupNudge = checkGuestBackupNudge;
 
   /* ============ [#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시 게스트 데이터 100% 무손실 비파괴 합집합(Union Merge) 이관 ============ */
-  async function migrateGuestDataToUser(targetUserId, targetProfile){
-    if(!targetUserId || !targetProfile) return false;
-    var rawGuest = null;
-    try {
-      rawGuest = localStorage.getItem('ourgoal_guest_profile');
-    } catch(e){}
-    if(!rawGuest) return false;
-
-    var gData = null;
-    try {
-      gData = JSON.parse(rawGuest);
-    } catch(e){ return false; }
-
-    if(!gData || gData.id === targetUserId) return false;
-    /* [#TASK-ES-365] 이 키는 로그인 사용자의 전체 사본으로도 쓰인다(saveProfile). 게스트가 만든 사본만 이관하고,
-       다른 로그인 사용자의 사본이면 새 계정으로 옮기지 않고 버린다(계정 전환 유출·오염 차단) */
-    if(!window.OurgoalAccountIsolation.canMigrateGuestCopy(gData, targetUserId)){
-      window.OurgoalAccountIsolation.dropForeignSessionCopy(targetUserId);
-      return false;
-    }
-
-    var hasGuestData = (Array.isArray(gData.goals) && gData.goals.length > 0) ||
-                       (Array.isArray(gData.records) && gData.records.length > 0) ||
-                       (gData.settings && (gData.settings.customAvatarUrl || gData.settings.avatarType === 'custom' || (Array.isArray(gData.settings.savedAvatars) && gData.settings.savedAvatars.length > 0) || gData.settings.googleCalendarConnected)) ||
-                       (gData.avatarUrl && gData.avatarUrl.indexOf('data:image') === 0);
-
-    if(!hasGuestData) return false;
-
-    var guestMigrated = false;
-
-    // 1. 설정 및 아바타 병합
-    targetProfile.settings = targetProfile.settings || {};
-    if(state.profile) state.profile.settings = state.profile.settings || targetProfile.settings;
-    if(gData.settings){
-      // [#TASK-ES-265] 구글 캘린더 연동 정보 및 토큰 완전 이관
-      if(gData.settings.googleCalendarConnected){
-        targetProfile.settings.googleCalendarConnected = true;
-        if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
-        if(gData.settings.googleCalendarEmail){
-          targetProfile.settings.googleCalendarEmail = gData.settings.googleCalendarEmail;
-          if(state.profile && state.profile.settings) state.profile.settings.googleCalendarEmail = gData.settings.googleCalendarEmail;
-        }
-        if(gData.settings.gcalClientId){
-          targetProfile.settings.gcalClientId = gData.settings.gcalClientId;
-          if(state.profile && state.profile.settings) state.profile.settings.gcalClientId = gData.settings.gcalClientId;
-        }
-        if(gData.settings.gcalSync){
-          targetProfile.settings.gcalSync = Object.assign(targetProfile.settings.gcalSync || {}, gData.settings.gcalSync);
-          if(state.profile && state.profile.settings) state.profile.settings.gcalSync = targetProfile.settings.gcalSync;
-        }
-        if(Array.isArray(gData.settings.customSchedules) && gData.settings.customSchedules.length){
-          targetProfile.settings.customSchedules = targetProfile.settings.customSchedules || [];
-          var csMap = {};
-          targetProfile.settings.customSchedules.forEach(function(cs){ if(cs && cs.id) csMap[cs.id] = true; });
-          gData.settings.customSchedules.forEach(function(cs){ if(cs && cs.id && !csMap[cs.id]) targetProfile.settings.customSchedules.push(cs); });
-          if(state.profile && state.profile.settings) state.profile.settings.customSchedules = targetProfile.settings.customSchedules;
-        }
-        // [#TASK-ES-345 CAL-02] 유지하는 유일한 예외 경로: 게스트 -> 회원 1회 이전.
-        // 이 기기에서 게스트로 구글 캘린더를 연결한 사람이 곧바로 가입·로그인한 경우(같은 사람)에 다시 연결을 강요하지 않기 위해,
-        // 이 기기 게스트 프로필의 uid 키(ourgoal_gcal_token_v1_<게스트 id>, 프로필이 없던 때의 ourgoal_gcal_token_v1_guest)만
-        // 새 uid 키로 옮긴다. _last 키는 읽지 않고, 새 uid 에 이미 자기 토큰이 있으면 덮어쓰지 않으며,
-        // 옮긴 직후 게스트 키를 지워 다음 계정이 같은 토큰을 다시 받지 못하게 한다.
-        try {
-          var guestTokKeys = ['ourgoal_gcal_token_v1_guest'];
-          if(gData.id && String(gData.id).indexOf('guest') === 0) guestTokKeys.unshift('ourgoal_gcal_token_v1_' + gData.id);
-          for(var gti = 0; gti < guestTokKeys.length; gti++){
-            var gTok = localStorage.getItem(guestTokKeys[gti]);
-            if(!gTok || targetUserId === 'guest') continue;
-            if(!localStorage.getItem('ourgoal_gcal_token_v1_' + targetUserId)){
-              var gTokObj = JSON.parse(gTok);
-              if(gTokObj && gTokObj.accessToken){
-                gTokObj.ownerUid = targetUserId;
-                localStorage.setItem('ourgoal_gcal_token_v1_' + targetUserId, JSON.stringify(gTokObj));
-              }
-            }
-            localStorage.removeItem(guestTokKeys[gti]);
-          }
-          purgeLegacySharedGcalKeys();
-        } catch(tErr){}
-        guestMigrated = true;
-      }
-      var guestSaved = Array.isArray(gData.settings.savedAvatars) ? gData.settings.savedAvatars : [];
-      if(guestSaved.length > 0){
-        var socialSaved = targetProfile.settings.savedAvatars || [];
-        if(!socialSaved || socialSaved.length === 0){
-          targetProfile.settings.savedAvatars = gData.settings.savedAvatars.slice(0, 10);
-          if(state.profile && state.profile.settings){
-            if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;
-          }
-        } else {
-          var sMap = {};
-          socialSaved.forEach(function(a){ if(a && (a.id || a.url)) sMap[a.id || a.url] = true; });
-          guestSaved.forEach(function(ga){
-            if(ga && (ga.id || ga.url) && !sMap[ga.id || ga.url]){
-              socialSaved.push(ga);
-              sMap[ga.id || ga.url] = true;
-            }
-          });
-          if(socialSaved.length > 10) socialSaved = socialSaved.slice(0, 10);
-          targetProfile.settings.savedAvatars = socialSaved;
-          if(state.profile){
-            state.profile.settings = state.profile.settings || {};
-            state.profile.settings.savedAvatars = socialSaved;
-          }
-        }
-        guestMigrated = true;
-      }
-      if(gData.settings.customAvatarUrl && (!targetProfile.settings.customAvatarUrl || targetProfile.settings.avatarType !== 'custom')){
-        if(state.profile){
-          state.profile.settings = state.profile.settings || {};
-          state.profile.settings.avatarType = gData.settings.avatarType || 'custom';
-          state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
-          state.profile.avatarUrl = gData.settings.customAvatarUrl;
-        }
-        targetProfile.settings.avatarType = gData.settings.avatarType || 'custom';
-        targetProfile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
-        if(gData.settings.avatarThemeId) targetProfile.settings.avatarThemeId = gData.settings.avatarThemeId;
-        if(gData.settings.avatarCraftCount) targetProfile.settings.avatarCraftCount = gData.settings.avatarCraftCount;
-        targetProfile.avatarUrl = gData.settings.customAvatarUrl;
-        guestMigrated = true;
-      }
-    } else if(gData.avatarUrl && !targetProfile.avatarUrl){
-      if(state.profile) state.profile.avatarUrl = gData.avatarUrl;
-      targetProfile.avatarUrl = gData.avatarUrl;
-      guestMigrated = true;
-    }
-
-    // 2. 목표 비파괴 합집합(Union Merge) 이관
-    if(Array.isArray(gData.goals) && gData.goals.length > 0){
-      targetProfile.goals = targetProfile.goals || [];
-      var existingGoalIds = new Set(targetProfile.goals.map(function(eg){ return eg.id; }));
-      var goalsToMerge = [];
-      gData.goals.forEach(function(g){
-        if(!existingGoalIds.has(g.id)){
-          var cloned = JSON.parse(JSON.stringify(g));
-          cloned.user_id = targetUserId;
-          targetProfile.goals.push(cloned);
-          goalsToMerge.push(cloned);
-          guestMigrated = true;
-        }
-      });
-
-      if(goalsToMerge.length > 0 && window.sb && typeof isValidRealUser === 'function' && isValidRealUser(targetUserId)){
-        try {
-          var goalsPayload = goalsToMerge.map(function(g){
-            return {
-              id: g.id,
-              user_id: targetUserId,
-              title: g.title,
-              category: g.category || null,
-              due_date: g.dueDate || null,
-              visibility: g.visibility || 'private',
-              topic: g.topic || null,
-              archived_at: g.archivedAt || null,
-              result: g.result || null,
-              milestones: g.milestones || []
-            };
-          });
-          await sb.from('goals').upsert(goalsPayload);
-        } catch(sbGErr){ console.warn('[migrateGuest] goals upsert fallback:', sbGErr); }
-      }
-    }
-
-    // 3. 기록 비파괴 합집합(Union Merge) 이관
-    if(Array.isArray(gData.records) && gData.records.length > 0){
-      targetProfile.records = targetProfile.records || [];
-      var existingRecIds = new Set(targetProfile.records.map(function(er){ return er.id; }));
-      var recsToMerge = [];
-      gData.records.forEach(function(r){
-        if(!existingRecIds.has(r.id)){
-          var clonedR = JSON.parse(JSON.stringify(r));
-          clonedR.user_id = targetUserId;
-          targetProfile.records.push(clonedR);
-          recsToMerge.push(clonedR);
-          guestMigrated = true;
-        }
-      });
-
-      if(recsToMerge.length > 0 && window.sb && typeof isValidRealUser === 'function' && isValidRealUser(targetUserId)){
-        try {
-          var recsPayload = recsToMerge.map(function(r){
-            return {
-              id: r.id,
-              user_id: targetUserId,
-              type: r.type || 'note',
-              text: r.text || r.content || '',
-              start_at: r.startAt || r.start_at || new Date().toISOString(),
-              end_at: r.endAt || r.end_at || r.startAt || new Date().toISOString(),
-              category: r.category || null,
-              theme: r.theme || 'daily',
-              sub_theme: r.subTheme || null
-            };
-          });
-          await sb.from('checkins').upsert(recsPayload);
-        } catch(sbRErr){ console.warn('[migrateGuest] checkins upsert fallback:', sbRErr); }
-      }
-    }
-
-    // 4. 로컬 스토리지 삼중 백업 갱신
-    try {
-      if(targetProfile.goals) localStorage.setItem('ourgoal_goals_backup_' + targetUserId, JSON.stringify(targetProfile.goals));
-      if(targetProfile.records) localStorage.setItem('ourgoal_records_backup_' + targetUserId, JSON.stringify(targetProfile.records));
-      if(targetProfile.settings) localStorage.setItem('ourgoal_settings_' + targetUserId, JSON.stringify(targetProfile.settings));
-    } catch(bkErr){}
-
-    if(guestMigrated){
-      if(typeof saveProfile === 'function') await saveProfile();
-      try { localStorage.removeItem('ourgoal_guest_profile'); } catch(e){}
-      toast('게스트 모드에서 작성한 목표와 실천 기록이 안전하게 연동되었어요! 🎉');
-    }
-
-    return guestMigrated;
-  }
+  /* [#TASK-ES-442] migrateGuestDataToUser → js/tabs/settings/guest-migration.js 로 옮김(인라인 스크립트 세포화 P0) */
   window.migrateGuestDataToUser = migrateGuestDataToUser;
 
   /* ============ Goal category templates ============ */
@@ -6328,261 +5323,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   document.getElementById('withdrawBtn').addEventListener('click', openWithdrawModal);
 
   /* ============ [#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 (최신 기능 전면 동기화) ============ */
-  var TAB_GUIDE_DATA = {
-    avatar: {
-      name: '아바타',
-      icon: '👤',
-      badge: '성장 랭크 & 페르소나',
-      features: [
-        { title: '베일에 싸인 시크릿 랭크 & 히든 오라 🔮', desc: '“다음엔 어떤 오라가 켜질지는 절대 비밀!” 실천 XP가 쌓일수록 내 아바타 등 뒤에 상상도 못한 신비로운 전설의 아우라와 이펙트가 하나씩 깨어나요. 어떤 모습으로 각성할지는 끝까지 가본 자만이 누릴 수 있는 특권이에요.' },
-        { title: '앱 진입 대형 인사 팝업 & 시간대별 맞춤 멘트 👋', desc: '앱을 켤 때마다 화면 절반 가득 아바타가 반갑게 맞이하며, 아침/오후/저녁/새벽 시간대별 격려 멘트와 기준 시간을 설정창에서 나만의 톤앤매너로 자유롭게 커스텀할 수 있어요.' },
-        { title: '나만의 아바타 생성 & 무제한 보관함 관리 🎨', desc: '320종 페르소나 풀과 퍼스널 컬러 합성, 성장 성향 프롬프트로 세상에 단 하나뿐인 캐릭터를 만들고, 3중 안전 영속화된 보관함(서랍)에서 기분 따라 원클릭 교체해요.' }
-      ],
-      showcase: {
-        badgeText: '실제 유저 제보 (각성 성공)',
-        user: '익명의 갓생 실천러 (180일 연속 실천, 각성 완료)',
-        title: '“도대체 어디까지 진화하는 거야?!” 히든 랭크를 직접 깨우는 재미',
-        quote: '“처음엔 조그만 모습이었는데, 매일 체크인하다 보니 갑자기 등 뒤에서 말도 안 되는 눈부신 전설의 아우라가 폭발했어요 ㅋㅋㅋ 다음 레벨엔 대체 뭐가 튀어나올지 너무 궁금해서 하루도 실천을 안 쉴 수가 없습니다!”',
-        mockupHtml: '<div style="background:var(--surface-1);padding:10px 12px;border-radius:10px;border:1px solid rgba(168,85,247,0.3);box-shadow:0 4px 14px rgba(168,85,247,0.15);">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-            '<div style="display:flex;align-items:center;gap:8px;">' +
-              '<span style="font-size:1.6rem;filter:drop-shadow(0 0 6px rgba(168,85,247,0.6));">🔮</span>' +
-              '<div><b style="font-size:.875rem;">Lv.??? 각성 페르소나</b><br><span style="font-size:.72rem;color:var(--brand);">✨ 베일에 싸인 시크릿 오라 발동 중!</span></div>' +
-            '</div>' +
-            '<span class="badge" style="background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;font-size:.72rem;padding:3px 8px;border-radius:6px;font-weight:800;">🔒 ??? 랭크</span>' +
-          '</div>' +
-          '<div style="font-size:.75rem;background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:6px;color:var(--ink-soft);">' +
-            '💬 인사 멘트: “대체 어디까지 올라갈 셈이야?! 오늘도 전설을 향해 질주해봐요! 🚀”' +
-          '</div>' +
-        '</div>'
-      }
-    },
-    home: {
-      name: '홈',
-      icon: '🏠',
-      badge: '오늘의 성장 루틴 & 위젯',
-      features: [
-        { title: '상단 고정 아바타(경험치) & 오늘 기록하기 📌', desc: '가장 중요한 내 성장치와 오늘 기록하기를 상단에 고정해 한 번의 탭으로 당일 실천을 빠르게 시작할 수 있어요.' },
-        { title: '나만의 홈 구성 커스텀 & 기기 바탕화면 위젯 📱', desc: '내 성장·히트맵·3대 퀘스트 순서를 자유롭게 커스텀하고, 앱을 켤 필요 없는 기기 바탕화면 위젯(3종×3구성)을 지원해요.' },
-        { title: '오늘의 카드 & 언제든 가능한 솔직 평가 💡', desc: '뭘 할지 고민될 땐 내 목표 기반 ‘오늘의 카드’ 추천을 받고, 하단 평가 배너를 통해 언제 얼마든지 자유롭게 피드백을 전할 수 있어요.' }
-      ],
-      showcase: {
-        badgeText: '우수 사용사례',
-        user: '김지훈 (스타트업 개발자, 120일 연속 실천)',
-        title: '바탕화면 위젯과 상단 고정으로 갓생 하루를 여는 루틴러',
-        quote: '“스마트폰 홈 화면에 일정·목표 위젯을 띄워두고 출근길에 확인해요. 상단에 고정된 오늘 기록하기 버튼으로 바로 체크인하고, 완벽히 채워진 히트맵을 볼 때마다 벅찬 성취감이 듭니다.”',
-        mockupHtml: '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-1);padding:8px 12px;border-radius:8px;">' +
-          '<div style="display:flex;align-items:center;gap:8px;">' +
-            '<span style="font-size:1.4rem;">📱</span>' +
-            '<div><b style="font-size:.875rem;">바탕화면 위젯 & 오늘 퀘스트 3/3</b><br><span style="font-size:.72rem;color:var(--emerald);">🔥 120일 연속 히트맵 달성 중</span></div>' +
-          '</div>' +
-          '<span class="badge" style="background:#F59E0B;color:#fff;font-size:.75rem;padding:2px 6px;border-radius:4px;">Lv.18 제우스</span>' +
-        '</div>'
-      }
-    },
-    goals: {
-      name: '목표',
-      icon: '🎯',
-      badge: '템플릿백과사전 & 3계층 로드맵',
-      features: [
-        { title: '📖 템플릿백과사전 (실사용 유저 사전 & AI 60선)', desc: '실제 유저들이 검증한 고득점 템플릿을 통째로 복사해오거나 아워골 AI 60선 전문가 커리큘럼으로 1초 만에 로드맵을 완성해요.' },
-        { title: '목표 ➔ 마일스톤 ➔ 할일 3계층 & 캘린더 연동', desc: '목표와 할 일에 일정을 지정하면 캘린더 24시간 블록과 양방향 자동 동기화되며 목표만/마일스톤 뷰를 자유롭게 토글해요.' },
-        { title: '루틴(Routine) 관리 & 10 EXP 즉시 획득 🔥', desc: '매일 반복하는 일상 루틴을 등록하고 완료할 때마다 10 EXP를 획득하며, 목표탭을 닮은 상세 편집 모달로 정교하게 관리해요.' }
-      ],
-      showcase: {
-        badgeText: '우수 사용사례',
-        user: '이수진 (마케터, 체지방 8% 달성)',
-        title: '템플릿백과사전 복사로 1초 만에 세운 100일 완주 로드맵',
-        quote: '“템플릿백과사전에서 다른 유저의 바디프로필 실사용 템플릿을 복사해와 내 일정에 맞췄어요. 마일스톤이 캘린더와 자동 연동되고 매일 루틴 10 EXP를 챙기니 100일간 하루도 밀리지 않았습니다!”',
-        mockupHtml: '<div style="background:var(--surface-1);padding:8px 12px;border-radius:8px;">' +
-          '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><b style="font-size:.875rem;">🏃 하프마라톤 100일 완성</b><span style="font-size:.75rem;font-weight:700;color:var(--brand);">85% 달성</span></div>' +
-          '<div style="width:100%;height:6px;background:var(--rule);border-radius:3px;overflow:hidden;"><div style="width:85%;height:100%;background:var(--emerald);"></div></div>' +
-          '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:6px;">📖 백과사전 템플릿 연동 · 📅 24시간 시간표 자동 동기화</div>' +
-        '</div>'
-      }
-    },
-    calendar: {
-      name: '일정',
-      icon: '📅',
-      badge: '사전 알림 & 비주얼 다이어리',
-      features: [
-        { title: '일정 사전 알림 (정시 ~ 1일 전 N분 전 지정) ⏰', desc: '놓치기 쉬운 일정을 위해 5분, 10분, 30분, 1시간 전 등 원하는 시간 전에 알림이 울리도록 사전 알림을 설정해요.' },
-        { title: '일정 체크 완료 토글 & 구글 캘린더 실시간 싱크', desc: '일간 타임라인에서 완료 여부를 바로 체크하고, 상단 헤더의 미니 구글 G 아이콘으로 팝업 없이 무음 양방향 동기화해요.' },
-        { title: '이 날의 감성 배경사진 (50% 투명도 보존) 🖼️', desc: '그날의 인증 사진이나 추억을 50% 반투명 배경으로 지정해 글씨는 선명하게 읽으면서 감성 포토 다이어리로 활용해요.' }
-      ],
-      showcase: {
-        badgeText: '우수 사용사례',
-        user: '박서준 (프리랜서 디자이너)',
-        title: '사전 알림과 감성 사진 배경으로 완벽해진 스케줄러',
-        quote: '“중요한 마감 30분 전에 사전 알림이 울려 놓치지 않고, 러닝 후 찍은 사진을 그날 캘린더 배경으로 깔아두니 나만의 인생 다이어리가 되었어요. 구글 캘린더와도 완벽히 동기화됩니다!”',
-        mockupHtml: '<div style="background:var(--surface-1);padding:8px 12px;border-radius:8px;border-left:3px solid #4285F4;">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-            '<b style="font-size:.875rem;">🔔 09.18 디자인 시안 제출 (30분 전 알림)</b>' +
-            '<span style="font-size:.7rem;padding:2px 6px;border-radius:4px;background:#e8f0fe;color:#1a73e8;font-weight:700;">G-Cal 무음 연동</span>' +
-          '</div>' +
-          '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:4px;">50% 감성 배경사진 적용 · 14:00 완료 체크 토글 연동</div>' +
-        '</div>'
-      }
-    },
-    records: {
-      name: '기록',
-      icon: '📝',
-      badge: '스톱워치 랩메모 & 6대 지표 분석',
-      features: [
-        { title: '스톱워치 랩타임 메모 & ‘표에시간기입’ ⏱️', desc: '1초 단위 스톱워치로 구간 기록을 재고 랩 메모를 남기며, 원하는 셀을 누르고 ‘표에시간기입’을 누르면 즉시 자동 입력돼요.' },
-        { title: '6대 차등 정밀 지표 분석 & 다중선택 그래프 📊', desc: '체중 7일 이동평균, 헬스 1RM, 러닝 페이스존, 공부 몰입도, 저축가속도, 수면 점수를 다중선택 칩으로 동시에 비교 분석해요.' },
-        { title: '안전한 초기화 2중 확인 & 노션 다이렉트 전송 📋', desc: '실수 방지 2중 확인 모달로 소중한 타이머 기록을 보호하고, 원클릭으로 내 개인 노션 DB로 즉시 영구 전송해요.' }
-      ],
-      showcase: {
-        badgeText: '우수 사용사례',
-        user: '최민우 (파워리프터, 3대 520kg 달성)',
-        title: '스톱워치 랩메모와 1RM 정밀 분석 차트로 한계 돌파',
-        quote: '“세트마다 인앱 스톱워치 랩메모로 휴식시간과 느낌을 적고 표에시간기입 버튼으로 바로 채웠어요. 1RM 에플리 추정 곡선과 주간 볼륨 차트를 보며 3대 500을 마침내 돌파했습니다!”',
-        mockupHtml: '<div style="background:var(--surface-1);padding:8px 12px;border-radius:8px;">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;"><b style="font-size:.875rem;">📊 3대 운동 1RM & 볼륨 동시 분석</b><span style="font-size:.72rem;color:var(--emerald);font-weight:700;">520 kg 돌파</span></div>' +
-          '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:4px;">⏱️ 랩메모(세트별 휴식 90초) 자동 기입 · 📋 노션 원클릭 싱크 완료</div>' +
-        '</div>'
-      }
-    },
-    social: {
-      name: '소통',
-      icon: '💬',
-      badge: '사진인증 피드 & 카톡 스타일 DM',
-      features: [
-        { title: '직접 사진 첨부(카메라/앨범) & 10대 카테고리 📸', desc: '오늘의 실천 사진을 모바일에서 바로 업로드하고, 공부·운동·생활·육아 등 10대 카테고리를 가로 스크롤로 쾌적하게 탐색해요.' },
-        { title: '최신 실천기록 자동선택 & 맞춤 AI피드백/다짐 ✨', desc: '피드 게시 시 가장 최근 실천기록이 먼저 자동 적용되며, 기록 선택에 맞춰 나누고 싶은 다짐과 AI 코칭 조언이 실시간 동기화돼요.' },
-        { title: '카카오톡 방식 DM(전송시각 & 노란색 1 읽음) & 자유 팀 👥', desc: '말풍선 옆 전송 시각과 읽지 않음(1) 카운트다운으로 답답함 없이 소통하고, 정원/주기 제약 없는 자유로운 팀을 만들어요.' }
-      ],
-      showcase: {
-        badgeText: '우수 사용사례',
-        user: '정유나 (미라클모닝 크루장)',
-        title: '사진인증과 카톡 스타일 DM으로 끈끈해진 소통방',
-        quote: '“아침마다 피드에 사진을 바로 올리고, 크루원들과 1:1 DM을 나눌 때 카톡처럼 보낸 시간과 1(읽음 확인)이 바로 뜨니까 소통이 훨씬 즐거워요. 불필요한 제약이 없는 자유 팀이라 누구나 편하게 참여합니다!”',
-        mockupHtml: '<div style="background:var(--surface-1);padding:8px 12px;border-radius:8px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:1.1rem;">📸</span><b style="font-size:.875rem;">사진인증 피드 · 1:1 DM: 오전 06:05 (읽음)</b></div>' +
-          '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:4px;">“오늘도 멋져요! 하루 힘차게 시작해봐요 👏” · 10대 카테고리 필터 연동</div>' +
-        '</div>'
-      }
-    }
-  };
-
-  function renderTabGuideContent(tabKey){
-    var item = TAB_GUIDE_DATA[tabKey] || TAB_GUIDE_DATA.avatar || TAB_GUIDE_DATA.home;
-    var sc = item.showcase;
-
-    var featsHtml = item.features.map(function(f){
-      return '<div class="guide-feature-item">' +
-        '<span class="guide-feature-bullet">✓</span>' +
-        '<div><b>' + escapeHtml(f.title) + '</b><br><span style="font-size:.8rem;color:var(--ink-soft);">' + escapeHtml(f.desc) + '</span></div>' +
-      '</div>';
-    }).join('');
-
-    var actionBtnText = (tabKey === 'avatar') 
-      ? '🎨 나만의 아바타 꾸미러 가기' 
-      : ('🚀 ' + escapeHtml(item.name) + ' 탭 바로 실천하러 가기');
-
-    return '<div class="guide-feature-block">' +
-        '<div style="font-size:.8125rem;font-weight:800;color:var(--brand);margin-bottom:8px;">✨ ' + escapeHtml(item.name) + ' 탭 핵심 혁신 기능</div>' +
-        featsHtml +
-      '</div>' +
-
-      '<!-- 실제 우수 사용사례 쇼케이스 -->' +
-      '<div class="guide-showcase-card">' +
-        '<div class="guide-showcase-header">' +
-          '<span class="showcase-badge">🌟 ' + escapeHtml(sc.badgeText) + '</span>' +
-          '<span class="showcase-user-info">' + escapeHtml(sc.user) + '</span>' +
-        '</div>' +
-        '<div class="guide-showcase-title">' + escapeHtml(sc.title) + '</div>' +
-        '<div class="guide-showcase-quote">' + sc.quote + '</div>' +
-        '<div class="showcase-mockup-wrap">' +
-          sc.mockupHtml +
-        '</div>' +
-      '</div>' +
-
-      '<div style="margin-top:14px;">' +
-        '<button type="button" class="btn btn-primary guide-action-try-btn" data-targettab="' + tabKey + '" style="width:100%;font-weight:800;padding:12px 14px;border-radius:12px;">' +
-          actionBtnText +
-        '</button>' +
-      '</div>';
-  }
-
-  function openTabGuideHubModal(initialTab){
-    var curTab = initialTab || 'avatar';
-    var tabs = [
-      { key: 'avatar', label: '아바타', icon: '👤' },
-      { key: 'home', label: '홈', icon: '🏠' },
-      { key: 'goals', label: '목표', icon: '🎯' },
-      { key: 'calendar', label: '일정', icon: '📅' },
-      { key: 'records', label: '기록/통계', icon: '📝' },
-      { key: 'social', label: '소통', icon: '💬' }
-    ];
-
-    var navHtml = tabs.map(function(t){
-      var activeCls = (t.key === curTab) ? ' active' : '';
-      return '<button type="button" class="guide-tab-nav-btn' + activeCls + '" data-tabkey="' + t.key + '">' +
-        t.icon + ' ' + t.label +
-      '</button>';
-    }).join('');
-
-    var modalHtml = '' +
-      '<div id="tabGuideHubModal" class="tab-guide-hub-container">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
-          '<h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-            '<span>🌟</span> 각 탭 200% 활용법 & 우수사례' +
-          '</h3>' +
-          '<button type="button" id="btnTabGuideClose" class="btn-close" style="background:none;border:none;font-size:1.25rem;cursor:pointer;color:var(--ink-soft);padding:4px;" aria-label="닫기">×</button>' +
-        '</div>' +
-        '<p style="margin:-6px 0 6px;font-size:.8125rem;color:var(--ink-soft);">' +
-          '“와 나도 저렇게 목표 세우고, 일정 세우고, 기록하고, 소통하고 싶다!” — 실제 갓생 실천 꿀팁' +
-        '</p>' +
-        '<div class="tab-guide-nav-bar">' + navHtml + '</div>' +
-        '<div id="tabGuideDynamicContent">' + renderTabGuideContent(curTab) + '</div>' +
-      '</div>';
-
-    openModal(modalHtml, function(sheet){
-      var closeBtn = sheet.querySelector('#btnTabGuideClose');
-      if(closeBtn) closeBtn.onclick = closeModal;
-
-      var contentEl = sheet.querySelector('#tabGuideDynamicContent');
-
-      function wireTryButton(){
-        var tryBtn = sheet.querySelector('.guide-action-try-btn');
-        if(tryBtn){
-          tryBtn.onclick = function(){
-            var target = tryBtn.getAttribute('data-targettab');
-            closeModal();
-            setTimeout(function(){
-              if(target === 'avatar'){
-                if(typeof openAvatarModal === 'function'){
-                  openAvatarModal();
-                } else if(typeof openProfileEditor === 'function'){
-                  openProfileEditor();
-                } else {
-                  toast('아바타 설정창을 불러오는 중입니다.');
-                }
-              } else {
-                if(typeof switchTab === 'function') switchTab(target);
-                var tabName = (TAB_GUIDE_DATA[target] && TAB_GUIDE_DATA[target].name) ? TAB_GUIDE_DATA[target].name : target;
-                toast(tabName + ' 탭으로 이동했어요! 지금 시작해보세요.');
-              }
-            }, 80);
-          };
-        }
-      }
-      wireTryButton();
-
-      var navBtns = sheet.querySelectorAll('.guide-tab-nav-btn');
-      navBtns.forEach(function(btn){
-        btn.onclick = function(){
-          var key = btn.getAttribute('data-tabkey');
-          navBtns.forEach(function(b){ b.classList.remove('active'); });
-          btn.classList.add('active');
-          contentEl.innerHTML = renderTabGuideContent(key);
-          wireTryButton();
-        };
-      });
-    });
-  }
+  /* [#TASK-ES-442] TAB_GUIDE_DATA · renderTabGuideContent · openTabGuideHubModal → js/tabs/settings/tab-guide.js 로 옮김(인라인 스크립트 세포화 P0) */
   window.openTabGuideHubModal = openTabGuideHubModal;
 
   var tabGuideBtn = document.getElementById('btnTabGuideHub');
@@ -6762,237 +5503,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-437] checkStreakFreeze → js/tabs/records/checkin-helpers.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* ============ Onboarding (first-time, after signup) — 16종 동물 아바타 & 직관적 안착 융합 ============ */
-  var ONBOARDING_AVATARS = [
-    // 🧠 분석형 (4종)
-    { mbti: 'INTJ', name: '전략가 부엉이', group: '분석형', emoji: '🦉', desc: '깊은 지혜와 치밀한 설계' },
-    { mbti: 'INTP', name: '사색가 고양이', group: '분석형', emoji: '🐱', desc: '끝없는 호기심의 탐구자' },
-    { mbti: 'ENTJ', name: '통솔자 불사조', group: '분석형', emoji: '🦅', desc: '목표를 향해 비상하는 리더' },
-    { mbti: 'ENTP', name: '발명가 여우', group: '분석형', emoji: '🦊', desc: '창의적 번뜩임의 달인' },
-    // 🌿 외교형 (4종)
-    { mbti: 'INFJ', name: '통찰가 사슴', group: '외교형', emoji: '🦌', desc: '맑은 눈망울의 예언자' },
-    { mbti: 'INFP', name: '치유자 수달', group: '외교형', emoji: '🦦', desc: '따뜻한 마음의 수호자' },
-    { mbti: 'ENFJ', name: '지도자 돌고래', group: '외교형', emoji: '🐬', desc: '모두를 이끄는 긍정 에너지' },
-    { mbti: 'ENFP', name: '활동가 강아지', group: '외교형', emoji: '🐶', desc: '행복을 전파하는 비타민' },
-    // 🛡️ 관리형 (4종)
-    { mbti: 'ISTJ', name: '원칙주의 거북', group: '관리형', emoji: '🐢', desc: '꾸준함과 신뢰의 상징' },
-    { mbti: 'ISFJ', name: '수호자 반달곰', group: '관리형', emoji: '🐻', desc: '묵묵히 지켜주는 버팀목' },
-    { mbti: 'ESTJ', name: '관리자 사자', group: '관리형', emoji: '🦁', desc: '당당한 카리스마의 기둥' },
-    { mbti: 'ESFJ', name: '배려자 코끼리', group: '관리형', emoji: '🐘', desc: '모두를 감싸는 다정함' },
-    // ⚡ 탐험형 (4종)
-    { mbti: 'ISTP', name: '장인 호랑이', group: '탐험형', emoji: '🐯', desc: '과묵하지만 날카로운 해결사' },
-    { mbti: 'ISFP', name: '예술가 카멜레온', group: '탐험형', emoji: '🦎', desc: '자유로운 감성과 색채' },
-    { mbti: 'ESTP', name: '도전자 치타', group: '탐험형', emoji: '🐆', desc: '거침없는 행동파 러너' },
-    { mbti: 'ESFP', name: '연예인 원숭이', group: '탐험형', emoji: '🐵', desc: '언제나 유쾌한 분위기 메이커' }
-  ];
-
-  function startOnboarding(){
-    window.startOnboarding = startOnboarding;
-    var selectedGroup = '분석형';
-    var selectedAvatar = ONBOARDING_AVATARS[0]; // 기본 부엉이
-    showObStep1();
-
-    function showObStep1(){
-      track('onboarding_step_viewed', { step: 1, source: 'onboarding', goal_type: null, day_index: dayIndexSinceSignup() });
-
-      function renderAvatarGrid(group, activeAvatar){
-        var list = ONBOARDING_AVATARS.filter(function(a){ return a.group === group; });
-        return '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">' +
-          list.map(function(av){
-            var isSel = (activeAvatar && activeAvatar.mbti === av.mbti);
-            var borderStyle = isSel ? 'border-color:var(--brand);background:rgba(16,185,129,0.12);' : 'border-color:var(--rule);background:var(--card);';
-            return '<div class="ob-avatar-card" data-mbti="'+av.mbti+'" style="border:1.5px solid;border-radius:14px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;'+borderStyle+'">' +
-              '<div style="font-size:26px;margin-bottom:2px;">'+av.emoji+'</div>' +
-              '<div style="font-size:11px;font-weight:800;color:var(--brand);margin-bottom:2px;">'+av.mbti+'</div>' +
-              '<div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;">'+escapeHtml(av.name)+'</div>' +
-              '<div style="font-size:10px;color:var(--ink-faint);line-height:1.3;">'+escapeHtml(av.desc)+'</div>' +
-            '</div>';
-          }).join('') +
-        '</div>';
-      }
-
-      var groups = ['분석형', '외교형', '관리형', '탐험형'];
-      var groupIcons = { '분석형':'🧠', '외교형':'🌿', '관리형':'🛡️', '탐험형':'⚡' };
-      var groupsHtml = '<div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;">' +
-        groups.map(function(grp){
-          var isAct = (grp === selectedGroup);
-          var chipStyle = isAct ? 'background:var(--brand);color:#fff;font-weight:700;border-color:var(--brand);' : 'background:var(--card);color:var(--ink-faint);border-color:var(--rule);';
-          return '<button type="button" class="ob-grp-chip" data-grp="'+grp+'" style="border:1px solid;border-radius:12px;padding:6px 12px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s;'+chipStyle+'">' +
-            groupIcons[grp] + ' ' + grp +
-          '</button>';
-        }).join('') +
-      '</div>';
-
-      var html = 
-        '<p class="ob-step-label">1 / 2 · 수호동물 선택 (10초)</p>' +
-        '<h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px;line-height:1.3;">나를 지켜줄 수호 동물을<br>선택해 주세요!</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.85rem;line-height:1.4;">MBTI 성향에 맞는 16종 동물 아바타 중 하나를 콕 찍어보세요. 언제든 변경할 수 있어요.</p>' +
-        groupsHtml +
-        '<div id="obAvatarGridSlot">' + renderAvatarGrid(selectedGroup, selectedAvatar) + '</div>' +
-        '<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;margin-bottom:14px;">' +
-          '<span>✨</span><span>추후 <b>내 실제 사진 기반 AI 아바타</b>로도 언제든 진화할 수 있습니다!</span>' +
-        '</div>' +
-        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obNext1" type="button">수호동물 확정하고 다음으로 ➔</button></div>' +
-        '<button class="land-login-link" id="obSkip1" type="button" style="width:100%;background:none;margin-top:10px;">기본 아바타(부엉이)로 건너뛰기</button>';
-
-      openModal(html, function(sheet){
-        function wireCards(){
-          sheet.querySelectorAll('.ob-avatar-card').forEach(function(card){
-            card.addEventListener('click', function(){
-              var m = card.dataset.mbti;
-              var found = ONBOARDING_AVATARS.find(function(a){ return a.mbti === m; });
-              if(found) selectedAvatar = found;
-              sheet.querySelector('#obAvatarGridSlot').innerHTML = renderAvatarGrid(selectedGroup, selectedAvatar);
-              wireCards();
-            });
-          });
-        }
-        wireCards();
-
-        sheet.querySelectorAll('.ob-grp-chip').forEach(function(chip){
-          chip.addEventListener('click', function(){
-            selectedGroup = chip.dataset.grp;
-            sheet.querySelectorAll('.ob-grp-chip').forEach(function(c){
-              var isA = (c.dataset.grp === selectedGroup);
-              c.style.background = isA ? 'var(--brand)' : 'var(--card)';
-              c.style.color = isA ? '#fff' : 'var(--ink-faint)';
-              c.style.borderColor = isA ? 'var(--brand)' : 'var(--rule)';
-              c.style.fontWeight = isA ? '700' : '400';
-            });
-            sheet.querySelector('#obAvatarGridSlot').innerHTML = renderAvatarGrid(selectedGroup, selectedAvatar);
-            wireCards();
-          });
-        });
-
-        sheet.querySelector('#obNext1').addEventListener('click', showObStep2);
-        sheet.querySelector('#obSkip1').addEventListener('click', function(){
-          selectedAvatar = ONBOARDING_AVATARS[0]; // 기본 부엉이
-          showObStep2();
-        });
-      });
-    }
-
-    function showObStep2(){
-      track('onboarding_step_viewed', { step: 2, source: 'onboarding', goal_type: null, day_index: dayIndexSinceSignup() });
-
-      var defaultName = state.profile.displayName || '새싹러너';
-      var chosenPreset = { title: '매일 30분 달리기/걷기', category: 'health' };
-
-      var html =
-        '<p class="ob-step-label">2 / 2 · 닉네임 & 1호 목표 (10초)</p>' +
-        '<h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px;">닉네임과 첫 시작 1호 목표</h3>' +
-        '<p class="muted" style="margin:0 0 16px;font-size:.85rem;">동류 러너들에게 불릴 이름과 오늘부터 시작할 대표 목표입니다.</p>' +
-        '<div style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;">' +
-          '<div style="font-size:36px;width:52px;height:52px;border-radius:14px;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;">'+selectedAvatar.emoji+'</div>' +
-          '<div>' +
-            '<div style="font-size:11px;font-weight:800;color:var(--brand);">'+selectedAvatar.mbti+' · '+selectedAvatar.group+'</div>' +
-            '<div style="font-size:14px;font-weight:700;color:var(--ink);">'+escapeHtml(selectedAvatar.name)+'</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="field" style="margin-bottom:14px;">' +
-          '<label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:6px;">닉네임</label>' +
-          '<input type="text" id="obNickInput" maxlength="20" placeholder="닉네임을 입력하세요" value="'+escapeHtml(defaultName)+'" style="width:100%;height:44px;background:var(--input-bg);border:1px solid var(--rule);border-radius:10px;padding:0 12px;color:var(--ink);font-size:14px;">' +
-        '</div>' +
-        '<div class="field" style="margin-bottom:16px;">' +
-          '<label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:6px;">3대 대표 킬러 목표 프리셋 (원터치 선택)</label>' +
-          '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;" id="obPresetChips">' +
-            '<button type="button" class="ob-preset-chip active" data-title="매일 30분 달리기/걷기" data-cat="health" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1.5px solid var(--brand);background:rgba(16,185,129,0.12);color:var(--brand);font-weight:700;cursor:pointer;text-align:center;">🏃 매일 30분 운동</button>' +
-            '<button type="button" class="ob-preset-chip" data-title="하루 20분 집중 공부/독서" data-cat="study" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);cursor:pointer;text-align:center;">📚 하루 20분 공부</button>' +
-            '<button type="button" class="ob-preset-chip" data-title="아침 7시 기상 & 스트레칭" data-cat="routine" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);cursor:pointer;text-align:center;">⏰ 아침 7시 기상</button>' +
-            '<button type="button" class="ob-preset-chip" data-title="" data-cat="" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;text-align:center;">⏭️ 나중에 설정하기</button>' +
-          '</div>' +
-        '</div>' +
-        '<div class="modal-actions" style="display:flex;gap:8px;">' +
-          '<button class="btn btn-ghost" id="obBack2" type="button" style="flex:1;">이전</button>' +
-          '<button class="btn btn-primary" id="obFinish2" type="button" style="flex:2;">아워골 시작하기 (+10 EXP) 🚀</button>' +
-        '</div>';
-
-      openModal(html, function(sheet){
-        sheet.querySelectorAll('.ob-preset-chip').forEach(function(chip){
-          chip.addEventListener('click', function(){
-            sheet.querySelectorAll('.ob-preset-chip').forEach(function(c){
-              c.classList.remove('active');
-              c.style.background = 'var(--card)';
-              c.style.color = 'var(--ink-soft)';
-              c.style.borderColor = 'var(--rule)';
-              c.style.fontWeight = '400';
-            });
-            chip.classList.add('active');
-            chip.style.background = 'rgba(16,185,129,0.12)';
-            chip.style.color = 'var(--brand)';
-            chip.style.borderColor = 'var(--brand)';
-            chip.style.fontWeight = '700';
-            var title = chip.dataset.title;
-            var cat = chip.dataset.cat;
-            if(title){
-              chosenPreset = { title: title, category: cat };
-            } else {
-              chosenPreset = null;
-            }
-          });
-        });
-
-        sheet.querySelector('#obBack2').addEventListener('click', showObStep1);
-        sheet.querySelector('#obFinish2').addEventListener('click', async function(){
-          var nickInput = sheet.querySelector('#obNickInput');
-          var name = (nickInput && nickInput.value.trim()) || defaultName;
-          await completeOnboarding(name, selectedAvatar, chosenPreset);
-        });
-      });
-    }
-
-    async function completeOnboarding(displayName, avatarObj, chosenGoalPreset){
-      closeModal();
-      state.profile.displayName = displayName;
-      // 1. 아바타 데이터 무결성 보장: 전역 avatar는 문자열(이모지)로 저장하여 [object Object] 결함 원천 차단
-      state.profile.avatar = avatarObj.emoji;
-      state.profile.mbti = avatarObj.mbti;
-      state.profile.guardianAnimal = {
-        emoji: avatarObj.emoji,
-        name: avatarObj.name,
-        mbti: avatarObj.mbti,
-        group: avatarObj.group
-      };
-      state.profile.avatarUrl = '';
-      state.profile._isNewSignup = false;
-      state.profile.settings.hasSeenGuide = true; // 30초 무마찰 온보딩을 위해 장문 모달 대신 홈 콕핏 안착
-      state.profile.firstCheckinPending = true; // 3단계: 첫 체크인 튜토리얼 칩 활성화 플래그
-      state.profile.firstCheckinCelebrated = false;
-
-      // 2. 1호 목표 칩 선택 시 목표 목록에 추가
-      if(chosenGoalPreset && chosenGoalPreset.title){
-        var newGoal = {
-          id: (typeof uid === 'function' ? uid('goal') : ('g_' + Date.now())),
-          title: chosenGoalPreset.title,
-          category: chosenGoalPreset.category || 'health',
-          createdAt: (typeof nowISO === 'function' ? nowISO() : new Date().toISOString()),
-          dueDate: null,
-          milestones: [
-            { id: (typeof uid === 'function' ? uid('ms') : ('m_1_' + Date.now())), title: '첫 발걸음 실천하기', status: 'todo' },
-            { id: (typeof uid === 'function' ? uid('ms') : ('m_2_' + Date.now())), title: '꾸준히 이어가기', status: 'todo' }
-          ]
-        };
-        state.profile.goals = state.profile.goals || [];
-        state.profile.goals.unshift(newGoal);
-        state.activeGoalId = newGoal.id;
-      }
-
-      await saveProfile();
-      enterApp();
-
-      // 3. 실제 경험치 지급 (+10 EXP) 및 레벨업 피드백
-      if(typeof awardXP === 'function'){
-        try { awardXP(10, '온보딩 수호동물 안착 축하'); } catch(e){}
-      }
-
-      toast('🎉 반가워요 ' + displayName + '님! 수호동물 ' + avatarObj.name + '와(과) 함께 시작합니다 (+10 EXP)');
-      track('onboarding_completed', { source: 'onboarding_fusion', mbti: avatarObj.mbti, day_index: 0 });
-
-      // 4. 3단계 (10초): 첫 체크인 튜토리얼 가이드 칩 홈 콕핏에 렌더링
-      if(typeof renderFirstCheckinTutorialBanner === 'function'){
-        renderFirstCheckinTutorialBanner();
-      }
-    }
-  }
+  /* [#TASK-ES-442] ONBOARDING_AVATARS · startOnboarding → js/tabs/settings/onboarding.js 로 옮김(인라인 스크립트 세포화 P0) */
   window.startOnboarding = startOnboarding;
 
   /* ============ 3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출 ============ */
@@ -7828,17 +6339,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* [#TASK-ES-437] gaugeSvg → js/tabs/goals/result-input.js 로 옮김(인라인 스크립트 세포화 P0) */
 
-  /* ============ Goal math ============ */
-  function goalProgress(goal){
-    if(!goal.milestones.length) return 0;
-    var done = goal.milestones.filter(function(m){ return m.status==='done'; }).length;
-    return Math.round((done/goal.milestones.length)*100);
-  }
-  function msCounts(goal){
-    var c = {total:goal.milestones.length, todo:0, doing:0, done:0};
-    goal.milestones.forEach(function(m){ c[m.status]++; });
-    return c;
-  }
+  /* [#TASK-ES-442] goalProgress · msCounts → js/tabs/goals/goal-math.js 로 옮김(인라인 스크립트 세포화 P0) */
   /* ============ 목표 일정 리스케일링 ============ */
   function rescaleGoal(goal, scaleRatio){
     if(!goal) return null;
@@ -7878,93 +6379,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 결과 기록 (체크박스 대신 수치 입력) ============ */
   var RESULT_UNITS = ['회','일','페이지','분','시간','km','kg','개','%'];
 
-  function resultPct(r){
-    if(!r) return null;
-    if(typeof r.pct === 'number' && !isNaN(r.pct)) return Math.min(999, r.pct);
-    if(r.dbProperties && typeof r.dbProperties.progress === 'number' && !isNaN(r.dbProperties.progress)) return Math.min(999, r.dbProperties.progress);
-    var target = Number(r.target), done = Number(r.result);
-    if(!target || isNaN(target) || isNaN(done)) return null;
-    return Math.min(999, Math.round((done / target) * 100));
-  }
+  /* [#TASK-ES-442] resultPct → js/tabs/goals/goal-math.js 로 옮김(인라인 스크립트 세포화 P0) */
   /* [#TASK-ES-437] resultLineHtml · openAiResultAssistantModal → js/tabs/goals/result-input.js 로 옮김(인라인 스크립트 세포화 P0) */
 
-  /* ============ AI 결과 입력 -> Notion DB 구조화 변환기 ============ */
-  function convertTextToNotionDbRecord(text, kind, obj, goal){
-    var raw = (text || '').trim();
-    var dateStr = typeof isoDate === 'function' ? isoDate(new Date()) : new Date().toISOString().slice(0, 10);
-    var category = (goal && goal.category) || 'etc';
-
-    // Status & Progress determination
-    var isDone = /(?:완료|끝|성공|완주|다\s*했|마침|100%|올클|해냄|달성)/i.test(raw);
-    var isDoing = /(?:진행|절반|도중|일부|시작|조금)/i.test(raw);
-    var status = isDone ? '완료' : (isDoing ? '진행중' : '완료');
-
-    var progress = isDone ? 100 : (isDoing ? 50 : 100);
-    var pctMatch = raw.match(/(\d+(?:\.\d+)?)\s*%/);
-    if(pctMatch){
-      progress = Math.min(100, Math.round(parseFloat(pctMatch[1])));
-      if(progress >= 100) status = '완료';
-      else if(progress > 0) status = '진행중';
-    } else {
-      var fracMatch = raw.match(/(\d+)\s*(?:개|km|쪽|강|회)?\s*(?:중|에서|\/)\s*(\d+)/);
-      if(fracMatch){
-        var part = parseFloat(fracMatch[2]), tot = parseFloat(fracMatch[1]);
-        if(tot > 0) progress = Math.min(100, Math.round((part / tot) * 100));
-        status = progress >= 100 ? '완료' : '진행중';
-      }
-    }
-
-    // Metric extraction
-    var metrics = [];
-    var distMatch = raw.match(/(\d+(?:\.\d+)?)\s*(?:km|킬로|킬로미터)/i);
-    if(distMatch) metrics.push(distMatch[1] + 'km');
-    var timeMatch = raw.match(/(\d+)\s*시간(?:\s*(\d+)\s*분)?/) || raw.match(/(\d+)\s*(?:분|min)/i);
-    if(timeMatch){
-      if(timeMatch[2] !== undefined) metrics.push(timeMatch[1] + '시간 ' + (timeMatch[2] || 0) + '분');
-      else if(raw.includes('시간')) metrics.push(timeMatch[1] + '시간');
-      else metrics.push(timeMatch[1] + '분');
-    }
-    var countMatch = raw.match(/(\d+)\s*(?:개|문제|강|세트|쪽|페이지|회|권)/);
-    if(countMatch) metrics.push(countMatch[0]);
-    if(!metrics.length) metrics.push(progress + '% 달성');
-    var metricStr = metrics.join(' · ');
-
-    // Title generation
-    var fallbackTitle = (obj && obj.title && obj.title !== '커리큘럼 정하기' && obj.title !== '커리큘럼') ? obj.title : '오늘의 실천 기록';
-    var cleanTitle = raw.replace(/[!?,.]/g, '').trim();
-    if(cleanTitle.length > 32) cleanTitle = cleanTitle.slice(0, 32) + '…';
-    var title = cleanTitle || fallbackTitle;
-
-    // Key takeaway extraction
-    var keyTakeaway = raw;
-    var tags = [];
-    if(/운동|헬스|러닝|달리기|km|와드|하체|상체|스쿼트|벤치/.test(raw) || category === 'exercise') tags.push('운동');
-    if(/공부|강의|강|문제|인강|복습|단어|독서|페이지|쪽|시험/.test(raw) || category === 'study' || category === 'exam') tags.push('학습');
-    if(/오답|정리|노트|기록/.test(raw)) tags.push('정리');
-    if(status === '완료') tags.push('완료');
-    if(!tags.length) tags.push('실천');
-
-    var notionSchema = {
-      'Name': { type: 'title', title: [{ type: 'text', text: { content: title } }] },
-      'Status': { type: 'select', select: { name: status } },
-      'Progress': { type: 'number', number: progress },
-      'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: metricStr } }] },
-      'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: keyTakeaway } }] },
-      'Tags': { type: 'multi_select', multi_select: tags.map(function(t){ return { name: t }; }) },
-      'Date': { type: 'date', date: { start: dateStr } }
-    };
-
-    return {
-      title: title,
-      status: status,
-      progress: progress,
-      metric: metricStr,
-      keyTakeaway: keyTakeaway,
-      tags: tags,
-      date: dateStr,
-      notionSchema: notionSchema
-    };
-  }
+  /* [#TASK-ES-442] convertTextToNotionDbRecord → js/tabs/goals/notion-record-convert.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* [#TASK-ES-375] openResultModal → js/tabs/goals/result-modal.js 로 옮김(목표 탭 세포 2차) */
 
@@ -9663,204 +8081,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   /* [#TASK-ES-360] calShift → js/tabs/calendar/render.js 로 옮김(일정 탭 세포) */
 
-  /* ============ [#TASK-ES-151 & #TASK-ES-253] 일정 체크 완료 토글 및 목표 양방향 동기화 ============ */
-  async function toggleScheduleDone(schedId, kind, goalId, msId, taskId){
-    var isNowDone = false;
-    var wasLinked = false;
-    if(kind === 'custom' && schedId){
-      var csList = state.profile.settings.customSchedules || [];
-      var sched = csList.find(function(c){
-        return String(c.id) === String(schedId) || String(c.linkedId) === String(schedId) || c.id === ('sched_' + schedId);
-      });
-      if(!sched) return;
-      sched.done = !sched.done;
-      isNowDone = sched.done;
-
-      // 연계된 목표/마일스톤/세부할일 식별
-      var effGoalId = sched.linkedGoalId || goalId || (sched.linkedLevel === 'goal' ? sched.linkedId : null);
-      var effMsId = sched.linkedMsId || msId || (sched.linkedLevel === 'ms' ? sched.linkedId : null);
-      var effTaskId = sched.linkedTaskId || taskId || (sched.linkedLevel === 'task' ? sched.linkedId : null);
-
-      if(!effGoalId && (effTaskId || effMsId)){
-        (state.profile.goals || []).forEach(function(g){
-          (g.milestones || []).forEach(function(m){
-            if(effMsId && String(m.id) === String(effMsId)) effGoalId = g.id;
-            (m.tasks || []).forEach(function(t){
-              if(effTaskId && String(t.id) === String(effTaskId)){
-                effGoalId = g.id;
-                if(!effMsId) effMsId = m.id;
-              }
-            });
-          });
-        });
-      }
-
-      if(!effTaskId && !effMsId && effGoalId){
-        (state.profile.goals || []).forEach(function(g){
-          if(String(g.id) !== String(effGoalId)) return;
-          (g.milestones || []).forEach(function(m){
-            if(m.title === sched.title) effMsId = m.id;
-            (m.tasks || []).forEach(function(t){
-              if(t.title === sched.title){
-                effTaskId = t.id;
-                effMsId = m.id;
-              }
-            });
-          });
-        });
-      }
-
-      // 목표/마일스톤/할 일과 양방향 연동 동기화
-      if(sched.linkedTaskId || sched.linkedGoalId || effTaskId || effMsId || effGoalId){
-        wasLinked = true;
-        (state.profile.goals || []).forEach(function(g){
-          if(effGoalId && String(g.id) !== String(effGoalId)) return;
-          (g.milestones || []).forEach(function(m){
-            if(effMsId && String(m.id) !== String(effMsId)) return;
-            (m.tasks || []).forEach(function(t){
-              if((effTaskId && String(t.id) === String(effTaskId)) || (!effTaskId && !effMsId && t.title === sched.title)){
-                t.done = isNowDone;
-              }
-            });
-            if(m.tasks && m.tasks.length){
-              var allTasksDone = m.tasks.every(function(tk){ return !!tk.done; });
-              m.status = allTasksDone ? 'done' : (m.status === 'done' ? 'todo' : m.status);
-            } else if((effMsId && String(m.id) === String(effMsId)) || (!effTaskId && m.title === sched.title)){
-              m.status = isNowDone ? 'done' : 'todo';
-            }
-          });
-        });
-
-        // 동일 목표/할일에 연계된 다른 customSchedules 항목 동기화
-        (state.profile.settings.customSchedules || []).forEach(function(otherCs){
-          if(String(otherCs.id) === String(sched.id)) return;
-          if(effTaskId && (String(otherCs.linkedTaskId) === String(effTaskId) || String(otherCs.linkedId) === String(effTaskId))){
-            otherCs.done = isNowDone;
-          } else if(effMsId && (String(otherCs.linkedMsId) === String(effMsId) || String(otherCs.linkedId) === String(effMsId))){
-            otherCs.done = isNowDone;
-          }
-        });
-      }
-    } else if(kind === 'task' && (goalId || schedId) && (taskId || msId)){
-      var effGoalId = goalId;
-      var effTaskId = taskId || schedId;
-      var effMsId = msId;
-      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(effGoalId); });
-      if(g && g.milestones){
-        g.milestones.forEach(function(m){
-          if(effMsId && String(m.id) !== String(effMsId)) return;
-          (m.tasks || []).forEach(function(t){
-            if(String(t.id) === String(effTaskId)){
-              t.done = !t.done;
-              isNowDone = t.done;
-              wasLinked = true;
-              (state.profile.settings.customSchedules || []).forEach(function(cs){
-                if(String(cs.linkedTaskId) === String(effTaskId) || String(cs.linkedId) === String(effTaskId) || (String(cs.linkedGoalId) === String(effGoalId) && cs.title === t.title)){
-                  cs.done = isNowDone;
-                }
-              });
-            }
-          });
-          if(m.tasks && m.tasks.length){
-            var allTasksDone = m.tasks.every(function(tk){ return !!tk.done; });
-            m.status = allTasksDone ? 'done' : (m.status === 'done' ? 'todo' : m.status);
-          }
-        });
-      }
-    } else if(kind === 'ms' && (goalId || schedId) && (msId || schedId)){
-      var effGoalId = goalId;
-      var effMsId = msId || schedId;
-      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(effGoalId); });
-      if(g && g.milestones){
-        var m = g.milestones.find(function(x){ return String(x.id) === String(effMsId); });
-        if(m){
-          m.status = (m.status === 'done') ? 'todo' : 'done';
-          isNowDone = (m.status === 'done');
-          wasLinked = true;
-          (m.tasks || []).forEach(function(t){ t.done = isNowDone; });
-          (state.profile.settings.customSchedules || []).forEach(function(cs){
-            if(String(cs.linkedMsId) === String(effMsId) || String(cs.linkedId) === String(effMsId) || (String(cs.linkedGoalId) === String(effGoalId) && cs.title === m.title)){
-              cs.done = isNowDone;
-            }
-          });
-        }
-      }
-    } else if(kind === 'goal' && goalId){
-      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(goalId); });
-      if(g){
-        var allDone = g.milestones && g.milestones.length && g.milestones.every(function(m){ return m.status === 'done'; });
-        isNowDone = !allDone;
-        wasLinked = true;
-        (g.milestones || []).forEach(function(m){
-          m.status = isNowDone ? 'done' : 'todo';
-          (m.tasks || []).forEach(function(t){ t.done = isNowDone; });
-        });
-        (state.profile.settings.customSchedules || []).forEach(function(cs){
-          if(String(cs.linkedGoalId) === String(g.id) || String(cs.linkedId) === String(g.id)){
-            cs.done = isNowDone;
-          }
-        });
-      }
-    } else if(kind === 'gcal' && (schedId || goalId)){
-      var gcalTarget = schedId || goalId;
-      state.gcalEventsCache = state.gcalEventsCache || [];
-      var sched = state.gcalEventsCache.find(function(c){ return String(c.id) === String(gcalTarget); });
-      if(sched){
-        sched.done = !sched.done;
-        isNowDone = sched.done;
-      } else {
-        isNowDone = true;
-        state.gcalEventsCache.push({ id: gcalTarget, done: true, kind: 'gcal' });
-      }
-      try { localStorage.setItem(gcalEventsKey(), JSON.stringify(state.gcalEventsCache)); } catch(e){}
-      if(!state.profile.settings) state.profile.settings = {};
-      if(!state.profile.settings.gcalDoneEvents) state.profile.settings.gcalDoneEvents = {};
-      state.profile.settings.gcalDoneEvents[gcalTarget] = isNowDone;
-    } else if(kind === 'team_goal' && (schedId || msId || goalId)){
-      var tgTarget = schedId || msId || goalId;
-      if(!state.profile.settings) state.profile.settings = {};
-      if(!state.profile.settings.teamGoalDoneEvents) state.profile.settings.teamGoalDoneEvents = {};
-      var curDone = !!state.profile.settings.teamGoalDoneEvents[tgTarget];
-      isNowDone = !curDone;
-      state.profile.settings.teamGoalDoneEvents[tgTarget] = isNowDone;
-      try {
-        localStorage.setItem('ourgoal_team_goal_done_events', JSON.stringify(state.profile.settings.teamGoalDoneEvents));
-      } catch(e){}
-      if(typeof MOCK_GROUPS !== 'undefined'){
-        MOCK_GROUPS.forEach(function(g){
-          (g.teamGoals || []).forEach(function(tg){
-            if(String(tg.id) === String(tgTarget)){
-              (tg.milestones || []).forEach(function(m){ m.status = isNowDone ? 'done' : 'todo'; });
-            }
-            (tg.milestones || []).forEach(function(m){
-              if(String(m.id) === String(tgTarget)){
-                m.status = isNowDone ? 'done' : 'todo';
-              }
-            });
-          });
-        });
-      }
-    }
-
-    if(isNowDone){
-      if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-      triggerHaptic(15);
-      awardXP(10, '일정 및 목표 달성');
-      toast(wasLinked ? '일정 및 연계 목표를 달성했어요! 🎯 (+10 EXP)' : '일정을 완료했어요! 🎯 (+10 EXP)');
-    } else {
-      if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-      triggerHaptic(10);
-      toast('일정을 미완료로 변경했어요');
-    }
-
-    saveLocalSettings(state.profile.id, state.profile.settings);
-    await saveProfile();
-    renderCalendarScreen();
-    if(typeof renderGoalsScreen === 'function') renderGoalsScreen();
-    if(typeof renderHome === 'function') renderHome();
-    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    if(typeof renderStatsScreen === 'function') renderStatsScreen();
-  }
+  /* [#TASK-ES-442] toggleScheduleDone → js/tabs/calendar/schedule-done-toggle.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* ============ [#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달 ============ */
   /* [#TASK-ES-444] compressCalendarBgImage · openCalendarDayBgPickerModal → js/tabs/calendar/day-bg-picker.js 로 옮김(인라인 스크립트 세포화 P1) */
@@ -21890,143 +20111,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       window.sendTeamGoalComment(gid, targetId, text);
     }
   });
+  /* [#TASK-ES-448] promptNewTeamGoal → js/tabs/goals/team-goal-prompt.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
-  function promptNewTeamGoal(gid){
-    var g = MOCK_GROUPS.find(function(x){ return x.id===gid; });
-    openModal(
-      '<h3>팀 목표 추가</h3>' +
-      '<div style="margin-bottom:12px;">' +
-        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">⚡ 추천 팀 목표 템플릿</div>' +
-        '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
-          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalWorkshop" style="font-size:.8125rem;padding:4px 8px;border-color:var(--red-line);color:var(--brand-strong);">🏢 회사 워크숍 준비</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalTravel" style="font-size:.8125rem;padding:4px 8px;border-color:var(--teal);color:var(--teal);">✈️ 단체여행 올패스</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm" id="btnOpenEncyclopediaFromTeam" style="font-size:.8125rem;padding:4px 9px;border:1px solid var(--brand);color:var(--brand-strong);font-weight:700;">📖 템플릿백과사전</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalMarathon" style="font-size:.8125rem;padding:4px 8px;">🏃 마라톤 완주</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalFitness" style="font-size:.8125rem;padding:4px 8px;">💪 누적 300회 운동</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="field"><label>목표 이름</label><input id="tgTitleInput" type="text" placeholder="예: 2026 전사 전략 워크숍 준비 및 실행"></div>' +
-      '<div class="field"><label>마감일 (선택)</label><input id="tgDueInput" type="date"></div>' +
-      '<div class="modal-actions"><button class="btn btn-ghost" id="tgCancel" type="button">취소</button><button class="btn btn-primary" id="tgSave" type="button">추가</button></div>',
-      function(sheet){
-        var defaultMilestones = [];
-        var applyGoalTpl = function(title, days, msList){
-          var inp = sheet.querySelector('#tgTitleInput');
-          // [#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화
-          inp.value = '';
-          inp.placeholder = '예: ' + title;
-          inp.dataset.tplTitle = title;
-          sheet.querySelector('#tgDueInput').value = daysFromNow(days);
-          defaultMilestones = msList || [];
-          inp.focus();
-        };
-                var btnEnc = sheet.querySelector('#btnOpenEncyclopediaFromTeam');
-        if(btnEnc) btnEnc.onclick = function(){
-          closeModal();
-          if(typeof openTemplateEncyclopediaModal === 'function'){
-            openTemplateEncyclopediaModal();
-          }
-        };
-        var btnWS = sheet.querySelector('#tplGoalWorkshop');
-        if(btnWS) btnWS.onclick = function(){
-          applyGoalTpl('2026 하반기 전사 전략 워크숍 준비 및 실행', 21, [
-            { id: uid('tgm'), title: '1단계: 장소/숙소 대관 및 워크숍 예산안 최종 승인', status: 'done' },
-            { id: uid('tgm'), title: '2단계: 부서별 세션 아젠다 및 팀빌딩 프로그램 확정', status: 'doing' },
-            { id: uid('tgm'), title: '3단계: 워크숍 본행사 진행 및 팀별 액션플랜 도출·회고', status: 'todo' }
-          ]);
-        };
-        var btnTR = sheet.querySelector('#tplGoalTravel');
-        if(btnTR) btnTR.onclick = function(){
-          applyGoalTpl('낙오자 없는 제주 3박 4일 단체 여행 완성', 14, [
-            { id: uid('tgm'), title: '1단계: 항공권 발권 및 독채 숙소 예약 확정', status: 'done' },
-            { id: uid('tgm'), title: '2단계: 렌터카 배차, 일자별 드라이브 코스 및 맛집 리스트업', status: 'doing' },
-            { id: uid('tgm'), title: '3단계: 안전 여행 완주, 공용 경비 정산 및 베스트 샷 앨범 공유', status: 'todo' }
-          ]);
-        };
-        var btnMR = sheet.querySelector('#tplGoalMarathon');
-        if(btnMR) btnMR.onclick = function(){
-          applyGoalTpl('크루 전원 하프 마라톤 완주 챌린지', 30, [
-            { id: uid('tgm'), title: '1단계: 10km 완주 테스트 통과', status: 'done' },
-            { id: uid('tgm'), title: '2단계: 주간 20km 마일리지 및 페이스 훈련', status: 'doing' },
-            { id: uid('tgm'), title: '3단계: 하프 마라톤 대회 전원 완주', status: 'todo' }
-          ]);
-        };
-        var btnFT = sheet.querySelector('#tplGoalFitness');
-        if(btnFT) btnFT.onclick = function(){
-          applyGoalTpl('이번 달 팀 누적 300회 운동 인증 달성', 30, [
-            { id: uid('tgm'), title: '1단계: 상반월 150회 돌파', status: 'doing' },
-            { id: uid('tgm'), title: '2단계: 하반월 300회 완수 및 팀 정모', status: 'todo' }
-          ]);
-        };
-
-        sheet.querySelector('#tgCancel').addEventListener('click', closeModal);
-        sheet.querySelector('#tgSave').addEventListener('click', async function(){
-          var inp = sheet.querySelector('#tgTitleInput');
-          var title = (inp ? inp.value.trim() : '') || (inp && inp.dataset.tplTitle) || (inp && inp.placeholder ? inp.placeholder.replace(/^예:\s*/, '') : '');
-          if(!title) return;
-          if(!g.teamGoals) g.teamGoals = [];
-          g.teamGoals.push({
-            id: uid('tg'),
-            title: title,
-            dueDate: sheet.querySelector('#tgDueInput').value || null,
-            milestones: defaultMilestones.length ? defaultMilestones : []
-          });
-          await saveProfile();
-          closeModal();
-          renderTeamGoalsScreen();
-          toast('팀 목표를 추가했어요');
-        });
-      }
-    );
-  }
   /* [#TASK-ES-446] buildRecordCardHtml → js/tabs/records/record-cards.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
-
-  function wireRecordCards(container, options){
-    if(!container) return;
-    options = options || {};
-    var onUpdate = options.onUpdate || function(){ renderRecordsScreen(); };
-    container.querySelectorAll('.rec-card').forEach(function(card){
-      var id = card.dataset.recid;
-      var rec = (state.profile.records || []).find(function(r){ return r.id===id; });
-      if(!rec) return;
-
-      if(rec.type === 'template'){
-        card.addEventListener('click', function(e){
-          if(e.target.closest('button') || e.target.closest('.rec-theme-chip')) return;
-          openTemplateRecordDetailModal(rec);
-        });
-      }
-
-      var editBtn = card.querySelector('[data-recedit]');
-      if(editBtn){
-        editBtn.addEventListener('click', function(e){
-          e.stopPropagation();
-          if(rec.type === 'template'){
-            openProTemplateRecordModal(rec);
-          } else {
-            openRecordModal(rec);
-          }
-        });
-      }
-      var chipBtn = card.querySelector('[data-rectheme]');
-      if(chipBtn){
-        chipBtn.addEventListener('click', function(e){
-          e.stopPropagation();
-          openThemePickerModal(id);
-        });
-      }
-      var delBtn = card.querySelector('[data-recdel]');
-      if(delBtn){
-        delBtn.addEventListener('click', async function(e){
-          e.stopPropagation();
-          if(!(await OurgoalCapabilities.call('ui.confirm', '이 기록을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.'))) return;
-          await moveToTrash('record', id, rec, 'in_app', rec.text || rec.title || '체크인 기록');
-          card.remove();
-          onUpdate();
-        });
-      }
-    });
-  }
+  /* [#TASK-ES-448] wireRecordCards → js/tabs/records/record-card-wire.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* ============ TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진 ============ */
   var TREND_METRICS = {
@@ -23777,84 +21865,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     return minStr;
   }
-
-  function playTimerBeep(){
-    try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.35);
-    } catch(e){}
-  }
-
-  var STOPWATCH_STATE = {
-    mode: 'stopwatch',
-    targetMs: 0,
-    elapsedMs: 0,
-    startTime: 0,
-    timerId: null,
-    isRunning: false,
-    laps: []
-  };
-
-  function renderStopwatchWidgetHtml(){
-    return '<div class="pro-stopwatch-widget" id="proStopwatchWidget">' +
-      '<div class="pro-stopwatch-header">' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span style="font-size:1rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg></span>' +
-          '<b style="font-size:.875rem;color:var(--ink);">인앱 인터벌 타이머 & 스톱워치</b>' +
-        '</div>' +
-        '<div class="pro-sw-modes" id="swModeRow">' +
-          '<button class="pro-sw-mode-chip active" data-swmode="stopwatch" type="button">스톱워치</button>' +
-          '<button class="pro-sw-mode-chip" data-swmode="rest60" type="button">60초 휴식</button>' +
-          '<button class="pro-sw-mode-chip" data-swmode="rest90" type="button">90초 휴식</button>' +
-          '<button class="pro-sw-mode-chip" data-swmode="rest120" type="button">2분 휴식</button>' +
-          '<button class="pro-sw-mode-chip" data-swmode="timecap20" type="button">20분 타임캡</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="pro-sw-display-row">' +
-        '<div class="pro-sw-clock" id="swDisplay">00:00.0</div>' +
-        '<div class="pro-sw-controls">' +
-          '<button class="btn btn-primary btn-sm" id="swStartPauseBtn" type="button" style="min-width:70px;">시작</button>' +
-          '<button class="btn btn-ghost btn-sm" id="swResetBtn" type="button">리셋</button>' +
-          '<button class="btn btn-ghost btn-sm" id="swLapBtn" type="button">랩</button>' +
-          '<button class="btn btn-ghost btn-sm" id="swInjectBtn" type="button" style="color:var(--ink);border-color:var(--rule);font-weight:700;" title="현재 측정 시간을 표의 시간 열에 기입">표에 시간 기입</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="sw-inject-hint" id="swInjectHint" style="margin-top:5px;font-size:0.75rem;color:var(--ink-faint);line-height:1.4;">' +
-        '💡 넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨 (분:초 또는 초 기입)' +
-      '</div>' +
-      '<div id="swLapsList" class="sw-laps-container" style="display:none;"></div>' +
-    '</div>';
-  }
-  function renderLapRowsHtml(laps){
-    if(!laps || !laps.length) return '';
-    return laps.map(function(lp, idx){
-      var isObj = lp && typeof lp === 'object';
-      var lapNum = isObj && lp.num !== undefined ? lp.num : (laps.length - idx);
-      var lapTime = isObj ? (lp.time || '00:00.0') : String(lp);
-      var lapMemo = isObj ? (lp.memo || '') : '';
-      var safeTime = escapeHtml(lapTime);
-      var safeMemo = escapeHtml(lapMemo);
-      return '<div class="sw-lap-row" data-lap-idx="' + idx + '" data-lap-num="' + lapNum + '">' +
-        '<div class="sw-lap-meta">' +
-          '<span class="sw-lap-badge">랩 ' + lapNum + '</span>' +
-          '<span class="sw-lap-time">' + safeTime + '</span>' +
-        '</div>' +
-        '<div class="sw-lap-memo-wrap">' +
-          '<input type="text" class="sw-lap-memo-input" data-lap-idx="' + idx + '" placeholder="구간 활동 내용 (예: 세트 ' + lapNum + ', 웜업)" value="' + safeMemo + '" aria-label="랩 ' + lapNum + ' 메모">' +
-          '<button type="button" class="btn btn-ghost btn-xs sw-lap-inject-btn" data-lap-idx="' + idx + '" title="이 구간 기록을 표에 기입">기입</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  }
+  /* [#TASK-ES-448] playTimerBeep · STOPWATCH_STATE · renderStopwatchWidgetHtml · renderLapRowsHtml → js/tabs/records/table-stopwatch.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   if (typeof window !== 'undefined') {
     window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;
     window.renderLapRowsHtml = renderLapRowsHtml;
@@ -27064,18 +25075,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     openExportThemeModal();
   }
   document.getElementById('exportRecordsBtn').addEventListener('click', openExportThemeModal);
-
-  /* ============ RENDER: COMM ============ */
-  /* ============ 200인 가상 페르소나 자율 활동 데이터 (20대~50대 남녀 각 100인씩 총 200인) ============ */
-  var AI_DISCLOSURE_NOTICE = '이는 ai봇 생성물입니다 앱 런칭 초기에 앱 활용을 보여드리기 위함이고 곧 실제 사용자의 제작물로 가득 찰 것입니다';
-
-  // [TASK-ES-332] 헌법 제4조 제1항 1호/7호 및 결심 490108 준수: 가상 페르소나 40명 전면 삭제 (0건화)
-  var SIM_PERSONAS = [];
-  var MOCK_PEOPLE = SIM_PERSONAS;
-  function daysFromNow(n){
-    var d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+n);
-    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-  }
+  /* [#TASK-ES-448] AI_DISCLOSURE_NOTICE · SIM_PERSONAS · MOCK_PEOPLE · daysFromNow → js/tabs/comm/sample-data.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   var MOCK_GROUPS = [
     { id:'g-workshop', isMock:true, icon:'🏢', name:'2026 하반기 전략 워크숍 TF', topic:'career/기획·전략', region:'서울 강남구', members:6, maxMembers:10, roomType:'small', inviteCode:'WORK-TF10', ownerName:'상민', progress:65, cadence:'주 3회', endDate:daysFromNow(21),
@@ -27221,230 +25221,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       activity:['지훈님이 이번 주 저축 목표를 채웠어요','서영님이 무지출 3일을 인증했어요','민재님이 가계부를 공유했어요'],
       teamGoals:[] }
   ];
-
-  /* 외부 연동 샘플 데이터 (스트라바·건강앱 mock) */
-  var EXTERNAL_DATA = [
-    { id:'x1', src:'Strava', icon:'🏃', text:'10km 러닝 43분 페이스 달성' },
-    { id:'x2', src:'Strava', icon:'🚴', text:'자전거 32km 라이딩 1시간 12분' },
-    { id:'x3', src:'헬스 앱', icon:'🏋️', text:'스쿼트 120kg 1RM 기록' },
-    { id:'x4', src:'헬스 앱', icon:'👟', text:'오늘 걸음 수 12,480보 달성' },
-    { id:'x5', src:'수면 트래커', icon:'😴', text:'수면 7시간 20분 · 깊은 수면 1시간 45분' }
-  ];
-
-  /* Ⓜ️ 인증 크리에이터 템플릿 (mock) — 마일스톤별 세부 할 일 포함 */
-  var CREATOR_TEMPLATES = [
-    { id:'t1', creator:'마인드코치 지윤', badge:'상담심리학 석사 · 상담 경력 8년', title:'상담심리학 기반 멘탈케어 4주 코스',
-      desc:'하루 10분, 흔들리는 마음을 스스로 다잡는 4주 루틴', category:'etc', weeks:4, users:1240,
-      ms:[
-        { title:'1주차 · 내 감정 알아차리기', tasks:['자기 전 감정 단어 3개로 오늘 적기','기분이 요동친 순간 1개 기록하기','감정 일기 앱/노트 정하고 알림 맞추기'] },
-        { title:'2주차 · 스트레스 원인 찾기', tasks:['스트레스 상황 5개 적고 공통점 찾기','내가 통제 가능/불가능한 것 나누기','회피 대신 대처한 사례 1개 쓰기'] },
-        { title:'3주차 · 이완 습관 만들기', tasks:['4-7-8 호흡 하루 2회 하기','명상 앱으로 10분 세션 5회 채우기','자기 전 스마트폰 30분 끄기'] },
-        { title:'4주차 · 나를 지지하는 말 만들기', tasks:['나에게 하는 응원 문장 3개 만들기','힘든 순간에 꺼내 볼 문장 저장하기','4주 회고 · 달라진 점 3줄 정리'] }
-      ] },
-    { id:'t2', creator:'슈퍼삼촌 태호', badge:'유아교육 전공 · 주말 돌봄 5년차', title:'조카와 함께하는 주말 활동 루틴',
-      desc:'스마트폰 없이도 아이가 몰입하는 주말 4주 플랜', category:'etc', weeks:4, users:612,
-      ms:[
-        { title:'주말 1 · 밖에서 뛰놀기', tasks:['집 근처 공원/놀이터 3곳 후보 정하기','물통·간식·응급밴드 가방 미리 싸기','활동 사진 3장 남기기'] },
-        { title:'주말 2 · 같이 만들어 먹기', tasks:['아이가 고른 간식 레시피 1개 정하기','장보기 목록 같이 쓰기','설거지까지 같이 하기'] },
-        { title:'주말 3 · 책과 이야기', tasks:['도서관에서 그림책 2권 빌리기','목소리 바꿔가며 읽어주기','책 내용으로 질문 3개 주고받기'] },
-        { title:'주말 4 · 규칙 있는 놀이', tasks:['보드게임 1개 규칙 같이 익히기','졌을 때 감정 이야기 나누기','다음 달 하고 싶은 활동 정하기'] }
-      ] },
-    { id:'t3', creator:'삼백일운동 현우', badge:'생활스포츠지도사 2급 · 수강생 900명', title:'헬스 초보자 12주 근력 루틴',
-      desc:'헬스장이 처음이어도 3개월 뒤 3대 운동이 되는 계획', category:'exercise', weeks:12, users:3180,
-      ms:[
-        { title:'0~2주차 · 기록 세팅과 자세', tasks:['운동 기록 앱/노트 만들기','스쿼트·벤치·데드 빈 봉 자세 영상 찍기','주 3회 요일 고정하기'] },
-        { title:'3~6주차 · 루틴 몸에 익히기', tasks:['전신 루틴 주 3회 6주 채우기','매 세션 무게·횟수 기록하기','단백질 하루 체중×1.2g 챙기기'] },
-        { title:'7~9주차 · 중량 올리기', tasks:['3대 중량 각 5kg씩 올리기','부위별 보조운동 2개 추가','수면 7시간 주 5일 지키기'] },
-        { title:'10~12주차 · 목표 기록 도전', tasks:['1RM 측정일 정하기','측정 전 주 디로드 하기','시작 전후 사진·기록 비교 정리'] }
-      ] }
-  ];
+  /* [#TASK-ES-448] EXTERNAL_DATA · CREATOR_TEMPLATES → js/tabs/comm/sample-data.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   window.CREATOR_TEMPLATES = CREATOR_TEMPLATES;
-
-  /* #TASK-ES-179: 가짜 잇템 통계 목데이터 완전 제거 (헌법 제4조 준수) */
-
-  var VISIBILITY_LABELS = { public:'전체 공개', theme:'같은 테마 공개', team:'팀원 공개', private:'나만 보기' };
-
-  /* ============ 카테고리 (대범위 · 중범위) ============ */
-  var TOPICS = {
-    health:   { icon:'💪', label:'운동·건강', subs:['헬스·근력','러닝·마라톤','다이어트','요가·필라테스','등산·아웃도어','식단·영양','구기·라켓'] },
-    study:    { icon:'📚', label:'학습·자격', subs:['어학','자격증·시험','대학·입시','코딩·개발','독서','대학원·연구'] },
-    career:   { icon:'💼', label:'커리어·머니', subs:['이직·취업','창업·사업','사이드 프로젝트','재테크·투자','절약·가계부'] },
-    hobby:    { icon:'🎨', label:'취미·창작', subs:['글쓰기','음악·악기','그림·디자인','사진·영상','요리·베이킹','공예·DIY'] },
-    mind:     { icon:'🧘', label:'마음·습관', subs:['명상·멘탈케어','기상·수면','금연·금주','미니멀·정리','일기·회고'] },
-    relation: { icon:'🏘️', label:'관계·생활', subs:['육아','반려동물','연애·결혼','가족','봉사·커뮤니티','여행'] }
-  };
-  function topicLabel(topic){
-    if(!topic) return '';
-    var parts = String(topic).split('/');
-    var t = TOPICS[parts[0]];
-    if(!t) return '';
-    return t.icon+' '+t.label + (parts[1] ? ' · '+parts[1] : '');
-  }
-  function topicPill(topic){
-    var l = topicLabel(topic);
-    return l ? '<span class="topic-pill">'+escapeHtml(l)+'</span>' : '';
-  }
-  /* ============ 지역 (시/도 · 시군구) ============ */
-  var REGIONS = {
-    '서울': ['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
-    '경기': ['수원시','성남시','고양시','용인시','부천시','안산시','안양시','남양주시','화성시','평택시','의정부시','시흥시','파주시','김포시','광명시','광주시','군포시','하남시','오산시','이천시','안성시','의왕시','양평군','여주시','과천시','구리시','포천시','양주시','동두천시','가평군','연천군'],
-    '인천': ['중구','동구','미추홀구','연수구','남동구','부평구','계양구','서구','강화군','옹진군'],
-    '부산': ['중구','서구','동구','영도구','부산진구','동래구','남구','북구','해운대구','사하구','금정구','강서구','연제구','수영구','사상구','기장군'],
-    '대구': ['중구','동구','서구','남구','북구','수성구','달서구','달성군','군위군'],
-    '광주': ['동구','서구','남구','북구','광산구'],
-    '대전': ['동구','중구','서구','유성구','대덕구'],
-    '울산': ['중구','남구','동구','북구','울주군'],
-    '세종': ['세종시'],
-    '강원': ['춘천시','원주시','강릉시','동해시','태백시','속초시','삼척시','홍천군','횡성군','영월군','평창군','정선군','철원군','화천군','양구군','인제군','고성군','양양군'],
-    '충북': ['청주시','충주시','제천시','보은군','옥천군','영동군','증평군','진천군','괴산군','음성군','단양군'],
-    '충남': ['천안시','공주시','보령시','아산시','서산시','논산시','계룡시','당진시','금산군','부여군','서천군','청양군','홍성군','예산군','태안군'],
-    '전북': ['전주시','군산시','익산시','정읍시','남원시','김제시','완주군','진안군','무주군','장수군','임실군','순창군','고창군','부안군'],
-    '전남': ['목포시','여수시','순천시','나주시','광양시','담양군','곡성군','구례군','고흥군','보성군','화순군','장흥군','강진군','해남군','영암군','무안군','함평군','영광군','장성군','완도군','진도군','신안군'],
-    '경북': ['포항시','경주시','김천시','안동시','구미시','영주시','영천시','상주시','문경시','경산시','의성군','청송군','영양군','영덕군','청도군','고령군','성주군','칠곡군','예천군','봉화군','울진군','울릉군'],
-    '경남': ['창원시','진주시','통영시','사천시','김해시','밀양시','거제시','양산시','의령군','함안군','창녕군','고성군','남해군','하동군','산청군','함양군','거창군','합천군'],
-    '제주': ['제주시','서귀포시']
-  };
-  function regionPickerHtml(idPrefix, selected){
-    var parts = (selected||'').split(' ');
-    var curSido = REGIONS[parts[0]] ? parts[0] : '서울';
-    return '<div class="cat-major-row" id="'+idPrefix+'Sido">' +
-        Object.keys(REGIONS).map(function(k){
-          return '<button class="cat-major'+(k===curSido?' active':'')+'" data-sido="'+k+'" type="button">'+k+'</button>';
-        }).join('') +
-      '</div>' +
-      '<div class="cat-sub-grid" id="'+idPrefix+'Gu"></div>';
-  }
-  function wireRegionPicker(root, idPrefix, ref){
-    var sidoRow = root.querySelector('#'+idPrefix+'Sido');
-    var guGrid = root.querySelector('#'+idPrefix+'Gu');
-    function paintGu(sido){
-      guGrid.innerHTML = REGIONS[sido].map(function(g){
-        var on = ref.value === (sido+' '+g);
-        return '<button class="cat-sub'+(on?' active':'')+'" data-gu="'+escapeHtml(g)+'" type="button">'+escapeHtml(g)+'</button>';
-      }).join('');
-      guGrid.querySelectorAll('[data-gu]').forEach(function(b){
-        b.addEventListener('click', function(){
-          ref.value = sido+' '+b.dataset.gu;
-          paintGu(sido);
-        });
-      });
-    }
-    sidoRow.querySelectorAll('[data-sido]').forEach(function(b){
-      b.addEventListener('click', function(){
-        sidoRow.querySelectorAll('[data-sido]').forEach(function(x){ x.classList.remove('active'); });
-        b.classList.add('active');
-        paintGu(b.dataset.sido);
-      });
-    });
-    var init = (ref.value||'').split(' ')[0];
-    paintGu(REGIONS[init] ? init : '서울');
-  }
-
-  /* 사용자 추가 중범위 카테고리
-     설계 메모: 대범위(6개)는 고정이라 상위 분류는 절대 늘어나지 않고,
-     사용자 정의는 항상 '대범위/중범위' 한 컬럼(text)에만 저장된다.
-     별도 테이블·조인 없이 topic 인덱스만으로 조회되며,
-     선택지는 기존 데이터에서 distinct로 유도하므로 아무리 많이 추가돼도 스키마는 그대로다. */
-  function normalizeSubName(s){
-    return String(s||'').replace(/[\/\\|]/g,' ').replace(/\s+/g,' ').trim().slice(0,20);
-  }
-  function customSubsFor(major){
-    var found = {};
-    function add(topic){
-      if(!topic) return;
-      var parts = String(topic).split('/');
-      if(parts[0]!==major || !parts[1]) return;
-      if(TOPICS[major].subs.indexOf(parts[1])!==-1) return;
-      found[parts[1]] = true;
-    }
-    (state.profile ? state.profile.goals : []).forEach(function(g){ add(g.topic); });
-    (state.profile && state.profile.interests ? state.profile.interests : []).forEach(add);
-    MOCK_GROUPS.forEach(function(g){ add(g.topic); });
-    return Object.keys(found);
-  }
-
-  /* 대/중 카테고리 선택 UI (모달·폼 공용) */
-  function categoryPickerHtml(idPrefix, selected){
-    var parts = (selected||'').split('/');
-    var curMajor = TOPICS[parts[0]] ? parts[0] : Object.keys(TOPICS)[0];
-    var curSub = parts[1] || '';
-    return '<div class="cat-major-row" id="'+idPrefix+'Major">' +
-        Object.keys(TOPICS).map(function(k){
-          return '<button class="cat-major'+(k===curMajor?' active':'')+'" data-major="'+k+'" type="button">'+TOPICS[k].icon+' '+TOPICS[k].label+'</button>';
-        }).join('') +
-      '</div>' +
-      '<div class="cat-sub-grid" id="'+idPrefix+'Sub">' +
-        TOPICS[curMajor].subs.map(function(s){
-          return '<button class="cat-sub'+(s===curSub?' active':'')+'" data-sub="'+escapeHtml(s)+'" type="button">'+escapeHtml(s)+'</button>';
-        }).join('') +
-      '</div>';
-  }
-  /* 선택 상태를 ref 객체(.value)에 반영 */
-  function wireCategoryPicker(root, idPrefix, ref, opts){
-    opts = opts || {};
-    var majorRow = root.querySelector('#'+idPrefix+'Major');
-    var subGrid = root.querySelector('#'+idPrefix+'Sub');
-    var extraSubs = {};
-    function paintSubs(major){
-      var subs = TOPICS[major].subs
-        .concat(customSubsFor(major))
-        .concat(extraSubs[major] || []);
-      var seen = {};
-      subs = subs.filter(function(s){ if(seen[s]) return false; seen[s]=true; return true; });
-      subGrid.innerHTML = subs.map(function(s){
-        var on = ref.value === (major+'/'+s);
-        var custom = TOPICS[major].subs.indexOf(s)===-1;
-        return '<button class="cat-sub'+(on?' active':'')+'" data-sub="'+escapeHtml(s)+'" type="button">'+(custom?'+ ':'')+escapeHtml(s)+'</button>';
-      }).join('') +
-      (opts.allowCustom===false ? '' :
-        '<button class="cat-sub" data-addsub="1" type="button" style="border-style:dashed;color:var(--brand-strong);border-color:var(--red-line);">＋ 직접 추가</button>');
-      subGrid.querySelectorAll('[data-sub]').forEach(function(b){
-        b.addEventListener('click', function(){
-          ref.value = major+'/'+b.dataset.sub;
-          paintSubs(major);
-        });
-      });
-      var addBtn = subGrid.querySelector('[data-addsub]');
-      if(addBtn) addBtn.addEventListener('click', function(){
-        var input = window.prompt('추가할 세부 카테고리 이름을 적어주세요 (최대 20자)\r\n대분류: '+TOPICS[major].label);
-        if(input===null) return;
-        var name = normalizeSubName(input);
-        if(!name){ toast('이름을 확인해주세요'); return; }
-        if(subs.indexOf(name)!==-1){ ref.value = major+'/'+name; paintSubs(major); return; }
-        extraSubs[major] = (extraSubs[major]||[]).concat([name]);
-        ref.value = major+'/'+name;
-        paintSubs(major);
-        toast('"'+name+'" 카테고리를 추가했어요');
-      });
-    }
-    majorRow.querySelectorAll('[data-major]').forEach(function(b){
-      b.addEventListener('click', function(){
-        majorRow.querySelectorAll('[data-major]').forEach(function(x){ x.classList.remove('active'); });
-        b.classList.add('active');
-        paintSubs(b.dataset.major);
-      });
-    });
-    var initMajor = (ref.value||'').split('/')[0];
-    paintSubs(TOPICS[initMajor] ? initMajor : Object.keys(TOPICS)[0]);
-  }
-
-  /* [#TASK-ES-379] renderCommScreen → js/tabs/comm/render.js 로 옮김(소통 탭 세포 1차) */
-
-  /* ============ 플랫폼 맞춤 공유 카드 ============ */
-  var SHARE_PLATFORMS = {
-    kakao:   { label:'카카오톡',   badgeChar:'카', emoji:'💬', bg:'#FEE500', text:'#3A1D1D', ratios:[{key:'wide',     label:'1.91:1', ratio:'1.91/1'}] },
-    insta:   { label:'인스타그램', badgeChar:'인', emoji:'📷', bg:'linear-gradient(135deg,#C13584,#F77737)', text:'#fff', ratios:[{key:'square',label:'1:1', ratio:'1/1'},{key:'portrait',label:'3:4', ratio:'3/4'}] },
-    tiktok:  { label:'틱톡',       badgeChar:'틱', emoji:'🎵', bg:'#111', text:'#fff', ratios:[{key:'vertical', label:'9:16',   ratio:'9/16'}] },
-    threads: { label:'쓰레드',     badgeChar:'쓰', emoji:'🧵', bg:'#2b2b2b', text:'#fff', ratios:[{key:'square',  label:'1:1',    ratio:'1/1'}] }
-  };
-  var SHARE_CANVAS_DIMS = {
-    kakao:   { wide:     {w:800, h:419} },
-    insta:   { square:   {w:720, h:720}, portrait:{w:720, h:960} },
-    tiktok:  { vertical: {w:720, h:1280} },
-    threads: { square:   {w:720, h:720} }
-  };
-  /* 실제 배포 도메인(접속 환경에 맞춰 동적 감지, 커스텀 도메인 및 로컬/Vercel 자동 호환) */
-  var SHARE_DOMAIN = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : 'https://ourgoal-app.vercel.app';
+  /* [#TASK-ES-448] VISIBILITY_LABELS → js/tabs/comm/sample-data.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
+  /* [#TASK-ES-448] TOPICS · topicLabel · topicPill · REGIONS · regionPickerHtml · wireRegionPicker · normalizeSubName · customSubsFor · categoryPickerHtml · wireCategoryPicker → js/tabs/goals/topic-region-picker.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
+  /* [#TASK-ES-448] SHARE_PLATFORMS · SHARE_CANVAS_DIMS · SHARE_DOMAIN → js/tabs/comm/share-card.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* 범용 외부 SNS 공유 엔진: js/viral-sharing.js 위임 */
 
@@ -27463,179 +25244,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
 
   var shareContent = function(opts){ return window.OurgoalViralSharing ? window.OurgoalViralSharing.shareContent(opts) : Promise.resolve(); }; window.shareContent = shareContent;
-
-  /* 워터마크: 모든 공유 카드(플랫폼별 공유 카드·완주 인증서·위클리 리캡)가 공통으로 호출 */
-  function drawShareWatermark(ctx, dims, userId, textColor){
-    var pad = Math.round(dims.w*0.045);
-    ctx.save();
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = textColor || '#fff';
-    ctx.textAlign = 'right';
-    ctx.globalAlpha = 0.75;
-    ctx.font = '800 ' + Math.round(dims.w*0.026) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillText('아워골', dims.w-pad, dims.h-pad*1.6);
-    ctx.font = '500 ' + Math.round(dims.w*0.02) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillText(SHARE_DOMAIN.replace(/^https?:\/\//,'')+'/share/'+userId, dims.w-pad, dims.h-pad*0.9);
-    ctx.textAlign = 'center';
-    ctx.font = '500 ' + Math.round(dims.w*0.022) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillText('나만의 목표 달성 메이트 · 아워골', dims.w/2, dims.h-pad*0.35);
-    ctx.restore();
-  }
-  function buildInviteLinkSuffix(goalId, goalTitle){ var origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : SHARE_DOMAIN; return goalId ? ('\r\n\r\n' + origin + '/share?type=goal&id=' + encodeURIComponent(goalId) + (goalTitle ? '&title=' + encodeURIComponent(goalTitle) : '')) : ('\r\n\r\n' + origin + '/share?type=app&ref=' + encodeURIComponent((state.profile && state.profile.id) || '')); }
-  function scRoundRect(ctx, x, y, w, h, r){
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.arcTo(x+w, y, x+w, y+h, r);
-    ctx.arcTo(x+w, y+h, x, y+h, r);
-    ctx.arcTo(x, y+h, x, y, r);
-    ctx.arcTo(x, y, x+w, y, r);
-    ctx.closePath();
-  }
-  function scWrapLines(ctx, text, maxWidth, maxLines){
-    var chars = String(text).split('');
-    var lines = [], line = '';
-    for(var i=0;i<chars.length;i++){
-      var test = line + chars[i];
-      if(ctx.measureText(test).width > maxWidth && line){
-        lines.push(line);
-        line = chars[i];
-        if(maxLines && lines.length>=maxLines) break;
-      } else {
-        line = test;
-      }
-    }
-    if(maxLines && lines.length>=maxLines){
-      lines = lines.slice(0, maxLines);
-      lines[maxLines-1] = lines[maxLines-1].replace(/.$/, '…');
-    } else if(line){
-      lines.push(line);
-    }
-    return lines;
-  }
-  function scDrawLines(ctx, lines, x, y, lineHeight){
-    lines.forEach(function(l, i){ ctx.fillText(l, x, y + i*lineHeight); });
-    return y + lines.length*lineHeight;
-  }
-  /* 선택된 목표·플랫폼 정보를 바탕으로 실제 공유될 이미지를 캔버스로 그려낸다 */
-  async function generateShareImage(pkey, g, pct, sel, days){
-    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; } catch(e){} }
-    var p = SHARE_PLATFORMS[pkey];
-    var comp = state.shareComposer;
-    var ratioKey = comp.ratio[pkey] || p.ratios[0].key;
-    var dims = (SHARE_CANVAS_DIMS[pkey] && SHARE_CANVAS_DIMS[pkey][ratioKey]) || SHARE_CANVAS_DIMS[pkey][Object.keys(SHARE_CANVAS_DIMS[pkey])[0]];
-    var canvas = document.createElement('canvas');
-    canvas.width = dims.w; canvas.height = dims.h;
-    var ctx = canvas.getContext('2d');
-
-    if(pkey==='insta'){
-      var grad = ctx.createLinearGradient(0,0,dims.w,dims.h);
-      grad.addColorStop(0,'#C13584'); grad.addColorStop(1,'#F77737');
-      ctx.fillStyle = grad;
-    } else {
-      ctx.fillStyle = p.bg==='#111' ? '#111111' : (p.bg.indexOf('gradient')!==-1 ? '#2b2b2b' : p.bg);
-    }
-    ctx.fillRect(0,0,dims.w,dims.h);
-
-    var textColor = p.text;
-    var pad = Math.round(dims.w*0.075);
-    var innerW = dims.w - pad*2;
-    var watermarkH = dims.w*0.1; // 하단 워터마크(drawShareWatermark)가 차지할 여백
-    var isVertical = pkey==='tiktok' || (pkey==='insta' && ratioKey==='portrait');
-    var topExtra = isVertical ? dims.h*0.05 : 0; // 세로형 카드는 위아래 여백을 넉넉히 둬 스티커 공간 확보
-    var y = pad + dims.w*0.03 + topExtra;
-
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = textColor;
-    ctx.globalAlpha = .92;
-    ctx.font = '700 ' + Math.round(dims.w*0.034) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillText('아워골', pad, y);
-    ctx.globalAlpha = .6;
-    ctx.font = '500 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
-    // [TASK-ES-104] 카카오톡/인스타그램 맞춤카드 문구 제거 (상민님 지시 제6항)
-    ctx.globalAlpha = 1;
-    y += dims.w*0.06;
-
-    var lastRec = state.profile.records[0];
-    var fbOk = sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id;
-    var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
-    var maxContentY = dims.h - pad*1.3 - watermarkH - (isVertical ? dims.h*0.04 : 0);
-    var compact = dims.h < 500;
-
-    if(sel.goal){
-      ctx.fillStyle = textColor;
-      ctx.font = '900 ' + Math.round(dims.w*0.07) + 'px "Noto Sans KR",sans-serif';
-      y = scDrawLines(ctx, scWrapLines(ctx, g.title, innerW, compact?1:2), pad, y, dims.w*0.08) + dims.w*0.012;
-      ctx.font = '800 ' + Math.round(dims.w*0.05) + 'px "Noto Sans KR",sans-serif';
-      ctx.fillText(pct+'% 달성 중', pad, y);
-      y += dims.w*(compact?0.045:0.055);
-      var barH = Math.round(dims.w*0.02);
-      ctx.fillStyle = 'rgba(255,255,255,.3)';
-      scRoundRect(ctx, pad, y, innerW, barH, barH/2); ctx.fill();
-      ctx.fillStyle = textColor;
-      scRoundRect(ctx, pad, y, Math.max(barH, innerW*Math.min(100,pct)/100), barH, barH/2); ctx.fill();
-      y += barH + dims.w*(compact?0.04:0.055);
-    }
-
-    function drawChip(icon, text){
-      if(y >= maxContentY) return;
-      var fontSize = Math.round(dims.w*0.028);
-      ctx.font = '600 '+fontSize+'px "Noto Sans KR",sans-serif';
-      var chipPadX = dims.w*0.026, chipPadY = dims.w*0.018;
-      var lines = scWrapLines(ctx, icon+' '+text, innerW - chipPadX*2, compact?1:2);
-      var lineH = dims.w*0.035;
-      var chipH = chipPadY*2 + lines.length*lineH;
-      if(y + chipH > maxContentY) return;
-      ctx.fillStyle = 'rgba(255,255,255,.16)';
-      scRoundRect(ctx, pad, y, innerW, chipH, dims.w*0.018); ctx.fill();
-      ctx.fillStyle = textColor;
-      scDrawLines(ctx, lines, pad+chipPadX, y+chipPadY+lineH*0.72, lineH);
-      y += chipH + dims.w*0.018;
-    }
-    if(sel.record && lastRec) drawChip('📝', lastRec.text);
-    if(fbOk) drawChip('🤖', state.lastCapture.feedback.comment);
-
-    if(pickedMs.length && y < maxContentY){
-      var chipFont = Math.round(dims.w*0.025);
-      ctx.font = '700 '+chipFont+'px "Noto Sans KR",sans-serif';
-      var cx = pad, cy = y, rowH = dims.w*0.048;
-      pickedMs.slice(0,4).forEach(function(m){
-        if(cy >= maxContentY) return;
-        var label = '· '+m.title;
-        var w = ctx.measureText(label).width + dims.w*0.03;
-        if(cx + w > pad+innerW){ cx = pad; cy += rowH+dims.w*0.012; if(cy>=maxContentY) return; }
-        ctx.fillStyle = 'rgba(255,255,255,.2)';
-        scRoundRect(ctx, cx, cy, w, rowH*0.82, rowH*0.4); ctx.fill();
-        ctx.fillStyle = textColor;
-        ctx.fillText(label, cx+dims.w*0.015, cy+rowH*0.56);
-        cx += w + dims.w*0.014;
-      });
-      y = cy + rowH + dims.w*0.02;
-    }
-
-    var footerY = Math.max(y + dims.w*0.03, dims.h - pad*0.6 - watermarkH);
-    ctx.globalAlpha = .7;
-    ctx.font = '600 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillStyle = textColor;
-    ctx.fillText(days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate):''), pad, footerY);
-    ctx.globalAlpha = 1;
-
-    drawShareWatermark(ctx, dims, state.profile.id, textColor);
-    return canvas;
-  }
-  function buildShareText(g, pct, sel, days){
-    var lines = [];
-    if(sel.goal) lines.push('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
-    var lastRec = state.profile.records[0];
-    if(sel.record && lastRec) lines.push('오늘 기록: '+lastRec.text);
-    if(sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id){
-      lines.push('AI 피드백: '+state.lastCapture.feedback.comment);
-    }
-    var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
-    if(pickedMs.length) lines.push('마일스톤: '+pickedMs.map(function(m){ return m.title; }).join(', '));
-    if(typeof days==='number') lines.push(days+'일째 진행 중');
-    var base = lines.join('\r\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
-    return base + buildInviteLinkSuffix(g.id);
-  }
+  /* [#TASK-ES-448] drawShareWatermark · buildInviteLinkSuffix · scRoundRect · scWrapLines · scDrawLines · generateShareImage · buildShareText → js/tabs/comm/share-card.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* ============ 목표 완주 인증서 (기존 공유 캔버스 인프라 재사용) ============ */
   async function generateGoalCertificateImage(goal, pct, days){
@@ -27988,66 +25597,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 소통 피드 (Supabase feed_posts, 실시간 동기화) ============ */
   var FEED_POSTS_CACHE = null; // null=아직 안 불러옴, 로드 후 배열
-  async function ensureFeedPostsLoaded(){
-    if(FEED_POSTS_CACHE) return;
-    FEED_POSTS_CACHE = []; if(!sb) return;
-    var res = await sb.from('feed_posts').select('*').order('created_at', { ascending:false }).limit(50);
-    FEED_POSTS_CACHE = res.data || [];
-  }
-  function setupFeedPostsRealtime(){ if(!sb || typeof sb.channel !== 'function') return;
-    function rerenderIfFeedVisible(){
-      if(state.activeTab!=='comm' || state.commSubTab!=='feed') return;
-      var subBody = document.getElementById('commSubBody');
-      if(subBody) renderCommFeed(subBody);
-    }
-    sb.channel('feed_posts_channel')
-      .on('postgres_changes', { event:'INSERT', schema:'public', table:'feed_posts' }, function(payload){
-        if(!FEED_POSTS_CACHE) return;
-        if(FEED_POSTS_CACHE.some(function(p){ return p.id===payload.new.id; })) return;
-        FEED_POSTS_CACHE.unshift(payload.new);
-        rerenderIfFeedVisible();
-      })
-      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'feed_posts' }, function(payload){
-        if(!FEED_POSTS_CACHE) return;
-        var idx = FEED_POSTS_CACHE.findIndex(function(p){ return p.id===payload.new.id; });
-        if(idx>-1) FEED_POSTS_CACHE[idx] = payload.new;
-        rerenderIfFeedVisible();
-      })
-      .on('postgres_changes', { event:'INSERT', schema:'public', table:'team_pings' }, function(payload){
-        var row = payload.new;
-        if(row && row.group_id === 'feed' && row.target_type === 'feed_comment'){
-          var pid = row.target_id;
-          var curList = getFeedComments(pid);
-          if(!curList.some(function(c){ return c.id === row.id; })){
-            curList.push({
-              id: row.id,
-              userId: row.sender_id,
-              name: row.sender_name || '동료',
-              avatar: row.sender_avatar || '👤',
-              text: row.message,
-              time: '방금',
-              isMe: (row.sender_id === (state.profile ? state.profile.id : '')),
-              is_ai: false,
-              createdAt: row.created_at
-            });
-            setFeedComments(pid, curList);
-            rerenderIfFeedVisible();
-          }
-        } else if(row && row.group_id === 'shared_groups' && row.target_type === 'team_group'){
-          try {
-            var g = typeof row.message === 'string' ? JSON.parse(row.message) : row.message;
-            if(g && g.id && !MOCK_GROUPS.some(function(x){ return x.id === g.id; })){
-              MOCK_GROUPS.unshift(g);
-              if(state.activeTab === 'comm' && state.commSubTab === 'group'){
-                var commBody = document.getElementById('commSubBody');
-                if(commBody && !state.activeGroupId) renderCommGroups(commBody);
-              }
-            }
-          } catch(e){}
-        }
-      })
-      .subscribe();
-  }
+  /* [#TASK-ES-448] ensureFeedPostsLoaded · setupFeedPostsRealtime → js/tabs/comm/feed-posts-sync.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   /* ============ 피드 상호소통 댓글 & 리액션 헬퍼 (#TASK-ES-133 서버 DB 실시간 동기화) ============ */
   /* [#TASK-ES-379] SERVER_FEED_COMMENTS_CACHE · loadServerFeedComments · getFeedComments · setFeedComments · handleUserCommentSubmit · toggleFeedReaction → js/tabs/comm/feed-comments.js 로 옮김(소통 탭 세포 1차) */
 
@@ -28681,26 +26231,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     });
   }
-
-  /* ============ 팀 참여 상태 (localStorage 유지) ============ */
-  function groupState(gid){
-    var s = state.profile.settings;
-    if(!s.groupState) s.groupState = {};
-    if(!s.groupState[gid]) s.groupState[gid] = { joined:false, checkins:[], cheers:0, myRole:'member' };
-    return s.groupState[gid];
-  }
-  function groupCheckedToday(gid){
-    return groupState(gid).checkins.indexOf(dateKey(nowISO())) !== -1;
-  }
-  function groupStreak(gid){
-    var days = {};
-    groupState(gid).checkins.forEach(function(d){ days[d] = true; });
-    var streak = 0, cursor = new Date(); cursor.setHours(0,0,0,0);
-    while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
-      streak++; cursor.setDate(cursor.getDate()-1);
-    }
-    return streak;
-  }
+  /* [#TASK-ES-448] groupState · groupCheckedToday · groupStreak → js/tabs/goals/team-state.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* ============ 전역 공유 팀 로더 & 렌더링 (#TASK-ES-133) ============ */
   var SHARED_GROUPS_LOADED = false;
@@ -29565,95 +27096,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     /* ============ 통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임) ============ */
   function handleDeepLinkRouting(){ if(window.OurgoalViralSharing) window.OurgoalViralSharing.handleDeepLinkRouting(); }
   var checkAndHandlePeerInviteUrl = handleDeepLinkRouting;
-
-  var MANITO_ADJ = ['새벽의','조용한','끈질긴','달리는','반짝이는','묵묵한','씩씩한','느긋한','집중하는','유쾌한'];
-  var MANITO_NOUN = { health:'러너', study:'공부벌레', career:'빌더', hobby:'창작자', mind:'명상가', relation:'이웃' };
-  var MANITO_EMOJI = { health:'🏃', study:'📖', career:'🚀', hobby:'🎨', mind:'🌙', relation:'🏡' };
-  /* [#TASK-ES-230] 마니또 4종 웰컴 스탬프 팔레트 */
-  var MANITO_WELCOME_STAMPS = [
-    { id:'fire', icon:'🔥', label:'불꽃응원', msg:'오늘도 불태우는 중이네요, 끝까지 함께 달려요! 🔥' },
-    { id:'luck', icon:'🍀', label:'행운부적', msg:'내일도 모든 일이 술술 풀릴 거예요, 행운을 가득 보내요! 🍀' },
-    { id:'tea', icon:'☕', label:'따뜻한차', msg:'지친 하루 따뜻한 차 한 잔 마시고 힘내세요! ☕' },
-    { id:'crown', icon:'👑', label:'완주응원', msg:'우리의 목표를 끝까지 완주할 당신을 응원해요! 👑' }
-  ];
+  /* [#TASK-ES-448] MANITO_ADJ · MANITO_NOUN · MANITO_EMOJI · MANITO_WELCOME_STAMPS → js/tabs/comm/manito-basics.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){ window.MANITO_WELCOME_STAMPS = MANITO_WELCOME_STAMPS; }
-
-  var MANITO_STAMPS = [
-    { id:'fire', icon:'🔥', label:'불꽃응원', msg:'오늘도 불태우는 중이네요, 끝까지 함께 달려요! 🔥' },
-    { id:'luck', icon:'🍀', label:'행운부적', msg:'내일도 모든 일이 술술 풀릴 거예요, 행운을 가득 보내요! 🍀' },
-    { id:'tea', icon:'☕', label:'따뜻한차', msg:'지친 하루 따뜻한 차 한 잔 마시고 힘내세요! ☕' },
-    { id:'crown', icon:'👑', label:'완주응원', msg:'우리의 목표를 끝까지 완주할 당신을 응원해요! 👑' },
-    { id:'clap', icon:'👏', label:'멋져요', msg:'꾸준함이 진짜 멋져요.' },
-    { id:'seed', icon:'🌱', label:'자라요', msg:'작게라도 매일 쌓이는 게 보여요.' }
-  ];
+  /* [#TASK-ES-448] MANITO_STAMPS → js/tabs/comm/manito-basics.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* 마니또 1분 쿨타임 및 원클릭 웰컴 스탬프 발송 엔진 */
   if(typeof window !== 'undefined' && !window.MANITO_STAMP_COOLDOWN){ window.MANITO_STAMP_COOLDOWN = {}; }
-  async function sendManitoWelcomeStamp(pid, sid, btnElement, bodyContainer){
-    var now = Date.now();
-    var lastSent = (window.MANITO_STAMP_COOLDOWN && window.MANITO_STAMP_COOLDOWN[pid]) || 0;
-    if(now - lastSent < 60000){
-      var remainSec = Math.ceil((60000 - (now - lastSent)) / 1000);
-      toast('잠시만요! ' + remainSec + '초 후에 다시 보낼 수 있어요 ⏳');
-      return;
-    }
-
-    triggerHapticFeedback(15);
-    if(btnElement){
-      var r = btnElement.getBoundingClientRect();
-      burstConfetti(r.left + r.width/2, r.top + r.height/2);
-    } else {
-      burstConfetti(window.innerWidth/2, window.innerHeight/3);
-    }
-
-    var ms = manitoState();
-    var today = dateKey(nowISO());
-    ms.sent.push({ to:pid, stamp:sid, date:today, at:nowISO() });
-    window.MANITO_STAMP_COOLDOWN[pid] = now;
-    await saveProfile();
-
-    var myGoal = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; })[0] : null;
-    var stampObj = MANITO_WELCOME_STAMPS.find(function(s){ return s.id===sid; }) || MANITO_STAMPS.find(function(s){ return s.id===sid; }) || { id:'fire', icon:'🔥', label:'불꽃응원', msg:'응원을 보냅니다' };
-
-    var cheerPing = {
-      id: 'mn_c_' + newId(),
-      group_id: 'manito',
-      sender_id: state.profile.id,
-      sender_name: ms.anonName || '비밀 수호천사',
-      sender_avatar: '🕊️',
-      receiver_id: pid,
-      target_type: 'manito_cheer',
-      target_id: sid,
-      target_title: stampObj.label,
-      ping_type: 'welcome_cheer',
-      message: myGoal ? ('"' + myGoal.title + '" ' + stampObj.msg) : stampObj.msg,
-      status: 'sent',
-      hidden: false,
-      created_at: nowISO()
-    };
-    sb.from('team_pings').insert(cheerPing).then(function(res){
-      if(res.error) console.warn('[ManitoCheer] Supabase insert warn:', res.error.message);
-    });
-
-    toast('나의 마니또에게 익명 응원이 전달되었습니다 🕊️');
-    if(bodyContainer) renderCommManito(bodyContainer);
-  }
-  function hashStr(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
-  function manitoState(){
-    var s = state.profile.settings;
-    if(!s.manito) s.manito = { joined:false, anonName:'', allowDm:false, sent:[], threads:{}, revealed:{}, seed: Math.floor(Math.random()*100000) };
-    return s.manito;
-  }
-  function manitoMajors(){
-    var ints = (state.profile.interests||[]).map(function(t){ return t.split('/')[0]; }).filter(function(k){ return TOPICS[k]; });
-    var goalMajors = state.profile.goals.filter(function(g){ return !g.archivedAt && g.topic; }).map(function(g){ return g.topic.split('/')[0]; }).filter(function(k){ return TOPICS[k]; }); // [#TASK-ES-352] TOPICS 에 없는 주제(예: reading)는 화면이 깨지므로 뺀다
-    var all = ints.concat(goalMajors);
-    var seen = {}; all = all.filter(function(k){ if(seen[k]) return false; seen[k]=true; return true; });
-    return all.length ? all : ['health','study','mind'];
-  }
-  function genAnonName(major, seed){
-    return MANITO_ADJ[seed % MANITO_ADJ.length]+' '+(MANITO_NOUN[major]||'동료')+' #'+String(seed%900+100);
-  }
+  /* [#TASK-ES-448] sendManitoWelcomeStamp · hashStr · manitoState · manitoMajors · genAnonName → js/tabs/comm/manito-basics.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   /* ============ 마니또 실 유저 익명 응원 연동 (#TASK-ES-133, #TASK-ES-145) ============ */
   var REAL_MANITO_PARTNERS_CACHE = [];
   var REAL_MANITO_INBOX_CACHE = [];
@@ -30122,352 +27571,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return window.OurgoalTeamInviteComm.openUserProfileModal(user);
     }
   }
-
-  /* ============ 웹알림 소프트 애스크 (TASK-RD-T020) ============ */
-  function openNotificationSoftAskModal(){
-    return new Promise(function(resolve){
-      if(!('Notification' in window)){
-        resolve(false);
-        return;
-      }
-      if(Notification.permission === 'granted'){
-        resolve(true);
-        return;
-      }
-      if(Notification.permission === 'denied'){
-        toast('브라우저 설정에서 알림 권한을 허용해주세요');
-        resolve(false);
-        return;
-      }
-      openModal(
-        '<div class="soft-ask-card">' +
-          '<div class="soft-ask-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>' +
-          '<h3>스트릭을 안전하게 지켜드릴까요?</h3>' +
-          '<p class="muted" style="margin:6px 0 0;font-size:.875rem;line-height:1.45;">' +
-            '저녁 8시까지 체크인이 없을 때 긴급 알림으로 연속 불꽃이 꺼지지 않게 지켜드려요.<br>' +
-            '일요일 저녁에는 주간 성취 리캡도 전해드려요.' +
-          '</p>' +
-        '</div>' +
-        '<div class="modal-actions">' +
-          '<button class="btn btn-ghost" id="softAskDismiss" type="button">나중에</button>' +
-          '<button class="btn btn-primary" id="softAskAllow" type="button">알림 켜고 보호받기</button>' +
-        '</div>',
-        function(sheet){
-          sheet.querySelector('#softAskDismiss').addEventListener('click', function(){
-            closeModal();
-            resolve(false);
-          });
-          sheet.querySelector('#softAskAllow').addEventListener('click', async function(){
-            closeModal();
-            try {
-              var perm = await Notification.requestPermission();
-              resolve(perm === 'granted');
-            } catch(e){
-              resolve(false);
-            }
-          });
-        }
-      );
-    });
-  }
-
-  /* ============ 고객지원 & FAQ 모달 (Req 10) ============ */
-  function openCustomerInquiryModal(){
-    openModal(
-      '<h3>1:1 고객 문의 및 오류 제보</h3>' +
-      '<p class="faint" style="margin:-8px 0 16px;">불편하신 점이나 새로운 기능 제안을 남겨주시면 개발팀에서 신속하게 검토합니다.</p>' +
-      '<div class="field">' +
-        '<label>문의 유형</label>' +
-        '<select id="inquiryType">' +
-          '<option value="bug">버그 / 오류 제보</option>' +
-          '<option value="feature">새로운 기능 제안</option>' +
-          '<option value="account">계정 / 보안 관련</option>' +
-          '<option value="other">기타 문의사항</option>' +
-        '</select>' +
-      '</div>' +
-      '<div class="field">' +
-        '<label>답변받으실 이메일</label>' +
-        '<input id="inquiryEmail" type="email" value="'+escapeHtml((state.user && state.user.email) || (state.profile && state.profile.email) || '')+'" placeholder="답변받으실 이메일 주소">' +
-      '</div>' +
-      '<div class="field">' +
-        '<label>문의 내용</label>' +
-        '<textarea id="inquiryContent" rows="4" placeholder="상세한 내용이나 발생 상황을 적어주세요." style="width:100%;border-radius:10px;padding:8px 12px;background:var(--card2);border:1px solid var(--rule);color:var(--ink);font-size:.875rem;resize:vertical;box-sizing:border-box;"></textarea>' +
-      '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="inquiryCancel" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="inquirySubmit" type="button">문의 접수</button>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#inquiryCancel').onclick = closeModal;
-        sheet.querySelector('#inquirySubmit').onclick = async function(){
-          var content = (sheet.querySelector('#inquiryContent').value || '').trim();
-          if(!content){ toast('문의 내용을 입력해주세요'); return; }
-          var btn = sheet.querySelector('#inquirySubmit'); var inqType = (sheet.querySelector('#inquiryType') && sheet.querySelector('#inquiryType').value) || 'other'; var replyEmail = (sheet.querySelector('#inquiryEmail') && sheet.querySelector('#inquiryEmail').value || '').trim();
-          btn.disabled = true; btn.textContent = '접수 중...'; try {
-            var payload = { action: 'inquiry', content: content, inquiryType: inqType, replyEmail: replyEmail, userId: (state.profile && state.profile.id) || (state.user && state.user.id) || '', userNickname: (state.profile && state.profile.nickname) || (state.profile && state.profile.username) || '익명 유저', userAgent: (navigator.userAgent || '').slice(0, 300), appVersion: 'v1.0.0' };
-            var res = await fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); var data = await res.json().catch(function(){ return {}; });
-            if (res.ok && data.ok) { closeModal(); toast('문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.'); } else { throw new Error((data && data.error) || '접수 중 오류가 발생했습니다.'); }
-          } catch(e) { btn.disabled = false; btn.textContent = '문의 접수'; toast(e.message || '네트워크 오류가 발생했습니다.'); }
-        };
-      }
-    );
-  }
+  /* [#TASK-ES-448] openNotificationSoftAskModal → js/tabs/settings/notify-soft-ask.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
+  /* [#TASK-ES-448] openCustomerInquiryModal → js/tabs/settings/support-modals.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.openCustomerInquiryModal = openCustomerInquiryModal;
   }
-
-  /* ============ 잇템 불법/유해 링크 3초 퀵 신고 모달 (#TASK-ES-179) ============ */
-  function openItemReportModal(reportData){
-    reportData = reportData || {};
-    var itemName = reportData.name || reportData.itemName || '등록된 잇템';
-    var itemUrl = reportData.buyUrl || reportData.url || reportData.itemUrl || '';
-    var itemOwner = reportData.owner || reportData.itemOwner || '등록 유저';
-
-    openModal(
-      '<h3>🚨 잇템 불법·유해 링크 신고</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">안전하고 신뢰할 수 있는 목표 달성 환경을 위해 불법·유해 링크를 신속히 제보해 주세요.</p>' +
-      '<div style="padding:10px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--rule);margin-bottom:12px;font-size:.8125rem;">' +
-        '<div style="font-weight:700;color:var(--ink);margin-bottom:3px;">📦 ' + escapeHtml(itemName) + '</div>' +
-        (itemOwner ? '<div class="faint" style="font-size:.75rem;margin-bottom:2px;">등록자: ' + escapeHtml(itemOwner) + '</div>' : '') +
-        (itemUrl ? '<div style="font-size:.75rem;color:var(--brand-strong);word-break:break-all;">' + escapeHtml(itemUrl) + '</div>' : '') +
-      '</div>' +
-      '<div class="field">' +
-        '<label style="font-weight:700;margin-bottom:6px;">신고 사유 선택 (필수)</label>' +
-        '<div style="display:flex;flex-direction:column;gap:6px;" id="repReasonWrap">' +
-          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="commission" checked style="accent-color:var(--brand);cursor:pointer;"> <span>수수료/제휴 대가성 미표기 (뒷광고)</span></label>' +
-          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="phishing" style="accent-color:var(--brand);cursor:pointer;"> <span>사기 · 피싱 의심 사이트 결제 유도</span></label>' +
-          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="harmful" style="accent-color:var(--brand);cursor:pointer;"> <span>불법 도박 · 성인물 · 유해 소프트웨어 링크</span></label>' +
-          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="other" style="accent-color:var(--brand);cursor:pointer;"> <span>기타 규정 위반 및 허위 정보</span></label>' +
-        '</div>' +
-      '</div>' +
-      '<div class="field" style="margin-top:10px;">' +
-        '<label>상세 설명 (선택)</label>' +
-        '<textarea id="repDetailInput" rows="3" placeholder="구체적인 문제 상황이나 의심되는 점을 적어주세요." style="width:100%;border-radius:10px;padding:8px 12px;background:var(--card2);border:1px solid var(--rule);color:var(--ink);font-size:.8125rem;resize:vertical;box-sizing:border-box;"></textarea>' +
-      '</div>' +
-      '<div style="margin:12px 0 14px;padding:8px 12px;background:rgba(235,87,87,0.08);border:1px solid rgba(235,87,87,0.25);border-radius:8px;font-size:.75rem;color:var(--red);line-height:1.45;">' +
-        '<b style="font-weight:700;">⚠️ 주의:</b> 허위 또는 악의적인 신고임이 확인될 경우, 서비스 이용 제한 등 계정에 불이익을 받으실 수 있습니다.' +
-      '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="repCancelBtn" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="repSubmitBtn" type="button" style="background:var(--red);border-color:var(--red);">신고 접수</button>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#repCancelBtn').onclick = closeModal;
-        sheet.querySelector('#repSubmitBtn').onclick = async function(){
-          var btn = sheet.querySelector('#repSubmitBtn');
-          var selectedRadio = sheet.querySelector('input[name="repReason"]:checked');
-          var reasonKey = selectedRadio ? selectedRadio.value : 'other';
-          var reasonLabels = {
-            commission: '수수료/제휴 대가성 미표기 (뒷광고)',
-            phishing: '사기·피싱 의심 사이트',
-            harmful: '불법·도박·성인물 등 유해 링크',
-            other: '기타 규정 위반'
-          };
-          var detail = (sheet.querySelector('#repDetailInput').value || '').trim();
-
-          btn.disabled = true;
-          btn.textContent = '신고 접수 중...';
-
-          try {
-            var payload = {
-              action: 'inquiry',
-              inquiryType: 'item_report',
-              reportData: {
-                itemName: itemName,
-                itemUrl: itemUrl,
-                itemOwner: itemOwner,
-                reason: reasonKey,
-                reasonLabel: reasonLabels[reasonKey] || reasonKey
-              },
-              content: detail || (reasonLabels[reasonKey] + ' 사유로 신고 접수됨'),
-              userId: (state.profile && state.profile.id) || (state.user && state.user.id) || '',
-              userNickname: (state.profile && state.profile.nickname) || (state.profile && state.profile.username) || '익명 러너',
-              userAgent: (navigator.userAgent || '').slice(0, 300),
-              appVersion: 'v1.0.0'
-            };
-
-            var res = await fetch('/api/inquiry', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-            var data = await res.json().catch(function(){ return {}; });
-            if(res.ok && data.ok){
-              closeModal();
-              toast('신고가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.');
-            } else {
-              throw new Error((data && data.error) || '신고 접수 중 오류가 발생했습니다.');
-            }
-          } catch(e) {
-            btn.disabled = false;
-            btn.textContent = '신고 접수';
-            toast(e.message || '네트워크 오류가 발생했습니다.');
-          }
-        };
-      }
-    );
-  }
+  /* [#TASK-ES-448] openItemReportModal → js/tabs/settings/support-modals.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.openItemReportModal = openItemReportModal;
   }
-
-  function openFaqModal(){
-    var faqs = [
-      {
-        q: '목표와 마일스톤은 어떻게 설정하나요?',
-        a: '목표 탭 상단의 AI 대화창에 자유롭게 이루고 싶은 목표를 문장으로 입력하세요. AI 비서가 목표 기간, 단계별 마일스톤, 하위 할 일까지 자동으로 구조화하여 추천해 줍니다. 직접 상단의 "+ 새 목표" 버튼을 눌러 수동으로 작성할 수도 있습니다.'
-      },
-      {
-        q: '구글 캘린더 연동은 어떻게 동작하나요?',
-        a: '구글 계정을 연동하면 아워골에 등록된 마일스톤 및 할 일의 마감 일정이 구글 캘린더에 자동으로 동기화됩니다. 일정 탭 상단의 배너나 설정 탭의 구글 캘린더 메뉴에서 언제든지 연동 및 수동 동기화를 진행할 수 있습니다.'
-      },
-      {
-        q: '체크인 기록과 스트릭(연속 달성)은 어떻게 관리되나요?',
-        a: '오늘 실천한 행동을 기록 탭이나 홈 탭에서 대화형/수동으로 기록하면 일일 스트릭이 1일 증가합니다. 만약 하루를 놓쳤을 경우 상점에서 스트릭 프리즈(얼음)를 사용하여 연속 불꽃을 보호할 수 있습니다.'
-      },
-      {
-        q: '공개 범위를 비공개(나만 보기)로 설정하면 어떻게 되나요?',
-        a: '목표, 캘린더, 기록의 공개 범위를 "🔒 나만 보기"로 설정하면 피드나 팀원에게 일체 노출되지 않으며 오직 본인에게만 표시되는 안전한 프라이빗 공간으로 운영됩니다.'
-      },
-      {
-        q: '데이터 백업과 기기 간 동기화는 어떻게 하나요?',
-        a: '설정 > 데이터 관리에서 "전체 백업" 버튼을 누르면 모든 목표와 기록이 JSON 파일로 다운로드됩니다. 새 기기나 다른 브라우저에서 "가져오기"를 통해 즉시 복원할 수 있습니다.'
-      }
-    ];
-
-    var faqHtml = faqs.map(function(item){
-      return '<details style="margin-bottom:8px;padding:10px 12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
-        '<summary style="font-weight:700;font-size:.875rem;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">' +
-          '<span>Q. ' + escapeHtml(item.q) + '</span>' +
-          '<span style="font-size:.8125rem;color:var(--ink-faint);">▼</span>' +
-        '</summary>' +
-        '<p class="faint" style="margin:8px 0 0;font-size:.8125rem;line-height:1.5;color:var(--ink-soft);border-top:1px dashed var(--rule);padding-top:8px;">' +
-          escapeHtml(item.a) +
-        '</p>' +
-      '</details>';
-    }).join('');
-
-    openModal(
-      '<h3>자주 묻는 질문 (FAQ)</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">아워골 이용 시 자주 궁금해하시는 내용들을 모았습니다.</p>' +
-      '<div style="max-height:60vh;overflow-y:auto;padding-right:2px;">' +
-        faqHtml +
-      '</div>' +
-      '<div class="modal-actions" style="margin-top:14px;">' +
-        '<button class="btn btn-primary" id="faqCloseBtn" type="button">확인</button>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#faqCloseBtn').onclick = closeModal;
-      }
-    );
-  }
-
-  // 📱 [#TASK-ES-180], [62] 기기 바탕화면 위젯 설정 & 미리보기 모달 함수
-  function openWidgetSettingsModal(){
-    var currentType = 'calendar';
-    var currentSize = 'standard';
-
-    function getWidgetUrl(type, size){
-      return 'widget.html?type=' + type + '&size=' + size;
-    }
-
-    openModal(
-      '<h3>📱 기기 바탕화면 위젯 설정 & 미리보기</h3>' +
-      '<p class="muted" style="margin:-8px 0 14px;">앱을 켜지 않고도 기기 바탕화면에서 오늘 할 일과 목표를 확인하세요.</p>' +
-      '<div style="margin-bottom:12px;">' +
-        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">1. 위젯 종류 선택 (3종)</div>' +
-        '<div style="display:flex;gap:6px;" id="widgetTypeTabs">' +
-          '<button type="button" class="btn btn-sm btn-primary" data-wtype="calendar" style="flex:1;">📅 일정</button>' +
-          '<button type="button" class="btn btn-sm btn-ghost" data-wtype="goals" style="flex:1;">🎯 목표</button>' +
-          '<button type="button" class="btn btn-sm btn-ghost" data-wtype="records" style="flex:1;">⏱️ 기록</button>' +
-        '</div>' +
-      '</div>' +
-      '<div style="margin-bottom:14px;">' +
-        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">2. 위젯 크기 선택 (3구성)</div>' +
-        '<div style="display:flex;gap:6px;" id="widgetSizeTabs">' +
-          '<button type="button" class="btn btn-sm btn-ghost" data-wsize="compact" style="flex:1;">▫️ 컴팩트</button>' +
-          '<button type="button" class="btn btn-sm btn-primary" data-wsize="standard" style="flex:1;">◽ 기본형</button>' +
-          '<button type="button" class="btn btn-sm btn-ghost" data-wsize="detail" style="flex:1;">◻️ 상세형</button>' +
-        '</div>' +
-      '</div>' +
-      '<div style="margin-bottom:14px;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--card2);">' +
-        '<div style="padding:8px 12px;background:var(--surface-2);border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;">' +
-          '<span style="font-size:.75rem;font-weight:700;color:var(--ink);">실시간 위젯 미리보기</span>' +
-          '<span id="widgetPreviewUrlText" style="font-size:.6875rem;color:var(--ink-faint);">widget.html?type=calendar&size=standard</span>' +
-        '</div>' +
-        '<div style="display:flex;justify-content:center;padding:16px;background:rgba(0,0,0,0.02);">' +
-          '<iframe id="widgetPreviewIframe" src="widget.html?type=calendar&size=standard" style="width:340px;height:240px;border:none;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08);background:#fff;"></iframe>' +
-        '</div>' +
-      '</div>' +
-      '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="btnOpenWidgetPopup" style="flex:1;font-weight:700;">↗️ 독립 위젯 창 띄우기</button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="btnCopyWidgetUrl" style="flex:1;font-weight:700;">📋 위젯 URL 복사</button>' +
-      '</div>' +
-      '<div style="padding:10px 12px;background:var(--surface-2);border-radius:12px;font-size:.75rem;color:var(--ink-soft);line-height:1.5;">' +
-        '💡 <b>스마트폰/PC 바탕화면 등록법:</b><br>' +
-        '1. [독립 위젯 창 띄우기] 클릭 후 브라우저 메뉴(⋮ 또는 공유)에서 <b>[홈 화면에 추가]</b>를 누르면 바탕화면 독립 위젯으로 동작합니다.<br>' +
-        '2. PWA 앱 설치 시 앱 아이콘을 길게 누르면 <b>일정/목표/기록 3종 원터치 숏컷</b>을 즉시 쓸 수 있습니다.' +
-      '</div>' +
-      '<div class="modal-actions" style="margin-top:14px;"><button class="btn btn-primary" id="widgetModalClose" type="button" style="width:100%;">확인 완료</button></div>',
-      function(sheet){
-        var iframe = sheet.querySelector('#widgetPreviewIframe');
-        var urlText = sheet.querySelector('#widgetPreviewUrlText');
-
-        function updatePreview(){
-          var url = getWidgetUrl(currentType, currentSize);
-          if(iframe) iframe.src = url;
-          if(urlText) urlText.textContent = url;
-        }
-
-        sheet.querySelectorAll('#widgetTypeTabs button').forEach(function(btn){
-          btn.addEventListener('click', function(){
-            sheet.querySelectorAll('#widgetTypeTabs button').forEach(function(b){
-              b.className = 'btn btn-sm btn-ghost';
-            });
-            btn.className = 'btn btn-sm btn-primary';
-            currentType = btn.getAttribute('data-wtype');
-            updatePreview();
-          });
-        });
-
-        sheet.querySelectorAll('#widgetSizeTabs button').forEach(function(btn){
-          btn.addEventListener('click', function(){
-            sheet.querySelectorAll('#widgetSizeTabs button').forEach(function(b){
-              b.className = 'btn btn-sm btn-ghost';
-            });
-            btn.className = 'btn btn-sm btn-primary';
-            currentSize = btn.getAttribute('data-wsize');
-            updatePreview();
-          });
-        });
-
-        var btnPopup = sheet.querySelector('#btnOpenWidgetPopup');
-        if(btnPopup){
-          btnPopup.addEventListener('click', function(){
-            var url = getWidgetUrl(currentType, currentSize);
-            window.open(url, 'OurgoalWidget', 'width=380,height=480,menubar=no,toolbar=no,location=no,status=no');
-          });
-        }
-
-        var btnCopy = sheet.querySelector('#btnCopyWidgetUrl');
-        if(btnCopy){
-          btnCopy.addEventListener('click', function(){
-            var url = window.location.origin + '/' + getWidgetUrl(currentType, currentSize);
-            if(navigator.clipboard && navigator.clipboard.writeText){
-              navigator.clipboard.writeText(url).then(function(){
-                toast('위젯 URL이 클립보드에 복사되었습니다! 📋');
-              });
-            } else {
-              toast('위젯 URL: ' + url);
-            }
-          });
-        }
-
-        var btnClose = sheet.querySelector('#widgetModalClose');
-        if(btnClose) btnClose.addEventListener('click', closeModal);
-      }
-    );
-  }
+  /* [#TASK-ES-448] openFaqModal → js/tabs/settings/support-modals.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
+  /* [#TASK-ES-448] openWidgetSettingsModal → js/tabs/settings/widget-settings-modal.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   document.addEventListener('click', function(e){
     if(e.target && e.target.closest && e.target.closest('#btnOpenWidgetModal')){
       openWidgetSettingsModal();

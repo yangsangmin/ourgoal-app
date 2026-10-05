@@ -1,0 +1,152 @@
+{
+  "task": "TASK-ES-455",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-455-GENERATED-MAPS-SYNC.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "main(3232cc2) 에서 module-guard --update·cell-map-export·inline-script-map --write 로 생성 지도 3종(기준선·세포지도·인라인 지도)을 재생성해 지금 코드와 맞춘다. 제품 코드·생성기 변경 0."
+    },
+    {
+      "id": "R2",
+      "text": "노션 요약 줄에서 800줄 초과 파일이 0개일 때 끝에 남는 「— 」를 없앤다(scripts/cell-map-publish.js notionHead 한 줄) — 코디네이터 [기본값] 지시"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포지도의 기준 커밋 도장이 origin/main(4050d60)을 합친 이 브랜치 커밋 e5fe2bbb 이다(cell-map-export 재생성)",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-map.json",
+        "text": "\"short\": \"e5fe2bbb\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "래칫 기준선 이력에 e5fe2bbb 측정 항목이 더해졌다(module-guard --update, 사유 없음)",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/module-baseline.json",
+        "text": "\"commit\": \"e5fe2bbb\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 지도(JSON)의 출처 해시가 지금 index.html 의 sha256 앞 12자다",
+      "touches": [
+        "docs/architecture/inline-script-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/inline-script-map.json",
+        "path": "source.sha256_12",
+        "equals": "8529d2adca97"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 지도(MD)의 출처 줄이 같은 해시를 가리킨다",
+      "touches": [
+        "docs/architecture/INLINE-SCRIPT-MAP.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+        "text": "sha256 앞 12자 `8529d2adca97`"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 에 8원칙 중 원칙 ② 본질·원인·중심·핵심 절이 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-455-GENERATED-MAPS-SYNC.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-455-GENERATED-MAPS-SYNC.md",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-455 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-455: 생성 지도 3종 일괄 갱신"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-455 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-455 | INFRA | [생성 지도 3종 일괄 갱신]"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "요약 줄은 초과 파일이 있을 때만 「— 」와 파일 목록을 붙인다",
+      "touches": [
+        "scripts/cell-map-publish.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-publish.js",
+        "text": "${s.oversize.nowFiles.length ? ' — ' + s.oversize.nowFiles.map("
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 초과 0개(「— 」 없음)와 1개(「— 파일 줄수」) 두 경우를 확인한다",
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  none.summary.oversize.now = 0; none.summary.oversize.nowFiles = [];"
+      }
+    }
+  ]
+}

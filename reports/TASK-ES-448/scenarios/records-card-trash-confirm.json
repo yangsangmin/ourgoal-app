@@ -1,0 +1,82 @@
+{
+  "id": "records-card-trash-confirm",
+  "title": "게스트로 기록 탭 「빠른 기록」으로 기록을 하나 저장한 뒤 그 기록 카드의 삭제(×)를 누르면 「이 기록을 휴지통으로 이동할까요?」 확인 창이 뜬다 — 기록 카드 단추 연결(wireRecordCards)을 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(3)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recAgentInput",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "type",
+      "selector": "#recAgentInput",
+      "text": "저녁에 헬스장에서 가슴운동 1시간"
+    },
+    {
+      "do": "click",
+      "selector": "#recAgentSendBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recAiSaveBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recAiSaveBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".screen.active .rec-card [data-recdel]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".screen.active .rec-card [data-recdel]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "이 기록을 휴지통으로 이동할까요?",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
