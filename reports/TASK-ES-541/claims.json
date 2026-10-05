@@ -247,6 +247,40 @@
    }
   },
   {
+   "id": "C13c",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "main 을 합친 뒤 다시 잰 tests 전후 스냅샷에서 npm test 의 smoke·무결성 통과/실패 수와 종료 코드가 같은 스냅샷의 기준 사본과 같다(무결성 1건 실패는 기준 main 에도 있는 알려진 상태 — #818·#813 순서)",
+   "touches": [
+    "reports/TASK-ES-541/test-compare-r2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-541/test-compare-r2.json",
+    "type": "jsonPath",
+    "path": "passFailSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C13d",
+   "req": "R6",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "main 을 합친 뒤 다시 잰 스냅샷에서도 기준 사본과 종료 코드가 갈린 시험지는 cell-map-export-es414 하나다(기준 사본 이력 없음)",
+   "touches": [
+    "reports/TASK-ES-541/test-compare-r2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-541/test-compare-r2.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff",
+    "equals": [
+     "tests/cell-map-export-es414.test.js"
+    ]
+   }
+  },
+  {
    "id": "C14",
    "req": "R6",
    "kind": "static",
