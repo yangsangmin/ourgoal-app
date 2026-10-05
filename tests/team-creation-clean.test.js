@@ -15,7 +15,7 @@ assert.ok(TEST_TICKET_ID === '#TASK-ES-319', '#TASK-ES-319 단위 테스트 식�
 console.log('🧪 [#TASK-ES-319 / 노션 68] 팀 만들기 불필요 제약 전면 삭제 단위 테스트 시작...');
 
 const indexHtmlPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8')); /* #TASK-ES-468 인라인 합본(원문 맨 앞 + js/tabs 세포) — 팀 만들기 기본값(promptNewGroup)이 소통 탭 세포로 옮겨 가도 같은 글자를 찾는다(인라인 어려움 구역 H4 선행) */
 
 // 1. 5대 제약 필드(정원 제한·인증 주기·챌린지 기간·인증 규칙·진행방식) 부재 검증
 assert.ok(!indexHtml.includes('<select id="grpMaxMembers">'), '팀 만들기 모달 정원 제한 선택란 영구 삭제 확인');

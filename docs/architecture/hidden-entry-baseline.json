@@ -1,0 +1,125 @@
+{
+ "_설명": "숨김 게이트 정적판(scripts/hidden-entry-guard.js) 허용 목록. #TASK-ES-458 때 origin/main(4050d60) 에서 이미 숨어 있던 처리기 요소를 숨긴 까닭별로 묶었다. 새 항목은 --allow \"<키>\" --reason \"사유(20자 이상)\" 로만 더하고, 더는 숨지 않는 항목은 --update 로 지운다(줄이는 방향).",
+ "groups": [
+  {
+   "reason": "검증 전용 배선 슬롯(og-task-23~53) — ui.css TASK-ES-304 「배선용 테스트 카드 일괄 은폐」로 사용자 화면에 두지 않는 시험용 카드(숨김 전수 C 분류)",
+   "keys": [
+    "#og-task-23-action-btn",
+    "#og-task-24-action-btn",
+    "#og-task-25-action-btn",
+    "#og-task-26-action-btn",
+    "#og-task-28-action-btn",
+    "#og-task-29-action-btn",
+    "#og-task-30-action-btn",
+    "#og-task-31-action-btn",
+    "#og-task-32-action-btn",
+    "#og-task-33-action-btn",
+    "#og-task-34-action-btn",
+    "#og-task-35-action-btn",
+    "#og-task-37-action-btn",
+    "#og-task-38-action-btn",
+    "#og-task-39-action-btn",
+    "#og-task-40-action-btn",
+    "#og-task-41-action-btn",
+    "#og-task-42-action-btn",
+    "#og-task-43-action-btn",
+    "#og-task-44-action-btn",
+    "#og-task-45-action-btn",
+    "#og-task-46-action-btn",
+    "#og-task-47-action-btn",
+    "#og-task-48-action-btn",
+    "#og-task-49-action-btn",
+    "#og-task-50-action-btn",
+    "#og-task-51-action-btn",
+    "#og-task-52-action-btn",
+    "#og-task-53-action-btn"
+   ]
+  },
+  {
+   "reason": "옛 상단바(.topbar)·옛 홈 머리 단추 — 성소 상단 바가 대체(b2b7918→ES-185). 보이는 진입로: 알림 = 성소 종 #sanctuaryBellBtn(ES-440), 활용법 = 설정 #btnTabGuideHub, 프로필 = 설정 탭, 홈 구성 = 설정 #homeLayoutOpenBtn",
+   "keys": [
+    "#btnCustomHomeLayout",
+    "#topHomeGuideBtn",
+    "#topHomeLayoutBtn",
+    "#topNotifBtn",
+    "#topUserChip"
+   ]
+  },
+  {
+   "reason": "정적 마크업에서는 홈 첫 화면(#screen-home 바로 아래)에 있어 숨김에 맞지만, 실행 중 홈 원스크린이 「🎯 오늘 목표」 시트로 옮겨 보인다(ES-440 시나리오로 확인) — 정적판의 한계",
+   "keys": [
+    "#btnOpenEvalModal",
+    "#todayGlancePill"
+   ]
+  },
+  {
+   "reason": "「포커스 미니멀」 모드에서만 숨는 규칙(ui.css body[data-ux-mode=minimal]) — 홈 구성 스위치·모드 칩으로 켜면 보인다(js/customize.js MINIMAL_HIDDEN 기본값, ES-433 시나리오로 확인)",
+   "keys": [
+    "#customFeedbackBtn",
+    "#homeChallengeRoomBtn"
+   ]
+  },
+  {
+   "reason": "옛 소통 허브 격자(#commHubGrid 인라인 숨김) — 보이는 진입로: 소통 탭 .comm-subtab 피드/동반자/팀(숨김 전수 B 분류)",
+   "keys": [
+    "#btnCommHubCrew",
+    "#btnCommHubFeed",
+    "#btnCommHubTeam"
+   ]
+  },
+  {
+   "reason": "기록 탭 빠른 스톱워치·타임라인/달력 전환 — TASK-ES-131 「3중 분산 해소·단일 콕핏」 결정으로 내림, 같은 일은 ⏱️ 시간기록 독 단추·성소 기록 모드가 한다(숨김 전수 D 분류)",
+   "keys": [
+    "#btnFastStopwatchSave",
+    "#btnFastStopwatchStart",
+    "#btnRecViewSwitchCalendar",
+    "#btnRecViewSwitchTimeline"
+   ]
+  },
+  {
+   "reason": "옛 테마 4종 견본 카드 — TASK-ES-133 결정으로 현행 4테마 칩(설정 성소 테마 선택)이 대체(숨김 전수 D 분류)",
+   "keys": [
+    "#btnThemeSwatchDark",
+    "#btnThemeSwatchLight",
+    "#btnThemeSwatchMidnight",
+    "#btnThemeSwatchWarm"
+   ]
+  },
+  {
+   "reason": "사진 일기장 안내창 닫기 — TASK-ES-130 「가이드 소탕」 결정으로 안내창 자체를 내림(숨김 전수 D 분류)",
+   "keys": [
+    "#btnHideCalDiaryGuide"
+   ]
+  },
+  {
+   "reason": "목표 상세 서랍(#goalDetailDrawer) 닫기 — 서랍을 여는 호출부가 자기 자신뿐인 고아 기능이고 목표 상세는 #goalDetailBody 로 따로 보인다(숨김 전수 부수 발견, 정리 여부는 별도 결정)",
+   "keys": [
+    "#btnGoalDrawerClose"
+   ]
+  },
+  {
+   "reason": "기록 탭 옛 빠른 기록·시간 측정 단추 — 보이는 진입로: 성소 기록 「+ 새 기록 작성」·⏱️ 시간기록 독 단추(OurgoalTimeTracker.open)(숨김 전수 B 분류)",
+   "keys": [
+    "#btnOpenTimeTracker",
+    "#recAddBtn",
+    "#recHeroCard > button \"⏱️ 시간 측정\"",
+    "#recHeroCard > button \"✍️ 빠른 기록\""
+   ]
+  },
+  {
+   "reason": "옛 달력 이전/오늘/다음 — 보이는 진입로: 성소 달력 .s-cal-arrow(shiftCal)·.s-cal-today-badge(숨김 전수 B 분류)",
+   "keys": [
+    "#calNextBtn",
+    "#calPrevBtn",
+    "#calTodayBtn"
+   ]
+  },
+  {
+   "reason": "숨은 옛 기록 머리줄(#screen-records > .screen-head, ES-250) 안 단추 — 보이는 진입로: 공개 범위 = 설정 #privRecSelect, 갓생 카드 = 성소 기록 #sRecStoryCardBtn(ES-433)",
+   "keys": [
+    "#recPrivacyBadge",
+    "#recStoryCardBtn"
+   ]
+  }
+ ]
+}

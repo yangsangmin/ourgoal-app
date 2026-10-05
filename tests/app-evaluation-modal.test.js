@@ -12,7 +12,8 @@ function runTest() {
   assert.ok(fs.existsSync(indexHtmlPath), 'index.html 파일이 존재해야 합니다.');
   assert.ok(fs.existsSync(uiCssPath), 'ui.css 파일이 존재해야 합니다.');
 
-  const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+  // #TASK-ES-469: 인라인 어려움 구역 H1 선행 — 평가 팝업 묶음이 js/tabs 세포로 옮겨 가도 같은 단언이 같은 글자를 찾도록 인라인 합본을 읽는다(단언·기대값 그대로)
+  const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));
   const uiCss = fs.readFileSync(uiCssPath, 'utf8');
 
   // 1. 홈탭 최하단 고정 배너 및 <아워골 평가해주기> 버튼 존재 검증

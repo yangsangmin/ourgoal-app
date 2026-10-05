@@ -1,0 +1,78 @@
+{
+  "id": "records-recap-real-streak",
+  "title": "게스트가 홈에서 한 줄 체크인을 저장한 뒤 기록 탭 「🎬 위클리 리캡 카드」를 누르면 리캡 카드의 스트릭 줄이 실제 값 「1일 연속 스트릭 달성 🔥」로 보인다(홈 스트릭과 같은 computeStreakDays) — 고치기 전에는 아무도 채우지 않는 profile.streak || 3 으로 늘 「3일 연속」이 찍혔다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "스쿼트 30개 완료"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "기록되었습니다",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#firstCheckinDoneBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#firstCheckinDoneBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#btnCheckinAiGoRecords"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecRecapBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#sRecapCanvasMock",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textEquals",
+      "selector": ".s-rc-streak",
+      "text": "1일 연속 스트릭 달성 🔥"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

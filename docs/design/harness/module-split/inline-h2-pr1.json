@@ -1,0 +1,79 @@
+{
+  "task": "TASK-ES-481",
+  "slot": "H2",
+  "slots": [
+    "H0 시범 #TASK-ES-439",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "HO 기관"
+  ],
+  "cells": [
+    {
+      "key": "goalsIa",
+      "file": "js/tabs/goals/goals-ia-actions.js",
+      "kit": "OurgoalGoalsKit",
+      "kitVar": "_goalsKit",
+      "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+      "title": "OurGoal Goals IA Actions (목표 탭 — 하위 탭 전환·성취 통계 기간·템플릿을 내 목표로 담기)",
+      "desc": [
+        "목표 탭 하위 탭 단추(switchGoalsSubTab) · 성취 통계 기간 단추와 리포트(switchGoalStatPeriod·renderGoalStatsChart) · 추천 템플릿을 내 목표로 담기(adoptTemplateAsMyGoal).",
+        "마크업 onclick 과 js/tabs/goals/render.js · js/sanctuary-v3-engine.js 가 window 이름으로 부른다 — window 노출 줄(window.currentGoalStatPeriod 초기값 포함)은 index.html 원래 자리에 그대로 있다.",
+        "같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍·루틴 매트릭스 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer·renderRoutineMatrixGrid·toggleRoutineStamp)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓)."
+      ],
+      "take": [
+        {
+          "group": "[UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리",
+          "names": [
+            "switchGoalsSubTab",
+            "switchGoalStatPeriod",
+            "renderGoalStatsChart",
+            "adoptTemplateAsMyGoal"
+          ],
+          "keepRest": true
+        }
+      ]
+    },
+    {
+      "key": "tplEncyclopedia",
+      "file": "js/tabs/goals/template-encyclopedia.js",
+      "kit": "OurgoalGoalsKit",
+      "kitVar": "_goalsKit",
+      "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+      "title": "OurGoal Template Encyclopedia (목표 탭 — 템플릿 백과사전 3대 분류·AI/실사용자 템플릿 화면)",
+      "desc": [
+        "목표 탭 「템플릿」 하위 탭 화면(renderTemplateEncyclopediaScreen)과 루틴·팀·개인 템플릿 상수(ROUTINE_TEMPLATES_AI·ROUTINE_TEMPLATES_REAL·TEAM_TEMPLATES_AI·TEAM_TEMPLATES_REAL·PERSONAL_TEMPLATES_REAL).",
+        "분류·종류·검색 상태 변수(_subtabTplDomain·_subtabTplType·_subtabTplCat·_subtabTplQuery)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다. window 노출 줄도 원래 자리에 그대로 있다."
+      ],
+      "take": [
+        {
+          "group": "[#TASK-ES-189] 템플릿 백과사전 3대 분류",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "recArchive",
+      "file": "js/tabs/records/archive-toggle.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Records Archive Toggle (기록 탭 — 이전 기록 아카이브 펼치기·접기)",
+      "desc": [
+        "기록 탭 「이전 기록 전체 보기」 아카이브 펼치기·접기(toggleRecordArchive).",
+        "마크업 onclick 이 window 이름으로 부른다 — window 노출 줄은 index.html 원래 자리에 그대로 있다.",
+        "같은 묶음의 달력 융합 칩·빠른 스톱워치 함수(switchRecFusionMode·handleQuickStopwatchToggle·handleQuickStopwatchSaveRecord)는 그 단추(#recCalFuseSwitcher·#quickStopwatchBar)가 ui.css 의 숨김 규칙으로 게스트 화면에 보이지 않고, CSV 내보내기(exportRecordsCsv)는 내려받기 뒤 토스트를 게스트 화면 시나리오로 확인하지 못해 옮기지 않았다(별도 티켓)."
+      ],
+      "take": [
+        {
+          "group": "[PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS",
+          "names": [
+            "toggleRecordArchive"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ]
+}

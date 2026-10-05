@@ -1,0 +1,122 @@
+{
+ "_설명": "숨김 게이트 브라우저판(docs/design/harness/hidden-entry-sweep.js, 수동) 허용 목록. #TASK-ES-458 때 origin/main(4050d60) 게스트 4테마 × 6탭 × 상태 68장에서 「늘 !important 로 숨고 같은 처리기·함수·글자의 보이는 요소도 없는」 처리기 요소를 숨긴 까닭별로 묶었다. 키 끝 \" *\" 는 그 앞머리로 시작하는 모든 키. 새 항목은 사유(20자 이상)와 함께 손으로 더한다.",
+ "groups": [
+  {
+   "reason": "검증 전용 배선 슬롯(og-task-23~53) — ui.css TASK-ES-304 「배선용 테스트 카드 일괄 은폐」로 사용자 화면에 두지 않는 시험용 카드(숨김 전수 C 분류)",
+   "keys": [
+    "#og-task-23-action-btn",
+    "#og-task-24-action-btn",
+    "#og-task-25-action-btn",
+    "#og-task-26-action-btn",
+    "#og-task-28-action-btn",
+    "#og-task-29-action-btn",
+    "#og-task-31-action-btn",
+    "#og-task-32-action-btn",
+    "#og-task-33-action-btn",
+    "#og-task-34-action-btn",
+    "#og-task-35-action-btn",
+    "#og-task-37-action-btn",
+    "#og-task-38-action-btn",
+    "#og-task-39-action-btn",
+    "#og-task-40-action-btn",
+    "#og-task-41-action-btn",
+    "#og-task-42-action-btn",
+    "#og-task-43-action-btn",
+    "#og-task-44-action-btn",
+    "#og-task-45-action-btn",
+    "#og-task-46-action-btn",
+    "#og-task-47-action-btn",
+    "#og-task-48-action-btn",
+    "#og-task-49-action-btn",
+    "#og-task-50-action-btn",
+    "#og-task-51-action-btn",
+    "#og-task-52-action-btn",
+    "#og-task-53-action-btn"
+   ]
+  },
+  {
+   "reason": "옛 상단바·옛 홈 머리 단추 — 성소 상단 바가 대체(b2b7918→ES-185). 보이는 진입로: 활용법 = 설정 #btnTabGuideHub, 프로필 = 설정 탭·성소 아바타 배지, 홈 구성 = 설정 #homeLayoutOpenBtn",
+   "keys": [
+    "#btnCustomHomeLayout",
+    "#topHomeGuideBtn",
+    "#topHomeLayoutBtn",
+    "#topUserChip"
+   ]
+  },
+  {
+   "reason": "기록 탭 빠른 스톱워치·타임라인/달력 전환 — TASK-ES-131 「3중 분산 해소·단일 콕핏」 결정으로 내림, 같은 일은 ⏱️ 시간기록 독 단추·성소 기록 모드가 한다(숨김 전수 D 분류)",
+   "keys": [
+    "#btnFastStopwatchSave",
+    "#btnFastStopwatchStart",
+    "#btnRecViewSwitchCalendar",
+    "#btnRecViewSwitchTimeline"
+   ]
+  },
+  {
+   "reason": "옛 테마 4종 견본 카드 — TASK-ES-133 결정으로 현행 4테마 칩(설정 성소 테마 선택)이 대체(숨김 전수 D 분류)",
+   "keys": [
+    "#btnThemeSwatchDark",
+    "#btnThemeSwatchLight",
+    "#btnThemeSwatchMidnight",
+    "#btnThemeSwatchWarm"
+   ]
+  },
+  {
+   "reason": "사진 일기장 안내창 닫기 — TASK-ES-130 「가이드 소탕」 결정으로 안내창 자체를 내림(숨김 전수 D 분류)",
+   "keys": [
+    "#btnHideCalDiaryGuide"
+   ]
+  },
+  {
+   "reason": "목표 상세 서랍(#goalDetailDrawer) 닫기 — 서랍을 여는 호출부가 자기 자신뿐인 고아 기능, 목표 상세는 #goalDetailBody 로 따로 보인다(숨김 전수 부수 발견)",
+   "keys": [
+    "#btnGoalDrawerClose"
+   ]
+  },
+  {
+   "reason": "옛 달력 42칸(#calGrid, 4테마 숨김) — 보이는 진입로: 성소 달력 .s-cal-day-cell(날짜마다 칸 번호가 바뀌어 앞머리로 허용)",
+   "keys": [
+    "#calGrid > *"
+   ]
+  },
+  {
+   "reason": "옛 달력 이전/다음 — 보이는 진입로: 성소 달력 .s-cal-arrow(shiftCal)(숨김 전수 B 분류)",
+   "keys": [
+    "#calNextBtn",
+    "#calPrevBtn"
+   ]
+  },
+  {
+   "reason": "「포커스 미니멀」 기본 모드에서만 숨는 단추 — 홈 구성 스위치로 켜면 보이고 누르면 기록 탭(ES-433 시나리오로 확인), 기록 탭은 하단 탭으로도 간다",
+   "keys": [
+    "#homeChallengeRoomBtn"
+   ]
+  },
+  {
+   "reason": "레벨 배지 줄(아바타 바꾸기 포함) — 상민님 지시 TASK-ES-140 「아바타 레벨표시 제거」로 4테마 숨김. 아바타 바꾸기는 성소 아바타 배지(#sanctuaryAvatarBadge)로 간다. js/customize.js 핵심 위젯 표기와 모순(ES-440 REQ 원칙 ④에 보고)",
+   "keys": [
+    "#levelBadgeRow > *"
+   ]
+  },
+  {
+   "reason": "기록 탭 옛 빠른 기록·시간 측정 카드 — 보이는 진입로: 성소 기록 「+ 새 기록 작성」·⏱️ 시간기록 독 단추(OurgoalTimeTracker.open)(숨김 전수 B 분류)",
+   "keys": [
+    "#recHeroCard > *"
+   ]
+  },
+  {
+   "reason": "옛 기록 세그먼트바(#recSegmentBar, 4테마 숨김) — 보이는 진입로: 성소 기록 모드 「📝 실천 타임라인」·「📈 히트맵·통계」·「🗂️ 보관함」(#sRecArchiveBtn, ES-440)",
+   "keys": [
+    "#recSegArchiveBtn",
+    "#recSegFeedBtn",
+    "#recSegStatsBtn"
+   ]
+  },
+  {
+   "reason": "성소 기록 숨김 칸의 「성취 통계」 — 「📈 히트맵·통계」가 같은 통계 화면(#recViewStats)을 연다. smoke [#TASK-ES-193] 가 이 단추 글자를 요구해 남겨 둠(ES-440)",
+   "keys": [
+    "#sRecModesWrap > div:nth-of-type(2) > button"
+   ]
+  }
+ ]
+}

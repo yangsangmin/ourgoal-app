@@ -84,7 +84,7 @@ function notionHead(map) {
   L.push(`</callout>`);
   L.push(`## 한눈에`);
   L.push(`- 세포 **${num(s.cells)}개** — 기관 ${num(s.kinds.organ)} · 탭 세포 ${num(s.kinds.tab)} · 하이브리드 ${num(s.kinds.hybrid)} · 미래 ${num(s.kinds.future)} (js 파일 ${num(s.files)}개, ${num(s.jsLines)}줄)`);
-  L.push(`- 800줄 넘는 세포: 처음 **${num(s.oversize.first)}** (${esc(s.oversize.firstDate)}) → 지금 **${num(s.oversize.now)}** — ${s.oversize.nowFiles.map(f => esc(f.file.replace(/^js\//, '')) + ' ' + num(f.lines) + '줄').join(' · ')}`);
+  L.push(`- 800줄 넘는 세포: 처음 **${num(s.oversize.first)}** (${esc(s.oversize.firstDate)}) → 지금 **${num(s.oversize.now)}**${s.oversize.nowFiles.length ? ' — ' + s.oversize.nowFiles.map(f => esc(f.file.replace(/^js\//, '')) + ' ' + num(f.lines) + '줄').join(' · ') : ''}`); // #TASK-ES-455 초과 파일이 없으면 「— 」를 붙이지 않는다
   L.push(`- 미분화 덩어리(index.html 안 스크립트): **${num(s.undifferentiated.inlineScriptLines)}줄**, 함수 ${num(s.undifferentiated.functionDecls)}개 — 여기서 세포를 하나씩 떼어 낸다`);
   L.push(`- 실제로 그리는 작은 세포 ${num(s.health.drawingSmallCells.drew)}/${num(s.health.drawingSmallCells.total)} · 전역 직접 연결 ${num(s.health.globalLinks)} · 탭 간 직접 참조 ${num(s.health.crossTabRefs)}`);
   if (s.descriptionsPending.length) L.push(`- 「하는 일」 설명 대기(머리 주석으로 대신 표시): ${names(s.descriptionsPending)}`);

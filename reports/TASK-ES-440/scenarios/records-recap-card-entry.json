@@ -1,0 +1,69 @@
+{
+  "id": "records-recap-card-entry",
+  "title": "게스트로 기록 탭에 들어가면 「🎬 위클리 리캡 카드」 단추(#sRecRecapBtn)가 보이고, 누르면 9:16 위클리 퍼펙트 리캡 카드(#sRecapCanvasMock)와 PNG 저장·리캡 모달·카카오 공유 단추 3개가 보인다 — 고치기 전에는 이 화면으로 가는 단추가 인라인 display:none !important 숨김 칸 안에만 있었다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "visible",
+      "selector": "#sRecRecapBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecRecapBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#sRecapCanvasMock",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textContains",
+      "selector": ".s-recap-share-card",
+      "text": "위클리 퍼펙트 리캡"
+    },
+    {
+      "expect": "count",
+      "selector": ".s-recap-actions button",
+      "equals": 3
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#sRecRecapBtn",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "task": "TASK-ES-461",
+  "slot": "H4",
+  "slots": [
+    "H0 시범 #TASK-ES-439",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "HO 기관"
+  ],
+  "cells": [
+    {
+      "key": "certShare",
+      "file": "js/tabs/comm/goal-certificate-share.js",
+      "kit": "OurgoalCommKit",
+      "kitVar": "_commKit",
+      "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+      "title": "OurGoal Goal Certificate & Share (소통 탭 — 목표 완주 인증서 그림·공유 하위 화면 렌더)",
+      "desc": [
+        "목표 완주 인증서 그림 만들기(generateGoalCertificateImage) · 소통 탭 공유 하위 화면 그리기(renderCommShare).",
+        "index.html 「목표 완주 인증서 (기존 공유 캔버스 인프라 재사용)」 묶음 전체를 옮겼다."
+      ],
+      "take": [
+        {
+          "group": "목표 완주 인증서 (기존 공유 캔버스 인프라 재사용)",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "sessionEntry",
+      "file": "js/tabs/settings/session-entry.js",
+      "kit": "OurgoalSettingsKit",
+      "kitVar": "_settingsKit",
+      "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Session Entry (설정 — 세션 복구·직접 로그인·로그인 빠른 복구 창)",
+      "desc": [
+        "세션 복구 뒤 앱 입장(restoreSessionAndEnter) · 아이디 직접 로그인(loginWithDirectIdentifier) · 로그인 빠른 복구 창(openLoginRescueModal · rescueLoginSession).",
+        "랜딩·로그인 화면의 「로그인이 잘 안 되시나요?」·「로그인 문제 해결」 링크 처리기 등록 문은 bindLoginRescueButtons 로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).",
+        "입장 중 표시(_isEnteringApp)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
+      ],
+      "take": [
+        {
+          "group": "세션 복구 및 안전 앱 진입 유틸",
+          "all": true,
+          "wrap": [
+            "bindLoginRescueButtons"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "manitoReal",
+      "file": "js/tabs/comm/manito-real.js",
+      "kit": "OurgoalCommKit",
+      "kitVar": "_commKit",
+      "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+      "title": "OurGoal Comm Manito Real Users (소통 탭 — 마니또 실 유저 익명 응원·짝·받은 응원함·마니또 화면)",
+      "desc": [
+        "실 유저 판별(isValidRealUser) · 서버 마니또 자료 불러오기(loadServerManitoData) · 짝·보낸 응원·연속·서로 응원·받은 응원함(manitoPartners · manitoSentToday · manitoStreak · manitoMutualCount · manitoInbox) · 마니또 화면(renderCommManito) · 마니또 대화(renderManitoDm).",
+        "서버 자료 캐시(REAL_MANITO_PARTNERS_CACHE · REAL_MANITO_INBOX_CACHE · MANITO_SERVER_LOADED)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다. window.isValidRealUser 노출 줄도 원래 자리에 있다."
+      ],
+      "take": [
+        {
+          "group": "마니또 실 유저 익명 응원 연동",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "peerInvite",
+      "file": "js/tabs/comm/peer-invite.js",
+      "kit": "OurgoalCommKit",
+      "kitVar": "_commKit",
+      "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+      "title": "OurGoal Comm Peer Invite (소통 탭 — '함께 목표' 방 초대 링크 복사·카카오 공유·초대 수락·초대 받은 화면)",
+      "desc": [
+        "클립보드 복사(copyTextToClipboard · fallbackCopyText) · 초대 기록(trackPeerInvite) · 카카오 공유(shareGroupToKakao) · 초대 링크 복사(copyGroupInviteLink) · 초대 성공 창(openPeerInviteSuccessModal) · 초대 수락(acceptPeerInvite) · 초대 받은 화면(showPeerInviteLandingModal).",
+        "같은 묶음의 순수 함수 세 개(calculateRemainingSeats · buildPeerInviteUrl · formatPeerInviteMessage)는 scripts/smoke-test.js FN_NAMES 가 잘라 가는 함수라 생성기 규칙(유형 F2)대로 index.html 에 남겼다."
+      ],
+      "take": [
+        {
+          "group": "[PEER INVITE] '함께 목표' 방 초대 루프",
+          "names": [
+            "copyTextToClipboard",
+            "fallbackCopyText",
+            "trackPeerInvite",
+            "shareGroupToKakao",
+            "copyGroupInviteLink",
+            "openPeerInviteSuccessModal",
+            "acceptPeerInvite",
+            "showPeerInviteLandingModal"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ]
+}

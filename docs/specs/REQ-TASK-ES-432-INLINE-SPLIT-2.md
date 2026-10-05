@@ -37,7 +37,7 @@
 
 ## 5. [원칙 ⑤] 절차
 
-워크트리 `C:/dev/wt/inline-split-2`(브랜치 `feat/2026-10-05-task-es-432-inline-split-2`) → 헌법 세포골격 절·1차 REQ·생성기·하네스·법정 주장 규칙(court/claims.js `effectiveFloor`·`rollup`)·#745 판정 정독 → 게스트로 닿는 길을 법정 실행기로 기준 앱에서 탐침 → (처음 4묶음으로 생성·측정까지 했으나 main 이 셋을 먼저 옮겨) origin/main 3232cc2 로 다시 시작 → 기준 사본 `git archive 3232cc2`(stash 없음; git 을 읽는 시험을 위해 그 사본에 main 이력을 받아 3232cc2 로 맞춤 — 작업 트리 차이 0) → 생성기 → verify → 모듈 로드 탐침 → 신고서·설명·가드 → 시나리오 로컬 기준·작업 → 게스트 조작 비교(기준 2회·후 1회) → 실계정 읽기 비교(기준·후·기준) → tab-check 기준 2회·후 1회 → npm test·tests 기준/후 → 문서 → 커밋 → main 합치기 → PR → 법정.
+워크트리 `C:/dev/wt/inline-split-2`(브랜치 `feat/2026-10-05-task-es-432-inline-split-2`) → 헌법 세포골격 절·1차 REQ·생성기·하네스·법정 주장 규칙(court/claims.js `effectiveFloor`·`rollup`)·#745 판정 정독 → 게스트로 닿는 길을 법정 실행기로 기준 앱에서 탐침 → (처음 4묶음으로 생성·측정까지 했으나 main 이 셋을 먼저 옮겨) origin/main 3232cc2 로 다시 시작 → 기준 사본 `git archive 3232cc2`, push 직전 main 합친 뒤 `git archive cb0328d`(stash 없음; git 을 읽는 시험을 위해 그 사본에 main 이력을 받아 같은 커밋으로 맞춤 — 작업 트리 차이 0) → 생성기 → verify → 모듈 로드 탐침 → 신고서·설명·가드 → 시나리오 로컬 기준·작업 → 게스트 조작 비교(기준 2회·후 1회) → 실계정 읽기 비교(기준·후·기준) → tab-check 기준 2회·후 1회 → npm test·tests 기준/후 → 문서 → 커밋 → main 합치기(index.html 은 main 판에 같은 생성기를 다시 돌림, 신고서·설명은 main 판 위에 새 세포만) → 다시 잼(verify·단독 로드·시나리오·게스트 조작·tests·실계정) → PR → 법정.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
@@ -53,8 +53,17 @@
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-기준 = origin/main 3232cc2(`git archive` 사본). 결과 파일은 `reports/TASK-ES-432/`.
+기준 = push 직전 origin/main cb0328d(`git archive` 사본, main 합친 뒤 다시 잼) — tab-check 만 합치기 전 origin/main 3232cc2 기준으로 같은 이전을 잰 것이다(6탭 1회 약 50분). 결과 파일은 `reports/TASK-ES-432/`. 전체 수치(인라인 줄 수 등)는 main 이 움직이면 바뀌므로 주장에 쓰지 않고 기록 파일에만 둔다.
 
-MEASURE_TABLE
+| 항목 | 도구 | 결과 |
+| :-- | :-- | :-- |
+| 글자 동일 | `verify-inline-split-2.js`(기준 = main 의 index.html) | 옮긴 3개 함수 토큰열 동일(L. 접두 제외: totalFeedCheers 67·checkSocialNotifications 135·showSocialNotifyBanner 110), 덩어리 33줄 줄 단위 동일(구획 주석 포함), 누수 0·미노출 0·남은 정의 0·안 가져온 사용 0, 새 파일 60줄 (`verify-inline-split-2.json` ok) |
+| 원본 단독 로드 | `court/probes/module-load.js` 로컬(`module-load-inline-split-2.js`) | 회귀 0, 새 파일 단독 로드 성공(등록 전역 = 기존 `OurgoalCommKit` 1개), 소통 탭 index·render·app-scope 단독 로드 전후 같음 |
+| 화면 시나리오(법정 형식) | `court/lib/scenario.js` runScenario 로컬 | `manito-reentry-cheer-banner` 기준·작업 모두 통과, 약점 0 |
+| 조작 전후(게스트) | `dom-compare-inline-split-2.js` | 10단계 × 13칸 = 130값, 기준 대 후 0, 기준 대 기준 0, 콘솔 오류 8/8/8(외부 분석 스크립트 차단 — 같은 글자). 다시 열기 3회 포함. 난수는 두 앱에 같은 씨앗 |
+| 탭 실측 | `tab-check.js all` 기준 2회·후 1회 → `tab-compare.js`(합치기 전 3232cc2) | 6탭 2,520값 — 기준1 대 기준2 0 · 기준1 대 후 0 · 기준2 대 후 0 |
+| 시험 | `npm test` · tests 112개(`test-compare-inline-split-2.js`) | smoke 443/0 · 무결성 38/38 · 버튼 943/943 기준=후, 종료 코드 0/0, tests 112개 종료 코드·정규화 출력 전부 같음(기존 실패 27개 양쪽 같음). 다른 것은 세포 파일 수(+1)·모듈 가드 ①②(줄어듦) 줄뿐 |
+| 실계정(읽기 전용) | `real-account-inline-split-2.js` 로컬 127.0.0.2 + /api 운영 전달, 테스트 계정 A | 17값, 기준1 대 후 0 · 기준1 대 기준2 0 · 기준2 대 후 0, pageerror 0, 하네스가 쓴 행 0(기록 수 전후 같음). 마니또 화면 글자는 실행마다 다시 뽑히는 익명 이름을 지운 뒤 해시 |
+| 인라인 줄 | `line-counts-inline-split-2.js`(module-metrics) | 늘지 않음(줄어듦) — 수치는 `line-counts.json` 에만 |
 
 [4단계: 심사 청구]

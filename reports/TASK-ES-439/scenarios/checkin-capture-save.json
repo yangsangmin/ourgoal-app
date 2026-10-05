@@ -1,0 +1,63 @@
+{
+  "id": "checkin-capture-save",
+  "title": "게스트로 홈 체크인 입력칸에 글자를 넣으면 글자수 힌트가 켜지고(테마 CSS 가 숨기는 칸이라 인라인 style 로 확인), 「기록」 단추를 누르면 입력칸이 비워지고 안내 문구가 바뀌며 힌트가 꺼진다 — 옮긴 두 처리기(bindCaptureLiveMeta·bindCaptureSave)가 index.html 원래 자리에서 걸려 이전 전과 같이 돈다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureInput",
+      "name": "placeholder",
+      "equals": "예: 오늘 마음을 단단히 먹은 일 한 줄을 자유롭게 적어보세요 ✍️"
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "아침 30분 걷기 완료"
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureLiveMeta",
+      "name": "style",
+      "equals": "display: flex;"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureInput",
+      "name": "placeholder",
+      "equals": "예: 오늘 실천한 멋진 일을 한 줄로 적어보세요"
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureLiveMeta",
+      "name": "style",
+      "equals": "display: none;"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

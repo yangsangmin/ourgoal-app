@@ -1,0 +1,105 @@
+{
+ "runner": "docs/design/harness/module-split/scenario-local-components.js(법정 실행기를 읽기만 함) — 판정 아님",
+ "base": "origin/main 3dcd05a git archive 사본",
+ "work": "작업 트리",
+ "allPassed": true,
+ "runs": [
+  {
+   "scenario": "settings-pin-setup",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"settings\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"설정\" 57x50px",
+     "6 do waitFor ok details.settings-group-accordion:has(#twoFactorSwitch) > summary → 보이는 요소 1개",
+     "7 do click ok 클릭 summary#setGroupAccountSummary \"👤 계정 & 프로필 프로필, 소셜 로그인 연동, 32\" 339x96px",
+     "8 do waitFor ok #twoFactorSwitch → 보이는 요소 1개",
+     "9 do click ok 클릭 div#twoFactorSwitch \"\" 51x31px",
+     "10 do waitFor ok #twoFaPinInput → 보이는 요소 1개",
+     "11 expect textContains ok #modalOverlay → 보이는 글자: [\"✕ 🔐 앱 잠금 PIN (이 기기) 이 기기에서 아워골을 새로 열 때 물어볼 4자리 PIN 을 정해요. 4자리 PIN PIN 확인 ※ 이 기기\"]",
+     "12 do type ok 입력 input#twoFaPinInput \"\" 333x57px",
+     "13 do type ok 입력 input#twoFaPinConfirm \"\" 333x57px",
+     "14 do click ok 클릭 button#btnSave2Fa \"앱 잠금 켜기\" 121x44px",
+     "15 expect textContains ok #toast → 보이는 글자: [\"이 기기에 앱 잠금 PIN 을 설정했어요. 🔐\"]",
+     "16 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  {
+   "scenario": "settings-logout-others",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"settings\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"설정\" 57x50px",
+     "6 do waitFor ok details.settings-group-accordion:has(#logoutOtherDevicesBtn) > summary → 보이는 요소 1개",
+     "7 do click ok 클릭 summary#setGroupAccountSummary \"👤 계정 & 프로필 프로필, 소셜 로그인 연동, 32\" 339x96px",
+     "8 do waitFor ok #logoutOtherDevicesBtn → 보이는 요소 1개",
+     "9 do click ok 클릭 button#logoutOtherDevicesBtn \"다른 모든 기기에서 로그아웃\" 315x44px",
+     "10 expect textContains ok #toast → 보이는 글자: [\"게스트 체험 모드는 로그인 세션이 없어 다른 기기에서 로그아웃할 것이 없어요.\"]",
+     "11 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  },
+  {
+   "scenario": "settings-tab-guide",
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "base": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": []
+   },
+   "work": {
+    "passed": true,
+    "failedStep": null,
+    "exceptions": [],
+    "steps": [
+     "1 do goto ok /index.html",
+     "2 do waitFor ok #btnLandingPreviewDirect → 보이는 요소 1개",
+     "3 do click ok 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px",
+     "4 do waitFor ok .navbtn[data-tab=\"settings\"] → 보이는 요소 1개",
+     "5 do click ok 클릭 button \"설정\" 57x50px",
+     "6 do waitFor ok details.settings-group-accordion:has(#btnTabGuideHub) > summary → 보이는 요소 1개",
+     "7 do click ok 클릭 summary#setGroupDataSummary \"💾 데이터 백업 & 고급 설정 / 고객지원 데이터 백\" 339x115px",
+     "8 do waitFor ok #btnTabGuideHub → 보이는 요소 1개",
+     "9 do click ok 클릭 button#btnTabGuideHub \"🌟 각 탭 200% 활용법 & 우수 사용사례\" 315x44px",
+     "10 do waitFor ok .guide-tab-nav-btn[data-tabkey=\"goals\"] → 보이는 요소 1개",
+     "11 do click ok 클릭 button \"🎯 목표\" 52x31px",
+     "12 expect textContains ok #modalOverlay → 보이는 글자: [\"✕ 🌟 각 탭 200% 활용법 & 우수사례 × “와 나도 저렇게 목표 세우고, 일정 세우고, 기록하고, 소통하고 싶다!” — 실제 갓생 실천 \"]",
+     "13 expect noExceptions ok 행동 이후 미처리 예외 0건"
+    ]
+   }
+  }
+ ]
+}

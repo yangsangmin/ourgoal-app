@@ -16,7 +16,7 @@ const cssPath = path.join(__dirname, '..', 'ui.css');
 const jsStatsPath = path.join(__dirname, '..', 'js', 'records-stats.js');
 const jsCompPath = path.join(__dirname, '..', 'js', 'components.js');
 
-const html = fs.readFileSync(htmlPath, 'utf8');
+const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(htmlPath, 'utf8')); /* #TASK-ES-475 인라인 합본(원문 맨 앞 + js/tabs 세포) — 실천 추이 차트 그리기(renderWeekChart)가 기록 탭 세포로 옮겨 가도(#TASK-ES-467) 같은 글자를 찾는다. renderMultiMetricSvg 는 원문에 남아 함수 잘라 읽기(원문 맨 앞)도 그대로 */
 const css = fs.readFileSync(cssPath, 'utf8');
 const jsStats = fs.readFileSync(jsStatsPath, 'utf8');
 const jsComp = readComponentsBundle();

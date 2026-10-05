@@ -1,0 +1,55 @@
+{
+  "id": "home-bell-notification-center",
+  "title": "게스트로 홈 상단 종 단추(#sanctuaryBellBtn)를 누르면 「알림 센터」 창이 열리고 「도착한 알림이 없습니다」가 보인다 — 고치기 전에는 종이 정의되지 않은 openNotifyModal 을 불러 눌러도 아무 일이 없었고(죽은 클릭), 알림 센터로 가는 옛 단추(#topNotifBtn)는 4테마 공통 숨김 상단바 안에 있었다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "visible",
+      "selector": "#sanctuaryBellBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryBellBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "알림 센터",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "도착한 알림이 없습니다"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

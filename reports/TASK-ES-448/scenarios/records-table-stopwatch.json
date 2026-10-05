@@ -1,0 +1,78 @@
+{
+  "id": "records-table-stopwatch",
+  "title": "게스트로 기록 탭 「템플릿」 칸의 전문 템플릿 기록 창을 열면 표 안 스톱워치 위젯이 그려지고, 「시작」을 누르면 단추가 「일시정지」로 바뀌며 「랩」을 누르면 「랩 1」 토스트가 뜬다 — 스톱워치 위젯(renderStopwatchWidgetHtml·renderLapRowsHtml·STOPWATCH_STATE·playTimerBeep)을 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#swStartPauseBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#swStartPauseBtn",
+      "text": "일시정지",
+      "timeoutMs": 4000
+    },
+    {
+      "do": "click",
+      "selector": "#swLapBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "랩 1",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -17,12 +17,51 @@
   var K = KIT.weeklyRecap = KIT.weeklyRecap || {};
   var T = K.scope = K.scope || {};
 
+  // [#TASK-ES-462] 허상지표 제거 — 스트릭·레벨은 앱이 실제로 쓰는 값에서만 읽는다. 못 읽으면 null(숫자 대신 그 줄을 그리지 않는다).
+  //   스트릭: index.html computeStreakDays(기록·스트릭 프리즈 날짜로 역산 — 홈 스트릭 배지와 같은 값, 통로 js/core/app-scope.js)
+  //   레벨: levelProgress(settings.xp.total) — 로그인 사용자는 서버 원장(user_ledger_docs 'xp', #TASK-ES-421) 판, 게스트는 기기 판. 홈 아바타 카드와 같은 공식.
+  function realStreakDays() {
+    try {
+      var sc = window.OurgoalAppScope && window.OurgoalAppScope.scope;
+      if (sc && typeof sc.computeStreakDays === 'function') {
+        var n = Number(sc.computeStreakDays());
+        return (isFinite(n) && n > 0) ? n : null;
+      }
+    } catch (e) {}
+    return null;
+  }
+  function realLevel() {
+    try {
+      var p = window.state && window.state.profile;
+      var xp = p && p.settings && p.settings.xp;
+      if (!xp || typeof window.levelProgress !== 'function') return null;
+      var lv = Number(window.levelProgress(Number(xp.total) || 0).level);
+      return (isFinite(lv) && lv >= 1) ? lv : null;
+    } catch (e) {}
+    return null;
+  }
+  // [#TASK-ES-478] 기록 하나의 실제 몰입 시간(ms). durationMinutes 가 있으면 그것, 없으면 endAt-startAt(앱의 다른 화면과 같은 계산), 둘 다 없으면 0 — 시간 없는 기록을 25분으로 지어 세지 않는다.
+  function realDurationMs(r) {
+    if (!r) return 0;
+    var m = Number(r.durationMinutes);
+    if (isFinite(m) && m > 0) return m * 60000;
+    if (r.endAt && r.startAt) {
+      var d = new Date(r.endAt).getTime() - new Date(r.startAt).getTime();
+      if (isFinite(d) && d > 0) return d;
+    }
+    return 0;
+  }
+  K.realDurationMs = realDurationMs;
+  K.realStreakDays = realStreakDays;
+  K.realLevel = realLevel;
+
   // [#TASK-ES-429] renderSanctuaryRecords 의 「engine.activeRecMode === 'recap'」 분기 본문 — 이전 전 1109~1133줄 글자 그대로.
   //   렌더 함수 지역 변수(records·contentHtml)는 인자로 받는다, 바뀐 contentHtml 을 돌려준다.
   function renderSanctuaryRecordsRecap(records, contentHtml) {
-      var streakVal = (window.state && window.state.profile && window.state.profile.streak) || 3;
+      var streakVal = realStreakDays(); // [#TASK-ES-462] 없으면 null — 가짜 「3일」 대신 줄을 뺀다
+      var levelVal = realLevel();
       var totalMinutes = 0;
-      records.forEach(function(r) { totalMinutes += (r.durationMinutes || 25); });
+      records.forEach(function(r) { totalMinutes += realDurationMs(r) / 60000; }); // [#TASK-ES-478] 가짜 기본 25분 제거
       var totalHours = Math.round(totalMinutes / 60 * 10) / 10;
 
       contentHtml = '<div class="s-recap-share-card">' +
@@ -33,9 +72,9 @@
         '<div class="s-recap-canvas-mock" id="sRecapCanvasMock">' +
           '<div class="s-rc-top">OURGOAL WEEKLY RECAP</div>' +
           '<div class="s-rc-main">' +
-            '<div class="s-rc-avatar">🦉 Lv.1</div>' +
-            '<div class="s-rc-metric">누적 ' + totalHours + '시간 몰입 완주!</div>' +
-            '<div class="s-rc-streak">' + streakVal + '일 연속 스트릭 달성 🔥</div>' +
+            '<div class="s-rc-avatar">🦉' + (levelVal ? ' Lv.' + levelVal : '') + '</div>' +
+            (totalHours > 0 ? '<div class="s-rc-metric">누적 ' + totalHours + '시간 몰입 완주!</div>' : '') +
+            (streakVal ? '<div class="s-rc-streak">' + streakVal + '일 연속 스트릭 달성 🔥</div>' : '') +
           '</div>' +
           '<div class="s-rc-foot">우리들의 목표 성소 · ourgoal.kr</div>' +
         '</div>' +
@@ -53,9 +92,10 @@
     downloadRecapImage: async function() {
       try {
         var allRecs = (window.state && window.state.profile && window.state.profile.records) || [];
-        var streakVal = (window.state && window.state.profile && window.state.profile.streak) || 3;
+        var streakVal = realStreakDays(); // [#TASK-ES-462] 실제 스트릭(없으면 null)
+        var levelVal = realLevel();
         var totalMs = 0;
-        allRecs.forEach(function(r) { totalMs += ((r.durationMinutes || 25) * 60000); });
+        allRecs.forEach(function(r) { totalMs += realDurationMs(r); }); // [#TASK-ES-478] 가짜 기본 25분 제거
 
         var canvas = document.createElement('canvas');
         canvas.width = 1080;
@@ -110,10 +150,10 @@
         ctx.fillStyle = '#10b981';
         ctx.font = '700 34px sans-serif';
         var nick = (window.state && window.state.profile && (window.state.profile.nickname || window.state.profile.displayName)) || '목표 달성자';
-        ctx.fillText(nick + ' · Lv.1 성소 탐험가', 540, 680);
+        ctx.fillText(nick + (levelVal ? ' · Lv.' + levelVal : '') + ' 성소 탐험가', 540, 680);
 
         // 메트릭 1: 누적 몰입 시간
-        var hoursStr = (Math.round(totalMs / 3600000 * 10) / 10) + '시간';
+        var hoursStr = totalMs > 0 ? (Math.round(totalMs / 3600000 * 10) / 10) + '시간' : '기록 시작';
         ctx.fillStyle = '#f8fafc';
         ctx.font = '900 84px sans-serif';
         ctx.fillText(hoursStr, 540, 890);
@@ -124,7 +164,7 @@
         // 메트릭 2: 연속 스트릭
         ctx.fillStyle = '#f59e0b';
         ctx.font = '900 84px sans-serif';
-        ctx.fillText(streakVal + '일 연속', 540, 1140);
+        ctx.fillText(streakVal ? streakVal + '일 연속' : '오늘부터 시작', 540, 1140);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
         ctx.font = '600 34px sans-serif';
         ctx.fillText('포커스 스트릭 달성 🔥', 540, 1200);

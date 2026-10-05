@@ -8,7 +8,6 @@
       "emits": [
         "checkin:created",
         "record:saved",
-        "tab:changed",
         "view:sync"
       ],
       "listens": []
@@ -1119,6 +1118,87 @@
       "dependsOn": []
     },
     {
+      "id": "core/gcal-token",
+      "file": "js/core/gcal-token.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 구글 캘린더 토큰·일정 캐시 계정(uid) 격리(ensureGcalOwner·gcalEventsKey·purgeLegacySharedGcalKeys 등). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "core/home-cockpit",
+      "file": "js/core/home-cockpit.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 홈 1초 조망 ↔ 무저항 체크인 콕핏(initHomeCockpit·initDimensionSliders·renderQuickCheckinGuideChips·switchHomeDate·saveProfile). 여러 탭이 saveProfile 을 부르는 공용 부품. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAccountIsolation",
+        "OurgoalAppScope",
+        "OurgoalRecordLedger"
+      ]
+    },
+    {
+      "id": "core/modal-helper",
+      "file": "js/core/modal-helper.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 모달 닫기(closeModal)·닫기 직후 잠깐 막기(isModalDismissCooldown)·하단 시트(openBottomSheetAlert·openBottomSheetConfirm)·뒤로가기 처리 등록(bindModalPopstateBack). openModal 은 최상위 arguments 를 써서 index.html 에 남김(헌법 CELL_SPLIT 5). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "triggerHaptic"
+      ]
+    },
+    {
       "id": "core/modal",
       "file": "js/core/modal.js",
       "layer": "core",
@@ -1178,6 +1258,46 @@
       "dependsOn": [
         "OurgoalCapabilities",
         "require:./capabilities.js"
+      ]
+    },
+    {
+      "id": "core/registry-init",
+      "file": "js/core/registry-init.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 조선소 블록 레지스트리 6대 메가블록 초기화(initShipyardRegistry)·탭 전환(setTab·switchTab)·탭 단추 클릭 등록(bindNavButtonsClick, index.html 원래 자리에서 부른다). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "tab:changed"
+      ],
+      "listens": [],
+      "domRoot": "screen-home",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalCalendarMegaBlock",
+        "OurgoalCommMegaBlock",
+        "OurgoalEvents",
+        "OurgoalGoalEditUX",
+        "OurgoalGoalsMegaBlock",
+        "OurgoalHomeMegaBlock",
+        "OurgoalRecordsMegaBlock",
+        "OurgoalRegistry",
+        "OurgoalSanctuaryV3",
+        "OurgoalSettingsMegaBlock",
+        "scrollY",
+        "triggerHaptic"
       ]
     },
     {
@@ -1268,6 +1388,59 @@
       ]
     },
     {
+      "id": "core/telemetry",
+      "file": "js/core/telemetry.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 익명 이벤트 계측(getSid·getAttribution·parseAttribution·recordLanding·dDay 등). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "posthog"
+      ]
+    },
+    {
+      "id": "core/time-keys",
+      "file": "js/core/time-keys.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 시간 글자(fmtTime·fmtDateLabel·nowISO)·날짜 키(pad·dateKey·getKSTDateKey·getEffectiveStandardDateKey)·고유 id(uid·newId) 도우미. 노출 묶음(window.getKSTDateKey 등)은 index.html 원래 자리. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "core/toast",
       "file": "js/core/toast.js",
       "layer": "core",
@@ -1343,6 +1516,32 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": []
+    },
+    {
+      "id": "core/virtual-user-helpers",
+      "file": "js/core/virtual-user-helpers.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 「가상유저 개선 10대 핵심 헬퍼 함수」 묶음(triggerHaptic·triggerHapticFeedback·reorderMilestones·filterFeedByCategory·calculateWeeklyFocusStats·exportRecordsToCsv·exportRecordsToMarkdown·OfflineSyncManager). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-471)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
     },
     {
       "id": "credits",
@@ -2639,6 +2838,7 @@
       "dependsOn": [
         "OurgoalSanctuaryV3",
         "dDay",
+        "openGoalDetailDrawer",
         "saveProfile",
         "triggerHaptic"
       ]
@@ -2786,8 +2986,10 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
+        "OurgoalAppScope",
         "OurgoalSanctuaryV3",
         "OurgoalViralSharing",
+        "levelProgress",
         "openWeeklyRecapModal",
         "state"
       ]
@@ -3388,6 +3590,33 @@
       ]
     },
     {
+      "id": "calendar/day-edit-hub",
+      "file": "js/tabs/calendar/day-edit-hub.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Calendar Day Edit Hub Modal (일정 관리 허브 모달)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalCalendarAttachment"
+      ]
+    },
+    {
       "id": "calendar/index",
       "file": "js/tabs/calendar/index.js",
       "layer": "tabs",
@@ -3527,6 +3756,32 @@
       "dependsOn": [
         "OurgoalAppScope",
         "OurgoalSanctuaryV3"
+      ]
+    },
+    {
+      "id": "calendar/schedule-done-toggle",
+      "file": "js/tabs/calendar/schedule-done-toggle.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Schedule Done Toggle (일정 탭 — 일정 완료 체크·목표 양방향 동기화)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {
@@ -3678,6 +3933,33 @@
       ]
     },
     {
+      "id": "comm/crew-pacing",
+      "file": "js/tabs/comm/crew-pacing.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "홈 「동반자」 페이스메이커 라이브 위젯 그리기·「응원 보내기」·「오늘 체크인」(renderCrewPacingWidget·applyCrewPacingUI·nudgeCrewMates·focusHomeCheckinInput). index.html 인라인 「Social Crew Pacing」 묶음에서 글자 그대로 옮김(#TASK-ES-466)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "_recordHesitation"
+      ]
+    },
+    {
       "id": "comm/dm-ledger",
       "file": "js/tabs/comm/dm-ledger.js",
       "layer": "tabs",
@@ -3759,6 +4041,32 @@
       ]
     },
     {
+      "id": "comm/feed-posts-sync",
+      "file": "js/tabs/comm/feed-posts-sync.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Feed Posts Sync (소통 탭 — 피드 글 불러오기·실시간 동기화)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "comm/first-cheer",
       "file": "js/tabs/comm/first-cheer.js",
       "layer": "tabs",
@@ -3783,6 +4091,33 @@
       "dependsOn": [
         "OurgoalAppScope",
         "OurgoalNotifyEngine"
+      ]
+    },
+    {
+      "id": "comm/goal-certificate-share",
+      "file": "js/tabs/comm/goal-certificate-share.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "소통 탭 공유 하위 화면(목표·기록·마일스톤 고르기·카드 미리보기·피드 게시·외부 공유)과 목표 완주 인증서 그림(generateGoalCertificateImage·renderCommShare). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalTeamInviteComm"
       ]
     },
     {
@@ -3821,6 +4156,87 @@
       ]
     },
     {
+      "id": "comm/manito-basics",
+      "file": "js/tabs/comm/manito-basics.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Manito Basics (소통 탭 — 마니또 이름·도장·상태)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "MANITO_STAMP_COOLDOWN",
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "comm/manito-real",
+      "file": "js/tabs/comm/manito-real.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "실 유저 판별(isValidRealUser)·서버 마니또 자료(loadServerManitoData)·짝·응원 집계(manitoPartners·manitoSentToday·manitoStreak·manitoMutualCount·manitoInbox)·마니또 화면(renderCommManito)·익명 대화(renderManitoDm). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [
+        "ui.confirm"
+      ],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "comm/peer-invite",
+      "file": "js/tabs/comm/peer-invite.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "클립보드 복사(copyTextToClipboard·fallbackCopyText)·초대 기록(trackPeerInvite)·카카오 공유(shareGroupToKakao)·링크 복사(copyGroupInviteLink)·초대 성공 창(openPeerInviteSuccessModal)·초대 수락(acceptPeerInvite)·초대 받은 화면(showPeerInviteLandingModal). 순수 함수 3개(smoke FN_NAMES)는 index.html 에 남음. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "comm/render",
       "file": "js/tabs/comm/render.js",
       "layer": "tabs",
@@ -3845,6 +4261,58 @@
       "dependsOn": [
         "OurgoalAppScope",
         "OurgoalTeamInviteComm"
+      ]
+    },
+    {
+      "id": "comm/sample-data",
+      "file": "js/tabs/comm/sample-data.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Comm Sample Data (소통 탭 — 둘러보기용 예시 자료)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "comm/share-card",
+      "file": "js/tabs/comm/share-card.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Share Card (소통 탭 — 플랫폼 맞춤 공유 카드 그리기)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {
@@ -4190,6 +4658,58 @@
       ]
     },
     {
+      "id": "goals/goal-math",
+      "file": "js/tabs/goals/goal-math.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Goal Math (목표 탭 — 진행률·마일스톤 수·결과 달성률 계산)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "goals/goals-ia-actions",
+      "file": "js/tabs/goals/goals-ia-actions.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "목표 탭 하위 탭 전환(switchGoalsSubTab)·성취 통계 기간과 리포트(switchGoalStatPeriod·renderGoalStatsChart)·추천 템플릿을 내 목표로 담기(adoptTemplateAsMyGoal). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-481)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "goals/index",
       "file": "js/tabs/goals/index.js",
       "layer": "tabs",
@@ -4222,6 +4742,86 @@
         "OurgoalRegistry",
         "renderGoalsScreen",
         "state"
+      ]
+    },
+    {
+      "id": "goals/new-goal-modal",
+      "file": "js/tabs/goals/new-goal-modal.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "새 목표 만들기 창(promptNewGoal)·직접 설정·검토 단계·로컬 목표 템플릿. index.html 인라인 「New goal modal」 묶음에서 글자 그대로 옮김(#TASK-ES-466)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalModeration",
+        "OurgoalSanctuaryV3"
+      ]
+    },
+    {
+      "id": "goals/notion-record-convert",
+      "file": "js/tabs/goals/notion-record-convert.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Notion Record Convert (목표 탭 — 결과 글을 노션 DB 기록으로 변환)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "goals/prompt-encyclopedia",
+      "file": "js/tabs/goals/prompt-encyclopedia.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Prompt Encyclopedia (목표 탭 — 데이터분석 프롬프트 백과사전)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {
@@ -4483,6 +5083,87 @@
       ]
     },
     {
+      "id": "goals/team-goal-prompt",
+      "file": "js/tabs/goals/team-goal-prompt.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Team Goal Prompt (목표 탭 — 새 팀 목표 만들기 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "goals/team-state",
+      "file": "js/tabs/goals/team-state.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Team State (목표 탭 — 팀 참여 상태)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "goals/template-encyclopedia",
+      "file": "js/tabs/goals/template-encyclopedia.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "목표 탭 템플릿 백과사전 화면(renderTemplateEncyclopediaScreen)과 루틴·팀·개인 템플릿 상수 — 개인·루틴·팀 3대 분류, AI 추천/실사용자 전환, 검색·담기. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-481)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "CREATOR_TEMPLATES",
+        "OURGOAL_60_TEMPLATES",
+        "OurgoalAppScope",
+        "OurgoalTeamInviteComm"
+      ]
+    },
+    {
       "id": "goals/template-quick-import",
       "file": "js/tabs/goals/template-quick-import.js",
       "layer": "tabs",
@@ -4490,6 +5171,32 @@
       "size": "small",
       "kind": "tab",
       "role": "OurGoal Template Quick Import (목표 탭 — 템플릿 1초 이식·분야별 마일스톤)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "goals/topic-region-picker",
+      "file": "js/tabs/goals/topic-region-picker.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Topic & Region Picker (목표 탭 — 카테고리·지역 고르기)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -4726,6 +5433,63 @@
       ]
     },
     {
+      "id": "records/archive-toggle",
+      "file": "js/tabs/records/archive-toggle.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "기록 탭 「이전 기록 전체 보기」 아카이브 펼치기·접기(toggleRecordArchive). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-481)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "records/checkin-capture",
+      "file": "js/tabs/records/checkin-capture.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "홈 체크인 입력칸 글자수 힌트 처리기(bindCaptureLiveMeta)와 「기록」 단추 저장 처리기(bindCaptureSave) — 기록 추가·XP·축하·AI 피드백·노션 전송. 로드 중 걸리던 처리기를 함수로 감싸 index.html 원래 자리에서 부른다. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-439)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "checkin:created",
+        "record:saved"
+      ],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalEvents",
+        "OurgoalStore"
+      ]
+    },
+    {
       "id": "records/checkin-helpers",
       "file": "js/tabs/records/checkin-helpers.js",
       "layer": "tabs",
@@ -4891,6 +5655,59 @@
       ]
     },
     {
+      "id": "records/pro-template-modals",
+      "file": "js/tabs/records/pro-template-modals.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "전문 템플릿 화면 — 내 전용 템플릿 만들기 창(openCreateCustomTemplateModal, 줄글 추천·표 미리보기)·표 속성(열) 편집 창(openTemplateColumnEditModal). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-467)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalModeration"
+      ]
+    },
+    {
+      "id": "records/pro-templates",
+      "file": "js/tabs/records/pro-templates.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "전문 템플릿 데이터·해석 — 기본 전문 템플릿 목록(DEFAULT_PRO_TEMPLATES)·내 템플릿 합친 목록(getAllProTemplates)·키로 찾기(getProTemplateByKey)·날짜 꼬리표(fmtYYMMDD)·줄글 → 표 열 해석(parseNaturalLanguageTemplateSpec)·키워드 추천(recommendTemplateFromAI). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-467)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "records/record-assistant",
       "file": "js/tabs/records/record-assistant.js",
       "layer": "tabs",
@@ -4898,6 +5715,32 @@
       "size": "small",
       "kind": "tab",
       "role": "OurGoal Record Assistant (기록 탭 — 대화형 기록 비서)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "records/record-card-wire",
+      "file": "js/tabs/records/record-card-wire.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Record Card Wire (기록 탭 — 기록 카드 단추 연결)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -4995,6 +5838,32 @@
       "dependsOn": [
         "OurgoalAppScope",
         "OurgoalSanctuaryV3"
+      ]
+    },
+    {
+      "id": "records/share-to-feed",
+      "file": "js/tabs/records/share-to-feed.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "목표 & 기록 선택 피드 공유 창(openShareToFeedModal)·게시 뒤 응원 연출(addSimulatedCheerAndReplyToPost). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-466)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {
@@ -5120,6 +5989,60 @@
       ]
     },
     {
+      "id": "records/table-stopwatch",
+      "file": "js/tabs/records/table-stopwatch.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Table Stopwatch (기록 탭 — 표 기록 인터벌 타이머·스톱워치 위젯)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "AudioContext",
+        "OurgoalAppScope",
+        "webkitAudioContext"
+      ]
+    },
+    {
+      "id": "records/trend-metrics-chart",
+      "file": "js/tabs/records/trend-metrics-chart.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "기록 탭 「📈 히트맵·통계」 실천 추이 차트 — 측정지표 정의(TREND_METRICS)·차트 칸 그리기와 지표 칩·기간 단추(renderWeekChart, #chartContainer). 여러 지표 SVG(renderMultiMetricSvg)는 시험지 잘라 읽기 때문에 index.html 에 남김. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-467)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "settings/account-entry",
       "file": "js/tabs/settings/account-entry.js",
       "layer": "tabs",
@@ -5172,6 +6095,84 @@
         "OurgoalAppScope",
         "_modalOpenAt",
         "announceToA11y"
+      ]
+    },
+    {
+      "id": "settings/app-defaults",
+      "file": "js/tabs/settings/app-defaults.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal App Defaults (설정 탭 — 설정 기본값)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "settings/app-evaluation",
+      "file": "js/tabs/settings/app-evaluation.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "아워골 평가해주기 90% 창 열기·닫기·초기화·제출 처리기, 홈 「새 목표」 단추 처리기(bindHomeAddGoal). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-466)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "settings/app-lock-pin",
+      "file": "js/tabs/settings/app-lock-pin.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal App Lock PIN (설정 탭 — 이 기기 앱 잠금 PIN)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {
@@ -5228,6 +6229,33 @@
       ]
     },
     {
+      "id": "settings/dev-debug-gate",
+      "file": "js/tabs/settings/dev-debug-gate.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Dev Debug Gate (설정 탭 — 개발 디버그 버튼 격리)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalDirectLoginGuard"
+      ]
+    },
+    {
       "id": "settings/guest-backup-nudge",
       "file": "js/tabs/settings/guest-backup-nudge.js",
       "layer": "tabs",
@@ -5251,6 +6279,34 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "settings/guest-migration",
+      "file": "js/tabs/settings/guest-migration.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Guest Migration (설정 탭 — 게스트 기록을 계정으로 합치기)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAccountIsolation",
+        "OurgoalAppScope",
+        "sb"
       ]
     },
     {
@@ -5292,6 +6348,58 @@
       ]
     },
     {
+      "id": "settings/login-devices",
+      "file": "js/tabs/settings/login-devices.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Login Devices (설정 탭 — 로그인 기기 목록·다른 기기 로그아웃 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "settings/notify-soft-ask",
+      "file": "js/tabs/settings/notify-soft-ask.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Notify Soft Ask (설정 탭 — 웹 알림 허용 먼저 묻기 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "settings/notion-sync",
       "file": "js/tabs/settings/notion-sync.js",
       "layer": "tabs",
@@ -5318,6 +6426,32 @@
       ]
     },
     {
+      "id": "settings/onboarding",
+      "file": "js/tabs/settings/onboarding.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Onboarding (설정 탭 — 첫 가입 온보딩)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "settings/pwa-install",
       "file": "js/tabs/settings/pwa-install.js",
       "layer": "tabs",
@@ -5325,6 +6459,32 @@
       "size": "small",
       "kind": "tab",
       "role": "OurGoal PWA Install Guide (설정 — 홈 화면 추가 안내·키보드 가림 방지)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "settings/quick-actions",
+      "file": "js/tabs/settings/quick-actions.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "설정 탭 빠른 동작 — 보안 카드 칠하기(paintSecurityCard)·보안 상태 점검(refreshSecurityStatus)·다른 기기 로그아웃 확인 창 열기(killDeviceSession)·테마 견본 고르기(selectThemeSwatch). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-439)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -5378,6 +6538,34 @@
         "OurgoalSettingsSubSecurity",
         "OurgoalTemplateCredit",
         "OurgoalUiHelpers"
+      ]
+    },
+    {
+      "id": "settings/session-entry",
+      "file": "js/tabs/settings/session-entry.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "세션 복구 뒤 앱 입장(restoreSessionAndEnter)·아이디 직접 로그인(loginWithDirectIdentifier)·로그인 빠른 복구 창(openLoginRescueModal·rescueLoginSession)·복구 링크 처리기 등록(bindLoginRescueButtons). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-461)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAccountIsolation",
+        "OurgoalAppScope",
+        "OurgoalDirectLoginGuard"
       ]
     },
     {
@@ -5578,6 +6766,58 @@
       ]
     },
     {
+      "id": "settings/support-modals",
+      "file": "js/tabs/settings/support-modals.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Support Modals (설정 탭 — 고객지원·자주 묻는 질문·잇템 신고 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "settings/tab-guide",
+      "file": "js/tabs/settings/tab-guide.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Tab Guide (설정 탭 — 탭별 200% 활용법 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "settings/theme-apply",
       "file": "js/tabs/settings/theme-apply.js",
       "layer": "tabs",
@@ -5603,6 +6843,32 @@
         "OurgoalAppScope",
         "OurgoalSanctuaryV3",
         "state"
+      ]
+    },
+    {
+      "id": "settings/widget-settings-modal",
+      "file": "js/tabs/settings/widget-settings-modal.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Widget Settings Modal (설정 탭 — 바탕화면 위젯 설정 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {

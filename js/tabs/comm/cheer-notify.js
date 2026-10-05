@@ -2,7 +2,7 @@
  * OurGoal Cheer Notify (소통 탭 — 받은 응원 알림 띠)
  *
  * #TASK-ES-432 (인라인 스크립트 세포화 2차): index.html 인라인 IIFE 의 받은 응원 알림 묶음을 동작 그대로 옮겼다.
- *   totalFeedCheers · checkSocialNotifications · showSocialNotifyBanner(이전 전 30818~30850줄)
+ *   totalFeedCheers · checkSocialNotifications · showSocialNotifyBanner(이전 전 22701~22733줄)
  * checkSocialNotifications = 앱에 들어올 때(enterApp — 아직 index.html) 내 피드 글 응원 수·마니또 받은 응원 수를 지난번 본 수와 비교해 새 것이 있으면
  * 홈 #socialNotifySlot 에 「응원이 도착했어요」 띠를 그린다(「확인하기」 #sbOpen → 소통 탭).
  * 묶음을 통째로(구획 주석 포함) 글자 그대로 옮겼다. 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓).

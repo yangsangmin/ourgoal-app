@@ -11,6 +11,11 @@ const ROOT = path.join(__dirname, '..');
 const HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 /* #TASK-ES-441 확인창 19곳 줄 세기는 인라인 합본(원문 맨 앞 + js/tabs 세포)에서 센다 — 확인창이 세포로 옮겨 가도 같은 줄을 찾는다 */
 const HTML_CELLS = require('./helpers/inline-bundle').withInlineCells(HTML);
+/* #TASK-ES-488 인라인 어려움 구역 H2 선행: 「기본 확인창은 루틴 삭제 2곳만 남는다」 검사는 index.html 원문 + 그 2곳이 옮겨 갈 목표 탭 루틴 화면 세포
+   (js/tabs/goals/routine-screen.js — 있을 때만, 생성기 접두 L. 만 뗌)에서 센다. 이 시험지가 쓰일 때 이미 세포였던 파일(goal-detail-events.js 등)의
+   확인창은 처음부터 이 검사 범위 밖이었으므로 합본 전체가 아니라 옮겨 갈 파일만 더한다. 기대값은 그대로다. */
+const ROUTINE_CELL = path.join(ROOT, 'js', 'tabs', 'goals', 'routine-screen.js');
+const HTML_ROUTINE = HTML + (fs.existsSync(ROUTINE_CELL) ? '\n' + fs.readFileSync(ROUTINE_CELL, 'utf8').replace(/(^|[^A-Za-z0-9_$.])L\.(?=[A-Za-z_$])/g, '$1') : '');
 const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
 const C = require(path.join(ROOT, 'js/core/confirm.js'));
 
@@ -34,19 +39,20 @@ function attachSheet() {
 }
 
 // index.html 에서 `head` 로 시작하는 함수 소스를 괄호 짝을 맞춰 잘라 온다(문자열·주석 안 괄호는 건너뛴다).
+// #TASK-ES-489: 잘라 오는 원본을 인라인 합본(HTML_CELLS — 원문 맨 앞 + js/tabs 세포 + js/core 이전 세포, L. 접두 제거)으로 넓혔다 — 휴지통 함수가 기관 세포 js/core/trash-bin.js 로 옮겨 가도(#TASK-ES-482) 같은 글자를 찾는다. 단언·기대값 그대로.
 function sliceFunction(head) {
-  const start = HTML.indexOf(head);
+  const start = HTML_CELLS.indexOf(head);
   assert.ok(start >= 0, 'index.html 에 ' + head + ' 가 있다');
-  assert.strictEqual(HTML.indexOf(head, start + 1), -1, head + ' 는 한 곳뿐이다');
-  let i = HTML.indexOf('{', start), depth = 0, q = null;
-  for (; i < HTML.length; i++) {
-    const ch = HTML[i], nx = HTML[i + 1];
+  assert.strictEqual(HTML_CELLS.indexOf(head, start + 1), -1, head + ' 는 한 곳뿐이다');
+  let i = HTML_CELLS.indexOf('{', start), depth = 0, q = null;
+  for (; i < HTML_CELLS.length; i++) {
+    const ch = HTML_CELLS[i], nx = HTML_CELLS[i + 1];
     if (q) { if (ch === '\\') { i++; continue; } if (ch === q) q = null; continue; }
-    if (ch === '/' && nx === '/') { i = HTML.indexOf('\n', i); continue; }
-    if (ch === '/' && nx === '*') { i = HTML.indexOf('*/', i) + 1; continue; }
+    if (ch === '/' && nx === '/') { i = HTML_CELLS.indexOf('\n', i); continue; }
+    if (ch === '/' && nx === '*') { i = HTML_CELLS.indexOf('*/', i) + 1; continue; }
     if (ch === '\'' || ch === '"' || ch === '`') { q = ch; continue; }
     if (ch === '{') depth++;
-    else if (ch === '}') { depth--; if (depth === 0) return HTML.slice(start, i + 1); }
+    else if (ch === '}') { depth--; if (depth === 0) return HTML_CELLS.slice(start, i + 1); }
   }
   throw new Error('괄호 짝을 못 찾음: ' + head);
 }
@@ -97,7 +103,7 @@ function countLine(line) {
   });
 
   await check('index.html 인라인 스크립트의 기본 확인창은 목표 탭 루틴 삭제 2곳만 남는다(이번 범위 밖)', () => {
-    const lines = HTML.split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l));
+    const lines = HTML_ROUTINE.split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l));
     const left = lines.filter(l => /(?:^|[^.\w$])confirm\(|\bwindow\.confirm\(/.test(l));
     assert.deepStrictEqual(left.map(l => l.trim()), [
       "if(!confirm('이 루틴을 삭제하시겠습니까?')) return;",

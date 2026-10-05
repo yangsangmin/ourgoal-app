@@ -1,0 +1,9 @@
+{"id":"settings-quick-actions","title":"게스트로 설정 탭 보안 카드의 「보안 상태 점검」을 누르면 앱 잠금 PIN 상태 토스트가 뜨고 배지가 꺼짐으로 칠해진다 — 옮긴 refreshSecurityStatus·paintSecurityCard 가 이전 전과 같이 돈다",
+"steps":[{"do":"goto","path":"/index.html"},{"do":"waitFor","selector":"#btnLandingPreviewDirect"},{"do":"click","selector":"#btnLandingPreviewDirect"},
+{"do":"waitFor","selector":".navbtn[data-tab=\"settings\"]","timeoutMs":15000},
+{"do":"click","selector":".navbtn[data-tab=\"settings\"]"},
+{"do":"waitFor","selector":"#btnSettingsSecurityRefresh","timeoutMs":10000},
+{"do":"click","selector":"#btnSettingsSecurityRefresh"},
+{"expect":"textContains","selector":"#toast","text":"앱 잠금 PIN 이 꺼져 있어요"},
+{"expect":"attr","selector":"#badge2faStatus","name":"data-applock","equals":"off"},
+{"expect":"noExceptions"}]}

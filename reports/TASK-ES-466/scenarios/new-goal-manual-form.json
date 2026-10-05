@@ -1,0 +1,9 @@
+{"id":"new-goal-manual-form","title":"게스트로 홈 「새 목표」를 누르면 줄글 입력 「새 목표」 창이 뜨고, 「직접 설정할게요」를 누르면 최종 목표·카테고리·공개 범위를 고르는 직접 설정 양식으로 바뀐다 — 옮긴 bindHomeAddGoal·promptNewGoal·showNewGoalManualForm 이 이전 전과 같이 돈다","steps":[{"do":"goto","path":"/index.html"},{"do":"waitFor","selector":"#btnLandingPreviewDirect"},{"do":"click","selector":"#btnLandingPreviewDirect"},{"do":"waitFor","selector":"#captureInput","timeoutMs":15000},
+{"do":"click","selector":"#homeAddGoal"},
+{"expect":"visible","selector":"#ngGenBtn"},
+{"expect":"textContains","selector":"#modalOverlay","text":"목표설정 도우미 봇"},
+{"do":"click","selector":"#ngManualBtn"},
+{"expect":"visible","selector":"#mGoalTitle"},
+{"expect":"visible","selector":"#mSave"},
+{"expect":"textContains","selector":"#modalOverlay","text":"공개 범위"},
+{"expect":"noExceptions"}]}
