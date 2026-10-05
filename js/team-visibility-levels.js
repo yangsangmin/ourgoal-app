@@ -9,6 +9,30 @@
 (function(global){
   'use strict';
 
+  /* ============ [#TASK-ES-402] 팀 세포 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md) ============
+     ① 가져오기: js/team-level-group-modal.js 로 옮긴 함수(openLevelGroupDetailModal)를 이 스코프에서 같은 이름으로 쓴다(브라우저는 index.html 이 부품을 먼저 읽고, node 는 아래 require).
+     ② 스코프 통로: 옮긴 코드가 읽는 이 스코프의 이름만 OurgoalTeamGoalsKit.visibilityLevels.scope 에 getter 로 노출한다(목록은 스코프 분석으로 뽑았다). */
+  var _goalsKit = global.OurgoalTeamGoalsKit && global.OurgoalTeamGoalsKit.visibilityLevels;
+  if(!_goalsKit && typeof require === 'function'){ _goalsKit = require('./team-level-group-modal.js'); }
+  _goalsKit = _goalsKit || {};
+  var openLevelGroupDetailModal = _goalsKit.openLevelGroupDetailModal;
+  Object.defineProperties(_goalsKit.scope || (_goalsKit.scope = {}), Object.getOwnPropertyDescriptors({
+    get askConfirm(){ return askConfirm; },
+    get closeModal(){ return closeModal; },
+    get daysFromNow(){ return daysFromNow; },
+    get esc(){ return esc; },
+    get getGoalLevelGoals(){ return getGoalLevelGoals; },
+    get getGroupLevelGoals(){ return getGroupLevelGoals; },
+    get getMockGroups(){ return getMockGroups; },
+    get getProfile(){ return getProfile; },
+    get openModal(){ return openModal; },
+    get renderTeamGoalsScreen(){ return renderTeamGoalsScreen; },
+    get saveProfile(){ return saveProfile; },
+    get toast(){ return toast; },
+    get triggerHaptic(){ return triggerHaptic; },
+    get uid(){ return uid; }
+  }));
+
   var _deps = {};
 
   function getState(){ return (_deps.getState ? _deps.getState() : global.state) || {}; }
@@ -123,314 +147,7 @@
     return cloned;
   }
 
-  /* ------------------------------------------------------------
-   * 2. 수준별 조 상세 모달 (목표별 tgid 지원)
-   * ------------------------------------------------------------ */
-  function openLevelGroupDetailModal(gid, lgId, tgid){
-    var g = getMockGroups().find(function(x){ return x.id === gid; });
-    var levelGroups = tgid ? getGoalLevelGoals(gid, tgid) : getGroupLevelGoals(gid);
-    var lg = levelGroups.find(function(x){ return x.id === lgId; });
-    if(!lg && tgid){
-      levelGroups = getGroupLevelGoals(gid);
-      lg = levelGroups.find(function(x){ return x.id === lgId; });
-      tgid = null;
-    }
-    if(!lg) return;
-
-    var nG = (lg.goals || []).length;
-    var nM = (lg.goals || []).reduce(function(acc, goal){ return acc + (goal.milestones || []).length; }, 0);
-    var nT = (lg.goals || []).reduce(function(acc, goal){ return acc + (goal.milestones || []).reduce(function(mAcc, ms){ return mAcc + (ms.tasks || []).length; }, 0); }, 0);
-    var nDoneT = (lg.goals || []).reduce(function(acc, goal){ return acc + (goal.milestones || []).reduce(function(mAcc, ms){ return mAcc + (ms.tasks || []).filter(function(t){ return t.done; }).length; }, 0); }, 0);
-    var nDoneM = (lg.goals || []).reduce(function(acc, goal){ return acc + (goal.milestones || []).filter(function(m){ return m.status === 'done'; }).length; }, 0);
-    var lgProg = nT > 0 ? Math.round(nDoneT / nT * 100) : (nM > 0 ? Math.round(nDoneM / nM * 100) : 0);
-
-    var goalsHtml = (lg.goals || []).map(function(goal){
-      var msListHtml = (goal.milestones || []).map(function(m){
-        var curPrio = m.priority || 'med';
-        var prioLabel = curPrio === 'high' ? '높음' : (curPrio === 'low' ? '낮음' : '보통');
-        var prioTagHtml = '<span class="ms-priority-tag ms-priority-' + curPrio + '" data-lgcyclestatusprio="' + goal.id + ':' + m.id + '" title="우선순위 변경 (클릭)">' + prioLabel + '</span>';
-        var tasks = m.tasks || [];
-        var taskRows = tasks.map(function(t){
-          return '<div class="task-row" style="padding:3px 0;">' +
-            '<div class="task-check' + (t.done ? ' done' : '') + '" data-lgtoggletask="' + goal.id + ':' + m.id + ':' + t.id + '" style="cursor:pointer;">' + (t.done ? '✓' : '') + '</div>' +
-            '<input class="task-title' + (t.done ? ' done-text' : '') + '" data-lgtasktitle="' + goal.id + ':' + m.id + ':' + t.id + '" value="' + esc(t.title) + '" style="font-size:.875rem;">' +
-            '<button class="icon-btn" data-lgdeltask="' + goal.id + ':' + m.id + ':' + t.id + '" type="button" title="삭제">×</button>' +
-          '</div>';
-        }).join('');
-
-        return '<div class="ms-row" style="margin-top:6px;padding:8px 10px;background:var(--card);border-radius:12px;border:1px solid var(--rule);">' +
-          '<div class="ms-main" style="align-items:flex-start;">' +
-            '<div class="ms-status ' + m.status + '" data-lgcyclestatus="' + goal.id + ':' + m.id + '" style="margin-top:2px;cursor:pointer;" title="상태 변경 (클릭)">' + (m.status === 'done' ? '✓' : '') + '</div>' +
-            '<div style="flex:1;min-width:0;">' +
-              '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;line-height:1;min-height:16px;">' +
-                prioTagHtml +
-                (tasks.length > 0 ? '<span class="faint" style="font-size:.6875rem;background:var(--card2);padding:1px 6px;border-radius:6px;">' + tasks.filter(function(t){ return t.done; }).length + '/' + tasks.length + ' 완료</span>' : '') +
-              '</div>' +
-              '<div style="display:flex;align-items:center;width:100%;">' +
-                '<input class="ms-title' + (m.status === 'done' ? ' done-text' : '') + '" data-lgmtitle="' + goal.id + ':' + m.id + '" value="' + esc(m.title) + '" style="width:100%;font-size:.9375rem;">' +
-              '</div>' +
-            '</div>' +
-            '<div class="ms-actions">' +
-              '<button class="icon-btn" data-lgdelms="' + goal.id + ':' + m.id + '" type="button" title="마일스톤 삭제">×</button>' +
-            '</div>' +
-          '</div>' +
-          (taskRows ? '<div class="task-list" style="margin-top:4px;">' + taskRows + '</div>' : '') +
-          '<div class="task-add" data-lgaddtask="' + goal.id + ':' + m.id + '" style="cursor:pointer;margin-top:4px;font-size:.8125rem;padding:4px 8px;">+ 세부 할 일 추가</div>' +
-        '</div>';
-      }).join('');
-
-      return '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:12px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
-          '<input data-lggoaltitle="' + goal.id + '" value="' + esc(goal.title) + '" style="font-weight:700;font-size:1rem;background:transparent;border:none;border-bottom:1px solid var(--rule);padding:2px 4px;flex:1;" placeholder="목표명을 입력하세요">' +
-          '<button class="icon-btn" data-lgdelgoal="' + goal.id + '" type="button" title="목표 삭제" style="color:var(--ink-faint);">×</button>' +
-        '</div>' +
-        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">' +
-          '<span class="faint" style="font-size:.8125rem;">마감일</span>' +
-          '<input type="date" data-lggoaldue="' + goal.id + '" value="' + (goal.dueDate || '') + '" style="font-size:.8125rem;padding:2px 6px;border-radius:6px;border:1px solid var(--rule);background:var(--card);">' +
-        '</div>' +
-        '<div style="margin-top:6px;">' +
-          msListHtml +
-          '<div class="add-ms-btn" data-lgaddms="' + goal.id + '" style="cursor:pointer;margin-top:8px;padding:8px;font-size:.8125rem;">+ 마일스톤 추가</div>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-
-    var modalHtml = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-      '<div style="display:flex;align-items:center;gap:6px;">' +
-        '<span style="font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span>' +
-        '<div>' +
-          '<h3 style="margin:0;font-size:1.1rem;">수준별 목표 상세 관리</h3>' +
-          '<div class="faint" style="font-size:.8125rem;">' + (g ? g.icon + ' ' + esc(g.name) : '') + (tgid ? ' (목표별 맞춤 조)' : ' (팀 통합 기본 조)') + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);font-weight:700;">달성률 ' + lgProg + '%</span>' +
-    '</div>' +
-
-    '<div class="field" style="margin:12px 0 10px;">' +
-      '<label style="font-weight:700;font-size:.8125rem;">조/그룹 이름 (수정 가능)</label>' +
-      '<div style="display:flex;gap:6px;">' +
-        '<input id="modalLgNameInput" type="text" value="' + esc(lg.name) + '" placeholder="예: A조 (상급/대회반)" style="font-weight:700;">' +
-        '<button class="btn btn-ghost btn-sm" id="modalSaveLgNameBtn" type="button" style="flex:0 0 auto;">이름 저장</button>' +
-      '</div>' +
-    '</div>' +
-
-    '<div style="background:var(--card2);border-radius:10px;padding:8px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">' +
-      '<span class="faint" style="font-size:.8125rem;">요약: 목표 ' + nG + '개 · 마일스톤 ' + nM + '개 · 할일 ' + nT + '개</span>' +
-      '<span class="faint" style="font-size:.8125rem;font-weight:700;">완료 할일 ' + nDoneT + '개</span>' +
-    '</div>' +
-    '<div class="group-bar" style="height:6px;margin-bottom:14px;"><span style="width:' + lgProg + '%;"></span></div>' +
-
-    '<div style="max-height:55vh;overflow-y:auto;padding-right:2px;margin-bottom:12px;">' +
-      (goalsHtml || '<p class="faint" style="text-align:center;padding:20px 0;">아직 등록된 조별 목표가 없어요. 아래 버튼으로 추가해보세요.</p>') +
-    '</div>' +
-
-    '<button class="btn btn-primary btn-sm btn-block" id="modalAddLgGoalBtn" type="button" style="margin-bottom:10px;">+ 이 조에 새 목표 추가</button>' +
-
-    '<div class="modal-actions" style="margin-top:6px;">' +
-      '<button class="btn btn-ghost btn-sm" id="modalDelLgBtn" type="button" style="color:var(--brand-strong);flex:0 0 auto;">조 삭제</button>' +
-      '<button class="btn btn-ghost btn-sm" id="modalCloseLgBtn" type="button" style="flex:1;">닫기</button>' +
-    '</div>';
-
-    openModal(modalHtml, function(sheet){
-      sheet.querySelector('#modalSaveLgNameBtn').addEventListener('click', async function(){
-        var newN = sheet.querySelector('#modalLgNameInput').value.trim();
-        if(newN){
-          lg.name = newN;
-          await saveProfile();
-          toast('조 이름을 수정했어요');
-          renderTeamGoalsScreen();
-        }
-      });
-
-      sheet.querySelector('#modalAddLgGoalBtn').addEventListener('click', async function(){
-        if(!lg.goals) lg.goals = [];
-        lg.goals.push({
-          id: uid('lgg'),
-          title: '새 수준별 목표',
-          dueDate: daysFromNow(30),
-          milestones: [
-            { id: uid('lgm'), title: '1단계 실천 과제', status: 'todo', priority: 'med', tasks: [] }
-          ]
-        });
-        await saveProfile();
-        toast('목표를 추가했어요');
-        closeModal();
-        openLevelGroupDetailModal(gid, lgId, tgid);
-        renderTeamGoalsScreen();
-      });
-
-      sheet.querySelector('#modalDelLgBtn').addEventListener('click', async function(){
-        if(!(await askConfirm('정말 "' + lg.name + '" 조와 속한 모든 목표/할일을 삭제할까요?'))) return;
-        var p = getProfile();
-        p.settings = p.settings || {};
-        if(tgid){
-          p.settings.goalLevelGoals = p.settings.goalLevelGoals || {};
-          p.settings.goalLevelGoals[tgid] = levelGroups.filter(function(x){ return x.id !== lgId; });
-        } else {
-          p.settings.groupLevelGoals = p.settings.groupLevelGoals || {};
-          p.settings.groupLevelGoals[gid] = levelGroups.filter(function(x){ return x.id !== lgId; });
-        }
-        await saveProfile();
-        toast('조를 삭제했어요');
-        closeModal();
-        renderTeamGoalsScreen();
-      });
-
-      sheet.querySelector('#modalCloseLgBtn').addEventListener('click', closeModal);
-
-      // Goal title & due edits
-      sheet.querySelectorAll('[data-lggoaltitle]').forEach(function(inp){
-        inp.addEventListener('change', async function(){
-          var goalId = inp.dataset.lggoaltitle;
-          var goal = (lg.goals || []).find(function(x){ return x.id === goalId; });
-          if(goal){ goal.title = inp.value.trim() || goal.title; await saveProfile(); renderTeamGoalsScreen(); }
-        });
-      });
-      sheet.querySelectorAll('[data-lggoaldue]').forEach(function(inp){
-        inp.addEventListener('change', async function(){
-          var goalId = inp.dataset.lggoaldue;
-          var goal = (lg.goals || []).find(function(x){ return x.id === goalId; });
-          if(goal){ goal.dueDate = inp.value || null; await saveProfile(); renderTeamGoalsScreen(); }
-        });
-      });
-      sheet.querySelectorAll('[data-lgdelgoal]').forEach(function(btn){
-        btn.addEventListener('click', async function(){
-          var goalId = btn.dataset.lgdelgoal;
-          lg.goals = (lg.goals || []).filter(function(x){ return x.id !== goalId; });
-          await saveProfile();
-          toast('목표를 삭제했어요');
-          closeModal();
-          openLevelGroupDetailModal(gid, lgId, tgid);
-          renderTeamGoalsScreen();
-        });
-      });
-
-      // Milestones
-      sheet.querySelectorAll('[data-lgaddms]').forEach(function(btn){
-        btn.addEventListener('click', async function(){
-          var goalId = btn.dataset.lgaddms;
-          var goal = (lg.goals || []).find(function(x){ return x.id === goalId; });
-          if(goal){
-            if(!goal.milestones) goal.milestones = [];
-            goal.milestones.push({ id: uid('lgm'), title: '새 마일스톤', status: 'todo', priority: 'med', tasks: [] });
-            await saveProfile();
-            closeModal();
-            openLevelGroupDetailModal(gid, lgId, tgid);
-            renderTeamGoalsScreen();
-          }
-        });
-      });
-      sheet.querySelectorAll('[data-lgcyclestatus]').forEach(function(el){
-        el.addEventListener('click', async function(){
-          var parts = el.dataset.lgcyclestatus.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          var m = goal && (goal.milestones || []).find(function(x){ return x.id === parts[1]; });
-          if(m){
-            var order = ['todo', 'doing', 'done'];
-            m.status = order[(order.indexOf(m.status) + 1) % 3];
-            triggerHaptic(10);
-            await saveProfile();
-            closeModal();
-            openLevelGroupDetailModal(gid, lgId, tgid);
-            renderTeamGoalsScreen();
-          }
-        });
-      });
-      sheet.querySelectorAll('[data-lgcyclestatusprio]').forEach(function(el){
-        el.addEventListener('click', async function(){
-          var parts = el.dataset.lgcyclestatusprio.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          var m = goal && (goal.milestones || []).find(function(x){ return x.id === parts[1]; });
-          if(m){
-            var pOrder = ['med', 'high', 'low'];
-            m.priority = pOrder[(pOrder.indexOf(m.priority || 'med') + 1) % 3];
-            triggerHaptic(10);
-            await saveProfile();
-            closeModal();
-            openLevelGroupDetailModal(gid, lgId, tgid);
-            renderTeamGoalsScreen();
-          }
-        });
-      });
-      sheet.querySelectorAll('[data-lgmtitle]').forEach(function(inp){
-        inp.addEventListener('change', async function(){
-          var parts = inp.dataset.lgmtitle.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          var m = goal && (goal.milestones || []).find(function(x){ return x.id === parts[1]; });
-          if(m){ m.title = inp.value.trim() || m.title; await saveProfile(); renderTeamGoalsScreen(); }
-        });
-      });
-      sheet.querySelectorAll('[data-lgdelms]').forEach(function(btn){
-        btn.addEventListener('click', async function(){
-          var parts = btn.dataset.lgdelms.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          if(goal){
-            goal.milestones = (goal.milestones || []).filter(function(x){ return x.id !== parts[1]; });
-            await saveProfile();
-            closeModal();
-            openLevelGroupDetailModal(gid, lgId, tgid);
-            renderTeamGoalsScreen();
-          }
-        });
-      });
-
-      // Tasks
-      sheet.querySelectorAll('[data-lgaddtask]').forEach(function(btn){
-        btn.addEventListener('click', async function(){
-          var parts = btn.dataset.lgaddtask.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          var m = goal && (goal.milestones || []).find(function(x){ return x.id === parts[1]; });
-          if(m){
-            if(!m.tasks) m.tasks = [];
-            m.tasks.push({ id: uid('lgt'), title: '새 세부 할 일', done: false });
-            await saveProfile();
-            closeModal();
-            openLevelGroupDetailModal(gid, lgId, tgid);
-            renderTeamGoalsScreen();
-          }
-        });
-      });
-      sheet.querySelectorAll('[data-lgtoggletask]').forEach(function(el){
-        el.addEventListener('click', async function(){
-          var parts = el.dataset.lgtoggletask.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          var m = goal && (goal.milestones || []).find(function(x){ return x.id === parts[1]; });
-          var t = m && (m.tasks || []).find(function(x){ return x.id === parts[2]; });
-          if(t){
-            t.done = !t.done;
-            triggerHaptic(10);
-            await saveProfile();
-            closeModal();
-            openLevelGroupDetailModal(gid, lgId, tgid);
-            renderTeamGoalsScreen();
-          }
-        });
-      });
-      sheet.querySelectorAll('[data-lgtasktitle]').forEach(function(inp){
-        inp.addEventListener('change', async function(){
-          var parts = inp.dataset.lgtasktitle.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          var m = goal && (goal.milestones || []).find(function(x){ return x.id === parts[1]; });
-          var t = m && (m.tasks || []).find(function(x){ return x.id === parts[2]; });
-          if(t){ t.title = inp.value.trim() || t.title; await saveProfile(); renderTeamGoalsScreen(); }
-        });
-      });
-      sheet.querySelectorAll('[data-lgdeltask]').forEach(function(btn){
-        btn.addEventListener('click', async function(){
-          var parts = btn.dataset.lgdeltask.split(':');
-          var goal = (lg.goals || []).find(function(x){ return x.id === parts[0]; });
-          var m = goal && (goal.milestones || []).find(function(x){ return x.id === parts[1]; });
-          if(m){
-            m.tasks = (m.tasks || []).filter(function(x){ return x.id !== parts[2]; });
-            await saveProfile();
-            closeModal();
-            openLevelGroupDetailModal(gid, lgId, tgid);
-            renderTeamGoalsScreen();
-          }
-        });
-      });
-    });
-  }
+  /* [#TASK-ES-402] openLevelGroupDetailModal → js/team-level-group-modal.js 로 옮김(동작 그대로). 이 IIFE 맨 위에서 같은 이름으로 가져온다. */
 
   /* ------------------------------------------------------------
    * 3. 카드 내부 단일 대표 목표 및 수준관리 아코디언 렌더러
