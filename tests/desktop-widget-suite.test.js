@@ -100,7 +100,7 @@ async function testItem62Action() {
     navigator: {
       vibrate: (ms) => { hapticDuration = ms; }
     },
-    renderCalendar: () => { viewRenderedCount++; },
+    renderCalendarScreen: () => { viewRenderedCount++; }, // [#TASK-ES-478] 픽스처만 고침: 제품은 #TASK-ES-353 부터 renderCalendarScreen 을 부른다(앱에 window.renderCalendar 는 없다). 단언·기대값(4)은 그대로
     renderGoalsScreen: () => { viewRenderedCount++; },
     renderHome: () => { viewRenderedCount++; },
     renderRecordsScreen: () => { viewRenderedCount++; },
