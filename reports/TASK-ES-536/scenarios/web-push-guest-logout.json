@@ -1,0 +1,61 @@
+{
+ "id": "web-push-guest-logout",
+ "title": "게스트로 설정 「데이터·계정」을 펼쳐 「로그아웃」을 누르면(로그아웃이 옮긴 removePushSubscription 으로 이 기기 푸시 구독 해제를 3초까지 기다린 뒤 진행) 로그인 화면과 「로그아웃되었습니다」 토스트가 보이고 예외가 없다 — js/tabs/settings/web-push.js",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#setGroupDataSummary",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#setGroupDataSummary"
+  },
+  {
+   "expect": "visible",
+   "selector": "#logoutBtn"
+  },
+  {
+   "do": "click",
+   "selector": "#logoutBtn"
+  },
+  {
+   "expect": "visible",
+   "selector": "#authScreen"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "로그아웃되었습니다"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

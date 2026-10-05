@@ -1,0 +1,84 @@
+{
+ "what": "Z1 시험지 선행 — 기준 시험지/새 시험지 × 기준 제품(origin/main git archive)/이동 제품(Z1 묶음 7개를 gen-inline-hard.js 로 옮긴 사본)",
+ "tests": {
+  "tests/account-withdrawal-modal.test.js": {
+   "oldOnBase": {
+    "code": 0,
+    "lines": 1,
+    "firstError": null
+   },
+   "newOnBase": {
+    "code": 0,
+    "lines": 1,
+    "firstError": null
+   },
+   "oldOnMoved": {
+    "code": 1,
+    "lines": 23,
+    "firstError": "AssertionError [ERR_ASSERTION]: withdrawModal container must be defined in template\r"
+   },
+   "newOnMoved": {
+    "code": 0,
+    "lines": 1,
+    "firstError": null
+   },
+   "newTestSameOnBaseProduct": true,
+   "newTestSameOnMoved": true
+  },
+  "tests/google-session-guard.test.js": {
+   "oldOnBase": {
+    "code": 0,
+    "lines": 11,
+    "firstError": null
+   },
+   "newOnBase": {
+    "code": 0,
+    "lines": 11,
+    "firstError": null
+   },
+   "oldOnMoved": {
+    "code": 1,
+    "lines": 16,
+    "firstError": "[실패] ① 위조·무서명 자격증명 5종(서명 없음·다른 키 서명·다른 aud·만료·JWT 아님)을 One-Tap 콜백에 넣으면 입장 0회, u_ uid 0, 정식 로그인 안내"
+   },
+   "newOnMoved": {
+    "code": 0,
+    "lines": 11,
+    "firstError": null
+   },
+   "newTestSameOnBaseProduct": true,
+   "newTestSameOnMoved": true
+  },
+  "tests/security-audit.test.js": {
+   "oldOnBase": {
+    "code": 0,
+    "lines": 1,
+    "firstError": null
+   },
+   "newOnBase": {
+    "code": 0,
+    "lines": 1,
+    "firstError": null
+   },
+   "oldOnMoved": {
+    "code": 1,
+    "lines": 16,
+    "firstError": "AssertionError [ERR_ASSERTION]: sync_records must pass Authorization Bearer header\r"
+   },
+   "newOnMoved": {
+    "code": 0,
+    "lines": 1,
+    "firstError": null
+   },
+   "newTestSameOnBaseProduct": true,
+   "newTestSameOnMoved": true
+  }
+ },
+ "baseTestBreaksOnMoved": [
+  "tests/account-withdrawal-modal.test.js",
+  "tests/google-session-guard.test.js",
+  "tests/security-audit.test.js"
+ ],
+ "newTestSameOnBaseProduct": true,
+ "newTestSameOnMoved": true
+}
