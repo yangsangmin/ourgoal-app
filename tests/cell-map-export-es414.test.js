@@ -75,6 +75,28 @@ check('머리 주석 줄 추출: 구분선·별표를 빼고 @role 을 벗긴다
   assert.deepStrictEqual(exporter.headerLines('var y = 2;\n'), []);
 });
 
+check('#TASK-ES-417 미추적 파일을 만들어도 출력이 바뀌지 않는다(git 추적 파일만 읽음)', () => {
+  const fs = require('fs');
+  const task = a.cells.map(c => c.tasks[0]).find(Boolean);
+  assert.ok(task, '작업 번호가 달린 세포가 하나는 있어야 한다');
+  const extraReq = 'docs/specs/REQ-' + task + '-ZZ-UNTRACKED-ES417-PROBE.md';
+  const extraJs = 'js/tabs/home/zz-untracked-es417-probe.js';
+  const made = [];
+  try {
+    for (const [rel, body] of [[extraReq, '# 미추적 탐침\n'], [extraJs, 'window.zzUntrackedEs417Probe = 1;\n' + 'x();\n'.repeat(900)]]) {
+      const p = path.join(root, rel);
+      assert.ok(!fs.existsSync(p), rel + ' 가 이미 있다');
+      fs.writeFileSync(p, body, 'utf8');
+      made.push(p);
+    }
+    const raw = exporter.serialize(exporter.buildFrom(root, root));
+    assert.ok(raw.includes(extraReq), '대조군: 작업 트리를 그대로 읽으면 미추적 REQ 가 들어간다');
+    assert.strictEqual(exporter.serialize(exporter.build(root)), exporter.serialize(a));
+  } finally {
+    made.forEach(p => fs.rmSync(p, { force: true }));
+  }
+});
+
 const publish = require('../scripts/cell-map-publish.js');
 
 check('db 재료: 묶음마다 256KiB 미만이고 다시 이으면 세포 목록이 그대로다', () => {
