@@ -186,6 +186,16 @@ check('병합 이력 칸(prs·그 PR 의 작업 번호·REQ)만 다르면 최신
   assert.strictEqual(exporter.compareSaved(exporter.serialize(extraTask), built).fresh, false);
 });
 
+// #TASK-ES-430 전문가 템플릿 자료(data/expert-templates/*)는 「목표 템플릿」 영역
+check('전문가 템플릿 자료 세포는 목표 템플릿 영역에 든다', () => {
+  const fam = exporter.FAMILIES.find(f => f.key === 'templates');
+  assert.ok(fam.test('data/expert-templates/career'), 'expert-templates 규칙');
+  assert.ok(fam.test('data/goal-templates/career'), '기존 goal-templates 규칙 그대로');
+  assert.ok(!fam.test('data/avatar-personas/enfj'), '다른 자료는 아니다');
+  const experts = a.cells.filter(c => /^data\/expert-templates\//.test(c.id));
+  experts.forEach(c => assert.strictEqual(c.area, 'family-templates', c.id));
+});
+
 const failed = results.filter(r => !r.ok);
 results.forEach(r => console.log((r.ok ? '  통과 ' : '  실패 ') + r.name + (r.ok ? '' : ' — ' + r.msg)));
 console.log(`cell-map-export 부품 시험: ${results.length - failed.length}/${results.length}`);

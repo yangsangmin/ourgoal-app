@@ -44,7 +44,7 @@ const FAMILIES = [
   { key: 'avatar', name: '아바타·EXP', desc: '내 아바타 만들기·도감·레벨', test: id => /^avatar/.test(id) || /^data\/avatar-personas\//.test(id) },
   { key: 'stats', name: '성취 통계', desc: '기록에서 지표를 뽑아 차트·리포트로', test: id => /^stats-/.test(id) || id === 'universal-stats' || id === 'records-stats' },
   { key: 'team', name: '팀·동반자·DM', desc: '팀 목표·팀원 점검·동반자·DM·공유', test: id => /^team-/.test(id) },
-  { key: 'templates', name: '목표 템플릿', desc: '60가지 전문가 목표 견본과 복제 크레딧', test: id => /^goal-templates/.test(id) || /^data\/goal-templates\//.test(id) || id === 'template-credit' },
+  { key: 'templates', name: '목표 템플릿', desc: '60가지 전문가 목표 견본과 복제 크레딧', test: id => /^goal-templates/.test(id) || /^data\/(goal|expert)-templates\//.test(id) || id === 'template-credit' },
   { key: 'time', name: '시간 기록', desc: '전체화면 스톱워치·타이머', test: id => /^time-tracker/.test(id) },
   { key: 'social', name: '반응·스트릭·크레딧', desc: '응원·도움돼요 반응, 출석·배지, 크레딧', test: id => ['reactions', 'streaks', 'credits', 'helpful-reason', 'top-helpful'].includes(id) },
   { key: 'misc', name: '그 밖의 여러 탭 기능', desc: '공유·가이드·첨부·테마·성소·홈 구성', test: () => true }

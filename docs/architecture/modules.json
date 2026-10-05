@@ -2819,6 +2819,95 @@
       "dependsOn": []
     },
     {
+      "id": "stats-dashboard-bind",
+      "file": "js/stats-dashboard-bind.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "성취 분석 콕핏 동작 배선 — 접기·데이터 관리·숨은 앵커, 렌즈·분자/분모·모드·기간·스케일·측정 지표·종목 칩, 십자선·툴팁 수정·전체화면(bindStats*). universal-stats.js 에서 분열(#TASK-ES-428)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal",
+        "toast"
+      ]
+    },
+    {
+      "id": "stats-dashboard-view",
+      "file": "js/stats-dashboard-view.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "성취 분석 콕핏 화면 글자 — 머리·렌즈·기간 컨트롤·종목 칩·측정 지표·차트·KPI·진단 리포트 HTML 만들기·그리기(buildStats*Html·mountStatsDashboardHtml). universal-stats.js 에서 분열(#TASK-ES-428)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "stats-dashboard",
+      "file": "js/stats-dashboard.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "성취 분석 콕핏 대시보드 조립자 — 머리(온톨로지)·문맥 객체 D·구획 차례 호출, 빈 화면(샘플 바로 불러오기·가져오기)·데이터 준비(renderUniversalStatsDashboard·renderStatsEmptyState·prepareStatsDashboardData). universal-stats.js 에서 분열(#TASK-ES-428)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal",
+        "toast"
+      ]
+    },
+    {
       "id": "stats-data-grid",
       "file": "js/stats-data-grid.js",
       "layer": "legacy",
@@ -5432,6 +5521,9 @@
         "openModal",
         "require:./core/confirm.js",
         "require:./stats-charts.js",
+        "require:./stats-dashboard-bind.js",
+        "require:./stats-dashboard-view.js",
+        "require:./stats-dashboard.js",
         "require:./stats-data-grid.js",
         "require:./stats-data-menu.js",
         "require:./stats-differentiated.js",
@@ -5444,8 +5536,7 @@
         "require:./stats-sample-fitness.js",
         "require:./stats-sample-growth.js",
         "require:./stats-samples.js",
-        "require:./stats-taxonomy.js",
-        "toast"
+        "require:./stats-taxonomy.js"
       ]
     },
     {
