@@ -56,4 +56,4 @@ async function run(activeTab) {
   const rec = await run('records');
   assert.deepStrictEqual(rec.calls, ['renderRecordsScreen'], '기록 탭 경로는 그대로');
   console.log('sync-server-records-render-home: OK');
-})().catch(e => { console.error(e); process.exit(1); });
+})().catch(e => { console.error(e); process.exitCode = 1; });
