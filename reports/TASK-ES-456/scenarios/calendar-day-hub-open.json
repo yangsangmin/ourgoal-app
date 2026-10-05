@@ -1,0 +1,85 @@
+{
+  "id": "calendar-day-hub-open",
+  "title": "게스트로 일정 탭에서 오늘 날짜 칸을 고르고 「📅 허브」를 누르면 「일정 관리」 허브 창(openCalendarDayEditHubModal — js/tabs/calendar/day-edit-hub.js 로 옮긴 묶음)이 「새 일정 추가」·「맞춤기록 작성」·「이날의 배경사진 고르기」 단추와 함께 뜨고, 「닫기」를 누르면 닫힌다 — 옮기기 전과 같은 동작",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-calendar .s-cal-day-cell.today",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-calendar .s-cal-day-cell.today"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "일정을 선택했습니다"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hubAddNewBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "일정 관리"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "해당 일자의 일정을 수정하거나 새로운 일정·맞춤기록을 추가하세요"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "이날의 배경사진 고르기"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#hubAddNewBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

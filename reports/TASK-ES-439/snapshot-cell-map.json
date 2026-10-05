@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "ae32476ba16a25860ea2c085f75fbfe3bc73f57d",
-  "short": "ae32476b",
-  "committedAt": "2026-10-05T20:25:22+09:00",
-  "subject": "[INFRA] #TASK-ES-439 chore: Merge origin/main(#758~#760, core.attributesFile) — index.html 충돌은 main 판을 입력으로 생성기를 다시 돌려 해결(시범 두 묶음은 다른 구역 PR 로 옮겨지지 않았음을 확인), 생성 지도 3종은 main 판 그대로 두지 않고 module-guard --update·inline-script-map --write·cell-map-export 로 다시 만듦, 측정 다시 잼"
+  "commit": "2c2b41e42bd7c3e170d0aab533098ec11cc61891",
+  "short": "2c2b41e4",
+  "committedAt": "2026-10-05T20:39:35+09:00",
+  "subject": "[INFRA] #TASK-ES-439 chore: Merge origin/main(#761·#763·#764, core.attributesFile) — index.html 충돌은 main 판을 입력으로 생성기를 다시 돌려 해결(시범 두 묶음은 #764 로 옮겨지지 않았음 확인), 생성 지도 3종은 main 판 그대로(코디네이터 규칙), 이 PR 판은 reports 스냅샷으로 고정하고 전체 수치 주장 C17·C28·C29·C40 은 같은 id 로 스냅샷·이 PR 소유 파일을 가리킴, 측정 다시 잼"
  },
  "summary": {
-  "cells": 237,
-  "files": 236,
-  "jsLines": 62319,
+  "cells": 238,
+  "files": 237,
+  "jsLines": 62521,
   "kinds": {
    "organ": 29,
-   "tab": 102,
+   "tab": 103,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 237,
+  "descriptionsHand": 238,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 26110,
-   "functionDecls": 474
+   "inlineScriptLines": 25935,
+   "functionDecls": 473
   },
   "health": {
-   "undifferentiatedLines": 26110,
+   "undifferentiatedLines": 25935,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 102,
+   "count": 103,
    "large": 6,
-   "small": 96
+   "small": 97
   },
   {
    "key": "hybrid",
@@ -185,6 +185,7 @@
     "calendar/index",
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
@@ -194,7 +195,7 @@
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 2308,
+   "lines": 2510,
    "over800": 0
   },
   {
@@ -2623,7 +2624,9 @@
     "OurgoalCalendarAttachment"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "calendar/day-edit-hub"
+   ],
    "readsFromIndexHtml": [
     "openAddAttachmentModal",
     "openAttachmentViewer",
@@ -3500,6 +3503,7 @@
     "avatar/xp",
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
@@ -7010,6 +7014,7 @@
    "calls": [
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
@@ -8438,6 +8443,63 @@
    ]
   },
   {
+   "id": "calendar/day-edit-hub",
+   "file": "js/tabs/calendar/day-edit-hub.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "calendar",
+   "tabs": [
+    "calendar"
+   ],
+   "name": "날짜 일정 관리 창",
+   "nameSource": "hand",
+   "does": "달력에서 날짜를 누르면 뜨는 그날 일정의 완료·수정·삭제·첨부 관리 창(일정 수정/관리 허브)을 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Calendar Day Edit Hub Modal (일정 관리 허브 모달)",
+    "#TASK-ES-456 (인라인 스크립트 세포화: index.html 인라인 IIFE 내 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 묶음을 옮김, 수정 없음 — 코드 이동 안티그래비티, 검수 Claude)",
+    "openCalendarDayEditHubModal (이전 전 main 194ed83 index.html 10753~10928줄)",
+    "openCalendarDayEditHubModal = 캘린더 날짜 클릭 시 나타나는 일정 관리 허브 모달창 (일정 수정, 상태 변경 등)."
+   ],
+   "lines": 202,
+   "over800": false,
+   "exposes": [
+    "OurgoalCalendarKit"
+   ],
+   "calls": [
+    "calendar-attachment",
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "calendar/sub-day-detail",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCalendarKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-456"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-456-AGY-G076.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "calendar/index",
    "file": "js/tabs/calendar/index.js",
    "kind": "tab",
@@ -8855,6 +8917,7 @@
    "calls": [
     "calendar/day-bg-picker",
     "calendar/day-detail",
+    "calendar/day-edit-hub",
     "calendar/lockscreen-image",
     "calendar/lockscreen-live",
     "calendar/natural-schedule",
