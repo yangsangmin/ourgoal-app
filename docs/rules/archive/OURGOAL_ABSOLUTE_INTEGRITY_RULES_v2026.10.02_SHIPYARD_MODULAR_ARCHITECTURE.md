@@ -6,11 +6,6 @@
 **버전 대장**: `docs/rules/CONSTITUTION_VERSIONS.md`  
 **법령 전문**: `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`
 
-### 커널과 법령 전문의 관계 (2026-10-05, 상민님 결심 K4 A — PR #727 병합 기록)
-- **실행 정본은 커널이다.** 세션이 첫 턴에 읽고 따르는 실행 정본은 헌법 커널 `AGENTS.md` · `CLAUDE.md` · `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md`(세 사본, 같은 내용)다. **이 문서(법령 전문)는 조·항·호 단위의 상세**다. 위 문단의 "유일한 최고 정본"은 이 관계 안에서 읽는다 — 커널이 정한 의무를 이 문서가 풀어 쓰며, 두 문서가 다르게 말하면 커널을 따르고 그 차이를 다음 개정 초안에 올린다(커널 `document_hierarchy` · 조문 14.3).
-- **현행 커널 버전**: `v2026.10.05-CELL` — PR #727 병합 기록(병합 커밋 `5330ec2`, 2026-10-05 12:41 KST). 개정 요약: 세포골격(`CELL_SKELETON` · `CELL_SPLIT` · `CELL_SPLIT_PROOF` · `claims_hygiene`), 세포지도 상시 연동(`CELL_MAP` — 병합마다 웹·노션·허브 최상단), 승인선 다섯 가지 표기(`[결심 필요]` · `[기본값]` · `[손 필요]`), 작업계획서 미완 항목 정지 금지, 측정=상태(`GUARD_05_MEASUREMENT_IS_STATE`), 위임 병합 기준(`MERGE_GATE`), 3회 핑퐁·돌려보냄 정지 유지(PIN_02), 8원칙 이름 한 벌, 낡은 참조 3곳 교체. 삭제 조항 0. 상세는 `docs/specs/REQ-TASK-ES-413-CONSTITUTION-CELL-AMENDMENT.md`, 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`.
-- **이 문서 본문은 이번에 바꾸지 않았다.** 아래 조문의 글자는 검사 도구(`scripts/verify-integrity-gate.js` · `scripts/smoke-test.js`)가 읽으므로 그대로 두었고, 커널과 아직 다르게 말하는 곳(제2조 8원칙 이름 표기, 제11조 Tri-Sync 대상, 제12조 모드 3 정지 해석 등 — REQ-TASK-ES-413 4절 M1~M12)은 커널을 따른다. 본문 정합은 별도 개정으로 한다.
-
 ### 기획정본 — 세션 시작 때 읽는다 (2026-10-02, 헌법 제2조 제9항)
 - 아워골의 UI/UX 기획, 화면 설계, 컴포넌트 개발에 착수하는 모든 세션은 **첫 턴에** `[기획정본] 아워골 실사용 안착 마스터플랜`(`docs/rules/MASTER_PLAN_OURGOAL.md` 또는 옵시디언 미러 정본)을 필수 정독하고, 그 안에 명시된 **7~70세 직관적 화면 전환 & 30초 온보딩 규격(제9장)** 및 **상민님의 불변 5대 제품 설계 공식(제10장: 무예단, 인지순행, 차원분리, 1초콕핏 ↔ 심층조망, 촉각적 손맛)**을 100% 준수하여 기획·구현한다. 기획정본의 설계 원칙에 반하는 시스템 임의 예단이나 인지 역행 UI를 제출할 경우 기획 검토 불가로 즉시 돌려보낸다.
 
