@@ -415,13 +415,13 @@
     var isTimerActive = (engine.activeRecMode === 'timer');
     var isFeedActive = (engine.activeRecMode === 'feed' || engine.activeRecMode === 'archive' || engine.activeRecMode === 'recap');
 
-    var modeNav = '<div class="s-rec-modes-wrap" id="sRecModesWrap" style="display:grid;grid-template-columns:repeat(3,minmax(min-content,1fr));gap:6px;padding-bottom:4px;margin-bottom:12px;width:100%;">' +
-      '<button type="button" class="s-rec-mode-btn ' + (isHeatmapActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">📈 히트맵·통계</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (isTimerActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">⏱️ 몰입 타이머</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (isFeedActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">📝 실천 타임라인</button>' +
-      '<div class="s-rec-submodes" id="sRecSubModes" role="group" aria-label="기록 더 보기" style="grid-column:1 / -1;display:flex;gap:6px;">' + /* [#TASK-ES-440] 보관함·위클리 리캡 카드는 아래 숨김 칸(#TASK-ES-131)에만 있어 들어갈 길이 없었다 → 보이는 둘째 줄로. 「성취 통계」는 「📈 히트맵·통계」가 같은 통계 화면(#recViewStats)을 열어 숨김 칸에 그대로 둔다 */
-        '<button type="button" id="sRecArchiveBtn" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" style="flex:1;min-height:42px;padding:6px 10px;font-size:0.8125rem;font-weight:700;border-radius:12px;" title="누르면: 보관한 목표 목록과 「다시 진행하기」가 보여요" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">🗂️ 보관함</button>' +
-        '<button type="button" id="sRecRecapBtn" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" style="flex:1;min-height:42px;padding:6px 10px;font-size:0.8125rem;font-weight:700;border-radius:12px;" title="누르면: 인스타 스토리용 9:16 위클리 리캡 카드(PNG 저장·카카오 공유)가 보여요" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">🎬 위클리 리캡 카드</button>' +
+    var modeNav = '<div class="s-rec-modes-wrap" id="sRecModesWrap" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding-bottom:4px;margin-bottom:12px;width:100%;box-sizing:border-box;">' + /* [#TASK-ES-462] minmax(min-content) 는 줄바꿈 없는 단추 글자 폭만큼 칸을 늘려 375px 에서 오른쪽 단추가 화면 밖으로 넘쳤다 → 칸은 1/3 씩, 글자는 단추 안에서 두 줄까지 */
+      '<button type="button" class="s-rec-mode-btn ' + (isHeatmapActive ? 'active' : '') + '" style="flex:1;min-width:0;min-height:42px;padding:4px 6px;font-size:0.875rem;font-weight:700;border-radius:12px;white-space:normal;word-break:keep-all;line-height:1.15;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">📈 히트맵·통계</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (isTimerActive ? 'active' : '') + '" style="flex:1;min-width:0;min-height:42px;padding:4px 6px;font-size:0.875rem;font-weight:700;border-radius:12px;white-space:normal;word-break:keep-all;line-height:1.15;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">⏱️ 몰입 타이머</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (isFeedActive ? 'active' : '') + '" style="flex:1;min-width:0;min-height:42px;padding:4px 6px;font-size:0.875rem;font-weight:700;border-radius:12px;white-space:normal;word-break:keep-all;line-height:1.15;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">📝 실천 타임라인</button>' +
+      '<div class="s-rec-submodes" id="sRecSubModes" role="group" aria-label="기록 더 보기" style="grid-column:1 / -1;display:flex;gap:6px;min-width:0;">' + /* [#TASK-ES-440] 보관함·위클리 리캡 카드는 아래 숨김 칸(#TASK-ES-131)에만 있어 들어갈 길이 없었다 → 보이는 둘째 줄로. 「성취 통계」는 「📈 히트맵·통계」가 같은 통계 화면(#recViewStats)을 열어 숨김 칸에 그대로 둔다 */
+        '<button type="button" id="sRecArchiveBtn" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" style="flex:1;min-width:0;min-height:42px;padding:4px 6px;font-size:0.8125rem;font-weight:700;border-radius:12px;white-space:normal;word-break:keep-all;line-height:1.15;" title="누르면: 보관한 목표 목록과 「다시 진행하기」가 보여요" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">🗂️ 보관함</button>' +
+        '<button type="button" id="sRecRecapBtn" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" style="flex:1;min-width:0;min-height:42px;padding:4px 6px;font-size:0.8125rem;font-weight:700;border-radius:12px;white-space:normal;word-break:keep-all;line-height:1.15;" title="누르면: 인스타 스토리용 9:16 위클리 리캡 카드(PNG 저장·카카오 공유)가 보여요" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">🎬 위클리 리캡 카드</button>' +
       '</div>' +
       '<div style="display:none !important;" aria-hidden="true">' +
         '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">성취 통계</button>' +
@@ -454,7 +454,7 @@
         filteredCount += (countByDay[fKey] || 0);
       }
 
-      var streakDays = (window.state && window.state.profile && window.state.profile.streak) || 3;
+      var streakDays = (window.OurgoalSanctuaryV3Kit && window.OurgoalSanctuaryV3Kit.weeklyRecap && typeof window.OurgoalSanctuaryV3Kit.weeklyRecap.realStreakDays === 'function') ? window.OurgoalSanctuaryV3Kit.weeklyRecap.realStreakDays() : null; // [#TASK-ES-462] 가짜 기본값 3 제거 — 실제 스트릭(없으면 줄을 뺀다)
 
       var cellsCount = (engine.heatFilter === 'today') ? 7 : ((engine.heatFilter === 'week') ? 14 : ((engine.heatFilter === 'month') ? 28 : 140));
       var cellsHtml = Array.from({ length: cellsCount }, function(_, i) {
@@ -498,7 +498,7 @@
           '</div>' +
           '<div class="s-heat-stat">' +
             '<span class="s-heat-val">' + filteredCount + '개 실천</span>' +
-            '<span class="s-heat-sub">' + streakDays + '일 연속 몰입 🔥</span>' +
+            (streakDays ? '<span class="s-heat-sub">' + streakDays + '일 연속 몰입 🔥</span>' : '') +
           '</div>' +
         '</div>' +
         '<div class="s-segment-pills">' +
