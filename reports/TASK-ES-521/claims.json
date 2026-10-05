@@ -29,6 +29,10 @@
   {
    "id": "R7",
    "text": "실계정 하네스 측정 기록(테스트 계정 기준1·작업·기준2 비교 결과와 게스트 도달 실측)을 저장소 reports/TASK-ES-521/ 에 남긴다 — 로그인 뒤 경로의 동작 주장(R4)과 분리한 기록 항목."
+  },
+  {
+   "id": "R8",
+   "text": "검사기 verify-inline-hard.js 에 「옮긴 코드가 대입하는 이름(L.X = …)의 index.html 마지막 get X() 줄에 set X(v) 가 없으면 FAIL」 검사(⑨ lastGetterNoSetter)를 더한다(기존 검사 유지) — 뒤쪽 expose 블록의 getter-only 노출이 머리의 setter 를 덮어 부팅이 멈추는 생성기 결함(Z2 발견, 작업참고 L047)을 막는다."
   }
  ],
  "claims": [
@@ -312,6 +316,71 @@
     "type": "jsonPath",
     "path": "steps.0.calls.getSupabaseAuthToken",
     "equals": 1
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기가 대입하는 이름의 마지막 getter 줄에 setter 가 있는지 재어 FAIL 조건에 넣는다",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-inline-hard.js",
+    "type": "codeContains",
+    "text": "&& importBeforeKit.length === 0 && lastGetterNoSetter.length === 0"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이 PR 의 이동 결과에서 마지막 getter 줄에 setter 가 빠진 대입 이름이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-521/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-521/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "lastGetterNoSetter",
+    "equals": []
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "뒤쪽 expose 블록에 getter-only 노출을 넣은 사본에서 검사 ⑨ 가 그 이름을 잡은 것으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-521/verify-last-getter-negative.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-521/verify-last-getter-negative.json",
+    "type": "jsonPath",
+    "path": "lastGetterNoSetter",
+    "equals": [
+     "_pendingAuthSession"
+    ]
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R8",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 사본에서 기존 setter 빠짐 검사(noSetter)는 아무것도 잡지 못한 것으로 기록되어 있다(새 검사가 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-521/verify-last-getter-negative.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-521/verify-last-getter-negative.json",
+    "type": "jsonPath",
+    "path": "noSetter",
+    "equals": []
    }
   }
  ]

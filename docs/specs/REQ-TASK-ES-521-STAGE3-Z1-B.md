@@ -48,6 +48,9 @@ DOM `#loginSubmit` · `#loginUser` · `#loginPass` · `#loginError` · `#landLog
 | 게스트 도달 | 게스트 홈에서 getSupabaseAuthToken 1회(`real-account-reach-guest-base.json`) |
 | 게스트 시나리오 | 3개 기준·작업 통과 (`scenario-local.json`) |
 | 실계정 조작 비교 | 테스트 계정 A 6단계(로그인 제출·홈·기록·설정·데이터 다시 맞추기·로그아웃·토스트) 기준1 대 작업 0 · 기준1 대 기준2 0 · 43값 · pageerror 0, Supabase 쓰기는 도구가 끊음 (`real-account-compare.json`) |
+| 검사기 ⑨ 음성 대조 | 뒤쪽 expose 블록에 _pendingAuthSession getter-only 한 줄을 넣은 사본에서 ⑨ 가 잡음, 기존 noSetter 는 0 (`verify-last-getter-negative.json`) |
 | 막힐 지점 | main 이동 충돌(L010 — 생성기 재실행) · 다른 구역도 「HO 기관」 자리를 쓰면 같은 자리 충돌(재생성으로 해결) |
+
+- 추가(오케스트레이터 지시 2026-10-06, Z2 발견 · 작업참고 L047): 검사기 ⑨ `lastGetterNoSetter` — 옮긴 코드가 대입하는 이름(L.X = …)은 index.html 에서 그 이름의 마지막 `get X()` 줄에도 `set X(v)` 가 있어야 한다. 뒤쪽 expose 블록의 getter-only 노출이 머리 setter 를 덮어 부팅이 멈추는 모양을 잡는다(기존 noSetter 는 「어디든 한 번 setter」라 못 잡음). 이 PR 의 대입 이름은 `_pendingAuthSession` 하나이고 마지막 getter 줄에 setter 가 있다(⑨ 0).
 
 [4단계: 심사 청구]
