@@ -24,9 +24,20 @@ function walk(dir) {
   return out;
 }
 
-// L.(js/core/app-scope.js 통로)로 인라인 이름을 읽는 세포 파일만
+// #TASK-ES-465 (인라인 어려움 기관 묶음 선행): 기관 세포는 js/core/*.js(맨 위 칸)에 둔다. 그중 인라인에서 생성기로 옮겨 온 파일만
+// (생성기 표지 `이전 전 index.html …(#TASK-… 생성기 표지)` 를 담은 파일 — app-scope.js·event-bus.js 같은 원래 기관은 빠진다) 합본 뒤에 붙인다.
+const CORE_DIR = path.join(ROOT, 'js', 'core');
+const MOVED_MARK = /\/\* ---- 이전 전 index\.html \d+~\d+줄\(#TASK-[\w-]+ 생성기 표지\) ---- \*\//;
+function coreMovedCellFiles() {
+  let names = [];
+  try { names = fs.readdirSync(CORE_DIR).sort(); } catch (e) { return []; }
+  return names.filter((n) => n.endsWith('.js')).map((n) => path.join(CORE_DIR, n))
+    .filter((f) => fs.statSync(f).isFile() && MOVED_MARK.test(fs.readFileSync(f, 'utf8')));
+}
+
+// L.(js/core/app-scope.js 통로)로 인라인 이름을 읽는 세포 파일만(js/tabs 경로순, 그다음 js/core 의 인라인 이전 세포 경로순)
 function inlineCellFiles() {
-  return walk(TABS_DIR).filter((f) => fs.readFileSync(f, 'utf8').indexOf('OurgoalAppScope') >= 0);
+  return walk(TABS_DIR).filter((f) => fs.readFileSync(f, 'utf8').indexOf('OurgoalAppScope') >= 0).concat(coreMovedCellFiles());
 }
 
 function readCell(f) { return fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])L\.(?=[A-Za-z_$])/g, '$1'); }

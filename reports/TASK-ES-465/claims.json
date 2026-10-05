@@ -1,0 +1,327 @@
+{
+ "task": "TASK-ES-465",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험 도우미 tests/helpers/inline-bundle.js 의 인라인 합본이 js/core 맨 위 칸의 인라인 이전 세포(생성기 표지를 담은 파일)도 붙이고, index.html 만 읽던 시험지 4개(구글 캘린더 재연결·기록 원장 동기화·고유 표시 이름·상단 가이드 위치)가 합본을 읽는다. 단언·기대값·검사 수 변경 0, 제품 코드 0, 금고 0."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 기준 대 작업 tests 종료 코드·npm test 수치 같음, 기관 묶음 모의 이전 사본에서 옛 시험지는 깨지고 새 시험지는 통과."
+  },
+  {
+   "id": "R3",
+   "text": "어려움 집계 도구 표 제목 표시 고침(설계 문서 1절 구역 표), 문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "합본 도우미가 js/core 맨 위 칸 중 생성기 표지를 담은 파일만 고른다",
+   "touches": [
+    "tests/helpers/inline-bundle.js"
+   ],
+   "check": {
+    "file": "tests/helpers/inline-bundle.js",
+    "type": "codeContains",
+    "text": "MOVED_MARK.test(fs.readFileSync(f, 'utf8'))"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "합본 세포 목록 = js/tabs app-scope 세포 다음 js/core 이전 세포",
+   "touches": [
+    "tests/helpers/inline-bundle.js"
+   ],
+   "check": {
+    "file": "tests/helpers/inline-bundle.js",
+    "type": "codeContains",
+    "text": ".concat(coreMovedCellFiles());"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "합본 맨 앞이 원문이 아니면 멈추는 규칙이 그대로다",
+   "touches": [
+    "tests/helpers/inline-bundle.js"
+   ],
+   "check": {
+    "file": "tests/helpers/inline-bundle.js",
+    "type": "codeContains",
+    "text": "if (src.slice(0, html.length) !== html) throw new Error"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "구글 캘린더 재연결 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/gcal-login-reconnect-fix.test.js"
+   ],
+   "check": {
+    "file": "tests/gcal-login-reconnect-fix.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기록 원장 동기화 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/record-ledger-sync.test.js"
+   ],
+   "check": {
+    "file": "tests/record-ledger-sync.test.js",
+    "type": "codeContains",
+    "text": "var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'));"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "고유 표시 이름 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/unique-display-name.test.js"
+   ],
+   "check": {
+    "file": "tests/unique-display-name.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "상단 가이드 위치 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/top-page-guide-reposition.test.js"
+   ],
+   "check": {
+    "file": "tests/top-page-guide-reposition.test.js",
+    "type": "codeContains",
+    "text": "const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(htmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지금 커밋: tests 123개 종료 코드가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-465/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-465/test-compare.json",
+    "type": "jsonPath",
+    "path": "exitCodeDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "지금 커밋: smoke 통과/실패 수가 기준과 같다(443/0)",
+   "touches": [
+    "reports/TASK-ES-465/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-465/test-compare.json",
+    "type": "jsonPath",
+    "path": "npmTestAfter.smoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "모의 이전 사본에서 옛 시험지는 7곳 실패",
+   "touches": [
+    "reports/TASK-ES-465/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-465/mock-move.json",
+    "type": "jsonPath",
+    "path": "oldTestsFailing",
+    "equals": 7
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "모의 이전 사본에서 새 시험지 실패 0",
+   "touches": [
+    "reports/TASK-ES-465/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-465/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestsFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "모의 이전 사본 smoke: 새 시험지 443/0",
+   "touches": [
+    "reports/TASK-ES-465/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-465/mock-move.json",
+    "type": "jsonPath",
+    "path": "newSmoke",
+    "equals": "443/0"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설계 문서 구역 표에 묶음 제목이 글자 그대로 나온다(XP/레벨 시스템)",
+   "touches": [
+    "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "text": "XP/레벨 시스템<br>"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설계 문서 구역 표 제목이 글자 그대로 나온다",
+   "touches": [
+    "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md"
+   ],
+   "check": {
+    "file": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "type": "codeNotContains",
+    "text": "/G/0/"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-465:"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-465 | INFRA |"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "집계 도구가 구역 표에 묶음 번호와 제목을 함께 싣는다(표시 고침 대상 줄)",
+   "touches": [
+    "scripts/inline-hard-types.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-hard-types.js",
+    "text": "z.titles.map(t => t.replace("
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "어려움 집계 결과를 같은 도구로 다시 만들었다",
+   "touches": [
+    "docs/architecture/inline-hard-types.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/inline-hard-types.json",
+    "path": "schema",
+    "equals": "inline-hard-types/1"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "시험지 선행 실측 결과를 같은 도구로 다시 만들었다",
+   "touches": [
+    "docs/architecture/inline-hard-test-probe.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/inline-hard-test-probe.json",
+    "path": "schema",
+    "equals": "inline-hard-test-probe/1"
+   }
+  }
+ ]
+}

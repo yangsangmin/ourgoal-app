@@ -1,0 +1,9 @@
+{"id":"share-to-feed-preview","title":"게스트로 소통 탭 「게시하기」를 누르면 「피드에 내 목표 / 기록 게시하기」 창이 뜨고, 「👁️ 미리보기」를 누르면 피드 게시 미리보기가 펼쳐지며 단추가 「미리보기 닫기」로 바뀐다 — 옮긴 openShareToFeedModal(js/tabs/records/share-to-feed.js)이 이전 전과 같이 돈다","steps":[{"do":"goto","path":"/index.html"},{"do":"waitFor","selector":"#btnLandingPreviewDirect"},{"do":"click","selector":"#btnLandingPreviewDirect"},{"do":"waitFor","selector":"#captureInput","timeoutMs":15000},
+{"do":"click","selector":".navbtn[data-tab=\"comm\"]"},
+{"do":"click","selector":"#btnCommPostFeed"},
+{"expect":"textContains","selector":"#modalOverlay","text":"피드에 내 목표 / 기록 게시하기"},
+{"expect":"visible","selector":"#shareConfirmBtn"},
+{"do":"click","selector":"#sharePreviewBtn"},
+{"expect":"textContains","selector":"#sharePreviewSlot","text":"피드 게시 미리보기"},
+{"expect":"textContains","selector":"#sharePreviewBtn","text":"미리보기 닫기"},
+{"expect":"noExceptions"}]}
