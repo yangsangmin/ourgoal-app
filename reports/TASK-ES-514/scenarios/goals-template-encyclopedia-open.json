@@ -1,0 +1,19 @@
+{
+  "id": "goals-template-encyclopedia-open",
+  "title": "게스트가 목표 탭 머리줄의 「📖 템플릿백과사전」(#btnGoalTemplateEncyclopedia)을 누르면 목표 템플릿 백과사전 창(#templateEncyclopediaModal)이 열리고 「실사용 템플릿 사전」 탭이 보이며, 닫기를 누르면 닫힌다 — 처리기를 한 벌(addEventListener)로 줄인 뒤에도 같은 창이 같은 탭으로 열린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "expect": "notVisible", "selector": "#avatarGreetingModal", "timeoutMs": 8000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "click", "selector": "#goalTemplateHeroCard .template-quick-card:nth-child(1) .btn-quick-adopt-goal" },
+    { "expect": "visible", "selector": "#btnGoalTemplateEncyclopedia", "timeoutMs": 8000 },
+    { "do": "click", "selector": "#btnGoalTemplateEncyclopedia" },
+    { "expect": "visible", "selector": "#templateEncyclopediaModal", "timeoutMs": 5000 },
+    { "expect": "textContains", "selector": "#templateEncyclopediaModal", "text": "목표 템플릿 백과사전" },
+    { "expect": "textContains", "selector": "#templateEncyclopediaModal", "text": "실사용 템플릿 사전" },
+    { "expect": "noExceptions" }
+  ]
+}
