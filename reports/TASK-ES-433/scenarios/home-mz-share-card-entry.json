@@ -1,0 +1,18 @@
+{
+  "id": "home-mz-share-card-entry",
+  "title": "게스트로 홈에 들어가면 「내 성장 자랑하기」 단추(#mzShareBtn)가 보이고, 누르면 갓생 스토리 카드 창 「오늘의 MZ 갓생 스토리 카드」가 열리며 탭은 홈 그대로다 — 고치기 전에는 4개 테마 공통 숨김 규칙(.home-actions)에 갇혀 단추가 보이지 않았고, 누르면 소통 탭으로도 넘어가는 처리기가 하나 더 붙어 있었다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "expect": "visible", "selector": "#mzShareBtn", "timeoutMs": 5000 },
+    { "do": "click", "selector": "#mzShareBtn" },
+    { "expect": "textContains", "selector": "#modalOverlay", "text": "오늘의 MZ 갓생 스토리 카드", "timeoutMs": 5000 },
+    { "expect": "visible", "selector": "#mzStoryCanvasEl" },
+    { "expect": "hasClass", "selector": "#screen-home", "className": "active" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}

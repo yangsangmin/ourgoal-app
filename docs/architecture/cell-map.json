@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "5e38f8759abb8e8535c8c0b25b1c250d975be285",
-  "short": "5e38f87",
-  "committedAt": "2026-10-05T17:36:30+09:00",
-  "subject": "Merge branch 'main' into feat/2026-10-05-task-es-429-sanctuary-split-v2"
+  "commit": "409f145bb896510d14897eb446806493e1057bc5",
+  "short": "409f145",
+  "committedAt": "2026-10-05T18:39:03+09:00",
+  "subject": "[INFRA] #TASK-ES-436 chore: Merge origin/main(#747·#748) — index.html·기준선·세포지도·신고서·인라인 지도는 main 판을 받고 같은 생성기로 다시 옮김(verify ok) · module-specs --write·module-guard --update·inline-script-map --write·cell-map-export 로 다시 만듦"
  },
  "summary": {
-  "cells": 179,
-  "files": 178,
-  "jsLines": 53011,
+  "cells": 184,
+  "files": 183,
+  "jsLines": 54458,
   "kinds": {
    "organ": 29,
-   "tab": 44,
+   "tab": 49,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 179,
+  "descriptionsHand": 184,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 33385,
-   "functionDecls": 658
+   "inlineScriptLines": 32147,
+   "functionDecls": 629
   },
   "health": {
-   "undifferentiatedLines": 33385,
+   "undifferentiatedLines": 32147,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 44,
+   "count": 49,
    "large": 6,
-   "small": 38
+   "small": 43
   },
   {
    "key": "hybrid",
@@ -120,16 +120,19 @@
    "desc": "개인·루틴·팀 목표와 마일스톤·할 일",
    "cells": [
     "goals/index",
+    "goals/ai-agent",
+    "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "goals/schedule-setup",
     "goals/sub-personal",
     "goals/sub-routine",
     "goals/sub-team"
    ],
-   "lines": 2115,
+   "lines": 3058,
    "over800": 0
   },
   {
@@ -139,13 +142,15 @@
    "desc": "체크인 기록·시간 기록·회고·통계",
    "cells": [
     "records/index",
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
     "records/period-ai-card",
     "records/render",
     "records/sub-retrospect",
     "records/sub-timeline",
     "records/sub-timer"
    ],
-   "lines": 1321,
+   "lines": 1825,
    "over800": 0
   },
   {
@@ -1559,6 +1564,7 @@
     "data/avatar-personas/istp"
    ],
    "calledBy": [
+    "goals/ai-status",
     "home/sub-onescreen",
     "settings/render"
    ],
@@ -3371,7 +3377,9 @@
     "OurgoalModeration"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "goals/ai-agent"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -3439,11 +3447,16 @@
     "comm/feed-comments",
     "comm/render",
     "comm/story-card-send",
+    "goals/ai-agent",
+    "goals/ai-status",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "goals/schedule-setup",
+    "records/ai-feedback",
+    "records/ai-feedback-providers",
     "records/period-ai-card",
     "records/render",
     "settings/render",
@@ -6905,6 +6918,7 @@
    "readsFromIndexHtml": [
     "calendarItemsByDate",
     "openCalendarManualEditModal",
+    "openMzShareCardModal",
     "promptNewGoal",
     "setRecordsSegment",
     "setTab",
@@ -8359,13 +8373,21 @@
    },
    "tasks": [
     "TASK-ES-379",
-    "TASK-ES-423"
+    "TASK-ES-423",
+    "TASK-ES-431"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
-    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md"
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-431-LOCKSCREEN-STREAK.md"
    ],
    "prs": [
+    {
+     "number": 746,
+     "task": "TASK-ES-431",
+     "title": "[FIX] #TASK-ES-431 fix: 잠금화면용 일정 카드 저장이 오류 토스트로 끝나던 것 — 정의 안 된 streakDays 를 computeStreakDays() 로 연결",
+     "date": "2026-10-05"
+    },
     {
      "number": 744,
      "task": "TASK-ES-423",
@@ -9212,6 +9234,114 @@
    ]
   },
   {
+   "id": "goals/ai-agent",
+   "file": "js/tabs/goals/ai-agent.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 어시스턴트",
+   "nameSource": "hand",
+   "does": "목표 탭에서 말로 마일스톤·할 일 추가·변경을 요청하면 AI 제안(diff)을 받아 미리보기로 보여 주고 확인 뒤 반영한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal AI Agent (목표 탭 — 대화로 목표 관리·AI 생성 미리보기)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "goalAgentSnapshot · requestGoalAgentDiff · sanitizeAttachments(이전 전 18895~18949줄, 구획 주석 포함 · 구획 「대화로 목표 관리 (AI diff 제안 + 확인 후 반영)」)",
+    "renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep(이전 전 19514~19908줄 · 구획 「목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)」)"
+   ],
+   "lines": 526,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "content-moderation",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "goals/ai-status",
+   "file": "js/tabs/goals/ai-status.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 AI 요약·미션",
+   "nameSource": "hand",
+   "does": "목표의 종합상황 요약·오늘의 미션 문장을 AI(실패 시 로컬 문장)로 만들고, 마일스톤을 끝내면 축하 창과 다음 행동 제안을 띄운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal AI Status (목표 탭 — 종합상황 요약·오늘의 미션·마일스톤 완료 축하)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "computeGoalStatusHash · localGoalStatusSummary · generateGoalStatusSummary(이전 전 20142~20191줄 · 구획 「현재 종합상황 (AI 요약)」)",
+    "milestonesForMission(이전 전 20240~20244줄 · 구획 「오늘의 미션」)"
+   ],
+   "lines": 161,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "avatar-system",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "goals/goal-detail-events",
    "file": "js/tabs/goals/goal-detail-events.js",
    "kind": "tab",
@@ -9602,6 +9732,61 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "goals/schedule-setup",
+   "file": "js/tabs/goals/schedule-setup.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 일정 설정",
+   "nameSource": "hand",
+   "does": "목표·마일스톤·할 일의 시작일·마감일을 정하는 일정 설정 창을 띄워 저장하고, 디데이·기간 알약을 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal Schedule Setup (목표 탭 — 3계층 일정 설정 창·디데이 표시)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "formatSchedulePillHtml · openScheduleSetupModal · applyScheduleUpdate(이전 전 20402~20630줄 · 구획 「목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #」)",
+    "openScheduleSetupModal = 목표·마일스톤·할일 일정 설정 바텀시트 · applyScheduleUpdate = 저장 · formatSchedulePillHtml = 디데이·기간 알약."
+   ],
+   "lines": 256,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-259",
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-259-GOALS-SCHEDULE-SYNC.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
   },
   {
    "id": "goals/sub-personal",
@@ -10130,6 +10315,114 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "records/ai-feedback-providers",
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "AI 피드백 공급자",
+   "nameSource": "hand",
+   "does": "기록 AI 피드백을 서버 AI·Gemini 로 요청하고, 실패하면 로컬 문장으로 대신한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record AI Feedback Providers (기록 탭 — Gemini·서버 AI 피드백 요청과 로컬 대체 문구)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "requestServerAIFeedback(이전 전 15624~15671줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)",
+    "requestGeminiFeedback(이전 전 15674~15716줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)"
+   ],
+   "lines": 211,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-225",
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-225-GEMINI-QUOTA-BACKOFF.md",
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "records/ai-feedback",
+   "file": "js/tabs/records/ai-feedback.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "기록 AI 피드백",
+   "nameSource": "hand",
+   "does": "체크인 기록에 대한 AI 피드백을 요청하고(프롬프트·최근 기록·다가오는 일정 재료), 피드백 단계 막대를 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record AI Feedback (기록 탭 — 체크인 AI 피드백 요청·프롬프트)",
+    "#TASK-ES-436 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "milestonesForAI(이전 전 15217~15225줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)",
+    "getUpcomingSchedulesForAI · getRecentCheckinsForAI · getLastFeedbackAdvice · initFeedbackTierBar · buildFeedbackPrompt · parseFeedbackJSON · requestAIFeedback(이전 전 15235~15484줄 · 구획 「AI feedback (best-effort; provider-aware; local fallback)」)"
+   ],
+   "lines": 293,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+   ],
+   "prs": []
   },
   {
    "id": "records/index",

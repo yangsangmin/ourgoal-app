@@ -1,0 +1,110 @@
+{
+ "task": "TASK-ES-436",
+ "seamTitle": "인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백",
+ "cells": [
+  {
+   "key": "agent",
+   "file": "js/tabs/goals/ai-agent.js",
+   "kit": "OurgoalGoalsKit",
+   "kitVar": "_goalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+   "title": "OurGoal Goal AI Agent (목표 탭 — 대화로 목표 관리·AI 생성 미리보기)",
+   "desc": [
+    "requestGoalAgentDiff = 목표 상태 요약을 AI 에 보내 바꿀 점(diff)을 받는다 · sendGoalAgentMessage = 대화 창 전송 → 로딩·검토 단계를 그린다."
+   ],
+   "groups": [
+    {
+     "header": "대화로 목표 관리 (AI diff 제안 + 확인 후 반영)"
+    },
+    {
+     "header": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)"
+    }
+   ],
+   "name": "목표 AI 어시스턴트",
+   "does": "목표 탭에서 말로 마일스톤·할 일 추가·변경을 요청하면 AI 제안(diff)을 받아 미리보기로 보여 주고 확인 뒤 반영한다"
+  },
+  {
+   "key": "status",
+   "file": "js/tabs/goals/ai-status.js",
+   "kit": "OurgoalGoalsKit",
+   "kitVar": "_goalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+   "title": "OurGoal Goal AI Status (목표 탭 — 종합상황 요약·오늘의 미션·마일스톤 완료 축하)",
+   "desc": [
+    "smoke-test 가 인라인에서 잘라 가는 localTodayMission·localNextActionSuggestion 은 index.html 에 남았다.",
+    "refreshGoalStatusSummary 는 시험지(ai-conditional-call-optimization)가 index.html 한 파일에서 그 글자를 찾아 index.html 에 남았다."
+   ],
+   "groups": [
+    {
+     "header": "현재 종합상황 (AI 요약)",
+     "keep": [
+      "refreshGoalStatusSummary"
+     ],
+     "keepWhy": "tests/ai-conditional-call-optimization.test.js 가 index.html 한 파일에서 이 함수의 가드 글자를 찾는다(시험지 선행 PR 없이 옮기지 않음)"
+    },
+    {
+     "header": "오늘의 미션 ============"
+    },
+    {
+     "header": "마일스톤 완료 축하 모달 (AI 다음 행동 제안)"
+    }
+   ],
+   "name": "목표 AI 요약·미션",
+   "does": "목표의 종합상황 요약·오늘의 미션 문장을 AI(실패 시 로컬 문장)로 만들고, 마일스톤을 끝내면 축하 창과 다음 행동 제안을 띄운다"
+  },
+  {
+   "key": "sched",
+   "file": "js/tabs/goals/schedule-setup.js",
+   "kit": "OurgoalGoalsKit",
+   "kitVar": "_goalsKit",
+   "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+   "title": "OurGoal Goal Schedule Setup (목표 탭 — 3계층 일정 설정 창·디데이 표시)",
+   "desc": [
+    "openScheduleSetupModal = 목표·마일스톤·할일 일정 설정 바텀시트 · applyScheduleUpdate = 저장 · formatSchedulePillHtml = 디데이·기간 알약."
+   ],
+   "groups": [
+    {
+     "header": "목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동"
+    }
+   ],
+   "name": "목표 일정 설정",
+   "does": "목표·마일스톤·할 일의 시작일·마감일을 정하는 일정 설정 창을 띄워 저장하고, 디데이·기간 알약을 그린다"
+  },
+  {
+   "key": "fb",
+   "file": "js/tabs/records/ai-feedback.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal Record AI Feedback (기록 탭 — 체크인 AI 피드백 요청·프롬프트)",
+   "desc": [
+    "requestAIFeedback = 체크인 기록에 대한 AI 피드백(공급자별 요청 → 실패 시 로컬 문구) · buildFeedbackPrompt 등 프롬프트 재료."
+   ],
+   "groups": [
+    {
+     "header": "AI feedback (best-effort; provider-aware; local fallback)"
+    }
+   ],
+   "name": "기록 AI 피드백",
+   "does": "체크인 기록에 대한 AI 피드백을 요청하고(프롬프트·최근 기록·다가오는 일정 재료), 피드백 단계 막대를 그린다"
+  },
+  {
+   "key": "fbp",
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal Record AI Feedback Providers (기록 탭 — Gemini·서버 AI 피드백 요청과 로컬 대체 문구)",
+   "desc": [
+    "GeminiQuotaDispatcher·PREMIUM_FEEDBACK_CATALOG 등 최상위 변수와 window 노출 문은 index.html 에 남았다."
+   ],
+   "groups": [
+    {
+     "header": "Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐"
+    }
+   ],
+   "name": "AI 피드백 공급자",
+   "does": "기록 AI 피드백을 서버 AI·Gemini 로 요청하고, 실패하면 로컬 문장으로 대신한다"
+  }
+ ]
+}

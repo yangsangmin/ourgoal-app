@@ -1,0 +1,651 @@
+{
+ "task": "TASK-ES-433",
+ "note": "작업자 로컬 예비 실행(판정 아님). court/lib/scenario.js runScenario + court/lib/static-server.js, 법정 호스트 이름(court/lib/site-host.js). 기준 = git archive 로 푼 origin/main(#747 병합 뒤) 사본, 작업 = 이 브랜치(origin/main 합친 뒤) 작업 폴더.",
+ "scenarios": {
+  "home-mz-share-card-entry": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 6,
+     "failKind": "expect",
+     "failDetail": "#mzShareBtn → 보이는 요소 0개",
+     "exceptions": []
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "exceptions": [],
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"home\"] → class=\"navbtn active\"",
+       "vacuous": true
+      },
+      {
+       "i": 6,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#mzShareBtn → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 7,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#mzShareBtn \"내 성장 자랑하기\" 341x48px"
+      },
+      {
+       "i": 8,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#modalOverlay → 보이는 글자: [\"✕ 오늘의 MZ 갓생 스토리 카드 인스타그램 스토리(9:16)·피드(1:1)·카카오톡에 오늘의 성취를 고화질 그래픽 카드로 인증하세요. 9:16\"]",
+       "vacuous": false
+      },
+      {
+       "i": 9,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#mzStoryCanvasEl → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#screen-home → class=\"screen active home-onescreen\"",
+       "vacuous": true
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"home\"] → class=\"navbtn active\"",
+       "vacuous": true
+      },
+      {
+       "i": 12,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "records-story-card-entry": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 7,
+     "failKind": "expect",
+     "failDetail": "#sRecStoryCardBtn → 보이는 요소 0개",
+     "exceptions": []
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "exceptions": [],
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"records\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"기록/통계\" 57x50px"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#sRecModesWrap → 보이는 요소 1개"
+      },
+      {
+       "i": 7,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#sRecStoryCardBtn → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 8,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#sRecStoryCardBtn \"📸 갓생 스토리카드\" 126x44px"
+      },
+      {
+       "i": 9,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#modalOverlay → 보이는 글자: [\"✕ 오늘의 MZ 갓생 스토리 카드 인스타그램 스토리(9:16)·피드(1:1)·카카오톡에 오늘의 성취를 고화질 그래픽 카드로 인증하세요. 9:16\"]",
+       "vacuous": false
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#mzStoryCanvasEl → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#screen-records → class=\"screen active\"",
+       "vacuous": true
+      },
+      {
+       "i": 12,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "home-layout-switch-mz-share": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 30,
+     "failKind": "expect",
+     "failDetail": "#mzShareBtn → 보이는 요소 0개",
+     "exceptions": []
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "exceptions": [],
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"settings\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"설정\" 57x50px"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "details:has(#homeLayoutOpenBtn) > summary → 보이는 요소 1개"
+      },
+      {
+       "i": 7,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px"
+      },
+      {
+       "i": 8,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeLayoutOpenBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 9,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeLayoutOpenBtn \"홈 구성 고르기\" 315x44px"
+      },
+      {
+       "i": 10,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"mzShareBtn\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"mzShareBtn\"] → aria-checked=\"true\"",
+       "vacuous": false
+      },
+      {
+       "i": 12,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 div \"\" 51x31px"
+      },
+      {
+       "i": 13,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"mzShareBtn\"] → aria-checked=\"false\"",
+       "vacuous": false
+      },
+      {
+       "i": 14,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#kf1DoneBtn \"완료\" 162x44px"
+      },
+      {
+       "i": 15,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"홈\" 57x50px"
+      },
+      {
+       "i": 16,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 17,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#mzShareBtn → 보이는 요소 0개",
+       "vacuous": true
+      },
+      {
+       "i": 18,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"설정\" 57x50px"
+      },
+      {
+       "i": 19,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "details:has(#homeLayoutOpenBtn) > summary → 보이는 요소 1개"
+      },
+      {
+       "i": 20,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px"
+      },
+      {
+       "i": 21,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeLayoutOpenBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 22,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeLayoutOpenBtn \"홈 구성 고르기\" 315x44px"
+      },
+      {
+       "i": 23,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"mzShareBtn\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 24,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"mzShareBtn\"] → aria-checked=\"false\"",
+       "vacuous": true
+      },
+      {
+       "i": 25,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 div \"\" 51x31px"
+      },
+      {
+       "i": 26,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"mzShareBtn\"] → aria-checked=\"true\"",
+       "vacuous": false
+      },
+      {
+       "i": 27,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#kf1DoneBtn \"완료\" 162x44px"
+      },
+      {
+       "i": 28,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"홈\" 57x50px"
+      },
+      {
+       "i": 29,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 30,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#mzShareBtn → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 31,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "home-layout-switch-challenge-room": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 17,
+     "failKind": "expect",
+     "failDetail": "#homeChallengeRoomBtn → 보이는 요소 0개",
+     "exceptions": []
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "exceptions": [],
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"settings\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"설정\" 57x50px"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "details:has(#homeLayoutOpenBtn) > summary → 보이는 요소 1개"
+      },
+      {
+       "i": 7,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px"
+      },
+      {
+       "i": 8,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeLayoutOpenBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 9,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeLayoutOpenBtn \"홈 구성 고르기\" 315x44px"
+      },
+      {
+       "i": 10,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"homeChallengeRoomBtn\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"homeChallengeRoomBtn\"] → aria-checked=\"false\"",
+       "vacuous": false
+      },
+      {
+       "i": 12,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 div \"\" 51x31px"
+      },
+      {
+       "i": 13,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"homeChallengeRoomBtn\"] → aria-checked=\"true\"",
+       "vacuous": false
+      },
+      {
+       "i": 14,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#kf1DoneBtn \"완료\" 162x44px"
+      },
+      {
+       "i": 15,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"홈\" 57x50px"
+      },
+      {
+       "i": 16,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 17,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeChallengeRoomBtn → 보이는 요소 1개",
+       "vacuous": false
+      },
+      {
+       "i": 18,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeChallengeRoomBtn \"내 성장 확인하기\" 168x48px"
+      },
+      {
+       "i": 19,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#screen-records → class=\"screen active\"",
+       "vacuous": false
+      },
+      {
+       "i": 20,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"records\"] → class=\"navbtn active\"",
+       "vacuous": false
+      },
+      {
+       "i": 21,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

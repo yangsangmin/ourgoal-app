@@ -1,0 +1,1233 @@
+{
+ "task": "TASK-ES-436",
+ "scriptHtmlLines": [
+  2331,
+  35690
+ ],
+ "plan": [
+  {
+   "cell": "agent",
+   "header": "대화로 목표 관리 (AI diff 제안 + 확인 후 반영)",
+   "groupLine": 18895,
+   "whole": true,
+   "stmts": [
+    {
+     "line": 18896,
+     "end": 18908,
+     "name": "goalAgentSnapshot",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 18909,
+     "end": 18935,
+     "name": "requestGoalAgentDiff",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 18936,
+     "end": 18949,
+     "name": "sanitizeAttachments",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    }
+   ]
+  },
+  {
+   "cell": "agent",
+   "header": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
+   "groupLine": 19513,
+   "whole": false,
+   "stmts": [
+    {
+     "line": 19514,
+     "end": 19626,
+     "name": "renderGoalOpsFullPreviewHtml",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 19628,
+     "end": 19630,
+     "name": "showGoalAgentLoadingStep",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 19631,
+     "end": 19908,
+     "name": "showGoalAgentReviewStep",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 19909,
+     "end": 19909,
+     "name": null,
+     "type": "ExpressionStatement",
+     "moved": false,
+     "why": "로드 중 문(ExpressionStatement)"
+    },
+    {
+     "line": 19910,
+     "end": 19950,
+     "name": "sendGoalAgentMessage",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 19951,
+     "end": 19951,
+     "name": null,
+     "type": "VariableDeclaration",
+     "moved": false,
+     "why": "최상위 변수"
+    },
+    {
+     "line": 19952,
+     "end": 19965,
+     "name": null,
+     "type": "IfStatement",
+     "moved": false,
+     "why": "로드 중 문(IfStatement)"
+    },
+    {
+     "line": 19966,
+     "end": 19966,
+     "name": null,
+     "type": "ExpressionStatement",
+     "moved": false,
+     "why": "로드 중 문(ExpressionStatement)"
+    },
+    {
+     "line": 19967,
+     "end": 19967,
+     "name": null,
+     "type": "ExpressionStatement",
+     "moved": false,
+     "why": "로드 중 문(ExpressionStatement)"
+    }
+   ]
+  },
+  {
+   "cell": "status",
+   "header": "현재 종합상황 (AI 요약)",
+   "groupLine": 20141,
+   "whole": false,
+   "stmts": [
+    {
+     "line": 20142,
+     "end": 20152,
+     "name": "computeGoalStatusHash",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20153,
+     "end": 20175,
+     "name": "localGoalStatusSummary",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20176,
+     "end": 20191,
+     "name": "generateGoalStatusSummary",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20192,
+     "end": 20237,
+     "name": "refreshGoalStatusSummary",
+     "type": "FunctionDeclaration",
+     "moved": false,
+     "why": "설정 keep: tests/ai-conditional-call-optimization.test.js 가 index.html 한 파일에서 이 함수의 가드 글자를 찾는다(시험지 선행 PR 없이 옮기지 않음)"
+    }
+   ]
+  },
+  {
+   "cell": "status",
+   "header": "오늘의 미션 ============",
+   "groupLine": 20239,
+   "whole": false,
+   "stmts": [
+    {
+     "line": 20240,
+     "end": 20244,
+     "name": "milestonesForMission",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20245,
+     "end": 20248,
+     "name": "localTodayMission",
+     "type": "FunctionDeclaration",
+     "moved": false,
+     "why": "smoke-test FN_NAMES"
+    },
+    {
+     "line": 20249,
+     "end": 20264,
+     "name": "requestTodayMission",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    }
+   ]
+  },
+  {
+   "cell": "status",
+   "header": "마일스톤 완료 축하 모달 (AI 다음 행동 제안)",
+   "groupLine": 20343,
+   "whole": false,
+   "stmts": [
+    {
+     "line": 20344,
+     "end": 20347,
+     "name": "localNextActionSuggestion",
+     "type": "FunctionDeclaration",
+     "moved": false,
+     "why": "smoke-test FN_NAMES"
+    },
+    {
+     "line": 20348,
+     "end": 20365,
+     "name": "requestNextActionSuggestion",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20366,
+     "end": 20399,
+     "name": "celebrateMilestoneDone",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    }
+   ]
+  },
+  {
+   "cell": "sched",
+   "header": "목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동",
+   "groupLine": 20401,
+   "whole": false,
+   "stmts": [
+    {
+     "line": 20402,
+     "end": 20422,
+     "name": "formatSchedulePillHtml",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20424,
+     "end": 20568,
+     "name": "openScheduleSetupModal",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20570,
+     "end": 20630,
+     "name": "applyScheduleUpdate",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 20631,
+     "end": 20639,
+     "name": null,
+     "type": "IfStatement",
+     "moved": false,
+     "why": "로드 중 문(IfStatement)"
+    }
+   ]
+  },
+  {
+   "cell": "fb",
+   "header": "AI feedback (best-effort; provider-aware; local fallback)",
+   "groupLine": 15216,
+   "whole": false,
+   "stmts": [
+    {
+     "line": 15217,
+     "end": 15225,
+     "name": "milestonesForAI",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15226,
+     "end": 15233,
+     "name": null,
+     "type": "VariableDeclaration",
+     "moved": false,
+     "why": "최상위 변수"
+    },
+    {
+     "line": 15235,
+     "end": 15264,
+     "name": "getUpcomingSchedulesForAI",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15266,
+     "end": 15297,
+     "name": "getRecentCheckinsForAI",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15299,
+     "end": 15315,
+     "name": "getLastFeedbackAdvice",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15317,
+     "end": 15400,
+     "name": "initFeedbackTierBar",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15402,
+     "end": 15466,
+     "name": "buildFeedbackPrompt",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15467,
+     "end": 15473,
+     "name": "parseFeedbackJSON",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15474,
+     "end": 15484,
+     "name": "requestAIFeedback",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    }
+   ]
+  },
+  {
+   "cell": "fbp",
+   "header": "Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
+   "groupLine": 15486,
+   "whole": false,
+   "stmts": [
+    {
+     "line": 15487,
+     "end": 15528,
+     "name": null,
+     "type": "VariableDeclaration",
+     "moved": false,
+     "why": "최상위 변수"
+    },
+    {
+     "line": 15530,
+     "end": 15620,
+     "name": null,
+     "type": "VariableDeclaration",
+     "moved": false,
+     "why": "최상위 변수"
+    },
+    {
+     "line": 15621,
+     "end": 15621,
+     "name": null,
+     "type": "ExpressionStatement",
+     "moved": false,
+     "why": "로드 중 문(ExpressionStatement)"
+    },
+    {
+     "line": 15622,
+     "end": 15622,
+     "name": null,
+     "type": "ExpressionStatement",
+     "moved": false,
+     "why": "로드 중 문(ExpressionStatement)"
+    },
+    {
+     "line": 15624,
+     "end": 15671,
+     "name": "requestServerAIFeedback",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15672,
+     "end": 15672,
+     "name": null,
+     "type": "VariableDeclaration",
+     "moved": false,
+     "why": "최상위 변수"
+    },
+    {
+     "line": 15674,
+     "end": 15716,
+     "name": "requestGeminiFeedback",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    },
+    {
+     "line": 15717,
+     "end": 15717,
+     "name": null,
+     "type": "VariableDeclaration",
+     "moved": false,
+     "why": "최상위 변수"
+    },
+    {
+     "line": 15718,
+     "end": 15806,
+     "name": "localFeedback",
+     "type": "FunctionDeclaration",
+     "moved": true,
+     "why": null
+    }
+   ]
+  }
+ ],
+ "chunks": [
+  {
+   "cell": "fb",
+   "header": "AI feedback (best-effort; provider-aware; local fallback)",
+   "title": "AI feedback (best-effort; provider-aware; local fallback)",
+   "names": [
+    "milestonesForAI"
+   ],
+   "start": 15217,
+   "end": 15225,
+   "whole": false
+  },
+  {
+   "cell": "fb",
+   "header": "AI feedback (best-effort; provider-aware; local fallback)",
+   "title": "AI feedback (best-effort; provider-aware; local fallback)",
+   "names": [
+    "getUpcomingSchedulesForAI",
+    "getRecentCheckinsForAI",
+    "getLastFeedbackAdvice",
+    "initFeedbackTierBar",
+    "buildFeedbackPrompt",
+    "parseFeedbackJSON",
+    "requestAIFeedback"
+   ],
+   "start": 15235,
+   "end": 15484,
+   "whole": false
+  },
+  {
+   "cell": "fbp",
+   "header": "Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
+   "title": "[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
+   "names": [
+    "requestServerAIFeedback"
+   ],
+   "start": 15624,
+   "end": 15671,
+   "whole": false
+  },
+  {
+   "cell": "fbp",
+   "header": "Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
+   "title": "[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
+   "names": [
+    "requestGeminiFeedback"
+   ],
+   "start": 15674,
+   "end": 15716,
+   "whole": false
+  },
+  {
+   "cell": "fbp",
+   "header": "Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
+   "title": "[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
+   "names": [
+    "localFeedback"
+   ],
+   "start": 15718,
+   "end": 15806,
+   "whole": false
+  },
+  {
+   "cell": "agent",
+   "header": "대화로 목표 관리 (AI diff 제안 + 확인 후 반영)",
+   "title": "대화로 목표 관리 (AI diff 제안 + 확인 후 반영)",
+   "names": [
+    "goalAgentSnapshot",
+    "requestGoalAgentDiff",
+    "sanitizeAttachments"
+   ],
+   "start": 18895,
+   "end": 18949,
+   "whole": true
+  },
+  {
+   "cell": "agent",
+   "header": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
+   "title": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
+   "names": [
+    "renderGoalOpsFullPreviewHtml",
+    "showGoalAgentLoadingStep",
+    "showGoalAgentReviewStep"
+   ],
+   "start": 19514,
+   "end": 19908,
+   "whole": false
+  },
+  {
+   "cell": "agent",
+   "header": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
+   "title": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
+   "names": [
+    "sendGoalAgentMessage"
+   ],
+   "start": 19910,
+   "end": 19950,
+   "whole": false
+  },
+  {
+   "cell": "status",
+   "header": "현재 종합상황 (AI 요약)",
+   "title": "현재 종합상황 (AI 요약)",
+   "names": [
+    "computeGoalStatusHash",
+    "localGoalStatusSummary",
+    "generateGoalStatusSummary"
+   ],
+   "start": 20142,
+   "end": 20191,
+   "whole": false
+  },
+  {
+   "cell": "status",
+   "header": "오늘의 미션 ============",
+   "title": "오늘의 미션",
+   "names": [
+    "milestonesForMission"
+   ],
+   "start": 20240,
+   "end": 20244,
+   "whole": false
+  },
+  {
+   "cell": "status",
+   "header": "오늘의 미션 ============",
+   "title": "오늘의 미션",
+   "names": [
+    "requestTodayMission"
+   ],
+   "start": 20249,
+   "end": 20264,
+   "whole": false
+  },
+  {
+   "cell": "status",
+   "header": "마일스톤 완료 축하 모달 (AI 다음 행동 제안)",
+   "title": "마일스톤 완료 축하 모달 (AI 다음 행동 제안)",
+   "names": [
+    "requestNextActionSuggestion",
+    "celebrateMilestoneDone"
+   ],
+   "start": 20348,
+   "end": 20399,
+   "whole": false
+  },
+  {
+   "cell": "sched",
+   "header": "목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동",
+   "title": "목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #TASK-ES-135)",
+   "names": [
+    "formatSchedulePillHtml",
+    "openScheduleSetupModal",
+    "applyScheduleUpdate"
+   ],
+   "start": 20402,
+   "end": 20630,
+   "whole": false
+  }
+ ],
+ "cellChunkLines": [
+  {
+   "file": "js/tabs/goals/ai-agent.js",
+   "cellStart": 21,
+   "cellEnd": 75,
+   "origStart": 18895,
+   "origEnd": 18949,
+   "names": [
+    "goalAgentSnapshot",
+    "requestGoalAgentDiff",
+    "sanitizeAttachments"
+   ],
+   "whole": true
+  },
+  {
+   "file": "js/tabs/goals/ai-agent.js",
+   "cellStart": 77,
+   "cellEnd": 471,
+   "origStart": 19514,
+   "origEnd": 19908,
+   "names": [
+    "renderGoalOpsFullPreviewHtml",
+    "showGoalAgentLoadingStep",
+    "showGoalAgentReviewStep"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/goals/ai-agent.js",
+   "cellStart": 473,
+   "cellEnd": 513,
+   "origStart": 19910,
+   "origEnd": 19950,
+   "names": [
+    "sendGoalAgentMessage"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/goals/ai-status.js",
+   "cellStart": 23,
+   "cellEnd": 72,
+   "origStart": 20142,
+   "origEnd": 20191,
+   "names": [
+    "computeGoalStatusHash",
+    "localGoalStatusSummary",
+    "generateGoalStatusSummary"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/goals/ai-status.js",
+   "cellStart": 74,
+   "cellEnd": 78,
+   "origStart": 20240,
+   "origEnd": 20244,
+   "names": [
+    "milestonesForMission"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/goals/ai-status.js",
+   "cellStart": 80,
+   "cellEnd": 95,
+   "origStart": 20249,
+   "origEnd": 20264,
+   "names": [
+    "requestTodayMission"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/goals/ai-status.js",
+   "cellStart": 97,
+   "cellEnd": 148,
+   "origStart": 20348,
+   "origEnd": 20399,
+   "names": [
+    "requestNextActionSuggestion",
+    "celebrateMilestoneDone"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/goals/schedule-setup.js",
+   "cellStart": 19,
+   "cellEnd": 247,
+   "origStart": 20402,
+   "origEnd": 20630,
+   "names": [
+    "formatSchedulePillHtml",
+    "openScheduleSetupModal",
+    "applyScheduleUpdate"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/records/ai-feedback.js",
+   "cellStart": 20,
+   "cellEnd": 28,
+   "origStart": 15217,
+   "origEnd": 15225,
+   "names": [
+    "milestonesForAI"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/records/ai-feedback.js",
+   "cellStart": 30,
+   "cellEnd": 279,
+   "origStart": 15235,
+   "origEnd": 15484,
+   "names": [
+    "getUpcomingSchedulesForAI",
+    "getRecentCheckinsForAI",
+    "getLastFeedbackAdvice",
+    "initFeedbackTierBar",
+    "buildFeedbackPrompt",
+    "parseFeedbackJSON",
+    "requestAIFeedback"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "cellStart": 21,
+   "cellEnd": 68,
+   "origStart": 15624,
+   "origEnd": 15671,
+   "names": [
+    "requestServerAIFeedback"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "cellStart": 70,
+   "cellEnd": 112,
+   "origStart": 15674,
+   "origEnd": 15716,
+   "names": [
+    "requestGeminiFeedback"
+   ],
+   "whole": false
+  },
+  {
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "cellStart": 114,
+   "cellEnd": 202,
+   "origStart": 15718,
+   "origEnd": 15806,
+   "names": [
+    "localFeedback"
+   ],
+   "whole": false
+  }
+ ],
+ "markers": [
+  {
+   "names": [
+    "milestonesForAI"
+   ],
+   "lines": [
+    15217,
+    15225
+   ],
+   "file": "js/tabs/records/ai-feedback.js"
+  },
+  {
+   "names": [
+    "getUpcomingSchedulesForAI",
+    "getRecentCheckinsForAI",
+    "getLastFeedbackAdvice",
+    "initFeedbackTierBar",
+    "buildFeedbackPrompt",
+    "parseFeedbackJSON",
+    "requestAIFeedback"
+   ],
+   "lines": [
+    15235,
+    15484
+   ],
+   "file": "js/tabs/records/ai-feedback.js"
+  },
+  {
+   "names": [
+    "requestServerAIFeedback"
+   ],
+   "lines": [
+    15624,
+    15671
+   ],
+   "file": "js/tabs/records/ai-feedback-providers.js"
+  },
+  {
+   "names": [
+    "requestGeminiFeedback"
+   ],
+   "lines": [
+    15674,
+    15716
+   ],
+   "file": "js/tabs/records/ai-feedback-providers.js"
+  },
+  {
+   "names": [
+    "localFeedback"
+   ],
+   "lines": [
+    15718,
+    15806
+   ],
+   "file": "js/tabs/records/ai-feedback-providers.js"
+  },
+  {
+   "names": [
+    "goalAgentSnapshot",
+    "requestGoalAgentDiff",
+    "sanitizeAttachments"
+   ],
+   "lines": [
+    18895,
+    18949
+   ],
+   "file": "js/tabs/goals/ai-agent.js"
+  },
+  {
+   "names": [
+    "renderGoalOpsFullPreviewHtml",
+    "showGoalAgentLoadingStep",
+    "showGoalAgentReviewStep"
+   ],
+   "lines": [
+    19514,
+    19908
+   ],
+   "file": "js/tabs/goals/ai-agent.js"
+  },
+  {
+   "names": [
+    "sendGoalAgentMessage"
+   ],
+   "lines": [
+    19910,
+    19950
+   ],
+   "file": "js/tabs/goals/ai-agent.js"
+  },
+  {
+   "names": [
+    "computeGoalStatusHash",
+    "localGoalStatusSummary",
+    "generateGoalStatusSummary"
+   ],
+   "lines": [
+    20142,
+    20191
+   ],
+   "file": "js/tabs/goals/ai-status.js"
+  },
+  {
+   "names": [
+    "milestonesForMission"
+   ],
+   "lines": [
+    20240,
+    20244
+   ],
+   "file": "js/tabs/goals/ai-status.js"
+  },
+  {
+   "names": [
+    "requestTodayMission"
+   ],
+   "lines": [
+    20249,
+    20264
+   ],
+   "file": "js/tabs/goals/ai-status.js"
+  },
+  {
+   "names": [
+    "requestNextActionSuggestion",
+    "celebrateMilestoneDone"
+   ],
+   "lines": [
+    20348,
+    20399
+   ],
+   "file": "js/tabs/goals/ai-status.js"
+  },
+  {
+   "names": [
+    "formatSchedulePillHtml",
+    "openScheduleSetupModal",
+    "applyScheduleUpdate"
+   ],
+   "lines": [
+    20402,
+    20630
+   ],
+   "file": "js/tabs/goals/schedule-setup.js"
+  }
+ ],
+ "imports": {
+  "agent": [
+   "sanitizeAttachments",
+   "showGoalAgentReviewStep",
+   "sendGoalAgentMessage"
+  ],
+  "status": [
+   "computeGoalStatusHash",
+   "localGoalStatusSummary",
+   "generateGoalStatusSummary",
+   "requestTodayMission",
+   "celebrateMilestoneDone"
+  ],
+  "sched": [
+   "formatSchedulePillHtml",
+   "openScheduleSetupModal",
+   "applyScheduleUpdate"
+  ],
+  "fb": [
+   "milestonesForAI",
+   "initFeedbackTierBar",
+   "requestAIFeedback"
+  ],
+  "fbp": [
+   "requestServerAIFeedback"
+  ]
+ },
+ "outsideRefs": {
+  "sanitizeAttachments": [
+   19415,
+   19420,
+   19435,
+   19458,
+   19470,
+   19475,
+   19489,
+   19498,
+   19510
+  ],
+  "showGoalAgentReviewStep": [
+   19909
+  ],
+  "sendGoalAgentMessage": [
+   19966,
+   19967
+  ],
+  "computeGoalStatusHash": [
+   2495,
+   20267,
+   20267,
+   20637
+  ],
+  "localGoalStatusSummary": [
+   20635
+  ],
+  "generateGoalStatusSummary": [
+   20201
+  ],
+  "requestTodayMission": [
+   20333
+  ],
+  "celebrateMilestoneDone": [
+   2494,
+   8465,
+   15937
+  ],
+  "formatSchedulePillHtml": [
+   2497,
+   20632
+  ],
+  "openScheduleSetupModal": [
+   2505,
+   10036,
+   10037,
+   20633
+  ],
+  "applyScheduleUpdate": [
+   20634
+  ],
+  "milestonesForAI": [],
+  "initFeedbackTierBar": [
+   13233
+  ],
+  "requestAIFeedback": [
+   15145,
+   26509,
+   30275,
+   30961
+  ],
+  "requestServerAIFeedback": [
+   15672
+  ]
+ },
+ "crossImports": [
+  "milestonesForAI"
+ ],
+ "seamRange": [
+  2575,
+  2608
+ ],
+ "tagEdits": [
+  {
+   "file": "js/tabs/goals/ai-agent.js",
+   "tag": "<script src=\"js/tabs/goals/ai-agent.js\"></script>"
+  },
+  {
+   "file": "js/tabs/goals/ai-status.js",
+   "tag": "<script src=\"js/tabs/goals/ai-status.js\"></script>"
+  },
+  {
+   "file": "js/tabs/goals/schedule-setup.js",
+   "tag": "<script src=\"js/tabs/goals/schedule-setup.js\"></script>"
+  },
+  {
+   "file": "js/tabs/records/ai-feedback.js",
+   "tag": "<script src=\"js/tabs/records/ai-feedback.js\"></script>"
+  },
+  {
+   "file": "js/tabs/records/ai-feedback-providers.js",
+   "tag": "<script src=\"js/tabs/records/ai-feedback-providers.js\"></script>"
+  }
+ ],
+ "bridged": [
+  {
+   "n": "DONE_KEYWORDS",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "GeminiQuotaDispatcher",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "RECORD_THEMES",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "THEME_FEEDBACK_PROMPTS",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "TOPICS",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "applyGoalAgentOp",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "burstConfetti",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "calendarItemsByDate",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "classifyRecordTheme",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "closeModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "dDay",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "dateKey",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "dispatchFullViewPropagation",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "escapeHtml",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "fbBotBubbleHtml",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "localNextActionSuggestion",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "localTodayMission",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "milestonesForAI",
+   "assigned": false,
+   "kind": "moved",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "normalizeSequentialMilestoneDates",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "nowISO",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "openModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderAll",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderCalendarScreen",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderGoalsScreen",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": false
+  },
+  {
+   "n": "renderHome",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "renderRecordsScreen",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "saveProfile",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "state",
+   "assigned": false,
+   "kind": "var",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "toast",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "triggerHaptic",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "triggerHapticFeedback",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  },
+  {
+   "n": "uid",
+   "assigned": false,
+   "kind": "hoisted",
+   "alreadyExposedBefore": true
+  }
+ ],
+ "newlyExposed": [
+  "DONE_KEYWORDS",
+  "GeminiQuotaDispatcher",
+  "THEME_FEEDBACK_PROMPTS",
+  "TOPICS",
+  "applyGoalAgentOp",
+  "classifyRecordTheme",
+  "dispatchFullViewPropagation",
+  "fbBotBubbleHtml",
+  "localNextActionSuggestion",
+  "localTodayMission",
+  "milestonesForAI",
+  "normalizeSequentialMilestoneDates",
+  "renderGoalsScreen"
+ ],
+ "edits": 228,
+ "htmlLinesBefore": 35729,
+ "htmlLinesAfter": 34494,
+ "cellFiles": {
+  "js/tabs/goals/ai-agent.js": 526,
+  "js/tabs/goals/ai-status.js": 161,
+  "js/tabs/goals/schedule-setup.js": 256,
+  "js/tabs/records/ai-feedback.js": 293,
+  "js/tabs/records/ai-feedback-providers.js": 211
+ }
+}
