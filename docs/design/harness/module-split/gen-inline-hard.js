@@ -41,6 +41,12 @@ const fail = m => { throw new Error(m); };
 // smoke-test FN_NAMES(시험지가 인라인에서 함수를 잘라 실행) — 옮기지 않는다(MODULE-SPLIT-PROTOCOL 1절 (라), 유형 F2)
 const smokeFn = (() => { const s = fs.readFileSync(path.join(APP, 'scripts', 'smoke-test.js'), 'utf8'); const m = s.match(/const FN_NAMES = \[([\s\S]*?)\];/); if (!m) fail('smoke-test FN_NAMES 못 읽음'); return new Set((m[1].match(/'([^']+)'/g) || []).map(x => x.slice(1, -1))); })();
 
+// #TASK-ES-465: smoke-test 가 함수를 잘라 오는 원본에 인라인 합본(tests/helpers/inline-bundle.js — js/tabs/** app-scope 세포 + js/core/*.js 중 생성기 표지를 담은 파일)을 붙이면
+// FN_NAMES 함수도 그 자리 세포로 옮길 수 있다(시험지가 같은 함수를 세포 글자에서 찾는다). 그 밖의 경로는 여전히 멈춘다.
+const smokeUsesBundle = /inline-bundle/.test(fs.readFileSync(path.join(APP, 'scripts', 'smoke-test.js'), 'utf8'));
+const bundleCoversCore = (() => { try { return /coreMovedCellFiles/.test(fs.readFileSync(path.join(APP, 'tests', 'helpers', 'inline-bundle.js'), 'utf8')); } catch (e) { return false; } })();
+const smokeReadsCell = file => smokeUsesBundle && (file.startsWith('js/tabs/') || (bundleCoversCore && /^js\/core\/[^/]+\.js$/.test(file)));
+
 // ── 묶음 경계(지도와 같은 규칙: 구획 주석 `/* ===` 에서 다음 구획 주석 앞까지)
 const isHeader = c => c.type === 'CommentBlock' && /^\s*=+/.test(c.value);
 const headers = [];
@@ -104,13 +110,13 @@ for (const c of CFG.cells) {
         const n = st.node.id.name; item.names = [n];
         if (!mine(n)) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) item.why = '이번 범위 밖(keepRest) — 원래 자리'; return plan.push(item); }
         const b = iScope.getBinding(n);
-        if (smokeFn.has(n)) fail('smoke-test FN_NAMES 함수 — 시험지 선행 PR 이 먼저(유형 F2): ' + n);
+        if (smokeFn.has(n) && !smokeReadsCell(c.file)) fail('smoke-test FN_NAMES 함수 — 시험지 선행 PR 이 먼저(유형 F2): ' + n);
         if (b.constantViolations.length) fail('함수 이름 재대입(유형 H) — 개별 설계: ' + n);
         if (topThisArgs(st.get('body'))) fail('최상위 this/arguments(유형 K) — 옮기지 않는다: ' + n);
         item.action = 'move';
       } else if (st.isVariableDeclaration()) {
         item.names = st.node.declarations.map(d => d.id.name);
-        const movable = st.node.declarations.every(d => d.id.type === 'Identifier' && iScope.getBinding(d.id.name).constantViolations.length === 0 && isPureInit(d.init) && !smokeFn.has(d.id.name))
+        const movable = st.node.declarations.every(d => d.id.type === 'Identifier' && iScope.getBinding(d.id.name).constantViolations.length === 0 && isPureInit(d.init) && (!smokeFn.has(d.id.name) || smokeReadsCell(c.file)))
           && st.node.declarations.every(d => !d.init || !/Function|Arrow/.test(d.init.type) || topThisArgs(st) === 0);
         if (!item.names.some(mine)) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) item.why = '이번 범위 밖(keepRest) — 원래 자리'; return plan.push(item); }
         if (!item.names.every(mine)) fail('한 var 문의 이름을 일부만 가져감: ' + item.names.join(','));

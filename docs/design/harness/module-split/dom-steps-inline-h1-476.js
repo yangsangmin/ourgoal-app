@@ -17,7 +17,7 @@ exports.steps = ({ click, clickIn }) => [
   ['mz-ratio-1-1', ev('(function(){ var b = [].slice.call(document.querySelectorAll("#modalOverlay button")).find(function(x){ return /1:1/.test(x.textContent); }); if(!b) return "missing"; b.click(); var l = document.getElementById("mzRatioLabel"); return "ratio:" + (l ? l.textContent : "-"); })()'), 600],
   ['mz-close', clickIn('#mzCardCloseBtn'), 600],
   ['kakao-check', ev('(function(){ if(typeof window.checkKakaoInAppBrowser !== "function") return "no-fn"; window.checkKakaoInAppBrowser(); return "banner:" + !!document.getElementById("btnEscapeInAppNotice"); })()')],
-  ['lvup-open', ev('(function(){ window.openAvatarLevelUpModal(2); var m = document.getElementById("avatarLevelUpModal"); return m.style.display + "|" + document.getElementById("avatarLevelUpTitle").textContent; })()'), 600],
+  ['lvup-open', ev('(function(){ if(typeof window.openAvatarLevelUpModal !== "function") return "no-fn:" + typeof window.openAvatarLevelUpModal; window.openAvatarLevelUpModal(2); var m = document.getElementById("avatarLevelUpModal"); return m.style.display + "|" + document.getElementById("avatarLevelUpTitle").textContent; })()'), 600],
   ['lvup-prompt', ev('(function(){ var i = document.getElementById("avatarGrowthPromptInput"); if(!i) return "missing"; i.value = "더 강하게 바보"; var b = document.getElementById("btnSaveGrowthPrompt"); if(!b) return "no-btn"; b.click(); return "saved:" + i.value; })()'), 800],
   ['lvup-close', click('#btnConfirmLevelUpClose'), 600],
   ['checkin-type', typeIn('아침 30분 걷기')],

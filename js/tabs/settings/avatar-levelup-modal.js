@@ -3,7 +3,7 @@
  *
  * 레벨이 오르면 뜨는 「LEVEL UP!」 대형 팝업 열기·닫기(openAvatarLevelUpModal·closeAvatarLevelUpModal)와 성장 성향 키워드 저장(유해 단어 거름 filterHarmfulWords)·공유·이미지 저장 처리기.
  * 처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. window 노출 두 줄·단추 요소 변수 선언·3줄 이하 등록은 원래 자리에 그대로 있다.
- * #TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3499~3506 · 3507~3549 · 3550~3554 · 3564~3568 · 3571~3594 · 3597~3610 · 3613~3655줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3563~3570 · 3571~3613 · 3614~3618 · 3628~3632 · 3635~3658 · 3661~3674 · 3677~3719줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalSettingsKit = global.OurgoalSettingsKit || {};
 
-  /* ---- 이전 전 index.html 3499~3506줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3563~3570줄(#TASK-ES-476 생성기 표지) ---- */
   function filterHarmfulWords(text){
     if(!text) return { clean: '', hasHarmful: false };
     var harmfulRegex = /씨발|시발|병신|개새|지랄|존나|썅|꺼져|죽어|자살|섹스|야동|보지|자지|바보|멍청이/gi;
@@ -24,7 +24,7 @@
     }
     return { clean: text, hasHarmful: false };
   }
-  /* ---- 이전 전 index.html 3507~3549줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3571~3613줄(#TASK-ES-476 생성기 표지) ---- */
 
   function openAvatarLevelUpModal(level){
     var m = document.getElementById('avatarLevelUpModal');
@@ -68,14 +68,14 @@
 
     m.style.display = 'flex';
   }
-  /* ---- 이전 전 index.html 3550~3554줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3614~3618줄(#TASK-ES-476 생성기 표지) ---- */
 
   function closeAvatarLevelUpModal(){
     var m = document.getElementById('avatarLevelUpModal');
     if(m) m.style.display = 'none';
   }
 
-  /* ---- 이전 전 index.html 3564~3568줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3628~3632줄(#TASK-ES-476 생성기 표지) ---- */
   function bindAvatarLevelUpBackdrop() { /* [#TASK-ES-476] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.avLvModalElem){
     L.avLvModalElem.addEventListener('click', function(e){
@@ -84,7 +84,7 @@
   }
   } /* bindAvatarLevelUpBackdrop */
 
-  /* ---- 이전 전 index.html 3571~3594줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3635~3658줄(#TASK-ES-476 생성기 표지) ---- */
   function bindAvatarGrowthPromptSave() { /* [#TASK-ES-476] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnSaveGrowth){
     L.btnSaveGrowth.addEventListener('click', function(){
@@ -112,7 +112,7 @@
   }
   } /* bindAvatarGrowthPromptSave */
 
-  /* ---- 이전 전 index.html 3597~3610줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3661~3674줄(#TASK-ES-476 생성기 표지) ---- */
   function bindAvatarLevelUpShare() { /* [#TASK-ES-476] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnShareLv){
     L.btnShareLv.addEventListener('click', function(){
@@ -130,7 +130,7 @@
   }
   } /* bindAvatarLevelUpShare */
 
-  /* ---- 이전 전 index.html 3613~3655줄(#TASK-ES-476 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3677~3719줄(#TASK-ES-476 생성기 표지) ---- */
   function bindAvatarLevelUpSaveImage() { /* [#TASK-ES-476] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnSaveLvImg){
     L.btnSaveLvImg.addEventListener('click', function(){

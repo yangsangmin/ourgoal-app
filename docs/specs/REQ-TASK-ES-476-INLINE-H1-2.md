@@ -21,7 +21,7 @@
 
 ## 3. [원칙 ③] 해결방식
 
-- 설정 → `gen-inline-hard.js`(입력 = origin/main 7ffdfd6 index.html) → `verify-inline-hard.js` → 단독 로드 탐침 → 신고서·설명 → 시험 → 게스트 조작 비교(`dom-compare-inline-h1.js` + `dom-steps-inline-h1-476.js`) → 법정 형식 시나리오 4개(세포마다 하나).
+- 설정 → `gen-inline-hard.js`(입력 = origin/main index.html — 합칠 때마다 main 판으로 다시 돌림, 마지막 70d631a) → `verify-inline-hard.js` → 단독 로드 탐침 → 신고서·설명 → 시험 → 게스트 조작 비교(`dom-compare-inline-h1.js` + `dom-steps-inline-h1-476.js`) → 법정 형식 시나리오 4개(세포마다 하나).
 
 ## 4. [원칙 ④] 재검토 — 한계와 발견
 
@@ -42,7 +42,7 @@ worktree `C:/dev/wt/inline-h1-b`(브랜치 `feat/2026-10-05-task-es-476-inline-h
 ## 7. [원칙 ⑦] 단계별 실행 — 식별자
 
 - DOM: `#avatarLevelUpModal`·`#avatarLevelUpTitle`·`#btnConfirmLevelUpClose`·`#btnSaveGrowthPrompt`·`#avatarGrowthPromptInput`, `#landLoginLink`·`#landingScreen`·`#authScreen`·`#landNickQuickLink`·`#landStartBtn`·`#landGuestBtn`, `#captureInput`·`#captureSave`·`#firstCheckinDoneBtn`·`#btnCheckinAiClose`·`#btnGuestBackupLater`·`#modalOverlay`, `#mzShareBtn`·`#mzRatioLabel`·`#mzCardCloseBtn`.
-- 함수: 1절 표 + `OurgoalAppScope.expose` 새 getter 18개(`avLvModalElem`·`btnSaveGrowth`·`btnSaveLvImg`·`btnShareLv`·`enterApp`·`filterFeedByCategory`·`focusTimerInterval`·`focusTimerRunning`·`focusTimerSeconds`·`generateMzStoryCanvas`·`initRememberedAuthFields`·`isValidRealUser`·`landGuestBtn`·`landNickQuickLink`·`notifyXpGained`·`openLoginRescueModal`·`openSelectCompanionForStoryModal`·`openSelectTeamForStoryModal`).
+- 함수: 1절 표 + `OurgoalAppScope.expose` 새 getter 16개(`avLvModalElem`·`btnSaveGrowth`·`btnSaveLvImg`·`btnShareLv`·`filterFeedByCategory`·`focusTimerInterval`·`focusTimerRunning`·`focusTimerSeconds`·`generateMzStoryCanvas`·`isValidRealUser`·`landGuestBtn`·`landNickQuickLink`·`notifyXpGained`·`openLoginRescueModal`·`openSelectCompanionForStoryModal`·`openSelectTeamForStoryModal`).
 - 파일: `index.html`, 새 세포 4개, `docs/architecture/modules.json`·`cell-descriptions.json`, `docs/design/harness/module-split/inline-hard-h1-476.json`·`dom-steps-inline-h1-476.js`, `reports/TASK-ES-476/*`.
 
 ## 8. [원칙 ⑧] 막히는 지점 · 성과 측정 (작업자 측정, 판정 아님)
@@ -51,7 +51,7 @@ worktree `C:/dev/wt/inline-h1-b`(브랜치 `feat/2026-10-05-task-es-476-inline-h
 | :-- | :-- | :-- |
 | 글자 동일 | `verify-inline-hard.js` | ok — 토큰·덩어리 줄·남은 글자 동일, 누수·미노출·setter 빠짐·남은 정의·안 가져온 사용·this/arguments 0, 처리기 619 = 588 + 31 (`verify-inline-hard.json`) |
 | 새 파일 줄 수 | 생성기 | avatar-levelup-modal 191 · inapp-landing 196 · first-checkin-tutorial 278 · focus-autopilot 517 |
-| index.html | 생성기 | 이 PR 의 이전 전 26,939줄 → 25,970줄(−969) |
+| index.html | 생성기 | 이 PR 의 이전 전(origin/main 70d631a) 24,701줄 → 23,730줄(−971) |
 | 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0, 새 파일 4개 단독 로드 ok·기존 키트 하나씩 (`module-load-probe.json`) |
 | 시험 | tests·scripts 126개 + npm test 구성 | 기준 통과 → 작업 실패 0(127개). 다른 2개(cell-map-export-es414·test-shipyard-modular)는 git 이력 없는 기준 사본에서만 실패·작업 통과, smoke 443/0 (`test-compare.json`) |
 | 모듈 가드 | `module-guard.js` | 통과(탭 간 직접 참조 0) |
