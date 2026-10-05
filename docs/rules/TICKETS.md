@@ -602,3 +602,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-527 | INFRA | [시험지 선행 · 인라인 3단계 Z3·기관] push-subscribe-auth-es400·core-confirm-es376 읽는 범위만 넓힘(단언·기대값 0 변경) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-527-STAGE3-Z3O-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-519 | INFRA | [시험지 선행 · 인라인 3단계 Z4] 구간 절단 시험지 3개(renderMultiMetricSvg·collapseAllTeamGoalAccordions)가 세포 이전 뒤에도 같은 함수를 읽음 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
+- #TASK-ES-550 | INFRA | [금고 단독] 무결성 게이트 「[검증 16/16] [#TASK-ES-192]」 4단계를 「페이월 자리 안내 모달 없음」으로(#813 직후 병합, 상민님 「광고·구독 삭제 금고 변경 승인」) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-550-MONEY-INTEGRITY-GATE.md | 4단계(심사 청구)
