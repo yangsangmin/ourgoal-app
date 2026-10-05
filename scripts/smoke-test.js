@@ -137,6 +137,20 @@ const COMPONENTS_SRC = [COMPONENTS_RAW, ...COMPONENTS_PART_FILES.map(readTeamPar
 // 합본 맨 앞은 js/components.js 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
 assert.strictEqual(COMPONENTS_SRC.slice(0, COMPONENTS_RAW.length), COMPONENTS_RAW, '컴포넌트 합본 맨 앞 = js/components.js 원문');
 if (COMPONENTS_PART_FILES.length === 0) assert.strictEqual(COMPONENTS_SRC, COMPONENTS_RAW, '컴포넌트 합본 = js/components.js (부품 파일이 없을 때)');
+// #TASK-ES-426 (포커스 성소 엔진 세포 쪼개기 선행 — 시험지): 성소 코드가 js/sanctuary-v3-engine.js 에서 js/sanctuary-*.js 세포(성소 세포 키트 OurgoalSanctuaryV3Kit 에 함수를 담는 파일)로 옮겨 가도(동작 그대로)
+// 같은 단언이 같은 코드를 찾도록, sanctuary-v3-engine.js 소스 글자 검사는 '성소 합본' = js/sanctuary-v3-engine.js(원문 그대로, 맨 앞) + 키트 부품 js/sanctuary-*.js(이름순) 를 본다.
+// 부품만 생성기 접두 T.·K. 를 떼고 읽는다(팀 합본 readTeamPartFile 과 같은 방식). 단언·기대값은 그대로다.
+const SANCTUARY_JS = path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js');
+function isSanctuaryPartFile(f) {
+  const n = path.basename(f);
+  return n.indexOf('sanctuary-') === 0 && n !== 'sanctuary-v3-engine.js' && fs.readFileSync(f, 'utf8').indexOf('OurgoalSanctuaryV3Kit') >= 0;
+}
+const SANCTUARY_PART_FILES = listJsTree(path.join(__dirname, '..', 'js'), false).filter(isSanctuaryPartFile);
+const SANCTUARY_RAW = fs.readFileSync(SANCTUARY_JS, 'utf8');
+const SANCTUARY_SRC = [SANCTUARY_RAW, ...SANCTUARY_PART_FILES.map(readTeamPartFile)].join('\n');
+// 합본 맨 앞은 js/sanctuary-v3-engine.js 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
+assert.strictEqual(SANCTUARY_SRC.slice(0, SANCTUARY_RAW.length), SANCTUARY_RAW, '성소 합본 맨 앞 = js/sanctuary-v3-engine.js 원문');
+if (SANCTUARY_PART_FILES.length === 0) assert.strictEqual(SANCTUARY_SRC, SANCTUARY_RAW, '성소 합본 = js/sanctuary-v3-engine.js (부품 파일이 없을 때)');
 const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + readAppModule(f); }).join('');
 // 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다.
 const APP_SRC = html;
@@ -7197,7 +7211,7 @@ check('compliance: [#TASK-ES-183] 스마트폰 잠금화면 전체 장악 (Scree
 });
 
 check('compliance: [#TASK-SANCTUARY-COMM-RADAR-REAL-INTEGRITY] 소통 탭 실시간 러닝메이트 레이더 실데이터 직결 및 위조숫자·가짜봇 완전 척결 무결성 검증', () => {
-  const sanctuarySrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctuarySrc = SANCTUARY_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -7345,7 +7359,7 @@ check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도�
   const path = require('path');
   const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
   const css = fs.readFileSync(path.join(__dirname, '../ui.css'), 'utf8');
-  const engineSrc = fs.readFileSync(path.join(__dirname, '../js/sanctuary-v3-engine.js'), 'utf8');
+  const engineSrc = SANCTUARY_SRC;
 
   // 1. sanctuary-v3-engine.js: isFocusSanctuary() 4대 테마 전수 지원 검증
   assert.ok(
@@ -7386,7 +7400,7 @@ check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도�
 
 check('[#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 및 상단 중복 버튼 제거 무결성 검증', () => {
   const indexHtml = APP_SRC;
-  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctuaryJs = SANCTUARY_SRC;
 
   // 1. 마운틴 트레일 카드 내 mountain-actions 및 불필요 버튼 0건 검증
   assert.ok(!sanctuaryJs.includes("id=\"sTransplantBtn\""), '마운틴 트레일 카드 내 하드코딩 sTransplantBtn 제거 확인');
@@ -7450,7 +7464,7 @@ check('[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) �
 
 check('[#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4위 1체 시맨틱 복원 검증', () => {
   const indexHtml = APP_SRC;
-  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctuaryJs = SANCTUARY_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. screen-calendar 최상단 헤더 및 기본 모드 배선 확인
@@ -7495,7 +7509,7 @@ check('[#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4�
 /* ============ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 검증 ============ */
 check('[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증', () => {
   const indexHtml = APP_SRC;
-  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctuaryJs = SANCTUARY_SRC;
 
   // 1. 전역 인터페이스 배선 확인
   assert.ok(indexHtml.includes('window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 완료');
@@ -7522,7 +7536,7 @@ check('[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도
 /* ============ [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증 ============ */
 check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증', () => {
   const indexHtml = APP_SRC;
-  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctuaryJs = SANCTUARY_SRC;
 
   // 1. 순수 데드클릭 박멸 확인
   assert.ok(indexHtml.includes('id="btnSwitchCompanionInvite"'), '동반자 초대 탭 칩 버튼 ID 존재');
@@ -7544,7 +7558,7 @@ check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결�
 });
 
 check('[#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 검증', () => {
-  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctuaryJs = SANCTUARY_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 일정 탭 3종 단일화
@@ -7933,7 +7947,7 @@ check('[#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 �
 
 check('[#TASK-ES-232] \'폰 잠금화면에서 보기\' 명칭 [📱 잠금화면용 일정 카드 저장] 정직화 및 9:16 배경 생성 무결성', () => {
   const indexHtml = APP_SRC;
-  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctuaryJs = SANCTUARY_SRC;
 
   // 1. 정직화된 버튼 명칭 확인
   assert.ok(indexHtml.includes('잠금화면용 일정 카드 저장'), 'index.html 버튼 명칭 정직화 확인');
@@ -8108,7 +8122,7 @@ check('[#TASK-ES-240] 일정탭 대표 안내멘트(#calHeadlineSentence) 시인
 
 check('[#TASK-ES-241] 일정탭 주간 뷰 전환 버튼 및 주간 캘린더 테마 고대비 시인성 개선 무결성', () => {
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const sanctContent = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctContent = SANCTUARY_SRC;
 
   // 1. 화이트 테마 .s-cal-mode-btn.active 솔리드 고대비 스타일 확인
   assert.ok(cssContent.includes('html[data-theme="white"] .s-cal-mode-btn.active'), '화이트 테마 활성 버튼 규칙 확인');
@@ -8191,7 +8205,7 @@ check('[#TASK-ES-245] 기록탭 샘플 데이터 1초 체험 후 원클릭 완�
 });
 
 check('[#TASK-ES-246] 소통탭 실시간 러닝메이트 레이더 영역 슬림화 및 접이식 콤팩트 카드 전환 무결성', () => {
-  const v3Engine = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const v3Engine = SANCTUARY_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 접기/펼치기 토글 버튼 및 함수 확인
@@ -8288,7 +8302,7 @@ check('[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무
 check('[#TASK-ES-250] 소통탭 8중 레이어 다이어트 및 모바일 375px 타이포그래피·조형 전면 정상화', () => {
   const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const sanctEngine = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const sanctEngine = SANCTUARY_SRC;
 
   // 1. 소통탭 동일 기능 버튼 중복 제거 (#commHeroCard 내 새 글 나누기 / 팀 둘러보기 제거 확인)
   assert.ok(!/#commHeroCard[\s\S]*?✍️ 새 글 나누기/.test(indexHtml), 'commHeroCard 내 중복 새 글 나누기 버튼 제거 확인');

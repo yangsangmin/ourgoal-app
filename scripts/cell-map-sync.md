@@ -28,7 +28,8 @@
    바뀐 `cell-map.json`(과 설명을 더했으면 `cell-descriptions.json`)만 커밋해 PR 을 낸다. 병합되면 jsDelivr 경로가 그 판을 내준다.
 2. 재료를 만든다(작업 폴더는 세션 임시 폴더).
    ```
-   node scripts/cell-map-publish.js --db-out <임시>/db --notion-out <임시>/notion --stored-at <지금 ISO 시각>
+   node scripts/cell-map-publish.js --root . --db-out <임시>/db --notion-out <임시>/notion --stored-at <지금 ISO 시각>
+   # --root . : 게시 시점의 병합 이력으로 세포별 PR 목록을 다시 계산해 싣는다(#TASK-ES-427). 저장본과 내용(도장·PR 목록 밖)이 다르면 게시하지 않고 종료 코드 1
    ```
 3. 웹페이지 저장본 갱신 — `ArtifactData` 로 `url=https://claude.ai/artifact/VvfYJf37tYgRGwKezpHW2J`:
    - `list` `cellchunks` 와 `get` `cellmap/meta` 로 지금 `version` 을 읽는다.

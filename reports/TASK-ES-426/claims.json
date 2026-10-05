@@ -1,0 +1,432 @@
+{
+ "task": "TASK-ES-426",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-426-SANCTUARY-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "scripts/smoke-test.js 11곳이 js/sanctuary-v3-engine.js 글자를 「성소 합본」(원본 원문 맨 앞 + js/ 바로 아래 OurgoalSanctuaryV3Kit 표식이 있는 sanctuary-*.js 부품, 이름순, 부품만 T.·K. 접두 제거)에서 읽는다. 단언 문장·기대값·검사 수 변경 0, 제품 코드 0, 금고 파일 0. 합본 맨 앞 = 원문 단언."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 기준 대 작업 npm test 수치·smoke 검사 제목·결과 동일, tests 종료 코드 동일, 모의 이전 트리에서 기준 시험지는 깨지고 새 시험지는 통과."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "성소 부품 = js/ 바로 아래 sanctuary-*.js 중 원본이 아니고 OurgoalSanctuaryV3Kit 표식이 있는 파일",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  return n.indexOf('sanctuary-') === 0 && n !== 'sanctuary-v3-engine.js' && fs.readFileSync(f, 'utf8').indexOf('OurgoalSanctuaryV3Kit') >= 0;"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "성소 합본 = 원본 원문(맨 앞) + 부품(T.·K. 접두 제거)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "const SANCTUARY_SRC = [SANCTUARY_RAW, ...SANCTUARY_PART_FILES.map(readTeamPartFile)].join('\\n');"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합본 맨 앞 = 원본 원문 단언(check 밖 — 검사 수 불변)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "assert.strictEqual(SANCTUARY_SRC.slice(0, SANCTUARY_RAW.length), SANCTUARY_RAW, '성소 합본 맨 앞 = js/sanctuary-v3-engine.js 원문');"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "부품이 없으면 합본 = 원문 단언",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "if (SANCTUARY_PART_FILES.length === 0) assert.strictEqual(SANCTUARY_SRC, SANCTUARY_RAW, '성소 합본 = js/sanctuary-v3-engine.js (부품 파일이 없을 때)');"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "소통 레이더 실데이터 직결 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const sanctuarySrc = SANCTUARY_SRC;"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "4대 테마 성소 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const engineSrc = SANCTUARY_SRC;"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "일정·기록·목표 성소 글자 검사 7곳이 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const sanctuaryJs = SANCTUARY_SRC;"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "화이트 테마 달력 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const sanctContent = SANCTUARY_SRC;"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "레이더 슬림화(ES-246) 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const v3Engine = SANCTUARY_SRC;"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "잠금화면 버튼 nowrap·목표 0건 알약 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const sanctEngine = SANCTUARY_SRC;"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 npm test 수치 같음(smoke·무결성·버튼·모듈 가드)",
+   "touches": [
+    "reports/TASK-ES-426/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/test-compare.json",
+    "type": "jsonPath",
+    "path": "sameNumbers",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 smoke 443 통과·0 실패",
+   "touches": [
+    "reports/TASK-ES-426/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 무결성 게이트 38/38",
+   "touches": [
+    "reports/TASK-ES-426/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.integrity",
+    "equals": [
+     38,
+     38
+    ]
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 버튼 배선 943/943",
+   "touches": [
+    "reports/TASK-ES-426/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.buttons",
+    "equals": [
+     943,
+     943
+    ]
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 검사 제목 목록 같음",
+   "touches": [
+    "reports/TASK-ES-426/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/test-compare.json",
+    "type": "jsonPath",
+    "path": "smokeTitlesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 검사 결과 같음",
+   "touches": [
+    "reports/TASK-ES-426/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/test-compare.json",
+    "type": "jsonPath",
+    "path": "smokeResultsIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드 같음",
+   "touches": [
+    "reports/TASK-ES-426/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 기준 시험지는 smoke 3개 실패",
+   "touches": [
+    "reports/TASK-ES-426/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/mock-move.json",
+    "type": "jsonPath",
+    "path": "oldSheet.smoke",
+    "equals": [
+     440,
+     3
+    ]
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지로 smoke 443/0",
+   "touches": [
+    "reports/TASK-ES-426/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/mock-move.json",
+    "type": "jsonPath",
+    "path": "newSheet.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지로 npm test 종료 0",
+   "touches": [
+    "reports/TASK-ES-426/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/mock-move.json",
+    "type": "jsonPath",
+    "path": "newSheet.npmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지로 tests 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-426/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-426/mock-move.json",
+    "type": "jsonPath",
+    "path": "testsExitSameAsBaseWithNewSheet",
+    "equals": true
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-426-SANCTUARY-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-426-SANCTUARY-TEST-BUNDLE.md",
+    "type": "codeContains",
+    "text": "## 8. [원칙 ⑧] 성과 측정 · 막히는 지점"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-426: 포커스 성소 엔진 세포 쪼개기(ES-425) 선행 시험지 — scripts/smoke-test.js 11곳이 js/sanctuary-v3-engine.js 글자를 「성소 합본」(원본 원문 맨 앞 + OurgoalSanctuaryV3Kit 표식이 있는 js/sanctuary-*.js 부품, T.·K. 접두 제거)에서 읽음. 단언·기대값·검사 수 0 변경, 제품 코드 0, 금고 0(동결 무결성 게이트는 원본 한 파일을 계속 읽음 — ES-425 가 그 글자 구간을 원본에 남김). 실측(판정 아님): 모의 이전 기준 시험지 440/443 → 새 시험지 443/443. REQ docs/specs/REQ-TASK-ES-426-SANCTUARY-TEST-BUNDLE.md"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-426 | INFRA/시험 | [포커스 성소 엔진 세포 쪼개기 선행 시험지] smoke-test.js 11곳이 성소 합본(원본 원문 + OurgoalSanctuaryV3Kit 부품 js/sanctuary-*.js, T.·K. 접두 제거)을 읽음 — 단언·기대값·검사 수 0 변경, 제품 코드 0 | 코디네이터 지시 (2026-10-05, ES-425 선행), REQ docs/specs/REQ-TASK-ES-426-SANCTUARY-TEST-BUNDLE.md | 4단계(심사 청구)"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 도구: 모의 이전 트리에 기준·새 시험지를 차례로 얹어 잼",
+   "touches": [
+    "docs/design/harness/module-split/mock-move-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/mock-move-sanctuary.js",
+    "type": "codeContains",
+    "text": "useSheets(BASE);"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 도구: 기준·작업 트리 npm test 와 tests 를 모두 돌림",
+   "touches": [
+    "docs/design/harness/module-split/test-compare-sanctuary.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/test-compare-sanctuary.js",
+    "type": "codeContains",
+    "text": "const b = runAll(BASE), w = runAll(WORK);"
+   }
+  }
+ ]
+}
