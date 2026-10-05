@@ -1,0 +1,98 @@
+{
+ "task": "TASK-ES-530",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-530-MONEY-SMOKE-FIRST.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달)에 따라 TASK-ES-516 이 지우는 함수 4개(subscriptionState·getTemplateAdNoticeMessage·computeAdCountdownProgress·isTemplateRewardedAdEnabled)를 smoke 가 추출·실행하지 않게 한다(시험지 선행, 제품 코드 0)."
+  },
+  {
+   "id": "R2",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 함수 추출 목록에서 광고 함수 3개 이름을 뺐다",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeNotContains",
+    "text": "'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled',"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 가 구독 상태 함수를 실행하지 않는다",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeNotContains",
+    "text": "fns.subscriptionState()"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 샌드박스의 광고 설정 스텁 줄을 뺐다",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeNotContains",
+    "text": "var OURGOAL_CONFIG = { ENABLE_TEMPLATE_REWARDED_ADS"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 를 8원칙 섹션으로 적었다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-530-MONEY-SMOKE-FIRST.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-530-MONEY-SMOKE-FIRST.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증·반론 격파"
+   }
+  }
+ ],
+ "retire": [
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "getTemplateAdNoticeMessage: 상민님 지시 정확한 안내 문구를 반환한다",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 템플릿 복제 보상형 광고의 안내 문구 함수 getTemplateAdNoticeMessage 를 TASK-ES-516 이 지운다. 지운 함수를 실행하는 검사라 폐기(실행형 — 「금고 변경 승인」 필요)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "computeAdCountdownProgress: 5초 카운트다운의 백분율을 정확히 계산하고 경계값을 방어한다",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 광고 5초 카운트다운 백분율 함수 computeAdCountdownProgress 를 TASK-ES-516 이 지운다. 지운 함수를 실행하는 검사라 폐기(실행형 — 「금고 변경 승인」 필요)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "isTemplateRewardedAdEnabled: 플래그에 따라 활성화 여부를 판정하고 기본값은 false(베타 무마찰)이다",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 보상형 광고 켜짐 판정 함수 isTemplateRewardedAdEnabled 와 플래그 ENABLE_TEMPLATE_REWARDED_ADS 를 TASK-ES-516 이 지운다. 지운 함수를 실행하는 검사라 폐기(실행형 — 「금고 변경 승인」 필요)."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무제한 목표, AI 코치, 30일 리포트)이 100% 무료로 제공된다",
+   "reason": "상민님 결정 「미분화덩어리에서 광고, 구독관련은 삭제해. 어차피 앱런칭도 아직 안했고 런칭 초기에는 유료화를 아무것도 안할꺼니까, 그리고 그것에 대해 구체화하지 않았으니까, 그것과 관련된 아이디어는 어차피 지식기반에 남아있으니 문제 없잖아?」(상민님 2026-10-06, 오케스트레이터 전달) — 구독 상태 함수 subscriptionState 를 TASK-ES-516 이 지운다. 이 검사의 6번 단계(fns.subscriptionState().isPro === true)만 뺐고 1~5번 단계(토스 결제 위젯 없음·무제한 무료 문구·페이월 호출 3종 없음)는 그대로다(실행형 단계 폐기 — 「금고 변경 승인」 필요)."
+  }
+ ]
+}
