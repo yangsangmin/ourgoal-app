@@ -1,0 +1,1308 @@
+{
+ "task": "TASK-ES-440",
+ "note": "작업자 로컬 예비 실행(판정 아님). court/lib/scenario.js runScenario + court/lib/static-server.js, 법정 호스트 이름(court/lib/site-host.js). 기준 = origin/main(eb9e6e4) 분리 worktree, 작업 = 이 브랜치 작업 폴더.",
+ "host": "court-*.test",
+ "summary": {
+  "scenarios": 8,
+  "workPassedBaseFailed": 8,
+  "validationErrors": 0,
+  "weaknesses": 0
+ },
+ "scenarios": {
+  "home-bell-notification-center": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 8,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#modalOverlay → 보이는 글자: []",
+     "exceptions": [],
+     "ms": 12858
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 6582,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#sanctuaryBellBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 7,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#sanctuaryBellBtn \"\" 44x44px"
+      },
+      {
+       "i": 8,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#modalOverlay → 보이는 글자: [\"✕ 🔔 알림 센터 🔔 도착한 알림이 없습니다 새로운 1:1 DM이나 팀 소식, 응원이 오면 여기에 표시돼요. 닫기 알림 설정 ⚙️\"]"
+      },
+      {
+       "i": 9,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#modalOverlay → 보이는 글자: [\"✕ 🔔 알림 센터 🔔 도착한 알림이 없습니다 새로운 1:1 DM이나 팀 소식, 응원이 오면 여기에 표시돼요. 닫기 알림 설정 ⚙️\"]"
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"home\"] → class=\"navbtn active\""
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "home-layout-switch-glance-pill": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 10,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#todayGlancePill → 보이는 요소 0개",
+     "exceptions": [],
+     "ms": 12714
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 10007,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 7,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 8,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"👟 주 3회 헬스 & 기초체력 스트레칭 · 30분 운\" 307x55px"
+      },
+      {
+       "i": 9,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": ".starter-goal-btn[data-starter=\"workout\"] → 보이는 요소 0개"
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#todayGlancePill → 보이는 요소 1개"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#todayGlancePill → 보이는 글자: [\"첫 기록 도전 · 오늘 기록 0회 · 25분 집중 추천\"]"
+      },
+      {
+       "i": 12,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeDetailClose \"✕\" 44x44px"
+      },
+      {
+       "i": 13,
+       "kind": "expect",
+       "name": "notHasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet\""
+      },
+      {
+       "i": 14,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"설정\" 57x50px"
+      },
+      {
+       "i": 15,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "details:has(#homeLayoutOpenBtn) > summary → 보이는 요소 1개"
+      },
+      {
+       "i": 16,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px"
+      },
+      {
+       "i": 17,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeLayoutOpenBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 18,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeLayoutOpenBtn \"홈 구성 고르기\" 315x44px"
+      },
+      {
+       "i": 19,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayGlancePill\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 20,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayGlancePill\"] → aria-checked=\"true\""
+      },
+      {
+       "i": 21,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 div \"\" 51x31px"
+      },
+      {
+       "i": 22,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayGlancePill\"] → aria-checked=\"false\""
+      },
+      {
+       "i": 23,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#kf1DoneBtn \"완료\" 162x44px"
+      },
+      {
+       "i": 24,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"홈\" 57x50px"
+      },
+      {
+       "i": 25,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeCompassQuest → 보이는 요소 1개"
+      },
+      {
+       "i": 26,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 27,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 28,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeGoalList → 보이는 요소 1개"
+      },
+      {
+       "i": 29,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#todayGlancePill → 보이는 요소 0개"
+      },
+      {
+       "i": 30,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "home-layout-switch-today-card": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 44,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#todayMissionCard .mission-card → 보이는 요소 0개",
+     "exceptions": [],
+     "ms": 18044
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 13193,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 7,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 8,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"👟 주 3회 헬스 & 기초체력 스트레칭 · 30분 운\" 307x55px"
+      },
+      {
+       "i": 9,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": ".starter-goal-btn[data-starter=\"workout\"] → 보이는 요소 0개"
+      },
+      {
+       "i": 10,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeDetailClose \"✕\" 44x44px"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "notHasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet\""
+      },
+      {
+       "i": 12,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"설정\" 57x50px"
+      },
+      {
+       "i": 13,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "details:has(#homeLayoutOpenBtn) > summary → 보이는 요소 1개"
+      },
+      {
+       "i": 14,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px"
+      },
+      {
+       "i": 15,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeLayoutOpenBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 16,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeLayoutOpenBtn \"홈 구성 고르기\" 315x44px"
+      },
+      {
+       "i": 17,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayMissionCard\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 18,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayMissionCard\"] → aria-checked=\"true\""
+      },
+      {
+       "i": 19,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 div \"\" 51x31px"
+      },
+      {
+       "i": 20,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayMissionCard\"] → aria-checked=\"false\""
+      },
+      {
+       "i": 21,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#kf1DoneBtn \"완료\" 162x44px"
+      },
+      {
+       "i": 22,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"홈\" 57x50px"
+      },
+      {
+       "i": 23,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeCompassQuest → 보이는 요소 1개"
+      },
+      {
+       "i": 24,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 25,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 26,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeGoalList → 보이는 요소 1개"
+      },
+      {
+       "i": 27,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#todayMissionCard .mission-card → 보이는 요소 0개"
+      },
+      {
+       "i": 28,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeDetailClose \"✕\" 44x44px"
+      },
+      {
+       "i": 29,
+       "kind": "expect",
+       "name": "notHasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet\""
+      },
+      {
+       "i": 30,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"설정\" 57x50px"
+      },
+      {
+       "i": 31,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "details:has(#homeLayoutOpenBtn) > summary → 보이는 요소 1개"
+      },
+      {
+       "i": 32,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 summary \"🎨 화면 & 홈 구성 4대 테마 설정, 잠금화면 위젯\" 339x96px"
+      },
+      {
+       "i": 33,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeLayoutOpenBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 34,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeLayoutOpenBtn \"홈 구성 고르기\" 315x44px"
+      },
+      {
+       "i": 35,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayMissionCard\"] → 보이는 요소 1개"
+      },
+      {
+       "i": 36,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayMissionCard\"] → aria-checked=\"false\""
+      },
+      {
+       "i": 37,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 div \"\" 51x31px"
+      },
+      {
+       "i": 38,
+       "kind": "expect",
+       "name": "attr",
+       "ok": true,
+       "detail": ".switch[data-kf1-id=\"todayMissionCard\"] → aria-checked=\"true\""
+      },
+      {
+       "i": 39,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#kf1DoneBtn \"완료\" 162x44px"
+      },
+      {
+       "i": 40,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"홈\" 57x50px"
+      },
+      {
+       "i": 41,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#homeCompassQuest → 보이는 요소 1개"
+      },
+      {
+       "i": 42,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 43,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 44,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#todayMissionCard .mission-card → 보이는 요소 1개"
+      },
+      {
+       "i": 45,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "home-sheet-daily-quest": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 10,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#dailyQuestBarWrap → 보이는 요소 0개",
+     "exceptions": [],
+     "ms": 12859
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 7649,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 7,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 8,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"👟 주 3회 헬스 & 기초체력 스트레칭 · 30분 운\" 307x55px"
+      },
+      {
+       "i": 9,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": ".starter-goal-btn[data-starter=\"workout\"] → 보이는 요소 0개"
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#dailyQuestBarWrap → 보이는 요소 1개"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#dailyQuestBarWrap → 보이는 글자: [\"⚡ 오늘의 3대 퀘스트 0 / 3 완료 +0 / 90 EXP (0%) ⭕ 오늘 한 줄 체크인 남기기 +30 EXP ⭕ 할일 1개 완료 +10 E\"]"
+      },
+      {
+       "i": 12,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 div#questItemMilestone \"⭕ 할일 1개 완료 +10 EXP\" 303x54px"
+      },
+      {
+       "i": 13,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"goals\"] → class=\"navbtn active\""
+      },
+      {
+       "i": 14,
+       "kind": "expect",
+       "name": "notHasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet\""
+      },
+      {
+       "i": 15,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "home-sheet-eval-entry": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 8,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#btnOpenEvalModal → 보이는 요소 0개",
+     "exceptions": [],
+     "ms": 11939
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 6862,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 7,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 8,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#btnOpenEvalModal → 보이는 요소 1개"
+      },
+      {
+       "i": 9,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnOpenEvalModal \"<아워골 평가해주기>\" 154x44px"
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#appEvaluationModal → 보이는 글자: [\"⭐ 아워골 솔직 평가 & 피드백 × 여러분의 솔직한 피드백이 아워골을 더 훌륭하게 만듭니다. 가감 없이 자유롭게 적어주세요! 언제 얼마든지 평가\"]"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"home\"] → class=\"navbtn active\""
+      },
+      {
+       "i": 12,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "home-sheet-today-card": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 11,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#todayMissionCard .mission-card → 보이는 요소 0개",
+     "exceptions": [],
+     "ms": 12989
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 6573,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#homeCompassQuest \"🎯 오늘 목표 목표 세우기\" 108x74px"
+      },
+      {
+       "i": 7,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 8,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"👟 주 3회 헬스 & 기초체력 스트레칭 · 30분 운\" 307x55px"
+      },
+      {
+       "i": 9,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": ".starter-goal-btn[data-starter=\"workout\"] → 보이는 요소 0개"
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#homeDetailSheet → class=\"home-detail-sheet open\""
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#todayMissionCard .mission-card → 보이는 요소 1개"
+      },
+      {
+       "i": 12,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#todayMissionCard → 보이는 글자: [\"오늘의 카드 뭘 할지 모르겠을 때 도움돼요(내 목표기반) 주 3회 헬스 & 기초체력 기르기 · 오늘은 \\\"운동 전후 스트레칭 5분\\\" 마일스톤을 위\"]"
+      },
+      {
+       "i": 13,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "records-archive-entry": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 8,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#sRecArchiveBtn → 보이는 요소 0개",
+     "exceptions": [],
+     "ms": 11491
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 6915,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"기록/통계\" 57x50px"
+      },
+      {
+       "i": 7,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#sRecModesWrap → 보이는 요소 1개"
+      },
+      {
+       "i": 8,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#sRecArchiveBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 9,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#sRecArchiveBtn \"🗂️ 보관함\" 187x44px"
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": "#sanctuaryRecordsView → 보이는 글자: [\"📈 히트맵·통계 ⏱️ 몰입 타이머 📝 실천 타임라인 🗂️ 보관함 🎬 위클리 리캡 카드 📸 갓생 스토리카드 📦 보관된 목표가 없습니다 \"]"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#sRecArchiveBtn → class=\"s-rec-mode-btn active\""
+      },
+      {
+       "i": 12,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": ".navbtn[data-tab=\"records\"] → class=\"navbtn active\""
+      },
+      {
+       "i": 13,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  },
+  "records-recap-card-entry": {
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": false,
+     "failedStep": 8,
+     "failKind": "expect",
+     "failReason": null,
+     "failDetail": "#sRecRecapBtn → 보이는 요소 0개",
+     "exceptions": [],
+     "ms": 11434
+    },
+    "work": {
+     "passed": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "failDetail": null,
+     "exceptions": [],
+     "ms": 7051,
+     "steps": [
+      {
+       "i": 1,
+       "kind": "do",
+       "name": "goto",
+       "ok": true,
+       "detail": "/index.html"
+      },
+      {
+       "i": 2,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+      },
+      {
+       "i": 3,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+      },
+      {
+       "i": 4,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#homeAddGoal → 보이는 요소 1개"
+      },
+      {
+       "i": 5,
+       "kind": "expect",
+       "name": "notVisible",
+       "ok": true,
+       "detail": "#avatarGreetingModal → 보이는 요소 0개"
+      },
+      {
+       "i": 6,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button \"기록/통계\" 57x50px"
+      },
+      {
+       "i": 7,
+       "kind": "do",
+       "name": "waitFor",
+       "ok": true,
+       "detail": "#sRecModesWrap → 보이는 요소 1개"
+      },
+      {
+       "i": 8,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#sRecRecapBtn → 보이는 요소 1개"
+      },
+      {
+       "i": 9,
+       "kind": "do",
+       "name": "click",
+       "ok": true,
+       "detail": "클릭 button#sRecRecapBtn \"🎬 위클리 리캡 카드\" 187x44px"
+      },
+      {
+       "i": 10,
+       "kind": "expect",
+       "name": "visible",
+       "ok": true,
+       "detail": "#sRecapCanvasMock → 보이는 요소 1개"
+      },
+      {
+       "i": 11,
+       "kind": "expect",
+       "name": "textContains",
+       "ok": true,
+       "detail": ".s-recap-share-card → 보이는 글자: [\"인스타그램 스토리 9:16 최적화 위클리 퍼펙트 리캡 OURGOAL WEEKLY RECAP 🦉 Lv.1 누적 0시간 몰입 완주! 3일 연속 스\"]"
+      },
+      {
+       "i": 12,
+       "kind": "expect",
+       "name": "count",
+       "ok": true,
+       "detail": ".s-recap-actions button → 보이는 요소 3개"
+      },
+      {
+       "i": 13,
+       "kind": "expect",
+       "name": "hasClass",
+       "ok": true,
+       "detail": "#sRecRecapBtn → class=\"s-rec-mode-btn active\""
+      },
+      {
+       "i": 14,
+       "kind": "expect",
+       "name": "noExceptions",
+       "ok": true,
+       "detail": "행동 이후 미처리 예외 0건"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

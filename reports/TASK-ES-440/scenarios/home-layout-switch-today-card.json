@@ -1,0 +1,211 @@
+{
+  "id": "home-layout-switch-today-card",
+  "title": "게스트가 시작 목표를 만든 뒤 설정 「홈 구성 고르기」에서 「오늘의 카드」 스위치를 끄면 홈 「🎯 오늘 목표」 시트에서 오늘의 카드가 사라지고, 다시 켜면 보인다 — 고치기 전에는 4테마 숨김(!important)이 이겨서 켜도 보이지 않는 죽은 스위치였다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "do": "click",
+      "selector": ".starter-goal-btn[data-starter=\"workout\"]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".starter-goal-btn[data-starter=\"workout\"]",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeDetailClose"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]",
+      "name": "aria-checked",
+      "equals": "true"
+    },
+    {
+      "do": "click",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]"
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]",
+      "name": "aria-checked",
+      "equals": "false"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1DoneBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeCompassQuest",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeGoalList",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#todayMissionCard .mission-card"
+    },
+    {
+      "do": "click",
+      "selector": "#homeDetailClose"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "details:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeLayoutOpenBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]",
+      "name": "aria-checked",
+      "equals": "false"
+    },
+    {
+      "do": "click",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]"
+    },
+    {
+      "expect": "attr",
+      "selector": ".switch[data-kf1-id=\"todayMissionCard\"]",
+      "name": "aria-checked",
+      "equals": "true"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1DoneBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeCompassQuest",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open"
+    },
+    {
+      "expect": "visible",
+      "selector": "#todayMissionCard .mission-card",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
