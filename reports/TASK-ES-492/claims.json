@@ -1,0 +1,263 @@
+{
+ "task": "TASK-ES-492",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "「맞춤 피드백 봇 설정」 묶음(1,085줄)을 설정 창 몫(js/tabs/settings/feedback-bot-setup.js)과 체크인 피드백 보여 주기 몫(js/tabs/records/checkin-feedback.js)으로 이름으로 나눠 생성기(설정 inline-organ-3.json, 자리 HO)로 글자 그대로 옮긴다. 새 전역 0, 노출·클릭 등록 한 줄 문 원래 자리."
+  },
+  {
+   "id": "R2",
+   "text": "동작 그대로를 측정한다 — verify, 단독 로드, 게스트 시나리오 2개 + 돌연변이 2개, 게스트 조작 비교, 시험."
+  },
+  {
+   "id": "R3",
+   "text": "세포 등록(modules.json·cell-descriptions.json — 생성 지도 3종 커밋 0), REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 「＋ 목표」를 누르면 「새 목표」 창이 피드백 봇 말풍선 안에 그려지고 예외가 없다 — 말풍선(fbBotBubbleHtml)·쿨다운 검사(피드백 봇 설정 창 세포)",
+   "touches": [
+    "js/tabs/settings/feedback-bot-setup.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/organ3-fbsetup-open.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 첫 체크인을 저장하면 축하 뒤 체크인 피드백 창이 뜨고 「기록 보러 가기」·「피드 공유」 단추가 보인다 — showCheckinFeedbackSheet(체크인 피드백 세포)",
+   "touches": [
+    "js/tabs/records/checkin-feedback.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/organ3-checkin-sheet.json"
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과 ok",
+   "touches": [
+    "reports/TASK-ES-492/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-492/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 세포 2개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-492/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-492/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "말풍선 키트 이름을 지운 돌연변이는 새 목표 창 시나리오에서 작업 쪽 실패",
+   "touches": [
+    "reports/TASK-ES-492/scenario-mutant-fbsetup.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-492/scenario-mutant-fbsetup.json",
+    "type": "jsonPath",
+    "path": "runs.work.passed",
+    "equals": false
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "피드백 창 키트 이름을 지운 돌연변이는 체크인 피드백 창 시나리오에서 작업 쪽 실패",
+   "touches": [
+    "reports/TASK-ES-492/scenario-mutant-checkin-sheet.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-492/scenario-mutant-checkin-sheet.json",
+    "type": "jsonPath",
+    "path": "runs.work.passed",
+    "equals": false
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-492/dom-compare-inline-organ.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-492/dom-compare-inline-organ.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-492/dom-compare-inline-organ.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-492/dom-compare-inline-organ.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 종료 코드가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-492/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-492/test-compare.json",
+    "type": "jsonPath",
+    "path": "exitCodeDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설정: 피드백 봇 묶음을 설정 창 몫·보여 주기 몫으로 이름으로 나눈다",
+   "touches": [
+    "docs/design/harness/module-split/inline-organ-3.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-organ-3.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/records/checkin-feedback.js\""
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "생성기: 다른 세포의 keepRest 남김은 옮기기에 진다(진짜 남김과 겹치면 멈춤)",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "!/keepRest/.test(i.why || '')"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 피드백 봇 설정 창 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/feedback-bot-setup\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설명 파일에 체크인 피드백 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"records/checkin-feedback\": \"체크인 피드백\""
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-492:"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-492 | INFRA |"
+   }
+  }
+ ]
+}

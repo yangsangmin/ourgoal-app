@@ -158,7 +158,8 @@ const finalPlan = [];
 for (const [, its] of [...byStart].sort((a, b) => a[0] - b[0])) {
   const out = its.filter(i => i.action === 'move' || i.action === 'wrap');
   if (out.length > 1) fail('같은 문을 두 세포가 가져감: ' + its[0].start);
-  if (out.length && its.some(i => i.action === 'keep')) fail('한 세포는 옮기고 다른 세포는 남김: ' + its[0].start);
+  // #TASK-ES-492: 한 묶음을 여러 세포가 이름으로 나눠 가질 때, 다른 세포의 keepRest(이름을 안 고른 문) 는 옮기기에 진다. 상태 변수 등 진짜 남김과 겹치면 멈춘다.
+  if (out.length && its.some(i => i.action === 'keep' && !/keepRest/.test(i.why || ''))) fail('한 세포는 옮기고 다른 세포는 남김: ' + its[0].start);
   const real = out.length ? out : its.filter(i => i.action === 'keep').slice(0, 1);
   if (!real.length) { const s = its[0]; fail('어느 세포도 가져가지 않는 문(names 에 빠짐): ' + s.start + ' ' + (s.names.join(',') || s.st.node.type)); }
   finalPlan.push(real[0]);

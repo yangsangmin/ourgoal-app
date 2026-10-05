@@ -572,3 +572,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md
 - #TASK-ES-486 | INFRA | [인라인 기관 이전 2차] 잠금화면 허브(연속 기록·앱 배지 기관 몫 분리)·일정 탭 공용·4대 뷰 디스패처 → 세포 4개, 동작 그대로(인라인 −1,159줄) | 코디네이터 지시 (2026-10-05, 기관 빌더), REQ docs/specs/REQ-TASK-ES-486-INLINE-ORGAN-2.md | 4단계(심사 청구)
 - #TASK-ES-489 | INFRA | [시험지 선행 · 인라인 어려움 기관 휴지통] core-confirm-es376 잘라 읽기가 인라인 합본을 읽음 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-489-ORGAN-TRASH-TEST-BUNDLE.md
+- #TASK-ES-492 | INFRA | [인라인 기관 이전 3차] 맞춤 피드백 봇(설정 창·체크인 피드백 보여 주기로 책임 나눔) → 세포 2개, 동작 그대로(인라인 −1,051줄) | 코디네이터 지시 (2026-10-05, 기관 빌더), REQ docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md | 4단계(심사 청구)

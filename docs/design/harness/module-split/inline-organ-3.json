@@ -1,0 +1,16 @@
+{
+  "task": "TASK-ES-492",
+  "label": "인라인 어려움 기관 묶음 이전 3차",
+  "slot": "HO",
+  "slots": ["H0 시범 #TASK-ES-439", "H1", "H2", "H3", "H4", "HO 기관"],
+  "cells": [
+    { "key": "fbSetup", "file": "js/tabs/settings/feedback-bot-setup.js", "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit", "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Feedback Bot Setup (설정 — 맞춤 피드백 봇 설정 창)",
+      "desc": ["「맞춤 피드백 봇 설정」 묶음 중 설정 창 몫: 프리셋 읽기·저장, 맞춤 프롬프트 만들기, 설정 창 열기·닫기·그리기, 말풍선 글자(fbBotBubbleHtml). 홈·설정 단추의 클릭 등록 줄은 index.html 원래 자리(한 줄씩)."],
+      "take": [ { "group": "맞춤 피드백 봇 설정 ============", "names": ["customFeedbackStatusSuffix", "refreshCustomFeedbackButtons", "getSavedFeedbackPresets", "persistFeedbackPresets", "openFeedbackSetup", "closeFeedbackSetup", "generateCustomFeedbackPrompt", "fbBotBubbleHtml", "renderFeedbackSetup", "openFeedbackSetupGated"], "keepRest": true } ] },
+    { "key": "fbSheet", "file": "js/tabs/records/checkin-feedback.js", "kit": "OurgoalRecordsKit", "kitVar": "_recordsKit", "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Checkin Feedback (기록 — 체크인 AI 피드백 칸·창·피드 공유)",
+      "desc": ["「맞춤 피드백 봇 설정」 묶음 중 피드백 보여 주기 몫: 판정 색(verdictClass)·홈/기록 피드백 칸 그리기·체크인 피드백 창 열기/닫기·피드 바로 공유·내 아바타 글자·「n분 전」 글자(timeAgoStr)."],
+      "take": [ { "group": "맞춤 피드백 봇 설정 ============", "names": ["verdictClass", "renderFeedbackSlot", "getUserAvatarHtml", "showCheckinFeedbackSheet", "closeCheckinFeedbackSheet", "instantShareCheckinToFeed", "renderRecordFeedbackSlot", "timeAgoStr"], "keepRest": true } ] }
+  ]
+}
