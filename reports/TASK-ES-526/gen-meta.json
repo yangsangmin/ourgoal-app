@@ -1,0 +1,464 @@
+{
+ "task": "TASK-ES-526",
+ "slot": "H2",
+ "scriptHtmlLines": [
+  2298,
+  13575
+ ],
+ "plan": [
+  {
+   "cell": "tableCsvSync",
+   "action": "move",
+   "segment": [
+    10494,
+    10523
+   ],
+   "stmt": [
+    10495,
+    10523
+   ],
+   "names": [
+    "downloadTableAsCsv"
+   ],
+   "why": null
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "move",
+   "segment": [
+    10524,
+    10554
+   ],
+   "stmt": [
+    10525,
+    10554
+   ],
+   "names": [
+    "parseCsvText"
+   ],
+   "why": null
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "move",
+   "segment": [
+    10555,
+    10602
+   ],
+   "stmt": [
+    10557,
+    10602
+   ],
+   "names": [
+    "openCsvImportModal"
+   ],
+   "why": null
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "move",
+   "segment": [
+    10603,
+    10655
+   ],
+   "stmt": [
+    10605,
+    10655
+   ],
+   "names": [
+    "openWearableSyncModal"
+   ],
+   "why": null
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "move",
+   "segment": [
+    10656,
+    10701
+   ],
+   "stmt": [
+    10658,
+    10701
+   ],
+   "names": [
+    "syncRecordToMatchingGoals"
+   ],
+   "why": null
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "keep",
+   "segment": [
+    10702,
+    10738
+   ],
+   "stmt": [
+    10704,
+    10738
+   ],
+   "names": [
+    "compressImageForVision"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "keep",
+   "segment": [
+    10739,
+    10741
+   ],
+   "stmt": [
+    10741,
+    10741
+   ],
+   "names": [
+    "VISION_DAILY_LIMIT"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "keep",
+   "segment": [
+    10742,
+    10750
+   ],
+   "stmt": [
+    10742,
+    10750
+   ],
+   "names": [
+    "getVisionDailyQuota"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "keep",
+   "segment": [
+    10751,
+    10757
+   ],
+   "stmt": [
+    10751,
+    10757
+   ],
+   "names": [
+    "decrementVisionDailyQuota"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "keep",
+   "segment": [
+    10758,
+    10979
+   ],
+   "stmt": [
+    10760,
+    10979
+   ],
+   "names": [
+    "openVisionTableModal"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "voiceTableInput",
+   "action": "move",
+   "segment": [
+    10980,
+    11037
+   ],
+   "stmt": [
+    10982,
+    11037
+   ],
+   "names": [
+    "parseVoiceToTableRow"
+   ],
+   "why": null
+  },
+  {
+   "cell": "voiceTableInput",
+   "action": "move",
+   "segment": [
+    11038,
+    11225
+   ],
+   "stmt": [
+    11040,
+    11225
+   ],
+   "names": [
+    "openVoiceTableModal"
+   ],
+   "why": null
+  },
+  {
+   "cell": "tableCsvSync",
+   "action": "keep",
+   "segment": [
+    11226,
+    11355
+   ],
+   "stmt": [
+    11228,
+    11355
+   ],
+   "names": [
+    "CURATED_MARKET_TEMPLATES"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "themeExportCsv",
+   "action": "move",
+   "segment": [
+    12785,
+    12797
+   ],
+   "stmt": [
+    12786,
+    12797
+   ],
+   "names": [
+    "getAIAnalysisPrompt"
+   ],
+   "why": null
+  },
+  {
+   "cell": "themeExportCsv",
+   "action": "move",
+   "segment": [
+    12798,
+    12816
+   ],
+   "stmt": [
+    12799,
+    12816
+   ],
+   "names": [
+    "buildCSV"
+   ],
+   "why": null
+  },
+  {
+   "cell": "peerInviteText",
+   "action": "move",
+   "segment": [
+    13058,
+    13065
+   ],
+   "stmt": [
+    13061,
+    13065
+   ],
+   "names": [
+    "calculateRemainingSeats"
+   ],
+   "why": null
+  },
+  {
+   "cell": "peerInviteText",
+   "action": "move",
+   "segment": [
+    13066,
+    13067
+   ],
+   "stmt": [
+    13067,
+    13067
+   ],
+   "names": [
+    "buildPeerInviteUrl"
+   ],
+   "why": null
+  },
+  {
+   "cell": "peerInviteText",
+   "action": "move",
+   "segment": [
+    13068,
+    13079
+   ],
+   "stmt": [
+    13069,
+    13079
+   ],
+   "names": [
+    "formatPeerInviteMessage"
+   ],
+   "why": null
+  }
+ ],
+ "imports": [
+  {
+   "n": "downloadTableAsCsv",
+   "cell": "tableCsvSync"
+  },
+  {
+   "n": "openCsvImportModal",
+   "cell": "tableCsvSync"
+  },
+  {
+   "n": "openWearableSyncModal",
+   "cell": "tableCsvSync"
+  },
+  {
+   "n": "syncRecordToMatchingGoals",
+   "cell": "tableCsvSync"
+  },
+  {
+   "n": "openVoiceTableModal",
+   "cell": "voiceTableInput"
+  },
+  {
+   "n": "getAIAnalysisPrompt",
+   "cell": "themeExportCsv"
+  },
+  {
+   "n": "buildCSV",
+   "cell": "themeExportCsv"
+  },
+  {
+   "n": "calculateRemainingSeats",
+   "cell": "peerInviteText"
+  },
+  {
+   "n": "buildPeerInviteUrl",
+   "cell": "peerInviteText"
+  },
+  {
+   "n": "formatPeerInviteMessage",
+   "cell": "peerInviteText"
+  }
+ ],
+ "outsideRefs": {
+  "downloadTableAsCsv": [
+   11924
+  ],
+  "openCsvImportModal": [
+   11904
+  ],
+  "openWearableSyncModal": [
+   11933
+  ],
+  "syncRecordToMatchingGoals": [
+   12515
+  ],
+  "openVoiceTableModal": [
+   11994
+  ],
+  "getAIAnalysisPrompt": [
+   2866
+  ],
+  "buildCSV": [
+   2942
+  ],
+  "calculateRemainingSeats": [
+   2815
+  ],
+  "buildPeerInviteUrl": [
+   2814
+  ],
+  "formatPeerInviteMessage": [
+   2820
+  ]
+ },
+ "bridged": [
+  {
+   "n": "RECORD_THEMES",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "TOPICS",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "closeModal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "dateKey",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "escapeHtml",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "fmtTime",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "fmtYYMMDD",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "openMicPermissionGuideModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "openModal",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "state",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": true
+  },
+  {
+   "n": "toast",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  }
+ ],
+ "exposed": [
+  "fmtYYMMDD",
+  "openMicPermissionGuideModal"
+ ],
+ "edits": 35,
+ "htmlLinesBefore": 13614,
+ "htmlLinesAfter": 13125,
+ "files": {
+  "js/tabs/records/table-csv-sync.js": 241,
+  "js/tabs/records/voice-table-input.js": 272,
+  "js/tabs/records/theme-export-csv.js": 58,
+  "js/tabs/comm/peer-invite-text.js": 50
+ }
+}

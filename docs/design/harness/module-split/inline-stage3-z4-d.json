@@ -1,0 +1,25 @@
+{
+  "task": "TASK-ES-526",
+  "label": "인라인 3단계 Z4 이동 3차(표 CSV·웨어러블·목표 연동 · 음성 표 입력 · 테마별 기록 CSV · 함께 목표 초대 글자)",
+  "slot": "H2",
+  "slots": ["H0 시범 #TASK-ES-439", "H1", "H2", "H3", "H4", "HO 기관"],
+  "cells": [
+    { "key": "tableCsvSync", "file": "js/tabs/records/table-csv-sync.js", "kit": "OurgoalRecordsKit", "kitVar": "_recordsKit", "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Table CSV Sync (기록 탭 — 전문 템플릿 표 CSV 내보내기·가져오기·웨어러블 데이터 창·맞는 목표 진척 연동)",
+      "desc": ["「CSV / 엑셀 양방향 연동 & 스마트워치 매핑 & 목표 3각 추적」 묶음 중 표 데이터 주고받기 책임: CSV 다운로드(downloadTableAsCsv)·CSV 글자 읽기(parseCsvText — smoke-test FN_NAMES, 인라인 합본에서 찾는다)·CSV 가져오기 창(openCsvImportModal)·스마트워치 데이터 창(openWearableSyncModal)·저장한 표 기록을 맞는 목표 진척에 반영(syncRecordToMatchingGoals).",
+               "같은 묶음의 사진 표 채우기(compressImageForVision·AI 사진 분석 하루 한도·openVisionTableModal)와 마켓 템플릿 자료(CURATED_MARKET_TEMPLATES)는 index.html 원래 자리에 남겼다(#TASK-ES-526 REQ 4절)."],
+      "take": [ { "group": "CSV / 엑셀 양방향 연동", "names": ["downloadTableAsCsv", "parseCsvText", "openCsvImportModal", "openWearableSyncModal", "syncRecordToMatchingGoals"], "keepRest": true } ] },
+    { "key": "voiceTableInput", "file": "js/tabs/records/voice-table-input.js", "kit": "OurgoalRecordsKit", "kitVar": "_recordsKit", "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Voice Table Input (기록 탭 — 음성 문장을 표 한 줄로 바꾸는 입력 창)",
+      "desc": ["「CSV / 엑셀 양방향 연동」 묶음 중 음성 입력 책임: 한국어 음성 문장 → 표 행 파서(parseVoiceToTableRow — smoke-test FN_NAMES)·핸즈프리 음성 표 입력 창(openVoiceTableModal, 예시 문장 칩으로도 행을 더한다)."],
+      "take": [ { "group": "CSV / 엑셀 양방향 연동", "names": ["parseVoiceToTableRow", "openVoiceTableModal"], "keepRest": true } ] },
+    { "key": "themeExportCsv", "file": "js/tabs/records/theme-export-csv.js", "kit": "OurgoalRecordsKit", "kitVar": "_recordsKit", "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Theme Export CSV (기록 탭 — 테마별 기록 CSV 글자·외부 AI 분석 프롬프트)",
+      "desc": ["「테마별 기록 DB 다운로드 & 외부 AI 분석 프롬프트 번들 (TASK-OG-001)」 묶음 전체: 테마별 외부 AI 분석 프롬프트(getAIAnalysisPrompt)·기록 CSV 글자 만들기(buildCSV) — 둘 다 smoke-test FN_NAMES(인라인 합본에서 찾는다). 내보내기 창은 js/tabs/records/export-theme.js."],
+      "take": [ { "group": "테마별 기록 DB 다운로드", "all": true } ] },
+    { "key": "peerInviteText", "file": "js/tabs/comm/peer-invite-text.js", "kit": "OurgoalCommKit", "kitVar": "_commKit", "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+      "title": "OurGoal Peer Invite Text (소통 탭 — 함께 목표 초대 링크·남은 자리·초대 문구)",
+      "desc": ["「[PEER INVITE] '함께 목표' 방 초대 루프」 묶음에 남아 있던 순수 함수 셋: 남은 자리 수(calculateRemainingSeats)·초대 링크 주소(buildPeerInviteUrl)·초대 문구(formatPeerInviteMessage) — 모두 smoke-test FN_NAMES(인라인 합본에서 찾는다). 복사·카카오 공유·초대 창은 js/tabs/comm/peer-invite.js."],
+      "take": [ { "group": "[PEER INVITE] '함께 목표' 방 초대 루프", "names": ["calculateRemainingSeats", "buildPeerInviteUrl", "formatPeerInviteMessage"], "keepRest": true } ] }
+  ]
+}

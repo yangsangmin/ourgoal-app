@@ -1,0 +1,69 @@
+{
+ "id": "comm-group-invite-link",
+ "title": "게스트로 소통 탭 「팀」에서 예시 팀 카드를 눌러 상세를 열고 「초대 링크 복사」를 누르면 「초대 링크가 복사되었어요!」 토스트가 뜬다 — 옮긴 buildPeerInviteUrl·formatPeerInviteMessage(js/tabs/comm/peer-invite-text.js)로 초대 링크·문구를 만든다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"comm\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"comm\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "[data-sub=\"group\"]",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "[data-sub=\"group\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "[data-open-group=\"g0\"]",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "[data-open-group=\"g0\"]",
+   "position": "left"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#grpCopyLinkBtn",
+   "timeoutMs": 5000
+  },
+  {
+   "do": "click",
+   "selector": "#grpCopyLinkBtn"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "초대 링크가 복사되었어요",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
