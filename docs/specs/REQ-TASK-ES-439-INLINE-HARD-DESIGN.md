@@ -2,7 +2,7 @@
 
 - 근거: 상민님 원문(2026-10-05) "미분화 덩어리 분열 작업을 우선순위로 해야하지 않나?" · 코디네이터 지시(쉬움·보통은 빌더 4명이 병렬로 옮기는 중, 이 작업은 그다음 단계 「어려움」을 막힘없이 만드는 길) · 헌법 v2026.10.05-CELL 세포골격 절(CELL_SKELETON · CELL_SPLIT · CELL_SPLIT_PROOF · claims_hygiene) · `docs/specs/MODULE-SPLIT-PROTOCOL.md` · 선례 #TASK-ES-423(PR #744).
 - 범위: ① 어려움 묶음 유형 집계 도구와 시험지 선행 실측 도구 ② 유형별 표준 이음매 설계 문서 `docs/architecture/INLINE-HARD-SPLIT-DESIGN.md` ③ 설정 파일로 움직이는 생성기·검사기·조작 비교 하네스 ④ 시범: 어려움 묶음 2개를 동작 그대로 이전 ⑤ 처리 순서·병렬 구역 제안. 기능 추가·삭제 0, 마크업·CSS 이동 0, 동결 파일 0, 시험 기대값 변경 0, retire 0.
-- 건드리지 않은 것: 쉬움·보통 빌더 구역(P0·P1·P2)과 2차 빌더 묶음(G064·G043·G044·G094·G061·G052·G177), 안티그래비티 배정 G076(캘린더 날짜 클릭 일정 관리 허브 모달)·G086(RENDER: HOME). 시범 두 묶음은 모두 지도 등급 「어려움」이다.
+- 건드리지 않은 것: 쉬움·보통 빌더 구역(P0·P1·P2)과 2차 빌더 묶음(G064·G043·G044·G094·G061·G052·G177), 안티그래비티 배정 5묶음(「캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달」·「RENDER: HOME」·「5대 테마 온톨로지 & 경량 AI 분류기」·「11인 외부 UI/UX 감시 및 개선팀 핵심 기능」·「서버 관리자 API를 통한 기록 및 프로필 복구」). 시범 두 묶음은 모두 지도 등급 「어려움」이다.
 
 ## 1. [원칙 ①] 문제 정확히 파악
 
@@ -21,7 +21,7 @@
 
 ### 3-1. 유형 집계 — `scripts/inline-hard-types.js`
 
-- 지도 JSON + index.html 재파싱. 유형 A1 남의 상태 재대입 · A2 내 상태를 남이 씀 · B1 로드 중 window 노출 · B2 로드 때 이벤트 등록 · B3 로드 중 다른 문 · C 인라인 on*= · D 큰 상수 · E 순환 호출(Tarjan SCC) · F1 시험지 단독 의존(근사) · F1m 시험지 선행 필요(실측) · F2 smoke FN_NAMES · G 800줄 초과 · H 함수 재대입 · I 공용 부품(들어옴 10+) · J 바깥 파일이 window 이름 씀 · K 최상위 this/arguments.
+- 지도 JSON + index.html 재파싱. 유형 A1 남의 상태 재대입 · A2 내 상태를 남이 씀 · B1 로드 중 window 노출 · B2 로드 때 이벤트 등록 · B3 로드 중 다른 문 · C 인라인 on*= · D 큰 상수 · E 순환 호출(Tarjan SCC) · F1 시험지 단독 의존(근사) · F1m 시험지 선행 필요(실측) · F2 smoke FN_NAMES · G 800줄 초과 · H 함수 재대입 · I 공용 부품(들어옴 10+) · J 바깥 파일이 window 이름 씀 · K 최상위 this/arguments · L 통로에 없는 인라인 이름 참조(예: BADGES·badgeContext) · M 덮어쓰는 키트(예: js/tabs/home/index.js 의 OurgoalHomeMegaBlock — 코디네이터 2026-10-05 요청, 안티그래비티가 「RENDER: HOME」 에서 막힌 두 유형).
 - 처리 단계(1 표준 이음매만 · 2 시험지 선행 뒤 · 3 FN_NAMES 선행·800줄 분할 · 4 기관·개별), 병렬 구역(연속 줄 구간, 겹침 0 검사), 권장 순서. `--write` 로 `inline-hard-types.json` 과 설계 문서 1절 표를 쓴다. 결정적(두 번 실행 md5 동일 — 작업자 측정).
 
 ### 3-2. 시험지 선행 실측 — `scripts/inline-hard-test-probe.js`
@@ -32,6 +32,7 @@
 
 - 설계 문서 2절(유형마다 이음매·법정 탐침·생성기·verify 근거). 생성기 `gen-inline-hard.js`(설정 `inline-hard-pilot.json`), 검사기 `verify-inline-hard.js`(생성기 분류를 다시 쓰지 않고 결과만 읽는다), 조작 비교 `dom-compare-inline-hard.js`.
 - 머리 이음매 구역 자리 표지 6줄(H0 시범·H1~H4·HO 기관) — 병렬 빌더가 서로 다른 표지 아래에 넣어 병합 충돌 0. 구획 주석(===)을 쓰지 않아 지도 묶음 수 189 그대로.
+- 유형 L: 생성기가 옮긴 코드가 쓰는 인라인 이름 중 getter 없는 것을 스코프 분석으로 뽑아 expose 에 더한다(이름은 옮기지 않음). 유형 M: 설정 afterTag 로 세포 태그를 키트를 통째로 새로 대입하는 파일 뒤에 붙이고, 머리에 키트 변수가 없으면 지역 변수로 만든다. afterTag 없이 덮어쓰는 키트를 쓰면 생성기가 멈춘다(작업자 측정: 홈 메가블록 키트 설정 → 멈춤, afterTag → 생성·verify ok·모듈 로드 회귀 0).
 - 지도 생성기 SEAM_RE 에 「세포화 1차 이음매」를 더함 — #423 이음매 묶음(G007)이 자리 표지·getter 를 담아 「어려움」으로 잘못 분류되던 것을 이음매로(옮길 대상 161 → 160).
 
 ### 3-4. 시범 — 어려움 묶음 2개
@@ -83,7 +84,7 @@ worktree `C:/dev/wt/inline-hard`(브랜치 `feat/2026-10-05-task-es-439-inline-h
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` 로컬 | `checkin-capture-save`·`settings-quick-actions` 기준·작업 모두 통과, 약점 0. 돌연변이(부르는 줄·노출 줄 지움) → 작업 쪽 실패(10·8단계) |
 | 시험 | `npm test` · tests 122개 | smoke 443/0 · 무결성 38/38 · 버튼 943/943 기준=후, 작업 npm test 종료 코드 0. tests·scripts/test-* 122개 중 120개 종료 코드 같음, 다른 2개(세포지도 이력 비교 시험·그것을 부르는 shipyard)는 git 이력 없는 기준 사본에서만 실패하고 작업은 통과(회귀 0) |
 | 탭 실측 | `tab-check.js home,settings,records` 기준 2회·후 1회 → `tab-compare.js` | TAB_CHECK_RESULT |
-| 처리 순서·구역 | `inline-hard-types.js`(이 PR 판) | 단계 1: 18묶음 · 2: 19 · 3: 12 · 4(기관): 18. 구역 H1 20묶음 · H2 13 · H3 5 · H4 9 · 기관 16(배정됨 G052·G076·G086·G177 제외), 겹침 0 |
+| 처리 순서·구역 | `inline-hard-types.js`(이 PR 판) | 단계 1: 18묶음 · 2: 19 · 3: 12 · 4(기관): 18. 구역 H1 17묶음 · H2 13 · H3 5 · H4 9 · 기관 16(배정 7묶음 제외 — 2차 빌더 「Enter app」·「Render all」, 안티그래비티 5묶음), 겹침 0 |
 
 **예상 단계 수(추정, 측정 아님)**: 구역마다 시험지 선행 PR 1 + 이전 PR ⌈묶음 ÷ 4⌉ + 800줄 초과 묶음마다 1 → H1 6 · H2 6 · H3 6 · H4 4 = 22 PR, 기관 16묶음 각 1 PR → 합 약 38 PR. 근거: #423 1 PR 4묶음, 이번 1 PR 2묶음(측정 한 벌은 묶음 수와 무관). 구역 4명 병렬이면 가장 긴 구역 6 PR, 기관은 2명으로 나누면 8 PR 이 가장 긴 길.
 

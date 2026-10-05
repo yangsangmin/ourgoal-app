@@ -311,7 +311,8 @@ for (const it of wrapped) IMPORTS.push({ n: it.wrapName, cell: it.cell });
 // 다른 세포로 간 이름을 L. 로 부르면 그 이름도 노출해야 한다(가져온 var 를 getter 로)
 const head = ['  /* [#' + TAG + '] ' + CFG.cells.map(c => c.file).join(' · ') + ' — 가져오기 ' + IMPORTS.length + '개 · 통로 노출은 스코프 분석으로 뽑았다 */'];
 for (const c of CFG.cells) {
-  if (!kitVars.has(c.kitVar + '=' + c.kit)) fail('앞선 이음매에 키트 변수 없음: ' + c.kitVar + '=' + c.kit);
+  // 앞선 이음매에 그 키트 변수가 없으면(예: 홈 탭) 이 자리에서 지역 변수로 만든다 — 전역 이름은 늘지 않는다(이미 있는 전역을 읽을 뿐)
+  if (!kitVars.has(c.kitVar + '=' + c.kit)) { if ([...kitVars].some(k => k.startsWith(c.kitVar + '='))) fail('키트 변수 이름이 다른 키트에 쓰였다: ' + c.kitVar); head.push('  var ' + c.kitVar + ' = window.' + c.kit + ';'); kitVars.add(c.kitVar + '=' + c.kit); }
   for (const x of IMPORTS.filter(i => i.cell === c.key)) head.push('  var ' + x.n + ' = ' + c.kitVar + '.' + x.n + ';');
 }
 const exposeList = [...bridged.keys()].sort().filter(n => !getters.has(n) || (bridged.get(n).assigned && !setters.has(n)));
@@ -322,12 +323,25 @@ if (exposeList.length) {
 }
 nh.splice(insertAt, 0, ...head);
 // (3) script 태그: 그 탭 index.js 태그 바로 앞, 같은 줄(순증가 0줄)
+// 덮어쓰는 키트(유형 M): 어떤 js 파일이 global.<키트> = { … } 로 통째로 새로 대입하면, 그 파일 태그보다 앞에 넣은 세포의 K.x 는 지워진다 → 그 파일 태그 뒤(afterTag)에만 넣는다
+const overwriters = kit => { const out = []; const walk = d => fs.readdirSync(d, { withFileTypes: true }).forEach(e => { const p = path.join(d, e.name); if (e.isDirectory()) return walk(p); if (!e.name.endsWith('.js') || path.resolve(p) === path.resolve(APP, CFG.cells.find(c => c.kit === kit).file)) return; const t = fs.readFileSync(p, 'utf8'); if (new RegExp('(?:global|window)\\.' + kit + '\\s*=(?!=)').test(t) && !new RegExp('(?:global|window)\\.' + kit + '\\s*=\\s*(?:global|window)\\.' + kit + '\\s*\\|\\|').test(t)) out.push(path.relative(APP, p).replace(/\\/g, '/')); }); walk(path.join(APP, 'js')); return out; };
 for (const c of CFG.cells) {
   if (!outFiles[c.file]) continue;
-  const idx = nh.findIndex(l => l.includes(c.beforeTag));
-  if (idx < 0) fail('태그 없음 ' + c.beforeTag);
-  nh[idx] = nh[idx].replace(c.beforeTag, '<script src="' + c.file + '"></script>' + c.beforeTag);
+  const tagStr = '<script src="' + c.file + '"></script>';
+  const ow = overwriters(c.kit);
+  if (c.afterTag) {
+    const idx = nh.findIndex(l => l.includes(c.afterTag));
+    if (idx < 0) fail('태그 없음 ' + c.afterTag);
+    nh[idx] = nh[idx].replace(c.afterTag, c.afterTag + tagStr);
+  } else {
+    if (ow.length) fail('키트 ' + c.kit + ' 를 통째로 새로 대입하는 파일이 있다(' + ow.join(', ') + ') — 그 태그 뒤에 넣도록 설정에 afterTag 를 쓴다(유형 M)');
+    const idx = nh.findIndex(l => l.includes(c.beforeTag));
+    if (idx < 0) fail('태그 없음 ' + c.beforeTag);
+    nh[idx] = nh[idx].replace(c.beforeTag, tagStr + c.beforeTag);
+  }
 }
+// 세포 태그는 인라인 IIFE 보다 앞이어야 한다(머리에서 가져온다)
+for (const c of CFG.cells) { const ti = nh.findIndex(l => l.includes('<script src="' + c.file + '"></script>')); if (outFiles[c.file] && !(ti >= 0 && ti < sLine)) fail('세포 태그가 인라인 IIFE 뒤에 있다: ' + c.file); }
 
 fs.writeFileSync(path.join(APP, 'index.html'), nh.join(EOL), 'utf8');
 for (const [f, arr] of Object.entries(outFiles)) fs.writeFileSync(path.join(APP, f), arr.join('\n'), 'utf8');

@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "f57954a9259aa7602dfe422d043b7a8ba28b630e",
-  "short": "f57954a",
-  "committedAt": "2026-10-05T18:21:06+09:00",
-  "subject": "[FIX] #TASK-ES-433 chore: Merge origin/main(#747 성소 분열) — 기록 화면 modeNav 는 js/sanctuary-v3-engine.js 에 남아 #sRecStoryCardBtn 줄이 같은 자리에 그대로 합쳐짐, 신고서·기준선은 main 판을 받고 module-specs --write·module-guard --update 로 다시 만듦"
+  "commit": "0c74fbd0e841d3e613064e9b60301ea415af4b81",
+  "short": "0c74fbd",
+  "committedAt": "2026-10-05T19:03:49+09:00",
+  "subject": "[INFRA] #TASK-ES-439 chore: Merge origin/main(#747·#748) — 합친 index.html 이 새 기준에 생성기를 다시 돌린 결과와 바이트 동일, 세포 파일은 새 기준 줄 표지로 다시 만듦, 기준선·세포지도는 main 판을 받고 module-specs --write·module-guard --update 로 다시 만듦, 측정 전부 새 기준으로 다시 잼"
  },
  "summary": {
-  "cells": 179,
-  "files": 178,
-  "jsLines": 53011,
+  "cells": 181,
+  "files": 180,
+  "jsLines": 53333,
   "kinds": {
    "organ": 29,
-   "tab": 44,
+   "tab": 46,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 179,
+  "descriptionsHand": 181,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 33382,
-   "functionDecls": 658
+   "inlineScriptLines": 33175,
+   "functionDecls": 654
   },
   "health": {
-   "undifferentiatedLines": 33382,
+   "undifferentiatedLines": 33175,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 44,
+   "count": 46,
    "large": 6,
-   "small": 38
+   "small": 40
   },
   {
    "key": "hybrid",
@@ -139,13 +139,14 @@
    "desc": "체크인 기록·시간 기록·회고·통계",
    "cells": [
     "records/index",
+    "records/checkin-capture",
     "records/period-ai-card",
     "records/render",
     "records/sub-retrospect",
     "records/sub-timeline",
     "records/sub-timer"
    ],
-   "lines": 1321,
+   "lines": 1552,
    "over800": 0
   },
   {
@@ -191,6 +192,7 @@
    "desc": "프로필·화면·알림·보안·연동·데이터",
    "cells": [
     "settings/index",
+    "settings/quick-actions",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -199,7 +201,7 @@
     "settings/sub-profile",
     "settings/sub-security"
    ],
-   "lines": 1513,
+   "lines": 1604,
    "over800": 0
   },
   {
@@ -3444,8 +3446,10 @@
     "goals/goal-export",
     "goals/render",
     "goals/result-modal",
+    "records/checkin-capture",
     "records/period-ai-card",
     "records/render",
+    "settings/quick-actions",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -3665,6 +3669,7 @@
     "home/sub-heatmap",
     "home/sub-quest",
     "home/sub-today",
+    "records/checkin-capture",
     "records/index",
     "records/sub-retrospect",
     "records/sub-timeline",
@@ -3921,7 +3926,8 @@
     "core/event-bus"
    ],
    "calledBy": [
-    "core/registry"
+    "core/registry",
+    "records/checkin-capture"
    ],
    "readsFromIndexHtml": [
     "state"
@@ -10141,6 +10147,62 @@
    ]
   },
   {
+   "id": "records/checkin-capture",
+   "file": "js/tabs/records/checkin-capture.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "체크인 저장",
+   "nameSource": "hand",
+   "does": "홈 체크인 입력칸에 글자수를 보여 주고, 「기록」을 누르면 오늘 실천을 기록으로 저장한 뒤 XP·축하·AI 피드백을 이어 준다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Checkin Capture (기록 — 홈 체크인 입력 글자수 힌트·기록 저장 처리기)",
+    "홈 체크인 입력칸(#captureInput) 글자수 힌트 처리기와 「기록」 단추(#captureSave) 저장 처리기 — 기록 추가·XP·축하·AI 피드백·노션 전송까지 이전 전과 같은 순서로 돈다.",
+    "두 처리기는 index.html 로드 중 바로 걸리던 문이다. 본문을 bindCaptureLiveMeta · bindCaptureSave 로 감싸 옮기고, index.html 원래 자리에서 그 함수를 부른다(등록 순서 보존, 이중 처리기 0).",
+    "입력칸 요소를 담은 상태 변수(liveMeta · liveCount · capInput)와 사진 대기값(pendingCapturePhoto)은 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
+   ],
+   "lines": 231,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/event-bus",
+    "core/store"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [
+    "checkin:created",
+    "record:saved"
+   ],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-439"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "records/index",
    "file": "js/tabs/records/index.js",
    "kind": "tab",
@@ -10589,6 +10651,57 @@
      "date": "2026-10-04"
     }
    ]
+  },
+  {
+   "id": "settings/quick-actions",
+   "file": "js/tabs/settings/quick-actions.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "설정 빠른 동작",
+   "nameSource": "hand",
+   "does": "설정의 보안 카드(앱 잠금 PIN 상태)를 칠하고 점검하며, 다른 기기 로그아웃 확인 창을 열고, 테마 견본을 고른다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Settings Quick Actions (설정 탭 — 보안 카드·테마 견본 빠른 동작)",
+    "설정 탭 보안 카드 칠하기(paintSecurityCard) · 보안 상태 점검(refreshSecurityStatus) · 다른 기기 로그아웃 확인 창 열기(killDeviceSession) · 테마 견본 고르기(selectThemeSwatch).",
+    "window.paintSecurityCard 는 js/tabs/settings/sub-security.js 가 찾는다 — 노출 줄은 index.html 원래 자리에 그대로 있다.",
+    "같은 묶음의 소통 허브 세 함수(switchCommSubTab·triggerFloatingReaction·openInAppDmSheet)는 옮기지 않았다 — 그 단추를 담은 #commHubGrid 가 인라인 display:none !important 로 숨어 있어 게스트 화면에서 잴 수 없다(별도 티켓)."
+   ],
+   "lines": 91,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-439"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
+   ],
+   "prs": []
   },
   {
    "id": "settings/render",
@@ -12571,9 +12684,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalThemeSystem"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],

@@ -559,6 +559,82 @@
     "index.html"
    ],
    "scenario": "scenarios/settings-quick-actions.json"
+  },
+  {
+   "id": "C36",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설계 문서에 통로에 없는 인라인 이름 참조(BADGES·badgeContext) 이음매 절이 있다",
+   "touches": [
+    "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md"
+   ],
+   "check": {
+    "file": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "type": "codeContains",
+    "text": "### 2-10. 통로에 없는 인라인 이름 참조(L)"
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설계 문서에 덮어쓰는 키트(OurgoalHomeMegaBlock) 이음매 절이 있다",
+   "touches": [
+    "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md"
+   ],
+   "check": {
+    "file": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "type": "codeContains",
+    "text": "### 2-11. 덮어쓰는 키트(M)"
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "생성기가 키트를 통째로 새로 대입하는 파일이 있으면 afterTag 없이는 멈춘다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "if (ow.length) fail('키트 ' + c.kit"
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "유형 집계가 덮어쓰는 키트 목록에 홈 메가블록을 싣는다",
+   "touches": [
+    "docs/architecture/inline-hard-types.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-hard-types.json",
+    "type": "codeContains",
+    "text": "\"kit\": \"OurgoalHomeMegaBlock\""
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "처리 순서 제안이 안티그래비티·2차 빌더 배정 7묶음을 구역에서 뺀다",
+   "touches": [
+    "docs/architecture/inline-hard-types.json"
+   ],
+   "check": {
+    "file": "docs/architecture/inline-hard-types.json",
+    "type": "jsonPath",
+    "path": "assigned.length",
+    "equals": 7
+   }
   }
  ]
 }

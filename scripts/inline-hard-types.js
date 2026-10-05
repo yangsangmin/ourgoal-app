@@ -23,6 +23,8 @@
  *   I  공용 부품             — 이 묶음 이름을 부르는 다른 묶음이 10개 이상(기관 세포 후보)
  *   J  바깥 파일이 window 이름을 씀 — 노출 순서를 지켜야 한다(지도 externalFiles)
  *   K  최상위 this/arguments — 옮길 함수 본문 최상위에서 this·arguments 를 쓴다(객체 경유 호출이면 값이 달라진다)
+ *   L  통로에 없는 인라인 이름 — 다른 묶음의 최상위 이름(상수·함수)을 쓰는데 아직 OurgoalAppScope.expose getter 가 없다(예: BADGES·badgeContext)
+ *   M  덮어쓰는 키트(전역 목록) — js 파일이 `global.X = { … }` 로 전역 객체를 통째로 새로 대입한다(X || {} 아님). 그 키트에 세포 이름을 달면 태그 순서에 따라 지워진다
  *
  * 결정적: 시각·난수 없음, 목록 정렬. 출처는 지도의 index.html 해시.
  * 사용: NODE_PATH=<node_modules> node scripts/inline-hard-types.js [--write] [--root <앱 폴더>] [--zones 4]
@@ -43,7 +45,7 @@ const OUT_JSON = path.join(ROOT, 'docs', 'architecture', 'inline-hard-types.json
 const PROBE = (() => { const p = path.join(ROOT, 'docs', 'architecture', 'inline-hard-test-probe.json'); if (!fs.existsSync(p)) return null; const j = JSON.parse(fs.readFileSync(p, 'utf8')); return j.source.indexSha256_12 === MAP.source.sha256_12 ? j : null; })();
 // 다른 시범·빌더에 배정된 묶음(제목 일부로 찾는다 — 묶음 번호는 앞 묶음이 사라지면 밀린다)
 // 앞이 '=' 이면 제목 전체가 같아야 한다
-const ASSIGNED = [['캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달', '안티그래비티 시범(2026-10-05 배정)'], ['=RENDER: HOME', '안티그래비티 몫(2026-10-05 배정)'], ['=Enter app', '2차 빌더(2026-10-05 배정)'], ['=Render all', '2차 빌더(2026-10-05 배정)']];
+const ASSIGNED = [['캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달', '안티그래비티 시범(2026-10-05 배정)'], ['=RENDER: HOME', '안티그래비티 몫(2026-10-05 배정)'], ['5대 테마 온톨로지 & 경량 AI 분류기', '안티그래비티 몫(2026-10-05 배정)'], ['11인 외부 UI/UX 감시 및 개선팀 핵심 기능', '안티그래비티 몫(2026-10-05 배정)'], ['서버 관리자 API를 통한 기록 및 프로필 복구', '안티그래비티 몫(2026-10-05 배정)'], ['=Enter app', '2차 빌더(2026-10-05 배정)'], ['=Render all', '2차 빌더(2026-10-05 배정)']];
 const DESIGN_MD = path.join(ROOT, 'docs', 'architecture', 'INLINE-HARD-SPLIT-DESIGN.md');
 
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
@@ -95,6 +97,13 @@ const sccOf = new Map();
   };
   for (const g of groups) if (!index.has(g.id)) strong(g.id);
 }
+// 머리에 이미 노출된 getter 이름(모든 expose 호출)
+const EXPOSED = new Set();
+iife.traverse({ CallExpression(p) { const c = p.node.callee; if (c.type === 'MemberExpression' && !c.computed && c.property.name === 'expose' && p.node.arguments[1] && p.node.arguments[1].properties) for (const pr of p.node.arguments[1].properties) if (pr.key) EXPOSED.add(pr.key.name); } });
+// 묶음 안에서 쓰는, 다른 묶음이 선언한 최상위 이름(함수·변수)
+const namesUsedFromOthers = g => { const out = new Set(); for (const [n, b] of Object.entries(iScope.bindings)) { const dg = gOfLine(H(b.path.node)); if (!dg || dg.id === g.id) continue; if (b.referencePaths.some(r => { const l = H(r.node); return l >= g.start && l <= g.end; })) out.add(n); } return [...out]; };
+// 덮어쓰는 키트: js/** 에서 `global.X = {` / `window.X = {` (X || {} 없이) — 세포를 그 키트에 달면 그 파일 태그 뒤에 넣어야 한다
+const OVERWRITE_KITS = (() => { const out = []; const walk = d => fs.readdirSync(d, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1)).forEach(e => { const p = path.join(d, e.name); if (e.isDirectory()) return walk(p); if (!e.name.endsWith('.js')) return; const t = fs.readFileSync(p, 'utf8'); const re = /(?:global|window)\.(Ourgoal\w+)\s*=\s*(\{|[A-Za-z_$][\w$]*\s*;)/g; let m; while ((m = re.exec(t))) { const name = m[1]; if (new RegExp('(?:global|window)\\.' + name + '\\s*=\\s*(?:global|window)\\.' + name + '\\s*\\|\\|').test(t)) continue; out.push({ kit: name, file: path.relative(ROOT, p).replace(/\\/g, '/') }); } }); walk(path.join(ROOT, 'js')); return out; })();
 const sccSize = new Map();
 for (const [, s] of sccOf) if (s) sccSize.set(s, (sccSize.get(s) || 0) + 1);
 // 2자 순환(서로 부름) 짝 — 설계 근거용
@@ -103,7 +112,7 @@ const mutual = (a) => (adj.get(a) || []).filter(b => (adj.get(b) || []).includes
 const TYPES = [
   ['A1', '남의 상태 재대입'], ['A2', '내 상태를 남이 씀·읽음'], ['B1', '로드 중 window 노출'], ['B2', '로드 때 이벤트 등록'], ['B3', '로드 중 다른 문'],
   ['C', '인라인 on*="이름()"'], ['D', '큰 상수(30줄 이상)'], ['E', '순환 호출(SCC)'], ['F1', '시험지 단독 의존(근사)'], ['F1m', '시험지 선행 필요(실측)'], ['F2', 'smoke FN_NAMES'],
-  ['G', '800줄 초과'], ['H', '함수 재대입'], ['I', '공용 부품(들어옴 10+)'], ['J', '바깥 파일이 window 이름 씀'], ['K', '최상위 this/arguments'],
+  ['G', '800줄 초과'], ['H', '함수 재대입'], ['I', '공용 부품(들어옴 10+)'], ['J', '바깥 파일이 window 이름 씀'], ['K', '최상위 this/arguments'], ['L', '통로에 없는 인라인 이름 참조'],
 ];
 
 const rows = [];
@@ -148,6 +157,7 @@ for (const g of hard) {
     for (const v of b.constantViolations) { const og = gOfLine(H(v.node)); if (og && og.id === g.id && !(H(b.path.node) >= g.start && H(b.path.node) <= g.end)) add('H', b.identifier.name + '(이 묶음이 덮어씀 ' + H(v.node) + ')'); }
   });
   for (const n of g.inlineHandlers) add('C', n);
+  for (const n of namesUsedFromOthers(g)) if (!EXPOSED.has(n)) add('L', n);
   if (sccOf.get(g.id)) add('E', sccOf.get(g.id) + '(' + sccSize.get(sccOf.get(g.id)) + '묶음)' + (mutual(g.id).length ? ' 서로 부름 ' + mutual(g.id).join('·') : ''));
   for (const f of g.testIndexOnly) add('F1', f);
   if (PROBE) { const pg = PROBE.groups.find(x => x.id === g.id); if (pg) for (const f of pg.broken) add('F1m', f); }
@@ -200,7 +210,7 @@ const out = {
   types: byType,
   stages: [1, 2, 3, 4].map(s => ({ stage: s, groups: rows.filter(r => r.stage === s).length, lines: rows.filter(r => r.stage === s).reduce((a, r) => a + r.lines, 0) })),
   order, zones: zoneOut, organ: organ.map(r => ({ id: r.id, lines: r.lines, types: Object.keys(r.types).sort() })),
-  zonesOverlap: 0, probe: PROBE ? { tests: PROBE.tests, needTestFirst: rows.filter(r => r.types.F1m).length, brokenTests: [...new Set(rows.flatMap(r => r.types.F1m || []))].sort() } : null,
+  zonesOverlap: 0, overwriteKits: OVERWRITE_KITS, probe: PROBE ? { tests: PROBE.tests, needTestFirst: rows.filter(r => r.types.F1m).length, brokenTests: [...new Set(rows.flatMap(r => r.types.F1m || []))].sort() } : null,
   assigned: rows.filter(r => r.assignedTo).map(r => ({ id: r.id, title: r.title, to: r.assignedTo })),
   groups: rows,
 };
@@ -219,17 +229,23 @@ if (out.probe) md.push('시험지 선행 실측(scripts/inline-hard-test-probe.j
 if (out.probe) md.push('');
 md.push('처리 단계(유형으로 정함): ' + out.stages.map(s => s.stage + '단계 ' + s.groups + '묶음 ' + s.lines + '줄').join(' · ') + '.');
 md.push('');
-md.push('| 묶음 | 줄 범위 | 줄 | 점수 | 단계 | 유형 |');
-md.push('|---|---|--:|--:|--:|---|');
-for (const r of rows.slice().sort((a, b) => a.start - b.start)) md.push('| ' + r.id + ' | ' + r.start + '~' + r.end + ' | ' + r.lines + ' | ' + r.score + ' | ' + r.stage + ' | ' + Object.keys(r.types).sort().map(k => k + '(' + r.types[k].length + ')').join(' ') + ' |');
+md.push('묶음 번호(G…)는 이 판에서만 맞다 — 앞 묶음이 옮겨지면 밀린다. 배정·구역은 **제목**으로 찾는다.');
+md.push('');
+md.push('| 묶음 | 제목 | 줄 범위 | 줄 | 점수 | 단계 | 유형 | 배정 |');
+md.push('|---|---|---|--:|--:|--:|---|---|');
+for (const r of rows.slice().sort((a, b) => a.start - b.start)) md.push('| ' + r.id + ' | ' + r.title.replace(/|/g, '/').slice(0, 48) + ' | ' + r.start + '~' + r.end + ' | ' + r.lines + ' | ' + r.score + ' | ' + r.stage + ' | ' + Object.keys(r.types).sort().map(k => k + '(' + r.types[k].length + ')').join(' ') + ' | ' + (r.assignedTo || '') + ' |');
+md.push('');
+md.push('#### 덮어쓰는 키트(유형 M) — 이 전역에 세포 이름을 달 때는 그 파일 태그 **뒤**(설정 afterTag)');
+md.push('');
+md.push(OVERWRITE_KITS.map(k => '`' + k.kit + '`(' + k.file + ')').join(' · ') || '없음');
 md.push('');
 md.push('#### 병렬 구역(줄 구간 겹침 0 — 도구가 검사)');
 md.push('');
 md.push('| 구역 | 줄 구간 | 어려움 줄 | 묶음 |');
 md.push('|---|---|--:|---|');
-for (const z of zoneOut) md.push('| ' + z.zone + ' | ' + z.from + '~' + z.to + ' | ' + z.hardLines + ' | ' + z.groups.join(' ') + ' |');
+for (const z of zoneOut) md.push('| ' + z.zone + ' | ' + z.from + '~' + z.to + ' | ' + z.hardLines + ' | ' + z.titles.map(t => t.replace(/|/g, '/')).join('<br>') + ' |');
 for (const r of rows.filter(r => r.assignedTo)) md.push('| 배정됨: ' + r.assignedTo + ' | ' + r.start + '~' + r.end + ' | ' + r.lines + ' | ' + r.id + ' ' + r.title.slice(0, 40) + ' |');
-md.push('| 기관(단계 4, 구역 밖 — 한 빌더가 먼저) | — | ' + organ.reduce((a, r) => a + r.lines, 0) + ' | ' + organ.map(r => r.id).join(' ') + ' |');
+md.push('| 기관(단계 4, 구역 밖 — 한 빌더가 먼저) | — | ' + organ.reduce((a, r) => a + r.lines, 0) + ' | ' + organ.map(r => r.id + ' ' + r.title.replace(/|/g, '/').slice(0, 40)).join('<br>') + ' |');
 md.push('');
 md.push('#### 권장 처리 순서(단계 → 유형 수 → 줄 수)');
 md.push('');
