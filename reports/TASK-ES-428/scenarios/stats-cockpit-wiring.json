@@ -1,0 +1,106 @@
+{
+  "id": "stats-cockpit-wiring",
+  "title": "게스트로 기록 탭의 「📈 히트맵·통계」를 열고 빈 통계 화면의 「건강·운동」 샘플(#uEmptyLoadBig3Btn)을 누르면 성취 분석 콕핏(#uCockpitMainCard)이 그려지고, 효율 분석 렌즈(.u-lens-btn[data-lens=\"ratio\"])를 누르면 분자 선택(#uRatioNumSelect)이 보이며, 성장 추세 렌즈로 돌아오면 측정 지표 줄(.u-dim-selector-row)이 보이고, 접기 아이콘(#uAccordionToggleIcon)을 누르면 본문(#uCockpitBody)이 접히고 한 번 더 누르면 다시 펼쳐지며, 전체화면 버튼(#uBtnGraphFullscreen)을 누르면 전체화면 모달(#uStatsFullscreenModal)이 보인다 — 대시보드를 js/stats-dashboard*.js 로 옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "button.s-rec-mode-btn[onclick*=\"heatmap\"]",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "button.s-rec-mode-btn[onclick*=\"heatmap\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#uEmptyLoadBig3Btn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#uEmptyLoadBig3Btn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#uCockpitMainCard",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".u-lens-btn[data-lens=\"ratio\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#uRatioNumSelect",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": ".u-lens-btn[data-lens=\"trend\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": ".u-dim-selector-row",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#uAccordionToggleIcon"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#uCockpitBody",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#uAccordionToggleIcon"
+    },
+    {
+      "expect": "visible",
+      "selector": "#uCockpitBody",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#uBtnGraphFullscreen"
+    },
+    {
+      "expect": "visible",
+      "selector": "#uStatsFullscreenModal",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
