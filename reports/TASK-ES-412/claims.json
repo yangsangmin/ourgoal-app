@@ -1,0 +1,962 @@
+{
+ "task": "TASK-ES-412",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-412-COMPONENTS-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "scripts/smoke-test.js(38곳)와 tests 31개가 js/components.js 글자를 「컴포넌트 합본」(원본 원문 맨 앞 + js/ 바로 아래 OurgoalComponentsKit 표식이 있는 components-*.js 부품, 이름순, 부품만 T.·K. 접두 제거)에서 읽는다. quest-task-exp 의 vm 실행은 브라우저 순서(부품 → 원본). 단언 문장·기대값·검사 수 변경 0, 제품 코드 0, 금고 파일 0. 합본 맨 앞 = 원문 단언."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 기준 대 작업 npm test 수치·smoke 검사 제목·결과 동일, tests 종료 코드·정규화 출력 동일, 모의 이전 트리에서 기준 시험지는 깨지고 새 시험지는 통과."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "컴포넌트 부품 = js/ 바로 아래 components-*.js 중 OurgoalComponentsKit 표식이 있는 파일",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  return n.indexOf('components-') === 0 && fs.readFileSync(f, 'utf8').indexOf('OurgoalComponentsKit') >= 0;"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "컴포넌트 합본 = 원본 원문(맨 앞) + 부품(T.·K. 접두 제거)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "const COMPONENTS_SRC = [COMPONENTS_RAW, ...COMPONENTS_PART_FILES.map(readTeamPartFile)].join('\\n');"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합본 맨 앞 = 원본 원문 단언(check 밖 — 검사 수 불변)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "assert.strictEqual(COMPONENTS_SRC.slice(0, COMPONENTS_RAW.length), COMPONENTS_RAW, '컴포넌트 합본 맨 앞 = js/components.js 원문');"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "부품이 없으면 합본 = 원문 단언",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "if (COMPONENTS_PART_FILES.length === 0) assert.strictEqual(COMPONENTS_SRC, COMPONENTS_RAW, '컴포넌트 합본 = js/components.js (부품 파일이 없을 때)');"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "ES-275 컴포넌트 모듈화 글자 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = COMPONENTS_SRC;"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "ES-284~ES-303 직통 핸들러 글자 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const compJs = COMPONENTS_SRC;"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "ES-307~ES-322 직통 핸들러 글자 검사가 합본을 읽음",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const jsComp = COMPONENTS_SRC;"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "ES-162 require 실행 경로는 그대로(원본 머리 이음매가 부품을 require)",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "  const compModule = require('../js/components.js');"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 도우미: 합본 = 원문 + 부품",
+   "touches": [
+    "tests/helpers/components-bundle.js"
+   ],
+   "check": {
+    "file": "tests/helpers/components-bundle.js",
+    "type": "codeContains",
+    "text": "  const src = [raw, ...parts.map(readPart)].join('\\n');"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 도우미: 합본 맨 앞이 원문이 아니면 던짐",
+   "touches": [
+    "tests/helpers/components-bundle.js"
+   ],
+   "check": {
+    "file": "tests/helpers/components-bundle.js",
+    "type": "codeContains",
+    "text": "  if (src.slice(0, raw.length) !== raw) throw new Error('컴포넌트 합본 맨 앞이 js/components.js 원문이 아님');"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 도우미: 브라우저 읽는 순서 = 부품 → 원본",
+   "touches": [
+    "tests/helpers/components-bundle.js"
+   ],
+   "check": {
+    "file": "tests/helpers/components-bundle.js",
+    "type": "codeContains",
+    "text": "function componentsLoadOrder() { return [...componentsPartFiles(), COMPONENTS_JS]; }"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "achievement-collapse-toggle.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/achievement-collapse-toggle.test.js"
+   ],
+   "check": {
+    "file": "tests/achievement-collapse-toggle.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "achievement-graph-multiset.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/achievement-graph-multiset.test.js"
+   ],
+   "check": {
+    "file": "tests/achievement-graph-multiset.test.js",
+    "type": "codeContains",
+    "text": "const jsComp = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "achievement-metric-multiselect.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/achievement-metric-multiselect.test.js"
+   ],
+   "check": {
+    "file": "tests/achievement-metric-multiselect.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "achievement-stats-shell-button-removal.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/achievement-stats-shell-button-removal.test.js"
+   ],
+   "check": {
+    "file": "tests/achievement-stats-shell-button-removal.test.js",
+    "type": "codeContains",
+    "text": "const jsComp = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "avatar-exp-celebration.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/avatar-exp-celebration.test.js"
+   ],
+   "check": {
+    "file": "tests/avatar-exp-celebration.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "avatar-icon-enlarge-all.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/avatar-icon-enlarge-all.test.js"
+   ],
+   "check": {
+    "file": "tests/avatar-icon-enlarge-all.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "avatar-levelup-dialogue.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/avatar-levelup-dialogue.test.js"
+   ],
+   "check": {
+    "file": "tests/avatar-levelup-dialogue.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "feed-ai-bot-reduction.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/feed-ai-bot-reduction.test.js"
+   ],
+   "check": {
+    "file": "tests/feed-ai-bot-reduction.test.js",
+    "type": "codeContains",
+    "text": "const jsComp = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "feed-post-category-diversity.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/feed-post-category-diversity.test.js"
+   ],
+   "check": {
+    "file": "tests/feed-post-category-diversity.test.js",
+    "type": "codeContains",
+    "text": "const jsComp = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "feed-post-photo-upload.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/feed-post-photo-upload.test.js"
+   ],
+   "check": {
+    "file": "tests/feed-post-photo-upload.test.js",
+    "type": "codeContains",
+    "text": "const jsComp = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "feed-post-preview-modal.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/feed-post-preview-modal.test.js"
+   ],
+   "check": {
+    "file": "tests/feed-post-preview-modal.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "feed-post-selectable-targets.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/feed-post-selectable-targets.test.js"
+   ],
+   "check": {
+    "file": "tests/feed-post-selectable-targets.test.js",
+    "type": "codeContains",
+    "text": "const jsComp = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "feed-share-latest-record.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/feed-share-latest-record.test.js"
+   ],
+   "check": {
+    "file": "tests/feed-share-latest-record.test.js",
+    "type": "codeContains",
+    "text": "const jsComp = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "goal-template-legacy-cleanup.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/goal-template-legacy-cleanup.test.js"
+   ],
+   "check": {
+    "file": "tests/goal-template-legacy-cleanup.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "goal-templates-encyclopedia.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/goal-templates-encyclopedia.test.js"
+   ],
+   "check": {
+    "file": "tests/goal-templates-encyclopedia.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "home-goal-board-cleanup.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/home-goal-board-cleanup.test.js"
+   ],
+   "check": {
+    "file": "tests/home-goal-board-cleanup.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "manito-ai-limit.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/manito-ai-limit.test.js"
+   ],
+   "check": {
+    "file": "tests/manito-ai-limit.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "quest-task-exp.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/quest-task-exp.test.js"
+   ],
+   "check": {
+    "file": "tests/quest-task-exp.test.js",
+    "type": "codeContains",
+    "text": "  const compJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "remove-ai-companions.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/remove-ai-companions.test.js"
+   ],
+   "check": {
+    "file": "tests/remove-ai-companions.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "schedule-dual-bg.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/schedule-dual-bg.test.js"
+   ],
+   "check": {
+    "file": "tests/schedule-dual-bg.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "schedule-notification-setting.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/schedule-notification-setting.test.js"
+   ],
+   "check": {
+    "file": "tests/schedule-notification-setting.test.js",
+    "type": "codeContains",
+    "text": "const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "settings-collapse-default.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/settings-collapse-default.test.js"
+   ],
+   "check": {
+    "file": "tests/settings-collapse-default.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "settings-reorganization.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/settings-reorganization.test.js"
+   ],
+   "check": {
+    "file": "tests/settings-reorganization.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "stopwatch-lap-activity-safety.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/stopwatch-lap-activity-safety.test.js"
+   ],
+   "check": {
+    "file": "tests/stopwatch-lap-activity-safety.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "story-card-diversity.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/story-card-diversity.test.js"
+   ],
+   "check": {
+    "file": "tests/story-card-diversity.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "team-goal-comment-fix.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/team-goal-comment-fix.test.js"
+   ],
+   "check": {
+    "file": "tests/team-goal-comment-fix.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "team-goals-collapse-default.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/team-goals-collapse-default.test.js"
+   ],
+   "check": {
+    "file": "tests/team-goals-collapse-default.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "team-linked-goals-example-card.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/team-linked-goals-example-card.test.js"
+   ],
+   "check": {
+    "file": "tests/team-linked-goals-example-card.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "time-record-modal-compact.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/time-record-modal-compact.test.js"
+   ],
+   "check": {
+    "file": "tests/time-record-modal-compact.test.js",
+    "type": "codeContains",
+    "text": "  const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "trio-es143-es145.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/trio-es143-es145.test.js"
+   ],
+   "check": {
+    "file": "tests/trio-es143-es145.test.js",
+    "type": "codeContains",
+    "text": "const componentsJs = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "two-factor-auth.test.js 가 components.js 글자를 합본(readComponentsBundle)으로 읽음",
+   "touches": [
+    "tests/two-factor-auth.test.js"
+   ],
+   "check": {
+    "file": "tests/two-factor-auth.test.js",
+    "type": "codeContains",
+    "text": "const componentsSrc = readComponentsBundle();"
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "quest-task-exp 의 vm 실행이 브라우저 순서(부품 → 원본)",
+   "touches": [
+    "tests/quest-task-exp.test.js"
+   ],
+   "check": {
+    "file": "tests/quest-task-exp.test.js",
+    "type": "codeContains",
+    "text": "  componentsLoadOrder().forEach(function (f) { vm.runInContext(fs.readFileSync(f, 'utf-8'), context); });"
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 smoke 검사 제목 목록 동일",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "smokeTitlesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 smoke 결과 목록 동일",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "smokeResultsIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C46",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 smoke 통과·실패 수",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C47",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 smoke 통과·실패 수",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "base.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C48",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 무결성 검사",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.integrity",
+    "equals": [
+     38,
+     38
+    ]
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 버튼 배선",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.buttons",
+    "equals": [
+     943,
+     943
+    ]
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 대 작업 npm test 수치 같음",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "sameNumbers",
+    "equals": true
+   }
+  },
+  {
+   "id": "C51",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsExitCodesIdentical",
+    "equals": true
+   }
+  },
+  {
+   "id": "C52",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 정규화 출력 차이 0",
+   "touches": [
+    "reports/TASK-ES-412/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/test-compare.json",
+    "type": "jsonPath",
+    "path": "testsOutputDiffAfterNormalize",
+    "equals": []
+   }
+  },
+  {
+   "id": "C53",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 기준 시험지 smoke",
+   "touches": [
+    "reports/TASK-ES-412/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/mock-move.json",
+    "type": "jsonPath",
+    "path": "oldSheet.smoke",
+    "equals": [
+     408,
+     35
+    ]
+   }
+  },
+  {
+   "id": "C54",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지 smoke",
+   "touches": [
+    "reports/TASK-ES-412/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/mock-move.json",
+    "type": "jsonPath",
+    "path": "newSheet.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C55",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지 npm test 종료 0",
+   "touches": [
+    "reports/TASK-ES-412/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/mock-move.json",
+    "type": "jsonPath",
+    "path": "newSheet.npmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C56",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 트리: 새 시험지로 tests 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-412/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-412/mock-move.json",
+    "type": "jsonPath",
+    "path": "testsExitSameAsBaseWithNewSheet",
+    "equals": true
+   }
+  },
+  {
+   "id": "C57",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-412-COMPONENTS-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-412-COMPONENTS-TEST-BUNDLE.md",
+    "type": "codeContains",
+    "text": "## 8. [원칙 ⑧] 성과 측정 · 막히는 지점"
+   }
+  },
+  {
+   "id": "C58",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-412: 공통 UI 컴포넌트 세포 쪼개기(ES-411) 선행 시험지 — scripts/smoke-test.js 38곳과 tests 31개가 js/components.js 글자를 「컴포넌트 합본」(원본 원문 맨 앞 + OurgoalComponentsKit 표식이 있는 js/components-*.js 부품, T.·K. 접두 제거, tests 는 도우미 tests/helpers/components-bundle.js)에서 읽고, quest-task-exp 의 vm 실행은 브라우저 순서(부품 → 원본). 단언·기대값·검사 수 0 변경, 제품 코드 0, 금고 0. 실측(판정 아님): 기준 대 작업 smoke 443/0·38/38·943/943 같음, tests 105개 종료 코드·정규화 출력 같음, 모의 이전 기준 시험지 408/443 → 새 시험지 443/443. REQ docs/specs/REQ-TASK-ES-412-COMPONENTS-TEST-BUNDLE.md"
+   }
+  },
+  {
+   "id": "C59",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-412 | INFRA/시험 | [공통 UI 컴포넌트 세포 쪼개기 선행 시험지] smoke-test.js 38곳·tests 31개가 컴포넌트 합본(원본 원문 + OurgoalComponentsKit 부품 js/components-*.js, T.·K. 접두 제거)을 읽음, quest-task-exp vm 은 부품 → 원본 순서 — 단언·기대값·검사 수 0 변경, 제품 코드 0 | 코디네이터 지시 (2026-10-05, ES-411 선행), REQ docs/specs/REQ-TASK-ES-412-COMPONENTS-TEST-BUNDLE.md | 4단계(심사 청구)"
+   }
+  },
+  {
+   "id": "C60",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 도구: tests 출력 정규화에 스택 줄 번호 포함",
+   "touches": [
+    "docs/design/harness/module-split/test-compare-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/test-compare-components.js",
+    "type": "codeContains",
+    "text": "  .replace(/:\\d+:\\d+\\)/g, ':<l>:<c>)').replace(/\\.js:\\d+(:\\d+)?/g, '.js:<l>').replace(/\\d+(\\.\\d+)?\\s?ms\\b/g, '<ms>').replace(/duration_ms[\"':\\s]+[\\d.]+/g, 'duration_ms <n>').split('(root: ' + path.basename(root) + ')').join('(root: <root>)')"
+   }
+  },
+  {
+   "id": "C61",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 도구: 모의 이전 트리에 기준·새 시험지를 차례로 얹어 잼",
+   "touches": [
+    "docs/design/harness/module-split/mock-move-components.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/mock-move-components.js",
+    "type": "codeContains",
+    "text": "useSheets(BASE);"
+   }
+  }
+ ]
+}

@@ -6,6 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 const assert = require('assert');
 
 console.log('[TEST START] feed-post-photo-upload (#TASK-ES-309)');
@@ -16,7 +17,7 @@ const jsCompPath = path.join(__dirname, '..', 'js', 'components.js');
 
 const html = fs.readFileSync(htmlPath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
-const jsComp = fs.readFileSync(jsCompPath, 'utf8');
+const jsComp = readComponentsBundle();
 
 // 1. index.html 사진 첨부 드롭존 & 프리뷰 마크업 및 게시물 연동 검증
 assert.ok(html.includes('share-photo-uploader-box'), 'index.html: .share-photo-uploader-box 컨테이너 확인');

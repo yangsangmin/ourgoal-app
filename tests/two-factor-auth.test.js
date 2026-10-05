@@ -3,6 +3,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 const TEST_TICKET_ID = '#TASK-ES-322';
 
@@ -30,7 +31,7 @@ console.log('  ✅ 2. enterApp 앱 진입 시 2FA 챌린지 락 파이프라인 
 
 // 3. components.js handle인증_Item71Action 직통 핸들러 검증
 const compPath = path.join(__dirname, '..', 'js', 'components.js');
-const componentsSrc = fs.readFileSync(compPath, 'utf8');
+const componentsSrc = readComponentsBundle();
 
 assert.ok(componentsSrc.includes('handle인증_Item71Action'), 'components.js handle인증_Item71Action 정의');
 assert.ok(componentsSrc.includes('og_task-71_cache'), 'components.js og_task-71_cache 로컬 캐시 키 탑재');

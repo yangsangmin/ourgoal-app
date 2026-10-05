@@ -6,6 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 const assert = require('assert');
 
 console.log('[TEST START] achievement-graph-multiset (#TASK-ES-307)');
@@ -18,7 +19,7 @@ const jsCompPath = path.join(__dirname, '..', 'js', 'components.js');
 const html = fs.readFileSync(htmlPath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
 const jsStats = fs.readFileSync(jsStatsPath, 'utf8');
-const jsComp = fs.readFileSync(jsCompPath, 'utf8');
+const jsComp = readComponentsBundle();
 
 // 1. index.html 핵심 식별자 및 다중 렌더링 로직 검증
 assert.ok(html.includes('TREND_METRICS'), 'index.html: TREND_METRICS 맵 정의 확인');

@@ -6,6 +6,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 // #TASK-ES-388 (팀 세포 쪼개기 2차 선행): 팀 코드가 js/team-invite-comm.js 에서 js/team-*.js 키트 부품(OurgoalTeamCommKit 에 함수를 담는 파일)으로 옮겨 가도
 // 같은 단언이 같은 코드를 찾도록 '팀 합본' = js/team-invite-comm.js(원문 그대로, 맨 앞) + 키트 부품(이름순, 생성기 접두 T.·K. 를 떼고) 를 읽는다. 단언·기대값은 그대로다.
@@ -28,7 +29,7 @@ async function runTests() {
   // 1. 소스 파일 정적 분석 검증
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const teamInviteJs = readTeamCommBundle(path.join(__dirname, '..'));
-  const componentsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const componentsJs = readComponentsBundle();
 
   // 목표탭 내 템플릿백과사전 버튼 유지
   assert.ok(indexHtml.includes('id="btnGoalTemplateEncyclopedia"'), '목표 탭 내 템플릿백과사전 버튼 탑재 확인');

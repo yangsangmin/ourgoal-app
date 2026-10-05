@@ -6,6 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 const assert = require('assert');
 
 console.log('[TEST START] feed-post-category-diversity (#TASK-ES-310)');
@@ -16,7 +17,7 @@ const jsCompPath = path.join(__dirname, '..', 'js', 'components.js');
 
 const html = fs.readFileSync(htmlPath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
-const jsComp = fs.readFileSync(jsCompPath, 'utf8');
+const jsComp = readComponentsBundle();
 
 // 1. index.html 카테고리 18종 및 가로 스크롤 UI 검증
 const EXPECTED_18_CATS = [

@@ -3,6 +3,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 // #TASK-ES-385 (아바타·EXP 쪼개기 PR-1, 설계 REQ-TASK-ES-384 5절): 아바타 코드가 js/avatar-system.js 에서 js/avatar/**/*.js · js/data/avatar-personas/*.js 로 옮겨 가도
 // 같은 단언이 같은 코드를 찾도록 '아바타 합본'(이름순, 쪼개기 생성기가 붙이는 AV.·MS. 접두를 뗌)을 읽는다. 단언·기대값은 그대로다.
@@ -32,7 +33,7 @@ function runTests() {
 
   const rootDir = path.resolve(__dirname, '..');
   const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
-  const componentsJs = fs.readFileSync(path.join(rootDir, 'js/components.js'), 'utf8');
+  const componentsJs = readComponentsBundle();
   const avatarSystemJs = readAvatarBundle(rootDir);
   const uiCss = fs.readFileSync(path.join(rootDir, 'ui.css'), 'utf8');
 

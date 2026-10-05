@@ -6,6 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 const assert = require('assert');
 
 console.log('[TEST START] feed-share-latest-record (#TASK-ES-314)');
@@ -15,7 +16,7 @@ const htmlPath = path.join(rootDir, 'index.html');
 const jsCompPath = path.join(rootDir, 'js', 'components.js');
 
 const html = fs.readFileSync(htmlPath, 'utf8');
-const jsComp = fs.readFileSync(jsCompPath, 'utf8');
+const jsComp = readComponentsBundle();
 const componentsModule = require(jsCompPath);
 
 // 1. index.html 피드 게시 모달 내 최신순 정렬 및 자동 선택 로직 검증
