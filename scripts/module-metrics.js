@@ -128,18 +128,51 @@ function escapeRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// #TASK-ES-502: 「없으면 만들어 두는」 방어 초기화는 그 탭의 정의가 아니다 — 다른 곳(index.html 인라인 등)이 정의·주인인 전역을
+// 그 탭이 쓰기 전에 비어 있으면 채우는 것뿐이다. 두 꼴만 뺀다(같은 줄, 같은 이름):
+//   ① if(!window.X) window.X = …   (global·globalThis 도 같다, 공백 무관)
+//   ② window.X = window.X || …
+// 무조건 대입(window.X = function…·window.X = X)은 계속 그 탭의 정의로 센다.
+function isGuardedInit(text, at, len, name) {
+  const lineStart = text.lastIndexOf('\n', at - 1) + 1;
+  let lineEnd = text.indexOf('\n', at);
+  if (lineEnd < 0) lineEnd = text.length;
+  const before = text.slice(lineStart, at);
+  const after = text.slice(at + len, lineEnd);
+  const n = escapeRe(name);
+  const G = '(?:global|window|globalThis)\\s*\\.\\s*';
+  if (new RegExp('\\bif\\s*\\(\\s*!\\s*' + G + n + '\\s*\\)\\s*$').test(before)) return true;
+  if (new RegExp('^\\s*' + G + n + '\\s*\\|\\|').test(after)) return true;
+  return false;
+}
+
 // 탭 B 가 정의한 전역 심볼(global.X = / window.X = / var Ourgoal… =)
 function tabDefinedSymbols(texts) {
   const names = new Set();
   for (const t of texts) {
     let m;
     const re = /\b(?:global|window|globalThis)\s*\.\s*([A-Za-z_$][\w$]*)\s*=(?![=>])/g;
-    while ((m = re.exec(t))) names.add(m[1]);
+    while ((m = re.exec(t))) {
+      if (isGuardedInit(t, m.index, m[0].length, m[1])) continue;
+      names.add(m[1]);
+    }
   }
   return names;
 }
 
 // ⑤ 탭 간 직접 참조: [{ from, to, file, line, text }]
+// index.html 인라인 스크립트가 window·global·globalThis 에 다는 이름(조건부 방어 초기화 포함 — 인라인이 주인이면 어느 꼴이든 주인이다)
+function inlineWindowSymbols(root) {
+  const names = new Set();
+  const indexPath = path.join(root, 'index.html');
+  if (!fs.existsSync(indexPath)) return names;
+  const t = blankCommentOnlyLines(maskToInlineScripts(readText(indexPath)));
+  const re = /\b(?:global|window|globalThis)\s*\.\s*([A-Za-z_$][\w$]*)\s*=(?![=>])/g;
+  let m;
+  while ((m = re.exec(t))) names.add(m[1]);
+  return names;
+}
+
 function crossTabRefs(root) {
   const tabsDir = path.join(root, 'js', 'tabs');
   if (!fs.existsSync(tabsDir)) return [];
@@ -150,9 +183,12 @@ function crossTabRefs(root) {
     filesByTab[tab] = listJs(root, 'js/tabs/' + tab);
     for (const f of filesByTab[tab]) textByFile[f] = blankCommentOnlyLines(readText(path.join(root, f)));
   }
+  // #TASK-ES-507: index.html 인라인 스크립트가 window 에 다는 이름은 인라인(미분화 덩어리)이 주인이다 — 세포가 그 값을 바꿔 써도(예: 불러옴 표시)
+  // 그 탭의 정의가 아니다. 그런 이름을 다른 탭이 읽는 것은 탭 간 참조가 아니라 인라인 공용 상태 읽기다(통로 L 과 같은 주인).
+  const inlineOwned = inlineWindowSymbols(root);
   const patternsByTab = {};
   for (const tab of tabs) {
-    const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f])));
+    const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s));
     const parts = [
       '\\bOurgoal' + escapeRe(capital(tab)) + '[A-Z][\\w$]*',
       '\\btabs\\/' + escapeRe(tab) + '\\/',
@@ -384,4 +420,4 @@ if (require.main === module) {
   else process.stdout.write(args.pretty ? text : JSON.stringify(doc) + '\n');
 }
 
-module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, MAX_LINES };
+module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, MAX_LINES };

@@ -1,0 +1,18 @@
+{
+  "id": "comm-fake-reaction-dm-gone",
+  "title": "게스트로 소통 탭에 들어가면 전송 없이 「응원을 전송했습니다」만 띄우던 무공해 응원 바(#commFloatingReactionDock)와 「대화방이 연결되었습니다」만 띄우던 안심 DM 시트(#commProfileBottomSheet)는 없고, 「💬 DM」 칸은 그대로 눌러 DM 화면이 그려진다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "waitFor", "selector": "#commBody [data-sub=\"dm\"]", "timeoutMs": 10000 },
+    { "expect": "notExists", "selector": "#commFloatingReactionDock" },
+    { "expect": "notExists", "selector": "#btnFloatingReactFire" },
+    { "expect": "notExists", "selector": "#commProfileBottomSheet" },
+    { "do": "click", "selector": "#commBody [data-sub=\"dm\"]" },
+    { "expect": "hasClass", "selector": "#commBody [data-sub=\"dm\"]", "className": "active", "timeoutMs": 6000 },
+    { "expect": "noExceptions" }
+  ]
+}

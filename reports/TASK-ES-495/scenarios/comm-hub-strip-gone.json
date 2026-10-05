@@ -1,0 +1,21 @@
+{
+  "id": "comm-hub-strip-gone",
+  "title": "게스트로 소통 탭에 들어가면 숨은 옛 허브 격자(#commHubGrid)와 피드 위 숨은 빠른 게시 띠(.comm-quick-strip·#feedQuickPostBtn)는 없고, 보이는 「피드 게시」 단추(#btnCommPostFeed)는 그대로 눌러 게시 창이 열린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "waitFor", "selector": "#commBody [data-sub=\"feed\"]", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#commBody [data-sub=\"feed\"]" },
+    { "do": "waitFor", "selector": "#commSubBody [data-feedtype=\"all\"]", "timeoutMs": 8000 },
+    { "expect": "notExists", "selector": "#commHubGrid" },
+    { "expect": "notExists", "selector": ".comm-quick-strip" },
+    { "expect": "notExists", "selector": "#feedQuickPostBtn" },
+    { "expect": "visible", "selector": "#btnCommPostFeed" },
+    { "do": "click", "selector": "#btnCommPostFeed" },
+    { "expect": "visible", "selector": "#modalOverlay.open, #modalOverlay.show, #modalSheet", "timeoutMs": 6000 },
+    { "expect": "noExceptions" }
+  ]
+}

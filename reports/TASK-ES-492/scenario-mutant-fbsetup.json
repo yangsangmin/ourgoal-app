@@ -1,0 +1,191 @@
+{
+ "scenario": "organ3-fbsetup-open",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 2,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"goals\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"목표\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sAddGoalBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#sAddGoalBtn \"+ 새 목표 만들기\" 165x44px"
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "800ms"
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#modalOverlay → class=\"modal-overlay active\"",
+     "vacuous": false
+    },
+    {
+     "i": 10,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#modalSheet → 보이는 글자: [\"✕ 새 목표 원하시는 바를 줄글 형태로 작성하시면 목표설정 도우미 봇이 마일스톤과 세부 할 일까지 채운 템플릿을 만들어드려요! 예: \\\"유튜브 5\"]",
+     "vacuous": false
+    },
+    {
+     "i": 11,
+     "kind": "expect",
+     "name": "exists",
+     "ok": true,
+     "detail": "#modalSheet .card svg.i → 요소 1개"
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": false,
+   "invalid": false,
+   "errors": [],
+   "failedStep": 9,
+   "failKind": "expect",
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [
+    {
+     "text": "TypeError: L.fbBotBubbleHtml is not a function",
+     "url": "/js/tabs/goals/new-goal-modal.js",
+     "line": 98
+    }
+   ],
+   "nonVacuousExpects": 0,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": ".navbtn[data-tab=\"goals\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"목표\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sAddGoalBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#sAddGoalBtn \"+ 새 목표 만들기\" 165x44px"
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "800ms"
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": false,
+     "detail": "#modalOverlay → class=\"modal-overlay\"",
+     "vacuous": false
+    }
+   ]
+  }
+ }
+}

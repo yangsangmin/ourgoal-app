@@ -1,0 +1,251 @@
+{
+ "task": "TASK-ES-499",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-499-INLINE-ORGAN-4.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "「프로필」 묶음(574줄)을 생성기(설정 inline-organ-4.json, 자리 HO)로 글자 그대로 기관 세포 js/core/profile-topbar.js 로 옮긴다. 키트 OurgoalUiHelpers(새 전역 0), 노출 묶음 원래 자리, 일정 알림 폴러 시작 문은 감싸 원래 자리에서 부른다."
+  },
+  {
+   "id": "R2",
+   "text": "동작 그대로를 측정한다 — verify, 단독 로드, 게스트 시나리오 + 돌연변이, 게스트 조작 비교, 시험, 그리고 기관 1차(#776) tab-check 결과."
+  },
+  {
+   "id": "R3",
+   "text": "세포 등록(modules.json·cell-descriptions.json — 생성 지도 3종 커밋 0), REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 위 막대 알림(종) 단추를 누르면 「알림 센터」 창이 뜨고 예외가 없다 — openNotificationCenterModal(프로필·위 막대 세포)",
+   "touches": [
+    "js/core/profile-topbar.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/organ4-notif-center.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과 ok(토큰·줄·남은 글자 동일, 이중 처리기 0)",
+   "touches": [
+    "reports/TASK-ES-499/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 세포 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-499/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "알림 센터 키트 이름을 지운 돌연변이는 시나리오에서 작업 쪽 실패",
+   "touches": [
+    "reports/TASK-ES-499/scenario-mutant-notif-center.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/scenario-mutant-notif-center.json",
+    "type": "jsonPath",
+    "path": "runs.work.passed",
+    "equals": false
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-499/dom-compare-inline-organ.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/dom-compare-inline-organ.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-499/dom-compare-inline-organ.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/dom-compare-inline-organ.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 종료 코드가 기준과 같다",
+   "touches": [
+    "reports/TASK-ES-499/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/test-compare.json",
+    "type": "jsonPath",
+    "path": "exitCodeDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기관 1차(#776) tab-check 기준 대 후 1,328값 차이 0",
+   "touches": [
+    "reports/TASK-ES-499/tab-check-organ1/tab-compare-base2-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/tab-check-organ1/tab-compare-base2-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기관 1차(#776) tab-check 기준 대 기준 차이 0(본질 변동 0)",
+   "touches": [
+    "reports/TASK-ES-499/tab-check-organ1/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-499/tab-check-organ1/tab-compare-base1-base2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설정: 일정 알림 폴러 시작 문을 감싸 원래 자리에서 부른다",
+   "touches": [
+    "docs/design/harness/module-split/inline-organ-4.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-organ-4.json",
+    "type": "codeContains",
+    "text": "\"wrap\": [\"bindScheduleReminderStart\"]"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 프로필·위 막대 기관 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"core/profile-topbar\""
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "설명 파일에 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"core/profile-topbar\": \"프로필·위 막대\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-499-INLINE-ORGAN-4.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-499-INLINE-ORGAN-4.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-499:"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-499 | INFRA |"
+   }
+  }
+ ]
+}

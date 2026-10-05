@@ -1,0 +1,190 @@
+{
+ "task": "TASK-ES-507",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-507-CROSS-TAB-INLINE-OWNED.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "모듈 가드 ⑤ 측정기(scripts/module-metrics.js crossTabRefs)가 index.html 인라인 스크립트가 window 에 다는 이름을 탭의 전역 정의에서 뺀다. 인라인에 없는 새 전역은 계속 센다."
+  },
+  {
+   "id": "R2",
+   "text": "그 구분을 새 시험지로 고정한다(오탐 0건·진짜 참조 잡힘·index.html 없으면 예전대로·지금 저장소 ⑤ 0). 기존 단언 변경 0, 기준선·생성 지도 커밋 0."
+  },
+  {
+   "id": "R3",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정기가 인라인 주인 이름을 탭 정의에서 뺀다",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "file": "scripts/module-metrics.js",
+    "type": "codeContains",
+    "text": ".filter(s => !inlineOwned.has(s));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "인라인 주인 이름은 index.html 인라인 스크립트에서만 모은다",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "file": "scripts/module-metrics.js",
+    "type": "codeContains",
+    "text": "const t = blankCommentOnlyLines(maskToInlineScripts(readText(indexPath)));"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지가 진짜 탭 간 참조(인라인에 없는 새 전역)를 1건 잡는지 단언한다",
+   "touches": [
+    "tests/cross-tab-inline-owned-es507.test.js"
+   ],
+   "check": {
+    "file": "tests/cross-tab-inline-owned-es507.test.js",
+    "type": "codeContains",
+    "text": "assert.ok(/openCommThing/.test(hits[0].text));"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "고친 뒤 새 시험지 통과(종료 코드 0)",
+   "touches": [
+    "reports/TASK-ES-507/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-507/metric-check.json",
+    "type": "jsonPath",
+    "path": "testAfterExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "고치기 전 측정기로는 새 시험지가 실패(종료 코드 1)",
+   "touches": [
+    "reports/TASK-ES-507/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-507/metric-check.json",
+    "type": "jsonPath",
+    "path": "testBeforeExit",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지금 저장소 ⑤ 탭 간 직접 참조 0",
+   "touches": [
+    "reports/TASK-ES-507/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-507/metric-check.json",
+    "type": "jsonPath",
+    "path": "crossTabRefsMainNow",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정기의 다른 출력은 고치기 전과 같다",
+   "touches": [
+    "reports/TASK-ES-507/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-507/metric-check.json",
+    "type": "jsonPath",
+    "path": "metricsOtherFieldsSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "#TASK-ES-502 시험지가 그대로 통과한다",
+   "touches": [
+    "reports/TASK-ES-507/metric-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-507/metric-check.json",
+    "type": "jsonPath",
+    "path": "es502TestStillPasses",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-507-CROSS-TAB-INLINE-OWNED.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-507-CROSS-TAB-INLINE-OWNED.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-507:"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-507 | INFRA |"
+   }
+  }
+ ]
+}

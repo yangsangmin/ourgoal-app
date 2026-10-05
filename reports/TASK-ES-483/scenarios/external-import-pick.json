@@ -1,0 +1,53 @@
+{
+ "id": "external-import-pick",
+ "title": "게스트로 홈 체크인의 「외부 기록 불러오기」 단추를 누르면 「외부 데이터 불러오기」 샘플 목록 창이 뜨고, 「10km 러닝 43분 페이스 달성」 줄을 누르면 창이 닫히며 「Strava 데이터를 불러왔어요」 토스트가 뜬다 — 옮긴 처리기(bindImportExternalBtn, js/tabs/records/external-import.js)가 index.html 원래 자리에서 걸려 이전 전과 같이 돈다",
+ "steps": [
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#captureInput",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#importExternalBtn"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay",
+   "text": "외부 데이터 불러오기"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay",
+   "text": "지금은 샘플 데이터예요"
+  },
+  {
+   "do": "click",
+   "selector": "#modalOverlay [data-ext=\"x1\"]"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "Strava 데이터를 불러왔어요"
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#modalOverlay [data-ext=\"x1\"]"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

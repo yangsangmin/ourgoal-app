@@ -1,0 +1,67 @@
+{
+  "id": "records-weekly-recap-open",
+  "title": "게스트로 기록 탭 미니 성취 펄스 막대(등록 문 bindRecPulseBar → 성취 통계)에서 위클리 리캡 「만들기」를 누르면 「한 주 동안 차분히 쌓아올린 발자국이에요」 리캡 창이 열리고(「🎨 카드 공유」 단추), 위 「×」를 누르면 닫힌다 — 리캡 창(openWeeklyRecapModal·findBestMoment)과 단추 등록 문을 기록 세포 파일 js/tabs/records/weekly-recap.js 로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recMiniPulseBar",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#recMiniPulseBar"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#weeklyRecapBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#weeklyRecapBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#btnRecapOpenCanvas",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "한 주 동안 차분히 쌓아올린 발자국이에요"
+    },
+    {
+      "do": "click",
+      "selector": "#btnRecapTopClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnRecapOpenCanvas",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

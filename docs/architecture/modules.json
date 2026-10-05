@@ -1339,6 +1339,36 @@
       ]
     },
     {
+      "id": "core/profile-topbar",
+      "file": "js/core/profile-topbar.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 아바타 글자(avatarHtml)·프로필 카드(renderProfileCard)·프로필 편집 창(openProfileEditor)·사진 줄이기(resizeImageToDataUrl)·위 막대(updateTopBar)·알림 배지(updateTopNotifBadge)·알림 센터 창(openNotificationCenterModal)·일정 알림 폴러(startScheduleReminderPoller, 시작 문은 bindScheduleReminderStart 로 감싸 index.html 원래 자리에서 부름). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-499)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalAvatar",
+        "OurgoalComm",
+        "OurgoalNotifyEngine",
+        "triggerHaptic"
+      ]
+    },
+    {
       "id": "core/registry-init",
       "file": "js/core/registry-init.js",
       "layer": "core",
@@ -4094,13 +4124,13 @@
       ]
     },
     {
-      "id": "comm/challenge-room",
-      "file": "js/tabs/comm/challenge-room.js",
+      "id": "comm/cheer-notify",
+      "file": "js/tabs/comm/cheer-notify.js",
       "layer": "tabs",
       "tab": "comm",
       "size": "small",
       "kind": "tab",
-      "role": "OurGoal Challenge Room (소통 탭 — 소규모 챌린지 룸 창)",
+      "role": "받은 응원 알림 띠 — 앱에 들어올 때 내 피드 글 응원 수·마니또 받은 응원 수를 지난번 본 수와 비교해 새 것이 있으면 홈에 「응원이 도착했어요」 띠를 그린다(checkSocialNotifications·showSocialNotifyBanner·totalFeedCheers). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-432)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -4503,6 +4533,32 @@
       ]
     },
     {
+      "id": "comm/shared-groups",
+      "file": "js/tabs/comm/shared-groups.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "공유 팀 불러오기(loadSharedGroups)·팀 목록(renderCommGroups)·팀 상세(renderGroupDetail)·함께 게이지(collectiveGaugeHtml)·새 팀 만들기 창(promptNewGroup). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-474)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "comm/story-canvas",
       "file": "js/tabs/comm/story-canvas.js",
       "layer": "tabs",
@@ -4761,6 +4817,32 @@
       ]
     },
     {
+      "id": "goals/attachments",
+      "file": "js/tabs/goals/attachments.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "참고자료 첨부 창(openAddAttachmentModal)·보기 창(openAttachmentViewer)·첨부 칩·목표 도우미 결과 반영(applyGoalAgentOp·buildGoalFromAgentData). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-483)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "goals/focus-autopilot",
       "file": "js/tabs/goals/focus-autopilot.js",
       "layer": "tabs",
@@ -4884,6 +4966,32 @@
       "size": "small",
       "kind": "tab",
       "role": "OurGoal Goal Math (목표 탭 — 진행률·마일스톤 수·결과 달성률 계산)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "goals/goal-update-suggest",
+      "file": "js/tabs/goals/goal-update-suggest.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "기록 기반 목표·마일스톤·할 일 자동 업데이트 제안 창(maybeShowGoalUpdateModal)·제안 거르기·설명·반영(sanitizeSuggestions·findSuggestionTarget·describeSuggestion·applySuggestion). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-483)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -5380,6 +5488,41 @@
       ]
     },
     {
+      "id": "goals/team-goals-screen",
+      "file": "js/tabs/goals/team-goals-screen.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "목표 탭 「팀목표」 하위 탭 화면(renderTeamGoalsScreen) — 빈 안내 또는 팀 필터·팀 목표 카드·마일스톤·할 일·댓글 배선. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-497)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [
+        "팀장"
+      ],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalGoalEditUX",
+        "OurgoalTeamInviteComm",
+        "OurgoalTeamLeaderCheck",
+        "OurgoalTeamLinkedGoals",
+        "OurgoalTeamVisibilityLevels",
+        "SHARED_GROUPS_LOADED",
+        "sb"
+      ]
+    },
+    {
       "id": "goals/team-state",
       "file": "js/tabs/goals/team-state.js",
       "layer": "tabs",
@@ -5761,6 +5904,33 @@
       ]
     },
     {
+      "id": "records/checkin-feedback",
+      "file": "js/tabs/records/checkin-feedback.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "기록 — 판정 색(verdictClass)·홈/기록 피드백 칸(renderFeedbackSlot·renderRecordFeedbackSlot)·체크인 피드백 창(showCheckinFeedbackSheet·closeCheckinFeedbackSheet)·피드 바로 공유(instantShareCheckinToFeed)·아바타(getUserAvatarHtml)·「n분 전」(timeAgoStr). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-492)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalAvatar"
+      ]
+    },
+    {
       "id": "records/checkin-helpers",
       "file": "js/tabs/records/checkin-helpers.js",
       "layer": "tabs",
@@ -5784,6 +5954,59 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "records/export-theme",
+      "file": "js/tabs/records/export-theme.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "캘린더 서명 토큰(fetchSignedCalendarToken)·구독 URL·iCalendar·마크다운 순수 함수(buildWebCalUrl·buildICS·buildMarkdownExport)·테마별 내보내기 창(openExportThemeModal·exportAllCheckins). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-474)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "records/external-import",
+      "file": "js/tabs/records/external-import.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "「외부 기록 불러오기」 처리기(샘플 EXTERNAL_DATA 목록 창·대량 가져오기 창)·홈 구성 열기(openHomeCustomizer)·개인 목표 활용 가이드 단추 처리기. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-483)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalCustomize"
       ]
     },
     {
@@ -6340,6 +6563,32 @@
       ]
     },
     {
+      "id": "records/weekly-recap",
+      "file": "js/tabs/records/weekly-recap.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "주간 집계(weeklyRecapStats)·리캡 카드 그림(fitBigFont·generateWeeklyRecapImage)·최고의 순간(findBestMoment)·리캡 창(openWeeklyRecapModal·openLegacyRecapCanvasModal)·기록 추가 창(openRecordModal)·기록 탭 로드 중 등록 문 5개(bindRec*). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-474)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "settings/account-entry",
       "file": "js/tabs/settings/account-entry.js",
       "layer": "tabs",
@@ -6577,6 +6826,32 @@
       "dependsOn": [
         "OurgoalAppScope",
         "OurgoalDirectLoginGuard"
+      ]
+    },
+    {
+      "id": "settings/feedback-bot-setup",
+      "file": "js/tabs/settings/feedback-bot-setup.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "설정 탭 — 맞춤 피드백 봇 설정 창(openFeedbackSetup·openFeedbackSetupGated·closeFeedbackSetup·renderFeedbackSetup)·프리셋(getSavedFeedbackPresets·persistFeedbackPresets)·맞춤 프롬프트(generateCustomFeedbackPrompt)·말풍선(fbBotBubbleHtml). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-492)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {

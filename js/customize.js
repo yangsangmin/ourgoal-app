@@ -16,7 +16,6 @@
     { id: 'captureCardBox',       label: '오늘 기록하기',            hint: '1줄 체크인 입력창 (상단 고정)', fixed: true },
     { id: 'todayGlancePill',      label: '오늘 몰입 요약',          hint: '오늘 상태 한 줄' },
     { id: 'todayMissionCard',     label: '오늘의 카드',             hint: '뭘 할지 모르겠을 때 도움돼요(내 목표기반)' },
-    { id: 'homeGrassSummaryCard', label: '최근 히트맵 요약',        hint: '최근 2주간의 기록 한눈에' },
     { id: 'customFeedbackBtn',    label: '맞춤 피드백 설정 버튼',   hint: 'AI 피드백 말투 설정 버튼' },
     { id: 'dailyQuestBarWrap',    label: '오늘의 3대 퀘스트',       hint: '체크인·할일·몰입 퀘스트 및 EXP 보상 카드' },
     { id: 'homeChallengeRoomBtn', label: '내 성장 확인하기 버튼',   hint: '기록 탭으로 바로 이동하는 버튼' },
@@ -70,7 +69,7 @@
   }
 
   /* 기존 '포커스 미니멀' 모드 CSS가 숨기던 항목 — 저장값이 없을 때 이관 기준 (REQ-D3) */
-  var MINIMAL_HIDDEN = ['homeGrassSummaryCard', 'customFeedbackBtn', 'homeChallengeRoomBtn'];
+  var MINIMAL_HIDDEN = ['customFeedbackBtn', 'homeChallengeRoomBtn'];
   var UX_MODE_KEY = 'ourgoal_ux_mode';
   var CUSTOM_MODE = 'custom';
   var PREV_ATTR = 'data-kf1-prev-display';

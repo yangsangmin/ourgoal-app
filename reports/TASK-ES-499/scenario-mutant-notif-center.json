@@ -1,0 +1,150 @@
+{
+ "scenario": "organ4-notif-center",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 2,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sanctuaryBellBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#sanctuaryBellBtn \"\" 44x44px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "800ms"
+    },
+    {
+     "i": 7,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": true,
+     "detail": "#modalOverlay → class=\"modal-overlay active\"",
+     "vacuous": false
+    },
+    {
+     "i": 8,
+     "kind": "expect",
+     "name": "textContains",
+     "ok": true,
+     "detail": "#modalSheet → 보이는 글자: [\"✕ 🔔 알림 센터 🔔 도착한 알림이 없습니다 새로운 1:1 DM이나 팀 소식, 응원이 오면 여기에 표시돼요. 닫기 알림 설정 ⚙️\"]",
+     "vacuous": false
+    },
+    {
+     "i": 9,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": false,
+   "invalid": false,
+   "errors": [],
+   "failedStep": 7,
+   "failKind": "expect",
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 0,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#sanctuaryBellBtn → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#sanctuaryBellBtn \"\" 44x44px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "800ms"
+    },
+    {
+     "i": 7,
+     "kind": "expect",
+     "name": "hasClass",
+     "ok": false,
+     "detail": "#modalOverlay → class=\"modal-overlay\"",
+     "vacuous": false
+    }
+   ]
+  }
+ }
+}

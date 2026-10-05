@@ -1647,8 +1647,8 @@ check('compliance: 가상 페르소나 40인 및 유저 피드백 TOP 10 핵심 
 
   // P8 & P17. 소규모 챌린지 룸 및 동료 페이스메이커
   assert.ok(html.includes('id="homeChallengeRoomBtn"'), '소규모 챌린지 룸 버튼 마크업 존재');
-  assert.ok(html.includes('openChallengeRoomModal'), '소규모 챌린지 룸 모달 함수 존재');
-  assert.ok(html.includes('정지호') && html.includes('김도윤') && html.includes('이지민'), '페이스메이커 페르소나 데이터 존재');
+  assert.ok(!html.includes('openChallengeRoomModal'), '소규모 챌린지 룸 모달 함수 소멸(#TASK-ES-495 상민님 승인 — 부르는 곳 0인 세포)');
+  assert.ok(!html.includes('정지호') && !html.includes('김도윤'), '챌린지 룸 가상 페이스메이커 데이터 소멸(#TASK-ES-495)');
 
   // P10. 시인성 강화 (고대비 모드 및 4단계 폰트)
   assert.ok(html.includes('id="highContrastSwitch"'), '고대비 모드 스위치 마크업 존재');
@@ -1728,7 +1728,7 @@ check('compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사
   assert.ok(html.includes('mz-card-preview'), 'MZ 카드 프리뷰 클래스');
 
   // 6. 200 페르소나 챌린지 룸 확장
-  assert.ok(html.includes('윤다은') && html.includes('송하준') && html.includes('서예진'), '200 페르소나 다양성 챌린지 룸');
+  assert.ok(!html.includes('윤다은') && !html.includes('송하준') && !html.includes('서예진'), '200 페르소나 챌린지 룸 목록 소멸(#TASK-ES-495)');
 });
 
 check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무제한 목표, AI 코치, 30일 리포트)이 100% 무료로 제공된다', () => {
@@ -4750,7 +4750,7 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
 
   // 3. 소통 탭 게시하기 버튼 정상 동작
   assert.ok(indexHtml.includes('id="btnCommPostFeed"'), '소통 탭 헤더 게시하기 버튼 탑재');
-  assert.ok(indexHtml.includes('id="feedQuickPostBtn"'), '소통 피드 안내창 게시하기 버튼 탑재');
+  assert.ok(!indexHtml.includes('id="feedQuickPostBtn"') && indexHtml.includes('id="btnCommPostFeed"'), '숨은 피드 게시하기 버튼 제거·보이는 #btnCommPostFeed 유지(#TASK-ES-495)');
   assert.ok(indexHtml.includes('window.openShareToFeedModal = openShareToFeedModal;'), 'openShareToFeedModal 전역 노출 검증');
 
   // 4. DM창 상단 같은 모임원 원클릭 DM 발송 바
@@ -6642,8 +6642,8 @@ check('compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI �
   assert.ok(indexSrc.includes('id="dmSubtabBadge"'), 'DM 미확인 레드 닷 뱃지 #dmSubtabBadge 보존');
 
   // 2. 피드 상단 1줄 컴팩트 툴바 및 퀵게시 버튼 보존 검증
-  assert.ok(indexSrc.includes('comm-quick-strip'), '피드 상단 comm-quick-strip 슬림 툴바 적용');
-  assert.ok(indexSrc.includes('id="feedQuickPostBtn"'), '퀵게시 버튼 #feedQuickPostBtn 엘리먼트 보존');
+  assert.ok(!indexSrc.includes('comm-quick-strip'), '숨은 피드 상단 comm-quick-strip 띠 제거(#TASK-ES-495)');
+  assert.ok(!indexSrc.includes('id="feedQuickPostBtn"'), '숨은 퀵게시 버튼 #feedQuickPostBtn 제거(#TASK-ES-495)');
 
   // 3. 소통 퀵 필터 칩 (전체 / 내 소통 / 사진인증만) 바인딩 검증
   assert.ok(indexSrc.includes('comm-feed-type-bar'), '소통 피드 타입 필터 바 탑재');
@@ -6851,8 +6851,8 @@ check('compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·
   // 3. 실제 UI와 1:1 라벨/힌트 정합화 확인
   assert.ok(customSrc.includes("label: '내 성장 확인하기 버튼'"), "homeChallengeRoomBtn 라벨이 '내 성장 확인하기 버튼'으로 일치");
   assert.ok(customSrc.includes("hint: '기록 탭으로 바로 이동하는 버튼'"), "homeChallengeRoomBtn 힌트가 '기록 탭으로 바로 이동하는 버튼'으로 일치");
-  assert.ok(customSrc.includes("label: '최근 히트맵 요약'"), "homeGrassSummaryCard 라벨이 '최근 히트맵 요약'으로 일치");
-  assert.ok(customSrc.includes("hint: '최근 2주간의 기록 한눈에'"), "homeGrassSummaryCard 힌트가 '최근 2주간의 기록 한눈에'로 일치");
+  assert.ok(!customSrc.includes("label: '최근 히트맵 요약'"), '홈 구성에서 「최근 히트맵 요약」 스위치 제거(#TASK-ES-495)');
+  assert.ok(!customSrc.includes("hint: '최근 2주간의 기록 한눈에'"), '「최근 히트맵 요약」 스위치 힌트 제거(#TASK-ES-495)');
   assert.ok(customSrc.includes("label: '오늘의 3대 퀘스트'"), "dailyQuestBarWrap 라벨이 '오늘의 3대 퀘스트'로 일치");
 
   // 4. ui.css 레거시 정리 및 .switch.locked 스타일 확인

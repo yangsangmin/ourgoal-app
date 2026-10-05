@@ -15,7 +15,6 @@ const expectedWidgetIds = [
   'levelBadgeRow',
   'todayGlancePill',
   'todayMissionCard',
-  'homeGrassSummaryCard',
   'captureCardBox',
   'customFeedbackBtn',
   'dailyQuestBarWrap',
