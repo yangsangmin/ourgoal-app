@@ -1,0 +1,355 @@
+{
+ "task": "TASK-ES-483",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 H1 어려움 세 묶음(기록 기반 자동 업데이트 제안·외부 데이터 불러오기(mock)·참고자료)을 #762 생성기로 세포 3개에 글자 그대로 옮긴다 — 이름 참조만 L. 접두, 기존 탭 키트 사용(새 전역 0), window 노출·상태 변수 원래 자리, 4줄 이상 로드 중 문은 bind 함수로 감싸 원래 자리에서 부름, 자리 표지 H1 아래."
+  },
+  {
+   "id": "R2",
+   "text": "생성기에 설정 표시 headerPick: nonEmpty 를 더한다 — 같은 글자의 구획 주석이 여럿이면 최상위 문을 담은 것 하나만 고르고, 표시가 없으면 이전과 같이 멈춘다."
+  },
+  {
+   "id": "R3",
+   "text": "체크인 뒤 「진행 상황이 바뀐 것 같아요」 제안 창과 「선택 반영하기」가 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다."
+  },
+  {
+   "id": "R4",
+   "text": "「외부 기록 불러오기」 샘플 목록 창과 줄 고르기가 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 돈다(샘플 데이터는 고치지 않음)."
+  },
+  {
+   "id": "R5",
+   "text": "일정 편집 창의 참고자료 첨부 창이 옮긴 뒤에도 게스트 화면에서 이전 전과 같이 뜬다."
+  },
+  {
+   "id": "R6",
+   "text": "동작 그대로를 측정한다 — 단독 로드 회귀 0, 시험 회귀 0, 게스트 조작 DOM 비교 차이 0."
+  },
+  {
+   "id": "R7",
+   "text": "세포 등록(modules.json·cell-descriptions.json)과 문서(REQ 8원칙 — 진입로 못 찾은 템플릿 백과사전 묶음·숨은 레벨 배지의 실측 근거 포함, dev_log·TICKETS 각 1줄)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 함수·감싼 문 토큰 동일·덩어리 줄 동일·남은 글자 동일·누수 0·미노출 0·setter 빠짐 0·이중 처리기 0 검사가 ok",
+   "touches": [
+    "reports/TASK-ES-483/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이전 전 index.html IIFE 의 남은 문이 글자 그대로 같은 순서로 남았다(남은 글자 동일)",
+   "touches": [
+    "reports/TASK-ES-483/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "처리기 등록 수가 이전 전과 같다",
+   "touches": [
+    "reports/TASK-ES-483/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정은 세 묶음을 자리 표지 H1 아래에 넣는다",
+   "touches": [
+    "docs/design/harness/module-split/inline-hard-h1-483.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-hard-h1-483.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "H1"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기는 headerPick 이 nonEmpty 일 때만 최상위 문을 담은 구획 주석으로 좁힌다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "type": "codeContains",
+    "text": "if (hs.length > 1 && pick === 'nonEmpty') {"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "「참고자료」 설정이 headerPick nonEmpty 를 쓴다",
+   "touches": [
+    "docs/design/harness/module-split/inline-hard-h1-483.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-hard-h1-483.json",
+    "type": "codeContains",
+    "text": "\"headerPick\": \"nonEmpty\""
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트가 운동 목표(마일스톤 자동 채움)를 만들고 첫 체크인 뒤 「주 3회 루틴 만들기 완료했어요」를 남기면 「진행 상황이 바뀐 것 같아요」 창이 「마일스톤 \"주 3회 루틴 만들기\" → 완료로 변경」을 담아 뜨고, 「선택 반영하기」를 누르면 「1개 항목을 목표에 반영했어요」 토스트가 뜬다 — 옮긴 maybeShowGoalUpdateModal·sanitizeSuggestions·describeSuggestion·applySuggestion",
+   "touches": [
+    "js/tabs/goals/goal-update-suggest.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goal-update-suggest-apply.json"
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 「외부 기록 불러오기」를 누르면 「외부 데이터 불러오기」 창이 「지금은 샘플 데이터예요」 안내와 함께 뜨고, 「10km 러닝」 줄을 누르면 창이 닫히며 「Strava 데이터를 불러왔어요」 토스트가 뜬다 — 옮긴 bindImportExternalBtn",
+   "touches": [
+    "js/tabs/records/external-import.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/external-import-pick.json"
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭 오늘 칸 → 허브 → 새 일정 추가 → 참고자료 첨부 단추를 누르면 「참고자료 첨부」 창이 제목 입력칸과 함께 뜬다 — 옮긴 openAddAttachmentModal",
+   "touches": [
+    "js/tabs/goals/attachments.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/attachment-add-modal.json"
+  },
+  {
+   "id": "C10",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침(로컬) 회귀 0",
+   "touches": [
+    "reports/TASK-ES-483/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 3개를 단독으로 실으면 오류 없이 기존 탭 키트 하나씩만 등록한다",
+   "touches": [
+    "reports/TASK-ES-483/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "newFilesAllOkOnlyExistingKits",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준에서 통과하고 작업에서 실패하는 시험 0(회귀 0)",
+   "touches": [
+    "reports/TASK-ES-483/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/test-compare.json",
+    "type": "jsonPath",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 DOM 비교(14단계, 기준 대 작업) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-483/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/dom-compare.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 기준 앱 2회 게스트 조작 비교 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-483/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/dom-compare.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 형식 시나리오 3개를 로컬 법정 실행기로 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-483/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-483/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 참고자료 첨부가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"file\": \"js/tabs/goals/attachments.js\","
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 목표 자동 업데이트 제안 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"goals/goal-update-suggest\": \"목표 자동 업데이트 제안\""
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 템플릿 백과사전 묶음 게스트 진입로 실측 근거가 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md",
+    "type": "codeContains",
+    "text": "**「[#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업」 묶음 — 게스트 진입로 없음(옮기지 않음)**"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 숨은 레벨 배지 근거(ui.css 줄)가 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md",
+    "type": "codeContains",
+    "text": "`ui.css` 5529~5532줄이 네 테마"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-483: 인라인 어려움 구역 H1 3차"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-483 | INFRA | [인라인 어려움 구역 H1 3차]"
+   }
+  }
+ ]
+}

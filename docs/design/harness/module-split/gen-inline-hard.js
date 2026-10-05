@@ -51,8 +51,13 @@ const smokeReadsCell = file => smokeUsesBundle && (file.startsWith('js/tabs/') |
 const isHeader = c => c.type === 'CommentBlock' && /^\s*=+/.test(c.value);
 const headers = [];
 for (const st of top) for (const c of (st.node.leadingComments || [])) if (isHeader(c)) headers.push({ line: c.loc.start.line + off, endLine: c.loc.end.line + off, text: c.value, stmt: st });
-const groupRange = title => {
-  const hs = headers.filter(h => h.text.includes(title));
+const groupRange = (title, pick) => {
+  let hs = headers.filter(h => h.text.includes(title));
+  // [#TASK-ES-483] 설정 take.headerPick: 'nonEmpty' — 같은 글자의 구획 주석이 여럿이면(예: 「참고자료」 구획 주석이 두 줄 연달아) 최상위 문을 담은 것 하나만 고른다. 표시가 없으면 이전과 같이 멈춘다.
+  if (hs.length > 1 && pick === 'nonEmpty') {
+    const endOf = h => { const i = headers.indexOf(h); return i + 1 < headers.length ? headers[i + 1].line - 1 : eLine; };
+    hs = hs.filter(h => top.some(st => H(st.node) >= h.line && HE(st.node) <= endOf(h)));
+  }
   if (hs.length !== 1) fail('구획 주석이 ' + hs.length + '개: ' + title);
   const i = headers.indexOf(hs[0]);
   return { start: hs[0].line, hEnd: hs[0].endLine, end: i + 1 < headers.length ? headers[i + 1].line - 1 : eLine };
@@ -99,7 +104,7 @@ const cellByKey =Object.fromEntries(CFG.cells.map(c => [c.key, c]));
 const plan = []; // { cell, action: move|wrap|keep, st, start, end, segStart, names, wrapName, why }
 for (const c of CFG.cells) {
   for (const t of c.take) {
-    const r = groupRange(t.group);
+    const r = groupRange(t.group, t.headerPick);
     const sts = top.filter(s => H(s.node) >= r.start && HE(s.node) <= r.end);
     let wrapK = 0;
     sts.forEach((st, k) => {

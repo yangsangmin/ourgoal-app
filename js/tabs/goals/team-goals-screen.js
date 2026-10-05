@@ -4,7 +4,7 @@
  * 목표 탭 「팀목표」 하위 탭 화면(renderTeamGoalsScreen) — 팀이 없으면 팀 만들기 빈 안내를, 팀이 있으면 팀 필터 칩·팀 목표 카드·마일스톤·할 일·댓글·수준별 목표 진입을 그리고 배선한다.
  * js/tabs/goals/render.js 와 다른 파일이 window·L 이름으로 부른다 — window 노출 줄은 index.html 원래 자리에 그대로 있다. 일괄 접기(collapseAllTeamGoalAccordions)는 시험지가 원래 자리 노출 줄까지 잘라 읽어 원래 자리에 남겼다.
  * 게스트(팀 0개)로 잴 수 있는 것은 빈 안내 분기뿐이다 — 팀이 있는 분기는 실계정 팀 소속이 있어야 잰다.
- * #TASK-ES-497(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 12300~13071줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-497(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 10571~11342줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,7 +16,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 12300~13071줄(#TASK-ES-497 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 10571~11342줄(#TASK-ES-497 생성기 표지) ---- */
 
   function renderTeamGoalsScreen(){
     if(typeof L.loadSharedGroups === 'function' && !window.SHARED_GROUPS_LOADED){
