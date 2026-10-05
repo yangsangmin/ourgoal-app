@@ -591,3 +591,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-507 | INFRA | [모듈 가드 ⑤ 측정기 오탐 2] index.html 인라인이 window 에 다는 이름(인라인 공용 상태)을 탭의 전역 정의에서 뺌 + 시험지(오탐 0·진짜 참조 잡힘·지금 ⑤ 0) — 기준선·제품 코드 0 | 코디네이터 [기본값] ② 방침 (2026-10-05), REQ docs/specs/REQ-TASK-ES-507-CROSS-TAB-INLINE-OWNED.md | 4단계(심사 청구)
 - #TASK-ES-509 | INFRA | [감사 하네스 접힌 details 오탐 제거] tab-states clickReal·VISIBLE_FN·audit vis — 오탐 0·진짜 가림 검출 유지, 법정 vis 는 금고라 보고 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-509-HARNESS-CLOSED-DETAILS.md
 - #TASK-ES-497 | INFRA | [인라인 어려움 구역 H2 3차] 목표 탭 「팀목표」 하위 탭 화면(renderTeamGoalsScreen)을 js/tabs/goals/team-goals-screen.js 로 동작 그대로 이전(일괄 접기·수준별 목표·편집 창은 남김) | 코디네이터 배정 구역 H2 (2026-10-05), REQ docs/specs/REQ-TASK-ES-497-INLINE-H2-3.md | 4단계(심사 청구)
+- #TASK-ES-510 | INFRA | [헌법 개정 v2026.10.06-SNOWBALL] 작업참고 스노우볼 — 매 작업 전 최신 작업참고 읽기·유형 분류(표준/이탈/탐색)·불변층·PR 병합마다 경험칙 갱신. 상민님 「헌법 개정 승인」(2026-10-06), 병합은 상민님 | 심사 청구
