@@ -216,7 +216,7 @@ function ttRecord(id, startIso) {
   });
 
   await check('배선: index.html 이 모듈을 싣고 저장·복원·병합에 쓴다(전체 교체 코드 없음)', async function () {
-    var html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')); // #TASK-ES-465: 인라인 합본 — 단언 그대로
     assert.ok(html.indexOf('<script src="js/record-ledger.js') !== -1, '스크립트 태그');
     assert.ok(html.indexOf('window.OurgoalRecordLedger.upsertCheckinRows(sb, recRows)') !== -1, 'saveProfile 저장');
     assert.ok(html.indexOf('window.OurgoalRecordLedger.applyRecordMeta(rec, r.meta)') !== -1, 'loadProfile 복원');
