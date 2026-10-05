@@ -20,8 +20,8 @@ function serve(dir) {
     res.writeHead(200, { 'Content-Type': MIME[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     fs.createReadStream(f).pipe(res);
   });
-  const port = 5500 + Math.floor(Math.random() * 400);
-  return new Promise(r => s.listen(port, () => r({ s, base: 'http://127.0.0.1:' + port })));
+  // 빈 포트를 운영체제가 고른다(같은 PC 에서 다른 측정이 돌아도 포트가 부딪치지 않게)
+  return new Promise(r => s.listen(0, '127.0.0.1', () => r({ s, base: 'http://127.0.0.1:' + s.address().port })));
 }
 const click = sel => ({ evalFn: '(function(){ var el = document.querySelector(' + JSON.stringify(sel) + '); if(!el) return "missing"; el.click(); return "clicked:" + (el.textContent||"").trim().slice(0,12); })()' });
 const clickIn = sel => ({ evalFn: '(function(){ var root = document.querySelector("#modalOverlay"); var el = root && root.querySelector(' + JSON.stringify(sel) + '); if(!el) return "missing"; el.click(); return "clicked:" + (el.textContent||"").trim().slice(0,12) + "|" + JSON.stringify(el.dataset); })()' });
@@ -46,6 +46,7 @@ const VOL = x => x == null ? x : String(x).replace(/data:image\/png;base64,[A-Za
   .replace(/\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z/g, '<iso>').replace(/\b1[789]\d{11}\b/g, '<ms>')
   .replace(/(\W)seed(\W*):\d+/g, '$1seed$2:<rnd>').replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g, '<uuid>')
   .replace(/\b(ms|t|task|g|goal|fc|qr|c)_[a-z0-9]{8,}/g, '$1_<uid>')
+  .replace(/(cacheSizeText\\*"[^>]*>)약 [\d.]+ ?[KMG]?B/g, '$1약 <size>') // 브라우저 저장소 추정치(navigator.storage.estimate — 실행마다 다름)
   .replace(/\d{4}-\d\d-\d\dT\d\d:\d\d(?![:\d])/g, '<dtl>').replace(/(lsSim(?:StatusTime|ClockTime)\\*"[^>]*>)\d{1,2}:\d\d/g, '$1<hh:mm>').replace(/127\.0\.0\.1:\d+/g, '127.0.0.1:<port>').replace(/(rec-time\\*"?>)\d{1,2}:\d\d/g, '$1<hh:mm>').replace(/>\d{1,2}:\d\d<\/span>/g, '><hh:mm></span>').replace(/(mnPreviewName\\*"?>)[^<]+/g, '$1<anon>');
 function sortKeys(x) { if (Array.isArray(x)) return x.map(sortKeys); if (x && typeof x === 'object') { const o = {}; for (const k of Object.keys(x).sort()) o[k] = sortKeys(x[k]); return o; } return x; }
 function normLs(ls) {
