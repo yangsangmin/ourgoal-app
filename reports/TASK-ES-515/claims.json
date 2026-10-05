@@ -494,17 +494,13 @@
    "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 숨겨 두던 상단바 홈구성·홈 머리 「나만의 홈 구성」 단추를 지웠다(숨김 대신 삭제). 「topHomeLayoutBtn 숨김 있음」「#btnCustomHomeLayout 있음」「ui.css #topHomeLayoutBtn 규칙 있음」을 「없음」으로 바꿨다(og-task-31 카드·handle홈_Item31Action 단언은 그대로)."
   },
   {
-   "file": "tests/remove-duplicate-home-layout-button.test.js",
-   "check": "btnCustomHomeLayout must exist in index.html",
-   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 숨은 홈 머리 단추를 지워 「있음」 단언을 「없음」으로 바꿨다."
-  },
-  {
-   "file": "tests/remove-duplicate-home-layout-button.test.js",
-   "check": "#topHomeLayoutBtn rule must exist in ui.css",
-   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 지운 요소의 숨김 규칙을 함께 지워 「있음」 단언을 「없음」으로 바꿨다."
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-282] 전 탭 상위 중복 \\'홈구성\\' 버튼 제거 및 \\'나만의 홈 구성\\' 단일화",
+   "reason": "R6 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — (같은 검사의 소스 표기 제목, 따옴표 이스케이프 포함) 숨겨 두던 상단바 홈구성·홈 머리 「나만의 홈 구성」 단추를 지웠다. 「topHomeLayoutBtn 숨김 있음」「#btnCustomHomeLayout 있음」「ui.css #topHomeLayoutBtn 규칙 있음」 단언 3줄을 「없음」으로 바꿨다."
   }
  ],
  "outOfScopeReports": [
+  "tests/remove-duplicate-home-layout-button.test.js 의 단언 2개(btnCustomHomeLayout 있음·ui.css #topHomeLayoutBtn 있음)를 「없음」으로 바꿨다 — 법정이 돌리지 않는 시험지라 retire 대신 주장 C26 으로 적는다(근거: 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달))",
   "가입 양식 #signupForm·#signupSubmit 은 남겼다 — 인증 화면 「회원가입」 탭 단추([data-authtab=\"signup\"])가 style=\"display:none;\" 이라 이 PR 뒤 보이는 진입로 0(삭제는 이번 승인 범위 밖, 결심 후보)",
   "tests/remove-duplicate-home-layout-button.test.js 의 비동기 부분은 기준·작업 모두 「renderCalendar must be called」로 실패(기존 결함, 정적 단언은 통과) — 이 PR 에서 고치지 않음"
  ]
