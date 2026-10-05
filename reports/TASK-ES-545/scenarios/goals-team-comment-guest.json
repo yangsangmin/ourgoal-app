@@ -1,0 +1,28 @@
+{
+ "id": "goals-team-comment-guest",
+ "title": "게스트로 소통 「팀」에서 예시 팀(2026 하반기 전략 워크숍 TF)을 체험 참여한 뒤 목표 「팀목표」에서 팀 목표 전체 대화를 열면 「댓글 0개」 입력 블록이 보이고, 댓글을 적어 등록하면 그 댓글이 목록에 그려진다 — 옮긴 teamCommentsBlockHtml·teamComments·teamCommentItemHtml·ensureTeamCommentsLoaded·canManageTeamGoals(js/tabs/goals/team-comments.js)가 이전 전과 같이 동작한다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 15000 },
+  { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+  { "do": "waitFor", "selector": "#commBody [data-sub=\"group\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#commBody [data-sub=\"group\"]" },
+  { "do": "waitFor", "selector": "[data-join=\"g-workshop\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "[data-join=\"g-workshop\"]" },
+  { "expect": "textContains", "selector": "#toast", "text": "참여했어요" },
+  { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+  { "do": "waitFor", "selector": "#btnGoalsSubTeam", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#btnGoalsSubTeam" },
+  { "do": "waitFor", "selector": "[data-tgtogglegoalcomments=\"g-workshop:tg-ws-1\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": "[data-tgtogglegoalcomments=\"g-workshop:tg-ws-1\"]" },
+  { "expect": "visible", "selector": "[data-tggoalcommentsbox=\"g-workshop:tg-ws-1\"] .team-comments-block" },
+  { "expect": "textContains", "selector": "[data-tggoalcommentsbox=\"g-workshop:tg-ws-1\"] .team-comments-block", "text": "댓글 0개" },
+  { "do": "type", "selector": "[data-tggoalcommentsbox=\"g-workshop:tg-ws-1\"] [data-cmtinput]", "text": "Z2 이전 확인 댓글" },
+  { "do": "click", "selector": "[data-tggoalcommentsbox=\"g-workshop:tg-ws-1\"] [data-cmtsend]" },
+  { "expect": "textContains", "selector": "[data-tggoalcommentsbox=\"g-workshop:tg-ws-1\"] .team-comments-block .feed-action", "text": "Z2 이전 확인 댓글" },
+  { "expect": "noExceptions" }
+ ]
+}
