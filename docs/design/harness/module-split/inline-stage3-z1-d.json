@@ -1,0 +1,13 @@
+{
+  "task": "TASK-ES-525",
+  "label": "인라인 3단계 Z1 로그인·계정 3차",
+  "slot": "HO 기관",
+  "slots": ["H0 시범 #TASK-ES-439", "H1", "H2", "H3", "H4", "HO 기관"],
+  "cells": [
+    { "key": "socialLogin", "file": "js/tabs/settings/social-login.js", "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit", "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Social Login (설정 — 카카오 OAuth 시작·구글 로그인(토큰 클라이언트·One-Tap)·로그인 단추 처리기)",
+      "desc": ["「소셜 로그인 (카카오 / 실제 구글 OAuth 연동)」 묶음: 카카오 OAuth 시작(startOAuthLogin — Supabase signInWithOAuth 로 카카오 동의 화면으로 넘어간다), 구글 로그인(startGoogleLogin·getGoogleTokenClient·initGoogleOneTap·handleGoogleUserSuccess·parseJwtPayload — 구글 단추는 #TASK-ES-108 카카오 단일화로 화면에서 숨겨져 있다), sha256Hex(이 묶음 안에서 부르는 곳 없음 — 그대로 옮김),",
+               "랜딩·로그인 화면의 카카오·구글 단추 처리기 등록 문(bindKakaoLoginButtons·bindGoogleLoginButtons — index.html 원래 자리에서 부른다). 구글 토큰 클라이언트(_googleTokenClient)·One-Tap nonce(_googleOneTapNonce) 상태 변수는 원래 자리에 그대로 있다."],
+      "take": [ { "group": "소셜 로그인 (카카오", "all": true, "wrap": ["bindKakaoLoginButtons", "bindGoogleLoginButtons"] } ] }
+  ]
+}

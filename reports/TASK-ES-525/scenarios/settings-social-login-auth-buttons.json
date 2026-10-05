@@ -1,0 +1,17 @@
+{
+ "id": "settings-social-login-auth-buttons",
+ "title": "첫 화면의 「로그인」을 누르면 로그인 화면에 카카오 시작 단추가 보이고 구글 단추는 숨겨진 채이며 예외가 없다 — 로드 중 원래 자리에서 부르는 bindKakaoLoginButtons·bindGoogleLoginButtons(js/tabs/settings/social-login.js)가 이전 전과 같이 오류 없이 돌고 화면이 같다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#landLoginLink" },
+  { "expect": "visible", "selector": "#landKakaoBtn" },
+  { "expect": "notVisible", "selector": "#authKakaoBtn" },
+  { "do": "click", "selector": "#landLoginLink" },
+  { "do": "waitFor", "selector": "#loginSubmit", "timeoutMs": 10000 },
+  { "expect": "visible", "selector": "#authKakaoBtn" },
+  { "expect": "textContains", "selector": "#authKakaoBtn", "text": "카카오" },
+  { "expect": "notVisible", "selector": "#authGoogleBtn" },
+  { "expect": "noExceptions" }
+ ]
+}

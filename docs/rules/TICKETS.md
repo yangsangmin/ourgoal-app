@@ -605,3 +605,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-537 | INFRA | [인라인 3단계 기관] 루틴 상세·편집 창 세포 이동(생성기, 자리 HO), Modal helper·Confetti 옮길 문 0 확인 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md | 4단계(심사 청구)
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
 - #TASK-ES-550 | INFRA | [금고 단독] 무결성 게이트 「[검증 16/16] [#TASK-ES-192]」 4단계를 「페이월 자리 안내 모달 없음」으로(#813 직후 병합, 상민님 「광고·구독 삭제 금고 변경 승인」) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-550-MONEY-INTEGRITY-GATE.md | 4단계(심사 청구)
+- #TASK-ES-525 | INFRA | [인라인 3단계 Z1 3차] 소셜 로그인(카카오·구글) 묶음을 세포로 이전(동작 그대로) | 오케스트레이터 배정 Z1(2026-10-06), REQ docs/specs/REQ-TASK-ES-525-STAGE3-Z1-D.md | 4단계(심사 청구)

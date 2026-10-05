@@ -2244,7 +2244,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/settings/sub-integrations.js"></script>
 <script src="js/tabs/settings/sub-data.js"></script>
 <script src="js/tabs/settings/theme-apply.js"></script><script src="js/tabs/settings/avatar-greeting.js"></script><script src="js/tabs/settings/account-entry.js"></script><script src="js/tabs/settings/guest-backup-nudge.js"></script><script src="js/tabs/settings/notion-sync.js"></script><script src="js/tabs/settings/comm-tour.js"></script><script src="js/tabs/settings/login-devices.js"></script><script src="js/tabs/settings/app-lock-pin.js"></script><script src="js/tabs/settings/dev-debug-gate.js"></script><script src="js/tabs/settings/guest-migration.js"></script><script src="js/tabs/settings/tab-guide.js"></script><script src="js/tabs/settings/onboarding.js"></script><script src="js/tabs/settings/app-defaults.js"></script><script src="js/tabs/settings/render.js"></script>
-<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/quick-actions.js"></script><script src="js/tabs/settings/app-evaluation.js"></script><script src="js/tabs/settings/session-entry.js"></script><script src="js/tabs/settings/avatar-levelup-modal.js"></script><script src="js/tabs/settings/inapp-landing.js"></script><script src="js/tabs/settings/feedback-bot-setup.js"></script><script src="js/tabs/settings/device-session.js"></script><script src="js/tabs/settings/notify-timer.js"></script><script src="js/tabs/settings/web-push.js"></script><script src="js/tabs/settings/index.js"></script>
+<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/quick-actions.js"></script><script src="js/tabs/settings/app-evaluation.js"></script><script src="js/tabs/settings/session-entry.js"></script><script src="js/tabs/settings/avatar-levelup-modal.js"></script><script src="js/tabs/settings/inapp-landing.js"></script><script src="js/tabs/settings/feedback-bot-setup.js"></script><script src="js/tabs/settings/device-session.js"></script><script src="js/tabs/settings/notify-timer.js"></script><script src="js/tabs/settings/web-push.js"></script><script src="js/tabs/settings/social-login.js"></script><script src="js/tabs/settings/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -3047,6 +3047,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   });
   /* [#TASK-ES-537] js/tabs/goals/routine-detail-modal.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var openRoutineDetailModal = _goalsKit.openRoutineDetailModal;
+  /* [#TASK-ES-525] js/tabs/settings/social-login.js — 가져오기 3개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var startOAuthLogin = _settingsKit.startOAuthLogin;
+  var bindKakaoLoginButtons = _settingsKit.bindKakaoLoginButtons;
+  var bindGoogleLoginButtons = _settingsKit.bindGoogleLoginButtons;
+  window.OurgoalAppScope.expose('index.html', {
+    get _googleOneTapNonce(){ return _googleOneTapNonce; }, set _googleOneTapNonce(v){ _googleOneTapNonce = v; },
+    get _googleTokenClient(){ return _googleTokenClient; }, set _googleTokenClient(v){ _googleTokenClient = v; },
+    get restoreSessionAndEnter(){ return restoreSessionAndEnter; }
+  });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -4071,310 +4080,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.initDevDebugButtons = initDevDebugButtons;
 
   /* ============ 소셜 로그인 (카카오 / 실제 구글 OAuth 연동) ============ */
-  async function sha256Hex(str){
-    try {
-      if(window.crypto && window.crypto.subtle && window.TextEncoder){
-        var enc = new TextEncoder();
-        var buf = await window.crypto.subtle.digest('SHA-256', enc.encode(str));
-        return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2, '0'); }).join('');
-      }
-    } catch(e){}
-    var h = 0, h2 = 0;
-    for(var i = 0; i < str.length; i++){
-      h = ((h << 5) - h) + str.charCodeAt(i);
-      h |= 0;
-      h2 = ((h2 << 7) - h2) + str.charCodeAt(i);
-      h2 |= 0;
-    }
-    var hex1 = Math.abs(h).toString(16).padStart(8, '0');
-    var hex2 = Math.abs(h2).toString(16).padStart(8, '0');
-    return (hex1 + hex2 + hex1 + hex2 + hex1 + hex2 + hex1 + hex2).slice(0, 64);
-  }
-
-  function parseJwtPayload(token){
-    try {
-      var base64Url = (token || '').split('.')[1];
-      if(!base64Url) return null;
-      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      return JSON.parse(jsonPayload);
-    } catch(e){
-      return null;
-    }
-  }
-
-  async function handleGoogleUserSuccess(googleUser, accessToken){
-    if(!googleUser || !googleUser.email){
-      toast('구글 계정 정보를 확인할 수 없습니다.');
-      return;
-    }
-    var email = (googleUser.email || '').trim().toLowerCase();
-    var sub = googleUser.sub || googleUser.id || '';
-    var name = googleUser.name || googleUser.given_name || email.split('@')[0];
-    var picture = googleUser.picture || googleUser.avatar_url || '';
-
-    // [보호 1] 이미 로그인된 상태(카카오 등 기존 세션)에서 구글 연동을 시도한 경우:
-    // 기존 카카오 세션을 절대 끊거나 파괴하지 않고, 캘린더 연동 정보만 안전하게 보관
-    if(state.profile && state.profile.id){
-      if(accessToken){
-        state.googleToken = {
-          accessToken: accessToken,
-          expiresAt: Date.now() + 3500 * 1000
-        };
-        if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken, email);
-        try { sessionStorage.setItem('ourgoal_google_token', accessToken); } catch(e){}
-      }
-      if(!state.profile.settings) state.profile.settings = {};
-      state.profile.settings.googleCalendarEmail = email;
-      state.profile.settings.googleCalendarConnected = true;
-      if(picture && !state.profile.avatarUrl) state.profile.avatarUrl = picture;
-      await saveProfile();
-      toast('Google 계정 및 캘린더가 안전하게 연동되었습니다!');
-      return;
-    }
-
-    // [보호 2] 미로그인 상태에서 구글 로그인 시도:
-    // 기존 카카오 계정 오염 및 세션 파괴를 원천 차단하고, 구글 직접 진입 및 카카오 데이터 연동 듀얼 옵션 제공
-    var isAccountConflict = true;
-    try { await sb.auth.signOut({ scope: 'local' }); } catch(e){}
-
-    openModal(
-      '<div style="text-align:center;padding:16px 8px;">' +
-        '<div style="font-size:2.5rem;margin-bottom:12px;">✨</div>' +
-        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">기존 카카오 가입 계정 안내</h3>' +
-        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
-          'Google 계정(<b>' + escapeHtml(email) + '</b>) 인증을 완료했습니다.<br>' +
-          'Google 계정으로 바로 시작하시거나, 기존 카카오 기록을 불러와 안전하게 이어가실 수 있습니다.' +
-        '</p>' +
-        '<button class="btn btn-primary" id="continueGoogleDirectBtn" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">' +
-          'Google 계정으로 바로 시작하기' +
-        '</button>' +
-        '<button class="btn btn-block btn-kakao" id="conflictKakaoLoginBtn" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>' +
-          '<span>기존 카카오 데이터 연동/복구</span>' +
-        '</button>' +
-        '<button class="btn btn-ghost btn-sm" id="conflictCloseBtn" style="width:100%;">이메일/다른 방법으로 시작</button>' +
-      '</div>',
-      function(sheet){
-        var gBtn = sheet.querySelector('#continueGoogleDirectBtn');
-        if(gBtn) gBtn.onclick = async function(){
-          closeModal();
-          /* [#TASK-ES-373] 액세스 토큰·userinfo 이메일은 검증 세션이 아니다 — Supabase 구글 OAuth 로 검증 세션을 받아 그 uid 로만 입장 */
-          await window.OurgoalGoogleSessionGuard.startOAuthOrGuide({ sb: sb, redirectTo: window.location.origin, loginHint: email, doc: document, toast: toast, initFields: typeof initRememberedAuthFields === 'function' ? initRememberedAuthFields : null, storage: localStorage, markLogin: setDeviceLoginTime });
-        };
-        var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
-        if(kBtn) kBtn.onclick = function(){
-          closeModal();
-          openLoginRescueModal('기존 카카오 계정의 닉네임이나 이메일을 입력하시면 방금 인증하신 Google 계정과 안전하게 연동해 드립니다!');
-        };
-        var cBtn = sheet.querySelector('#conflictCloseBtn');
-        if(cBtn) cBtn.onclick = function(){
-          closeModal();
-          var authScreen = document.getElementById('authScreen');
-          var landScreen = document.getElementById('landingScreen');
-          if(landScreen) landScreen.style.display = 'none';
-          if(authScreen) authScreen.style.display = 'flex';
-          var lUser = document.getElementById('loginUser');
-          if(lUser){ lUser.value = email; lUser.focus(); }
-        };
-      }
-    );
-  }
+  /* [#TASK-ES-525] sha256Hex · parseJwtPayload · handleGoogleUserSuccess → js/tabs/settings/social-login.js 로 옮김(인라인 3단계 Z1 로그인·계정 3차 — 앞 주석 포함) */
 
   var _googleTokenClient = null;
-  function getGoogleTokenClient(){
-    if(!_googleTokenClient && window.google && google.accounts && google.accounts.oauth2){
-      var clientId = (GOOGLE_OAUTH_CLIENT_ID || '').trim();
-      if(!clientId) return null;
-      try {
-        _googleTokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: clientId,
-          scope: 'openid email profile https://www.googleapis.com/auth/calendar.events',
-          prompt: 'select_account',
-          callback: async function(tokenResponse){
-            if(tokenResponse && tokenResponse.error){
-              console.warn('Google OAuth token error:', tokenResponse);
-              if(tokenResponse.error !== 'popup_closed_by_user'){
-                toast('Google 로그인 실패: ' + (tokenResponse.error_description || tokenResponse.error));
-              }
-              return;
-            }
-            if(tokenResponse && tokenResponse.access_token){
-              try {
-                var userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                  headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
-                });
-                if(!userRes.ok) throw new Error('사용자 정보를 가져올 수 없습니다. (' + userRes.status + ')');
-                var googleUser = await userRes.json();
-                await handleGoogleUserSuccess(googleUser, tokenResponse.access_token);
-              } catch(fetchErr){
-                console.error('Google userinfo fetch failed:', fetchErr);
-                toast('구글 계정 정보 조회 실패: ' + fetchErr.message);
-              }
-            }
-          }
-        });
-      } catch(e){
-        console.warn('initTokenClient 실패:', e);
-      }
-    }
-    return _googleTokenClient;
-  }
-
-  function startGoogleLogin(){
-    if(!window.google || !google.accounts){
-      toast('Google 인증 모듈을 불러오는 중입니다...');
-      var existing = document.getElementById('googleGsiScript');
-      if(!existing){
-        var s = document.createElement('script');
-        s.id = 'googleGsiScript';
-        s.src = 'https://accounts.google.com/gsi/client';
-        s.async = true;
-        s.defer = true;
-        s.onload = function(){
-          initGoogleOneTap();
-          var client = getGoogleTokenClient();
-          if(client){
-            try { client.requestAccessToken(); } catch(e){}
-          }
-        };
-        s.onerror = function(){
-          if(typeof openLoginRescueModal === 'function'){
-            openLoginRescueModal('Google 인증 모듈 연결이 원활하지 않습니다. 카카오 3초 시작 또는 닉네임으로 즉시 입장하실 수 있습니다!');
-          } else {
-            toast('Google 인증 서버 연결 실패. 카카오 로그인을 이용해주세요.');
-          }
-        };
-        document.head.appendChild(s);
-      } else {
-        if(typeof openLoginRescueModal === 'function'){
-          openLoginRescueModal('Google 로그인 연결 중입니다. 닉네임 또는 카카오로 1초 만에 바로 입장하실 수 있어요!');
-        }
-      }
-      return;
-    }
-    var client = getGoogleTokenClient();
-    if(client){
-      try {
-        client.requestAccessToken();
-      } catch(e){
-        console.warn('requestAccessToken 실패, One-Tap 폴백 시도:', e);
-        if(google.accounts && google.accounts.id) google.accounts.id.prompt();
-      }
-    } else if(google.accounts && google.accounts.id){
-      google.accounts.id.prompt();
-    } else {
-      if(typeof openLoginRescueModal === 'function'){
-        openLoginRescueModal('Google 클라이언트를 초기화할 수 없습니다. 닉네임 또는 카카오로 바로 시작하세요!');
-      } else {
-        toast('카카오 또는 닉네임으로 바로 입장해주세요.');
-      }
-    }
-  }
+  /* [#TASK-ES-525] getGoogleTokenClient · startGoogleLogin → js/tabs/settings/social-login.js 로 옮김(인라인 3단계 Z1 로그인·계정 3차 — 앞 주석 포함) */
 
   var _googleOneTapNonce = null;
-  async function initGoogleOneTap(){
-    if(window.google && google.accounts && google.accounts.id && GOOGLE_OAUTH_CLIENT_ID){
-      try {
-        _googleOneTapNonce = await window.OurgoalGoogleSessionGuard.createNonce(); /* [#TASK-ES-373] GIS 에는 hashed, Supabase 에는 raw */
-        google.accounts.id.initialize({
-          client_id: GOOGLE_OAUTH_CLIENT_ID,
-          nonce: _googleOneTapNonce ? _googleOneTapNonce.hashed : undefined,
-          auto_select: false,
-          cancel_on_tap_outside: true,
-          callback: async function(response){
-            /* [#TASK-ES-373] 미로그인: 자격증명을 브라우저에서 풀어 믿지 않고 Supabase signInWithIdToken 검증 세션 uid 로만 입장(실패 시 정식 로그인 안내) */
-            if(response && response.credential && !(state.profile && state.profile.id)) return window.OurgoalGoogleSessionGuard.enterWithCredential({ sb: sb, credential: response.credential, rawNonce: _googleOneTapNonce && _googleOneTapNonce.raw, restore: restoreSessionAndEnter, getProfileId: function(){ return state.profile && state.profile.id; }, doc: document, toast: toast, initFields: typeof initRememberedAuthFields === 'function' ? initRememberedAuthFields : null, storage: localStorage, markLogin: setDeviceLoginTime });
-            if(response && response.credential){ /* 이미 로그인한 상태: 기존처럼 캘린더 연동 표시만(입장 uid 를 바꾸지 않는다) */
-              var payload = parseJwtPayload(response.credential);
-              if(payload && payload.email){
-                await handleGoogleUserSuccess({
-                  email: payload.email,
-                  sub: payload.sub,
-                  name: payload.name || payload.given_name || payload.email.split('@')[0],
-                  picture: payload.picture || ''
-                }, null);
-              }
-            }
-          }
-        });
-        var shell = document.getElementById('appShell');
-        if(!shell || !shell.classList.contains('active')){
-          google.accounts.id.prompt();
-        }
-      } catch(e){
-        console.warn('Google OneTap init failed:', e);
-      }
-    }
-  }
-
-  async function startOAuthLogin(provider){
-    if(provider === 'google'){
-      startGoogleLogin();
-      return;
-    }
-    try {
-      // 카카오 OAuth 진입 전 오염 세션을 정리하여 Supabase Identity 계정 충돌 원천 방어
-      try {
-        var existingSession = await sb.auth.getSession();
-        if(existingSession && existingSession.data && existingSession.data.session){
-          await sb.auth.signOut({ scope: 'local' });
-        }
-      } catch(e){}
-      setDeviceLoginTime(Date.now());
-      try { localStorage.setItem('ourgoal_last_auth_provider', provider); } catch(e){}
-      // PKCE code_verifier 2중 안전 백업 (카카오톡 인앱 브라우저 localStorage 유실 방어)
-      try {
-        for(var si = 0; si < localStorage.length; si++){
-          var sk = localStorage.key(si);
-          if(sk && sk.indexOf('-code-verifier') !== -1) sessionStorage.setItem(sk, localStorage.getItem(sk));
-        }
-      } catch(e){}
-      var res = await sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: window.location.origin } });
-      if(res && res.error) throw res.error;
-    } catch(err){
-      console.warn('OAuth 시작 실패:', err);
-      var msg = err && err.message ? String(err.message) : '';
-      if(/unsupported provider|provider is not enabled|not enabled/i.test(msg)){
-        openModal(
-          '<div style="text-align:center;padding:12px 6px;">' +
-            '<div style="font-size:2.2rem;margin-bottom:8px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>' +
-            '<h3 style="margin:0 0 8px;font-size:1.1rem;font-weight:700;">' + (provider === 'kakao' ? '카카오' : '구글') + ' 로그인 심사 준비 중</h3>' +
-            '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;">공식 비즈니스 앱 콘솔 심사 대기 중입니다.<br><b>이메일 또는 닉네임으로 1초 만에</b> 바로 시작하실 수 있어요!</p>' +
-            '<button class="btn btn-primary" id="fallbackQuickAuthBtn" style="width:100%;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">1초 빠른 시작하기</button>' +
-            '<button class="btn btn-ghost btn-sm" id="fallbackQuickAuthClose" style="width:100%;margin-top:8px;">닫기</button>' +
-          '</div>',
-          function(sheet){
-            var cBtn = sheet.querySelector('#fallbackQuickAuthClose');
-            if(cBtn) cBtn.onclick = closeModal;
-            var qBtn = sheet.querySelector('#fallbackQuickAuthBtn');
-            if(qBtn) qBtn.onclick = function(){
-              closeModal();
-              var landNick = document.getElementById('landNick');
-              if(landNick){
-                landNick.focus();
-                landNick.scrollIntoView({ behavior: 'smooth' });
-              } else if(typeof openLoginRescueModal === 'function'){
-                openLoginRescueModal('사용하실 닉네임 또는 이메일을 입력하시면 1초 만에 바로 입장하실 수 있어요!');
-              }
-            };
-          }
-        );
-      } else {
-        toast((provider === 'kakao' ? '카카오' : '구글') + ' 로그인 시작에 실패했어요: ' + (msg || '잠시 후 다시 시도해주세요'));
-      }
-    }
-  }
-  ['landKakaoBtn','authKakaoBtn'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.addEventListener('click', function(){ startOAuthLogin('kakao'); });
-  });
-  ['landGoogleBtn','authGoogleBtn'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.addEventListener('click', function(){ startGoogleLogin(); });
-  });
+  /* [#TASK-ES-525] initGoogleOneTap · startOAuthLogin → js/tabs/settings/social-login.js 로 옮김(인라인 3단계 Z1 로그인·계정 3차 — 앞 주석 포함) */
+  bindKakaoLoginButtons(); /* [#TASK-ES-525] 로드 중 문(앞 주석 포함) → js/tabs/settings/social-login.js 의 bindKakaoLoginButtons 로 옮김 — 원래 자리에서 부른다 */
+  bindGoogleLoginButtons(); /* [#TASK-ES-525] 로드 중 문(앞 주석 포함) → js/tabs/settings/social-login.js 의 bindGoogleLoginButtons 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ [#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 계정 통합 ============ */
   /* [#TASK-ES-437] openGuestBackupNudgeModal · checkGuestBackupNudge → js/tabs/settings/guest-backup-nudge.js 로 옮김(인라인 스크립트 세포화 P0) */

@@ -1,0 +1,201 @@
+{
+ "task": "TASK-ES-525",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-525-STAGE3-Z1-D.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「소셜 로그인 (카카오 / 실제 구글 OAuth 연동)」(startOAuthLogin·startGoogleLogin·getGoogleTokenClient·initGoogleOneTap·handleGoogleUserSuccess·parseJwtPayload·sha256Hex, 카카오·구글 단추 처리기 등록 문 → bindKakaoLoginButtons·bindGoogleLoginButtons)을 설정 탭 세포 js/tabs/settings/social-login.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 HO). 로그인 화면(카카오 단추 보임·구글 단추 숨김)이 이전 전과 같은지 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R2",
+   "text": "카카오 단추를 누르면 Supabase OAuth 로 카카오 동의 화면(외부)으로 넘어가고, 구글 로그인은 구글 GIS(외부)로 자격증명을 받는다 — 외부 페이지 경로."
+  },
+  {
+   "id": "R3",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0·키트 변수 뒤 가져오기·마지막 getter setter(verify), 원본·새 파일 단독 로드 회귀 0, 신고서 등록."
+  },
+  {
+   "id": "R4",
+   "text": "실계정 하네스 측정 기록(테스트 계정 기준1·작업·기준2 — 로그인 상태 홈·소통·설정·로그아웃 뒤 로그인 화면)을 저장소 reports/TASK-ES-525/ 에 남긴다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 첫 화면의 「로그인」을 누르면 로그인 화면에 카카오 시작 단추가 보이고 구글 단추는 숨겨진 채이며 예외가 없다 — 원래 자리에서 부르는 bindKakaoLoginButtons·bindGoogleLoginButtons 가 오류 없이 돈다",
+   "touches": [
+    "js/tabs/settings/social-login.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-social-login-auth-buttons.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "카카오 시작 단추를 누르면 옮긴 startOAuthLogin 이 이전 전과 같이 카카오 동의 화면으로 넘기고, 구글 로그인은 옮긴 startGoogleLogin·initGoogleOneTap 이 이전 전과 같이 구글 자격증명을 받는다",
+   "touches": [
+    "js/tabs/settings/social-login.js",
+    "index.html"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "external-page",
+    "who": "카카오·구글 계정이 있는 사람(실기기·실브라우저)",
+    "how": [
+     "배포 주소에서 첫 화면의 「카카오로 3초 만에 시작하기」를 눌러 카카오 동의 화면으로 넘어가는지 본다",
+     "구글 판별 규칙은 node tests/google-session-guard.test.js (합본에서 initGoogleOneTap·handleGoogleUserSuccess 를 잘라 위조 자격증명 5종·검증 세션 입장을 돌린다)"
+    ],
+    "note": "작업자 실측(판정 아님): 법정 실행기 로컬 실행에서 카카오 단추를 누르면 기준·작업 모두 첫 화면 주소를 떠났다(외부 OAuth). tests/google-session-guard.test.js 6/6 통과(작업 트리). 구글 단추는 #TASK-ES-108 카카오 단일화로 마크업에서 숨겨져 있다 — 숨김 상태는 그대로(REQ 4절)."
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-525/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-525/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-525/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 키트 변수 선언보다 앞선 가져오기 줄 0",
+   "touches": [
+    "reports/TASK-ES-525/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "importBeforeKit",
+    "equals": []
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 대입하는 이름(_googleTokenClient·_googleOneTapNonce)의 마지막 getter 줄에 setter 빠짐 0",
+   "touches": [
+    "reports/TASK-ES-525/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "lastGetterNoSetter",
+    "equals": []
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-525/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/social-login 이 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/social-login\""
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-525/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-525/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-525/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  }
+ ]
+}

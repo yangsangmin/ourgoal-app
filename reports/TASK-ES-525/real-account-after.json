@@ -1,0 +1,68 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "after",
+ "mode": "test-account-A",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · test account A (address hidden) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 로그인 뒤 홈 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "82a79f1a3906fb3f",
+   "opened": null
+  },
+  {
+   "name": "② 소통 탭 #screen-comm",
+   "present": true,
+   "visible": true,
+   "textHash": "64b5e589e8f7869e",
+   "textLen": 464,
+   "attrsHash": "364e9e1e024735a3",
+   "opened": null
+  },
+  {
+   "name": "③ 설정 탭 #screen-settings",
+   "present": true,
+   "visible": true,
+   "textHash": "3c77871f6233540b",
+   "textLen": 764,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null
+  },
+  {
+   "name": "④ 로그아웃 → 로그인 화면(카카오 단추) #authScreen",
+   "present": true,
+   "visible": true,
+   "textHash": "391a45f9ec7b9e73",
+   "textLen": 235,
+   "attrsHash": "122bfc4fc04d9022",
+   "opened": true,
+   "counts": {
+    "authKakaoBtn": 1,
+    "authGoogleBtnHidden": 1
+   }
+  }
+ ],
+ "errors": [],
+ "loggedIn": true,
+ "entered": true,
+ "globals": "startOAuthLogin/undefined,startGoogleLogin/undefined,initGoogleOneTap/undefined,handleGoogleUserSuccess/undefined,bindKakaoLoginButtons/undefined,bindGoogleLoginButtons/undefined",
+ "recordsCountUnchanged": false,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 3,
+  "POST /rest/v1/checkins": 3,
+  "POST /rest/v1/rpc/count_content_reactions": 1,
+  "POST /rest/v1/rpc/my_content_reactions": 1,
+  "POST /rest/v1/rpc/list_content_advice": 1
+ }
+}
