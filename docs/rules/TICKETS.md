@@ -604,6 +604,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-524 | INFRA | [시험지 선행 · 인라인 3단계 구역 Z5+Z6] smoke 「[#TASK-ES-186]」 검사·theme-system-v4·today-mission-card-guide·quest-task-exp 가 인라인 합본을 읽음(읽는 줄 1줄씩) — 단언·기대값·검사 수 그대로, 제품 코드 0 | 오케스트레이터 배정 구역 Z5+Z6 (2026-10-06), REQ docs/specs/REQ-TASK-ES-524-STAGE3-Z56-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-527 | INFRA | [시험지 선행 · 인라인 3단계 Z3·기관] push-subscribe-auth-es400·core-confirm-es376 읽는 범위만 넓힘(단언·기대값 0 변경) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-527-STAGE3-Z3O-TEST-FIRST.md | 4단계(심사 청구)
 - #TASK-ES-519 | INFRA | [시험지 선행 · 인라인 3단계 Z4] 구간 절단 시험지 3개(renderMultiMetricSvg·collapseAllTeamGoalAccordions)가 세포 이전 뒤에도 같은 함수를 읽음 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-519-STAGE3-Z4-TEST-FIRST.md
+- #TASK-ES-523 | INFRA | [인라인 3단계 Z4 이동 2차] 활용가이드·공개 범위 배지·스톱워치 시간 글자를 세포 3개로 동작 그대로 이전 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md
 - #TASK-ES-516 | FIX | [돈 묶음 소멸] 미분화 덩어리의 광고·구독 묶음 4개(광고 상수·구독 상태·페이월 안내 모달·PRO 배지·템플릿 복제 보상형 광고 함수)와 진입 흔적 삭제, 데이터 칸 보존(상민님 2026-10-06 「광고, 구독관련은 삭제해」), 선행 #806 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md | 4단계(심사 청구)
 - #TASK-ES-537 | INFRA | [인라인 3단계 기관] 루틴 상세·편집 창 세포 이동(생성기, 자리 HO), Modal helper·Confetti 옮길 문 0 확인 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md | 4단계(심사 청구)
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
