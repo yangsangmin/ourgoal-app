@@ -62,7 +62,7 @@ worktree `C:/dev/wt/stage3-z2`(처음 origin/main 417a777, #803 포함 — #808 
 | 원본 단독 로드 | 회귀 0 · 새 세포 4개 단독 로드 ok (`module-load-probe.json`) |
 | 게스트 시나리오 | 4개 기준·작업 통과 (`scenario-local.json`) |
 | 도달 실측 | `real-account-reach-guest-base.json` · `real-account-reach-A-base.json` |
-| 게스트·실계정 조작 비교 | `guest-compare.json` · `real-account-compare.json` |
+| 게스트·실계정 조작 비교 | 9단계 기준1/작업/기준2 차이 0 (`guest-compare.json` · `real-account-compare.json`) — 기준 사본은 origin/main 03dcb6b(#813 병합 전) 판, 작업은 그 위에 생성한 판. 이후 main(#813)을 합쳐 다시 생성한 판은 verify·단독 로드·시나리오·시험지 비교를 다시 쟀다 |
 | tests 전후 | 시험지 종료 코드 기준 = 작업 (`tests-compare.json` differing 0 — 합친 main 기준) |
 | 막힐 지점 | main 이동(L010 생성기 재실행) · #808 병합 전에는 team-goal-comment-fix 가 작업 트리에서 실패(선행 순서) |
 

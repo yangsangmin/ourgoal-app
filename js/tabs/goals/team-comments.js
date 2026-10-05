@@ -4,7 +4,7 @@
  * 「RENDER: 팀 목표」 묶음 중 팀 목표 댓글 몫: 관리 권한 확인(canManageTeamGoals) · 댓글 캐시(TEAM_COMMENTS_CACHE) · 댓글 불러오기(ensureTeamCommentsLoaded — 서버 team_comments + 로컬 프로필 댓글 무손실 병합) · 댓글 실시간 수신(setupTeamCommentsRealtime) · 댓글 목록·한 줄·입력 블록 그리기(teamComments·teamCommentItemHtml·teamCommentsBlockHtml),
  * 그리고 로그인 뒤 실시간 채널을 한 번만 여는 setupRealtimeChannelsOnce(팀 댓글·소통 피드·사용자 세션). 채널 상태 변수 REALTIME_CHANNELS_SETUP 는 재대입이 있어 index.html 원래 자리에 두고 L 통로(getter·setter)로 읽는다. 다른 기기 원격 로그아웃 방송을 받는 setupUserSessionRealtime 과 USER_SESSION_CHANNEL 은 원래 자리에 두었다 — USER_SESSION_CHANNEL 은 뒤쪽 P0 이음매(#TASK-ES-442)가 getter 만 노출해 옮긴 코드의 대입이 막힌다(생성기가 앞 자리에 단 setter 를 뒤 노출이 덮는다, 작업자 실측).
  * 게스트로 닿는 몫(예시 팀 체험 → 팀목표 → 댓글 열기·등록)은 게스트 시나리오로, 로그인 뒤 몫(서버 댓글 불러오기·실시간 채널 구독)은 테스트 계정 실계정 하네스로 기준·작업을 맞댔다(#TASK-ES-545).
- * #TASK-ES-545(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서): index.html 인라인 IIFE 의 구간(이전 전 8705~8708 · 8709~8711 · 8714~8720 · 8738~8754 · 8755~8776 · 8930~8935 · 8936~8950 · 8951~8961줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-545(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서): index.html 인라인 IIFE 의 구간(이전 전 8662~8665 · 8666~8668 · 8671~8677 · 8695~8711 · 8712~8733 · 8887~8892 · 8893~8907 · 8908~8918줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,17 +16,17 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 8705~8708줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8662~8665줄(#TASK-ES-545 생성기 표지) ---- */
   function canManageTeamGoals(gid){
     var role = L.groupState(gid).myRole;
     return role==='owner' || role==='manager';
   }
-  /* ---- 이전 전 index.html 8709~8711줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8666~8668줄(#TASK-ES-545 생성기 표지) ---- */
 
   /* 팀 목표/마일스톤 댓글 — 역할(팀장·매니저·팀원) 무관 전원 작성·열람 가능, groupState에 로컬 저장 */
   var TEAM_COMMENTS_CACHE = {}; // gid -> team_comments rows
 
-  /* ---- 이전 전 index.html 8714~8720줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8671~8677줄(#TASK-ES-545 생성기 표지) ---- */
   function setupRealtimeChannelsOnce(){
     if(L.REALTIME_CHANNELS_SETUP) return;
     L.REALTIME_CHANNELS_SETUP = true;
@@ -35,7 +35,7 @@
     L.setupUserSessionRealtime();
   }
 
-  /* ---- 이전 전 index.html 8738~8754줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8695~8711줄(#TASK-ES-545 생성기 표지) ---- */
   async function ensureTeamCommentsLoaded(gid){
     if(TEAM_COMMENTS_CACHE[gid]) return;
     TEAM_COMMENTS_CACHE[gid] = []; // 중복 요청 방지용 로딩 가드
@@ -53,7 +53,7 @@
       }
     });
   }
-  /* ---- 이전 전 index.html 8755~8776줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8712~8733줄(#TASK-ES-545 생성기 표지) ---- */
   function setupTeamCommentsRealtime(){ if(!L.sb || typeof L.sb.channel !== 'function') return;
     L.sb.channel('team_comments_channel')
       .on('postgres_changes', { event:'INSERT', schema:'public', table:'team_comments' }, function(payload){
@@ -77,14 +77,14 @@
       .subscribe();
   }
 
-  /* ---- 이전 전 index.html 8930~8935줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8887~8892줄(#TASK-ES-545 생성기 표지) ---- */
 
   function teamComments(gid, targetId){
     var blockedList = (L.state.profile && L.state.profile.settings && L.state.profile.settings.blockedUsers) || [];
     var filtered = L.filterHidden(TEAM_COMMENTS_CACHE[gid]);
     return L.filterBlockedPosts(filtered, blockedList).filter(function(c){ return c.target_id===targetId; });
   }
-  /* ---- 이전 전 index.html 8936~8950줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8893~8907줄(#TASK-ES-545 생성기 표지) ---- */
   function teamCommentItemHtml(c){
     var isMe = c.user_id === L.state.profile.id;
     var reported = !!((L.state.profile.settings.contentReports||{})['team_comment:'+c.id]);
@@ -100,7 +100,7 @@
         '</div>' +
       '</div>';
   }
-  /* ---- 이전 전 index.html 8951~8961줄(#TASK-ES-545 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 8908~8918줄(#TASK-ES-545 생성기 표지) ---- */
   function teamCommentsBlockHtml(gid, targetId){
     var list = teamComments(gid, targetId);
     return '<div class="team-comments-block" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--rule);">' +
