@@ -11,7 +11,8 @@ function runTests() {
   console.log(`[TEST START] ${SUITE_NAME}`);
 
   const rootDir = path.resolve(__dirname, '..');
-  const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
+  // #TASK-ES-469: 인라인 어려움 구역 H1 선행 — 피드 공유 모달 묶음이 js/tabs 세포로 옮겨 가도 같은 단언이 같은 글자를 찾도록 인라인 합본을 읽는다(단언·기대값 그대로)
+  const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8'));
   const componentsJs = readComponentsBundle();
   const uiCss = fs.readFileSync(path.join(rootDir, 'ui.css'), 'utf8');
 
