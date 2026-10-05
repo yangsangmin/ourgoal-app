@@ -1,0 +1,73 @@
+{
+  "id": "records-pro-notion-export",
+  "title": "게스트로 전문 템플릿 기록 창에서 「Notion 연동」을 누르면 「Notion 표 내보내기 & 연동」 창이 뜨고, 노션 키 없이 「Notion DB로 즉시 전송」을 누르면 「설정(⚙️) 탭에서 Notion API Key 또는 Webhook URL을 먼저 등록해주세요.」 토스트가 뜬다 — 노션 내보내기 창(openProNotionExportModal)·노션 바로 보내기(pushRecordToNotion)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#proTrendChartWrap",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#proNotionExportBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "Notion 표 내보내기 & 연동",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#notionDirectPushBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "Notion API Key 또는 Webhook URL을 먼저 등록해주세요.",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
