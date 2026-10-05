@@ -42,8 +42,10 @@ DOM `#setGroupDataSummary`·`#btnRestartGuide`·`#miniGuideOverlay`·`#btnMiniGu
 |---|---|
 | verify | ok — 토큰 동일·덩어리 줄 동일·남은 글자 동일·누수 0·this/arguments 0·이중 처리기 0·800줄 이하 (`verify-inline-hard.json`) |
 | 단독 로드 | 회귀 0, 새 파일 3개 단독 로드 ok (`module-load-probe.json`) |
-| tests 전후 | `tests-exit-compare.json`: tests 113개 종료 코드 기준 사본 = 작업 트리(npm test 없이 파일마다 번갈아, `docs/design/harness/module-split/tests-exit-compare-z4.js`). 기존 도구 `test-compare.json`(npm test 를 먼저 돌림)에서는 두 번 모두 작업 쪽 tests/offline-sync-queue-retain.test.js 만 종료 1 — 그 시험은 index.html 을 읽지 않고(js/core/virtual-user-helpers.js 만) 따로 3회씩·순서대로 돌리면 기준·작업 모두 종료 0 이라 실행 환경 흔들림으로 보고 그대로 기록했다 |
+| tests 전후 | `tests-exit-compare.json`: tests 113개를 기준 사본·작업 트리에서 번갈아 실행(npm test 없이, `docs/design/harness/module-split/tests-exit-compare-z4.js`) — 회귀(기준 통과·작업 실패) 0. 종료 코드가 다른 것은 cell-map-export-es414 하나로 기준 사본(git archive, git 이력 없음)에서만 실패. 기존 도구 `test-compare.json`(npm test 를 먼저 돌림, main 합치기 전 측정)에서는 두 번 모두 작업 쪽 tests/offline-sync-queue-retain.test.js 만 종료 1 — 그 시험은 index.html 을 읽지 않고 따로 돌리면 기준·작업 모두 종료 0 이라 실행 환경 흔들림으로 보고 그대로 기록했다 |
 | 게스트 조작 비교 | 6단계(홈·일정 배지·목표·기록·설정·가이드 단추) 기준1 대 작업 0 · 기준1 대 기준2 0 (41값, `guest-compare.json`) |
 | 게스트 시나리오 | 3개 기준·작업 통과 (`scenario-local.json`) |
+
+측정은 origin/main 합치기 뒤 다시 했다(index.html 충돌 → main 판 index.html 로 생성기 재실행, L010 — 세포 파일은 생성기 표지의 줄 번호만 바뀜).
 
 발견 결함(고치지 않고 그대로 옮김): maybeShowFirstLoginGuide 호출부 0(죽은 함수).

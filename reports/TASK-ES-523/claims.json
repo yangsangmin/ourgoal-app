@@ -213,15 +213,15 @@
    "req": "R5",
    "kind": "static",
    "domain": "config",
-   "statement": "tests/*.test.js 종료 코드가 기준 사본과 작업 트리에서 같다고 기록되어 있다(npm test 없이 파일마다 번갈아 실행)",
+   "statement": "tests/*.test.js 를 기준 사본·작업 트리에서 번갈아 돌린 기록에 기준 통과·작업 실패(회귀)가 0 개로 기록되어 있다",
    "touches": [
     "reports/TASK-ES-523/tests-exit-compare.json"
    ],
    "check": {
     "file": "reports/TASK-ES-523/tests-exit-compare.json",
     "type": "jsonPath",
-    "path": "exitCodesSame",
-    "equals": true
+    "path": "regressionCount",
+    "equals": 0
    }
   },
   {

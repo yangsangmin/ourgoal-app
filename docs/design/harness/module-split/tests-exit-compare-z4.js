@@ -2,6 +2,7 @@
 // 인라인 3단계 Z4: tests/*.test.js 를 기준 트리·작업 트리에서 하나씩 돌려 종료 코드만 맞댄다(작업자 측정, 판정 아님).
 // test-compare-inline-split-2.js 는 같은 실행 안에서 npm test 를 먼저 돌리는데, 그 뒤 작업 쪽 tests/offline-sync-queue-retain.test.js 가 두 번 종료 1 이었다
 // (따로 돌리면 기준·작업 모두 종료 0 — 그 시험은 index.html 을 읽지 않는다). 그래서 종료 코드 비교만 npm test 없이 따로 낸다. 다른 파일의 출력 차이는 그 도구의 결과 파일을 본다.
+// regressions = 기준에서 종료 0 인데 작업에서 0 이 아닌 시험(회귀). 기준 사본은 git archive 라 git 이력을 읽는 시험(cell-map-export-es414)은 기준 쪽만 실패할 수 있다.
 // 사용: NODE_PATH=<node_modules> node tests-exit-compare-z4.js <기준 트리> <작업 트리> <out.json> [반복 수=1]
 const { spawnSync } = require('child_process'); const fs = require('fs'), path = require('path');
 const [BASE, WORK, OUT, REP] = process.argv.slice(2); const N = Number(REP) || 1;
@@ -16,6 +17,7 @@ for (const f of files) {
   res[f] = { base: b, work: w };
   if (JSON.stringify(b) !== JSON.stringify(w)) exitDiff.push(f);
 }
-const out = { what: 'tests/*.test.js 종료 코드 — 기준 트리 대 작업 트리(npm test 없이, 파일마다 번갈아)', files: files.length, sameFileList: JSON.stringify(files) === JSON.stringify(baseFiles), repeat: N, exitDiff, exitCodesSame: exitDiff.length === 0 && JSON.stringify(files) === JSON.stringify(baseFiles), results: res };
+const regressions = exitDiff.filter(f => res[f].work.some(c => c !== 0) && res[f].base.every(c => c === 0)); // 기준은 통과·작업은 실패
+const out = { what: 'tests/*.test.js 종료 코드 — 기준 트리 대 작업 트리(npm test 없이, 파일마다 번갈아)', files: files.length, sameFileList: JSON.stringify(files) === JSON.stringify(baseFiles), repeat: N, exitDiff, regressions, regressionCount: regressions.length, exitCodesSame: exitDiff.length === 0 && JSON.stringify(files) === JSON.stringify(baseFiles), results: res };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + '\n');
-console.log(JSON.stringify({ files: out.files, exitDiff, exitCodesSame: out.exitCodesSame }));
+console.log(JSON.stringify({ files: out.files, exitDiff, regressions, regressionCount: regressions.length, exitCodesSame: out.exitCodesSame }));

@@ -184,7 +184,7 @@ async function runSecurityTests() {
   // =========================================================================
   {
     var indexHtmlPath = path.join(__dirname, '..', 'index.html');
-    var indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+    var indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8')); // #TASK-ES-518: 인라인 합본(원문 맨 앞 + 세포) — 단언·기대값 그대로
 
     assert.ok(indexHtml.indexOf('getSupabaseAuthToken') !== -1, 'index.html must define getSupabaseAuthToken helper');
     assert.ok(indexHtml.indexOf('fetchSignedCalendarToken') !== -1, 'index.html must define fetchSignedCalendarToken');
