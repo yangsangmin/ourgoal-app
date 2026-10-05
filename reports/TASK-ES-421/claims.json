@@ -1,0 +1,710 @@
+{
+  "task": "TASK-ES-421",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-421-XP-SERVER-LEDGER.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "운영 Supabase 에 user_ledger_docs 표를 만든다 — 로그인 사용자 본인 행만 select·insert·update(RLS 3정책), anon 표 권한 0, 반복 실행 안전, 되돌리기 SQL 별도(데이터 삭제 없음), 탈퇴 파기 목록 3곳에 포함."
+    },
+    {
+      "id": "R2",
+      "text": "첫 로그인 이관: 기기 settings.xp 원문을 먼저 백업하고, 서버에 없으면 그대로·있으면 합치기 규칙(이력 id 합집합, 합계는 큰 쪽 이상, 멱등)으로 올린 뒤 되읽어 일치할 때만 확인하고, 확인 뒤에만 settings.xp 를 기기에 쓰지 않는다."
+    },
+    {
+      "id": "R3",
+      "text": "확인 뒤 지급은 Server-First: 메모리 판에 반영 + 대기열 → 서버 판(rev) 위에 얹어 쓰고, 오프라인·실패면 기기 사본(ourgoal_ledger_cache_<uid>)에 보관했다가 재동기화한다. 판 충돌이면 다시 읽어 얹는다."
+    },
+    {
+      "id": "R4",
+      "text": "게스트·세션 없는 로그인은 지금처럼 기기 settings.xp. 지급 규칙(XP_RULES·호출처)·레벨 계산(xpForLevel·levelForXP) 변경 0. index.html 인라인 줄 순증가 0."
+    },
+    {
+      "id": "R5",
+      "text": "헌법 E4 수명주기 4단계(생성 → 기기 캐시 파기 → 리로드 → 서버 복원 deepStrictEqual)와 B 세션이 A 원장을 못 읽는 것(RLS)을 실계정으로 잰다."
+    },
+    {
+      "id": "R6",
+      "text": "부품 시험(npm test 경로): 이관·합치기·오프라인 재동기화·게스트 불변."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "표 만들기는 if not exists 라 다시 돌려도 안전하다",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-05-xp-ledger.sql",
+        "text": "create table if not exists public.user_ledger_docs ("
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "읽기 정책은 로그인 사용자 본인 행만",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-05-xp-ledger.sql",
+        "text": "  using (user_id = (select auth.uid()));"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "anon 은 표 권한 자체를 회수한다",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-05-xp-ledger.sql",
+        "text": "revoke all on public.user_ledger_docs from anon;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "로그인 사용자에게는 select·insert·update 만(삭제 권한 없음)",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-05-xp-ledger.sql",
+        "text": "grant select, insert, update on public.user_ledger_docs to authenticated;"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "자동 파기 목록 함수에 이 표를 users 앞에 더한다",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-05-xp-ledger.sql",
+        "text": "    (21, 'user_ledger_docs',  'user_id'),"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "되돌리기는 정책만 거두고 표·행은 남긴다",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger-rollback.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-05-xp-ledger-rollback.sql",
+        "text": "drop policy if exists uld_select_own on public.user_ledger_docs;"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "파기 설치 SQL 의 목록도 같은 21번 행",
+      "touches": [
+        "docs/sql/2026-10-04-account-purge-install.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-04-account-purge-install.sql",
+        "text": "    (21, 'user_ledger_docs',  'user_id'),"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "탈퇴 즉시 파기(api/withdraw.js) 대상에 이 표",
+      "touches": [
+        "api/withdraw.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/withdraw.js",
+        "text": "  { table: 'user_ledger_docs', col: 'user_id' },"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "운영 적용 뒤 정책 3개(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-421/prod-sql.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-421/prod-sql.json",
+        "path": "post.policies",
+        "equals": 3
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "운영 적용 뒤 anon 표 권한 0(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-421/prod-sql.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-421/prod-sql.json",
+        "path": "post.anon_grants",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "db",
+      "statement": "운영 적용 뒤 anon select 권한 false(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-421/prod-sql.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-421/prod-sql.json",
+        "path": "privileges.anon_select",
+        "equals": false
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "이관 전 기기 원문을 한 번만 백업한다(이미 있으면 덮지 않음)",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "      if(ls.getItem(LEDGER_BACKUP_PREFIX + uid)) return true;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "백업이 안 되면 이관하지 않는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    if(!backupBeforeMigration(uid, plain)) return { mode: 'device', why: 'backup-failed' };"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "합계 = 서버 합계 + 새 이력 합 + 기기의 이력 밖 몫이 더 클 때 그 차이",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    var total = S.total + sumLog(added) + Math.max(0, uC - uS);"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "서버가 이미 본 id 는 다시 더하지 않는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    var added = C.log.filter(function(e){ return !known[e.id]; });"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "쓴 뒤 서버를 다시 읽어 합친 판과 다르면 확인하지 않는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "      if(back.error || !back.row || !sameXpDoc(back.row.data, merged)) return { mode: 'device', why: 'verify-mismatch' };"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "확인 뒤 settings.xp 는 열거되지 않는 칸 — 기기 설정 JSON 에서 빠진다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "      enumerable: false,"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "프로필 불러오기 직후 같은 줄에서 원장을 붙인다(줄 수 변화 0)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    var settings = loadLocalSettings(userId); if(window.OurgoalAvatarParts && window.OurgoalAvatarParts.xp && window.OurgoalAvatarParts.xp.attachLedger) settings = window.OurgoalAvatarParts.xp.attachLedger(userId, settings);"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "지급 직후 이력 항목에 id 를 달고 대기열에 넣는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    ledgerRecord(xp.log[0], amount);"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "갱신은 읽은 판(rev)과 같을 때만",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "        r = await sb.from(LEDGER_TABLE).update({ data: data }).eq('user_id', uid).eq('doc_key', LEDGER_DOC).eq('rev', rev).select('data,rev');"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "0행 갱신(판 충돌)이면 다시 읽어 재시도",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "        if(w.conflict){ got = await readServerXp(sb, uid); if(got.error) return { mode: 'ledger', why: 'offline' }; continue; }"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "대기열·기기 사본은 ourgoal_ledger_cache_<uid> 에 저장",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "      c.xp = { doc: LG.base, pending: LG.pending, importQ: LG.importQ, rev: LG.rev, confirmedAt: LG.confirmedAt, savedAt: new Date().toISOString() };"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "연결이 돌아오면 바로 다시 보낸다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    try { window.addEventListener('online', function(){ LG.nextTry = 0; ledgerTick(); }); } catch(e){}"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R3",
+      "kind": "static",
+      "domain": "db",
+      "statement": "서버 트리거가 갱신마다 rev 를 올린다",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-05-xp-ledger.sql",
+        "text": "    new.rev := old.rev + 1;"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "합계가 바뀌면 레벨 배지를 다시 그린다(새 기기 복원 때 0 으로 남지 않게)",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    try { if(typeof L.renderLevelBadge === 'function') L.renderLevelBadge(); } catch(e){}"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "로그인 세션 사용자 id 가 지금 프로필과 다르면 원장을 쓰지 않는다(게스트·세션 없는 로그인은 기기)",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    if(!sess || !sess.user || sess.user.id !== uid){ if(!LG.active) LG.mode = 'device'; return { mode: LG.mode, why: 'no-session' }; }"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "uuid 가 아닌 프로필(게스트)에는 붙이지 않는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "      if(!settings || typeof settings !== 'object' || !UUID_RE.test(String(userId || ''))) return settings;"
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "xp.award 능력 기술에 저장 위치(서버 원장·기기)를 적는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "      sideEffect: 'server',"
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트로 홈 체크인(#captureSave)을 누르면 축하 팝업에 「잘했다! 내 자신!」·「EXP 획득」이 뜨고 홈 경험치 막대(#homeHeroExpBar)가 0 에서 50 으로 오른다 — 게스트는 서버 원장을 쓰지 않으므로 기준 커밋에서도 같은 결과여야 한다(고칠 게 없었음이 기대값)",
+      "touches": [
+        "js/avatar/xp.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/guest-checkin-exp-unchanged.json"
+    },
+    {
+      "id": "C30",
+      "req": "R5",
+      "kind": "static",
+      "domain": "db",
+      "statement": "실계정 하네스(작업자 측정): 8단계 중 실패 0",
+      "touches": [
+        "reports/TASK-ES-421/real-account-xp-ledger.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-421/real-account-xp-ledger.json",
+        "path": "summary.failed",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R5",
+      "kind": "static",
+      "domain": "db",
+      "statement": "실계정 하네스 ④ 서버 복원 deepStrictEqual 참(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-421/real-account-xp-ledger.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-421/real-account-xp-ledger.json",
+        "path": "steps.4.evidence.deepStrictEqual",
+        "equals": true
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R5",
+      "kind": "static",
+      "domain": "db",
+      "statement": "실계정 하네스 ⑤ B 세션이 읽은 A 원장 행 0(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-421/real-account-xp-ledger.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-421/real-account-xp-ledger.json",
+        "path": "steps.5.evidence.readARows",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R5",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인 사용자가 체크인으로 EXP 를 얻은 뒤 브라우저 데이터를 모두 지우고 다시 로그인하면 레벨·EXP 합계·이력이 서버에서 그대로 돌아온다",
+      "touches": [
+        "js/avatar/xp.js",
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정 A 로 로그인할 수 있는 사람 또는 세션(실계정 하네스 docs/design/harness/real-account-xp-ledger-es421.js)",
+        "how": [
+          "A 로그인 → 홈 체크인 한 줄 → 「오늘 실천 완료」",
+          "홈 레벨 배지·경험치 막대 값 기록",
+          "브라우저 사이트 데이터 전부 삭제 → 새로고침 → 다시 로그인",
+          "레벨 배지·경험치 합계가 삭제 전과 같은지 본다"
+        ],
+        "note": "작업자 측정(판정 아님): 로컬 127.0.0.2 정적 서버 + /api 운영 전달, 헤드리스 크롬, 운영 Supabase, 테스트 계정 A — reports/TASK-ES-421/real-account-xp-ledger.json ①~④ 통과(메모리 판 = 파기 전 서버 판 = 지금 서버 판 deepStrictEqual, 판 번호 그대로, 레벨 배지 글자 같음)."
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R5",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "다른 사용자(B)의 로그인 세션으로는 A 의 EXP 원장을 읽을 수도 고칠 수도 없고, 로그인 없는 요청은 표 자체를 읽지 못한다",
+      "touches": [
+        "docs/sql/2026-10-05-xp-ledger.sql"
+      ],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정 A·B 로 로그인할 수 있는 사람 또는 세션",
+        "how": [
+          "A 로그인 → EXP 원장 행이 생기게 체크인",
+          "B 로그인 → user_ledger_docs 에서 user_id = A 조회·갱신·A 이름으로 넣기 시도",
+          "anon 키로 REST /rest/v1/user_ledger_docs 조회"
+        ],
+        "note": "작업자 측정(판정 아님): reports/TASK-ES-421/real-account-xp-ledger.json ⑤ B 읽기 0행·남의 행 0·갱신 0행·넣기 거부 42501·A 판 그대로, ⑥ anon REST 401(42501). 운영 권한 집계 reports/TASK-ES-421/prod-sql.json."
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험이 npm test 경로(test-shipyard-modular)에서 돈다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/xp-server-ledger-es421.test.js');"
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험: 합치기 결과 합계 95(60 + 30 + 기기 이력 밖 5)",
+      "touches": [
+        "tests/xp-server-ledger-es421.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/xp-server-ledger-es421.test.js",
+        "text": "    assert.strictEqual(m.total, 95, '60 + 30 + 기기의 이력 밖 5');"
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험: 오프라인 동안 대기열이 기기 사본에 남는다",
+      "touches": [
+        "tests/xp-server-ledger-es421.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/xp-server-ledger-es421.test.js",
+        "text": "    assert.strictEqual(cached.xp.pending.length, 2, '대기열이 기기 사본에 있음');"
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험: 게스트는 서버 호출 0",
+      "touches": [
+        "tests/xp-server-ledger-es421.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/xp-server-ledger-es421.test.js",
+        "text": "    assert.strictEqual(server.calls, 0, '서버 호출 0');"
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "부품 시험: 확인 뒤 기기 설정 JSON 에서 xp 가 빠진다",
+      "touches": [
+        "tests/xp-server-ledger-es421.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/xp-server-ledger-es421.test.js",
+        "text": "    assert.strictEqual(JSON.parse(JSON.stringify(settings)).xp, undefined, '기기 설정 JSON 에서 빠짐(쓰기 중단)');"
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "실계정 하네스가 복원 판을 deepStrictEqual 로 잰다",
+      "touches": [
+        "docs/design/harness/real-account-xp-ledger-es421.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/real-account-xp-ledger-es421.js",
+        "text": "    try { assert.deepStrictEqual(s2.mem, s1.server.data); assert.deepStrictEqual(s2.server.data, s1.server.data); deepOk = true; } catch (e) { deepErr = String(e.message).slice(0, 200); }"
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R2",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "REQ 에 이관 규칙(합치기)이 적혀 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-421-XP-SERVER-LEDGER.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-421-XP-SERVER-LEDGER.md",
+        "text": "### 3-3. 이관 규칙 (기기별 1회 · `migrateXp`)"
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R4",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "세포 신고서가 xp.js 의 새 전역 읽기(updateTopBar)를 반영",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "        \"updateTopBar\""
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R6",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-421: K-XP1 EXP 서버 원장 이관"
+      }
+    },
+    {
+      "id": "C44",
+      "req": "R6",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-421 | E1/E4 | [K-XP1 EXP 서버 원장]"
+      }
+    }
+  ]
+}

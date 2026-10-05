@@ -42,6 +42,7 @@ var PURGE_TARGETS = [
   { table: 'feed_posts', col: 'user_id' },
   { table: 'checkins', col: 'user_id' },
   { table: 'goals', col: 'user_id' },
+  { table: 'user_ledger_docs', col: 'user_id' },
   { table: 'users', col: 'id' }
 ];
 // 사용자 칸 대신 jsonb 안에 사용자 id 를 담는 행: events 의 settings_ledger·companion_ledger(api/track.js 가 props.userId 로 씀).

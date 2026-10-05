@@ -2317,7 +2317,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/avatar/modal/bind-craft.js?v=20261005-es390"></script>
   <script src="js/avatar/modal/bind-persona.js?v=20261005-es390"></script>
   <script src="js/avatar/modal/bind-save.js?v=20261005-es390"></script>
-  <script src="js/avatar/xp.js?v=20261005-es395"></script>
+  <script src="js/avatar/xp.js?v=20261005-es421"></script>
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
   <script src="js/auth-safety.js"></script>
@@ -3760,7 +3760,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
       track('signup_completed', Object.assign({ source: provider || 'email', day_index: 0 }, getAttribution()));
     }
-    var settings = loadLocalSettings(userId);
+    var settings = loadLocalSettings(userId); if(window.OurgoalAvatarParts && window.OurgoalAvatarParts.xp && window.OurgoalAvatarParts.xp.attachLedger) settings = window.OurgoalAvatarParts.xp.attachLedger(userId, settings); /* [#TASK-ES-421] EXP 서버 원장 붙이기(js/avatar/xp.js) */
     var dbSavedAvatars = Array.isArray(urow.saved_avatars) ? urow.saved_avatars : [];
     if(!settings.savedAvatars || settings.savedAvatars.length === 0){
       if(dbSavedAvatars.length > 0){
