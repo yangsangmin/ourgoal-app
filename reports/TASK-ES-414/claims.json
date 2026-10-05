@@ -18,8 +18,14 @@
       "kind": "static",
       "domain": "code",
       "statement": "생성기는 현재 시각 대신 입력 경로를 마지막으로 바꾼 커밋과 그 시각을 기준으로 적는다",
-      "touches": ["scripts/cell-map-export.js"],
-      "check": { "type": "codeContains", "file": "scripts/cell-map-export.js", "text": "const out = git(root, ['log', '-1', '--first-parent', '--format=%H%x1f%h%x1f%cI%x1f%s', 'HEAD', '--'].concat(BASIS_PATHS));" }
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "const out = git(root, ['log', '-1', '--first-parent', '--format=%H%x1f%h%x1f%cI%x1f%s', 'HEAD', '--'].concat(BASIS_PATHS));"
+      }
     },
     {
       "id": "C2",
@@ -27,8 +33,14 @@
       "kind": "static",
       "domain": "code",
       "statement": "세포마다 부르는 세포(calls)와 이 세포를 부르는 쪽(calledBy)을 노출 이름·require 로 계산한다",
-      "touches": ["scripts/cell-map-export.js"],
-      "check": { "type": "codeContains", "file": "scripts/cell-map-export.js", "text": "  calls.forEach((set, from) => set.forEach(to => calledBy.get(to).add(from)));" }
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "  calls.forEach((set, from) => set.forEach(to => calledBy.get(to).add(from)));"
+      }
     },
     {
       "id": "C3",
@@ -36,8 +48,14 @@
       "kind": "static",
       "domain": "code",
       "statement": "분열 이력은 기준선 첫 기록의 800줄 초과 파일에서 시작해 줄 수 흐름과 떼어 낸 부품을 모은다",
-      "touches": ["scripts/cell-map-export.js"],
-      "check": { "type": "codeContains", "file": "scripts/cell-map-export.js", "text": "  const firstFiles = first.metrics.oversizeJsFiles.files;" }
+      "touches": [
+        "scripts/cell-map-export.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-export.js",
+        "text": "  const firstFiles = first.metrics.oversizeJsFiles.files;"
+      }
     },
     {
       "id": "C4",
@@ -45,8 +63,15 @@
       "kind": "static",
       "domain": "config",
       "statement": "저장된 세포지도는 세포 150개를 담는다",
-      "touches": ["docs/architecture/cell-map.json"],
-      "check": { "type": "jsonPath", "file": "docs/architecture/cell-map.json", "path": "summary.cells", "equals": 150 }
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "summary.cells",
+        "equals": 150
+      }
     },
     {
       "id": "C5",
@@ -54,8 +79,15 @@
       "kind": "static",
       "domain": "config",
       "statement": "저장된 세포지도의 800줄 초과는 처음 12개다",
-      "touches": ["docs/architecture/cell-map.json"],
-      "check": { "type": "jsonPath", "file": "docs/architecture/cell-map.json", "path": "summary.oversize.first", "equals": 12 }
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "summary.oversize.first",
+        "equals": 12
+      }
     },
     {
       "id": "C6",
@@ -63,8 +95,14 @@
       "kind": "static",
       "domain": "config",
       "statement": "「이 세포가 하는 일」 설명 파일에 사용자가 보는 기능 말로 쓴 줄이 있다(예: DM 대화방)",
-      "touches": ["docs/architecture/cell-descriptions.json"],
-      "check": { "type": "codeContains", "file": "docs/architecture/cell-descriptions.json", "text": "\"team-dm-room\": \"DM 대화방 화면 — 메시지 보여 주기·불러오기·실시간 수신·보낸 시각 표시\"" }
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "\"team-dm-room\": \"DM 대화방 화면 — 메시지 보여 주기·불러오기·실시간 수신·보낸 시각 표시\""
+      }
     },
     {
       "id": "C7",
@@ -72,8 +110,14 @@
       "kind": "static",
       "domain": "code",
       "statement": "웹페이지 db 재료는 meta 한 문서와 150KB 이하 세포 묶음들로 나뉜다",
-      "touches": ["scripts/cell-map-publish.js"],
-      "check": { "type": "codeContains", "file": "scripts/cell-map-publish.js", "text": "const CHUNK_BYTES = 150 * 1024;" }
+      "touches": [
+        "scripts/cell-map-publish.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-publish.js",
+        "text": "const CHUNK_BYTES = 150 * 1024;"
+      }
     },
     {
       "id": "C8",
@@ -81,8 +125,14 @@
       "kind": "static",
       "domain": "code",
       "statement": "노션 되읽기 대조는 세포 펼침 수·하는 일 글자·영역 제목·깨진 글자·기준 커밋을 센다",
-      "touches": ["scripts/cell-map-publish.js"],
-      "check": { "type": "codeContains", "file": "scripts/cell-map-publish.js", "text": "    broken: (text.match(/\\uFFFD/g) || []).length," }
+      "touches": [
+        "scripts/cell-map-publish.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-publish.js",
+        "text": "    broken: (text.match(/\\uFFFD/g) || []).length,"
+      }
     },
     {
       "id": "C9",
@@ -90,8 +140,14 @@
       "kind": "static",
       "domain": "code",
       "statement": "부품 시험이 두 번 만든 세포지도의 바이트가 같은지 본다",
-      "touches": ["tests/cell-map-export-es414.test.js"],
-      "check": { "type": "codeContains", "file": "tests/cell-map-export-es414.test.js", "text": "  assert.strictEqual(exporter.serialize(a), exporter.serialize(b));" }
+      "touches": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/cell-map-export-es414.test.js",
+        "text": "  assert.strictEqual(exporter.serialize(a), exporter.serialize(b));"
+      }
     },
     {
       "id": "C10",
@@ -99,8 +155,14 @@
       "kind": "static",
       "domain": "code",
       "statement": "npm test 경로(test-shipyard-modular [Test 6])가 세포지도 부품 시험을 돌린다",
-      "touches": ["scripts/test-shipyard-modular.js"],
-      "check": { "type": "codeContains", "file": "scripts/test-shipyard-modular.js", "text": "  runNode('tests/cell-map-export-es414.test.js');" }
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/cell-map-export-es414.test.js');"
+      }
     },
     {
       "id": "C11",
@@ -108,8 +170,14 @@
       "kind": "static",
       "domain": "config",
       "statement": "갱신 절차 문서가 db 묶음을 먼저, meta 를 마지막에 쓰라고 적는다",
-      "touches": ["scripts/cell-map-sync.md"],
-      "check": { "type": "codeContains", "file": "scripts/cell-map-sync.md", "text": "순서가 중요하다: 묶음을 먼저, meta 를 마지막에." }
+      "touches": [
+        "scripts/cell-map-sync.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/cell-map-sync.md",
+        "text": "순서가 중요하다: 묶음을 먼저, meta 를 마지막에."
+      }
     },
     {
       "id": "C12",
@@ -117,8 +185,14 @@
       "kind": "static",
       "domain": "config",
       "statement": "REQ 에 8원칙 중 원칙 ② 본질·원인·중심·핵심 절이 있다",
-      "touches": ["docs/specs/REQ-TASK-ES-414-CELL-MAP-LIVE.md"],
-      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-414-CELL-MAP-LIVE.md", "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심" }
+      "touches": [
+        "docs/specs/REQ-TASK-ES-414-CELL-MAP-LIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-414-CELL-MAP-LIVE.md",
+        "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+      }
     },
     {
       "id": "C13",
@@ -126,8 +200,14 @@
       "kind": "static",
       "domain": "config",
       "statement": "dev_log 에 ES-414 한 줄 기록",
-      "touches": ["dev_log.md"],
-      "check": { "type": "codeContains", "file": "dev_log.md", "text": "- 2026-10-05 TASK-ES-414: 세포지도 실시간(노션·웹) 데이터 생성기" }
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-414: 세포지도 실시간(노션·웹) 데이터 생성기"
+      }
     },
     {
       "id": "C14",
@@ -135,22 +215,21 @@
       "kind": "static",
       "domain": "config",
       "statement": "TICKETS 에 ES-414 한 줄 기록(4단계 심사 청구)",
-      "touches": ["docs/rules/TICKETS.md"],
-      "check": { "type": "codeContains", "file": "docs/rules/TICKETS.md", "text": "- #TASK-ES-414 | INFRA | [세포지도 실시간]" }
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-414 | INFRA | [세포지도 실시간]"
+      }
     },
     {
       "id": "C15",
       "req": "R2",
-      "kind": "unverified",
-      "domain": "ui-behavior",
-      "statement": "claude.ai 웹페이지가 세포지도를 저장본에서 읽어 세포를 누르면 상세가 열린다(바깥 화면 — 이 PR 의 파일이 아님)",
-      "touches": ["docs/architecture/cell-map.json"],
-      "unverified": {
-        "reason": "needs-live-server",
-        "cannotBecause": "external-page",
-        "who": "상민님 또는 세션 — 브라우저로 https://claude.ai/artifact/VvfYJf37tYgRGwKezpHW2J",
-        "how": ["페이지를 연다", "상태바가 「페이지 저장본」·기준 커밋을 보이는지 본다", "세포 하나를 눌러 오른쪽(폰은 아래) 상세가 열리는지 본다"]
-      }
+      "kind": "withdrawn",
+      "statement": "claude.ai 웹페이지(이 PR 밖 바깥 화면)의 세포 상세 열림",
+      "withdrawnReason": "웹페이지는 이 PR 의 파일이 아니라 claude.ai artifact 라 법정이 열 수 없다. 이 PR 의 주장은 생성기·데이터·절차 문서(C1~C14)로 한정하고, 웹페이지 확인은 작업자 측정(로컬 헤드리스 1280·375px, claude.ai 실화면 상태바)을 PR 본문에 남긴다."
     }
   ]
 }
