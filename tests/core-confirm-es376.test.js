@@ -15,7 +15,11 @@ const HTML_CELLS = require('./helpers/inline-bundle').withInlineCells(HTML);
    (js/tabs/goals/routine-screen.js — 있을 때만, 생성기 접두 L. 만 뗌)에서 센다. 이 시험지가 쓰일 때 이미 세포였던 파일(goal-detail-events.js 등)의
    확인창은 처음부터 이 검사 범위 밖이었으므로 합본 전체가 아니라 옮겨 갈 파일만 더한다. 기대값은 그대로다. */
 const ROUTINE_CELL = path.join(ROOT, 'js', 'tabs', 'goals', 'routine-screen.js');
-const HTML_ROUTINE = HTML + (fs.existsSync(ROUTINE_CELL) ? '\n' + fs.readFileSync(ROUTINE_CELL, 'utf8').replace(/(^|[^A-Za-z0-9_$.])L\.(?=[A-Za-z_$])/g, '$1') : '');
+/* #TASK-ES-527 인라인 3단계 기관 선행: 루틴 삭제 2곳 중 상세·편집 창(openRoutineDetailModal)은 목표 탭 세포 js/tabs/goals/routine-detail-modal.js 로
+   옮겨 간다 — 그 파일도(있을 때만, 생성기 접두 L. 만 뗌) 같은 방식으로 더한다. 기대값은 그대로다. */
+const ROUTINE_DETAIL_CELL = path.join(ROOT, 'js', 'tabs', 'goals', 'routine-detail-modal.js');
+const HTML_ROUTINE = HTML + (fs.existsSync(ROUTINE_CELL) ? '\n' + fs.readFileSync(ROUTINE_CELL, 'utf8').replace(/(^|[^A-Za-z0-9_$.])L\.(?=[A-Za-z_$])/g, '$1') : '')
+  + (fs.existsSync(ROUTINE_DETAIL_CELL) ? '\n' + fs.readFileSync(ROUTINE_DETAIL_CELL, 'utf8').replace(/(^|[^A-Za-z0-9_$.])L\.(?=[A-Za-z_$])/g, '$1') : '');
 const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
 const C = require(path.join(ROOT, 'js/core/confirm.js'));
 
