@@ -1,0 +1,103 @@
+/**
+ * #TASK-ES-414 세포지도 생성기 부품 시험 — 결정성(두 번 만들어 바이트 같음) · 필수 칸 · 영역이 모든 세포를 한 번씩 담음
+ * 실행: node tests/cell-map-export-es414.test.js (npm test → scripts/test-shipyard-modular.js [Test 6] 경로)
+ */
+'use strict';
+
+const assert = require('assert');
+const path = require('path');
+const exporter = require('../scripts/cell-map-export.js');
+
+const root = path.join(__dirname, '..');
+const results = [];
+function check(name, fn) {
+  try { fn(); results.push({ name, ok: true }); } catch (e) { results.push({ name, ok: false, msg: e.message }); }
+}
+
+const a = exporter.build(root);
+const b = exporter.build(root);
+const spec = require('../docs/architecture/modules.json');
+
+check('같은 입력으로 두 번 만들면 바이트가 같다', () => {
+  assert.strictEqual(exporter.serialize(a), exporter.serialize(b));
+});
+
+check('형식 이름과 기준 커밋 칸이 있다', () => {
+  assert.strictEqual(a.schema, 'ourgoal.cell-map/1');
+  assert.ok('commit' in a.source && 'committedAt' in a.source, 'source.commit · source.committedAt 칸');
+  assert.strictEqual(a.source.repo, 'yangsangmin/ourgoal-app');
+});
+
+check('세포 수가 신고서와 같고 세포마다 필수 칸이 있다', () => {
+  assert.strictEqual(a.cells.length, spec.cells.length);
+  for (const c of a.cells) {
+    for (const k of ['id', 'kind', 'kindName', 'area', 'does', 'doesSource', 'calls', 'calledBy', 'exposes', 'tasks', 'reqs', 'prs', 'tabs']) {
+      assert.ok(c[k] !== undefined, `${c.id}: ${k} 칸`);
+    }
+    assert.ok(typeof c.does === 'string' && c.does.trim().length > 0, `${c.id}: 하는 일 한 줄이 비어 있다`);
+    if (c.file) assert.ok(Number.isInteger(c.lines) && c.lines > 0, `${c.id}: 줄 수`);
+    assert.strictEqual(c.over800, c.lines !== null && c.lines > 800, `${c.id}: 800줄 초과 표시`);
+  }
+});
+
+check('영역들이 모든 세포를 정확히 한 번씩 담는다', () => {
+  const seen = {};
+  a.areas.forEach(ar => ar.cells.forEach(id => { seen[id] = (seen[id] || 0) + 1; }));
+  for (const c of a.cells) assert.strictEqual(seen[c.id], 1, `${c.id} 영역 소속 ${seen[c.id] || 0}회`);
+  assert.strictEqual(Object.keys(seen).length, a.cells.length);
+});
+
+check('세포 종류 4가지 · 꽂는 자리 15곳', () => {
+  assert.deepStrictEqual(a.kinds.map(k => k.key), ['organ', 'tab', 'hybrid', 'future']);
+  assert.strictEqual(a.kinds.reduce((s, k) => s + k.count, 0), a.cells.length);
+  assert.strictEqual(a.slots.length, 15);
+});
+
+check('분열 이력: 처음 800줄 초과 목록이 기준선 첫 기록과 같고 지금 수는 지표와 같다', () => {
+  const baseline = require('../docs/architecture/module-baseline.json');
+  const first = baseline.history[0].metrics.oversizeJsFiles;
+  assert.strictEqual(a.summary.oversize.first, first.count);
+  assert.deepStrictEqual(a.splits.map(s => s.file).sort(), Object.keys(first.files).sort());
+  const m = require('../scripts/module-metrics.js').measure(root);
+  assert.strictEqual(a.summary.oversize.now, m.ratchet.oversizeJsFiles.count);
+});
+
+check('부르는/불리는 관계가 서로 맞다', () => {
+  const byId = new Map(a.cells.map(c => [c.id, c]));
+  for (const c of a.cells) {
+    for (const t of c.calls) assert.ok(byId.get(t).calledBy.includes(c.id), `${c.id} → ${t}`);
+  }
+});
+
+check('머리 주석 줄 추출: 구분선·별표를 빼고 @role 을 벗긴다', () => {
+  const raw = "'use strict';\n/**\n * ======\n * @role 홈 카드\n * 둘째 줄\n */\nvar x = 1;\n";
+  assert.deepStrictEqual(exporter.headerLines(raw), ['홈 카드', '둘째 줄']);
+  assert.deepStrictEqual(exporter.headerLines('var y = 2;\n'), []);
+});
+
+const publish = require('../scripts/cell-map-publish.js');
+
+check('db 재료: 묶음마다 256KiB 미만이고 다시 이으면 세포 목록이 그대로다', () => {
+  const d = publish.dbDocs(a);
+  assert.strictEqual(d.meta.chunkCount, d.chunks.length);
+  assert.strictEqual(d.meta.cells, undefined);
+  d.chunks.forEach(ch => assert.ok(Buffer.byteLength(JSON.stringify(ch)) < 256 * 1024, `묶음 ${ch.index} 크기`));
+  assert.deepStrictEqual([].concat(...d.chunks.map(ch => ch.cells)), a.cells);
+});
+
+check('노션 본문: 두 번 만들면 같고, 되읽기 대조가 세포 전부를 찾는다', () => {
+  const p1 = publish.notionParts(a).join('');
+  const p2 = publish.notionParts(b).join('');
+  assert.strictEqual(p1, p2);
+  const r = publish.verifyNotion(a, p1);
+  assert.strictEqual(r.toggles, a.cells.length);
+  assert.deepStrictEqual(r.missing, []);
+  assert.strictEqual(r.areas, a.areas.length);
+  const broken = publish.verifyNotion(a, p1.replace(publish.esc(a.cells[0].does), '바뀐 글'));
+  assert.deepStrictEqual(broken.missing, [a.cells[0].id]);
+});
+
+const failed = results.filter(r => !r.ok);
+results.forEach(r => console.log((r.ok ? '  통과 ' : '  실패 ') + r.name + (r.ok ? '' : ' — ' + r.msg)));
+console.log(`cell-map-export 부품 시험: ${results.length - failed.length}/${results.length}`);
+if (failed.length) process.exitCode = 1;
