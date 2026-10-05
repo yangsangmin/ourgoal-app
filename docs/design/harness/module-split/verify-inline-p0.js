@@ -46,7 +46,7 @@ const origLines = readLines(ORIG);
 const lineCheck = [];
 const strip = l => l.replace(/(^|[^A-Za-z0-9_$.])L\.(?=[A-Za-z_$])/g, '$1');
 for (const [f, names] of Object.entries(MOVED)) {
-  const src = fs.readFileSync(path.join(APP, f), 'utf8');
+  const src = fs.readFileSync(path.join(APP, f), 'utf8').replace(/\r\n/g, '\n'); // CRLF 체크아웃이어도 주석 토큰 글자가 같게
   const fast = parser.parse(src, { sourceType: 'script', tokens: true });
   const ndecl = topDecls(fast.program.body[0].expression.callee.body.body);
   for (const n of names) {
