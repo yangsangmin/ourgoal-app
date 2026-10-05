@@ -1,0 +1,59 @@
+{
+  "id": "settings-faq-modal",
+  "title": "게스트로 설정 탭 「데이터」 묶음을 펼치고 「자주 묻는 질문 (FAQ)」을 누르면 「자주 묻는 질문 (FAQ)」 창이 뜬다 — FAQ 창(openFaqModal)을 설정 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#setGroupDataSummary",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#faqAccordionBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#faqAccordionBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "자주 묻는 질문 (FAQ)",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

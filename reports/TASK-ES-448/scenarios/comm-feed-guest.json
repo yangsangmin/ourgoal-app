@@ -1,0 +1,70 @@
+{
+  "id": "comm-feed-guest",
+  "title": "게스트로 소통 탭 「🎁 마니또」에서 「📰 피드」로 옮기면 「실시간 활동 피드」 화면이 그려지고 예외가 없다 — 피드 글 불러오기·실시간 구독(ensureFeedPostsLoaded·setupFeedPostsRealtime, 게스트는 서버 클라이언트가 없어 빈 목록으로 끝남)을 소통 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#commBody [data-sub=\"manito\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"manito\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mnJoin",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"feed\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commBody",
+      "text": "실시간 활동 피드",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
