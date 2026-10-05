@@ -1,0 +1,207 @@
+{
+ "task": "TASK-ES-447",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험지 4개(stopwatch-lap-inputs·stopwatch-table-hint·guest-null-client-es377·desktop-widget-suite)가 index.html 대신 #751 인라인 합본(withInlineCells)을 읽는다. 단언·기대값·검사 수 0 변경, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "모의 이전(기준 사본에서 해당 선언을 세포로 옮김)으로 기준 시험지는 깨지고 새 시험지는 기준과 같음을 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 stopwatch-lap-inputs 가 index.html 대신 인라인 합본을 읽는다(읽기 줄만 바꿈)",
+   "touches": [
+    "tests/stopwatch-lap-inputs.test.js"
+   ],
+   "check": {
+    "file": "tests/stopwatch-lap-inputs.test.js",
+    "type": "codeContains",
+    "text": "const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(htmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 stopwatch-table-hint 가 index.html 대신 인라인 합본을 읽는다(읽기 줄만 바꿈)",
+   "touches": [
+    "tests/stopwatch-table-hint.test.js"
+   ],
+   "check": {
+    "file": "tests/stopwatch-table-hint.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 guest-null-client-es377 가 index.html 대신 인라인 합본을 읽는다(읽기 줄만 바꿈)",
+   "touches": [
+    "tests/guest-null-client-es377.test.js"
+   ],
+   "check": {
+    "file": "tests/guest-null-client-es377.test.js",
+    "type": "codeContains",
+    "text": "const HTML = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')).replace(/\\r\\n/g, '\\n');"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 desktop-widget-suite 가 index.html 대신 인라인 합본을 읽는다(읽기 줄만 바꿈)",
+   "touches": [
+    "tests/desktop-widget-suite.test.js"
+   ],
+   "check": {
+    "file": "tests/desktop-widget-suite.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 기준 제품에서 기준 시험지와 종료 코드가 같다",
+   "touches": [
+    "reports/TASK-ES-447/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-447/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestsSameOnBaseProduct",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 모의 이전 제품에서 기준 시험지·기준 제품과 종료 코드·통과 줄·첫 오류가 같다",
+   "touches": [
+    "reports/TASK-ES-447/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-447/mock-move.json",
+    "type": "jsonPath",
+    "path": "newTestsSameOnMockMoved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 시험지는 모의 이전에서 3개가 깨진다(선행이 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-447/mock-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-447/mock-move.json",
+    "type": "jsonPath",
+    "path": "baseTestsBreakOnMockMoved",
+    "equals": [
+     "tests/stopwatch-lap-inputs.test.js",
+     "tests/stopwatch-table-hint.test.js",
+     "tests/guest-null-client-es377.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 도구: 4조합을 돌린다",
+   "touches": [
+    "docs/design/harness/module-split/mock-move-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/mock-move-inline-p2.js",
+    "type": "codeContains",
+    "text": "for (const t of TESTS) rows[t] = { baseTestBaseProduct: run(WORK, BASE_TESTS, t), newTestBaseProduct: run(WORK, WORK, t), baseTestMockMoved: run(MOCK, BASE_TESTS, t), newTestMockMoved: run(MOCK, WORK, t) };"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 설정: 스톱워치 위젯·wireRecordCards",
+   "touches": [
+    "docs/design/harness/module-split/mock-move-inline-p2.config.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/mock-move-inline-p2.config.js",
+    "type": "codeContains",
+    "text": "    Object.assign({ key: 'sw', file: 'js/tabs/records/mock-stopwatch.js', title: 'mock', desc: ['mock'], groups: [{ id: 'G140', names: ['playTimerBeep', 'STOPWATCH_STATE', 'renderStopwatchWidgetHtml', 'renderLapRowsHtml'] }, { id: 'G130', names: ['wireRecordCards'] }] }, R),"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-447: 시험지 4개"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-447 | INFRA | [시험지 인라인 합본 · 구역 P2 선행]"
+   }
+  }
+ ]
+}

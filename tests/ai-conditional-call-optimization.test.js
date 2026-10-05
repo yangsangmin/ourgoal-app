@@ -14,7 +14,7 @@ const SUITE_TASK = 'TASK-ES-264';
 console.log('[TEST] ai-conditional-call-optimization.test.js: starting execution for ' + SUITE_TASK + '...');
 
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8')); /* #TASK-ES-451 인라인 합본(원문 맨 앞 + js/tabs 세포) — refreshGoalStatusSummary 가 목표 탭 세포로 옮겨 가도 같은 가드 글자를 찾는다(인라인 세포화 P1 선행) */
 
 // 1. 소스 정적 검증
 {

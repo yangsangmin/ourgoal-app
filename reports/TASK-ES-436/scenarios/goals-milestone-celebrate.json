@@ -1,0 +1,64 @@
+{
+  "id": "goals-milestone-celebrate",
+  "title": "게스트로 목표 탭에서 템플릿 목표를 담은 뒤 진행 중인 1단계 마일스톤의 상태 표시를 눌러 완료로 바꾸면 옮긴 축하 창(celebrateMilestoneDone → requestNextActionSuggestion, 서버가 없으면 로컬 제안)이 「마일스톤 정복을 축하해」와 다음 마일스톤 「2단계 꾸준히 실천하기」 제안을 띄운다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "템플릿이 내 목표에"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-goals .ms-status.doing",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-goals .ms-status.doing"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "마일스톤 정복을 축하해",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "2단계 꾸준히 실천하기"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

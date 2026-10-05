@@ -1,0 +1,52 @@
+{
+  "id": "settings-avatar-greeting",
+  "title": "게스트로 설정 탭 「아바타 인사 미리보기」를 누르면 옮긴 아바타 인사 창(openAvatarGreetingPopup — js/tabs/settings/avatar-greeting.js)이 이전 전과 같이 보인다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "details.settings-group-accordion:has(#btnPreviewAvatarGreeting) > summary",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#btnPreviewAvatarGreeting) > summary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnPreviewAvatarGreeting",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#btnPreviewAvatarGreeting"
+    },
+    {
+      "expect": "visible",
+      "selector": "#avatarGreetingModal"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

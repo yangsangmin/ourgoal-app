@@ -14,7 +14,7 @@ const path = require('path');
 const vm = require('vm');
 
 const ROOT = path.resolve(process.argv[2] || path.join(__dirname, '..'));
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 const UID = '11111111-1111-4111-8111-111111111111';
 
 /* index.html 에서 함수 본문 잘라 오기(중괄호 짝 맞춤, 문자열·주석 건너뜀) */
