@@ -104,9 +104,8 @@
       if(r.endAt && r.startAt){
         var m = Math.round((new Date(r.endAt) - new Date(r.startAt)) / 60000);
         if(m > 0 && m < 1440) totalMins += m;
-      } else {
-        totalMins += 25;
       }
+      /* [#TASK-ES-494] 상민님 승인(2026-10-05 「주간 집중 시간 A안으로 진행해」): endAt 이 없으면(진행 중 기록) 몰입 시간에 넣지 않는다 — 예전 25분 기본값(허상지표) 삭제 */
     });
     return {
       totalSessions: totalSessions,
