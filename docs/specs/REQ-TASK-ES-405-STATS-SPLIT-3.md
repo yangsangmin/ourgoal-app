@@ -32,7 +32,7 @@
   ④ 구획 안 `return`·`this`·`arguments`·구획 밖으로 나가는 `break`/`continue` 0.
 - 원본 이음매(1·2차 것을 늘림): require 줄에 새 파일 8개, 가져오기 19줄(원본에 남은 코드가 실제로 부르는 이름만 — 구획 함수 6개는 조립자만 부르므로 안 가져온다), getter 목록 = 기존 15 ∪ 새 3(이름순).
 - index.html: 2차 태그 4개 뒤·원본 태그 바로 앞, 같은 줄에 새 태그 8개(`?v=20261005-es405`). 원본 태그·버전 글자는 그대로.
-- 신고서: `module-specs --write` 가 새 세포 8개를 올리고(kind·role·spans 는 신고서의 손 칸 — 2차처럼 hybrid·역할 한 줄·spans records/goals 를 스크립트로 채움), `module-guard --update` 로 기준선 23번째(④ 8 — universal-stats.js 1,114줄로 아직 800 초과라 수는 그대로).
+- 신고서: `module-specs --write` 가 새 세포 8개를 올리고(kind·role·spans 는 신고서의 손 칸 — 2차처럼 hybrid·역할 한 줄·spans records/goals 를 스크립트로 채움), `module-guard --update` 로 기준선 갱신. main(#718·#719·#721) 합친 뒤 기준선은 main 판을 받고 다시 만들어 24번째(④ 5 — 팀 세포 쪼개기 3차로 줄어든 수, universal-stats.js 1,114줄은 아직 800 초과).
 
 ## 4. [원칙 ④] 재검토 — 다른 길과 비교
 - A 상수를 부품 파일 최상위 `var` 로 옮기고 원본이 `_statsKit.X` 를 가져오기: 원본을 다시 읽을 때(require 캐시 비우기 시험) 키트의 옛 객체를 다시 쥐게 돼 `ensureMetricConfig` 로 고친 옛 상태가 이어진다 — 이전과 다르다. 기각.
@@ -58,12 +58,13 @@
 작업자 실측(판정 아님) — `reports/TASK-ES-405/`:
 - `sample-boundary-stats-3.json`: 80경우 모두 같음(기준 대 기준도 `sample-boundary-stats-3-base-base.json` 80/80).
 - `verify-stats-split-3.json`: 토큰 비교 37묶음 동일(함수 12·상수 6+원본 선언 6·구획 6·조립자 1·원본에 남은 함수 4·API·꼬리·별칭), 1·2차 부품 글자 동일, 누수 0, 미노출 0, 안 쓰는 노출 0, 원본에 남은 정의 0, API 키 37개·순서, `window` 이름 동일, 상수 동일성, 순수 함수 16가지 결과 동일, 부품 `잔디` 0.
-- `test-compare.json`: npm test 수치·smoke 제목 487개·tests 103개 종료 코드·정규화 출력 같음.
+- `test-compare.json`: npm test 수치·smoke 제목 487개·tests 103개(main 합친 뒤 105개) 종료 코드·정규화 출력 같음.
 - 막히는 지점: 부품 파일이 하나라도 안 읽히면 이전(2차까지)은 그 기능만 죽었지만, 이제 원본이 머리에서 공장 함수를 부르므로 원본 IIFE 가 멈춘다(브라우저 태그·Node require 줄 모두 부품을 먼저 읽어 실제로는 생기지 않음 — 새 결함 아님, 위험 기록). `generateDomainSample` 내부 텍스트를 찾는 시험은 없다(시험지 수정 0).
 
 ## 9. 화면 측정
 - `tab-check.js` 기록·목표 기준(git archive) 2회·후 1회 → `tab-compare-base1-base2.json`·`tab-compare-base1-after.json`.
 - `dom-compare-stats-3.js` 게스트 조작 69단계(2차 40단계 + 전체화면 열기·회전·닫기, 차등 분석 기준 모달(공개 API)·닫기, 리포트 카드 HTML(공개 API), CSV 내보내기(만든 CSV 글자 — Blob 을 붙잡아 맞댐, 다운로드 막음), 스냅샷(알림 글자), 1초 샘플 로드 hyrox·running·study·coding·sales, 렌즈, 탭 왕복), 단계마다 10칸(2차 9칸 + 알림 창 글자) → `dom-compare-stats-3.json`.
+- main(#718·#719·#721) 합친 뒤 다시 잼: `js/universal-stats.js`·`js/stats-*.js` 는 main 에서 안 바뀜(index.html 은 다른 태그만 바뀜). 그 기준(main git archive·detach 트리) 대 합친 트리: `verify-stats-split-3-main.json`·`sample-boundary-stats-3-main.json`·`test-compare-main.json`·`dom-compare-stats-3-main.json`. tab-check·로그인 비교는 합치기 전 기준에서 쟀다.
 - 로그인 상태: `real-account-stats-3.js` — 로컬 127.0.0.2 + /api 운영 전달, 테스트 계정 A, 읽기 전용 22단계(2차 13단계 + 전체화면·차등 분석 모달·리포트 카드·CSV 내보내기, 융합·샘플 로드·저장 안 누름) 기준 2회·후 1회, 단계마다 화면·모달 정규화 HTML sha256·바이트 → `real-account-stats.json`(주소·계정·기록 내용 미기록).
 
 ## 10. 남은 범위 (4차 이후, `js/universal-stats.js` 1,114줄)
