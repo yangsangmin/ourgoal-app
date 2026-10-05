@@ -59,7 +59,6 @@ global.document = {
   getElementById: (id) => {
     if (id === 'og-task-31-container') return { style: {} };
     if (id === 'og-task-31-action-btn') return { disabled: false };
-    if (id === 'btnCustomHomeLayout') return { disabled: false };
     return null;
   },
   querySelectorAll: () => [],
@@ -109,14 +108,15 @@ async function testActionHandler() {
 // 4. index.html 상단 바 중복 제거 및 본문 배선 정적 무결성 검증
 const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
 assert.ok(!indexHtml.includes('id="topHomeLayoutBtn" style="display:none;font-size:11px;padding:3px 7px'), 'topHomeLayoutBtn must be removed from topbar');
-assert.ok(indexHtml.includes('id="btnCustomHomeLayout"'), 'btnCustomHomeLayout must exist in index.html');
+// [#TASK-ES-515] 상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」(오케스트레이터 전달) — 늘 숨어 있던 홈 머리 단추·상단바 홈구성 단추를 지웠다
+assert.ok(!indexHtml.includes('id="btnCustomHomeLayout"'), 'hidden btnCustomHomeLayout must be removed from index.html');
 assert.ok(indexHtml.includes('handle홈_Item31Action'), 'handle홈_Item31Action must be bound in index.html');
 assert.ok(indexHtml.includes('id="og-task-31-container"'), 'og-task-31-container must exist in index.html');
 assert.ok(indexHtml.includes('id="og-task-31-action-btn"'), 'og-task-31-action-btn must exist in index.html');
 
 // 5. ui.css 반응형 및 상단 버튼 소거 스타일 검증
 const uiCss = fs.readFileSync(path.join(__dirname, '../ui.css'), 'utf8');
-assert.ok(uiCss.includes('#topHomeLayoutBtn'), '#topHomeLayoutBtn rule must exist in ui.css');
+assert.ok(!uiCss.includes('#topHomeLayoutBtn'), '#topHomeLayoutBtn hide rule must be removed with the element');
 assert.ok(uiCss.includes('#og-task-31-container'), '#og-task-31-container rule must exist in ui.css');
 assert.ok(uiCss.includes('#og-task-31-action-btn'), '#og-task-31-action-btn rule must exist in ui.css');
 assert.ok(uiCss.includes('min-width: 44px;'), 'Action button must have min-width 44px for a11y touch');

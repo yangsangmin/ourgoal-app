@@ -1,0 +1,367 @@
+{
+ "task": "TASK-ES-548",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-548-STAGE3-Z56-B.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「Enter app」(enterApp 과 로드 중 등록 문 6개)을 기관 세포 js/core/app-enter.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 HO, 등록 문은 bind 함수로 감싸 원래 자리에서 부름)."
+  },
+  {
+   "id": "R2",
+   "text": "「캘린더 수동 일정 편집 모달 (Req 2 & #TASK-ES-253)」(openCalendarManualEditModal)을 일정 세포 js/tabs/calendar/manual-edit-modal.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R3",
+   "text": "「UX Telemetry (Hesitation & Rage Tap)」의 _uxTelemetry 와 연타 감지 등록 문(bindRageTapTelemetry)을 js/tabs/settings/ux-telemetry.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R4",
+   "text": "「신규 유저 10초 활성화: 갓생 스타터 목표 템플릿」의 STARTER_GOAL_TEMPLATES 를 js/tabs/goals/starter-goal-templates.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R5",
+   "text": "옮기기 증명: verify(토큰·남은 글자·이중 처리기 0), 이음매 순서 점검(L046·L047), 원본·새 파일 단독 로드 회귀 0, 게스트 조작 비교 차이 0, tests 종료 코드 기준과 같음(이력 없는 사본 한 개 제외), 신고서·설명·설정."
+  },
+  {
+   "id": "R6",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 「로그인 없이 둘러보기」를 누르면 앱 화면이 열리고, 네트워크가 끊기면 「오프라인 모드로 전환되었어요」 토스트, 다시 연결되면 「온라인에 다시 연결되었어요」 토스트가 뜨며 예외가 없다 — 옮긴 enterApp·bindOfflineNotice·bindOnlineSync",
+   "touches": [
+    "js/core/app-enter.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/app-enter-offline-online.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 일정 탭 「일정 추가」를 누르면 「새 일정 추가」 창이 열리고, 제목을 넣어 저장하면 「일정을 추가했어요」 토스트가 뜨며 예외가 없다 — 옮긴 openCalendarManualEditModal",
+   "touches": [
+    "js/tabs/calendar/manual-edit-modal.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/calendar-manual-add-event.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 하단 「설정」 탭을 빠르게 두 번 누르고 「홈」을 누르면 설정 화면·홈 화면이 그대로 열리고 예외가 없다 — 옮긴 bindRageTapTelemetry 가 등록한 문서 클릭 처리기가 모든 클릭에서 돈다",
+   "touches": [
+    "js/tabs/settings/ux-telemetry.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/ux-rage-tap-tabs.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 「오늘의 퀘스트」 나침반에서 스타터 「매일 1시간 몰입」을 누르면 「첫 갓생 목표가 시작되었어요!」 토스트가 뜨고 목표 탭에 「매일 1시간 몰입 & 자격증 합격」 목표가 생기며 예외가 없다 — 옮긴 STARTER_GOAL_TEMPLATES 의 제목",
+   "touches": [
+    "js/tabs/goals/starter-goal-templates.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/home-starter-goal-study.json"
+  },
+  {
+   "id": "C5",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-548/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-548/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-548/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 종합 결과 ok",
+   "touches": [
+    "reports/TASK-ES-548/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "이음매 순서 점검: 키트 선언보다 앞선 가져오기 0 · 대입 이름 setter 빠짐 0(L046·L047)",
+   "touches": [
+    "reports/TASK-ES-548/seam-order-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/seam-order-check.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 4개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-548/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교(기준1 대 작업) 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-548/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 2회 사이 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-548/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 전부 중 기준 사본과 종료 코드가 갈린 시험지는 cell-map-export-es414 하나다(기준 사본이 git archive 라 이력 없음 — 회귀 아님)",
+   "touches": [
+    "reports/TASK-ES-548/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff",
+    "equals": [
+     "tests/cell-map-export-es414.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 트리 npm test 종료 코드 0 이 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-548/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-548/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R5",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 파일에 CSS 은폐 글자가 없다",
+   "touches": [
+    "js/core/app-enter.js"
+   ],
+   "check": {
+    "file": "js/core/app-enter.js",
+    "type": "codeNotContains",
+    "text": "!important"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 기관 세포 core/app-enter 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"core/app-enter\""
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 수동 일정 편집 창 세포가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"calendar/manual-edit-modal\""
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일에 새 세포의 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"core/app-enter\": \"앱 진입\""
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정이 기관 자리 HO 를 쓴다(L046)",
+   "touches": [
+    "docs/design/harness/module-split/inline-stage3-z56-b.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-stage3-z56-b.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "HO"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-548-STAGE3-Z56-B.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-548-STAGE3-Z56-B.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-548 | INFRA |"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-548:"
+   }
+  }
+ ]
+}

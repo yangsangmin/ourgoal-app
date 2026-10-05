@@ -1,0 +1,94 @@
+{
+  "task": "TASK-ES-520",
+  "label": "인라인 3단계 Z4 — FN_NAMES 묶음(목표 보관·히트맵·표 집계·표 추이·여러 지표 SVG)",
+  "slot": "H3",
+  "slots": [
+    "H0 시범 #TASK-ES-439",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "HO 기관"
+  ],
+  "cells": [
+    {
+      "key": "goalArchive",
+      "file": "js/tabs/goals/goal-archive.js",
+      "kit": "OurgoalGoalsKit",
+      "kitVar": "_goalsKit",
+      "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+      "title": "OurGoal Goal Archive (목표 탭 — 보관한 목표 화면·되돌리기·달성률)",
+      "desc": [
+        "「목표 보관(기록으로 옮기기)」 묶음 전체: 보관 목표 되돌리기(restoreGoal)·목표 달성률(goalAchievement)·보관 목표 목록 그리기(renderArchivedGoals, #archivedGoals)와 기간·쪽 고르기 노출(bindArchivedPeriodSetter·bindArchivedPageSetter — index.html 원래 자리에서 부른다).",
+        "goalAchievement 는 smoke-test FN_NAMES 다 — 시험지는 인라인 합본(tests/helpers/inline-bundle.js)에서 이 글자를 찾는다."
+      ],
+      "take": [
+        {
+          "group": "목표 보관(기록으로 옮기기)",
+          "all": true,
+          "wrap": [
+            "bindArchivedPeriodSetter",
+            "bindArchivedPageSetter"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recordHeatmap",
+      "file": "js/tabs/records/record-heatmap-levels.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Record Heatmap Levels (기록 탭 — 히트맵 칸 수·색 단계·기록 검색)",
+      "desc": [
+        "「기록 히트맵 (GitHub 히트맵 스타일)」 묶음 전체: 히트맵 주 수·색 단계(HEATMAP_WEEKS·HEATMAP_LEVELS)·칸 단계 계산(heatmapLevel)·기록 검색 거르기(filterRecordsByQuery). heatmapLevel·filterRecordsByQuery 는 smoke-test FN_NAMES 다(인라인 합본에서 찾는다)."
+      ],
+      "take": [
+        {
+          "group": "기록 히트맵 (GitHub 히트맵 스타일)",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "tableAnalytics",
+      "file": "js/tabs/records/table-analytics-engine.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Table Analytics Engine (기록 탭 — 전문 템플릿 표 실시간 집계·일자별 추이 계산)",
+      "desc": [
+        "「전문 템플릿 실시간 자동 집계 엔진 (혁신 1)」 묶음(computeTableAnalytics)과 「📈 표 기록 기반 일자별 자동 성장 추이 차트」 묶음(computeTrendChartData) — 둘 다 표 기록을 숫자로 바꾸는 계산 책임이다. 그리는 쪽(renderAnalyticsHtml·renderTrendSvgChart)은 js/tabs/records/table-analytics-view.js.",
+        "computeTableAnalytics·computeTrendChartData 는 smoke-test FN_NAMES 다(인라인 합본에서 찾는다)."
+      ],
+      "take": [
+        {
+          "group": "전문 템플릿 실시간 자동 집계 엔진",
+          "all": true
+        },
+        {
+          "group": "표 기록 기반 일자별 자동 성장 추이 차트",
+          "all": true
+        }
+      ]
+    },
+    {
+      "key": "multiMetricSvg",
+      "file": "js/tabs/records/trend-multi-metric-svg.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Trend Multi Metric SVG (기록 탭 — 실천 추이 차트의 여러 측정지표 선 SVG)",
+      "desc": [
+        "「TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진」 묶음의 renderMultiMetricSvg — 켜진 측정지표(몰입시간·실천횟수·달성률·스트릭)마다 선 하나·점들을 그린 SVG 글자를 만든다(js/tabs/records/trend-metrics-chart.js 의 renderWeekChart 가 부른다).",
+        "window.TREND_METRICS · window.renderMultiMetricSvg 노출 줄은 index.html 원래 자리에 그대로 있다. 시험지 tests/achievement-graph-multiset.test.js 는 합본 도우미 cutFunctionWithExposure(#TASK-ES-519)로 이 함수 글자와 원래 자리 노출 줄을 읽는다."
+      ],
+      "take": [
+        {
+          "group": "TASK-ES-307: 측정지표 다중 선택",
+          "all": true
+        }
+      ]
+    }
+  ]
+}

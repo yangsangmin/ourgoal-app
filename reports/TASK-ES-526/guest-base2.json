@@ -1,0 +1,78 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base2",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 첫 화면 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "67bb6583576d8d96",
+   "opened": null
+  },
+  {
+   "name": "② 기록 탭 #screen-records",
+   "present": true,
+   "visible": true,
+   "textHash": "fc7bc23110582a5b",
+   "textLen": 558,
+   "attrsHash": "e1424b895461c1ae",
+   "opened": null
+  },
+  {
+   "name": "③ 전문 템플릿 단추 칸 열기 #recOpenProTemplateBtn",
+   "present": true,
+   "visible": true,
+   "textHash": "1e8c10206f5b35bd",
+   "textLen": 2,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true
+  },
+  {
+   "name": "④ 전문 템플릿 기록 창 #modalSheet(CSV·음성·웨어러블 단추)",
+   "present": true,
+   "visible": true,
+   "textHash": "7d59bdc3a697151c",
+   "textLen": 738,
+   "attrsHash": "076c0e084a48b505",
+   "opened": true
+  },
+  {
+   "name": "⑤ 소통 탭 #screen-comm",
+   "present": true,
+   "visible": true,
+   "textHash": "c9bec303d60a8bd5",
+   "textLen": 372,
+   "attrsHash": "0582e23fc1b9f0f5",
+   "opened": null
+  },
+  {
+   "name": "⑥ 소통 팀 하위 탭 #screen-comm",
+   "present": true,
+   "visible": true,
+   "textHash": "aa7e274dc54d957b",
+   "textLen": 1856,
+   "attrsHash": "f5ed4bbd0d204060",
+   "opened": true
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "downloadTableAsCsv/undefined,parseCsvText/undefined,openCsvImportModal/undefined,openWearableSyncModal/undefined,syncRecordToMatchingGoals/undefined,parseVoiceToTableRow/undefined,openVoiceTableModal/undefined,buildCSV/undefined,getAIAnalysisPrompt/undefined,calculateRemainingSeats/undefined,buildPeerInviteUrl/undefined,formatPeerInviteMessage/undefined,openVisionTableModal/undefined,CURATED_MARKET_TEMPLATES/undefined",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 1
+ }
+}

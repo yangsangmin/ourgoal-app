@@ -1,0 +1,118 @@
+{
+  "task": "TASK-ES-563",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-563-GENERATED-MAPS-SYNC-4.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "main(2313ad6) 기준으로 생성 지도 4개(기준선·세포지도·인라인 지도 JSON/MD)를 생성기로 다시 만들어 지금 코드와 맞춘다. 생성: 안티그래비티, 검수·서류: Claude. 제품 코드·생성기 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포지도에 새로 분열된 세포(settings/web-push)가 들어 있다(cell-map-export 재생성)",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-map.json",
+        "text": "\"id\": \"settings/web-push\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "래칫 기준선 이력에 9b30905d 측정 항목이 더해졌다(module-guard --update, 사유 없음 — origin/main 509b2788 합친 뒤 재생성)",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/module-baseline.json",
+        "text": "\"commit\": \"9b30905d\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 지도(JSON)의 출처 해시가 지금 index.html 의 sha256 앞 12자다",
+      "touches": [
+        "docs/architecture/inline-script-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/inline-script-map.json",
+        "path": "source.sha256_12",
+        "equals": "96015d7e28f8"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 지도(MD)의 출처 줄이 같은 해시를 가리킨다",
+      "touches": [
+        "docs/architecture/INLINE-SCRIPT-MAP.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+        "text": "sha256 앞 12자 `96015d7e28f8`"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 에 생성자·검수자 구분이 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-563-GENERATED-MAPS-SYNC-4.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-563-GENERATED-MAPS-SYNC-4.md",
+        "text": "- **생성: 안티그래비티 / 검수·서류: Claude**"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-563 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-06 TASK-ES-563: 생성 지도 일괄 갱신 4회차"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-563 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-563 | INFRA | [생성 지도 일괄 갱신 4회차]"
+      }
+    }
+  ]
+}

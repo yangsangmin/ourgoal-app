@@ -54,8 +54,8 @@
   {
    "file": "js/tabs/goals/personal-goals-guide.js",
    "origLines": [
-    8653,
-    8738
+    6853,
+    6938
    ],
    "wrap": null,
    "diffLines": 0,
@@ -65,8 +65,8 @@
   {
    "file": "js/tabs/goals/team-level-goals.js",
    "origLines": [
-    8739,
-    8747
+    6939,
+    6947
    ],
    "wrap": null,
    "diffLines": 0,
@@ -76,8 +76,8 @@
   {
    "file": "js/tabs/goals/team-level-goals.js",
    "origLines": [
-    8753,
-    8929
+    6953,
+    7129
    ],
    "wrap": null,
    "diffLines": 0,
@@ -87,8 +87,8 @@
   {
    "file": "js/tabs/goals/team-level-goals.js",
    "origLines": [
-    8930,
-    9224
+    7130,
+    7424
    ],
    "wrap": null,
    "diffLines": 0,
@@ -98,8 +98,8 @@
   {
    "file": "js/tabs/goals/team-level-goals.js",
    "origLines": [
-    9225,
-    9265
+    7425,
+    7465
    ],
    "wrap": null,
    "diffLines": 0,
@@ -109,8 +109,8 @@
   {
    "file": "js/tabs/goals/team-goal-edit-modal.js",
    "origLines": [
-    9271,
-    9411
+    7471,
+    7611
    ],
    "wrap": null,
    "diffLines": 0,
@@ -121,13 +121,16 @@
  "restSame": true,
  "restDiff": null,
  "tokens": {
-  "origRest": 75976,
-  "newRest": 75976
+  "origRest": 52322,
+  "newRest": 52322
  },
  "imported": [
+  "GOAL_TEMPLATES",
   "PERSONAL_TEMPLATES_REAL",
   "ROUTINE_TEMPLATES_AI",
   "ROUTINE_TEMPLATES_REAL",
+  "STARTER_GOAL_TEMPLATES",
+  "TEAM_COMMENTS_CACHE",
   "TEAM_TEMPLATES_AI",
   "TEAM_TEMPLATES_REAL",
   "TOPICS",
@@ -135,18 +138,23 @@
   "applyGoalAgentOp",
   "applyScheduleUpdate",
   "archiveGoal",
+  "bindArchivedPageSetter",
+  "bindArchivedPeriodSetter",
   "bindNewGoalStepExports",
+  "canManageTeamGoals",
   "categoryPickerHtml",
   "celebrateMilestoneDone",
   "collapseAllTeamGoalAccordions",
   "computeGoalStatusHash",
   "convertTextToNotionDbRecord",
+  "ensureTeamCommentsLoaded",
   "exportGoalSnapshot",
   "formatSchedulePillHtml",
   "gaugeSvg",
   "generateGoalStatusSummary",
   "getGroupLevelGoals",
   "getTeamGoalTemplatePreset",
+  "goalAchievement",
   "goalProgress",
   "groupCheckedToday",
   "groupState",
@@ -176,6 +184,7 @@
   "quickCreateStarterGoal",
   "refreshGoalStatusSummary",
   "regionPickerHtml",
+  "renderArchivedGoals",
   "renderAttachmentChipsHtml",
   "renderGoalStatsChart",
   "renderGoalsScreen",
@@ -187,13 +196,18 @@
   "renderTeamGoalsEmptyGuideHtml",
   "renderTeamGoalsScreen",
   "renderTemplateEncyclopediaScreen",
+  "reorderGoal",
   "requestTodayMission",
   "resultPct",
   "sanitizeAttachments",
   "sendGoalAgentMessage",
+  "setupRealtimeChannelsOnce",
+  "shiftGoalOrder",
   "showGoalAgentReviewStep",
+  "sortGoalsByOrder",
   "switchGoalStatPeriod",
   "switchGoalsSubTab",
+  "teamCommentsBlockHtml",
   "templateMilestones",
   "topicLabel",
   "topicPill",
@@ -223,142 +237,194 @@
  "noSetter": [],
  "thisArgs": [],
  "listeners": {
-  "origIIFE": 231,
-  "newIIFE": 213,
+  "origIIFE": 185,
+  "newIIFE": 167,
   "cells": 18,
   "same": true
  },
  "wrapCalls": [
   {
-   "line": 3287,
+   "line": 3342,
    "fn": "bindSupabaseAuthStateListener"
   },
   {
-   "line": 3498,
+   "line": 3553,
    "fn": "bindAvatarLevelUpBackdrop"
   },
   {
-   "line": 3501,
+   "line": 3556,
    "fn": "bindAvatarGrowthPromptSave"
   },
   {
-   "line": 3504,
+   "line": 3559,
    "fn": "bindAvatarLevelUpShare"
   },
   {
-   "line": 3507,
+   "line": 3562,
    "fn": "bindAvatarLevelUpSaveImage"
   },
   {
-   "line": 4012,
+   "line": 3666,
    "fn": "bindLandNickQuickLink"
   },
   {
-   "line": 4013,
-   "fn": "bindLandStartBtn"
-  },
-  {
-   "line": 4014,
+   "line": 3667,
    "fn": "bindLandLoginLink"
   },
   {
-   "line": 4016,
+   "line": 3669,
    "fn": "bindLandGuestBtn"
   },
   {
-   "line": 4022,
+   "line": 3675,
    "fn": "bindLandTesterBButton"
   },
   {
-   "line": 4024,
+   "line": 3677,
    "fn": "bindAuthTesterBButton"
   },
   {
-   "line": 4389,
+   "line": 4007,
+   "fn": "bindAuthTabButtons"
+  },
+  {
+   "line": 4010,
    "fn": "bindSignupSubmit"
   },
   {
-   "line": 4408,
+   "line": 4025,
    "fn": "bindLoginSubmit"
   },
   {
-   "line": 4411,
+   "line": 4028,
    "fn": "bindResyncAccountDataButton"
   },
   {
-   "line": 4412,
+   "line": 4029,
    "fn": "bindLogoutButton"
   },
   {
-   "line": 4413,
+   "line": 4030,
    "fn": "bindResetButton"
   },
   {
-   "line": 4797,
+   "line": 4041,
+   "fn": "bindTabGuideHubButton"
+  },
+  {
+   "line": 4045,
+   "fn": "bindRestartGuideButton"
+  },
+  {
+   "line": 4048,
+   "fn": "bindInquiryButtons"
+  },
+  {
+   "line": 4050,
+   "fn": "bindSupportEmailLink"
+  },
+  {
+   "line": 4063,
+   "fn": "bindFocusResync"
+  },
+  {
+   "line": 4064,
+   "fn": "bindVisibilityResync"
+  },
+  {
+   "line": 4065,
+   "fn": "bindRemoteLogoutStorageListener"
+  },
+  {
+   "line": 4066,
+   "fn": "startRemoteSessionPoll"
+  },
+  {
+   "line": 4067,
+   "fn": "bindOnlineSync"
+  },
+  {
+   "line": 4068,
+   "fn": "bindOfflineNotice"
+  },
+  {
+   "line": 4098,
    "fn": "bindNavButtonsClick"
   },
   {
-   "line": 4866,
+   "line": 4167,
    "fn": "bindModalPopstateBack"
   },
   {
-   "line": 4935,
+   "line": 4235,
    "fn": "bindScheduleReminderStart"
   },
   {
-   "line": 6591,
+   "line": 4611,
+   "fn": "bindRageTapTelemetry"
+  },
+  {
+   "line": 5353,
    "fn": "bindCaptureLiveMeta"
   },
   {
-   "line": 6592,
+   "line": 5354,
    "fn": "bindCaptureSave"
   },
   {
-   "line": 6783,
+   "line": 5545,
    "fn": "bindImportExternalBtn"
   },
   {
-   "line": 6790,
+   "line": 5549,
    "fn": "bindPersonalGuideBtn"
   },
   {
-   "line": 7374,
+   "line": 6133,
    "fn": "bindAppEvalBackdrop"
   },
   {
-   "line": 7379,
+   "line": 6138,
    "fn": "bindAppEvalSubmit"
   },
   {
-   "line": 7380,
+   "line": 6139,
    "fn": "bindHomeAddGoal"
   },
   {
-   "line": 7397,
+   "line": 6156,
    "fn": "bindNewGoalStepExports"
   },
   {
-   "line": 11656,
+   "line": 6195,
+   "fn": "bindArchivedPeriodSetter"
+  },
+  {
+   "line": 6196,
+   "fn": "bindArchivedPageSetter"
+  },
+  {
+   "line": 9043,
    "fn": "bindRecTimeTrackerBtn"
   },
   {
-   "line": 11659,
-   "fn": "bindRecSegmentBar"
-  },
-  {
-   "line": 11661,
+   "line": 9047,
    "fn": "bindRecPulseBar"
   },
   {
-   "line": 11662,
+   "line": 9048,
    "fn": "bindRecCarouselPills"
   },
   {
-   "line": 11663,
+   "line": 9049,
    "fn": "bindRecDocumentClick"
   },
   {
-   "line": 12118,
+   "line": 9331,
+   "fn": "bindWidgetModalOpener"
+  },
+  {
+   "line": 9446,
    "fn": "bindLoginRescueButtons"
   }
  ],

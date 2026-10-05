@@ -3,7 +3,8 @@
  *
  * 목표 탭 하위 탭 단추(switchGoalsSubTab) · 성취 통계 기간 단추와 리포트(switchGoalStatPeriod·renderGoalStatsChart) · 추천 템플릿을 내 목표로 담기(adoptTemplateAsMyGoal).
  * 마크업 onclick 과 js/tabs/goals/render.js · js/sanctuary-v3-engine.js 가 window 이름으로 부른다 — window 노출 줄(window.currentGoalStatPeriod 초기값 포함)은 index.html 원래 자리에 그대로 있다.
- * 같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍·루틴 매트릭스 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer·renderRoutineMatrixGrid·toggleRoutineStamp)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓).
+ * 같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓).
+ * 같은 묶음에 있던 루틴 매트릭스 함수 두 개는 #TASK-ES-515 에서 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」).
  * #TASK-ES-481(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 15140~15145 · 15276~15287 · 15288~15312 · 15315~15355줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.

@@ -1,0 +1,21 @@
+{
+ "id": "settings-blocked-users-guest",
+ "title": "게스트로 설정 「데이터 백업 & 고급 설정」 묶음을 펼쳐 차단한 사용자 「목록 보기」를 누르면 「차단한 사용자 관리」 창에 「차단한 사용자가 없습니다.」가 보이고 「닫기」로 닫힌다 — 옮긴 openBlockedUsersModal(js/tabs/comm/user-blocks.js)이 이전 전과 같이 동작한다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]", "timeoutMs": 15000 },
+  { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+  { "do": "waitFor", "selector": "#setGroupDataSummary", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#setGroupDataSummary" },
+  { "expect": "visible", "selector": "#manageBlockedBtn" },
+  { "do": "click", "selector": "#manageBlockedBtn" },
+  { "expect": "textContains", "selector": "#modalSheet", "text": "차단한 사용자 관리" },
+  { "expect": "textContains", "selector": "#modalSheet", "text": "차단한 사용자가 없습니다." },
+  { "do": "click", "selector": "#closeBlockedModal" },
+  { "expect": "notVisible", "selector": "#closeBlockedModal" },
+  { "expect": "noExceptions" }
+ ]
+}

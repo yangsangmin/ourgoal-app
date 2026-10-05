@@ -1,0 +1,52 @@
+{
+  "id": "records-fuse-chip-gone",
+  "title": "게스트로 기록 탭에 들어가면 숨은 달력 융합 칩(#recCalFuseSwitcher)과 그 칩만 쓰던 인라인 달력 칸(#recInlineCalendarSlot)이 없고, 보이는 달력 탭 단추는 눌러 달력 화면이 열린다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#recCalFuseSwitcher"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#recInlineCalendarSlot"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#screen-calendar",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
