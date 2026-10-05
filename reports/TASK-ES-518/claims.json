@@ -1,0 +1,162 @@
+{
+ "task": "TASK-ES-518",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-518-STAGE3-Z1-TEST-BUNDLE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험지 tests/account-withdrawal-modal.test.js · tests/google-session-guard.test.js · tests/security-audit.test.js 가 index.html 원문 대신 인라인 합본(tests/helpers/inline-bundle.js withInlineCells — 원문 맨 앞 + 세포)을 읽는다. 단언·기대값·검사 수 0 변경, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "실제 이동 제품(Z1 묶음을 생성기로 옮긴 사본)으로 기준 시험지는 깨지고 새 시험지는 기준과 같음을 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탈퇴 창 시험지가 인라인 합본을 읽는다",
+   "touches": [
+    "tests/account-withdrawal-modal.test.js"
+   ],
+   "check": {
+    "file": "tests/account-withdrawal-modal.test.js",
+    "type": "codeContains",
+    "text": "const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(htmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "구글 세션 시험지가 인라인 합본에서 함수를 잘라 온다",
+   "touches": [
+    "tests/google-session-guard.test.js"
+   ],
+   "check": {
+    "file": "tests/google-session-guard.test.js",
+    "type": "codeContains",
+    "text": "var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(HTML_PATH, 'utf8'));"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "보안 감사 시험지 Layer 5 가 인라인 합본을 읽는다",
+   "touches": [
+    "tests/security-audit.test.js"
+   ],
+   "check": {
+    "file": "tests/security-audit.test.js",
+    "type": "codeContains",
+    "text": "var indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 기준 제품에서 기준 시험지와 종료 코드·출력 줄 수·첫 오류가 같다",
+   "touches": [
+    "reports/TASK-ES-518/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-518/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnBaseProduct",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 시험지 3개는 실제 이동 제품에서 깨진다(선행이 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-518/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-518/real-move.json",
+    "type": "jsonPath",
+    "path": "baseTestBreaksOnMoved",
+    "equals": [
+     "tests/account-withdrawal-modal.test.js",
+     "tests/google-session-guard.test.js",
+     "tests/security-audit.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 실제 이동 제품에서 기준 시험지·기준 제품과 같다",
+   "touches": [
+    "reports/TASK-ES-518/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-518/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnMoved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-518-STAGE3-Z1-TEST-BUNDLE.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-518-STAGE3-Z1-TEST-BUNDLE.md",
+    "type": "codeContains",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-518: 시험지 선행(인라인 3단계 Z1 로그인·계정)"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-518 | INFRA | [시험지 선행 · 인라인 3단계 Z1 로그인·계정]"
+   }
+  }
+ ]
+}

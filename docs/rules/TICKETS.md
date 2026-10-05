@@ -595,6 +595,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-511 | INFRA | [생성 지도 일괄 갱신 3회차] 생성 파일 4개를 main 8f76013 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-06), REQ docs/specs/REQ-TASK-ES-511-GENERATED-MAPS-SYNC-3.md | 4단계(심사 청구)
 - #TASK-ES-513 | INFRA | [인라인 3단계 설계·시범] 잔여 유형별 집계·실계정 표준 절차 설계, 시범 1묶음(디바이스 세션) 실계정 하네스로 재어 이동 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-513-INLINE-STAGE3.md | 4단계(심사 청구)
 - #TASK-ES-512 | INFRA | [헌법 버전 대장] v2026.10.06-SNOWBALL 행 추가 + 법령 전문 머리 현행 커널 버전 갱신(PR #800 병합 기록 1ce6c14 근거, 조문 본문 변경 0) | 코디네이터 세션 f747dcaa | 2026-10-06
+- #TASK-ES-518 | INFRA | [시험지 선행 · 인라인 3단계 Z1 로그인·계정] 시험지 3개(탈퇴 창·구글 세션·보안 감사)가 인라인 합본을 읽음, 단언·기대값 0 변경 | 오케스트레이터 배정 Z1(2026-10-06), REQ docs/specs/REQ-TASK-ES-518-STAGE3-Z1-TEST-BUNDLE.md | 4단계(심사 청구)
 - #TASK-ES-514 | FIX | [숨김 조사 결함] 빠른 목표 추가 저장 · 템플릿백과사전 이중 처리기 · 성소 새 기록 중계 제거 · 숨김 기준선 사유 정정 | 코디네이터 세션 f747dcaa, REQ docs/specs/REQ-TASK-ES-514-HIDDEN-AUDIT-DEFECTS.md | 2026-10-06
 - #TASK-ES-531 | FIX | [홈 구성 단추 이중 처리기] #btnCustomHomeLayout 처리기 한 벌 + handle홈_Item31Action 의 open 의존성 연결(숨은 단추, 동작 동일) | 코디네이터 세션 f747dcaa, REQ docs/specs/REQ-TASK-ES-531-HOME-LAYOUT-SINGLE-HANDLER.md | 2026-10-06
 - #TASK-ES-530 | INFRA | [시험지 선행] 돈(광고·구독) 묶음 소멸(TASK-ES-516) 전에 smoke 가 지울 함수 4개(subscriptionState·광고 함수 3개)를 추출·실행하지 않게 — 실행 검사 3개·단계 1개 폐기(상민님 2026-10-06 결정, 병합은 「금고 변경 승인」 뒤) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-530-MONEY-SMOKE-FIRST.md | 4단계(심사 청구)
