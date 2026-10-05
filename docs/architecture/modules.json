@@ -7,8 +7,7 @@
       "role": "미분화 덩어리 — 아직 세포로 분화되지 않은 인라인 스크립트(여기서 세포를 하나씩 떼어 낸다)",
       "emits": [
         "checkin:created",
-        "record:saved",
-        "view:sync"
+        "record:saved"
       ],
       "listens": []
     }
@@ -1388,6 +1387,32 @@
       ]
     },
     {
+      "id": "core/streak-badge",
+      "file": "js/core/streak-badge.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 연속 기록(computeStreakDays)·보호권(maybeGrantStreakFreeze·maybeApplyStreakFreeze·STREAK_FREEZE_MAX)·아바타 제작 보너스(maybeGrantAvatarCraftBonus)·배지 글자(streakBadgeHtml)·앱 아이콘 배지(updateAppBadge). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-486)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "core/telemetry",
       "file": "js/core/telemetry.js",
       "layer": "core",
@@ -1516,6 +1541,37 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": []
+    },
+    {
+      "id": "core/view-dispatch",
+      "file": "js/core/view-dispatch.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "기관 — 4대 연계 뷰 원자적 동시 전파(dispatchFullViewPropagation). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-486)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "view:sync"
+      ],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalEvents",
+        "OurgoalSanctuaryV3",
+        "OurgoalStore"
+      ]
     },
     {
       "id": "core/virtual-user-helpers",
@@ -3538,6 +3594,32 @@
       ]
     },
     {
+      "id": "calendar/calendar-core",
+      "file": "js/tabs/calendar/calendar-core.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "일정 탭 — 날짜별 일정 모음(calendarItemsByDate)·달력 칸(calCellHtml)·날짜 글자(isoDate·toDateTimeLocalValue·toLocalInputValue)·구글 캘린더 일정 넣기(pushCalendarEvent·quickSyncToCalendar). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-486)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "calendar/day-bg-picker",
       "file": "js/tabs/calendar/day-bg-picker.js",
       "layer": "tabs",
@@ -3649,6 +3731,32 @@
         "OurgoalRegistry",
         "renderCalendarScreen",
         "state"
+      ]
+    },
+    {
+      "id": "calendar/lockscreen-hub",
+      "file": "js/tabs/calendar/lockscreen-hub.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "일정 탭 — 폰 잠금화면에서 바로 보기 통합 허브 창(openLockScreenHubModal). 노출 묶음은 index.html 원래 자리. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-486)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {

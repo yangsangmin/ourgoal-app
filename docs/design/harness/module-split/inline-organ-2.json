@@ -1,0 +1,24 @@
+{
+  "task": "TASK-ES-486",
+  "label": "인라인 어려움 기관 묶음 이전 2차",
+  "slot": "HO",
+  "slots": ["H0 시범 #TASK-ES-439", "H1", "H2", "H3", "H4", "HO 기관"],
+  "cells": [
+    { "key": "streakBadge", "file": "js/core/streak-badge.js", "kit": "OurgoalUiHelpers", "kitVar": "_uiKit", "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Streak & App Badge (기관 — 연속 기록·보호권·앱 아이콘 배지)",
+      "desc": ["연속 기록 일수 계산·보호권(프리즈) 지급/사용·아바타 제작 보너스·연속 기록 배지 글자·앱 아이콘 배지 숫자(「폰 잠금화면에서 바로 보기 통합 허브 모달」 묶음 중 기관 몫)."],
+      "take": [ { "group": "[#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기", "names": ["STREAK_FREEZE_MAX", "computeStreakDays", "maybeApplyStreakFreeze", "maybeGrantStreakFreeze", "maybeGrantAvatarCraftBonus", "streakBadgeHtml", "updateAppBadge"] } ] },
+    { "key": "lockHub", "file": "js/tabs/calendar/lockscreen-hub.js", "kit": "OurgoalCalendarKit", "kitVar": "_calendarKit", "beforeTag": "<script src=\"js/tabs/calendar/index.js\"></script>",
+      "title": "OurGoal Lock Screen Hub (일정 탭 — 폰 잠금화면에서 바로 보기 통합 허브 창)",
+      "desc": ["일정 탭 「잠금화면」 단추가 여는 통합 허브 창(openLockScreenHubModal). 노출 묶음(window.openLockScreenHubModal 등)은 index.html 원래 자리."],
+      "take": [ { "group": "[#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기", "names": ["openLockScreenHubModal"] } ] },
+    { "key": "calCore", "file": "js/tabs/calendar/calendar-core.js", "kit": "OurgoalCalendarKit", "kitVar": "_calendarKit", "beforeTag": "<script src=\"js/tabs/calendar/index.js\"></script>",
+      "title": "OurGoal Calendar Core (일정 탭 — 날짜별 일정 모음·달력 칸·일정 넣기)",
+      "desc": ["「일정(캘린더) 탭」 묶음: 날짜별 일정 모음(calendarItemsByDate)·달력 칸 그리기(calCellHtml)·날짜 글자 도우미·구글 캘린더 일정 넣기(pushCalendarEvent·quickSyncToCalendar)."],
+      "take": [ { "group": "일정(캘린더) 탭 ============", "all": true } ] },
+    { "key": "viewDispatch", "file": "js/core/view-dispatch.js", "kit": "OurgoalUiHelpers", "kitVar": "_uiKit", "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal View Dispatch (기관 — 4대 연계 뷰 동시 전파)",
+      "desc": ["홈·목표·기록·일정 4대 연계 뷰를 한 번에 다시 그리는 디스패처(dispatchFullViewPropagation)."],
+      "take": [ { "group": "4대 연계 뷰 원자적 동시 전파 디스패처", "all": true } ] }
+  ]
+}
