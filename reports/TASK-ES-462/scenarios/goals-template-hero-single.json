@@ -1,0 +1,62 @@
+{
+  "id": "goals-template-hero-single",
+  "title": "목표 0개 게스트가 목표 탭에 들어가면 「추천 목표 템플릿 백과사전」 카드(#goalTemplateHeroCard)가 문서에 하나만 있고(성소 목표 화면 안), 그 카드의 「+ 담기」를 누르면 목표가 생겨 카드가 사라진다 — 고치기 전에는 숨은 #personalGoalsEmptyGuideSlot 에 같은 id 카드가 하나 더 그려졌다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#sanctuaryGoalsView #goalTemplateHeroCard",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#personalGoalsEmptyGuideSlot #goalTemplateHeroCard"
+    },
+    {
+      "expect": "count",
+      "selector": "#goalTemplateHeroCard",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": "#goalTemplateHeroCard .template-quick-card:nth-child(3) .btn-quick-adopt-goal"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#goalTemplateHeroCard",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#personalGoalsEmptyGuideSlot #goalTemplateHeroCard"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

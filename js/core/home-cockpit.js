@@ -2,7 +2,7 @@
  * OurGoal Home Cockpit (기관 — 홈 1초 조망 ↔ 체크인 콕핏)
  *
  * 홈 1초 조망·무저항 체크인 콕핏 8대 과업 묶음(#TASK-UIUX-PHASE3-HOME-COCKPIT). 여러 탭이 부르는 공용 부품이라 기관 칸에 둔다.
- * #TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 4041~4063 · 4065~4085 · 4087~4109 · 4111~4171 · 4172~4277줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 4070~4092 · 4094~4114 · 4116~4138 · 4140~4200 · 4201~4306줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 4041~4063줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4070~4092줄(#TASK-ES-471 생성기 표지) ---- */
   function switchHomeDate(offset){
     window._homeDateOffset = offset;
     if(typeof L.triggerHaptic === 'function') L.triggerHaptic(12);
@@ -39,7 +39,7 @@
     }
   }
 
-  /* ---- 이전 전 index.html 4065~4085줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4094~4114줄(#TASK-ES-471 생성기 표지) ---- */
 
   function initDimensionSliders(){
     var slEnergy = document.getElementById('sliderEnergy');
@@ -62,7 +62,7 @@
     }
   }
 
-  /* ---- 이전 전 index.html 4087~4109줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4116~4138줄(#TASK-ES-471 생성기 표지) ---- */
 
   function initHomeCockpit(){
     initDimensionSliders();
@@ -87,7 +87,7 @@
     }
   }
 
-  /* ---- 이전 전 index.html 4111~4171줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4140~4200줄(#TASK-ES-471 생성기 표지) ---- */
 
   function renderQuickCheckinGuideChips(){
     var wrap = document.querySelector('.quick-checkin-chips');
@@ -149,7 +149,7 @@
       });
     });
   }
-  /* ---- 이전 전 index.html 4172~4277줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4201~4306줄(#TASK-ES-471 생성기 표지) ---- */
 
   async function saveProfile(){
 

@@ -1,0 +1,459 @@
+{
+ "env": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)",
+ "steps": [
+  "home-enter",
+  "crew-open",
+  "crew-nudge",
+  "crew-checkin",
+  "detail-close-1",
+  "quest-open",
+  "eval-open",
+  "eval-submit-empty",
+  "eval-close",
+  "detail-close-2",
+  "newgoal-open",
+  "newgoal-manual",
+  "newgoal-back-ai",
+  "newgoal-close",
+  "comm-enter",
+  "share-open",
+  "share-preview",
+  "share-preview-close",
+  "share-close",
+  "tab-roundtrip"
+ ],
+ "notes": [
+  "home-enter => tab:home:ok / tab:home:ok",
+  "crew-open => clicked:🏃동반자페이스 보기 / clicked:🏃동반자페이스 보기",
+  "crew-nudge => clicked:응원 보내기 / clicked:응원 보내기",
+  "crew-checkin => clicked:동반자 피드 ➔ / clicked:동반자 피드 ➔",
+  "detail-close-1 => clicked:✕ / clicked:✕",
+  "quest-open => clicked:🎯오늘 목표2개 진행 / clicked:🎯오늘 목표2개 진행",
+  "eval-open => clicked:<아워골 평가해주기> / clicked:<아워골 평가해주기>",
+  "eval-submit-empty => clicked:평가 제출하기 / clicked:평가 제출하기",
+  "eval-close => clicked:× / clicked:×",
+  "detail-close-2 => clicked:✕ / clicked:✕",
+  "newgoal-open => clicked:새 목표 / clicked:새 목표",
+  "newgoal-manual => clicked:직접 설정할게요|{} / clicked:직접 설정할게요|{}",
+  "newgoal-back-ai => clicked:AI 도우미로 만들래요|{} / clicked:AI 도우미로 만들래요|{}",
+  "newgoal-close => closed / closed",
+  "comm-enter => tab:comm:ok / tab:comm:ok",
+  "share-open => clicked:게시하기 / clicked:게시하기",
+  "share-preview => clicked:✕ 미리보기 닫기|{} / clicked:✕ 미리보기 닫기|{}",
+  "share-preview-close => clicked:👁️ 미리보기|{} / clicked:👁️ 미리보기|{}",
+  "share-close => closed / closed",
+  "tab-roundtrip => roundtrip / roundtrip"
+ ],
+ "comparedFields": 200,
+ "digestAfter": [
+  {
+   "step": "home-enter",
+   "note": "tab:home:ok",
+   "toast": "toast|⚡ 데일리 퀘스트 완수! +40 EXP 획득",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-home",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "crew-open",
+   "note": "clicked:🏃동반자페이스 보기",
+   "toast": "toast|⚡ 데일리 퀘스트 완수! +40 EXP 획득",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-home",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "crew-nudge",
+   "note": "clicked:응원 보내기",
+   "toast": "toast show|오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-home",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "crew-checkin",
+   "note": "clicked:동반자 피드 ➔",
+   "toast": "toast|오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "detail-close-1",
+   "note": "clicked:✕",
+   "toast": "toast|오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "quest-open",
+   "note": "clicked:🎯오늘 목표2개 진행",
+   "toast": "toast|오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "eval-open",
+   "note": "clicked:<아워골 평가해주기>",
+   "toast": "toast|오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "eval-submit-empty",
+   "note": "clicked:평가 제출하기",
+   "toast": "toast show|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "eval-close",
+   "note": "clicked:×",
+   "toast": "toast|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "detail-close-2",
+   "note": "clicked:✕",
+   "toast": "toast|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "newgoal-open",
+   "note": "clicked:새 목표",
+   "toast": "toast|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "newgoal-manual",
+   "note": "clicked:직접 설정할게요|{}",
+   "toast": "toast|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "newgoal-back-ai",
+   "note": "clicked:AI 도우미로 만들래요|{}",
+   "toast": "toast|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "newgoal-close",
+   "note": "closed",
+   "toast": "toast|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" onclick=\"if",
+   "newErrors": []
+  },
+  {
+   "step": "comm-enter",
+   "note": "tab:comm:ok",
+   "toast": "toast|평가 항목을 최소 하나 이상 입력해주세요.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" onclick=\"if",
+   "newErrors": []
+  },
+  {
+   "step": "share-open",
+   "note": "clicked:게시하기",
+   "toast": "toast show|소통 피드 게시하기 모달이 정상 연결되었습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "share-preview",
+   "note": "clicked:✕ 미리보기 닫기|{}",
+   "toast": "toast|소통 피드 게시하기 모달이 정상 연결되었습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "share-preview-close",
+   "note": "clicked:👁️ 미리보기|{}",
+   "toast": "toast|소통 피드 게시하기 모달이 정상 연결되었습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay active|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" oncl",
+   "newErrors": []
+  },
+  {
+   "step": "share-close",
+   "note": "closed",
+   "toast": "toast|소통 피드 게시하기 모달이 정상 연결되었습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" onclick=\"if",
+   "newErrors": []
+  },
+  {
+   "step": "tab-roundtrip",
+   "note": "roundtrip",
+   "toast": "toast|소통 피드 게시하기 모달이 정상 연결되었습니다.",
+   "downloads": [],
+   "dialogs": [],
+   "activeScreen": "screen-records",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"><button type=\"button\" class=\"modal-sheet-close touch-target-44\" aria-label=\"닫기\" title=\"닫기\" onclick=\"if",
+   "newErrors": []
+  }
+ ],
+ "differing": 15,
+ "diffs": [
+  {
+   "step": "home-enter",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "crew-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "crew-nudge",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "crew-checkin",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "detail-close-1",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "quest-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "eval-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "eval-submit-empty",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "eval-close",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "detail-close-2",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-manual",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-back-ai",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-close",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "comm-enter",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  }
+ ],
+ "baseVsBaseDiffering": 15,
+ "baseVsBase": [
+  {
+   "step": "home-enter",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "crew-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "crew-nudge",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "crew-checkin",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "detail-close-1",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "quest-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "eval-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "eval-submit-empty",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "eval-close",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "detail-close-2",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-open",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-manual",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-back-ai",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "newgoal-close",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  },
+  {
+   "step": "comm-enter",
+   "field": "ls",
+   "base": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"maxBaseCrafts\\\":\\\"<t>\\\",\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode",
+   "after": "o\\\":{\\\"allowDm\\\":false,\\\"anonName\\\":\\\"\\\",\\\"joined\\\":false,\\\"revealed\\\":{},\\\"seed\\\":<rnd>,\\\"sent\\\":[],\\\"threads\\\":{}},\\\"myFeedPosts\\\":[],\\\"notifCheers\\\":true,\\\"notifDday\\\":true,\\\"notifStreak\\\":true,\\\"notifTeamVerify\\\":true,\\\"notifications\\\":{\\\"bgEnabled\\\":true,\\\"dmMessages\\\":true,\\\"feedbackMode\\\":\\\"all\\\",\\\"goalReminders"
+  }
+ ],
+ "errorsBase": [],
+ "errorsBase2": [],
+ "errorsAfter": [],
+ "bootBase": [
+  "#avatarGreetingModal: 오늘은 뭘 했냐? 내자신"
+ ],
+ "bootAfter": [
+  "#avatarGreetingModal: 오늘은 뭘 했냐? 내자신"
+ ],
+ "kitsBase": {
+  "OurgoalCalendarKit": "buildLockScreenCardPayload,calShift,calWeekStart,closeLockScreenLiveCard,compressCalendarBgImage,executeCalAgentNaturalSchedule,generateLockScreenCalendarImage,generateLockScreenScheduleCardImage,lsDrawRoundRect,openCalendarDayBgPickerModal,openCalendarDayEditHubModal,parseNaturalScheduleText,refreshCalDayDetail,renderCalDayDetail,renderCalendarScreen,syncLockScreenLiveCard,toggleScheduleDone",
+  "OurgoalCommKit": "AI_DISCLOSURE_NOTICE,CREATOR_TEMPLATES,EXTERNAL_DATA,MANITO_ADJ,MANITO_EMOJI,MANITO_NOUN,MANITO_STAMPS,MANITO_WELCOME_STAMPS,MOCK_PEOPLE,SHARE_CANVAS_DIMS,SHARE_DOMAIN,SHARE_PLATFORMS,SIM_PERSONAS,VISIBILITY_LABELS,buildInviteLinkSuffix,buildShareText,daysFromNow,drawShareWatermark,ensureFeedPostsLoaded,genAnonName,generateMzStoryCanvas,generateShareImage,getFeedComments,handleUserCommentSubmit,hashStr,loadServerFeedComments,manitoMajors,manitoState,openChallengeRoomModal,openSelectCompanionForStoryModal,openSelectTeamForStoryModal,renderCommCompanions,renderCommDM,renderCommScreen,scDrawLines,scRoundRect,scWrapLines,scheduleCheerDelivery,sendManitoWelcomeStamp,setFeedComments,setupFeedPostsRealtime,toggleFeedPostPreview,toggleFeedReaction,triggerFirstCheerResponse",
+  "OurgoalGoalsKit": "REGIONS,TOPICS,applyScheduleUpdate,archiveGoal,buildGoalSnapshot,categoryPickerHtml,celebrateMilestoneDone,computeGoalStatusHash,convertTextToNotionDbRecord,customSubsFor,exportGoalSnapshot,formatDateTimeBadge,formatSchedulePillHtml,gaugeSvg,generateGoalStatusSummary,getLikedPromptIds,getPromptLikesMap,getUserPrompts,goalAgentSnapshot,goalProgress,goalSnapshotSummary,groupCheckedToday,groupState,groupStreak,hybridDashboardHtml,importTemplateInstantly,localGoalStatusSummary,localNextActionSuggestion,localTodayMission,milestonesForMission,msCounts,normalizeSubName,openAddUserPromptModal,openAiResultAssistantModal,openGoalCertificateModal,openResultModal,openScheduleSetupModal,openTeamInviteModal,openTeamLinkedPersonalGoalModal,promptNewTeamGoal,quickCreateStarterGoal,refreshGoalStatusSummary,regionPickerHtml,renderGoalDetailBody,renderGoalOpsFullPreviewHtml,renderGoalsScreen,renderPromptEncyclopediaHtml,requestGoalAgentDiff,requestNextActionSuggestion,requestTodayMission,resultBadgeHtml,resultLineHtml,resultPct,sanitizeAttachments,sendGoalAgentMessage,showGoalAgentLoadingStep,showGoalAgentReviewStep,templateMilestones,topicLabel,topicPill,wireCategoryPicker,wireGoalDetailEvents,wirePromptEncyclopediaEvents,wireRegionPicker",
+  "OurgoalRecordsKit": "STOPWATCH_STATE,TOPIC_COLORS,applyQuickCunningText,bindCaptureLiveMeta,bindCaptureSave,buildFeedbackPrompt,buildRecordCardHtml,checkStreakFreeze,compressImage,generateLocalPeriodFeedback,generatePeriodAIFeedback,getLastFeedbackAdvice,getRecentCheckinsForAI,getUpcomingSchedulesForAI,handleConversationalRecord,initFeedbackTierBar,initPeriodAiCard,localFeedback,milestonesForAI,openConversationalRecordConfirmModal,openPhotoViewerModal,openProCoachReportModal,openProNotionExportModal,parseConversationalRecord,parseFeedbackJSON,playTimerBeep,pushRecordToNotion,renderAnalyticsHtml,renderHomeGrassSummary,renderLapRowsHtml,renderPeriodFeedbackResult,renderRecordHeatmap,renderRecordsScreen,renderReportSummary,renderStopwatchWidgetHtml,renderTrendSvgChart,requestAIFeedback,requestGeminiFeedback,requestServerAIFeedback,setRecordsSegment,setRecordsSlide,svgCategoryDonut,svgTrendChart,wireRecordCards",
+  "OurgoalSettingsKit": "ONBOARDING_AVATARS,TAB_GUIDE_DATA,_recordHesitation,appLockCryptoAvailable,applyAppSettings,applyTheme,bindSettingsHapticDelegate,bindSettingsStaticHandlers,challengeTwoFactorModal,checkGuestBackupNudge,checkPendingDeletionRestore,closeAvatarGreetingPopup,closePwaInstallGuideModal,collapseAllSettingsSections,confirmPwaInstall,defaultSettings,formatStorageBytes,getRegisteredDevices,getUxMode,hashAppLockPin,initDevDebugButtons,initKeyboardShield,initRememberedAuthFields,isHashedAppLockPin,killDeviceSession,migrateGuestDataToUser,openAvatarGreetingPopup,openChangePasswordModal,openCustomerInquiryModal,openFaqModal,openGuestBackupNudgeModal,openIosPwaInstallGuideModal,openItemReportModal,openLogoutOtherDevicesConfirmModal,openNotificationSoftAskModal,openPwaInstallGuideModal,openTabGuideHubModal,openTwoFactorDisableModal,openTwoFactorSetupModal,openWidgetSettingsModal,paintCacheUsage,paintSecurityCard,refreshSecurityStatus,renderActiveDevicesList,renderAdaptiveModeBar,renderIosPwaBanner,renderSettingsHeroCard,renderSettingsScreen,renderTabGuideContent,selectThemeSwatch,sendToNotion,sha256HexAppLock,showCommTourModal,showLastAuthBadge,showLegalModal,showLevelUpBanner,startOnboarding,switchPwaOsTab,switchUxMode,toggleAdvancedSettings,verifyAppLockPin"
+ },
+ "kitsAfter": {
+  "OurgoalCalendarKit": "buildLockScreenCardPayload,calShift,calWeekStart,closeLockScreenLiveCard,compressCalendarBgImage,executeCalAgentNaturalSchedule,generateLockScreenCalendarImage,generateLockScreenScheduleCardImage,lsDrawRoundRect,openCalendarDayBgPickerModal,openCalendarDayEditHubModal,parseNaturalScheduleText,refreshCalDayDetail,renderCalDayDetail,renderCalendarScreen,syncLockScreenLiveCard,toggleScheduleDone",
+  "OurgoalCommKit": "AI_DISCLOSURE_NOTICE,CREATOR_TEMPLATES,EXTERNAL_DATA,MANITO_ADJ,MANITO_EMOJI,MANITO_NOUN,MANITO_STAMPS,MANITO_WELCOME_STAMPS,MOCK_PEOPLE,SHARE_CANVAS_DIMS,SHARE_DOMAIN,SHARE_PLATFORMS,SIM_PERSONAS,VISIBILITY_LABELS,applyCrewPacingUI,buildInviteLinkSuffix,buildShareText,daysFromNow,drawShareWatermark,ensureFeedPostsLoaded,focusHomeCheckinInput,genAnonName,generateMzStoryCanvas,generateShareImage,getFeedComments,handleUserCommentSubmit,hashStr,loadServerFeedComments,manitoMajors,manitoState,nudgeCrewMates,openChallengeRoomModal,openSelectCompanionForStoryModal,openSelectTeamForStoryModal,renderCommCompanions,renderCommDM,renderCommScreen,renderCrewPacingWidget,scDrawLines,scRoundRect,scWrapLines,scheduleCheerDelivery,sendManitoWelcomeStamp,setFeedComments,setupFeedPostsRealtime,toggleFeedPostPreview,toggleFeedReaction,triggerFirstCheerResponse",
+  "OurgoalGoalsKit": "REGIONS,TOPICS,applyScheduleUpdate,archiveGoal,bindNewGoalStepExports,buildGoalSnapshot,categoryPickerHtml,celebrateMilestoneDone,computeGoalStatusHash,convertTextToNotionDbRecord,customSubsFor,exportGoalSnapshot,formatDateTimeBadge,formatSchedulePillHtml,gaugeSvg,generateGoalStatusSummary,generateGoalTemplate,getLikedPromptIds,getPromptLikesMap,getUserPrompts,goalAgentSnapshot,goalProgress,goalSnapshotSummary,groupCheckedToday,groupState,groupStreak,hybridDashboardHtml,importTemplateInstantly,localGoalStatusSummary,localGoalTemplate,localNextActionSuggestion,localTodayMission,milestonesForMission,msCounts,normalizeSubName,openAddUserPromptModal,openAiResultAssistantModal,openGoalCertificateModal,openResultModal,openScheduleSetupModal,openTeamInviteModal,openTeamLinkedPersonalGoalModal,promptNewGoal,promptNewTeamGoal,quickCreateStarterGoal,refreshGoalStatusSummary,regionPickerHtml,renderGoalDetailBody,renderGoalOpsFullPreviewHtml,renderGoalsScreen,renderPromptEncyclopediaHtml,requestGoalAgentDiff,requestNextActionSuggestion,requestTodayMission,resultBadgeHtml,resultLineHtml,resultPct,sanitizeAttachments,sendGoalAgentMessage,showGoalAgentLoadingStep,showGoalAgentReviewStep,showNewGoalChatStep,showNewGoalLoadingStep,showNewGoalManualForm,showNewGoalReviewStep,templateMilestones,topicLabel,topicPill,wireCategoryPicker,wireGoalDetailEvents,wirePromptEncyclopediaEvents,wireRegionPicker",
+  "OurgoalRecordsKit": "STOPWATCH_STATE,TOPIC_COLORS,addSimulatedCheerAndReplyToPost,applyQuickCunningText,bindCaptureLiveMeta,bindCaptureSave,buildFeedbackPrompt,buildRecordCardHtml,checkStreakFreeze,compressImage,generateLocalPeriodFeedback,generatePeriodAIFeedback,getLastFeedbackAdvice,getRecentCheckinsForAI,getUpcomingSchedulesForAI,handleConversationalRecord,initFeedbackTierBar,initPeriodAiCard,localFeedback,milestonesForAI,openConversationalRecordConfirmModal,openPhotoViewerModal,openProCoachReportModal,openProNotionExportModal,openShareToFeedModal,parseConversationalRecord,parseFeedbackJSON,playTimerBeep,pushRecordToNotion,renderAnalyticsHtml,renderHomeGrassSummary,renderLapRowsHtml,renderPeriodFeedbackResult,renderRecordHeatmap,renderRecordsScreen,renderReportSummary,renderStopwatchWidgetHtml,renderTrendSvgChart,requestAIFeedback,requestGeminiFeedback,requestServerAIFeedback,setRecordsSegment,setRecordsSlide,svgCategoryDonut,svgTrendChart,wireRecordCards",
+  "OurgoalSettingsKit": "ONBOARDING_AVATARS,TAB_GUIDE_DATA,_recordHesitation,appLockCryptoAvailable,applyAppSettings,applyTheme,bindAppEvalBackdrop,bindAppEvalSubmit,bindHomeAddGoal,bindSettingsHapticDelegate,bindSettingsStaticHandlers,challengeTwoFactorModal,checkGuestBackupNudge,checkPendingDeletionRestore,closeAppEvaluationModal,closeAvatarGreetingPopup,closePwaInstallGuideModal,collapseAllSettingsSections,confirmPwaInstall,defaultSettings,formatStorageBytes,getRegisteredDevices,getUxMode,hashAppLockPin,initDevDebugButtons,initKeyboardShield,initRememberedAuthFields,isHashedAppLockPin,killDeviceSession,migrateGuestDataToUser,openAppEvaluationModal,openAvatarGreetingPopup,openChangePasswordModal,openCustomerInquiryModal,openFaqModal,openGuestBackupNudgeModal,openIosPwaInstallGuideModal,openItemReportModal,openLogoutOtherDevicesConfirmModal,openNotificationSoftAskModal,openPwaInstallGuideModal,openTabGuideHubModal,openTwoFactorDisableModal,openTwoFactorSetupModal,openWidgetSettingsModal,paintCacheUsage,paintSecurityCard,refreshSecurityStatus,renderActiveDevicesList,renderAdaptiveModeBar,renderIosPwaBanner,renderSettingsHeroCard,renderSettingsScreen,renderTabGuideContent,resetAppEvaluationForm,selectThemeSwatch,sendToNotion,sha256HexAppLock,showCommTourModal,showLastAuthBadge,showLegalModal,showLevelUpBanner,startOnboarding,switchPwaOsTab,switchUxMode,toggleAdvancedSettings,verifyAppLockPin"
+ }
+}

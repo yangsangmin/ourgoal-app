@@ -2,7 +2,7 @@
  * OurGoal Telemetry (기관 — 익명 이벤트 계측)
  *
  * 온보딩 퍼널·유입 채널·알림 클릭률 익명 이벤트 계측 도우미(계측 묶음).
- * #TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 2970~2987 · 2988~2994 · 2995~3006 · 3007~3025 · 3026~3036 · 3037~3043 · 3044~3047 · 3048~3055 · 3056~3066줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 2999~3016 · 3017~3023 · 3024~3035 · 3036~3054 · 3055~3065 · 3066~3072 · 3073~3076 · 3077~3084 · 3085~3095줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 2970~2987줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2999~3016줄(#TASK-ES-471 생성기 표지) ---- */
   /* ============ 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 ============
      원칙: user_id는 저장하지 않고 기기별 익명 sid만 사용(개인정보 최소화). 계측 실패는 UX에 절대 영향을 주지 않는다. */
   function parseAttribution(search){
@@ -33,7 +33,7 @@
     });
     return out;
   }
-  /* ---- 이전 전 index.html 2988~2994줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3017~3023줄(#TASK-ES-471 생성기 표지) ---- */
   function getSid(){
     try{
       var sid = localStorage.getItem('ourgoal_sid');
@@ -41,7 +41,7 @@
       return sid;
     } catch(e){ return null; }
   }
-  /* ---- 이전 전 index.html 2995~3006줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3024~3035줄(#TASK-ES-471 생성기 표지) ---- */
   function getAttribution(search){
     try{
       var saved = localStorage.getItem('ourgoal_attrib');
@@ -54,7 +54,7 @@
       return fresh;
     } catch(e){ return {}; }
   }
-  /* ---- 이전 전 index.html 3007~3025줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3036~3054줄(#TASK-ES-471 생성기 표지) ---- */
   /* 랜딩 진입 처리 — 부트 IIFE 안에 있으면 테스트할 수 없어 이름 있는 함수로 뺀다 (AUD-8).
      유입 저장과 landing_view 기록은 주기가 다르다:
        - 유입(attribution)은 매 로드마다 확인한다. 첫 유입만 보존하되, 확인 자체를 거르면 안 된다.
@@ -74,7 +74,7 @@
     if(viewed){ try{ track('landing_view', attrib); } catch(e){ } }
     return { attrib: attrib, viewed: viewed };
   }
-  /* ---- 이전 전 index.html 3026~3036줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3055~3065줄(#TASK-ES-471 생성기 표지) ---- */
   function track(name, props){
     try{
       if(typeof window !== 'undefined' && window.posthog && typeof window.posthog.capture === 'function'){
@@ -86,7 +86,7 @@
       L.sb.from('events').insert({ sid: getSid(), name: name, props: props || {} }).then(function(){}, function(){});
     } catch(e){ /* 계측 실패는 조용히 무시 */ }
   }
-  /* ---- 이전 전 index.html 3037~3043줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3066~3072줄(#TASK-ES-471 생성기 표지) ---- */
   function dayIndexSinceSignup(){
     try{
       var c = L.state.profile && L.state.profile.createdAt;
@@ -94,12 +94,12 @@
       return Math.max(0, Math.floor((Date.now() - new Date(c).getTime()) / 86400000));
     } catch(e){ return null; }
   }
-  /* ---- 이전 전 index.html 3044~3047줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3073~3076줄(#TASK-ES-471 생성기 표지) ---- */
   function trackGoalCreated(goal, source){
     var goals = (L.state.profile && L.state.profile.goals) || [];
     track('goal_created', { source: source, goal_type: goal && goal.category, category: goal && goal.category, first: goals.length<=1, day_index: dayIndexSinceSignup() });
   }
-  /* ---- 이전 전 index.html 3048~3055줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3077~3084줄(#TASK-ES-471 생성기 표지) ---- */
   function fmtDuration(ms){
     if(ms<0) ms=0;
     var mins = Math.round(ms/60000);
@@ -108,7 +108,7 @@
     if(m<=0) return h+'시간';
     return h+'시간 '+m+'분';
   }
-  /* ---- 이전 전 index.html 3056~3066줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3085~3095줄(#TASK-ES-471 생성기 표지) ---- */
   function dDay(dateStr){
     if(!dateStr) return null;
     var target = dateStr.indexOf('T')!==-1 ? new Date(dateStr) : new Date(dateStr+'T00:00:00');

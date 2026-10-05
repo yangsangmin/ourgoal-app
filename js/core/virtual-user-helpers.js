@@ -2,7 +2,7 @@
  * OurGoal Virtual-User Helpers (기관 — 가상유저 개선 10대 헬퍼)
  *
  * 「가상유저 개선 10대 핵심 헬퍼 함수」 묶음을 글자 그대로 옮겼다(고치지 않음 — 발견 사항은 #TASK-ES-471 REQ 에 적었다).
- * #TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 3160~3183 · 3184~3187 · 3189~3198 · 3199~3228 · 3229~3254 · 3255~3262 · 3263~3270 · 3271~3302줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 3189~3212 · 3213~3216 · 3218~3227 · 3228~3257 · 3258~3283 · 3284~3291 · 3292~3299 · 3300~3331줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 3160~3183줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3189~3212줄(#TASK-ES-471 생성기 표지) ---- */
   function triggerHaptic(pattern){
     var HAPTIC_PATTERNS = {
       tap: 12,
@@ -39,13 +39,13 @@
     }catch(e){}
     return false;
   }
-  /* ---- 이전 전 index.html 3184~3187줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3213~3216줄(#TASK-ES-471 생성기 표지) ---- */
 
   function triggerHapticFeedback(pattern){
     return triggerHaptic(pattern || 12);
   }
 
-  /* ---- 이전 전 index.html 3189~3198줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3218~3227줄(#TASK-ES-471 생성기 표지) ---- */
 
   function reorderMilestones(goal, fromIdx, toIdx){
     if(!goal || !goal.milestones || !Array.isArray(goal.milestones)) return [];
@@ -56,7 +56,7 @@
     goal.milestones = list;
     return list;
   }
-  /* ---- 이전 전 index.html 3199~3228줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3228~3257줄(#TASK-ES-471 생성기 표지) ---- */
 
   function filterFeedByCategory(items, categoryKey){
     if(!categoryKey || categoryKey === 'all') return (items || []).slice();
@@ -87,7 +87,7 @@
       return false;
     });
   }
-  /* ---- 이전 전 index.html 3229~3254줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3258~3283줄(#TASK-ES-471 생성기 표지) ---- */
 
   function calculateWeeklyFocusStats(records){
     var now = new Date();
@@ -114,7 +114,7 @@
       activeDays: Object.keys(daysSet).length
     };
   }
-  /* ---- 이전 전 index.html 3255~3262줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3284~3291줄(#TASK-ES-471 생성기 표지) ---- */
 
   function exportRecordsToCsv(records, themeKey){
     var list = records || [];
@@ -123,7 +123,7 @@
     }
     return '\uFEFF' + L.buildCSV(list);
   }
-  /* ---- 이전 전 index.html 3263~3270줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3292~3299줄(#TASK-ES-471 생성기 표지) ---- */
 
   function exportRecordsToMarkdown(records, themeKey, includePrompt){
     var list = records || [];
@@ -132,7 +132,7 @@
     }
     return L.buildMarkdownExport(list, themeKey || 'all', !!includePrompt);
   }
-  /* ---- 이전 전 index.html 3271~3302줄(#TASK-ES-471 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3300~3331줄(#TASK-ES-471 생성기 표지) ---- */
 
   var OfflineSyncManager = {
     QUEUE_KEY: 'ourgoal_offline_sync_queue',
