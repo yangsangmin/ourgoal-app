@@ -42,7 +42,7 @@ DOM `#logoutBtn` · `#setGroupDataSummary` · `#authScreen` · `#toast` · `#act
 | verify | ok · 토큰 동일 · 남은 글자 동일 · 이중 처리기 0(IIFE 269 → 268 + 세포 1) (`reports/TASK-ES-513/verify-inline-hard.json`) |
 | 새 파일 줄 수 | 148 (800 이하) |
 | 원본 단독 로드 | 회귀 0 · 새 파일·settings/index.js·app-scope.js 단독 로드 ok (`module-load-probe.json`) |
-| tests 전후 | tests 종료 코드 기준 사본 = 작업 트리(차이 0). npm test 는 양쪽 다 `cell-map-export-es414` 에서 실패 — 기준 사본은 git 이력 없음, 작업 트리는 새 파일이 커밋 전이라 줄 수를 못 읽음(커밋 뒤 다시 잼) |
+| tests 전후 | tests 종료 코드 기준 사본 = 작업 트리(커밋 전 측정, 차이 0). 작업 트리 npm test 종료 0(커밋 뒤). 기준 사본의 npm test 실패는 `cell-map-export-es414` 하나 — git archive 사본이라 git 이력이 없어서다(앞선 #496 과 같음) |
 | 게스트 도달 | `performLogout`·`getDeviceId`·`checkRemoteSessionRevoked`·`getDeviceLoginTime` 게스트로 불림, `setDeviceLoginTime` 게스트 0 · 테스트 계정 2 (`real-account-reach-guest-base.json`·`real-account-reach-A-base.json`) |
 | 게스트 조작 비교 | 6단계 기준1 대 작업 차이 0 · 기준1 대 기준2 0 (`guest-compare.json`) |
 | 실계정 조작 비교 | 테스트 계정 A 6단계(로그인·탭 전환·설정·로그인 기기 목록·로그아웃·토스트) 기준1 대 작업 0 · 기준 대 기준 0 · pageerror 0 (`real-account-compare.json`) |
