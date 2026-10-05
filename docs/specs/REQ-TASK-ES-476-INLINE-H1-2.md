@@ -32,7 +32,7 @@
 
 ## 5. [원칙 ⑤] 절차
 
-worktree `C:/dev/wt/inline-h1-b`(브랜치 `feat/2026-10-05-task-es-476-inline-h1-2`, #772 위에서 시작 → 병합 뒤 origin/main 7ffdfd6 으로 빨리 감기, 생성기 다시 돌림) → 설정·생성 → verify → 단독 로드 → 신고서·설명·가드 → 시험 126개 기준/작업 → 게스트 조작 비교(기준 2회·작업 1회) → 시나리오 4개 기준/작업 → 문서·주장 → 커밋 → PR.
+worktree `C:/dev/wt/inline-h1-b`(브랜치 `feat/2026-10-05-task-es-476-inline-h1-2`, #772 위에서 시작 → 병합 뒤 origin/main 7ffdfd6 으로 빨리 감기, 생성기 다시 돌림) → 설정·생성 → verify → 단독 로드 → 신고서·설명·가드 → 시험 127개 기준/작업 → 게스트 조작 비교(기준 2회·작업 1회) → 시나리오 4개 기준/작업 → 문서·주장 → 커밋 → PR.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
@@ -53,7 +53,7 @@ worktree `C:/dev/wt/inline-h1-b`(브랜치 `feat/2026-10-05-task-es-476-inline-h
 | 새 파일 줄 수 | 생성기 | avatar-levelup-modal 191 · inapp-landing 196 · first-checkin-tutorial 278 · focus-autopilot 517 |
 | index.html | 생성기 | 이 PR 의 이전 전 26,939줄 → 25,970줄(−969) |
 | 단독 로드 | `court/probes/module-load.js` 로컬 | 회귀 0, 새 파일 4개 단독 로드 ok·기존 키트 하나씩 (`module-load-probe.json`) |
-| 시험 | tests·scripts 126개 + npm test 구성 | 종료 코드 기준 = 작업 126/126(기준 원래 실패 31 같음), smoke 443/0 (`test-compare.json`) |
+| 시험 | tests·scripts 126개 + npm test 구성 | 기준 통과 → 작업 실패 0(127개). 다른 2개(cell-map-export-es414·test-shipyard-modular)는 git 이력 없는 기준 사본에서만 실패·작업 통과, smoke 443/0 (`test-compare.json`) |
 | 모듈 가드 | `module-guard.js` | 통과(탭 간 직접 참조 0) |
 | 게스트 조작 비교 | `dom-compare-inline-h1.js` | 12단계 × 10칸 = 120값, 기준 대 작업 0 · 기준 대 기준 0, 콘솔 오류 0/0/0 (`dom-compare.json`) |
 | 화면 시나리오 | `court/lib/scenario.js` 로컬 | 4개 기준·작업 모두 통과, 약점 0 (`scenario-local.json`) |
