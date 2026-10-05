@@ -17,6 +17,10 @@
   {
    "id": "R5",
    "text": "인라인 잔여 3단계 설계 문서 docs/architecture/INLINE-STAGE3-DESIGN.md(유형별 집계·실계정 표준 절차·법정 증거 형식·FN_NAMES 판정·CELL_SPLIT 5 구분·병렬 구역과 PR 수 추정)와 도구(real-account-split-check.js·inline-stage3-classes.js)."
+  },
+  {
+   "id": "R6",
+   "text": "실계정 하네스 측정 기록(테스트 계정 기준1·작업·기준2 비교 결과와 게스트·계정 도달 실측)을 저장소 reports/TASK-ES-513/ 에 남긴다 — 로그인 뒤 경로의 동작 주장(R3)과 분리한 기록 항목."
   }
  ],
  "claims": [
@@ -57,9 +61,9 @@
   },
   {
    "id": "C3",
-   "req": "R3",
+   "req": "R6",
    "kind": "static",
-   "domain": "ui-behavior",
+   "domain": "config",
    "statement": "테스트 계정 실계정 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
    "touches": [
     "reports/TASK-ES-513/real-account-compare.json"
@@ -73,9 +77,9 @@
   },
   {
    "id": "C4",
-   "req": "R3",
+   "req": "R6",
    "kind": "static",
-   "domain": "ui-behavior",
+   "domain": "config",
    "statement": "테스트 계정 실계정 읽기 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
    "touches": [
     "reports/TASK-ES-513/real-account-compare.json"
@@ -89,9 +93,9 @@
   },
   {
    "id": "C5",
-   "req": "R3",
+   "req": "R6",
    "kind": "static",
-   "domain": "ui-behavior",
+   "domain": "config",
    "statement": "도달 실측: 테스트 계정으로 로그인한 첫 단계까지 setDeviceLoginTime 이 2회 불린 것으로 기록되어 있다",
    "touches": [
     "reports/TASK-ES-513/real-account-reach-A-base.json"
@@ -105,9 +109,9 @@
   },
   {
    "id": "C6",
-   "req": "R3",
+   "req": "R6",
    "kind": "static",
-   "domain": "ui-behavior",
+   "domain": "config",
    "statement": "도달 실측: 게스트로 같은 단계를 모두 지나도 setDeviceLoginTime 호출 기록이 없다",
    "touches": [
     "reports/TASK-ES-513/real-account-reach-guest-base.json"
