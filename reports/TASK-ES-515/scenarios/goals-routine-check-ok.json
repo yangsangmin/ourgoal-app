@@ -1,0 +1,59 @@
+{
+  "id": "goals-routine-check-ok",
+  "title": "게스트 목표 탭 「🔄 루틴」 하위 탭에서 첫 루틴의 체크 칸을 누르면 체크가 켜진다 — 루틴 매트릭스를 지운 뒤 남은 루틴 화면",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnGoalsSubRoutine",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubRoutine"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#routineGoalsView [data-rtchk]",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#routineGoalsView [data-rtchk=\"rt_morning\"]",
+      "className": "on"
+    },
+    {
+      "do": "click",
+      "selector": "#routineGoalsView [data-rtchk=\"rt_morning\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#routineGoalsView [data-rtchk=\"rt_morning\"]",
+      "className": "on",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

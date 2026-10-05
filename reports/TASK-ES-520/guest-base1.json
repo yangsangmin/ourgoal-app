@@ -1,0 +1,84 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base1",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 첫 화면 #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "67bb6583576d8d96",
+   "opened": null
+  },
+  {
+   "name": "② 기록 탭 #screen-records(기록 목록·검색 칸)",
+   "present": true,
+   "visible": true,
+   "textHash": "4d5e26706840b1fc",
+   "textLen": 39,
+   "attrsHash": "a6f9d36dfc6879ce",
+   "opened": null
+  },
+  {
+   "name": "③ 히트맵·통계 모드 → 히트맵 #recordHeatmap",
+   "present": true,
+   "visible": true,
+   "textHash": "cf1ec330cfab6022",
+   "textLen": 160,
+   "attrsHash": "f78eb80d742f67c5",
+   "opened": true,
+   "counts": {
+    "heatmapCells": 131
+   }
+  },
+  {
+   "name": "④ 실천추이 차트 #chartContainer(여러 지표 SVG)",
+   "present": true,
+   "visible": true,
+   "textHash": "88dad9809e82c9f3",
+   "textLen": 195,
+   "attrsHash": "6507a36f613d9ff2",
+   "opened": true,
+   "counts": {
+    "trendPaths": 2
+   }
+  },
+  {
+   "name": "⑤ 보관함 모드 #archivedGoals",
+   "present": true,
+   "visible": true,
+   "textHash": "75b0ec664b6e3c7d",
+   "textLen": 42,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true
+  },
+  {
+   "name": "⑥ 목표 탭 #screen-goals",
+   "present": true,
+   "visible": true,
+   "textHash": "3c08e90fe9b18654",
+   "textLen": 345,
+   "attrsHash": "de8d692ed9f36ffb",
+   "opened": null
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "renderArchivedGoals/undefined,restoreGoal/undefined,goalAchievement/undefined,setArchivedPeriod/function,setArchivedPage/function,heatmapLevel/undefined,filterRecordsByQuery/undefined,computeTableAnalytics/undefined,computeTrendChartData/undefined,renderMultiMetricSvg/function,TREND_METRICS/object",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 1
+ }
+}

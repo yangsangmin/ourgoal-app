@@ -1,0 +1,82 @@
+{
+ "id": "records-pro-csv-import",
+ "title": "게스트로 전문 템플릿 기록 창의 「CSV 가져오기」 창에 쉼표 구분 표 글자 두 줄을 붙여넣고 「데이터 표에 반영하기」를 누르면 「CSV 표 데이터 2개 행을 성공적으로 가져왔어요!」 토스트가 뜬다 — 옮긴 openCsvImportModal·parseCsvText(js/tabs/records/table-csv-sync.js)가 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"records\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#recQuickDockBar",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#recQuickDockBar > button:nth-child(4)"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#recOpenProTemplateBtn",
+   "timeoutMs": 8000
+  },
+  {
+   "do": "click",
+   "selector": "#recOpenProTemplateBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#proCsvImportBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#proCsvImportBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#csvTextInput",
+   "timeoutMs": 5000
+  },
+  {
+   "do": "type",
+   "selector": "#csvTextInput",
+   "text": "1,스쿼트,5세트,10회,20분,-,90점\n2,데드리프트,3세트,5회,15분,-,80점"
+  },
+  {
+   "do": "click",
+   "selector": "#csvApplyBtn"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "CSV 표 데이터 2개 행을 성공적으로 가져왔어요",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
