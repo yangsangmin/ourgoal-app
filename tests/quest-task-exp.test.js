@@ -10,7 +10,7 @@ const SUITE_NAME = 'quest-task-exp';
 
 async function runTests() {
   const rootDir = path.resolve(__dirname, '..');
-  const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf-8');
+  const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(rootDir, 'index.html'), 'utf-8'));
   const compJs = readComponentsBundle();
   const uiCss = fs.readFileSync(path.join(rootDir, 'ui.css'), 'utf-8');
 

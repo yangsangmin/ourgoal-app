@@ -1,0 +1,189 @@
+{
+ "task": "TASK-ES-524",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-524-STAGE3-Z56-TEST-FIRST.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 Z5+Z6 표준 묶음을 옮기면 깨지는 시험지 4곳(smoke 「[#TASK-ES-186]」 검사·theme-system-v4·today-mission-card-guide·quest-task-exp)이 인라인 합본(index.html 원문 맨 앞 + 인라인 세포, L. 접두 제거)을 읽는다. 단언·기대값·검사 수 변경 0, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "전후 측정: 모의 이전 사본에서 옛 시험지는 깨지고 새 시험지는 통과, 기준 사본·작업 트리에서 새 시험지 통과, 작업 트리 npm test 종료 0."
+  },
+  {
+   "id": "R3",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke 시험의 「[#TASK-ES-186] 성소 기준 4대 테마」 검사가 인라인 합본을 읽는다",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "file": "scripts/smoke-test.js",
+    "type": "codeContains",
+    "text": "const html = require('../tests/helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8'));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테마 시스템 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/theme-system-v4.test.js"
+   ],
+   "check": {
+    "file": "tests/theme-system-v4.test.js",
+    "type": "codeContains",
+    "text": "const html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexHtmlPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "오늘의 미션 카드 안내 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/today-mission-card-guide.test.js"
+   ],
+   "check": {
+    "file": "tests/today-mission-card-guide.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8'));"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "퀘스트 할 일 경험치 시험이 인라인 합본을 읽는다",
+   "touches": [
+    "tests/quest-task-exp.test.js"
+   ],
+   "check": {
+    "file": "tests/quest-task-exp.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(rootDir, 'index.html'), 'utf-8'));"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 사본에서 새 시험지 4곳 중 실패가 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-524/test-first-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-524/test-first-check.json",
+    "type": "jsonPath",
+    "path": "mockNewFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 이전 사본에서 옛 시험지 4곳이 모두 실패한 것으로 기록되어 있다(선행이 필요했다)",
+   "touches": [
+    "reports/TASK-ES-524/test-first-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-524/test-first-check.json",
+    "type": "jsonPath",
+    "path": "mockOldFailing",
+    "equals": 4
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 사본에서도 새 시험지 실패가 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-524/test-first-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-524/test-first-check.json",
+    "type": "jsonPath",
+    "path": "baseNewFailing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리 npm test 종료 코드 0 이 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-524/npm-test.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-524/npm-test.json",
+    "type": "jsonPath",
+    "path": "npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-524-STAGE3-Z56-TEST-FIRST.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-524-STAGE3-Z56-TEST-FIRST.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-524 | INFRA |"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-524:"
+   }
+  }
+ ]
+}
