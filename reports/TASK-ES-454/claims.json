@@ -1,0 +1,161 @@
+{
+ "task": "TASK-ES-454",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-454-INLINE-TEST-BUNDLE-G076.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "시험지 tests/schedule-notification-setting.test.js 가 index.html 대신 #751 인라인 합본(withInlineCells)을 읽는다. 단언·기대값·검사 수 0 변경, 제품 코드 0."
+  },
+  {
+   "id": "R2",
+   "text": "실제 이동 사본(#TASK-ES-448 브랜치)으로 기준 시험지는 깨지고 새 시험지는 기준과 같음을 재고, tests 전부를 이동 사본에서 돌려 같은 이동으로 깨지는 다른 시험지가 없음을 잰다."
+  },
+  {
+   "id": "R3",
+   "text": "REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험지 schedule-notification-setting 이 index.html 대신 인라인 합본을 읽는다(읽기 줄만 바꿈)",
+   "touches": [
+    "tests/schedule-notification-setting.test.js"
+   ],
+   "check": {
+    "file": "tests/schedule-notification-setting.test.js",
+    "type": "codeContains",
+    "text": "const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8'));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 기준 제품에서 기준 시험지와 종료 코드·출력 줄 수가 같다",
+   "touches": [
+    "reports/TASK-ES-454/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-454/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnBaseProduct",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 시험지는 실제 이동 사본에서 깨진다(선행이 필요한 근거)",
+   "touches": [
+    "reports/TASK-ES-454/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-454/real-move.json",
+    "type": "jsonPath",
+    "path": "baseTestBreaksOnMoved",
+    "equals": [
+     "tests/schedule-notification-setting.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 시험지는 실제 이동 사본에서 기준 시험지·기준 제품과 종료 코드·출력 줄 수·첫 오류가 같다",
+   "touches": [
+    "reports/TASK-ES-454/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-454/real-move.json",
+    "type": "jsonPath",
+    "path": "newTestSameOnMoved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 전부를 이동 사본에서 돌린 종료 코드가 기준 제품과 다른 시험지는 0개다",
+   "touches": [
+    "reports/TASK-ES-454/real-move.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-454/real-move.json",
+    "type": "jsonPath",
+    "path": "exitDiffOnMovedWithNewTests",
+    "equals": []
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 도구: 4조합을 돌린다",
+   "touches": [
+    "docs/design/harness/module-split/real-move-test-g076.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/real-move-test-g076.js",
+    "type": "codeContains",
+    "text": "for (const t of CHANGED) rows[t] = { baseTestBaseProduct: run(BASE, BASE, t), newTestBaseProduct: run(BASE, WORK, t), baseTestMoved: run(MOVED, BASE, t), newTestMoved: run(MOVED, WORK, t) };"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-454-INLINE-TEST-BUNDLE-G076.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-454-INLINE-TEST-BUNDLE-G076.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-454: 시험지 schedule-notification-setting"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-454 | INFRA | [시험지 인라인 합본 · G076 허브 창 선행]"
+   }
+  }
+ ]
+}

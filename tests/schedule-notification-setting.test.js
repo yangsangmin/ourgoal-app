@@ -8,7 +8,7 @@ const path = require('path');
 const { readComponentsBundle } = require('./helpers/components-bundle.js'); // #TASK-ES-412 컴포넌트 합본(원문 + 키트 부품)
 
 // 1. 소스 정적 마크업 및 구조 검증
-const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8')); // #TASK-ES-454 인라인 합본(G076 허브 창 세포 이동 선행) — 단언 그대로
 const notifyEngineJs = fs.readFileSync(path.join(__dirname, '../js/notify-engine.js'), 'utf8');
 const componentsJs = readComponentsBundle();
 
