@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "2b6d2fc16e50f44922965f1d6496c69a8feec0b4",
-  "short": "2b6d2fc",
-  "committedAt": "2026-10-05T19:21:48+09:00",
-  "subject": "[FIX] #TASK-ES-440 fix: 숨김에 갇힌 살아 있는 기능 복원 — 알림 센터(성소 종 죽은 클릭)·보관함·성소 위클리 리캡 카드·앱 평가·오늘의 카드·3대 퀘스트·오늘 몰입 요약"
+  "commit": "a1c331130ac2c471aa1a7d1fd9d0b7c127cd788c",
+  "short": "a1c3311",
+  "committedAt": "2026-10-05T19:57:51+09:00",
+  "subject": "[FIX] #TASK-ES-440 chore: Merge origin/main(#754)"
  },
  "summary": {
-  "cells": 211,
-  "files": 210,
-  "jsLines": 58237,
+  "cells": 212,
+  "files": 211,
+  "jsLines": 58310,
   "kinds": {
    "organ": 29,
-   "tab": 76,
+   "tab": 77,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 211,
+  "descriptionsHand": 212,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 29246,
-   "functionDecls": 558
+   "inlineScriptLines": 29207,
+   "functionDecls": 557
   },
   "health": {
-   "undifferentiatedLines": 29246,
+   "undifferentiatedLines": 29207,
    "globalLinks": 282,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 76,
+   "count": 77,
    "large": 6,
-   "small": 70
+   "small": 71
   },
   {
    "key": "hybrid",
@@ -123,6 +123,7 @@
     "goals/ai-agent",
     "goals/ai-local-fallback",
     "goals/ai-status",
+    "goals/ai-status-refresh",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
@@ -137,7 +138,7 @@
     "goals/team-goal-modals",
     "goals/template-quick-import"
    ],
-   "lines": 3616,
+   "lines": 3689,
    "over800": 0
   },
   {
@@ -3486,6 +3487,7 @@
     "goals/ai-agent",
     "goals/ai-local-fallback",
     "goals/ai-status",
+    "goals/ai-status-refresh",
     "goals/goal-detail",
     "goals/goal-detail-events",
     "goals/goal-export",
@@ -9786,6 +9788,63 @@
    "reqs": [
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md"
+   ],
+   "prs": []
+  },
+  {
+   "id": "goals/ai-status-refresh",
+   "file": "js/tabs/goals/ai-status-refresh.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 종합상황 새로 고침",
+   "nameSource": "hand",
+   "does": "목표가 바뀌었거나 날이 바뀌었을 때만 종합상황 AI 요약을 다시 받아 저장한다(같으면 다시 부르지 않음)",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal Status Refresh (목표 탭 — 종합상황 AI 요약 새로 고침)",
+    "#TASK-ES-453 (인라인 스크립트 세포화 P1): index.html 인라인 IIFE 에서 옮긴 묶음 —",
+    "refreshGoalStatusSummary(이전 전 17321~17368줄, 구획 주석 포함 · 구획 「현재 종합상황 (AI 요약)」)",
+    "#TASK-ES-436 에서 시험지(ai-conditional-call-optimization)가 index.html 한 파일만 읽어 남겼던 함수 — #TASK-ES-451 로 시험지가 인라인 합본을 읽게 되어 옮겼다."
+   ],
+   "lines": 73,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-423",
+    "TASK-ES-436",
+    "TASK-ES-451",
+    "TASK-ES-453"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
+    "docs/specs/REQ-TASK-ES-451-INLINE-TEST-BUNDLE-P1.md",
+    "docs/specs/REQ-TASK-ES-453-INLINE-P1-3.md"
    ],
    "prs": []
   },

@@ -66,6 +66,8 @@
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
+측정 시점: 4테마 실측·sweep·tab-check 는 origin/main eb9e6e4(ES-433 병합 뒤) 기준으로 쟀고, 그 뒤 main(인라인 분열 #749~#759 — 이 작업 파일과 겹침 없음)을 합친 판에서 시나리오 8개·npm test·세포 검사를 다시 쟀다(기준 3232cc2).
+
 수치는 `reports/TASK-ES-440/scenario-local.json`·`layout-measure.json`·`sweep-compare.json`·`tab-compare.json`·`test-compare.json`·`constraints.json` 을 인용한다.
 
 | 측정 | 방법 | 결과 파일 |
