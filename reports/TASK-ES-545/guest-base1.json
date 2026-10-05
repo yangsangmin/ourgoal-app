@@ -1,0 +1,115 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base1",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈 첫 화면(로그인 직후 실시간 채널 한 번 연결) #screen-home",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "67bb6583576d8d96",
+   "opened": null
+  },
+  {
+   "name": "② 소통 팀 하위 탭 #commBody",
+   "present": true,
+   "visible": true,
+   "textHash": "3712b329940f111c",
+   "textLen": 1796,
+   "attrsHash": "a01da662ad7dc436",
+   "opened": null,
+   "counts": {
+    "join": 11
+   }
+  },
+  {
+   "name": "③ 예시 팀 체험 참여 g-workshop(저장 쓰기는 도구가 끊음) #commBody",
+   "present": true,
+   "visible": true,
+   "textHash": "202adb3b93cbe4b8",
+   "textLen": 1808,
+   "attrsHash": "a01da662ad7dc436",
+   "opened": true
+  },
+  {
+   "name": "④ 목표 팀목표 하위 탭(서버 팀 댓글 불러오기·권한) #screen-goals",
+   "present": true,
+   "visible": true,
+   "textHash": "082cb4bd1ea5f109",
+   "textLen": 733,
+   "attrsHash": "1e7b0458966a145a",
+   "opened": null,
+   "counts": {
+    "cmtBlock": 4,
+    "cmtSend": 4
+   }
+  },
+  {
+   "name": "⑤ 팀 목표 전체 대화 열기 [data-tggoalcommentsbox]",
+   "present": true,
+   "visible": true,
+   "textHash": "1cca609781149382",
+   "textLen": 8,
+   "attrsHash": "68352c088d6e0510",
+   "opened": true
+  },
+  {
+   "name": "⑥ 소통 피드(숨김·차단 거르기) #commBody",
+   "present": true,
+   "visible": true,
+   "textHash": "fb1ee2166a07ddd1",
+   "textLen": 312,
+   "attrsHash": "d0f0ec9a8e6f7cf4",
+   "opened": null
+  },
+  {
+   "name": "⑦ 목표 개인 하위 탭(저장 순서 정렬) #screen-goals",
+   "present": true,
+   "visible": true,
+   "textHash": "3c08e90fe9b18654",
+   "textLen": 345,
+   "attrsHash": "1e7b0458966a145a",
+   "opened": null,
+   "counts": {
+    "goals": 0
+   }
+  },
+  {
+   "name": "⑧ 설정 차단 목록 창 #modalSheet",
+   "present": true,
+   "visible": true,
+   "textHash": "c80b6036eb4c4090",
+   "textLen": 58,
+   "attrsHash": "f95bc03647e16114",
+   "opened": true
+  },
+  {
+   "name": "⑨ 설정 위젯 설정 창 #modalSheet",
+   "present": true,
+   "visible": true,
+   "textHash": "39e67970d6f9cc48",
+   "textLen": 382,
+   "attrsHash": "12b0f79d2e8b4430",
+   "opened": true
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "canManageTeamGoals/undefined,TEAM_COMMENTS_CACHE/undefined,setupRealtimeChannelsOnce/undefined,ensureTeamCommentsLoaded/undefined,teamCommentsBlockHtml/undefined,filterHidden/undefined,filterBlockedPosts/undefined,blockUser/undefined,openBlockedUsersModal/undefined,sortGoalsByOrder/undefined,shiftGoalOrder/undefined,reorderGoal/undefined,bindWidgetModalOpener/undefined",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 2
+ }
+}

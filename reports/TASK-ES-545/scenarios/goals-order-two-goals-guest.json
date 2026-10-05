@@ -1,0 +1,22 @@
+{
+ "id": "goals-order-two-goals-guest",
+ "title": "게스트로 목표 탭에서 추천 템플릿 「10km 마라톤 완주 로드맵」을 담고 빠른 추가로 두 번째 목표를 더하면 개인 목표 목록에 두 목표가 저장 순서대로 그려진다 — 옮긴 sortGoalsByOrder(js/tabs/goals/goal-order.js)가 이전 전과 같이 목록을 정렬해 넘긴다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"goals\"]", "timeoutMs": 15000 },
+  { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+  { "do": "waitFor", "selector": ".btn-quick-adopt-goal[onclick*=\"10km\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": ".btn-quick-adopt-goal[onclick*=\"10km\"]" },
+  { "expect": "textContains", "selector": "#toast", "text": "10km 마라톤 완주 로드맵" },
+  { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+  { "do": "waitFor", "selector": "#goalFastAddInput", "timeoutMs": 10000 },
+  { "do": "type", "selector": "#goalFastAddInput", "text": "Z2 두번째 목표" },
+  { "do": "click", "selector": "#btnGoalFastAddSubmit" },
+  { "expect": "count", "selector": "[data-sgoalid]", "equals": 2 },
+  { "expect": "textContains", "selector": "[data-sgoalid]", "text": "Z2 두번째 목표" },
+  { "expect": "noExceptions" }
+ ]
+}

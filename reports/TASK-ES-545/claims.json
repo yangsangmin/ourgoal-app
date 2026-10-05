@@ -1,0 +1,301 @@
+{
+ "task": "TASK-ES-545",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-545-STAGE3-Z2-TEAM.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「RENDER: 팀 목표」의 팀 목표 댓글 몫(canManageTeamGoals·TEAM_COMMENTS_CACHE·setupRealtimeChannelsOnce·ensureTeamCommentsLoaded·setupTeamCommentsRealtime·teamComments·teamCommentItemHtml·teamCommentsBlockHtml)을 목표 탭 세포 js/tabs/goals/team-comments.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 자리 H2). 게스트로 닿는 몫(예시 팀 체험 → 팀목표 → 팀 목표 전체 대화 열기·댓글 등록)은 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R2",
+   "text": "같은 묶음의 숨김·차단 몫(filterHidden·filterBlockedPosts·isUserBlocked·blockUser·unblockUser·openBlockedUsersModal)을 소통 세포 js/tabs/comm/user-blocks.js 로 동작 그대로 옮긴다. 게스트로 닿는 몫(설정 「차단한 사용자 관리」 창)은 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R3",
+   "text": "같은 묶음의 목표 순서 몫(sortGoalsByOrder·shiftGoalOrder·reorderGoal)을 목표 탭 세포 js/tabs/goals/goal-order.js 로 동작 그대로 옮긴다. 게스트로 닿는 몫(개인 목표 두 개를 저장 순서대로 그림)은 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R4",
+   "text": "인라인 묶음 「DM & 동반자 소통 시스템」의 로드 중 문(문서 클릭 위임 #btnOpenWidgetModal → 위젯 설정 창)을 bindWidgetModalOpener 로 감싸 설정 세포 js/tabs/settings/widget-modal-opener.js 로 옮기고 index.html 원래 자리에서 부른다. 게스트 시나리오로 낸다."
+  },
+  {
+   "id": "R5",
+   "text": "로그인한 뒤에만 다른 몫(테스트 계정의 서버 팀 댓글 불러오기·로그인 세션의 실시간 채널 연결·로그인 상태의 소통 피드 거르기·개인 목표 정렬·차단 목록 창)은 테스트 계정 실계정 하네스로 기준·작업·기준을 읽기 전용으로 맞댄다."
+  },
+  {
+   "id": "R6",
+   "text": "실계정 하네스 측정 기록(테스트 계정 기준1·작업·기준2 비교 결과와 게스트·계정 도달 실측)을 저장소 reports/TASK-ES-545/ 에 남긴다 — 로그인 뒤 경로의 동작 주장(R5)과 분리한 기록 항목."
+  },
+  {
+   "id": "R7",
+   "text": "옮기기 증명: 토큰 동일·남은 글자 동일·이중 처리기 0(verify), 원본·새 파일 단독 로드 회귀 0, 신고서 등록."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 소통 「팀」에서 예시 팀을 체험 참여하고 목표 「팀목표」에서 팀 목표 전체 대화를 열면 「댓글 0개」 입력 블록이 보이고, 댓글을 적어 등록하면 그 댓글이 목록에 그려지며 예외가 없다 — 옮긴 teamCommentsBlockHtml·teamCommentItemHtml 이 그린다",
+   "touches": [
+    "js/tabs/goals/team-comments.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-team-comment-guest.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정 「데이터 백업 & 고급 설정」을 펼쳐 차단한 사용자 「목록 보기」를 누르면 「차단한 사용자 관리」 창에 「차단한 사용자가 없습니다.」가 보이고 「닫기」로 닫히며 예외가 없다 — 옮긴 openBlockedUsersModal 이 연다",
+   "touches": [
+    "js/tabs/comm/user-blocks.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-blocked-users-guest.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 추천 템플릿 하나를 담고 빠른 추가로 두 번째 목표를 더하면 개인 목표 목록에 두 목표가 그려지며 예외가 없다 — 옮긴 sortGoalsByOrder 가 목록을 정렬해 넘긴다",
+   "touches": [
+    "js/tabs/goals/goal-order.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-order-two-goals-guest.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 설정에서 「바탕화면 위젯 설정 & 미리보기」 단추가 든 묶음을 펼쳐 단추를 누르면 「기기 바탕화면 위젯 설정 & 미리보기」 창이 보이고 예외가 없다",
+   "touches": [
+    "js/tabs/settings/widget-modal-opener.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/settings-widget-opener-guest.json"
+  },
+  {
+   "id": "C5",
+   "req": "R5",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "테스트 계정으로 로그인한 상태에서 팀목표 화면(서버 팀 댓글 불러오기 포함)·팀 목표 대화 블록·소통 피드·개인 목표 목록·차단 목록 창·위젯 설정 창이 이전 전과 같다",
+   "touches": [
+    "js/tabs/goals/team-comments.js",
+    "js/tabs/comm/user-blocks.js",
+    "js/tabs/goals/goal-order.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "index.html"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 환경 변수(OG_APP_URL·OG_TEST_A_EMAIL·OG_TEST_A_PASSWORD)가 있는 이 PC 의 세션",
+    "how": [
+     "git archive origin/main 으로 기준 사본을 푼다",
+     "node docs/design/harness/module-split/real-account-split-check.js <기준 사본> docs/design/harness/module-split/real-account-stage3-z2-545-steps.json base1 base1.json 을 돌리고, 같은 명령을 이 변경 트리(after)와 기준 사본(base2)으로 한 번씩 더 돌린다",
+     "node docs/design/harness/module-split/real-account-compare-inline-split-2.js base1.json after.json base2.json 비교.json 으로 base1VsAfter.differing 과 base1VsBase2.differing 이 0 인지 본다"
+    ],
+    "note": "작업자 실측(판정 아님): 테스트 계정 9단계 기준1·작업·기준2 비교 결과와 pageerror 는 reports/TASK-ES-545/real-account-compare.json, Supabase 쓰기 요청은 도구가 끊음(writesBlocked). 도달 실측은 real-account-reach-A-base.json·real-account-reach-guest-base.json."
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-545/real-account-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/real-account-compare.json",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "테스트 계정 실계정 읽기 비교의 기준 2회 사이(본질 변동) 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-545/real-account-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/real-account-compare.json",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 같은 9단계 읽기 비교(기준1 대 작업)의 다른 값이 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-545/guest-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/guest-compare.json",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도달 실측: 게스트로 예시 팀 체험 뒤 팀목표 하위 탭 단계까지 teamCommentsBlockHtml 이 16회 불린 것으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-545/real-account-reach-guest-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/real-account-reach-guest-base.json",
+    "path": "steps.3.calls.teamCommentsBlockHtml",
+    "equals": 16
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R7",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-545/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/verify-inline-hard.json",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R7",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-545/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/verify-inline-hard.json",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R7",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0(처리기 수 이전 전 = 이후 IIFE + 새 세포)",
+   "touches": [
+    "reports/TASK-ES-545/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/verify-inline-hard.json",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R7",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 4개 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-545/module-load-probe.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-545/module-load-probe.json",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/team-comments 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"goals/team-comments\""
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 comm/user-blocks 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"comm/user-blocks\""
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 goals/goal-order 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"goals/goal-order\""
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 settings/widget-modal-opener 가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"settings/widget-modal-opener\""
+   }
+  }
+ ]
+}
