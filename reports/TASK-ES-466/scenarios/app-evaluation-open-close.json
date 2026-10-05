@@ -1,0 +1,8 @@
+{"id":"app-evaluation-open-close","title":"게스트로 홈 「🎯 오늘 목표」 창에서 <아워골 평가해주기>를 누르면 「아워골 솔직 평가 & 피드백」 창이 뜨고, × 를 누르면 닫힌다 — 옮긴 openAppEvaluationModal·closeAppEvaluationModal(js/tabs/settings/app-evaluation.js)이 index.html 원래 자리의 처리기에서 이전 전과 같이 불린다","steps":[{"do":"goto","path":"/index.html"},{"do":"waitFor","selector":"#btnLandingPreviewDirect"},{"do":"click","selector":"#btnLandingPreviewDirect"},{"do":"waitFor","selector":"#captureInput","timeoutMs":15000},
+{"do":"click","selector":"#homeCompassQuest"},
+{"do":"click","selector":"#btnOpenEvalModal"},
+{"expect":"style","selector":"#appEvaluationModal","prop":"display","equals":"flex"},
+{"expect":"textContains","selector":"#appEvaluationModal","text":"아워골 솔직 평가 & 피드백"},
+{"do":"click","selector":"#btnAppEvalClose"},
+{"expect":"style","selector":"#appEvaluationModal","prop":"display","equals":"none"},
+{"expect":"noExceptions"}]}
