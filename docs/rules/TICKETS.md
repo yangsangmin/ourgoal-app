@@ -566,6 +566,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-462 | FIX/버그 | [분열 중 발견 기존 결함 묶음] PWA OS 탭 단계 전환·목표 빈 안내 이중 id·리캡/히트맵 가짜 스트릭·레벨 제거·기록 모드 줄 375 넘침·목표 0개 오늘 목표 시트 퀘스트·관리자 복구 홈 갱신·홈 구성 레벨 배지 문구·목표 상세 서랍 진입로와 저장 — 챌린지 룸·가려진 버튼·위젯 시험은 근거와 함께 보고만 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-462-SPLIT-DEFECTS.md
 - #TASK-ES-465 | INFRA | [시험지 기관 세포 합본] 인라인 어려움 기관 이전 선행 — 합본 도우미가 js/core 인라인 이전 세포도 읽음 + 시험지 4개 읽는 줄 합본으로, 단언·기대값·검사 수 그대로 · 어려움 집계 표 제목 표시 고침 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md | 4단계(심사 청구)
 - #TASK-ES-469 | INFRA | [시험지 인라인 합본 · 어려움 구역 H1 선행] app-evaluation-modal·feed-post-preview-modal 시험지 2개가 index.html 대신 인라인 합본을 읽음(단언 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-469-INLINE-H1-TEST-BUNDLE.md
+- #TASK-ES-471 | INFRA | [인라인 기관 이전 1차] 공용 부품 8묶음(홈 콕핏·Utilities·Modal helper·가상유저 10대 헬퍼·표준 시간대·조선소 레지스트리 초기화·계측·구글 캘린더 토큰 격리) → js/core 세포 7개, 동작 그대로(인라인 −682줄) | 코디네이터 지시 (2026-10-05, 기관 빌더), REQ docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md | 4단계(심사 청구)
 - #TASK-ES-466 | INFRA | [인라인 어려움 구역 H1 1차] 동반자 페이스·피드 게시 창·평가 창·새 목표 창 네 묶음을 세포 4개로 이전(동작 그대로) | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md
 - #TASK-ES-475 | INFRA | [시험지 선행 · 인라인 어려움 H3] achievement-graph-multiset 이 인라인 합본을 읽음(읽기 줄 1줄) | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-475-H3-TEST-BUNDLE.md
 - #TASK-ES-467 | INFRA | [인라인 어려움 구역 H3] 측정지표 추이 차트·전문 템플릿 묶음을 js/tabs/records/ 세포 3개로 동작 그대로 이전 | 오케스트레이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md

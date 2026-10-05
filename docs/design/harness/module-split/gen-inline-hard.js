@@ -91,7 +91,11 @@ const wrapSafe = st => {
   return why;
 };
 
-const cellByKey = Object.fromEntries(CFG.cells.map(c => [c.key, c]));
+// #TASK-ES-465: `if(typeof window !== 'undefined'){ window.a = a; window.b = c; }` 처럼 몸통이 window 속성 대입뿐인 if 문(else 없음)은 노출 묶음이다 → 원래 자리
+const isWindowAssign = x => x && x.type === 'AssignmentExpression' && x.operator === '=' && x.left.type === 'MemberExpression' && x.left.object.type === 'Identifier' && x.left.object.name === 'window' && (x.right.type !== 'AssignmentExpression' || isWindowAssign(x.right));
+const isWindowExposureBlock = n => n.type === 'IfStatement' && !n.alternate && n.consequent.type === 'BlockStatement' && n.consequent.body.length > 0
+  && n.consequent.body.every(b => b.type === 'ExpressionStatement' && (isWindowAssign(b.expression) || (b.expression.type === 'SequenceExpression' && b.expression.expressions.every(isWindowAssign))));
+const cellByKey =Object.fromEntries(CFG.cells.map(c => [c.key, c]));
 const plan = []; // { cell, action: move|wrap|keep, st, start, end, segStart, names, wrapName, why }
 for (const c of CFG.cells) {
   for (const t of c.take) {
@@ -128,6 +132,7 @@ for (const c of CFG.cells) {
         const e = st.isExpressionStatement() && st.node.expression;
         const lineCount = HE(st.node) - H(st.node) + 1;
         if (e && e.type === 'AssignmentExpression' && e.left.type === 'MemberExpression' && e.left.object.type === 'Identifier' && e.left.object.name === 'window' && lineCount <= 3) { item.action = 'keep'; item.why = 'window 노출 — 원래 자리(순서 보존)'; }
+        else if (isWindowExposureBlock(st.node)) { item.action = 'keep'; item.why = 'window 노출 묶음(if 안 window.X = … 만) — 원래 자리(순서 보존, #TASK-ES-465)'; }
         else if (!t.all && !(t.wrap || []).length) { item.action = t.keepRest ? 'keep' : 'skip'; if (t.keepRest) item.why = '이번 범위 밖(keepRest) — 원래 자리'; }
         else if (lineCount <= 3) { item.action = 'keep'; item.why = '3줄 이하 로드 중 문 — 원래 자리'; }
         else {
@@ -229,7 +234,7 @@ for (const c of CFG.cells) {
     ' * ' + c.title,
     ' *',
     ...c.desc.map(d => ' * ' + d),
-    ' * #' + TAG + '(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 ' + pieces + '줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.',
+    ' * #' + TAG + '(' + (CFG.label || '인라인 어려움 묶음 시범') + '): index.html 인라인 IIFE 의 구간(이전 전 ' + pieces + '줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.',
     ' * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.',
     ' * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.',
     ' * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md',
@@ -273,7 +278,7 @@ const repl = [];
 for (const r of repl.slice().sort((a, b) => b.segStart - a.segStart)) {
   const file = cellByKey[r.cell].file;
   const line = r.kind === 'move'
-    ? '  /* [#' + TAG + '] ' + r.names.join(' · ') + ' → ' + file + ' 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */'
+    ? '  /* [#' + TAG + '] ' + r.names.join(' · ') + ' → ' + file + ' 로 옮김(' + (CFG.label || '인라인 어려움 묶음 시범') + ' — 앞 주석 포함) */'
     : '  ' + r.names[0] + '(); /* [#' + TAG + '] 로드 중 문(앞 주석 포함) → ' + file + ' 의 ' + r.names[0] + ' 로 옮김 — 원래 자리에서 부른다 */';
   nh.splice(r.segStart - 1, r.end - r.segStart + 1, line);
 }
