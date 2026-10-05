@@ -1,0 +1,658 @@
+{
+ "task": "TASK-ES-446",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "구역 P2 기록 탭 묶음(G130·G132·G133·G136·G138·G139·G141·G142·G143)의 최상위 선언 14개를 js/tabs/records/ 세포 5개(record-cards·record-heatmap-report·record-assistant·table-analytics-view·pro-report-export)로 글자 그대로 옮긴다. 이름 참조만 L. 접두, 새 전역 0(기존 OurgoalRecordsKit), 새 파일 800줄 이하, index.html 인라인 순증가 0(줄어듦), 기능 추가·삭제 0. 옮긴 화면이 게스트에게 이전과 같이 그려지고 동작한다."
+  },
+  {
+   "id": "R2",
+   "text": "옮기기·검사·측정 도구(일반화 생성기·설정·검사기·원본 단독 로드·시험 비교·게스트 조작 비교·시나리오 로컬 실행)를 저장소에 남긴다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 측정: git archive 기준(c222c4d) 대비 토큰·덩어리 줄 동일·누수 0, 법정 모듈 로드 탐침 회귀 0, 게스트 조작 비교 기준 2회·후 1회 차이 0, npm test·tests 기준과 같음, 화면 시나리오 기준·작업 통과, tab-check 기준 2회·후 1회."
+  },
+  {
+   "id": "R4",
+   "text": "세포 등록(modules.json·cell-descriptions.json·cell-map.json·module-baseline.json·인라인 지도 재생성)과 REQ 8원칙·dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭 「빠른 기록」에 「저녁에 헬스장에서 가슴운동 1시간」을 적고 「기록」을 누르면 대화형 기록 확인 창(「AI 대화형 기록 확인」)이 뜨고, 「기록 저장」을 누르면 그 기록이 기록 카드(.rec-card)로 그려진다 — 대화형 기록 비서(parseConversationalRecord·handleConversationalRecord·openConversationalRecordConfirmModal)와 기록 카드 그리기(buildRecordCardHtml)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+   "touches": [
+    "js/tabs/records/record-assistant.js",
+    "js/tabs/records/record-cards.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-agent-confirm-save.json"
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭의 이번 주 실천 띠(#recMiniPulseBar, 「성취 확인」)를 눌러 성취 통계로 가서 「🟩 히트맵」을 누르면 기록 히트맵 칸(#recordHeatmap .heatmap-cell)이 보이고, 「🤖 AI리포트」에서 리포트의 「30일」을 누르면 그 칸이 켜진다(active) — 기록 히트맵 그리기(renderRecordHeatmap)와 리포트 그리기(renderReportSummary·svgTrendChart·svgCategoryDonut·TOPIC_COLORS)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+   "touches": [
+    "js/tabs/records/record-heatmap-report.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-report-period.json"
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭 「템플릿」 칸의 「닫기」(내 템플릿으로 기록)를 누르면 전문 템플릿 기록 창이 뜨고, 일자별 추이 칸(#proTrendChartWrap)에 「성장 추이」 차트, 자동 집계 칸(#proAnalyticsWrap)에 집계 띠(#proAnalyticsBanner)가 그려진다 — 추이 차트 그리기(renderTrendSvgChart)·집계 결과 그리기(renderAnalyticsHtml)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+   "touches": [
+    "js/tabs/records/table-analytics-view.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-pro-template-chart.json"
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 전문 템플릿 기록 창에서 「AI 코치」를 누르면 「AI 프로 코칭 리포트」 창이 뜨고 「닫기」로 닫힌다 — AI 프로 코칭 리포트 창(openProCoachReportModal)을 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+   "touches": [
+    "js/tabs/records/pro-report-export.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-pro-coach-report.json"
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트로 전문 템플릿 기록 창에서 「Notion 연동」을 누르면 「Notion 표 내보내기 & 연동」 창이 뜨고, 노션 키 없이 「Notion DB로 즉시 전송」을 누르면 「설정(⚙️) 탭에서 Notion API Key 또는 Webhook URL을 먼저 등록해주세요.」 토스트가 뜬다 — 노션 내보내기 창(openProNotionExportModal)·노션 바로 보내기(pushRecordToNotion)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+   "touches": [
+    "js/tabs/records/pro-report-export.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-pro-notion-export.json"
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: 옮길 선언이 재대입·중복 선언되면 멈춘다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-p2.js",
+    "type": "codeContains",
+    "text": "  if (b.constantViolations.length) throw new Error('이전 이름 재대입/중복 선언: ' + n);"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: 변수 초기값이 로드 중에 인라인/다른 세포 이름을 읽으면 멈춘다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-p2.js",
+    "type": "codeContains",
+    "text": "    if (!MOVED.has(p.node.name) || DECL_CELL[p.node.name] !== DECL_CELL[n]) throw new Error('변수 초기값이 로드 중에 인라인/다른 세포 이름을 읽음: ' + n + ' → ' + p.node.name);"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기: smoke-test FN_NAMES 함수가 읽는 이름은 옮기지 않는다",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-p2.js",
+    "type": "codeContains",
+    "text": "    if (fn && smokeNames.has(fn.node.id.name) && !(CFG.smokeStubbed || []).includes(n)) throw new Error('smoke-test FN_NAMES 함수(' + fn.node.id.name + ')가 읽는 이름을 옮기려 함: ' + n);"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설정: 기록 카드 세포는 buildRecordCardHtml 만 옮긴다(wireRecordCards 는 시험지 선행 뒤)",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-p2-1.config.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/gen-inline-p2-1.config.js",
+    "type": "codeContains",
+    "text": "      groups: [{ id: 'G130', names: ['buildRecordCardHtml'] }] }, R),"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "검사기: 토큰·덩어리 줄·누수·노출·남은 정의·800줄 종합",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/verify-inline-p2.js",
+    "type": "codeContains",
+    "text": "const ok = report.equivalent && lineCheck.length === META.chunks.length && lineCheck.every(x => x.same) && leftDefs.length === 0 && usedInIndexNotImported.length === 0 && notExposed.length === 0 && kNotMoved.length === 0 && importedMissing.length === 0"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교: 단계 묶음은 PR 마다 다른 파일에서 읽는다",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-compare-inline-p2.js",
+    "type": "codeContains",
+    "text": "const STEP_SETS = require('./dom-compare-inline-p2-steps.js')({ click, seedRecords, closeModal });"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 단계: 노션 키를 두 앱에 같은 조작으로 넣고 즉시 전송",
+   "touches": [
+    "docs/design/harness/module-split/dom-compare-inline-p2-steps.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/dom-compare-inline-p2-steps.js",
+    "type": "codeContains",
+    "text": "    ['notion-push-2', click('#notionDirectPushBtn'), 2000],"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "원본 단독 로드: 법정 탐침을 읽기만 함",
+   "touches": [
+    "docs/design/harness/module-split/module-load-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/module-load-inline-p2.js",
+    "type": "codeContains",
+    "text": "const probe = require(path.resolve(WORK, 'court', 'probes', 'module-load.js'));"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 비교: 기준·작업 트리 npm test 와 tests 전부",
+   "touches": [
+    "docs/design/harness/module-split/test-compare-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/test-compare-inline-p2.js",
+    "type": "codeContains",
+    "text": "const b = runAll(BASE), w = runAll(WORK);"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시나리오 로컬 실행기: 기준·작업 양쪽",
+   "touches": [
+    "docs/design/harness/module-split/scenario-local-inline-p2.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/scenario-local-inline-p2.js",
+    "type": "codeContains",
+    "text": "    for (const [label, dir] of [['base', BASE], ['work', WORK]]) {"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "토큰 동일·누수 0·노출·남은 정의 0 종합",
+   "touches": [
+    "reports/TASK-ES-446/verify-inline-p2-1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/verify-inline-p2-1.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 선언 14개 토큰열 동일",
+   "touches": [
+    "reports/TASK-ES-446/verify-inline-p2-1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/verify-inline-p2-1.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정 모듈 로드 탐침 회귀 0",
+   "touches": [
+    "reports/TASK-ES-446/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "regressionCount",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새 세포 파일 5개 단독 로드 성공",
+   "touches": [
+    "reports/TASK-ES-446/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "newFilesStandaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 후 차이 0",
+   "touches": [
+    "reports/TASK-ES-446/dom-compare-inline-p2-1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/dom-compare-inline-p2-1.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교 기준 대 기준 차이 0",
+   "touches": [
+    "reports/TASK-ES-446/dom-compare-inline-p2-1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/dom-compare-inline-p2-1.json",
+    "type": "jsonPath",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 조작 비교한 값 429",
+   "touches": [
+    "reports/TASK-ES-446/dom-compare-inline-p2-1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/dom-compare-inline-p2-1.json",
+    "type": "jsonPath",
+    "path": "comparedFields",
+    "equals": 429
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 smoke 443 통과·0 실패",
+   "touches": [
+    "reports/TASK-ES-446/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.smoke",
+    "equals": [
+     443,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 무결성 게이트 38/38",
+   "touches": [
+    "reports/TASK-ES-446/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.integrity",
+    "equals": [
+     38,
+     38,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 버튼 배선 943/943",
+   "touches": [
+    "reports/TASK-ES-446/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmTest.buttons",
+    "equals": [
+     943,
+     943
+    ]
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests 종료 코드 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-446/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitCodesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "smoke·무결성·버튼 통과·실패 수 기준과 같음",
+   "touches": [
+    "reports/TASK-ES-446/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/test-compare.json",
+    "type": "jsonPath",
+    "path": "passFailSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 선언 14개가 index.html 인라인에 남지 않았다(원본에서 그 구간이 사라짐)",
+   "touches": [
+    "reports/TASK-ES-446/verify-inline-p2-1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/verify-inline-p2-1.json",
+    "type": "jsonPath",
+    "path": "leftDefsInIndex",
+    "equals": []
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시나리오 로컬 5개 기준·작업 모두 통과",
+   "touches": [
+    "reports/TASK-ES-446/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서: 기록 카드 세포",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/tabs/records/record-cards.js\","
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서: AI 코칭·노션 내보내기 세포",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "      \"file\": \"js/tabs/records/pro-report-export.js\","
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 대화형 기록 비서 짧은 이름",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "    \"records/record-assistant\": \"대화형 기록 비서\","
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 설명: 히트맵·리포트 하는 일",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "    \"records/record-heatmap-report\": \"기록 히트맵과 주간·월간 리포트(추이 그래프·카테고리 도넛)를 그린다\","
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "세포지도 재생성: 새 세포 실림",
+   "touches": [
+    "docs/architecture/cell-map.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-map.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/table-analytics-view\""
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "index.html 에서 쓰는 옮긴 이름은 모두 기록 키트에서 가져온다(안 가져온 사용 0)",
+   "touches": [
+    "reports/TASK-ES-446/verify-inline-p2-1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/verify-inline-p2-1.json",
+    "type": "jsonPath",
+    "path": "usedInIndexNotImported",
+    "equals": []
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 8원칙 문서",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-446-INLINE-P2-1.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-05 TASK-ES-446: 인라인 스크립트 세포화 구역 P2-1(#750 대체"
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-446 | INFRA | [인라인 스크립트 세포화 구역 P2-1 · #750 대체]"
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 탭 tab-check 기준 2회 사이(본질 변동) 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-446/tab-compare-base-run1-base-run2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/tab-compare-base-run1-base-run2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 탭 tab-check 기준 1회차 대 후 다른 값 0(408값)",
+   "touches": [
+    "reports/TASK-ES-446/tab-compare-base-run1-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/tab-compare-base-run1-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기록 탭 tab-check 기준 2회차 대 후 다른 값 0",
+   "touches": [
+    "reports/TASK-ES-446/tab-compare-base-run2-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-446/tab-compare-base-run2-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  }
+ ]
+}

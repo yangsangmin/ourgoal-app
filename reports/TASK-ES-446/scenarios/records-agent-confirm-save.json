@@ -1,0 +1,69 @@
+{
+  "id": "records-agent-confirm-save",
+  "title": "게스트로 기록 탭 「빠른 기록」에 「저녁에 헬스장에서 가슴운동 1시간」을 적고 「기록」을 누르면 대화형 기록 확인 창(「AI 대화형 기록 확인」)이 뜨고, 「기록 저장」을 누르면 그 기록이 기록 카드(.rec-card)로 그려진다 — 대화형 기록 비서(parseConversationalRecord·handleConversationalRecord·openConversationalRecordConfirmModal)와 기록 카드 그리기(buildRecordCardHtml)를 기록 탭 세포 파일로 옮겼다(동작 그대로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(3)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recAgentInput",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "type",
+      "selector": "#recAgentInput",
+      "text": "저녁에 헬스장에서 가슴운동 1시간"
+    },
+    {
+      "do": "click",
+      "selector": "#recAgentSendBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "AI 대화형 기록 확인",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#recAiSaveBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".screen.active .rec-card .rec-text",
+      "text": "가슴운동",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
