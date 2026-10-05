@@ -3,7 +3,7 @@
  *
  * 「목표 보관(기록으로 옮기기)」 묶음 전체: 보관 목표 되돌리기(restoreGoal)·목표 달성률(goalAchievement)·보관 목표 목록 그리기(renderArchivedGoals, #archivedGoals)와 기간·쪽 고르기 노출(bindArchivedPeriodSetter·bindArchivedPageSetter — index.html 원래 자리에서 부른다).
  * goalAchievement 는 smoke-test FN_NAMES 다 — 시험지는 인라인 합본(tests/helpers/inline-bundle.js)에서 이 글자를 찾는다.
- * #TASK-ES-520(인라인 3단계 Z4 — FN_NAMES 묶음(목표 보관·히트맵·표 집계·표 추이·여러 지표 SVG)): index.html 인라인 IIFE 의 구간(이전 전 7740~7748 · 7749~7761 · 7762~7767 · 7768~7775 · 7776~7908줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-520(인라인 3단계 Z4 — FN_NAMES 묶음(목표 보관·히트맵·표 집계·표 추이·여러 지표 SVG)): index.html 인라인 IIFE 의 구간(이전 전 7379~7387 · 7388~7400 · 7401~7406 · 7407~7414 · 7415~7547줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -15,7 +15,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 7740~7748줄(#TASK-ES-520 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7379~7387줄(#TASK-ES-520 생성기 표지) ---- */
   /* ============ 목표 보관(기록으로 옮기기) ============ */
   /* [#TASK-ES-375] archiveGoal → js/tabs/goals/goal-export.js 로 옮김(목표 탭 세포 2차) */
   async function restoreGoal(goal){
@@ -25,7 +25,7 @@
     L.setTab('goals');
     L.toast('목표를 다시 진행 중으로 되돌렸어요');
   }
-  /* ---- 이전 전 index.html 7749~7761줄(#TASK-ES-520 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7388~7400줄(#TASK-ES-520 생성기 표지) ---- */
   function goalAchievement(goal){
     var pct = L.resultPct(goal.result);
     if(pct !== null) return pct;
@@ -39,7 +39,7 @@
     all.forEach(function(v){ done += v; });
     return Math.round(done / all.length);
   }
-  /* ---- 이전 전 index.html 7762~7767줄(#TASK-ES-520 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7401~7406줄(#TASK-ES-520 생성기 표지) ---- */
   function bindArchivedPeriodSetter() { /* [#TASK-ES-520] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   window.setArchivedPeriod = function(p) {
     if (!window.state) window.state = {};
@@ -48,7 +48,7 @@
     renderArchivedGoals();
   };
   } /* bindArchivedPeriodSetter */
-  /* ---- 이전 전 index.html 7768~7775줄(#TASK-ES-520 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7407~7414줄(#TASK-ES-520 생성기 표지) ---- */
   function bindArchivedPageSetter() { /* [#TASK-ES-520] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
 
   window.setArchivedPage = function(page) {
@@ -59,7 +59,7 @@
     if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   } /* bindArchivedPageSetter */
-  /* ---- 이전 전 index.html 7776~7908줄(#TASK-ES-520 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7415~7547줄(#TASK-ES-520 생성기 표지) ---- */
 
   function renderArchivedGoals(){
     var wrap = document.getElementById('archivedGoals');

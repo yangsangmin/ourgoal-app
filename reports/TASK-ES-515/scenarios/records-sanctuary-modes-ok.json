@@ -1,0 +1,62 @@
+{
+  "id": "records-sanctuary-modes-ok",
+  "title": "게스트 기록 탭의 성소 기록 단추 3개 — 「📈 히트맵·통계」는 통계 보기, 「🗂️ 보관함」은 보관함 보기, 「📝 실천 타임라인」은 내 기록 보기를 연다(세그먼트 막대를 지운 뒤 남은 진입로)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sRecModesWrap",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecModesWrap > button:nth-child(1)"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recViewStats",
+      "timeoutMs": 6000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecArchiveBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recViewArchive",
+      "timeoutMs": 6000
+    },
+    {
+      "do": "click",
+      "selector": "#sRecModesWrap > button:nth-child(3)"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recViewFeed",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

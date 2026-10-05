@@ -231,12 +231,9 @@
     var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
     var doc = typeof document !== 'undefined' ? document : (win.document || null);
     var actionBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('og-task-31-action-btn') : null;
-    var customBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('btnCustomHomeLayout') : null;
+    /* [#TASK-ES-515] 홈 머리 옛 「나만의 홈 구성」 단추는 지웠다(상민님 승인 2026-10-06) — 잠금·풀기 대상은 이 단추 하나 */
     if (actionBtn) {
       actionBtn.disabled = true;
-    }
-    if (customBtn) {
-      customBtn.disabled = true;
     }
 
     // 1. [햅틱 진동 피드백] (12ms 체감 인터랙션)
@@ -313,9 +310,6 @@
     } finally {
       if (actionBtn) {
         actionBtn.disabled = false;
-      }
-      if (customBtn) {
-        customBtn.disabled = false;
       }
     }
   }
@@ -397,7 +391,7 @@
     }
   }
 
-  /* [#TASK-ES-531] open 이 쓰는 의존성을 앱 스코프 통로(js/core/app-scope.js)에서 모은다 — 기록 탭 openHomeCustomizer(js/tabs/records/external-import.js)가 넘기는 것과 같은 6개 */
+  /* [#TASK-ES-531] open 이 쓰는 의존성을 앱 스코프 통로(js/core/app-scope.js)에서 모은다 — 옛 기록 탭 openHomeCustomizer(#TASK-ES-515 에서 숨은 두 단추와 함께 지움)가 넘기던 것과 같은 6개 */
   function appScopeDeps(){
     var L = (root.OurgoalAppScope && root.OurgoalAppScope.scope) || {};
     return { state: L.state, saveProfile: L.saveProfile, toast: L.toast, openModal: L.openModal, closeModal: L.closeModal, track: L.track };
