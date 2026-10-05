@@ -7,6 +7,8 @@
  *   node scripts/cell-map-publish.js --notion-out <폴더>   — 노션 「아워골 세포지도 (실시간)」 본문(노션 마크다운): <폴더>/notion-0.md …
  *                                                          (0 = 머리·전체 구조·분열 진행률, 1… = 영역별 세포 세부. 한 번에 넣기 큰 본문을 나눈 것)
  *   --stored-at <ISO 시각> 을 주면 meta 에 storedAt 을 더한다(웹페이지 상태바 「저장」 시각).
+ *   --root <저장소> 를 주면 그 저장소에서 지도를 새로 만들어(게시 시점의 병합 이력으로 prs·tasks·reqs 를 다시 계산) 싣는다(#TASK-ES-427).
+ *     새로 만든 것이 저장본(--map 또는 저장소의 cell-map.json)과 도장·병합 이력 칸 말고도 다르면 게시하지 않는다(종료 코드 1 — 지도 갱신 PR 먼저).
  *   두 옵션을 같이 줄 수 있다. --map <파일> 로 다른 cell-map.json 을 읽는다.
  * 결정적이다: 같은 cell-map.json → 같은 바이트. 절차: scripts/cell-map-sync.md
  */
@@ -174,11 +176,34 @@ function verifyNotion(map, fetched) {
   };
 }
 
+/**
+ * 게시할 지도(#TASK-ES-427): 저장소에서 새로 만든 지도가 저장본과 도장·병합 이력 칸만 다르면 새로 만든 것(게시 시점 이력)을 쓴다.
+ * 내용이 다르면 { ok: false } — 저장본이 낡았으니 지도 갱신 PR 이 먼저다.
+ */
+function mapForPublish(savedText, builtText) {
+  const exporter = require('./cell-map-export');
+  const r = exporter.compareSaved(savedText, builtText);
+  if (!r.fresh) return { ok: false, map: null, refreshed: false };
+  return { ok: true, map: JSON.parse(builtText), refreshed: String(savedText).replace(/\r\n/g, '\n') !== builtText };
+}
+
 if (require.main === module) {
   const argv = process.argv.slice(2);
   const arg = k => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : null; };
   const mapPath = arg('--map') || path.join(__dirname, '..', 'docs', 'architecture', 'cell-map.json');
-  const map = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+  let map = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+  const repoRoot = arg('--root');
+  if (repoRoot) {
+    const exporter = require('./cell-map-export');
+    const built = exporter.serialize(exporter.build(path.resolve(repoRoot)));
+    const r = mapForPublish(fs.readFileSync(mapPath, 'utf8'), built);
+    if (!r.ok) {
+      console.log('게시 안 함: 저장소에서 새로 만든 지도가 저장본과 내용이 다르다 — node scripts/cell-map-export.js 로 지도 갱신 PR 을 먼저 낸다');
+      process.exit(1);
+    }
+    map = r.map;
+    console.log(`게시 지도: 저장소 ${repoRoot} 에서 새로 만든 판(기준 커밋 ${map.source.short}, 병합 이력 다시 계산${r.refreshed ? ' — 저장본과 도장·PR 목록이 다름' : ' — 저장본과 같음'})`);
+  }
   const dbOut = arg('--db-out');
   const notionOut = arg('--notion-out');
   const storedAt = arg('--stored-at'); // db 적재 시각(선택) — 웹페이지 상태바의 「저장」 시각. 주면 그 값만 meta 에 더한다
@@ -209,4 +234,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { dbDocs, notionParts, notionHead, verifyNotion, esc, kst, WEB_URL };
+module.exports = { dbDocs, notionParts, notionHead, verifyNotion, mapForPublish, esc, kst, WEB_URL };

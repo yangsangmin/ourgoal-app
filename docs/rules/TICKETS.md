@@ -535,3 +535,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-422 | INFRA | [세포지도 다시 만들기·xp.award 설명] #736 병합 뒤 cell-map.json 재생성 + 신고서 xp.award 설명을 서버 원장·게스트 기기로, 제품 코드 변경 0 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-422-CELL-MAP-RESYNC-XP.md | 4단계(심사 청구)
 - #TASK-ES-424 | FIX/버그 | [세포지도 --check 순환] 기준 커밋 도장만 다르면 최신으로 보게(compareSaved), 지도 갱신 PR 병합 뒤 다시 낡아지는 순환 해소, 제품 코드 변경 0 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-424-CELL-MAP-CHECK-STABLE.md | 4단계(심사 청구)
 - #TASK-ES-425 | E2 | [전문가 템플릿 레지스트리 세포 분열] js/goal-templates-registry.js 2,815→72줄 + 자료 세포 6개(js/data/expert-templates), 동작 0 변경·서버 폴백 그대로 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-425-EXPERT-TEMPLATES-SPLIT.md | 4단계(심사 청구)
+- #TASK-ES-427 | FIX/버그 | [세포지도 병합 이력 칸] --check 에서 prs(와 파생 tasks·reqs) 제외, 게시(cell-map-publish --root)는 게시 시점 이력으로 다시 계산, 제품 코드 변경 0 | 코디네이터 지시 (2026-10-05), REQ docs/specs/REQ-TASK-ES-427-CELL-MAP-HISTORY-FIELDS.md | 4단계(심사 청구)
