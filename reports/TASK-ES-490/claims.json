@@ -1,0 +1,61 @@
+{
+ "task": "TASK-ES-490",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-490-OFFLINE-QUEUE-LOSS.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "온라인 복귀 때 오프라인 큐를 보내지도 않고 비우던 것 → 저장 성공 뒤에만 비우고 사용자에게 알림"
+  },
+  {
+   "id": "R2",
+   "text": "동기화 실패 시 큐 유지·재시도·사용자 피드백(오류를 삼키고 큐를 비우던 GUARD_03 데이터 손실)"
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 13,
+   "domain": "ui-behavior",
+   "statement": "게스트가 오프라인에서 한 줄 체크인을 저장하고 다시 온라인이 되면 「오프라인 기록 1건을 동기화했어요」가 뜬다(저장 성공 뒤에만 큐를 비움) — 고치기 전에는 온라인 복귀 때 처리기 없는 flush() 가 아무것도 보내지 않고 큐를 비워 동기화 알림이 없었다",
+   "touches": [
+    "index.html",
+    "js/core/virtual-user-helpers.js"
+   ],
+   "scenario": "scenarios/offline-checkin-sync-on-reconnect.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "로그인 사용자가 오프라인 체크인 뒤 온라인으로 돌아왔는데 서버 저장(saveProfile)이 실패하면 큐가 그대로 남고 「오프라인 기록 N건을 아직 보내지 못했어요」가 뜨며 30초 뒤 다시 시도한다(고치기 전에는 오류를 삼키고 큐를 비웠다). 작업자 측정: tests/offline-sync-queue-retain.test.js — 세포 파일을 그대로 불러 실패 처리기·실패 saveProfile 로 돌림, 기준 실패(남은 큐 [])·작업 통과",
+   "touches": [
+    "js/core/virtual-user-helpers.js",
+    "tests/offline-sync-queue-retain.test.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "로그인 계정 + 서버 저장 실패를 일으킬 수 있는 환경(게스트 saveProfile 은 기기에만 써서 실패하지 않는다), 또는 노드 시험 tests/offline-sync-queue-retain.test.js",
+    "how": [
+     "로그인 계정으로 오프라인에서 체크인한다",
+     "서버를 막은 채 온라인으로 돌린다",
+     "큐(ourgoal_offline_sync_queue)가 남고 실패 알림이 뜨는지 본다",
+     "또는 node tests/offline-sync-queue-retain.test.js 가 기준에서 실패·작업에서 통과하는지 본다"
+    ]
+   }
+  }
+ ],
+ "outOfScopeReports": {
+  "note": "보고만 — 코드 변경 0",
+  "items": [
+   {
+    "id": "X1",
+    "text": "calculateWeeklyFocusStats 종료 시간 없는 기록 25분 대체값 — scripts/smoke-test.js 검사 「calculateWeeklyFocusStats: endAt 누락 기록은 기본 몰입시간(25분)을 반영한다」(기대값 25)가 이 동작을 고정한다. 제품 함수를 돌리는 검사의 폐기·기대값 변경은 상민님 결심 사항이라 이번에 바꾸지 않음"
+   }
+  ]
+ }
+}
