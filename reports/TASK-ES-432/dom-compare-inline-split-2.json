@@ -1,0 +1,201 @@
+{
+ "env": "local static server + headless Chrome + empty guest (landing 「로그인 없이 둘러보기」) + Supabase mock (no remote, no real account)",
+ "steps": [
+  "enter",
+  "comm-enter",
+  "comm-manito",
+  "manito-join",
+  "reopen-1",
+  "cheer-open",
+  "reopen-2",
+  "manito-again",
+  "reopen-3",
+  "tab-roundtrip"
+ ],
+ "notes": [
+  "enter => clicked / clicked",
+  "comm-enter => tab:comm:ok / tab:comm:ok",
+  "comm-manito => clicked:🎁 마니또 / clicked:🎁 마니또",
+  "manito-join => clicked:마니또 시작하기 / clicked:마니또 시작하기",
+  "reopen-1 => reloaded:screen-home / reloaded:screen-home",
+  "cheer-open => clicked:확인하기 / clicked:확인하기",
+  "reopen-2 => reloaded:screen-home / reloaded:screen-home",
+  "manito-again => tab:comm:ok / tab:comm:ok",
+  "reopen-3 => reloaded:screen-home / reloaded:screen-home",
+  "tab-roundtrip => roundtrip / roundtrip"
+ ],
+ "comparedFields": 130,
+ "digestAfter": [
+  {
+   "step": "enter",
+   "note": "clicked",
+   "toast": "toast|게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-home",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "comm-enter",
+   "note": "tab:comm:ok",
+   "toast": "toast|게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "comm-manito",
+   "note": "clicked:🎁 마니또",
+   "toast": "toast|게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "commSubTab": "manito",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "manito-join",
+   "note": "clicked:마니또 시작하기",
+   "toast": "toast|게스트 모드로 AI 마니또 3명이 배정됐어요 🎁 (실 유저 풀에 참여하려면 로그인해주세요)",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "commSubTab": "manito",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "reopen-1",
+   "note": "reloaded:screen-home",
+   "toast": "toast|",
+   "cheerSlot": "<div class=\"notify-banner\"><div class=\"nb-txt\"><b>응원이 도착했어요</b>마니또 응원 1개</div><button id=\"sbOpen\" type=\"button\">확인하기</button></div>",
+   "dialogs": [],
+   "activeScreen": "screen-home",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": [
+    "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+    "Failed to load resource: net::ERR_FAILED"
+   ]
+  },
+  {
+   "step": "cheer-open",
+   "note": "clicked:확인하기",
+   "toast": "toast|",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "reopen-2",
+   "note": "reloaded:screen-home",
+   "toast": "toast|",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-home",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": [
+    "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+    "Failed to load resource: net::ERR_FAILED"
+   ]
+  },
+  {
+   "step": "manito-again",
+   "note": "tab:comm:ok",
+   "toast": "toast|",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  },
+  {
+   "step": "reopen-3",
+   "note": "reloaded:screen-home",
+   "toast": "toast|",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-home",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": [
+    "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+    "Failed to load resource: net::ERR_FAILED"
+   ]
+  },
+  {
+   "step": "tab-roundtrip",
+   "note": "roundtrip",
+   "toast": "toast|",
+   "cheerSlot": "",
+   "dialogs": [],
+   "activeScreen": "screen-comm",
+   "commSubTab": "feed",
+   "modalHead": "modal-overlay|\n  <div class=\"modal-sheet\" id=\"modalSheet\"></div>\n",
+   "newErrors": []
+  }
+ ],
+ "differing": 0,
+ "diffs": [],
+ "baseVsBaseDiffering": 0,
+ "baseVsBase": [],
+ "errorsBase": [
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED"
+ ],
+ "errorsBase2": [
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED"
+ ],
+ "errorsAfter": [
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED",
+  "Access to script at 'https://us-assets.i.posthog.com/static/array.js' from origin 'http://127.0.0.1:<port>' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the req",
+  "Failed to load resource: net::ERR_FAILED"
+ ],
+ "bootBase": [
+  "enter:[]",
+  "reopen-1:[]",
+  "reopen-2:[]",
+  "reopen-3:[]"
+ ],
+ "bootAfter": [
+  "enter:[]",
+  "reopen-1:[]",
+  "reopen-2:[]",
+  "reopen-3:[]"
+ ],
+ "kitsBase": {
+  "comm": "generateMzStoryCanvas,getFeedComments,handleUserCommentSubmit,loadServerFeedComments,openChallengeRoomModal,openSelectCompanionForStoryModal,openSelectTeamForStoryModal,renderCommCompanions,renderCommDM,renderCommScreen,scheduleCheerDelivery,setFeedComments,toggleFeedPostPreview,toggleFeedReaction,triggerFirstCheerResponse"
+ },
+ "kitsAfter": {
+  "comm": "checkSocialNotifications,generateMzStoryCanvas,getFeedComments,handleUserCommentSubmit,loadServerFeedComments,openChallengeRoomModal,openSelectCompanionForStoryModal,openSelectTeamForStoryModal,renderCommCompanions,renderCommDM,renderCommScreen,scheduleCheerDelivery,setFeedComments,showSocialNotifyBanner,toggleFeedPostPreview,toggleFeedReaction,totalFeedCheers,triggerFirstCheerResponse"
+ }
+}
