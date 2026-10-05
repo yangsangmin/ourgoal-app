@@ -1,0 +1,87 @@
+{
+ "id": "settings-guide-restart",
+ "title": "게스트로 설정 탭 「데이터 백업 & 고급 설정」 묶음을 펼쳐 「앱 기본 가이드 다시보기」를 누르면 홈 화면 위에 「1 / 4 · 🏠 홈 화면」 안내가 뜨고, 「다음」을 누르면 목표 탭으로 넘어가며 「2 / 4 · 🎯 목표 탭」 안내가, 닫기(✕)를 누르면 안내가 사라진다 — 옮긴 startFirstLoginGuide(js/tabs/settings/first-login-guide.js)가 이전 전과 같이 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#setGroupDataSummary",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#setGroupDataSummary"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnRestartGuide",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#btnRestartGuide"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#miniGuideOverlay",
+   "text": "1 / 4 · 🏠 홈 화면",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "hasClass",
+   "selector": ".navbtn[data-tab=\"home\"]",
+   "className": "active"
+  },
+  {
+   "do": "click",
+   "selector": "#btnMiniGuideNext"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#miniGuideOverlay",
+   "text": "2 / 4 · 🎯 목표 탭",
+   "timeoutMs": 5000
+  },
+  {
+   "expect": "hasClass",
+   "selector": ".navbtn[data-tab=\"goals\"]",
+   "className": "active"
+  },
+  {
+   "do": "click",
+   "selector": "#btnMiniGuideClose"
+  },
+  {
+   "expect": "notVisible",
+   "selector": "#miniGuideOverlay"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
