@@ -241,7 +241,9 @@ const FN_NAMES = [
 
 // #TASK-ES-385: EXP 함수(xpForLevel·levelForXP·levelProgress)가 js/avatar/xp.js 로 옮겨 가도 같은 함수를 뽑도록, 추출 원본은 인라인 스크립트 + js/avatar/xp.js(있으면)다. 지금은 xp.js 가 없어 mainScript 그대로다.
 const AVATAR_XP_JS = path.join(AVATAR_CELL_DIR, 'xp.js');
-const fnSource = mainScript + (fs.existsSync(AVATAR_XP_JS) ? '\n' + readAvatarFile(AVATAR_XP_JS) : '');
+// #TASK-ES-441: 인라인 함수가 js/tabs/<탭>/*.js 세포(L. 통로)로 옮겨 가도 같은 함수를 뽑도록, 추출 원본 뒤에 세포 글자(L. 접두 제거)를 붙인다 — 인라인 스크립트가 맨 앞이라 아직 인라인에 있는 함수는 원래 자리에서 먼저 찾힌다.
+const INLINE_CELLS_SRC = require('../tests/helpers/inline-bundle').withInlineCells('');
+const fnSource = mainScript + (fs.existsSync(AVATAR_XP_JS) ? '\n' + readAvatarFile(AVATAR_XP_JS) : '') + INLINE_CELLS_SRC;
 const extracted = FN_NAMES.map(name => extractFunction(fnSource, name)).join('\n');
 
 const sandboxSrc =
@@ -1916,7 +1918,7 @@ check('compliance: 모달 오버레이 탭 시 고스트 클릭(터치 관통) �
 });
 
 check('parseJwtPayload: JWT base64url 페이로드를 올바른 JSON 객체로 디코딩한다', () => {
-  const parseFn = eval('(' + extractFunction(mainScript, 'parseJwtPayload') + ')');
+  const parseFn = eval('(' + extractFunction(mainScript + INLINE_CELLS_SRC, 'parseJwtPayload') + ')');
   const payload = { sub: 'google_1234567890', email: 'ourgoal_user@gmail.com', name: '김목표' };
   const b64 = Buffer.from(JSON.stringify(payload)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const dummyToken = 'eyJhbGciOiJSUzI1NiJ9.' + b64 + '.signature';
@@ -2120,7 +2122,7 @@ check('compliance: 마일스톤 번호 중복(1단계. 1단계:) 방어 정규�
 });
 
 check('convertTextToNotionDbRecord: 자연어 줄글 입력을 노션 DB 프로퍼티 규격으로 구조화 변환한다', () => {
-  const fnCode = extractFunction(mainScript, 'convertTextToNotionDbRecord');
+  const fnCode = extractFunction(mainScript + INLINE_CELLS_SRC, 'convertTextToNotionDbRecord');
   const convertFn = eval('(' + fnCode + ')');
   const res = convertFn('오늘 20km 1시간 40분 완주했어 땀 많이 흘림', 'ms', { title: '러닝 완주' }, { category: 'exercise' });
 

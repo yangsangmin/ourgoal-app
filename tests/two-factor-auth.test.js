@@ -11,7 +11,7 @@ console.log(`🧪 [${TEST_TICKET_ID} / 노션 71] 2단계 인증(2FA) 실질적 
 
 // 1. index.html 정적 분석 및 핵심 2FA 함수/마크업 검증
 const indexPath = path.join(__dirname, '..', 'index.html');
-const indexHtml = fs.readFileSync(indexPath, 'utf8');
+const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(indexPath, 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 
 assert.ok(indexHtml.includes('function openTwoFactorSetupModal()'), 'openTwoFactorSetupModal 함수 존재');
 assert.ok(indexHtml.includes('function openTwoFactorDisableModal('), 'openTwoFactorDisableModal 해제 검증 함수 존재');
