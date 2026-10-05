@@ -1,0 +1,631 @@
+{
+  "task": "TASK-ES-428",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-428-STATS-SPLIT-4.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/universal-stats.js(1,614줄)를 800줄 이하로 — renderUniversalStatsDashboard(884줄)를 대시보드 DOM 출력 검사기를 먼저 만든 뒤(기준 대 기준 0) 구획 하위 함수로 떼고 공유 지역 변수는 하나의 문맥 객체로 넘겨(동작 그대로) js/stats-*.js 세포로 옮긴다. 새 파일 각 800줄 이하, part1/part2 금지, 기능 추가·삭제 0. 카탈로그 상수는 법정 모듈 로드 탐침(원본 단독 로드)을 깨지 않고 같은 글자 이중 보관 없이 옮길 방식이 없으면 원본에 남긴다 — 판단 근거를 REQ 에 [기본값]."
+    },
+    {
+      "id": "R2",
+      "text": "공개 API(window.OurgoalUniversalStats 키 37개·순서)·window 이름(새 이름 0)·호출 순서·화면 동작 그대로. 1·2·3차 이음매를 늘리고 1·2·3차 부품 글자 변경 0, index.html 태그 같은 줄(순증가 0), 원본·새 파일 단독 로드 오류 0."
+    },
+    {
+      "id": "R3",
+      "text": "전후 차이 0 증명 — git archive 기준 대비 토큰 동일·누수 0, 대시보드 DOM 출력 검사기 기준 대 작업 0, npm test 수치·tests 출력 동일, 기록·목표 탭 tab-check 차이 0, 게스트 통계 조작 DOM 비교 차이 0(이전 회차 69단계 이상), 로그인 상태 통계 화면 읽기 전용 비교 차이 0."
+    },
+    {
+      "id": "R4",
+      "text": "새 세포마다 신고서(module-specs --write)·기준선(module-guard --update)·세포 설명(짧은 한국어 이름·하는 일)·세포지도(cell-map.json 재생성)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본에 대시보드 함수 정의가 남지 않았다",
+      "touches": [
+        "js/universal-stats.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "text": "function renderUniversalStatsDashboard(container, allRecs, state, callbacks){",
+        "file": "js/universal-stats.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "대시보드 조립자는 js/stats-dashboard.js 에 같은 인자로 있다",
+      "touches": [
+        "js/stats-dashboard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  function renderUniversalStatsDashboard(container, allRecs, state, callbacks){",
+        "file": "js/stats-dashboard.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자는 머리에서 만든 공유 이름 5개를 문맥 객체 D 에 담는다",
+      "touches": [
+        "js/stats-dashboard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    var D = { container: container, allRecs: allRecs, state: state, callbacks: callbacks, ontology: ontology };",
+        "file": "js/stats-dashboard.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "빈 화면이면 빈 화면 구획을 부른 뒤 이전과 같이 return 한다",
+      "touches": [
+        "js/stats-dashboard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "      renderStatsEmptyState(D);",
+        "file": "js/stats-dashboard.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자는 화면 글자 구획(진단 리포트·조립·그리기)을 키트로 부른다",
+      "touches": [
+        "js/stats-dashboard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    K.mountStatsDashboardHtml(D);",
+        "file": "js/stats-dashboard.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "화면 글자 구획은 js/stats-dashboard-view.js 에 문맥 객체 하나를 받는 함수로 있다",
+      "touches": [
+        "js/stats-dashboard-view.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  function mountStatsDashboardHtml(D){",
+        "file": "js/stats-dashboard-view.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "차트 상호작용 배선 구획은 js/stats-dashboard-bind.js 에 있다",
+      "touches": [
+        "js/stats-dashboard-bind.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  function bindStatsChartInteractions(D){",
+        "file": "js/stats-dashboard-bind.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "배선 구획은 공유 이름을 문맥 객체 칸으로 읽는다(전체화면 버튼)",
+      "touches": [
+        "js/stats-dashboard-bind.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    var fsBtn = D.container.querySelector('#uBtnGraphFullscreen');",
+        "file": "js/stats-dashboard-bind.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "카탈로그 상수는 원본에 그대로 남는다 [기본값]",
+      "touches": [
+        "js/universal-stats.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var METRIC_CONFIGS = {",
+        "file": "js/universal-stats.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본 줄 수 732(800 이하)로 기록",
+      "touches": [
+        "reports/TASK-ES-428/line-counts.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/line-counts.json",
+        "path": "after.universalStats",
+        "equals": 732
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본·새 파일 3개 모두 800줄 이하로 기록",
+      "touches": [
+        "reports/TASK-ES-428/line-counts.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/line-counts.json",
+        "path": "after.allAtMost800",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "Node 에서는 원본이 3차 부품 뒤에 4차 부품 3개를 require 한다",
+      "touches": [
+        "js/universal-stats.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "require('./stats-differentiated.js'); require('./stats-dashboard.js'); require('./stats-dashboard-view.js'); require('./stats-dashboard-bind.js'); _statsKit = root.OurgoalUniversalStatsKit; }",
+        "file": "js/universal-stats.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본 IIFE 맨 위에서 옮긴 대시보드를 같은 이름으로 가져온다",
+      "touches": [
+        "js/universal-stats.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var renderUniversalStatsDashboard = _statsKit.renderUniversalStatsDashboard;",
+        "file": "js/universal-stats.js"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "공개 API 객체에 대시보드 키가 그대로 있다",
+      "touches": [
+        "js/universal-stats.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    renderUniversalStatsDashboard: renderUniversalStatsDashboard,",
+        "file": "js/universal-stats.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 은 새 태그 3개를 원본 태그 바로 앞 같은 줄에 둔다(원본 태그 글자 그대로)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "<script src=\"js/stats-dashboard.js?v=20261005-es428\"></script><script src=\"js/stats-dashboard-view.js?v=20261005-es428\"></script><script src=\"js/stats-dashboard-bind.js?v=20261005-es428\"></script><script src=\"js/universal-stats.js?v=20260914-es061d\"></script>",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "공개 API 키 37개·순서가 이전과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-428/verify-stats-split-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/verify-stats-split-4.json",
+        "path": "runtime.sameApiKeysAndOrder",
+        "equals": true
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "window 이름이 이전과 같다고 기록(새 이름 0)",
+      "touches": [
+        "reports/TASK-ES-428/verify-stats-split-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/verify-stats-split-4.json",
+        "path": "runtime.sameWindowNames",
+        "equals": true
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "1·2·3차 부품 14개 글자가 이전과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-428/verify-stats-split-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/verify-stats-split-4.json",
+        "path": "prevPartsUnchanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본·새 파일 각각 단독 로드 오류 0으로 기록",
+      "touches": [
+        "reports/TASK-ES-428/verify-stats-split-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/verify-stats-split-4.json",
+        "path": "standaloneOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "법정 모듈 로드 탐침 로컬 실행 회귀 0으로 기록",
+      "touches": [
+        "reports/TASK-ES-428/module-load-probe.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/module-load-probe.json",
+        "path": "regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 게스트로 기록 탭 「📈 히트맵·통계」에서 건강·운동 샘플을 불러오면 성취 분석 콕핏이 그려지고, 효율 분석 렌즈를 누르면 분자 선택이 보이며, 접기 아이콘을 누르면 본문이 접혔다가 한 번 더 누르면 펼쳐지고, 전체화면 버튼을 누르면 전체화면 모달이 보인다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/stats-dashboard.js",
+        "js/stats-dashboard-view.js",
+        "js/stats-dashboard-bind.js",
+        "js/universal-stats.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/stats-cockpit-wiring.json"
+    },
+    {
+      "id": "C22",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 구획·조립자·원본 남은 코드 토큰열이 기대 토큰열과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-428/verify-stats-split-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/verify-stats-split-4.json",
+        "path": "equivalent",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "검사기 종합 결과 ok(누수 0·미노출 0·순수 함수 결과 동일 포함)로 기록",
+      "touches": [
+        "reports/TASK-ES-428/verify-stats-split-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/verify-stats-split-4.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "대시보드 DOM 출력 검사기 기준 대 기준 차이 0으로 기록",
+      "touches": [
+        "reports/TASK-ES-428/dashboard-boundary-stats-4-base-base.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/dashboard-boundary-stats-4-base-base.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "대시보드 DOM 출력 검사기 기준 대 작업 차이 0으로 기록",
+      "touches": [
+        "reports/TASK-ES-428/dashboard-boundary-stats-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/dashboard-boundary-stats-4.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "대시보드 DOM 출력 검사기가 957단계를 맞댔다고 기록",
+      "touches": [
+        "reports/TASK-ES-428/dashboard-boundary-stats-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/dashboard-boundary-stats-4.json",
+        "path": "steps",
+        "equals": 957
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "일부러 고장 낸 사본은 검사기가 다르다고 잡았다고 기록(검사기 민감도)",
+      "touches": [
+        "reports/TASK-ES-428/dashboard-boundary-stats-4-mutant.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/dashboard-boundary-stats-4-mutant.json",
+        "path": "ok",
+        "equals": false
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "npm test smoke 검사 제목 목록이 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-428/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/test-compare.json",
+        "path": "smokeTitlesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests 종료 코드가 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-428/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/test-compare.json",
+        "path": "tests.exitCodesSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests 정규화 출력이 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-428/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/test-compare.json",
+        "path": "tests.outputsSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "기록·목표 탭 tab-check 기준 대 후 차이 0으로 기록",
+      "touches": [
+        "reports/TASK-ES-428/tab-compare-base1-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/tab-compare-base1-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "게스트 통계 조작 DOM 비교(95단계) 본질 변동 뺀 차이 0으로 기록",
+      "touches": [
+        "reports/TASK-ES-428/dom-compare-stats-4.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/dom-compare-stats-4.json",
+        "path": "differingExcludingNoise",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "로그인 상태 통계 화면 읽기 전용 비교 본질 변동 뺀 차이 0으로 기록",
+      "touches": [
+        "reports/TASK-ES-428/real-account-stats.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/real-account-stats.json",
+        "path": "differingExcludingNoise",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "법정 시나리오를 법정 실행기로 로컬 실행 — 작업 커밋 통과로 기록",
+      "touches": [
+        "reports/TASK-ES-428/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/scenario-local.json",
+        "path": "runs.work.passed",
+        "equals": true
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 새 세포 stats-dashboard 가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "\"file\": \"js/stats-dashboard.js\",",
+        "file": "docs/architecture/modules.json"
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 새 세포 stats-dashboard-bind 가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "\"file\": \"js/stats-dashboard-bind.js\",",
+        "file": "docs/architecture/modules.json"
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포 설명에 짧은 이름 「성취 분석 콕핏」이 있다",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "\"stats-dashboard\": \"성취 분석 콕핏\",",
+        "file": "docs/architecture/cell-descriptions.json"
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포 설명에 화면 글자 세포의 하는 일이 있다",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "\"stats-dashboard-view\": \"콕핏의 머리·렌즈·종목 칩·차트·핵심 숫자·진단 리포트 화면을 만든다\",",
+        "file": "docs/architecture/cell-descriptions.json"
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 가드 ④(800줄 초과 js 파일 수) 작업 커밋 1로 기록(기준 2)",
+      "touches": [
+        "reports/TASK-ES-428/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-428/test-compare.json",
+        "path": "work.npmTest.moduleGuard.3",
+        "equals": 1
+      }
+    }
+  ]
+}

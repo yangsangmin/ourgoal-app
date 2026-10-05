@@ -1,0 +1,369 @@
+{
+ "scenario": "stats-cockpit-wiring",
+ "valid": {
+  "errors": [],
+  "weaknesses": []
+ },
+ "runs": {
+  "base": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 6,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#homeAddGoal → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1200ms"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "button.s-rec-mode-btn[onclick*=\"heatmap\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 9,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"📈 히트맵·통계\" 117x44px"
+    },
+    {
+     "i": 10,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#uEmptyLoadBig3Btn → 보이는 요소 1개"
+    },
+    {
+     "i": 11,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#uEmptyLoadBig3Btn \"🏃 건강·운동 52주 중량·세션\" 152x78px"
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uCockpitMainCard → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 13,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"⚡ 효율 분석 단가·비율\" 78x63px"
+    },
+    {
+     "i": 14,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uRatioNumSelect → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 15,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"📈 성장 추세 시계열·PR\" 78x63px"
+    },
+    {
+     "i": 16,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": ".u-dim-selector-row → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 17,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 span#uAccordionToggleIcon \"▲\" 24x23px"
+    },
+    {
+     "i": 18,
+     "kind": "expect",
+     "name": "notVisible",
+     "ok": true,
+     "detail": "#uCockpitBody → 보이는 요소 0개",
+     "vacuous": false
+    },
+    {
+     "i": 19,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 span#uAccordionToggleIcon \"▼\" 24x23px"
+    },
+    {
+     "i": 20,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uCockpitBody → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 21,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#uBtnGraphFullscreen \"전체화면\" 88x44px"
+    },
+    {
+     "i": 22,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uStatsFullscreenModal → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 23,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  },
+  "work": {
+   "passed": true,
+   "invalid": false,
+   "errors": [],
+   "failedStep": null,
+   "failKind": null,
+   "failReason": null,
+   "toolError": null,
+   "exceptions": [],
+   "nonVacuousExpects": 6,
+   "steps": [
+    {
+     "i": 1,
+     "kind": "do",
+     "name": "goto",
+     "ok": true,
+     "detail": "/index.html"
+    },
+    {
+     "i": 2,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+     "i": 3,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+     "i": 4,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#homeAddGoal → 보이는 요소 1개"
+    },
+    {
+     "i": 5,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 6,
+     "kind": "do",
+     "name": "wait",
+     "ok": true,
+     "detail": "1200ms"
+    },
+    {
+     "i": 7,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+     "i": 8,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "button.s-rec-mode-btn[onclick*=\"heatmap\"] → 보이는 요소 1개"
+    },
+    {
+     "i": 9,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"📈 히트맵·통계\" 117x44px"
+    },
+    {
+     "i": 10,
+     "kind": "do",
+     "name": "waitFor",
+     "ok": true,
+     "detail": "#uEmptyLoadBig3Btn → 보이는 요소 1개"
+    },
+    {
+     "i": 11,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#uEmptyLoadBig3Btn \"🏃 건강·운동 52주 중량·세션\" 152x78px"
+    },
+    {
+     "i": 12,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uCockpitMainCard → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 13,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"⚡ 효율 분석 단가·비율\" 78x63px"
+    },
+    {
+     "i": 14,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uRatioNumSelect → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 15,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button \"📈 성장 추세 시계열·PR\" 78x63px"
+    },
+    {
+     "i": 16,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": ".u-dim-selector-row → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 17,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 span#uAccordionToggleIcon \"▲\" 24x23px"
+    },
+    {
+     "i": 18,
+     "kind": "expect",
+     "name": "notVisible",
+     "ok": true,
+     "detail": "#uCockpitBody → 보이는 요소 0개",
+     "vacuous": false
+    },
+    {
+     "i": 19,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 span#uAccordionToggleIcon \"▼\" 24x23px"
+    },
+    {
+     "i": 20,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uCockpitBody → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 21,
+     "kind": "do",
+     "name": "click",
+     "ok": true,
+     "detail": "클릭 button#uBtnGraphFullscreen \"전체화면\" 88x44px"
+    },
+    {
+     "i": 22,
+     "kind": "expect",
+     "name": "visible",
+     "ok": true,
+     "detail": "#uStatsFullscreenModal → 보이는 요소 1개",
+     "vacuous": false
+    },
+    {
+     "i": 23,
+     "kind": "expect",
+     "name": "noExceptions",
+     "ok": true,
+     "detail": "행동 이후 미처리 예외 0건"
+    }
+   ]
+  }
+ }
+}
