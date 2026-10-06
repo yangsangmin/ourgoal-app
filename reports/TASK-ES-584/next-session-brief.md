@@ -336,3 +336,5 @@ C:/dev/agy-collab/TEMPLATE.md의 반복 누락 예방 항목을 지시서마다 
 출처: [838,839,840,841]
 ## recent-TASK-ES-584
 [{"id":"proposal-evidence-linkage","proposal":"전체 읽기와 실제 적용/증거를 분리 연결하는 유형. 원장 자동승격 없음.","sourceTask":"TASK-ES-584"}]
+## recent-TASK-ES-584
+[{"id":"proposal-evidence-linkage","proposal":"전체 읽기와 실제 적용/증거를 분리 연결하는 유형. 원장 자동승격 없음.","sourceTask":"TASK-ES-584"}]

@@ -30,7 +30,7 @@ async function main() {
   const lessons = [{id:'L001',분야:'보고',규칙:'전체 정본과 측정 증거를 연결하라.',어떻게:'전체 파일을 읽고 SHA를 기록.',출처PR:[841],대상:['claude','codex','antigravity']}];
   write(path.join(source,'lessons.json'),lessons);
   write(path.join(source,'WORK-REFERENCE.md'),'# 참고\n기준 PR #841 · 경험칙 1개\n**L001. 전체 정본과 측정 증거를 연결하라.**\n');
-  const rootsFile = path.join(sandbox,'read-roots.json'); write(rootsFile,[repo,source]);
+  const rootsFile = path.join(sandbox,'read-roots.json'); write(rootsFile,[repo,source,json(path.join(registry,'registry.json')).sharedStoreRoot].filter(Boolean));
   const inputPath = 'docs/design/harness/shared-learning/cli.js';
   const inputs = [{path:inputPath,sha256:hashFile(path.join(repo,inputPath))}];
   const inputProductSha = sha(stable(inputs));
