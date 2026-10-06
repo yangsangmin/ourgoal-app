@@ -2,34 +2,141 @@
   "id": "theme-picker-actual-ui",
   "title": "게스트 진입 후 홈 체크인 저장, 축하 및 AI 시트 닫기, 기록 탭 이동, 테마 칩 클릭하여 테마 선택창 열기, 테마 변경 저장 및 토스트 확인, 다시 열기 현재 표시 확인 후 닫기",
   "steps": [
-    { "do": "setViewport", "width": 430, "height": 1800 },
-    { "do": "goto", "path": "/index.html" },
-    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
-    { "do": "click", "selector": "#btnLandingPreviewDirect" },
-    { "do": "waitFor", "selector": "#captureInput", "timeoutMs": 15000 },
-    { "do": "type", "selector": "#captureInput", "text": "매일 독서와 알고리즘 문제 풀기 실천" },
-    { "do": "click", "selector": "#captureSave" },
-    { "do": "waitFor", "selector": "#firstCheckinDoneBtn", "timeoutMs": 10000 },
-    { "do": "click", "selector": "#firstCheckinDoneBtn" },
-    { "do": "waitFor", "selector": "#btnCheckinAiClose", "timeoutMs": 10000 },
-    { "do": "click", "selector": "#btnCheckinAiClose" },
-    { "do": "wait", "ms": 500 },
-    { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]", "timeoutMs": 15000 },
-    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
-    { "do": "waitFor", "selector": ".rec-card [data-rectheme]", "timeoutMs": 15000 },
-    { "do": "click", "selector": ".rec-card [data-rectheme]" },
-    { "do": "waitFor", "selector": "#themePickList", "timeoutMs": 10000 },
-    { "expect": "visible", "selector": "#themePickList" },
-    { "do": "click", "selector": "[data-picktheme=\"study\"]" },
-    { "do": "waitFor", "selector": "#toast", "timeoutMs": 10000 },
-    { "expect": "textContains", "selector": "#toast", "text": "테마를 [공부기록](으)로 변경했어요" },
-    { "do": "waitFor", "selector": ".rec-card [data-rectheme]", "timeoutMs": 10000 },
-    { "do": "click", "selector": ".rec-card [data-rectheme]" },
-    { "do": "waitFor", "selector": "#themePickList", "timeoutMs": 10000 },
-    { "expect": "visible", "selector": "[data-picktheme=\"study\"].active" },
-    { "do": "click", "selector": "#mCloseTheme" },
-    { "do": "wait", "ms": 500 },
-    { "expect": "notVisible", "selector": "#themePickList" },
-    { "expect": "noExceptions" }
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 1800
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "매일 독서와 알고리즘 문제 풀기 실천"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#firstCheckinDoneBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#firstCheckinDoneBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnCheckinAiClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnCheckinAiClose"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".rec-card [data-rectheme]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-rectheme]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#themePickList",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "visible",
+      "selector": "#themePickList"
+    },
+    {
+      "do": "click",
+      "selector": "[data-picktheme=\"study\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#toast",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "테마를 [공부기록](으)로 변경했어요"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".rec-card [data-rectheme]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-rectheme]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#themePickList",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "visible",
+      "selector": "[data-picktheme=\"study\"].active"
+    },
+    {
+      "do": "click",
+      "selector": "#mCloseTheme"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#themePickList"
+    },
+    {
+      "expect": "noExceptions"
+    }
   ]
 }
