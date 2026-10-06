@@ -1,0 +1,366 @@
+{
+  "task": "TASK-ES-581",
+  "timestamp": "2026-10-06T12:06:39.759Z",
+  "measurementType": "작업자 측정 (Worker Measurement - 판정 아님)",
+  "runsSummary": {
+    "base1": {
+      "label": "base1",
+      "stepsCount": 5,
+      "calls": {
+        "boot": 1,
+        "renderAll": 1
+      }
+    },
+    "base2": {
+      "label": "base2",
+      "stepsCount": 5,
+      "calls": {
+        "boot": 1,
+        "renderAll": 1
+      }
+    },
+    "after": {
+      "label": "after",
+      "stepsCount": 5,
+      "calls": {
+        "runAppBoot": 1,
+        "boot": 1,
+        "renderAll": 1
+      }
+    }
+  },
+  "dynamicFieldAudit": [
+    {
+      "run": "base1",
+      "rawId": "guest-muwmlzm2e9wg",
+      "rawUsername": "guest-muwmlzm2e9wg",
+      "rawCreatedAt": "2026-10-06T11:59:35.306Z",
+      "rawManitoSeed": 86273,
+      "createdAtValidISO8601": true,
+      "createdAtCodeOrigin": "js/core/default-profile.js:26 (createdAt: L.nowISO())",
+      "manitoSeedValidInteger": true,
+      "manitoSeedCodeOrigin": "js/core/default-settings.js (Math.floor(Math.random() * 100000))",
+      "usernameEqualsId": true,
+      "usernameCodeOrigin": "js/core/default-profile.js:22-24 (defaultProfile(id, username, displayName))"
+    },
+    {
+      "run": "base2",
+      "rawId": "guest-muwmm9zn6x25",
+      "rawUsername": "guest-muwmm9zn6x25",
+      "rawCreatedAt": "2026-10-06T11:59:48.755Z",
+      "rawManitoSeed": 51882,
+      "createdAtValidISO8601": true,
+      "createdAtCodeOrigin": "js/core/default-profile.js:26 (createdAt: L.nowISO())",
+      "manitoSeedValidInteger": true,
+      "manitoSeedCodeOrigin": "js/core/default-settings.js (Math.floor(Math.random() * 100000))",
+      "usernameEqualsId": true,
+      "usernameCodeOrigin": "js/core/default-profile.js:22-24 (defaultProfile(id, username, displayName))"
+    },
+    {
+      "run": "after",
+      "rawId": "guest-muwmmjz0qu1o",
+      "rawUsername": "guest-muwmmjz0qu1o",
+      "rawCreatedAt": "2026-10-06T12:00:01.692Z",
+      "rawManitoSeed": 13270,
+      "createdAtValidISO8601": true,
+      "createdAtCodeOrigin": "js/core/default-profile.js:26 (createdAt: L.nowISO())",
+      "manitoSeedValidInteger": true,
+      "manitoSeedCodeOrigin": "js/core/default-settings.js (Math.floor(Math.random() * 100000))",
+      "usernameEqualsId": true,
+      "usernameCodeOrigin": "js/core/default-profile.js:22-24 (defaultProfile(id, username, displayName))"
+    }
+  ],
+  "domNormalizationAudit": {
+    "guestIdRule": {
+      "canonicalToken": "<guest-canonical-id>",
+      "codeOrigin": "js/core/default-profile.js:22 (uid())",
+      "rawBase1": "guest-muwmlzm2e9wg",
+      "rawBase2": "guest-muwmm9zn6x25",
+      "rawAfter": "guest-muwmmjz0qu1o"
+    },
+    "deviceIdRule": {
+      "canonicalToken": "<dev-canonical-id>",
+      "codeOrigin": "js/tabs/settings/device-session.js:24 (dev_<timestamp>_<random>)",
+      "rawBase1": "dev_1791287975496_o6udmiwl",
+      "rawBase2": "dev_1791287988948_xv5d4abp",
+      "rawAfter": "dev_1791288001881_h23hpjtn"
+    },
+    "storageEstimateRule": {
+      "canonicalToken": "약 <storage-estimate> 사용 중 (브라우저 추정치)",
+      "codeOrigin": "js/tabs/settings/render.js:46 (navigator.storage.estimate())",
+      "precedent": "docs/design/harness/module-split/dom-compare-settings.js:81"
+    }
+  },
+  "checks": {
+    "stepsCountSame": true,
+    "clicksCountSame": true,
+    "allClicksHitTargetOrChild": true,
+    "zeroPageErrors": true,
+    "consoleErrorsMultisetIdentical": true,
+    "renderAllCalledInAllRuns": true,
+    "bootCalledInAllRuns": true,
+    "bijectiveMappingVerified": true
+  },
+  "consoleErrorsMultiset": {
+    "base1": {
+      "Failed to load resource: net::ERR_FAILED": 11,
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=<redacted-public-key>&vsn=2.0.0' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED": 3
+    },
+    "base2": {
+      "Failed to load resource: net::ERR_FAILED": 11,
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=<redacted-public-key>&vsn=2.0.0' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED": 3
+    },
+    "after": {
+      "Failed to load resource: net::ERR_FAILED": 11,
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=<redacted-public-key>&vsn=2.0.0' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED": 3
+    },
+    "identical": true
+  },
+  "stepComparisons": [
+    {
+      "stepIndex": 0,
+      "stepName": "0_initial_load",
+      "activeTab": {
+        "base1": "home",
+        "base2": "home",
+        "after": "home",
+        "match": true
+      },
+      "toastVisible": {
+        "base1": false,
+        "base2": false,
+        "after": false,
+        "match": true
+      },
+      "toastText": {
+        "base1": null,
+        "base2": null,
+        "after": null,
+        "match": true
+      },
+      "domComparison": {
+        "rawLengths": {
+          "base1": 116770,
+          "base2": 116770,
+          "after": 116770
+        },
+        "normalizedLengths": {
+          "base1": 116770,
+          "base2": 116770,
+          "after": 116770
+        },
+        "exactMatchBase1Base2": true,
+        "exactMatchBase1After": true
+      },
+      "leafCount": 1,
+      "leafDiffs": 0,
+      "stepMatch": true
+    },
+    {
+      "stepIndex": 1,
+      "stepName": "1_landing_preview_entered",
+      "activeTab": {
+        "base1": "home",
+        "base2": "home",
+        "after": "home",
+        "match": true
+      },
+      "toastVisible": {
+        "base1": true,
+        "base2": true,
+        "after": true,
+        "match": true
+      },
+      "toastText": {
+        "base1": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "base2": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "after": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "match": true
+      },
+      "domComparison": {
+        "rawLengths": {
+          "base1": 202010,
+          "base2": 202010,
+          "after": 202010
+        },
+        "normalizedLengths": {
+          "base1": 202012,
+          "base2": 202012,
+          "after": 202012
+        },
+        "exactMatchBase1Base2": true,
+        "exactMatchBase1After": true
+      },
+      "leafCount": 143,
+      "leafDiffs": 0,
+      "stepMatch": true
+    },
+    {
+      "stepIndex": 2,
+      "stepName": "2_greet_closed",
+      "activeTab": {
+        "base1": "home",
+        "base2": "home",
+        "after": "home",
+        "match": true
+      },
+      "toastVisible": {
+        "base1": false,
+        "base2": false,
+        "after": false,
+        "match": true
+      },
+      "toastText": {
+        "base1": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "base2": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "after": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "match": true
+      },
+      "domComparison": {
+        "rawLengths": {
+          "base1": 202010,
+          "base2": 202010,
+          "after": 202010
+        },
+        "normalizedLengths": {
+          "base1": 202012,
+          "base2": 202012,
+          "after": 202012
+        },
+        "exactMatchBase1Base2": true,
+        "exactMatchBase1After": true
+      },
+      "leafCount": 143,
+      "leafDiffs": 0,
+      "stepMatch": true
+    },
+    {
+      "stepIndex": 3,
+      "stepName": "3_goals_tab_switched",
+      "activeTab": {
+        "base1": "goals",
+        "base2": "goals",
+        "after": "goals",
+        "match": true
+      },
+      "toastVisible": {
+        "base1": false,
+        "base2": false,
+        "after": false,
+        "match": true
+      },
+      "toastText": {
+        "base1": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "base2": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "after": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "match": true
+      },
+      "domComparison": {
+        "rawLengths": {
+          "base1": 219478,
+          "base2": 219478,
+          "after": 219478
+        },
+        "normalizedLengths": {
+          "base1": 219480,
+          "base2": 219480,
+          "after": 219480
+        },
+        "exactMatchBase1Base2": true,
+        "exactMatchBase1After": true
+      },
+      "leafCount": 143,
+      "leafDiffs": 0,
+      "stepMatch": true
+    },
+    {
+      "stepIndex": 4,
+      "stepName": "4_home_tab_returned",
+      "activeTab": {
+        "base1": "home",
+        "base2": "home",
+        "after": "home",
+        "match": true
+      },
+      "toastVisible": {
+        "base1": false,
+        "base2": false,
+        "after": false,
+        "match": true
+      },
+      "toastText": {
+        "base1": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "base2": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "after": "게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.",
+        "match": true
+      },
+      "domComparison": {
+        "rawLengths": {
+          "base1": 219476,
+          "base2": 219476,
+          "after": 219476
+        },
+        "normalizedLengths": {
+          "base1": 219478,
+          "base2": 219478,
+          "after": 219478
+        },
+        "exactMatchBase1Base2": true,
+        "exactMatchBase1After": true
+      },
+      "leafCount": 143,
+      "leafDiffs": 0,
+      "stepMatch": true
+    }
+  ],
+  "leafStats": {
+    "totalProfileLeavesCompared": 573,
+    "totalProfileDiffsExcludingNormalizations": 0,
+    "totalDomStepsCompared": 5,
+    "domStringsIdenticalAcrossBase1Base2": true,
+    "domStringsIdenticalAcrossBase1After": true,
+    "domStructureIdentical": true
+  },
+  "branchVerification": {
+    "base1": {
+      "boot": {
+        "totalRanges": 25,
+        "executedRangesCount": 1,
+        "zeroCountRangesCount": 24,
+        "guestPathMeasured": true,
+        "loginBranchMeasured": false,
+        "note": "게스트 로컬 초기화/리스너 등록 1회 실행, 로그인 복원 분기는 0회 미측정으로 정확히 구분"
+      }
+    },
+    "base2": {
+      "boot": {
+        "totalRanges": 25,
+        "executedRangesCount": 1,
+        "zeroCountRangesCount": 24,
+        "guestPathMeasured": true,
+        "loginBranchMeasured": false,
+        "note": "게스트 로컬 초기화/리스너 등록 1회 실행, 로그인 복원 분기는 0회 미측정으로 정확히 구분"
+      }
+    },
+    "after": {
+      "runAppBoot": {
+        "totalRanges": 1,
+        "executedRangesCount": 1,
+        "zeroCountRangesCount": 0,
+        "guestPathMeasured": true,
+        "loginBranchMeasured": false,
+        "note": "게스트 로컬 초기화/리스너 등록 1회 실행, 로그인 복원 분기는 0회 미측정으로 정확히 구분"
+      },
+      "boot": {
+        "totalRanges": 25,
+        "executedRangesCount": 1,
+        "zeroCountRangesCount": 24,
+        "guestPathMeasured": true,
+        "loginBranchMeasured": false,
+        "note": "게스트 로컬 초기화/리스너 등록 1회 실행, 로그인 복원 분기는 0회 미측정으로 정확히 구분"
+      }
+    },
+    "note": "게스트 로컬 초기화/리스너 등록 1회 실행 확인. Supabase 세션 복원 및 PKCE 24개 분기는 0회 미측정으로 정확히 구분."
+  },
+  "workerVerdict": "EQUIVALENT_AND_VERIFIED"
+}
