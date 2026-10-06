@@ -1,0 +1,44 @@
+{
+  "task": "TASK-ES-576",
+  "portAllocation": "포트만 OS가 원자적으로 배정",
+  "adapter": "docs/design/harness/module-split/tab-isolated576.js",
+  "original": "C:\\Users\\HP\\.codex\\worktrees\\today-mission-576\\ourgoal-app\\docs\\design\\harness\\tab-check.js",
+  "originalSha256": "e2a2a18482c081f24f8fe4cf7a9c805a5ac966f641ed3b69dc08a537fdba00a6",
+  "compiledSha256": "41c4c2e811de5751511a67ca0ece3322265587db30b5eeca20e979c2eadd1792",
+  "exactReplacements": [
+    {
+      "before": "const port = 4700 + Math.floor(Math.random() * 300);",
+      "after": "const port = 0;",
+      "count": 1
+    },
+    {
+      "before": "const base = 'http://localhost:' + port;",
+      "after": "const base = 'http://localhost:' + server.address().port;",
+      "count": 1
+    }
+  ],
+  "args": [
+    ".",
+    "C:/dev/wt/today576-tab-after",
+    "home",
+    "--summary",
+    "reports/TASK-ES-576/tab-after.json",
+    "--deadclick",
+    "off"
+  ],
+  "pid": 11476,
+  "servers": [
+    {
+      "address": "::",
+      "family": "IPv6",
+      "port": 59359
+    }
+  ],
+  "chrome": [
+    {
+      "pid": 4044,
+      "wsEndpoint": "ws://127.0.0.1:59361/devtools/browser/c538cae8-252c-40c7-957e-1a29f047e66e",
+      "profileArg": "--user-data-dir=C:\\Users\\HP\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-rKuqOM"
+    }
+  ]
+}

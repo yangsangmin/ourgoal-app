@@ -631,3 +631,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-572 | INFRA | 알림 헬퍼·목표 상세 서랍 책임 분열 준비 — UI도달/원문 생성기/시나리오, 최종 기준은 부모 통지 뒤.
 
 - #TASK-ES-575 | INFRA | 캘린더 사용 가능 순수 판별 원문 분열 | REQ-TASK-ES-575-CALENDAR-AVAILABILITY.md | 4단계(심사 청구)
+
+- #TASK-ES-576 | INFRA | 오늘 미션 해시 및 카드 렌더 책임 원문 분열 | docs/specs/REQ-TASK-ES-576-TODAY-MISSION.md | 4단계(심사 청구)
