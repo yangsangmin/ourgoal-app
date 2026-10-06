@@ -141,14 +141,30 @@
       "operation": "append thin entry guidance only; keep canonical original sections",
       "expectedSourceHash": null,
       "requires": "fetch full page hash immediately before CAS; backup original markdown; append; read back exact link/text",
-      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결: https://github.com/yangsangmin/ourgoal-app/blob/main/docs/agents/shared-learning/README.md\nWORK-REFERENCE 전체읽기 유지. 참여자의 명시권한 계약. bootstrap→validate→collect(공유store C:/dev/agent-learning-events 기본)→다음 작업 bootstrap의 최근 보완점 연결. 작업자 측정/독립Court 분리. 원장/규칙 자동승격없음.\n<!-- /TASK-ES-584 shared-learning-entry -->\n"
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결: https://github.com/yangsangmin/ourgoal-app/blob/main/docs/agents/shared-learning/README.md\nWORK-REFERENCE 전체읽기 유지. 참여자의 명시권한 계약. bootstrap→validate→collect(공유store C:/dev/agent-learning-events 기본)→다음 작업 bootstrap의 최근 보완점 연결. 작업자 측정/독립Court 분리. 원장/규칙 자동승격없음.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "connector": {
+        "fetch": "mcp__codex_apps__notion_fetch",
+        "update": "mcp__codex_apps__notion_notion_update_page",
+        "command": "insert_content",
+        "position": "end",
+        "fullPageReplace": false,
+        "serverAtomicCASClaim": false
+      }
     },
     {
       "page": "3f0598db90968182b4d4d09e39e72dcb",
       "operation": "append shared contract/tool link and task event fields",
       "expectedSourceHash": null,
       "requires": "fetch full page hash immediately before CAS; backup original markdown; append; read back",
-      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결: https://github.com/yangsangmin/ourgoal-app/blob/main/docs/agents/shared-learning/README.md\nWORK-REFERENCE 전체읽기 유지. 참여자의 명시권한 계약. bootstrap→validate→collect(공유store C:/dev/agent-learning-events 기본)→다음 작업 bootstrap의 최근 보완점 연결. 작업자 측정/독립Court 분리. 원장/규칙 자동승격없음.\n<!-- /TASK-ES-584 shared-learning-entry -->\n"
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결: https://github.com/yangsangmin/ourgoal-app/blob/main/docs/agents/shared-learning/README.md\nWORK-REFERENCE 전체읽기 유지. 참여자의 명시권한 계약. bootstrap→validate→collect(공유store C:/dev/agent-learning-events 기본)→다음 작업 bootstrap의 최근 보완점 연결. 작업자 측정/독립Court 분리. 원장/규칙 자동승격없음.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "connector": {
+        "fetch": "mcp__codex_apps__notion_fetch",
+        "update": "mcp__codex_apps__notion_notion_update_page",
+        "command": "insert_content",
+        "position": "end",
+        "fullPageReplace": false,
+        "serverAtomicCASClaim": false
+      }
     }
   ],
   "effectFollowup": {
@@ -177,12 +193,14 @@
   },
   "executionOrder": [
     "hash-and-byte-backup",
+    "install-immutable-merged-runtime-and-verify-snapshot",
     "append-four-local-entry-guides-with-CAS",
     "run-original-reference-generator",
     "repository-history-preserving-copy-sync-PR-and-Court",
     "Notion-append-after-re-read-and-readback",
     "two-next-session-shared-store-readback",
-    "task-link-check-and-followup"
+    "task-link-check-and-followup",
+    "arbitrary-project-installed-runtime-smoke"
   ],
   "executionDocument": "docs/agents/shared-learning/ROLLOUT-PROPOSAL.md",
   "rollbackOrder": [
@@ -195,5 +213,68 @@
     "measuredAt": "2026-10-06T14:15:42.856Z",
     "onMismatch": "stop that rollout step; read latest full source and compare lesson IDs/version hashes/PR sources/history; revise proposal after analysis; never silently replace expectedHash",
     "canonicalReferenceBasePr": 841
+  },
+  "runtimeInstall": {
+    "executed": false,
+    "sourceMergeCommit": null,
+    "sourceSelection": "only immutable remote-main merge commit after final Court and root review; never reset shared checkout",
+    "releaseRootTemplate": "C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>",
+    "toolFiles": [
+      "docs/design/harness/shared-learning/bootstrap.js",
+      "docs/design/harness/shared-learning/canary.js",
+      "docs/design/harness/shared-learning/check.js",
+      "docs/design/harness/shared-learning/cli.js",
+      "docs/design/harness/shared-learning/collect.js",
+      "docs/design/harness/shared-learning/common.js",
+      "docs/design/harness/shared-learning/measure.js",
+      "docs/design/harness/shared-learning/validate.js"
+    ],
+    "registryFiles": [
+      "registry.json",
+      "core.md",
+      "adapters/claude.md",
+      "adapters/codex.md",
+      "adapters/antigravity.md",
+      "adapters/generic.md"
+    ],
+    "manifestFields": [
+      "sourceMergeCommit",
+      "files[{sourcePath,installedPath,sha256}]",
+      "snapshotSHA256",
+      "installedAt",
+      "previousRelease"
+    ],
+    "snapshotHashAlgorithm": "SHA256(canonical JSON of installed file path/bytehash pairs sorted by path); bytes from git archive merged commit",
+    "canonicalLedgerCopied": false,
+    "entryCliTemplate": "node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js",
+    "mandatoryCommandParameters": [
+      "--repo-root <owning actual project tree>",
+      "--registry-root <releaseRoot>/registry",
+      "--participants <explicit contract>"
+    ],
+    "snapshotReadback": "compare every installed byteSHA with Git extraction manifest before entry links are changed",
+    "nonOurgoalSmoke": "in a fresh arbitrary-project folder create explicit generic participant contract; run installed bootstrap with actual project repo-root and installed registry-root; commandsExecuted0/readReceipt canonical/full brief/output inside owning project; verify no local source write",
+    "rollback": "restore entry guide to previous verified immutable release; retain releases/events/evidence; snapshotSHA readback"
+  },
+  "stableDiscovery": {
+    "local": [
+      "C:/dev/agent-knowledge/preamble.md",
+      "C:/dev/agent-knowledge/README.md",
+      "C:/dev/agy-collab/TEMPLATE.md",
+      "C:/dev/agy-collab/README.md"
+    ],
+    "generated": [
+      "C:/dev/agent-knowledge/WORK-REFERENCE.md"
+    ],
+    "fallback": [
+      "docs/agents/WORK-REFERENCE.md",
+      "docs/agents/README.md"
+    ],
+    "notion": [
+      "3f0598db9096819f810ce45a92e59215",
+      "3f0598db90968182b4d4d09e39e72dcb"
+    ],
+    "textSubstitution": "before executing localChanges.executable, expand verified sourceMergeCommit and actual release CLI/registry paths into appendText and regenerate exact args; never append unresolved placeholder",
+    "activeSessionAutoReinjectionClaim": false
   }
 }
