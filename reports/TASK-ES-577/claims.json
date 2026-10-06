@@ -1,0 +1,171 @@
+{
+  "task": "TASK-ES-577",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-577-MAP-BATCH.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "기준선은 측정 감소만 반영하고 기존 이력을 보존한다."
+    },
+    {
+      "id": "R2",
+      "text": "세포지도 저장본을 최신 생성 산출물로 갱신한다."
+    },
+    {
+      "id": "R3",
+      "text": "인라인 JSON·Markdown을 동일 입력에서 생성한다."
+    },
+    {
+      "id": "R4",
+      "text": "재현성·변경 범위·시험 작업자 측정 보고를 적재한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업자 측정 보고 historyPrefixPreserved 값 적재를 확인한다.",
+      "touches": [
+        "docs/architecture/module-baseline.json",
+        "reports/TASK-ES-577/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-577/measurement.json",
+        "path": "historyPrefixPreserved",
+        "equals": true
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업자 측정 보고 ratchetNonIncreasing 값 적재를 확인한다.",
+      "touches": [
+        "docs/architecture/module-baseline.json",
+        "reports/TASK-ES-577/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-577/measurement.json",
+        "path": "ratchetNonIncreasing",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업자 측정 보고 reproducible 값 적재를 확인한다.",
+      "touches": [
+        "docs/architecture/cell-map.json",
+        "reports/TASK-ES-577/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-577/measurement.json",
+        "path": "reproducible",
+        "equals": true
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업자 측정 보고 reproducible 값 적재를 확인한다.",
+      "touches": [
+        "docs/architecture/inline-script-map.json",
+        "docs/architecture/INLINE-SCRIPT-MAP.md",
+        "reports/TASK-ES-577/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-577/measurement.json",
+        "path": "reproducible",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업자 측정 보고 productDiffEmpty 값 적재를 확인한다.",
+      "touches": [
+        "reports/TASK-ES-577/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-577/measurement.json",
+        "path": "productDiffEmpty",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업자 측정 보고 onlyFourMapsChanged 값 적재를 확인한다.",
+      "touches": [
+        "reports/TASK-ES-577/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-577/measurement.json",
+        "path": "onlyFourMapsChanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업자 측정 보고 npmExit 값 적재를 확인한다.",
+      "touches": [
+        "reports/TASK-ES-577/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-577/measurement.json",
+        "path": "npmExit",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "표준 8원칙 요구사항 문서를 기록한다.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-577-MAP-BATCH.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-577-MAP-BATCH.md",
+        "text": "[원칙 ⑧]"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기존 npm test 실행 로그를 기록한다.",
+      "touches": [
+        "reports/TASK-ES-577/npm-test.txt"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-577/npm-test.txt",
+        "text": "440개 통과, 0개 실패"
+      }
+    }
+  ]
+}

@@ -6034,3 +6034,6 @@
 - TASK-ES-575: calendarAvailable만 기존 기관 키트로 원문 분열. 최신main 기준 실제 일정UI/CDP 및 전후 측정, 원격 전송0.
 
 - TASK-ES-576: computeTodayMissionHash와 renderTodayMissionCard를 home/today-mission으로 원문 분열. 최신 main 기준 실제 오늘 미션 UI/CDP 조작 및 아코디언 더보기 실측 완료.
+
+## TASK-ES-577 생성지도 일괄 갱신
+실제 Antigravity flash 생성 커밋 b1f403a4. Codex 독립 재생성·기준선 이력·수치 비증가·제품/시험/금고 변경0 확인. npm 전후 검사 요약 동일. reports/TASK-ES-577/measurement.json 참조. 작업자 측정은 법정 판정이 아니다.
