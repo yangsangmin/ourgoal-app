@@ -625,3 +625,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-568 | INFRA | 잔여 책임 분열: 교대근무 루틴·기록 성장 차트·홈 오늘요약·퀘스트 | 동작0변경·생성기·기준비교 | 진행
 
 - #TASK-ES-569 | INFRA | 기록 테마 분류·공용 토스트 표시 책임을 동작 그대로 두 세포로 분열 | REQ docs/specs/REQ-TASK-ES-569-RECORD-THEME.md | 4단계(심사 청구)
+
+- #TASK-ES-570 | INFRA | 생성 지도 네 파일 일괄 갱신 | 작업자 측정 기록: reports/TASK-ES-570/measurement.json | 4단계(심사 청구)
