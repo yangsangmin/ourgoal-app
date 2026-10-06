@@ -6037,3 +6037,5 @@
 
 ## TASK-ES-577 생성지도 일괄 갱신
 실제 Antigravity flash 생성 커밋 b1f403a4. Codex 독립 재생성·기준선 이력·수치 비증가·제품/시험/금고 변경0 확인. npm 전후 검사 요약 동일. reports/TASK-ES-577/measurement.json 참조. 작업자 측정은 법정 판정이 아니다.
+
+- 2026-10-06 TASK-ES-578: openThemePickerModal을 records/theme-picker로 원문 분열. 최신 main(37f41857) 기준 실제 테마 모달 UI/CDP 조작 2회 및 세포 단독 로드·격리 탭 24장·113개 시험 대조 회귀 0 실측 완료.
