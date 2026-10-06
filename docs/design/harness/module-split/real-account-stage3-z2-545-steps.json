@@ -1,0 +1,12 @@
+{"moved":["canManageTeamGoals","TEAM_COMMENTS_CACHE","setupRealtimeChannelsOnce","ensureTeamCommentsLoaded","teamCommentsBlockHtml","filterHidden","filterBlockedPosts","blockUser","openBlockedUsersModal","sortGoalsByOrder","shiftGoalOrder","reorderGoal","bindWidgetModalOpener"],
+ "steps":[
+ {"name":"① 홈 첫 화면(로그인 직후 실시간 채널 한 번 연결) #screen-home","tab":"home","wait":1500,"read":"#screen-home"},
+ {"name":"② 소통 팀 하위 탭 #commBody","tab":"comm","sub":"group","wait":2000,"read":"#commBody","count":{"join":"[data-join]"}},
+ {"name":"③ 예시 팀 체험 참여 g-workshop(저장 쓰기는 도구가 끊음) #commBody","click":"[data-join=\"g-workshop\"]","wait":2000,"read":"#commBody"},
+ {"name":"④ 목표 팀목표 하위 탭(서버 팀 댓글 불러오기·권한) #screen-goals","tab":"goals","gsub":"team","wait":3000,"read":"#screen-goals","count":{"cmtBlock":".team-comments-block","cmtSend":"[data-cmtsend]"}},
+ {"name":"⑤ 팀 목표 전체 대화 열기 [data-tggoalcommentsbox]","click":"[data-tgtogglegoalcomments=\"g-workshop:tg-ws-1\"]","wait":1500,"read":"[data-tggoalcommentsbox=\"g-workshop:tg-ws-1\"]"},
+ {"name":"⑥ 소통 피드(숨김·차단 거르기) #commBody","tab":"comm","sub":"feed","wait":3000,"read":"#commBody"},
+ {"name":"⑦ 목표 개인 하위 탭(저장 순서 정렬) #screen-goals","tab":"goals","gsub":"personal","wait":2500,"read":"#screen-goals","count":{"goals":"[data-sgoalid]"}},
+ {"name":"⑧ 설정 차단 목록 창 #modalSheet","tab":"settings","click":"#manageBlockedBtn","wait":1500,"read":"#modalSheet","close":"#closeBlockedModal"},
+ {"name":"⑨ 설정 위젯 설정 창 #modalSheet","click":"#btnOpenWidgetModal","wait":1500,"read":"#modalSheet"}
+]}

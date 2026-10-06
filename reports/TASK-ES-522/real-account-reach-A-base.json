@@ -1,0 +1,146 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "reach-A",
+ "mode": "test-account-A",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · test account A (address hidden) · temporary browser profile · read-only",
+ "countNames": [
+  "totalCompletedMilestones",
+  "resolveUniqueDisplayName",
+  "formatDisplayNameWithTag",
+  "ensureUserRow",
+  "loadProfile",
+  "syncServerRecords",
+  "closeWithdrawModal",
+  "submitWithdrawAccount",
+  "openWithdrawModal",
+  "withdrawAccount"
+ ],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "① 홈",
+   "present": true,
+   "visible": true,
+   "textHash": "d83ddf488afeedf1",
+   "textLen": 312,
+   "attrsHash": "82a79f1a3906fb3f",
+   "opened": null,
+   "calls": {
+    "loadProfile": 2,
+    "ensureUserRow": 2,
+    "totalCompletedMilestones": 2
+   }
+  },
+  {
+   "name": "② 목표",
+   "present": true,
+   "visible": true,
+   "textHash": "3c08e90fe9b18654",
+   "textLen": 345,
+   "attrsHash": "de8d692ed9f36ffb",
+   "opened": null,
+   "calls": {
+    "loadProfile": 2,
+    "ensureUserRow": 2,
+    "totalCompletedMilestones": 2
+   }
+  },
+  {
+   "name": "③ 소통",
+   "present": true,
+   "visible": true,
+   "textHash": "64b5e589e8f7869e",
+   "textLen": 464,
+   "attrsHash": "364e9e1e024735a3",
+   "opened": null,
+   "calls": {
+    "loadProfile": 2,
+    "ensureUserRow": 2,
+    "totalCompletedMilestones": 2
+   }
+  },
+  {
+   "name": "④ 기록",
+   "present": true,
+   "visible": true,
+   "textHash": "ff03629c75f92c9b",
+   "textLen": 1062,
+   "attrsHash": "df8b43c4480f32c3",
+   "opened": null,
+   "calls": {
+    "loadProfile": 2,
+    "ensureUserRow": 2,
+    "totalCompletedMilestones": 2
+   }
+  },
+  {
+   "name": "⑤ 설정",
+   "present": true,
+   "visible": true,
+   "textHash": "3c77871f6233540b",
+   "textLen": 764,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null,
+   "counts": {
+    "withdrawBtn": 1,
+    "resync": 1
+   },
+   "calls": {
+    "loadProfile": 2,
+    "ensureUserRow": 2,
+    "totalCompletedMilestones": 2
+   }
+  },
+  {
+   "name": "⑥ 데이터 다시 맞추기",
+   "present": true,
+   "visible": true,
+   "textHash": "3b3759daf84b6cce",
+   "textLen": 35,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true,
+   "calls": {
+    "loadProfile": 3,
+    "ensureUserRow": 3,
+    "totalCompletedMilestones": 3,
+    "syncServerRecords": 1
+   }
+  },
+  {
+   "name": "⑦ 탈퇴 안내 창 열기(확정 단추는 누르지 않음)",
+   "present": true,
+   "visible": true,
+   "textHash": "fc9e9fafde359b77",
+   "textLen": 1651,
+   "attrsHash": "e801211014ead8fe",
+   "opened": true,
+   "calls": {
+    "loadProfile": 3,
+    "ensureUserRow": 3,
+    "totalCompletedMilestones": 3,
+    "syncServerRecords": 1,
+    "openWithdrawModal": 1
+   }
+  }
+ ],
+ "errors": [],
+ "loggedIn": true,
+ "entered": true,
+ "globals": "loadProfile/function,syncServerRecords/undefined,openWithdrawModal/undefined",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {
+   "/api/track#sync_records": 1
+  }
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 6,
+  "POST /rest/v1/checkins": 6,
+  "POST /rest/v1/rpc/count_content_reactions": 2,
+  "POST /rest/v1/rpc/list_content_advice": 2,
+  "POST /rest/v1/rpc/my_content_reactions": 2
+ }
+}

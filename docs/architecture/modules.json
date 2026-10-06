@@ -1419,6 +1419,35 @@
       ]
     },
     {
+      "id": "core/profile-load",
+      "file": "js/core/profile-load.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Profile Load (기관 — 프로필 불러오기·사용자 행 만들기·고유 닉네임 태그·완료 마일스톤 합)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAccountIsolation",
+        "OurgoalAppScope",
+        "OurgoalAvatarParts",
+        "OurgoalRecordLedger"
+      ]
+    },
+    {
       "id": "core/profile-topbar",
       "file": "js/core/profile-topbar.js",
       "layer": "core",
@@ -1516,6 +1545,34 @@
       "dependsOn": [
         "OurgoalEvents",
         "OurgoalStore"
+      ]
+    },
+    {
+      "id": "core/server-records-sync",
+      "file": "js/core/server-records-sync.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Server Records Sync (기관 — 서버 관리자 API 를 통한 기록·프로필 복구)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAccountIsolation",
+        "OurgoalAppScope",
+        "OurgoalRecordLedger"
       ]
     },
     {
@@ -4903,6 +4960,34 @@
       ]
     },
     {
+      "id": "comm/user-blocks",
+      "file": "js/tabs/comm/user-blocks.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal User Blocks (소통 — 신고 숨김·차단 사용자 거르기와 차단 관리)",
+      "spans": [],
+      "provides": [],
+      "requires": [
+        "ui.confirm"
+      ],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "goals/ai-agent",
       "file": "js/tabs/goals/ai-agent.js",
       "layer": "tabs",
@@ -5210,6 +5295,32 @@
       "size": "small",
       "kind": "tab",
       "role": "OurGoal Goal Math (목표 탭 — 진행률·마일스톤 수·결과 달성률 계산)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "goals/goal-order",
+      "file": "js/tabs/goals/goal-order.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Goal Order (목표 탭 — 개인 목표 우선순위 정렬·이동)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -5701,6 +5812,32 @@
         "OurgoalTeamLinkedGoals",
         "renderTeamGoalsScreen",
         "state"
+      ]
+    },
+    {
+      "id": "goals/team-comments",
+      "file": "js/tabs/goals/team-comments.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Team Comments (목표 탭 — 팀 목표·마일스톤 댓글과 로그인 뒤 실시간 채널)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
       ]
     },
     {
@@ -8349,6 +8486,32 @@
       ]
     },
     {
+      "id": "settings/widget-modal-opener",
+      "file": "js/tabs/settings/widget-modal-opener.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Widget Modal Opener (설정 — 「위젯 설정」 단추 문서 위임 클릭)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "settings/widget-settings-modal",
       "file": "js/tabs/settings/widget-settings-modal.js",
       "layer": "tabs",
@@ -8356,6 +8519,32 @@
       "size": "small",
       "kind": "tab",
       "role": "OurGoal Widget Settings Modal (설정 탭 — 바탕화면 위젯 설정 창)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "settings/withdraw-modal",
+      "file": "js/tabs/settings/withdraw-modal.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Withdraw Modal (설정 — 회원 탈퇴 전용 안내 창·법적 책임·데이터 분실 사전 안내·탈퇴 신청)",
       "spans": [],
       "provides": [],
       "requires": [],

@@ -1,6 +1,6 @@
 # REQ — #TASK-ES-556 인라인 3단계 구역 Z6 표준 3 (홈 화면 그리기·마이크 권한 안내 창·AI 피드백 문구집)
 
-- 근거: 헌법 v2026.10.06-SNOWBALL(CELL_SPLIT · CELL_SPLIT_PROOF), 설계 `docs/architecture/INLINE-STAGE3-DESIGN.md` 2절 표준(T) 표·6절 구역 Z6, 작업참고 `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #802**(L016·L015·L001·L009·L010·L019·L042) + 공지 L046·L047.
+- 근거: 헌법 v2026.10.06-SNOWBALL(CELL_SPLIT · CELL_SPLIT_PROOF), 설계 `docs/architecture/INLINE-STAGE3-DESIGN.md` 2절 표준(T) 표·6절 구역 Z6, 작업참고 `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #828**(L016·L015·L001·L009·L010·L019·L042) + 공지 L046·L047.
 - 지시(2026-10-06, 오케스트레이터 배정): 구역 Z5+Z6 표준(T) 묶음을 index.html 줄 순서대로 표준 이음매로 연속 PR.
 - 범위: T 묶음 4개 — 「RENDER: HOME」·「🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227)」·「AI feedback (best-effort; provider-aware; local fallback)」·「[#TASK-ES-225] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐」. 생성기 설정 `docs/design/harness/module-split/inline-stage3-z56-c.json`(자리 HO). 동작 0 변경.
 - 작업 유형(SNOWBALL): (가) 표준. 이탈 없음.
@@ -50,3 +50,8 @@ DOM `#homeCompassQuest` · `#homeGoalList` · `.starter-goal-btn[data-starter="s
 | 막힐 지점 | 병합 줄(#814 → #819 → …) 뒤 main 합치기 때 생성기 재실행(L010), 토스트 시간 창 |
 
 [4단계: 심사 청구]
+
+## 재개 측정 (2026-10-06, Codex)
+- 작업참고 기준 PR #828. main 입력 생성기 재실행(L010), 생성 지도 4개 main 보존(L009), 검사 기대값·주장 종류 변경 0.
+- 기준 출처: 730471cdb42d7812e171e54db993a63ee3aa2935. git archive origin/main 사본은 Python tarfile UTF8로 추출했다.
+- 인라인·함수 전후 측정 정본: `reports/TASK-ES-556/snapshot-resume.json`, 측정기 `scripts/module-metrics.js`.

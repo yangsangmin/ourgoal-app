@@ -1,0 +1,69 @@
+{
+ "id": "core-profile-load-hall-of-fame",
+ "title": "게스트로 설정 탭 프로필 묶음의 「명예의 전당」을 누르면 창에 「N / M개 획득」과 뱃지 칸이 그려지고 「마일스톤 헌터」 칸이 보이며 예외가 없다 — 뱃지 문맥이 부르는 완료 마일스톤 합(totalCompletedMilestones)을 기관 세포 js/core/profile-load.js 로 옮겼다(동작 그대로)",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"settings\"]"
+  },
+  {
+   "do": "waitFor",
+   "selector": "details.settings-group-accordion:has(#profileCard) > summary",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "details.settings-group-accordion:has(#profileCard) > summary"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#hallOfFameBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#hallOfFameBtn"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalSheet h3",
+   "text": "명예의 전당",
+   "timeoutMs": 4000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalSheet",
+   "text": "개 획득"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalSheet .badge-tile",
+   "text": "마일스톤 헌터"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
