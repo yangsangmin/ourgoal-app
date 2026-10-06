@@ -1,0 +1,100 @@
+{
+  "taskId": "TASK-ES-580",
+  "targetTask": "TASK-ES-576",
+  "targetPr": 837,
+  "headCommit": "7d72029892a1acfeeede36429ebdb0e844219e93",
+  "baseCommit": "c34a0568b99f6423b929622f022e495c9dd497ac",
+  "reconciliationTimestamp": "2026-10-06T20:38:00+09:00",
+  "summary": "PR #837의 test-final.json과 proof.json 간 불일치는 제품 회귀가 아니며, 중간 하네스 실행 산출물(test-final.json)과 선행 PR #835 템플릿 복사 기록(proof.json) 간의 사후 정합화 누락에서 기인한 서류 불일치임.",
+  "classification": {
+    "measuredFactsPast": {
+      "task370": "2026-10-06T15:39:58 - test-compare-inline-split-2.js 실행. base zip 사본 대 작업 트리 대조로 baseExit 1, workExit 1, outDiff 3건, task 'TASK-ES-432' 출력.",
+      "task407": "2026-10-06T15:44:41 - 작업 트리 단독 npm test 실행. 종료코드 0 (100% 통과). sha256: 21aaf2be6521c428be6f9a0ae726fc9ecf8ce82372bfdee9284c211b0e536cf6.",
+      "task977": "2026-10-06T19:01:26 - 작업 트리 단독 npm test 재실행. 종료코드 0 (100% 통과). sha256: 21aaf2be6521c428be6f9a0ae726fc9ecf8ce82372bfdee9284c211b0e536cf6."
+    },
+    "copiedTemplateValuesInProofJson": {
+      "npmBase0": "TASK-ES-575(PR #835) proof.json 템플릿 복사값. 과거 시점에 단독 base npm 0 실측 로그는 생성되지 않았음.",
+      "titlesSameTrue": "TASK-ES-575 proof.json 템플릿 복사값. 당시 test-final.json의 실측(false, 178 vs 179개 모듈 파일 제목 차이)과 상충되며 실측된 사실이 아님.",
+      "outputDiff0": "TASK-ES-575 proof.json 템플릿 복사값. 당시 test-final.json의 실측(3건)과 상충되며 실측된 사실이 아님."
+    },
+    "measuredFactsNewTask580": {
+      "archiveComparisons": "zip 사본 간 115개 시험 중 기저 실패 28개 100% 일치. offline-sync-queue-retain 간헐적 1회 실패 관측.",
+      "offlineSyncFlakiness": "동일 조건 50회 반복 실측 결과 BASE 49통과/1실패(98%), WORK 47통과/3실패(94%). 두 커밋 간 관련 소스/시험 파일 diff 0줄(sha256 동일).",
+      "gitNpmMeasurement": "독립 git 클론 환경 실측 결과 base(c34a0568) exitCode 0 (npm-test-base-c34a0568.log, sha256: c33c2bf5...), work(7d720298) exitCode 0 (npm-test-work-7d720298.log, sha256: f41d2f23...)."
+    },
+    "unmeasuredItems": {
+      "pastBaseNpmLog": "TASK-ES-576 수행 당시 c34a0568에 대한 독립 git 환경의 단독 npm test 원시 로그는 부재함 (TASK-ES-580 신규 실측으로만 확인됨).",
+      "pastPreNormalized3TestsLog": "TASK-ES-576 수행 당시 outputDiff 3건을 .git 포함 환경에서 사전 대조한 과거 로그는 부재함."
+    },
+    "environmentalDifferences": {
+      "gitPresence": "zip 사본(scratch/base)에 .git 디렉터리가 없어 scripts/verify-integrity-gate.js 실행 실패(npmExit 1) 및 git 명령 종속 3개 시험(avatar, goal-templates, cell-map-export)의 출력/종료코드 차이 발생.",
+      "modularFilesCount": "새 세포 today-mission.js 추가로 modular files가 178->179로 증가하여 smoke-test 제목 1행 차이 발생 (smokeTitlesIdentical false 원인)."
+    },
+    "potentialRegressionVerdict": {
+      "verdict": "제품 회귀 없음 (0건)",
+      "rationale": "1) PR #837 변경 파일 중 3개 outputDiff 및 offline-sync와 관련된 제품 코드는 0건임. 2) 기저 실패 28건은 기준선과 작업선에서 100% 동일함. 3) offline-sync 실패는 Date.now() 밀리초 충돌로 인한 양쪽 공통 비결정성(flakiness)임."
+    }
+  },
+  "evidenceFiles": [
+    {
+      "role": "과거 작업 npm test 최종 원시 로그",
+      "path": "reports/TASK-ES-580/raw-task-977.log",
+      "sha256": "21aaf2be6521c428be6f9a0ae726fc9ecf8ce82372bfdee9284c211b0e536cf6",
+      "exitCode": 0
+    },
+    {
+      "role": "과거 작업 npm test 1차 원시 로그",
+      "path": "reports/TASK-ES-580/raw-task-407.log",
+      "sha256": "21aaf2be6521c428be6f9a0ae726fc9ecf8ce82372bfdee9284c211b0e536cf6",
+      "exitCode": 0
+    },
+    {
+      "role": "과거 하네스 대조 원시 로그",
+      "path": "reports/TASK-ES-580/raw-task-370.log",
+      "sha256": "28c5550fdb298512a0ec1f13db26865cc633cf04a0fc822046a32a8a0eac5b63",
+      "exitCode": 1
+    },
+    {
+      "role": "원래 커밋된 test-final.json (보존)",
+      "path": "reports/TASK-ES-576/test-final.json",
+      "sha256": "df9495bc8e53faa38942e21b282f0374d74d6ff0fbb1f6edcadc8883093acffb"
+    },
+    {
+      "role": "원래 커밋된 proof.json (보존)",
+      "path": "reports/TASK-ES-576/proof.json",
+      "sha256": "7b2ce60c36e7598220a9177f1b2b9265c6436902f42bc22186297babad6e2f40"
+    },
+    {
+      "role": "신규 기준 npm test 실측 로그 (git-base c34a0568)",
+      "path": "reports/TASK-ES-580/npm-test-base-c34a0568.log",
+      "sha256": "c33c2bf5d5dde028baba49aefa03e172e4b8c95498d6693c1b1b363ee179beac",
+      "exitCode": 0
+    },
+    {
+      "role": "신규 작업 npm test 실측 로그 (git-work 7d720298)",
+      "path": "reports/TASK-ES-580/npm-test-work-7d720298.log",
+      "sha256": "f41d2f23e426afa5803f14fb541ad499a1b3dc6bd4dbc8b53b4a941f5f554c75",
+      "exitCode": 0
+    },
+    {
+      "role": "신규 비결정성 50회 실측 데이터",
+      "path": "reports/TASK-ES-580/offline-sync-flakiness.json"
+    }
+  ],
+  "independentReview": {
+    "by": "Codex",
+    "baseHead": "c34a0568b99f6423b929622f022e495c9dd497ac",
+    "workHead": "7d72029892a1acfeeede36429ebdb0e844219e93",
+    "sourceDiff": "",
+    "scope": "정확한 HEAD·npm 로그 SHA·관련 소스 diff 확인. 법정 판정 아님.",
+    "limitations": [
+      "반복50회 집계는 작업자 보고서. 실행별 원시 결과는 게시 자료에서 확인되지 않아 독립 재계산 불가.",
+      "모든115개 출력이 동일하다는 주장은 하지 않음. archive 비교에서 간헐 실패와 환경 차이가 있으며 기존 원시 자료 보존."
+    ],
+    "repositoryEvidence": [
+      "reports/TASK-ES-580/archive-comparison-result.json",
+      "reports/TASK-ES-580/test-3-diffs.json",
+      "reports/TASK-ES-580/git-npm-summary.json"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "testFile": "tests/offline-sync-queue-retain.test.js",
+  "productFile": "js/core/virtual-user-helpers.js",
+  "gitDiff": {
+    "c34a0568_vs_7d720298": "ZERO diff (0 insertions, 0 deletions)",
+    "productFileSha256": "4b65d15e7db67f6390b9c2f6decbc6c40836384f6986b0d2e960e5396a6488ab (identical in base and work)",
+    "testFileSha256": "1e2e78f4864c94c8b904afcac6eea1fbd44b8019d7d0b16ee4569641f439372b (identical in base and work)"
+  },
+  "repeatabilityMeasurement": {
+    "base_c34a0568": {
+      "runs": 50,
+      "passed": 49,
+      "failed": 1,
+      "passRate": "98.0%"
+    },
+    "work_7d720298": {
+      "runs": 50,
+      "passed": 47,
+      "failed": 3,
+      "passRate": "94.0%"
+    }
+  },
+  "rootCauseOfNonDeterminism": {
+    "mechanism": "tests/offline-sync-queue-retain.test.js의 load() 가상 환경에는 L.uid 함수가 주입되지 않아, js/core/virtual-user-helpers.js 146행의 enqueue()가 'act_' + Date.now()로 ID를 생성함. r1과 r2를 연속 enqueue할 때 Windows 시스템 시계의 밀리초 경계(tick boundary)에 따라 두 항목의 ID가 동일하게 부여되는 현상이 발생함. ID가 충돌하면 flush() 내부의 doneIds 중복 마킹으로 인해 실패한 r2가 큐 필터링에서 삭제되어 '실패한 항목(r2)은 큐에 남는다 — 남은 큐: []' 단언 실패(AssertionError)가 간헐적으로 발생함.",
+    "verdict": "PR837(7d720298)에서 도입된 제품 회귀가 아니며, 기준 커밋(c34a0568)과 작업 커밋(7d720298) 모두에 동일하게 존재하는 시험 환경 및 Date.now() ID 생성의 기저 비결정성(Flakiness)임."
+  }
+}
