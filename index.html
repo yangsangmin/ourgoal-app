@@ -2149,7 +2149,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script>
-<script src="js/core/ui-helpers.js"></script><script src="js/core/app-boot.js"></script><script src="js/core/all-view-render.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
+<script src="js/core/ui-helpers.js"></script><script src="js/tabs/records/template-record-detail.js"></script><script src="js/core/app-boot.js"></script><script src="js/core/all-view-render.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
 <script src="js/core/modal.js"></script>
@@ -3199,6 +3199,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get recordLanding(){ return recordLanding; },
     get setupDateRolloverWatcher(){ return setupDateRolloverWatcher; },
     get updateTopBar(){ return updateTopBar; }
+  });
+  /* [#TASK-ES-585] js/tabs/records/template-record-detail.js — 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var openTemplateRecordDetailModal = _uiKit.openTemplateRecordDetailModal;
+  var checkRecordDeepLink = _uiKit.checkRecordDeepLink;
+  window.OurgoalAppScope.expose('index.html', {
+    get computeTrendChartData(){ return computeTrendChartData; },
+    get getProTemplateByKey(){ return getProTemplateByKey; },
+    get openProCoachReportModal(){ return openProCoachReportModal; },
+    get openProNotionExportModal(){ return openProNotionExportModal; },
+    get renderAnalyticsHtml(){ return renderAnalyticsHtml; },
+    get renderTrendSvgChart(){ return renderTrendSvgChart; }
   });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
@@ -7277,148 +7288,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       sheet.querySelector('#proCalendarSaveBtn').onclick = function(){ executeSave(true); };
     });
   }
-
-  /* 🔍 전문 템플릿 기록 상세 조회 모달 (일정 또는 기록에서 클릭 시) */
-  function openTemplateRecordDetailModal(record){
-    if(!record) return;
-    var curTpl = getProTemplateByKey(record.templateKey || record.templateId);
-    var tplTitle = record.templateTitle || (curTpl ? curTpl.title : '전문 맞춤 기록');
-    var cols = record.columns || (curTpl ? curTpl.columns : ['번호', '항목']);
-    var rList = record.rows || [];
-    var yymmdd = fmtYYMMDD(record.startAt);
-
-    openModal(
-      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span class="pro-tpl-badge">' + escapeHtml(tplTitle) + '</span>' +
-          '<span class="faint" style="font-size:.8125rem;">' + yymmdd + ' (' + rList.length + '개 항목)</span>' +
-        '</div>' +
-        '<div style="display:flex;gap:5px;align-items:center;">' +
-          '<button class="btn btn-ghost btn-sm" id="detailCoachBtn" type="button" style="font-size:.8125rem;padding:3px 7px;color:var(--ink);border-color:var(--rule);" title="AI 프로 코치 분석">AI 코치</button>' +
-          '<button class="btn btn-ghost btn-sm" id="detailNotionBtn" type="button" style="font-size:.8125rem;padding:3px 7px;" title="노션 표 복사">Notion</button>' +
-          '<button class="btn btn-ghost btn-sm" id="detailEditBtn" type="button" style="font-size:.8125rem;padding:3px 8px;color:var(--ink);border-color:var(--rule);">수정</button>' +
-        '</div>' +
-      '</div>' +
-      '<div id="detailAnalyticsWrap" style="margin-bottom:10px;">' +
-        renderAnalyticsHtml(curTpl, cols, rList) +
-      '</div>' +
-      '<div id="detailTrendChartWrap" style="margin-bottom:10px;">' +
-        renderTrendSvgChart(computeTrendChartData(record.templateKey || record.templateId, (state.profile && state.profile.records) || [], '7')) +
-      '</div>' +
-      (record.memo ? '<div style="padding:8px 12px;background:var(--card2);border-radius:10px;margin-bottom:10px;font-size:.875rem;line-height:1.45;">💭 <b>메모:</b> ' + escapeHtml(record.memo) + '</div>' : '') +
-      '<div class="pro-tpl-table-wrap">' +
-        '<table class="pro-notion-table">' +
-          '<thead>' +
-            '<tr>' +
-              cols.map(function(c, idx){
-                return '<th style="'+(idx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
-              }).join('') +
-            '</tr>' +
-          '</thead>' +
-          '<tbody>' +
-            (rList.length ? rList.map(function(r, rIdx){
-              return '<tr>' + cols.map(function(c, cIdx){
-                var cell = r[cIdx] !== undefined ? r[cIdx] : '';
-                return '<td style="padding:6px 10px;'+(cIdx===0?'width:44px;text-align:center;font-weight:700;color:var(--ink-faint);':'')+'">'+escapeHtml(String(cell))+'</td>';
-              }).join('') + '</tr>';
-            }).join('') : '<tr><td colspan="'+cols.length+'" style="text-align:center;padding:14px;color:var(--ink-faint);">기록된 행이 없습니다</td></tr>') +
-          '</tbody>' +
-        '</table>' +
-      '</div>' +
-      (record.photo ? '<div style="margin:10px 0;"><img src="'+record.photo+'" style="max-height:180px;border-radius:10px;object-fit:cover;border:1px solid var(--rule);"></div>' : '') +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:8px;">' +
-        '<span class="faint" style="font-size:.8125rem;">기록일시: ' + fmtTime(record.startAt) + '</span>' +
-        '<div style="display:flex;gap:6px;">' +
-          (record.linkedScheduleId ? '<button class="btn btn-ghost btn-sm" id="detailGoCalBtn" type="button" style="font-size:.8125rem;">캘린더에서 보기</button>' : '') +
-          '<button class="btn btn-primary btn-sm" id="detailCloseBtn" type="button" style="padding:4px 16px;">닫기</button>' +
-        '</div>' +
-      '</div>',
-      function(sheet){
-        sheet.querySelector('#detailCloseBtn').onclick = closeModal;
-
-        var detailChartPeriod = '7';
-        function bindDetailChartEvents(){
-          var chartWrap = sheet.querySelector('#detailTrendChartWrap');
-          if(!chartWrap) return;
-          var tip = chartWrap.querySelector('#trendTooltip');
-          chartWrap.querySelectorAll('.trend-pt-group').forEach(function(g){
-            g.onmouseenter = function(){
-              if(!tip) return;
-              tip.textContent = (g.dataset.val || '') + ' (' + (g.dataset.date || '') + ')';
-              tip.style.display = 'block';
-              var rect = g.getBoundingClientRect();
-              var wrapRect = chartWrap.getBoundingClientRect();
-              tip.style.left = (rect.left - wrapRect.left) + 'px';
-              tip.style.top = (rect.top - wrapRect.top - 24) + 'px';
-            };
-            g.onmouseleave = function(){
-              if(tip) tip.style.display = 'none';
-            };
-          });
-          chartWrap.querySelectorAll('.pro-trend-filter-chip').forEach(function(btn){
-            btn.onclick = function(){
-              detailChartPeriod = btn.dataset.period || '7';
-              var cData = computeTrendChartData(record.templateKey || record.templateId, (state.profile && state.profile.records) || [], detailChartPeriod);
-              chartWrap.innerHTML = renderTrendSvgChart(cData);
-              var activeBtn = chartWrap.querySelector('.pro-trend-filter-chip[data-period="'+detailChartPeriod+'"]');
-              if(activeBtn){
-                chartWrap.querySelectorAll('.pro-trend-filter-chip').forEach(function(b){ b.classList.remove('active'); });
-                activeBtn.classList.add('active');
-              }
-              bindDetailChartEvents();
-            };
-          });
-        }
-        bindDetailChartEvents();
-
-        var editBtn = sheet.querySelector('#detailEditBtn');
-        if(editBtn){
-          editBtn.onclick = function(){
-            closeModal();
-            openProTemplateRecordModal(record);
-          };
-        }
-        var coachBtn = sheet.querySelector('#detailCoachBtn');
-        if(coachBtn){
-          coachBtn.onclick = function(){
-            openProCoachReportModal(curTpl, cols, rList, record.memo||'');
-          };
-        }
-        var notionBtn = sheet.querySelector('#detailNotionBtn');
-        if(notionBtn){
-          notionBtn.onclick = function(){
-            openProNotionExportModal(curTpl, cols, rList);
-          };
-        }
-        var calBtn = sheet.querySelector('#detailGoCalBtn');
-        if(calBtn){
-          calBtn.onclick = function(){
-            closeModal();
-            state.calSelectedDate = isoDate(new Date(record.startAt));
-            state.calDate = state.calSelectedDate;
-            setTab('calendar');
-          };
-        }
-      }
-    );
-  }
-
-  /* 🔗 URL 해시 딥링크 감지 (#record=rec_xxx 또는 #record:rec_xxx) */
-  function checkRecordDeepLink(){
-    var hash = window.location.hash || '';
-    var m = hash.match(/#record[=:](\w+)/);
-    if(m && m[1]){
-      var rid = m[1];
-      var rec = (state.profile.records || []).find(function(r){ return r.id === rid; });
-      if(rec){
-        if(rec.type === 'template'){
-          openTemplateRecordDetailModal(rec);
-        } else {
-          openRecordModal(rec);
-        }
-      }
-    }
-  }
+  /* [#TASK-ES-585] openTemplateRecordDetailModal · checkRecordDeepLink → js/tabs/records/template-record-detail.js 로 옮김(전문 템플릿 기록 상세 모달·딥링크 책임 원문 분열 — 앞 주석 포함) */
   window.addEventListener('hashchange', checkRecordDeepLink);
 
   /* ============ [#TASK-ES-358] 기록 탭 렌더 → js/tabs/records/period-ai-card.js · render.js 로 옮김 ============

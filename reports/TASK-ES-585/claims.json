@@ -1,0 +1,127 @@
+{
+  "task": "TASK-ES-585",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-585.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "전문 템플릿 기록 상세 모달(openTemplateRecordDetailModal) 및 딥링크(checkRecordDeepLink) 책임을 원문 손수정0으로 js/tabs/records/template-record-detail.js에 기계적 분열하고 브라우저 동작을 보존한다."
+    },
+    {
+      "id": "R2",
+      "text": "게스트 UI에서 전문 템플릿 기록 생성, 상세 모달 열기/닫기/차트기간/수정·취소 및 #record:<id> 딥링크 브라우저 네비게이션 동작을 보존한다."
+    },
+    {
+      "id": "R3",
+      "text": "원문 토큰 일치, 단독 모듈 로드, UI 비교기 6종 변이 감지, 표준 tab-check 2+1, 115개 시험 전수 비교 및 무결성 증명을 등록한다."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "유료 AI 요청·remote 송신·실계정/외부계정 데이터변경/삭제/로그인/클립보드외부전송·tri-sync·배포는 미측정. AI 코치/Notion 내보내기 범위 밖 전송 가지는 미측정으로 분리.",
+      "cannotBecause": "needs-login-and-external-service"
+    },
+    {
+      "text": "목표 빠른추가 진입은 숨김 여부 아직 미측정이며 이 작업 범위가 아님.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "seed(Math.random) 독립 난수 추첨 앵커 검증: manito-basics manitoState 최초 접근 난수로 기존 원시 내 독립 앵커 부재하여 미측정으로 유지.",
+      "cannotBecause": "no-independent-anchor-in-raw"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "실제 게스트 진입 후 기록 탭에서 전문 템플릿 기록을 생성하고, 상세 모달 열기/닫기 및 #record:<id> 딥링크 브라우저 네비게이션 동작을 보존한다.",
+      "touches": [
+        "index.html",
+        "js/tabs/records/template-record-detail.js"
+      ],
+      "scenario": "scenarios/template-record-detail-guest.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원문 토큰 동일(915/106), 잔여 동일(35505), 접두누수0, this/arguments0, 새전역0, 이중처리기0, 800줄 이하(168줄) 검증 완료",
+      "touches": [
+        "reports/TASK-ES-585/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-585/verify-inline-hard.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 단독 로드 탐침 비교 (새 회귀 0, 신규 세포 파일 단독 로드 ok: true)",
+      "touches": [
+        "reports/TASK-ES-585/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-585/module-load.json",
+        "path": "newRegressionCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 UI 14단계 15클릭 불변식 보존, 모달/토스트/저장소/에러 전수 일치, 6종 뮤테이터 민감도 감지 전수 통과",
+      "touches": [
+        "reports/TASK-ES-585/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-585/ui-compare.json",
+        "path": "storageMatched",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "표준 tab-check 2+1 (기록 탭 기준선 2회 대 작업판 비교)",
+      "touches": [
+        "reports/TASK-ES-585/tab-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-585/tab-compare.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "115개 전체 시험 및 npm test 기준선 대 작업판 비교 (새 회귀 0)",
+      "touches": [
+        "reports/TASK-ES-585/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-585/test-compare.json",
+        "path": "tests.regressionCount",
+        "equals": 0
+      }
+    }
+  ]
+}

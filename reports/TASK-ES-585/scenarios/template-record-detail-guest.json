@@ -1,0 +1,95 @@
+{
+  "id": "template-record-detail-guest",
+  "title": "실제 게스트 진입·기록 탭·전문 템플릿 생성·상세 모달 조회 및 닫기·딥링크 보존",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar .rec-quick-dock-btn:nth-child(2)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#proGeneralSaveBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".pro-template-record-card",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".pro-template-record-card"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#detailCloseBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
