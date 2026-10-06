@@ -6032,3 +6032,5 @@
 - TASK-ES-572: 실제 시간입력·알림스위치·20초타이머 및 성지 목표 상세 서랍 UI 도달 실측. 5함수 원문 생성기 분열 초안. native 권한창 한계만 별도 주장이며 보고 domain=config. 최종 proof·제품 push 아직 없음.
 
 - TASK-ES-575: calendarAvailable만 기존 기관 키트로 원문 분열. 최신main 기준 실제 일정UI/CDP 및 전후 측정, 원격 전송0.
+
+- TASK-ES-576: computeTodayMissionHash와 renderTodayMissionCard를 home/today-mission으로 원문 분열. 최신 main 기준 실제 오늘 미션 UI/CDP 조작 및 아코디언 더보기 실측 완료.

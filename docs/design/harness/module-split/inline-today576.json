@@ -1,0 +1,28 @@
+{
+  "task": "TASK-ES-576",
+  "label": "오늘 미션 해시·카드 렌더 책임 분열",
+  "slot": "HO",
+  "cells": [
+    {
+      "key": "todayMission",
+      "file": "js/tabs/home/today-mission.js",
+      "kit": "OurgoalHomeMegaBlock",
+      "kitVar": "_homeKit",
+      "afterTag": "<script src=\"js/tabs/home/index.js\"></script>",
+      "title": "OurGoal Today Mission (홈 — 오늘 미션 해시·카드)",
+      "desc": [
+        "목표·기록 기반 해시와 오늘 미션 카드의 캐시·펼침/접기·비동기 저장 재렌더. 기존 AI 요청 함수·통로·window 노출·버그를 보존한다. 홈 키트를 통째 대입하는 index.js 뒤에 태그를 둔다."
+      ],
+      "take": [
+        {
+          "group": "오늘의 미션 및 AI 피드백 조건부 호출 최적화",
+          "names": [
+            "computeTodayMissionHash",
+            "renderTodayMissionCard"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ]
+}

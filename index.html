@@ -2162,7 +2162,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/home/sub-today.js"></script>
 <script src="js/tabs/home/sub-quest.js"></script>
 <script src="js/tabs/home/sub-onescreen.js"></script>
-<script src="js/tabs/home/index.js"></script><script src="js/tabs/home/quest-summary.js"></script><script src="js/tabs/home/home-render.js"></script>
+<script src="js/tabs/home/index.js"></script><script src="js/tabs/home/today-mission.js"></script><script src="js/tabs/home/quest-summary.js"></script><script src="js/tabs/home/home-render.js"></script>
 <!-- OurGoal Shipyard Architecture: Goals Mega-Block & Sub-Blocks (목표 메가블록 및 소블록 외판) -->
 <script src="js/tabs/goals/sub-personal.js"></script>
 <script src="js/tabs/goals/sub-routine.js"></script>
@@ -3187,6 +3187,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var defaultProfile = _uiKit.defaultProfile;
   /* [#TASK-ES-575] js/core/calendar-availability.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var calendarAvailable = _uiKit.calendarAvailable;
+  /* [#TASK-ES-576] js/tabs/home/today-mission.js — 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var computeTodayMissionHash = _homeKit.computeTodayMissionHash;
+  var renderTodayMissionCard = _homeKit.renderTodayMissionCard;
+  window.OurgoalAppScope.expose('index.html', {
+    get requestTodayMission(){ return requestTodayMission; }
+  });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -5348,82 +5354,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-444] localTodayMission → js/tabs/goals/ai-local-fallback.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
   /* [#TASK-ES-436] requestTodayMission → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
   /* ============ [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 ============ */
-  function computeTodayMissionHash(g){
-    var baseHash = typeof computeGoalStatusHash === 'function' ? computeGoalStatusHash(g) : String(g.title||'');
-    var recs = (state.profile && state.profile.records) || [];
-    var lastRec = recs.find(function(r){ return r.goalId === g.id || r.category === g.category; });
-    var recPart = lastRec ? (lastRec.id + ':' + (lastRec.startAt || lastRec.date || '')) : '';
-    return baseHash + (recPart ? (':' + recPart) : '');
-  }
+  /* [#TASK-ES-576] computeTodayMissionHash → js/tabs/home/today-mission.js 로 옮김(오늘 미션 해시·카드 렌더 책임 분열 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.computeTodayMissionHash = computeTodayMissionHash;
   }
-  function renderTodayMissionCard(){
-    var el = document.getElementById('todayMissionCard');
-    if(!el || !state.profile) return;
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    if(!goals.length){ el.innerHTML = ''; return; }
-    var today = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : dateKey(nowISO());
-    var missions = state.profile.settings.todayMissions || {};
-
-    function missionRowHtml(g){
-      var m = missions[g.id];
-      var gHash = computeTodayMissionHash(g);
-      var isCacheValid = !!(m && m.text && m.date === today && (!m.hash || m.hash === gHash));
-      var text = isCacheValid ? m.text : '생각하는 중...';
-      return '<div class="mission-row"><span class="m-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
-    }
-
-    var firstGoal = goals[0];
-    var restGoals = goals.slice(1);
-    var isExpanded = !!state.missionAccordionOpen;
-
-    var moreBtnHtml = restGoals.length > 0 ?
-      ('<button class="btn btn-ghost btn-sm mission-more-btn" id="btnToggleMissionAccordion" type="button" style="font-size:.6875rem;padding:1px 6px;color:var(--ink-soft);border-color:var(--rule);line-height:1.2;">' +
-        (isExpanded ? '접기 ▴' : ('외 ' + restGoals.length + '개 미션 더보기 ▾')) +
-      '</button>') : '';
-
-    var restHtml = (restGoals.length > 0) ?
-      ('<div id="missionRestList" style="display:' + (isExpanded ? 'block' : 'none') + ';">' +
-        restGoals.map(missionRowHtml).join('') +
-      '</div>') : '';
-
-    el.innerHTML = '<div class="mission-card" style="padding:10px 14px;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><div class="ct-label" style="margin:0;">오늘의 카드</div><span class="today-card-guide-hint" title="뭘 할지 모르겠을 때 도움돼요(내 목표기반)">뭘 할지 모르겠을 때 도움돼요(내 목표기반)</span></div>' +
-        moreBtnHtml +
-      '</div>' +
-      missionRowHtml(firstGoal) +
-      restHtml +
-    '</div>';
-
-    var toggleBtn = el.querySelector('#btnToggleMissionAccordion');
-    if(toggleBtn){
-      toggleBtn.onclick = function(){
-        state.missionAccordionOpen = !state.missionAccordionOpen;
-        renderTodayMissionCard();
-      };
-    }
-    goals.forEach(function(g){
-      var m = missions[g.id];
-      var gHash = computeTodayMissionHash(g);
-      var isCacheValid = !!(m && m.text && m.date === today && (!m.hash || m.hash === gHash));
-      if(isCacheValid){
-        if(m && !m.hash){ m.hash = gHash; }
-        return;
-      }
-      if(!state.todayMissionPending) state.todayMissionPending = {};
-      if(state.todayMissionPending[g.id]) return;
-      state.todayMissionPending[g.id] = true;
-      requestTodayMission(g).then(async function(text){
-        delete state.todayMissionPending[g.id];
-        if(!state.profile.settings.todayMissions) state.profile.settings.todayMissions = {};
-        state.profile.settings.todayMissions[g.id] = { date: today, text: text, hash: gHash, updatedAt: nowISO() };
-        await saveProfile();
-        if(state.activeTab==='home') renderTodayMissionCard();
-      });
-    });
-  }
+  /* [#TASK-ES-576] renderTodayMissionCard → js/tabs/home/today-mission.js 로 옮김(오늘 미션 해시·카드 렌더 책임 분열 — 앞 주석 포함) */
 
   /* [#TASK-ES-444] localNextActionSuggestion → js/tabs/goals/ai-local-fallback.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
   /* [#TASK-ES-436] requestNextActionSuggestion · celebrateMilestoneDone → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
