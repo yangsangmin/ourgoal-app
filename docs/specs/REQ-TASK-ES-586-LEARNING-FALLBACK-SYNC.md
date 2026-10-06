@@ -15,7 +15,7 @@ docs/agents/lessons.json·WORK-REFERENCE.md·reference-meta.json을 로컬 정�
 정본 원장·runtime·노션·헌법·금고·제품·기존시험 변경0. 레지스트리 실제설정은 수정하지 않는다. 원래 없는 meta는 부재로 기록하며 만들었다고 역사에 쓰지 않는다. 앱 신고서는 check만 한다.
 
 ## 5. [원칙 ⑤] 절차
-history byte snapshot → sourceHash 확인·사본 복사 → ID별내용 대조 → 임시 registry canonicalRoot unavailable+fallback repoRoot로 bootstrap → module-guard --update 낮추기만 → cell-map-export → inline-script-map --write/check → 두번재생성 → npm test → PR → Court artifact.
+history byte snapshot → sourceHash 확인·사본 복사 → ID별내용 대조 → 임시 registry canonicalRoot unavailable+fallback repoRoot로 bootstrap → module-guard --update 낮추기만 → cell-map-export → inline-script-map --write 후 두 번 재생성 SHA 대조 → npm test → PR → Court artifact.
 
 ## 6. [원칙 ⑥] 절차 재검증 및 반론 격파
 반론1: 덮어쓰면 옛 원장이 사라진다. 격파: Git원문byte history와 SHA를 보존한다. 반론2: 헤더수만 맞추면 충분하다. 격파: 실제배열의 모든 ID/versionHash/PR/확인횟수를 대조하고 canonical 없는 실행에서 fallbackReceipt를 읽는다.
