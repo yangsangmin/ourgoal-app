@@ -1,0 +1,47 @@
+{
+  "task": "TASK-ES-581",
+  "label": "전체 화면 렌더·앱 부팅 원문 분열 (renderAll 및 appBoot)",
+  "slot": "HO",
+  "cells": [
+    {
+      "key": "core/all-view-render",
+      "file": "js/core/all-view-render.js",
+      "title": "전체 화면 렌더 통합 (renderAll)",
+      "desc": [
+        "홈·목표·일정·기록·소통·설정 6대 화면 및 탑바를 한 번에 다시 그린다."
+      ],
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "take": [
+        {
+          "group": " ============ Render all ============ ",
+          "names": [
+            "renderAll"
+          ],
+          "keepRest": true
+        }
+      ]
+    },
+    {
+      "key": "core/app-boot",
+      "file": "js/core/app-boot.js",
+      "title": "앱 부팅 및 세션 복원 (app-boot)",
+      "desc": [
+        "Supabase Auth 리스너 등록, PKCE 복원, 게스트/로그인 세션 초기화 및 진입을 관장한다."
+      ],
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "take": [
+        {
+          "group": " ============ Boot ============ ",
+          "wrap": [
+            "runAppBoot"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ]
+}

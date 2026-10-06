@@ -1,0 +1,165 @@
+{
+  "task": "TASK-ES-581",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-581-APP-BOOT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "앱 부팅의 게스트 진입 실제 화면 동작을 보존한다. 인증 세션·PKCE 분기는 미측정으로 구분한다."
+    },
+    {
+      "id": "R2",
+      "text": "전체 화면 렌더 이후 게스트 6개 탭 전환·홈 복귀를 보존한다."
+    },
+    {
+      "id": "R3",
+      "text": "분열 설정·신고서·명세·검증 도구와 작업자 측정 기록을 등록한다."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "로그인·PKCE 분기 실제 실행 미측정. 운영 live 하네스 범위이탈 기록은 로컬 작업 head 증명이 아니며 추가 실행은 차단했다.",
+      "cannotBecause": "needs-login"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "실제 게스트 클릭으로 홈에 진입하고 인사창을 닫는 부팅 동작을 보존한다.",
+      "touches": [
+        "index.html",
+        "js/core/app-boot.js"
+      ],
+      "scenario": "scenarios/app-boot-guest.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트 홈 렌더 이후 6개 탭 실제 클릭 전환과 홈 복귀를 보존한다.",
+      "touches": [
+        "index.html",
+        "js/core/all-view-render.js"
+      ],
+      "scenario": "scenarios/all-view-render.json"
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원문 동일성·잔여·누수 검사 작업자 기록 적재",
+      "touches": [
+        "reports/TASK-ES-581/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-581/verify-inline-hard.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "전체 탭 기준2회차 대비 작업 비교 차이0 작업자 기록 적재",
+      "touches": [
+        "reports/TASK-ES-581/tab-base2-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-581/tab-base2-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "전체 DOM·저장값·토스트·콘솔 비교 작업자 기록 적재",
+      "touches": [
+        "reports/TASK-ES-581/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-581/ui-compare.json",
+        "path": "measurementSummary.allChecksPass",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정·미측정·범위이탈 및 출처를 구분한 제출자료 목록 등록",
+      "touches": [
+        "reports/TASK-ES-581/evidence-manifest.json",
+        ".claude/plan-TASK-ES-581.md",
+        ".task-links/TASK-ES-581.json",
+        "docs/architecture/cell-descriptions.json",
+        "docs/architecture/modules.json",
+        "docs/design/harness/module-split/batch-next-plan.md",
+        "docs/design/harness/module-split/boot-compare581.js",
+        "docs/design/harness/module-split/boot-ui581.js",
+        "docs/design/harness/module-split/inline-boot581.json",
+        "docs/design/harness/module-split/tab-isolated581.js",
+        "docs/specs/REQ-TASK-ES-581-APP-BOOT.md",
+        "reports/TASK-ES-581/batch-next-plan.md",
+        "reports/TASK-ES-581/check-evidence.cjs",
+        "reports/TASK-ES-581/module-load.json",
+        "reports/TASK-ES-581/proof.json",
+        "reports/TASK-ES-581/real-account-availability.json",
+        "reports/TASK-ES-581/tab-after.json",
+        "reports/TASK-ES-581/tab-after.json.adapter.json",
+        "reports/TASK-ES-581/tab-base1.json",
+        "reports/TASK-ES-581/tab-base1.json.adapter.json",
+        "reports/TASK-ES-581/tab-base2.json",
+        "reports/TASK-ES-581/tab-base2.json.adapter.json",
+        "reports/TASK-ES-581/tab-compare.json",
+        "reports/TASK-ES-581/tab-repro-base.json",
+        "reports/TASK-ES-581/test-compare.json",
+        "reports/TASK-ES-581/ui-after.json",
+        "reports/TASK-ES-581/ui-after.json.publication.json",
+        "reports/TASK-ES-581/ui-after.v1.json",
+        "reports/TASK-ES-581/ui-after.v1.json.publication.json",
+        "reports/TASK-ES-581/ui-after.v2.json",
+        "reports/TASK-ES-581/ui-after.v2.json.publication.json",
+        "reports/TASK-ES-581/ui-base1.json",
+        "reports/TASK-ES-581/ui-base1.json.publication.json",
+        "reports/TASK-ES-581/ui-base1.v1.json",
+        "reports/TASK-ES-581/ui-base1.v1.json.publication.json",
+        "reports/TASK-ES-581/ui-base1.v2.json",
+        "reports/TASK-ES-581/ui-base1.v2.json.publication.json",
+        "reports/TASK-ES-581/ui-base2.json",
+        "reports/TASK-ES-581/ui-base2.json.publication.json",
+        "reports/TASK-ES-581/ui-base2.v1.json",
+        "reports/TASK-ES-581/ui-base2.v1.json.publication.json",
+        "reports/TASK-ES-581/ui-base2.v2.json",
+        "reports/TASK-ES-581/ui-base2.v2.json.publication.json",
+        "reports/TASK-ES-581/verify-inline-hard.raw.log",
+        "reports/TASK-ES-581/root-source-verify.json",
+        "reports/TASK-ES-581/root-module-load.json",
+        "reports/TASK-ES-581/root-scenario-local.json",
+        "reports/TASK-ES-581/root-test-compare.json",
+        "reports/TASK-ES-581/root-review.json",
+        "reports/TASK-ES-581/root-evidence-check.log"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-581/evidence-manifest.json",
+        "path": "task",
+        "equals": "TASK-ES-581"
+      }
+    }
+  ]
+}
