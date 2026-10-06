@@ -1,0 +1,61 @@
+{
+  "task": "TASK-ES-587",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-587.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "AST 파싱 및 순회를 위해 @babel/parser, @babel/traverse 개발 의존성을 추가한다."
+    },
+    {
+      "id": "R2",
+      "text": "npm ci 및 로드 테스트 결과를 보고에 포함한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "package.json에 @babel/parser 개발 의존성이 선언되어 있다.",
+      "touches": [
+        "package.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "package.json",
+        "text": "\"@babel/parser\":"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "package.json에 @babel/traverse 개발 의존성이 선언되어 있다.",
+      "touches": [
+        "package.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "package.json",
+        "text": "\"@babel/traverse\":"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "package-lock.json에 @babel/parser 및 @babel/traverse 잠금 정보가 추가되어 있다.",
+      "touches": [
+        "package-lock.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "package-lock.json",
+        "text": "node_modules/@babel/parser"
+      }
+    }
+  ]
+}
