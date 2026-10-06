@@ -1,0 +1,70 @@
+{
+ "task": "TASK-ES-556",
+ "label": "인라인 3단계 구역 Z6 표준 3",
+ "slot": "HO",
+ "slots": [
+  "H0 시범 #TASK-ES-439",
+  "H1",
+  "H2",
+  "H3",
+  "H4",
+  "HO 기관"
+ ],
+ "cells": [
+  {
+   "key": "homeRender",
+   "file": "js/tabs/home/home-render.js",
+   "kit": "OurgoalHomeMegaBlock",
+   "kitVar": "_homeKit",
+   "afterTag": "<script src=\"js/tabs/home/index.js\"></script>",
+   "title": "OurGoal Home Render (홈 — 홈 화면 그리기)",
+   "desc": [
+    "「RENDER: HOME」 묶음 전체(renderHome). 홈 큰 세포 키트 OurgoalHomeMegaBlock 은 js/tabs/home/index.js 가 통째로 대입하므로 그 태그 뒤에 둔다(유형 M)."
+   ],
+   "take": [
+    {
+     "group": "RENDER: HOME",
+     "all": true
+    }
+   ]
+  },
+  {
+   "key": "micGuide",
+   "file": "js/tabs/records/mic-permission-guide.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal Mic Permission Guide (기록 — 마이크 권한 자가 진단·허용 안내 창)",
+   "desc": [
+    "「🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227)」 묶음의 openMicPermissionGuideModal. window 노출 문은 원래 자리."
+   ],
+   "take": [
+    {
+     "group": "마이크 권한 거부 상태 자가 진단",
+     "all": true
+    }
+   ]
+  },
+  {
+   "key": "aiCatalog",
+   "file": "js/tabs/records/ai-feedback-catalog.js",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+   "title": "OurGoal AI Feedback Catalog (기록 — 테마별 피드백 지시문·로컬 피드백 문구·Gemini 쿼터 큐·완료 낱말)",
+   "desc": [
+    "「AI feedback (best-effort; provider-aware; local fallback)」 묶음의 THEME_FEEDBACK_PROMPTS, 「[#TASK-ES-225] Gemini API 분당 쿼터 방어」 묶음의 PREMIUM_FEEDBACK_CATALOG·GeminiQuotaDispatcher·DONE_KEYWORDS. window 노출 문과 상태 변수 requestClaudeFeedback 은 원래 자리."
+   ],
+   "take": [
+    {
+     "group": "AI feedback (best-effort; provider-aware; local fallback)",
+     "all": true
+    },
+    {
+     "group": "Gemini API 분당 쿼터",
+     "all": true
+    }
+   ]
+  }
+ ]
+}

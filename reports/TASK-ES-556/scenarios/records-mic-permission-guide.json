@@ -1,0 +1,53 @@
+{
+ "id": "records-mic-permission-guide",
+ "title": "게스트로 홈 3초 체크인의 마이크 단추를 누르면(브라우저가 마이크 권한을 주지 않음) 마이크 권한 안내 창이 뜬다 — 옮긴 openMicPermissionGuideModal(js/tabs/records/mic-permission-guide.js)",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#micBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#micBtn"
+  },
+  {
+   "do": "wait",
+   "ms": 2500
+  },
+  {
+   "expect": "visible",
+   "selector": "#micPermissionGuideModal"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#micPermissionGuideModal",
+   "text": "마이크"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

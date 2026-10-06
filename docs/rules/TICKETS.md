@@ -615,6 +615,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
 - #TASK-ES-552 | INFRA | [인라인 3단계 Z2 2차] 「개인 목표 200% 활용 가이드」 묶음을 세포 3개(goals/personal-goals-guide·goals/team-level-goals·goals/team-goal-edit-modal)로 옮김 — 게스트 시나리오 3(예시 팀 체험·템플릿 팀 개설로 팀 경로 도달) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-552-STAGE3-Z2-GUIDE.md | 4단계(심사 청구)
 - #TASK-ES-550 | INFRA | [금고 단독] 무결성 게이트 「[검증 16/16] [#TASK-ES-192]」 4단계를 「페이월 자리 안내 모달 없음」으로(#813 직후 병합, 상민님 「광고·구독 삭제 금고 변경 승인」) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-550-MONEY-INTEGRITY-GATE.md | 4단계(심사 청구)
+- #TASK-ES-556 | INFRA | [인라인 3단계 구역 Z6 표준 3] 홈 화면 그리기·마이크 권한 안내 창·AI 피드백 문구집 4묶음을 세포 3개로 동작 그대로 이전(자리 HO) | 오케스트레이터 배정 구역 Z5+Z6 (2026-10-06), REQ docs/specs/REQ-TASK-ES-556-STAGE3-Z56-C.md | 4단계(심사 청구)
 - #TASK-ES-563 | INFRA | [생성 지도 일괄 갱신 4회차] 생성 파일 4개를 main 2313ad6 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-06), REQ docs/specs/REQ-TASK-ES-563-GENERATED-MAPS-SYNC-4.md | 4단계(심사 청구)
 - #TASK-ES-526 | INFRA | [인라인 3단계 Z4 이동 3차] 표 CSV·음성 표 입력·테마별 기록 CSV·초대 글자를 세포 4개로 동작 그대로 이전 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-526-STAGE3-Z4-D.md
 - #TASK-ES-562 | INFRA | [인라인 3단계 구역 Z5 표준 1 — 다시 냄, #814 대체] 앱 잠금 PIN 형식·목표 종류 상수·로그인 화면 동작·가이드 단추·문의 단추 7묶음을 세포 5개로 동작 그대로 이전(자리 표지 Z56) | 오케스트레이터 배정 구역 Z5+Z6 (2026-10-06), REQ docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md | 4단계(심사 청구)

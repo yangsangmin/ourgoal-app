@@ -2,7 +2,7 @@
  * OurGoal Team Goal Edit Modal (목표 탭 — 팀장·매니저의 팀 목표 상세 편집 창)
  *
  * 같은 묶음의 팀 목표 상세 편집 창(openTeamGoalEditModal): 팀 목표명·마감일·마일스톤·세부 할 일을 고치고 저장·삭제한다. 팀목표 화면 편집 모드의 「상세 편집」 단추가 L 통로로 부른다.
- * #TASK-ES-552(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집): index.html 인라인 IIFE 의 구간(이전 전 7471~7611줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-552(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집): index.html 인라인 IIFE 의 구간(이전 전 6905~7045줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
-  /* ---- 이전 전 index.html 7471~7611줄(#TASK-ES-552 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 6905~7045줄(#TASK-ES-552 생성기 표지) ---- */
   /* [#TASK-ES-493] getTeamGoalTemplatePreset → js/tabs/goals/team-goals-guide.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   function openTeamGoalEditModal(gid, tgid){

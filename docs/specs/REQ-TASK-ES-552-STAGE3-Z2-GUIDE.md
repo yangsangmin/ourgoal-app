@@ -61,3 +61,11 @@ worktree `C:/dev/wt/stage3-z2`(처음 origin/main 03dcb6b, #803 포함 — 이�
 | 막힐 지점 | 같은 H2 자리를 쓰는 #TASK-ES-545 와 머리 이음매 충돌(L010 생성기 재실행) · main 이동 |
 
 [4단계: 심사 청구]
+
+## Codex 인계 재측정 (작업참고 기준 PR #827)
+
+최신 origin/main 3ced3a46 입력으로 생성기를 재실행했다. reports/TASK-ES-552/snapshot-resume.json이 현재 수치 정본이며 previous-measurements.json은 기존 측정 보존본이다. 위 초기 기준 설명보다 재측정 파일을 우선 읽는다. 최신 기준 게스트·실계정·탭은 기준2회/작업1회로 다시 측정하며 시험은 git 이력을 가진 동일 main 사본과 종료 코드를 맞댄다. 주장·기대값·검사 수 변경 0.
+
+탭 비교는 화면 측정용 --deadclick off로 목표 탭 기준2회·작업1회를 실행한다. deadclick rep의 개별 단추 재부팅 반복은 별도 조작 시나리오 3개와 게스트·실계정 단계 비교가 이미 수행하여 화면 차이 검사에는 사용하지 않는다. 하네스와 기대값 변경 0.
+
+기준 archive의 전체텍스트 출처 확인은 baseline-provenance.json으로 증명한다(EOL 정규화 동일). tab-check commit 칸은 내부 archive가 부모 작업트리의 git 메타를 상속한 값이므로 content sourceTreeRef를 함께 본다.

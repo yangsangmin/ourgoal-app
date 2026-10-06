@@ -1,0 +1,514 @@
+{
+ "task": "TASK-ES-556",
+ "slot": "HO",
+ "scriptHtmlLines": [
+  2257,
+  10521
+ ],
+ "plan": [
+  {
+   "cell": "homeRender",
+   "action": "move",
+   "segment": [
+    4614,
+    4826
+   ],
+   "stmt": [
+    4615,
+    4826
+   ],
+   "names": [
+    "renderHome"
+   ],
+   "why": null
+  },
+  {
+   "cell": "micGuide",
+   "action": "move",
+   "segment": [
+    4997,
+    5230
+   ],
+   "stmt": [
+    4997,
+    5230
+   ],
+   "names": [
+    "openMicPermissionGuideModal"
+   ],
+   "why": null
+  },
+  {
+   "cell": "micGuide",
+   "action": "keep",
+   "segment": [
+    5231,
+    5231
+   ],
+   "stmt": [
+    5231,
+    5231
+   ],
+   "names": [],
+   "why": "window 노출 — 원래 자리(순서 보존)"
+  },
+  {
+   "cell": "aiCatalog",
+   "action": "move",
+   "segment": [
+    5351,
+    5360
+   ],
+   "stmt": [
+    5353,
+    5360
+   ],
+   "names": [
+    "THEME_FEEDBACK_PROMPTS"
+   ],
+   "why": null
+  },
+  {
+   "cell": "aiCatalog",
+   "action": "move",
+   "segment": [
+    5365,
+    5406
+   ],
+   "stmt": [
+    5365,
+    5406
+   ],
+   "names": [
+    "PREMIUM_FEEDBACK_CATALOG"
+   ],
+   "why": null
+  },
+  {
+   "cell": "aiCatalog",
+   "action": "move",
+   "segment": [
+    5407,
+    5498
+   ],
+   "stmt": [
+    5408,
+    5498
+   ],
+   "names": [
+    "GeminiQuotaDispatcher"
+   ],
+   "why": null
+  },
+  {
+   "cell": "aiCatalog",
+   "action": "keep",
+   "segment": [
+    5499,
+    5499
+   ],
+   "stmt": [
+    5499,
+    5499
+   ],
+   "names": [],
+   "why": "window 노출 — 원래 자리(순서 보존)"
+  },
+  {
+   "cell": "aiCatalog",
+   "action": "keep",
+   "segment": [
+    5500,
+    5500
+   ],
+   "stmt": [
+    5500,
+    5500
+   ],
+   "names": [],
+   "why": "window 노출 — 원래 자리(순서 보존)"
+  },
+  {
+   "cell": "aiCatalog",
+   "action": "keep",
+   "segment": [
+    5501,
+    5503
+   ],
+   "stmt": [
+    5503,
+    5503
+   ],
+   "names": [
+    "requestClaudeFeedback"
+   ],
+   "why": "상태 변수(재대입 또는 실행되는 초기값) — 원래 자리에 두고 L getter/setter 로 읽는다"
+  },
+  {
+   "cell": "aiCatalog",
+   "action": "move",
+   "segment": [
+    5504,
+    5506
+   ],
+   "stmt": [
+    5506,
+    5506
+   ],
+   "names": [
+    "DONE_KEYWORDS"
+   ],
+   "why": null
+  }
+ ],
+ "imports": [
+  {
+   "n": "renderHome",
+   "cell": "homeRender"
+  },
+  {
+   "n": "openMicPermissionGuideModal",
+   "cell": "micGuide"
+  },
+  {
+   "n": "THEME_FEEDBACK_PROMPTS",
+   "cell": "aiCatalog"
+  },
+  {
+   "n": "PREMIUM_FEEDBACK_CATALOG",
+   "cell": "aiCatalog"
+  },
+  {
+   "n": "GeminiQuotaDispatcher",
+   "cell": "aiCatalog"
+  },
+  {
+   "n": "DONE_KEYWORDS",
+   "cell": "aiCatalog"
+  }
+ ],
+ "outsideRefs": {
+  "renderHome": [
+   2322,
+   3516,
+   3516,
+   10173
+  ],
+  "openMicPermissionGuideModal": [
+   2761,
+   5231,
+   5245,
+   5245,
+   5266,
+   5266,
+   5274,
+   5274,
+   5293,
+   5293
+  ],
+  "THEME_FEEDBACK_PROMPTS": [
+   3154
+  ],
+  "PREMIUM_FEEDBACK_CATALOG": [
+   5500
+  ],
+  "GeminiQuotaDispatcher": [
+   3153,
+   5499
+  ],
+  "DONE_KEYWORDS": [
+   3152
+  ]
+ },
+ "bridged": [
+  {
+   "n": "BADGES",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "badgeContext",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "burstConfetti",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "computeStreakDays",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "dDay",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "dateKey",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "dispatchFullViewPropagation",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "escapeHtml",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "goalProgress",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "initFeedbackTierBar",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "initHomeCockpit",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "msCounts",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "openFocusAutoPilotModal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "quickCreateStarterGoal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "quickSyncToCalendar",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "refreshCustomFeedbackButtons",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderAdaptiveModeBar",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "renderAll",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderCrewPacingWidget",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "renderDailyQuestBar",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderHomeGrassSummary",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderIosPwaBanner",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "renderLevelBadge",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "renderQuickCheckinGuideChips",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "renderTodayGlancePill",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "renderTodayMissionCard",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "reorderGoal",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": false,
+   "setterBefore": false
+  },
+  {
+   "n": "saveProfile",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "setTab",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "shiftGoalOrder",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "sortGoalsByOrder",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "state",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": true
+  },
+  {
+   "n": "streakBadgeHtml",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "toast",
+   "assigned": false,
+   "kind": "hoisted",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "topicPill",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "triggerHaptic",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "triggerHapticFeedback",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "updateAppBadge",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  }
+ ],
+ "exposed": [
+  "BADGES",
+  "badgeContext",
+  "initFeedbackTierBar",
+  "initHomeCockpit",
+  "msCounts",
+  "openFocusAutoPilotModal",
+  "quickCreateStarterGoal",
+  "renderAdaptiveModeBar",
+  "renderCrewPacingWidget",
+  "renderIosPwaBanner",
+  "renderQuickCheckinGuideChips",
+  "renderTodayGlancePill",
+  "reorderGoal"
+ ],
+ "edits": 85,
+ "htmlLinesBefore": 10560,
+ "htmlLinesAfter": 9994,
+ "files": {
+  "js/tabs/home/home-render.js": 237,
+  "js/tabs/records/mic-permission-guide.js": 258,
+  "js/tabs/records/ai-feedback-catalog.js": 179
+ }
+}
