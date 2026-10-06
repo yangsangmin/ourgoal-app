@@ -58,3 +58,9 @@ index.html의 `computeTodayMissionHash(g)`(5351줄)와 `renderTodayMissionCard()
 - 카드 슬롯 `#todayMissionCard`는 홈 첫 화면의 직접 자식일 때 숨김 CSS가 적용되지만, `sub-onescreen.js`가 `#homeSheetPanelQuest`로 노드째 이동시켜 시트 안에서 정상 노출된다. 화면 은폐로 오인하지 않고 실제 시트 안에서 가시성을 검증한다.
 - 추천 목표 2개 추가 시 버튼 선택기가 유일하게 클릭되도록 정확한 DOM 쿼리를 사용한다.
 - 날짜/시간(nowISO), 캐시 해시, 임의 ID 등 정상 변동 요인은 정규화 규칙을 명확히 기록하고 원시 데이터를 보존한다.
+
+---
+
+## 9. 증거 정합성 추적 (TASK-ES-580 사후 감사)
+- PR #837 병합본 보고서 간 수치 차이(test-final.json의 TASK-ES-432 표기/npmExit 1/outputDiff 3건 vs proof.json의 템플릿 복사값)에 대한 사후 원시 대조 및 정합성 규명은 [REQ-TASK-ES-580-PROOF-RECONCILIATION.md](REQ-TASK-ES-580-PROOF-RECONCILIATION.md) 및 [reports/TASK-ES-576/reconciliation.json](../reports/TASK-ES-576/reconciliation.json)에 기록되었다.
+- 원래의 test-final.json 및 proof.json 원본은 무결성 보존을 위해 수정/삭제되지 않고 보존된다.

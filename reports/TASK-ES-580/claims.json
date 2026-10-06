@@ -1,0 +1,166 @@
+{
+  "task": "TASK-ES-580",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "PR #837 원시 로그 대조 및 test-final.json/proof.json 불일치 규명"
+    },
+    {
+      "id": "R2",
+      "text": "offline-sync-queue-retain 비결정성 원인 규명 및 50회 실측 데이터 확보"
+    },
+    {
+      "id": "R3",
+      "text": "독립 git 클론 기반 c34a0568 및 7d720298 npm test 전경 실측(exit 0) 및 무회귀 확인"
+    },
+    {
+      "id": "R4",
+      "text": "정합성 부속서(reconciliation.json) 및 보고서 게시 자료 적재"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원시 로그 메타데이터 표에서 task-370 하네스 로그 적재를 확인한다.",
+      "touches": [
+        "reports/TASK-ES-580/raw-log-table.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-580/raw-log-table.json",
+        "path": "0.id",
+        "equals": "task-370"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "정합성 분석서에서 test-final.json의 TASK-ES-432 표기 원인이 스크립트 하드코딩임을 확인한다.",
+      "touches": [
+        "reports/TASK-ES-580/reconciliation.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-580/reconciliation.json",
+        "text": "test-compare-inline-split-2.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "offline-sync 관련 소스 및 시험 파일의 diff가 0임을 확인한다.",
+      "touches": [
+        "reports/TASK-ES-580/offline-sync-flakiness.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-580/offline-sync-flakiness.json",
+        "text": "ZERO diff"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "offline-sync 50회 연속 반복 실측(base 49/1, work 47/3) 적재를 확인한다.",
+      "touches": [
+        "reports/TASK-ES-580/offline-sync-flakiness.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-580/offline-sync-flakiness.json",
+        "path": "repeatabilityMeasurement.base_c34a0568.runs",
+        "equals": 50
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "독립 git 클론 기반 기준 커밋(c34a0568)의 npm test 종료코드 0을 확인한다.",
+      "touches": [
+        "reports/TASK-ES-580/git-npm-summary.json",
+        "reports/TASK-ES-580/npm-test-base-c34a0568.log"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-580/git-npm-summary.json",
+        "path": "base.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "독립 git 클론 기반 작업 커밋(7d720298)의 npm test 종료코드 0을 확인한다.",
+      "touches": [
+        "reports/TASK-ES-580/git-npm-summary.json",
+        "reports/TASK-ES-580/npm-test-work-7d720298.log"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-580/git-npm-summary.json",
+        "path": "work.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-576/reconciliation.json 정합성 부속서 적재를 확인한다.",
+      "touches": [
+        "reports/TASK-ES-576/reconciliation.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-576/reconciliation.json",
+        "path": "targetTask",
+        "equals": "TASK-ES-576"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "표준 8원칙 요구사항 문서 기록을 확인한다.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md",
+        "text": "[원칙 ⑧]"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ-576 말미에 TASK-ES-580 사후 감사 정정 링크가 연결되었음을 확인한다.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-576-TODAY-MISSION.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-576-TODAY-MISSION.md",
+        "text": "TASK-ES-580 사후 감사"
+      }
+    }
+  ]
+}

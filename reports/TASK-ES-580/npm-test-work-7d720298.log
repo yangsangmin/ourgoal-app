@@ -1,0 +1,887 @@
+
+> ourgoal-app@1.0.0 test
+> node scripts/smoke-test.js && node scripts/verify-integrity-gate.js && node scripts/verify-all-clicks.js && node scripts/test-shipyard-modular.js
+
+[1/2] index.html 인라인 <script> 문법 검증
+  ✓ 메인 <script> 블록이 유효한 JS 문법이다 (new Function 파싱)
+[2/2] 핵심 함수 단위 테스트
+  ✓ goalProgress: 마일스톤이 없으면 0%
+  ✓ goalProgress: 4개 중 1개 완료면 25%
+  ✓ goalProgress: 전부 완료면 100%
+  ✓ msCounts: 상태별 개수를 정확히 센다
+  ✓ resultPct: target/result가 없으면 null
+  ✓ resultPct: 5/10 -> 50%
+  ✓ resultPct: 999%로 상한 고정
+  ✓ dDay: 오늘이면 D-day
+  ✓ dDay: 내일이면 D-1
+  ✓ computeStreakDays: 기록이 없으면 0
+  ✓ computeStreakDays: 오늘/어제/그제 연속 기록이면 3
+  ✓ computeStreakDays: 하루 빠지면 오늘부터의 연속만 센다
+  ✓ findSuggestionTarget: 마일스톤 타입
+  ✓ findSuggestionTarget: 존재하지 않는 id는 null
+  ✓ sanitizeSuggestions: 이미 done인 마일스톤을 done으로 바꾸는 제안은 걸러낸다
+  ✓ sanitizeSuggestions: 유효한 status 변경 제안은 통과시킨다
+  ✓ applySuggestion: 마일스톤 status 변경이 실제로 반영된다
+  ✓ applySuggestion: result가 target 이상이면 자동으로 done 처리된다
+  ✓ describeSuggestion: status 변경 라벨을 생성한다
+  ✓ localTodayMission: 미완료 마일스톤이 있으면 그 제목을 언급한다
+  ✓ localTodayMission: 전부 완료면 회고를 제안한다
+  ✓ maybeGrantStreakFreeze: 7일 연속을 달성하면 프리즈를 1개 지급한다
+  ✓ maybeGrantStreakFreeze: 같은 티어에서는 중복 지급하지 않는다
+  ✓ maybeApplyStreakFreeze: 어제를 놓쳤어도 그제 기록이 있고 프리즈가 있으면 자동 적용된다
+  ✓ maybeApplyStreakFreeze: 프리즈가 없으면 적용되지 않는다
+  ✓ xpForLevel: 레벨 1은 0 XP
+  ✓ levelForXP: 경계값 미만이면 이전 레벨을 유지한다
+  ✓ levelProgress: 현재 레벨 구간 안에서의 진행률을 계산한다
+  ✓ totalCompletedMilestones: 여러 목표에 걸친 완료 마일스톤 수를 정확히 센다
+  ✓ heatmapLevel: 기록이 없으면 0단계
+  ✓ heatmapLevel: 최댓값이면 최고 단계(4)
+  ✓ heatmapLevel: 비율에 따라 중간 단계로 나뉜다
+  ✓ localNextActionSuggestion: 남은 마일스톤이 있으면 그 제목을 제안한다
+  ✓ localNextActionSuggestion: 남은 마일스톤이 없으면 결과 기록을 제안한다
+  ✓ goalAchievement: 마일스톤이 전부 done이면 100
+  ✓ goalAchievement: 일부만 done이면 100 미만
+  ✓ goalAchievement: 목표 자체에 수치 결과가 있으면 그 비율을 우선한다
+  ✓ weeklyRecapStats: 기록이 없으면 count 0, 시간 0
+  ✓ weeklyRecapStats: 7일 이전 기록은 제외한다
+  ✓ weeklyRecapStats: 이번 주 기록 시간과 최다 분야를 정확히 계산한다
+  ✓ generateDynamicNotification: D-3 이내 마감 목표가 있으면 D-day 알림을 최우선한다
+  ✓ generateDynamicNotification: 보관된 목표의 마감일은 D-day 알림에서 무시한다
+  ✓ generateDynamicNotification: 저녁 8시 이후 미체크인이고 어제까지 스트릭이 있으면 경보 문구
+  ✓ generateDynamicNotification: 오늘 이미 체크인했으면 스트릭 경보를 띄우지 않는다
+  ✓ generateDynamicNotification: 참여 중인 팀이 있으면 팀 인증 알림을 보여준다
+  ✓ generateDynamicNotification: 해당하는 조건이 없으면 기본 메시지를 보여준다
+  ✓ generateDynamicNotification: 일요일 저녁 18~22시에 기록이 있으면 위클리 리캡 문구
+  ✓ sortGoalsByOrder: orderList 순서대로 목표를 정확히 정렬한다
+  ✓ sortGoalsByOrder: orderList에 없는 신규 목표는 뒤쪽에 안전하게 배치된다
+  ✓ sortGoalsByOrder: 빈 배열이나 null orderList에도 예외 없이 원본 복사본을 반환한다
+  ✓ isWithinDND: 자정을 넘기는 시간대(22:00~08:00)의 심야 및 아침 시간을 정확히 판별한다
+  ✓ isWithinDND: 비활성화되어 있거나 설정이 없으면 항상 false를 반환한다
+  ✓ generateDynamicNotification: 방해금지(DND) 시간대에는 알림 문구를 생성하지 않고 차단(null)한다
+  ✓ buildICS: RFC 5545 표준 VCALENDAR 및 VEVENT 블록을 정확히 생성한다
+  ✓ parseAttribution: utm/ref만 추출하고 나머지 파라미터는 버린다
+  ✓ parseAttribution: 빈 값·빈 문자열·잘못된 인코딩에도 예외 없이 빈 객체를 돌려준다
+  ✓ parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한다
+  ✓ filterHidden: hidden:true·null 항목은 제외하고 나머지는 순서를 유지한다
+  ✓ filterHidden: undefined나 빈 배열을 넣으면 빈 배열을 돌려준다
+  ✓ filterBlockedPosts: 차단된 사용자의 글/댓글은 필터링되고 나머지는 유지된다
+  ✓ filterBlockedPosts: 문자열 ID 배열 및 null/undefined 에도 안전하다
+  ✓ getSid: 같은 기기에서는 항상 같은 익명 id를 돌려주고 localStorage에 보존한다
+  ✓ getAttribution: 첫 유입만 저장하고 이후 다른 UTM으로 와도 첫 값을 유지한다(first-touch)
+  ✓ getAttribution: UTM 없는 오가닉 방문은 아무것도 저장하지 않고, localStorage가 깨져도 예외 없이 빈 객체
+  ✓ buildCheckinRecord: 목표가 있으면 category를 물려받고 type=note·startAt=endAt(ISO)·id 비어있지 않음
+  ✓ buildCheckinRecord: 목표가 없으면 category는 null, visibility는 private
+  ✓ defaultSettings: 최초 로그인 기본 설정에서 모든 공개 범위(goals, calendar, records, stats)가 private이다
+  ✓ getPrivacyLabel: 기본값 및 private는 나만 보기를 반환하고, team 및 public을 올바르게 매핑한다
+  ✓ updateAppBadge: 스트릭이 있으면 아이콘 배지에 그 숫자를 설정한다
+  ✓ updateAppBadge: 스트릭 0·음수·비숫자면 배지를 지운다
+  ✓ updateAppBadge: Badging API가 없는 환경에서는 예외 없이 false를 돌려준다
+  ✓ calendarAvailable: 앱/사용자 ID가 모두 비어 있거나 공백만이면 false
+  ✓ calendarAvailable: 앱 ID 또는 사용자 ID 중 하나라도 있으면 true (settings null 포함)
+  ✓ filterRecordsByQuery: 검색어가 비어있으면 전체 목록을 그대로 돌려준다
+  ✓ filterRecordsByQuery: 본문 텍스트를 대소문자 구분 없이 부분일치로 찾는다
+  ✓ filterRecordsByQuery: 날짜(월/일 라벨·dateKey)로도 찾는다
+  ✓ filterRecordsByQuery: 분야(TOPICS 라벨)로도 찾고, 일치하는 게 없으면 빈 배열
+
+  ✓ recordLanding: 첫 방문이면 유입을 저장하고 landing_view도 기록한다
+  ✓ recordLanding: lv_day가 오늘이어도 ?utm_source 유입은 저장된다 (AUD-8 회귀)
+  ✓ recordLanding: 첫 유입(first-touch)만 보존하고 나중 유입으로 덮어쓰지 않는다
+  ✓ recordLanding: 유입 파라미터가 없어도 예외 없이 하루 1회 게이트만 동작한다
+  ✓ sql-lint: 마지막 문장의 세미콜론 누락을 잡는다
+  ✓ sql-lint: 달러 인용($$) 짝 불일치를 잡는다
+  ✓ sql-lint: create policy 뒤 on <테이블> 누락을 잡는다
+  ✓ sql-lint: 괄호 짝 불일치를 잡는다
+  ✓ sql-lint: 정상 SQL 은 통과시킨다 (거짓 경보 없음)
+  ✓ docs/sql 의 모든 .sql 파일이 문법 검사를 통과한다
+  ✓ verify-report-schema: 42703(컬럼 없음)·PGRST205·PGRST202 는 미적용
+  ✓ verify-report-schema: 200 과 42501(anon 실행 거부) 은 적용
+  ✓ verify-report-schema: 예상 밖 응답은 적용/미적용이 아니라 판정불가(null)
+  ✓ compliance: docs/legal/privacy.md 및 terms.md 가 존재하고 필수 조항을 포함한다
+  ✓ compliance: index.html 에 회원탈퇴·약관·문의·버전 마커가 존재한다
+  ✓ compliance: [#TASK-ES-175] 공식 운영 이메일(ourgoal.support@gmail.com) 전수 단일화 및 구 이메일(ysm0422@naver.com, support@ourgoal.kr) 0건 방화벽 검증
+  ✓ compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다
+  ✓ compliance: [#TASK-ES-351] 탈퇴 버튼은 서버 요청 모드를 부르고, 로그인 복구 판정은 서버 기록을 읽는다
+  ✓ compliance: api/withdraw.js 가 유효한 핸들러 모듈이다
+  ✓ fmtYYMMDD: 날짜를 6자리 YYMMDD 형식으로 정확히 변환한다
+  ✓ recommendTemplateFromAI: 헬스 입력 시 운동종목, 세트, 횟수, 시간, 거리, 강도(100점) 컬럼을 추천한다
+  ✓ recommendTemplateFromAI: 하이록스, 공부, 영업 등 테마별 특화 속성을 지능형으로 추천한다
+  ✓ compliance: 전문적(내 전용 템플릿) 기록하기 UI 요소 및 안내멘트가 존재한다
+  ✓ compliance: 전문 템플릿 모달, 속성 편집, 상세 조회 및 일정 링크 딥링크 함수가 존재한다
+  ✓ computeTableAnalytics: 헬스/운동 템플릿의 총 볼륨(kg)과 총 세트를 정확히 집계한다
+  ✓ computeTableAnalytics: 공부 템플릿의 총 학습시간과 평균 집중도를 정확히 집계한다
+  ✓ computeTableAnalytics: 영업 템플릿의 총 파이프라인 금액과 가중 예상매출을 정확히 계산한다
+  ✓ compliance: 4대 혁신 기능(자동 통계, 1초 루틴 로드, AI 프로 코치, Notion 연동) 및 캘린더 일자 수정 허브 모달이 모두 구현되어 있다
+  ✓ recommendTemplateFromAI: 크로스핏과 하이록스를 엄격히 분리하고 하이록스는 8대 공식 스테이션을 모두 제공한다
+  ✓ recommendTemplateFromAI: 세부 입력(자격증, 주식 등)을 통합 테마로 뭉개지 않고 맞춤 유지한다
+  ✓ parseNaturalLanguageTemplateSpec: 줄글 설명으로부터 열 속성과 행 데이터를 자연어로 맞춤 파싱한다
+  ✓ parseCsvText: 콤마 및 탭 구분 텍스트를 2차원 배열로 안전하게 파싱한다
+  ✓ compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다
+  ✓ compliance: 다른 기기 원격 로그아웃, 마일스톤·할일 마감일/D-day 및 결과입력 AI 비서가 구현되어 있다
+  ✓ parseVoiceToTableRow: 헬스 및 운동 음성 문장에서 종목, 무게, 횟수, 세트를 추출하여 표 열에 맞춤 매핑한다
+  ✓ parseVoiceToTableRow: 크로스핏 및 공부 음성 문장을 정확히 인식하여 표 열에 배치한다
+  ✓ compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다
+  ✓ triggerHaptic: 진동 지원 시 지정/기본 밀리초 및 프리셋/배열 패턴으로 진동을 실행한다
+  ✓ reorderMilestones: 마일스톤 순서를 올바르게 교체하고 경계 밖 인덱스에는 원본을 보존한다
+  ✓ filterFeedByCategory: 전체 또는 지정 카테고리(공부, 개발, 운동 등)에 따라 피드 아이템을 정확히 필터링한다
+  ✓ calculateWeeklyFocusStats: 최근 7일간의 세션 수, 누적 집중 시간 및 활동 일수를 정확히 계산한다
+  ✓ exportRecordsToCsv: UTF-8 BOM을 포함하고 테마별 필터링이 적용된 CSV 텍스트를 생성한다
+  ✓ exportRecordsToMarkdown: 마크다운 표 구조 및 외부 AI 프롬프트 번들을 포함하여 생성한다
+  ✓ filterFeedByCategory: 특수문자나 빈 항목, 미매칭 카테고리 입력에도 예외 없이 안전하다
+  ✓ reorderMilestones: 동일 인덱스 이동 시 배열 순서를 그대로 유지한다
+  ✓ calculateWeeklyFocusStats: endAt 누락 기록은 몰입시간에 넣지 않는다
+  ✓ exportRecordsToMarkdown: 본문 내 파이프 기호(|)와 줄바꿈을 안전하게 이스케이프한다
+  ✓ exportRecordsToCsv: 따옴표(")가 포함된 본문을 CSV 표준에 맞게 더블 쿼트로 치환한다
+  ✓ computeTrendChartData: 실 기록 2개 이상일 때 정확한 통계치와 성장률을 계산한다
+  ✓ computeTrendChartData: 기록 부족 시(0~1개) 시뮬레이션 데이터를 제공하며 도메인별 메트릭을 매핑한다
+  ✓ formatStopwatchTime: 밀리초를 분:초.소수점 형식으로 정확히 변환하며 무효값을 방어한다
+  ✓ buildNotionPagePayload: 노션 API 공식 스펙에 부합하는 중첩 표 블록과 메타데이터 페이로드를 생성한다
+  ✓ compliance: 3종 혁신 기능(비주얼 성장 차트, 인앱 스톱워치, 노션 다이렉트 푸시) UI 및 연동 스펙이 완벽히 구비되어 있다
+  ✓ compliance: 가상 페르소나 40인 및 유저 피드백 TOP 10 핵심 개선사항이 index.html에 모두 구현되어 있다
+  ✓ compliance: 최초 로그인 시 모든 공개 범위(헤더 배지, 설정 셀렉트, 목표/기록 기본값)가 비공개로 설정되어 있다
+  ✓ compliance: 가상 페르소나 200인 및 2배 다양화(신경다양성, 테크, 기기, 습관루프) 무결성 검증
+  ✓ compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사항이 index.html에 구현되어 있다
+  ✓ compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무제한 목표, AI 코치, 30일 리포트)이 100% 무료로 제공된다
+  ✓ compliance: 기록/달력 6대 UX 개선사항(기록 탭 AI 피드백, 히트맵 기간·횟수 시각화, 위클리 리캡 항목선택, 기간별 AI 피드백, 퀵도크 삭제, 일정 허브 모달 정상동작)이 모두 구현되어 있다
+  ✓ distributeSequentialDates: 30일 마라톤 일일계획의 dueDate가 마지막 날 하나로 몰리지 않고 1일차~30일차로 순차 분배된다
+  ✓ distributeSequentialDates: 공부/다이어트/주차별 등 다른 테마에서도 순차 날짜가 올바르게 분배된다
+  ✓ localGoalAgentFallback: 한달 일일 계획 요청 시 30개 항목과 순차 날짜가 생성된다
+  ✓ compliance: index.html에 normalizeSequentialMilestoneDates 및 35개 마일스톤 지원 로직이 존재한다
+  ✓ compliance: 소통 탭 헤더 우측 [내 목표 / 기록 게시하기] 버튼 및 피드 전면 상호소통(리액션·댓글·페르소나 인터랙션)이 구현되어 있다
+  ✓ compliance: 모달 오버레이 탭 시 고스트 클릭(터치 관통) 방어 및 쿨다운 가드가 구현되어 있다
+  ✓ parseJwtPayload: JWT base64url 페이로드를 올바른 JSON 객체로 디코딩한다
+  ✓ compliance: Google OAuth 2.0 실제 연동 로직(클라이언트 ID, 버튼, 세션 브릿지, One-Tap)이 완벽히 구현되어 있다
+  ✓ compliance: 마일스톤 우선순위 태그(🔴 높음 / 🟡 보통 / 🟢 낮음)가 마일스톤 제목 위 독립 행에 최소 여백으로 배치되어 제목 입력을 가리지 않는다
+  ✓ compliance: 향후 30일간의 일정 연계 AI 피드백 엔진 및 무관한 피드백 엄격 금지 규칙이 구현되어 있다
+  ✓ compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다
+  ✓ compliance: 팀 수준별 목표 관리(조별 목표·마일스톤·할일, 컴팩트 요약, 상세 관리 모달) 및 모임장 왕관 시스템이 구현되어 있다
+  ✓ compliance: 상단 모임 필터 칩바 및 팀 목표 200% 활용 가이드 업데이트가 구현되어 있다
+  ✓ compliance: 기존 계정 목표 보존, saveProfile 비파괴성 및 최초로그인 온보딩 오작동 원천 차단
+  ✓ localGoalAgentFallback: 25년5월17일생 아기 만 3살까지 건강 육아 요청 시 영유아 검진 일정 및 2028-05-17 마감일 생성 검증
+  ✓ localGoalAgentFallback: 비운동성 의료 건강 및 자격증 요청 시 도메인 분리 검증
+  ✓ compliance: 마일스톤 번호 중복(1단계. 1단계:) 방어 정규식 및 7대 AI 엔드포인트 Gemini 3.1 캐스케이드 구비
+  ✓ convertTextToNotionDbRecord: 자연어 줄글 입력을 노션 DB 프로퍼티 규격으로 구조화 변환한다
+  ✓ compliance: 목표탭 결과입력 UI/UX 혁신 (커리큘럼 정하기·수치단위·메모 삭제, 노션 DB AI비서, 수동입력하기)
+  ✓ rescaleGoal: 지연된 마일스톤과 할 일 일정을 여유롭게 연장하고 조정 횟수를 기록한다
+  ✓ compliance: 앰비언트 1줄 체크인 및 모바일 엄지 인체공학 UI
+  ✓ compliance: 2026 차세대 UX 표준 (View Transitions, prefers-reduced-motion, 다이나믹 햅틱 프리셋) 탑재
+  ✓ quickCreateStarterGoal: 4대 갓생 템플릿(헬스·러닝·공부·독서) 맞춤 목표와 마일스톤을 1초 만에 생성한다
+  ✓ generateMzStoryCanvas: 9:16 인스타 스토리 최적 720x1280 해상도와 스트릭·기록을 캔버스에 렌더링한다
+  ✓ compliance: 9:16 인스타 스토리 바이럴 카드 & Web Share API & iOS PWA 설치 배너
+  ✓ compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth 우아한 폴백
+  ✓ buildWebCalUrl: 사용자 ID와 오리진을 기반으로 유효한 webcal:// 실시간 피드 URL을 생성한다
+  ✓ generateMzStoryCanvas: neon, cyber, gold, aurora 4대 테마 및 파티클 옵션으로 캔버스를 정상 렌더링한다
+  ✓ compliance: 3대 혁신 기능(WebCal 실시간 구독, 9:16 인스타 테마/파티클 캔버스, 1순위 대표 목표 초집중 모드)이 완벽히 구비되어 있다
+  ✓ calculateRemainingSeats: 1:1 방 및 5인 소그룹 잔여석을 정확히 계산한다
+  ✓ buildPeerInviteUrl: 웹 무설치 초대 링크를 유효한 쿼리 파라미터와 함께 생성한다
+  ✓ formatPeerInviteMessage: 카카오톡 공유용 메시지에 앱 설치 없는 웹 수락 안내와 링크를 포함한다
+  ✓ compliance: [PEER INVITE] 친구와 1:1 또는 5인 소그룹 마라톤 완주방 및 웹 무설치 즉시 수락 루프가 구현되어 있다 (크레딧 제외)
+  ✓ compliance: [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인(5초 카운트다운, 모달 안내, AdMob 및 Web fallback, app-ads.txt) 무결성 검증
+  ✓ compliance: 오늘 같은 테마 실사용자 수 집계 RPC DDL(T01-S02, #TASK-ES-001)이 존재하고 유효하다
+  ✓ compliance: [#TASK-ES-015] js/credits.js 가 존재하고 문법이 유효하며 OurgoalCredits API 6개를 노출한다
+  ✓ compliance: [#TASK-ES-015] 크레딧은 기본 OFF — ENABLE_CREDITS false, 서버 enabled 기본값 false, 화면 화폐 문구 없음
+  ✓ compliance: [#TASK-ES-015] credit_ledger SQL — append-only·멱등·봇 제외·설정값 기반이며 파괴 구문이 없다
+  ✓ KF-7: js/reactions.js 가 존재하고 문법이 유효하며 4종 타입·이유 선택지를 정의한다
+  ✓ KF-7: index.html 이 반응 모듈을 로드하고 초기화·렌더·바인딩 훅을 가진다
+  ✓ KF-7: content_reactions SQL 이 존재하고 소프트 삭제·봇 제외·SECURITY DEFINER RPC 만 쓰며 파괴 구문이 없다
+  ✓ KF-1: js/customize.js 가 존재하고 문법이 유효하며 로드 시 document 를 만지지 않는다
+  ✓ KF-1: 화이트리스트에 체크인 루프·내 목표·기록·소통 화면 id가 없거나 상단 고정 잠금된다 (본질 ①②③ 보호, REQ-P1, REQ-TASK-ES-173)
+  ✓ KF-1: normalize 가 화이트리스트 밖·핵심 id·중복을 버리고, 저장값 없으면 기존 모드에서 유추한다 (REQ-D2·D3)
+  ✓ KF-1: index.html 에 설정 진입 버튼·모듈 로드·홈 렌더 훅이 있고 되돌리기가 제공된다 (REQ-S1·S2)
+  ✓ compliance: [#TASK-ES-019] js/streaks.js 가 존재·문법 유효·OurgoalStreaks API 를 노출하고 index.html 이 로드·호출한다
+  ✓ compliance: [#TASK-ES-019] 출석·기록에 화폐·XP 보상 없음 — awardXP·크레딧 미호출, 화폐 문구 0건, 로컬스토리지 직접 저장 없음
+  ✓ compliance: [#TASK-ES-019] 조건값은 RULES 한 곳(14·100일 포함) · 순수 함수 동작 · 홈 순서(저장 → 내 위치 → 목표 목록) 유지
+  ✓ KF-5: js/helpful-reason.js 가 존재하고 문법이 유효하며 API·기본 태그 5종·기본 최소 글자 수를 정의한다
+  ✓ KF-5: 이유 SQL — 테이블·품질 게이트·봇 제외·보안 정의자·소프트 삭제, DROP/TRUNCATE/DELETE 없음
+  ✓ KF-5: index.html 이 js/helpful-reason.js 를 reactions.js 뒤에 로드하고 앱 핸들을 연결한다
+  ✓ KF-5: js/reactions.js 가 도움돼요 저장 직후 이유 시트를 띄우고 글쓴이 카드에 이유 보기 버튼을 붙인다
+  ✓ KF-4: js/top-helpful.js 가 존재하고 문법이 유효하며 30일 창·슬롯 2개·라벨을 정의한다
+  ✓ KF-4: 상단 슬롯에 서열 문구(N위·TOP·랭킹)가 없다 — 실데이터 라벨만
+  ✓ KF-4: top_helpful_posts SQL — 카테고리 안에서만 집계, 봇·시뮬·숨김·자기반응 제외, DROP/DELETE 없음
+  ✓ KF-2: js/template-credit.js 가 존재하고 문법이 유효하며 API 5종을 노출한다 (#TASK-ES-017)
+  ✓ KF-2: 복제 흐름에서 광고가 분리되고, 광고는 설정의 선택형 버튼 한 경로뿐이다 (정본 §3)
+  ✓ KF-2: 마켓·기본 템플릿의 고정 복제 수·가상 크리에이터 표기가 화면에서 사라지고 서버 실데이터 배지만 남는다 (금지 6-1)
+  ✓ KF-2: template_copies SQL — 멱등·RLS·봇 제외·구간 적립은 서버·DROP 없음
+  ✓ compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다
+  ✓ compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기(아코디언)가 구현되어 있다
+  ✓ compliance: [#TASK-ES-028] 계층형 테마(대·중·소) 온톨로지, 즐겨찾기 퀵바, 커스텀 테마 및 비강제 추천 시스템이 완벽히 구현되어 있다
+  ✓ compliance: [#TASK-ES-029] 팀 목표 템플릿 개설·체험 분리 및 하이브리드 편집 시스템이 완벽히 구현되어 있다
+  ✓ compliance: [#TASK-ES-026] js/team-leader-check.js 가 존재하고 유효한 모듈 API를 노출한다
+  ✓ compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로드하고 렌더 및 이벤트 핸들을 연결한다
+  ✓ compliance: [#TASK-ES-027] js/team-leader-check.js 에 팀원 찌르기(2종) 및 모임장 1:1 DM 반응 API가 탑재되어 있다
+  ✓ compliance: [#TASK-ES-027] index.html 이 마일스톤 및 팀 목표에 찌르기 버튼을 탑재하고 찌르기/DM 이벤트를 처리한다
+  ✓ compliance: [#TASK-ES-026] js/team-leader-check.js 가 존재하고 유효한 모듈 API를 노출한다
+  ✓ compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로드하고 렌더 및 이벤트 핸들을 연결한다
+  ✓ compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스바·4단 캐러셀 및 과거 기록 계층형 아코디언이 구현되어 있다
+  ✓ compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세션 보존 및 자가 치유(Self-Healing) 복구 파이프라인이 구현되어 있다
+  ✓ compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 안정성(ReferenceError esc 방어, min-height 0, 정적 리스너)이 완비되어 있다
+  ✓ compliance: [#TASK-ES-035] 기록 및 프로필 삼중 로컬 백업, 게스트 세션 고착 해제, 자가 치유 및 데이터 무결성 복원이 완비되어 있다
+  ✓ compliance: [#TASK-ES-036] 서버 사이드 관리자 권한 데이터 복구 파이프라인(api/track.js) 및 RLS 차단 우회 기록·프로필 즉시 복원이 완비되어 있다
+  ✓ compliance: [#TASK-ES-037] 기록·목표 탭 12대 핵심 UX 개선 및 통계·마일스톤 구조 개편이 완비되어 있다
+  ✓ compliance: [#TASK-ES-038] 목표 탭 마일스톤 창 공간 활용 효율화 및 고밀도 UI/UX 개편이 완비되어 있다
+  ✓ compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장형 아바타 시스템이 완벽히 구현되어 있다
+  ✓ compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 테마·홈구성 모달 정상화가 완벽히 구현되어 있다
+  ✓ compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 추첨 합성 & 나무망치 제작 연출 검증
+  ✓ compliance: [#TASK-ES-047] 사진 기반 퍼스널 컬러/특징 분석 및 77종 바디 일체형 무봉제 만화형 페이스 합성 엔진 검증
+  ✓ compliance: [#TASK-ES-048] 아바타 적용 즉시 반영, 제작 시 3회 차감, Gemini 비전 엔드포인트 & 무봉제 샌드위치 렌더러, 뱃지 제거 검증
+  ✓ compliance: [#TASK-ES-049] Gemini 3.1 Flash-Lite 초가성비 비전 모델 교체 및 사진 픽셀 기반 동적 만화 얼굴 이중 방어망 검증
+  ✓ compliance: [#TASK-ES-050] 아바타 API 실패 시 정중 안내 문구 및 횟수 롤백 복원 검증
+  ✓ compliance: [#TASK-ES-051] Gemini 비전 inlineData 규격 준수, API 키 트림 및 사진 512px JPEG 리사이징 검증
+  ✓ compliance: [#TASK-ES-052] Gemini 3.1 Flash-Lite Image 멀티모달 이미지 생성 모델 도입 및 아바타 연동 검증
+  ✓ compliance: [#TASK-ES-053] 아바타 모달 미세조정 버튼(헤어스타일/표정/다른바디) 삭제 및 아바타 제작 한도 10회 확대 검증
+  ✓ compliance: [#TASK-ES-054] 아바타 테마 번호(#숫자) 삭제 및 AI 이미지 생성 프롬프트 모자(Hat) 반영 검증
+  ✓ compliance: [#TASK-ES-056] 아워골 전면 Gemini API 단일화 및 오프라인/서버 지연 안내 문구 무결성 검증
+  ✓ compliance: [#TASK-ES-057] 맞춤 템플릿 AI 줄글 분석의 Gemini 3.1 Flash Lite 연동 및 무중단 배선 무결성 검증
+  ✓ compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유해/범죄 키워드 차단 이중 방어선 및 오탐 방지 안내 시스템 검증
+  ✓ [TASK-ES-059] 테마 구분 없는 임의 데이터 AI 자율 메트릭 추론 및 다형성 시각화 엔진 검증
+  ✓ compliance: [#TASK-ES-059-FUSION] 임의 데이터 자율 융합(Ingest & Fusion) 및 완전 다중선택 슬라이싱 시각화 시스템 검증
+  ✓ compliance: [#TASK-AUTH-P0-SAFETY] 로그인/계정관리 P0 안전망 패키지(비밀번호 찾기/변경, 로그인 유지, 30일 탈퇴 유예, 최근 로그인 뱃지) 무결성 검증
+  ✓ compliance: [#TASK-ES-043] 9대 UX 핵심 결함(스트릭 보존, 개인정보 보호, 게스트 병합, localhost 차단, 랜딩 버튼, 연타 방어, 즉시 렌더, 도구어 순화, 인앱 안내)이 구현되어 있다
+  ✓ compliance: [#TASK-ES-042] 체크인 3단 피드백 모드(기본·중간·정밀) 및 최근 3일 기록 연계 피드백 엔진 검증
+  ✓ compliance: [#TASK-ES-059-BUTTONS] 기록 버튼 중복 해소 및 세부기록 모달 기능 연계 검증
+  ✓ compliance: [#TASK-ES-060] 1900년대 및 역대 과거 임의 데이터 완벽 수용·융합·자율 시각화 및 크래시 방어 검증
+  ✓ compliance: [#TASK-ES-061] 유니버설 데이터 자율 융합, 동적 EAV 온톨로지 & 프로급 콕핏 시스템 무결성 검증
+  ✓ compliance: [#TASK-ES-061-DEFITNESS] 운동/건강 편향 탈피 및 임의 도메인(영업, 개발, 학습 등) 자율 다차원 동적 분석 검증
+  ✓ compliance: [#TASK-ES-061-TRUE-MULTIDIMENSIONAL] 범용 EAV 자율 마이닝, 4대 분석 렌즈(추세·상관비·레이더·주기), 통계 리포트 및 기본 펼침 무결성 검증
+  ✓ compliance: [#TASK-ES-061-UIUX-MASTERPIECE] 4대 렌즈 마이크로 뱃지, 상관효율비 인터랙티브 페어 선택기, AI 비주얼 브리핑 게이지, 주중/주말 주기 분석 무결성 검증
+  ✓ compliance: [#TASK-ES-090] 아워골 기록탭 지금부터 시간기록(전체화면, 가로세로 회전, 스톱워치 4대 버튼, 취소 안전 경고, 내 기록 저장) 무결성 검증
+  ✓ compliance: [#TASK-ES-091] 아워골 데이터 가져오기 & 1초 샘플(원터치 로드, 실시간 표 미리보기, 탭 구분자 지원, 샘플 정화 안전망) 무결성 검증
+  ✓ compliance: [#TASK-ES-092] 전문가용 데이터 시각화 파워 보존 및 직관적 초간편 인터페이스 전면 개편 무결성 검증
+  ✓ compliance: [#TASK-ES-093] 추천 샘플 데이터 5대 테마별 엄선 7종(총 35종) 카탈로그, 2열 반응형 그리드 및 하이록스 1초 융합 검증
+  ✓ compliance: [#TASK-ES-094] 기출문제 예시 1W 기간 하루단위 꺾은선 그래프(7일 연속 세션), 요일 x축 레이블링 및 전 기간 반응형 시인성 검증
+  ✓ compliance: [#TASK-ES-095] 하이록스 8대 공식 스테이션 및 전 테마 세부 종목별 실측 기록·페이스·체감강도(RPE) EAV 무결성 검증
+  ✓ compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증
+  ✓ compliance: [#TASK-ES-102 & #TASK-ES-126] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 탑바 단일화 및 6대 탭 통합 가이드 허브 무결성 검증
+  ✓ compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차단 안전망 완결성 검증
+  ✓ compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면 정비(초대·팀원대화·모임창복구·피드아코디언·게시버튼·1:1소통카드3종) 무결성 검증
+  ✓ compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기 모달·게시하기 연동·모임원 DM바·동반자 소셜탭 무결성 검증
+  ✓ compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 체크·소통 시스템 검증
+  ✓ compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 상호 연동(Real Inter-Account Interaction) DM 및 동반자 시스템 검증
+  ✓ compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 검증
+  ✓ compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 해결, 목표 제목 편집 지원 및 하단 고정 완료 액션바 완결성 검증
+  ✓ compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·마일스톤 접힘), 최초 대표 목표 1개 노출 & 스위처, 2계층 아코디언 및 ‘팀 통합 수준관리’ vs ‘목표별 수준관리’ 이원화 무결성 검증
+  ✓ compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 가로 인라인 정돈, 달성률/게이지바 슬림화, 모바일 반응형 컴팩트 카드 및 아코디언 접힘) 무결성 검증
+  ✓ compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출 & PKCE 4초 대기 및 복구 안전망 검증
+  ✓ compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로그인·재접속 시 아바타 영속성 및 화면 동기화 무결성 검증
+  ✓ compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신
+  ✓ compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 검증
+  ✓ compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 및 미사용자 전파 시스템화 (통합 딥링크 & 동적 OG 게이트웨이, 소프트 게스트 뷰어 3종) 검증
+  ✓ compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·기록 분석 MBTI/좌우명) 결합 및 77종 바디 안내문구 정비 검증
+  ✓ compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수 시스템 완결 및 노션 DB·텔레그램 실시간 자동 연동 검증
+  ✓ compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증
+  ✓ compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 복원(Vercel 서버리스 + RPC 폴백) 및 가상 유저 3인 AI 동반자 투명 뱃지 표기 검증
+  ✓ compliance: [#TASK-CONST-003] index.html 스마트 무결성 안전핀 검증 (22,196줄 고정 잠금 해제, 본체 20,000줄 보존, // ... 무단 축약 금지)
+  ✓ compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소나 온톨로지 및 시스템 무결성 검증
+  ✓ compliance: [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증
+  ✓ compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증
+  ✓ compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존(로컬 자가복원 + 서버리스 원장) 검증
+  ✓ compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 PostgrestFilterBuilder 예외 완전 격리 검증
+  ✓ compliance: [#TASK-ES-131] DM 수신자 완벽 사용자 경험(수신함 자동인입 + 레드 닷 뱃지 + 맞추가 배너) 검증
+  ✓ compliance: [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스템(WebCal 캘린더 피드 + 데일리퀘스트 EXP 누적 + 도달예정일 알고리즘 + 30일 탈퇴유예) 완결 검증
+  ✓ compliance: [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(피드 댓글 서버 실시간 동기화 + 새 팀 전역 공유 영구 보존 + 마니또 실 유저 익명 응원 연동) 무결성 검증
+  ✓ compliance: [#TASK-ES-134] 목표 탭 현상태 분석 AI 조언 명칭 변경, 분석완료 상태 전환 배지 및 스마트 캐시 제어 검증
+  ✓ compliance: [#TASK-ES-135] 아바타 보관함(서랍) 3중 영속화(Supabase DB + LocalStorage + 마이그레이션 합집합 복원) 무결성 검증
+  ✓ compliance: [#TASK-ES-136] 목표 데이터 해시 변경 감지 보강 및 "오늘의 카드" 안내 멘트 상민님 지정 원문 100% 교체
+  ✓ compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증
+  ✓ compliance: [#TASK-ES-138] 캘린더 일정(customSchedules) 일간/시간표 24시간 블록 뷰 구현 및 세부 일정 저장 무결성 검증
+  ✓ compliance: [#TASK-ES-139] 설정창 노션 연동 6대 UX 개선 및 가이드 툴팁·URL 정규화 완결 검증
+  ✓ compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증
+  ✓ compliance: [#TASK-ES-141] 홈 구성 커스텀(customize.js) 최적화 및 유령 요소 제거·상민님 지정 문구 완결 검증
+  ✓ compliance: [#TASK-ES-142] 구글 캘린더 연동 영속성 및 토큰 복원·동의 루프 방어 검증
+  ✓ compliance: [#TASK-ES-143] 전 AI 엔드포인트 로컬 스마트 룰베이스 폴백 및 보안/RLS 무결성 감사 검증
+  ✓ compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근본 해결 및 1:1 DM 실시간 수신 파이프라인 무결성 검증
+  ✓ compliance: [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증
+  ✓ compliance: [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업 평가폼 무결성 검증
+  ✓ compliance: [#TASK-ES-147] 목표 탭 '목표만' 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증
+  ✓ compliance: [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증
+  ✓ compliance: [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 ('* 팀 목표를 생성하면 사라짐') 표시 검증
+  ✓ compliance: [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 성향 프롬프트 설정 무결성 검증
+  ✓ compliance: [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료 토글 및 목표 양방향 동기화 무결성 검증
+  ✓ compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증
+  ✓ compliance: [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 무결성 검증
+  ✓ compliance: [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증
+  ✓ compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증
+  ✓ compliance: [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화 검증
+  ✓ compliance: [#TASK-ES-156] 캘린더 일정 체크 토글 및 구글 연동 일정 편집 시 제목 프리필 결함 해결 검증
+  ✓ compliance: [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제거 및 헤더 미니 구글 아이콘 배지 콤팩트화 검증
+  ✓ compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증
+  ✓ compliance: [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지(새싹·숲·포세이돈·제우스·우주 5대 테마) 결합 검증
+  ✓ compliance: [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 허브 모달 4위 1체 검증
+  ✓ compliance: [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주얼 프리뷰 · 리치 칩 UI/UX 4위 1체 검증
+  ✓ compliance: [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalComponents 5대 컴포넌트) 시스템 4위 1체 검증
+  ✓ compliance: [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 검증
+  ✓ compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증
+  ✓ compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증
+  ✓ compliance: [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(맨 앞) 신설 및 200% 활용 가이드 & 쇼케이스 검증
+  ✓ compliance: [#TASK-ES-167] 아바타 페르소나 사용자 노출 '77종' 전면 배제·'320종' 단일화 및 영구 금지 헌법 규제 검증
+  ✓ compliance: [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWorker·스마트 폴링·상단바 알림센터) 무결성 전면 고도화 검증
+  ✓ compliance: [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 및 가짜 타이머 제거·직통 배선 검증
+  ✓ compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·오늘 기록하기 잠금) 및 유령 항목 정리·정합성 고도화 검증
+  ✓ compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과제 9건([45]~[53]) 전수 구현 및 무결성 검증
+  ✓ compliance: [#TASK-ES-175] 기록 탭 시간기록 카드 슬림화([47]) 및 스톱워치 구간기록 시간창 자동 상단 이동([44]) & 입력창 모던 정돈([55]) 무결성 검증
+  ✓ compliance: [#TASK-ES-176] 팀 목표창 View ↔ Edit 완전 분리(A안) · 3대 본질 시너지(E1/E2/E3) 및 목표/소통 탭 60선 대형창 제거 무결성 검증
+  ✓ compliance: [#TASK-ES-177] 아워골 생각 메모장 3대 완결 과제([58] 소통 피드 직접 사진 첨부 · [59] 카테고리 10종 확장 및 가로스크롤 · [60] 성취통계 껍데기 버튼 영구 삭제)
+  ✓ compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증
+  ✓ compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제([61]~[69]) 및 6대 탭 활용법 모달 최신화 검증
+  ✓ compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증
+  ✓ compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·0ms 즉각 미리보기) 무결성 검증
+  ✓ compliance: [#TASK-ES-183] 스마트폰 잠금화면 전체 장악 (Screen-On Full-Screen LockScreen Takeover) 네이티브 서비스 및 사용자 통제 파이프라인 무결성 검증
+  ✓ compliance: [#TASK-SANCTUARY-COMM-RADAR-REAL-INTEGRITY] 소통 탭 실시간 러닝메이트 레이더 실데이터 직결 및 위조숫자·가짜봇 완전 척결 무결성 검증
+  ✓ compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기 과제([70]~[87]) 전수 구현 및 개정 헌법(v2026.09.18) 6대 무결성 검증
+  ✓ [#TASK-ES-185] 화이트 테마 렌더링 먹통 버그 근본 척결 및 성소 외 3대 테마(화이트·블랙·도심) 시인성·대비 전면 고도화 검증
+  ✓ [#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도심) 조형·레이아웃·컴포넌트 100% 동일 동기화 및 테마별 컬러 분리 검증
+  ✓ [#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 및 상단 중복 버튼 제거 무결성 검증
+  ✓ [#TASK-ES-188] 로그인 창 둘러보기 버튼 문구 정돈 (로그인 없이 둘러보기) 무결성 검증
+  ✓ [#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템 무결성 검증
+  ✓ [#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4위 1체 시맨틱 복원 검증
+  ✓ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증
+  ✓ [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증
+  ✓ [#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 검증
+  ✓ [#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 및 가로스크롤 은폐 해소 검증
+  ✓ [#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구 원장 영속화 및 기록 탭 상시 노출 무결성
+  ✓ [#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo Diary) 썸네일 자동 연계 & 히트맵 14px 스케일업 무결성
+  ✓ [#TASK-ES-217 / 생각 메모장 88번] 오늘의 3초 체크인 목표 커닝페이퍼 칩 플레이스홀더 가이드화 및 지움 피로도 근절 무결성
+  ✓ [#TASK-ES-219 / 생각 메모장 89번] 데이터분석 프롬프트 백과사전 실사용 유저 등록·피드 게시 및 도움돼요 상호작용 무결성
+  ✓ [#TASK-ES-220] 교대근무자 전용 가변형 루틴 자동 스케줄링 및 맞춤 루틴 연동 무결성
+  ✓ [#TASK-ES-222] 카카오톡 인앱 브라우저 감지 및 Safari/Chrome 탈출 가이드 무결성
+  ✓ [#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬 조건부 격리 무결성
+  ✓ [#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 병합 무결성
+  ✓ [#TASK-ES-225] [생각 메모장 95번] 동시 접속 급증 대비 Gemini API 분당 쿼터(Rate Limit 429) 방어 및 백오프 큐 무결성
+  ✓ [#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성
+  ✓ [#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성
+  ✓ [#TASK-ES-228] [생각 메모장 98번] 홈 탭 '오늘 달성 레이스' 가짜 시뮬레이션 제거 및 '함께 달리는 동류 N명' 실데이터 배선 무결성
+  ✓ [#TASK-ES-229] 팀 목표 및 소통 탭 내 가상 샘플 그룹(MOCK_GROUPS) 분리 및 [💡 활용 예시] 배지·새 팀 만들기 전면화
+  ✓ [#TASK-ES-230] 마니또(Manito) 매칭 즉시 원클릭 웰컴 응원 스탬프 발송 및 실시간 푸시 피드백 배선
+  ✓ [#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 복사] 및 [가입자 닉네임 검색] 상단 신설 무결성
+  ✓ [#TASK-ES-232] '폰 잠금화면에서 보기' 명칭 [📱 잠금화면용 일정 카드 저장] 정직화 및 9:16 배경 생성 무결성
+  ✓ [#TASK-ES-233] 가입 첫날 신규 유저(기록 0~2개) '3일 실천 완성 레이더 차트 미리보기' 인포그래픽 무결성
+  ✓ [#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성
+  ✓ [#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성
+  ✓ [#TASK-ES-236] AI 목표 어시스턴트 제안된 목표 플랜 확인 및 단계 선택 프리뷰 무결성
+  ✓ [#TASK-ES-237] 목표탭 상단 5개 서브탭 버튼 중앙 정렬 및 시인성·터치 가독성 무결성
+  ✓ [#TASK-ES-238] 목표탭 대표 안내멘트(#goalsHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성
+  ✓ [#TASK-ES-239] 목표탭 마일스톤·세부 할일 다건 등록 시 계층형 시인성 개선 및 접이식 관리 편의성 극대화 무결성
+  ✓ [#TASK-ES-240] 일정탭 대표 안내멘트(#calHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성
+  ✓ [#TASK-ES-241] 일정탭 주간 뷰 전환 버튼 및 주간 캘린더 테마 고대비 시인성 개선 무결성
+  ✓ [#TASK-ES-242] 기록탭 대표 안내멘트(#recHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성
+  ✓ [#TASK-ES-243] 소통탭 대표 안내멘트(#commHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성
+  ✓ [#TASK-ES-244] 설정탭 대표 안내멘트(#settingsHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성
+  ✓ [#TASK-ES-245] 기록탭 샘플 데이터 1초 체험 후 원클릭 완전 삭제/초기화 기능 무결성
+  ✓ [#TASK-ES-246] 소통탭 실시간 러닝메이트 레이더 영역 슬림화 및 접이식 콤팩트 카드 전환 무결성
+  ✓ [#TASK-ES-247] 소통탭 상단 6대 서브탭 버튼 가로너비 균등 비율 및 글자 크기·패딩 반응형 최적화 무결성
+  ✓ [#TASK-ES-248] 설정탭 상단 프로필 요약 카드 시인성 강화 및 계정·아바타 정보 가독성 전면 개선 무결성
+  ✓ [#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무료 기능 및 생성횟수 3회 문구 정상화
+  ✓ [#TASK-ES-250] 소통탭 8중 레이어 다이어트 및 모바일 375px 타이포그래피·조형 전면 정상화
+  ✓ [#TASK-ES-218] 설정 탭(screen-settings) 토스식 UI/UX 전면 혁신 및 모바일 375px 조형 무결성
+  ✓ [#TASK-ES-251] 제미나이 API 중앙 게이트웨이 일원화 및 엔터프라이즈 복원력 무결성
+  ✓ [#TASK-ES-252] 사용자 계정 및 데이터 관리·보관 5계층 보안 방어선 무결성
+  ✓ [#TASK-ES-253] 일정 체크 토글 및 목표 양방향 연동 UI/UX 완결 무결성
+  ✓ compliance: [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 및 세부 알림 설정창 완결
+  ✓ compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지
+  ✓ compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증
+  ✓ compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증
+  ✓ compliance: [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 통합/목표별 수준관리 분리 무결성 검증
+  ✓ compliance: [#TASK-ES-259] 목표탭 구글 캘린더 일정 설정 버튼 및 디데이(기간) 표시 연동 무결성 검증
+  ✓ compliance: [#TASK-ES-260] 기록탭 명칭 '기록/통계'로 변경 2차 초정밀 완결 무결성 검증
+  ✓ compliance: [#TASK-ES-261] 목표탭 ‘목표만’ 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증
+  ✓ compliance: [#TASK-ES-262] 오늘의 미션 추천카드 내 안내멘트 생성 (‘뭘 할지 모르겠을 때 도움돼요’) 검증
+  ✓ compliance: [#TASK-ES-263] 나만의 홈 구성 연동 전수조사 및 자동 연동 시스템화 검증
+  ✓ compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증
+  ✓ compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증
+  ✓ compliance: [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 최상단 이름 왼쪽 배치 및 동적 동기화 검증
+  ✓ compliance: [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/공유/저장/프롬프트 성향 설정 검증
+  ✓ compliance: [#TASK-ES-268] 홈탭 최하단 <아워골 평가해주기> 고정배너 및 90% 팝업 평가폼 검증
+  ✓ compliance: [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞춤형 아바타 생성 결합 및 설정창 확대 검증
+  ✓ [#TASK-ES-270] 목표탭 상단 루틴 탭(개인 왼쪽 배치·요일별 칩 필터·교대근무 1초 치환·EXP 10) 무결성 검증
+  ✓ compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 4위 1체 배선 무결성 검증
+  ✓ compliance: [#TASK-ES-272] 아바타 레벨별 상징 백그라운드 이미지 결합 및 비가림성 보장 무결성 검증
+  ✓ compliance: [#TASK-ES-273] 각 탭 활용법 내용 최신화 및 실제 우수 사용사례 이미지/카드 첨부 무결성 검증
+  ✓ compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증
+  ✓ compliance: [#TASK-ES-275] 컴포넌트 모듈화 (효과 시너지, 개발 효율화, UI 및 사용자경험 개선)
+  ✓ compliance: [#TASK-ES-276] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화
+  ✓ compliance: [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선)
+  ✓ compliance: [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현
+  ✓ compliance: [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경
+  ✓ compliance: [#TASK-ES-280] 일정 사진 일기장 안내창 우측 상단 닫기(X) 버튼 추가 및 영구 숨김 처리
+  ✓ compliance: [#TASK-ES-281] 소통탭 게시하기 버튼 먹통 오류 수정 및 정상 동작 복구
+  ✓ compliance: [#TASK-ES-282] 전 탭 상위 중복 '홈구성' 버튼 제거 및 '나만의 홈 구성' 단일화
+  ✓ compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이콘 크기 확대 (애정도·시인성 강화)
+  ✓ compliance: [#TASK-ES-284] 오늘의 퀘스트 미션 변경 ('핵심 마일스톤 1개' -> '할일 1개' 실행 및 10EXP 보상 조정)
+  ✓ compliance: [#TASK-ES-285] 홈 목표현황판 불필요 지표(진행중 목표·평균달성률·병행분야) 삭제 및 인터페이스 최적화
+  ✓ compliance: [#TASK-ES-286] 갓생 스토리카드 다각화(1:1·3:4·9:16 비율 및 항목 선택) 및 피드 즉시 게시 기능 구현
+  ✓ compliance: [#TASK-ES-287] 동반자 탭 내 AI 동반자 전면 제거 (실 사용자 중심 전환)
+  ✓ TASK-ES-288: 설정창 전면 개편 4위 1체 배선 및 모바일 375px 규격 검증
+  ✓ TASK-ES-289: 마니또 AI 동반자 1명 제한 및 실 유저 20명 초과 시 AI 전원 삭제 4위 1체 배선 검증
+  ✓ TASK-ES-290: 일정 배경사진 최대 2장 및 상하 반반 분할 레이아웃 4위 1체 배선 검증
+  ✓ TASK-ES-291: 레벨업 연출 멘트 및 배경 변경 유도 4위 1체 배선 검증
+  ✓ TASK-ES-292: 경험치 획득 시 아바타 축하 팝업 연출("잘했다! 내 자신!") 4위 1체 배선 검증
+  ✓ TASK-ES-293: 성취통계 측정지표 다중선택 필터링 4위 1체 배선 검증
+  ✓ TASK-ES-294: 스톱워치 실시간 구간별 활동기록 팝업·상세 연동 및 초기화 2중 확인 안전장치 4위 1체 배선 검증
+  ✓ TASK-ES-295: 성취통계 데이터 관리 옆 접기토글 4위 1체 배선 검증
+  ✓ TASK-ES-296: 팀 연계 개인목표 우수 사용사례 예시 카드 4위 1체 배선 검증
+  ✓ TASK-ES-297: 시간기록 모달창 세부설명 간소화 및 창 크기 축소 4위 1체 배선 검증
+  ✓ TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 검증
+  ✓ TASK-ES-299: 팀 목표 댓글 작성 및 전송 기능 4위 1체 배선 검증
+  ✓ TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증
+  ✓ TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증
+  ✓ TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증
+  ✓ TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증
+  ✓ TASK-ES-304: 홈화면 상단 누적 배선용 테스트 카드 23종 일괄 화면 은폐 및 홈화면 기능 최상단 복원 검증
+  ✓ TASK-ES-305: 루틴 상세 모달 및 편집 기능 구현 (목표탭 벤치마킹 & 루틴 카드 클릭 시 바로 진입) 검증
+  ✓ TASK-ES-306: 스톱워치 구간기록별 텍스트 입력창 UI 정돈 및 시인성 개선 (랩 컨테이너, 텍스트 인풋, 즉시 기입 배선) 검증
+  ✓ TASK-ES-307: 성취통계 다중 선택된 측정지표 데이터 그래프 동시 렌더링 연동 (칩 바, 다중 SVG 라인, 요약 배지) 검증
+  ✓ TASK-ES-308: 소통탭 게시 시 공유 대상(목표·기록·AI피드백) 선택형 UI 및 다짐 작성 유지 검증
+  ✓ TASK-ES-309: 소통 피드 게시하기 내 사진(이미지) 첨부 드롭존, 프리뷰 카드 및 피드 연동 검증
+  ✓ compliance: [#TASK-ES-310] [59] 소통 피드 게시하기 카테고리 분류 다양화 및 가로 스크롤 선택 UI 무결성 검증
+  ✓ compliance: [#TASK-ES-311] [60] 성취통계 메뉴 내 미작동 껍데기 버튼(목표연계·캘린더 등록) 영구 삭제 및 Zero Dead Click 무결성 검증
+  ✓ compliance: [#TASK-ES-312] [61] 피드 내 AI 봇 활동내역 최하단 1개 축소 및 실 유저 20명 초과 시 전면 제거 무결성 검증
+  ✓ compliance: [#TASK-ES-313] [62] 기기 바탕화면용 위젯 기능(일정·목표·기록 3종 × 3가지 구성) 개발 완결 무결성 검증
+  ✓ compliance: [#TASK-ES-314] [63] 피드 게시 시 실천기록 최신순 자동적용 및 기록 맞춤형 AI피드백/다짐 연동 무결성 검증
+  ✓ compliance: [#TASK-ES-315] [64] 기존 'AI 추천 목표템플릿 예시 60선' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증
+  ✓ compliance: [#TASK-ES-316] [65] 일정 편집 내 사전 알림 설정(울릴 시간 N분 전 지정) 기능 무결성 검증
+  ✓ compliance: [#TASK-ES-317] [66] 아워골 평가해주기 창 밑 상시 평가 안내 문구 무결성 검증
+  ✓ compliance: [#TASK-ES-318] [67] DM 전송 상태·읽음 확인(카카오톡 방식 노란색 1) 및 전송·도착·읽음 시각 상세 표시 무결성 검증
+  ✓ compliance: [#TASK-ES-319] [68] 팀 만들기 불필요 제약(정원 제한·인증 주기·챌린지 기간·인증 규칙·진행방식) 전면 삭제 및 무해화 무결성 검증
+  ✓ compliance: [#TASK-ES-320] [69] 카카오 로그인 동명이인 가입/중복 닉네임 방지 고유 태그 부여 및 동반자 핀포인트 매칭 완결 무결성 검증
+  ✓ compliance: [#TASK-ES-321] [70] 원격 로그아웃 전 로그인 기기 목록 확인 및 개별 세션 제어 완결 무결성 검증
+  ✓ compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작동 및 무결성 복구 검증
+  ✓ compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다
+440개 통과, 0개 실패
+================================================================
+🛡️  아워골 전면 무결성 헌법 5대 핵심 검증 게이트 (Integrity Gate)
+================================================================
+
+[검증 1/5] 껍데기 버튼 및 데드 클릭(Dead Click) 전수 검사
+  ✓ [PASS] 인라인 onclick 속성에 바인딩된 모든 함수가 실제 스크립트에 정의되어 있다
+  ✓ [PASS] 주요 인터랙티브 액션 버튼(저장, 등록, 삭제, 닫기 등)에 핸들러가 배선되어 있다
+
+[검증 2/5] 유저 데이터 100% 무손실 보존(Zero Data Loss) 검사
+  ✓ [PASS] 가상 유저 페르소나 데이터(아바타, 목표, 기록, 세팅값) 10종의 불변 보존 검증
+  ✓ [PASS] 로컬 스토리지 삼중 백업 및 자가 치유(Self-Healing) 키가 유지되고 있다
+
+[검증 3/5] 화면 간 상호연동 및 상태 전파 배선 검사
+  ✓ [PASS] 체크인 및 기록 작성 시 연계 뷰(홈, 기록, 통계, 캘린더) 갱신 배선이 연결되어 있다
+  ✓ [PASS] 목표 변경(추가/수정/달성) 시 전역 상태 및 홈/목표 화면이 동기화된다
+
+[검증 4/5] 전 기능 및 전 UX(계정/로그인, 3대 본질) 회귀 방지 검사
+  ✓ [PASS] 게스트 모드와 소셜 로그인(카카오/구글) 간 무손실 데이터 이관 및 세션 보존이 구현되어 있다
+  ✓ [PASS] 3대 본질 루프(E1 체크인, E2 회고, E3 동류소통) 핵심 로직이 손상되지 않았다
+
+[검증 5/5] 문제해결 8원칙 적용 REQ / PLAN 표준 규격 검사
+  ✓ [PASS] 표준 템플릿(TEMPLATE_REQ_8STEPS.md, TEMPLATE_PLAN_8STEPS.md)이 존재하고 8원칙 규격을 완비했다
+  ✓ [PASS] 헌법 정본에 문제해결 8원칙 세부 기준(제2조 1~2항) 및 기계적 무결성 헌법(제2조 5항)이 명시되어 있다
+  ✓ [PASS] 신규 및 변경 대상 REQ/PLAN 문서의 8원칙 기계적 무결성(린터)이 100% 통과한다
+  ✓ [PASS] 절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md)가 존재하고 15대 조문을 포괄한다
+
+[검증 6/6] 용어 헌법: '잔디' 단어 배제 및 '히트맵' 단일화 검사
+  ✓ [PASS] UI 텍스트, 라벨 및 신규 스펙에서 '잔디' 단어가 100% 제거되고 '히트맵'으로 대체되었다
+  ✓ [PASS] UI 텍스트, 라벨, 가이드 및 프롬프트에서 아바타 '77종/77가지' 노출이 영구 배제되고 '320종'으로 단일화되었다 (헌법 제10조 제4~5항)
+
+[검증 7/7] 헌법 제9조/제12조: 배포 안전핀 및 작업계획서 4단계 상한선 검사
+  ✓ [PASS] 헌법 정본에 원격 main PR 머지=실서버 배포 동일시(제9조 2항) 및 지시 의도 5대 모드(제12조)가 규정되어 있다
+
+[검증 8/8] 헌법 제13조: 실 사용자 계정 상호 연동 헌법 검사
+  ✓ [PASS] 헌법 정본에 실 사용자 계정 상호 연동 헌법(제13조 1~5항) 및 가짜 실제구현 금지(제1조 4항 6호, 제4조 1항 7호)가 규정되어 있다
+
+[검증 9/9] 헌법 제14조: 외부 연동 E2E 무결성 및 헌법 독점주의 검사
+  ✓ [PASS] 헌법 정본에 제14조(외부연동 E2E 무결성·헌법 독점주의·법체계 위계 단일화)가 규정되어 있다
+
+[검증 10/10] 헌법 제15조: 유저 자산 원격 원장화 및 수명주기 영속성 헌법 검사
+  ✓ [PASS] 헌법 정본에 제15조 및 5대 고도화 규정이 완전 편입되어 있다
+
+[검증 11/11] 공식 운영 이메일(ourgoal.support@gmail.com) 전수 단일화 및 구 이메일 영구 방화벽 검사
+  ✓ [PASS] 공식 운영 이메일(ourgoal.support@gmail.com)이 런타임 및 정본 문서에 필수 배선되어 있다
+  ✓ [PASS] 구 이메일(ysm0422@naver.com, support@ourgoal.kr)이 런타임, 법률 문서, 가이드에 0건(Zero)임을 물리적으로 보증한다
+
+[검증 12/12] 헌법 v2026.09.18: 시각 및 공간 조형 무결성 및 CSS 은폐 린터 검사
+  ✓ [PASS] 헌법 정본에 시각 자가감사(제7조 8항), 시각 IA 명세(제2조 6항), CSS 은폐 금지(제3조 5항), 4-Block 팩트 보고(제8조 3항)가 규정되어 있다
+  ✓ [PASS] CSS 내에 핵심 뷰 슬롯(#commBody, #personalGoalsView)을 은폐하는 위헌 패턴이 존재하지 않는다
+
+[검증 13/13] 헌법 v2026.09.19: PWA 캐시 무효화 · 인앱 완결(Zero mailto) · 4대 뷰 동시 전파 검사
+  ✓ [PASS] sw.js의 CACHE_NAME이 20260919 당일 최신 버전으로 갱신되어 있다 (헌법 제14조 제3항)
+  ✓ [PASS] index.html 내 외부 이메일 앱 의존 링크(mailto:)가 0건(Zero)이다 (헌법 제3조 제4항, 제14조 제1항)
+  ✓ [PASS] 4대 뷰 동시 전파 디스패처(dispatchFullViewPropagation)가 존재하고 체크인 저장에 배선되어 있다 (헌법 제1조 제4항 제5호, 제15조 제6항 제3호)
+
+[검증 14/14] 헌법 v2026.09.20: 체계적 시너지 및 물리적 집행력 검사
+  ✓ [PASS] 헌법 정본에 6대 신설/개정 조항(제2조 7항, 제3조 6항, 제4조 1항 9호, 제7조 8항 3호, 제11조 4항, 제14조 9항)이 완전 수록되어 있다
+  ✓ [PASS] 런칭 초기 광고 전면 배제 (Zero Ads Gate): 광고 모달/카운트다운 타이머 잔존 0건을 물리적으로 보증한다 (제4조 1항 8호, 제5조 1항 1호, 제14조 9항)
+  ✓ [PASS] 도메인 철학 일관성 (Zero Photo Profile Gate): 설정 프로필 사진 업로드 잔재가 0건이고 아바타 보관함이 직결되어 있다 (제4조 1항 9호, 제10조 5항)
+  ✓ [PASS] 모바일 375px 4대 시각 물리 규격이 ui.css에 배선되어 있다 (제7조 제8항 제3호)
+  ✓ [PASS] [검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사
+  ✓ [PASS] [검증 16/16] [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 정적 방화벽 검사
+  ✓ [PASS] [검증 17/17] [#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 조형 정적 방화벽 검사
+  ✓ [PASS] [검증 18/18] [#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 정적 방화벽 검사
+  ✓ [PASS] [검증 19/20] [#TASK-ES-195] 목표 탭 5종 서브탭 5열 그리드 단정화 및 통계 세그먼트 버튼 40px 정적 방화벽 검사
+  ✓ [PASS] [검증 20/20] [#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구 원장 영속화 및 기록 탭 상시 노출 무결성 검사
+  ✓ [PASS] [검증 21/21] [#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo Diary) 썸네일 자동 연계 & 히트맵 14px 스케일업 무결성 검사
+  ✓ [PASS] [검증 22/22] #TASK-ES-198: 캘린더 6대 결함 전수 일괄 정상화 검증
+  ✓ [PASS] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증
+
+================================================================
+🎯 검증 결과: 총 38개 검사 중 38개 통과 (0개 실패)
+================================================================
+✨ [ALL PASS] 아워골 전면 무결성 헌법 5대 검증 게이트를 완벽히 통과했습니다.
+
+================================================================
+🛡️  아워골 엄밀 Zero Dead-Click 3중 방화벽 검증기 (Anti-False-Pass)
+================================================================
+
+🧪 [카나리 자가 시험] 검증기 판정 무결성 시험 중...
+✓ [PASS] 카나리 변이 시험 통과: 공통 CSS 클래스를 통한 허위 통과(False-Pass)가 원천 차단됨을 입증했습니다.
+
+[분석] 정적 <button> 태그 총 918개 발견
+[결과] 엄밀 핸들러 배선 확인 버튼: 918개 / 918개
+✓ [PASS] 모든 <a> 링크 태그에 올바른 href 또는 이벤트 핸들러가 존재합니다.
+✓ [PASS] 전역 클릭 이벤트 위임(Event Delegation) 배선 정상 확인
+
+✨ [ALL PASS] 아워골 전수 인터랙션 및 엄밀 Zero Dead-Click 검증 100% 완료!
+
+🚢 Testing OurGoal Master Shipyard Modular Architecture (All 6 Tabs & Core)...
+[Test 1] All modular sub-blocks line count <= 800 lines (Cell Division Principle)
+  ✓ Checked 179 modular files: ALL under 800 lines (range: 68~118 lines)
+[Test 2] Mega-block loading and registry docking for all 6 core tabs
+  ✓ All 6 MegaBlocks registered successfully
+[Test 3] Sub-block docking validation (18 sub-blocks docked)
+  ✓ 18 sub-blocks successfully docked into 6 mega-blocks
+[Test 4] Cross-block Event Bus broadcasting & 4-view simultaneous propagation
+  ✓ 4 cross-block events broadcasted across all mega-blocks
+[Test 5] Watertight error boundary: individual failure isolation
+  ✓ Watertight isolation verified: sub-block failure does not halt the ship
+[Test 6] Cell skeleton: module guard ratchet + capabilities/slots + guard/scaffold unit tests (TASK-ES-356)
+[모듈 가드] ① 5942 · ② 71 · ③ 260 · ④ 0 · ⑤ 0
+  ⚠ 신고서: core/trash-bin: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: calendar/day-bg-picker: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: calendar/day-edit-hub: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: calendar/manual-edit-modal: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: goals/attachments: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: goals/prompt-encyclopedia: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: goals/team-goals-screen: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: records/record-card-wire: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ⚠ 신고서: settings/feedback-bot-setup: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
+  ↓ 기준선을 낮출 수 있다(node scripts/module-guard.js --update):
+    - ① index.html 인라인 스크립트 줄 수: 6133 → 5942 (-191)
+    - ② index.html 함수 선언 수: 81 → 71 (-10)
+    - ③ window 전역 직접 대입 수: 261 → 260 (-1)
+✓ 모듈 가드 통과
+[core] 능력 등록부·꽂는 자리 시험
+  ok · 능력: provide → request/call 로 이름만으로 받아 쓴다
+  ok · 능력: 없는 능력 요청은 CAPABILITY_MISSING — 무엇을 누가 찾았는지 메시지에 담는다
+  ok · 능력: 한 능력에 주는 세포는 하나(CAPABILITY_CONFLICT), 같은 세포가 다시 주면 바꿔 끼운다
+  ok · 능력: 이름 규칙·구현·세포 id 검사
+  ok · 능력: describe() 는 구현 없이 기계가 읽는 기술만 — 외부 행위는 needsConfirm
+  ok · 능력: revokeCell 로 세포가 떨어지면 흔적 0
+  ok · 자리: 정식 목록 15곳(상민님 확정 2026-10-04)이 미리 있고 그 밖은 없다
+  ok · 자리: 하이브리드 세포는 여러 자리에 동시에 꽂히고, order·세포 id 순으로 나온다
+  ok · 자리: 정식 목록 밖 이름은 기여·정의 모두 SLOT_NOT_ALLOWED
+  ok · 자리: 미래 자리 assistant.skill 은 등록만 받고 그리지 않는다
+  ok · 자리: 기여 하나가 실패해도 나머지는 그린다(수밀 격벽) + block:error 신호
+  ok · 자리: withdrawCell 로 세포가 떨어지면 모든 자리에서 흔적 0
+ok · 능력 등록부·꽂는 자리 시험 12건 통과
+[module-guard] 모듈 가드 시험
+  ok · 통과: 지금 저장소는 기준선을 넘지 않는다(npm test 경로와 같은 CLI)
+  ok · 실패 ①: index.html 인라인 스크립트 줄이 늘면 실패한다
+  ok · 실패 ④: 800줄을 넘는 js 파일이 새로 생기거나 더 길어지면 실패한다
+  ok · 실패 ⑤: js/tabs/alpha 가 js/tabs/beta 의 심볼·경로를 직접 참조하면 실패한다
+  ok · 래칫: 줄면 통과하고 낮출 수 있다고 알리며, 사유 없는 올리기·손으로 올린 이력은 거부한다
+  ok · 신고서: 신고서 없는 세포·주는 세포 없는 requires·데이터 주인 둘·목록 밖 자리·종류 밖 kind 는 실패, 신호 불일치는 경고
+ok · module-guard 시험 6건 통과(통과 1 · 실패 ①④⑤ 3 · 래칫 1 · 신고서 1)
+[new-module] 세포 스캐폴드 시험
+  ok · 세포·시험 뼈대·신고서 생성(provides·contributes·capabilities 포함)
+  ok · 만든 빈 세포가 레지스트리 경유로 마운트되고 능력·자리·구독이 dispose 로 흔적 0
+  ok · 신고서 있는 새 세포 — 모듈 가드 통과
+  ok · 신고서를 지우면 가드가 "신고서 없는 세포"로 실패
+  ok · 중복·이름 규칙 위반·목록 밖 자리·없는 탭 거부
+ok · new-module 시험 통과(생성물 삭제·신고서 원문 복원 확인)
+[core/toast] 공용 토스트 통로 시험
+  ok · 능력 등록: ui.toast(화면) · ui.toast.bind 를 core/toast 세포가 준다
+  ok · CORE-10: team-invite-comm 이 init() 전에 토스트를 부르면 정본 토스트가 정확히 1회 뜬다(재귀 없음)
+  ok · 정본 준비 전 호출은 대기열에 두었다가 정본이 붙는 순간 1회 띄운다(메시지 손실 0)
+  ok · 정본이 window.toast 로 나중에 생겨도(DOMContentLoaded 전 로드 순서) 다음 호출 때 밀린 것부터 차례대로 띄운다
+  ok · init 으로 넘겨받은 토스트가 있으면 그것을 쓰고 정본은 부르지 않는다
+  ok · bind: 주입 자리에 통로 자신이 들어와도 재귀하지 않는다 · 주입 토스트 오류는 삼키고 흐름을 막지 않는다
+  ok · 6곳(auth-safety·helpful-reason·reactions·team-invite-comm·team-linked-goals·team-visibility-levels)이 각자 만든 토스트 함수 없이 ui.toast.bind 를 부른다
+  ok · index.html: 능력 등록부·공용 토스트 통로가 6개 파일보다 먼저 로드된다
+[core/toast] 8건 통과
+[TEST] settings-gcal-autosync-switch.test.js: starting execution for TASK-ES-362...
+ok · 구글 캘린더 자동 동기화 스위치 시험 3건 통과
+[TEST] calendar-natural-schedule.test.js: starting execution for TASK-ES-362...
+ok · AI 일정 비서 자연어 파서 시험 32건 통과
+[core/modal] 공용 모달 통로 시험
+  ok · 능력 등록: ui.modal(화면) · ui.modal.close · ui.modal.bind 를 core/modal 세포가 준다
+  ok · 정본이 있으면 열기·닫기를 정본에 그대로 1회씩 넘긴다(onMount 도 정본이 부른다)
+  ok · 대기열: 정본 준비 전 열기·닫기·열기 요청은 잃지 않고, 정본이 붙는 순간 요청 순서대로 넘긴다
+  ok · 대기열: 정본이 window.openModal 로 나중에 생겨도(로드 순서) 다음 호출 때 밀린 것부터 넘긴다
+  ok · 대기열: 아무것도 안 열린 채 정본 없이 닫기만 오면 쌓지 않는다(열린 모달이 없다)
+  ok · bind: 주입 openModal/closeModal 이 있으면 그것을 쓰고 정본은 부르지 않는다 · open 은 두 인자, close 는 인자 없이
+  ok · bind: 주입이 없으면 공용 통로(정본)로 · 주입 자리에 통로 자신이 들어와도 재귀하지 않는다
+  ok · 재귀 없음: window.openModal 자리에 통로가 만든 함수가 있으면 정본으로 보지 않고 대기한다
+  ok · team-linked-goals: init 전 DM 모달 열기는 정본(window.openModal)으로 가고, init 후에는 주입 openModal 로 간다
+  ok · 4곳에 각자 만든 openModal 함수가 없다 — 진짜 통로 2곳은 ui.modal.bind 를 부르고, 자체 모달 2곳은 이름을 정정했다(외부 API 키 그대로)
+  ok · index.html: 공용 모달 통로가 공용 토스트 통로 다음, 두 팀 파일보다 먼저 로드된다
+[core/modal] 11건 통과
+[core/confirm] 공용 확인창 통로 시험
+  ok · 능력 등록: ui.confirm(화면) · ui.confirm.bind 를 core/confirm 세포가 준다
+  ok · 정본 있음 · 확인을 누르면 뒤따르는 동작이 1회 실행되고, 본문은 넘긴 문구 그대로다
+  ok · 정본 있음 · 취소를 누르면 동작 0회
+  ok · 정본 없음 · 브라우저 기본 확인창으로 떨어진다(같은 문구 1회, 결과 그대로)
+  ok · 정본도 기본 확인창도 없으면 동작하지 않는다(false)
+  ok · 문구에 꺾쇠·따옴표·줄바꿈이 있어도 글자 그대로 보이게 이스케이프만 하고 줄바꿈은 둔다
+  ok · 겹친 요청은 대기열에서 차례를 기다린다 — 첫째가 닫힌 뒤에 둘째를 띄운다
+  ok · bind: 주입 확인 함수가 있으면 그것을 쓰고, 통로 자신이 주입돼도 재귀 없이 정본으로 1회 간다
+  ok · 열린 정본 모달 안에서 띄우면 밑 모달 노드를 떼었다가 닫힌 뒤 같은 노드를 다시 붙이고, 그 다음에 동작한다
+  ok · ✕·바깥 탭·뒤로가기로 닫히면(onOk/onCancel 없음) 취소로 보고 동작 0회
+  ok · 정본이 그리지 못하면(#modalOverlay 가 안 열림) 기본 확인창으로 떨어진다
+  ok · 실제 호출부 js/customize.js 홈 구성 되돌리기: 취소 → 되돌림 0회 · 확인 → 되돌림 1회
+  ok · index.html 밖 9개 파일에 기본 확인창 직접 호출이 없고 모두 ui.confirm.bind 를 부른다
+  ok · index.html: 공용 확인창 통로가 공용 모달 통로 바로 다음, 호출부 파일보다 먼저 로드된다
+[core/confirm] 14건 통과
+[core/confirm 2단계] index.html 확인창 19곳 → 공용 통로 ui.confirm
+  ok · 19곳이 모두 공용 통로 ui.confirm 으로 예전 문구 그대로 묻는다
+  ok · index.html 인라인 스크립트의 기본 확인창은 목표 탭 루틴 삭제 2곳만 남는다(이번 범위 밖)
+  ok · 공용 확인창 통로가 index.html 인라인 스크립트보다 먼저 로드된다
+  ok · 휴지통 영구 삭제(permanentDeleteFromTrash): 취소 → 그대로·저장 0회 · 확인 → 그 항목만 지우고 저장 1회
+  ok · 휴지통 비우기(emptyTrash): 취소 → 그대로 · 확인 → 비우고 저장 1회
+  ok · 사용자 차단(blockUser): 취소 → 차단 목록·원격 저장 0회 · 확인 → 목록 1건·원격 1회·저장 1회
+  ok · 샘플 정리(purgeSampleRecordsOneClick): 취소 → 샘플 그대로 · 확인 → 내 기록만 남기고 저장 1회
+[core/confirm 2단계] 7건 통과
+TASK-ES-365 계정 전환 격리 시험 (부품만 돌려 봄 — 가짜 브라우저·가짜 Supabase) 대상: index.html
+  [통과] ① A 로그인·기록·로그아웃 -> 같은 브라우저 B 로그인: B 화면 기록·소개·동반자에 A 데이터 0건, B 업로드에 A 기록 0건
+  [통과] ② 서버에 A 기록이 아직 없을 때(오프라인 저장분)도 B 로 넘어가지 않는다
+  [통과] ③ 로그아웃 없이 계정이 바뀌어도(A 전체 사본이 남은 채 B 세션) A 사본을 B 로 이관하지 않는다
+  [통과] ④ 서버 동기화 요청(sync_records)에는 지금 로그인 uid 만 실린다
+  [통과] ⑤ 기존 흐름 유지: 게스트로 쓴 목표·기록은 로그인한 계정으로 이관되어 그 계정 이름으로 올라간다
+  [통과] ⑥ 로그아웃은 계정 공용 키만 지우고 서버 원장(A 기록)은 그대로 둔다
+
+측정값: {"profileIsB":true,"aTextOnB":0,"aBioOnB":0,"aCompanionOnB":0,"bUploadsWithA":0,"bLocalCopiesWithA":0,"offlineATextOnB":0,"offlineBUploadsWithA":0,"aBackRestored":1,"aCopyLeftBeforeSwitch":true,"noLogoutATextOnB":0,"noLogoutBUploadsWithA":0,"syncIdsOtherThanB":0,"guestRecMigrated":1,"guestGoalMigrated":1,"guestRecOnServerAsB":1,"guestCopyRemoved":true,"sharedKeysLeft":[],"serverAKept":true,"aOwnBackupKept":true}
+결과: 6/6 통과
+[goal-templates-data-split] #TASK-ES-364
+  ok · Node 경로: 60종·id 순서가 분리 전과 같다
+  ok · Node 경로: list JSON 지문 = 분리 전 지문(6151e77aadc1…)
+  ok · Node 경로: list deepStrictEqual 분리 전 원본(git 9962457)
+  ok · 브라우저 경로: window.OURGOAL_60_TEMPLATES.list = Node 경로 list
+  ok · 브라우저 경로: 전역 이름은 OURGOAL_60_TEMPLATES 하나 + 데이터 묶음 OurgoalGoalTemplateParts 하나만 새로 생김
+  ok · getByCategory: all·6카테고리 결과가 원본과 같다(각 10종)
+  ok · getById: tplId·id 양쪽 표기, 없는 id 는 null
+  ok · search: 키워드 결과가 원본과 같다
+  ok · 데이터 파일 6개 각 800줄 이하, 조립자 800줄 이하
+  ok · index.html: 데이터 파일 6개가 PART_ORDER 순서로 조립자보다 먼저 읽힌다
+[goal-templates-data-split] 10 passed
+[comm/dm-ledger] DM·동반자 서버 원장 통로 시험
+  ok · trackPost: 본인 토큰을 Authorization 에 붙여 /api/track 으로 보낸다(COMM-03 원인 ①: 토큰 없이 401)
+  ok · trackPost: 토큰이 없으면 보내지 않고 null(서버 401 을 만들지 않는다)
+  ok · storageCopy: 대화 흔적(_thread·_loadedThreadFromDb·lastMsg·lastTime·isUnread)을 뺀 사본, 원본은 그대로
+  ok · insertReply: 상태 열이 없는 표(PGRST204)면 그 열만 빼고 다시 넣어 메시지를 도착시킨다(COMM-04A 원인)
+  ok · insertReply: 열이 다 있으면 한 번에, 다른 오류(권한 등)는 다시 넣지 않고 실패로 돌려준다
+  ok · markThreadRead: 서버 함수 og_dm_mark(p_read true) 를 먼저 부르고 바뀐 행 수를 돌려준다
+  ok · markThreadRead: 함수가 없으면 받는 사람 본인 행만 직접 update(아직 안 읽은 행), 실패는 ok:false 로 정직하게
+  ok · team-invite-comm: markDmThreadAsRead 가 통로의 markThreadRead 를 부른다(COMM-04 원인: 부르는 곳 없음)
+  ok · renderSingleDmMsg: 내 메시지는 도착 시각이 없으면 '도착'을 쓰지 않는다(04B: 상대가 꺼져 있을 때 도착을 지어내지 않음)
+  ok · ensureDefaultCompanions: 자기 uid 키(ourgoal_companions_backup_<uid>)만 읽고, 비어 있으면 다른 계정 키를 가져오지 않는다
+[comm/dm-ledger] 10/10 통과
+  통과 · DM 60건 중 대화방 목록은 50건
+  통과 · DM 60건 중 최신 50건(m11~m60)만, 오래된 m01~m10 은 없음
+  통과 · DM 표시 순서는 시간 오름차순(m11 … m60)
+  통과 · DM 화면 글자에서 최신 m60 이 맨 아래(m59 보다 뒤), m01 없음
+  통과 · DM 읽음 표시 그대로: 마지막 내 메시지(m60)는 안 읽음, 그 전 내 메시지(m58)는 읽음, 상대 메시지는 읽음
+  통과 · DM 3건(50건 이하)은 전부 오름차순
+  통과 · DM 실시간 수신 새 메시지(m61)는 불러온 50건 맨 뒤에 붙고 내 메시지는 읽음으로
+  통과 · 팀 대화방 130건 중 최신 100건(c031~c130)을 오름차순으로
+DM 최신 50건 시험: 8/8 통과
+[ES-406] ok   처음: 저장값 없음 → 본문 접힘
+[ES-406] ok   클릭 1회: 저장값 false(펼침)·화면 다시 그림 요청
+[ES-406] ok   클릭 1회 뒤 렌더 + 일괄 접기: 본문 펼침(display:block)·화살표 rotated 유지
+[ES-406] ok   일괄 접기가 의도된 다른 아코디언은 그대로 접힘(조별 본문·마일스톤·details)
+[ES-406] ok   다시 렌더 뒤에도 펼침 유지
+[ES-406] ok   클릭 2회: 저장값 true(접힘)
+[ES-406] ok   클릭 2회 뒤 렌더 + 일괄 접기: 본문 접힘·화살표 rotated 없음
+[ES-406] ok   다시 렌더 뒤에도 접힘 유지
+[ES-406] ok   클릭 3회: 다시 펼침
+[ES-406] team-level-accordion: all checks held
+[ES-409] ok   A1 저장값 없음: 목록 펼침(display:flex)이고 일괄 접기 뒤에도 화살표 rotated 유지
+[ES-409] ok   A2 isParticipantsOpen: 저장값 없음 → 펼침
+[ES-409] ok   A3 머리 클릭 1회: 목록 접힘·화살표 rotated 없음·저장값 foldParticipants true
+[ES-409] ok   A4 접힘 저장 뒤 렌더 + 일괄 접기: 목록 접힘·화살표 rotated 없음
+[ES-409] ok   A5 다시 클릭 뒤 렌더 + 일괄 접기: 목록 펼침·화살표 rotated
+[ES-409] ok   B1 저장값 없음: 일괄 접기가 마일스톤 목록을 접고 버튼은 「마일스톤 펼치기 ▼」(기본 접힘 그대로)
+[ES-409] ok   B2 펼침 저장(unfoldMsList true): 일괄 접기 뒤에도 목록이 보이고 버튼은 「마일스톤 접기 ▲」
+[ES-409] ok   B3 isMsListOpen: 펼침 저장 → 참
+[ES-409] ok   B4 접힘 저장(unfoldMsList false): 일괄 접기가 목록을 접음
+[ES-409] ok   C1 「마일스톤 펼치기」 클릭 1회: 목록 펼침·버튼 「마일스톤 접기 ▲」·저장값 unfoldMsList true
+[ES-409] ok   C2 클릭 2회: 목록 접힘·저장값 false
+[ES-409] team-fold-state: all checks held
+[ES-410] ok   A0 같은 버튼에 손잡이 2개가 걸림(카드 + 모듈)
+[ES-410] ok   A1 클릭 1회: 세부 할 일 상자 펼침(display:block)·화살표 ▲
+[ES-410] ok   A2 클릭 2회: 상자 접힘(display:none)·화살표 ▼
+[ES-410] ok   B1 모듈 없음 클릭 1회: 카드 손잡이가 상자 펼침·화살표 ▲
+[ES-410] ok   B2 모듈 없음 클릭 2회: 상자 접힘·화살표 ▼
+[ES-410] team-tasks-toggle: all checks held
+TASK-ES-368 빠른 복구·닉네임 입장 잠금 시험 (부품만 돌려 봄 — 가짜 브라우저·가짜 Supabase) 대상: index.html
+  [통과] ① A 백업이 있는 기기에서 세션 없이 빠른 복구(A 닉네임·다른 닉네임 모두): 화면에 A 데이터 0, 앱 입장 0회, 정식 로그인 안내
+  [통과] ② A 백업이 있는 기기에서 B 세션으로 빠른 복구(A 닉네임 입력): B 로 들어가고 화면·업로드에 A 데이터 0
+  [통과] ③ B 세션에서 호출자가 A uid 를 직접 넘겨도 세션 uid(B)로만 연다
+  [통과] ④ 구글 이메일만 넘긴 입장(Supabase 세션 없음)은 열지 않는다 — u_ uid 입장 0, 화면에 A 데이터 0, 정식 로그인 안내
+  [통과] ⑤ 기존 흐름 유지: A 세션으로 빠른 복구하면 서버가 비어 있어도 A 자기 백업을 되찾는다
+  [통과] ⑥ 추가 범위(#680 발견): loadProfile 동반자 복구는 이 uid 의 ourgoal_companions_backup_ 키만 읽는다 — B 자기 키가 비어도 A 동반자 0
+
+측정값: {"noSessionResult":[false,false],"noSessionAOnScreen":0,"noSessionEnterApp":0,"noSessionAuthScreen":"flex","noSessionGuide":"빠른 복구는 카카오·구글·이메일로 로그인한 상태에서만 이 기기에 남은 내 기록을 열 수 있어요. 먼저 로그인해 주세요.","bSessionOk":true,"bSessionProfile":"B","bSessionAOnScreen":0,"bSessionUploadsWithA":0,"bSessionExplicitAProfile":"B","bSessionExplicitAOnScreen":0,"googleOk":false,"googleUidIsEmailUid":false,"googleAOnScreen":0,"googleEnterApp":0,"googleAuthScreen":"flex","ownBackupRestored":1,"bCompanionsFromA":0,"aCompanionsOwn":1}
+결과: 6/6 통과
+TASK-ES-373 구글 로그인 서버 검증 세션 시험 (부품만 돌려 봄 — 가짜 브라우저·가짜 Supabase·가짜 구글 키) 대상: index.html
+  [통과] ① 위조·무서명 자격증명 5종(서명 없음·다른 키 서명·다른 aud·만료·JWT 아님)을 One-Tap 콜백에 넣으면 입장 0회, u_ uid 0, 정식 로그인 안내
+  [통과] ② 서버 검증 성공(가짜 구글 키로 서명된 정상 자격증명 + nonce) → Supabase 세션 uid 로 입장, u_ uid 아님
+  [통과] ③ 다른 nonce 로 발급된 자격증명(재사용 흉내)은 서버가 거절 → 입장 0
+  [통과] ④ 토큰 클라이언트 경로(미로그인, 액세스 토큰·userinfo 이메일): "Google 계정으로 바로 시작하기" 는 이메일 u_ uid 로 들어가지 않고 Supabase 구글 OAuth 로 넘긴다
+  [통과] ⑤ 토큰 클라이언트 경로에서 Supabase 가 구글 공급자를 거절하면(공급자 꺼짐) 입장 0, 정식 로그인 안내
+  [통과] ⑥ 고정: loginWithDirectIdentifier 에 이메일 → u_ uid 를 만드는 줄이 없다
+
+측정값: {"forged":{"unsigned":{"enterApp":0,"emailUid":false,"authScreen":"flex","loginError":true},"attackerSigned":{"enterApp":0,"emailUid":false,"authScreen":"flex","loginError":true},"wrongAud":{"enterApp":0,"emailUid":false,"authScreen":"flex","loginError":true},"expired":{"enterApp":0,"emailUid":false,"authScreen":"flex","loginError":true},"notJwt":{"enterApp":0,"emailUid":false,"authScreen":"flex","loginError":true}},"forgedEntered":0,"forgedEmailUid":0,"forgedGuided":5,"gisNonceSet":true,"goodProfile":"server-uid","goodRestoreCalls":1,"goodIdTokenCalls":1,"goodProvider":"google","replayEntered":0,"tokenPathEnterApp":0,"tokenPathDirectCalls":0,"tokenPathOAuth":["google"],"disabledEnterApp":0,"disabledGuide":"flex","directDerivesEmailUid":false}
+결과: 6/6 통과
+[xp-server-ledger-es421] EXP 서버 원장 부품 시험
+  ok · 게스트 불변: 지급은 settings.xp(열거되는 일반 칸)에 옛 모양 그대로, 서버 호출 0, 원장 키 0
+  ok · 세션 없는 로그인(직접 로그인): 기기 모드 유지 — 서버 쓰기 0, settings.xp 일반 칸
+  ok · 첫 로그인 이관(서버 없음): 백업 먼저 → 서버에 기기 값 그대로 → 되읽기 일치 뒤에만 settings.xp 쓰기 중단
+  ok · 되읽기 불일치면 확인하지 않음: settings.xp 를 계속 기기에 씀
+  ok · 합치기(서버에 이미 있음): 이력 합집합 + 합계는 큰 쪽 이상, 다시 합쳐도 늘지 않음(멱등)
+  ok · 합치기: 200건 넘는 기기 이력 — 서버 이력 200건, 합계는 전체 합 그대로
+  ok · 이관 + 서버 기존 판: 두 기기 이력이 합쳐져 서버·메모리 같음, 레벨 배지 다시 그림
+  ok · 확인 뒤 지급: 메모리에 바로 반영 + 대기열 → 동기화로 서버 합계·이력 반영, 대기열 0
+  ok · 오프라인 재동기화: 실패 동안 기기 사본에 보관 → 캐시 파기 없이 다시 열어도 유지 → 연결되면 서버로
+  ok · 두 기기 각자 지급 후 차례로 동기화: 서버 합계 = 모든 지급 합, 같은 지급 두 번 보내도 한 번
+  ok · 읽고 쓰는 사이 다른 기기가 먼저 씀(판 충돌): 0행 갱신을 충돌로 보고 다시 읽어 얹음 — 양쪽 지급 모두 남음
+  ok · 이력 없는 직접 증가(첫 체크인 +5 우회 경로)도 잃지 않음: 다음 동기화에 합계만 올라감
+  ok · 본인 행만: B 세션으로는 A 원장을 읽지도 쓰지도 못함(RLS 흉내)
+  ok · 계정 전환: A 원장이 B 프로필에 붙지 않음
+[xp-server-ledger-es421] 모두 통과
+TASK-ES-372 개발용 테스터 B 직통 입장 호스트 제한 시험 (부품만 돌려 봄 — 가짜 document·location) 대상: index.html
+  [통과] ① 운영·미리보기 등 로컬이 아닌 호스트: ?debug=true 여도 테스터 B 버튼 0개, 강제 인자(true)로 불러도 0개
+  [통과] ② 로컬이 아닌 호스트: enterAsTesterB 를 직접 불러도 테스터 B 로 입장하지 않는다(직통 로그인 호출 0회, 앱 입장 0회)
+  [통과] ③ 로컬 개발 호스트(localhost·127.0.0.1·[::1]·*.localhost): ?debug=true 면 버튼 2개, 없으면 0개, enterAsTesterB 는 테스터 B uid 로 들어간다
+  [통과] ④ 직통 입장 규칙: 세션 없이 호출자가 uid 를 넘겨도 로컬 개발 호스트가 아니면 열지 않는다(needs-login)
+  [통과] ⑤ 호스트 판정: 허용 목록만 참, 비슷한 이름(localhost.example.com·evillocalhost·127.0.0.1.nip.io)은 거짓
+
+측정값: {"blockedHostButtons":{"ourgoal-app.vercel.app":0,"ourgoal-app-git-feat-x-yangsangmin.vercel.app":0,"www.example.com":0,"localhost.example.com":0,"evillocalhost":0,"127.0.0.1.nip.io":0,"192.168.0.10":0,"":0},"blockedHostForcedButtons":{"ourgoal-app.vercel.app":0,"ourgoal-app-git-feat-x-yangsangmin.vercel.app":0,"www.example.com":0,"localhost.example.com":0,"evillocalhost":0,"127.0.0.1.nip.io":0,"192.168.0.10":0,"":0},"blockedHostEntries":{"ourgoal-app.vercel.app":0,"ourgoal-app-git-feat-x-yangsangmin.vercel.app":0,"www.example.com":0,"localhost.example.com":0,"evillocalhost":0,"127.0.0.1.nip.io":0,"192.168.0.10":0,"":0},"allowedHostButtons":{"localhost":2,"127.0.0.1":2,"[::1]":2,"ourgoal.localhost":2,"LOCALHOST":2},"allowedHostNoDebugButtons":{"localhost":0,"127.0.0.1":0,"[::1]":0,"ourgoal.localhost":0,"LOCALHOST":0},"allowedHostEntries":{"localhost":1,"127.0.0.1":1,"[::1]":1,"ourgoal.localhost":1,"LOCALHOST":1},"explicitUidOffHost":false,"explicitUidNoFlag":false,"explicitUidDevHost":true,"isLocalDevHost":{"localhost":true,"127.0.0.1":true,"[::1]":true,"ourgoal.localhost":true,"LOCALHOST":true,"ourgoal-app.vercel.app":false,"ourgoal-app-git-feat-x-yangsangmin.vercel.app":false,"www.example.com":false,"localhost.example.com":false,"evillocalhost":false,"127.0.0.1.nip.io":false,"192.168.0.10":false,"":false}}
+결과: 5/5 통과
+게스트 실시간 구독 null 가드 (#TASK-ES-377)
+  ok · Supabase 클라이언트가 없으면(sb=null) 게스트 프로필로 실시간 구독을 불러도 예외가 나지 않는다
+  ok · Supabase 클라이언트가 없으면 피드 불러오기도 예외 없이 빈 목록으로 끝난다
+  ok · channel 함수가 없는 불완전한 클라이언트여도 실시간 구독은 건너뛴다
+  ok · 클라이언트가 있으면 예전처럼 팀 댓글·피드·사용자 세션 채널 3개를 열고 구독한다
+  ok · 휴지통 되돌리기 안내: 막대는 누름을 통과시키고 「실행 취소」 버튼만 누름을 받으며, 문구와 6초는 그대로다
+게스트 실시간 구독 null 가드: 5건 모두 통과
+결과 입력 창 「보관」 시험 (#TASK-ES-378)
+  ok · 목표 단위(goal 인자 없음)에서 연 창의 「보관」이 그 목표를 보관하고 저장·토스트·닫기·화면 갱신까지 이어진다
+  ok · 마일스톤에서 연 창의 「보관」이 상위 목표를 보관하고 화면 갱신에서 예외가 나지 않는다
+  ok · 할 일에서 연 창의 「보관」도 상위 목표를 보관하고 화면을 갱신한다
+  ok · 결과가 아직 없으면 「보관」 버튼은 그려지지 않는다(기존 그대로)
+  ok · 목표 단위에서 「저장 및 보관함으로 이동」을 누르면 결과가 저장되고 목표도 실제로 보관된다
+결과 입력 창 「보관」 시험 5건 통과
+  ok · 숨김 규칙(#goalDetailBody > .toss-goal-hero-card)은 ui.css 에 그대로 있다
+  ok · 결과 없는 목표: #goalResultBtn 이 있고 숨김 카드 밖, #goalDetailBody 바로 아래 줄에 있다
+  ok · 결과 없는 목표: 문구는 「+ 최종 결과」, 요약 줄 없음
+  ok · 결과 있는 목표: 문구 「📝 결과 수정」 + 「최종 결과 · 달성률 80%」 요약
+  ok · 편집 모드: #goalResultBtn 을 그리지 않는다
+  goal-result-btn-es380: 5건 통과 · 0건 실패
+[avatar-personas-split] #TASK-ES-386
+  ok · Node 경로: 320종·id 1~320 순서·MBTI 20개씩 순서가 그대로
+  ok · Node 경로: BODY_THEMES_320 JSON 지문 = 분리 전 지문(b556882b0a91…)
+  ok · Node 경로: BODY_THEMES_320 deepStrictEqual 분리 전 원본(git ddbb761)
+  ok · Node 경로: 공개 이름(Object.keys(OurgoalAvatar))이 원본과 같다
+  ok · 브라우저 경로(self 있음, index.html 순서): OurgoalAvatar.BODY_THEMES_320 = 원본
+  ok · 브라우저 경로(self 없음 — 전역 this 로 실행): 같은 배열
+  ok · 브라우저 경로: 새 전역은 데이터 묶음 OurgoalAvatarPersonaParts 하나뿐(16개 키, PART_ORDER 순)
+  ok · getAllThemes·getThemesByMbti(16종·소문자·빈값)·getThemesByGroup(4군·빈값) 결과가 원본과 같다
+  ok · searchThemes·getTheme(1·20·21·160·320·없는 id) 결과가 원본과 같다
+  ok · 변이 ①(값 1개): esfp 파일의 색 하나를 바꾸면 지문·deepStrictEqual 비교가 실패한다
+  ok · 변이 ②(순서): 조립 순서에서 intj·intp 를 맞바꾸면 지문·deepStrictEqual 비교가 실패한다
+  ok · 데이터 파일 16개 각 800줄 이하, 각 20종
+  ok · index.html: 데이터 파일 16개가 PART_ORDER 순서로 avatar-system.js 보다 먼저 읽힌다
+[avatar-personas-split] 13 passed · 0 failed
+  ok   피드 공유 DM → 푸시 요청 1건이 로그인 세션 Bearer 를 붙여 나간다
+  ok   피드 공유 DM 푸시의 받는 사람 칸 = 서버가 읽는 targetUserId (receiver_id 아님)
+  ok   로그인 세션이 없으면 피드 공유 DM 푸시 요청을 보내지 않는다(토큰 없는 요청 0건)
+  ok   DM 화면 전송의 푸시 호출에 Authorization Bearer 머리글이 있다
+  ok   DM 화면 전송의 받는 사람 칸 = targetUserId
+  ok   서버: 로그인 사용자 + 방금 그 상대에게 보낸 DM 행 → 200, 그 상대 구독에만 발송
+  ok   서버: 로그인 사용자라도 그 상대에게 보낸 최근 DM 행이 없으면 403, 발송 0
+  ok   서버: 자기 자신을 받는 사람으로 지정하면 403
+  ok   서버: 가짜 토큰·토큰 없음은 즉시 발송도 401, 발송 0
+  ok   서버: 로그인 사용자 토큰으로는 정기 발송(크론) 분기에 못 들어간다 — 401
+  ok   서버: 사용자 호출 알림은 앱 안 경로만 연다(바깥 주소 → /#comm)
+  ok   서버: DB 토큰(비밀값) 호출은 예전처럼 DM 행 없이도 즉시 발송 200
+dm-push-auth: 12/12 (root: git-work)
+  ok · S1 POST 토큰 없음 + 남의 userId → 401, 행 안 생김
+  ok · S2 POST 가짜 토큰 → 401, 행 안 생김
+  ok · S3 POST 본인 토큰 + 남의 userId → 403, 행 안 생김
+  ok · S4 POST 본인 토큰 + 본인 userId → 200, 행 user_id = 토큰 uid
+  ok · S5 POST 본인 토큰 + userId 생략 → 200, 행 user_id = 토큰 uid
+  ok · S6 DELETE 토큰 없음 → 401, 남의 구독 행 그대로
+  ok · S7 DELETE 본인 토큰으로 남의 구독 → 403, 행 그대로
+  ok · S8 DELETE 본인 토큰으로 본인 구독 → 200, 그 행만 지워짐
+  ok · S9 GET 공개키 조회는 토큰 없이 200 그대로
+  ok · A1 앱 구독 등록: 로그인 세션 → POST 1건, Authorization = Bearer 세션 토큰
+  ok · A2 앱 구독 등록: 세션 없음(게스트) → POST 0건
+  ok · A3 앱 구독 해제: 로그인 세션 → DELETE 1건, Authorization = Bearer 세션 토큰
+  ok · A4 앱 구독 해제: 세션 없음 → DELETE 0건
+[push-subscribe-auth-es400] 13 ok · 0 failed
+  ok   일반 로그아웃(performLogout)은 signOut 을 한 번, { scope: 'local' } 로 부른다(이 기기만)
+  ok   로그아웃은 세션이 있을 때 먼저 이 기기 푸시 구독을 서버에서 지운다(DELETE /api/push-subscribe + 세션 Bearer) — 그 다음 signOut
+  ok   서비스 워커가 준비되지 않아도(ready 가 끝나지 않음) 로그아웃은 막히지 않고 끝난다
+  ok   구독이 없거나 서비스 워커가 없는 브라우저는 구독 요청 0건으로 로그아웃한다
+  ok   서버가 세션을 지운 기기(getUser: 'Auth session missing!')는 끊긴 세션으로 판정되어 로그아웃 화면으로 간다
+  ok   문구는 대소문자를 가리지 않는다('AUTH SESSION MISSING')
+  ok   getUser 오류 응답 401 도 끊긴 세션으로 판정된다
+  ok   잠깐의 네트워크 오류('Failed to fetch', status 0)로는 로그아웃시키지 않는다
+  ok   로그인 직후 60초 안에는 'Auth session missing!' 이어도 로그아웃시키지 않는다(기존 오탐 방어 유지)
+  ok   세션이 살아 있으면(getUser 정상) 로그아웃시키지 않는다
+  ok   인자 없는 signOut()(기본값 global)은 탈퇴(submitWithdrawAccount) 1곳에만 남는다
+  ok   다른 기기 로그아웃은 그대로 { scope: 'others' } 다
+logout-scope-es399: 12/12 (root: git-work)
+  통과 같은 입력으로 두 번 만들면 바이트가 같다
+  통과 형식 이름과 기준 커밋 칸이 있다
+  통과 세포 수가 신고서와 같고 세포마다 필수 칸이 있다
+  통과 영역들이 모든 세포를 정확히 한 번씩 담는다
+  통과 세포 종류 4가지 · 꽂는 자리 15곳
+  통과 분열 이력: 처음 800줄 초과 목록이 기준선 첫 기록과 같고 지금 수는 지표와 같다
+  통과 부르는/불리는 관계가 서로 맞다
+  통과 머리 주석 줄 추출: 구분선·별표를 빼고 @role 을 벗긴다
+  통과 #TASK-ES-417 미추적 파일을 만들어도 출력이 바뀌지 않는다(git 추적 파일만 읽음)
+  통과 db 재료: 묶음마다 256KiB 미만이고 다시 이으면 세포 목록이 그대로다
+  통과 노션 본문: 두 번 만들면 같고, 되읽기 대조가 세포 전부를 찾는다
+  통과 세포마다 짧은 이름표(name)가 있고, 손 이름이 없으면 하는 일 첫 구절·id 순으로 대신한다
+  통과 노션 본문 세포 펼침 제목이 짧은 이름 · id 순이고, 영역 표의 세포 목록도 짧은 이름이다
+  통과 저장본과 내용이 같고 기준 커밋 도장만 다르면 최신으로 본다(내용이 다르면 갱신 필요)
+  통과 병합 이력 칸(prs·그 PR 의 작업 번호·REQ)만 다르면 최신으로 보고, 게시는 새로 만든 판을 쓴다
+  통과 전문가 템플릿 자료 세포는 목표 템플릿 영역에 든다
+  통과 노션 요약 줄: 800줄 초과 파일이 0개면 「— 」 없이 끝나고, 있으면 「— 파일 줄수」가 붙는다
+cell-map-export 부품 시험: 17/17
+[ES-431] ok   A1 카드 그리기가 예외 없이 캔버스를 돌려준다
+[ES-431] ok   A2 스트릭 줄이 computeStreakDays() 값으로 그려진다
+[ES-431] ok   B1 computeStreakDays 가 통로에 없으면 0일로 그린다
+[ES-431] lockscreen-card-streak: all checks held
+숨김 게이트 정적판 시험
+  ok · 지금 저장소: 숨은 처리기 요소가 모두 허용 목록 안에 있고 허용 목록 형식이 맞다(가드 통과)
+  ok · 지금 저장소 CLI: 종료 코드 0
+  ok · 깨끗한 픽스처: 숨은 처리기 요소 0
+  ok · ① ui.css 에 4테마 !important 숨김 규칙을 더하면 실패 — #bellBtn
+  ok · ② 조상에 인라인 display: none !important 를 넣으면 실패 — 조상 #topRight 안의 #bellBtn
+  ok · ③ 클래스 선택자로 조상을 숨기면(.home-actions — ES-433 사례) 실패 — 자바스크립트 처리기만 있는 #shareBtn
+  ok · ④ id 없는 onclick 단추도 잡는다 — 조상 #missionCard 숨김(ES-440 오늘의 카드 사례)
+  ok · ④-2 js 파일의 변수 담기 꼴 처리기(var b = getElementById; b.onclick =)도 처리기로 센다
+  ok · 처리기 없는 요소를 숨기는 것은 실패가 아니다
+  ok · :hover·::before 같은 상태 선택자, !important 없는 display:none 은 실패가 아니다
+  ok · 홈 첫 화면으로 좁힌 선택자(#screen-home > #id)는 그 자리에 있을 때만 맞는다
+  ok · 허용 목록: 사유가 있으면 통과, 사유 20자 미만·키 중복은 실패
+  ok · --allow 는 사유 없이 거부(종료 2), 사유가 있으면 허용 목록에 올라 통과, --update 는 더는 숨지 않는 항목을 지운다
+
+13개 통과, 0개 실패
+  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry
+✨ MASTER SHIPYARD MODULAR ARCHITECTURE VALIDATION 100% COMPLETE & PASS!
+[OurgoalHomeMegaBlock] Sub-block mount error in "faulty-isolate": Error: Simulated watertight failure
+    at Object.mount (C:\dev\wt\agy-scratch\TASK-ES-580\git-work\scripts\test-shipyard-modular.js:127:24)
+    at Object.mount (C:\dev\wt\agy-scratch\TASK-ES-580\git-work\js\tabs\home\index.js:87:23)
+    at Object.<anonymous> (C:\dev\wt\agy-scratch\TASK-ES-580\git-work\scripts\test-shipyard-modular.js:135:30)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14)
+    at Object..js (node:internal/modules/cjs/loader:1961:10)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47

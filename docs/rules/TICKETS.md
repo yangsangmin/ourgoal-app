@@ -635,3 +635,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-576 | INFRA | 오늘 미션 해시 및 카드 렌더 책임 원문 분열 | docs/specs/REQ-TASK-ES-576-TODAY-MISSION.md | 4단계(심사 청구)
 
 - TASK-ES-577 [INFRA] PR837 이후 생성지도 저장본 일괄 갱신. REQ-TASK-ES-577-MAP-BATCH.md · reports/TASK-ES-577/claims.json
+- #TASK-ES-580 | INFRA | PR837 시험 증거 불일치 원시 기록 대조 및 정합성 규명 | docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md | 4단계(심사 청구)
