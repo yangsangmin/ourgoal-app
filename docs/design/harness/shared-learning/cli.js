@@ -4,6 +4,7 @@ const { fs, path, json, write, inside } = require('./common');
 const { bootstrap } = require('./bootstrap');
 const { validateEvent } = require('./validate');
 const { collectEvent } = require('./collect');
+const {feedbackView}=require('./feedback-view');
 function main(argv) {
   const [command, ...args] = argv;
   const flags = {};
@@ -36,6 +37,12 @@ function main(argv) {
     if(fs.existsSync(resolved))inside(repoRoot,resolved);
     write(file,value);
   }
+  if(command==='report') {
+    if(flags['review-ref'])options.reviewRef=json(flags['review-ref']);
+    const result=feedbackView(options);
+    if(flags.out)output(flags.out,result);
+    return result;
+  }
   if (command === 'bootstrap') {
     options.participants = json(flags.participants);
     const result = bootstrap(options);
@@ -57,7 +64,7 @@ function main(argv) {
     if (result.integrityValid === false) process.exitCode = 2;
     return result;
   }
-  throw Error('사용: bootstrap|validate|collect --source-root ... --repo-root ...');
+  throw Error('사용: bootstrap|validate|collect|report --source-root ... --repo-root ...');
 }
 if (require.main === module) {
   try { console.log(JSON.stringify(main(process.argv.slice(2)),null,2)); }

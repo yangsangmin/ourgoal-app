@@ -42,7 +42,7 @@ function collectEvent(event, options) {
     // Exclusive create keeps events append-only; never overwrites a central array.
     fs.writeFileSync(file, text, { encoding:'utf8', flag:'wx' });
     const evidenceKeys = [...new Set(event.evidence.filter(e => e.status === 'measured').map(e => stable([e.sourceTask,e.inputProductSha,e.rawSha256,e.scope])))];
-    fs.writeFileSync(pendingFile, JSON.stringify({ eventId:id, taskId:task,
+    fs.writeFileSync(pendingFile, JSON.stringify({ eventId:id, taskId:task,eventSha256:digest,
       sourceHash:current, disposition:'proposal-only', promotion:false, confirmationKeys:evidenceKeys,
       lessonCandidates:event.lessonCandidates, effectFollowup:event.effectFollowup },null,2)+'\n',{encoding:'utf8',flag:'wx'});
     return { disposition:'pending', eventId:id, taskId:task, eventSha256:digest, promotion:false };

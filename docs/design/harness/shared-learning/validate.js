@@ -1,6 +1,7 @@
 'use strict';
 const { fs, path, json, sha, stable, hashFile, inside, sourceSnapshot } = require('./common');
 const HEX = /^[a-f0-9]{64}$/;
+const {validateFeedback}=require('./feedback-validate');
 function validateEvent(event, options) {
   const errors = [];
   const add = (condition, message) => { if (!condition) errors.push(message); };
@@ -56,6 +57,7 @@ function validateEvent(event, options) {
   const evidences = list(event.evidence, 'EVIDENCE', true);
   const identities = new Set();
   const checks = new Set();
+  const confirmedFailedChecks=new Set();
   for (const e of evidences) {
     fields(e, ['checkerId','command','args','inputProductSha','inputFiles','rawPath','rawSha256','publishedPath','publishedSha256','redaction','exitCode','measuredAt','scope','sourceTask','status'], 'EVIDENCE');
     add(typeof e.command === 'string' && e.command.length > 0, 'COMMAND_REQUIRED');
@@ -92,6 +94,7 @@ function validateEvent(event, options) {
       if (e.redaction?.mode === 'none') add(e.rawSha256 === e.publishedSha256 && e.redaction.transforms?.length === 0, 'UNDECLARED_TRANSFORM');
       else add(e.redaction?.mode === 'masked' && Array.isArray(e.redaction.transforms) && e.redaction.transforms.length > 0, 'MASK_TRANSFORM_REQUIRED');
       if (e.exitCode === 0) checks.add(e.checkerId);
+      else if(event.feedback?.failures?.some(f=>f.confirmation==='confirmed'&&f.evidenceSha256===e.rawSha256&&f.checkerId===e.checkerId))confirmedFailedChecks.add(e.checkerId);
     } else {
       add(e.exitCode === null && e.measuredAt === null && typeof e.reason === 'string' && e.reason.length > 0, 'UNMEASURED_REASON');
     }
@@ -100,7 +103,7 @@ function validateEvent(event, options) {
     for (const ref of a.evidenceRefs || []) add(evidences.some(e => e.checkerId === ref && e.status === 'measured' && e.exitCode === 0), 'APPLIED_EVIDENCE_MISSING: ' + ref);
   }
   for (const check of list(event.requiredChecks, 'REQUIRED_CHECKS', true)) {
-    add(checks.has(check) || (Array.isArray(event.outcome?.unmeasured) && event.outcome.unmeasured.some(u => u.checkerId === check && typeof u.reason === 'string' && u.reason)), 'REQUIRED_CHECK_UNACCOUNTED: ' + check);
+    add(checks.has(check) || confirmedFailedChecks.has(check) || (Array.isArray(event.outcome?.unmeasured) && event.outcome.unmeasured.some(u => u.checkerId === check && typeof u.reason === 'string' && u.reason)), 'REQUIRED_CHECK_UNACCOUNTED: ' + check);
   }
   fields(event.outcome, ['courtUrl','measurementOnly','unmeasured','regressions'], 'OUTCOME');
   add(event.outcome?.measurementOnly === true, 'MEASUREMENT_ONLY_REQUIRED');
@@ -112,6 +115,7 @@ function validateEvent(event, options) {
   for (const k of ['interventionBefore','interventionAfter','qualityBefore','qualityAfter']) {
     add(event.effectFollowup?.[k] === null || (event.effectFollowup?.samples?.[k]?.length > 0), 'EFFECT_SAMPLE_REQUIRED: ' + k);
   }
+  errors.push(...validateFeedback(event,options));
   return { integrityValid: errors.length === 0, measurementOnly: true, productVerdict: null, taskId: event.taskId, errors };
 }
 module.exports = { validateEvent };
