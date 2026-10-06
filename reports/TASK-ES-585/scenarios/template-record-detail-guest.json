@@ -1,6 +1,6 @@
 {
   "id": "template-record-detail-guest",
-  "title": "실제 게스트 진입·기록 탭·전문 템플릿 생성·상세 모달 조회 및 닫기·딥링크 보존",
+  "title": "실제 게스트 진입·기록 탭·전문 템플릿 생성·상세 모달 조회·차트 기간 전환 및 닫기·뒤로가기 보존",
   "steps": [
     {
       "do": "setViewport",
@@ -30,6 +30,10 @@
       "selector": "#btnAvatarGreetClose"
     },
     {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
       "do": "waitFor",
       "selector": ".navbtn[data-tab=\"records\"]",
       "timeoutMs": 10000
@@ -50,7 +54,7 @@
     },
     {
       "do": "click",
-      "selector": "#recQuickDockBar .rec-quick-dock-btn:nth-child(2)"
+      "selector": "#recQuickDockBar button:nth-child(4)"
     },
     {
       "do": "waitFor",
@@ -71,22 +75,102 @@
       "selector": "#proGeneralSaveBtn"
     },
     {
-      "do": "waitFor",
-      "selector": ".pro-template-record-card",
-      "timeoutMs": 10000
-    },
-    {
-      "do": "click",
-      "selector": ".pro-template-record-card"
+      "expect": "notVisible",
+      "selector": "#modalOverlay.active"
     },
     {
       "expect": "visible",
-      "selector": "#modalOverlay",
-      "timeoutMs": 10000
+      "selector": ".rec-card"
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active"
+    },
+    {
+      "expect": "visible",
+      "selector": "#detailCloseBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#detailTrendChartWrap"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#detailTrendChartWrap .pro-trend-filter-chip[data-period=\"7\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#detailTrendChartWrap .pro-trend-filter-chip[data-period=\"30\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#detailTrendChartWrap .pro-trend-filter-chip[data-period=\"30\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#detailTrendChartWrap .pro-trend-filter-chip[data-period=\"7\"]",
+      "className": "active"
     },
     {
       "do": "click",
       "selector": "#detailCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay.active"
+    },
+    {
+      "expect": "visible",
+      "selector": ".rec-card"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active"
+    },
+    {
+      "expect": "visible",
+      "selector": "#detailCloseBtn"
+    },
+    {
+      "do": "back"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay.active"
+    },
+    {
+      "expect": "visible",
+      "selector": ".rec-card"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
     },
     {
       "expect": "noExceptions"
