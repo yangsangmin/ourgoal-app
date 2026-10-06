@@ -48,10 +48,14 @@ const TESTS = [
       try {
         const validProof = {
           schema: 'cell-split-proof/1',
-          proofs: { tokenResidualLeak: 'token.json' },
-          baseSha: 'base123',
-          headSha: 'head123',
-          mutatorSensitivity: { ok: true, detectedMutations: 5 },
+          proofs: { 
+             moduleLoad: 'moduleLoad.json',
+             testSuiteCompare: 'testSuite.json',
+             tabIsolatedWork: 'tab.json'
+          },
+          baseSha: '000000000000000000000000000000000000ba5e',
+          headSha: '000000000000000000000000000000000000beef',
+          mutatorSensitivity: { ok: true, detectedMutations: 5, inputSha: 'in123', executorSha: 'exec123', rawRejectionReason: 'something' },
         };
         
         const validToken = {
@@ -66,12 +70,18 @@ const TESTS = [
 
         const claim = { id: 'C1', change: 'preserve', proof: 'proof.json' };
         
-        const mockH = { captures: [{ dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', err: 'E', modal: 'F' }] };
-        const mockB = { captures: [{ dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', err: 'E', modal: 'F' }] };
-        const mockB2 = { captures: [{ dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', err: 'E', modal: 'F' }] };
+        const mockH = { captures: [{ stepId: 'step_0_goto', dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', errCount: 0, modal: 'F' }] };
+        const mockB = { captures: [{ stepId: 'step_0_goto', dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', errCount: 0, modal: 'F' }] };
+        const mockB2 = { captures: [{ stepId: 'step_0_goto', dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', errCount: 0, modal: 'F' }] };
         const ctx = { scenarioResults: { H: mockH, B: mockB, B2: mockB2 }, base: { sha: '000000000000000000000000000000000000ba5e' }, head: { sha: '000000000000000000000000000000000000beef' } };
 
-        writeTree(dir, { 'proof.json': validProof, 'token.json': validToken, 'moduleLoad.json': { newRegressionCount: 0 }, 'testSuite.json': { tests: { regressionCount: 0 } }, 'tab.json': { differingValues: 0 } });
+        writeTree(dir, { 
+          'proof.json': validProof, 
+          'token.json': validToken,
+          'moduleLoad.json': { newRegressionCount: 0, inputSha: 'a', executorSha: 'b', baseRaw: 'c', headRaw: 'd' }, 
+          'testSuite.json': { tests: { regressionCount: 0 }, inputSha: 'a', executorSha: 'b', baseRaw: 'c', headRaw: 'd' }, 
+          'tab.json': { differingValues: 0, inputSha: 'a', executorSha: 'b', baseRaw: 'c', headRaw: 'd' } 
+        });
         const resOk = preserveLib.verifyCellSplitProof(dir, claim, ctx);
         t.ok(resOk.ok, '정상 splitProof 검증 통과');
 

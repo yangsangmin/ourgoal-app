@@ -1,4 +1,9 @@
 const fs = require('fs');
+
+// ---------------------------------------------------------
+// 1. Rewrite preserve.js
+// ---------------------------------------------------------
+const preserveCode = `const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
@@ -48,7 +53,7 @@ function verifyCellSplitProof(claimsDir, claim, ctx) {
         try {
           const repoDir = process.cwd();
           const out = execFileSync('git', ['--no-pager', 'diff', '--name-only', ctx.base.sha, ctx.head.sha], { encoding: 'utf8', cwd: repoDir });
-          changedFiles = out.trim().split('\n').map(x => x.trim()).filter(Boolean);
+          changedFiles = out.trim().split('\\n').map(x => x.trim()).filter(Boolean);
           if (changedFiles.length === 0) {
              return { ok: false, reason: 'Git diff 반환 0건 (변경 파일 없음)' };
           }
@@ -160,3 +165,83 @@ module.exports = {
   resolveProofFile,
   readJsonSafe
 };
+`;
+fs.writeFileSync('court/lib/preserve.js', preserveCode, 'utf8');
+
+// ---------------------------------------------------------
+// 2. Fix scenario.js (preserveOnly block)
+// ---------------------------------------------------------
+let scenarioCode = fs.readFileSync('court/lib/scenario.js', 'utf8');
+const oldScenarioBlock = `      if (opts.preserveOnly) {
+          try {
+            const dom = await ev('document.documentElement.outerHTML');
+            const ls = await ev('JSON.stringify(localStorage)');
+            const ss = await ev('JSON.stringify(sessionStorage)');
+            const toast = await ev('document.querySelector(".toast") ? document.querySelector(".toast").innerText : ""');
+            const err = await ev('document.querySelector(".error") ? document.querySelector(".error").innerText : ""');
+            const modal = await ev('document.querySelector(".modal") ? document.querySelector(".modal").innerText : ""');
+            if (!result.captures) result.captures = [];
+            result.captures.push({ dom, localStorage: ls, sessionStorage: ss, toast, err, modal });
+          } catch(e) {}
+        }`;
+const newScenarioBlock = `      if (opts.preserveOnly) {
+          try {
+            const dom = await ev('document.documentElement.outerHTML');
+            const ls = await ev('JSON.stringify(localStorage)');
+            const ss = await ev('JSON.stringify(sessionStorage)');
+            const toast = await ev('document.querySelector(".toast") ? document.querySelector(".toast").innerText : ""');
+            const errCount = result.consoleErrors.length + result.exceptions.length;
+            const modal = await ev('document.querySelector(".modal") ? document.querySelector(".modal").innerText : ""');
+            if (!result.captures) result.captures = [];
+            const stepId = 'step_' + i + '_' + (st.name || st.do);
+            result.captures.push({ stepId, dom, localStorage: ls, sessionStorage: ss, toast, errCount, modal });
+          } catch(e) {
+            result.failKind = 'tool';
+            result.toolError = 'preserve capture failed: ' + e.message;
+            throw e;
+          }
+        }`;
+scenarioCode = scenarioCode.replace(oldScenarioBlock, newScenarioBlock);
+fs.writeFileSync('court/lib/scenario.js', scenarioCode, 'utf8');
+
+
+// ---------------------------------------------------------
+// 3. Fix Constitution (AGENTS.md, etc.)
+// ---------------------------------------------------------
+let agents = fs.readFileSync('AGENTS.md', 'utf8');
+
+// Completely rewrite the headers
+agents = agents.replace(/# \[정본\].*\n/g, '# [정본] 아워골 최고 헌법 v2026.10.06-SNOWBALL (v2026.10.07-PRESERVATION 발효 예정)\n');
+agents = agents.replace(/> \*\*버전\*\*:.*\n/g, '> **버전**: v2026.10.06-SNOWBALL (v2026.10.07-PRESERVATION 발효 예정: 동작 보존 증명 - CELL_SPLIT 기반 원문 이전 및 동작0변경(일반 리팩터링 제외)에 한정하여 기계적 토큰 검증, DOM/스토리지 일치, 부품 누수 없음을 필수로 요구하는 동작 보존 판정 도입)\n');
+
+fs.writeFileSync('AGENTS.md', agents, 'utf8');
+fs.writeFileSync('CLAUDE.md', agents, 'utf8');
+fs.writeFileSync('01_OURGOAL_SUPREME_CONSTITUTION_FULL.md', agents, 'utf8');
+
+// ---------------------------------------------------------
+// 4. Fix RULES.md Version Headers
+// ---------------------------------------------------------
+let rules = fs.readFileSync('docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md', 'utf8');
+
+const newRuleHistory = `- **현행 커널 버전**: \`v2026.10.06-SNOWBALL\` — PR #800 병합 기록(병합 커밋 \`1ce6c14\`, 2026-10-06 00:38 KST). 개정 요약: 작업참고 스노우볼, \`step_0_session_start\` 0항·\`MODE_0\` 분류 단계·조문 12.7~12.8 추가.
+- **발효 예정 커널 개정안**: \`v2026.10.07-PRESERVATION\` — 상민님 CELL_SPLIT 기반 동작 보존 승인 한정(WIP). 일반 리팩터링이나 fix/new 제외. 분할 증명서(CELL_SPLIT_PROOF) 기반 기계적 검증(제8조 제3항 10호 신설, MERGE_GATE 반영).
+- **직전 커널 버전**: \`v2026.10.05-CELL\` — PR #727 병합 기록.
+- **이 문서 본문은 이번에 바꾸지 않았다.** (CELL 개정 당시의 문구로서, 본문 정합은 별도 개정으로 한다는 의미이며, PRESERVATION 10호 신설은 하단에 명시됨)`;
+
+// Replace everything between "### 커널과 법령 전문의 관계..." and "### 기획정본"
+const rulesHeaderRegex = /- \*\*현행 커널 버전\*\*:[\s\S]*?- \*\*이 문서 본문은 이번에 바꾸지 않았다\.\*\*.*?\n/g;
+rules = rules.replace(rulesHeaderRegex, newRuleHistory + '\n');
+fs.writeFileSync('docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md', rules, 'utf8');
+
+// ---------------------------------------------------------
+// 5. Update unit-preserve.js mock to include errCount and stepId
+// ---------------------------------------------------------
+let unitCode = fs.readFileSync('court/selftest/unit-preserve.js', 'utf8');
+unitCode = unitCode.replace(/\{ dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', err: 'E', modal: 'F' \}/g, "{ stepId: 'step_0_goto', dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', errCount: 0, modal: 'F' }");
+
+// And replace "err" checks in test titles
+unitCode = unitCode.replace(/'err'/g, "'errCount'");
+
+fs.writeFileSync('court/selftest/unit-preserve.js', unitCode, 'utf8');
+
+console.log('Final patch complete');

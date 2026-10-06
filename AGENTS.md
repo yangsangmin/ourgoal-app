@@ -1,4 +1,4 @@
-# [정본] 아워골 최고 헌법 v2026.10.07-PRESERVATION (v2026.10.06-SNOWBALL + 동작 보존 증명: CELL_SPLIT 기반 원문 이전 및 동작 무변경에 한정하여 기계적 토큰 검증, DOM/스토리지 일치, 부품 누수 없음을 필수로 요구하는 판정 도입. 발효 예정)
+# [정본] 아워골 최고 헌법 v2026.10.06-SNOWBALL (v2026.10.07-PRESERVATION 발효 예정)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
