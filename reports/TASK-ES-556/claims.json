@@ -1,0 +1,349 @@
+{
+ "task": "TASK-ES-556",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-556-STAGE3-Z56-C.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 묶음 「RENDER: HOME」(renderHome)을 홈 세포 js/tabs/home/home-render.js 로 동작 그대로 옮긴다(생성기 글자 그대로, 홈 큰 세포 키트 태그 뒤, 자리 HO)."
+  },
+  {
+   "id": "R2",
+   "text": "「🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227)」(openMicPermissionGuideModal)을 기록 세포 js/tabs/records/mic-permission-guide.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R3",
+   "text": "「AI feedback (best-effort; provider-aware; local fallback)」의 THEME_FEEDBACK_PROMPTS 와 「[#TASK-ES-225] Gemini API 분당 쿼터 …」의 PREMIUM_FEEDBACK_CATALOG·GeminiQuotaDispatcher·DONE_KEYWORDS 를 기록 세포 js/tabs/records/ai-feedback-catalog.js 로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R4",
+   "text": "옮기기 증명: verify(토큰·남은 글자·이중 처리기 0·키트 변수 뒤 가져오기·마지막 노출 setter), 이음매 순서 점검(L046·L047), 원본·새 파일 단독 로드 회귀 0, 게스트 조작 비교 차이 0, tests 종료 코드 기준과 같음(이력 없는 사본 한 개 제외), 신고서·설명·설정."
+  },
+  {
+   "id": "R5",
+   "text": "문서: REQ(8원칙), dev_log·TICKETS 각 1줄."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 「오늘의 퀘스트」 나침반을 열면 홈 목표 목록에 「아직 등록된 목표가 없어요」 스타터 안내가 보이고, 스타터 「매일 1시간 몰입」을 누르면 목록이 「오늘 1순위 목표에 온전히 집중하는 날이에요」 안내로 다시 그려지며 예외가 없다 — 옮긴 renderHome 이 그린다",
+   "touches": [
+    "js/tabs/home/home-render.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/home-goal-list-after-starter.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 3초 체크인의 마이크 단추를 누르면(브라우저가 마이크 권한을 주지 않음) 마이크 권한 안내 창이 뜨고 예외가 없다 — 옮긴 openMicPermissionGuideModal 이 그린다",
+   "touches": [
+    "js/tabs/records/mic-permission-guide.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-mic-permission-guide.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 홈 3초 체크인에 글을 넣어 저장하면 서버 AI 가 없을 때 「AI 응답량이 많아 고품질 추천 엔진으로 즉시 보답해 드렸습니다」 토스트가 뜨고 예외가 없다 — 옮긴 GeminiQuotaDispatcher 의 대체 경로가 PREMIUM_FEEDBACK_CATALOG 피드백을 낸다",
+   "touches": [
+    "js/tabs/records/ai-feedback-catalog.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-checkin-local-feedback.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 옮긴 구간 토큰열이 이전 전과 같다(접두 제외)",
+   "touches": [
+    "reports/TASK-ES-556/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 남은 글자가 같다",
+   "touches": [
+    "reports/TASK-ES-556/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 결과: 이중 처리기 0",
+   "touches": [
+    "reports/TASK-ES-556/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "검사기 종합 결과 ok",
+   "touches": [
+    "reports/TASK-ES-556/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "이음매 순서 점검: 키트 선언보다 앞선 가져오기 0 · 대입 이름 setter 빠짐 0(L046·L047)",
+   "touches": [
+    "reports/TASK-ES-556/seam-order-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/seam-order-check.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "원본 단독 로드 회귀 0 · 새 세포 단독 로드 ok",
+   "touches": [
+    "reports/TASK-ES-556/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교(기준1 대 작업) 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-556/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "게스트 조작 비교 기준 2회 사이 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-556/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "tests 전부 중 기준 사본과 종료 코드가 갈린 시험지는 cell-map-export-es414 하나다(기준 사본이 git archive 라 이력 없음 — 회귀 아님)",
+   "touches": [
+    "reports/TASK-ES-556/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-556/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff",
+    "equals": [
+     "tests/cell-map-export-es414.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "새 파일에 CSS 은폐 글자가 없다",
+   "touches": [
+    "js/tabs/home/home-render.js"
+   ],
+   "check": {
+    "file": "js/tabs/home/home-render.js",
+    "type": "codeNotContains",
+    "text": "!important"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 home/home-render 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"home/home-render\""
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 records/mic-permission-guide 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/mic-permission-guide\""
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 새 세포 records/ai-feedback-catalog 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/ai-feedback-catalog\""
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일에 새 세포의 짧은 이름이 있다",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "\"home/home-render\": \"홈 화면 그리기\""
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 설정이 기관 자리 HO 를 쓴다(L046)",
+   "touches": [
+    "docs/design/harness/module-split/inline-stage3-z56-c.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-stage3-z56-c.json",
+    "type": "jsonPath",
+    "path": "slot",
+    "equals": "HO"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 에 8원칙 원칙 ② 본질·원인·중심·핵심이 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-556-STAGE3-Z56-C.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-556-STAGE3-Z56-C.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "티켓 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-556 | INFRA |"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "dev_log 줄이 있다",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "- 2026-10-06 TASK-ES-556:"
+   }
+  }
+ ]
+}
