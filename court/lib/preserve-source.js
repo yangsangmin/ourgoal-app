@@ -8,6 +8,7 @@ function getHash(buf) {
 }
 
 function prepareCleanDir(dir) {
+  if (!dir.startsWith(require('os').tmpdir())) throw new Error('Safety check failed: temp dir not in os.tmpdir');
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(dir, { recursive: true });
 }
@@ -61,7 +62,9 @@ function recomputeSplit({ repoDir, baseSha, headSha, config, changedFiles, mockO
     try {
       execFileSync(process.execPath, [genScript, tmpDir, configPath], { stdio: 'pipe', encoding: 'utf8' });
     } catch(err) {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
+      if (!tmpDir.startsWith(require('os').tmpdir())) throw new Error('Safety check failed');
+    if (!tmpDir.startsWith(require('os').tmpdir())) throw new Error('Safety check failed');
+    fs.rmSync(tmpDir, { recursive: true, force: true });
       if (fs.existsSync(configPath)) fs.unlinkSync(configPath);
       return { ok: false, reason: 'Generator failed: ' + err.message };
     }
