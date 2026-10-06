@@ -1,6 +1,6 @@
 # 에이전트 공통 작업참고 (아워골)
 
-> **기준 PR #798** (8f76013) · 생성 2026-10-06 00:30 KST · 경험칙 43개
+> **기준 PR #837** (0b8cda96) · 생성 2026-10-06 19:54 KST · 경험칙 52개
 > 대상: Claude · 안티그래비티 · 코덱스 — 작업을 시작하기 전에 이 파일을 끝까지 읽고 따른다.
 > 정본: C:/dev/agent-knowledge/lessons.json (경험칙 원장) → 이 파일은 생성물이다. 손으로 고치지 않는다.
 
@@ -71,7 +71,7 @@
 
 ## 경험칙 — 분야별 (확인 횟수가 많을수록 자주 부딪힌 것)
 
-### 법정·주장 (8)
+### 법정·주장 (10)
 
 **L005. 옮기기(분열) PR 의 「확인 부족 — 고칠 게 없었음」은 정상 판정으로 받아들이고 병합 기준에 넣어라.**
 - 왜: 동작 0 변경 이동은 기준에서도 시나리오가 통과하므로 법정이 「고치기 전엔 안 됨」을 볼 수 없다. #764·#772·#773·#775·#781·#785·#786·#788 모두 이 형태로 병합됐다.
@@ -81,12 +81,12 @@
 **L002. main 이 움직이면 값이 바뀌는 전체 수치(인라인 전체 줄 수·세포 수·기준선 현재값·main 커밋 해시)를 주장에 쓰지 마라.**
 - 왜: #750 은 인라인 32,509줄, #749 는 기준선 history 수치를 주장했다가 main 을 합치자 거짓이 되었고, 철회하면 막다른 길이라 두 PR 모두 닫고 새 PR(#755·#754)로 다시 냈다.
 - 어떻게: 옮긴 묶음 자체의 성질(토큰 동일·새 파일 줄 수·원래 구간 사라짐)만 주장한다. 전체 수치가 꼭 필요하면 이 PR 이 소유한 reports/TASK-ES-xxx/snapshot-*.json 을 가리키게 한다(#762 C17·C28·C29).
-- 출처: #749 #750 #754 #755 #762 · 처음 2026-10-05 · 확인 4회 · 대상 claude·antigravity·codex
+- 출처: #749 #750 #754 #755 #762 #814 · 처음 2026-10-05 · 확인 5회 · 대상 claude·antigravity·codex
 
 **L001. 화면 파일(index.html·js 화면 세포)의 동작 주장은 처음부터 게스트 화면 시나리오로 내고, 글자 확인(codeContains) 주장은 문서·설정·신고서에만 써라.**
 - 왜: #745 성소 분열이 화면 파일에 글자 확인 주장을 냈다가 「분야 하향 표기」로 돌려보내졌고, 철회·종류 변경을 해도 법정이 옛 시험을 다시 돌려 같은 PR 에서 막다른 길이 됐다(judge.js REHEARD_OK).
-- 어떻게: reports/TASK-ES-xxx/scenarios/ 에 세포마다 하나씩 게스트 시나리오를 둔다. push 전에 로컬 법정 실행기로 기준(origin/main)에서 실패·작업에서 통과(고치기) 또는 양쪽 통과(옮기기)를 확인한다.
-- 출처: #745 #747 · 처음 2026-10-05 · 확인 3회 · 대상 claude·antigravity·codex
+- 어떻게: reports/TASK-ES-xxx/scenarios/ 에 세포마다 하나씩 게스트 시나리오를 둔다. push 전에 로컬 법정 실행기로 기준(origin/main)에서 실패·작업에서 통과(고치기) 또는 양쪽 통과(옮기기)를 확인한다. scenario 경로는 claims.json 디렉터리 기준 상대경로(scenarios/name.json)로 쓴다. push 전에 path.resolve(dirname(claimsFile), scenario)로 실제 파일 존재를 검사한다. #835는 파일이 제출되어도 저장소 기준 경로를 적으면 시험 미제출로 처리되는 것을 확인했다.
+- 출처: #745 #747 #835 · 처음 2026-10-05 · 확인 4회 · 대상 claude·antigravity·codex
 
 **L003. 같은 PR 에서 이미 「안 됨」을 받은 주장은 철회하거나 종류를 바꾸지 말고, 막혔으면 경위를 댓글로 남기고 PR 을 닫은 뒤 같은 코드로 새 PR 을 연다(A안 선례).**
 - 왜: 법정은 한 번 안 됨을 받은 주장이 철회·변경되면 옛 시험을 재실행해 계속 돌려보낸다. 상민님이 #745 에 A안(닫고 새 PR)을 승인했다.
@@ -96,7 +96,12 @@
 **L006. 법정 도구 한계 사유(needs-login·needs-real-device 등)는 정말로 법정이 잴 수 없는 것에만 쓰고, 게스트 화면으로 잴 수 있는 것을 한계로 돌리지 마라.**
 - 왜: #767 첫 판정이 「잴 수 있는데 재지 않음」으로 돌려보냈다. 관리자 복구처럼 로그인 뒤에만 도는 경로만 needs-login 이 받아들여졌다.
 - 어떻게: elementFromPoint·게스트 시나리오로 닿는지 먼저 실측하고, 닿지 않는 근거(로그인 필요·실기기 필요)를 cannotBecause 에 적는다.
-- 출처: #767 #783 · 처음 2026-10-05 · 확인 2회 · 대상 claude·codex
+- 출처: #767 #783 #833 · 처음 2026-10-05 · 확인 3회 · 대상 claude·codex
+
+**L051. reports 아래 측정 보고 파일의 값 적재 주장은 등록된 config 분야로 쓰고, 제품 동작 주장은 별도 실제 화면 시나리오로 검증하라.**
+- 왜: #829 첫 판정 B75440DD에서 미등록 architecture 분야의 보고서 주장 25개가 unknownDomainFloor L4로 올라 부족이 되었다. 동일 ID·종류·검사·기대값을 유지하고 config로 바로잡은 d8f60034의 재심 9003CA06은 보고서 기록을 L1 충분으로 확인했다.
+- 어떻게: court/grade-floors.json의 등록 분야를 읽는다. reports-only jsonPath 주장은 config, 제품 파일은 해당 분야의 실제 시나리오. 보고값이 적혀 있음은 법정이 실제 UI·실계정 결과를 재측정했다는 뜻이 아니다. 분류를 교정할 때 주장 철회·종류·기대값 변경 없이 원문을 유지한다.
+- 출처: #829 #831 · 처음 2026-10-06 · 확인 2회 · 대상 claude·antigravity·codex
 
 **L004. 「주장 없음 → 확인 못 함」이 뜨면, 코드를 바꾼 항목은 시나리오 주장을 붙이고, 보고만 한 항목은 지시 항목(requirements)에서 내려 outOfScopeReports 로 옮겨라.**
 - 왜: #767 결함 PR 이 보고만 한 항목(챌린지 룸·위젯 시험 등)을 지시 항목에 남겨 「주장 없음」으로 병합 기준을 막았다. 내린 뒤 통과 기준을 충족했다.
@@ -113,27 +118,32 @@
 - 어떻게: 기대값 변경이 필요하면 결심 요청에 「승인 문구는 『금고 변경 승인』이어야 함」을 같이 적는다. claims retire 에 승인 원문 인용.
 - 출처: #791 · 처음 2026-10-05 · 확인 1회 · 대상 claude·codex
 
-### 병합·충돌 (6)
+**L045. 로그인 뒤 경로 묶음은 --guest --count 로 도달을 먼저 재고, 로그인 뒤 동작 지시 항목에는 needs-login 주장 하나만 건다. 실계정 결과 파일은 별도 기록 항목(config)으로 분리한다**
+- 왜: #802 1차(71a0e79): 같은 항목에 needs-login + 결과 파일 static 4개를 걸자 항목 전체가 「코드만 확인」으로 부족 목록에 올랐다. 2차(d9cd3e9): 분리하니 needs-login 은 「도구 한계」, 기록 항목은 「글자만 확인(충분)」으로 찍혀 병합 기준 충족. 법정은 로그인 뒤 화면을 다시 돌릴 길이 없다
+- 어떻게: docs/architecture/INLINE-STAGE3-DESIGN.md 3-1(도달 실측)·3-2(기준1→작업→기준2 읽기 전용 비교, 쓰기 차단)·3-4(두 주장 배치). 보고에서 「글자만 확인」을 로그인 뒤 화면 확인으로 적지 않는다
+- 출처: #802 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
+
+### 병합·충돌 (9)
 
 **L010. 병합 하나가 나머지 열린 분열 PR 을 CONFLICTING 으로 만드는 것은 정상이다 — index.html 충돌은 손으로 풀지 말고 main 판 index.html 을 입력으로 생성기를 다시 돌려 해결하라.**
 - 왜: #759·#760·#762·#773·#775·#782·#785·#788 등 거의 모든 분열 PR 이 다른 병합 뒤 충돌했다. 생성기 재실행이 손 충돌 0·verify ok 로 가장 안전했다.
 - 어떻게: git -c core.attributesFile=C:/dev/ourgoal-app/.git/info/attributes merge origin/main → 충돌 시 git show origin/main:index.html > 입력 → 생성기 설정 그대로 재실행 → verify-inline-*.js ok → 시나리오 재실행 → push.
-- 출처: #759 #760 #762 #773 #775 #782 #785 #788 · 처음 2026-10-05 · 확인 8회 · 대상 claude·antigravity·codex
+- 출처: #759 #760 #762 #773 #775 #782 #785 #788 #827 #824 #829 #830 · 처음 2026-10-05 · 확인 12회 · 대상 claude·antigravity·codex
 
 **L009. 분열 PR 에서는 생성 지도 3종(docs/architecture/module-baseline.json·cell-map.json·inline-script-map.json·INLINE-SCRIPT-MAP.md)을 커밋하지 말고 main 판 그대로 두어라. 병합 3~5건마다 일괄 갱신 PR 을 따로 낸다.**
 - 왜: 모든 분열 PR 이 이 3개를 고쳐 병렬 PR 끼리 끝없이 충돌했다. module-guard 는 값이 늘 때만 실패하므로 줄어든 기준선을 PR 마다 반영할 필요가 없다.
 - 어떻게: 일괄 갱신: node scripts/module-guard.js --update(사유 없이, 낮아진 값만) → node scripts/cell-map-export.js → node scripts/inline-script-map.js --write → --check·module-guard·npm test → 한 커밋(#761·#787).
-- 출처: #761 #787 · 처음 2026-10-05 · 확인 5회 · 대상 claude·antigravity·codex
+- 출처: #761 #787 #832 · 처음 2026-10-05 · 확인 6회 · 대상 claude·antigravity·codex
+
+**L012. TASK-ES 번호는 쓰기 직전에 gh pr list --state all 과 git ls-remote 로 비었는지 확인하고, 브랜치를 먼저 push 해 번호를 선점하라.**
+- 왜: 병렬 빌더들이 같은 번호를 잡아 충돌했다(448: #760 vs G076 마무리, 462: #767 vs H2, 478: #777 vs #778). 늦게 쓴 쪽이 모든 서류의 번호를 바꿔야 했다. 번호가 겹치면 reports/TASK-ES-N/claims.json 까지 남의 것을 덮어쓴다(#828 이 #826 의 주장 파일을 덮었다가 되돌림).
+- 어떻게: gh pr list --state all --limit 80 · git ls-remote origin | grep task-es-<번호> 가 비면 즉시 빈 브랜치 push. 충돌 시 나중에 쓴 쪽이 바꾼다.
+- 출처: #760 #765 #767 #777 #778 #779 ##828 · 처음 2026-10-05 · 확인 4회 · 대상 claude·antigravity·codex
 
 **L011. dev_log.md·docs/rules/TICKETS.md 는 끝줄 추가끼리 충돌하므로 합집합 합치기로 처리하라.**
 - 왜: 병렬 PR 이 모두 두 파일 끝에 한 줄씩 더해 충돌했다. #779 는 오케스트레이터가 합집합으로 합쳐 바로 재심을 받았다.
 - 어떻게: git -c core.attributesFile=C:/dev/ourgoal-app/.git/info/attributes merge origin/main (그 attributes 파일이 두 파일을 union 병합으로 지정).
 - 출처: #758 #769 #779 · 처음 2026-10-05 · 확인 3회 · 대상 claude·antigravity·codex
-
-**L012. TASK-ES 번호는 쓰기 직전에 gh pr list --state all 과 git ls-remote 로 비었는지 확인하고, 브랜치를 먼저 push 해 번호를 선점하라.**
-- 왜: 병렬 빌더들이 같은 번호를 잡아 충돌했다(448: #760 vs G076 마무리, 462: #767 vs H2, 478: #777 vs #778). 늦게 쓴 쪽이 모든 서류의 번호를 바꿔야 했다.
-- 어떻게: gh pr list --state all --limit 80 · git ls-remote origin | grep task-es-<번호> 가 비면 즉시 빈 브랜치 push. 충돌 시 나중에 쓴 쪽이 바꾼다.
-- 출처: #760 #765 #767 #777 #778 #779 · 처음 2026-10-05 · 확인 3회 · 대상 claude·antigravity·codex
 
 **L014. 여러 PR 이 동시에 판정 대기 중이면 계속 밀려 충돌하는 PR 을 먼저 병합한다고 약속하고 지켜라(직렬화).**
 - 왜: #775 는 #774·#773·#779·#781 병합에 세 번 밀려 재합침을 반복했다. 다음 병합 1순위로 지정한 뒤 병합됐다.
@@ -145,12 +155,27 @@
 - 어떻게: 판정 감시는 백그라운드 루프로 하되, 병합은 gh pr diff 로 tests/ 의 삭제 줄에 assert 가 없는지·금고 경로 변경이 없는지 본 뒤 직접 gh pr merge.
 - 출처: #768 #769 #780 · 처음 2026-10-05 · 확인 1회 · 대상 claude
 
-### 분열·이음매 (6)
+**L048. 검사를 강화하는 금고 단독 PR(「X 가 없다」 단언)은 그 X 를 지우는 본 PR 이 병합된 뒤에만 병합한다 — 순서가 바뀌면 main 의 npm test 가 깨져 모든 빌더의 측정이 오염된다. 자동 병합 훑기에서 금고·게이트 PR 은 제외하고 손으로 순서를 정한다**
+- 왜: 2026-10-06 #818(verify-integrity-gate 「페이월 모달 없다」)이 #813(광고·구독 삭제)보다 먼저 병합돼 main 무결성 게이트 37/38 실패. 오케스트레이터의 pass 스크립트가 제목 필터에 「금고」를 안 넣어 자동 병합됨
+- 어떻게: pass 스크립트 제목 필터에 금고·무결성 게이트 추가. 짝 PR(본 변경 → 게이트 강화)은 번호를 적어 두고 본 PR 병합 직후 연달아 병합. 깨진 창이 생기면 전 빌더에 「main 게이트 1건 실패는 알려진 상태」 공지
+- 출처: #818 #813 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
+
+**L049. index.html 을 바꾸는 PR 이 3개 이상 동시에 열리면 오케스트레이터가 병합 줄을 정해 한 번에 하나만 재생성·push 하게 한다 — 전원이 동시에 재합치면 병합 하나마다 전원이 다시 충돌해 10분씩 낭비된다**
+- 왜: 2026-10-06 3단계: 빌더 5명이 각자 재생성 중에 다른 PR 이 병합돼 #814 가 세 번 재생성(각 10분). 줄을 세우면 재생성은 PR 당 1회
+- 어떻게: 줄: 결심 PR → 가장 오래 기다린 PR 순. 선두만 push, 나머지는 측정 자료만 준비. 병합 즉시 다음 빌더에 알림. dev_log·TICKETS 만 충돌하는 PR 은 오케스트레이터가 합집합으로 바로 합침
+- 출처: #814 #815 #819 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
+
+**L050. 법정(court) 실행은 끝났는데 PR 에 판정 댓글이 안 붙으면 court-publish 워크플로(workflow_run)가 GitHub 대기열에서 취소·정체된 것이다 — 판정 정본은 court 실행의 artifact court-verdict/verdict.json(verdict·verdictId·head) 이므로 gh run download 로 받아 그 값으로 줄을 진행하고, PR 댓글에 실행 번호·artifact 출처를 적는다**
+- 왜: 2026-10-06 #828: court 실행 37364990097 은 「통과」(C8DB8338)로 끝났지만 court-publish 37365862801 이 cancelled → rerun 도 queued 로 30분+ 정체. 댓글만 보는 줄 스크립트는 WAIT 만 찍어 줄 전체가 멈췄다
+- 어떻게: gh run list --workflow court-publish 로 상태 확인 → gh run rerun 1회 → 그래도 queued 면 gh run download <court 실행> 으로 verdict.json 을 읽는다(head 가 PR 머리와 같은지 확인). 작업자 로컬 측정은 근거가 아니다 — artifact 만 근거
+- 출처: #828 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
+
+### 분열·이음매 (8)
 
 **L016. 어려운 인라인 묶음은 표준 이음매로 옮겨라: 재대입 상태는 선언을 원래 자리에 두고 L.getter/setter, window 노출·인라인 onclick 이름은 노출 줄을 원래 자리, 로드 중 문은 본문만 세포 함수로 하고 원래 자리에 부르는 한 줄.**
 - 왜: #762 설계로 54묶음 중 대부분이 표준 이음매로 풀렸고, 실제로 막는 것은 시험지 선행·smoke FN_NAMES·800줄 초과·공용 부품뿐이었다.
 - 어떻게: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md 2절·4-1 빌더 절차, gen-inline-hard.js 설정(take.names·keepRest·afterTag·headerPick). 묶음은 번호가 아니라 제목으로 찾는다(번호는 병합마다 밀림).
-- 출처: #762 · 처음 2026-10-05 · 확인 10회 · 대상 claude·antigravity·codex
+- 출처: #762 #834 · 처음 2026-10-05 · 확인 11회 · 대상 claude·antigravity·codex
 
 **L015. 분열(옮기기) PR 은 고치기가 아니다 — 동작 0 변경, 버그도 그대로 옮기고, 바꿀 수 있는 글자는 생성기가 붙이는 이름 접두(L. 등)뿐이다.**
 - 왜: 헌법 CELL_SPLIT. 옮기면서 고치면 판정·회귀 원인이 섞인다. 빌더들은 발견 결함을 고치지 않고 목록으로 보고해 결함 PR(#767·#777)로 따로 고쳤다.
@@ -176,6 +201,16 @@
 - 왜: G076 에서 class="empty-state" 가 empty-L.state 로 손상됐다. L. 를 지운 토큰 대조로는 잡히지 않았고 문자열 내용까지 비교하는 검사기·화면 시나리오가 잡았다.
 - 어떻게: 스코프 분석 생성기만 쓰고 정규식 치환으로 접두를 붙이지 않는다. 검수는 문자열 포함 토큰 대조 + 기준·작업 화면 시나리오.
 - 출처: #765 · 처음 2026-10-05 · 확인 1회 · 대상 claude·antigravity·codex
+
+**L046. js/core 기관 키트(_uiKit 등)를 쓰는 세포는 자리 표지를 HO(기관)로 — 가져오기 줄이 키트 변수 선언보다 앞(H1~H4)에 들어가면 IIFE 머리에서 TypeError 로 앱 전체가 안 뜨는데 verify·node 시험은 통과한다**
+- 왜: 2026-10-06 Z1 빌더 실측: gen-inline-hard.js 가 머리에 var _uiKit 가 있다고 보고 새로 만들지 않지만 가져오기 줄은 H1 자리(선언보다 앞)에 넣어 undefined. 실계정 하네스 pageerror 「Cannot read properties of undefined (reading getSupabaseAuthToken)」로만 발견
+- 어떻게: 설정 slot 을 HO 기관 으로 쓰거나 생성 뒤 index.html 에서 가져오기 줄 위치 > 키트 변수 선언 위치를 확인. 법정 모듈 로드 탐침·게스트 시나리오(앱 부팅 포함)를 반드시 돌린다 — 토큰 대조만으로 부족(L0xx 안티그래비티 교훈과 같은 꼴)
+- 출처: 운영 원칙 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
+
+**L047. 옮긴 코드가 대입하는 이름(assignedL)마다 index.html 의 「마지막」 get X() 노출 줄에 set X(v) 가 있는지 확인하라 — 뒤쪽 P0 이음매 블록의 getter-only 노출이 생성기가 단 setter 를 덮어 부팅 때 「Cannot set property X … only a getter」 가 난다**
+- 왜: 2026-10-06 Z2 빌더 실측(USER_SESSION_CHANNEL): gen-inline-hard.js 가 H 자리 머리에 getter+setter 를 다시 달지만 index.html ~3204·3240줄의 P0 expose 블록이 나중에 실행돼 덮음. verify-inline-hard 는 setter 빠짐 0 으로 통과 — 못 잡음. 게스트 시나리오 noExceptions 로만 발견
+- 어떻게: 생성 뒤 이름마다 마지막 노출 줄 검사(검사기 ⑨ 추가 예정). 안 되면 그 대입 함수는 원래 자리에 둔다. 부팅 포함 게스트 시나리오·법정 모듈 로드 탐침 필수(L046 과 같은 꼴)
+- 출처: 운영 원칙 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
 
 ### 시험지 (2)
 
@@ -206,7 +241,7 @@
 **L026. 조작 DOM 비교는 기준 대 기준도 함께 돌려 본질 변동(타이밍·난수·실행마다 다른 저장값)을 걸러낸 뒤 기준 대 작업 차이를 판단하라.**
 - 왜: maxBaseCrafts·lastStreakAwarded 같은 저장값과 아바타 인사(22시 경계)·가이드 400ms 경쟁이 같은 기준 두 번에서도 달라졌다.
 - 어떻게: Math.random 씨앗 고정, 실행마다 다른 키는 비교에서 빼고 그 사실을 REQ 에 기록. tab-check 는 기준 2회·후 1회.
-- 출처: #764 #772 #773 #775 · 처음 2026-10-05 · 확인 4회 · 대상 claude·antigravity·codex
+- 출처: #764 #772 #773 #775 #836 #837 · 처음 2026-10-05 · 확인 6회 · 대상 claude·antigravity·codex
 
 **L025. 닫힌 <details> 안의 단추가 「가려짐·죽은 클릭」으로 잡히면 결함으로 단정하지 말고, 바깥 details 를 펼친 뒤 elementFromPoint·진짜 마우스로 다시 눌러 확인하라.**
 - 왜: #checkinFeedbackTierBar·#btnModeGamified·#customFeedbackBtn·#advancedSettingsSummary·#btnRestartGuide 모두 측정 착시였다(getBoundingClientRect 는 0 이 아니지만 elementFromPoint 는 뒤 요소를 돌려줌).
@@ -235,7 +270,7 @@
 - 어떻게: 게스트는 새로 고침 뒤 유지 시나리오, 로그인 서버 저장은 실계정 하네스로.
 - 출처: #767 · 처음 2026-10-05 · 확인 1회 · 대상 claude·antigravity·codex
 
-### 승인선 (4)
+### 승인선 (5)
 
 **L030. 값이 없을 때 그럴듯한 숫자를 넣는 대체값(|| 3, || 25, 하드코딩 Lv.1)은 허상지표다 — 실제 값이 없으면 숫자를 그리지 마라.**
 - 왜: 리캡 카드 「3일 연속」(|| 3)·하드코딩 Lv.1·통계 카드 || 3·리캡 durationMinutes || 25·주간 집중 endAt 없으면 25분이 모두 하지 않은 성과를 보여줬다(#767·#777·#791).
@@ -256,6 +291,11 @@
 - 왜: P0 의 subscriptionState·OURGOAL_CONFIG, H3 의 「템플릿 복제 보상형 광고」는 커밋 훅 AL1(돈) 표시와 승인선 ①로 건너뛰었다.
 - 어떻게: 묶음 제목·이름에 subscription·paywall·ad·credit 이 있으면 손대지 않고 보고.
 - 출처: #764 #774 · 처음 2026-10-05 · 확인 2회 · 대상 claude·antigravity·codex
+
+**L044. 헌법 개정은 세 사본 동일(cmp)·버전 표기·이전 커널 archive 보관·상민님 직접 병합까지가 한 묶음이다 — 병합 뒤 홈 사본(C:/Users/HP/AGENTS.md)과 버전 대장 행을 같은 턴에 맞춘다**
+- 왜: 2026-10-06 v2026.10.06-SNOWBALL 개정(PR #800)을 상민님이 직접 병합. 법정은 금고 PR 을 「확인 부족 — 상민님 결심」으로만 표시하므로 위임 병합이 아니다
+- 어떻게: PR 전: cmp AGENTS.md CLAUDE.md 01_…FULL.md 동일 확인, docs/rules/archive 에 이전 커널 원문. PR 후: cp 로 홈 사본 동기화·cmp 확인, CONSTITUTION_VERSIONS.md 행 추가 PR(금고라 다시 상민님 병합)
+- 출처: #800 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
 
 ### 안티그래비티 (4)
 
@@ -279,7 +319,7 @@
 - 어떻게: 설계 문서 배정 칸에 「안티그래비티 몫」을 먼저 적고, inline-script-map 에서 제목으로 존재 확인.
 - 출처: #756 · 처음 2026-10-05 · 확인 1회 · 대상 claude
 
-### 보고 (5)
+### 보고 (6)
 
 **L038. 상민님 보고는 쉬운 한국어로 「한 것 / 측정으로 검증한 것 / 다음에 열리는 것」, 결심이 필요하면 [결심 필요] + 권장안 하나 + 승인 시 하는 일·그 다음 + 선택지별 장단점·예상 결과로 써라.**
 - 왜: 상민님은 코드를 보지 않는 결정권자이고 답은 짧게 온다. 세부 설명을 요구한 적이 있다(25분 결심).
@@ -296,15 +336,20 @@
 - 어떻게: export NODE_PATH=C:/dev/ourgoal-app/node_modules; git commit ...
 - 출처: #761 · 처음 2026-10-05 · 확인 3회 · 대상 claude·antigravity·codex
 
+**L052. REQ의 표준 8원칙 서식을 먼저 기존 무결성 게이트로 검사한 뒤 전체 npm 검증을 실행하라.**
+- 왜: #830의 표준 헤더 교정, #832의 구형 원칙 헤더, #835의 원칙② 원인·중심·핵심 누락으로 문서 형식이 첫 검증을 막았다. 제품을 바꾸지 않고 서식을 보강해 검증을 완료했다. 같은 작성 마찰은 문서 작성 직후 검사로 먼저 잡는다.
+- 어떻게: REQ에 독립된 ## N. [원칙 ①]~[원칙 ⑧] 헤더, 원칙②의 본질·원인·중심·핵심, 원칙⑥ 재검증과 반론을 적는다. node scripts/verify-integrity-gate.js를 먼저 실행하고 문서 오류를 고친 뒤 npm test를 실행한다. 금고 검사 코드·기대값은 변경하지 않는다.
+- 출처: #830 #832 #835 · 처음 2026-10-06 · 확인 3회 · 대상 claude·antigravity·codex
+
 **L041. git 훅을 건너뛰지 마라(--no-verify 금지) — 이름 바꾸기만 든 커밋이어도 예외 없음**
 - 왜: 2026-10-05 H2 빌더가 번호 바꾸기 커밋 1건을 --no-verify 로 커밋(다음 커밋에서 훅이 다시 돌아 실해는 없었음). 전역 지침·헌법 모두 훅 우회 금지
 - 어떻게: 훅이 막으면 원인(대개 NODE_PATH 미설정·티켓 태그 누락)을 고친 뒤 다시 커밋. NODE_PATH=C:/dev/ourgoal-app/node_modules 를 git commit 과 같은 셸에서 export
 - 출처: #779 · 처음 2026-10-05 · 확인 1회 · 대상 claude·antigravity·codex
 
 **L043. 작업 유형을 표준·이탈·탐색으로 분류하고, 이탈하면 사유 네 가지를, 새 유형이면 깊은 추론과 자체 검증 설계를 기록으로 남겨라**
-- 왜: 2026-10-06 상민님: 참고파일에 없는 유형도 유연하게 깊게 추론하되, 그 유연함이 기존 방식의 면죄부가 되면 안 된다 → 헌법 v2026.10.06-SNOWBALL(SNOWBALL 제2·3항)
+- 왜: 2026-10-06 상민님: 참고파일에 없는 유형도 유연하게 깊게 추론하되, 그 유연함이 기존 방식의 면죄부가 되면 안 된다 → 헌법 v2026.10.06-SNOWBALL(SNOWBALL 제2·3항, PR #800)
 - 어떻게: 추론 블록 「분류」에 판정(가/나/다)과 근거. 이탈: ①어느 규칙 ②왜(사실) ③대신 무엇 ④검증 동급 이상 — REQ·보고에. 새 유형: 가까운 유형 차용·8원칙 전부·반론 2개·실패 예측·검증 설계 → 끝나면 lessons.json 에 유형 추가. 불변층은 예외 없음
-- 출처: #510 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
+- 출처: #800 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
 
 ## 이 파일을 키우는 법 (스노우볼)
 
