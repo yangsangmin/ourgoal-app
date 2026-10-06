@@ -1,0 +1,130 @@
+{
+  "source": "e56210428d1a30e21631cd102b4bb8db65d60333",
+  "sourceKind": "git archive token source plus detached Git baseline",
+  "baseline": "C:/dev/wt/csv571-final-baseline",
+  "archiveSource": "C:/dev/wt/csv571-final-source/index.html",
+  "archiveIndexSha256": "e31eb349231891f01e1c15e036dc97a519a5decd53adb924574468ed555f2ffe",
+  "adapter": "docs/design/harness/module-split/tab-isolated571.js",
+  "standardSourceDiff": "",
+  "runs": [
+    {
+      "name": "base1",
+      "summary": "reports/TASK-ES-571/tab-base1.json",
+      "shots": 24,
+      "matrix": {
+        "themes": [
+          "focus-sanctuary",
+          "black",
+          "white",
+          "urban-city"
+        ],
+        "viewports": [
+          "375x667",
+          "375x812"
+        ]
+      },
+      "port": 52760,
+      "chrome": {
+        "pid": 15772,
+        "wsEndpoint": "ws://127.0.0.1:52767/devtools/browser/ac25b452-07d2-463f-855a-80ff96e41df4",
+        "profileArg": "--user-data-dir=C:\\Users\\HP\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-51kuFF"
+      },
+      "originalSha256": "e2a2a18482c081f24f8fe4cf7a9c805a5ac966f641ed3b69dc08a537fdba00a6",
+      "compiledSha256": "41c4c2e811de5751511a67ca0ece3322265587db30b5eeca20e979c2eadd1792",
+      "exactReplacements": [
+        {
+          "before": "const port = 4700 + Math.floor(Math.random() * 300);",
+          "after": "const port = 0;",
+          "count": 1
+        },
+        {
+          "before": "const base = 'http://localhost:' + port;",
+          "after": "const base = 'http://localhost:' + server.address().port;",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "base2",
+      "summary": "reports/TASK-ES-571/tab-base2.json",
+      "shots": 24,
+      "matrix": {
+        "themes": [
+          "focus-sanctuary",
+          "black",
+          "white",
+          "urban-city"
+        ],
+        "viewports": [
+          "375x667",
+          "375x812"
+        ]
+      },
+      "port": 52761,
+      "chrome": {
+        "pid": 61248,
+        "wsEndpoint": "ws://127.0.0.1:52763/devtools/browser/e95bc1a6-fa95-4d5b-bb17-f81c7afbfb76",
+        "profileArg": "--user-data-dir=C:\\Users\\HP\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-48H6f6"
+      },
+      "originalSha256": "e2a2a18482c081f24f8fe4cf7a9c805a5ac966f641ed3b69dc08a537fdba00a6",
+      "compiledSha256": "41c4c2e811de5751511a67ca0ece3322265587db30b5eeca20e979c2eadd1792",
+      "exactReplacements": [
+        {
+          "before": "const port = 4700 + Math.floor(Math.random() * 300);",
+          "after": "const port = 0;",
+          "count": 1
+        },
+        {
+          "before": "const base = 'http://localhost:' + port;",
+          "after": "const base = 'http://localhost:' + server.address().port;",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "summary": "reports/TASK-ES-571/tab-after.json",
+      "shots": 24,
+      "matrix": {
+        "themes": [
+          "focus-sanctuary",
+          "black",
+          "white",
+          "urban-city"
+        ],
+        "viewports": [
+          "375x667",
+          "375x812"
+        ]
+      },
+      "port": 52762,
+      "chrome": {
+        "pid": 42644,
+        "wsEndpoint": "ws://127.0.0.1:52765/devtools/browser/39431b9b-6384-4d2d-8a2c-4dc6594c82b5",
+        "profileArg": "--user-data-dir=C:\\Users\\HP\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-8llCjB"
+      },
+      "originalSha256": "e2a2a18482c081f24f8fe4cf7a9c805a5ac966f641ed3b69dc08a537fdba00a6",
+      "compiledSha256": "41c4c2e811de5751511a67ca0ece3322265587db30b5eeca20e979c2eadd1792",
+      "exactReplacements": [
+        {
+          "before": "const port = 4700 + Math.floor(Math.random() * 300);",
+          "after": "const port = 0;",
+          "count": 1
+        },
+        {
+          "before": "const base = 'http://localhost:' + port;",
+          "after": "const base = 'http://localhost:' + server.address().port;",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "independentPorts": true,
+  "independentProfiles": true,
+  "independentDebugPorts": true,
+  "sourceHashesSame": true,
+  "comparisonCommands": [
+    "node docs/design/harness/tab-compare.js reports/TASK-ES-571/tab-base1.json reports/TASK-ES-571/tab-base2.json --out reports/TASK-ES-571/tab-base-compare.json",
+    "node docs/design/harness/tab-compare.js reports/TASK-ES-571/tab-base1.json reports/TASK-ES-571/tab-after.json --out reports/TASK-ES-571/tab-after-compare.json"
+  ]
+}

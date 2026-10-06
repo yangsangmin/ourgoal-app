@@ -1,0 +1,61 @@
+{
+  "tool": "csv-compare571.js",
+  "inputs": [
+    "reports/TASK-ES-571/csv-base1.json",
+    "reports/TASK-ES-571/csv-base2.json",
+    "reports/TASK-ES-571/csv-after.json"
+  ],
+  "normalization": "Only UUID and ISO timestamp values read from each actual saved record; equality of shared timestamp fields is preserved. Original JSON/file bytes retained. Transport blocked-request counts are metadata, not product values.",
+  "substitutions": [
+    [
+      {
+        "raw": "5d71c650-81ae-4ef0-ad5f-da2088389ace",
+        "replacement": "<record-0-id>"
+      },
+      {
+        "raw": "2026-10-06T04:10:53.490Z",
+        "replacement": "<record-0-startAt>"
+      }
+    ],
+    [
+      {
+        "raw": "d9e7908d-8a2b-4fa8-82e5-39ed60bc3ccc",
+        "replacement": "<record-0-id>"
+      },
+      {
+        "raw": "2026-10-06T04:10:53.391Z",
+        "replacement": "<record-0-startAt>"
+      }
+    ],
+    [
+      {
+        "raw": "b2274e24-d4cb-4e5f-8fee-9f89f73fa6ea",
+        "replacement": "<record-0-id>"
+      },
+      {
+        "raw": "2026-10-06T04:10:53.490Z",
+        "replacement": "<record-0-startAt>"
+      }
+    ]
+  ],
+  "normalizedCsvSha256": [
+    "8d7e7887b29c6a942b0d2e64e09004405c0b5a6ce728f3f2d79c362d47cb2e0c",
+    "8d7e7887b29c6a942b0d2e64e09004405c0b5a6ce728f3f2d79c362d47cb2e0c",
+    "8d7e7887b29c6a942b0d2e64e09004405c0b5a6ce728f3f2d79c362d47cb2e0c"
+  ],
+  "base1VsBase2": {
+    "comparedValues": 165,
+    "differingValues": 0,
+    "diffs": []
+  },
+  "base1VsAfter": {
+    "comparedValues": 165,
+    "differingValues": 0,
+    "diffs": []
+  },
+  "base2VsAfter": {
+    "comparedValues": 165,
+    "differingValues": 0,
+    "diffs": []
+  }
+}

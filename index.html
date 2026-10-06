@@ -2179,7 +2179,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/checkin-helpers.js"></script><script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/checkin-feedback.js"></script><script src="js/tabs/records/export-theme.js"></script><script src="js/tabs/records/weekly-recap.js"></script><script src="js/tabs/records/external-import.js"></script><script src="js/tabs/records/stopwatch-format.js"></script><script src="js/tabs/records/record-heatmap-levels.js"></script><script src="js/tabs/records/table-analytics-engine.js"></script><script src="js/tabs/records/trend-multi-metric-svg.js"></script><script src="js/tabs/records/table-csv-sync.js"></script><script src="js/tabs/records/voice-table-input.js"></script><script src="js/tabs/records/theme-export-csv.js"></script><script src="js/tabs/records/mic-permission-guide.js"></script><script src="js/tabs/records/ai-feedback-catalog.js"></script><script src="js/tabs/records/growth-chart.js"></script><script src="js/tabs/records/theme-classifier.js"></script><script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/checkin-feedback.js"></script><script src="js/tabs/records/export-theme.js"></script><script src="js/tabs/records/weekly-recap.js"></script><script src="js/tabs/records/external-import.js"></script><script src="js/tabs/records/stopwatch-format.js"></script><script src="js/tabs/records/record-heatmap-levels.js"></script><script src="js/tabs/records/table-analytics-engine.js"></script><script src="js/tabs/records/trend-multi-metric-svg.js"></script><script src="js/tabs/records/table-csv-sync.js"></script><script src="js/tabs/records/voice-table-input.js"></script><script src="js/tabs/records/theme-export-csv.js"></script><script src="js/tabs/records/mic-permission-guide.js"></script><script src="js/tabs/records/ai-feedback-catalog.js"></script><script src="js/tabs/records/growth-chart.js"></script><script src="js/tabs/records/theme-classifier.js"></script><script src="js/tabs/records/csv-export.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
@@ -3175,6 +3175,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var RECORD_THEMES = _recordsKit.RECORD_THEMES;
   var classifyRecordTheme = _recordsKit.classifyRecordTheme;
   var toast = _uiKit.toast;
+  /* [#TASK-ES-571] js/tabs/records/csv-export.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var exportRecordsCsv = _recordsKit.exportRecordsCsv;
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -5592,41 +5594,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS ============ */
   /* [#TASK-ES-481] toggleRecordArchive → js/tabs/records/archive-toggle.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window.toggleRecordArchive = toggleRecordArchive;
-
-  function exportRecordsCsv(){
-    triggerHapticFeedback(12);
-    var recs = (state && state.profile && state.profile.records) || [];
-    if(!recs.length){
-      if(typeof toast === 'function') toast('내보낼 기록이 없습니다 📭');
-      return;
-    }
-    var headers = ['ID', '시작일시', '종료일시', '테마', '내용', '진행시간(초)'];
-    var rows = recs.map(function(r){
-      return [
-        r.id || '',
-        r.startAt || '',
-        r.endAt || '',
-        r.theme || 'daily',
-        '"' + (r.text || r.content || '').replace(/"/g, '""') + '"',
-        r.duration || 0
-      ].join(',');
-    });
-    var csvContent = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
-    try {
-      var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      var url = URL.createObjectURL(blob);
-      var link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'ourgoal_records_' + new Date().toISOString().slice(0,10) + '.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      if(typeof toast === 'function') toast('기록 CSV 다운로드가 완료되었습니다 📥');
-    } catch(err){
-      console.error('CSV export failed:', err);
-      if(typeof toast === 'function') toast('CSV 내보내기 완료 (백업 완료) 💾');
-    }
-  }
+  /* [#TASK-ES-571] exportRecordsCsv → js/tabs/records/csv-export.js 로 옮김(기록 CSV 내보내기 책임 분열 — 앞 주석 포함) */
   window.exportRecordsCsv = exportRecordsCsv;
 
   /* ============ [PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTIONS ============ */
