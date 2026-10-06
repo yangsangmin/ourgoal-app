@@ -1,0 +1,51 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base1",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "홈 체크인 표시",
+   "present": true,
+   "visible": true,
+   "textHash": "97b10955a0ac716a",
+   "textLen": 190,
+   "attrsHash": "bcbd982baa577694",
+   "opened": null
+  },
+  {
+   "name": "기록 테마 카드 표시",
+   "present": true,
+   "visible": true,
+   "textHash": "fc7bc23110582a5b",
+   "textLen": 558,
+   "attrsHash": "7a1f1071732b679e",
+   "opened": null
+  },
+  {
+   "name": "기록 테마 선택 창 읽기",
+   "present": false,
+   "visible": null,
+   "textHash": null,
+   "textLen": null,
+   "attrsHash": null,
+   "opened": false
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "toast/function,showToast/function",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 1
+ }
+}

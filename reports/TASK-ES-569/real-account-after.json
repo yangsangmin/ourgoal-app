@@ -1,0 +1,52 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "after",
+ "mode": "test-account-A",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · test account A (address hidden) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "홈 체크인 표시",
+   "present": true,
+   "visible": true,
+   "textHash": "97b10955a0ac716a",
+   "textLen": 190,
+   "attrsHash": "bcbd982baa577694",
+   "opened": null
+  },
+  {
+   "name": "기록 테마 카드 표시",
+   "present": true,
+   "visible": true,
+   "textHash": "ff03629c75f92c9b",
+   "textLen": 1062,
+   "attrsHash": "b221c4ad9ba2b98f",
+   "opened": null
+  },
+  {
+   "name": "기록 테마 선택 창 읽기",
+   "present": true,
+   "visible": true,
+   "textHash": "38e3ca4f9bdbdb54",
+   "textLen": 139,
+   "attrsHash": "afd15b995f4e295e",
+   "opened": true
+  }
+ ],
+ "errors": [],
+ "loggedIn": true,
+ "entered": true,
+ "globals": "toast/function,showToast/function",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 5,
+  "POST /rest/v1/checkins": 5
+ }
+}

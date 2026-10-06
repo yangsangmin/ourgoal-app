@@ -1,0 +1,121 @@
+{
+ "beforeStage": {
+  "source": "tests-exit-before-stage.json",
+  "differences": [
+   "tests/cell-map-export-es414.test.js"
+  ],
+  "cause": "신고서는 새 두 파일을 선언했지만 파일은 아직 미추적이라 git 추적 파일만 읽는 cell-map-export 시험에서 파일을 읽지 못했다",
+  "resolution": "새 제품 파일과 REQ를 git add로 등록한 뒤 같은 시험·전체 시험을 다시 측정했다. 시험 기대값·검사·제품 함수 변경0"
+ },
+ "scope": {
+  "kept": [
+   "toastTimer",
+   "buildCheckinRecord",
+   "saveQuickCheckin",
+   "renderAll"
+  ],
+  "deadclick": "off — 기준/작업 동일, 실제 조작은 세포별 behavior와 DOM 비교로 별도 기록",
+  "classifier": "직접 함수 호출·상수 비교이며 모든 체크인 저장의 호출수 주장이 아님",
+  "realAccount": "표준 실계정 하네스 읽기 전용, reports 검사는 저장값 적재 주장"
+ },
+ "measurements": {
+  "scenarios": {
+   "tool": "docs/design/harness/module-split/scenario-local-z56.js",
+   "scenarios": {
+    "records-theme-picker-preserved": {
+     "valid": {
+      "errors": [],
+      "weaknesses": []
+     },
+     "runs": {
+      "base": {
+       "passed": true,
+       "failedStep": null,
+       "failKind": null,
+       "failReason": null,
+       "toolError": null,
+       "exceptions": [],
+       "nonVacuousExpects": 4
+      },
+      "work": {
+       "passed": true,
+       "failedStep": null,
+       "failKind": null,
+       "failReason": null,
+       "toolError": null,
+       "exceptions": [],
+       "nonVacuousExpects": 4
+      }
+     }
+    },
+    "toast-privacy-undo-shared-timer": {
+     "valid": {
+      "errors": [],
+      "weaknesses": []
+     },
+     "runs": {
+      "base": {
+       "passed": true,
+       "failedStep": null,
+       "failKind": null,
+       "failReason": null,
+       "toolError": null,
+       "exceptions": [],
+       "nonVacuousExpects": 4
+      },
+      "work": {
+       "passed": true,
+       "failedStep": null,
+       "failKind": null,
+       "failReason": null,
+       "toolError": null,
+       "exceptions": [],
+       "nonVacuousExpects": 4
+      }
+     }
+    }
+   },
+   "allPassedBoth": true
+  },
+  "npm": {
+   "base": {
+    "exit": 0,
+    "countLines": [
+     "440개 통과, 0개 실패",
+     "🎯 검증 결과: 총 38개 검사 중 38개 통과 (0개 실패)",
+     "[분석] 정적 <button> 태그 총 918개 발견",
+     "[결과] 엄밀 핸들러 배선 확인 버튼: 918개 / 918개",
+     "ok · module-guard 시험 6건 통과(통과 1 · 실패 ①④⑤ 3 · 래칫 1 · 신고서 1)",
+     "  goal-result-btn-es380: 5건 통과 · 0건 실패",
+     "  ok · 허용 목록: 사유가 있으면 통과, 사유 20자 미만·키 중복은 실패",
+     "13개 통과, 0개 실패"
+    ]
+   },
+   "work": {
+    "exit": 0,
+    "countLines": [
+     "440개 통과, 0개 실패",
+     "🎯 검증 결과: 총 38개 검사 중 38개 통과 (0개 실패)",
+     "[분석] 정적 <button> 태그 총 918개 발견",
+     "[결과] 엄밀 핸들러 배선 확인 버튼: 918개 / 918개",
+     "ok · module-guard 시험 6건 통과(통과 1 · 실패 ①④⑤ 3 · 래칫 1 · 신고서 1)",
+     "  goal-result-btn-es380: 5건 통과 · 0건 실패",
+     "  ok · 허용 목록: 사유가 있으면 통과, 사유 20자 미만·키 중복은 실패",
+     "13개 통과, 0개 실패"
+    ]
+   }
+  },
+  "helpers": {
+   "files": [
+    "components-bundle.js",
+    "inline-bundle.js"
+   ],
+   "unchanged": true
+  }
+ },
+ "reqHeaderRepair": {
+  "source": "npm-before-header-fix.json",
+  "cause": "8개 독립 섹션은 있었으나 헤더가 ## ① 형식이라 표준 ## 1. [원칙 ①]을 검사하는 린터가 읽지 못했다",
+  "resolution": "REQ 헤더 형식만 보정했다. 제품 코드·시험 코드·시험 기대값 변경0. npm test 양쪽 종료코드는 npm-test-summary.json 원본 인용"
+ }
+}
