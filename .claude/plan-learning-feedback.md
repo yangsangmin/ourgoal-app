@@ -12,4 +12,4 @@
 - [x] 독립 검토의 원시 실패 식별자·등록 checker·옛 효과 출처 반례 보강 · 예상15분 · fix-check-output.json에서 세 반례 exit2, 미확인 관측 수집/확정집계 제외, 기존 도구33건 예상 일치
 
 - [x] 정상 submit 전 claims/REQ 형식 검사와 실제 실패 pending 연결 · 예상10분 · 기존 요약 원문 보존, validateClaims 형식 오류0, REQ gate exit0, submit-feedback-result.json의 실제 실패exit1/수정exit0·다음bootstrap 연결
-- [ ] 최종 head 정상 quick 예비검사 · 예상5분 · 정상 commit 후 기존 court/judge.js --quick exit0 측정·root 인계
+- [x] 정상 quick 예비검사 · 예상5분 · 4ff83210에서 기존 court/judge.js --quick exit0 측정(legacy-sandbox/quick-formal-claims); 문서 정리 commit 뒤 최종 head 동일 검사를 재실행해 root 인계. GitHub 판정 아님.
