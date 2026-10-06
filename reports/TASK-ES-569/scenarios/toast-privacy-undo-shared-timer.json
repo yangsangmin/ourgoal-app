@@ -1,0 +1,121 @@
+{
+ "id": "toast-privacy-undo-shared-timer",
+ "title": "공개 범위 Undo 토스트는 기본 토스트 소멸 시각 뒤에도 살아 있고, 실제 Undo로 나만 보기 저장 및 일반 토스트 교체·클릭 닫기가 동작한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": "#homeCompassQuest"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "do": "click",
+   "selector": ".starter-goal-btn[data-starter=\"study\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "do": "click",
+   "selector": "#homeDetailClose"
+  },
+  {
+   "do": "wait",
+   "ms": 600
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"goals\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 600
+  },
+  {
+   "do": "click",
+   "selector": "#btnPersonalAddGoalInline"
+  },
+  {
+   "do": "click",
+   "selector": "#ngManualBtn"
+  },
+  {
+   "do": "type",
+   "selector": "#mGoalTitle",
+   "text": "분열 대조 독서 목표",
+   "clear": true
+  },
+  {
+   "do": "select",
+   "selector": "#mGoalVis",
+   "value": "theme"
+  },
+  {
+   "do": "click",
+   "selector": "#mSave"
+  },
+  {
+   "expect": "visible",
+   "selector": "#btnUndoThemePrivacy"
+  },
+  {
+   "do": "wait",
+   "ms": 2700
+  },
+  {
+   "expect": "visible",
+   "selector": "#btnUndoThemePrivacy"
+  },
+  {
+   "do": "click",
+   "selector": "#btnUndoThemePrivacy"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "나만 보기로 변경되었어요"
+  },
+  {
+   "expect": "hasClass",
+   "selector": "#toast",
+   "className": "show"
+  },
+  {
+   "do": "click",
+   "selector": "#toast"
+  },
+  {
+   "expect": "notHasClass",
+   "selector": "#toast",
+   "className": "show"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

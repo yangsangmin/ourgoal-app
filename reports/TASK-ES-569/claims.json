@@ -1,0 +1,360 @@
+{
+ "task": "TASK-ES-569",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-569-RECORD-THEME.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "기록 테마 상수4개와 classifyRecordTheme를 생성기로 그대로 이동한다"
+  },
+  {
+   "id": "R2",
+   "text": "게스트 기록을 만들고 실제 테마 선택으로 공부기록 표시와 알림을 확인한다"
+  },
+  {
+   "id": "R3",
+   "text": "토큰·남은 글자·단독 로드·분류 산출 동일을 증명한다"
+  },
+  {
+   "id": "R4",
+   "text": "DOM·화면·실계정 읽기·시험 전후 측정 결과를 저장한다"
+  },
+  {
+   "id": "R5",
+   "text": "새 세포를 신고하고 생성 지도4종·시험 기대값을 변경하지 않는다"
+  },
+  {
+   "id": "R6",
+   "text": "토스트 표시·공유 타이머·Undo 교체·클릭 닫기를 보존한다"
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "게스트 실제 체크인 후 기록 테마 선택 창에서 공부기록을 고르면 카드와 변경 토스트가 표시되고 예외가 없다",
+   "touches": [
+    "js/tabs/records/theme-classifier.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-theme-picker-preserved.json"
+  },
+  {
+   "id": "C2",
+   "req": "R6",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "실제 목표 저장의 Undo는 일반 토스트 시간 뒤에도 남고, 누르면 비공개 저장 토스트로 교체되며 클릭하면 닫히고 예외가 없다",
+   "touches": [
+    "js/core/toast-renderer.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/toast-privacy-undo-shared-timer.json"
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고에 옮긴 구간 토큰열 동일이 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고에 원본의 남은 글자 동일이 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고에 이벤트 처리기 수 동일이 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "listeners.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "보고에 원본 로드 회귀0 및 새 두 파일 각각 단독 로드 ok가 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "직접 호출한 순수 분류기 사례와 상수 비교가 동일하다고 보고에 기록되어 있다. 실제 UI 저장 호출수나 실계정 검증 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/classifier-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/classifier-compare.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고 dom-compare.json에 base1VsBase2.differing 차이0이 기록되어 있다. 보고 적재 검사이며 법정 실계정 재측정 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/dom-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고 dom-compare.json에 base1VsAfter.differing 차이0이 기록되어 있다. 보고 적재 검사이며 법정 실계정 재측정 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/dom-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/dom-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고 guest-compare.json에 base1VsBase2.differing 차이0이 기록되어 있다. 보고 적재 검사이며 법정 실계정 재측정 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고 guest-compare.json에 base1VsAfter.differing 차이0이 기록되어 있다. 보고 적재 검사이며 법정 실계정 재측정 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고 real-account-compare.json에 base1VsBase2.differing 차이0이 기록되어 있다. 보고 적재 검사이며 법정 실계정 재측정 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 보고 real-account-compare.json에 base1VsAfter.differing 차이0이 기록되어 있다. 보고 적재 검사이며 법정 실계정 재측정 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/real-account-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/real-account-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "두 탭 화면 비교 보고에 차이0이 기록되어 있다. deadclick off이며 전수 클릭 검증 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/tab-compare-base1-base2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/tab-compare-base1-base2.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "두 탭 화면 비교 보고에 차이0이 기록되어 있다. deadclick off이며 전수 클릭 검증 주장이 아니다",
+   "touches": [
+    "reports/TASK-ES-569/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/tab-compare-base1-after.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "전체 시험 종료 코드 전후 차이0이 보고에 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/tests-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/tests-compare.json",
+    "type": "jsonPath",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 helper 파일들이 기준과 같은 글자라고 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/helpers-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/helpers-compare.json",
+    "type": "jsonPath",
+    "path": "unchanged",
+    "equals": true
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 종료0이 base.exit에 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/npm-test-summary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/npm-test-summary.json",
+    "type": "jsonPath",
+    "path": "base.exit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 종료0이 work.exit에 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-569/npm-test-summary.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-569/npm-test-summary.json",
+    "type": "jsonPath",
+    "path": "work.exit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 records/theme-classifier 세포가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"records/theme-classifier\""
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서에 core/toast-renderer 세포가 등록되어 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"core/toast-renderer\""
+   }
+  }
+ ]
+}

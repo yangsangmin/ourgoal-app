@@ -1,0 +1,28 @@
+{
+  "task": "TASK-ES-569",
+  "label": "기록 테마 분류와 공용 토스트 표시 책임 분열",
+  "slot": "HO 기관",
+  "slots": ["H0 시범 #TASK-ES-439", "H1", "H2", "H3", "H4", "HO 기관"],
+  "cells": [
+    {
+      "key": "themeClassifier",
+      "file": "js/tabs/records/theme-classifier.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Record Theme Classifier (기록 — 테마 온톨로지·낱말·정규식·카테고리 기반 분류)",
+      "desc": ["기록 테마 온톨로지 6종(RECORD_THEMES)과 키워드·정규식·카테고리 표를 소유하고 classifyRecordTheme의 분류 결과를 만든다.", "원래 인라인 변수와 앱 스코프 통로를 보존해 기록 카드·테마 선택·내보내기·프로필 읽기·피드백 코드가 같은 데이터와 함수를 읽는다. 미사용 빠른 체크인과 buildCheckinRecord는 원본에 남긴다."],
+      "take": [{"group": "5대 테마 온톨로지", "names": ["RECORD_THEMES", "THEME_KEYWORDS", "THEME_REGEX_RULES", "CATEGORY_THEME_MAP", "classifyRecordTheme"], "keepRest": true}]
+    },
+    {
+      "key": "toastRenderer",
+      "file": "js/core/toast-renderer.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Toast Renderer (기관 — 공용 토스트 표시·교체·닫기)",
+      "desc": ["toast(msg) 표시 책임만 글자 그대로 옮긴다. toastTimer 상태와 window.toast·window.showToast 노출은 index.html 원래 자리에 보존한다.", "기존 앱 스코프 getter/setter로 Confetti Undo와 같은 타이머를 쓰며 새 연결·타이머·API를 만들지 않는다. UiHelpers 원본 파일은 수정하지 않는다."],
+      "take": [{"group": "Confetti", "names": ["toast"], "keepRest": true}]
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+ "id": "records-theme-picker-preserved",
+ "title": "기록 저장 뒤 테마 선택 창의 여섯 테마 중 공부기록으로 변경하면 카드와 토스트가 같은 테마를 표시한다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#captureInput"
+  },
+  {
+   "do": "type",
+   "selector": "#captureInput",
+   "text": "오늘 책을 읽고 기출문제 풀이 완료"
+  },
+  {
+   "do": "click",
+   "selector": "#captureSave"
+  },
+  {
+   "do": "wait",
+   "ms": 1000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#firstCheckinDoneBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#firstCheckinDoneBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnCheckinAiClose",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#btnCheckinAiClose"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "do": "click",
+   "selector": "[data-rectheme]"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#themePickList",
+   "text": "공부기록"
+  },
+  {
+   "expect": "count",
+   "selector": "#themePickList [data-picktheme]",
+   "equals": 6
+  },
+  {
+   "do": "click",
+   "selector": "#themePickList [data-picktheme=\"study\"]"
+  },
+  {
+   "expect": "textContains",
+   "selector": "[data-rectheme]",
+   "text": "공부기록"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "테마를 [공부기록](으)로 변경했어요"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
