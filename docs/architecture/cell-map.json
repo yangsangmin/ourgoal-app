@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "f38db6cc635fa93c6326473279a1e1b7b78e687d",
-  "short": "f38db6cc",
-  "committedAt": "2026-10-06T13:38:04+09:00",
-  "subject": "Merge pull request #831 from yangsangmin/codex/task-es-571-records-csv"
+  "commit": "0b8cda96fad7e057ffcd20db1c7044799bd73d29",
+  "short": "0b8cda96",
+  "committedAt": "2026-10-06T19:54:09+09:00",
+  "subject": "Merge pull request #837 from yangsangmin/codex/task-es-576-today-mission"
  },
  "summary": {
-  "cells": 332,
-  "files": 331,
-  "jsLines": 85739,
+  "cells": 337,
+  "files": 336,
+  "jsLines": 86082,
   "kinds": {
-   "organ": 50,
-   "tab": 176,
+   "organ": 52,
+   "tab": 179,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 332,
+  "descriptionsHand": 337,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,12 +37,12 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 6133,
-   "functionDecls": 81
+   "inlineScriptLines": 5942,
+   "functionDecls": 71
   },
   "health": {
-   "undifferentiatedLines": 6133,
-   "globalLinks": 261,
+   "undifferentiatedLines": 5942,
+   "globalLinks": 260,
    "oversizeCells": 0,
    "drawingSmallCells": {
     "drew": 7,
@@ -74,15 +74,15 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 50
+   "count": 52
   },
   {
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 176,
+   "count": 179,
    "large": 6,
-   "small": 170
+   "small": 173
   },
   {
    "key": "hybrid",
@@ -110,9 +110,10 @@
     "home/sub-heatmap",
     "home/sub-onescreen",
     "home/sub-quest",
-    "home/sub-today"
+    "home/sub-today",
+    "home/today-mission"
    ],
-   "lines": 1238,
+   "lines": 1338,
    "over800": 0
   },
   {
@@ -131,6 +132,7 @@
     "goals/goal-archive",
     "goals/goal-category-templates",
     "goals/goal-detail",
+    "goals/goal-detail-drawer",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/goal-math",
@@ -165,7 +167,7 @@
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 10936,
+   "lines": 11011,
    "over800": 0
   },
   {
@@ -305,6 +307,7 @@
     "settings/guide-buttons",
     "settings/inapp-landing",
     "settings/login-devices",
+    "settings/notification-helper",
     "settings/notify-soft-ask",
     "settings/notify-timer",
     "settings/notion-sync",
@@ -331,7 +334,7 @@
     "settings/widget-settings-modal",
     "settings/withdraw-modal"
    ],
-   "lines": 6898,
+   "lines": 6997,
    "over800": 0
   },
   {
@@ -518,11 +521,13 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/capabilities",
     "core/confetti",
     "core/confirm",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -547,7 +552,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 5156,
+   "lines": 5225,
    "over800": 0
   },
   {
@@ -3714,9 +3719,11 @@
     "comm/user-blocks",
     "core/app-enter",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/gcal-sync",
     "core/gcal-token",
     "core/home-cockpit",
@@ -3742,6 +3749,7 @@
     "goals/goal-archive",
     "goals/goal-category-templates",
     "goals/goal-detail",
+    "goals/goal-detail-drawer",
     "goals/goal-detail-events",
     "goals/goal-export",
     "goals/goal-math",
@@ -3774,6 +3782,7 @@
     "goals/topic-region-picker",
     "home/home-render",
     "home/quest-summary",
+    "home/today-mission",
     "records/ai-feedback",
     "records/ai-feedback-catalog",
     "records/ai-feedback-providers",
@@ -3832,6 +3841,7 @@
     "settings/guide-buttons",
     "settings/inapp-landing",
     "settings/login-devices",
+    "settings/notification-helper",
     "settings/notify-soft-ask",
     "settings/notify-timer",
     "settings/notion-sync",
@@ -3950,6 +3960,70 @@
      "task": "TASK-ES-482",
      "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/calendar-availability",
+   "file": "js/core/calendar-availability.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "캘린더 사용 가능 판별",
+   "nameSource": "hand",
+   "does": "앱·사용자 설정의 클라이언트 ID 존재 여부로 캘린더 사용 가능 여부를 판별한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Calendar Availability (기관 — 캘린더 사용 가능 판별)",
+    "앱 클라이언트 ID와 설정 클라이언트 ID 존재 여부의 순수 판별. 원문 trim·fallback 동작과 인접 토큰 저장·기존 통로를 보존한다.",
+    "#TASK-ES-575(캘린더 사용 가능 여부 판별 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 4274~4279줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 30,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-575"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-575-CALENDAR-AVAILABILITY.md"
+   ],
+   "prs": [
+    {
+     "number": 836,
+     "task": "TASK-ES-575",
+     "title": "[분열] #TASK-ES-575 캘린더 연결 가능 판별 원문 이전",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -4283,6 +4357,70 @@
      "number": 816,
      "task": "TASK-ES-536",
      "title": "[INFRA] #TASK-ES-536 feat: 인라인 3단계 Z3 — Notifications·Web Push·자정 날짜 변경·딥링크 관문 → 세포 4개(동작 그대로, 자리 HO)",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
+   "id": "core/default-profile",
+   "file": "js/core/default-profile.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "기본 프로필 생성",
+   "nameSource": "hand",
+   "does": "기존 게스트·로그인 진입의 기본 프로필 구조와 설정 초기값을 생성한다",
+   "doesSource": "hand",
+   "header": [
+    "기본 프로필 생성",
+    "기존 게스트·로그인 진입의 기본 프로필 구조와 설정 초기값을 동작 그대로 생성한다.",
+    "#TASK-ES-574(기본 프로필 생성 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 3612~3625줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 39,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-574"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-574-DEFAULT-PROFILE.md"
+   ],
+   "prs": [
+    {
+     "number": 835,
+     "task": "TASK-ES-574",
+     "title": "[INFRA] #TASK-ES-574 기본 프로필 기관 분열",
      "date": "2026-10-06"
     }
    ]
@@ -4891,6 +5029,7 @@
     "home/home-render",
     "home/index",
     "home/quest-summary",
+    "home/today-mission",
     "records/index",
     "sanctuary-v3-engine",
     "settings/index"
@@ -13120,6 +13259,64 @@
    ]
   },
   {
+   "id": "goals/goal-detail-drawer",
+   "file": "js/tabs/goals/goal-detail-drawer.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "목표 상세 서랍",
+   "nameSource": "hand",
+   "does": "성지 상세 버튼에서 목표 진척도와 마일스톤을 확인하고 완료 상태를 바꾼다.",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Goal Detail Drawer (목표 — 상세 서랍·마일스톤)",
+    "성지 트레일 상세 버튼으로 여는 목표 서랍의 진척도·마일스톤 체크 및 닫기. 원격 저장과 기존 window 노출은 원래 동작 그대로.",
+    "#TASK-ES-572(알림 헬퍼·목표 상세 서랍 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 5536~5565 · 5566~5569 · 5570~5582줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 75,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-572"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-572-NEXT-CELLS.md"
+   ],
+   "prs": [
+    {
+     "number": 833,
+     "task": "TASK-ES-572",
+     "title": "[INFRA] #TASK-ES-572 알림·목표 상세 서랍 책임 분열",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
    "id": "goals/goal-detail-events",
    "file": "js/tabs/goals/goal-detail-events.js",
    "kind": "tab",
@@ -15758,6 +15955,66 @@
      "task": "TASK-ES-353",
      "title": "[INFRA] #TASK-ES-353 CORE-04 변경 이벤트 단일화·리스너 중복 방지 (HOME-18·GOALS-22 흡수)",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "home/today-mission",
+   "file": "js/tabs/home/today-mission.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "home",
+   "tabs": [
+    "home"
+   ],
+   "name": "오늘 미션 해시·카드",
+   "nameSource": "hand",
+   "does": "목표·기록 기반 해시와 오늘 미션 카드의 캐시·펼침/접기·비동기 저장 재렌더를 담당한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Today Mission (홈 — 오늘 미션 해시·카드)",
+    "목표·기록 기반 해시와 오늘 미션 카드의 캐시·펼침/접기·비동기 저장 재렌더. 기존 AI 요청 함수·통로·window 노출·버그를 보존한다. 홈 키트를 통째 대입하는 index.js 뒤에 태그를 둔다.",
+    "#TASK-ES-576(오늘 미션 해시·카드 렌더 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 5351~5357 · 5361~5426줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 100,
+   "over800": false,
+   "exposes": [
+    "OurgoalHomeMegaBlock"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "core/registry-init"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalHomeMegaBlock"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-576"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-576-TODAY-MISSION.md"
+   ],
+   "prs": [
+    {
+     "number": 837,
+     "task": "TASK-ES-576",
+     "title": "[분열] #TASK-ES-576 오늘 미션 해시 및 카드 렌더 책임 원문 이전",
+     "date": "2026-10-06"
     }
    ]
   },
@@ -19654,6 +19911,64 @@
    ]
   },
   {
+   "id": "settings/notification-helper",
+   "file": "js/tabs/settings/notification-helper.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "방해금지·알림 문구",
+   "nameSource": "hand",
+   "does": "방해금지 시간을 판별하고 목표·연속 기록·주간 성취에 맞춘 알림 문구를 만든다.",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Notification Helper (설정 — DND 판별·동적 알림 문구)",
+    "알림 타이머가 사용하는 방해금지 시간 판별과 맥락별 알림 문구. 기존 스코프 getter·타이머 호출 순서를 보존한다.",
+    "#TASK-ES-572(알림 헬퍼·목표 상세 서랍 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 7927~7947 · 7948~7999줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 99,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-572"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-572-NEXT-CELLS.md"
+   ],
+   "prs": [
+    {
+     "number": 833,
+     "task": "TASK-ES-572",
+     "title": "[INFRA] #TASK-ES-572 알림·목표 상세 서랍 책임 분열",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
    "id": "settings/notify-soft-ask",
    "file": "js/tabs/settings/notify-soft-ask.js",
    "kind": "tab",
@@ -20107,9 +20422,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/gcal-sync",
     "core/gcal-token",
     "core/home-cockpit",
@@ -20264,9 +20581,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -20359,9 +20678,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -20447,10 +20768,12 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/confirm",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -20553,9 +20876,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -20641,9 +20966,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -20736,9 +21063,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
+    "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
@@ -23436,7 +23765,6 @@
     "CREATOR_TEMPLATES",
     "cloneTemplate",
     "closeModal",
-    "defaultProfile",
     "openModal",
     "setTab",
     "state",
