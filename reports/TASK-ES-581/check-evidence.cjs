@@ -251,8 +251,8 @@ for (const item of manifest.items) {
       const repro = JSON.parse(fs.readFileSync(item.pairwiseBaseReproResultPath, 'utf8'));
       const work = JSON.parse(fs.readFileSync(item.pairwiseWorkResultPath, 'utf8'));
 
-      if (repro.differingValues !== 2 || work.differingValues !== 2) {
-        errors.push(`Item ${item.id}: expected exactly 2 baseline diffs in repro and work, got repro:${repro.differingValues}, work:${work.differingValues}`);
+      if (!Array.isArray(repro.diffs) || !Array.isArray(work.diffs) || repro.differingValues !== repro.diffs.length || work.differingValues !== work.diffs.length) {
+        errors.push('Baseline diff counts disagree with their actual diff lists');
       }
 
       // Exact diffs matching: deep equality on each diff
@@ -265,12 +265,15 @@ for (const item of manifest.items) {
   }
 
   if (item.id === 'tests-suite-compare') {
-    if (resultParsed.work?.npmExit !== 0) {
-      errors.push(`Item ${item.id}: npm test in worktree failed with exit code: ${resultParsed.work?.npmExit}`);
+    if (resultParsed.workNpmExit !== 0 || resultParsed.baseNpmExit !== 0) {
+      errors.push(`Item ${item.id}: baseline/work npm execution failed`);
     }
-    const nt = resultParsed.work?.npmTest;
+    const nt = resultParsed.workNpmNumbers;
     if (nt?.smoke?.[0] !== 440 || nt?.smoke?.[1] !== 0 || nt?.integrity?.[0] !== 38 || nt?.buttons?.[0] !== 918) {
       errors.push(`Item ${item.id}: test count regression in worktree: ${JSON.stringify(nt)}`);
+    }
+    if (JSON.stringify(resultParsed.baseNpmNumbers) !== JSON.stringify(nt) || resultParsed.files !== 115 || !Array.isArray(resultParsed.exitDiff) || resultParsed.exitDiff.length || !Array.isArray(resultParsed.outputDiff) || resultParsed.outputDiff.length) {
+      errors.push(`Item ${item.id}: baseline/work counts or individual exit/output comparison differ`);
     }
   }
 
@@ -304,7 +307,7 @@ console.log(`  Total Items Declared: ${manifest.items.length}`);
 console.log(`  Document & Hash Integrity: ${errors.length === 0 ? 'ALL PASS' : 'FAILED'}`);
 console.log(`  Execution Success (exitCode 0): ${executionSuccessCount}`);
 console.log(`  Execution Env Divergence (exitCode 1 documented): ${executionEnvDiffCount}`);
-console.log(`  Blocked Operations (safety policy enforced): ${blockedCount}`);
+console.log(`  현재 실계정 실행 차단·로그인 분기 미측정: ${blockedCount}`);
 console.log(`  Unmeasured Items: ${unmeasuredCount}`);
 console.log(`  Integrity Violations / Errors: ${errors.length}`);
 console.log('============================================================');

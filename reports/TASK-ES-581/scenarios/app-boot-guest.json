@@ -1,0 +1,58 @@
+{
+  "id": "app-boot-guest",
+  "title": "실제 게스트 진입·인사 닫기·홈 진입 보존 (로그인 분기 미측정)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 1800
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#landingScreen"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

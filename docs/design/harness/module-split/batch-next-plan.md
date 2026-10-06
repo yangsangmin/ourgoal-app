@@ -1,3 +1,5 @@
+> 미검증 후보 초안이다. 실제 배지 가시성·OAuth 키트·이동량은 확인되지 않았으며 실행에 사용하지 않는다. 후속 설계 정본은 TASK579/batch-current.json 및 TASK582 지시서다.
+
 # 차기 묶음 분열 계획 (Batch Next Plan) - 예비 검토안
 
 > [!IMPORTANT]

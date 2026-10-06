@@ -1,0 +1,58 @@
+{
+  "task": "TASK-ES-581",
+  "reviewer": "Codex independent measurements; Court verdict remains separate",
+  "baseCommit": "b87cf99e3910c1dda25dd33579477d94ef597f82",
+  "productMeasurementCommit": "0635fb93026e57ae30e445d9ba604f86caa2f5e2",
+  "productSha256": {
+    "index.html": "cad25d67075dce510e975379243e5da22c4d3b896d1879341101c441c036f5d1",
+    "js/core/all-view-render.js": "c11cc4ec3787d77999f15967b75178eb9cf1722a7fdd4d3c6556235a8c58b1b6",
+    "js/core/app-boot.js": "10d3651a3a98c0c0292cf3b2253b5f3d5a19ef2324aa1c40426a4b4f4937b2c2"
+  },
+  "productHashesUnchanged": true,
+  "source": "root-source-verify.json",
+  "load": "root-module-load.json",
+  "scenarios": "root-scenario-local.json",
+  "tests": "root-test-compare.json",
+  "uiComparison": {
+    "status": "EQUIVALENT_AND_VERIFIED",
+    "allChecksPass": true,
+    "allStepMatchesPass": true,
+    "totalDiffs": 0,
+    "workerMeasurementNote": "작업자 측정값 (판정 아님 — 법정을 대체하지 않음)"
+  },
+  "negativeComparatorCases": [
+    {
+      "name": "toast",
+      "exitCode": 1,
+      "input": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-toast.json",
+      "log": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-toast.log"
+    },
+    {
+      "name": "storage",
+      "exitCode": 1,
+      "input": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-storage.json",
+      "log": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-storage.log"
+    },
+    {
+      "name": "changingSid",
+      "exitCode": 1,
+      "input": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-changingSid.json",
+      "log": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-changingSid.log"
+    },
+    {
+      "name": "reversedDeviceTime",
+      "exitCode": 1,
+      "input": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-reversedDeviceTime.json",
+      "log": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581/negative-reversedDeviceTime.log"
+    }
+  ],
+  "rawEvidenceRoot": "C:\\dev\\ourgoal-app\\.Codex\\split-run/review-boot-581",
+  "limitations": [
+    "Authenticated local session/PKCE branches unmeasured",
+    "Production live run was outside authorized read-only scope; its output is not local-head proof",
+    "Cleanup log recorded team_pings 1/team_ping_replies 2 left; current state not independently measured; further account writes stopped"
+  ],
+  "workspaceRecovery": {
+    "note": "Worktree path disappeared during finalization; committed branch and raw evidence survived. Restored same branch, reapplied documented paper edits, restored checkout LF proof bytes only when matching recorded SHA; product hashes match pre-test measurements."
+  }
+}

@@ -13,6 +13,36 @@ const b2 = JSON.parse(fs.readFileSync(b2Path, 'utf8'));
 const after = JSON.parse(fs.readFileSync(aPath, 'utf8'));
 
 const runs = [b1, b2, after];
+// Per-run dynamic field invariants: validate before replacing only the known generated fields.
+for (const [runIndex, run] of runs.entries()) {
+  const stable = new Map(); let lastActive = 0;
+  const same = (key, value) => {
+    if (stable.has(key)) assert.strictEqual(value, stable.get(key), 'dynamic invariant changed: ' + runIndex + '/' + key);
+    else stable.set(key, value);
+  };
+  for (const step of run.steps) {
+    const ls = step.allLocalStorage || {};
+    for (const key of ['ourgoal_sid', 'ourgoal_device_id']) if (ls[key]) same(key, ls[key]);
+    if (!ls.ourgoal_guest_profile) continue;
+    const profile = JSON.parse(ls.ourgoal_guest_profile);
+    same('profile.id', profile.id); same('profile.createdAt', profile.createdAt);
+    assert.strictEqual(profile.username, profile.id, 'username/id relationship');
+    assert.ok(Number.isFinite(Date.parse(profile.createdAt)), 'createdAt date invalid');
+    if (profile.settings?.manito) {
+      const seed = profile.settings.manito.seed;
+      assert.ok(Number.isInteger(seed) && seed >= 0 && seed < 100000, 'profile seed invalid');
+      same('profile.seed', seed);
+      const settingsRaw = ls['ourgoal_settings_' + profile.id];
+      if (settingsRaw) assert.strictEqual(JSON.parse(settingsRaw).manito.seed, seed, 'profile/settings seed disagreement');
+    }
+    const devicesRaw = ls['ourgoal_registered_devices_' + profile.id];
+    if (devicesRaw) for (const dev of JSON.parse(devicesRaw)) {
+      if (dev.id !== ls.ourgoal_device_id) continue;
+      assert.ok(Number.isFinite(dev.firstLogin) && Number.isFinite(dev.lastActive) && dev.firstLogin <= dev.lastActive && dev.lastActive >= lastActive, 'device timestamp relationship');
+      same('device.firstLogin', dev.firstLogin); lastActive = dev.lastActive;
+    }
+  }
+}
 
 // 1. Helper to extract all leaves from JSON object with dot paths (including empty arrays/objects)
 function getLeafNodes(obj, prefix = '') {
