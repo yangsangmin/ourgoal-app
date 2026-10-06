@@ -28,3 +28,21 @@ collect는 registry.sharedStoreRoot로 명시된 공유 이벤트 저장소(기�
 롤아웃은 `rollout-proposal.json`을 root가 검토한다. 실제 전세션 진입문구·원장 사본·노션 연결 변경은 이 PR에서 실행하지 않는다.
 
 이 도구는 작업자가 쓴 event의 진실성이나 명령이 실제 실행됐다는 사실을 독립적으로 증명하지 않는다. 원시 실행 봉투와 입력 파일 SHA, 읽기 영수증, 적용 링크의 일치만 확인한다. 잘못된 입력 선언도 모두 일관되게 꾸민 경우 별도 독립 검토가 필요하다. 사전 계약의 실제 파일과 원시 입력 교차검사 및 독립 Court를 함께 사용한다. TASK581→582 after 오사용 canary는 불변 Git 게시 바이트 및 당시 manifest 입력 hash에 대한 자료 무결성 차단 측정이다.
+# 작업 중 실패·최근 개선·재검토 연결
+
+기존 `collect`는 작업 종료 전에도 이벤트를 수집한다. 실패 원인을 다음 세션에 전달하려면 기존 이벤트에 선택 필드 `feedback`을 추가한다. 새 원장이나 승격 정책을 만들지 않는다. 아래 명령은 이 확장이 병합·설치된 CLI에 적용된다. 고정 진입점의 설치 버전은 root가 별도로 갱신한다.
+
+```powershell
+node C:/dev/agent-knowledge/shared-learning.js collect --repo-root <실제작업tree> --event <이벤트JSON> --expected-source-hash <읽은lessonsSHA>
+node C:/dev/agent-knowledge/shared-learning.js report --repo-root <실제작업tree> --task-kind <작업유형>
+```
+
+`feedback.schema`는 `learning-feedback/1`, `phase`는 `in-progress/completed/followup`, `executionRoot`는 실제 작업 tree다. `failures/improvements/metrics`는 배열이다. 실패에는 `failureId/causeId/summary/observedAt/confirmation/evidenceSha256/checkerId/scope`를 기록한다. `confirmation=confirmed`는 원시 `result.confirmedFailures`의 같은 failureId/causeId에 연결해야 한다. 비0 종료만 확인됐으면 `confirmation=unconfirmed`, `phase=in-progress`로 관측을 수집하고 원인 확정·반복 권고에 세지 않는다. 필수 검사의 실패를 수집할 수 있다는 뜻이며 검사 성공이나 작업 완료라는 뜻은 아니다. 새 bootstrap의 `feedback-pending`에는 수집된 실패와 최근 개선이 나타난다. 같은 원인의 고유 task·입력·원시·범위 증거가 반복되면 담당/방법 재검토를 권고할 뿐 자동 재배정·권한 확대·규범 승격은 하지 않는다. 기존 공통3/adapter2 충돌은 그대로 제안 상태다.
+
+개선에는 `improvementId/problem/action/status/measuredAt/failureRef/evidenceRefs`를 둔다. `failureRef`는 수집된 `{taskId,eventId,eventSha256,failureId}`다. 상태는 `instructed/implemented/verified/applied`로 구분하며, 검증·적용 상태는 비0 아닌 원시 결과의 `improvementStatuses[improvementId]`와 일치해야 한다. 이는 작업자의 기록 근거 대조이며 독립 판정이 아니다. `report.recent3`는 같은 개선의 최신 기록을 하나로 합쳐 최근 3건을 읽기 전용 산출한다. 새 고유 건이 없으면 기존 3건이 유지되고 새 건이 생기면 오래된 건이 빠진다. 증거가 사라지거나 변경되면 기존 상태와 `evidenceValidity=unmeasured-or-changed`를 함께 보여 준다.
+
+증거 재검토는 `report --review-ref <참조JSON>`으로 요청한다. 참조는 `{taskId,eventId,eventSha256}`다. 수집 전 명시한 증거 `reuseContract`의 `declaredBeforeRun/declaredAt/dependencies/executors`와 원시 봉투의 동일 계약, 현재 파일 SHA를 대조한다. 각 파일 항목은 `{path,sha256}`다. 실행기에는 실제 검사·비교기를 포함해야 한다. work-after는 전체 제품 입력 SHA도 대조한다. 계약 부재는 미측정, 변경은 재측정 권고, 동일은 `reuse-candidate`이며 검증 생략 승인이나 다른 head의 after 복사 허용이 아니다.
+
+후속 이벤트의 `feedback.followupOf`는 원래 수집 이벤트의 정확한 task/event/SHA를 가리킨다. 같은 유형의 다음 고유 5개 작업을 연결하며 같은 작업의 후속 보완은 최신 이벤트로 읽는다. `metrics` 항목은 `{name,value,evidenceSha256}`, 원시 `result.metrics[name]`과 같은 값이어야 한다. 이름은 interventionMinutes/qualityDefects/repeatDefects/evidenceMismatches/tokens/progressUnits다. 원래 before 출처나 5개 after 출처가 없으면 해당 값·delta는 null이다. 반복 결함·증거 불일치 0은 실측 표본이 모두 있을 때만 표시한다. 모델 진행량·토큰 절감·개선 성공 결론은 이 도구가 산출하지 않는다.
+
+다른 tree의 원시 근거를 다시 읽으려면 명시적 `--read-roots <허용root배열JSON>`에 그 tree를 포함한다. 읽기 허용이 없으면 수집 기록은 발견하지만 현재 측정은 미측정이다. 원시와 수집 SHA·봉투 대조는 입력 자체가 진실하거나 명령이 실제 실행됐다는 증명이 아니다. 독립 검토와 Court를 대체하지 않는다. 수집 잠금 중 보고는 `FEEDBACK_STORE_WRITING_RETRY`로 재시도를 요구하며 부분 기록을 확정 상태로 읽지 않는다.

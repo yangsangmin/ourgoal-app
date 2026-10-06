@@ -1,5 +1,6 @@
 'use strict';
 const { fs, path, json, sha, stable, receipt, sourceSnapshot, inside } = require('./common');
+const {feedbackView}=require('./feedback-view');
 function bootstrap(options) {
   const registryRoot = path.resolve(options.registryRoot);
   const registry = json(path.join(registryRoot, 'registry.json'));
@@ -65,6 +66,9 @@ function bootstrap(options) {
     }
   }
   const otherLessons = other ? new Map(other.lessons.map(l => [l.id, sha(stable(l))])) : null;
+  const feedback=feedbackView(options);
+  brief+='## feedback-pending\n'+JSON.stringify({failureGroups:feedback.failureGroups,recent3:feedback.recent3,promotionPolicy:feedback.promotionPolicy})+'\n';
+  receiptList.push(...feedback.readReceipt);
   return { brief, taskId: options.taskId, taskKind: options.taskKind, participants,
     source: { root: source.root, basePr: source.basePr, ledgerSha256: source.ledgerSha256,
       referenceSha256: source.referenceSha256, actualCount: source.actualCount,
@@ -76,6 +80,6 @@ function bootstrap(options) {
         sameLedger: other.ledgerSha256 === source.ledgerSha256,
         missingOrChangedIds: source.lessons.filter(l => otherLessons.get(l.id) !== sha(stable(l))).map(l => l.id) } },
     missingSources, eventsRoot, recentEventIds:recent.slice(0,5).map(r=>r.event.eventId), readReceipt: receiptList, appliedLessons,
-    effectFollowup: registry.effectFollowup, generatedAt: new Date().toISOString() };
+    feedback,effectFollowup: registry.effectFollowup, generatedAt: new Date().toISOString() };
 }
 module.exports = { bootstrap };
