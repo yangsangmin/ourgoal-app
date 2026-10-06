@@ -6038,5 +6038,6 @@
 ## TASK-ES-577 생성지도 일괄 갱신
 실제 Antigravity flash 생성 커밋 b1f403a4. Codex 독립 재생성·기준선 이력·수치 비증가·제품/시험/금고 변경0 확인. npm 전후 검사 요약 동일. reports/TASK-ES-577/measurement.json 참조. 작업자 측정은 법정 판정이 아니다.
 
+- 2026-10-06 TASK-ES-578: openThemePickerModal을 records/theme-picker로 원문 분열. 최신 main(37f41857) 기준 실제 테마 모달 UI/CDP 조작 2회(DOM elementFromPoint 포함검증) 및 세포 단독 로드·격리 탭 24장·115개 시험 출력/검사수 대조 회귀 0 실측 완료.
 ## TASK-ES-580 PR837 시험 증거 불일치 원시 기록 대조 및 정합성 규명
 - 2026-10-06 TASK-ES-580: PR #837(7d720298) test-final.json과 proof.json 간 불일치 원시 로그 대조. test-final.json은 .git 없는 zip 아카이브 사본 기반 하네스(task-370) 산출물이며, proof.json은 선행 PR #835 템플릿 복사값의 사후 정합화 누락으로 규명(제품 회귀 아님). offline-sync-queue-retain 비결정성(50회 실측 49/1 vs 47/3) 원인은 load()의 L.uid 부재로 인한 Date.now() 밀초 충돌이며 기준(c34a0568)과 작업(7d720298) 소스/시험 100% 동일(diff 0). 독립 git 클론 npm test 양쪽 exit 0 실측. 제품/시험/지도4/금고/헌법 변경 0. REQ docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md, reports/TASK-ES-580/.

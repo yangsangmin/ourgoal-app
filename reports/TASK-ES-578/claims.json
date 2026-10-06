@@ -1,0 +1,391 @@
+{
+  "task": "TASK-ES-578",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-578-THEME-PICKER.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "기록 테마 선택창 열기·테마 변경·프로필 저장·토스트·화면 갱신 원문 동작을 보존한다."
+    },
+    {
+      "id": "R2",
+      "text": "작업자 측정 보고 결과를 config 기록으로 적재한다."
+    },
+    {
+      "id": "R3",
+      "text": "생성 설정·신고서·설명·측정도구·명세를 등록한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "실제 마우스 클릭 기반 기록 테마 변경 및 토스트 표시, 모달 열기/닫기 동작을 보존한다.",
+      "touches": [
+        "index.html",
+        "js/tabs/records/theme-picker.js"
+      ],
+      "scenario": "scenarios/theme-picker.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/verify-inline-hard.json ok 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/verify-inline-hard.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/verify-inline-hard.json equivalent 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/verify-inline-hard.json",
+        "path": "equivalent",
+        "equals": true
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/seam.json ok 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/seam.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/seam.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/module-load.json regressions 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/module-load.json",
+        "path": "regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/tab-compare.json differingValues 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/tab-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/tab-compare.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/ui-after.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/ui-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/ui-after.json",
+        "path": "task",
+        "equals": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/ui-base1.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/ui-base1.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/ui-base1.json",
+        "path": "task",
+        "equals": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/ui-base2.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/ui-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/ui-base2.json",
+        "path": "task",
+        "equals": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/ui-compare.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/ui-compare.json",
+        "path": "task",
+        "equals": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/scenario-local.json allPassedBoth 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/scenario-local.json",
+        "path": "allPassedBoth",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/architecture/modules.json 등록 확인",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "records/theme-picker"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/architecture/cell-descriptions.json 등록 확인",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "기록 테마 선택창"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/inline-theme578.json 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/inline-theme578.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/inline-theme578.json",
+        "text": "openThemePickerModal"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/theme-picker-ui578.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/theme-picker-ui578.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/theme-picker-ui578.js",
+        "text": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/theme-picker-compare578.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/theme-picker-compare578.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/theme-picker-compare578.js",
+        "text": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/tab-isolated578.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/tab-isolated578.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/tab-isolated578.js",
+        "text": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/specs/REQ-TASK-ES-578-THEME-PICKER.md 등록 확인",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-578-THEME-PICKER.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-578-THEME-PICKER.md",
+        "text": "[원칙 ⑧]"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log.md 등록 확인",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 등록 확인",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/test-compare-578.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/test-compare-578.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/test-compare-578.js",
+        "text": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/test-compare.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/test-compare.json",
+        "path": "task",
+        "equals": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/test-compare.json regressions 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/test-compare.json",
+        "path": "tests.regressionCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/ui-compare.json allTargetsOrDescendantsVerified 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/ui-compare.json",
+        "path": "clicksVerification.allTargetsOrDescendantsVerified",
+        "equals": true
+      }
+    }
+  ]
+}

@@ -2179,7 +2179,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/checkin-helpers.js"></script><script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/checkin-feedback.js"></script><script src="js/tabs/records/export-theme.js"></script><script src="js/tabs/records/weekly-recap.js"></script><script src="js/tabs/records/external-import.js"></script><script src="js/tabs/records/stopwatch-format.js"></script><script src="js/tabs/records/record-heatmap-levels.js"></script><script src="js/tabs/records/table-analytics-engine.js"></script><script src="js/tabs/records/trend-multi-metric-svg.js"></script><script src="js/tabs/records/table-csv-sync.js"></script><script src="js/tabs/records/voice-table-input.js"></script><script src="js/tabs/records/theme-export-csv.js"></script><script src="js/tabs/records/mic-permission-guide.js"></script><script src="js/tabs/records/ai-feedback-catalog.js"></script><script src="js/tabs/records/growth-chart.js"></script><script src="js/tabs/records/theme-classifier.js"></script><script src="js/tabs/records/csv-export.js"></script><script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/checkin-feedback.js"></script><script src="js/tabs/records/export-theme.js"></script><script src="js/tabs/records/weekly-recap.js"></script><script src="js/tabs/records/external-import.js"></script><script src="js/tabs/records/stopwatch-format.js"></script><script src="js/tabs/records/record-heatmap-levels.js"></script><script src="js/tabs/records/table-analytics-engine.js"></script><script src="js/tabs/records/trend-multi-metric-svg.js"></script><script src="js/tabs/records/table-csv-sync.js"></script><script src="js/tabs/records/voice-table-input.js"></script><script src="js/tabs/records/theme-export-csv.js"></script><script src="js/tabs/records/mic-permission-guide.js"></script><script src="js/tabs/records/ai-feedback-catalog.js"></script><script src="js/tabs/records/growth-chart.js"></script><script src="js/tabs/records/theme-classifier.js"></script><script src="js/tabs/records/csv-export.js"></script><script src="js/tabs/records/theme-picker.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
@@ -3193,6 +3193,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.OurgoalAppScope.expose('index.html', {
     get requestTodayMission(){ return requestTodayMission; }
   });
+  /* [#TASK-ES-578] js/tabs/records/theme-picker.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var openThemePickerModal = _recordsKit.openThemePickerModal;
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -5662,55 +5664,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 5대 테마 원형 라이프 밸런스 휠 (SVG Pie Chart) ============ */
 
-  /* =========================================================================
-     [#TASK-ES-233] 3일 실천 완성 나의 6각 성장 차트 미리보기 SVG 렌더러
-     - 6대 영역: 체력, 지식, 마음, 관계, 커리어, 루틴
-     - recCount(0~2)에 따른 발광 노드 및 3단계 달성 진척도
-  ========================================================================= */
-  /* [#TASK-ES-568] renderColdstartRadarPreviewSvg · renderLifeBalanceWheel · renderRecordThemeFilters → js/tabs/records/growth-chart.js 로 옮김(잔여 책임 분열 — 교대근무 루틴·성장차트·홈 퀘스트 — 앞 주석 포함) */
-
-  /* 1-Click HITL 테마 수정 팝업 (TASK-OG-001) */
-  function openThemePickerModal(recId){
-    var rec = state.profile.records.find(function(r){ return r.id===recId; });
-    if(!rec || typeof RECORD_THEMES === 'undefined') return;
-    var keys = ['mind','study','business','schedule','workout','daily'];
-    var optionsHtml = keys.map(function(k){
-      var th = RECORD_THEMES[k];
-      var isCurrent = ((rec.theme || 'daily') === k);
-      return '<div class="export-theme-opt'+(isCurrent?' active':'')+'" data-picktheme="'+k+'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;cursor:pointer;margin-bottom:8px;background:var(--card2);border:1px solid '+(isCurrent?th.color:'transparent')+';">' +
-        '<div style="display:flex;align-items:center;gap:10px;">' +
-          '<span style="font-size:1.3rem;">'+th.icon+'</span>' +
-          '<div>' +
-            '<div style="font-weight:700;font-size:.9rem;color:var(--ink);">'+th.label+(isCurrent?' <span style="font-size:.8125rem;color:'+th.color+';font-weight:600;">(현재)</span>':'')+'</div>' +
-            '<div style="font-size:.8125rem;color:var(--ink-soft);">'+th.desc+'</div>' +
-          '</div>' +
-        '</div>' +
-        '<span style="font-size:1.1rem;color:'+(isCurrent?th.color:'var(--ink-faint)')+';">'+(isCurrent?'✓':'›')+'</span>' +
-      '</div>';
-    }).join('');
-
-    openModal(
-      '<h3>기록 테마 변경</h3>' +
-      '<p class="faint" style="font-size:.875rem;margin-bottom:14px;word-break:break-word;">"'+escapeHtml(rec.text)+'"</p>' +
-      '<div id="themePickList">' + optionsHtml + '</div>' +
-      '<div class="modal-actions" style="margin-top:12px;"><button class="btn btn-ghost" id="mCloseTheme" type="button">닫기</button></div>',
-      function(sheet){
-        sheet.querySelector('#mCloseTheme').addEventListener('click', closeModal);
-        sheet.querySelectorAll('[data-picktheme]').forEach(function(item){
-          item.addEventListener('click', async function(){
-            var newTheme = item.dataset.picktheme;
-            rec.theme = newTheme;
-            rec.themeConfidence = 1.0;
-            var th = RECORD_THEMES[newTheme];
-            await saveProfile();
-            closeModal();
-            renderRecordsScreen();
-            toast('테마를 [' + th.label + '](으)로 변경했어요');
-          });
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-578] openThemePickerModal → js/tabs/records/theme-picker.js 로 옮김(기록 테마 선택창 책임 원문 분열 — 앞 주석 포함) */
   /* [#TASK-ES-446] parseConversationalRecord · handleConversationalRecord · openConversationalRecordConfirmModal → js/tabs/records/record-assistant.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* [#TASK-ES-467] DEFAULT_PRO_TEMPLATES · getAllProTemplates · getProTemplateByKey · fmtYYMMDD · parseNaturalLanguageTemplateSpec · recommendTemplateFromAI → js/tabs/records/pro-templates.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */

@@ -1,0 +1,137 @@
+{
+  "task": "TASK-ES-578",
+  "reference": "PR #838",
+  "baseline": "37f41857ced08770a05b79565563326e0b851541",
+  "archive": {
+    "file": "C:/dev/wt/agy-scratch/TASK-ES-578/base-origin.zip",
+    "sha256": "e9875b12e040c5cc80e16dbc6fb105d24497f531f297c64cb077ade0feedf3c9",
+    "detached": "C:/dev/wt/agy-scratch/TASK-ES-578/base-origin",
+    "sourceCommit": "37f41857ced08770a05b79565563326e0b851541",
+    "sourceCommitVerified": true
+  },
+  "frozenDiff": "",
+  "npm": {
+    "workExitCode": 0,
+    "workResult": "PASS",
+    "baseExitCode": 1,
+    "baseNote": "exit 1 due to .git absence in extracted archive (cell-map-export git rev-parse failure; smoke/integrity passed)"
+  },
+  "testsCompare": {
+    "tool": "docs/design/harness/module-split/test-compare-578.js",
+    "report": "reports/TASK-ES-578/test-compare.json",
+    "totalFiles": 115,
+    "testFiles": 113,
+    "helperScripts": 2,
+    "regressions": 0,
+    "gitAbsenceDiff": [
+      "tests/cell-map-export-es414.test.js"
+    ],
+    "gitAbsenceReason": "base-origin lacks .git folder (extracted git archive), causing cell-map-export-es414 to fail (15/17); worktree has valid .git tracking and passed (17/17, exit code 0). 0 regressions.",
+    "failingInBaseAndAfter": 27,
+    "outputDiffCount": 3,
+    "rawOutputsDir": "C:/dev/wt/agy-scratch/TASK-ES-578/test-outputs"
+  },
+  "individualTestsExitCompare": {
+    "tool": "docs/design/harness/module-split/tests-exit-compare-z4.js",
+    "report": "reports/TASK-ES-578/tests-exit-compare.json",
+    "totalFiles": 113,
+    "regressions": 0,
+    "exitDiff": [
+      "tests/cell-map-export-es414.test.js"
+    ],
+    "exitDiffReason": "base-origin is an extracted git-archive without .git directory (git rev-parse fails in base-origin); worktree passed (exit code 0). 0 regressions."
+  },
+  "tab": {
+    "runs": 3,
+    "shots": [
+      24,
+      24,
+      24
+    ],
+    "adapter": "docs/design/harness/module-split/tab-isolated578.js",
+    "adapterValidation": "Exact port 0 dynamic allocation modification only (identical to tab-isolated576.js); tab-check.js untouched",
+    "outputs": [
+      "reports/TASK-ES-578/tab-base1.json",
+      "reports/TASK-ES-578/tab-base2.json",
+      "reports/TASK-ES-578/tab-after.json"
+    ],
+    "diffs": 0,
+    "comparedValues": 408
+  },
+  "historicalHarnessFailures": [
+    {
+      "id": "fail-1",
+      "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base1-fail1-raw.json",
+      "cause": "$eval selector parameter not forwarded to page execution context",
+      "resolution": "Forwarded selector string as argument in page.$eval"
+    },
+    {
+      "id": "fail-2",
+      "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base1-fail2-raw.json",
+      "script": "C:/dev/wt/agy-scratch/TASK-ES-578/theme-picker-ui578-fail2.js",
+      "cause": "After home checkin save, firstCheckinCelebrationModal (#firstCheckinDoneBtn) shielded records nav button",
+      "resolution": "Added explicit real mouse click on #firstCheckinDoneBtn and waited for overlay close"
+    },
+    {
+      "id": "fail-3",
+      "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base1-fail3-raw.json",
+      "script": "C:/dev/wt/agy-scratch/TASK-ES-578/theme-picker-ui578-fail3.js",
+      "cause": "Checkin AI feedback sheet (#btnCheckinAiClose) shielded records nav button, and modal active check needed classList.contains('active')",
+      "resolution": "Added explicit real mouse click on #btnCheckinAiClose, waited for checkinAiSheetBackdrop close, and verified modalOverlay.classList.contains('active')"
+    }
+  ],
+  "priorRawPreserved": [
+    "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base1-v1-raw.json",
+    "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base2-v1-raw.json",
+    "C:/dev/wt/agy-scratch/TASK-ES-578/ui-after-v1-raw.json"
+  ],
+  "finalUIRuns": {
+    "actualCallCounts": [
+      2,
+      2,
+      2
+    ],
+    "totalMetricsCompared": 1372,
+    "totalLeavesCompared": 1320,
+    "staticLeavesCompared": 1254,
+    "dynamicLeavesVerified": 66,
+    "totalDomComparisons": 24,
+    "clicksVerified": 10,
+    "allTargetsOrDescendantsVerified": true,
+    "isTargetOrDescendantDOMMeasured": true,
+    "unexpectedDifferences": 0,
+    "identicalBehaviorProven": true,
+    "normalization": "1:1 bijective mapping for guest/record IDs (L053); structural invariants asserted",
+    "originShiftVerified": true
+  },
+  "publication": [
+    {
+      "task": "TASK-ES-578",
+      "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base1-raw.json",
+      "publicFile": "reports/TASK-ES-578/ui-base1.json",
+      "rawSha256": "a567b8da6e1ac9884b72759cea807d5de95d545af4a55f4e6a82a0ab9012342d",
+      "publicSha256": "d12d74aa9ffd7d24cf0c0329bf6cc1310c3f0ab95ad701624db0d421a4e0e0b1",
+      "changed": true,
+      "policy": "URL apikey/secret only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
+    },
+    {
+      "task": "TASK-ES-578",
+      "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base2-raw.json",
+      "publicFile": "reports/TASK-ES-578/ui-base2.json",
+      "rawSha256": "e3144f2370cb866ac352b918dbff01ffb3ad13761a1dd40c6f1ccddcb87b0b6f",
+      "publicSha256": "82d8c453cb620ea7c340b3870339051342951e4a979470984cc434dc80f528f9",
+      "changed": true,
+      "policy": "URL apikey/secret only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
+    },
+    {
+      "task": "TASK-ES-578",
+      "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-after-raw.json",
+      "publicFile": "reports/TASK-ES-578/ui-after.json",
+      "rawSha256": "5b8c59e1282952324b019c5fc4945792aab86ba84b25059df320c9820170498c",
+      "publicSha256": "ef2c8d96712dac2d3898565066f72623932e55366b373f4abe2f89577d96651c",
+      "changed": true,
+      "policy": "URL apikey/secret only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
+    }
+  ],
+  "note": "Worker measurement only; reports config records not court UI remeasurement. npm test passed and court probes verified."
+}
