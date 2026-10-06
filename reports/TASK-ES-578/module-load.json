@@ -1,0 +1,41 @@
+{
+  "task": "TASK-ES-578",
+  "method": "court/probes/module-load.js L2 격리 VM 로드 탐침 (base vs head)",
+  "baseDirectory": "C:/dev/wt/agy-scratch/TASK-ES-578/base-origin",
+  "headDirectory": ".",
+  "scope": {
+    "standardDirectories": [
+      "js"
+    ],
+    "standardFilesCount": 82,
+    "description": "court/probes/module-load.js 표준 검사 범위(js/*.js 82개 파일) 전수 대조"
+  },
+  "regressions": [],
+  "insufficient": [
+    {
+      "file": "js/goal-templates-registry.js",
+      "note": "양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined",
+      "category": "PRE_EXISTING_BOTH_FAILED"
+    }
+  ],
+  "fixed": [],
+  "removed": [],
+  "moved": [],
+  "counts": {
+    "head": 82,
+    "headOk": 81,
+    "base": 82,
+    "baseOk": 81
+  },
+  "readErrors": [],
+  "newCellStandaloneLoad": {
+    "file": "js/tabs/records/theme-picker.js",
+    "method": "court/probes/module-load.js loadOne(file) 격리 VM 단독 로드 실측",
+    "ok": true,
+    "error": null,
+    "globals": [
+      "OurgoalRecordsKit"
+    ],
+    "verified": true
+  }
+}

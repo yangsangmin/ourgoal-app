@@ -2,7 +2,7 @@
  * 앱 부팅 및 세션 복원 (app-boot)
  *
  * Supabase Auth 리스너 등록, PKCE 복원, 게스트/로그인 세션 초기화 및 진입을 관장한다.
- * #TASK-ES-581(전체 화면 렌더·앱 부팅 원문 분열 (renderAll 및 appBoot)): index.html 인라인 IIFE 의 구간(이전 전 7853~8079줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-581(전체 화면 렌더·앱 부팅 원문 분열 (renderAll 및 appBoot)): index.html 인라인 IIFE 의 구간(이전 전 7807~8033줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 7853~8079줄(#TASK-ES-581 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 7807~8033줄(#TASK-ES-581 생성기 표지) ---- */
   function runAppBoot() { /* [#TASK-ES-581] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* ============ Boot ============ */
   (async function boot(){

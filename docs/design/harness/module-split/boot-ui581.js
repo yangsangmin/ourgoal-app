@@ -21,10 +21,31 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const url = 'http://' + host + ':' + server.port;
   let browser;
 
+  let inputCommit = null;
+  try {
+    inputCommit = require('child_process').execSync(`git -C "${root}" rev-parse HEAD`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+  } catch (_) {
+    if (root.includes('base_main_b87cf99e')) {
+      inputCommit = 'b87cf99e3910c1dda25dd33579477d94ef597f82';
+    } else if (root.includes('base_clean')) {
+      inputCommit = '37f41857ced08770a05b79565563326e0b851541';
+    }
+  }
+
+  const fileSha256 = {};
+  for (const rel of ['index.html', 'js/core/all-view-render.js', 'js/core/app-boot.js']) {
+    const fp = path.join(root, rel);
+    if (fs.existsSync(fp)) {
+      fileSha256[rel] = crypto.createHash('sha256').update(fs.readFileSync(fp)).digest('hex');
+    }
+  }
+
   const report = {
     task: 'TASK-ES-581',
     label,
     url,
+    inputCommit,
+    fileSha256,
     method: '실제 게스트 UI 조작 및 CDP Profiler coverage; 함수 직접호출/상태주입 없음',
     steps: [],
     clicks: [],
@@ -134,6 +155,13 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
           ls[k] = localStorage.getItem(k);
         }
 
+        // Collect all sessionStorage keys
+        const ss = {};
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const k = sessionStorage.key(i);
+          ss[k] = sessionStorage.getItem(k);
+        }
+
         return {
           landingDisplay: document.getElementById('landingScreen')?.style?.display || null,
           appShellDisplay: document.getElementById('appShell')?.style?.display || null,
@@ -144,6 +172,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
           toastText: toastEl?.textContent?.trim() || null,
           savedGuestProfile: localStorage.getItem('ourgoal_guest_profile'),
           allLocalStorage: ls,
+          allSessionStorage: ss,
           activeTab: st.activeTab || null
         };
       });
@@ -230,9 +259,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     if (browser) await browser.close();
     await server.close();
 
-    const rawDir = 'C:/dev/wt/agy-scratch/TASK-ES-581/raw';
-    fs.mkdirSync(rawDir, { recursive: true });
-    const rawFile = path.join(rawDir, label + '.json');
+    const rawV2Dir = 'C:/dev/wt/agy-scratch/TASK-ES-581/raw/v2-sessionstorage';
+    fs.mkdirSync(rawV2Dir, { recursive: true });
+    const rawFile = path.join(rawV2Dir, label + '.json');
     const rawText = JSON.stringify(report, null, 2) + '\n';
     fs.writeFileSync(rawFile, rawText, 'utf8');
 

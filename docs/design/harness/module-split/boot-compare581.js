@@ -113,12 +113,23 @@ function extractRawDynamic(run, label) {
   const stepWithProfile = run.steps.find(s => s.savedGuestProfile);
   if (!stepWithProfile) return null;
   const p = JSON.parse(stepWithProfile.savedGuestProfile);
+  const sid = stepWithProfile.allLocalStorage?.ourgoal_sid;
+  const devReg = stepWithProfile.allLocalStorage ? Object.entries(stepWithProfile.allLocalStorage).find(([k]) => k.startsWith('ourgoal_registered_devices_')) : null;
+  let devParsed = null;
+  try { devParsed = devReg ? JSON.parse(devReg[1]) : null; } catch (_) {}
+
   return {
     run: label,
     rawId: p.id,
     rawUsername: p.username,
     rawCreatedAt: p.createdAt,
-    rawManitoSeed: p.settings?.manito?.seed
+    rawManitoSeed: p.settings?.manito?.seed,
+    rawSid: sid,
+    rawRegisteredDevice: devParsed && devParsed[0] ? {
+      id: devParsed[0].id,
+      firstLogin: devParsed[0].firstLogin,
+      lastActive: devParsed[0].lastActive
+    } : null
   };
 }
 
@@ -136,6 +147,10 @@ for (const a of rawAudits) {
   const isSeedValid = typeof a.rawManitoSeed === 'number' && Number.isInteger(a.rawManitoSeed) && a.rawManitoSeed >= 0 && a.rawManitoSeed < 100000;
   // Username === id
   const isUserEqualId = a.rawUsername === a.rawId;
+  // UUID for sid
+  const isSidUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(a.rawSid);
+  // Device timestamps valid epoch
+  const isDevEpochValid = a.rawRegisteredDevice && typeof a.rawRegisteredDevice.firstLogin === 'number' && a.rawRegisteredDevice.firstLogin > 1700000000000;
 
   dynamicFieldAudit.push({
     ...a,
@@ -144,7 +159,11 @@ for (const a of rawAudits) {
     manitoSeedValidInteger: isSeedValid,
     manitoSeedCodeOrigin: 'js/core/default-settings.js (Math.floor(Math.random() * 100000))',
     usernameEqualsId: isUserEqualId,
-    usernameCodeOrigin: 'js/core/default-profile.js:22-24 (defaultProfile(id, username, displayName))'
+    usernameCodeOrigin: 'js/core/default-profile.js:22-24 (defaultProfile(id, username, displayName))',
+    sidValidUUID: isSidUuid,
+    sidCodeOrigin: 'js/core/telemetry.js:39-40 (L.newId())',
+    deviceTimestampsValidEpoch: isDevEpochValid,
+    deviceTimestampsCodeOrigin: 'js/tabs/settings/login-devices.js / device-session.js:25 (Date.now())'
   });
 }
 
@@ -165,6 +184,80 @@ function normalizeProfile(pRaw, idMap) {
     p.settings.manito.seed = '<random-seed:0~99999>';
   }
   return p;
+}
+
+// Full LocalStorage Normalization (Strict Key/Path-Targeted Only — No Global Regex)
+function normalizeStorage(ls, guestId, devId, sid) {
+  const out = {};
+  for (const [rawK, rawV] of Object.entries(ls || {})) {
+    // 1. Exact Key mapping: only map known guestId substring in key name
+    const k = guestId ? rawK.split(guestId).join('<guest-canonical-id>') : rawK;
+
+    // 2. Specific Key value normalization
+    if (k === 'ourgoal_sid') {
+      assert.ok(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(rawV), `Invalid sid format: ${rawV}`);
+      out[k] = '<sid-canonical-token>';
+      continue;
+    }
+
+    if (k === 'ourgoal_device_id') {
+      assert.ok(/^dev_\d+_[a-z0-9]+$/.test(rawV), `Invalid device id format: ${rawV}`);
+      out[k] = '<dev-canonical-id>';
+      continue;
+    }
+
+    let parsed = rawV;
+    try { parsed = JSON.parse(rawV); } catch (_) {}
+
+    if (k === 'ourgoal_guest_profile') {
+      const pNorm = normalizeProfile(parsed, new Map([[guestId, '<guest-canonical-id>']]));
+      out[k] = pNorm;
+      continue;
+    }
+
+    if (k === 'ourgoal_settings_<guest-canonical-id>') {
+      const s = JSON.parse(JSON.stringify(parsed));
+      if (s && s.manito && typeof s.manito.seed === 'number') {
+        assert.ok(s.manito.seed >= 0 && s.manito.seed < 100000, `Invalid manito.seed: ${s.manito.seed}`);
+        s.manito.seed = '<random-seed:0~99999>';
+      }
+      out[k] = s;
+      continue;
+    }
+
+    if (k === 'ourgoal_registered_devices_<guest-canonical-id>') {
+      const devs = JSON.parse(JSON.stringify(parsed));
+      if (Array.isArray(devs)) {
+        devs.forEach(d => {
+          if (devId && d.id === devId) d.id = '<dev-canonical-id>';
+          if (typeof d.firstLogin === 'number') {
+            assert.ok(d.firstLogin > 1700000000000, `firstLogin out of range: ${d.firstLogin}`);
+            d.firstLogin = '<epoch-timestamp>';
+          }
+          if (typeof d.lastActive === 'number') {
+            assert.ok(d.lastActive > 1700000000000, `lastActive out of range: ${d.lastActive}`);
+            d.lastActive = '<epoch-timestamp>';
+          }
+        });
+      }
+      out[k] = devs;
+      continue;
+    }
+
+    if (k === 'ourgoal_profile_backup_<guest-canonical-id>') {
+      out[k] = parsed;
+      continue;
+    }
+
+    if (k === 'ourgoal_goals_backup_<guest-canonical-id>') {
+      out[k] = parsed;
+      continue;
+    }
+
+    // Any other key (e.g. ourgoal_lv_day, ourgoal_current_theme, etc.) must match literal value
+    out[k] = parsed;
+  }
+  return out;
 }
 
 // Normalize DOM string for dynamic IDs and runtime estimates
@@ -194,9 +287,9 @@ const results = {
   timestamp: new Date().toISOString(),
   measurementType: '작업자 측정 (Worker Measurement - 판정 아님)',
   runsSummary: {
-    base1: { label: b1.label, stepsCount: b1.steps.length, calls: b1.callCounts },
-    base2: { label: b2.label, stepsCount: b2.steps.length, calls: b2.callCounts },
-    after: { label: after.label, stepsCount: after.steps.length, calls: after.callCounts }
+    base1: { label: b1.label, stepsCount: b1.steps.length, calls: b1.callCounts, inputCommit: b1.inputCommit, fileSha256: b1.fileSha256 },
+    base2: { label: b2.label, stepsCount: b2.steps.length, calls: b2.callCounts, inputCommit: b2.inputCommit, fileSha256: b2.fileSha256 },
+    after: { label: after.label, stepsCount: after.steps.length, calls: after.callCounts, inputCommit: after.inputCommit, fileSha256: after.fileSha256 }
   },
   dynamicFieldAudit,
   domNormalizationAudit: {
@@ -240,6 +333,10 @@ const results = {
   leafStats: {
     totalProfileLeavesCompared: 0,
     totalProfileDiffsExcludingNormalizations: 0,
+    totalLocalStorageLeavesCompared: 0,
+    totalLocalStorageDiffsExcludingNormalizations: 0,
+    totalSessionStorageLeavesCompared: 0,
+    totalSessionStorageDiffsExcludingNormalizations: 0,
     totalDomStepsCompared: 0,
     domStringsIdenticalAcrossBase1Base2: true,
     domStringsIdenticalAcrossBase1After: true,
@@ -251,11 +348,16 @@ const results = {
     after: after.branchDetails,
     note: '게스트 로컬 초기화/리스너 등록 1회 실행 확인. Supabase 세션 복원 및 PKCE 24개 분기는 0회 미측정으로 정확히 구분.'
   },
-  workerVerdict: 'PENDING'
+  sessionStorage: null,
+  measurementSummary: null
 };
 
-let totalLeaves = 0;
-let totalDiffs = 0;
+let totalProfileLeaves = 0;
+let totalProfileDiffs = 0;
+let totalStorageLeaves = 0;
+let totalStorageDiffs = 0;
+let totalSessionLeaves = 0;
+let totalSessionDiffs = 0;
 let allDomExactMatch = true;
 
 for (let i = 0; i < b1.steps.length; i++) {
@@ -280,7 +382,7 @@ for (let i = 0; i < b1.steps.length; i++) {
   let stepProfileDiffs = 0;
 
   for (const k of stepLeafKeys) {
-    totalLeaves++;
+    totalProfileLeaves++;
     const v1 = l1[k];
     const v2 = l2[k];
     const va = la[k];
@@ -289,7 +391,68 @@ for (let i = 0; i < b1.steps.length; i++) {
     }
   }
 
-  // 2. Full DOM string comparison
+  // 2. Full LocalStorage comparison (all keys and leaves)
+  const g1 = idMapResults[0].guestId;
+  const g2 = idMapResults[1].guestId;
+  const ga = idMapResults[2].guestId;
+
+  const d1 = s1.allLocalStorage?.ourgoal_device_id;
+  const d2 = s2.allLocalStorage?.ourgoal_device_id;
+  const da = sa.allLocalStorage?.ourgoal_device_id;
+
+  const sid1 = s1.allLocalStorage?.ourgoal_sid;
+  const sid2 = s2.allLocalStorage?.ourgoal_sid;
+  const sida = sa.allLocalStorage?.ourgoal_sid;
+
+  const normStorage1 = normalizeStorage(s1.allLocalStorage, g1, d1, sid1);
+  const normStorage2 = normalizeStorage(s2.allLocalStorage, g2, d2, sid2);
+  const normStorageA = normalizeStorage(sa.allLocalStorage, ga, da, sida);
+
+  const leavesStorage1 = getLeafNodes(normStorage1);
+  const leavesStorage2 = getLeafNodes(normStorage2);
+  const leavesStorageA = getLeafNodes(normStorageA);
+
+  const allStorageLeafKeys = new Set([
+    ...Object.keys(leavesStorage1),
+    ...Object.keys(leavesStorage2),
+    ...Object.keys(leavesStorageA)
+  ]);
+
+  let stepStorageDiffs = 0;
+  for (const sk of allStorageLeafKeys) {
+    totalStorageLeaves++;
+    if (JSON.stringify(leavesStorage1[sk]) !== JSON.stringify(leavesStorageA[sk]) ||
+        JSON.stringify(leavesStorage2[sk]) !== JSON.stringify(leavesStorageA[sk])) {
+      stepStorageDiffs++;
+    }
+  }
+
+
+  // 3. Full SessionStorage comparison (all keys and leaves)
+  const ss1 = s1.allSessionStorage || {};
+  const ss2 = s2.allSessionStorage || {};
+  const ssa = sa.allSessionStorage || {};
+
+  const leavesSession1 = getLeafNodes(ss1);
+  const leavesSession2 = getLeafNodes(ss2);
+  const leavesSessionA = getLeafNodes(ssa);
+
+  const allSessionLeafKeys = new Set([
+    ...Object.keys(leavesSession1),
+    ...Object.keys(leavesSession2),
+    ...Object.keys(leavesSessionA)
+  ]);
+
+  let stepSessionDiffs = 0;
+  for (const ssk of allSessionLeafKeys) {
+    totalSessionLeaves++;
+    if (JSON.stringify(leavesSession1[ssk]) !== JSON.stringify(leavesSessionA[ssk]) ||
+        JSON.stringify(leavesSession2[ssk]) !== JSON.stringify(leavesSessionA[ssk])) {
+      stepSessionDiffs++;
+    }
+  }
+
+  // 4. Full DOM string comparison
   const dev1 = s1.allLocalStorage?.['ourgoal_device_id'];
   const dev2 = s2.allLocalStorage?.['ourgoal_device_id'];
   const deva = sa.allLocalStorage?.['ourgoal_device_id'];
@@ -308,7 +471,7 @@ for (let i = 0; i < b1.steps.length; i++) {
     results.leafStats.domStringsIdenticalAcrossBase1After = domExactMatchB1A;
   }
 
-  // 3. Toast comparison across base1, base2, and after
+  // 5. Toast comparison across base1, base2, and after
   const toastVis1 = s1.toastVisible;
   const toastVis2 = s2.toastVisible;
   const toastVisA = sa.toastVisible;
@@ -319,13 +482,13 @@ for (let i = 0; i < b1.steps.length; i++) {
   const toastTextA = sa.toastText;
   const toastTextMatch = (toastText1 === toastText2) && (toastText1 === toastTextA);
 
-  // 4. Active tab comparison across base1, base2, and after
+  // 6. Active tab comparison across base1, base2, and after
   const activeTab1 = s1.activeTab;
   const activeTab2 = s2.activeTab;
   const activeTabA = sa.activeTab;
   const activeTabMatch = (activeTab1 === activeTab2) && (activeTab1 === activeTabA);
 
-  const stepMatch = (stepProfileDiffs === 0) && domExactMatch && toastVisMatch && toastTextMatch && activeTabMatch;
+  const stepMatch = (stepProfileDiffs === 0) && (stepStorageDiffs === 0) && (stepSessionDiffs === 0) && domExactMatch && toastVisMatch && toastTextMatch && activeTabMatch;
 
   results.stepComparisons.push({
     stepIndex: i,
@@ -339,32 +502,56 @@ for (let i = 0; i < b1.steps.length; i++) {
       exactMatchBase1Base2: domExactMatchB1B2,
       exactMatchBase1After: domExactMatchB1A
     },
-    leafCount: stepLeafKeys.size,
-    leafDiffs: stepProfileDiffs,
+    profileLeafCount: stepLeafKeys.size,
+    profileLeafDiffs: stepProfileDiffs,
+    storageLeafCount: allStorageLeafKeys.size,
+    storageLeafDiffs: stepStorageDiffs,
+    sessionLeafCount: allSessionLeafKeys.size,
+    sessionLeafDiffs: stepSessionDiffs,
     stepMatch
   });
-
-  totalDiffs += stepProfileDiffs;
 }
 
-results.leafStats.totalProfileLeavesCompared = totalLeaves;
-results.leafStats.totalProfileDiffsExcludingNormalizations = totalDiffs;
+const totalDiffs = totalProfileDiffs + totalStorageDiffs + totalSessionDiffs;
+results.leafStats.totalProfileLeavesCompared = totalProfileLeaves;
+results.leafStats.totalProfileDiffsExcludingNormalizations = totalProfileDiffs;
+results.leafStats.totalLocalStorageLeavesCompared = totalStorageLeaves;
+results.leafStats.totalLocalStorageDiffsExcludingNormalizations = totalStorageDiffs;
+results.leafStats.totalSessionStorageLeavesCompared = totalSessionLeaves;
+results.leafStats.totalSessionStorageDiffsExcludingNormalizations = totalSessionDiffs;
 results.leafStats.totalDomStepsCompared = b1.steps.length;
 results.leafStats.domStructureIdentical = allDomExactMatch;
 
-const allChecksPass = Object.values(results.checks).every(Boolean) && totalDiffs === 0 && allDomExactMatch;
-results.workerVerdict = allChecksPass ? 'EQUIVALENT_AND_VERIFIED' : 'DISCREPANCY_DETECTED';
+const allStepMatchesPass = results.stepComparisons.every(s => s.stepMatch);
+const allChecksPass = Object.values(results.checks).every(Boolean) && totalDiffs === 0 && allDomExactMatch && allStepMatchesPass;
+
+results.sessionStorage = {
+  status: 'measured',
+  totalLeavesCompared: totalSessionLeaves,
+  diffs: totalSessionDiffs,
+  keysObserved: Array.from(new Set(runs.flatMap(r => r.steps.flatMap(s => Object.keys(s.allSessionStorage || {}))))),
+  note: '게스트 모드 진입 및 인사 모달 닫기 과정에서 ourgoal_avatar_greeted_session 플래그 등 전수 수집 및 3자 일치 검증'
+};
+
+results.measurementSummary = {
+  status: allChecksPass ? 'EQUIVALENT_AND_VERIFIED' : 'DISCREPANCY_DETECTED',
+  allChecksPass,
+  allStepMatchesPass,
+  totalDiffs,
+  workerMeasurementNote: '작업자 측정값 (판정 아님 — 법정을 대체하지 않음)'
+};
 
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, JSON.stringify(results, null, 2) + '\n', 'utf8');
 
 console.log(JSON.stringify({
-  workerVerdict: results.workerVerdict,
+  measurementSummary: results.measurementSummary,
   checks: results.checks,
   totalLeavesCompared: results.leafStats.totalProfileLeavesCompared,
   diffs: results.leafStats.totalProfileDiffsExcludingNormalizations,
   domStructureIdentical: results.leafStats.domStructureIdentical,
-  domExactMatchBase1Base2: results.leafStats.domStringsIdenticalAcrossBase1Base2,
-  domExactMatchBase1After: results.leafStats.domStringsIdenticalAcrossBase1After,
+  allStepMatchesPass,
   consoleErrorsMultisetIdentical: results.checks.consoleErrorsMultisetIdentical
 }, null, 2));
+
+process.exitCode = allChecksPass ? 0 : 1;

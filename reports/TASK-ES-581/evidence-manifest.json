@@ -1,0 +1,307 @@
+{
+  "task": "TASK-ES-581",
+  "timestamp": "2026-10-06T13:12:00.000Z",
+  "targetBranch": "codex/task-es-581-app-boot",
+  "baseCommitAtTaskStart": "37f41857ced08770a05b79565563326e0b851541",
+  "latestOriginMainCommit": "b87cf99e3910c1dda25dd33579477d94ef597f82",
+  "items": [
+    {
+      "id": "token-residual-leak",
+      "title": "최신 origin/main 대비 이동 토큰·잔여 원문·누수 검증",
+      "status": "measured",
+      "command": "node docs/design/harness/module-split/verify-inline-hard.js C:/dev/wt/agy-scratch/TASK-ES-581/base_main_b87cf99e/index.html . docs/design/harness/module-split/inline-boot581.json",
+      "exitCode": 0,
+      "inputCommit": "b87cf99e3910c1dda25dd33579477d94ef597f82",
+      "inputFiles": [
+        {
+          "path": "C:/dev/wt/agy-scratch/TASK-ES-581/base_main_b87cf99e/index.html",
+          "sha256": "f2e36401beeb4b95e6a8d355eb694054681b28048cf4efe4d5d2f9fb8e871651"
+        },
+        {
+          "path": "index.html",
+          "sha256": "cad25d67075dce510e975379243e5da22c4d3b896d1879341101c441c036f5d1"
+        },
+        {
+          "path": "js/core/all-view-render.js",
+          "sha256": "c11cc4ec3787d77999f15967b75178eb9cf1722a7fdd4d3c6556235a8c58b1b6"
+        },
+        {
+          "path": "js/core/app-boot.js",
+          "sha256": "10d3651a3a98c0c0292cf3b2253b5f3d5a19ef2324aa1c40426a4b4f4937b2c2"
+        }
+      ],
+      "rawLogPath": "reports/TASK-ES-581/verify-inline-hard.raw.log",
+      "rawLogSha256": "9d5c9308ee4ce36b346d480a849928e54a8a827090e8acf3e01eea2d805deb2e",
+      "resultPath": "reports/TASK-ES-581/verify-inline-hard.json",
+      "resultSha256": "98cb0b3bfbe8ec9da8fd8d389bf9c976f90c7087988f04a8e69f2fdc816ef120",
+      "comparatorPath": "docs/design/harness/module-split/verify-inline-hard.js",
+      "parsedMetrics": {
+        "equivalent": true,
+        "renderAllTokens": 91,
+        "runAppBootTokens": 1961,
+        "origRestTokens": 36522,
+        "newRestTokens": 36522,
+        "leaks": 0,
+        "thisArgs": 0,
+        "listenersEqual": true,
+        "allUnder800Lines": true
+      }
+    },
+    {
+      "id": "module-load-isolation",
+      "title": "법정 module-load 탐침 및 개별 파일 단독 로드",
+      "status": "measured",
+      "command": "node court/probes/module-load.js",
+      "exitCode": 0,
+      "inputCommit": "b87cf99e3910c1dda25dd33579477d94ef597f82",
+      "inputFiles": [
+        {
+          "path": "js/core/all-view-render.js",
+          "sha256": "c11cc4ec3787d77999f15967b75178eb9cf1722a7fdd4d3c6556235a8c58b1b6"
+        },
+        {
+          "path": "js/core/app-boot.js",
+          "sha256": "10d3651a3a98c0c0292cf3b2253b5f3d5a19ef2324aa1c40426a4b4f4937b2c2"
+        }
+      ],
+      "resultPath": "reports/TASK-ES-581/module-load.json",
+      "resultSha256": "24064828b1ac84d012462fd2b43bddd4d548bf26c842467f18add113239ebe8a",
+      "comparatorPath": "court/probes/module-load.js",
+      "parsedMetrics": {
+        "totalProbed": 82,
+        "standardProbeOk": 81,
+        "preExistingFailures": 1,
+        "newRegressions": 0,
+        "allViewRenderIsolatedOk": true,
+        "appBootIsolatedOk": true
+      }
+    },
+    {
+      "id": "ui-cdp-guest-measurement",
+      "title": "게스트 UI 2+1 회 조작 및 CDP 실제 호출/분기 측정",
+      "status": "measured",
+      "command": "node docs/design/harness/module-split/boot-ui581.js",
+      "exitCode": 0,
+      "inputCommit": "b87cf99e3910c1dda25dd33579477d94ef597f82",
+      "inputFiles": [
+        {
+          "path": "C:/dev/wt/agy-scratch/TASK-ES-581/raw/v2-sessionstorage/v2-base1.json",
+          "sha256": "65d138b4f58cc87677ef68567cf1150620d3b8ea746ced4182f2e3bda7fc65bf"
+        },
+        {
+          "path": "C:/dev/wt/agy-scratch/TASK-ES-581/raw/v2-sessionstorage/v2-base2.json",
+          "sha256": "2e522b82ea6241384fd874aad87fb3d92bc28b321224d3a31298a5d09dad6528"
+        },
+        {
+          "path": "C:/dev/wt/agy-scratch/TASK-ES-581/raw/v2-sessionstorage/v2-after.json",
+          "sha256": "7e9143fb5a9f90d4de40a42958a9acdc3790afc7022de3ce81e16437ae752daa"
+        }
+      ],
+      "historicalV1Raw": [
+        {
+          "path": "C:/dev/wt/agy-scratch/TASK-ES-581/raw/base1.json",
+          "sha256": "f877c1d3944f0b708aec8a3b21e25835e4cacb7d2ac21ecfb96fd35d40b270fd"
+        },
+        {
+          "path": "C:/dev/wt/agy-scratch/TASK-ES-581/raw/base2.json",
+          "sha256": "6c8c8cc5494e4917dcc359355ae06b5931e868bbfeece234a5ab9708ba9052ef"
+        },
+        {
+          "path": "C:/dev/wt/agy-scratch/TASK-ES-581/raw/after.json",
+          "sha256": "196983b5f458f3e5c46d39267ceca0964e6d26c1530e6e7869099cf1018ba2bc"
+        }
+      ],
+      "resultPath": "reports/TASK-ES-581/ui-after.v2.json",
+      "resultSha256": "fdc81f9b26d8fa8cfa9a081a5d2306e8d8585c1beb70ab52f655156f85a18147",
+      "comparatorPath": "docs/design/harness/module-split/boot-ui581.js",
+      "parsedMetrics": {
+        "runsCount": 3,
+        "stepsPerRun": 5,
+        "clicksPerRun": 4,
+        "isHitTargetOrChild100Percent": true,
+        "pageErrors": 0,
+        "consoleErrorsMultisetExactMatch": true,
+        "cdpRenderAllCalled": 1,
+        "cdpBootCalled": 1,
+        "guestBranchCount": 1,
+        "supabasePkceBranchesMeasured": 0,
+        "supabasePkceBranchesStatus": "unmeasured"
+      }
+    },
+    {
+      "id": "dom-profile-storage-compare",
+      "title": "전체 DOM·저장값(Local+Session)·토스트·콘솔 동등성 비교",
+      "status": "measured",
+      "command": "node docs/design/harness/module-split/boot-compare581.js reports/TASK-ES-581/ui-base1.v2.json reports/TASK-ES-581/ui-base2.v2.json reports/TASK-ES-581/ui-after.v2.json reports/TASK-ES-581/ui-compare.json",
+      "exitCode": 0,
+      "inputFiles": [
+        {
+          "path": "reports/TASK-ES-581/ui-base1.v2.json",
+          "sha256": "8f7d69af8282232fc6d7b848e2918b9707c3541993e57f479a5912f95e48fcea"
+        },
+        {
+          "path": "reports/TASK-ES-581/ui-base2.v2.json",
+          "sha256": "4d3bf60c7043f2e92431608dd84f5f678523a7ff588665c3af855e142fc02285"
+        },
+        {
+          "path": "reports/TASK-ES-581/ui-after.v2.json",
+          "sha256": "fdc81f9b26d8fa8cfa9a081a5d2306e8d8585c1beb70ab52f655156f85a18147"
+        }
+      ],
+      "resultPath": "reports/TASK-ES-581/ui-compare.json",
+      "resultSha256": "ccec4880855850596ebe58da5a8aaa59ff1f6b476ed43e44c51428eb5394fbf2",
+      "comparatorPath": "docs/design/harness/module-split/boot-compare581.js",
+      "parsedMetrics": {
+        "workerStatus": "EQUIVALENT_AND_VERIFIED",
+        "totalProfileLeavesCompared": 573,
+        "totalStorageLeavesCompared": 1166,
+        "totalSessionStorageLeavesCompared": 5,
+        "totalDiffs": 0,
+        "domStructureIdentical": true,
+        "domExactMatchBase1Base2": true,
+        "domExactMatchBase1After": true,
+        "toastVisibleMatch": true,
+        "toastTextMatch": true,
+        "activeTabMatch": true,
+        "allStepMatchesPass": true
+      }
+    },
+    {
+      "id": "tab-isolated-check",
+      "title": "6대 탭 전체 격리 촬영 기준2회/작업1회 비교 (기준2→작업 0차이 검증)",
+      "status": "measured",
+      "command": "node docs/design/harness/module-split/tab-isolated581.js",
+      "exitCode": 0,
+      "baseline2RunFiles": [
+        {
+          "path": "reports/TASK-ES-581/tab-base1.json",
+          "sha256": "e0fa275ed017139b6aef8a0d8b79fa657b48aade27e488d2bd1f242bbe8f03f4"
+        },
+        {
+          "path": "reports/TASK-ES-581/tab-base2.json",
+          "sha256": "2d4d2a1dd3c1e453f0d54197714c1583b68124b97c3a37435e98bd588aa283a3"
+        }
+      ],
+      "afterFile": {
+        "path": "reports/TASK-ES-581/tab-after.json",
+        "sha256": "2e73b7f26bc2c480595faaf28e146f99e25ad771491d0da0aec8d671b2487723"
+      },
+      "resultPath": "reports/TASK-ES-581/tab-base2-after.json",
+      "resultSha256": "18b823c91acb9ed260f15d623e708a8f06868df54ada0188fc7c58295e649da8",
+      "pairwiseBaseReproResultPath": "reports/TASK-ES-581/tab-repro-base.json",
+      "pairwiseBaseReproResultSha256": "5cf002cfdf5c7f195dc864b9789307f70281adb62d76e739c6e2a4c66e95e16b",
+      "pairwiseWorkResultPath": "reports/TASK-ES-581/tab-compare.json",
+      "pairwiseWorkResultSha256": "f3246cdcba273dbcd8526b1bbb0b12a23ee3fc18473a348b6468b26e71c1381f",
+      "comparatorPath": "docs/design/harness/tab-compare.js",
+      "parsedMetrics": {
+        "totalShotsPerRun": 136,
+        "tabsCovered": [
+          "home",
+          "goals",
+          "records",
+          "calendar",
+          "comm",
+          "settings"
+        ],
+        "base2ToAfterComparedValues": 2312,
+        "base2ToAfterDifferingValues": 0,
+        "base2ToAfterDiffsCount": 0,
+        "baseReproComparedValues": 2312,
+        "baseReproDifferingValues": 2,
+        "workComparedValues": 2312,
+        "workDifferingValues": 2,
+        "diffsExactMatchAcrossBaseReproAndWork": true,
+        "diffDetails": [
+          {
+            "tab": "calendar",
+            "shot": "calendar-focus-sanctuary-375x812-subtab",
+            "field": "smallTargetList",
+            "reason": "달력 오늘 배지 폰트 렌더링 폭 46x33 vs 42x33 (실행 간 미세 변동)"
+          },
+          {
+            "tab": "calendar",
+            "shot": "calendar-focus-sanctuary-375x812-subtab",
+            "field": "consoleErrorsFromLoad",
+            "reason": "달력 탭 최초 로드 콘솔 수 35 vs 1 (실행 간 타이밍 차이)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "tests-suite-compare",
+      "title": "npm test 및 115개 개별 시험 전후 비교",
+      "status": "measured",
+      "command": "node docs/design/harness/module-split/test-compare-inline-p2.js C:/dev/wt/agy-scratch/TASK-ES-581/base_main_b87cf99e . reports/TASK-ES-581/test-compare.json",
+      "exitCode": 1,
+      "inputCommit": "b87cf99e3910c1dda25dd33579477d94ef597f82",
+      "resultPath": "reports/TASK-ES-581/test-compare.json",
+      "resultSha256": "c04a4b57c193403e1e7c57649fd1d69c0d624264a429853a2e3c8fec39d9d3a2",
+      "comparatorPath": "docs/design/harness/module-split/test-compare-inline-p2.js",
+      "parsedMetrics": {
+        "npmWorkExit": 0,
+        "smokePassed": 440,
+        "smokeFailed": 0,
+        "integrityPassed": 38,
+        "buttonsVerified": 918,
+        "moduleGuardOversize": 0,
+        "moduleGuardCrossTabRefs": 0,
+        "totalTestFiles": 115,
+        "exitDiffFiles": [
+          "tests/cell-map-export-es414.test.js"
+        ],
+        "exitDiffReason": "archive 사본 내 .git 부재로 인한 환경적 차이 (작업트리 환경에서는 17/17 정상 통과)",
+        "outputDiffFiles": [
+          "tests/avatar-personas-split.test.js",
+          "tests/cell-map-export-es414.test.js",
+          "tests/goal-templates-data-split.test.js"
+        ],
+        "outputDiffReason": "폴더 경로 및 git 부재로 인한 출력 문자열 차이"
+      }
+    },
+    {
+      "id": "real-account-check",
+      "title": "로그인 관련 실계정 쓰기 이탈 기록 및 추가 실행 차단",
+      "status": "blocked",
+      "command": "node docs/design/harness/real-account-check.js",
+      "exitCode": null,
+      "note": "1세션에서 전체 live 하네스를 실제 실행하여 계정데이터 생성·정리·전송한 범위이탈이 발생함. 추가 실계정 쓰기는 전면 중지(재실행 금지). 당시 수집된 결과(11통과/17미측정)의 운영 배포 화면(https://ourgoal-app.vercel.app)은 이번 로컬 HEAD의 증명이 아니며, 로그인/OTP 실계정 검증은 현재 로컬 환경에서 측정 불가로 정확히 기록함.",
+      "resultPath": "reports/TASK-ES-581/real-account-availability.json",
+      "resultSha256": "b39b345f6d99026d0aa7d7ef7d1dd5c07ac3d476a82e3c982a1e7209136148bd",
+      "comparatorPath": "docs/design/harness/real-account-check.js"
+    },
+    {
+      "id": "session-storage",
+      "title": "sessionStorage 영향 범위 측정 및 3자 동등성 검증",
+      "status": "measured",
+      "command": "node docs/design/harness/module-split/boot-compare581.js reports/TASK-ES-581/ui-base1.v2.json reports/TASK-ES-581/ui-base2.v2.json reports/TASK-ES-581/ui-after.v2.json reports/TASK-ES-581/ui-compare.json",
+      "exitCode": 0,
+      "inputCommit": "b87cf99e3910c1dda25dd33579477d94ef597f82",
+      "inputFiles": [
+        {
+          "path": "reports/TASK-ES-581/ui-base1.v2.json",
+          "sha256": "8f7d69af8282232fc6d7b848e2918b9707c3541993e57f479a5912f95e48fcea"
+        },
+        {
+          "path": "reports/TASK-ES-581/ui-base2.v2.json",
+          "sha256": "4d3bf60c7043f2e92431608dd84f5f678523a7ff588665c3af855e142fc02285"
+        },
+        {
+          "path": "reports/TASK-ES-581/ui-after.v2.json",
+          "sha256": "fdc81f9b26d8fa8cfa9a081a5d2306e8d8585c1beb70ab52f655156f85a18147"
+        }
+      ],
+      "resultPath": "reports/TASK-ES-581/ui-compare.json",
+      "resultSha256": "ccec4880855850596ebe58da5a8aaa59ff1f6b476ed43e44c51428eb5394fbf2",
+      "comparatorPath": "docs/design/harness/module-split/boot-compare581.js",
+      "parsedMetrics": {
+        "status": "measured",
+        "totalLeavesCompared": 5,
+        "diffs": 0,
+        "keysObserved": [
+          "ourgoal_avatar_greeted_session"
+        ],
+        "note": "게스트 모드 진입 및 인사 모달 닫기 과정에서 ourgoal_avatar_greeted_session 플래그 등 전수 수집 및 3자 일치 검증"
+      }
+    }
+  ]
+}

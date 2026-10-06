@@ -1,0 +1,44 @@
+{
+  "task": "TASK-ES-578",
+  "portAllocation": "포트만 OS가 원자적으로 배정",
+  "adapter": "docs/design/harness/module-split/tab-isolated578.js",
+  "original": "C:\\dev\\wt\\agy-scratch\\TASK-ES-578\\base-origin\\docs\\design\\harness\\tab-check.js",
+  "originalSha256": "e2a2a18482c081f24f8fe4cf7a9c805a5ac966f641ed3b69dc08a537fdba00a6",
+  "compiledSha256": "41c4c2e811de5751511a67ca0ece3322265587db30b5eeca20e979c2eadd1792",
+  "exactReplacements": [
+    {
+      "before": "const port = 4700 + Math.floor(Math.random() * 300);",
+      "after": "const port = 0;",
+      "count": 1
+    },
+    {
+      "before": "const base = 'http://localhost:' + port;",
+      "after": "const base = 'http://localhost:' + server.address().port;",
+      "count": 1
+    }
+  ],
+  "args": [
+    "C:/dev/wt/agy-scratch/TASK-ES-578/base-origin",
+    "C:/dev/wt/agy-scratch/TASK-ES-578/tab-base1",
+    "records",
+    "--summary",
+    "C:/dev/wt/agy-scratch/TASK-ES-578/tab-summary-base1.json",
+    "--deadclick",
+    "off"
+  ],
+  "pid": 54668,
+  "servers": [
+    {
+      "address": "::",
+      "family": "IPv6",
+      "port": 51466
+    }
+  ],
+  "chrome": [
+    {
+      "pid": 65392,
+      "wsEndpoint": "ws://127.0.0.1:51470/devtools/browser/bb7387c4-ef04-466b-88c6-6c124f99a851",
+      "profileArg": "--user-data-dir=C:\\Users\\HP\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-kRdzF7"
+    }
+  ]
+}
