@@ -1,0 +1,27 @@
+{
+  "task": "TASK-ES-575",
+  "label": "캘린더 사용 가능 여부 판별 책임 분열",
+  "slot": "HO",
+  "cells": [
+    {
+      "key": "calendarAvailability",
+      "file": "js/core/calendar-availability.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "title": "OurGoal Calendar Availability (기관 — 캘린더 사용 가능 판별)",
+      "desc": [
+        "앱 클라이언트 ID와 설정 클라이언트 ID 존재 여부의 순수 판별. 원문 trim·fallback 동작과 인접 토큰 저장·기존 통로를 보존한다."
+      ],
+      "take": [
+        {
+          "group": "전역 7일 유예 통합 휴지통",
+          "names": [
+            "calendarAvailable"
+          ],
+          "keepRest": true
+        }
+      ],
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>"
+    }
+  ]
+}

@@ -6030,3 +6030,5 @@
 - 2026-10-06 TASK-ES-569: 최신 main 2138415b 입력에서 기록 테마 상수4·분류기·공용 토스트를 생성기 이동. 원래 toastTimer 상태와 공유 setter, buildCheckinRecord/saveQuickCheckin 조립부는 보존. 작업참고 #829 L051, 측정 정본 reports/TASK-ES-569/.
 
 - TASK-ES-572: 실제 시간입력·알림스위치·20초타이머 및 성지 목표 상세 서랍 UI 도달 실측. 5함수 원문 생성기 분열 초안. native 권한창 한계만 별도 주장이며 보고 domain=config. 최종 proof·제품 push 아직 없음.
+
+- TASK-ES-575: calendarAvailable만 기존 기관 키트로 원문 분열. 최신main 기준 실제 일정UI/CDP 및 전후 측정, 원격 전송0.

@@ -1,0 +1,91 @@
+{
+ "task": "TASK-ES-575",
+ "slot": "HO",
+ "scriptHtmlLines": [
+  2257,
+  8244
+ ],
+ "plan": [
+  {
+   "cell": "calendarAvailability",
+   "action": "keep",
+   "segment": [
+    4270,
+    4273
+   ],
+   "stmt": [
+    4273,
+    4273
+   ],
+   "names": [
+    "googleTokenClient"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "calendarAvailability",
+   "action": "move",
+   "segment": [
+    4274,
+    4279
+   ],
+   "stmt": [
+    4275,
+    4279
+   ],
+   "names": [
+    "calendarAvailable"
+   ],
+   "why": null
+  },
+  {
+   "cell": "calendarAvailability",
+   "action": "keep",
+   "segment": [
+    4280,
+    4305
+   ],
+   "stmt": [
+    4281,
+    4305
+   ],
+   "names": [
+    "saveGoogleToken"
+   ],
+   "why": "이번 범위 밖(keepRest) — 원래 자리"
+  },
+  {
+   "cell": "calendarAvailability",
+   "action": "keep",
+   "segment": [
+    4306,
+    4314
+   ],
+   "stmt": [
+    4307,
+    4314
+   ],
+   "names": [],
+   "why": "window 노출 묶음(if 안 window.X = … 만) — 원래 자리(순서 보존, #TASK-ES-465)"
+  }
+ ],
+ "imports": [
+  {
+   "n": "calendarAvailable",
+   "cell": "calendarAvailability"
+  }
+ ],
+ "outsideRefs": {
+  "calendarAvailable": [
+   2390
+  ]
+ },
+ "bridged": [],
+ "exposed": [],
+ "edits": 0,
+ "htmlLinesBefore": 8283,
+ "htmlLinesAfter": 8280,
+ "files": {
+  "js/core/calendar-availability.js": 30
+ }
+}

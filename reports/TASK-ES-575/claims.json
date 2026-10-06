@@ -1,0 +1,1056 @@
+{
+  "task": "TASK-ES-575",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-575-CALENDAR-AVAILABILITY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "실제 캘린더 일정 생성 UI와 사용가능 판별 원문을 보존한다."
+    },
+    {
+      "id": "R2",
+      "text": "작업자 측정 보고 결과를 config 기록으로 적재한다."
+    },
+    {
+      "id": "R3",
+      "text": "생성 설정·신고서·설명·측정도구·명세를 등록한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "실제 게스트 일정 생성 후 기존 캘린더 사용가능 판별과 UI 배선을 보존한다.",
+      "touches": [
+        "index.html",
+        "js/core/calendar-availability.js"
+      ],
+      "scenario": "scenarios/calendar-availability.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/verify-inline-hard.json ok 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/verify-inline-hard.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/verify-inline-hard.json equivalent 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/verify-inline-hard.json",
+        "path": "equivalent",
+        "equals": true
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/verify-inline-hard.json restSame 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/verify-inline-hard.json",
+        "path": "restSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/module-load.json regressions 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/module-load.json",
+        "path": "regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/seam.json ok 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/seam.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/seam.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-compare.json baseline.differing 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-compare.json",
+        "path": "baseline.differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-compare.json after.differing 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-compare.json",
+        "path": "after.differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-compare.json rawCallCounts 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-compare.json",
+        "path": "rawCallCounts",
+        "equals": [
+          3,
+          3,
+          3
+        ]
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-repro.json differingValues 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-repro.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-repro.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-compare.json differingValues 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-compare.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json frozenDiff 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "frozenDiff",
+        "equals": ""
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json tests.total 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "tests.total",
+        "equals": 115
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json tests.exitDiff 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "tests.exitDiff",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json tests.outputDiff 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "tests.outputDiff",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json npm.base 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "npm.base",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json npm.after 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "npm.after",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json npm.smokeSame 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "npm.smokeSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json tab.shots 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "tab.shots",
+        "equals": [
+          24,
+          24,
+          24
+        ]
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/gen-inline-hard-meta.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/gen-inline-hard-meta.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/gen-inline-hard-meta.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/module-load.json standaloneOk 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/module-load.json",
+        "path": "standaloneOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/preparation.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/preparation.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/preparation.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/proof.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/proof.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/proof.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/scenario-ambiguous.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/scenario-ambiguous.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/scenario-ambiguous.json",
+        "path": "tool",
+        "equals": "docs/design/harness/module-split/scenario-local-z56.js"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/scenario-initial-invalid.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/scenario-initial-invalid.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/scenario-initial-invalid.json",
+        "path": "tool",
+        "equals": "docs/design/harness/module-split/scenario-local-z56.js"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/scenario-local.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/scenario-local.json",
+        "path": "tool",
+        "equals": "docs/design/harness/module-split/scenario-local-z56.js"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/scenario-second-invalid.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/scenario-second-invalid.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/scenario-second-invalid.json",
+        "path": "tool",
+        "equals": "docs/design/harness/module-split/scenario-local-z56.js"
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/seam.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/seam.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/seam.json",
+        "path": "tool",
+        "equals": "docs/design/harness/module-split/seam-order-check.js"
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-after.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-after.json",
+        "path": "tool",
+        "equals": "docs/design/harness/tab-check.js"
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-after.json.adapter.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-after.json.adapter.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-after.json.adapter.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-base1.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-base1.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-base1.json",
+        "path": "tool",
+        "equals": "docs/design/harness/tab-check.js"
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-base1.json.adapter.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-base1.json.adapter.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-base1.json.adapter.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-base2.json tool 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-base2.json",
+        "path": "tool",
+        "equals": "docs/design/harness/tab-check.js"
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-base2.json.adapter.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-base2.json.adapter.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-base2.json.adapter.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-compare.json sameCommit 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-compare.json",
+        "path": "sameCommit",
+        "equals": true
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/tab-repro.json sameCommit 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/tab-repro.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/tab-repro.json",
+        "path": "sameCommit",
+        "equals": true
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/test-final.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/test-final.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/test-final.json",
+        "path": "task",
+        "equals": "TASK-ES-432"
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-after-initial-failure.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-after-initial-failure.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-after-initial-failure.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-after-initial-failure.json.publication.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-after-initial-failure.json.publication.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-after-initial-failure.json.publication.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-after-second-attempt.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-after-second-attempt.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-after-second-attempt.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-after.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-after.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-after.json.publication.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-after.json.publication.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-after.json.publication.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base1-initial-failure.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base1-initial-failure.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base1-initial-failure.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C44",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base1-initial-failure.json.publication.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base1-initial-failure.json.publication.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base1-initial-failure.json.publication.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C45",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base1-second-attempt.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base1-second-attempt.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base1-second-attempt.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C46",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base1-second-attempt.json.publication.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base1-second-attempt.json.publication.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base1-second-attempt.json.publication.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C47",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base1.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base1.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base1.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C48",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base1.json.publication.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base1.json.publication.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base1.json.publication.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C49",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base2-initial-failure.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base2-initial-failure.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base2-initial-failure.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C50",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base2-initial-failure.json.publication.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base2-initial-failure.json.publication.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base2-initial-failure.json.publication.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C51",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base2-second-attempt.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base2-second-attempt.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base2-second-attempt.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C52",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base2.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base2.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C53",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-base2.json.publication.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-base2.json.publication.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-base2.json.publication.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C54",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/ui-compare.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/ui-compare.json",
+        "path": "task",
+        "equals": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C55",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-575/verify-inline-hard.json equivalent 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-575/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/verify-inline-hard.json",
+        "path": "equivalent",
+        "equals": true
+      }
+    },
+    {
+      "id": "C56",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/architecture/modules.json 등록 확인",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "core/calendar-availability"
+      }
+    },
+    {
+      "id": "C57",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/architecture/cell-descriptions.json 등록 확인",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "캘린더 사용 가능 판별"
+      }
+    },
+    {
+      "id": "C58",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/inline-calendar575.json 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/inline-calendar575.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/inline-calendar575.json",
+        "text": "calendarAvailable"
+      }
+    },
+    {
+      "id": "C59",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/calendar-ui575.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/calendar-ui575.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/calendar-ui575.js",
+        "text": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C60",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/calendar-compare575.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/calendar-compare575.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/calendar-compare575.js",
+        "text": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C61",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/tab-isolated575.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/tab-isolated575.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/tab-isolated575.js",
+        "text": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C62",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/specs/REQ-TASK-ES-575-CALENDAR-AVAILABILITY.md 등록 확인",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-575-CALENDAR-AVAILABILITY.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-575-CALENDAR-AVAILABILITY.md",
+        "text": "[원칙 ⑧]"
+      }
+    },
+    {
+      "id": "C63",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log.md 등록 확인",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C64",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 등록 확인",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "TASK-ES-575"
+      }
+    },
+    {
+      "id": "C65",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "법정 시나리오 로컬 원본/작업 실제 UI 결과 기록",
+      "touches": [
+        "reports/TASK-ES-575/scenario-local.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-575/scenario-local.json",
+        "path": "allPassedBoth",
+        "equals": true
+      }
+    }
+  ]
+}
