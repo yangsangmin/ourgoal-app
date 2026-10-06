@@ -1,0 +1,790 @@
+{
+ "tool": "docs/design/harness/module-split/tail-range-check-573.js",
+ "kind": "작업자 비제품 도구 측정 — 법정 판정 아님",
+ "baselineCommit": "f91b0979072b48fda91ac9bbd38bc30d530ec22b",
+ "oldGeneratorRef": "f91b0979",
+ "inputSha256": "1fce9fb795735deb02801af5cece07486d6567888f95f41cf50db56aa14cb9ef",
+ "generatorSha256": "7e2f27ae1365739e9a309d959cf4afb9b0ef936b07ab87d58947e8d47cdcf26d",
+ "verifierSha256": "6fdc2e8fda51b7d45e5002526a6156fa16f0d693207dab8ce0eff61e06f70f1b",
+ "cases": [
+  {
+   "name": "기존 생성기의 실제 defaultProfile 차단",
+   "kind": "before",
+   "exit": 1,
+   "matchedExpected": true
+  },
+  {
+   "name": "실제 defaultProfile 단순 노출 원문 보존",
+   "kind": "allowed",
+   "exit": 0,
+   "tokenSame": true,
+   "restSame": true,
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "helperReadsCell": true,
+   "functionSamples": 3,
+   "functionValuesSame": true,
+   "matchedExpected": true
+  },
+  {
+   "name": "suffix 공백·라인 주석 보존",
+   "kind": "allowed",
+   "exit": 0,
+   "tokenSame": true,
+   "restSame": true,
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "helperReadsCell": true,
+   "functionSamples": 3,
+   "functionValuesSame": true,
+   "matchedExpected": true
+  },
+  {
+   "name": "CRLF 입력 같은 범위 보존",
+   "kind": "allowed",
+   "exit": 0,
+   "tokenSame": true,
+   "restSame": true,
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "helperReadsCell": true,
+   "functionSamples": 3,
+   "functionValuesSame": true,
+   "matchedExpected": true
+  },
+  {
+   "name": "$ 식별자 원문 보존",
+   "kind": "allowed",
+   "exit": 0,
+   "tokenSame": true,
+   "restSame": true,
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "$profile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "helperReadsCell": true,
+   "functionSamples": 3,
+   "functionValuesSame": true,
+   "matchedExpected": true
+  },
+  {
+   "name": "opt-in 없음",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "opt-in false",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "계산 프로퍼티",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "연쇄 대입",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "다른 함수 노출",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "다른 속성 노출",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "suffix 두 문",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "세미콜론 없음",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "중간 블록 주석",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "앞 문과 시작 줄 공유",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 두 문이 한 줄에: 3615",
+   "matchedExpected": true
+  },
+  {
+   "name": "한 줄 함수",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3615",
+   "matchedExpected": true
+  },
+  {
+   "name": "끝 줄에 다른 함수 본문",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3624",
+   "matchedExpected": true
+  },
+  {
+   "name": "window 지역 이름 가림",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3626",
+   "matchedExpected": true
+  },
+  {
+   "name": "top this",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 최상위 this/arguments(유형 K) — 옮기지 않는다: defaultProfile",
+   "matchedExpected": true
+  },
+  {
+   "name": "top arguments",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 최상위 this/arguments(유형 K) — 옮기지 않는다: defaultProfile",
+   "matchedExpected": true
+  },
+  {
+   "name": "같은 함수 두 세포 소유",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 같은 문을 두 세포가 가져감: 3615",
+   "matchedExpected": true
+  },
+  {
+   "name": "원본 export 중복",
+   "kind": "blocked",
+   "exit": 1,
+   "sourceUnchanged": true,
+   "reason": "Error: 문 끝 줄 뒤에 다른 코드: 3625",
+   "matchedExpected": true
+  },
+  {
+   "name": "suffix 삭제",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": false,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 0,
+     "closeOk": true,
+     "firstDiff": null,
+     "sourceEndColumn": 3,
+     "sourceEndOk": true
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": false,
+     "occurrences": {
+      "original": 1,
+      "generated": 0
+     },
+     "occurrencesSame": false,
+     "restPosition": {
+      "original": 7991,
+      "generated": -1
+     },
+     "sameRestPosition": false
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "suffix 다른 export",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": false,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 0,
+     "closeOk": true,
+     "firstDiff": null,
+     "sourceEndColumn": 3,
+     "sourceEndOk": true
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": false,
+     "occurrences": {
+      "original": 1,
+      "generated": 0
+     },
+     "occurrencesSame": false,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "suffix 중복",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": false,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 0,
+     "closeOk": true,
+     "firstDiff": null,
+     "sourceEndColumn": 3,
+     "sourceEndOk": true
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 2
+     },
+     "occurrencesSame": false,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "suffix 원래 순서 재배열",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": false,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 0,
+     "closeOk": true,
+     "firstDiff": null,
+     "sourceEndColumn": 3,
+     "sourceEndOk": true
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3616,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 8111
+     },
+     "sameRestPosition": false
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "suffix 공백 변조",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": true,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 0,
+     "closeOk": true,
+     "firstDiff": null,
+     "sourceEndColumn": 3,
+     "sourceEndOk": true
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": false,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "표지 끝 열 변조",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": true,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 1,
+     "closeOk": true,
+     "firstDiff": {
+      "neu": "  }",
+      "orig": "  } "
+     },
+     "sourceEndColumn": 4,
+     "sourceEndOk": false
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      4
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": false,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "추가 표지 주석 본문 끼워넣기",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": true,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 14,
+     "closeOk": true,
+     "firstDiff": {
+      "neu": "  /* 원문 AST 끝 3625:3 · defaultProfile · 같은 줄 window 노출 보존 */",
+      "orig": "  /* [#TASK-ES-522] totalCompletedMilestones → js/core/profile-load.js 로 옮김(인라인 3단계 Z1 로그인·계정 2차 — 앞 주석 포함) */"
+     },
+     "sourceEndColumn": 3,
+     "sourceEndOk": true
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "함수 본문 변조",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": false,
+   "restSame": true,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 1,
+     "closeOk": true,
+     "firstDiff": {
+      "neu": "      bio: '변조', avatarUrl: '', interests: [], region: '', regionPublic: false,",
+      "orig": "      bio: '', avatarUrl: '', interests: [], region: '', regionPublic: false,"
+     },
+     "sourceEndColumn": 3,
+     "sourceEndOk": true
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "matchedExpected": true
+  },
+  {
+   "name": "검사 opt-in false",
+   "kind": "mutation",
+   "exit": 1,
+   "tokenSame": true,
+   "restSame": true,
+   "lineChecks": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "origLines": [
+      3612,
+      3625
+     ],
+     "wrap": null,
+     "diffLines": 0,
+     "closeOk": true,
+     "firstDiff": null,
+     "sourceEndColumn": 3,
+     "sourceEndOk": false
+    }
+   ],
+   "preservedTails": [
+    {
+     "file": "js/core/default-profile-range-probe.js",
+     "function": "defaultProfile",
+     "originalEnd": [
+      3625,
+      3
+     ],
+     "generatedLine": 3614,
+     "matches": 1,
+     "suffixSame": true,
+     "occurrences": {
+      "original": 1,
+      "generated": 1
+     },
+     "occurrencesSame": true,
+     "restPosition": {
+      "original": 7991,
+      "generated": 7991
+     },
+     "sameRestPosition": true
+    }
+   ],
+   "matchedExpected": true
+  }
+ ],
+ "representatives": [
+  {
+   "name": "TASK-ES-552 세 셀",
+   "inputRef": "3ced3a46",
+   "inputSha256": "1faada35d1f5e407d3f0575b838d5cffda5d3e63210dae7e3e29a4aa98636f97",
+   "files": [
+    {
+     "file": "index.html",
+     "oldSha256": "333c00654b06190050f1011fa511b8bc599e6ac619fe33765722a544d3a07288",
+     "newSha256": "333c00654b06190050f1011fa511b8bc599e6ac619fe33765722a544d3a07288",
+     "same": true
+    },
+    {
+     "file": "js/tabs/goals/personal-goals-guide.js",
+     "oldSha256": "945cfc461344dc78b4ca105507a8bb5cc34069de8981cd1ea0e744ea6f1a4ed7",
+     "newSha256": "945cfc461344dc78b4ca105507a8bb5cc34069de8981cd1ea0e744ea6f1a4ed7",
+     "same": true
+    },
+    {
+     "file": "js/tabs/goals/team-level-goals.js",
+     "oldSha256": "e2fb6d0f93b688da0b7b849a658b80179b5134c0cfc67ea438d9bfd1735b2bc9",
+     "newSha256": "e2fb6d0f93b688da0b7b849a658b80179b5134c0cfc67ea438d9bfd1735b2bc9",
+     "same": true
+    },
+    {
+     "file": "js/tabs/goals/team-goal-edit-modal.js",
+     "oldSha256": "9a124d7376a93469a64f1eea4d72177a3ef51aab01d8356325db66f4c23772f9",
+     "newSha256": "9a124d7376a93469a64f1eea4d72177a3ef51aab01d8356325db66f4c23772f9",
+     "same": true
+    }
+   ],
+   "oldVerifyExit": 0,
+   "newVerifyExit": 0,
+   "verifyReportSame": true,
+   "matchedExpected": true
+  },
+  {
+   "name": "TASK-ES-568 세 셀",
+   "inputRef": "0a2e424d",
+   "inputSha256": "333c00654b06190050f1011fa511b8bc599e6ac619fe33765722a544d3a07288",
+   "files": [
+    {
+     "file": "index.html",
+     "oldSha256": "fcfe975c68e88d95368dd003361b4543a16c9fcfcf4e7133850e416cf8f227e0",
+     "newSha256": "fcfe975c68e88d95368dd003361b4543a16c9fcfcf4e7133850e416cf8f227e0",
+     "same": true
+    },
+    {
+     "file": "js/tabs/goals/shift-routines.js",
+     "oldSha256": "fa2c6eb3a2d88f5dc71244b1c3407544ccfc24a0a05110df7455b311d2d25241",
+     "newSha256": "fa2c6eb3a2d88f5dc71244b1c3407544ccfc24a0a05110df7455b311d2d25241",
+     "same": true
+    },
+    {
+     "file": "js/tabs/records/growth-chart.js",
+     "oldSha256": "7efbc7036d604f916e98e7fb5a7d966192ff8f8a9e60f10d8901b6ac3a74eebe",
+     "newSha256": "7efbc7036d604f916e98e7fb5a7d966192ff8f8a9e60f10d8901b6ac3a74eebe",
+     "same": true
+    },
+    {
+     "file": "js/tabs/home/quest-summary.js",
+     "oldSha256": "55f4100f33a77a1fef44ce3ca9ce2e3ae280980907021403de6ee0b52755fd82",
+     "newSha256": "55f4100f33a77a1fef44ce3ca9ce2e3ae280980907021403de6ee0b52755fd82",
+     "same": true
+    }
+   ],
+   "oldVerifyExit": 0,
+   "newVerifyExit": 0,
+   "verifyReportSame": true,
+   "matchedExpected": true
+  }
+ ],
+ "counts": {
+  "cases": 31,
+  "representatives": 2,
+  "expected": 31
+ },
+ "allExpected": true
+}

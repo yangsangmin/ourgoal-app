@@ -1,0 +1,311 @@
+{
+ "task": "TASK-ES-573",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-573-GENERATOR-TAIL-RANGE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "생성기 좁은 opt-in 및 AST suffix 지원 소스 식별자를 기록한다."
+  },
+  {
+   "id": "R2",
+   "text": "검사기 원본 AST·suffix·잔여 토큰 검사 소스 식별자를 기록한다."
+  },
+  {
+   "id": "R3",
+   "text": "기존 대표 생성 byte·검사 JSON 대조 측정값을 보고 파일에 기록한다."
+  },
+  {
+   "id": "R4",
+   "text": "경계 및 실제 defaultProfile 임시 사본 검사 측정값·탐침 설정을 기록한다."
+  },
+  {
+   "id": "R5",
+   "text": "제품 변경 없는 도구 작업 범위·문법·npm 측정을 기록한다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도구 소스의 실제 식별자/검사식 기록: const windowSuffixEnd = it =>",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "text": "const windowSuffixEnd = it =>"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도구 소스의 실제 식별자/검사식 기록: preserveWindowSuffix",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "text": "preserveWindowSuffix"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도구 소스의 실제 식별자/검사식 기록: sourceEndOk",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-hard.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/verify-inline-hard.js",
+    "text": "sourceEndOk"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도구 소스의 실제 식별자/검사식 기록: sameRestPosition",
+   "touches": [
+    "docs/design/harness/module-split/verify-inline-hard.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/verify-inline-hard.js",
+    "text": "sameRestPosition"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 representatives.0.verifyReportSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "representatives.0.verifyReportSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 representatives.1.verifyReportSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "representatives.1.verifyReportSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 counts.cases 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "counts.cases",
+    "equals": 31
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 allExpected 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "allExpected",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 cases.1.tokenSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "cases.1.tokenSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 cases.1.restSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "cases.1.restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 cases.1.preservedTails.0.suffixSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "cases.1.preservedTails.0.suffixSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/tail-range-check.json의 cases.1.preservedTails.0.sameRestPosition 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/tail-range-check.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/tail-range-check.json",
+    "path": "cases.1.preservedTails.0.sameRestPosition",
+    "equals": true
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 docs/design/harness/module-split/tail-profile-573.json의 task 적재 확인",
+   "touches": [
+    "docs/design/harness/module-split/tail-profile-573.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/design/harness/module-split/tail-profile-573.json",
+    "path": "task",
+    "equals": "TASK-ES-573"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 docs/design/harness/module-split/tail-profile-573.json의 cells.0.take.0.preserveWindowSuffix 적재 확인",
+   "touches": [
+    "docs/design/harness/module-split/tail-profile-573.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/design/harness/module-split/tail-profile-573.json",
+    "path": "cells.0.take.0.preserveWindowSuffix",
+    "equals": true
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도구 소스의 실제 식별자/검사식 기록: function allowed(",
+   "touches": [
+    "docs/design/harness/module-split/tail-range-check-573.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/tail-range-check-573.js",
+    "text": "function allowed("
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/npm-test-summary.json의 exit 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/npm-test-summary.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/npm-test-summary.json",
+    "path": "exit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/provenance.json의 productSplit 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/provenance.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/provenance.json",
+    "path": "productSplit",
+    "equals": false
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-573/provenance.json의 protectedChangedFiles 적재 확인",
+   "touches": [
+    "reports/TASK-ES-573/provenance.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-573/provenance.json",
+    "path": "protectedChangedFiles",
+    "equals": []
+   }
+  }
+ ]
+}

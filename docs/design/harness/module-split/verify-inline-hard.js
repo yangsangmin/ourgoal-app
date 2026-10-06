@@ -38,6 +38,7 @@ const strip = l => l.replace(/(^|[^A-Za-z0-9_$.])[LK]\.(?=[A-Za-z_$])/g, '$1');
 
 const O = iifeOf(ORIG);
 const oast = parser.parse(O.code, { sourceType: 'script', tokens: true, ranges: true });
+let originalIife; traverse(oast, { FunctionExpression(p) { if (!originalIife) originalIife = p; } });
 const obody = oast.program.body[0].expression.callee.body.body;
 const oTop = {}; for (const x of obody) { if (x.type === 'FunctionDeclaration') oTop[x.id.name] = x; if (x.type === 'VariableDeclaration') for (const d of x.declarations) oTop[d.id.name] = x; }
 const oLine = n => n.loc.start.line + O.s, oLineE = n => n.loc.end.line + O.s;
@@ -57,14 +58,25 @@ for (const f of FILES) {
     if (!m) continue;
     const a = +m[1], b = +m[2];
     let j = i + 1;
+    const tailMark = (fl[j] || '').match(/^  \/\* 원문 AST 끝 (\d+):(\d+) · ([A-Za-z_$][\w$]*) · 같은 줄 window 노출 보존 \*\/$/);
+    let endColumn = null, tailName = null, sourceEndOk = true;
+    if (tailMark) {
+      endColumn = +tailMark[2]; tailName = tailMark[3]; j++;
+      const fn = oTop[tailName], nx = fn && obody[obody.indexOf(fn) + 1], e = nx && nx.type === 'ExpressionStatement' && nx.expression;
+      sourceEndOk = !originalIife.scope.hasOwnBinding('window') && CFG.cells.some(c => c.file === f && c.take.some(t => t.preserveWindowSuffix === true && (t.all || (t.names || []).includes(tailName))))
+        && !!fn && fn.type === 'FunctionDeclaration' && fn.loc.start.line !== fn.loc.end.line && +tailMark[1] === b && oLineE(fn) === b && fn.loc.end.column === endColumn && O.lines[b - 1].slice(0, endColumn).trim() === '}'
+        && !!nx && oLine(nx) === b && oLineE(nx) === b && !!e && e.type === 'AssignmentExpression' && e.operator === '=' && e.left.type === 'MemberExpression' && !e.left.computed && e.left.object.type === 'Identifier' && e.left.object.name === 'window' && e.left.property.name === tailName && e.right.type === 'Identifier' && e.right.name === tailName
+        && new RegExp('^[ \\t]+window\\.' + tailName.replace(/\$/g, '\\$') + '[ \\t]*=[ \\t]*' + tailName.replace(/\$/g, '\\$') + '[ \\t]*;[ \\t]*(?://.*)?$').test(O.lines[b - 1].slice(endColumn));
+    }
     let wrap = null;
     const w = fl[j].match(/^  function (\w+)\(\) \{ \/\* \[#[\w-]+\] 로드 중 문/);
     if (w) { wrap = w[1]; j++; }
     const seg = fl.slice(j, j + (b - a + 1));
-    const diffs = []; seg.forEach((l, k) => { if (strip(l) !== O.lines[a - 1 + k]) diffs.push(k); });
+    const originalLine = k => endColumn != null && k === b - a ? O.lines[a - 1 + k].slice(0, endColumn) : O.lines[a - 1 + k];
+    const diffs = []; seg.forEach((l, k) => { if (strip(l) !== originalLine(k)) diffs.push(k); });
     const closeOk = !wrap || fl[j + (b - a + 1)] === '  } /* ' + wrap + ' */';
-    lineCheck.push({ file: f, origLines: [a, b], wrap, diffLines: diffs.length, closeOk, firstDiff: diffs.length ? { neu: seg[diffs[0]], orig: O.lines[a - 1 + diffs[0]] } : null });
-    movedRanges.push({ a, b, wrap, file: f });
+    lineCheck.push({ file: f, origLines: [a, b], wrap, diffLines: diffs.length, closeOk, firstDiff: diffs.length ? { neu: seg[diffs[0]], orig: originalLine(diffs[0]) } : null, ...(tailMark ? { sourceEndColumn: endColumn, sourceEndOk: sourceEndOk && !wrap } : {}) });
+    movedRanges.push({ a, b, wrap, file: f, ...(tailMark ? { endColumn, tailName } : {}) });
   }
   // ① 토큰
   for (const st of cbody) {
@@ -141,10 +153,29 @@ const slotLines = (ls, slot) => {
 };
 const seamLine = slotLines(N.lines, CFG.slot);
 N.lines.forEach((l, i) => { if (l.includes('[' + TAG + ']')) seamLine.add(i + 1); });
+// #TASK-ES-573: 표지와 원래 window 노출이 같은 줄이면 그 노출 토큰은 남은 글자 검사에 포함한다.
+// suffix 자체는 원문과 글자 그대로 비교해 공백·주석·순서 훼손도 확인한다.
+const preservedTails = movedRanges.filter(r => r.endColumn != null).map(r => {
+  const prefix = '  /* [' + TAG + '] ' + r.tailName + ' → ' + r.file + ' 로 옮김(';
+  const found = N.lines.map((line, i) => ({ line, i })).filter(x => x.line.startsWith(prefix));
+  const expected = O.lines[r.b - 1].slice(r.endColumn);
+  if (found.length === 1) seamLine.delete(found[0].i + 1);
+  const actual = found.length === 1 ? found[0].line.slice(found[0].line.indexOf('*/') + 2) : null;
+  const countExports = root => { let count = 0; traverse(root, { AssignmentExpression(p) { const l = p.node.left; if (l.type === 'MemberExpression' && l.object.type === 'Identifier' && l.object.name === 'window' && ((!l.computed && l.property.name === r.tailName) || (l.computed && l.property.type === 'StringLiteral' && l.property.value === r.tailName))) count++; } }); return count; };
+  const occurrences = { original: countExports(oast), generated: countExports(nast) };
+  return { file: r.file, function: r.tailName, originalEnd: [r.b, r.endColumn], generatedLine: found.length === 1 ? found[0].i + 1 : null, matches: found.length, suffixSame: actual === expected, occurrences, occurrencesSame: occurrences.original === 1 && occurrences.generated === 1 };
+});
 const origSlot = slotLines(O.lines, CFG.slot);
 const isCode = t => typeof t.type !== 'string'; // 주석 토큰(CommentBlock·CommentLine)은 남은 글자 비교에서 뺀다(표지·자리 표지 주석)
-const origKeep = oast.tokens.filter(isCode).filter(t => { const l = t.loc.start.line + O.s; return !origSlot.has(l) && !movedRanges.some(r => l >= r.a && l <= r.b); }).map(tokVal);
-const newKeep = nast.tokens.filter(isCode).filter(t => !seamLine.has(t.loc.start.line + N.s)).map(tokVal);
+const origKeepTokens = oast.tokens.filter(isCode).filter(t => { const l = t.loc.start.line + O.s; return !origSlot.has(l) && !movedRanges.some(r => l >= r.a && l <= r.b && (r.endColumn == null || l < r.b || t.loc.end.column <= r.endColumn)); });
+const newKeepTokens = nast.tokens.filter(isCode).filter(t => !seamLine.has(t.loc.start.line + N.s));
+const origKeep = origKeepTokens.map(tokVal), newKeep = newKeepTokens.map(tokVal);
+for (const tail of preservedTails) {
+  const fn = oTop[tail.function], oldExport = obody[obody.indexOf(fn) + 1];
+  const newExport = nast.program.body[0].expression.callee.body.body.find(n => n.type === 'ExpressionStatement' && n.loc.start.line + N.s === tail.generatedLine);
+  tail.restPosition = { original: oldExport ? origKeepTokens.findIndex(t => t.start === oldExport.start) : -1, generated: newExport ? newKeepTokens.findIndex(t => t.start === newExport.start) : -1 };
+  tail.sameRestPosition = tail.restPosition.original >= 0 && tail.restPosition.original === tail.restPosition.generated;
+}
 let restDiff = -1; for (let i = 0; i < Math.max(origKeep.length, newKeep.length); i++) if (origKeep[i] !== newKeep[i]) { restDiff = i; break; }
 const restSame = restDiff < 0;
 // expose · 가져오기
@@ -185,7 +216,8 @@ const report = {
   imported: [...imported].sort(), leftDefsInIndex: leftDefs, usedInIndexNotImported, usedL: [...usedL].sort(), notExposed, assignedL: [...assignedL].sort(), noSetter,
   thisArgs, listeners, wrapCalls: callLines, callsOk, importBeforeKit, lastGetterNoSetter, files,
 };
-report.ok = report.equivalent && lineCheck.length > 0 && lineCheck.every(x => x.diffLines === 0 && x.closeOk) && restSame && leftDefs.length === 0 && usedInIndexNotImported.length === 0
+if (preservedTails.length) report.preservedTails = preservedTails;
+report.ok = report.equivalent && lineCheck.length > 0 && lineCheck.every(x => x.diffLines === 0 && x.closeOk && x.sourceEndOk !== false) && preservedTails.every(x => x.suffixSame && x.occurrencesSame && x.sameRestPosition) && restSame && leftDefs.length === 0 && usedInIndexNotImported.length === 0
   && notExposed.length === 0 && noSetter.length === 0 && thisArgs.length === 0 && listeners.same && callsOk && importBeforeKit.length === 0 && lastGetterNoSetter.length === 0
   && Object.values(files).every(x => x.leaksIIFEName.length === 0 && x.lines <= 800);
 console.log(JSON.stringify(report, null, 1));

@@ -113,7 +113,7 @@ for (const c of CFG.cells) {
       const tail = lines[HE(st.node) - 1].slice(st.node.loc.end.column).trim();
       const tailCode = !!(tail && !tail.startsWith('//'));
       // 앞 주석·빈 줄은 그 문을 따라간다(묶음 첫 문은 구획 주석부터)
-      const item = { cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? prevEnd + 1 : r.start, names: [], sharesPrevLine, tailCode };
+      const item = { cell: c.key, group: t.group, hEnd: r.hEnd, gStart: r.start, gEnd: r.end, st, start: H(st.node), end: HE(st.node), segStart: k ? prevEnd + 1 : r.start, names: [], sharesPrevLine, tailCode, preserveWindowSuffix: t.preserveWindowSuffix === true };
       const mine = n => t.all || (t.names || []).includes(n);
       if (st.isFunctionDeclaration()) {
         const n = st.node.id.name; item.names = [n];
@@ -156,11 +156,25 @@ for (const c of CFG.cells) {
     if ((t.wrap || []).length !== wrapK) fail('설정 wrap 이름 수(' + (t.wrap || []).length + ')와 감싼 문 수(' + wrapK + ')가 다르다: ' + t.group);
   }
 }
-// #TASK-ES-482: 한 줄을 나눠 쓰는 문(앞 문과 같은 줄에서 시작·끝 줄 뒤에 다른 코드)은 옮기거나 감쌀 수 없다 — 그 줄의 다른 문이 같이 딸려 가거나 잘린다. 둘 다 원래 자리면 통과
+// #TASK-ES-573: 명시 opt-in인 여러 줄 함수의 닫는 } 뒤 window.같은이름=같은함수; 한 문장만 원문 끝 열로 자른다.
+// 일반 같은 줄 코드·계산 프로퍼티·연쇄 대입·한 줄 함수는 기존 차단을 유지한다. suffix는 원래 자리의 원문 그대로 남는다.
+const windowSuffixEnd = it => {
+  if (!it.preserveWindowSuffix || !it.st.isFunctionDeclaration() || it.start === it.end || iScope.hasOwnBinding('window')) return null;
+  const n = it.st.node.id.name, col = it.st.node.loc.end.column;
+  if (!/^[A-Za-z_$][\w$]*$/.test(n) || lines[it.end - 1].slice(0, col).trim() !== '}') return null;
+  const nx = top[top.indexOf(it.st) + 1], e = nx && nx.isExpressionStatement() && nx.node.expression;
+  if (!nx || H(nx.node) !== it.end || HE(nx.node) !== it.end || !plan.some(x => x.st === nx && x.action === 'keep')) return null;
+  if (!e || e.type !== 'AssignmentExpression' || e.operator !== '=' || e.left.type !== 'MemberExpression' || e.left.computed || e.left.object.type !== 'Identifier' || e.left.object.name !== 'window' || e.left.property.name !== n || e.right.type !== 'Identifier' || e.right.name !== n) return null;
+  if (!new RegExp('^[ \\t]+window\\.' + n.replace(/\$/g, '\\$') + '[ \\t]*=[ \\t]*' + n.replace(/\$/g, '\\$') + '[ \\t]*;[ \\t]*(?://.*)?$').test(lines[it.end - 1].slice(col))) return null;
+  let count = 0; traverse(ast, { AssignmentExpression(p) { const l = p.node.left; if (l.type === 'MemberExpression' && l.object.type === 'Identifier' && l.object.name === 'window' && ((!l.computed && l.property.name === n) || (l.computed && l.property.type === 'StringLiteral' && l.property.value === n))) count++; } });
+  if (count !== 1) return null;
+  return col;
+};
+// #TASK-ES-482: 한 줄을 나눠 쓰는 문은 기본적으로 옮기거나 감쌀 수 없다. #573의 좁은 함수 끝 범위만 예외다.
 for (const it of plan) {
   const out = it.action === 'move' || it.action === 'wrap';
   if (out && it.sharesPrevLine) fail('두 문이 한 줄에: ' + it.start);
-  if (out && it.tailCode) fail('문 끝 줄 뒤에 다른 코드: ' + it.end);
+  if (out && it.tailCode) { const col = windowSuffixEnd(it); if (col === null) fail('문 끝 줄 뒤에 다른 코드: ' + it.end); it.sourceEndColumn = col; }
   if (it.tailCode) { const nx = plan.find(x => x !== it && x.start === it.end && x.sharesPrevLine && (x.action === 'move' || x.action === 'wrap')); if (nx) fail('두 문이 한 줄에: ' + nx.start); }
 }
 // 같은 문을 두 세포가 가져가면 안 된다 · skip 은 다른 세포가 가져가야 한다
@@ -233,11 +247,12 @@ for (const c of CFG.cells) {
   for (const it of its) {
     if (it.segStart !== prevEnd + 1 && body.length) body.push('');
     body.push('  /* ---- 이전 전 index.html ' + it.segStart + '~' + it.end + '줄(#' + TAG + ' 생성기 표지) ---- */');
+    if (it.sourceEndColumn != null) body.push('  /* 원문 AST 끝 ' + it.end + ':' + it.sourceEndColumn + ' · ' + it.names[0] + ' · 같은 줄 window 노출 보존 */');
     if (it.action === 'wrap') {
       body.push('  function ' + it.wrapName + '() { /* [#' + TAG + '] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */');
       body.push(...range(it.segStart, it.end));
       body.push('  } /* ' + it.wrapName + ' */');
-    } else body.push(...range(it.segStart, it.end));
+    } else { const segment = range(it.segStart, it.end); if (it.sourceEndColumn != null) segment[segment.length - 1] = segment[segment.length - 1].slice(0, it.sourceEndColumn); body.push(...segment); }
     prevEnd = it.end;
   }
   const exportNames = its.flatMap(i => i.names);
@@ -281,8 +296,8 @@ const repl = [];
   const flush = () => { if (run) { repl.push(run); run = null; } };
   for (const it of sorted) {
     if (it.action === 'move') {
-      if (run && run.kind === 'move' && run.cell === it.cell && run.end + 1 === it.segStart) { run.end = it.end; run.names.push(...it.names); }
-      else { flush(); run = { kind: 'move', cell: it.cell, segStart: it.segStart, end: it.end, names: it.names.slice() }; }
+      if (run && run.kind === 'move' && run.cell === it.cell && run.end + 1 === it.segStart && run.sourceEndColumn == null && it.sourceEndColumn == null) { run.end = it.end; run.names.push(...it.names); }
+      else { flush(); run = { kind: 'move', cell: it.cell, segStart: it.segStart, end: it.end, names: it.names.slice(), sourceEndColumn: it.sourceEndColumn }; }
     } else if (it.action === 'wrap') { flush(); repl.push({ kind: 'wrap', cell: it.cell, segStart: it.segStart, end: it.end, names: [it.wrapName] }); }
     else flush();
   }
@@ -293,7 +308,7 @@ for (const r of repl.slice().sort((a, b) => b.segStart - a.segStart)) {
   const line = r.kind === 'move'
     ? '  /* [#' + TAG + '] ' + r.names.join(' · ') + ' → ' + file + ' 로 옮김(' + (CFG.label || '인라인 어려움 묶음 시범') + ' — 앞 주석 포함) */'
     : '  ' + r.names[0] + '(); /* [#' + TAG + '] 로드 중 문(앞 주석 포함) → ' + file + ' 의 ' + r.names[0] + ' 로 옮김 — 원래 자리에서 부른다 */';
-  nh.splice(r.segStart - 1, r.end - r.segStart + 1, line);
+  nh.splice(r.segStart - 1, r.end - r.segStart + 1, line + (r.sourceEndColumn == null ? '' : lines[r.end - 1].slice(r.sourceEndColumn)));
 }
 // (2) 머리 이음매: 구역 자리 표지 아래(없으면 #TASK-ES-423 이음매 다음에 자리 표지 묶음을 만든다)
 const usIdx = nh.findIndex((l, i) => i > sLine - 1 && l.includes('"use strict";'));
@@ -378,7 +393,7 @@ fs.writeFileSync(path.join(APP, 'index.html'), nh.join(EOL), 'utf8');
 for (const [f, arr] of Object.entries(outFiles)) fs.writeFileSync(path.join(APP, f), arr.join('\n'), 'utf8');
 const meta = {
   task: TAG, slot: CFG.slot, scriptHtmlLines: [sLine + 1, eLine],
-  plan: finalPlan.map(i => ({ cell: i.cell, action: i.action, segment: [i.segStart, i.end], stmt: [i.start, i.end], names: i.names, why: i.why || null })),
+  plan: finalPlan.map(i => ({ cell: i.cell, action: i.action, segment: [i.segStart, i.end], stmt: [i.start, i.end], names: i.names, why: i.why || null, ...(i.sourceEndColumn == null ? {} : { sourceEndColumn: i.sourceEndColumn }) })),
   imports: IMPORTS, outsideRefs,
   bridged: [...bridged.keys()].sort().map(n => ({ n, ...bridged.get(n), exposedBefore: getters.has(n), setterBefore: setters.has(n) })), exposed: exposeList, edits: uniq.length,
   htmlLinesBefore: lines.length, htmlLinesAfter: nh.length,
