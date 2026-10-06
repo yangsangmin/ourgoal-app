@@ -7,7 +7,7 @@
 ```powershell
 node docs/design/harness/shared-learning/cli.js bootstrap --source-root C:/dev/agent-knowledge --repo-root <전용트리> --participants <participants.json> --task-id <TASK> --task-kind <유형> --tool codex --out <bootstrap.json> --brief <brief.md>
 node docs/design/harness/shared-learning/cli.js validate --source-root C:/dev/agent-knowledge --repo-root <전용트리> --read-roots <허용읽기root배열.json> --event <learning-event.json> --out <검사결과.json>
-node docs/design/harness/shared-learning/cli.js collect --source-root C:/dev/agent-knowledge --repo-root <전용트리> --read-roots <허용읽기root배열.json> --event <learning-event.json> --expected-source-hash <읽은lessons.json의실제SHA256>
+node docs/design/harness/shared-learning/cli.js collect --source-root C:/dev/agent-knowledge --repo-root <전용트리> --read-roots <허용읽기root배열.json> --event <learning-event.json> --store-root <전용트리/reports/learning-pending> --expected-source-hash <읽은lessons.json의실제SHA256>
 node docs/design/harness/shared-learning/check.js
 ```
 
@@ -21,7 +21,7 @@ scope는 work-after/shared-baseline/tool-unit이다. 다른 TASK 증거는 share
 
 collect는 registry.sharedStoreRoot로 명시된 공유 이벤트 저장소(기본 C:/dev/agent-learning-events) 또는 전용 트리 안 pending root를 사용한다. 임의 외부 root는 막고 물리 경로·symlink를 검사한다. 원장을 수정하지 않고 task별 불변 이벤트를 쓴다. exclusive lock+expectedSourceHash CAS이며 동일 eventId/동일내용은 idempotent, 다른 내용은 충돌이다. 확인 키는 고유 sourceTask/제품입력/원시hash/scope다. 수집 횟수를 확인 횟수로 삼지 않는다. 제안·pending만 수집하고 기존 공통3회/adapter2회 승격 차이는 제안으로 남긴다.
 
-권장 공동운영은 collect의 `--store-root`와 bootstrap의 `--events-root`를 생략하여 동일한 registry.sharedStoreRoot를 사용하는 것이다. bootstrap은 같은 공유 store의 `<TASK>/<eventId>.json`을 읽어 최근 이벤트 5건의 보완점을 다음 브리프에 연결한다. 공유 store 연결 장애 때만 collect에 `--store-root <전용트리/reports/learning-pending>`을 지정해 로컬 pending을 보존하고, 해당 트리의 다음 bootstrap에 `--events-root`를 같은 경로로 준다. 외부 동기화 완료라고 표시하지 않는다. 복구 뒤 동일 eventId/원시hash/expectedSourceHash로 공유store에 수집하고 idempotent를 확인한다. source-root 생략은 세 명령 모두 canonical→repository fallback 순서이며 선택 이유와 fallback 상태를 결과에 표시한다. fallback 원천은 읽기 전용이고 정본 최신성은 미확인 pending으로 구분한다. 서로 다른 worktree 두 곳에서 공유 store로 수집한 두 보완점을 각각 다음 브리프에서 확인하는 실제 CLI 검사를 포함한다.
+bootstrap은 같은 공유 store의 `<TASK>/<eventId>.json`을 읽어 최근 이벤트 5건의 보완점을 다음 브리프에 연결한다. `--store-root`를 별도로 쓰면 다음 bootstrap의 `--events-root`에 같은 값을 준다. source-root 생략은 세 명령 모두 canonical→repository fallback 순서이며 선택 이유와 fallback 상태를 결과에 표시한다. fallback 원천은 읽기 전용이고 정본 최신성은 미확인 pending으로 구분한다. 서로 다른 worktree 두 곳에서 공유 store로 수집한 두 보완점을 각각 다음 브리프에서 확인하는 실제 CLI 검사를 포함한다.
 
 효과 후속은 같은 유형 다음 5건의 반복 결함 0·증거 불일치 0을 재고, 개입시간·품질 전후 표본 출처가 없으면 null이다. 아직 도구 효과를 향상이라고 선언하지 않는다. CLI 검사는 제출 무결성만 확인하며 제품 안전·법정 판정을 대체하지 않는다. 이 검사 fixture는 신규 도구 단위 검사용이고 제품 E2E가 아니다.
 
