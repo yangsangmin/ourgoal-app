@@ -56,6 +56,20 @@ console.log('Task:', manifest.task);
 console.log('Base commit (start):', manifest.baseCommitAtTaskStart);
 console.log('Latest origin/main commit:', manifest.latestOriginMainCommit);
 
+if (manifest.latestMainComparison) {
+  const comp = manifest.latestMainComparison;
+  console.log('Latest origin/main product input comparison:');
+  console.log(`  Measured base commit: ${comp.measuredBaseCommit}`);
+  console.log(`  Latest origin/main: ${comp.latestOriginMainCommit}`);
+  console.log(`  Product diff bytes: ${comp.productDiffBetweenMeasuredAndLatest}`);
+  console.log(`  Product input SHA identical: ${comp.productInputShaIdentical}`);
+  if (comp.productInputShaIdentical !== true || comp.productDiffBetweenMeasuredAndLatest !== 0) {
+    errors.push('latestMainComparison failed: product input SHA between measured and latest origin/main is not identical');
+  } else {
+    console.log(`  -> Latest origin/main product asset identity VERIFIED (diff: 0 bytes)`);
+  }
+}
+
 const manifestIds = new Set(manifest.items.map(it => it.id));
 for (const reqId of requiredItemIds) {
   if (!manifestIds.has(reqId)) {
@@ -223,4 +237,5 @@ if (errors.length > 0) {
 }
 
 console.log('\nALL EVIDENCE & MANIFEST INTEGRITY VERIFICATIONS PASSED (exit code 0)');
+console.log('NOTE: Local checker passing (exit code 0) is a worker self-verification check and does NOT constitute GitHub Court approval.');
 process.exit(0);

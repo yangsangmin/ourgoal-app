@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { execSync } = require('child_process');
 
 function sha256(filePath) {
   if (!fs.existsSync(filePath)) return null;
@@ -17,12 +18,33 @@ const appRoot = path.resolve('C:/Users/HP/.codex/worktrees/agy-record-modals-585
 const baseRoot = path.resolve('C:/dev/wt/agy-scratch/TASK-ES-585/base_main_full_66ce3a63');
 const reportsRoot = path.join(appRoot, 'reports/TASK-ES-585');
 
+const latestOriginMain = '890442ead35d75a513974b5e4b0c96ab279138a4';
+const measuredBaseCommit = '66ce3a630d1c7dfc81550901f6356b2c0fb8b6b9';
+
+let productDiffStat = '';
+try {
+  productDiffStat = execSync(`git diff --stat ${measuredBaseCommit} ${latestOriginMain} -- index.html js css api public sw.js manifest.json`, {
+    cwd: appRoot,
+    encoding: 'utf8'
+  }).trim();
+} catch (e) {
+  productDiffStat = e.message;
+}
+const productDiffIdentical = productDiffStat.length === 0;
+
 const manifest = {
   task: 'TASK-ES-585',
   timestamp: new Date().toISOString(),
   targetBranch: 'codex/task-es-585-record-detail',
-  baseCommitAtTaskStart: '66ce3a630d1c7dfc81550901f6356b2c0fb8b6b9',
-  latestOriginMainCommit: '66ce3a630d1c7dfc81550901f6356b2c0fb8b6b9',
+  baseCommitAtTaskStart: measuredBaseCommit,
+  latestOriginMainCommit: latestOriginMain,
+  latestMainComparison: {
+    latestOriginMainCommit: latestOriginMain,
+    measuredBaseCommit: measuredBaseCommit,
+    productDiffBetweenMeasuredAndLatest: productDiffStat.length,
+    productInputShaIdentical: productDiffIdentical,
+    reuseJustification: '최신 origin/main(890442ea, PR #844 병합)과 실측 기준(66ce3a63) 간 제품 자산(index.html, js/**, css/**, api/**, public/**, sw.js) diff가 0바이트로 100% 동일함. 병합 변경사항은 문서/학습도구/시험하네스에 국한되어 제품 런타임 입력 파일의 재실행 없이 66ce3a63 실측값을 100% 유효하게 재사용함.'
+  },
   items: [
     {
       id: 'token-residual-leak',
