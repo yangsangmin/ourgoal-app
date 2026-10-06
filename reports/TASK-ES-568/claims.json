@@ -1,0 +1,572 @@
+{
+ "task": "TASK-ES-568",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-568-NEXT-SPLIT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "교대근무 루틴·맞춤 설정·주기 함수를 목표 세포로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R2",
+   "text": "기록 성장차트·SVG·영역 필터 함수를 기록 세포로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R3",
+   "text": "목표 시트에서 보이는 홈 오늘 요약·3대퀘스트 함수를 홈 세포로 동작 그대로 옮긴다."
+  },
+  {
+   "id": "R4",
+   "text": "토큰·남은 글자 동일, 로드회귀0, 기준2회/작업1회 차이0, 전체시험 전후와 측정 스냅샷을 기록한다."
+  },
+  {
+   "id": "R5",
+   "text": "신고서·설명·생성기 설정·8원칙 REQ·티켓·dev_log를 기록한다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "교대근무 맞춤 설정·주기 창과 야간 루틴 적용 — 동작을 바꾸지 않고 옮긴 세포의 실제 게스트 화면 조작",
+   "touches": [
+    "js/tabs/goals/shift-routines.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/goals-shift-routines.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "기록 성장 차트 SVG와 영역 필터 변경 — 동작을 바꾸지 않고 옮긴 세포의 실제 게스트 화면 조작",
+   "touches": [
+    "js/tabs/records/growth-chart.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/records-growth-chart.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "오늘 목표 시트의 요약·퀘스트 및 할일 진입 — 동작을 바꾸지 않고 옮긴 세포의 실제 게스트 화면 조작",
+   "touches": [
+    "js/tabs/home/quest-summary.js",
+    "index.html"
+   ],
+   "scenario": "scenarios/home-quest-summary.json"
+  },
+  {
+   "id": "C4",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "verify-inline-hard.json ok 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "verify-inline-hard.json equivalent 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "verify-inline-hard.json restSame 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "seam-order-check.json ok 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/seam-order-check.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/seam-order-check.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "module-load-probe.json standaloneOk 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/module-load-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/module-load-probe.json",
+    "type": "jsonPath",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "guest-compare.json base1VsAfter.differing 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "guest-compare.json base1VsBase2.differing 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/guest-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/guest-compare.json",
+    "type": "jsonPath",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "scenario-local.json allPassedBoth 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/scenario-local.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/scenario-local.json",
+    "type": "jsonPath",
+    "path": "allPassedBoth",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "test-compare.json work.npmExit 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/test-compare.json",
+    "type": "jsonPath",
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "test-compare.json tests.exitDiff 측정 기록",
+   "touches": [
+    "reports/TASK-ES-568/test-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/test-compare.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff",
+    "equals": [
+     "tests/cell-map-export-es414.test.js"
+    ]
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/shift-routines\""
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "교대근무 루틴"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/design/harness/module-split/inline-next568.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-next568.json",
+    "type": "codeContains",
+    "text": "TASK-ES-568"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-568-NEXT-SPLIT.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-568-NEXT-SPLIT.md",
+    "type": "codeContains",
+    "text": "## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "- #TASK-ES-568 | INFRA |"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "TASK-ES-568"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/design/harness/module-split/prepare-next568.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/prepare-next568.js",
+    "type": "codeContains",
+    "text": "작업자 제출 자료"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/design/harness/module-split/guest-steps-next568.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/guest-steps-next568.json",
+    "type": "codeContains",
+    "text": "shift cycle"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 설정·기록 확인",
+   "touches": [
+    "docs/design/harness/module-split/guest-steps-next568-reach.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/guest-steps-next568-reach.json",
+    "type": "codeContains",
+    "text": "home quest sheet"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 측정 산출물 guest-reach.json",
+   "touches": [
+    "reports/TASK-ES-568/guest-reach.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/guest-reach.json",
+    "type": "jsonPath",
+    "path": "entered",
+    "equals": true
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 측정 산출물 guest-reach2.json",
+   "touches": [
+    "reports/TASK-ES-568/guest-reach2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/guest-reach2.json",
+    "type": "jsonPath",
+    "path": "entered",
+    "equals": true
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 측정 산출물 guest-base1.json",
+   "touches": [
+    "reports/TASK-ES-568/guest-base1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/guest-base1.json",
+    "type": "jsonPath",
+    "path": "entered",
+    "equals": true
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 측정 산출물 guest-base2.json",
+   "touches": [
+    "reports/TASK-ES-568/guest-base2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/guest-base2.json",
+    "type": "jsonPath",
+    "path": "entered",
+    "equals": true
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 측정 산출물 guest-after.json",
+   "touches": [
+    "reports/TASK-ES-568/guest-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/guest-after.json",
+    "type": "jsonPath",
+    "path": "entered",
+    "equals": true
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 측정 산출물 gen-inline-hard-meta.json",
+   "touches": [
+    "reports/TASK-ES-568/gen-inline-hard-meta.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/gen-inline-hard-meta.json",
+    "type": "jsonPath",
+    "path": "task",
+    "equals": "TASK-ES-568"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "작업 측정 산출물 snapshot-final.json",
+   "touches": [
+    "reports/TASK-ES-568/snapshot-final.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/snapshot-final.json",
+    "type": "jsonPath",
+    "path": "after.ratchet.oversizeJsFiles.count",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준·작업 측정 기록 test-probe.json",
+   "touches": [
+    "reports/TASK-ES-568/test-probe.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/test-probe.json",
+    "type": "jsonPath",
+    "path": "tests.exitDiff",
+    "equals": []
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준·작업 측정 기록 tab-base1.json",
+   "touches": [
+    "reports/TASK-ES-568/tab-base1.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/tab-base1.json",
+    "type": "jsonPath",
+    "path": "deadClickMode",
+    "equals": "off"
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준·작업 측정 기록 tab-base2.json",
+   "touches": [
+    "reports/TASK-ES-568/tab-base2.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/tab-base2.json",
+    "type": "jsonPath",
+    "path": "deadClickMode",
+    "equals": "off"
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준·작업 측정 기록 tab-after.json",
+   "touches": [
+    "reports/TASK-ES-568/tab-after.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/tab-after.json",
+    "type": "jsonPath",
+    "path": "deadClickMode",
+    "equals": "off"
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준·작업 측정 기록 tab-base-compare.json",
+   "touches": [
+    "reports/TASK-ES-568/tab-base-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/tab-base-compare.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "기준·작업 측정 기록 tab-after-compare.json",
+   "touches": [
+    "reports/TASK-ES-568/tab-after-compare.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-568/tab-after-compare.json",
+    "type": "jsonPath",
+    "path": "differingValues",
+    "equals": 0
+   }
+  }
+ ]
+}

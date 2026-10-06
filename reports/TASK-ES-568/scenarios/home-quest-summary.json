@@ -1,0 +1,73 @@
+{
+ "id": "home-quest-summary",
+ "title": "오늘 목표 시트의 요약·퀘스트 및 할일 진입",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "wait",
+   "ms": 1200
+  },
+  {
+   "do": "click",
+   "selector": "#homeCompassQuest"
+  },
+  {
+   "do": "wait",
+   "ms": 500
+  },
+  {
+   "expect": "visible",
+   "selector": "#todayGlancePill"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#todayGlancePill",
+   "text": "첫 기록 도전"
+  },
+  {
+   "expect": "visible",
+   "selector": "#dailyQuestBarWrap"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#dailyQuestBarWrap",
+   "text": "오늘의 3대 퀘스트"
+  },
+  {
+   "do": "click",
+   "selector": "#questItemMilestone"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "expect": "visible",
+   "selector": "#screen-goals.active"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

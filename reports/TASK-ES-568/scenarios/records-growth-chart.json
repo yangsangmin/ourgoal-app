@@ -1,0 +1,73 @@
+{
+ "id": "records-growth-chart",
+ "title": "기록 성장 차트 SVG와 영역 필터 변경",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "wait",
+   "ms": 1200
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "expect": "visible",
+   "selector": "#recFeedColdstartRadarSlot"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#recFeedColdstartRadarSlot",
+   "text": "3일 뒤 완성될 나의 6각 성장 차트"
+  },
+  {
+   "expect": "visible",
+   "selector": "#recFeedColdstartRadarSlot svg"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#recThemeFilters",
+   "text": "운동"
+  },
+  {
+   "do": "click",
+   "selector": "#recThemeFilters [data-filter=\"workout\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "expect": "visible",
+   "selector": "#recThemeFilters [data-filter=\"workout\"].active"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

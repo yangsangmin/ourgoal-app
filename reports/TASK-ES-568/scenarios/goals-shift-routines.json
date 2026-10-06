@@ -1,0 +1,106 @@
+{
+ "id": "goals-shift-routines",
+ "title": "교대근무 맞춤 설정·주기 창과 야간 루틴 적용",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "wait",
+   "ms": 1200
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"goals\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "do": "click",
+   "selector": "#btnGoalsSubRoutine"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "do": "click",
+   "selector": "#btnOpenShiftRoutineModal"
+  },
+  {
+   "do": "wait",
+   "ms": 500
+  },
+  {
+   "expect": "visible",
+   "selector": "#shiftWorkCustomModalContent"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#shiftWorkCustomModalContent",
+   "text": "교대근무 맞춤 루틴"
+  },
+  {
+   "do": "click",
+   "selector": "#btnShiftModalCycleLink"
+  },
+  {
+   "do": "wait",
+   "ms": 500
+  },
+  {
+   "expect": "visible",
+   "selector": "#btnSaveShiftCycle"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#modalOverlay",
+   "text": "교대근무 주기 순환"
+  },
+  {
+   "do": "click",
+   "selector": "#btnCancelShiftCycle"
+  },
+  {
+   "do": "wait",
+   "ms": 500
+  },
+  {
+   "do": "click",
+   "selector": "#btnShiftNight"
+  },
+  {
+   "do": "wait",
+   "ms": 800
+  },
+  {
+   "expect": "textContains",
+   "selector": "#routineGoalsView",
+   "text": "야간"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
