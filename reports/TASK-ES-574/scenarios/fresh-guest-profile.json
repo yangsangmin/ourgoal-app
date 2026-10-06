@@ -1,0 +1,65 @@
+{
+ "id": "fresh-guest-profile-preserved",
+ "title": "보이는 랜딩 버튼으로 기본 게스트 프로필을 만들고 홈과 기록을 오간다",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#captureInput",
+   "timeoutMs": 15000
+  },
+  {
+   "expect": "visible",
+   "selector": "#captureCardBox"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#toast.show",
+   "timeoutMs": 15000
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "게스트 모드로 시작했어요"
+  },
+  {
+   "expect": "visible",
+   "selector": "#captureInput"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "expect": "visible",
+   "selector": "#screen-records"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"home\"]"
+  },
+  {
+   "expect": "visible",
+   "selector": "#captureInput"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}

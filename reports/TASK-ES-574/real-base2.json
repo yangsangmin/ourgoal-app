@@ -1,0 +1,43 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "base2",
+ "mode": "test-account-A",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · test account A (address hidden) · temporary browser profile · read-only",
+ "countNames": [],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "로그인 홈 읽기",
+   "present": true,
+   "visible": false,
+   "textHash": "58679f10ebbd958f",
+   "textLen": 21,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": null
+  },
+  {
+   "name": "설정 프로필 읽기",
+   "present": true,
+   "visible": true,
+   "textHash": "3c77871f6233540b",
+   "textLen": 764,
+   "attrsHash": "03559c2b083d0d75",
+   "opened": null
+  }
+ ],
+ "errors": [],
+ "loggedIn": true,
+ "entered": true,
+ "globals": "defaultProfile/function",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 3,
+  "POST /rest/v1/checkins": 3
+ }
+}

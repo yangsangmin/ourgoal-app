@@ -1,0 +1,22 @@
+'use strict';
+// 실제 Court 방식 새 storage·임의 호스트에서 랜딩 버튼을 클릭한다. 원문/함수 수정·직접 호출·상태 주입 없음.
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),pp=require('C:/dev/command-center/node_modules/puppeteer-core');
+const root=path.resolve(process.argv[2]),out=process.argv[3],{start}=require(path.join(root,'court/lib/static-server')),cfg=require(path.join(root,'court/config.json'));
+const host=process.env.PROFILE_HOST574||require(path.join(root,'court/lib/site-host')).pickSiteHost(),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const server=await start(root,cfg.denyServePrefixes),url='http://'+host+':'+server.port,browser=await pp.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--no-sandbox','--disable-gpu','--lang=ko-KR','--host-resolver-rules=MAP '+host+' 127.0.0.1, MAP * ~NOTFOUND','--unsafely-treat-insecure-origin-as-secure='+url]});
+ const report={kind:'작업자 실제 게스트 UI 측정 — 법정 판정 아님',host,steps:[],pageerrors:[],consoleErrors:[],rawCoverage:[],completed:false};
+ try{const ctx=await browser.createBrowserContext(),page=await ctx.newPage(),cdp=await page.createCDPSession();await page.setViewport({width:430,height:1800});
+ const stubs=(cfg.stubs||[]).map(s=>({...s,re:new RegExp('^'+s.urlPattern.split('*').map(x=>x.replace(/[.+?^${}()|[\]\\]/g,'\\$&')).join('.*')+'$')}));
+ await page.setRequestInterception(true);page.on('request',r=>{const s=stubs.find(s=>s.re.test(r.url()));if(s)return r.respond({status:200,contentType:s.contentType||'application/javascript',body:fs.readFileSync(path.join(root,'court',s.file))});if(new URL(r.url()).hostname!==host)return r.abort();r.continue();});
+ page.on('pageerror',e=>report.pageerrors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.consoleErrors.push(m.text());});
+ await cdp.send('Profiler.enable');await cdp.send('Profiler.startPreciseCoverage',{callCount:true,detailed:true});await page.goto(url+'/index.html',{waitUntil:'networkidle2'});await sleep(1200);
+ report.initial=await page.evaluate(()=>({storageKeys:Object.keys(localStorage),profile:window.OurgoalAppScope?.scope?.state?.profile||null,landingVisible:!!document.querySelector('#btnLandingPreviewDirect')&&getComputedStyle(document.querySelector('#btnLandingPreviewDirect')).display!=='none'}));
+ await cdp.send('Profiler.takePreciseCoverage');
+ const save=async name=>report.steps.push({name,...await page.evaluate(()=>({windowExposure:{type:typeof window.defaultProfile,name:window.defaultProfile?.name,arity:window.defaultProfile?.length},state:window.OurgoalAppScope?.scope?.state?.profile||null,saved:localStorage.getItem('ourgoal_guest_profile'),home:document.querySelector('#homeGreeting')?.outerHTML,capture:document.querySelector('#captureCardBox')?.outerHTML,toast:document.querySelector('#toast')?.outerHTML,activeTab:window.OurgoalAppScope?.scope?.state?.activeTab}))});
+ const btn=await page.$('#btnLandingPreviewDirect');if(!btn||!await btn.isIntersectingViewport())throw Error('보이는 랜딩 버튼 없음');await btn.click();await page.waitForFunction(()=>{const s=window.OurgoalAppScope?.scope?.state?.profile?.settings;return s?.notifications?.cheerActivities===true&&s?.notifications?.streakReminders===true&&s?.notifDm===true;},{timeout:10000});await sleep(150);await save('실제 랜딩 게스트 버튼 클릭');
+ const raw=await cdp.send('Profiler.takePreciseCoverage');report.rawCoverage=raw.result.filter(x=>x.functions.some(f=>f.functionName==='defaultProfile'));report.defaultProfileCalls=report.rawCoverage.flatMap(s=>s.functions.filter(f=>f.functionName==='defaultProfile').map(f=>({url:s.url.replace(url,'<site>'),ranges:f.ranges})));report.actualCallCount=report.defaultProfileCalls.reduce((n,f)=>n+(f.ranges[0]?.count||0),0);
+ await page.click('.navbtn[data-tab="records"]');await sleep(700);await save('기록 탭 진입');await page.click('.navbtn[data-tab="home"]');await sleep(500);await save('홈 복귀');
+ report.completed=report.initial.profile===null&&report.actualCallCount===1&&!!report.steps[0].saved&&report.pageerrors.length===0;
+ }catch(e){report.error=e.stack;}finally{await browser.close();await server.close();fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(report,null,1)+'\n','utf8');}
+ console.log(JSON.stringify({completed:report.completed,actualCallCount:report.actualCallCount,steps:report.steps.length,pageerrors:report.pageerrors.length,error:report.error||null}));if(!report.completed)process.exitCode=1;
+})();
