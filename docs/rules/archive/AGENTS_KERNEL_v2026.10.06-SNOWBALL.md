@@ -1,8 +1,8 @@
-# [정본] 아워골 최고 헌법 v2026.10.07-PRESERVATION (v2026.10.06-SNOWBALL + 동작 보존 증명: CELL_SPLIT 기반 원문 이전 및 동작 무변경에 한정하여 기계적 토큰 검증, DOM/스토리지 일치, 부품 누수 없음을 필수로 요구하는 판정 도입. 발효 예정)
+# [정본] 아워골 최고 헌법 v2026.10.06-SNOWBALL (OurGoal Supreme Constitution v2026.10.06-SNOWBALL)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.07-PRESERVATION (v2026.10.06-SNOWBALL + 동작 보존 증명: 리팩토링·모듈 분할 시 기계적 토큰 검증, DOM/스토리지 일치, 부품 누수 없음을 요구하는 동작 보존(preserve) 판정 추가). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.  
+> **버전**: v2026.10.06-SNOWBALL (v2026.10.05-CELL + 작업참고 스노우볼: 모든 에이전트가 매 작업 전 최신 작업참고를 읽고 유형 분류 → 표준·이탈·탐색으로 깊게 추론하며, PR 병합마다 경험칙을 갱신하는 진화 체계 편입 개정). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.  
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
 > **사본**: `AGENTS.md` · `CLAUDE.md` · `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 는 한 글자도 다르지 않은 같은 내용으로 함께 고친다(`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
 > **법령 전문**: 조·항·호 단위 상세는 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`, 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
@@ -102,7 +102,7 @@
         (나) 위임 병합: 상민님이 병합을 세션에 맡긴 작업(전역 지침 2026-09-08 "안 묻는다: 구현·검증·PR·병합")에서 아래 병합 기준을 모두 만족할 때.
       </trigger>
       <merge_criteria id="MERGE_GATE">
-        1. 법정 판정이 "통과"(또는 CELL_SPLIT 분열 한정 "동작 보존 확인")이거나, "확인 부족"이면서 그 부족 목록이 전부 법정 도구 한계로 못 잰 항목(`needs-login`·`needs-two-accounts`·`needs-live-server`·`needs-real-device` 등 법정이 정한 사유)뿐일 때만 병합한다.
+        1. 법정 판정이 "통과"이거나, "확인 부족"이면서 그 부족 목록이 전부 법정 도구 한계로 못 잰 항목(`needs-login`·`needs-two-accounts`·`needs-live-server`·`needs-real-device` 등 법정이 정한 사유)뿐일 때만 병합한다.
            주장이 안 걸린 제품 파일·잴 수 있는데 재지 않은 항목이 부족 목록에 있으면 병합하지 않고 고친다.
         2. "돌려보냄"·"심사 못 함"은 병합하지 않는다.
         3. 금고(별표 3) 변경·헌법 개정을 담은 PR 은 위임 병합 대상이 아니다. 상민님의 "금고 변경 승인" 또는 "헌법 개정 승인" 문구가 있어야 한다("1"·"진행"으로는 승인되지 않는다).
@@ -542,11 +542,9 @@
       <clause id="8.1">작업 진행 상황은 REQ -> PLAN -> Code -> Draft PR -> Main Merge -> Verification의 6단계를 엄격히 준수한다.</clause>
       <clause id="8.2">PR 본문과 저장소 보고서는 [개요, REQ/PLAN, 핵심 변경사항, Claims, 법정 판정서]의 5대 고정 블록 서식을 미세 변형 없이 준수한다.</clause>
       <clause id="8.3">상민님께 드리는 대화 보고는 쉬운 말로, 결심이 필요 없으면 "한 것 / 측정으로 검증한 것 / 다음에 열리는 것" 세 덩어리로 쓰고 질문으로 끝내지 않는다. 결심이 필요하면 제5조 제3항 형식을 쓴다. "애매하게" 보고하지 않는다 — 결국 뭐가 문제고 뭐 하면 되는지 한 줄로 적는다.</clause>
-    
-        <clause id="8.4">제8조 제3항 10호 (동작 보존의 증명): CELL_SPLIT 기반의 원문 이전 및 동작 무변경(기존 버그 보존 포함)에 한정하여 동작 보존(preserve)을 주장할 수 있으며, 이때는 기계적인 토큰 검증, DOM/스토리지 일치, 부품 누수 없음을 검증하는 분할 증명서(CELL_SPLIT_PROOF)를 필수 제출하고 법정의 "동작 보존 확인" 판정을 받아야 한다. 일반 리팩터링이나 fix/new 등은 동작 보존 판정의 대상이 될 수 없다.</clause>
-      </article>
+    </article>
 
-      <article id="ARTICLE_09" title="배포 안전핀 및 PLAN 체크리스트 승격 규칙">
+    <article id="ARTICLE_09" title="배포 안전핀 및 PLAN 체크리스트 승격 규칙">
       <clause id="9.1">PLAN 문서의 체크리스트는 원격 머지 이전까지 오직 [4단계: 심사 청구]까지만 기록할 수 있다.</clause>
       <clause id="9.2">상민님의 명시적 승인(배포, 1, 머지 승인) 또는 위임 병합 기준(MODE_4B MERGE_GATE)을 만족한 병합이 원격 main 에 들어간 후에만 5단계(배포 완료) 및 6단계(원격 검증)로 승격 표기할 수 있다.</clause>
       <clause id="9.3">위임 병합은 법정 판정이 "통과"이거나 "확인 부족" 중 법정 도구 한계로 못 잰 항목만 남은 경우에 한한다. 금고·헌법 변경, 지시함 변경, 승인선 다섯 가지에 걸리는 변경은 위임 병합 대상이 아니다.</clause>

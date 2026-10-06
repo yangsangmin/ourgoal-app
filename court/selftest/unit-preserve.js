@@ -69,9 +69,9 @@ const TESTS = [
         const mockH = { captures: [{ dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', err: 'E', modal: 'F' }] };
         const mockB = { captures: [{ dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', err: 'E', modal: 'F' }] };
         const mockB2 = { captures: [{ dom: 'A', localStorage: 'B', sessionStorage: 'C', toast: 'D', err: 'E', modal: 'F' }] };
-        const ctx = { scenarioResults: { H: mockH, B: mockB, B2: mockB2 }, base: { sha: 'base123' }, head: { sha: 'head123' } };
+        const ctx = { scenarioResults: { H: mockH, B: mockB, B2: mockB2 }, base: { sha: '000000000000000000000000000000000000ba5e' }, head: { sha: '000000000000000000000000000000000000beef' } };
 
-        writeTree(dir, { 'proof.json': validProof, 'token.json': validToken });
+        writeTree(dir, { 'proof.json': validProof, 'token.json': validToken, 'moduleLoad.json': { newRegressionCount: 0 }, 'testSuite.json': { tests: { regressionCount: 0 } }, 'tab.json': { differingValues: 0 } });
         const resOk = preserveLib.verifyCellSplitProof(dir, claim, ctx);
         t.ok(resOk.ok, '정상 splitProof 검증 통과');
 

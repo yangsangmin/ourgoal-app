@@ -238,12 +238,12 @@ async function judgeClaim(ctx, claim) {
   // 예산은 시험을 시작하기 전에만 본다: 이미 시작한 시험은 끝까지(결과가 갈리면 다시 돌려 보는 것까지) 마친다 — 돌리다 만 결과로 판정하지 않는다.
   if (pastDeadline(ctx)) return timeShort(out, '주장 심사에 쓸 수 있는 시간이 다 돼서 이 시험은 돌려 보지 못했다.');
   const runner = ctx.runScenario || runScenario;
-  const H = await runner({ scenario, siteUrl: head.url, siteRev: head.sha, outDir: outDir ? path.join(outDir, 'head') : null, config });
-  const B = await runner({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: outDir ? path.join(outDir, 'base') : null, config });
+  const H = await runner({ scenario, siteUrl: head.url, siteRev: head.sha, outDir: outDir ? path.join(outDir, 'head') : null, config, preserveOnly: claim.change === 'preserve' });
+  const B = await runner({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: outDir ? path.join(outDir, 'base') : null, config, preserveOnly: claim.change === 'preserve' });
   out.evidence = { type: 'scenario', scenarioId: scenario.id, title: scenario.title, steps: scenario.steps, head: slim(H), base: slim(B) };
   if (H.failKind === 'tool' || B.failKind === 'tool') { out.outcome = OUTCOME.CANNOT_JUDGE; out.notes.push('도구 오류: ' + (H.toolError || B.toolError || '')); return out; }
   if (claim.change === 'preserve') {
-    const B2 = await runner({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: outDir ? path.join(outDir, 'base2') : null, config });
+    const B2 = await runner({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: outDir ? path.join(outDir, 'base2') : null, config, preserveOnly: claim.change === 'preserve' });
     out.evidence.base2 = slim(B2);
     if (B2.failKind === 'tool') {
       out.outcome = OUTCOME.CANNOT_JUDGE;
