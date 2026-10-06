@@ -1,15 +1,19 @@
 'use strict';
-const { fs, path, stable, sha, hashFile, inside, safeId } = require('./common');
+const { fs, path, stable, sha, hashFile, inside, safeId, json } = require('./common');
 const { validateEvent } = require('./validate');
 function collectEvent(event, options) {
   const checked = validateEvent(event, options);
   if (!checked.integrityValid) throw Error('INVALID_EVENT: ' + checked.errors.join(', '));
-  const store = path.resolve(options.storeRoot);
+  const registry=json(path.join(options.registryRoot,'registry.json'));
+  const shared=registry.sharedStoreRoot&&path.resolve(registry.sharedStoreRoot);
+  const store = path.resolve(options.storeRoot || shared);
   const rel = path.relative(path.resolve(options.repoRoot), store);
-  if (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel)) throw Error('STORE_OUTSIDE_REPO');
+  const local=rel!== '..'&&!rel.startsWith('..'+path.sep)&&!path.isAbsolute(rel);
+  if (!local && (!shared || path.relative(shared,store)!=='')) throw Error('STORE_OUTSIDE_ALLOWED_ROOT');
   if (store === path.resolve(options.sourceRoot) || store.startsWith(path.resolve(options.sourceRoot) + path.sep)) throw Error('CANONICAL_STORE_FORBIDDEN');
   fs.mkdirSync(store, { recursive: true });
-  inside(options.repoRoot, store);
+  if(local)inside(options.repoRoot, store);
+  else if(path.relative(store,fs.realpathSync(store))!=='')throw Error('STORE_SYMLINK');
   const physicalStore = fs.realpathSync(store);
   const physicalSource = fs.realpathSync(options.sourceRoot);
   if (physicalStore === physicalSource || physicalStore.startsWith(physicalSource + path.sep)) throw Error('CANONICAL_STORE_FORBIDDEN');

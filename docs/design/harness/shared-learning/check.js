@@ -84,6 +84,41 @@ async function main() {
   const files=fs.readdirSync(path.join(concurrentStore,'TASK-ES-584')).filter(f=>!f.endsWith('.pending.json'));
   results.push({name:'cas-parallel',matched:files.length===1&&parallel.every(r=>r.code===0||r.stderr.includes('COLLECT_LOCKED')),outputs:parallel.map(r=>r.code)});
   results.push({name:'canonical-unchanged',matched:hashFile(path.join(source,'lessons.json'))===sourceBefore});
+  // Two independent checkouts share one explicitly registered store outside both.
+  const sharedRegistry=path.join(sandbox,'shared-registry');
+  fs.cpSync(registry,sharedRegistry,{recursive:true});
+  const sharedStore=path.join(sandbox,'shared-event-store');
+  const reg=json(path.join(sharedRegistry,'registry.json'));
+  reg.sharedStoreRoot=sharedStore;reg.sources.canonicalRoot=source;
+  write(path.join(sharedRegistry,'registry.json'),reg);
+  const childRoots=['session-a','session-b'].map(n=>path.join(sandbox,n));
+  for(const [i,child]of childRoots.entries()){
+    fs.mkdirSync(child,{recursive:true});write(path.join(child,'product-input.txt'),'same measured input\n');
+    write(path.join(child,'participants.json'),[{tool:i?'unknown':'claude',role:'worker',worktree:child,owns:['product-input.txt'],allowedActions:['read','unit-check']}]);
+    const out=path.join(child,'bootstrap.json'),brief=path.join(child,'brief.md');
+    run('shared-bootstrap-'+i,['bootstrap','--repo-root',child,'--registry-root',sharedRegistry,'--participants',path.join(child,'participants.json'),'--task-id','TASK-SESSION-'+i,'--task-kind','shared-learning','--out',out,'--brief',brief],0);
+    const boot=json(out);const input=[{path:'product-input.txt',sha256:hashFile(path.join(child,'product-input.txt'))}];const digest=sha(stable(input));
+    const raw={command:process.execPath,args:['unit-measure'],inputProductSha:digest,exitCode:0,scope:'tool-unit',sourceTask:'TASK-SESSION-'+i,measuredAt:new Date().toISOString(),result:{unitOnly:true}};
+    write(path.join(child,'raw.json'),raw);
+    const e={...clone(event),eventId:'shared-event-'+i,taskId:'TASK-SESSION-'+i,participants:boot.participants,readReceipt:boot.readReceipt,appliedLessons:boot.appliedLessons,briefPath:'brief.md',inputProductSha:digest,evidence:[{...raw,checkerId:'submission-integrity',inputFiles:input,rawPath:'raw.json',rawSha256:hashFile(path.join(child,'raw.json')),publishedPath:'raw.json',publishedSha256:hashFile(path.join(child,'raw.json')),redaction:{mode:'none',transforms:[]},status:'measured'}],lessonCandidates:[{proposal:'shared-improvement-'+i}],createdAt:new Date().toISOString()};
+    write(path.join(child,'event.json'),e);
+    write(path.join(child,'roots.json'),[sandbox,repo,'C:/dev/agy-collab']);
+    run('shared-collect-'+i,['collect','--repo-root',child,'--registry-root',sharedRegistry,'--read-roots',path.join(child,'roots.json'),'--event',path.join(child,'event.json'),'--expected-source-hash',expected],0);
+  }
+  for(const [i,child]of childRoots.entries()){
+    const out=path.join(child,'next-bootstrap.json'),brief=path.join(child,'next-brief.md');
+    run('shared-next-bootstrap-'+i,['bootstrap','--repo-root',child,'--registry-root',sharedRegistry,'--participants',path.join(child,'participants.json'),'--task-id','TASK-NEXT-'+i,'--task-kind','shared-learning','--out',out,'--brief',brief],0);
+    const b=json(out);const text=fs.readFileSync(brief,'utf8');
+    results.push({name:'shared-next-both-improvements-'+i,matched:b.recentEventIds.includes('shared-event-0')&&b.recentEventIds.includes('shared-event-1')&&text.includes('shared-improvement-0')&&text.includes('shared-improvement-1')});
+  }
+  const fallbackRegistry=path.join(sandbox,'fallback-registry');fs.cpSync(sharedRegistry,fallbackRegistry,{recursive:true});
+  const fallbackReg=json(path.join(fallbackRegistry,'registry.json'));fallbackReg.sources.canonicalRoot=path.join(sandbox,'unavailable-source');fallbackReg.sources.fallbackRoot='fallback';write(path.join(fallbackRegistry,'registry.json'),fallbackReg);
+  fs.cpSync(source,path.join(childRoots[0],'fallback'),{recursive:true});
+  const fallbackChild=childRoots[0];
+  run('fallback-default-bootstrap',['bootstrap','--repo-root',fallbackChild,'--registry-root',fallbackRegistry,'--participants',path.join(fallbackChild,'participants.json'),'--task-id','TASK-FALLBACK','--task-kind','shared-learning','--out',path.join(fallbackChild,'fallback-boot.json'),'--brief',path.join(fallbackChild,'fallback-brief.md')],0);
+  const fboot=json(path.join(fallbackChild,'fallback-boot.json'));const fe=json(path.join(fallbackChild,'event.json'));fe.readReceipt=fboot.readReceipt;fe.appliedLessons=fboot.appliedLessons;fe.briefPath='fallback-brief.md';write(path.join(fallbackChild,'fallback-event.json'),fe);
+  run('fallback-default-validate',['validate','--repo-root',fallbackChild,'--registry-root',fallbackRegistry,'--read-roots',path.join(fallbackChild,'roots.json'),'--event',path.join(fallbackChild,'fallback-event.json')],0);
+  results.push({name:'fallback-selection-visible',matched:fboot.sourceSelection.fallback===true&&fboot.source.fallback===true});
   const summary={measurementOnly:true,productVerdict:null,rawRoot:path.relative(repo,rawRoot),fixturePurpose:'new-cli-unit-only; no product E2E',cases:results,total:results.length,matched:results.filter(r=>r.matched).length,unmatched:results.filter(r=>!r.matched),effectImprovement:null,measuredAt:new Date().toISOString()};
   write(path.join(reports,'cli-check.json'),summary);console.log(JSON.stringify(summary,null,2));
   if(summary.unmatched.length)process.exitCode=2;

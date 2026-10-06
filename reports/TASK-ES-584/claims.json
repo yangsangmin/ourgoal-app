@@ -202,6 +202,22 @@
         "path": "scopeBoundaryRejected",
         "equals": true
       }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "공유이벤트 저장소는 명시된 발견 registry 경로로 연결한다.",
+      "touches": [
+        "docs/agents/shared-learning/registry.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/agents/shared-learning/registry.json",
+        "path": "sharedStoreRoot",
+        "equals": "C:/dev/agent-learning-events"
+      }
     }
   ]
 }

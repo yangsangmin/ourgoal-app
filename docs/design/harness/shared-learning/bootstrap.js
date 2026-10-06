@@ -1,5 +1,5 @@
 'use strict';
-const { fs, path, json, sha, stable, receipt, sourceSnapshot } = require('./common');
+const { fs, path, json, sha, stable, receipt, sourceSnapshot, inside } = require('./common');
 function bootstrap(options) {
   const registryRoot = path.resolve(options.registryRoot);
   const registry = json(path.join(registryRoot, 'registry.json'));
@@ -45,12 +45,18 @@ function bootstrap(options) {
     return { id: l.id, versionHash: sha(stable(l)), scope, briefSection: section,
       checkerId: 'manual-with-evidence', disposition: 'planned' };
   });
-  const eventsRoot = options.eventsRoot;
+  const eventsRoot = options.eventsRoot || registry.sharedStoreRoot;
   const recent = [];
   if (eventsRoot && fs.existsSync(eventsRoot)) {
-    for (const task of fs.readdirSync(eventsRoot)) {
-      const file = path.join(eventsRoot, task, 'learning-event.json');
-      if (fs.existsSync(file)) { const e = json(file); recent.push({ file, event: e }); }
+    if(path.relative(path.resolve(eventsRoot),fs.realpathSync(eventsRoot))!=='')throw Error('EVENT_STORE_SYMLINK');
+    for (const task of fs.readdirSync(eventsRoot,{withFileTypes:true}).filter(d=>d.isDirectory())) {
+      const folder=path.join(eventsRoot,task.name);
+      for(const name of fs.readdirSync(folder).filter(n=>n.endsWith('.json')&&!n.endsWith('.pending.json'))){
+        const file=path.join(folder,name);
+        if(fs.lstatSync(file).isSymbolicLink()) throw Error('EVENT_STORE_SYMLINK');
+        const e=json(inside(eventsRoot,file));
+        if(e.taskId&&e.eventId&&Array.isArray(e.lessonCandidates))recent.push({file,event:e});
+      }
     }
     recent.sort((a, b) => String(b.event.createdAt || '').localeCompare(String(a.event.createdAt || '')));
     for (const r of recent.slice(0, 5)) {
@@ -69,7 +75,7 @@ function bootstrap(options) {
         referenceSha256: other.referenceSha256, headerCountMatches: other.headerCountMatches,
         sameLedger: other.ledgerSha256 === source.ledgerSha256,
         missingOrChangedIds: source.lessons.filter(l => otherLessons.get(l.id) !== sha(stable(l))).map(l => l.id) } },
-    missingSources, readReceipt: receiptList, appliedLessons,
+    missingSources, eventsRoot, recentEventIds:recent.slice(0,5).map(r=>r.event.eventId), readReceipt: receiptList, appliedLessons,
     effectFollowup: registry.effectFollowup, generatedAt: new Date().toISOString() };
 }
 module.exports = { bootstrap };
