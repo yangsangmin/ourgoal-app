@@ -555,7 +555,7 @@ async function judge(opts) {
       for (const n of v.boot.insufficient) if (!already.has(n)) warn(/^표준 점검/.test(n) ? '표준 점검 사용 불가' : '앱 띄우기 비교가 흔들림', n);
 
       if (docOk) {
-        const ctx = { claimsDir: path.join(headSnap.dir, path.dirname(v.claimsFile)), base, head, floors, config: cfg };
+        const ctx = { claimsDir: path.join(headSnap.dir, path.dirname(v.claimsFile)), base, head, floors, config: cfg, repoDir: repo, changedFiles: changed.map(f => f.path) };
         // 주장 심사 시간 예산. 화면에서 돌려 보는 주장이 많으면 GitHub 의 시간 제한에 걸려 판정서 없이 끝난다 — 성실하게 시험을 낸 작업일수록 불리해진다.
         // 예산을 넘기면 남은 화면 주장은 돌리지 않고 "확인 못 함(시간 부족)"으로 내린다(글자 확인·확인 못 함·철회는 시간이 들지 않으므로 끝까지 본다). 판정서는 반드시 남긴다.
         phase('주장 심사(' + doc.claims.length + '건)');

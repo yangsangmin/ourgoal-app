@@ -36,7 +36,7 @@ const CANNOT_BECAUSE_SHORT = {
   'needs-login': '로그인 뒤 화면', 'file-attach': '파일 첨부', 'native-dialog': '기기·브라우저가 띄우는 창', 'camera-mic-share': '카메라·마이크·화면 공유',
   'push-notification': '푸시 알림', 'payment-window': '결제 창', 'external-page': '다른 사이트로 이동', 'long-duration': '오래 걸리는 동작', 'visual-quality': '보기 좋은지(사람 눈)',
 };
-const STATIC_TYPES = ['jsonPath', 'fileExists', 'codeContains', 'codeNotContains'];
+const STATIC_TYPES = ['jsonPath', 'fileExists', 'codeContains', 'codeNotContains', 'sourcePreservation'];
 const MEASURABLE_SCREEN_TOP = 'L3'; // 기본 화면 단일 세션에서 필수 제출되는 하한(PC 화면에서 눌러 봄)
 const MEASURABLE_TOP = 'L5'; // 법정이 직접 잴 수 있는 가장 높은 수준(진짜 폰 신호·다중 계정 모의 포함)
 // "무엇을 하면(행동) 무엇이 된다(결과)"를 말하는 문장. 이런 주장은 눌러 보면 되는 것이라 "눈으로 봐야 아는 품질"이라는 사유로는 받지 않는다.
@@ -97,6 +97,7 @@ function claimErrors(c, label, reqIds) {
     if (!k || !STATIC_TYPES.includes(k.type) || typeof k.file !== 'string' || k.file.includes('..')) errors.push(at + 'check 는 {type: ' + STATIC_TYPES.join('|') + ', file}');
     else if (k.type === 'jsonPath' && (typeof k.path !== 'string' || !Object.prototype.hasOwnProperty.call(k, 'equals'))) errors.push(at + 'jsonPath 는 path·equals 필요');
     else if ((k.type === 'codeContains' || k.type === 'codeNotContains') && (typeof k.text !== 'string' || k.text.length < 4)) errors.push(at + 'codeContains 는 text(4자 이상) 필요');
+      else if (k.type === 'sourcePreservation' && typeof k.config !== 'string') errors.push(at + 'sourcePreservation 은 config(파일 경로) 필요');
     // 검사하는 파일은 "이 주장이 걸린 파일"에 들어 있어야 한다. 빼고 적으면 그 파일의 경로 하한(화면 코드는 화면에서 봐야 한다)을 피해 갈 수 있다.
     if (k && typeof k.file === 'string' && Array.isArray(c.touches) && !c.touches.includes(k.file)) errors.push(at + 'check.file(' + k.file + ') 이 touches 에 없다 — 검사하는 파일은 이 주장이 걸린 파일이어야 한다');
   }
@@ -168,8 +169,18 @@ function effectiveFloor(claim, floors) {
 
 function getPath(obj, dotted) { return dotted.split('.').reduce((o, k) => (o && typeof o === 'object' ? o[k] : undefined), obj); }
 
-function judgeStatic(claim, headDir) {
+function judgeStatic(claim, headDir, ctx) {
   const k = claim.check;
+  if (k.type === 'sourcePreservation') {
+    const { recomputeSplit } = require('./lib/preserve-source.js');
+    const configAbs = path.join(headDir, k.config);
+    if (!fs.existsSync(configAbs)) return { ok: false, detail: k.config + ' 없음' };
+    let configObj;
+    try { configObj = JSON.parse(fs.readFileSync(configAbs, 'utf8')); } catch(e) { return { ok: false, detail: '설정 파일 파싱 실패' }; }
+    const result = recomputeSplit({ repoDir: ctx.repoDir, baseSha: ctx.base.sha, headSha: ctx.head.sha, config: configObj, changedFiles: ctx.changedFiles });
+    if (!result.ok) return { ok: false, detail: result.reason };
+    return { ok: true, detail: '소스 보존 증명 통과 (' + result.details.checkedFiles.length + '개 파일)' };
+  }
   const fp = path.join(headDir, k.file);
   const exists = fs.existsSync(fp) && fs.statSync(fp).isFile();
   if (k.type === 'fileExists') return { ok: exists, detail: k.file + (exists ? ' 있음' : ' 없음') + ' (커밋된 트리 기준)' };
@@ -180,6 +191,7 @@ function judgeStatic(claim, headDir) {
     const v = getPath(j, k.path);
     return { ok: JSON.stringify(v) === JSON.stringify(k.equals), detail: k.path + ' = ' + JSON.stringify(v) + ' (기대 ' + JSON.stringify(k.equals) + ', 값을 파싱해서 비교)' };
   }
+  
   const code = stripByExt(k.file, src);
   const n = code.split(k.text).length - 1;
   if (k.type === 'codeContains') return { ok: n > 0, detail: '주석을 걷어낸 코드에서 ' + n + '회' };
@@ -219,7 +231,7 @@ async function judgeClaim(ctx, claim) {
     return out;
   }
   if (claim.kind === 'static') {
-    const r = judgeStatic(claim, head.dir);
+    const r = judgeStatic(claim, head.dir, ctx);
     out.evidence = { type: 'static', detail: r.detail };
     out.achieved = r.ok ? 'L1' : 'L0';
     out.outcome = r.ok ? OUTCOME.TEXT_ONLY : OUTCOME.NOT_WORKING;
