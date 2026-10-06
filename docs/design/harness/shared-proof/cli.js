@@ -1,18 +1,19 @@
 'use strict';
-const {fs,path,read,equal,isHash,codeHash,object} = require('./common');
+const {fs,path,sha,safeFile,read,equal,isHash,codeHash,object,negativeCaseGates} = require('./common');
 const {preflight,adapterErrors} = require('./preflight');
 const {checkDynamic} = require('./dynamic-contract');
 const {compare} = require('./compare');
 function evaluate(request, evidenceRoot, inputRoots) {
   const errors=[], gates={schema:false,input:false,dynamic:false,baseline:false,work:false,sensitivity:false};
   const add=(gate,code,field)=>errors.push({gate,code,field});
-  let adapter, runs=[];
+  let adapter, runs=[], actualReadInputShas=[];
   try {
     if(!object(request) || request.schema!=='shared-proof-request/1' || !Array.isArray(request.runs) || request.runs.length!==3 || !equal(request.runs.map(x=>x.role),['base1','base2','after'])) throw Error('REQUEST_SCHEMA');
     adapter=read(evidenceRoot,request.adapter.path,request.adapter.sha256).value;
     const ae=adapterErrors(adapter); ae.forEach(e=>add('schema',e.code,e.field));
     if(ae.length) return result();
     gates.schema=true;
+    actualReadInputShas=request.runs.map(r=>{try{return sha(fs.readFileSync(safeFile(evidenceRoot,r.path)));}catch{return null;}});
     for(const r of request.runs) {
       const raw=read(evidenceRoot,r.path,r.sha256);
       const re=preflight(raw.value,adapter,{...r.binding,adapterSha256:request.adapter.sha256},inputRoots[r.role]);
@@ -32,12 +33,12 @@ function evaluate(request, evidenceRoot, inputRoots) {
       const audit=read(evidenceRoot,request.sensitivity.path,request.sensitivity.sha256).value;
       if(!object(audit) || audit.schema!=='shared-proof-sensitivity/1' || audit.independent!==true || audit.coreSha256!==codeHash() || audit.adapterSha256!==request.adapter.sha256 || !equal(audit.inputShas,request.runs.map(r=>r.sha256)) || !Array.isArray(audit.cases) || !equal(audit.cases.map(c=>c.id).sort(),[...adapter.negativeCases].sort())) add('sensitivity','AUDIT_BINDING_OR_CASES','sensitivity');
       else for(const c of audit.cases) {
-        if(!Number.isInteger(c.changedExistingValues) || c.changedExistingValues<1 || !Number.isInteger(c.exitCode) || c.exitCode===0 || typeof c.rejectionGate!=='string' || !Object.hasOwn(gates,c.rejectionGate) || !isHash(c.mutatedRawSha256) || !isHash(c.resultSha256)) add('sensitivity','AUDIT_CASE_UNMEASURED',`sensitivity/${c.id}`);
+        if(!Number.isInteger(c.changedExistingValues) || c.changedExistingValues<1 || !Number.isInteger(c.exitCode) || c.exitCode===0 || c.rejectionGate!==negativeCaseGates[c.id] || !isHash(c.mutatedRawSha256) || !isHash(c.resultSha256)) add('sensitivity','AUDIT_CASE_UNMEASURED',`sensitivity/${c.id}`);
         else {
           const raw=read(evidenceRoot,c.mutatedRawPath,c.mutatedRawSha256);
           const measured=read(evidenceRoot,c.resultPath,c.resultSha256).value;
           const originalShas=request.runs.map(r=>r.sha256);
-          const recordedShas=measured.inputShas;
+          const recordedShas=measured.actualReadInputShas;
           if(!object(raw.value) || measured.exitCode!==c.exitCode || measured.coreSha256!==codeHash() || measured.adapterSha256!==request.adapter.sha256 || !Array.isArray(recordedShas) || recordedShas.length!==3 || !recordedShas.includes(c.mutatedRawSha256) || recordedShas.some((s,i)=>s!==originalShas[i]&&s!==c.mutatedRawSha256) || !Array.isArray(measured.errors) || !measured.errors.some(e=>e.gate===c.rejectionGate)) add('sensitivity','AUDIT_RAW_RESULT_BINDING',`sensitivity/${c.id}`);
         }
       }
@@ -47,7 +48,8 @@ function evaluate(request, evidenceRoot, inputRoots) {
   return result();
   function result() {
     const satisfied=Object.values(gates).every(v=>v===true) && errors.length===0;
-    return {schema:'shared-proof-result/1',measurementOnly:true,productVerdict:null,effect:null,coreSha256:codeHash(),adapterSha256:request?.adapter?.sha256||null,inputShas:Array.isArray(request?.runs)?request.runs.map(r=>r.sha256):null,gates,errors,allRequiredGatesSatisfied:satisfied,exitCode:satisfied?0:1};
+    const expectedInputShas=Array.isArray(request?.runs)?request.runs.map(r=>r.sha256):null;
+    return {schema:'shared-proof-result/1',measurementOnly:true,productVerdict:null,effect:null,coreSha256:codeHash(),adapterSha256:request?.adapter?.sha256||null,inputShas:expectedInputShas,expectedInputShas,actualReadInputShas,gates,errors,allRequiredGatesSatisfied:satisfied,exitCode:satisfied?0:1};
   }
 }
 function main(argv) {

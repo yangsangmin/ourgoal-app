@@ -8,6 +8,8 @@
   "adapter": {"schema": "shared-proof-adapter/1", "required": ["taskId", "collectionReady", "steps", "dynamicContracts", "negativeCases"]},
   "sensitivity": {"schema": "shared-proof-sensitivity/1", "required": ["independent", "coreSha256", "adapterSha256", "inputShas", "cases"]},
   "requiredGates": ["schema", "input", "dynamic", "baseline", "work", "sensitivity"],
+  "resultInputBindings": ["expectedInputShas", "actualReadInputShas", "adapterSha256", "coreSha256"],
+  "requiredNegativeCases": ["full-dom", "feature-dom", "ls-value", "ls-added", "ls-deleted", "ss-value", "pageerror", "console-content", "toast", "completion", "required-step", "base2-only", "function-entry", "postcondition", "raw-sha"],
   "dynamicDisposition": "unmeasured; unsupported provenance is rejected, no normalization",
   "output": {"schema": "shared-proof-result/1", "productVerdict": null, "effect": null}
 }

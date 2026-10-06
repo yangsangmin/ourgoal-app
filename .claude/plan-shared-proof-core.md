@@ -5,8 +5,11 @@
 - [x] 설계·PR843 작업참고·기존 감사 확인 · 예상 10분 · 원인과 경계 식별
 - [x] 독립 8원칙 REQ와 실행 계약 구현 · 예상 30분 · 누락시 gate false와 비0 종료(코어 단위 원시21조건 기록)
 - [x] 실제 기존 raw 읽기·최소 코어 단위 자료 CLI 측정 · 예상 15분 · 누락/변조 원시 종료코드 보존(legacy6파일·단위21조건·npm종료0)
-- [ ] 정상 훅 commit 및 root 인계 · 예상 10분 · commit SHA와 독립 검토 가능한 파일 제공
+- [x] 독립 감도 담당 검토 지적 보완 · 예상 15분 · 실제 전체 CLI 정상 입력/변이 입력 실행 근거 연결(독립15케이스 지정gate반려·정상exit0·바인딩6변이반려, 단위계약 범위)
+- [x] 정상 훅 commit 및 root 인계 · 예상 10분 · commit SHA와 독립 검토 가능한 파일 제공(초기 be66e231 및 보완 후속 commit, root push/PR/Court 소유)
 
 막힘 예상: 기존 raw의 수집 필드 부재는 미측정으로 넘긴다. 번호는 root 예약 확인 후 연결한다. push·PR·Court는 root가 담당한다. 동적 치환은 provenance 없이 허용하지 않는다.
 
-측정 출처: reports/shared-proof-core/measurement.json, legacy-582-missing.json, legacy-585-missing.json, npm-test-result.json. 독립 감도·실제582/585 UI 동등성은 아직 미측정이며 작업자 단위 검사가 대체하지 않는다.
+측정 출처: reports/shared-proof-core/measurement.json, legacy-582-missing.json, legacy-585-missing.json, npm-test-result.json. 초기 측정 당시 독립 감도는 미측정이었다. 실제582/585 UI 동등성은 미측정이며 작업자 단위 검사가 대체하지 않는다.
+
+독립 기본 감도 측정은 reports/shared-proof-core/independent-audit.json과 영수증으로 연결했다. 실제582/585 UI 동등성·동적provenance 매핑·추가6동적감도·효과는 여전히 미측정/null이다. Court 판정은 root가 후속 진행한다.

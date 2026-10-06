@@ -5,6 +5,7 @@ const digest = value => sha(JSON.stringify(value));
 const isHash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const requiredNegativeCases = ['full-dom','feature-dom','ls-value','ls-added','ls-deleted','ss-value','pageerror','console-content','toast','completion','required-step','base2-only','function-entry','postcondition','raw-sha'];
+const negativeCaseGates = Object.fromEntries([...requiredNegativeCases,'valid-date','valid-seed','id-collision','id-reference','device-link','time-reversal'].map(k=>[k,k==='base2-only'?'baseline':['completion','required-step','function-entry','postcondition','raw-sha'].includes(k)?'input':'work']));
 function canonical(value) {
   if (Array.isArray(value)) return value.map(canonical);
   if (!object(value)) return value;
@@ -27,4 +28,4 @@ function read(root, relative, expected) {
 function codeHash() {
   return digest(['common.js','preflight.js','dynamic-contract.js','compare.js','cli.js'].map(p => ({path:p,sha256:sha(fs.readFileSync(path.join(__dirname,p)))})));
 }
-module.exports = {fs,path,sha,digest,isHash,object,equal,canonical,safeFile,read,codeHash,requiredNegativeCases};
+module.exports = {fs,path,sha,digest,isHash,object,equal,canonical,safeFile,read,codeHash,requiredNegativeCases,negativeCaseGates};
