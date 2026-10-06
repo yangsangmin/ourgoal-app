@@ -639,3 +639,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-580 | INFRA | PR837 시험 증거 불일치 원시 기록 대조 및 정합성 규명 | docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md | 4단계(심사 청구)
 
 - #TASK-ES-584 | INFRA | 공통 경험칙·도구 adapter 적용/증거 연결 최소 CLI | docs/specs/REQ-TASK-ES-584-SHARED-LEARNING.md · reports/TASK-ES-584/claims.json | 4단계(심사 청구)
+
+- #TASK-ES-586 | INFRA | 공통학습 fallback 사본과 생성지도 일괄 동기화 | docs/specs/REQ-TASK-ES-586-LEARNING-FALLBACK-SYNC.md · reports/TASK-ES-586/measurement.json | 4단계(심사 청구)

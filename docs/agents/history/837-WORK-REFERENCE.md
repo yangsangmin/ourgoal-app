@@ -1,6 +1,6 @@
 # 에이전트 공통 작업참고 (아워골)
 
-> **기준 PR #842** (66ce3a630d1c7dfc81550901f6356b2c0fb8b6b9) · 생성 2026-10-06 23:23 KST · 경험칙 54개
+> **기준 PR #837** (0b8cda96) · 생성 2026-10-06 19:54 KST · 경험칙 52개
 > 대상: Claude · 안티그래비티 · 코덱스 — 작업을 시작하기 전에 이 파일을 끝까지 읽고 따른다.
 > 정본: C:/dev/agent-knowledge/lessons.json (경험칙 원장) → 이 파일은 생성물이다. 손으로 고치지 않는다.
 
@@ -69,13 +69,6 @@
 - 결심 불필요: 「한 것 / 측정으로 검증한 것 / 다음에 열리는 것」. 질문으로 끝내지 않는다.
 - 결심 필요: `[결심 필요]` + 권장 결정 하나 + 승인 시 즉시 하는 것과 그 다음 열리는 것 + 선택지별 장점·단점·예상 결과 + 기타 최대 3.
 
-
-<!-- TASK-ES-584 shared-learning-entry -->
-공통 작업학습 도구 안내: C:/dev/agent-knowledge/shared-learning.js (출처 병합 66ce3a630d1c7dfc81550901f6356b2c0fb8b6b9)를 어느 작업 폴더에서든 사용할 수 있다. 사용법: C:/dev/agent-knowledge/shared-learning-runtime/66ce3a630d1c7dfc81550901f6356b2c0fb8b6b9/docs/agents/shared-learning/README.md
-기존 WORK-REFERENCE 전체 읽기를 유지한다. 명시한 참여자의 역할·담당 파일·허용 행위로 bootstrap 브리프를 만든다. node C:/dev/agent-knowledge/shared-learning.js bootstrap --repo-root <실제전용작업폴더> --participants <참여계약.json> --task-id <TASK> --task-kind <유형> --out <작업폴더/학습진입.json> --brief <작업폴더/학습지침.md>
-작업별 원시/게시 증거와 실제 제품 입력을 validate한 뒤 collect로 C:/dev/agent-learning-events 공유 저장소에 보완 후보를 남긴다. 다음 bootstrap에서 최근 보완 후보를 읽는다. 실행하지 않은 것은 미측정, 작업자 측정과 독립 법정 판정을 구분한다. 도구명으로 권한을 넓히지 않으며 원장/규칙 자동 승격은 없다.
-<!-- /TASK-ES-584 shared-learning-entry -->
-
 ## 경험칙 — 분야별 (확인 횟수가 많을수록 자주 부딪힌 것)
 
 ### 법정·주장 (10)
@@ -83,7 +76,7 @@
 **L005. 옮기기(분열) PR 의 「확인 부족 — 고칠 게 없었음」은 정상 판정으로 받아들이고 병합 기준에 넣어라.**
 - 왜: 동작 0 변경 이동은 기준에서도 시나리오가 통과하므로 법정이 「고치기 전엔 안 됨」을 볼 수 없다. #764·#772·#773·#775·#781·#785·#786·#788 모두 이 형태로 병합됐다.
 - 어떻게: 판정 부족 목록이 「고칠 게 없었음」과 실계정·실기기 한계뿐이면 병합. 다른 사유(주장 없는 제품 파일, 잴 수 있는데 안 잼)가 섞이면 병합하지 않고 고친다.
-- 출처: #764 #772 #773 #775 #781 #785 #786 #788 #840 · 처음 2026-10-05 · 확인 9회 · 대상 claude·codex
+- 출처: #764 #772 #773 #775 #781 #785 #786 #788 · 처음 2026-10-05 · 확인 8회 · 대상 claude·codex
 
 **L002. main 이 움직이면 값이 바뀌는 전체 수치(인라인 전체 줄 수·세포 수·기준선 현재값·main 커밋 해시)를 주장에 쓰지 마라.**
 - 왜: #750 은 인라인 32,509줄, #749 는 기준선 history 수치를 주장했다가 main 을 합치자 거짓이 되었고, 철회하면 막다른 길이라 두 PR 모두 닫고 새 PR(#755·#754)로 다시 냈다.
@@ -108,7 +101,7 @@
 **L051. reports 아래 측정 보고 파일의 값 적재 주장은 등록된 config 분야로 쓰고, 제품 동작 주장은 별도 실제 화면 시나리오로 검증하라.**
 - 왜: #829 첫 판정 B75440DD에서 미등록 architecture 분야의 보고서 주장 25개가 unknownDomainFloor L4로 올라 부족이 되었다. 동일 ID·종류·검사·기대값을 유지하고 config로 바로잡은 d8f60034의 재심 9003CA06은 보고서 기록을 L1 충분으로 확인했다.
 - 어떻게: court/grade-floors.json의 등록 분야를 읽는다. reports-only jsonPath 주장은 config, 제품 파일은 해당 분야의 실제 시나리오. 보고값이 적혀 있음은 법정이 실제 UI·실계정 결과를 재측정했다는 뜻이 아니다. 분류를 교정할 때 주장 철회·종류·기대값 변경 없이 원문을 유지한다.
-- 출처: #829 #831 #839 · 처음 2026-10-06 · 확인 3회 · 대상 claude·antigravity·codex
+- 출처: #829 #831 · 처음 2026-10-06 · 확인 2회 · 대상 claude·antigravity·codex
 
 **L004. 「주장 없음 → 확인 못 함」이 뜨면, 코드를 바꾼 항목은 시나리오 주장을 붙이고, 보고만 한 항목은 지시 항목(requirements)에서 내려 outOfScopeReports 로 옮겨라.**
 - 왜: #767 결함 PR 이 보고만 한 항목(챌린지 룸·위젯 시험 등)을 지시 항목에 남겨 「주장 없음」으로 병합 기준을 막았다. 내린 뒤 통과 기준을 충족했다.
@@ -140,7 +133,7 @@
 **L009. 분열 PR 에서는 생성 지도 3종(docs/architecture/module-baseline.json·cell-map.json·inline-script-map.json·INLINE-SCRIPT-MAP.md)을 커밋하지 말고 main 판 그대로 두어라. 병합 3~5건마다 일괄 갱신 PR 을 따로 낸다.**
 - 왜: 모든 분열 PR 이 이 3개를 고쳐 병렬 PR 끼리 끝없이 충돌했다. module-guard 는 값이 늘 때만 실패하므로 줄어든 기준선을 PR 마다 반영할 필요가 없다.
 - 어떻게: 일괄 갱신: node scripts/module-guard.js --update(사유 없이, 낮아진 값만) → node scripts/cell-map-export.js → node scripts/inline-script-map.js --write → --check·module-guard·npm test → 한 커밋(#761·#787).
-- 출처: #761 #787 #832 #838 · 처음 2026-10-05 · 확인 7회 · 대상 claude·antigravity·codex
+- 출처: #761 #787 #832 · 처음 2026-10-05 · 확인 6회 · 대상 claude·antigravity·codex
 
 **L012. TASK-ES 번호는 쓰기 직전에 gh pr list --state all 과 git ls-remote 로 비었는지 확인하고, 브랜치를 먼저 push 해 번호를 선점하라.**
 - 왜: 병렬 빌더들이 같은 번호를 잡아 충돌했다(448: #760 vs G076 마무리, 462: #767 vs H2, 478: #777 vs #778). 늦게 쓴 쪽이 모든 서류의 번호를 바꿔야 했다. 번호가 겹치면 reports/TASK-ES-N/claims.json 까지 남의 것을 덮어쓴다(#828 이 #826 의 주장 파일을 덮었다가 되돌림).
@@ -243,7 +236,7 @@
 - 어떻게: git worktree add --detach <tmp> origin/main → 생성기 3종 → cell-map-publish --root <tmp> → --verify-notion → worktree 제거.
 - 출처: #761 #787 · 처음 2026-10-05 · 확인 2회 · 대상 claude·antigravity
 
-### 화면 검증 (5)
+### 화면 검증 (4)
 
 **L026. 조작 DOM 비교는 기준 대 기준도 함께 돌려 본질 변동(타이밍·난수·실행마다 다른 저장값)을 걸러낸 뒤 기준 대 작업 차이를 판단하라.**
 - 왜: maxBaseCrafts·lastStreakAwarded 같은 저장값과 아바타 인사(22시 경계)·가이드 400ms 경쟁이 같은 기준 두 번에서도 달라졌다.
@@ -264,11 +257,6 @@
 - 왜: #763 이 알림 센터 죽은 종·보관함·위클리 리캡·앱 평가·오늘의 카드·3대 퀘스트를 복원했고, #766 숨김 게이트(증가 금지 기준선)가 재발을 막는다.
 - 어떻게: scripts/hidden-entry-guard.js(npm test 안) + 느린 브라우저판 docs/design/harness/hidden-entry-sweep.js. 복원한 항목은 --update 로 허용 목록을 줄인다. 새 !important 숨김 0.
 - 출처: #763 #766 · 처음 2026-10-05 · 확인 2회 · 대상 claude·antigravity·codex
-
-**L053. UI 비교의 실행마다 다른 ID는 일대일 대응·키 개수·연결을 보존하고, 해시 차이는 실제 제품 계산식으로 입증하라.**
-- 왜: PR837 첫 비교는 서로 다른 목표 ID를 같은 placeholder로 합쳐 미션·요약 키를 줄였다. 재검토에서1603항목·원래 제품 해시90개·실제 마우스 coverage를 독립 대조했다.
-- 어떻게: 기준2회·작업1회 원시 보존. 정규화 ID bijection·키 개수·연결 불변식을 확인한다. 실제 제품 AST에서 계산식을 읽어 남은 해시 차이를 검증한다. page.evaluate 버튼.click·함수 직접호출·상태주입으로 실제 UI를 대체하지 않는다. 못 잰 것은 측정불가.
-- 출처: #837 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
 
 ### 데이터 무손실 (2)
 
@@ -309,12 +297,7 @@
 - 어떻게: PR 전: cmp AGENTS.md CLAUDE.md 01_…FULL.md 동일 확인, docs/rules/archive 에 이전 커널 원문. PR 후: cp 로 홈 사본 동기화·cmp 확인, CONSTITUTION_VERSIONS.md 행 추가 PR(금고라 다시 상민님 병합)
 - 출처: #800 · 처음 2026-10-06 · 확인 1회 · 대상 claude·antigravity·codex
 
-### 안티그래비티 (5)
-
-**L054. 검증 수치를 원시 기록에서 자동 추출하고 제출 전에 증거 목록·입력 해시·필수 측정·참조 경로를 기계 검사하라.**
-- 왜: #838 로그 인코딩 혼용, #839 복사한 미측정 값과 실행별 원시 없는 집계, #840 부분 비교·click true 고정·기준 해시 오기·npm과 개별 시험 혼동을 Codex가 보완했다. 기록 DB에 보완점이 남아도 플레이북과 기본 지시서로 승격하지 않아 반복했다.
-- 어떻게: C:/dev/agy-collab/TEMPLATE.md의 반복 누락 예방 항목을 지시서마다 유지한다. evidence-manifest.json에 측정/미측정/차단, 입력 커밋·SHA256·명령·종료코드·원시/게시 경로를 남기고 제출자료 검사기로 누락·파일 부재·파싱 실패·입력 불일치를 차단한다. 전체DOM/저장값/토스트/console 내용과 실제 click을 비교하고 npm과 개별 시험 결과를 구분한다. 원시 실패/성공을 보존한다. 검사기 도입의 효과는 TASK581부터 별도 측정하며 법정 판정을 대체하지 않는다.
-- 출처: #838 #839 #840 #841 #842 · 처음 2026-10-06 · 확인 5회 · 대상 claude·antigravity·codex
+### 안티그래비티 (4)
 
 **L034. 안티그래비티에는 결과를 기계로 검사할 수 있는 반복 실행(스크립트 재생성·결정론 재실행·시험)을 맡기고, 판단이 필요한 코드 이동은 맡기지 마라.**
 - 왜: 생성 지도 일괄 갱신은 결함 0·Claude 마무리 15분으로 한 번에 성공(#787). G076 코드 이동은 결함 3건·Claude 마무리 62분(#765).

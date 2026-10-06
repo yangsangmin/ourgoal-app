@@ -1,0 +1,255 @@
+{
+  "task": "TASK-ES-586",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-586-LEARNING-FALLBACK-SYNC.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "정본 사본과 과거 Git원문을 보존하고 fallback 연결 안내를 제공한다."
+    },
+    {
+      "id": "R2",
+      "text": "생성기 산출 지도와 측정 기록을 제출한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "measurementOnly 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "measurementOnly",
+        "equals": true
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "missingOldIds 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "missingOldIds",
+        "equals": []
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "allLessonVersionsSame 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "allLessonVersionsSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "historyBytesSame 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "historyBytesSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "copyBytesSame 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "copyBytesSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "headerCountsMatch 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "headerCountsMatch",
+        "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "headerPrMatchesMeta 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "headerPrMatchesMeta",
+        "equals": true
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "absoluteEntryPresent 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "absoluteEntryPresent",
+        "equals": true
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "fallbackSelected 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "fallbackSelected",
+        "equals": true
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "fallbackReceiptMatches 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "fallbackReceiptMatches",
+        "equals": true
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "generatedReproduced 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "generatedReproduced",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "baselineNonincrease 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "baselineNonincrease",
+        "equals": true
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "baselineOldHistoryUnchanged 작업자 측정 기록 확인(제품판정 아님).",
+      "touches": [
+        "reports/TASK-ES-586/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/measurement.json",
+        "path": "baselineOldHistoryUnchanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "저장소 사본에서 고정 절대 런타임을 발견하는 안내를 기록한다.",
+      "touches": [
+        "docs/agents/README.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/agents/README.md",
+        "text": "C:/dev/agent-knowledge/shared-learning.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기존 npm test 종료코드0 원시기록을 제출한다.",
+      "touches": [
+        "reports/TASK-ES-586/npm-test-result.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-586/npm-test-result.json",
+        "path": "exitCode",
+        "equals": 0
+      }
+    }
+  ]
+}

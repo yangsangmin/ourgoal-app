@@ -6044,3 +6044,6 @@
 
 ## TASK-ES-584 공통 학습 연결 CLI
 - 정본 원장 읽기전용 registry + core/adapter 및 bootstrap/validate/collect. 작업별 readReceipt/적용/증거 입력hash/원시·게시hash/필수검사/CAS·중복 검사. reports/TASK-ES-584/cli-check.json 실제 신규도구 단위검사 기록. 제품·기존시험·Court·금고 변경0. 원장/노션/전세션 진입 변경은 rollout-proposal만, 효과 향상 null.
+
+## TASK-ES-586 fallback 사본·생성지도 동기화
+- 기준PR842 로컬정본54개를 byte복사하고 기존GitLF 원문43개/PR837 참고를 docs/agents/history에 보존. 임시registry canonicalUnavailable fallback bootstrap 전체참고receipt대조. module-specs 수정0, module-guard 감소갱신·cell/inline 지도2회hash재현. npm test exit0. reports/TASK-ES-586/measurement.json은작업자측정이며효과개선null. 제품·기존시험·금고 변경0.
