@@ -6041,3 +6041,6 @@
 - 2026-10-06 TASK-ES-578: openThemePickerModal을 records/theme-picker로 원문 분열. 최신 main(37f41857) 기준 실제 테마 모달 UI/CDP 조작 2회(DOM elementFromPoint 포함검증) 및 세포 단독 로드·격리 탭 24장·115개 시험 출력/검사수 대조 회귀 0 실측 완료.
 ## TASK-ES-580 PR837 시험 증거 불일치 원시 기록 대조 및 정합성 규명
 - 2026-10-06 TASK-ES-580: PR #837(7d720298) test-final.json과 proof.json 간 불일치 원시 로그 대조. test-final.json은 .git 없는 zip 아카이브 사본 기반 하네스(task-370) 산출물이며, proof.json은 선행 PR #835 템플릿 복사값의 사후 정합화 누락으로 규명(제품 회귀 아님). offline-sync-queue-retain 비결정성(50회 실측 49/1 vs 47/3) 원인은 load()의 L.uid 부재로 인한 Date.now() 밀초 충돌이며 기준(c34a0568)과 작업(7d720298) 소스/시험 100% 동일(diff 0). 독립 git 클론 npm test 양쪽 exit 0 실측. 제품/시험/지도4/금고/헌법 변경 0. REQ docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md, reports/TASK-ES-580/.
+
+## TASK-ES-584 공통 학습 연결 CLI
+- 정본 원장 읽기전용 registry + core/adapter 및 bootstrap/validate/collect. 작업별 readReceipt/적용/증거 입력hash/원시·게시hash/필수검사/CAS·중복 검사. reports/TASK-ES-584/cli-check.json 실제 신규도구 단위검사 기록. 제품·기존시험·Court·금고 변경0. 원장/노션/전세션 진입 변경은 rollout-proposal만, 효과 향상 null.

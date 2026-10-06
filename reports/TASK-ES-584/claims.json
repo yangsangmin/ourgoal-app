@@ -1,0 +1,223 @@
+{
+  "task": "TASK-ES-584",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-584-SHARED-LEARNING.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "공통 계약 및 도구 adapter 연결 사용 안내와 최소 CLI를 제공한다."
+    },
+    {
+      "id": "R2",
+      "text": "작업자 CLI 실측 보고를 config 기록으로 제출한다."
+    },
+    {
+      "id": "R3",
+      "text": "전체 정본 보존 및 실제내용 차이와 실행하지 않은 롤아웃 제안을 기록한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "CLI 단위 검사 예상불일치 목록이 빈 작업자 측정 기록이다. 제품 판정이 아니다.",
+      "touches": [
+        "reports/TASK-ES-584/cli-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-584/cli-check.json",
+        "path": "unmatched",
+        "equals": []
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "CLI 결과는 작업자 측정으로 분리한다.",
+      "touches": [
+        "reports/TASK-ES-584/cli-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-584/cli-check.json",
+        "path": "measurementOnly",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "현재 정본 읽기/적용/증거 이벤트 무결성 오류 목록 기록이다.",
+      "touches": [
+        "reports/TASK-ES-584/event-validation.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-584/event-validation.json",
+        "path": "errors",
+        "equals": []
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "레지스트리는 정본 교체 없이 발견만 한다.",
+      "touches": [
+        "docs/agents/shared-learning/registry.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/agents/shared-learning/registry.json",
+        "path": "authority",
+        "equals": "discovery-only"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기존 로컬/노션정본 롤아웃은 실행하지 않은 제안이다.",
+      "touches": [
+        "docs/agents/shared-learning/rollout-proposal.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/agents/shared-learning/rollout-proposal.json",
+        "path": "executed",
+        "equals": false
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "도구 및 사용 안내의 연결 구현 글자 확인(제품 동작 판정 아님).",
+      "touches": [
+        "docs/agents/shared-learning/README.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/agents/shared-learning/README.md",
+        "text": "전체 읽기다"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "도구 및 사용 안내의 연결 구현 글자 확인(제품 동작 판정 아님).",
+      "touches": [
+        "docs/design/harness/shared-learning/cli.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/shared-learning/cli.js",
+        "text": "collectEvent"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "도구 및 사용 안내의 연결 구현 글자 확인(제품 동작 판정 아님).",
+      "touches": [
+        "docs/design/harness/shared-learning/validate.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/shared-learning/validate.js",
+        "text": "RAW_EXECUTION_INPUT_MISMATCH"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "도구 및 사용 안내의 연결 구현 글자 확인(제품 동작 판정 아님).",
+      "touches": [
+        "docs/design/harness/shared-learning/collect.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/shared-learning/collect.js",
+        "text": "SOURCE_CAS_CONFLICT"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "도구 및 사용 안내의 연결 구현 글자 확인(제품 동작 판정 아님).",
+      "touches": [
+        "docs/design/harness/shared-learning/bootstrap.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/shared-learning/bootstrap.js",
+        "text": "referenceMissingIds"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 역사적 다른TASK after 오사용 자료 무결성 경계 차단 작업자 기록.",
+      "touches": [
+        "reports/TASK-ES-584/canary-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-584/canary-summary.json",
+        "path": "inputBoundaryRejected",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 역사적 다른TASK after 오사용 자료 무결성 경계 차단 작업자 기록.",
+      "touches": [
+        "reports/TASK-ES-584/canary-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-584/canary-summary.json",
+        "path": "scopeBoundaryRejected",
+        "equals": true
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "공유이벤트 저장소는 명시된 발견 registry 경로로 연결한다.",
+      "touches": [
+        "docs/agents/shared-learning/registry.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/agents/shared-learning/registry.json",
+        "path": "sharedStoreRoot",
+        "equals": "C:/dev/agent-learning-events"
+      }
+    }
+  ]
+}

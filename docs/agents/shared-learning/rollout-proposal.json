@@ -1,0 +1,289 @@
+{
+  "taskId": "TASK-ES-584",
+  "disposition": "proposal-only",
+  "executed": false,
+  "automaticPromotion": false,
+  "authorityChanges": false,
+  "canonicalLedger": "C:/dev/agent-knowledge/lessons.json",
+  "preserve": [
+    "all lesson IDs",
+    "past events",
+    "PR sources",
+    "confirmation counts",
+    "approval boundaries",
+    "entire WORK-REFERENCE read"
+  ],
+  "localChanges": [
+    {
+      "file": "C:/dev/agent-knowledge/preamble.md",
+      "operation": "append-guidance",
+      "expectedSourceHash": "833dc3d6d145140615a2c9132f30f003a08abba365dfefa3391526c3ff6c93f6",
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\n\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "writeMode": "append-only-after-CAS-and-backup",
+      "verification": [
+        "original bytes preserved",
+        "exact appended text readback",
+        "new sha256 recorded"
+      ],
+      "executable": {
+        "command": "node",
+        "args": [
+          "-e",
+          "const fs=require('node:fs'),p=require('node:path'),c=require('node:crypto');const file=\"C:/dev/agent-knowledge/preamble.md\",expected=\"833dc3d6d145140615a2c9132f30f003a08abba365dfefa3391526c3ff6c93f6\",append=\"\\n\\n<!-- TASK-ES-584 shared-learning-entry -->\\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\\n\\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\\n<!-- /TASK-ES-584 shared-learning-entry -->\\n\".replaceAll('<sourceMergeCommit>',process.argv[1]||'');if(!/^[a-f0-9]{40}$/.test(process.argv[1]||''))throw Error('UNRESOLVED_RUNTIME_RELEASE');const release=p.join('C:/dev/agent-knowledge/shared-learning-runtime/releases',process.argv[1]);const install=JSON.parse(fs.readFileSync(p.join(release,'install-manifest.json'),'utf8'));if(install.sourceMergeCommit!==process.argv[1]||c.createHash('sha256').update(fs.readFileSync(p.join(release,'cli.js'))).digest('hex')!==install.cliSha256)throw Error('RUNTIME_SNAPSHOT_MISMATCH');const b=fs.readFileSync(file),sha=x=>c.createHash('sha256').update(x).digest('hex');if(sha(b)!==expected)throw Error('SOURCE_CAS_CONFLICT');if(b.toString('utf8').includes('<!-- TASK-ES-584 shared-learning-entry -->')){console.log('idempotent');process.exit(0);}const backupRoot=p.join('C:/dev/agent-learning-backups','TASK-ES-584-'+Date.now());fs.mkdirSync(backupRoot,{recursive:true});const backup=p.join(backupRoot,p.basename(p.dirname(file))+'-'+p.basename(file));fs.writeFileSync(backup,b,{flag:'wx'});const next=Buffer.concat([b,Buffer.from(append,'utf8')]);fs.writeFileSync(file,next);if(!fs.readFileSync(file).equals(next)||sha(fs.readFileSync(backup))!==expected)throw Error('READBACK_MISMATCH');console.log(JSON.stringify({file,backup,beforeSha256:expected,afterSha256:sha(next),applied:true}));",
+          "<sourceMergeCommit>"
+        ],
+        "executed": false,
+        "argumentSubstitution": "last argument is actual remote-main immutable merge commit; unresolved input throws before source writes"
+      },
+      "rollback": {
+        "precondition": "current SHA256 == recorded afterSha256; otherwise preserve later edits and remove only marker proposal",
+        "command": "restore exact backup Buffer to original path, then compare SHA256 to beforeSha256",
+        "deleteHistoricalEvidence": false
+      }
+    },
+    {
+      "file": "C:/dev/agent-knowledge/README.md",
+      "operation": "append-usage",
+      "expectedSourceHash": "13fce4f00efc619d11ca5b7cb51dbd945b0f83c2d7f0918d02f816dd9dfb8236",
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\n\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "writeMode": "append-only-after-CAS-and-backup",
+      "verification": [
+        "original bytes preserved",
+        "exact appended text readback",
+        "new sha256 recorded"
+      ],
+      "executable": {
+        "command": "node",
+        "args": [
+          "-e",
+          "const fs=require('node:fs'),p=require('node:path'),c=require('node:crypto');const file=\"C:/dev/agent-knowledge/README.md\",expected=\"13fce4f00efc619d11ca5b7cb51dbd945b0f83c2d7f0918d02f816dd9dfb8236\",append=\"\\n\\n<!-- TASK-ES-584 shared-learning-entry -->\\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\\n\\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\\n<!-- /TASK-ES-584 shared-learning-entry -->\\n\".replaceAll('<sourceMergeCommit>',process.argv[1]||'');if(!/^[a-f0-9]{40}$/.test(process.argv[1]||''))throw Error('UNRESOLVED_RUNTIME_RELEASE');const release=p.join('C:/dev/agent-knowledge/shared-learning-runtime/releases',process.argv[1]);const install=JSON.parse(fs.readFileSync(p.join(release,'install-manifest.json'),'utf8'));if(install.sourceMergeCommit!==process.argv[1]||c.createHash('sha256').update(fs.readFileSync(p.join(release,'cli.js'))).digest('hex')!==install.cliSha256)throw Error('RUNTIME_SNAPSHOT_MISMATCH');const b=fs.readFileSync(file),sha=x=>c.createHash('sha256').update(x).digest('hex');if(sha(b)!==expected)throw Error('SOURCE_CAS_CONFLICT');if(b.toString('utf8').includes('<!-- TASK-ES-584 shared-learning-entry -->')){console.log('idempotent');process.exit(0);}const backupRoot=p.join('C:/dev/agent-learning-backups','TASK-ES-584-'+Date.now());fs.mkdirSync(backupRoot,{recursive:true});const backup=p.join(backupRoot,p.basename(p.dirname(file))+'-'+p.basename(file));fs.writeFileSync(backup,b,{flag:'wx'});const next=Buffer.concat([b,Buffer.from(append,'utf8')]);fs.writeFileSync(file,next);if(!fs.readFileSync(file).equals(next)||sha(fs.readFileSync(backup))!==expected)throw Error('READBACK_MISMATCH');console.log(JSON.stringify({file,backup,beforeSha256:expected,afterSha256:sha(next),applied:true}));",
+          "<sourceMergeCommit>"
+        ],
+        "executed": false,
+        "argumentSubstitution": "last argument is actual remote-main immutable merge commit; unresolved input throws before source writes"
+      },
+      "rollback": {
+        "precondition": "current SHA256 == recorded afterSha256; otherwise preserve later edits and remove only marker proposal",
+        "command": "restore exact backup Buffer to original path, then compare SHA256 to beforeSha256",
+        "deleteHistoricalEvidence": false
+      }
+    },
+    {
+      "file": "C:/dev/agy-collab/TEMPLATE.md",
+      "operation": "append-bootstrap-link",
+      "expectedSourceHash": "bd6231a1319153d7bab8762f84565dc5d9c86a1a6483a2cbb2f428e6505c7b14",
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\n\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "writeMode": "append-only-after-CAS-and-backup",
+      "verification": [
+        "original bytes preserved",
+        "exact appended text readback",
+        "new sha256 recorded"
+      ],
+      "executable": {
+        "command": "node",
+        "args": [
+          "-e",
+          "const fs=require('node:fs'),p=require('node:path'),c=require('node:crypto');const file=\"C:/dev/agy-collab/TEMPLATE.md\",expected=\"bd6231a1319153d7bab8762f84565dc5d9c86a1a6483a2cbb2f428e6505c7b14\",append=\"\\n\\n<!-- TASK-ES-584 shared-learning-entry -->\\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\\n\\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\\n<!-- /TASK-ES-584 shared-learning-entry -->\\n\".replaceAll('<sourceMergeCommit>',process.argv[1]||'');if(!/^[a-f0-9]{40}$/.test(process.argv[1]||''))throw Error('UNRESOLVED_RUNTIME_RELEASE');const release=p.join('C:/dev/agent-knowledge/shared-learning-runtime/releases',process.argv[1]);const install=JSON.parse(fs.readFileSync(p.join(release,'install-manifest.json'),'utf8'));if(install.sourceMergeCommit!==process.argv[1]||c.createHash('sha256').update(fs.readFileSync(p.join(release,'cli.js'))).digest('hex')!==install.cliSha256)throw Error('RUNTIME_SNAPSHOT_MISMATCH');const b=fs.readFileSync(file),sha=x=>c.createHash('sha256').update(x).digest('hex');if(sha(b)!==expected)throw Error('SOURCE_CAS_CONFLICT');if(b.toString('utf8').includes('<!-- TASK-ES-584 shared-learning-entry -->')){console.log('idempotent');process.exit(0);}const backupRoot=p.join('C:/dev/agent-learning-backups','TASK-ES-584-'+Date.now());fs.mkdirSync(backupRoot,{recursive:true});const backup=p.join(backupRoot,p.basename(p.dirname(file))+'-'+p.basename(file));fs.writeFileSync(backup,b,{flag:'wx'});const next=Buffer.concat([b,Buffer.from(append,'utf8')]);fs.writeFileSync(file,next);if(!fs.readFileSync(file).equals(next)||sha(fs.readFileSync(backup))!==expected)throw Error('READBACK_MISMATCH');console.log(JSON.stringify({file,backup,beforeSha256:expected,afterSha256:sha(next),applied:true}));",
+          "<sourceMergeCommit>"
+        ],
+        "executed": false,
+        "argumentSubstitution": "last argument is actual remote-main immutable merge commit; unresolved input throws before source writes"
+      },
+      "rollback": {
+        "precondition": "current SHA256 == recorded afterSha256; otherwise preserve later edits and remove only marker proposal",
+        "command": "restore exact backup Buffer to original path, then compare SHA256 to beforeSha256",
+        "deleteHistoricalEvidence": false
+      }
+    },
+    {
+      "file": "C:/dev/agy-collab/README.md",
+      "operation": "append-event-record-link",
+      "expectedSourceHash": "d2b7d222aa39a932ae0e0b12dc81bbec18de8e98247710a28a3cfd8594105122",
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\n\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "writeMode": "append-only-after-CAS-and-backup",
+      "verification": [
+        "original bytes preserved",
+        "exact appended text readback",
+        "new sha256 recorded"
+      ],
+      "executable": {
+        "command": "node",
+        "args": [
+          "-e",
+          "const fs=require('node:fs'),p=require('node:path'),c=require('node:crypto');const file=\"C:/dev/agy-collab/README.md\",expected=\"d2b7d222aa39a932ae0e0b12dc81bbec18de8e98247710a28a3cfd8594105122\",append=\"\\n\\n<!-- TASK-ES-584 shared-learning-entry -->\\n공통 작업학습 연결 도구: 저장소 docs/agents/shared-learning/README.md를 읽고 bootstrap으로 공통 core·adapter·전체 정본 해시 영수증·적용 연결을 생성한다. 전체 WORK-REFERENCE 직접 읽기는 유지한다. 도구명으로 권한을 추론하지 않는다. learning-event를 validate한 뒤 task별 pending 수집하며 원장/규칙 자동승격은 하지 않는다.\\n공동운영 기본: registry.sharedStoreRoot(C:/dev/agent-learning-events)에 collect하고 다음 bootstrap이 같은 store의 최근 보완점을 읽는다. collect의 --store-root와 bootstrap의 --events-root는 기본값을 사용한다.\\n\\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\\n<!-- /TASK-ES-584 shared-learning-entry -->\\n\".replaceAll('<sourceMergeCommit>',process.argv[1]||'');if(!/^[a-f0-9]{40}$/.test(process.argv[1]||''))throw Error('UNRESOLVED_RUNTIME_RELEASE');const release=p.join('C:/dev/agent-knowledge/shared-learning-runtime/releases',process.argv[1]);const install=JSON.parse(fs.readFileSync(p.join(release,'install-manifest.json'),'utf8'));if(install.sourceMergeCommit!==process.argv[1]||c.createHash('sha256').update(fs.readFileSync(p.join(release,'cli.js'))).digest('hex')!==install.cliSha256)throw Error('RUNTIME_SNAPSHOT_MISMATCH');const b=fs.readFileSync(file),sha=x=>c.createHash('sha256').update(x).digest('hex');if(sha(b)!==expected)throw Error('SOURCE_CAS_CONFLICT');if(b.toString('utf8').includes('<!-- TASK-ES-584 shared-learning-entry -->')){console.log('idempotent');process.exit(0);}const backupRoot=p.join('C:/dev/agent-learning-backups','TASK-ES-584-'+Date.now());fs.mkdirSync(backupRoot,{recursive:true});const backup=p.join(backupRoot,p.basename(p.dirname(file))+'-'+p.basename(file));fs.writeFileSync(backup,b,{flag:'wx'});const next=Buffer.concat([b,Buffer.from(append,'utf8')]);fs.writeFileSync(file,next);if(!fs.readFileSync(file).equals(next)||sha(fs.readFileSync(backup))!==expected)throw Error('READBACK_MISMATCH');console.log(JSON.stringify({file,backup,beforeSha256:expected,afterSha256:sha(next),applied:true}));",
+          "<sourceMergeCommit>"
+        ],
+        "executed": false,
+        "argumentSubstitution": "last argument is actual remote-main immutable merge commit; unresolved input throws before source writes"
+      },
+      "rollback": {
+        "precondition": "current SHA256 == recorded afterSha256; otherwise preserve later edits and remove only marker proposal",
+        "command": "restore exact backup Buffer to original path, then compare SHA256 to beforeSha256",
+        "deleteHistoricalEvidence": false
+      }
+    }
+  ],
+  "repositorySync": {
+    "source": "C:/dev/agent-knowledge/lessons.json",
+    "sourceHash": "88ffcaec7b649a8150087cce64e488286a51db225c8ce6d058232f34dfa80863",
+    "target": "docs/agents/lessons.json",
+    "expectedTargetHash": "dda4489c1e82d6aa31d25aa12cc2de830ca13aa01cd1462e1bb6c054d7895312",
+    "operation": "proposal: sync actual IDs and version hashes preserving all history; regenerate WORK-REFERENCE with original generator; separate reviewed PR",
+    "verification": [
+      "actual JSON count and IDs",
+      "each lesson version hash",
+      "header count equals actual count",
+      "basePr/meta/commit",
+      "Notion readback"
+    ],
+    "historyTarget": "docs/agents/history/<previousBasePr>-lessons.json",
+    "additionalTargets": [
+      "docs/agents/WORK-REFERENCE.md",
+      "docs/agents/reference-meta.json",
+      "docs/agents/README.md thin link"
+    ]
+  },
+  "notionChanges": [
+    {
+      "page": "3f0598db9096819f810ce45a92e59215",
+      "operation": "append thin entry guidance only; keep canonical original sections",
+      "expectedSourceHash": null,
+      "requires": "fetch full page hash immediately before CAS; backup original markdown; append; read back exact link/text",
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결: https://github.com/yangsangmin/ourgoal-app/blob/main/docs/agents/shared-learning/README.md\nWORK-REFERENCE 전체읽기 유지. 참여자의 명시권한 계약. bootstrap→validate→collect(공유store C:/dev/agent-learning-events 기본)→다음 작업 bootstrap의 최근 보완점 연결. 작업자 측정/독립Court 분리. 원장/규칙 자동승격없음.\n\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "connector": {
+        "fetch": "mcp__codex_apps__notion_fetch",
+        "update": "mcp__codex_apps__notion_notion_update_page",
+        "command": "insert_content",
+        "position": "end",
+        "fullPageReplace": false,
+        "serverAtomicCASClaim": false
+      }
+    },
+    {
+      "page": "3f0598db90968182b4d4d09e39e72dcb",
+      "operation": "append shared contract/tool link and task event fields",
+      "expectedSourceHash": null,
+      "requires": "fetch full page hash immediately before CAS; backup original markdown; append; read back",
+      "appendText": "\n\n<!-- TASK-ES-584 shared-learning-entry -->\n공통 작업학습 연결: https://github.com/yangsangmin/ourgoal-app/blob/main/docs/agents/shared-learning/README.md\nWORK-REFERENCE 전체읽기 유지. 참여자의 명시권한 계약. bootstrap→validate→collect(공유store C:/dev/agent-learning-events 기본)→다음 작업 bootstrap의 최근 보완점 연결. 작업자 측정/독립Court 분리. 원장/규칙 자동승격없음.\n\n검증된 설치 CLI: node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js\n항상 --repo-root <자기실제작업트리절대경로> --registry-root C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/registry 를 명시한다. 설치manifest의 sourceMergeCommit·cliSha256·snapshotSHA256를 확인한다.\n<!-- /TASK-ES-584 shared-learning-entry -->\n",
+      "connector": {
+        "fetch": "mcp__codex_apps__notion_fetch",
+        "update": "mcp__codex_apps__notion_notion_update_page",
+        "command": "insert_content",
+        "position": "end",
+        "fullPageReplace": false,
+        "serverAtomicCASClaim": false
+      }
+    }
+  ],
+  "effectFollowup": {
+    "nextMatchingTasks": 5,
+    "repeatDefectsTarget": 0,
+    "evidenceMismatchTarget": 0,
+    "interventionBefore": null,
+    "interventionAfter": null,
+    "qualityBefore": null,
+    "qualityAfter": null
+  },
+  "promotionConflict": {
+    "common": 3,
+    "adapter": 2,
+    "resolution": "proposal only; no automatic threshold decision"
+  },
+  "measuredAt": "2026-10-06T13:58:45.114Z",
+  "sharedEventStore": {
+    "root": "C:/dev/agent-learning-events",
+    "authority": "append-only proposal events; canonical lessons unchanged",
+    "collectionFormat": "<TASK>/<eventId>.json",
+    "nextSessionRead": "bootstrap reads the same registry.sharedStoreRoot",
+    "executedCanary": "reports/TASK-ES-584/next-session-bootstrap.json",
+    "crossWorktreeTest": "reports/TASK-ES-584/cli-check.json shared-next-both-improvements-0/1",
+    "installerProposal": "Each existing entry point appends thin README/bootstrap link, preserve original source and explicit permissions."
+  },
+  "executionOrder": [
+    "hash-and-byte-backup",
+    "install-immutable-merged-runtime-and-verify-snapshot",
+    "append-four-local-entry-guides-with-CAS",
+    "run-original-reference-generator",
+    "repository-history-preserving-copy-sync-PR-and-Court",
+    "Notion-append-after-re-read-and-readback",
+    "two-next-session-shared-store-readback",
+    "task-link-check-and-followup",
+    "arbitrary-project-installed-runtime-smoke"
+  ],
+  "executionDocument": "docs/agents/shared-learning/ROLLOUT-PROPOSAL.md",
+  "rollbackOrder": [
+    "remove-only-owned-Notion-marker-preserving-concurrent-edits",
+    "reviewed-revert-PR-for-repository-copy-sync",
+    "restore-local-backups-only-if-postHash-still-matches",
+    "retain-shared-events-raw-and-history"
+  ],
+  "expectedHashPolicy": {
+    "measuredAt": "2026-10-06T14:15:42.856Z",
+    "onMismatch": "stop that rollout step; read latest full source and compare lesson IDs/version hashes/PR sources/history; revise proposal after analysis; never silently replace expectedHash",
+    "canonicalReferenceBasePr": 841
+  },
+  "runtimeInstall": {
+    "executed": false,
+    "sourceMergeCommit": null,
+    "sourceSelection": "only immutable remote-main merge commit after final Court and root review; never reset shared checkout",
+    "releaseRootTemplate": "C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>",
+    "toolFiles": [
+      "docs/design/harness/shared-learning/bootstrap.js",
+      "docs/design/harness/shared-learning/canary.js",
+      "docs/design/harness/shared-learning/check.js",
+      "docs/design/harness/shared-learning/cli.js",
+      "docs/design/harness/shared-learning/collect.js",
+      "docs/design/harness/shared-learning/common.js",
+      "docs/design/harness/shared-learning/measure.js",
+      "docs/design/harness/shared-learning/validate.js"
+    ],
+    "registryFiles": [
+      "registry.json",
+      "core.md",
+      "adapters/claude.md",
+      "adapters/codex.md",
+      "adapters/antigravity.md",
+      "adapters/generic.md"
+    ],
+    "manifestFields": [
+      "sourceMergeCommit",
+      "files[{sourcePath,installedPath,sha256}]",
+      "snapshotSHA256",
+      "installedAt",
+      "previousRelease",
+      "cliSha256"
+    ],
+    "snapshotHashAlgorithm": "SHA256(canonical JSON of installed file path/bytehash pairs sorted by path); bytes from git archive merged commit",
+    "canonicalLedgerCopied": false,
+    "entryCliTemplate": "node C:/dev/agent-knowledge/shared-learning-runtime/releases/<sourceMergeCommit>/cli.js",
+    "mandatoryCommandParameters": [
+      "--repo-root <owning actual project tree>",
+      "--registry-root <releaseRoot>/registry",
+      "--participants <explicit contract>"
+    ],
+    "snapshotReadback": "compare every installed byteSHA with Git extraction manifest before entry links are changed",
+    "nonOurgoalSmoke": "in a fresh arbitrary-project folder create explicit generic participant contract; run installed bootstrap with actual project repo-root and installed registry-root; commandsExecuted0/readReceipt canonical/full brief/output inside owning project; verify no local source write",
+    "rollback": "restore entry guide to previous verified immutable release; retain releases/events/evidence; snapshotSHA readback"
+  },
+  "stableDiscovery": {
+    "local": [
+      "C:/dev/agent-knowledge/preamble.md",
+      "C:/dev/agent-knowledge/README.md",
+      "C:/dev/agy-collab/TEMPLATE.md",
+      "C:/dev/agy-collab/README.md"
+    ],
+    "generated": [
+      "C:/dev/agent-knowledge/WORK-REFERENCE.md"
+    ],
+    "fallback": [
+      "docs/agents/WORK-REFERENCE.md",
+      "docs/agents/README.md"
+    ],
+    "notion": [
+      "3f0598db9096819f810ce45a92e59215",
+      "3f0598db90968182b4d4d09e39e72dcb"
+    ],
+    "textSubstitution": "substitute actual merged commit in executable last argument and Notion appendText; executable validates installed manifest/CLI byteSHA before any original source write",
+    "activeSessionAutoReinjectionClaim": false
+  }
+}
