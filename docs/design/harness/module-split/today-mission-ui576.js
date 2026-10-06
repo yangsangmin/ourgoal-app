@@ -136,7 +136,14 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     // 1. 게스트 모드 진입
     await click('#btnLandingPreviewDirect');
     await page.waitForSelector('#captureInput', { visible: true });
-    await sleep(2000);
+    await sleep(1500);
+
+    // 아바타 인사 모달이 떠 있을 경우 닫기
+    const greetClose = await page.$('#btnAvatarGreetClose');
+    if (greetClose) {
+      const isVis = await page.evaluate(el => el.offsetParent !== null, greetClose);
+      if (isVis) await click('#btnAvatarGreetClose');
+    }
 
     // 2. 홈 퀘스트 나침반 열기 (목표 0개인 빈 카드 상태 확인)
     await click('#homeCompassQuest');
@@ -145,17 +152,30 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await click('#homeDetailClose');
     await sleep(500);
 
-    // 3. 목표 탭으로 이동하여 추천 목표 2개 담기
+    // 3. 목표 탭으로 이동하여 추천 목표 2개 실제 마우스 클릭으로 담기
     await click('.navbtn[data-tab="goals"]');
-    await page.waitForSelector('.btn-quick-adopt-goal', { visible: true, timeout: 10000 });
+    await sleep(500);
 
-    await page.evaluate(() => {
-      const btns = Array.from(document.querySelectorAll('.btn-quick-adopt-goal'));
-      if (btns.length >= 2) {
-        btns[0].click();
-        btns[1].click();
-      }
-    });
+    // 1번째 추천 목표: 10km 마라톤 완주 로드맵 실제 마우스 클릭
+    await click('.btn-quick-adopt-goal[onclick*="10km"]');
+    await sleep(800);
+    await page.waitForFunction(
+      () => (window.OurgoalAppScope?.scope?.state?.profile?.goals || []).length >= 1,
+      { timeout: 10000 }
+    );
+
+    // 2번째 추천 목표: 목표 화면 헤더의 '활용가이드' 버튼 클릭 후 정보처리기사 실기 합격 실제 마우스 클릭
+    await click('#btnShowPersonalGuideModal');
+    await sleep(600);
+    await click('#modalSheet .btn-quick-adopt-goal[onclick*="정보처리기사"]');
+    await sleep(800);
+
+    // 가이드 모달 닫기
+    const closeBtn = await page.$('.modal-sheet-close');
+    if (closeBtn) {
+      const isVis = await page.evaluate(el => el.offsetParent !== null, closeBtn);
+      if (isVis) await click('.modal-sheet-close');
+    }
 
     await page.waitForFunction(
       () => (window.OurgoalAppScope?.scope?.state?.profile?.goals || []).length >= 2,

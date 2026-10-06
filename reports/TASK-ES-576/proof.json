@@ -59,36 +59,39 @@
       19,
       19
     ],
-    "baselineComparisons": 55,
-    "afterComparisons": 55,
-    "normalization": "Exact actual guest/mission IDs and dynamic hashes/timestamps; URL strings only; all fields/counts retained",
-    "failures": "None; all 3 runs completed with 19 calls each"
+    "baselineNonHashDiffs": 0,
+    "afterNonHashDiffs": 0,
+    "baselineHashDiffs": 30,
+    "afterHashDiffs": 30,
+    "normalization": "1:1 bijective mapping for guest/goal/milestone/schedule/record IDs; structural invariants asserted",
+    "formulaVerification": "All hashes verified against computeGoalStatusHash and computeTodayMissionHash (100% matched); cause of 30 hash diffs proven to be Date.now() timestamp propagation into milestone IDs",
+    "failures": "None; all 3 runs completed with 19 calls each via real mouse click pipeline"
   },
   "publication": [
     {
       "task": "TASK-ES-576",
-      "rawFile": "C:/dev/wt/today-mission576-raw/ui-base1.json",
+      "rawFile": "C:/dev/wt/today-mission576-raw/base1.json",
       "publicFile": "reports/TASK-ES-576/ui-base1.json",
-      "rawSha256": "b00243590b9c750cf314e5e77a4b7720234a188202a20ee7c8b6489fde806a05",
-      "publicSha256": "f88fa219e397cb6d625aaf80e6c81b443a1a0da242a39d3db3c0986c18fc487d",
+      "rawSha256": "736f69f1e6adfb226b867000f0c9c2bd41276db1358f35fd4b9c936e572cad02",
+      "publicSha256": "17ab733eae69ade921dfc77cd5496247ce8b809f4ad351d9de295cb9bfc1c671",
       "changed": true,
       "policy": "URL apikey only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
     },
     {
       "task": "TASK-ES-576",
-      "rawFile": "C:/dev/wt/today-mission576-raw/ui-base2.json",
+      "rawFile": "C:/dev/wt/today-mission576-raw/base2.json",
       "publicFile": "reports/TASK-ES-576/ui-base2.json",
-      "rawSha256": "9e904673d323918ffbad5187eba4237a6fef629168e90d594ebb58538996f160",
-      "publicSha256": "51d9d67d726b5491854655d4e270bc83f7fd4bf5036fd58588daca3111fb0acc",
+      "rawSha256": "b0bb377827551c992ea3015b9eb1422d749af7e32eae78366f509da2255b1d65",
+      "publicSha256": "f15028aa3176793217a7cd5cab0a410ba1419f13247931946de1a2a2d63b188f",
       "changed": true,
       "policy": "URL apikey only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
     },
     {
       "task": "TASK-ES-576",
-      "rawFile": "C:/dev/wt/today-mission576-raw/ui-after.json",
+      "rawFile": "C:/dev/wt/today-mission576-raw/after.json",
       "publicFile": "reports/TASK-ES-576/ui-after.json",
-      "rawSha256": "3eab20c9b47876af6cbf952a25c86115e482e58c4e8183b73bb130b38738d780",
-      "publicSha256": "73237e9e1b5b1b6c5dce93e2e2fe9ef188a2dae329729b84cb7a3be139dcae17",
+      "rawSha256": "ef2c9a22ca01bf5fc171e7e85d9b5b5e09bf8032447a7a1c0bd97b597dfb97fe",
+      "publicSha256": "e1a3f2f300874a291603fb8e529e2dd3db96633514b4fc00e5aaafc7092ee9cf",
       "changed": true,
       "policy": "URL apikey only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
     }

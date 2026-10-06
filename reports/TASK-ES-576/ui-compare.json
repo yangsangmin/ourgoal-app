@@ -5,566 +5,353 @@
     "reports/TASK-ES-576/ui-base2.json",
     "reports/TASK-ES-576/ui-after.json"
   ],
-  "normalization": "Exact actual guest/goal/record IDs and valid ISO timestamps; integer manito seed; URL strings only; all fields/counts retained",
+  "method": "1:1 ID 정규화 + 연결 불변식 검증 + 기존 해시 계산식 대조 및 인과 증명",
+  "normalization": "Exact 1:1 bijective mapping for guest/goal/milestone/schedule/record IDs; ISO timestamps to <iso>; integer manito seed; structural invariants asserted",
+  "invariantsPreserved": true,
+  "formulaContrast": {
+    "base1ChecksCount": 10,
+    "base2ChecksCount": 10,
+    "afterChecksCount": 10,
+    "allFormulaChecksPassed": true
+  },
+  "counterfactualCauseProof": {
+    "summary": "남은 차이의 원인은 추천 목표 채택 시 Date.now()로 생성되는 마일스톤 ID(m_timestamp_idx) 차이가 computeGoalStatusHash 및 computeTodayMissionHash에 직접 입력되어 발생한 결정론적 해시 차이임이 수식 대조로 입증됨. 해시 삭제 또는 상수 치환 일체 없음.",
+    "proofs": [
+      {
+        "goalTitle": "정보처리기사 실기 합격",
+        "b1ActualHash": "-302384077",
+        "b2ActualHash": "-1869338605",
+        "afterActualHash": "-1404847085",
+        "syntheticB2HashMatchesB2": true,
+        "syntheticAfterHashMatchesAfter": true,
+        "formulaInputProof": "computeGoalStatusHash / computeTodayMissionHash formulas are 100% identical and deterministic"
+      },
+      {
+        "goalTitle": "10km 마라톤 완주 로드맵",
+        "b1ActualHash": "-1131829734",
+        "b2ActualHash": "-1439752998",
+        "afterActualHash": "1060571066",
+        "syntheticB2HashMatchesB2": true,
+        "syntheticAfterHashMatchesAfter": true,
+        "formulaInputProof": "computeGoalStatusHash / computeTodayMissionHash formulas are 100% identical and deterministic"
+      }
+    ]
+  },
   "baseline": {
-    "compared": 1537,
-    "differing": 55,
-    "diffs": [
+    "compared": 1603,
+    "differingTotal": 30,
+    "differingNonHash": 0,
+    "differingHash": 30,
+    "nonHashDiffs": [],
+    "hashDiffs": [
       {
-        "key": ".steps.1.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
+        "key": ".steps.1.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.1.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268397140_2"
+        "key": ".steps.1.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.1.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
+        "key": ".steps.1.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.1.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268397121_2"
+        "key": ".steps.1.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268397121_1"
+        "key": ".steps.1.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
+        "key": ".steps.1.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268397140_1"
+        "key": ".steps.2.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
+        "key": ".steps.2.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.1.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
+        "key": ".steps.2.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.1.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
+        "key": ".steps.2.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.1.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
+        "key": ".steps.2.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.2.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
+        "key": ".steps.2.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.2.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268397140_2"
+        "key": ".steps.3.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.2.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
+        "key": ".steps.3.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.2.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268397121_2"
+        "key": ".steps.3.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268397121_1"
+        "key": ".steps.3.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
+        "key": ".steps.3.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268397140_1"
+        "key": ".steps.3.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
+        "key": ".steps.4.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.2.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
+        "key": ".steps.4.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.2.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
+        "key": ".steps.4.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.2.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
+        "key": ".steps.4.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.3.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
+        "key": ".steps.4.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.3.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268397140_2"
+        "key": ".steps.4.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.3.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
+        "key": ".steps.5.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.3.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268397121_2"
+        "key": ".steps.5.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268397121_1"
+        "key": ".steps.5.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
+        "key": ".steps.5.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268397140_1"
+        "key": ".steps.5.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "-1439752998"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
-      },
-      {
-        "key": ".steps.3.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.3.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.3.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.4.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
-      },
-      {
-        "key": ".steps.4.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268397140_2"
-      },
-      {
-        "key": ".steps.4.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
-      },
-      {
-        "key": ".steps.4.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268397121_2"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268397121_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268397140_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.4.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.4.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.5.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
-      },
-      {
-        "key": ".steps.5.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268397140_2"
-      },
-      {
-        "key": ".steps.5.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
-      },
-      {
-        "key": ".steps.5.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268397121_2"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268397121_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268397121_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268397140_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268397140_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.5.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
-      },
-      {
-        "key": ".steps.5.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1391430029"
+        "key": ".steps.5.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1869338605"
       }
     ]
   },
   "after": {
-    "compared": 1537,
-    "differing": 55,
-    "diffs": [
+    "compared": 1603,
+    "differingTotal": 30,
+    "differingNonHash": 0,
+    "differingHash": 30,
+    "nonHashDiffs": [],
+    "hashDiffs": [
       {
-        "key": ".steps.1.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
+        "key": ".steps.1.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.1.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268348155_2"
+        "key": ".steps.1.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.1.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
+        "key": ".steps.1.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.1.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268348136_2"
+        "key": ".steps.1.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268348136_1"
+        "key": ".steps.1.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
+        "key": ".steps.1.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268348155_1"
+        "key": ".steps.2.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.1.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
+        "key": ".steps.2.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.1.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
+        "key": ".steps.2.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.1.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
+        "key": ".steps.2.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.1.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
+        "key": ".steps.2.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.2.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
+        "key": ".steps.2.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.2.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268348155_2"
+        "key": ".steps.3.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.2.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
+        "key": ".steps.3.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.2.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268348136_2"
+        "key": ".steps.3.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268348136_1"
+        "key": ".steps.3.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
+        "key": ".steps.3.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268348155_1"
+        "key": ".steps.3.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.2.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
+        "key": ".steps.4.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.2.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
+        "key": ".steps.4.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.2.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
+        "key": ".steps.4.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.2.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
+        "key": ".steps.4.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.3.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
+        "key": ".steps.4.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.3.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268348155_2"
+        "key": ".steps.4.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.3.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
+        "key": ".steps.5.saved.settings.goalStatusSummaries.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.3.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268348136_2"
+        "key": ".steps.5.saved.settings.goalStatusSummaries.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268348136_1"
+        "key": ".steps.5.saved.settings.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
+        "key": ".steps.5.saved.settings.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268348155_1"
+        "key": ".steps.5.todayMissions.<id:goal:1>.hash",
+        "a": "-1131829734",
+        "b": "1060571066"
       },
       {
-        "key": ".steps.3.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
-      },
-      {
-        "key": ".steps.3.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.3.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.3.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.4.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
-      },
-      {
-        "key": ".steps.4.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268348155_2"
-      },
-      {
-        "key": ".steps.4.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
-      },
-      {
-        "key": ".steps.4.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268348136_2"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268348136_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268348155_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
-      },
-      {
-        "key": ".steps.4.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.4.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.4.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.5.saved.goals.0.milestones.0.id",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
-      },
-      {
-        "key": ".steps.5.saved.goals.0.milestones.1.id",
-        "a": "m_1791268372789_2",
-        "b": "m_1791268348155_2"
-      },
-      {
-        "key": ".steps.5.saved.goals.1.milestones.0.id",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
-      },
-      {
-        "key": ".steps.5.saved.goals.1.milestones.1.id",
-        "a": "m_1791268372770_2",
-        "b": "m_1791268348136_2"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.0.id",
-        "a": "sched_m_1791268372770_1",
-        "b": "sched_m_1791268348136_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.0.linkedId",
-        "a": "m_1791268372770_1",
-        "b": "m_1791268348136_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.1.id",
-        "a": "sched_m_1791268372789_1",
-        "b": "sched_m_1791268348155_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.customSchedules.1.linkedId",
-        "a": "m_1791268372789_1",
-        "b": "m_1791268348155_1"
-      },
-      {
-        "key": ".steps.5.saved.settings.goalStatusSummaries.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.5.saved.settings.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
-      },
-      {
-        "key": ".steps.5.todayMissions.<runtime-id>.hash",
-        "a": "-854643149",
-        "b": "-1065027533"
+        "key": ".steps.5.todayMissions.<id:goal:0>.hash",
+        "a": "-302384077",
+        "b": "-1404847085"
       }
     ]
   },
