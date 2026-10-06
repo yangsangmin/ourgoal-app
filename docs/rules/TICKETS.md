@@ -622,3 +622,6 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-567 | INFRA | [시험지 선행 · 인라인 3단계 Z2] 확인창 시험의 「처리기는 confirm.js 뒤」 검사가 인라인 합본을 읽음(단언·기대값 그대로, #824 선행) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-567-STAGE3-Z2-CONFIRM-FIRST.md | 4단계(심사 청구)
 
 - #TASK-ES-571 | INFRA | 기록 CSV 내보내기 책임 분열 — 동작 그대로 이전, 실제 다운로드 준비 및 최신 main 최종 증명 예정.
+- #TASK-ES-568 | INFRA | 잔여 책임 분열: 교대근무 루틴·기록 성장 차트·홈 오늘요약·퀘스트 | 동작0변경·생성기·기준비교 | 진행
+
+- #TASK-ES-569 | INFRA | 기록 테마 분류·공용 토스트 표시 책임을 동작 그대로 두 세포로 분열 | REQ docs/specs/REQ-TASK-ES-569-RECORD-THEME.md | 4단계(심사 청구)

@@ -6025,3 +6025,6 @@
 - 2026-10-06 TASK-ES-567: 시험지 선행 — #824(TASK-ES-552) 재생성 때 core-confirm-es376 의 처리기 위치 검사가 깨짐(index.html 에 남은 ui.confirm 처리기 2곳이 모두 옮길 함수 안). 그 한 줄만 이미 있는 HTML_CELLS(인라인 합본)를 읽게 함, 단언 0 변경.
 
 - TASK-ES-571: 기록 CSV 책임 생성기 분열 준비. 원본 실제 버튼 호출·빈 안내·UI 생성 기록 파일 다운로드 측정. 최종 기준은 TASK569 병합 이후; 제품 push·최종 증명 전.
+- 2026-10-06 TASK-ES-568: 교대루틴·기록성장차트·홈요약을 생성기 표준 이음매로 분열. 작업참고 #827. 접근성 안내·테마수정창은 호출검증 범위 밖으로 원래 자리 보존. 측정 정본 reports/TASK-ES-568/.
+
+- 2026-10-06 TASK-ES-569: 최신 main 2138415b 입력에서 기록 테마 상수4·분류기·공용 토스트를 생성기 이동. 원래 toastTimer 상태와 공유 setter, buildCheckinRecord/saveQuickCheckin 조립부는 보존. 작업참고 #829 L051, 측정 정본 reports/TASK-ES-569/.

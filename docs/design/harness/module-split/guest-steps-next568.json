@@ -1,0 +1,56 @@
+{
+ "moved": [
+  "openShiftWorkCustomModal",
+  "openShiftCycleModal",
+  "applyShiftWorkRoutines",
+  "SHIFT_WORK_PRESETS"
+ ],
+ "steps": [
+  {
+   "name": "home quest",
+   "tab": "home",
+   "click": "#homeCompassQuest",
+   "read": "#dailyQuestBarWrap",
+   "wait": 1000
+  },
+  {
+   "name": "home summary",
+   "read": "#todayGlancePill",
+   "close": "#homeDetailClose",
+   "wait": 500
+  },
+  {
+   "name": "shift custom",
+   "tab": "goals",
+   "gsub": "routine",
+   "click": "#btnOpenShiftRoutineModal",
+   "read": "#shiftWorkCustomModalContent",
+   "wait": 1000
+  },
+  {
+   "name": "shift cycle",
+   "click": "#btnShiftModalCycleLink",
+   "read": "#modalOverlay",
+   "close": "#btnCancelShiftCycle",
+   "wait": 1000
+  },
+  {
+   "name": "shift night",
+   "click": "#btnShiftNight",
+   "read": "#routineGoalsView",
+   "wait": 1200
+  },
+  {
+   "name": "growth chart",
+   "tab": "records",
+   "read": "#recFeedColdstartRadarSlot",
+   "wait": 1000
+  },
+  {
+   "name": "growth workout filter",
+   "click": "#recThemeFilters [data-filter=\"workout\"]",
+   "read": "#recThemeFilters",
+   "wait": 700
+  }
+ ]
+}

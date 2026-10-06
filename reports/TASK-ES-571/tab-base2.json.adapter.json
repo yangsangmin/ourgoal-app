@@ -1,0 +1,42 @@
+{
+  "adapter": "docs/design/harness/module-split/tab-isolated571.js",
+  "original": "C:\\dev\\wt\\csv571-final-baseline\\docs\\design\\harness\\tab-check.js",
+  "originalSha256": "e2a2a18482c081f24f8fe4cf7a9c805a5ac966f641ed3b69dc08a537fdba00a6",
+  "compiledSha256": "41c4c2e811de5751511a67ca0ece3322265587db30b5eeca20e979c2eadd1792",
+  "exactReplacements": [
+    {
+      "before": "const port = 4700 + Math.floor(Math.random() * 300);",
+      "after": "const port = 0;",
+      "count": 1
+    },
+    {
+      "before": "const base = 'http://localhost:' + port;",
+      "after": "const base = 'http://localhost:' + server.address().port;",
+      "count": 1
+    }
+  ],
+  "args": [
+    "C:/dev/wt/csv571-final-baseline",
+    "C:/dev/wt/csv571-final-tab-base2",
+    "records",
+    "--summary",
+    "reports/TASK-ES-571/tab-base2.json",
+    "--deadclick",
+    "off"
+  ],
+  "pid": 59956,
+  "servers": [
+    {
+      "address": "::",
+      "family": "IPv6",
+      "port": 52761
+    }
+  ],
+  "chrome": [
+    {
+      "pid": 61248,
+      "wsEndpoint": "ws://127.0.0.1:52763/devtools/browser/e95bc1a6-fa95-4d5b-bb17-f81c7afbfb76",
+      "profileArg": "--user-data-dir=C:\\Users\\HP\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-48H6f6"
+    }
+  ]
+}
