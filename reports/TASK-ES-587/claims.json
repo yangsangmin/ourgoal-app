@@ -56,6 +56,22 @@
         "file": "package-lock.json",
         "text": "node_modules/@babel/parser"
       }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm ci 설치 및 로드 검증 로그가 UTF-8로 존재한다.",
+      "touches": [
+        "reports/TASK-ES-587/worker-report.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-587/worker-report.json",
+        "path": "installationCheck.exitCode",
+        "equals": 0
+      }
     }
   ]
 }
