@@ -68,3 +68,6 @@
 - `offline-sync-queue-retain.test.js`는 `load()` 가상 스코프에 `L.uid` 함수가 주입되지 않아 `Date.now()` 밀리초 충돌(99.4%)로 간헐적 실패가 발생할 수 있다. 제품 회귀로 오인하지 않도록 50회 반복 실측 데이터와 diff 0 근거를 함께 제시한다.
 - `reports/` 내 신규 json 파일 경로는 저장소 루트 기준 상대경로(`reports/TASK-ES-580/...`)를 사용하여 PR 검증 시 정상 참조되도록 구성한다.
 - claims 등록 시 법정 미등록 분야 에러(L051)를 방지하기 위해 등록된 `config` 분야를 사용하고 각 요구사항마다 고유한 상대경로 시나리오를 매핑한다.
+
+### 독립 검토 범위와 보존 한계
+Codex는 정확한 기준·작업 HEAD, npm 로그 SHA, 관련 소스 diff0을 대조했다. 실행별 반복50회 원시 결과는 게시 자료에서 확인되지 않아 집계를 독립 재계산하지 못했다. 전체115개 출력동일을 주장하지 않는다. 추가 archive 비교·3개 환경 차이 원시는 reports/TASK-ES-580/archive-comparison-result.json 및 test-3-diffs.json에 보존한다. 기존576 proof/test-final은 수정하지 않는다.
