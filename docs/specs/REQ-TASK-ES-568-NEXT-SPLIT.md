@@ -32,3 +32,4 @@ DOM: `#btnOpenShiftRoutineModal`·`#shiftWorkCustomModalContent`·`#btnShiftModa
 - [ ] [4단계: 심사 청구] 부모가 push·PR·독립 법정 실행 후 기록
 
 측정 해석: 전체 실행기는 tests/*.test.js 113개와 별도 helper 스크립트 2개를 합쳐 115개 실행을 기록한다. 기준 archive의 Git 이력 시험 차이는 회귀와 구분한다. 원본의 공백 글자도 그대로 이동하므로 diff --check에 원본에서 옮긴 공백줄이 남을 수 있다.
+최종 전체 시험은 archive의 이력 한계를 제외하지 않는다. #824 병합 뒤 원격 main의 detached git baseline과 작업을 비교하며 기준·작업 npm 종료0 및 시험 종료차이0을 직접 잰다. archive 결과는 archive-test-compare.json에 별도로 보존한다.
