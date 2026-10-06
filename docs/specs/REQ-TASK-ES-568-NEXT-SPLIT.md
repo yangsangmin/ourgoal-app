@@ -43,3 +43,6 @@ DOM: `#btnOpenShiftRoutineModal`·`#shiftWorkCustomModalContent`·`#btnShiftModa
 - 탭기준2회/작업1회: {"baseValues":1224,"baseDiff":0,"afterValues":1224,"afterDiff":0}
 - 게스트조작3회: {"values":47,"diff":0,"baseDiff":0}
 전체 비교 도구의 종료1은 모듈 수·인라인 줄·함수 수의 의도된 변화 때문이다. 시험별 종료·정규화출력 차이는 위 원본 report에서 직접 0으로 확인한다.
+
+## 법정 B75440DD 뒤 보고서 분류 교정
+C4~C14·C24~C37의 touches는 reports/ 안의 작업자 측정 산출물뿐이다. 해당 static 주장은 파일에 적재한 값 확인(config)이며 법정이 제품 동작을 재측정했다는 주장이 아니다. 실제 CELL_SPLIT_PROOF 근거는 별도 작업자 측정 기록이다. ID·req·kind·검사·기대값·statement는 유지하고 domain만 교정한다. 재심 판단은 법정에 맡긴다.
