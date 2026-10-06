@@ -1,0 +1,48 @@
+{
+ "tool": "docs/design/harness/module-split/real-account-split-check.js",
+ "label": "initial-reach",
+ "mode": "guest",
+ "env": "local 127.0.0.2 static + /api/track forwarded to production (other /api and sync_records·notion_push·inquiry blocked) · Supabase rest/storage writes aborted · guest (no login) · temporary browser profile · read-only",
+ "countNames": [
+  "exportRecordsCsv"
+ ],
+ "countMissing": [],
+ "steps": [
+  {
+   "name": "records CSV visible",
+   "present": true,
+   "visible": true,
+   "textHash": "eb6b42f54c42d283",
+   "textLen": 3,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": null,
+   "calls": {}
+  },
+  {
+   "name": "records CSV click",
+   "present": true,
+   "visible": true,
+   "textHash": "4859e1ec763f9bca",
+   "textLen": 15,
+   "attrsHash": "e3b0c44298fc1c14",
+   "opened": true,
+   "calls": {
+    "exportRecordsCsv": 1
+   }
+  }
+ ],
+ "errors": [],
+ "loggedIn": false,
+ "entered": true,
+ "globals": "exportRecordsCsv/function",
+ "recordsCountUnchanged": true,
+ "rowsWritten": 0,
+ "api": {
+  "forwarded": {},
+  "blocked": {}
+ },
+ "writesBlocked": {
+  "POST /rest/v1/events": 1,
+  "POST /rest/v1/users": 1
+ }
+}

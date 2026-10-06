@@ -6023,3 +6023,5 @@
 - 2026-10-06 TASK-ES-562: 인라인 3단계 구역 Z5 표준 1 다시 냄(#814 TASK-ES-541 대체 — main 따라 바뀌는 smoke 수를 주장에 썼다가 고쳐 「말없이 삭제된 주장」 막다른 길, A안 선례 #745) — 같은 생성기 설정으로 main 판에서 세포 5개(settings/app-lock-pin-format·goals/goal-category-templates·settings/auth-screen-actions·settings/guide-buttons·settings/support-inquiry-bind) 재생성, 주장에 main 의존 수치 0. verify ok·순서 점검 ok·단독 로드 회귀 0·게스트 시나리오 5·조작 비교 0(작업자 측정). REQ docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md
 - 2026-10-06 TASK-ES-563(추가): #815·#825·#821 병합으로 낡아 origin/main 509b2788 합침 — 생성 지도 4개는 main 판을 받은 뒤 다시 생성(도장 9b30905d, 손으로 푼 충돌 0, 두 번 생성 해시 같음). 주장 C2~C4 는 같은 id 로 새 값.
 - 2026-10-06 TASK-ES-567: 시험지 선행 — #824(TASK-ES-552) 재생성 때 core-confirm-es376 의 처리기 위치 검사가 깨짐(index.html 에 남은 ui.confirm 처리기 2곳이 모두 옮길 함수 안). 그 한 줄만 이미 있는 HTML_CELLS(인라인 합본)를 읽게 함, 단언 0 변경.
+
+- TASK-ES-571: 기록 CSV 책임 생성기 분열 준비. 원본 실제 버튼 호출·빈 안내·UI 생성 기록 파일 다운로드 측정. 최종 기준은 TASK569 병합 이후; 제품 push·최종 증명 전.

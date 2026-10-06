@@ -620,3 +620,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-526 | INFRA | [인라인 3단계 Z4 이동 3차] 표 CSV·음성 표 입력·테마별 기록 CSV·초대 글자를 세포 4개로 동작 그대로 이전 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-526-STAGE3-Z4-D.md
 - #TASK-ES-562 | INFRA | [인라인 3단계 구역 Z5 표준 1 — 다시 냄, #814 대체] 앱 잠금 PIN 형식·목표 종류 상수·로그인 화면 동작·가이드 단추·문의 단추 7묶음을 세포 5개로 동작 그대로 이전(자리 표지 Z56) | 오케스트레이터 배정 구역 Z5+Z6 (2026-10-06), REQ docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md | 4단계(심사 청구)
 - #TASK-ES-567 | INFRA | [시험지 선행 · 인라인 3단계 Z2] 확인창 시험의 「처리기는 confirm.js 뒤」 검사가 인라인 합본을 읽음(단언·기대값 그대로, #824 선행) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-567-STAGE3-Z2-CONFIRM-FIRST.md | 4단계(심사 청구)
+
+- #TASK-ES-571 | INFRA | 기록 CSV 내보내기 책임 분열 — 동작 그대로 이전, 실제 다운로드 준비 및 최신 main 최종 증명 예정.

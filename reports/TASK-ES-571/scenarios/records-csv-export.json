@@ -1,0 +1,112 @@
+{
+ "id": "records-csv-export",
+ "title": "기록 CSV 빈목록 안내·실제 저장 기록 다운로드",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "expect": "visible",
+   "selector": "#btnExportRecordsCsv"
+  },
+  {
+   "do": "click",
+   "selector": "#btnExportRecordsCsv"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "내보낼 기록이 없습니다 📭"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"home\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "do": "waitFor",
+   "selector": "#captureInput"
+  },
+  {
+   "do": "type",
+   "selector": "#captureInput",
+   "text": "CSV 분열 확인 \"따옴표\", 한글"
+  },
+  {
+   "do": "click",
+   "selector": "#captureSave"
+  },
+  {
+   "do": "wait",
+   "ms": 1000
+  },
+  {
+   "do": "waitFor",
+   "selector": "#firstCheckinDoneBtn",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#firstCheckinDoneBtn"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnCheckinAiClose",
+   "timeoutMs": 10000
+  },
+  {
+   "do": "click",
+   "selector": "#btnCheckinAiClose"
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"records\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "do": "click",
+   "selector": "#btnExportRecordsCsv"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#toast",
+   "text": "기록 CSV 다운로드가 완료되었습니다 📥"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
