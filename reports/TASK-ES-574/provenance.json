@@ -1,0 +1,169 @@
+{
+ "task": "TASK-ES-574",
+ "baselineCommit": "625c876b2e429a78a707536ea3ab7ff9619c2ffc",
+ "workReference": "PR #834",
+ "sourceHashes": {
+  "baselineIndex": "ce7ed6d55cdf165f8a1f8f32b0047f208ea22fca7ec78390a7c583c8c29a3cd8",
+  "index": "c99b4264a6ae77317c1ca18639fa88ed5aa8ce58802d0ca4fb576ec986756e79",
+  "cell": "52c1e625a623054d32fcc391d3fd4f4906217a8376638f5285a6531ab66ea2d4",
+  "generator": "7e2f27ae1365739e9a309d959cf4afb9b0ef936b07ab87d58947e8d47cdcf26d",
+  "verifier": "6fdc2e8fda51b7d45e5002526a6156fa16f0d693207dab8ce0eff61e06f70f1b"
+ },
+ "mapProof": [
+  {
+   "file": "docs/architecture/module-baseline.json",
+   "same": true,
+   "sha256": "ce7af52d994f8d53a5a946bdc077043f87c744ec13aa69a4293f1d1c81044116"
+  },
+  {
+   "file": "docs/architecture/cell-map.json",
+   "same": true,
+   "sha256": "09ecfef90261dcc019641e8ee4c2601cbb49b8d4908b337adc336084474bafae"
+  },
+  {
+   "file": "docs/architecture/inline-script-map.json",
+   "same": true,
+   "sha256": "6edd849c2a9a31f8a6094468c18827ef987e0b8186769837dd590081a7f8b48a"
+  },
+  {
+   "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+   "same": true,
+   "sha256": "1635de67bbf093325b025365969203b6e5359c570d374b6e59945549a897eff4"
+  }
+ ],
+ "syntax": [
+  {
+   "file": "js/core/default-profile.js",
+   "exit": 0,
+   "sha256": "52c1e625a623054d32fcc391d3fd4f4906217a8376638f5285a6531ab66ea2d4"
+  },
+  {
+   "file": "docs/design/harness/module-split/profile-ui574.js",
+   "exit": 0,
+   "sha256": "255755613fd0903a13622777c9a8a2b786104af403f842457c8dd3254078d23c"
+  },
+  {
+   "file": "docs/design/harness/module-split/profile-compare574.js",
+   "exit": 0,
+   "sha256": "e9fdccfd5cca363e254c0623290f85f5fa71ea7deeec02825efde9770451e029"
+  }
+ ],
+ "actualCallCounts": [
+  1,
+  1,
+  1
+ ],
+ "steps": 3,
+ "profileLeavesCompared": 909,
+ "windowExposure": [
+  [
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   },
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   },
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   }
+  ],
+  [
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   },
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   },
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   }
+  ],
+  [
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   },
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   },
+   {
+    "type": "function",
+    "name": "defaultProfile",
+    "arity": 3
+   }
+  ]
+ ],
+ "normalization": {
+  "profiles": "유효 guest id/username·유효 ISO 생성일·정수 manito random seed만 canonical 값으로 비교",
+  "console": "원시 오류 보존; 외부 주소 및 비동기 발생 순서만 정규화, 개수 보존"
+ },
+ "asyncSettle": {
+  "original": "js/core/profile-topbar.js startScheduleReminderPoller setTimeout(runCheck,3000) → js/notify-engine.js checkScheduleReminders → getNotifConfig",
+  "wait": "notifications.cheerActivities===true && notifications.streakReminders===true && notifDm===true",
+  "timeoutMs": 10000,
+  "oldRaw": [
+   "ui-before-settle-base1.json",
+   "ui-before-settle-base2.json",
+   "ui-before-settle-after.json"
+  ],
+  "oldComparison": "ui-before-settle-compare.json",
+  "productChanged": false
+ },
+ "scenarioPreparation": {
+  "originalFailure": "두 번 failedStep6(1-based) 숨김 #homeGreeting textContains. 첫 보고에서 토스트로 오인 후 정정.",
+  "preserved": [
+   "scenario-before-toast-wait.json",
+   "scenario-before-visible-target.json"
+  ],
+  "final": "동일 실제 랜딩 클릭, 보이는 captureCardBox/captureInput·기존 토스트·홈/기록 왕복을 확인",
+  "publishedClaimExpectationChanged": false
+ },
+ "testsPreparation": {
+  "originalFailure": "신규 REQ 원칙② 원인/중심/핵심 문구 누락",
+  "preserved": "tests-before-req-format.json",
+  "repair": "REQ 문서만 보강 후 npm 재실행; 기존 시험 및 기대값0변경"
+ },
+ "tab": {
+  "tabs": [
+   "home",
+   "settings"
+  ],
+  "shots": [
+   40,
+   40,
+   40
+  ],
+  "deadclick": "off 양쪽 동일, 전수 죽은 클릭 검증 아님"
+ },
+ "rowsWrittenRemote": 0,
+ "manualMove": 0,
+ "publicReportRedaction": {
+  "files": [
+   "ui-after.json",
+   "ui-base1.json",
+   "ui-base2.json",
+   "ui-before-settle-after.json",
+   "ui-before-settle-base1.json",
+   "ui-before-settle-base2.json"
+  ],
+  "field": "콘솔 WebSocket URL apikey",
+  "reason": "정상 훅 HARDCODED_SECRET 차단. 오류 개수·문구 및 UI/프로필 데이터 변경 없이 URL의 공개 anon 키만 가림",
+  "originalPreservedLocal": ".claude/raw-reports574",
+  "proofRerun": false
+ }
+}

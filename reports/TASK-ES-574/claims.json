@@ -1,0 +1,407 @@
+{
+ "task": "TASK-ES-574",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-574-DEFAULT-PROFILE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "실제 보이는 랜딩 버튼으로 기본 게스트 프로필을 생성하고 저장·홈/기록 진입 동작을 보존한다."
+  },
+  {
+   "id": "R2",
+   "text": "원문 이전·단독로드·시험·DOM/탭·실계정 작업자 측정 결과를 보고 파일에 적재한다."
+  },
+  {
+   "id": "R3",
+   "text": "생성 설정·기관 신고서·설명·명세를 기록한다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "새 storage에서 실제 랜딩 게스트 버튼 클릭으로 기본 프로필을 만들고 홈 입력·기존 토스트·기록 탭 왕복을 보존한다.",
+   "touches": [
+    "index.html",
+    "js/core/default-profile.js"
+   ],
+   "scenario": "reports/TASK-ES-574/scenarios/fresh-guest-profile.json"
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/verify-inline-hard.json의 ok 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/verify-inline-hard.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/verify-inline-hard.json의 equivalent 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/verify-inline-hard.json",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/verify-inline-hard.json의 restSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/verify-inline-hard.json",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/verify-inline-hard.json의 preservedTails.0.suffixSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/verify-inline-hard.json",
+    "path": "preservedTails.0.suffixSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/verify-inline-hard.json의 preservedTails.0.occurrencesSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/verify-inline-hard.json",
+    "path": "preservedTails.0.occurrencesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/verify-inline-hard.json의 preservedTails.0.sameRestPosition 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/verify-inline-hard.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/verify-inline-hard.json",
+    "path": "preservedTails.0.sameRestPosition",
+    "equals": true
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/module-load.json의 standaloneOk 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/module-load.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/module-load.json",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/ui-compare.json의 base1VsBase2.differing 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/ui-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/ui-compare.json",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/ui-compare.json의 base1VsAfter.differing 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/ui-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/ui-compare.json",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/ui-compare.json의 base2VsAfter.differing 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/ui-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/ui-compare.json",
+    "path": "base2VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/ui-compare.json의 actualCallCounts 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/ui-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/ui-compare.json",
+    "path": "actualCallCounts",
+    "equals": [
+     1,
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/tab-base-compare.json의 differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/tab-base-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/tab-base-compare.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/tab-after-compare.json의 differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/tab-after-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/tab-after-compare.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/real-compare.json의 base1VsAfter.differing 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/real-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/real-compare.json",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/tests-compare.json의 tests.exitCodesSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/tests-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/tests-compare.json",
+    "path": "tests.exitCodesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/tests-compare.json의 tests.outputsSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/tests-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/tests-compare.json",
+    "path": "tests.outputsSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/tests-compare.json의 passFailSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/tests-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/tests-compare.json",
+    "path": "passFailSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/npm-after-req-format.json의 exit 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/npm-after-req-format.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/npm-after-req-format.json",
+    "path": "exit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 reports/TASK-ES-574/provenance.json의 manualMove 적재 확인",
+   "touches": [
+    "reports/TASK-ES-574/provenance.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-574/provenance.json",
+    "path": "manualMove",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 docs/design/harness/module-split/inline-profile574.json의 task 적재 확인",
+   "touches": [
+    "docs/design/harness/module-split/inline-profile574.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/design/harness/module-split/inline-profile574.json",
+    "path": "task",
+    "equals": "TASK-ES-574"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 docs/design/harness/module-split/real-account-profile574-steps.json의 moved 적재 확인",
+   "touches": [
+    "docs/design/harness/module-split/real-account-profile574-steps.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/design/harness/module-split/real-account-profile574-steps.json",
+    "path": "moved",
+    "equals": [
+     "defaultProfile"
+    ]
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 docs/architecture/cell-descriptions.json의 cells.core/default-profile 적재 확인",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/cell-descriptions.json",
+    "path": "cells.core/default-profile",
+    "equals": "기존 게스트·로그인 진입의 기본 프로필 구조와 설정 초기값을 생성한다"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정/설정 기록 docs/architecture/modules.json의 cells.39.file 적재 확인",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/modules.json",
+    "path": "cells.39.file",
+    "equals": "js/core/default-profile.js"
+   }
+  }
+ ]
+}
