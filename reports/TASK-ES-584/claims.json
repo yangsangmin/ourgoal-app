@@ -170,6 +170,38 @@
         "file": "docs/design/harness/shared-learning/bootstrap.js",
         "text": "referenceMissingIds"
       }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 역사적 다른TASK after 오사용 자료 무결성 경계 차단 작업자 기록.",
+      "touches": [
+        "reports/TASK-ES-584/canary-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-584/canary-summary.json",
+        "path": "inputBoundaryRejected",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 역사적 다른TASK after 오사용 자료 무결성 경계 차단 작업자 기록.",
+      "touches": [
+        "reports/TASK-ES-584/canary-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-584/canary-summary.json",
+        "path": "scopeBoundaryRejected",
+        "equals": true
+      }
     }
   ]
 }
