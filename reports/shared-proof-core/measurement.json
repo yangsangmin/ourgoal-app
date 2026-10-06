@@ -1,0 +1,347 @@
+{
+  "measurementOnly": true,
+  "productVerdict": null,
+  "fixtureScope": "new CLI unit contract, not product E2E",
+  "measuredAt": "2026-10-06T16:30:39.125Z",
+  "cases": [
+    {
+      "name": "original-independent-audit-unmeasured",
+      "expectedGate": "sensitivity",
+      "expectedCode": "INDEPENDENT_AUDIT_UNMEASURED",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": true,
+        "sensitivity": false
+      },
+      "rawSha256": "b7b5009d65bdc861b5f387048fb15d4d9e192094eea877fbfa11eeeb13ff6974"
+    },
+    {
+      "name": "incomplete",
+      "expectedGate": "input",
+      "expectedCode": "INCOMPLETE_OR_ERROR",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "2b04d00b430ec55c2f3e82975915d8f5b2c7a42a4fdd5a179fffccfb3ca856be"
+    },
+    {
+      "name": "error",
+      "expectedGate": "input",
+      "expectedCode": "INCOMPLETE_OR_ERROR",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "f84dd80769d903650d50b78e2c64df8ae3a13aa95dd4af9e79c136a2e2482cfe"
+    },
+    {
+      "name": "same-step-omitted-all",
+      "expectedGate": "input",
+      "expectedCode": "REQUIRED_STEP_ORDER",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "f6854c9a828e667fcd73a375b423ece192ae2e5a182b59dc17dd2e5d84896a39"
+    },
+    {
+      "name": "input-file-sha",
+      "expectedGate": "input",
+      "expectedCode": "INPUT_CHANGED_OR_MISSING",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "8003dba731357587a54c923077b5a7295783a6685d4000302a94f8a710c51d96"
+    },
+    {
+      "name": "dom-sha",
+      "expectedGate": "input",
+      "expectedCode": "DOM_SHA",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "ac33f61d21037fbe65bec5e1a3f13ad4aa8adb49a1950fc1e9af52c7d21a7fca"
+    },
+    {
+      "name": "full-dom",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "52116f96055b69bb452d1e4b599c32fb9fdb32ca25ff7635bf4a3a2119ff844c"
+    },
+    {
+      "name": "feature-dom",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "4d6cd220ba2ea549df4c051a10baa66451bbe3a9882c2db5a8faead66c191d91"
+    },
+    {
+      "name": "ls-value",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "d35a9e025c32796c74240b737907c8c8bc0451865a9646259d8a275d77cb00f5"
+    },
+    {
+      "name": "ls-key-add",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "61bb98e930dbb7440ab52931a9d82f5584cacdb4183a86569a45c386e08de7f4"
+    },
+    {
+      "name": "ls-key-delete",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "279c94adf9446ce5183ab0dbad33873714435bf1fd2d5b1b6484a01791c48006"
+    },
+    {
+      "name": "ss-value",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "de60648371cf20a53f9586ed23281bcecf99e4aacbe164c0f8125348337f406b"
+    },
+    {
+      "name": "pageerror",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "1fe7e02e4ad4217a592a28424ce6994d4a59197e12fe5db053c4ac2c49bdd7d2"
+    },
+    {
+      "name": "console-content",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "7c1b9419842596719845b33f2afdbc9cf75d2fcf020295768811dfe32448922b"
+    },
+    {
+      "name": "toast",
+      "expectedGate": "work",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": true,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "0fb17bac846ade753216725ed68f85b1c1c08ec33a69ca8466991f20e9382991"
+    },
+    {
+      "name": "base2-only",
+      "expectedGate": "baseline",
+      "expectedCode": "DOMAIN_DIFFERENCE",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": true,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "d75f941c01a03368934a87208d5d8237a8b70ff9bd6e4042c940687407a82278"
+    },
+    {
+      "name": "function-unobserved",
+      "expectedGate": "input",
+      "expectedCode": "FUNCTION_UNOBSERVED",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "953d14ab993488afacef30a4a021eabc2d41d6291850b1f47b80226b6f40e867"
+    },
+    {
+      "name": "postcondition",
+      "expectedGate": "input",
+      "expectedCode": "POSTCONDITION",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "74a8a8b77c1a97f1994fdf94fca9a7912f416eb5482fe7f4d5fd52806ae84c9e"
+    },
+    {
+      "name": "non-mouse",
+      "expectedGate": "input",
+      "expectedCode": "ACTUAL_CLICK_REQUIRED",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "71f5381b9f18866e3eda2aaec03d25a23bc356bf353ce93a78aa6b2e763457a7"
+    },
+    {
+      "name": "missing-ss",
+      "expectedGate": "input",
+      "expectedCode": "MISSING_OBSERVATION",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": true,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "9b02a6cede137b1af3feac7495857d7d17080ad4a7273c72b36117568a0b4e9f"
+    },
+    {
+      "name": "raw-tamper",
+      "expectedGate": "input",
+      "expectedCode": "RAW_SHA_MISMATCH",
+      "actualExitCode": 1,
+      "expectedObserved": true,
+      "gates": {
+        "schema": true,
+        "input": false,
+        "dynamic": false,
+        "baseline": false,
+        "work": false,
+        "sensitivity": false
+      },
+      "rawSha256": "1b364db2609737a2fb1c27d714ff5236381320ee971ced30978af6fc5db5c4fc"
+    }
+  ],
+  "expectedObservations": 21,
+  "observed": 21,
+  "effect": null
+}
