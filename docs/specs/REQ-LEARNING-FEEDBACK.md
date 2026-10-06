@@ -18,3 +18,5 @@ event.feedback 선택필드로 failures/improvements/metrics/followupOf/review�
 feedback-validate.js는선택필드참조를검사,feedback-view.js는반복·최근3·다음5건효과를산출,review.js는사전명시의존과현재파일SHA를대조한다. 기존collect/CAS/store를재사용한다. reportCLI는새JSON출력과읽기영수증만생성하고store쓰기0이다.
 ## 8. [원칙 ⑧] 막힘 예상·성과 측정
 정본stale/CAS·증거부재·입력변경·확인되지않은실패·효과표본부재를반려/미측정한다. recent3은새건없으면동일3건을유지,새고유개선이면오래된건을제외한다. 후속유형5고유task/반복결함0/증거불일치0은기존계약이며충돌2/3자동규범결정0. 모델진행량·토큰절감·효과는실제전후표본없으면null.
+
+독립 검토 e404fb03 반례 보강: confirmed는 원시 confirmedFailures의 failureId/causeId와 정확히 연결하며 비0 종료만은 unconfirmed 관측이다. validateEvent는 evidence/requiredChecks의 registry 등록과 registry readReceipt SHA를 요구한다. 기존 effectFollowup 숫자는 samples 항목의 evidenceSha256·metric을 현재 measured/exit0 원시 result.metrics와 연결하고 산술평균이 숫자와 같아야 한다. 출처 없는 옛 숫자는 null 또는 반려이며 원장·설치 runtime는 변경하지 않는다.

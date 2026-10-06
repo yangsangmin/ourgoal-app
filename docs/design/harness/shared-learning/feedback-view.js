@@ -46,9 +46,9 @@ function feedbackView(options) {
       if(!failures.has(groupKey))failures.set(groupKey,{taskKind:event.taskKind,causeId:failure.causeId,observations:new Map()});
       const observationKey=stable([event.taskId,event.inputProductSha,failure.evidenceSha256,failure.scope,failure.checkerId]);
       const e=event.evidence.find(e=>e.rawSha256===failure.evidenceSha256),raw=e&&checkedEnvelope(entry,e,options);
-      const valid=raw?.valid&&(e.exitCode!==0||raw.value.result?.confirmedFailures?.some(x=>x.failureId===failure.failureId&&x.causeId===failure.causeId));
+      const valid=failure.confirmation==='confirmed'&&raw?.valid&&raw.value.result?.confirmedFailures?.some(x=>x.failureId===failure.failureId&&x.causeId===failure.causeId);
       failures.get(groupKey).observations.set(observationKey,{failureId:failure.failureId,taskId:event.taskId,eventId:event.eventId,eventSha256:entry.eventSha256,evidenceSha256:failure.evidenceSha256,
-        observedAt:failure.observedAt,summary:failure.summary,evidenceValidity:valid?'current-hash-checked':raw?.reason||'unmeasured',confirmedAtCollection:true,currentlyMeasured:Boolean(valid)});
+        observedAt:failure.observedAt,summary:failure.summary,confirmation:failure.confirmation,evidenceValidity:valid?'current-hash-checked':raw?.reason||'pending-unconfirmed',confirmedAtCollection:failure.confirmation==='confirmed',currentlyMeasured:Boolean(valid)});
     }
     for(const i of f.improvements||[]) {
       const origin=byId.get(key(i.failureRef));
@@ -67,7 +67,7 @@ function feedbackView(options) {
   }
   const failureGroups=[...failures.values()].map(g=>{
     const observations=[...g.observations.values()],measured=observations.filter(o=>o.currentlyMeasured);
-    return {taskKind:g.taskKind,causeId:g.causeId,uniqueConfirmedAtCollection:observations.length,currentlyMeasured:measured.length,observations,
+    return {taskKind:g.taskKind,causeId:g.causeId,uniqueConfirmedAtCollection:observations.filter(o=>o.confirmedAtCollection).length,currentlyMeasured:measured.length,observations,
       recommendation:measured.length>1?{action:'담당 또는 방법을 재검토해 전환을 권고',basis:'같은 원인의 고유 실측 증거 반복',automaticReassignment:false,permissionExpansion:false,policyPromotion:false}:null};
   });
   const recent3=[...improvements.values()].sort((a,b)=>Date.parse(b.measuredAt)-Date.parse(a.measuredAt)||b.eventId.localeCompare(a.eventId)).slice(0,3);

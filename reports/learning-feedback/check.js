@@ -18,6 +18,7 @@ function boot(name){run(name,['bootstrap','--participants',pf,'--task-id','UNIT-
 let booted=boot('initial-bootstrap');
 const inputs=[{path:'reports/learning-feedback/check.js',sha256:hashFile(__filename)}],inputProductSha=sha(stable(inputs));
 function event(id,task='UNIT-FEEDBACK',exitCode=1,result={}){
+ if(exitCode!==0&&!result.confirmedFailures)result={...result,confirmedFailures:[{failureId:'failure-one',causeId:'same-cause'}]};
  const measuredAt=new Date().toISOString(),raw=path.join(root,id+'-raw.json');
  const envelope={command:process.execPath,args:[cli,'unit-contract-fixture'],inputProductSha,exitCode,scope:'tool-unit',sourceTask:task,measuredAt,result};write(raw,envelope);
  const e={...envelope,checkerId:'submission-integrity',inputFiles:inputs,rawPath:path.relative(repo,raw),rawSha256:hashFile(raw),publishedPath:path.relative(repo,raw),publishedSha256:hashFile(raw),redaction:{mode:'none',transforms:[]},status:'measured'};
@@ -58,6 +59,13 @@ try{
  assert('absent-before-not-invented',measured.metrics.qualityDefects.before===null&&measured.metrics.qualityDefects.delta===null);
  assert('absent-model-token-observations-null',measured.modelProgress===null&&measured.tokenSavings===null&&measured.metrics.tokens.after===null);
  assert('fixture-no-improvement-claim',measured.improvementConclusion===null&&measured.productVerdict===null);
+ const rejectFile=path.join(root,'independent-counterexample.json');
+ function reject(name,e){write(rejectFile,e);run(name,['validate','--event',rejectFile],2);}
+ const invented=JSON.parse(JSON.stringify(first));invented.feedback.failures[0].causeId='invented-cause';invented.feedback.failures[0].failureId='never-observed';reject('invented-failure-cause-rejected',invented);
+ const unknown=JSON.parse(JSON.stringify(first));unknown.evidence[0].checkerId='self-invented-checker';unknown.feedback.failures[0].checkerId='self-invented-checker';unknown.requiredChecks=['self-invented-checker'];reject('unknown-required-checker-rejected',unknown);
+ const fabricated=event('fabricated-effect','UNIT-FEEDBACK',0);fabricated.effectFollowup={...fabricated.effectFollowup,interventionBefore:123,samples:{interventionBefore:['not-an-evidence']}};reject('fabricated-effect-samples-rejected',fabricated);
+ const unconfirmed=event('pending-observation');unconfirmed.feedback.failures[0].confirmation='unconfirmed';unconfirmed.feedback.failures[0].causeId='unconfirmed-cause';collect(unconfirmed,'collect-pending-observation');
+ assert('observation-is-not-confirmed',report('pending-observation-report').failureGroups.find(g=>g.causeId==='unconfirmed-cause').uniqueConfirmedAtCollection===0);
  const bad=event('unconfirmed',undefined,0);bad.feedback.failures=first.feedback.failures;const bf=path.join(root,'bad.json');write(bf,bad);run('unconfirmed-failure-rejected',['validate','--event',bf],2);
  const changed=event('changed-raw');changed.evidence[0].rawSha256='0'.repeat(64);write(bf,changed);run('changed-raw-rejected',['validate','--event',bf],2);
  write(path.join(__dirname,'check-result.json'),{measurementOnly:true,productVerdict:null,fixtureScope:'new tool contract only',effect:null,results,rawRoot:root});

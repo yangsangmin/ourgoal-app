@@ -1,18 +1,22 @@
 {
   "measurementOnly": true,
   "productVerdict": null,
-  "toolFixtureCases": 36,
-  "expectedMatched": 36,
+  "toolFixtureCases": 42,
+  "expectedMatched": 42,
   "legacyCases": 33,
   "legacyMatched": 33,
   "evidence": [
     {
       "path": "reports/learning-feedback/check-result.json",
-      "sha256": "65ae19bf8a8de0b790ad7a597eb80657106ed51e73a509ebcc1711fc35e1f8a5"
+      "sha256": "0642295154d0f79584addcc23aee3a24664be1e2297b8d238b1a8dd543b724dd"
+    },
+    {
+      "path": "reports/learning-feedback/fix-check-output.json",
+      "sha256": "4831d699811c92b00b60ac06f6f5aca36f2bfa77eae33e25cb0f6c448dfcb2af"
     },
     {
       "path": "reports/learning-feedback/legacy-check-output.json",
-      "sha256": "28e4362dbec0537f8b1b2501a2e5abeac2b2e1dee644c3b7b66139979f5dffa5"
+      "sha256": "082a6fede5422471fb4198e2012bfcff408b277130037409a326d09d14ac625f"
     },
     {
       "path": "reports/learning-feedback/npm-test.txt",
@@ -23,8 +27,44 @@
       "sha256": "6864a5072bbcdfe41719e6a1a3d20ee746874b8da6d514e02e37e273433f779f"
     }
   ],
+  "sourceHashes": [
+    {
+      "path": "docs/design/harness/shared-learning/validate.js",
+      "sha256": "3bb19b19b56cacfefd90261ac998e89349bed33339ad2a42a95f3103d119cf3b"
+    },
+    {
+      "path": "docs/design/harness/shared-learning/feedback-validate.js",
+      "sha256": "a874f35ab539206446c79a9ea8e51cd48cfd534cace7f35b747f6c1963d8b987"
+    },
+    {
+      "path": "docs/design/harness/shared-learning/feedback-view.js",
+      "sha256": "d63df10bbe05f0bdf0d4350820c0b0d14aea09e484997d0de7c72d452c17bdc1"
+    }
+  ],
   "effect": null,
   "modelProgress": null,
   "tokenSavings": null,
-  "installedRuntimeUpdated": false
+  "installedRuntimeUpdated": false,
+  "independentCounterexamples": [
+    {
+      "name": "invented-failure-cause-rejected",
+      "exitCode": 2,
+      "expected": 2,
+      "matched": true
+    },
+    {
+      "name": "unknown-required-checker-rejected",
+      "exitCode": 2,
+      "expected": 2,
+      "matched": true
+    },
+    {
+      "name": "fabricated-effect-samples-rejected",
+      "exitCode": 2,
+      "expected": 2,
+      "matched": true
+    }
+  ],
+  "npmObservationHead": "e404fb0338c35a72c94eedc0e6c6e90fa16f9dad",
+  "npmReuseReason": "product and existing test inputs unchanged; affected tool contract suites rerun"
 }

@@ -5,3 +5,5 @@
 `check-result.json`은 스크립트 산출이다. 실패→collect→bootstrap, 같은 원인 반복 권고, 개선 최신3건과 새건 없는 유지, 실행기 변경, 후속 고유5건의 증거 연결 및 누락 before/delta null을 관측한다. `legacy-check-output.json`은 별도 `legacy-sandbox` 사본에서 실행한 기존33건 결과이며 기존 TASK584 보고서에는 쓰지 않았다. 상세 실행 입력/출력은 해당 사본 reports에 남는다.
 
 수집·재조회는 정본 lessons·헌법·승인선·Court·제품·기존 시험 기대값을 변경하지 않는다. 수집자 기록의 사실성은 독립 확인 대상이다. 설치 runtime 갱신·PR·Court·병합은 root 담당이다.
+
+독립 검토 e404fb03의 세 반례는 `fix-check-output.json`과 새 raw 실행에 복제했다. 정상 fixture는 원시에 특정 failureId/causeId를 기록하고, 존재하지 않는 원인/검사/효과 출처는 CLI exit2를 관측했다. 원인이 미확인인 비0 관측은 pending으로 수집되며 confirmed 집계는 늘지 않는다. `legacy-fix-cli-raw`는 보강 뒤 기존33건 새 실행 원문이다. 기존 npm 시험은 e404fb03의 관측을 유지한다(제품·기존 시험 입력 변경0); 이번 영향 범위의 도구 계약만 재실행했다.

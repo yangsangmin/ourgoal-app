@@ -1,6 +1,6 @@
 'use strict';
 const {path,json,inside,hashFile,stable,safeId}=require('./common');
-const {object,hash,time,text,referencedEvent}=require('./feedback-common');
+const {object,hash,time,text,referencedEvent,checkedEnvelope}=require('./feedback-common');
 const metricNames=['interventionMinutes','qualityDefects','repeatDefects','evidenceMismatches','tokens','progressUnits'];
 function validateFeedback(event,options) {
   const errors=[],add=(ok,code)=>{if(!ok)errors.push(code);},f=event.feedback;
@@ -16,11 +16,12 @@ function validateFeedback(event,options) {
   const failures=Array.isArray(f.failures)?f.failures:[];
   add(new Set(failures.map(x=>x.failureId)).size===failures.length,'FEEDBACK_DUPLICATE_FAILURE');
   for(const failure of failures) {
-    add(object(failure)&&text(failure.summary)&&time(failure.observedAt)&&failure.confirmation==='confirmed','FEEDBACK_FAILURE_SCHEMA');
+    add(object(failure)&&text(failure.summary)&&time(failure.observedAt)&&['confirmed','unconfirmed'].includes(failure.confirmation),'FEEDBACK_FAILURE_SCHEMA');
     try{safeId(failure.failureId);safeId(failure.causeId);}catch{errors.push('FEEDBACK_FAILURE_ID');}
     const e=evidence(failure.evidenceSha256),raw=e&&envelope(e);
     add(Boolean(e&&raw&&e.checkerId===failure.checkerId&&e.scope===failure.scope&&e.measuredAt===failure.observedAt),'FEEDBACK_FAILURE_EVIDENCE');
-    add(Boolean(e&&(e.exitCode!==0||raw?.result?.confirmedFailures?.some(x=>x.failureId===failure.failureId&&x.causeId===failure.causeId))),'FEEDBACK_FAILURE_NOT_CONFIRMED');
+    if(failure.confirmation==='confirmed')add(Boolean(raw?.result?.confirmedFailures?.some(x=>x.failureId===failure.failureId&&x.causeId===failure.causeId)),'FEEDBACK_FAILURE_NOT_CONFIRMED');
+    else add(f.phase==='in-progress','FEEDBACK_UNCONFIRMED_PENDING_ONLY');
   }
   const metrics=Array.isArray(f.metrics)?f.metrics:[];
   add(new Set(metrics.map(m=>m.name)).size===metrics.length,'FEEDBACK_DUPLICATE_METRIC');
@@ -39,7 +40,12 @@ function validateFeedback(event,options) {
     add(object(i)&&text(i.problem)&&text(i.action)&&time(i.measuredAt)&&['instructed','implemented','verified','applied'].includes(i.status),'FEEDBACK_IMPROVEMENT_SCHEMA');
     try{safeId(i.improvementId);}catch{errors.push('FEEDBACK_IMPROVEMENT_ID');}
     let origin;
-    try{origin=referencedEvent(i.failureRef,options);add(origin.event.taskKind===event.taskKind&&origin.event.feedback?.failures?.some(x=>x.failureId===i.failureRef.failureId),'FEEDBACK_IMPROVEMENT_FAILURE_LINK');}
+    try{
+      origin=referencedEvent(i.failureRef,options);
+      const linked=origin.event.feedback?.failures?.find(x=>x.failureId===i.failureRef.failureId&&x.confirmation==='confirmed');
+      const proof=linked&&origin.event.evidence.find(e=>e.rawSha256===linked.evidenceSha256),raw=proof&&checkedEnvelope(origin,proof,options);
+      add(origin.event.taskKind===event.taskKind&&raw?.valid&&raw.value.result?.confirmedFailures?.some(x=>x.failureId===linked.failureId&&x.causeId===linked.causeId),'FEEDBACK_IMPROVEMENT_FAILURE_LINK');
+    }
     catch(e){errors.push(e.message);}
     add(Array.isArray(i.evidenceRefs)&&i.evidenceRefs.length>0&&i.evidenceRefs.every(hash),'FEEDBACK_IMPROVEMENT_REFS');
     for(const ref of i.evidenceRefs||[]) {
