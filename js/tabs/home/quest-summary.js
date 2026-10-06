@@ -2,7 +2,7 @@
  * OurGoal Home Quest Summary (홈 — 오늘 요약·3대 퀘스트)
  *
  * 목표 시트에서 보이는 오늘 요약·3대 퀘스트. 접근성 안내 함수는 원래 자리.
- * #TASK-ES-568(잔여 책임 분열 — 교대근무 루틴·성장차트·홈 퀘스트): index.html 인라인 IIFE 의 구간(이전 전 4649~4673 · 4674~4783줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * #TASK-ES-568(잔여 책임 분열 — 교대근무 루틴·성장차트·홈 퀘스트): index.html 인라인 IIFE 의 구간(이전 전 4656~4680 · 4681~4790줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
  * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
  * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -14,7 +14,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalHomeMegaBlock = global.OurgoalHomeMegaBlock || {};
 
-  /* ---- 이전 전 index.html 4649~4673줄(#TASK-ES-568 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4656~4680줄(#TASK-ES-568 생성기 표지) ---- */
 
   function renderTodayGlancePill(){
     var pill = document.getElementById('todayGlancePill');
@@ -40,7 +40,7 @@
       }
     };
   }
-  /* ---- 이전 전 index.html 4674~4783줄(#TASK-ES-568 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4681~4790줄(#TASK-ES-568 생성기 표지) ---- */
 
   function renderDailyQuestBar(animate){
     var wrap = document.getElementById('dailyQuestBarWrap');

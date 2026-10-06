@@ -1,0 +1,21 @@
+{
+ "id": "goals-personal-guide-guest",
+ "title": "게스트로 목표 탭에서 추천 템플릿 하나를 담은 뒤 「활용가이드」를 누르면 「개인 목표 200% 활용 가이드」 창에 추천 템플릿 카드와 3단계 실천법이 보인다 — 옮긴 renderPersonalGoalsEmptyGuideHtml(js/tabs/goals/personal-goals-guide.js)이 그 내용을 그린다",
+ "steps": [
+  { "do": "setViewport", "width": 430, "height": 3200 },
+  { "do": "goto", "path": "/index.html" },
+  { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+  { "do": "click", "selector": "#btnLandingPreviewDirect" },
+  { "do": "waitFor", "selector": ".navbtn[data-tab=\"goals\"]", "timeoutMs": 15000 },
+  { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+  { "do": "waitFor", "selector": ".btn-quick-adopt-goal[onclick*=\"10km\"]", "timeoutMs": 10000 },
+  { "do": "click", "selector": ".btn-quick-adopt-goal[onclick*=\"10km\"]" },
+  { "expect": "textContains", "selector": "#toast", "text": "10km 마라톤 완주 로드맵" },
+  { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+  { "do": "waitFor", "selector": "#btnShowPersonalGuideModal", "timeoutMs": 10000 },
+  { "do": "click", "selector": "#btnShowPersonalGuideModal" },
+  { "expect": "textContains", "selector": "#modalSheet", "text": "작심삼일을 넘어서는" },
+  { "expect": "textContains", "selector": "#modalSheet", "text": "추천 목표 템플릿 백과사전" },
+  { "expect": "noExceptions" }
+ ]
+}

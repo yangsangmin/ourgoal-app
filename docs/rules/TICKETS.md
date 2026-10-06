@@ -613,6 +613,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-516 | FIX | [돈 묶음 소멸] 미분화 덩어리의 광고·구독 묶음 4개(광고 상수·구독 상태·페이월 안내 모달·PRO 배지·템플릿 복제 보상형 광고 함수)와 진입 흔적 삭제, 데이터 칸 보존(상민님 2026-10-06 「광고, 구독관련은 삭제해」), 선행 #806 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md | 4단계(심사 청구)
 - #TASK-ES-537 | INFRA | [인라인 3단계 기관] 루틴 상세·편집 창 세포 이동(생성기, 자리 HO), Modal helper·Confetti 옮길 문 0 확인 | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-537-STAGE3-ORGAN.md | 4단계(심사 청구)
 - #TASK-ES-536 | INFRA | [인라인 3단계 Z3 알림·시간·주소] 4묶음 8함수를 세포 4개로 동작 그대로 이동(생성기, 자리 HO) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md | 4단계(심사 청구)
+- #TASK-ES-552 | INFRA | [인라인 3단계 Z2 2차] 「개인 목표 200% 활용 가이드」 묶음을 세포 3개(goals/personal-goals-guide·goals/team-level-goals·goals/team-goal-edit-modal)로 옮김 — 게스트 시나리오 3(예시 팀 체험·템플릿 팀 개설로 팀 경로 도달) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-552-STAGE3-Z2-GUIDE.md | 4단계(심사 청구)
 - #TASK-ES-550 | INFRA | [금고 단독] 무결성 게이트 「[검증 16/16] [#TASK-ES-192]」 4단계를 「페이월 자리 안내 모달 없음」으로(#813 직후 병합, 상민님 「광고·구독 삭제 금고 변경 승인」) | 오케스트레이터 배정(2026-10-06), REQ docs/specs/REQ-TASK-ES-550-MONEY-INTEGRITY-GATE.md | 4단계(심사 청구)
 - #TASK-ES-556 | INFRA | [인라인 3단계 구역 Z6 표준 3] 홈 화면 그리기·마이크 권한 안내 창·AI 피드백 문구집 4묶음을 세포 3개로 동작 그대로 이전(자리 HO) | 오케스트레이터 배정 구역 Z5+Z6 (2026-10-06), REQ docs/specs/REQ-TASK-ES-556-STAGE3-Z56-C.md | 4단계(심사 청구)
 - #TASK-ES-563 | INFRA | [생성 지도 일괄 갱신 4회차] 생성 파일 4개를 main 2313ad6 기준 재생성(생성: 안티그래비티, 검수·서류: Claude), 제품 코드 변경 0 | 코디네이터 운영 규칙 (2026-10-06), REQ docs/specs/REQ-TASK-ES-563-GENERATED-MAPS-SYNC-4.md | 4단계(심사 청구)

@@ -1,6 +1,6 @@
 # REQ — TASK-ES-568 잔여 책임 분열
 
-근거: 헌법 CELL_SPLIT·CELL_SPLIT_PROOF, 작업참고 기준 PR #827, 유형 (가) 표준(L015·L016·L019·L009·L010·L026·L046·L047). 최종 입력은 #824 병합 뒤 origin/main이다. 구현 책임은 builder_827 한 명이다.
+근거: 헌법 CELL_SPLIT·CELL_SPLIT_PROOF, 작업참고 착수 기준 PR #827 · 최종 기준 PR #824, 유형 (가) 표준(L015·L016·L019·L009·L010·L026·L046·L047). 최종 입력은 #824 병합 뒤 origin/main이다. 구현 책임은 builder_827 한 명이다.
 
 ## 1. [원칙 ①] 문제 정확히 파악
 인라인의 교대근무 루틴·성장 차트·홈 오늘 요약 책임이 남아 있다. 후보 전체가 아니라 게스트 실제 조작으로 도달한 함수만 옮긴다. `guest-reach.json`·`guest-reach2.json`에 기준 호출 수와 보임을 기록한다.
@@ -33,3 +33,13 @@ DOM: `#btnOpenShiftRoutineModal`·`#shiftWorkCustomModalContent`·`#btnShiftModa
 
 측정 해석: 전체 실행기는 tests/*.test.js 113개와 별도 helper 스크립트 2개를 합쳐 115개 실행을 기록한다. 기준 archive의 Git 이력 시험 차이는 회귀와 구분한다. 원본의 공백 글자도 그대로 이동하므로 diff --check에 원본에서 옮긴 공백줄이 남을 수 있다.
 최종 전체 시험은 archive의 이력 한계를 제외하지 않는다. #824 병합 뒤 원격 main의 detached git baseline과 작업을 비교하며 기준·작업 npm 종료0 및 시험 종료차이0을 직접 잰다. archive 결과는 archive-test-compare.json에 별도로 보존한다.
+
+최종 기준 커밋: 0a2e424dcbbfc9e4c99ebb75eaea87ec99716efd. 토큰 원본은 이 커밋 git archive, 실행 기준은 이 커밋 detached git worktree(C:/dev/wt/next568-final-baseline)다. 실제 source와 최종 수치는 snapshot-final.json에 스크립트로 적는다.
+
+## 최종 작업자 측정 (판정 아님)
+- 토큰·남은글자: {"equivalent":true,"restSame":true,"ok":true}
+- Git기준·작업npm: {"base":0,"work":0}
+- 113시험지+helper2: {"exitDiff":[],"outputDiff":[]}
+- 탭기준2회/작업1회: {"baseValues":1224,"baseDiff":0,"afterValues":1224,"afterDiff":0}
+- 게스트조작3회: {"values":47,"diff":0,"baseDiff":0}
+전체 비교 도구의 종료1은 모듈 수·인라인 줄·함수 수의 의도된 변화 때문이다. 시험별 종료·정규화출력 차이는 위 원본 report에서 직접 0으로 확인한다.
