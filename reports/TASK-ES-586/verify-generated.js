@@ -1,0 +1,25 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
+const root=path.resolve(__dirname,'../..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),hash=f=>sha(fs.readFileSync(path.join(root,f)));
+const write=(name,v)=>fs.writeFileSync(path.join(__dirname,name),JSON.stringify(v,null,2)+'\n','utf8');
+const files=['docs/architecture/module-baseline.json','docs/architecture/cell-map.json','docs/architecture/inline-script-map.json','docs/architecture/INLINE-SCRIPT-MAP.md'];
+const before=Object.fromEntries(files.map(f=>[f,hash(f)]));
+function run(name,args){const r=spawnSync(process.execPath,args,{cwd:root,encoding:'utf8',env:process.env,maxBuffer:64*1024*1024});write(name+'.raw.json',{command:process.execPath,args,exitCode:r.status,stdout:r.stdout,stderr:r.stderr,measuredAt:new Date().toISOString()});if(r.status!==0)throw Error(name+': '+r.stdout+r.stderr);return r;}
+run('module-guard-second-update',['scripts/module-guard.js','--update']);
+run('cell-map-second-generation',['scripts/cell-map-export.js']);
+run('inline-map-second-generation',['scripts/inline-script-map.js','--write']);
+run('module-guard-check',['scripts/module-guard.js']);
+run('cell-map-check',['scripts/cell-map-export.js','--check']);
+const after=Object.fromEntries(files.map(f=>[f,hash(f)]));
+const current=JSON.parse(fs.readFileSync(path.join(root,files[0]),'utf8'));
+const baseBytes=spawnSync('git',['show','origin/main:'+files[0]],{cwd:root}).stdout;
+const base=JSON.parse(baseBytes.toString('utf8'));
+const previousMetrics=base.history.at(-1).metrics,currentMetrics=current.history.at(-1).metrics;
+const names=['inlineScriptLines','indexFunctionDecls','windowAssignments','crossTabRefs'];
+const nonincrease=names.every(n=>currentMetrics[n]<=previousMetrics[n])&&currentMetrics.oversizeJsFiles.count<=previousMetrics.oversizeJsFiles.count;
+const productPaths=spawnSync('git',['ls-files','index.html','js','docs/architecture/modules.json','scripts/module-guard.js','scripts/module-metrics.js','scripts/cell-map-export.js','scripts/inline-script-map.js'],{cwd:root,encoding:'utf8'}).stdout.trim().split('\n');
+const inputFiles=productPaths.map(f=>({path:f,sha256:hash(f)}));
+const sourceCommit=spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim();
+const proof={measurementOnly:true,productVerdict:null,sourceCommit,inputFiles,before,after,reproduced:files.every(f=>before[f]===after[f]),previousMetrics,currentMetrics,nonincrease,historyBefore:base.history.length,historyAfter:current.history.length,oldHistoryUnchanged:JSON.stringify(current.history.slice(0,base.history.length))===JSON.stringify(base.history),generatedCellMapSource:JSON.parse(fs.readFileSync(path.join(root,files[1]),'utf8')).source,absentOutputs:{'docs/architecture/CELL-MAP.md':!fs.existsSync(path.join(root,'docs/architecture/CELL-MAP.md'))},inlineCheckFlagImplemented:false,inlineVerification:'actual second --write and identical output SHA; no unsupported --check claim',effectImprovement:null,measuredAt:new Date().toISOString()};
+write('generated-proof.json',proof);console.log(JSON.stringify({reproduced:proof.reproduced,nonincrease,oldHistoryUnchanged:proof.oldHistoryUnchanged,previousMetrics,currentMetrics},null,2));
+if(!proof.reproduced||!nonincrease||!proof.oldHistoryUnchanged)process.exitCode=2;

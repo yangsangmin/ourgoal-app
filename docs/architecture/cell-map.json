@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "0b8cda96fad7e057ffcd20db1c7044799bd73d29",
-  "short": "0b8cda96",
-  "committedAt": "2026-10-06T19:54:09+09:00",
-  "subject": "Merge pull request #837 from yangsangmin/codex/task-es-576-today-mission"
+  "commit": "2a14c21f05baf97c579b82eaa3db27373fbdef41",
+  "short": "2a14c21f",
+  "committedAt": "2026-10-06T22:49:49+09:00",
+  "subject": "Merge pull request #841 from yangsangmin/codex/task-es-581-app-boot"
  },
  "summary": {
-  "cells": 337,
-  "files": 336,
-  "jsLines": 86082,
+  "cells": 340,
+  "files": 339,
+  "jsLines": 86445,
   "kinds": {
-   "organ": 52,
-   "tab": 179,
+   "organ": 54,
+   "tab": 180,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 337,
+  "descriptionsHand": 340,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 5942,
-   "functionDecls": 71
+   "inlineScriptLines": 5667,
+   "functionDecls": 68
   },
   "health": {
-   "undifferentiatedLines": 5942,
+   "undifferentiatedLines": 5667,
    "globalLinks": 260,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,15 +74,15 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 52
+   "count": 54
   },
   {
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 179,
+   "count": 180,
    "large": 6,
-   "small": 173
+   "small": 174
   },
   {
    "key": "hybrid",
@@ -213,12 +213,13 @@
     "records/table-stopwatch",
     "records/theme-classifier",
     "records/theme-export-csv",
+    "records/theme-picker",
     "records/trend-metrics-chart",
     "records/trend-multi-metric-svg",
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 9302,
+   "lines": 9375,
    "over800": 0
   },
   {
@@ -518,6 +519,8 @@
    "name": "골격(core)",
    "desc": "신호망·등록부·상태·능력·꽂는 자리·공용 통로",
    "cells": [
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
@@ -552,7 +555,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 5225,
+   "lines": 5515,
    "over800": 0
   },
   {
@@ -1545,6 +1548,7 @@
    ],
    "calls": [],
    "calledBy": [
+    "core/app-boot",
     "core/home-cockpit",
     "core/profile-load",
     "core/server-records-sync",
@@ -1554,9 +1558,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAccountIsolation"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -3597,6 +3599,136 @@
    ]
   },
   {
+   "id": "core/all-view-render",
+   "file": "js/core/all-view-render.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "전체 화면 렌더",
+   "nameSource": "hand",
+   "does": "홈·목표·일정·기록·소통·설정 6대 화면 및 탑바를 한 번에 다시 그린다",
+   "doesSource": "hand",
+   "header": [
+    "전체 화면 렌더 통합 (renderAll)",
+    "홈·목표·일정·기록·소통·설정 6대 화면 및 탑바를 한 번에 다시 그린다.",
+    "#TASK-ES-581(전체 화면 렌더·앱 부팅 원문 분열 (renderAll 및 appBoot)): index.html 인라인 IIFE 의 구간(이전 전 7777~7789줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 37,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope",
+    "sanctuary-v3-engine"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-581"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-581-APP-BOOT.md"
+   ],
+   "prs": [
+    {
+     "number": 841,
+     "task": "TASK-ES-581",
+     "title": "[INFRA] TASK-ES-581 전체 화면 렌더·앱 부팅 원문 분열",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
+   "id": "core/app-boot",
+   "file": "js/core/app-boot.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "앱 부팅",
+   "nameSource": "hand",
+   "does": "Supabase Auth 리스너 등록, PKCE 복원, 게스트/로그인 세션 초기화 및 진입을 관장한다",
+   "doesSource": "hand",
+   "header": [
+    "앱 부팅 및 세션 복원 (app-boot)",
+    "Supabase Auth 리스너 등록, PKCE 복원, 게스트/로그인 세션 초기화 및 진입을 관장한다.",
+    "#TASK-ES-581(전체 화면 렌더·앱 부팅 원문 분열 (renderAll 및 appBoot)): index.html 인라인 IIFE 의 구간(이전 전 7807~8033줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 253,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "account-isolation",
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-581"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-581-APP-BOOT.md"
+   ],
+   "prs": [
+    {
+     "number": 841,
+     "task": "TASK-ES-581",
+     "title": "[INFRA] TASK-ES-581 전체 화면 렌더·앱 부팅 원문 분열",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
    "id": "core/app-enter",
    "file": "js/core/app-enter.js",
    "kind": "organ",
@@ -3717,6 +3849,8 @@
     "comm/story-canvas",
     "comm/story-card-send",
     "comm/user-blocks",
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/badges",
     "core/calendar-availability",
@@ -3816,6 +3950,7 @@
     "records/table-stopwatch",
     "records/theme-classifier",
     "records/theme-export-csv",
+    "records/theme-picker",
     "records/trend-metrics-chart",
     "records/trend-multi-metric-svg",
     "records/voice-table-input",
@@ -8842,6 +8977,7 @@
     "records/table-stopwatch",
     "records/theme-classifier",
     "records/theme-export-csv",
+    "records/theme-picker",
     "records/trend-metrics-chart",
     "records/trend-multi-metric-svg",
     "records/voice-table-input",
@@ -8962,6 +9098,7 @@
     "records/table-stopwatch",
     "records/theme-classifier",
     "records/theme-export-csv",
+    "records/theme-picker",
     "records/trend-metrics-chart",
     "records/trend-multi-metric-svg",
     "records/voice-table-input",
@@ -8977,6 +9114,7 @@
    ],
    "calledBy": [
     "calendar/render",
+    "core/all-view-render",
     "core/registry-init",
     "core/view-dispatch",
     "goals/new-goal-modal",
@@ -18367,6 +18505,67 @@
    ]
   },
   {
+   "id": "records/theme-picker",
+   "file": "js/tabs/records/theme-picker.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "기록 테마 선택창",
+   "nameSource": "hand",
+   "does": "기록 카드 테마 배지로 여는 선택창, 현재 표시·테마 저장·기록 화면 갱신·토스트 책임",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Record Theme Picker (기록 — 테마 선택창)",
+    "기록 카드 테마 배지로 여는 선택창, 현재 표시·테마 저장·기록 화면 갱신·토스트 책임. 기존 데이터와 오류 동작을 그대로 보존한다.",
+    "#TASK-ES-578(기록 테마 선택창 책임 원문 분열): index.html 인라인 IIFE 의 구간(이전 전 5665~5713줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 73,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-578"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-578-THEME-PICKER.md"
+   ],
+   "prs": [
+    {
+     "number": 840,
+     "task": "TASK-ES-578",
+     "title": "[INFRA] TASK-ES-578 기록 테마 선택창 원문 분열",
+     "date": "2026-10-06"
+    }
+   ]
+  },
+  {
    "id": "records/trend-metrics-chart",
    "file": "js/tabs/records/trend-metrics-chart.js",
    "kind": "tab",
@@ -20419,6 +20618,8 @@
    ],
    "calls": [
     "avatar-system",
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
@@ -20578,6 +20779,8 @@
     "OurgoalSettingsSubAppearance"
    ],
    "calls": [
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
@@ -20675,6 +20878,8 @@
     "OurgoalSettingsSubData"
    ],
    "calls": [
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
@@ -20765,6 +20970,8 @@
     "extractNotionDatabaseId"
    ],
    "calls": [
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
@@ -20873,6 +21080,8 @@
     "OurgoalSettingsSubNotify"
    ],
    "calls": [
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
@@ -20963,6 +21172,8 @@
     "OurgoalSettingsSubProfile"
    ],
    "calls": [
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
@@ -21060,6 +21271,8 @@
     "OurgoalSettingsSubSecurity"
    ],
    "calls": [
+    "core/all-view-render",
+    "core/app-boot",
     "core/app-enter",
     "core/app-scope",
     "core/badges",
