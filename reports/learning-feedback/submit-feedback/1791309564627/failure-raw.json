@@ -1,0 +1,28 @@
+{
+  "command": "C:\\Program Files\\nodejs\\node.exe",
+  "args": [
+    "-e",
+    "const fs=require('fs');const errors=require(process.argv[1]).validateClaims(JSON.parse(fs.readFileSync(process.argv[2],'utf8')));console.log(JSON.stringify({errors,confirmedFailures:errors.length?[{failureId:'claims-format-required-fields',causeId:'submission-schema-not-checked'}]:[],improvementStatuses:errors.length?{}:{'claims-format-repair':'verified'}}));process.exitCode=errors.length?1:0;",
+    "C:\\Users\\HP\\.codex\\worktrees\\learning-feedback\\ourgoal-app\\court\\claims.js",
+    "C:\\Users\\HP\\.codex\\worktrees\\learning-feedback\\ourgoal-app\\reports\\learning-feedback\\measurement-summary.json"
+  ],
+  "inputProductSha": "b765e204fc82303e3767235bd226d278659308a2d4c76dd85e55f873ac702a41",
+  "exitCode": 1,
+  "scope": "tool-unit",
+  "sourceTask": "OURGOAL-AGY-SPLIT-RUN-20261006",
+  "measuredAt": "2026-10-06T17:59:24.831Z",
+  "result": {
+    "errors": [
+      "task 누락 또는 형식 오류",
+      "requirements(상민님 지시 항목) 가 비어 있다 — 보고서의 분모는 주장 수가 아니라 지시 항목 수다",
+      "claims 배열 누락"
+    ],
+    "confirmedFailures": [
+      {
+        "failureId": "claims-format-required-fields",
+        "causeId": "submission-schema-not-checked"
+      }
+    ],
+    "improvementStatuses": {}
+  }
+}

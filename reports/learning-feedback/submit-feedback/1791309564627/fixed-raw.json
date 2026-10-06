@@ -1,0 +1,21 @@
+{
+  "command": "C:\\Program Files\\nodejs\\node.exe",
+  "args": [
+    "-e",
+    "const fs=require('fs');const errors=require(process.argv[1]).validateClaims(JSON.parse(fs.readFileSync(process.argv[2],'utf8')));console.log(JSON.stringify({errors,confirmedFailures:errors.length?[{failureId:'claims-format-required-fields',causeId:'submission-schema-not-checked'}]:[],improvementStatuses:errors.length?{}:{'claims-format-repair':'verified'}}));process.exitCode=errors.length?1:0;",
+    "C:\\Users\\HP\\.codex\\worktrees\\learning-feedback\\ourgoal-app\\court\\claims.js",
+    "C:\\Users\\HP\\.codex\\worktrees\\learning-feedback\\ourgoal-app\\reports\\learning-feedback\\claims.json"
+  ],
+  "inputProductSha": "6416d6c625175a40a166964bde3eef8013769eaa2e79624ae7ec8e095e79373a",
+  "exitCode": 0,
+  "scope": "tool-unit",
+  "sourceTask": "OURGOAL-AGY-SPLIT-RUN-20261006",
+  "measuredAt": "2026-10-06T17:59:25.030Z",
+  "result": {
+    "errors": [],
+    "confirmedFailures": [],
+    "improvementStatuses": {
+      "claims-format-repair": "verified"
+    }
+  }
+}

@@ -20,3 +20,5 @@ feedback-validate.js는선택필드참조를검사,feedback-view.js는반복·�
 정본stale/CAS·증거부재·입력변경·확인되지않은실패·효과표본부재를반려/미측정한다. recent3은새건없으면동일3건을유지,새고유개선이면오래된건을제외한다. 후속유형5고유task/반복결함0/증거불일치0은기존계약이며충돌2/3자동규범결정0. 모델진행량·토큰절감·효과는실제전후표본없으면null.
 
 독립 검토 e404fb03 반례 보강: confirmed는 원시 confirmedFailures의 failureId/causeId와 정확히 연결하며 비0 종료만은 unconfirmed 관측이다. validateEvent는 evidence/requiredChecks의 registry 등록과 registry readReceipt SHA를 요구한다. 기존 effectFollowup 숫자는 samples 항목의 evidenceSha256·metric을 현재 measured/exit0 원시 result.metrics와 연결하고 산술평균이 숫자와 같아야 한다. 출처 없는 옛 숫자는 null 또는 반려이며 원장·설치 runtime는 변경하지 않는다.
+
+제출 전 형식 보완: measurements-only 요약을 공식 claims.json으로 오인한 원인이 normal pre-push에서 검출됐다. 기존 요약은 measurement-summary.json으로 원문 보존하고 prepare-claims.js가 공식 task/requirements/claims와 static jsonPath를 생성한다. preflight-feedback.js의 실제 validateClaims 실패/수정 측정을 기존 pending→다음 bootstrap에 연결하며 규범·제품·Court 검사 코드는 수정하지 않는다. quick 예비검사는 독립 GitHub 판정으로 대체하지 않는다.

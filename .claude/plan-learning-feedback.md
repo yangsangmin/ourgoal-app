@@ -10,3 +10,6 @@
 막힘 예상: 실패의 진실성은 독립검토가 확인한다. 권고는 자동 재배정·권한 변경이 아니다. 기존2/3승격 충돌을 결정하지 않는다. 효과·진행량·토큰은 출처 없으면null. runtime 설치/PR/Court/병합은root.
 
 - [x] 독립 검토의 원시 실패 식별자·등록 checker·옛 효과 출처 반례 보강 · 예상15분 · fix-check-output.json에서 세 반례 exit2, 미확인 관측 수집/확정집계 제외, 기존 도구33건 예상 일치
+
+- [x] 정상 submit 전 claims/REQ 형식 검사와 실제 실패 pending 연결 · 예상10분 · 기존 요약 원문 보존, validateClaims 형식 오류0, REQ gate exit0, submit-feedback-result.json의 실제 실패exit1/수정exit0·다음bootstrap 연결
+- [ ] 최종 head 정상 quick 예비검사 · 예상5분 · 정상 commit 후 기존 court/judge.js --quick exit0 측정·root 인계
