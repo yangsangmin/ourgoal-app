@@ -7,11 +7,12 @@ const path = require('node:path');
 const grade = require('./lib/grade');
 const { stripByExt } = require('./lib/strip');
 const { validateScenario, isHollow, scenarioFingerprint, runScenario } = require('./lib/scenario');
+const { verifyCellSplitProof } = require('./lib/preserve');
 
 const KINDS = ['behavior', 'static', 'unverified', 'withdrawn'];
 // 주장의 세기. 법정이 직접 돌려 보는 종류(behavior·static)가 "강한 판"이다. 강한 판을 약한 종류로 바꾸면 법정은 옛 판을 다시 돌려 본다(judge.js).
 const KIND_RANK = { behavior: 2, static: 1, unverified: 0, withdrawn: 0 };
-const CHANGES = ['fix', 'new'];
+const CHANGES = ['fix', 'new', 'preserve'];
 const UNVERIFIED_REASONS = {
   'needs-real-device': '진짜 폰이 있어야 확인할 수 있다',
   'needs-two-accounts': '진짜 계정 2개가 있어야 확인할 수 있다',
@@ -45,6 +46,7 @@ const ACTION_RESULT = /(누르면|눌렀을 때|클릭하면|탭하면|선택하
 const OUTCOME = {
   CONFIRMED: '확인됨',              // 고치기 전엔 안 되고 고친 뒤엔 됨 / 새 동작이 실제로 됨
   NOTHING_TO_FIX: '고칠 게 없었음',  // 고치기 전에도 정상이었음
+  PRESERVED: '보존됨',              // 세포 분열 전후 동작이 완벽히 보존됨
   NOT_WORKING: '아직 안 됨',
   BROKE: '되던 기능이 고장 남',
   TEXT_ONLY: '글자만 확인',
@@ -87,7 +89,7 @@ function claimErrors(c, label, reqIds) {
   } else if (reqIds && c.req !== undefined && !reqIds.has(c.req)) errors.push(at + 'req 가 requirements 에 없다');
   if (c.kind === 'behavior') {
     if (typeof c.scenario !== 'string' || !/^[A-Za-z0-9_./-]+\.json$/.test(c.scenario) || c.scenario.includes('..')) errors.push(at + 'scenario 는 claims.json 기준 상대 경로의 .json');
-    if (!CHANGES.includes(c.change)) errors.push(at + 'change 는 fix(있던 결함을 고침)·new(새 동작) 중 하나');
+    if (!CHANGES.includes(c.change)) errors.push(at + 'change 는 fix(있던 결함을 고침)·new(새 동작)·preserve(동작 보존) 중 하나');
     if (c.change === 'fix' && !Number.isInteger(c.symptom)) errors.push(at + 'fix 주장은 symptom(고치기 전에 거짓이어야 하는 확인 단계 번호)이 필수다');
   }
   if (c.kind === 'static') {
@@ -235,17 +237,84 @@ async function judgeClaim(ctx, claim) {
   // 시험이 무효·공허한지는 시간이 없어도 위에서 말해 준다. 여기부터가 시간이 드는 일(화면에서 돌려 보기)이다.
   // 예산은 시험을 시작하기 전에만 본다: 이미 시작한 시험은 끝까지(결과가 갈리면 다시 돌려 보는 것까지) 마친다 — 돌리다 만 결과로 판정하지 않는다.
   if (pastDeadline(ctx)) return timeShort(out, '주장 심사에 쓸 수 있는 시간이 다 돼서 이 시험은 돌려 보지 못했다.');
-  const H = await runScenario({ scenario, siteUrl: head.url, siteRev: head.sha, outDir: outDir ? path.join(outDir, 'head') : null, config });
-  const B = await runScenario({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: outDir ? path.join(outDir, 'base') : null, config });
+  const runner = ctx.runScenario || runScenario;
+  const H = await runner({ scenario, siteUrl: head.url, siteRev: head.sha, outDir: outDir ? path.join(outDir, 'head') : null, config });
+  const B = await runner({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: outDir ? path.join(outDir, 'base') : null, config });
   out.evidence = { type: 'scenario', scenarioId: scenario.id, title: scenario.title, steps: scenario.steps, head: slim(H), base: slim(B) };
   if (H.failKind === 'tool' || B.failKind === 'tool') { out.outcome = OUTCOME.CANNOT_JUDGE; out.notes.push('도구 오류: ' + (H.toolError || B.toolError || '')); return out; }
+  if (claim.change === 'preserve') {
+    const B2 = await runner({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: outDir ? path.join(outDir, 'base2') : null, config });
+    out.evidence.base2 = slim(B2);
+    if (B2.failKind === 'tool') {
+      out.outcome = OUTCOME.CANNOT_JUDGE;
+      out.notes.push('도구 오류: ' + (B2.toolError || ''));
+      return out;
+    }
+    if (!H.passed) {
+      out.outcome = OUTCOME.NOT_WORKING;
+      out.notes.push('작업 커밋에서 실패: 단계 ' + H.failedStep + ' ' + detailOf(H));
+      return out;
+    }
+    if (!B.passed || !B2.passed) {
+      if (B.passed !== B2.passed) {
+        out.outcome = OUTCOME.UNSTABLE;
+        out.notes.push('기준 커밋 시험이 흔들림 (1차 ' + (B.passed ? '성공' : '실패') + ', 2차 ' + (B2.passed ? '성공' : '실패') + ')');
+        return out;
+      }
+      out.outcome = OUTCOME.NO_TEST;
+      out.notes.push('기준 커밋에서 실패하여 동작 보존을 확인할 수 없음: 단계 ' + (B.passed ? B2.failedStep : B.failedStep) + ' ' + detailOf(B.passed ? B2 : B));
+      return out;
+    }
+    if (B.passed !== B2.passed || B.failedStep !== B2.failedStep) {
+      out.outcome = OUTCOME.UNSTABLE;
+      out.notes.push('기준 커밋 2회 실행 결과가 갈림');
+      return out;
+    }
+    if (!H.provesBehavior) {
+      out.outcome = OUTCOME.NO_TEST;
+      out.notes.push('작업 커밋에서 통과는 했지만 "행동이 만든 변화"를 확인한 단언이 없다(전부 행동 전에도 참이던 확인)');
+      return out;
+    }
+    if (!B.provesBehavior || !B2.provesBehavior) {
+      out.outcome = OUTCOME.NO_TEST;
+      out.notes.push('기준 커밋에서 통과는 했지만 "행동이 만든 변화"를 확인한 단언이 없다(전부 행동 전에도 참이던 확인)');
+      return out;
+    }
+    const achievedGrade = H.hardwareDevice ? 'L5' : (H.multiActor ? 'L4' : 'L3');
+    const baseGrade = B.hardwareDevice ? 'L5' : (B.multiActor ? 'L4' : 'L3');
+    const base2Grade = B2.hardwareDevice ? 'L5' : (B2.multiActor ? 'L4' : 'L3');
+    out.achieved = achievedGrade;
+    const hMeets = grade.meets(achievedGrade, ef.floor);
+    const bMeets = grade.meets(baseGrade, ef.floor);
+    const b2Meets = grade.meets(base2Grade, ef.floor);
+    out.meetsFloor = hMeets && bMeets && b2Meets;
+    if (!out.meetsFloor) {
+      out.outcome = OUTCOME.UNVERIFIED;
+      out.notes.push('확인 부족: 이 종류는 ' + grade.label(ef.floor) + ' 수준으로 봐야 하는데 기준/작업 실행이 요구 수준에 미달했다');
+      return out;
+    }
+    const splitProof = verifyCellSplitProof(claimsDir, claim, { base, head, outDir, scenarioResults: { H, B, B2 } });
+    out.evidence.splitProof = splitProof;
+    if (!splitProof.ok) {
+      out.outcome = OUTCOME.UNVERIFIED;
+      out.meetsFloor = false;
+      out.notes.push('확인 부족(분열 증거 검증 미달): ' + splitProof.reason);
+      return out;
+    }
+    out.outcome = OUTCOME.PRESERVED;
+    out.notes.push('동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨');
+    if (H.fixtures && H.fixtures.length) out.notes.push('금고 fixture 사용: ' + H.fixtures.join(', '));
+    if (H.multiActor) out.notes.push('다중 계정 모의(L4): 보조 브라우저 세션(peer)과 상호작용을 확인했습니다');
+    if (H.hardwareDevice) out.notes.push('기기 하드웨어 신호 모의(L5): 모바일 하드웨어 이벤트 반응을 확인했습니다');
+    return out;
+  }
   // 두 커밋의 결과가 갈리면 그 차이가 판정을 좌우한다. 우연(화면 전환 타이밍 등)이 아닌지 양쪽을 더 돌려 확인한다.
   if (H.passed !== B.passed) {
     const sig = r => (r.passed ? 'pass' : 'fail@' + r.failedStep + ':' + r.failKind);
     const runs = { head: [sig(H)], base: [sig(B)] };
     for (let i = 1; i < STABILITY_RUNS; i++) {
-      runs.head.push(sig(await runScenario({ scenario, siteUrl: head.url, siteRev: head.sha, outDir: null, config })));
-      runs.base.push(sig(await runScenario({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: null, config })));
+      runs.head.push(sig(await runner({ scenario, siteUrl: head.url, siteRev: head.sha, outDir: null, config })));
+      runs.base.push(sig(await runner({ scenario, siteUrl: base.url, siteRev: base.sha, outDir: null, config })));
     }
     out.evidence.stability = runs;
     if (new Set(runs.head).size > 1 || new Set(runs.base).size > 1) {
@@ -296,8 +365,9 @@ function rollup(doc, judged, reheard) {
     // 시간이 모자라 돌려 보지 못한 주장이 하나라도 걸린 지시는, 같은 지시의 다른 주장이 확인됐어도 확인된 것으로 세지 않는다(돌려 보지 않은 시험이 안 되는 것이었을 수 있다).
     else if (live.some(j => j.timeShort)) { bucket = '확인 못 함'; note = '시간 부족'; }
     else if (live.every(j => j.outcome === OUTCOME.NOTHING_TO_FIX)) bucket = '고칠 게 없었음';
+    else if (live.some(j => j.outcome === OUTCOME.PRESERVED && j.meetsFloor)) bucket = '동작 보존 확인';
     else if (live.some(j => j.outcome === OUTCOME.CONFIRMED && j.meetsFloor)) bucket = '화면에서 눌러 확인';
-    else if (live.some(j => j.outcome === OUTCOME.CONFIRMED)) bucket = '확인 부족';
+    else if (live.some(j => j.outcome === OUTCOME.CONFIRMED || j.outcome === OUTCOME.PRESERVED)) bucket = '확인 부족';
     else if (live.some(j => j.outcome === OUTCOME.TEXT_ONLY)) bucket = live.some(j => j.outcome === OUTCOME.TEXT_ONLY && j.meetsFloor) ? '글자만 확인(이 종류는 그걸로 충분)' : '코드만 확인(화면에서는 안 봄)';
     else { bucket = '확인 못 함'; if (live.every(j => j.toolLimit)) note = '법정 도구 한계'; }
     // 이 지시에 필요한 확인 수준 = 걸린 주장들의 유효 하한 중 가장 높은 것. 주장이 없으면 알 수 없다(null).
@@ -310,4 +380,4 @@ function rollup(doc, judged, reheard) {
   return { reqs, counts, total: reqs.length };
 }
 
-module.exports = { validateClaims, claimErrors, judgeClaim, rollup, effectiveFloor, judgeStatic, isRepoPath, OUTCOME, KINDS, KIND_RANK, UNVERIFIED_REASONS, CANNOT_BECAUSE, CANNOT_BECAUSE_SHORT, STATIC_TYPES, DEFAULT_CLAIM_BUDGET_MS, readJson };
+module.exports = { validateClaims, claimErrors, judgeClaim, rollup, effectiveFloor, judgeStatic, isRepoPath, OUTCOME, KINDS, KIND_RANK, UNVERIFIED_REASONS, CANNOT_BECAUSE, CANNOT_BECAUSE_SHORT, STATIC_TYPES, DEFAULT_CLAIM_BUDGET_MS, readJson, CHANGES };
