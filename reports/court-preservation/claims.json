@@ -1,0 +1,52 @@
+{
+  "task": "court-preservation",
+  "requirementsSource": "docs/specs/REQ-COURT-PRESERVATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Source preservation is checked strictly using git blob exact match"
+    },
+    {
+      "id": "R2",
+      "text": "Legacy fix/new protection remains intact"
+    },
+    {
+      "id": "R3",
+      "text": "Token/rest/leak/load/UI/test contracts are preserved"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C-SOURCE",
+      "req": "R1",
+      "kind": "static",
+      "statement": "Source validation strictly measures git tree exact byte match without mock overrides",
+      "touches": [
+        "court/lib/preserve-source.js",
+        "court/claims.js",
+        "court/judge.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "court/claims.js",
+        "text": "const result = recomputeSplit({ repoDir: ctx.repoDir, baseSha: ctx.base.sha, headSha: ctx.head.sha, config: configObj, changedFiles: ctx.changedFiles });"
+      },
+      "domain": "config"
+    },
+    {
+      "id": "C-SAFETY",
+      "req": "R1",
+      "kind": "static",
+      "statement": "Temporary directory removal requires exact containment in os.tmpdir()",
+      "touches": [
+        "court/lib/preserve-source.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "court/lib/preserve-source.js",
+        "text": "if (!tmpDir.startsWith(require('os').tmpdir())) throw new Error('Safety check failed');"
+      },
+      "domain": "config"
+    }
+  ]
+}
