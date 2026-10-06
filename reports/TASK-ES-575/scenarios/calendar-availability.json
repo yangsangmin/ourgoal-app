@@ -1,0 +1,76 @@
+{
+  "id": "calendar-availability-actual-ui",
+  "title": "실제 일정 생성과 사용가능 판별이 그린 동기화 버튼 보존",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 3200
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "expect": "visible",
+      "selector": "#screen-calendar"
+    },
+    {
+      "do": "click",
+      "selector": "#screen-calendar button[onclick=\"window.OurgoalSanctuaryV3.openAddScheduleModal();\"][title=\"누르면: 원하는 날짜에 실천할 목표와 시간을 등록합니다\"]"
+    },
+    {
+      "do": "type",
+      "selector": "#calEditTitle",
+      "text": "캘린더 분열 실제 일정"
+    },
+    {
+      "do": "click",
+      "selector": "#calEditSaveBtn"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet .modal-sheet-close"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#screen-calendar",
+      "text": "캘린더 분열 실제 일정"
+    },
+    {
+      "expect": "exists",
+      "selector": "#calDayDetail [data-calsync]"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

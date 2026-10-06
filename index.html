@@ -2152,7 +2152,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script>
-<script src="js/core/ui-helpers.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
+<script src="js/core/ui-helpers.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
 <script src="js/core/modal.js"></script>
@@ -3185,6 +3185,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var toggleMilestoneInDrawer = _goalsKit.toggleMilestoneInDrawer;
   /* [#TASK-ES-574] js/core/default-profile.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var defaultProfile = _uiKit.defaultProfile;
+  /* [#TASK-ES-575] js/core/calendar-availability.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var calendarAvailable = _uiKit.calendarAvailable;
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -4271,12 +4273,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-482] getTrashList · autoPurgeExpiredTrash · moveToTrash · restoreFromTrash · permanentDeleteFromTrash · emptyTrash · toastWithTrashUndo · openTrashModal → js/core/trash-bin.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   var googleTokenClient = null;
-  /* 캘린더 사용 가능 판단을 한 곳에: 앱 상수 우선, 비면 사용자가 설정에 넣은 ID로 폴백 (A2/R5/F4) */
-  function calendarAvailable(appClientId, settings){
-    var app = ((appClientId || '') + '').trim();
-    var own = ((settings && settings.gcalClientId) || '').trim();
-    return !!(app || own);
-  }
+  /* [#TASK-ES-575] calendarAvailable → js/core/calendar-availability.js 로 옮김(캘린더 사용 가능 여부 판별 책임 분열 — 앞 주석 포함) */
   /* [#TASK-ES-482] effectiveGcalClientId · isGoogleCalendarConnected · tryConnectGoogleCalendar · openGoogleCalendarConnectModal · fetchGoogleCalendarEvents · syncAllToGoogleCalendar · nextDayISO → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   function saveGoogleToken(tokenObj){
     var optEmail = arguments[1];

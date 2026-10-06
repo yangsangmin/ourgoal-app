@@ -1,0 +1,112 @@
+{
+ "tool": "docs/design/harness/tab-check.js",
+ "task": "TASK-ES-349",
+ "appDir": "calendar575-baseline",
+ "commit": "69d5b9e67b87d20b5303c19cc5dfd28d5ea4cefb",
+ "measuredAt": "2026-10-06T05:45:24.746Z",
+ "env": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)",
+ "matrix": {"themes":["focus-sanctuary","black","white","urban-city"],"viewports":["375x667","375x812"]},
+ "deadClickMode": "off",
+ "runSeconds": 152,
+ "sets": {
+  "smallTargetList": {
+   "S1": [
+    "span.s-cal-today-badge 42x33",
+    "div.s-cal-day-cell.active 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell.today 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell.active 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell.active 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell.active 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell 43x48",
+    "div.s-cal-day-cell.active 43x48"
+   ],
+   "S2": [
+    "span.s-cal-today-badge 42x33"
+   ]
+  },
+  "hiddenInteractiveDetail": {
+   "H1": [
+    "#btnHideCalDiaryGuide ← visibility:hidden",
+    "#og-task-29-action-btn ← visibility:hidden",
+    "#calPrevBtn ← display:none !important (조상 div.cal-nav-row)",
+    "#calTodayBtn ← display:none !important (조상 div.cal-nav-row)",
+    "#calNextBtn ← display:none !important (조상 div.cal-nav-row)"
+   ],
+   "H2": [
+    "#btnHideCalDiaryGuide ← visibility:hidden",
+    "#og-task-29-action-btn ← visibility:hidden",
+    "#calPrevBtn ← display:none !important (조상 div.cal-nav-row)",
+    "#calTodayBtn ← display:none !important (조상 div.cal-nav-row)",
+    "#calNextBtn ← display:none !important (조상 div.cal-nav-row)",
+    "#calEditLinkedSubtask ← display:none (조상 #calEditLinkedSubtaskField)",
+    "#calEditNotifyOffset ← display:none (조상 #calEditNotifyTimeField)",
+    "#calEditNotifyCustomMin ← display:none (조상 #calEditNotifyCustomWrap)"
+   ]
+  },
+  "importantNoneRules": {
+   "R1": [
+    "[data-theme=\"focus-sanctuary\"] #calGrid, [data-theme=\"focus-sanctuary\"] .cal-nav",
+    "#screen-calendar #og-task-29-container, #screen-calendar #calSubGuideBanner, #sc"
+   ]
+  }
+ },
+ "tabs": {
+  "calendar": {
+   "note": null,
+   "states": [{"key":"base","opener":"탭 버튼만 누름","deadClick":true},{"key":"subtab","opener":"주간 보기(.s-cal-mode-btn \"주간\")","deadClick":true},{"key":"sheet","opener":"#calAddManualBtn(+ 일정 추가) → 일정 편집 시트","deadClick":true}],
+   "shots": [
+    {"name":"calendar-focus-sanctuary-375x667-base","state":"base","entered":true,"enterNote":null,"theme":"focus-sanctuary","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1467,"heightRatio":2.2,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-focus-sanctuary-375x667-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"focus-sanctuary","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.46,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-focus-sanctuary-375x667-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=333) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"focus-sanctuary","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1467,"heightRatio":2.2,"noScroll":false,"innerScrollers":["#modalSheet 763/545"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-focus-sanctuary-375x812-base","state":"base","entered":true,"enterNote":null,"theme":"focus-sanctuary","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1467,"heightRatio":1.81,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-focus-sanctuary-375x812-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"focus-sanctuary","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.02,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-focus-sanctuary-375x812-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=406) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"focus-sanctuary","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1467,"heightRatio":1.81,"noScroll":false,"innerScrollers":["#modalSheet 763/664"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-black-375x667-base","state":"base","entered":true,"enterNote":null,"theme":"black","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":2.2,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-black-375x667-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"black","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.46,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-black-375x667-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=333) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"black","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":2.2,"noScroll":false,"innerScrollers":["#modalSheet 763/546"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-black-375x812-base","state":"base","entered":true,"enterNote":null,"theme":"black","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":1.81,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-black-375x812-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"black","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.02,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-black-375x812-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=406) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"black","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":1.81,"noScroll":false,"innerScrollers":["#modalSheet 763/665"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-white-375x667-base","state":"base","entered":true,"enterNote":null,"theme":"white","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":2.2,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-white-375x667-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"white","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.46,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-white-375x667-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=333) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"white","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":2.2,"noScroll":false,"innerScrollers":["#modalSheet 763/546"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-white-375x812-base","state":"base","entered":true,"enterNote":null,"theme":"white","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":1.81,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-white-375x812-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"white","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.02,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-white-375x812-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=406) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"white","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":1.81,"noScroll":false,"innerScrollers":["#modalSheet 763/665"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-urban-city-375x667-base","state":"base","entered":true,"enterNote":null,"theme":"urban-city","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":2.2,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-urban-city-375x667-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"urban-city","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.46,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-urban-city-375x667-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=333) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"urban-city","viewport":{"w":375,"h":667},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":2.2,"noScroll":false,"innerScrollers":["#modalSheet 763/546"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":60,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-urban-city-375x812-base","state":"base","entered":true,"enterNote":null,"theme":"urban-city","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":1.81,"noScroll":false,"innerScrollers":[],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-urban-city-375x812-subtab","state":"subtab","entered":true,"enterNote":"button.s-cal-mode-btn 누름(y=133) · 확인: 버튼 active=true, data-cal-mode=week","theme":"urban-city","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1644,"heightRatio":2.02,"noScroll":false,"innerScrollers":[],"smallTargets":1,"smallTargetList":"S2","hiddenInteractive":5,"hiddenInteractiveDetail":"H1","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null},
+    {"name":"calendar-urban-city-375x812-sheet","state":"sheet","entered":true,"enterNote":"#calAddManualBtn 누름(y=406) · 확인: #modalOverlay.active=true, #calEditTitle 보임=true","theme":"urban-city","viewport":{"w":375,"h":812},"bootOverlays":["#avatarGreetingModal: 오늘은 뭘 할거냐? 내자신"],"docScrollHeight":1468,"heightRatio":1.81,"noScroll":false,"innerScrollers":["#modalSheet 763/665"],"smallTargets":32,"smallTargetList":"S1","hiddenInteractive":8,"hiddenInteractiveDetail":"H2","importantNoneInScope":4,"importantNoneInDoc":57,"importantNoneRules":"R1","consoleErrors":0,"consoleErrorSamples":[],"consoleErrorsFromLoad":1,"consoleErrorLoadSamples":["Failed to load resource: net::ERR_NAME_NOT_RESOLVED"],"httpErrors":[],"lvVisible":false,"expVisible":false,"deadClick":null}
+   ],
+   "deadClick": {
+
+   }
+  }
+ }
+}
