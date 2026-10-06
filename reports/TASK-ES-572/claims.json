@@ -1,0 +1,994 @@
+{
+ "task": "TASK-ES-572",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-572-NEXT-CELLS.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "알림 시간·DND UI 설정 뒤 실제 타이머의 방해금지 판별·동적 문구 생성 책임을 원문 그대로 분열한다."
+  },
+  {
+   "id": "R2",
+   "text": "성지 목표 상세 서랍의 열기·마일스톤 상태 변경·닫기를 원문 그대로 분열한다."
+  },
+  {
+   "id": "R3",
+   "text": "분열 작업자 측정 산출물을 보고서 파일에 기록한다."
+  },
+  {
+   "id": "R4",
+   "text": "신고서·설명·설정·시나리오·8원칙 명세를 기록한다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "unverified",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "브라우저 알림 권한을 허용한 뒤 실제 시간입력·알림스위치 조작으로20초타이머가 DND 판별·동적 문구를 생성하고 앱 배너를 그리는 경로",
+   "touches": [
+    "index.html",
+    "js/tabs/settings/notification-helper.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "native-dialog",
+    "who": "작업자 별도 headless Chrome context에서 native 알림 권한 허용 후 실제 UI 측정",
+    "how": [
+     "브라우저 알림 native 권한을 허용한다. 법정 DSL에는 권한창 조작·overridePermissions가 없다.",
+     "게스트 설정의 체크인 time input change와 notifySwitch 실제 click을 한다.",
+     "기존20초타이머를20~40초 기다려 DND·동적 문구 호출과 notifyBannerSlot을 확인한다."
+    ],
+    "note": "제한은 native 알림 권한 요청창뿐이다. 시간입력·DND·게스트PC·20초대기 자체는 도구 한계로 주장하지 않는다."
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "성지 추천목표를 실제 담은 뒤 상세 서랍의 마일스톤 완료 토글과 닫기",
+   "touches": [
+    "index.html",
+    "js/tabs/goals/goal-detail-drawer.js"
+   ],
+   "scenario": "scenarios/goals-detail-drawer.json"
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/verify-inline-hard.json ok",
+   "touches": [
+    "reports/TASK-ES-572/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/verify-inline-hard.json equivalent",
+   "touches": [
+    "reports/TASK-ES-572/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "equivalent",
+    "equals": true
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/verify-inline-hard.json restSame",
+   "touches": [
+    "reports/TASK-ES-572/verify-inline-hard.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/verify-inline-hard.json",
+    "type": "jsonPath",
+    "path": "restSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/reach-original.json completed",
+   "touches": [
+    "reports/TASK-ES-572/reach-original.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/reach-original.json",
+    "type": "jsonPath",
+    "path": "completed",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/reach-original.json pageerrors",
+   "touches": [
+    "reports/TASK-ES-572/reach-original.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/reach-original.json",
+    "type": "jsonPath",
+    "path": "pageerrors",
+    "equals": []
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/reach-original.json rowsWrittenRemote",
+   "touches": [
+    "reports/TASK-ES-572/reach-original.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/reach-original.json",
+    "type": "jsonPath",
+    "path": "rowsWrittenRemote",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/reach-work-preparation.json completed",
+   "touches": [
+    "reports/TASK-ES-572/reach-work-preparation.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/reach-work-preparation.json",
+    "type": "jsonPath",
+    "path": "completed",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/reach-work-preparation.json pageerrors",
+   "touches": [
+    "reports/TASK-ES-572/reach-work-preparation.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/reach-work-preparation.json",
+    "type": "jsonPath",
+    "path": "pageerrors",
+    "equals": []
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 보고서 적재값 확인 reports/TASK-ES-572/reach-work-preparation.json rowsWrittenRemote",
+   "touches": [
+    "reports/TASK-ES-572/reach-work-preparation.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/reach-work-preparation.json",
+    "type": "jsonPath",
+    "path": "rowsWrittenRemote",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/architecture/modules.json",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"settings/notification-helper\""
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/architecture/modules.json",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "file": "docs/architecture/modules.json",
+    "type": "codeContains",
+    "text": "\"id\": \"goals/goal-detail-drawer\""
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/architecture/cell-descriptions.json",
+   "touches": [
+    "docs/architecture/cell-descriptions.json"
+   ],
+   "check": {
+    "file": "docs/architecture/cell-descriptions.json",
+    "type": "codeContains",
+    "text": "목표 상세 서랍"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/design/harness/module-split/inline-next572.json",
+   "touches": [
+    "docs/design/harness/module-split/inline-next572.json"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/inline-next572.json",
+    "type": "codeContains",
+    "text": "toggleMilestoneInDrawer"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/design/harness/module-split/ui-reach572.js",
+   "touches": [
+    "docs/design/harness/module-split/ui-reach572.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/ui-reach572.js",
+    "type": "codeContains",
+    "text": "함수 직접 호출"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/specs/REQ-TASK-ES-572-NEXT-CELLS.md",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-572-NEXT-CELLS.md"
+   ],
+   "check": {
+    "file": "docs/specs/REQ-TASK-ES-572-NEXT-CELLS.md",
+    "type": "codeContains",
+    "text": "[원칙 ⑧]"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/design/harness/module-split/tab-isolated572.js",
+   "touches": [
+    "docs/design/harness/module-split/tab-isolated572.js"
+   ],
+   "check": {
+    "file": "docs/design/harness/module-split/tab-isolated572.js",
+    "type": "codeContains",
+    "text": "포트만 OS가 원자적으로 배정"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 docs/rules/TICKETS.md",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "file": "docs/rules/TICKETS.md",
+    "type": "codeContains",
+    "text": "#TASK-ES-572"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "분열 제출 문서 기록 dev_log.md",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "file": "dev_log.md",
+    "type": "codeContains",
+    "text": "TASK-ES-572"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "목표 서랍 시나리오 준비 측정 결과 적재",
+   "touches": [
+    "reports/TASK-ES-572/scenario-preparation.json"
+   ],
+   "check": {
+    "file": "reports/TASK-ES-572/scenario-preparation.json",
+    "type": "jsonPath",
+    "path": "allPassedBoth",
+    "equals": true
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 module-load-final.json의 standaloneOk 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/module-load-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/module-load-final.json",
+    "path": "standaloneOk",
+    "equals": true
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 seam-final.json의 ok 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/seam-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/seam-final.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-compare-final.json의 base1VsBase2.differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-compare-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-compare-final.json",
+    "path": "base1VsBase2.differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-compare-final.json의 base1VsAfter.differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-compare-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-compare-final.json",
+    "path": "base1VsAfter.differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-compare-final.json의 base2VsAfter.differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-compare-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-compare-final.json",
+    "path": "base2VsAfter.differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-base-compare.json의 differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-base-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-base-compare.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-after-compare.json의 differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-after-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-after-compare.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 test-final.json의 base.npmExit 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/test-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/test-final.json",
+    "path": "base.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 test-final.json의 work.npmExit 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/test-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/test-final.json",
+    "path": "work.npmExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 test-final.json의 tests.exitDiff 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/test-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/test-final.json",
+    "path": "tests.exitDiff",
+    "equals": []
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 test-final.json의 tests.outputDiffAfterNormalize 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/test-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/test-final.json",
+    "path": "tests.outputDiffAfterNormalize",
+    "equals": []
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 test-final.json의 passFailSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/test-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/test-final.json",
+    "path": "passFailSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 provenance-final.json의 mapsPreserved 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/provenance-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/provenance-final.json",
+    "path": "mapsPreserved",
+    "equals": true
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 provenance-final.json의 testGoldUnchanged 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/provenance-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/provenance-final.json",
+    "path": "testGoldUnchanged",
+    "equals": true
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 provenance-final.json의 standardSourcesUnchanged 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/provenance-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/provenance-final.json",
+    "path": "standardSourcesUnchanged",
+    "equals": true
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 provenance-final.json의 independentPorts 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/provenance-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/provenance-final.json",
+    "path": "independentPorts",
+    "equals": true
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 provenance-final.json의 independentProfiles 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/provenance-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/provenance-final.json",
+    "path": "independentProfiles",
+    "equals": true
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 provenance-final.json의 independentDebugPorts 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/provenance-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/provenance-final.json",
+    "path": "independentDebugPorts",
+    "equals": true
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 provenance-final.json의 sourceHashesSame 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/provenance-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/provenance-final.json",
+    "path": "sourceHashesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 scenario-final.json의 allPassedBoth 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/scenario-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/scenario-final.json",
+    "path": "allPassedBoth",
+    "equals": true
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 gen-inline-hard-meta.json의 task 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/gen-inline-hard-meta.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/gen-inline-hard-meta.json",
+    "path": "task",
+    "equals": "TASK-ES-572"
+   }
+  },
+  {
+   "id": "C43",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 snapshot-final.json의 inlineReduction 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/snapshot-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/snapshot-final.json",
+    "path": "inlineReduction",
+    "equals": 112
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 snapshot-final.json의 functionReduction 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/snapshot-final.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/snapshot-final.json",
+    "path": "functionReduction",
+    "equals": 5
+   }
+  },
+  {
+   "id": "C45",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-compare-before-id-hash.json의 base1VsBase2.differingValues 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-compare-before-id-hash.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-compare-before-id-hash.json",
+    "path": "base1VsBase2.differingValues",
+    "equals": 6
+   }
+  },
+  {
+   "id": "C46",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-base1.json의 completed 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-base1.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-base1.json",
+    "path": "completed",
+    "equals": true
+   }
+  },
+  {
+   "id": "C47",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-base1.json의 pageerrors 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-base1.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-base1.json",
+    "path": "pageerrors",
+    "equals": []
+   }
+  },
+  {
+   "id": "C48",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-base1.json의 rowsWrittenRemote 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-base1.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-base1.json",
+    "path": "rowsWrittenRemote",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-base2.json의 completed 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-base2.json",
+    "path": "completed",
+    "equals": true
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-base2.json의 pageerrors 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-base2.json",
+    "path": "pageerrors",
+    "equals": []
+   }
+  },
+  {
+   "id": "C51",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-base2.json의 rowsWrittenRemote 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-base2.json",
+    "path": "rowsWrittenRemote",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C52",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-after.json의 completed 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-after.json",
+    "path": "completed",
+    "equals": true
+   }
+  },
+  {
+   "id": "C53",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-after.json의 pageerrors 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-after.json",
+    "path": "pageerrors",
+    "equals": []
+   }
+  },
+  {
+   "id": "C54",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 ui-after.json의 rowsWrittenRemote 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/ui-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/ui-after.json",
+    "path": "rowsWrittenRemote",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C55",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-base1.json의 tool 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-base1.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-base1.json",
+    "path": "tool",
+    "equals": "docs/design/harness/tab-check.js"
+   }
+  },
+  {
+   "id": "C56",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-base1.json.adapter.json의 task 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-base1.json.adapter.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-base1.json.adapter.json",
+    "path": "task",
+    "equals": "TASK-ES-572"
+   }
+  },
+  {
+   "id": "C57",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-base2.json의 tool 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-base2.json",
+    "path": "tool",
+    "equals": "docs/design/harness/tab-check.js"
+   }
+  },
+  {
+   "id": "C58",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-base2.json.adapter.json의 task 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-base2.json.adapter.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-base2.json.adapter.json",
+    "path": "task",
+    "equals": "TASK-ES-572"
+   }
+  },
+  {
+   "id": "C59",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-after.json의 tool 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-after.json",
+    "path": "tool",
+    "equals": "docs/design/harness/tab-check.js"
+   }
+  },
+  {
+   "id": "C60",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업자 측정 보고 tab-after.json.adapter.json의 task 적재 확인",
+   "touches": [
+    "reports/TASK-ES-572/tab-after.json.adapter.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-572/tab-after.json.adapter.json",
+    "path": "task",
+    "equals": "TASK-ES-572"
+   }
+  },
+  {
+   "id": "C61",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실제 저장 데이터의 유동 ID·파생 hash 비교 정책을 도구에 기록한다.",
+   "touches": [
+    "docs/design/harness/module-split/ui-compare572.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/ui-compare572.js",
+    "text": "원본 보고서는 보존"
+   }
+  }
+ ]
+}

@@ -1,0 +1,44 @@
+{
+  "task": "TASK-ES-572",
+  "portAllocation": "포트만 OS가 원자적으로 배정",
+  "adapter": "docs/design/harness/module-split/tab-isolated572.js",
+  "original": "C:\\Users\\HP\\.codex\\worktrees\\next-cells-572\\ourgoal-app\\docs\\design\\harness\\tab-check.js",
+  "originalSha256": "e2a2a18482c081f24f8fe4cf7a9c805a5ac966f641ed3b69dc08a537fdba00a6",
+  "compiledSha256": "41c4c2e811de5751511a67ca0ece3322265587db30b5eeca20e979c2eadd1792",
+  "exactReplacements": [
+    {
+      "before": "const port = 4700 + Math.floor(Math.random() * 300);",
+      "after": "const port = 0;",
+      "count": 1
+    },
+    {
+      "before": "const base = 'http://localhost:' + port;",
+      "after": "const base = 'http://localhost:' + server.address().port;",
+      "count": 1
+    }
+  ],
+  "args": [
+    ".",
+    "C:/dev/wt/next572-tab-after",
+    "settings,goals",
+    "--summary",
+    "reports/TASK-ES-572/tab-after.json",
+    "--deadclick",
+    "off"
+  ],
+  "pid": 59748,
+  "servers": [
+    {
+      "address": "::",
+      "family": "IPv6",
+      "port": 65070
+    }
+  ],
+  "chrome": [
+    {
+      "pid": 54848,
+      "wsEndpoint": "ws://127.0.0.1:59805/devtools/browser/86de5083-c34b-4ef4-b136-f91b2a803996",
+      "profileArg": "--user-data-dir=C:\\Users\\HP\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-d3Jc9D"
+    }
+  ]
+}
