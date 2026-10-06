@@ -1,0 +1,56 @@
+{
+  "task": "TASK-ES-572",
+  "label": "알림 헬퍼·목표 상세 서랍 책임 분열",
+  "slot": "HO",
+  "cells": [
+    {
+      "key": "notificationHelper",
+      "file": "js/tabs/settings/notification-helper.js",
+      "kit": "OurgoalSettingsKit",
+      "kitVar": "_settingsKit",
+      "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal Notification Helper (설정 — DND 판별·동적 알림 문구)",
+      "desc": [
+        "알림 타이머가 사용하는 방해금지 시간 판별과 맥락별 알림 문구. 기존 스코프 getter·타이머 호출 순서를 보존한다."
+      ],
+      "take": [
+        {
+          "group": "방해금지 시간대",
+          "names": [
+            "isWithinDND"
+          ],
+          "keepRest": true
+        },
+        {
+          "group": "맥락 기반 다이내믹 알림",
+          "names": [
+            "generateDynamicNotification"
+          ],
+          "keepRest": true
+        }
+      ]
+    },
+    {
+      "key": "goalDetailDrawer",
+      "file": "js/tabs/goals/goal-detail-drawer.js",
+      "kit": "OurgoalGoalsKit",
+      "kitVar": "_goalsKit",
+      "beforeTag": "<script src=\"js/tabs/goals/index.js\"></script>",
+      "title": "OurGoal Goal Detail Drawer (목표 — 상세 서랍·마일스톤)",
+      "desc": [
+        "성지 트레일 상세 버튼으로 여는 목표 서랍의 진척도·마일스톤 체크 및 닫기. 원격 저장과 기존 window 노출은 원래 동작 그대로."
+      ],
+      "take": [
+        {
+          "group": "목표 탭 노션급 데이터 관리",
+          "names": [
+            "openGoalDetailDrawer",
+            "closeGoalDetailDrawer",
+            "toggleMilestoneInDrawer"
+          ],
+          "keepRest": true
+        }
+      ]
+    }
+  ]
+}

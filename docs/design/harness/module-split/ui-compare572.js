@@ -1,0 +1,19 @@
+'use strict';
+const fs=require('fs'),crypto=require('crypto'),path=require('path');
+const hashModule=path.resolve(__dirname,'../../../../js/tabs/goals/ai-status.js'),hashGoal=require(hashModule).computeGoalStatusHash;
+const [B1,B2,AFTER,OUT]=process.argv.slice(2);
+const inputs=[B1,B2,AFTER],raw=inputs.map(p=>JSON.parse(fs.readFileSync(p,'utf8')));
+function normalize(j){
+ const guest=JSON.parse(j.steps.at(-1).saved.ourgoal_guest_profile), ids=[[guest.id,'<guest>'],...guest.goals.flatMap((g,i)=>[[g.id,'<goal-'+i+'>'],...g.milestones.map((m,k)=>[m.id,'<goal-'+i+'-milestone-'+k+'>'])])];
+ const derivedHashes=[];
+ const profile=v=>{const p=JSON.parse(v);if(p.settings?.manito)p.settings.manito.seed='<random-guest-manito-seed>';for(const g of p.goals||[]){const expected=hashGoal(g),canonical=JSON.parse(JSON.stringify(g,(k,v)=>typeof v==='string'?ids.reduce((s,[a,b])=>s.split(a).join(b),v):v));for(const key of ['goalStatusSummaries','todayMissions']){const c=p.settings?.[key]?.[g.id];if(c){if(c.hash!==expected)throw Error('saved goal hash is not derived from actual goal: '+key);derivedHashes.push({key,goal:g.id,actual:c.hash,recomputed:expected,canonical:hashGoal(canonical)});c.hash=hashGoal(canonical);}}}return p;};
+ const selected={completed:j.completed,rowsWrittenRemote:j.rowsWrittenRemote,pageerrors:j.pageerrors,steps:j.steps.map(s=>({...s,saved:Object.fromEntries(Object.entries(s.saved).map(([k,v])=>[k,profile(v)]))}))};
+ const seenTimes=new Set();function collect(v){if(typeof v==='string'){for(const m of v.matchAll(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g))seenTimes.add(m[0]);}else if(v&&typeof v==='object')Object.values(v).forEach(collect);}collect(selected);
+ let text=JSON.stringify(selected);for(const [a,b]of ids)text=text.split(a).join(b);for(const t of seenTimes)text=text.split(t).join('<runtime-ISO-timestamp>');text=text.split(j.timeInput.value).join('<UI-selected-current-checkin-time>');
+ const timestampRelations=guest.settings.customSchedules.map(s=>({sameGoalCreatedAt:guest.goals.find(g=>g.id===s.linkedGoalId)?.createdAt===s.createdAt}));
+ return{value:JSON.parse(text),timestampRelations,normalizations:{ids,isoValues:[...seenTimes],selectedUITime:j.timeInput.value,randomManitoSeed:guest.settings.manito.seed,derivedHashes}};
+}
+function flatten(v,p='',o={}){if(v&&typeof v==='object'&&Object.keys(v).length)for(const k of Object.keys(v))flatten(v[k],p+'/'+k,o);else o[p]=v;return o;}
+function compare(a,b){const x=flatten({value:a.value,timestampRelations:a.timestampRelations}),y=flatten({value:b.value,timestampRelations:b.timestampRelations});const keys=[...new Set([...Object.keys(x),...Object.keys(y)])],diffs=keys.filter(k=>JSON.stringify(x[k])!==JSON.stringify(y[k])).map(path=>({path,base:x[path],after:y[path]}));return{comparedValues:keys.length,differingValues:diffs.length,diffs};}
+const [a,b,c]=raw.map(normalize),out={task:'TASK-ES-572',tool:'ui-compare572.js',scope:'전체 단계 DOM(배너·서랍), 저장 profile 전체, settings·목표·마일스톤·토스트·호출수·권한·오류. 독립 게스트 ID/실제 ISO 시각/현재시각 UI 입력/기존 manito 랜덤초기 seed·마일스톤 ID에서 계산한 캐시 hash만 정규화(hash는 실제 목표에서 먼저 재계산 일치 검사). 원본 보고서는 보존.',inputs,hashModuleSha256:crypto.createHash('sha256').update(fs.readFileSync(hashModule)).digest('hex'),inputSha256:inputs.map(p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex')),normalizations:[a,b,c].map(x=>x.normalizations),base1VsBase2:compare(a,b),base1VsAfter:compare(a,c),base2VsAfter:compare(b,c)};
+fs.writeFileSync(OUT,JSON.stringify(out,null,2)+'\n','utf8');console.log(JSON.stringify({task:out.task,baseDiff:out.base1VsBase2.differingValues,afterDiff:out.base1VsAfter.differingValues,afterDiff2:out.base2VsAfter.differingValues,values:out.base1VsAfter.comparedValues}));process.exitCode=[out.base1VsBase2,out.base1VsAfter,out.base2VsAfter].some(x=>x.differingValues)?1:0;

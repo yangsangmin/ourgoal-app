@@ -6028,3 +6028,5 @@
 - 2026-10-06 TASK-ES-568: 교대루틴·기록성장차트·홈요약을 생성기 표준 이음매로 분열. 작업참고 #827. 접근성 안내·테마수정창은 호출검증 범위 밖으로 원래 자리 보존. 측정 정본 reports/TASK-ES-568/.
 
 - 2026-10-06 TASK-ES-569: 최신 main 2138415b 입력에서 기록 테마 상수4·분류기·공용 토스트를 생성기 이동. 원래 toastTimer 상태와 공유 setter, buildCheckinRecord/saveQuickCheckin 조립부는 보존. 작업참고 #829 L051, 측정 정본 reports/TASK-ES-569/.
+
+- TASK-ES-572: 실제 시간입력·알림스위치·20초타이머 및 성지 목표 상세 서랍 UI 도달 실측. 5함수 원문 생성기 분열 초안. native 권한창 한계만 별도 주장이며 보고 domain=config. 최종 proof·제품 push 아직 없음.

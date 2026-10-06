@@ -627,3 +627,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-569 | INFRA | 기록 테마 분류·공용 토스트 표시 책임을 동작 그대로 두 세포로 분열 | REQ docs/specs/REQ-TASK-ES-569-RECORD-THEME.md | 4단계(심사 청구)
 
 - #TASK-ES-570 | INFRA | 생성 지도 네 파일 일괄 갱신 | 작업자 측정 기록: reports/TASK-ES-570/measurement.json | 4단계(심사 청구)
+
+- #TASK-ES-572 | INFRA | 알림 헬퍼·목표 상세 서랍 책임 분열 준비 — UI도달/원문 생성기/시나리오, 최종 기준은 부모 통지 뒤.

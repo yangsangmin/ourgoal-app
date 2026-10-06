@@ -1,0 +1,79 @@
+{
+ "id": "goals-detail-drawer",
+ "title": "성지 목표 상세 서랍·마일스톤 체크·닫기",
+ "steps": [
+  {
+   "do": "setViewport",
+   "width": 430,
+   "height": 3200
+  },
+  {
+   "do": "goto",
+   "path": "/index.html"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "click",
+   "selector": "#btnLandingPreviewDirect"
+  },
+  {
+   "do": "waitFor",
+   "selector": ".navbtn[data-tab=\"settings\"]",
+   "timeoutMs": 15000
+  },
+  {
+   "do": "click",
+   "selector": ".navbtn[data-tab=\"goals\"]"
+  },
+  {
+   "do": "wait",
+   "ms": 700
+  },
+  {
+   "do": "click",
+   "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal"
+  },
+  {
+   "do": "waitFor",
+   "selector": "#sGoalDetailBtn"
+  },
+  {
+   "do": "click",
+   "selector": "#sGoalDetailBtn"
+  },
+  {
+   "expect": "hasClass",
+   "selector": "#goalDetailDrawer",
+   "className": "open"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#goalDrawerBody",
+   "text": "핵심 마일스톤"
+  },
+  {
+   "do": "click",
+   "selector": "#goalDrawerBody > div:nth-child(2) > div:nth-child(2) > span[onclick]"
+  },
+  {
+   "expect": "textContains",
+   "selector": "#goalDrawerBody",
+   "text": "✅"
+  },
+  {
+   "do": "click",
+   "selector": "#btnGoalDrawerClose"
+  },
+  {
+   "expect": "notHasClass",
+   "selector": "#goalDetailDrawer",
+   "className": "open"
+  },
+  {
+   "expect": "noExceptions"
+  }
+ ]
+}
