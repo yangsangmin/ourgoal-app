@@ -637,3 +637,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - TASK-ES-577 [INFRA] PR837 이후 생성지도 저장본 일괄 갱신. REQ-TASK-ES-577-MAP-BATCH.md · reports/TASK-ES-577/claims.json
 - #TASK-ES-578 | INFRA | openThemePickerModal 기록 테마 선택창 책임 원문 분열 | docs/specs/REQ-TASK-ES-578-THEME-PICKER.md · reports/TASK-ES-578/proof.json | 4단계(심사 청구)
 - #TASK-ES-580 | INFRA | PR837 시험 증거 불일치 원시 기록 대조 및 정합성 규명 | docs/specs/REQ-TASK-ES-580-PROOF-RECONCILIATION.md | 4단계(심사 청구)
+
+- #TASK-ES-584 | INFRA | 공통 경험칙·도구 adapter 적용/증거 연결 최소 CLI | docs/specs/REQ-TASK-ES-584-SHARED-LEARNING.md · reports/TASK-ES-584/claims.json | 4단계(심사 청구)
