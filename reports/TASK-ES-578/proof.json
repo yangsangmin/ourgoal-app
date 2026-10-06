@@ -11,10 +11,27 @@
   },
   "frozenDiff": "",
   "npm": {
-    "exitCode": 0,
-    "result": "PASS"
+    "workExitCode": 0,
+    "workResult": "PASS",
+    "baseExitCode": 1,
+    "baseNote": "exit 1 due to .git absence in extracted archive (cell-map-export git rev-parse failure; smoke/integrity passed)"
   },
-  "individualTests": {
+  "testsCompare": {
+    "tool": "docs/design/harness/module-split/test-compare-578.js",
+    "report": "reports/TASK-ES-578/test-compare.json",
+    "totalFiles": 115,
+    "testFiles": 113,
+    "helperScripts": 2,
+    "regressions": 0,
+    "gitAbsenceDiff": [
+      "tests/cell-map-export-es414.test.js"
+    ],
+    "gitAbsenceReason": "base-origin lacks .git folder (extracted git archive), causing cell-map-export-es414 to fail (15/17); worktree has valid .git tracking and passed (17/17, exit code 0). 0 regressions.",
+    "failingInBaseAndAfter": 27,
+    "outputDiffCount": 3,
+    "rawOutputsDir": "C:/dev/wt/agy-scratch/TASK-ES-578/test-outputs"
+  },
+  "individualTestsExitCompare": {
     "tool": "docs/design/harness/module-split/tests-exit-compare-z4.js",
     "report": "reports/TASK-ES-578/tests-exit-compare.json",
     "totalFiles": 113,
@@ -63,6 +80,11 @@
       "resolution": "Added explicit real mouse click on #btnCheckinAiClose, waited for checkinAiSheetBackdrop close, and verified modalOverlay.classList.contains('active')"
     }
   ],
+  "priorRawPreserved": [
+    "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base1-v1-raw.json",
+    "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base2-v1-raw.json",
+    "C:/dev/wt/agy-scratch/TASK-ES-578/ui-after-v1-raw.json"
+  ],
   "finalUIRuns": {
     "actualCallCounts": [
       2,
@@ -75,6 +97,8 @@
     "dynamicLeavesVerified": 66,
     "totalDomComparisons": 24,
     "clicksVerified": 10,
+    "allTargetsOrDescendantsVerified": true,
+    "isTargetOrDescendantDOMMeasured": true,
     "unexpectedDifferences": 0,
     "identicalBehaviorProven": true,
     "normalization": "1:1 bijective mapping for guest/record IDs (L053); structural invariants asserted",
@@ -85,8 +109,8 @@
       "task": "TASK-ES-578",
       "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base1-raw.json",
       "publicFile": "reports/TASK-ES-578/ui-base1.json",
-      "rawSha256": "2bb0f8f21d1fe0ee1783759d5abd0391993959b7edad2cad6234456bc065e514",
-      "publicSha256": "50475f1032c526d1b8722bef7ccae90d3fee4a5ae0a77be2418c0f371af1a930",
+      "rawSha256": "a567b8da6e1ac9884b72759cea807d5de95d545af4a55f4e6a82a0ab9012342d",
+      "publicSha256": "d12d74aa9ffd7d24cf0c0329bf6cc1310c3f0ab95ad701624db0d421a4e0e0b1",
       "changed": true,
       "policy": "URL apikey/secret only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
     },
@@ -94,8 +118,8 @@
       "task": "TASK-ES-578",
       "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-base2-raw.json",
       "publicFile": "reports/TASK-ES-578/ui-base2.json",
-      "rawSha256": "58a5fb1d44f105a5f87fd031c8410384d78671ea4f745be432b16972f0f75b88",
-      "publicSha256": "6cc046c9f9f5ffc507042db3b9ee70a45553c66f1b3a15ce334adb911afeed17",
+      "rawSha256": "e3144f2370cb866ac352b918dbff01ffb3ad13761a1dd40c6f1ccddcb87b0b6f",
+      "publicSha256": "82d8c453cb620ea7c340b3870339051342951e4a979470984cc434dc80f528f9",
       "changed": true,
       "policy": "URL apikey/secret only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
     },
@@ -103,8 +127,8 @@
       "task": "TASK-ES-578",
       "rawFile": "C:/dev/wt/agy-scratch/TASK-ES-578/ui-after-raw.json",
       "publicFile": "reports/TASK-ES-578/ui-after.json",
-      "rawSha256": "7122c01ae8bdff3ef8200523af1f2c0dba4aade411880ee503c38f183074d084",
-      "publicSha256": "20142aa980bd83f2b93dff923be147399bfac9628a049262f5666202f5256c87",
+      "rawSha256": "5b8c59e1282952324b019c5fc4945792aab86ba84b25059df320c9820170498c",
+      "publicSha256": "ef2c8d96712dac2d3898565066f72623932e55366b373f4abe2f89577d96651c",
       "changed": true,
       "policy": "URL apikey/secret only redacted; counts/DOM/profile/ranges unchanged; compare public artifacts"
     }

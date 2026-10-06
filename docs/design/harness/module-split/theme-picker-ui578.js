@@ -92,14 +92,19 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       const hitInfo = await page.$eval(sel, (e, s) => {
         const r = e.getBoundingClientRect();
         const h = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        const isTargetOrDescendant = !!(h && (e === h || e.contains(h)));
         return {
           selector: s,
           targetOuterHTML: e.outerHTML.slice(0, 300),
           rect: { x: r.x, y: r.y, width: r.width, height: r.height },
           hitTag: h ? h.tagName : null,
-          hitOuterHTML: h ? h.outerHTML.slice(0, 300) : null
+          hitOuterHTML: h ? h.outerHTML.slice(0, 300) : null,
+          isTargetOrDescendant: isTargetOrDescendant
         };
       }, sel);
+      if (!hitInfo.isTargetOrDescendant) {
+        throw new Error(`Click target not hit or descendant for ${sel}: hitTag=${hitInfo.hitTag}`);
+      }
       report.clicks.push(hitInfo);
       await page.click(sel);
       await sleep(650);

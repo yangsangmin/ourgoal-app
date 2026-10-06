@@ -81,6 +81,9 @@ for (let i = 0; i < 10; i++) {
   assert.strictEqual(c1.hitTag, expected.hitTag, `Click ${i} hitTag base1`);
   assert.strictEqual(c2.hitTag, expected.hitTag, `Click ${i} hitTag base2`);
   assert.strictEqual(ca.hitTag, expected.hitTag, `Click ${i} hitTag after`);
+  assert.strictEqual(c1.isTargetOrDescendant, true, `Click ${i} isTargetOrDescendant base1`);
+  assert.strictEqual(c2.isTargetOrDescendant, true, `Click ${i} isTargetOrDescendant base2`);
+  assert.strictEqual(ca.isTargetOrDescendant, true, `Click ${i} isTargetOrDescendant after`);
 
   clickVerifications.push({
     clickIndex: i + 1,
@@ -88,7 +91,7 @@ for (let i = 0; i < 10; i++) {
     hitTag: expected.hitTag,
     role: expected.role,
     hitOuterHTMLSample: c1.hitOuterHTML.slice(0, 100),
-    isTargetOrDescendant: true,
+    isTargetOrDescendant: c1.isTargetOrDescendant && c2.isTargetOrDescendant && ca.isTargetOrDescendant,
     identicalAcrossRuns: true
   });
 }

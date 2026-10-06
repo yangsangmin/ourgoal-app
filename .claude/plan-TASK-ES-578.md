@@ -94,12 +94,21 @@
 - **비교 분석 결과**: `reports/TASK-ES-578/ui-compare.json`
   - 1372개 지표 비교 완료 (DOM 24종, leaf 1320개: 정적 1254개 일치, 동적 66개 코드 출처 검증)
   - 10개 클릭 selector 및 hitTag 100% 일치
+  - `isTargetOrDescendant`: 하네스에서 실제 DOM `elementFromPoint` 결과 `e === h || e.contains(h)`를 측정하여 10개 클릭 전수 `true` 실측 및 검증 (하드코딩 배제)
   - 1:1 ID 맵핑 보존 (L053)
 - **탭 격리 실측**: `reports/TASK-ES-578/tab-compare.json`
   - 24개 캡처 포인트, 408개 속성 비교: base1 == base2 == after (차이 0)
+- **115개 시험 출력 및 검사수 비교**: `reports/TASK-ES-578/test-compare.json` (`docs/design/harness/module-split/test-compare-578.js`)
+  - 113개 단위시험(`tests/*.test.js`) + 2개 헬퍼(`scripts/test-universal-stats-ux.js`, `scripts/test-universal-import.js`) = 115개 전수 대조
+  - regressions: 0 (기준 통과 -> 작업 실패 0건)
+  - .git 부재 차이: `tests/cell-map-export-es414.test.js` (base-origin은 git archive 추출본으로 .git 부재 15/17, worktree는 17/17 정상 통과)
+  - 기저 실패: 27건 (base/work 공통 실패 동일)
+  - base npm: exit 1 (.git 부재로 cell-map-export 실패; smoke/integrity는 통과), work npm: exit 0 (PASS)
+  - 원시 출력: `C:/dev/wt/agy-scratch/TASK-ES-578/test-outputs/` (base/work 115개 텍스트 전수 보존)
 - **개별 시험 종료 코드 대조**: `reports/TASK-ES-578/tests-exit-compare.json`
   - 113개 시험지 대조 결과 regressions: 0
-- **보존된 실패 증거**:
+- **보존된 실패 및 이전 원시 증거**:
   - fail 1 (하네스 $eval sel 미전달): `ui-base1-fail1-raw.json`, `ui-base1-fail1.json`
   - fail 2 (첫 체크인 축하 모달 차폐): `ui-base1-fail2-raw.json`, `ui-base1-fail2.json`, `theme-picker-ui578-fail2.js`
   - fail 3 (체크인 피드백 시트 차폐 및 active 클래스 대기 미세조정): `ui-base1-fail3-raw.json`, `ui-base1-fail3.json`, `theme-picker-ui578-fail3.js`
+  - 이전 원시 1회차: `ui-base1-v1-raw.json`, `ui-base2-v1-raw.json`, `ui-after-v1-raw.json`

@@ -323,6 +323,69 @@
         "file": "docs/rules/TICKETS.md",
         "text": "TASK-ES-578"
       }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/design/harness/module-split/test-compare-578.js 등록 확인",
+      "touches": [
+        "docs/design/harness/module-split/test-compare-578.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/test-compare-578.js",
+        "text": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/test-compare.json task 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/test-compare.json",
+        "path": "task",
+        "equals": "TASK-ES-578"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/test-compare.json regressions 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/test-compare.json",
+        "path": "tests.regressionCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reports/TASK-ES-578/ui-compare.json allTargetsOrDescendantsVerified 작업자 기록 적재 확인",
+      "touches": [
+        "reports/TASK-ES-578/ui-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-578/ui-compare.json",
+        "path": "clicksVerification.allTargetsOrDescendantsVerified",
+        "equals": true
+      }
     }
   ]
 }
