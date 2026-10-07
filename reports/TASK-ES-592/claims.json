@@ -1,0 +1,27 @@
+{
+  "task": "TASK-ES-592",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-592.md",
+  "requirements": [
+    { "id": "R1", "text": "Vercel 배포에 화면·서버가 쓰지 않는 기록물(reports·docs 등)을 올리지 않아 배포 용량을 줄인다. 개인정보처리방침(docs/legal)과 런타임 파일은 그대로 배포한다." }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": ".vercelignore 가 작업 기록 폴더 reports/ 를 배포에서 뺀다",
+      "touches": [".vercelignore"],
+      "check": { "type": "codeContains", "file": ".vercelignore", "text": "/reports/" }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": ".vercelignore 는 개인정보처리방침 폴더 docs/legal 을 빼지 않는다",
+      "touches": [".vercelignore"],
+      "check": { "type": "codeNotContains", "file": ".vercelignore", "text": "/docs/legal" }
+    }
+  ]
+}
