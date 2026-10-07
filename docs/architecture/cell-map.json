@@ -9,23 +9,27 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "2a14c21f05baf97c579b82eaa3db27373fbdef41",
-  "short": "2a14c21f",
-  "committedAt": "2026-10-06T22:49:49+09:00",
-  "subject": "Merge pull request #841 from yangsangmin/codex/task-es-581-app-boot"
+  "commit": "29eb9880f13a70637ff8e11e55c4d83f2fe32feb",
+  "short": "29eb9880",
+  "committedAt": "2026-10-07T19:39:46+09:00",
+  "subject": "[E2] #TASK-ES-591 fix: 인라인 어려움 세포화 시범 (G108 크리에이터 템플릿)"
  },
  "summary": {
-  "cells": 340,
-  "files": 339,
-  "jsLines": 86445,
+  "cells": 342,
+  "files": 341,
+  "jsLines": 87322,
   "kinds": {
-   "organ": 54,
-   "tab": 180,
-   "hybrid": 105,
+   "organ": 56,
+   "tab": 181,
+   "hybrid": 104,
    "future": 1
   },
-  "descriptionsHand": 340,
-  "descriptionsPending": [],
+  "descriptionsHand": 339,
+  "descriptionsPending": [
+   "auth-social",
+   "creator-templates-legacy",
+   "goals/template-encyclopedia-modal"
+  ],
   "oversize": {
    "limit": 800,
    "first": 12,
@@ -37,11 +41,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 5667,
-   "functionDecls": 68
+   "inlineScriptLines": 4820,
+   "functionDecls": 47
   },
   "health": {
-   "undifferentiatedLines": 5667,
+   "undifferentiatedLines": 4820,
    "globalLinks": 260,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,21 +78,21 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 54
+   "count": 56
   },
   {
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 180,
+   "count": 181,
    "large": 6,
-   "small": 174
+   "small": 175
   },
   {
    "key": "hybrid",
    "name": "하이브리드",
    "desc": "여러 탭·여러 자리에 걸치는 세포",
-   "count": 105
+   "count": 104
   },
   {
    "key": "future",
@@ -164,10 +168,11 @@
     "goals/team-level-goals",
     "goals/team-state",
     "goals/template-encyclopedia",
+    "goals/template-encyclopedia-modal",
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 11011,
+   "lines": 11617,
    "over800": 0
   },
   {
@@ -439,7 +444,7 @@
    "key": "family-templates",
    "group": "hybrid",
    "name": "목표 템플릿",
-   "desc": "60가지 전문가 목표 견본과 복제 크레딧",
+   "desc": "60가지 전문가 목표 견본과 복제 수",
    "cells": [
     "data/expert-templates/career",
     "data/expert-templates/health",
@@ -457,7 +462,7 @@
     "goal-templates-registry",
     "template-credit"
    ],
-   "lines": 6719,
+   "lines": 6716,
    "over800": 0
   },
   {
@@ -477,16 +482,15 @@
   {
    "key": "family-social",
    "group": "hybrid",
-   "name": "반응·스트릭·크레딧",
-   "desc": "응원·도움돼요 반응, 출석·배지, 크레딧",
+   "name": "반응·스트릭",
+   "desc": "응원·도움돼요 반응, 출석·배지",
    "cells": [
-    "credits",
     "helpful-reason",
     "reactions",
     "streaks",
     "top-helpful"
    ],
-   "lines": 1118,
+   "lines": 973,
    "over800": 0
   },
   {
@@ -566,6 +570,7 @@
    "cells": [
     "account-isolation",
     "auth-safety",
+    "auth-social",
     "components-auth-actions",
     "components-avatar-actions",
     "components-feed-actions",
@@ -579,12 +584,13 @@
     "components-widget-actions",
     "components",
     "content-moderation",
+    "creator-templates-legacy",
     "direct-login-guard",
     "google-session-guard",
     "notify-engine",
     "record-ledger"
    ],
-   "lines": 5850,
+   "lines": 6269,
    "over800": 0
   },
   {
@@ -1667,6 +1673,61 @@
      "task": null,
      "title": "[INFRA] #TASK-AUTH-P0-SAFETY feat: 로그인 및 계정관리 P0 안전망 패키지 모듈화 구현",
      "date": "2026-09-14"
+    }
+   ]
+  },
+  {
+   "id": "auth-social",
+   "file": "js/auth-social.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-body",
+   "tabs": [],
+   "name": "auth-social",
+   "nameSource": "derived",
+   "does": "OurGoal Social Auth (카카오 / 구글 로그인 연동)",
+   "doesSource": "header",
+   "header": [
+    "OurGoal Social Auth (카카오 / 구글 로그인 연동)",
+    "소셜 로그인 (카카오 및 구글 OAuth) 인증을 처리하는 모듈입니다.",
+    "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3746~3764 · 3765~3778 · 3779~3856 · 3859~3896 · 3897~3947 · 3950~3983 · 3984~4041 · 4042~4045 · 4046~4049줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 346,
+   "over800": false,
+   "exposes": [
+    "OurgoalAuthSocialKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "google-session-guard"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalAuthSocialKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-591"
+   ],
+   "reqs": [],
+   "prs": [
+    {
+     "number": 855,
+     "task": "TASK-ES-591",
+     "title": "G039 인라인 묶음 분리 (#TASK-ES-591)",
+     "date": "2026-10-07"
     }
    ]
   },
@@ -3818,6 +3879,7 @@
    ],
    "calls": [],
    "calledBy": [
+    "auth-social",
     "avatar/xp",
     "calendar/calendar-core",
     "calendar/day-bg-picker",
@@ -3874,6 +3936,7 @@
     "core/trash-bin",
     "core/view-dispatch",
     "core/virtual-user-helpers",
+    "creator-templates-legacy",
     "goals/ai-agent",
     "goals/ai-local-fallback",
     "goals/ai-status",
@@ -3912,6 +3975,7 @@
     "goals/team-level-goals",
     "goals/team-state",
     "goals/template-encyclopedia",
+    "goals/template-encyclopedia-modal",
     "goals/template-quick-import",
     "goals/topic-region-picker",
     "home/home-render",
@@ -6122,44 +6186,41 @@
    ]
   },
   {
-   "id": "credits",
-   "file": "js/credits.js",
-   "kind": "hybrid",
-   "kindName": "하이브리드",
+   "id": "creator-templates-legacy",
+   "file": "js/creator-templates-legacy.js",
+   "kind": "organ",
+   "kindName": "기관",
    "size": null,
-   "area": "family-social",
-   "tabs": [
-    "comm",
-    "home",
-    "records"
-   ],
-   "name": "크레딧",
-   "nameSource": "hand",
-   "does": "앱 안에서만 쓰는 크레딧 잔액·적립 내역을 서버에서 불러온다",
-   "doesSource": "hand",
+   "area": "organ-body",
+   "tabs": [],
+   "name": "creator-templates-legacy",
+   "nameSource": "derived",
+   "does": "크리에이터 템플릿(구형 창)",
+   "doesSource": "header",
    "header": [
-    "아워골 — 공용 크레딧 클라이언트 (#TASK-ES-015, INFRA)",
-    "규격: 「아워골 수익화 모델(정립/구현)」 §1·§2.",
-    "- 크레딧은 앱 내 전용. 현금·상품권과 교환하지 않는다. 화면에 화폐 문구를 쓰지 않는다.",
-    "- 원장은 서버 credit_ledger 하나. 이 파일은 로컬에 잔액을 저장하지 않는다."
+    "크리에이터 템플릿(구형 창)",
+    "구형 템플릿 60선 창 렌더링 및 템플릿 복제 함수",
+    "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 6854~6877 · 6878~6900줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 128,
+   "lines": 73,
    "over800": false,
    "exposes": [
-    "OurgoalCredits"
+    "OurgoalCreatorTemplatesLegacyKit"
    ],
    "calls": [
+    "core/app-scope",
+    "goal-templates-data",
+    "team-invite-comm",
     "template-credit"
    ],
-   "calledBy": [
-    "helpful-reason"
-   ],
+   "calledBy": [],
    "readsFromIndexHtml": [
-    "OURGOAL_CONFIG"
+    "REAL_USER_TEMPLATES"
    ],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "OurgoalCredits"
+    "OurgoalCreatorTemplatesLegacyKit"
    ],
    "emits": [],
    "listens": [],
@@ -6171,7 +6232,7 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-015"
+    "TASK-ES-591"
    ],
    "reqs": [],
    "prs": []
@@ -8070,15 +8131,15 @@
     "data/goal-templates/study"
    ],
    "calledBy": [
+    "creator-templates-legacy",
     "goals/template-encyclopedia",
+    "goals/template-encyclopedia-modal",
     "team-templates",
     "viral-sharing"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OURGOAL_60_TEMPLATES"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -8198,12 +8259,12 @@
     "OurgoalGoogleSessionGuard"
    ],
    "calls": [],
-   "calledBy": [],
+   "calledBy": [
+    "auth-social"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoogleSessionGuard"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -8250,14 +8311,13 @@
     "도움돼요를 누른 직후 \"왜 도움이 됐나요?\" 시트를 띄운다(건너뛰기 가능).",
     "태그 1개 + 한 줄 텍스트(선택). 텍스트가 품질 게이트(최소 글자 수·복붙 아님)를"
    ],
-   "lines": 230,
+   "lines": 213,
    "over800": false,
    "exposes": [
     "OurgoalHelpfulReason"
    ],
    "calls": [
     "core/toast",
-    "credits",
     "reactions"
    ],
    "calledBy": [
@@ -8281,12 +8341,20 @@
    },
    "tasks": [
     "TASK-ES-016",
-    "TASK-ES-361"
+    "TASK-ES-361",
+    "TASK-ES-588"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-361-TOAST-UNIFY.md"
+    "docs/specs/REQ-TASK-ES-361-TOAST-UNIFY.md",
+    "docs/specs/REQ-TASK-ES-588.md"
    ],
    "prs": [
+    {
+     "number": 852,
+     "task": "TASK-ES-588",
+     "title": "[E1] #TASK-ES-588 feat(credits): remove credits v2",
+     "date": "2026-10-07"
+    },
     {
      "number": 675,
      "task": "TASK-ES-361",
@@ -10401,6 +10469,7 @@
     "TASK-ES-273"
    ],
    "reqs": [
+    "docs/specs/REQ-TASK-ES-126-AVATAR-320-PERSONAS.md",
     "docs/specs/REQ-TASK-ES-266-TOP-PAGE-GUIDE-REPOSITION.md",
     "docs/specs/REQ-TASK-ES-273-TAB-GUIDES-SHOWCASE.md"
    ],
@@ -15441,6 +15510,59 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "goals/template-encyclopedia-modal",
+   "file": "js/tabs/goals/template-encyclopedia-modal.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "goals/template-encyclopedia-modal",
+   "nameSource": "derived",
+   "does": "OurGoal Template Encyclopedia Modal (목표 템플릿 백과사전 전체화면 팝업 및 상호작용)",
+   "doesSource": "header",
+   "header": [
+    "OurGoal Template Encyclopedia Modal (목표 템플릿 백과사전 전체화면 팝업 및 상호작용)",
+    "목표 템플릿 백과사전 팝업을 열고 닫는 제어, UI 렌더링(AI 추천, 실유저 템플릿), 탭 전환 상호작용을 처리합니다.",
+    "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4709~4890 · 4895~4901 · 4902~4906 · 4909~4946 · 4947~4953 · 4954~4958 · 4959~4972 · 4974~5007 · 5009~5015 · 5016~5020 · 5021~5061 · 5063~5155 · 5156~5234 · 5245~5249 · 5250~5259 · 5263~5269줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 606,
+   "over800": false,
+   "exposes": [
+    "OurgoalGoalsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "goal-templates-data",
+    "team-invite-comm"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [
+    "CREATOR_TEMPLATES"
+   ],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalGoalsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-591"
+   ],
+   "reqs": [],
+   "prs": []
   },
   {
    "id": "goals/template-encyclopedia",
@@ -20671,13 +20793,21 @@
    },
    "tasks": [
     "TASK-ES-354",
-    "TASK-ES-516"
+    "TASK-ES-516",
+    "TASK-ES-588"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md",
-    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
+    "docs/specs/REQ-TASK-ES-588.md"
    ],
    "prs": [
+    {
+     "number": 852,
+     "task": "TASK-ES-588",
+     "title": "[E1] #TASK-ES-588 feat(credits): remove credits v2",
+     "date": "2026-10-07"
+    },
     {
      "number": 813,
      "task": "TASK-ES-516",
@@ -22398,10 +22528,12 @@
     "comm/goal-certificate-share",
     "comm/render",
     "core/app-enter",
+    "creator-templates-legacy",
     "goals/focus-autopilot",
     "goals/team-goal-modals",
     "goals/team-goals-screen",
     "goals/template-encyclopedia",
+    "goals/template-encyclopedia-modal",
     "sanctuary-peer-radar",
     "team-dm-room",
     "team-leader-check",
@@ -23348,11 +23480,11 @@
    "doesSource": "hand",
    "header": [
     "아워골 — 템플릿 복제 크레딧 (KF-2 #TASK-ES-017, E3)",
-    "규격: 「아워골 수익화 모델(정립/구현)」 §1·§2·§3, KF-2 요구사항정의서 v2.",
+    "규격: KF-2 요구사항정의서 v2.",
     "- 복제 수는 서버 실데이터(template_copies)만 표시한다. 값이 없거나 0이면 아무 숫자도 보이지 않는다.",
-    "- 원작자 크레딧 구간 판정·적립은 서버 RPC(record_template_copy) 안에서만. 클라이언트는 결과만 본다."
+    "서버가 아직 준비되지 않았을 때(테이블·RPC 없음: PGRST202/205, 42P01, 404)는 전부 조용히 실패하고"
    ],
-   "lines": 129,
+   "lines": 126,
    "over800": false,
    "exposes": [
     "OurgoalTemplateCredit",
@@ -23363,7 +23495,7 @@
     "auth-safety",
     "comm/dm-ledger",
     "comm/story-card-send",
-    "credits",
+    "creator-templates-legacy",
     "goal-edit-ux",
     "goals/team-goals-screen",
     "settings/guest-migration",
@@ -23396,12 +23528,20 @@
    },
    "tasks": [
     "TASK-ES-017",
-    "TASK-ES-516"
+    "TASK-ES-516",
+    "TASK-ES-588"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md"
+    "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
+    "docs/specs/REQ-TASK-ES-588.md"
    ],
    "prs": [
+    {
+     "number": 852,
+     "task": "TASK-ES-588",
+     "title": "[E1] #TASK-ES-588 feat(credits): remove credits v2",
+     "date": "2026-10-07"
+    },
     {
      "number": 813,
      "task": "TASK-ES-516",

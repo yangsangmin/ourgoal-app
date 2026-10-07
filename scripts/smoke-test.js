@@ -2699,9 +2699,9 @@ check('KF-2: 마켓·기본 템플릿의 고정 복제 수·가상 크리에이�
   assert.ok(!html.includes("t.users.toLocaleString()+'명이 사용 중'"), '고정 사용자 수 표시 없음');
   assert.ok(!html.includes("escapeHtml(t.creator)+'</b>'"), '가상 크리에이터 이름 표시 없음');
   assert.ok(html.includes('data-tplcount="\' + t.key + \'"'), '마켓 카드에 서버 집계 배지 자리(기본 숨김)');
-  assert.ok(html.includes('data-tplcount="creator:\'+t.id+\'"'), '기본 템플릿에도 서버 집계 자리');
+  assert.ok((html + INLINE_CELLS_SRC).includes('data-tplcount="creator:\'+t.id+\'"'), '기본 템플릿에도 서버 집계 자리');
   assert.ok(html.includes('OurgoalTemplateCredit.recordCopy(tpl.key || tpl.title'), '마켓 복제 시 서버 기록');
-  assert.ok(html.includes("OurgoalTemplateCredit.recordCopy('creator:' + t.id"), '기본 템플릿 복제 시 서버 기록');
+  assert.ok((html + INLINE_CELLS_SRC).includes("OurgoalTemplateCredit.recordCopy('creator:' + t.id"), '기본 템플릿 복제 시 서버 기록');
 });
 check('KF-2: template_copies SQL — 멱등·RLS·봇 제외·구간 적립은 서버·DROP 없음', () => {
   const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-template-copies.sql'), 'utf8');
@@ -4670,7 +4670,7 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
 
   // 6. 소통탭 피드 템플릿 아코디언 검증
   assert.ok(indexHtml.includes('toggleTemplatesBtn'), '템플릿 아코디언 토글 버튼 탑재');
-  assert.ok(indexHtml.includes('renderTemplatesAccordionHtml'), 'templatesHtml 내 아코디언 렌더러 연동');
+  assert.ok((indexHtml + INLINE_CELLS_SRC).includes('renderTemplatesAccordionHtml'), 'templatesHtml 내 아코디언 렌더러 연동');
 
   // 7. 소통탭 1:1 '외부sns 소통용 카드 제작하기' & 3대 액션 버튼 검증
   assert.ok(indexHtml.includes('외부sns 소통용 카드 제작하기'), '외부sns 소통용 카드 제작하기 버튼 탑재');
@@ -7498,7 +7498,7 @@ check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결�
   assert.ok(indexHtml.includes('id="btnSwitchCompanionInvite"'), '동반자 초대 탭 칩 버튼 ID 존재');
   assert.ok(indexHtml.includes('switchInviteTab'), '동반자 초대/링크 복사 탭 전환 핸들러 존재');
   assert.ok(indexHtml.includes('btn-select-wearable'), '스마트워치 선택 버튼 클래스 존재');
-  assert.ok(indexHtml.includes('id="toggleTemplatesBtnInner"'), '추천 템플릿 토글 버튼 ID 존재');
+  assert.ok((indexHtml + INLINE_CELLS_SRC).includes('id="toggleTemplatesBtnInner"'), '추천 템플릿 토글 버튼 ID 존재');
 
   // 2. 유령 버튼(#goalArchiveBtn) 마크업 복원 확인
   assert.ok(indexHtml.includes("archiveBtnEl.id = 'goalArchiveBtn'"), '목표 상세 보관함 버튼(#goalArchiveBtn) 생성 확인');

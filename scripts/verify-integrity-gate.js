@@ -16,6 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const INLINE_CELLS_SRC = require('../tests/helpers/inline-bundle').withInlineCells('');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const INDEX_HTML = path.join(ROOT_DIR, 'index.html');
@@ -752,7 +753,7 @@ check('[검증 16/16] [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터
   assert.ok(html.includes('id="btnSwitchCompanionInvite"'), '#btnSwitchCompanionInvite 탭 버튼 ID 누락');
   assert.ok(html.includes('switchInviteTab'), '팀원 초대 모달 탭 전환 로직 누락');
   assert.ok(html.includes('btn-select-wearable'), '스마트워치 선택 버튼 클래스 누락');
-  assert.ok(html.includes('id="toggleTemplatesBtnInner"'), '#toggleTemplatesBtnInner ID 누락');
+  assert.ok((html + INLINE_CELLS_SRC).includes('id="toggleTemplatesBtnInner"'), '#toggleTemplatesBtnInner ID 누락');
 
   // 2. 유령 버튼 복원 검증
   assert.ok(html.includes("archiveBtnEl.id = 'goalArchiveBtn'"), '목표 상세 보관함 버튼(#goalArchiveBtn) 마크업 생성 누락');
