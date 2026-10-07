@@ -115,7 +115,8 @@ ok('브라우저 경로: 새 전역은 데이터 묶음 OurgoalAvatarPersonaPart
   const aloneWin = baseWin || runBrowser([['js/avatar-system.js', read('js/avatar-system.js')]], true);
   const baseNames = Object.keys(aloneWin).filter(k => !skip.includes(k)).sort();
   // #TASK-ES-389: 로직 부품이 있으면 부품 통로 OurgoalAvatarParts 하나가 더 생긴다(설계 REQ-TASK-ES-384 3-1절에 적은 새 전역 1개). 그 밖의 새 전역은 0.
-  assert.deepStrictEqual(names, baseNames.concat(['OurgoalAvatarPersonaParts'], CELL_PARTS.length ? ['OurgoalAvatarParts'] : []).sort());
+  // #TASK-ES-599: OurgoalLevelBadgeKit 새 전역 추가 반영
+  assert.deepStrictEqual(names, baseNames.concat(['OurgoalAvatarPersonaParts', 'OurgoalLevelBadgeKit'], CELL_PARTS.length ? ['OurgoalAvatarParts'] : []).sort());
   assert.deepStrictEqual(Object.keys(winSelf.OurgoalAvatarPersonaParts), PART_ORDER);
 });
 
