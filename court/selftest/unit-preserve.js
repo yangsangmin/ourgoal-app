@@ -189,7 +189,51 @@ const TESTS = [
       t.ok(!res.ok, '비정상 파일명 거절됨');
       t.ok(res.reason.includes('Invalid path'), '사유에 Invalid path');
     }
-  }
+  },
+  {
+    id: 'U-preserve-judgeclaim-passes-repodir',
+    title: '동작 보존 주장: judgeClaim 이 분열 증명 검증에 저장소 경로(repoDir)를 넘기고, 진짜 저장소에서 git diff 가 성공한다(TASK-ES-597)',
+    async run(t) {
+      const { execFileSync } = require('node:child_process');
+      const repo = tempDir('repo');
+      const g = args => execFileSync('git', ['-C', repo, '-c', 'user.name=court-selftest', '-c', 'user.email=court-selftest@users.noreply.github.com', '-c', 'commit.gpgsign=false', ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+      g(['init', '-q']);
+      writeTree(repo, { 'index.html': '<p>a</p>\n' });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'base']);
+      const baseSha = g(['rev-parse', 'HEAD']);
+      writeTree(repo, { 'index.html': '<p>b</p>\n' });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'head']);
+      const headSha = g(['rev-parse', 'HEAD']);
+
+      const claimsDir = tempDir('claims');
+      const steps = [{ do: 'goto', path: '/index.html' }, { do: 'click', selector: '#btn' }, { expect: 'visible', selector: '#result' }];
+      writeTree(claimsDir, { 'sc.json': { id: 'selftest-repodir', title: '시험', steps }, 'proof.json': { task: 'TASK-SELFTEST', cells: [] } });
+      const claim = { id: 'C1', req: 'R1', kind: 'behavior', change: 'preserve', domain: 'ui-behavior', statement: '보존', touches: ['index.html'], scenario: 'sc.json', proof: 'proof.json' };
+      const pass = { passed: true, failedStep: null, failKind: null, provesBehavior: true, states: [], steps: [], fixtures: [], notes: [], exceptions: [] };
+
+      const origVerify = preserveLib.verifyCellSplitProof;
+      let seen = null;
+      preserveLib.verifyCellSplitProof = (dir, c, vctx) => { seen = vctx; return origVerify(dir, c, vctx); };
+      try {
+        const ctx = { claimsDir, base: { url: 'b', sha: baseSha }, head: { url: 'h', sha: headSha }, floors: grade.loadFloors(), config: scenarioLib.loadConfig(), repoDir: repo, outDir: null, runScenario: async () => pass };
+        const res = await claimsLib.judgeClaim(ctx, claim);
+        t.ok(seen !== null, '분열 증명 검증까지 도달함');
+        t.eq(seen && seen.repoDir, repo, '분열 증명 검증에 넘긴 repoDir 가 법정의 저장소 경로와 같다');
+        const sp = res.evidence && res.evidence.splitProof;
+        t.ok(!!sp, '판정 증거에 분열 증명 결과가 남음');
+        const reason = (sp && sp.reason) || '';
+        t.ok(!/Git diff 실행 실패/.test(reason), 'git diff 가 저장소 안에서 성공함(사유: ' + (reason || '없음') + ')');
+        t.ok(!/repoDir\) 누락/.test(reason), 'repoDir 누락 사유가 아님');
+      } finally {
+        preserveLib.verifyCellSplitProof = origVerify;
+      }
+
+      const missing = preserveLib.verifyCellSplitProof(claimsDir, claim, { base: { sha: baseSha }, head: { sha: headSha }, scenarioResults: { H: pass } });
+      t.ok(!missing.ok && /repoDir\) 누락/.test(missing.reason), 'repoDir 없이 부르면 git 을 돌리지 않고 법정 내부 결함으로 알린다: ' + missing.reason);
+      fs.rmSync(repo, { recursive: true, force: true });
+      fs.rmSync(claimsDir, { recursive: true, force: true });
+    },
+  },
 ];
 
 module.exports = { TESTS };
