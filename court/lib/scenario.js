@@ -630,8 +630,8 @@ async function runScenario(opts) {
           const toast = await ev('document.querySelector(".toast") ? document.querySelector(".toast").innerText : ""');
           const err = await ev('document.querySelector(".error") ? document.querySelector(".error").innerText : ""');
           const modal = await ev('document.querySelector(".modal") ? document.querySelector(".modal").innerText : ""');
-          if (!result.captures) result.captures = [];
-          result.captures.push({ dom, localStorage: ls, sessionStorage: ss, toast, err, modal });
+          if (!result.states) result.states = [];
+          result.states.push({ dom, localStorage: ls, sessionStorage: ss, toast, err, modal });
         } catch(e) {}
       }
     }
