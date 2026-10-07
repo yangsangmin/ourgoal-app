@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아워골(OurGoal) Google Play 런칭 마스터 핸드북 (출력용)</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text-main: #1f2937;
+      --text-muted: #4b5563;
+      --bg-card: #f9fafb;
+      --border-color: #e5e7eb;
+      --border-dark: #cbd5e1;
+      --accent: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text-main);
+      background-color: #f3f4f6;
+      line-height: 1.55;
+      font-size: 13.5px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* 상단 인쇄 안내 및 버튼 (화면에서만 노출) */
+    .no-print-bar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .no-print-bar .title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .no-print-bar .btn-print {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .no-print-bar .btn-print:hover {
+      background: #2563eb;
+    }
+
+    /* 메인 문서 컨테이너 */
+    .document {
+      max-width: 210mm;
+      margin: 20px auto 40px auto;
+      background: #fff;
+      padding: 20mm 16mm;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 4px;
+    }
+
+    /* 헤더 및 문서 타이틀 */
+    .doc-header {
+      border-bottom: 2.5px solid var(--primary);
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+    }
+    .doc-badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: var(--primary);
+      border: 1px solid #bfdbfe;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    h1.doc-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .doc-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .doc-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      font-size: 11.5px;
+      color: #64748b;
+    }
+
+    /* 섹션 공통 스타일 */
+    .section {
+      margin-bottom: 26px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      border-left: 4px solid var(--primary);
+      padding-left: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-subtitle {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 14px 0 8px 0;
+    }
+
+    p {
+      margin-bottom: 8px;
+    }
+
+    /* 요약 카드 및 안내 박스 */
+    .info-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      font-size: 12.5px;
+    }
+    .info-box.highlight {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .info-box.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    /* 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 12px;
+    }
+    th, td {
+      border: 1px solid var(--border-dark);
+      padding: 7px 9px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #1e293b;
+      text-align: center;
+    }
+    td.center {
+      text-align: center;
+    }
+
+    /* 메시지 템플릿 복사용 박스 */
+    .msg-template {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #3b82f6;
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin: 8px 0 14px 0;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-line;
+      font-family: 'Pretendard', sans-serif;
+    }
+    .msg-badge {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #3730a3;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-bottom: 4px;
+    }
+
+    /* 체크리스트 박스 */
+    .checklist-tag {
+      display: inline-block;
+      border: 1px solid #94a3b8;
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: -1px;
+    }
+
+    /* 복사용 코드 블록 */
+    code, pre {
+      font-family: 'Consolas', monospace;
+      font-size: 11.5px;
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    pre {
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      overflow-x: auto;
+      margin-bottom: 8px;
+    }
+
+    /* 인쇄 전용 규칙 */
+    @media print {
+      body {
+        background: #fff;
+      }
+      .no-print-bar {
+        display: none !important;
+      }
+      .document {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 14mm 12mm 14mm 12mm;
+      }
+      .page-break {
+        page-break-before: always;
+        break-before: page;
+      }
+      .avoid-break {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 화면 상단 인쇄 버튼 바 -->
+  <div class="no-print-bar">
+    <div class="title">📱 아워골(OurGoal) Google Play 런칭 마스터 핸드북 (공식 정본)</div>
+    <button class="btn-print" onclick="window.print()">
+      🖨️ A4 인쇄 / PDF 저장하기 (Ctrl + P)
+    </button>
+  </div>
+
+  <div class="document">
+
+    <!-- 문서 표지 헤더 -->
+    <div class="doc-header">
+      <span class="doc-badge">Official Deployment Guide</span>
+      <h1 class="doc-title">아워골(OurGoal) Google Play 런칭 마스터 핸드북</h1>
+      <div class="doc-subtitle">내부 테스트 · 14일 20인 비공개 테스트 · 프로덕션 정식 출시 원스톱 완주 가이드</div>
+      <div class="doc-meta">
+        <span><strong>작성일자:</strong> 2026-09-21</span>
+        <span><strong>패키지명:</strong> com.yangbis.ourgoal</span>
+        <span><strong>타깃 URL:</strong> https://ourgoal-app.vercel.app</span>
+        <span><strong>담당/승인:</strong> 개발팀 / 상민님</span>
+      </div>
+    </div>
+
+    <!-- 1. 런칭 마스터 로드맵 -->
+    <div class="section avoid-break">
+      <div class="section-title">1. 런칭 마스터 로드맵 및 단계별 타임라인</div>
+      <p style="font-size:12.5px; color:#475569;">
+        Google Play 신규 개인 개발자 정책에 따라, <strong>수요일 약속 배포를 100% 보장하는 [내부 테스트]</strong>와 
+        <strong>14일 20인 연속 테스트를 완주하는 [비공개 테스트]</strong>의 2트랙 병행 전략으로 진행합니다.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 14%;">단계</th>
+            <th style="width: 16%;">목표 일정</th>
+            <th style="width: 44%;">주요 실행 내용</th>
+            <th style="width: 13%;">구글 심사</th>
+            <th style="width: 13%;">비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center"><strong>Phase 0</strong></td>
+            <td class="center"><strong>오늘(월) D-Day</strong></td>
+            <td>콘솔 앱 생성, 스토어 설명문/그래픽 등록, 정책 설문(로그인 계정) 작성</td>
+            <td class="center">-</td>
+            <td class="center">1~2시간</td>
+          </tr>
+          <tr>
+            <td class="center" style="background:#eff6ff;"><strong>Phase 1</strong></td>
+            <td class="center" style="background:#eff6ff;"><strong>수요일 (D+2)</strong></td>
+            <td><strong>[내부 테스트]</strong> AAB 업로드 ➔ 수요일 테스터 링크 발송 및 즉시 실사용</td>
+            <td class="center" style="color:var(--accent); font-weight:700;">없음 (즉시)</td>
+            <td class="center" style="color:var(--primary); font-weight:700;">수요일 보장</td>
+          </tr>
+          <tr>
+            <td class="center" style="background:#fffbeb;"><strong>Phase 2</strong></td>
+            <td class="center" style="background:#fffbeb;"><strong>수/목 ~ D+18</strong></td>
+            <td><strong>[비공개 테스트]</strong> 심사 승인 ➔ 20인 테스터 비공개 전환 ➔ <strong>14일 연속 완주</strong></td>
+            <td class="center" style="color:var(--warning); font-weight:700;">2~5일 소요</td>
+            <td class="center" style="font-weight:700;">14일 트랙</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Phase 3</strong></td>
+            <td class="center"><strong>D+18 ~ D+25</strong></td>
+            <td><strong>'프로덕션 액세스 신청'</strong> 설문 제출 ➔ 최종 심사 ➔ 전세계 정식 출시!</td>
+            <td class="center">3~7일 소요</td>
+            <td class="center" style="color:var(--accent); font-weight:700;">정식 런칭</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. 복사-붙여넣기 텍스트 키트 -->
+    <div class="section avoid-break">
+      <div class="section-title">2. Google Play Console 복사-붙여넣기 텍스트 키트</div>
+      
+      <div class="info-box">
+        <strong>앱 기본 세부정보</strong><br>
+        • <strong>앱 이름 (최대 30자):</strong> <code>아워골 - 목표 실천과 무공해 성장</code><br>
+        • <strong>기본 언어:</strong> 한국어 (ko-KR) &nbsp;|&nbsp; <strong>앱/게임:</strong> 앱 &nbsp;|&nbsp; <strong>무료/유료:</strong> 무료<br>
+        • <strong>카테고리:</strong> 생산성 (Productivity) &nbsp;|&nbsp; <strong>태그:</strong> 목표 달성, 라이프스타일
+      </div>
+
+      <div class="info-box">
+        <strong>스토어 설명문 (Store Listing)</strong><br>
+        • <strong>간단한 설명 (80자):</strong><br>
+        <code>삶의 방향성을 찾아가는 무공해 성장 도피처. 목표 실천, 5단위 회고, 동류 연대.</code><br><br>
+        • <strong>자세한 설명 (핵심 발췌):</strong><br>
+        <span style="font-size:11.5px; color:#475569;">
+          "내가 지금 올바른 방향으로 나아가고 있는 걸까?" 자극적인 알고리즘과 과시형 SNS에 지친 보통 사람들을 위한 무공해 성장 쉼터, 아워골입니다.<br>
+          1. 실천이 곧 에너지! 체크인 루프 (E1) - RPG 퀘스트 메커니즘으로 실천 즉시 경험치와 효능감 축적<br>
+          2. 자기효능감을 복원하는 5단위 회고 (E2) - 오늘/주/월/년/설정기간 5단계 성찰<br>
+          3. 비교 없는 동류 연대와 소통 (E3) - 박탈감 없는 클린 소통과 무공해 응원<br>
+          4. 320종 아바타 세계관 - 내면을 투영하는 개성 넘치는 만화 아바타
+        </span>
+      </div>
+
+      <div class="info-box warning">
+        <strong>★ 심사 반려 방지 필수 URL 및 테스트 계정 정보</strong><br>
+        • <strong>개인정보처리방침 URL:</strong> <code>https://ourgoal-app.vercel.app/docs/legal/privacy.md</code><br>
+        • <strong>데이터 삭제 요청 URL:</strong> <code>https://ourgoal-app.vercel.app/api/withdraw.js</code><br>
+        • <strong>앱 액세스 권한 (구글 심사관 전용 테스트 계정 - 필수 입력):</strong><br>
+        &nbsp;&nbsp;- 계정 ID: <code>reviewer@ourgoal.app</code> &nbsp;|&nbsp; 비밀번호: <code>TestUser2026!*</code><br>
+        &nbsp;&nbsp;- 설명: <em>"앱 첫 화면에서 위 계정으로 로그인 시 모든 기능(체크인, 회고, 피드)을 검토하실 수 있습니다."</em>
+      </div>
+    </div>
+
+    <!-- 3. 단계별 테스터 안내 및 메시지 템플릿 (페이지 분할) -->
+    <div class="section page-break">
+      <div class="section-title">3. 단계별 테스터 필수 & 권장 안내 사항 및 메시지 템플릿</div>
+      <p style="font-size:12px; color:#475569; margin-bottom:12px;">
+        아래 가이드와 템플릿은 테스터들의 이탈을 방지하고 구글 정책을 100% 충족하기 위해 최적화된 메시지입니다.
+      </p>
+
+      <!-- 3-1 사전 준비 -->
+      <div class="avoid-break" style="margin-bottom:16px;">
+        <div class="section-subtitle" style="color:var(--primary);">3-1. 사전 준비: 테스터 모집 및 구글 계정 수합 (월~화)</div>
+        <div style="display:flex; gap:10px; margin-bottom:6px;">
+          <div class="info-box" style="flex:1; margin:0;">
+            <strong style="color:var(--danger);">[필수 안내]</strong><br>
+            1. 안드로이드 스마트폰 사용자만 참여 가능 (아이폰 불가)<br>
+            2. <strong>구글 플레이스토어 로그인 계정</strong> 필수 (다른 이메일 시 404 오류)<br>
+            3. 최소 14일 동안 앱 삭제 금지 동의
+          </div>
+          <div class="info-box" style="flex:1; margin:0;">
+            <strong style="color:var(--accent);">[권장 안내]</strong><br>
+            • 아워골의 무공해 성장 쉼터 철학 소개로 기대감 형성<br>
+            • 정식 런칭 시 얼리어답터 감사 크레딧 및 특별 리워드 약속
+          </div>
+        </div>
+        <div class="msg-template">
+<span class="msg-badge">카카오톡 / 문자 복사용</span>
+안녕하세요 [이름]님!
+제가 오랜 시간 정성을 쏟아 만든 목표 실천 & 무공해 성장 앱 [아워골(OurGoal)]의 첫 비공개 테스트에 초대합니다.
+정식 출시에 앞서 소중한 테스터분들과 2주간 함께 앱을 써보고 피드백을 나누고자 합니다.
+
+📱 참여 방법:
+구글 플레이스토어 비공개 테스터 등록을 위해, 현재 스마트폰의 [Google Play 스토어에 로그인되어 있는 구글 이메일(Gmail)]을 회신 부탁드립니다.
+- 성함: 
+- 구글 플레이 계정 이메일: 
+
+수요일에 바로 다운로드받으실 수 있는 전용 초대 링크를 보내드리겠습니다. 귀한 시간 함께해 주셔서 진심으로 감사드립니다!
+        </div>
+      </div>
+
+      <!-- 3-2 내부 테스트 배포 -->
+      <div class="avoid-break" style="margin-bottom:16px;">
+        <div class="section-subtitle" style="color:var(--primary);">3-2. 1단계: 내부 테스트(Internal) 배포 및 수요일 링크 발송 (수요일)</div>
+        <div style="display:flex; gap:10px; margin-bottom:6px;">
+          <div class="info-box" style="flex:1; margin:0;">
+            <strong style="color:var(--danger);">[필수 안내]</strong><br>
+            1. 링크 클릭 ➔ [테스터 참여 수락] ➔ [스토어 다운로드] 3단계 순서<br>
+            2. "항목을 찾을 수 없음" 발생 시: 플레이스토어 계정 확인 안내
+          </div>
+          <div class="info-box" style="flex:1; margin:0;">
+            <strong style="color:var(--accent);">[권장 안내]</strong><br>
+            • 가입 후 첫 목표 1개 생성 및 체크인 1회 해보기 미션 제안<br>
+            • 편안한 분위기에서 가볍게 오류/소감 전달 요청
+          </div>
+        </div>
+        <div class="msg-template">
+<span class="msg-badge">카카오톡 / 문자 복사용</span>
+[이름]님, 기다려 주셔서 감사합니다! 
+아워골(OurGoal) 안드로이드 테스트 앱이 준비되었습니다. 아래 링크를 통해 설치해 주시면 됩니다.
+
+🔗 [테스터 참여 링크]: (콘솔 내부테스트 링크 입력)
+
+📌 설치 순서 (30초 소요):
+1. 위 링크 클릭 후 화면에서 [테스터 참여 수락] 클릭
+2. 화면 하단 [Google Play에서 다운로드] 링크 클릭
+3. 플레이스토어 화면에서 [설치] 버튼 클릭
+
+⚠️ 주의: 링크에서 "항목을 찾을 수 없음"이 뜰 경우, 스마트폰 브라우저에 로그인된 구글 계정이 제출해 주신 계정과 일치하는지 확인해 주세요!
+설치 후 첫 목표 하나 만들어 보시고 편하게 소감 들려주세요. 감사합니다!
+        </div>
+      </div>
+
+      <!-- 3-3 비공개 테스트 전환 -->
+      <div class="avoid-break" style="margin-bottom:16px;">
+        <div class="section-subtitle" style="color:var(--primary);">3-3. 2단계: 비공개 테스트(Closed) 전환 및 14일 카운트 개시 (목~금)</div>
+        <div style="display:flex; gap:10px; margin-bottom:6px;">
+          <div class="info-box" style="flex:1; margin:0;">
+            <strong style="color:var(--danger);">[필수 안내]</strong><br>
+            1. <strong>기존 앱 삭제 불필요!</strong> 전달된 링크에서 '수락'만 1회 클릭<br>
+            2. <strong>앞으로 14일간 앱 삭제 금지!</strong> (20명 미만 시 카운트 리셋)
+          </div>
+          <div class="info-box" style="flex:1; margin:0;">
+            <strong style="color:var(--accent);">[권장 안내]</strong><br>
+            • 플레이스토어 앱 내 [개발자에게 비공개 피드백 남기기] 1회 작성 당부<br>
+            • 주 2~3회 꾸준한 체크인 독려
+          </div>
+        </div>
+        <div class="msg-template">
+<span class="msg-badge">카카오톡 / 문자 복사용</span>
+[이름]님, 아워골을 사용해 주셔서 정말 감사합니다!
+구글 정식 비공개 테스트 트랙 심사가 통과되어, 오늘부터 구글 공식 [14일 연속 테스트] 카운트다운에 들어갑니다.
+
+기존에 설치하신 앱은 지우실 필요가 없으며, 아래 링크에서 [참여 수락]만 딱 한 번 더 눌러주시면 됩니다!
+
+🔗 [비공개 테스트 전환 수락 링크]: (콘솔 비공개테스트 링크 입력)
+
+💡 테스터님께 드리는 간곡한 부탁 2가지:
+1. 구글 정책상 14일 동안 테스터 20명이 앱을 삭제하지 않고 유지해야 정식 출시가 승인됩니다. 딱 2주간 앱을 지우지 말아주세요!
+2. 플레이스토어 앱 상세화면의 [개발자에게 비공개 피드백 남기기]에 짧은 한 줄이라도 의견을 남겨주시면 구글 정식 승인에 결정적인 도움이 됩니다. 감사합니다!
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3-4 & 3-5 템플릿 계속 -->
+    <div class="section avoid-break">
+      <div class="section-subtitle" style="color:var(--primary);">3-4. 3단계: 14일 유지 기간 중 이탈 방지 리마인더 (진행 중)</div>
+      <div class="msg-template">
+<span class="msg-badge">Day 7 반환점 리마인더 카톡 복사용</span>
+[이름]님, 아워골과 함께해 주신 지 벌써 1주일이 되었습니다!
+테스터분들의 소중한 의견 덕분에 작은 결함들과 화면 편의성이 계속해서 개선되고 있습니다.
+
+오늘은 아워골의 핵심 기능 중 하나인 [기록/회고 탭]에서 이번 주 나의 실천 발자취를 돌아보시는 건 어떨까요?
+앞으로 남은 7일 동안도 앱 삭제 없이 함께해 주시기를 부탁드립니다. 오늘도 보람찬 하루 보내세요! 🌱
+      </div>
+
+      <div class="section-subtitle" style="color:var(--primary);">3-5. 4단계: 정식 출시(Production) 축하 및 스토어 리뷰 요청 (런칭 완료 후)</div>
+      <div class="msg-template">
+<span class="msg-badge">정식 런칭 축하 및 리뷰 요청 카톡 복사용</span>
+[이름]님, 기쁜 소식을 전해드립니다! 🎉
+[이름]님께서 14일간 든든하게 자리를 지켜주신 덕분에, 드디어 아워골(OurGoal)이 구글 플레이스토어 정식 승인을 받고 전 세계에 출시되었습니다!
+테스트 기간 동안 작성하셨던 목표와 체크인 데이터는 정식 버전에도 100% 안전하게 유지됩니다.
+
+🔗 [아워골 구글 플레이스토어 정식 링크]: (정식 스토어 URL)
+
+[이름]님의 소중한 별점 5점과 따뜻한 한 줄 리뷰는 아워골의 가장 큰 힘이 됩니다. 함께 첫 발걸음을 만들어 주셔서 진심으로 감사드립니다! ❤️
+      </div>
+    </div>
+
+    <!-- 4. 14일 데일리 체크리스트 (인쇄하여 펜으로 체크) -->
+    <div class="section page-break">
+      <div class="section-title">
+        <span>4. 14일 연속 완주 데일리 관리 일지 (Checklist)</span>
+        <span style="font-size:11px; font-weight:normal; color:#dc2626;">★ 활성 설치 수 20인 절대 사수</span>
+      </div>
+      <p style="font-size:11.5px; color:#475569; margin-bottom:8px;">
+        ※ 매일 오전 구글 플레이 콘솔 대시보드를 열고 활성 설치자 수와 참여 일수를 직접 확인하여 수기로 체크합니다.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 8%;">일차</th>
+            <th style="width: 10%;">날짜</th>
+            <th style="width: 15%;">활성 설치자 수<br>(목표: 20인 이상)</th>
+            <th style="width: 18%;">20인 충족 여부<br>(PASS / FAIL)</th>
+            <th style="width: 33%;">일일 점검 및 운영 조치 사항</th>
+            <th style="width: 16%;">비공개 피드백<br>(누적 건수)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center"><strong>Day 1</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>비공개 트랙 전환 테스터 20인 옵트인 완료 확인</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 2</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>미설치 테스터 대상 1:1 설치 안내 및 카운터 시작 점검</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 3</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>320종 아바타 설정 팁 카톡 발송 및 앱 접속 유도</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 4</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>콘솔 크래시/ANR(비정상 종료율) 0% 무결성 점검</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 5</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>플레이스토어 비공개 의견 접수 확인 및 버그 목록화</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 6</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>주말 접속 독려 리마인더 발송</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 7</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td><strong>반환점 달성!</strong> 주간 회고(E2) 실천 권유 카톡 발송</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 8</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>테스터 이탈자 발생 여부 정밀 점검 (예비 테스터 대기)</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 9</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>수집된 UI 불편사항 핫픽스 빌드 배포 (개선 증적 확보)</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 10</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>스토어 비공개 피드백 최소 3~5건 이상 등록 확인</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 11</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>대시보드 상 '연속 11일' 정상 누적 카운트 확인</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 12</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>D-2 감사 리마인더 발송 및 프로덕션 답변서 최종 검토</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center"><strong>Day 13</strong></td>
+            <td class="center">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td>프로덕션 신청 설문 4대 문항 작성 및 검증 완료</td>
+            <td class="center">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+          <tr>
+            <td class="center" style="background:#eff6ff;"><strong>Day 14</strong></td>
+            <td class="center" style="background:#eff6ff;">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="center" style="background:#eff6ff;">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 명</td>
+            <td class="center" style="background:#eff6ff;"><span class="checklist-tag"></span>PASS &nbsp; <span class="checklist-tag"></span>FAIL</td>
+            <td style="background:#eff6ff; font-weight:700; color:var(--primary);">
+              🎉 14일 완주! [프로덕션 액세스 신청] 버튼 활성화 확인
+            </td>
+            <td class="center" style="background:#eff6ff;">( &nbsp;&nbsp;&nbsp;&nbsp; ) 건</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5. 프로덕션 설문 모범 답안 & 6. 기술 점검 -->
+    <div class="section avoid-break">
+      <div class="section-title">5. '프로덕션 액세스 신청' 심사 설문 4대 문항 모범 답안</div>
+
+      <div class="info-box" style="margin-bottom:8px;">
+        <strong>Q1. 앱의 주요 기능과 타깃 사용자는 누구인가요?</strong><br>
+        <span style="color:#334155; font-size:12px;">
+          아워골(OurGoal)은 현대 사회의 과시형 SNS와 자극적인 알고리즘에 지친 사용자들에게 '무공해 성장 도피처'를 제공하는 목표 실천 및 회고 서비스입니다. 주요 타깃은 삶의 방향성을 고민하며 일상의 성취를 축적하려는 청년 및 직장인입니다. 체크인(E1)을 통한 즉각적 효능감, 5단위 회고(E2)를 통한 자기효능감 복원, 비교 없는 동류 연대(E3)를 통해 꾸준한 성장을 지원합니다.
+        </span>
+      </div>
+
+      <div class="info-box" style="margin-bottom:8px;">
+        <strong>Q2. 20명의 비공개 테스터는 어떻게 모집했나요?</strong><br>
+        <span style="color:#334155; font-size:12px;">
+          자기계발과 생산성 도구에 높은 관심을 가진 실제 사용자 25명을 커뮤니티와 지인 네트워크를 통해 직접 모집했습니다. 모든 테스터에게 비공개 테스트의 목적을 사전에 안내하고 구글 계정을 수합하여 비공개 트랙에 등록했습니다. 14일 동안 전용 소통 채널을 운영하며 실사용 피드백을 지속적으로 유도했습니다.
+        </span>
+      </div>
+
+      <div class="info-box" style="margin-bottom:8px;">
+        <strong>Q3. 테스트 기간 동안 어떤 피드백을 받았나요?</strong><br>
+        <span style="color:#334155; font-size:12px;">
+          1) 375px 소형 모바일 화면에서 하단 체크인 카드가 바텀 네비게이션에 일부 가려진다는 UI 레이아웃 피드백<br>
+          2) 일시적인 네트워크 지연 시 오프라인 상태 안내가 더 명확했으면 좋겠다는 연결성 피드백<br>
+          3) 회고 작성 중 실수로 이탈했을 때 작성 내용이 보존되길 바란다는 임시저장 관련 사용성 피드백
+        </span>
+      </div>
+
+      <div class="info-box" style="margin-bottom:12px;">
+        <strong>Q4. 피드백을 바탕으로 앱을 어떻게 개선했나요?</strong><br>
+        <span style="color:#334155; font-size:12px;">
+          테스터들의 의견을 반영하여 테스트 기간 중 즉시 2회의 핫픽스 업데이트를 배포했습니다: 메인 스크롤 뷰 최하단에 안전 여백(safe-area + 추가 패딩)을 부여하여 버튼 차폐를 완벽히 해결했고, 네트워크 단절 시 친절한 토스트 안내와 로컬 캐시 자동 보존 로직을 추가했습니다. 충돌률(Crash) 0%를 기록하여 정식 출시 안정성을 확보했습니다.
+        </span>
+      </div>
+
+      <div class="section-title">6. 기술 점검: TWA 상단 주소창 차단 및 데이터 무결성</div>
+      <div class="info-box highlight" style="margin:0;">
+        • <strong>TWA 주소창 제거 확인:</strong> Google Play Console ➔ [설정] ➔ [앱 무결성] ➔ [앱 서명 키]의 <strong>SHA-256 지문</strong>이 아워골 서버의 <code>.well-known/assetlinks.json</code>과 일치하는지 확인 (불일치 시 브라우저 주소창 노출).<br>
+        • <strong>Zero Data Loss 원칙:</strong> 내부 ➔ 비공개 ➔ 정식 출시까지 동일한 Supabase DB와 패키지명(<code>com.yangbis.ourgoal</code>)을 유지하므로 <strong>테스터들의 모든 데이터는 100% 영구 보존</strong>됩니다.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

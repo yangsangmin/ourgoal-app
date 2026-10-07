@@ -10,115 +10,72 @@
 한 묶음은 여러 유형에 걸린다. 묶음 수·줄 수는 그 유형에 걸린 묶음의 합이다.
 
 <!-- hard-types:begin -->
-> 아래 표는 `NODE_PATH=<node_modules> node scripts/inline-hard-types.js --write` 가 쓴다(손으로 고치지 않는다). 출처 index.html sha256 앞 12자 `1564c7585660`.
+> 아래 표는 `NODE_PATH=<node_modules> node scripts/inline-hard-types.js --write` 가 쓴다(손으로 고치지 않는다). 출처 index.html sha256 앞 12자 `097dd682323d`.
 
-어려움 묶음 **53개 · 20020줄**(지도 등급 「어려움」 = 점수 25 초과).
+어려움 묶음 **17개 · 3093줄**(지도 등급 「어려움」 = 점수 25 초과).
 
 | 유형 | 뜻 | 묶음 수 | 줄 수(묶음 합) | 건수 |
 |---|---|--:|--:|--:|
-| A1 | 남의 상태 재대입 | 7 | 3515 | 7 |
-| A2 | 내 상태를 남이 씀·읽음 | 6 | 2239 | 9 |
-| B1 | 로드 중 window 노출 | 21 | 8737 | 83 |
-| B2 | 로드 때 이벤트 등록 | 14 | 5821 | 50 |
-| B3 | 로드 중 다른 문 | 21 | 10224 | 32 |
-| C | 인라인 on*="이름()" | 18 | 6140 | 35 |
-| D | 큰 상수(30줄 이상) | 6 | 3011 | 9 |
-| E | 순환 호출(SCC) | 34 | 15708 | 34 |
-| F1 | 시험지 단독 의존(근사) | 51 | 19650 | 249 |
-| F1m | 시험지 선행 필요(실측) | 10 | 5092 | 15 |
-| F2 | smoke FN_NAMES | 16 | 6634 | 47 |
-| G | 800줄 초과 | 5 | 6099 | 5 |
+| A1 | 남의 상태 재대입 | 2 | 720 | 24 |
+| A2 | 내 상태를 남이 씀·읽음 | 11 | 1145 | 324 |
+| B1 | 로드 중 window 노출 | 9 | 516 | 42 |
+| B2 | 로드 때 이벤트 등록 | 6 | 1896 | 13 |
+| B3 | 로드 중 다른 문 | 10 | 1059 | 52 |
+| C | 인라인 on*="이름()" | 1 | 64 | 2 |
+| D | 큰 상수(30줄 이상) | 1 | 177 | 1 |
+| E | 순환 호출(SCC) | 0 | 0 | 0 |
+| F1 | 시험지 단독 의존(근사) | 16 | 3055 | 119 |
+| F1m | 시험지 선행 필요(실측) | 0 | 0 | 0 |
+| F2 | smoke FN_NAMES | 1 | 101 | 1 |
+| G | 800줄 초과 | 1 | 1322 | 1 |
 | H | 함수 재대입 | 0 | 0 | 0 |
-| I | 공용 부품(들어옴 10+) | 18 | 5161 | 18 |
-| J | 바깥 파일이 window 이름 씀 | 29 | 12092 | 852 |
-| K | 최상위 this/arguments | 2 | 920 | 2 |
-| L | 통로에 없는 인라인 이름 참조 | 38 | 17058 | 201 |
+| I | 공용 부품(들어옴 10+) | 1 | 67 | 1 |
+| J | 바깥 파일이 window 이름 씀 | 12 | 644 | 654 |
+| K | 최상위 this/arguments | 2 | 113 | 2 |
+| L | 통로에 없는 인라인 이름 참조 | 13 | 2622 | 67 |
 
-시험지 선행 실측(scripts/inline-hard-test-probe.js): 시험지 43개를 묶음마다 돌려 **10묶음**이 시험지 선행 PR 이 먼저 필요(깨지는 시험지 13개). 근사(F1)와의 차이가 실측으로 좁힌 몫이다.
-
-처리 단계(유형으로 정함): 1단계 21묶음 6931줄 · 2단계 4묶음 1588줄 · 3단계 10묶음 6340줄 · 4단계 18묶음 5161줄.
+처리 단계(유형으로 정함): 1단계 1묶음 38줄 · 2단계 12묶음 1519줄 · 3단계 2묶음 1423줄 · 4단계 2묶음 113줄.
 
 묶음 번호(G…)는 이 판에서만 맞다 — 앞 묶음이 옮겨지면 밀린다. 배정·구역은 **제목**으로 찾는다.
 
 | 묶음 | 제목 | 줄 범위 | 줄 | 점수 | 단계 | 유형 | 배정 |
 |---|---|---|--:|--:|--:|---|---|
-| G017 | Utilities | 2921~2944 | 24 | 88 | 4 | F1(1) F2(7) I(1) |  |
-| G018 | [#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가  | 2945~2969 | 25 | 45 | 4 | B3(1) F1(1) F2(1) I(1) J(2) |  |
-| G019 | 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 | 2970~3067 | 98 | 60 | 4 | F1(3) F2(5) I(1) |  |
-| G020 | Confetti | 3068~3142 | 75 | 229 | 4 | B3(2) C(1) E(1) F1(1) I(1) J(148) |  |
-| G022 | 가상유저 개선 10대 핵심 헬퍼 함수 | 3159~3302 | 144 | 114 | 4 | A2(1) B1(1) C(2) D(1) E(1) F1(6) F2(6) I(1) J(26) L(2) |  |
-| G023 | [#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정 격리 | 3303~3354 | 52 | 28 | 4 | B3(1) F1(1) F1m(1) I(1) J(3) L(1) |  |
-| G025 | XP/레벨 시스템 | 3363~3468 | 106 | 71 | 1 | B1(5) B3(1) E(1) F1(10) J(10) L(5) |  |
-| G026 | [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 | 3469~3627 | 159 | 43 | 2 | B1(2) B2(6) F1(3) F1m(1) J(1) |  |
-| G028 | 뱃지 컬렉션 (명예의 전당) | 3636~3987 | 352 | 230 | 4 | A2(2) B1(1) B3(3) E(1) F1(10) F1m(2) F2(1) I(1) J(168) L(4) |  |
-| G036 | [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체 | 4039~4279 | 241 | 190 | 4 | B1(4) B3(1) E(1) F1(10) F1m(1) I(1) J(85) L(3) |  |
-| G039 | [#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저 감지 및 An | 4394~4552 | 159 | 36 | 1 | B1(2) B2(4) B3(1) F1(4) L(2) |  |
-| G055 | Enter app | 5412~5542 | 131 | 36 | 1 | B2(5) B3(1) E(1) F1(3) L(11) | 2차 빌더(2026-10-05 배정) |
-| G057 | 3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출 | 5547~5792 | 246 | 32 | 1 | B1(3) E(1) F1(4) J(1) L(2) |  |
-| G059 | 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항) | 6077~6201 | 125 | 85 | 4 | B2(1) B3(2) C(2) E(1) F1(2) F1m(1) I(1) J(32) L(4) |  |
-| G060 | Modal helper & Android Hardware Back Handler | 6202~6343 | 142 | 162 | 4 | B2(1) B3(1) C(1) F1(3) I(1) J(99) K(1) |  |
-| G065 | 프로필 | 6427~7000 | 574 | 71 | 4 | B2(1) B3(4) C(1) E(1) F1(9) I(1) J(5) L(6) |  |
-| G067 | [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템 | 7002~7779 | 778 | 56 | 4 | A2(1) B3(1) E(1) F1(7) F1m(1) F2(1) I(1) J(3) K(1) L(2) |  |
-| G068 | 일정(캘린더) 탭 | 7780~8123 | 344 | 39 | 4 | E(1) F1(7) I(1) L(1) |  |
-| G071 | [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합  | 8630~9458 | 829 | 114 | 4 | B3(1) E(1) F1(4) F2(4) G(1) I(1) J(37) L(10) |  |
-| G072 | 5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001) | 9459~9714 | 256 | 26 | 3 | A2(1) D(1) E(1) F1(4) F2(1) | 안티그래비티 몫(2026-10-05 배정) |
-| G074 | Social Crew Pacing (#TASK-ES-228) | 9721~9953 | 233 | 36 | 1 | B1(4) C(2) E(1) F1(4) L(2) |  |
-| G078 | RENDER: HOME | 10023~10237 | 215 | 65 | 4 | E(1) F1(14) I(1) L(14) | 안티그래비티 몫(2026-10-05 배정) |
-| G079 | 11인 외부 UI/UX 감시 및 개선팀 핵심 기능 구현 | 10238~10383 | 146 | 26 | 1 | E(1) F1(7) L(1) | 안티그래비티 몫(2026-10-05 배정) |
-| G080 | 1순위 대표 목표 AI 초집중 모드 (Focus Auto-Pilot) | 10384~10882 | 499 | 29 | 1 | A1(1) C(1) E(1) F1(2) L(4) |  |
-| G088 | 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안 | 11406~11541 | 136 | 30 | 3 | E(1) F2(4) |  |
-| G089 | 맞춤 피드백 봇 설정 | 11542~12626 | 1085 | 77 | 4 | A1(1) B1(3) B2(3) B3(1) C(1) E(1) F1(8) G(1) I(1) J(1) L(4) |  |
-| G090 | 목표 & 기록 선택 피드 공유 모달 (전면 고도화) | 12627~13365 | 739 | 40 | 1 | A1(1) B1(1) C(1) E(1) F1(5) J(2) L(2) |  |
-| G092 | 외부 데이터 불러오기 (mock) | 13372~13439 | 68 | 35 | 1 | B2(5) C(1) F1(3) L(1) |  |
-| G093 | [#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작용 | 13440~14007 | 568 | 76 | 1 | B1(9) B2(6) C(2) D(1) F1(4) J(4) L(2) |  |
-| G094 | [#TASK-ES-146] 아워골 평가해주기 90% 팝업 | 14008~14143 | 136 | 54 | 2 | B1(3) B2(7) F1(6) F1m(1) J(1) L(1) |  |
-| G095 | New goal modal | 14144~14459 | 316 | 38 | 1 | B3(2) C(1) F1(5) J(2) L(5) |  |
-| G097 | 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) | 14461~15021 | 561 | 32 | 1 | B3(1) F1(4) J(4) L(2) |  |
-| G099 | 목표 보관(기록으로 옮기기) | 15046~15219 | 174 | 194 | 3 | B1(2) C(1) F1(1) F2(1) J(168) |  |
-| G103 | [#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달 | 15635~16335 | 701 | 32 | 2 | B3(1) E(1) F1(6) F1m(1) J(2) L(4) |  |
-| G105 | [#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저  | 16339~17082 | 744 | 46 | 1 | B1(8) D(4) F1(4) J(1) L(4) |  |
-| G106 | [UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA ( | 17083~17316 | 234 | 63 | 1 | B1(13) C(8) J(2) |  |
-| G107 | [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUN | 17317~17497 | 181 | 54 | 1 | A1(1) B1(8) C(5) F1(4) |  |
-| G108 | [PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTI | 17498~17573 | 76 | 47 | 1 | A1(1) B1(8) C(3) F1(1) J(2) L(5) | #TASK-ES-439 시범(PR #762 — 설정 네 함수 옮김, 소통 허브 세 함수는 숨은 UI 라 남김) |
-| G111 | RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만) | 17600~17859 | 260 | 40 | 3 | A2(2) E(1) F1(4) F2(3) L(2) |  |
-| G112 | 개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135) | 17860~19815 | 1956 | 96 | 3 | B1(1) B3(3) E(1) F1(16) F1m(5) G(1) J(14) L(11) |  |
-| G114 | TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진 | 19908~20202 | 295 | 34 | 1 | B1(2) C(1) F1(6) |  |
-| G118 | 전문적(내 전용 템플릿) 기록하기 & 일정 연동 | 20507~21356 | 850 | 27 | 3 | D(1) E(1) F1(2) F2(3) G(1) |  |
-| G123 | 템플릿 복제 보상형 광고(Rewarded Ad) 파이프라인 (TASK-ES-013) | 22528~23906 | 1379 | 54 | 3 | B2(1) B3(1) E(1) F1(3) F2(3) G(1) L(23) |  |
-| G125 | 위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용) | 23943~24554 | 612 | 60 | 3 | B2(8) C(1) E(1) F1(4) F2(1) L(4) |  |
-| G128 | 캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 H | 24589~25037 | 449 | 66 | 3 | A2(2) B1(2) B2(1) D(1) E(1) F1(9) F2(3) J(5) L(4) |  |
-| G129 | 목표 완주 인증서 (기존 공유 캔버스 인프라 재사용) | 25038~25337 | 300 | 34 | 1 | A1(1) F1(4) L(8) |  |
-| G132 | 피드 상호소통 댓글 & 리액션 헬퍼 (#TASK-ES-133 서버 DB 실시간 동기화) | 25390~26024 | 635 | 32 | 1 | A1(1) E(1) F1(3) L(14) |  |
-| G133 | 전역 공유 팀 로더 & 렌더링 (#TASK-ES-133) | 26025~26616 | 592 | 43 | 2 | B3(2) E(1) F1(5) F1m(1) L(10) |  |
-| G134 | [PEER INVITE] '함께 목표' 방 초대 루프 (웹 무설치 즉시 수락) | 26617~26884 | 268 | 46 | 3 | E(1) F1(7) F2(3) |  |
-| G136 | 마니또 실 유저 익명 응원 연동 (#TASK-ES-133, #TASK-ES-145) | 26895~27354 | 460 | 42 | 1 | B1(1) E(1) F1(5) J(4) L(10) |  |
-| G144 | 4대 연계 뷰 원자적 동시 전파 디스패처 (헌법 제1조 제4항 제5호 & 제15조 제6 | 27580~27624 | 45 | 46 | 4 | B3(1) E(1) F1(3) I(1) J(20) |  |
-| G146 | Render all | 27660~27672 | 13 | 33 | 4 | E(1) F1(4) I(1) L(3) | 2차 빌더(2026-10-05 배정) |
-| G147 | 세션 복구 및 안전 앱 진입 유틸 | 27673~27906 | 234 | 26 | 1 | B2(1) E(1) F1(3) L(8) |  |
+| G010 | [#TASK-ES-432] 인라인 스크립트 세포화 2차 이음매 (docs/archite | 2539~3220 | 682 | 378 | 2 | A1(22) A2(282) B3(32) F1(34) L(5) |  |
+| G015 | [#TASK-ES-442] 인라인 스크립트 세포화 P0 이음매 (docs/archite | 3380~3417 | 38 | 28 | 2 | A1(2) A2(20) B3(1) F1(1) L(3) |  |
+| G019 | Confetti | 3458~3472 | 15 | 224 | 2 | A2(1) B3(2) F1(1) J(212) |  |
+| G023 | XP/레벨 시스템 | 3506~3611 | 106 | 95 | 2 | B1(5) B3(1) F1(14) J(19) L(2) |  |
+| G024 | [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 | 3612~3633 | 22 | 41 | 2 | A2(4) B1(2) B2(2) B3(4) F1(1) J(2) L(5) |  |
+| G026 | 뱃지 컬렉션 (명예의 전당) | 3642~3655 | 14 | 268 | 2 | A2(1) B1(1) B3(3) F1(2) J(247) L(2) |  |
+| G039 | 소셜 로그인 (카카오 / 실제 구글 OAuth 연동) | 3745~4050 | 306 | 31 | 2 | B2(2) F1(4) |  |
+| G054 | Modal helper & Android Hardware Back Handler | 4159~4225 | 67 | 172 | 4 | A2(2) B3(2) F1(4) I(1) J(135) K(1) L(3) |  |
+| G059 | [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템 | 4299~4344 | 46 | 32 | 4 | A2(1) B3(1) F1(1) J(9) K(1) L(1) |  |
+| G062 | 5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001) | 4388~4488 | 101 | 59 | 3 | F1(12) F2(1) | 안티그래비티 몫(2026-10-05 배정) |
+| G079 | [#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작용 | 4725~4762 | 38 | 64 | 1 | A2(4) B1(9) B2(3) B3(3) J(5) L(8) |  |
+| G080 | [#TASK-ES-146] 아워골 평가해주기 90% 팝업 | 4763~4793 | 31 | 46 | 2 | A2(2) B1(3) B2(4) B3(3) F1(1) J(2) L(7) |  |
+| G090 | [#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저  | 4887~4901 | 15 | 35 | 2 | A2(4) B1(8) F1(1) J(2) L(5) |  |
+| G091 | [UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA ( | 4902~4965 | 64 | 91 | 2 | B1(11) C(2) F1(11) J(6) L(6) |  |
+| G103 | 템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013) | 5589~6910 | 1322 | 104 | 3 | B2(1) F1(16) G(1) L(19) |  |
+| G107 | 캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 H | 6962~7138 | 177 | 38 | 2 | A2(3) B1(2) B2(1) D(1) F1(5) J(10) L(1) |  |
+| G108 | 크리에이터 템플릿 (#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화) | 7139~7187 | 49 | 55 | 2 | B1(1) F1(11) J(5) |  |
 
 #### 덮어쓰는 키트(유형 M) — 이 전역에 세포 이름을 달 때는 그 파일 태그 **뒤**(설정 afterTag)
 
-`OurgoalAuthSafety`(js/auth-safety.js) · `OurgoalCalendarAttachment`(js/calendar-attachment.js) · `OurgoalComponents`(js/components.js) · `OurgoalAppScope`(js/core/app-scope.js) · `OurgoalCapabilities`(js/core/capabilities.js) · `OurgoalEvents`(js/core/event-bus.js) · `OurgoalEventBus`(js/core/event-bus.js) · `OurgoalRegistry`(js/core/registry.js) · `OurgoalBlockRegistry`(js/core/registry.js) · `OurgoalSlots`(js/core/slots.js) · `OurgoalStore`(js/core/store.js) · `OurgoalStateStore`(js/core/store.js) · `OurgoalUiHelpers`(js/core/ui-helpers.js) · `OurgoalCredits`(js/credits.js) · `OurgoalGoalEditUX`(js/goal-edit-ux.js) · `OurgoalHelpfulReason`(js/helpful-reason.js) · `OurgoalNotifyEngine`(js/notify-engine.js) · `OurgoalReactions`(js/reactions.js) · `OurgoalSanctuaryV3`(js/sanctuary-v3-engine.js) · `OurgoalStreaks`(js/streaks.js) · `OurgoalCalendarMegaBlock`(js/tabs/calendar/index.js) · `OurgoalCalendarDayDetail`(js/tabs/calendar/sub-day-detail.js) · `OurgoalCalendarMonthView`(js/tabs/calendar/sub-month-view.js) · `OurgoalCalendarPhotoDiary`(js/tabs/calendar/sub-photo-diary.js) · `OurgoalDmLedger`(js/tabs/comm/dm-ledger.js) · `OurgoalCommMegaBlock`(js/tabs/comm/index.js) · `OurgoalCommSubCompanions`(js/tabs/comm/sub-companions.js) · `OurgoalCommSubCrew`(js/tabs/comm/sub-crew.js) · `OurgoalCommSubFeed`(js/tabs/comm/sub-feed.js) · `OurgoalGoalsMegaBlock`(js/tabs/goals/index.js) · `OurgoalGoalsPersonal`(js/tabs/goals/sub-personal.js) · `OurgoalGoalsRoutine`(js/tabs/goals/sub-routine.js) · `OurgoalGoalsTeam`(js/tabs/goals/sub-team.js) · `OurgoalHomeMegaBlock`(js/tabs/home/index.js) · `OurgoalHomeHeatmap`(js/tabs/home/sub-heatmap.js) · `OurgoalHomeOneScreen`(js/tabs/home/sub-onescreen.js) · `OurgoalHomeQuest`(js/tabs/home/sub-quest.js) · `OurgoalHomeToday`(js/tabs/home/sub-today.js) · `OurgoalRecordsMegaBlock`(js/tabs/records/index.js) · `OurgoalRecordsRetrospect`(js/tabs/records/sub-retrospect.js) · `OurgoalRecordsTimeline`(js/tabs/records/sub-timeline.js) · `OurgoalRecordsTimer`(js/tabs/records/sub-timer.js) · `OurgoalSettingsMegaBlock`(js/tabs/settings/index.js) · `OurgoalSettingsSubAppearance`(js/tabs/settings/sub-appearance.js) · `OurgoalSettingsSubData`(js/tabs/settings/sub-data.js) · `OurgoalSettingsSubIntegrations`(js/tabs/settings/sub-integrations.js) · `OurgoalSettingsSubNotify`(js/tabs/settings/sub-notify.js) · `OurgoalSettingsSubProfile`(js/tabs/settings/sub-profile.js) · `OurgoalSettingsSubSecurity`(js/tabs/settings/sub-security.js) · `OurgoalTeamInviteComm`(js/team-invite-comm.js) · `OurgoalTeamLeaderCheck`(js/team-leader-check.js) · `OurgoalTeamLinkedGoals`(js/team-linked-goals.js) · `OurgoalTeamVisibilityLevels`(js/team-visibility-levels.js) · `OurgoalTemplateCredit`(js/template-credit.js) · `OurgoalThemeSystem`(js/theme-system.js) · `OurgoalTimeTracker`(js/time-tracker.js) · `OurgoalTopHelpful`(js/top-helpful.js) · `OurgoalViralSharing`(js/viral-sharing.js)
+`OurgoalAuthSafety`(js/auth-safety.js) · `OurgoalCalendarAttachment`(js/calendar-attachment.js) · `OurgoalComponents`(js/components.js) · `OurgoalAppScope`(js/core/app-scope.js) · `OurgoalCapabilities`(js/core/capabilities.js) · `OurgoalEvents`(js/core/event-bus.js) · `OurgoalEventBus`(js/core/event-bus.js) · `OurgoalRegistry`(js/core/registry.js) · `OurgoalBlockRegistry`(js/core/registry.js) · `OurgoalSlots`(js/core/slots.js) · `OurgoalStore`(js/core/store.js) · `OurgoalStateStore`(js/core/store.js) · `OurgoalUiHelpers`(js/core/ui-helpers.js) · `OurgoalGoalEditUX`(js/goal-edit-ux.js) · `OurgoalHelpfulReason`(js/helpful-reason.js) · `OurgoalNotifyEngine`(js/notify-engine.js) · `OurgoalReactions`(js/reactions.js) · `OurgoalSanctuaryV3`(js/sanctuary-v3-engine.js) · `OurgoalStreaks`(js/streaks.js) · `OurgoalCalendarMegaBlock`(js/tabs/calendar/index.js) · `OurgoalCalendarDayDetail`(js/tabs/calendar/sub-day-detail.js) · `OurgoalCalendarMonthView`(js/tabs/calendar/sub-month-view.js) · `OurgoalCalendarPhotoDiary`(js/tabs/calendar/sub-photo-diary.js) · `OurgoalDmLedger`(js/tabs/comm/dm-ledger.js) · `OurgoalCommMegaBlock`(js/tabs/comm/index.js) · `OurgoalCommSubCompanions`(js/tabs/comm/sub-companions.js) · `OurgoalCommSubCrew`(js/tabs/comm/sub-crew.js) · `OurgoalCommSubFeed`(js/tabs/comm/sub-feed.js) · `OurgoalGoalsMegaBlock`(js/tabs/goals/index.js) · `OurgoalGoalsPersonal`(js/tabs/goals/sub-personal.js) · `OurgoalGoalsRoutine`(js/tabs/goals/sub-routine.js) · `OurgoalGoalsTeam`(js/tabs/goals/sub-team.js) · `OurgoalHomeMegaBlock`(js/tabs/home/index.js) · `OurgoalHomeHeatmap`(js/tabs/home/sub-heatmap.js) · `OurgoalHomeOneScreen`(js/tabs/home/sub-onescreen.js) · `OurgoalHomeQuest`(js/tabs/home/sub-quest.js) · `OurgoalHomeToday`(js/tabs/home/sub-today.js) · `OurgoalRecordsMegaBlock`(js/tabs/records/index.js) · `OurgoalRecordsRetrospect`(js/tabs/records/sub-retrospect.js) · `OurgoalRecordsTimeline`(js/tabs/records/sub-timeline.js) · `OurgoalRecordsTimer`(js/tabs/records/sub-timer.js) · `OurgoalSettingsMegaBlock`(js/tabs/settings/index.js) · `OurgoalSettingsSubAppearance`(js/tabs/settings/sub-appearance.js) · `OurgoalSettingsSubData`(js/tabs/settings/sub-data.js) · `OurgoalSettingsSubIntegrations`(js/tabs/settings/sub-integrations.js) · `OurgoalSettingsSubNotify`(js/tabs/settings/sub-notify.js) · `OurgoalSettingsSubProfile`(js/tabs/settings/sub-profile.js) · `OurgoalSettingsSubSecurity`(js/tabs/settings/sub-security.js) · `OurgoalTeamInviteComm`(js/team-invite-comm.js) · `OurgoalTeamLeaderCheck`(js/team-leader-check.js) · `OurgoalTeamLinkedGoals`(js/team-linked-goals.js) · `OurgoalTeamVisibilityLevels`(js/team-visibility-levels.js) · `OurgoalTemplateCredit`(js/template-credit.js) · `OurgoalThemeSystem`(js/theme-system.js) · `OurgoalTimeTracker`(js/time-tracker.js) · `OurgoalTopHelpful`(js/top-helpful.js) · `OurgoalViralSharing`(js/viral-sharing.js)
 
 #### 병렬 구역(줄 구간 겹침 0 — 도구가 검사)
 
 | 구역 | 줄 구간 | 어려움 줄 | 묶음 |
 |---|---|--:|---|
-| H1 | 3363~15021 | 3926 | G025 XP/레벨 시스템<br>G026 [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드<br>G039 [#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저<br>G057 3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출<br>G074 Social Crew Pacing (#TASK-ES-228)<br>G080 1순위 대표 목표 AI 초집중 모드 (Focus Auto-Pilot)<br>G088 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안<br>G090 목표 & 기록 선택 피드 공유 모달 (전면 고도화)<br>G092 외부 데이터 불러오기 (mock)<br>G093 [#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작<br>G094 [#TASK-ES-146] 아워골 평가해주기 90% 팝업<br>G095 New goal modal<br>G097 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) |
-| H2 | 15046~19815 | 4250 | G099 목표 보관(기록으로 옮기기)<br>G103 [#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편<br>G105 [#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및<br>G106 [UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인<br>G107 [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALE<br>G111 RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만)<br>G112 개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-1 |
-| H3 | 19908~23906 | 2524 | G114 TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진<br>G118 전문적(내 전용 템플릿) 기록하기 & 일정 연동<br>G123 템플릿 복제 보상형 광고(Rewarded Ad) 파이프라인 (TASK-E |
-| H4 | 23943~27906 | 3550 | G125 위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용)<br>G128 캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-<br>G129 목표 완주 인증서 (기존 공유 캔버스 인프라 재사용)<br>G132 피드 상호소통 댓글 & 리액션 헬퍼 (#TASK-ES-133 서버 DB <br>G133 전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)<br>G134 [PEER INVITE] '함께 목표' 방 초대 루프 (웹 무설치 즉시 <br>G136 마니또 실 유저 익명 응원 연동 (#TASK-ES-133, #TASK-E<br>G147 세션 복구 및 안전 앱 진입 유틸 |
-| 배정됨: 2차 빌더(2026-10-05 배정) | 5412~5542 | 131 | G055 Enter app |
-| 배정됨: 안티그래비티 몫(2026-10-05 배정) | 9459~9714 | 256 | G072 5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001) |
-| 배정됨: 안티그래비티 몫(2026-10-05 배정) | 10023~10237 | 215 | G078 RENDER: HOME |
-| 배정됨: 안티그래비티 몫(2026-10-05 배정) | 10238~10383 | 146 | G079 11인 외부 UI/UX 감시 및 개선팀 핵심 기능 구현 |
-| 배정됨: #TASK-ES-439 시범(PR #762 — 설정 네 함수 옮김, 소통 허브 세 함수는 숨은 UI 라 남김) | 17498~17573 | 76 | G108 [PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTING |
-| 배정됨: 2차 빌더(2026-10-05 배정) | 27660~27672 | 13 | G146 Render all |
-| 기관(단계 4, 구역 밖 — 한 빌더가 먼저) | — | 4933 | G017 Utilities<br>G018 [#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가<br>G019 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알<br>G020 Confetti<br>G022 가상유저 개선 10대 핵심 헬퍼 함수<br>G023 [#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정<br>G028 뱃지 컬렉션 (명예의 전당)<br>G036 [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망<br>G059 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항)<br>G060 Modal helper & Android Hardware Back Han<br>G065 프로필<br>G067 [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle <br>G068 일정(캘린더) 탭<br>G071 [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바<br>G089 맞춤 피드백 봇 설정<br>G144 4대 연계 뷰 원자적 동시 전파 디스패처 (헌법 제1조 제4항 제5호 & |
+| H1 | 2539~3417 | 720 | G010 [#TASK-ES-432] 인라인 스크립트 세포화 2차 이음매 (docs<br>G015 [#TASK-ES-442] 인라인 스크립트 세포화 P0 이음매 (docs |
+| H2 | 3458~6910 | 1933 | G019 Confetti<br>G023 XP/레벨 시스템<br>G024 [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드<br>G026 뱃지 컬렉션 (명예의 전당)<br>G039 소셜 로그인 (카카오 / 실제 구글 OAuth 연동)<br>G079 [#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작<br>G080 [#TASK-ES-146] 아워골 평가해주기 90% 팝업<br>G090 [#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및<br>G091 [UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인<br>G103 템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013) |
+| H3 | 6962~7138 | 177 | G107 캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK- |
+| H4 | 7139~7187 | 49 | G108 크리에이터 템플릿 (#TASK-ES-315, 64: 구형 창 영구 제거  |
+| 배정됨: 안티그래비티 몫(2026-10-05 배정) | 4388~4488 | 101 | G062 5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001) |
+| 기관(단계 4, 구역 밖 — 한 빌더가 먼저) | — | 113 | G054 Modal helper & Android Hardware Back Han<br>G059 [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle  |
 
 #### 권장 처리 순서(단계 → 유형 수 → 줄 수)
 
-1. G079(1단계·146줄·EF1L) · 2. G106(1단계·234줄·B1CJ) · 3. G114(1단계·295줄·B1CF1) · 4. G129(1단계·300줄·A1F1L) · 5. G092(1단계·68줄·B2CF1L) · 6. G107(1단계·181줄·A1B1CF1) · 7. G147(1단계·234줄·B2EF1L) · 8. G097(1단계·561줄·B3F1JL) · 9. G132(1단계·635줄·A1EF1L) · 10. G055(1단계·131줄·B2B3EF1L) · 11. G039(1단계·159줄·B1B2B3F1L) · 12. G074(1단계·233줄·B1CEF1L) · 13. G057(1단계·246줄·B1EF1JL) · 14. G095(1단계·316줄·B3CF1JL) · 15. G136(1단계·460줄·B1EF1JL) · 16. G080(1단계·499줄·A1CEF1L) · 17. G105(1단계·744줄·B1DF1JL) · 18. G108(1단계·76줄·A1B1CF1JL) · 19. G025(1단계·106줄·B1B3EF1JL) · 20. G093(1단계·568줄·B1B2CDF1JL) · 21. G090(1단계·739줄·A1B1CEF1JL) · 22. G026(2단계·159줄·B1B2F1F1mJ) · 23. G133(2단계·592줄·B3EF1F1mL) · 24. G094(2단계·136줄·B1B2F1F1mJL) · 25. G103(2단계·701줄·B3EF1F1mJL) · 26. G088(3단계·136줄·EF2) · 27. G134(3단계·268줄·EF1F2) · 28. G099(3단계·174줄·B1CF1F2J) · 29. G072(3단계·256줄·A2DEF1F2) · 30. G111(3단계·260줄·A2EF1F2L) · 31. G118(3단계·850줄·DEF1F2G) · 32. G125(3단계·612줄·B2CEF1F2L) · 33. G123(3단계·1379줄·B2B3EF1F2GL) · 34. G112(3단계·1956줄·B1B3EF1F1mGJL) · 35. G128(3단계·449줄·A2B1B2DEF1F2JL) · 36. G017(4단계·24줄·F1F2I) · 37. G019(4단계·98줄·F1F2I) · 38. G146(4단계·13줄·EF1IL) · 39. G078(4단계·215줄·EF1IL) · 40. G068(4단계·344줄·EF1IL) · 41. G018(4단계·25줄·B3F1F2IJ) · 42. G144(4단계·45줄·B3EF1IJ) · 43. G023(4단계·52줄·B3F1F1mIJL) · 44. G020(4단계·75줄·B3CEF1IJ) · 45. G060(4단계·142줄·B2B3CF1IJK) · 46. G036(4단계·241줄·B1B3EF1F1mIJL) · 47. G065(4단계·574줄·B2B3CEF1IJL) · 48. G071(4단계·829줄·B3EF1F2GIJL) · 49. G059(4단계·125줄·B2B3CEF1F1mIJL) · 50. G022(4단계·144줄·A2B1CDEF1F2IJL) · 51. G028(4단계·352줄·A2B1B3EF1F1mF2IJL) · 52. G067(4단계·778줄·A2B3EF1F1mF2IJKL) · 53. G089(4단계·1085줄·A1B1B2B3CEF1GIJL)
+1. G079(1단계·38줄·A2B1B2B3JL) · 2. G039(2단계·306줄·B2F1) · 3. G108(2단계·49줄·B1F1J) · 4. G019(2단계·15줄·A2B3F1J) · 5. G090(2단계·15줄·A2B1F1JL) · 6. G015(2단계·38줄·A1A2B3F1L) · 7. G091(2단계·64줄·B1CF1JL) · 8. G023(2단계·106줄·B1B3F1JL) · 9. G010(2단계·682줄·A1A2B3F1L) · 10. G026(2단계·14줄·A2B1B3F1JL) · 11. G024(2단계·22줄·A2B1B2B3F1JL) · 12. G080(2단계·31줄·A2B1B2B3F1JL) · 13. G107(2단계·177줄·A2B1B2DF1JL) · 14. G062(3단계·101줄·F1F2) · 15. G103(3단계·1322줄·B2F1GL) · 16. G059(4단계·46줄·A2B3F1JKL) · 17. G054(4단계·67줄·A2B3F1IJKL)
 <!-- hard-types:end -->
 
 기준(origin/main, 시범 전) 집계는 `reports/TASK-ES-439/inline-hard-types-base.json`·`inline-hard-test-probe-base.json` 에 있다(같은 도구, 기준 사본에서 실행).

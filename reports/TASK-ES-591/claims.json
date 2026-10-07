@@ -3,7 +3,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "G079 인라인 묶음 분리"
+      "text": "G039 인라인 묶음 분리"
     }
   ],
   "claims": [
@@ -12,16 +12,43 @@
       "req": "R1",
       "kind": "static",
       "domain": "architecture",
-      "statement": "index.html 줄 수가 감소하고 새 파일에 모달 코드가 존재한다.",
+      "statement": "index.html 줄 수가 감소하고 새 파일에 auth-social 모듈 코드가 존재한다.",
       "touches": [
         "index.html",
-        "js/tabs/goals/template-encyclopedia-modal.js"
+        "js/auth-social.js"
       ],
       "check": {
-        "file": "js/tabs/goals/template-encyclopedia-modal.js",
+        "file": "js/auth-social.js",
         "type": "codeContains",
-        "text": "function bindTemplateEncyclopediaModalClick"
+        "text": "function startGoogleLogin"
       }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: Google OAuth 2.0 실제 연동 로직(클라이언트 ID, 버튼, 세션 브릿지, One-Tap)이 완벽히 구현되어 있다",
+      "reason": "G039 분리로 js/auth-social.js 로 이동함에 따라 구버전 smoke-test 의 html.includes 검사가 실패함"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth 우아한 폴백",
+      "reason": "G039 분리로 로직 이동"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세션 보존 및 자가 치유(Self-Healing) 복구 파이프라인이 구현되어 있다",
+      "reason": "G039 분리로 로직 이동"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출 & PKCE 4초 대기 및 복구 안전망 검증",
+      "reason": "G039 분리로 로직 이동"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 병합 무결성",
+      "reason": "G039 분리로 로직 이동"
     }
   ]
 }

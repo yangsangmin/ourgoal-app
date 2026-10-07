@@ -31,8 +31,10 @@ const MOVED_MARK = /\/\* ---- 이전 전 index\.html \d+~\d+줄\(#TASK-[\w-]+ �
 function coreMovedCellFiles() {
   let names = [];
   try { names = fs.readdirSync(CORE_DIR).sort(); } catch (e) { return []; }
-  return names.filter((n) => n.endsWith('.js')).map((n) => path.join(CORE_DIR, n))
-    .filter((f) => fs.statSync(f).isFile() && MOVED_MARK.test(fs.readFileSync(f, 'utf8')));
+  let core = names.filter(n => n.endsWith('.js')).map(n => path.join(CORE_DIR, n)).filter(f => fs.statSync(f).isFile() && MOVED_MARK.test(fs.readFileSync(f, 'utf8')));
+  let extra = [];
+  try { extra = fs.readdirSync(path.join(ROOT, 'js')).filter(n => n.endsWith('.js')).map(n => path.join(ROOT, 'js', n)).filter(f => fs.statSync(f).isFile() && MOVED_MARK.test(fs.readFileSync(f, 'utf8'))); } catch(e) {}
+  return extra.concat(core);
 }
 
 // L.(js/core/app-scope.js 통로)로 인라인 이름을 읽는 세포 파일만(js/tabs 경로순, 그다음 js/core 의 인라인 이전 세포 경로순)
