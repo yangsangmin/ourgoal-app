@@ -2231,6 +2231,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/avatar/craft-engine.js?v=20261005-es389"></script>
   <script src="js/avatar/wallet.js?v=20261005-es389"></script>
   <script src="js/avatar/dynamic-album.js?v=20261005-es389"></script>
+  <script src="js/avatar/level-badge.js"></script>
   <script src="js/avatar/feature-cards.js?v=20261005-es390"></script>
   <script src="js/avatar/modal/index.js?v=20261005-es390"></script>
   <script src="js/avatar/modal/markup.js?v=20261005-es390"></script>
@@ -2956,6 +2957,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openVisionTableModal = _visionTableInputKit.openVisionTableModal;
   var _curatedMarketDataKit = window.OurgoalCuratedMarketDataKit;
   var CURATED_MARKET_TEMPLATES = _curatedMarketDataKit.CURATED_MARKET_TEMPLATES;
+  /* [#TASK-ES-592] js/avatar/level-badge.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var _levelBadgeKit = window.OurgoalLevelBadgeKit;
+  var renderLevelBadge = _levelBadgeKit.renderLevelBadge;
   /* [어려움 이음매 자리 HO 기관] */
   /* [#TASK-ES-471] js/core/time-keys.js · js/core/telemetry.js · js/core/virtual-user-helpers.js · js/core/gcal-token.js · js/core/home-cockpit.js · js/core/registry-init.js · js/core/modal-helper.js — 가져오기 42개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var _uiKit = window.OurgoalUiHelpers;
@@ -3539,103 +3543,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.levelForXP = levelForXP;
   window.levelProgress = levelProgress;
   window.notifyXpGained = notifyXpGained;
-  function hasUserCustomizedAvatar(profile){
-    if(!profile) return false;
-    var s = profile.settings || {};
-    return Boolean(
-      s.avatarChangedOnce ||
-      (s.savedAvatars && s.savedAvatars.length > 0) ||
-      (s.avatarType === 'custom' && s.customAvatarUrl) ||
-      (profile.avatarUrl && (profile.avatarUrl.indexOf('data:image') === 0 || profile.avatarUrl.indexOf('http') === 0))
-    );
-  }
-  function levelBadgeHtml(xp){
-    var p = levelProgress(xp);
-    var hasCheckedInToday = false;
-    var todayCheckinCount = 0;
-    if(state.profile && state.profile.records){
-      var today = dateKey(nowISO());
-      todayCheckinCount = state.profile.records.filter(function(r){ return dateKey(r.startAt) === today; }).length;
-      hasCheckedInToday = todayCheckinCount > 0;
-    }
-    var currentSitKey = 'checkin_1';
-    if(todayCheckinCount >= 3) currentSitKey = 'checkin_3';
-    else if(todayCheckinCount === 2) currentSitKey = 'checkin_2';
-    else if(todayCheckinCount === 1) currentSitKey = 'checkin_1';
-    else currentSitKey = (state.profile && state.profile.settings && state.profile.settings.equippedSituationKey) || 'checkin_1';
-    var sitData = (window.OurgoalAvatar && window.OurgoalAvatar.DYNAMIC_SITUATIONS) ? window.OurgoalAvatar.DYNAMIC_SITUATIONS[currentSitKey] : null;
-
-    var rankInfo = (window.OurgoalAvatar && window.OurgoalAvatar.getRankThemeInfo) ?
-      window.OurgoalAvatar.getRankThemeInfo(p.level) :
-      { stepTitle: 'Lv.' + p.level, stepFullName: 'Lv.' + p.level, mainColor: 'var(--brand)', badgeGradient: 'var(--brand)', stepInfo: { name: '' } };
-
-    var avatarHtml = (window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml) ?
-      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 76, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting, situationKey: currentSitKey }) :
-      '<div class="avatar-placeholder" style="width:76px;height:76px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🤖</div>';
-    /* [TASK-ES-283 compat: renderAvatarHtml(p.level, state.profile, { size: 72, width:72px;height:72px;] */
-    /* [TASK-ES-174 compat: size: 54 width:54px;height:54px;] */
-
-    var hasCustomAvatar = hasUserCustomizedAvatar(state.profile);
-    var btnAvatarStyle = hasCustomAvatar ? 'display:none;' : '';
-
-    return '<div class="level-badge" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;width:100%;box-sizing:border-box;">' +
-      '<div class="level-badge-avatar-wrap" style="display:flex;align-items:center;gap:10px;cursor:pointer;" title="내 아바타 관리 (클릭하여 변경)">' +
-        avatarHtml +
-        '<div class="level-rank-info-col" style="display:flex;flex-direction:column;gap:1px;min-width:0;">' +
-          '<div class="level-rank-title" style="font-weight:800;font-size:.825rem;color:var(--ink);display:flex;align-items:center;gap:4px;white-space:nowrap;">' +
-            '<span>' + rankInfo.stepTitle + '</span>' +
-            (rankInfo.stepInfo && rankInfo.stepInfo.name ? '<span class="level-rank-subname" style="font-size:.7rem;font-weight:600;color:' + rankInfo.mainColor + ';">' + rankInfo.stepInfo.name + '</span>' : '') +
-          '</div>' +
-          (sitData ? '<div class="dynamic-avatar-bubble-chip" style="font-size:.6875rem;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:4px;margin-top:1px;" title="' + sitData.title + '"><span style="font-size:10px;">' + sitData.icon + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;">' + sitData.greeting + '</span></div>' : '') +
-          '<button type="button" class="btn btn-ghost btn-xs" id="btnOpenAvatarModal" style="font-size:.6875rem;padding:1px 6px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;width:fit-content;' + btnAvatarStyle + '">내 아바타 바꾸기</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="level-bar-wrap" style="flex:1;min-width:70px;margin:0 4px;display:flex;flex-direction:column;gap:3px;">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:.7rem;color:var(--ink-soft);">' +
-          '<span style="font-weight:700;color:' + rankInfo.mainColor + ';">Lv.' + p.level + '</span>' +
-          '<span class="level-xp-txt">' + p.into + ' / ' + p.span + ' XP</span>' +
-        '</div>' +
-        '<div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:' + rankInfo.badgeGradient + ';"></span></div>' +
-      '</div>' +
-    '</div>';
-  }
-  function renderLevelBadge(){
-    var el = document.getElementById('levelBadgeRow');
-    if(!el || !state.profile) return;
-    var xpTotal = (state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
-    el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(xpTotal)+'</div>';
-
-    var openAvatarTrigger = function(){
-      if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
-        var p = levelProgress(xpTotal);
-        window.OurgoalAvatar.openAvatarModal({
-          profile: state.profile,
-          state: state,
-          saveProfile: saveProfile,
-          toast: toast,
-          openModal: openModal,
-          closeModal: closeModal,
-          currentLevel: p.level, mockGroups: (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []),
-          onAvatarChanged: function(){
-            renderLevelBadge();
-            if(typeof updateTopBar === 'function') updateTopBar(); if(typeof renderHome === 'function') renderHome();
-          }
-        });
-      }
-    };
-
-    var btnChangeAvatar = el.querySelector('#btnOpenAvatarModal');
-    if(btnChangeAvatar){
-      btnChangeAvatar.onclick = openAvatarTrigger;
-    }
-
-    var avatarWrap = el.querySelector('.level-badge-avatar-wrap');
-    if(avatarWrap){
-      avatarWrap.onclick = function(e){
-        openAvatarTrigger();
-      };
-    }
-  }
+  /* [#TASK-ES-592] hasUserCustomizedAvatar · levelBadgeHtml · renderLevelBadge → js/avatar/level-badge.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){ window.renderLevelBadge = renderLevelBadge; }
   /* ============ [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 ============ */
   /* [#TASK-ES-476] filterHarmfulWords · openAvatarLevelUpModal · closeAvatarLevelUpModal → js/tabs/settings/avatar-levelup-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
