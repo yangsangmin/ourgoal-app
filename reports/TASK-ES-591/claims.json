@@ -1,7 +1,27 @@
 {
   "task": "TASK-ES-591",
+  "requirements": [
+    {
+      "id": "R1",
+      "desc": "G079 인라인 묶음 분리"
+    }
+  ],
   "claims": [
-    "G079 인라인 묶음 분리 (목표 템플릿 백과사전 팝업)",
-    "index.html 줄 수 513줄 감소"
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "index.html 줄 수가 감소하고 새 파일에 모달 코드가 존재한다.",
+      "touches": [
+        "index.html",
+        "js/tabs/goals/template-encyclopedia-modal.js"
+      ],
+      "check": {
+        "file": "js/tabs/goals/template-encyclopedia-modal.js",
+        "type": "codeContains",
+        "text": "function bindTemplateEncyclopediaModalClick"
+      }
+    }
   ]
 }
