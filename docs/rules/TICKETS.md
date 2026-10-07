@@ -656,3 +656,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-595 | INFRA | 10-07 G0xx 분열 PR 품질 점검·보정 — 폐기 신청 실체 점검(삭제 0, 단언 범위 확대), #859 openModal 손 수정 동치 재증명(원본 고정본 대조 검사 추가) | reports/TASK-ES-595/AUDIT.md | 4단계(심사 청구)
 
 - #TASK-ES-596 | INFRA | 미분화 덩어리 해체 A1 시범 — announceToA11y · openUserProfileModal 생성기 이전, 동작 보존 확인 경로 첫 사용 | reports/TASK-ES-596/claims.json | 4단계(심사 청구)
+- #TASK-ES-597 | INFRA | 법정 「동작 보존 확인」 경로 수리 — judgeClaim 이 분열 증명 검증에 repoDir 를 넘기지 않아 GitHub 에서 git diff 가 늘 실패하던 결함(PR #864 판정 D956DC5D 에서 발견) + 실제 경로 자체 점검 | court/claims.js · court/lib/preserve.js · court/selftest/unit-preserve.js | 4단계(심사 청구)
+- #TASK-ES-598 | INFRA | 법정 「동작 보존 확인」 재생성 단계 수리 — 심사 대상 저장소에 의존성이 없어 기준 커밋 생성기가 '@babel/parser' 를 못 찾던 결함(PR #864 재심 F53D61B2 에서 발견), 법정 쪽 node_modules 를 NODE_PATH 로 제공 + 자체 점검 | court/lib/preserve-source.js · court/selftest/unit-preserve.js | 4단계(심사 청구)

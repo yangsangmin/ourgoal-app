@@ -24,7 +24,21 @@ function getBlobBytes(repoDir, sha, file) {
   }
 }
 
-function recomputeSplit({ repoDir, baseSha, headSha, config, changedFiles, mockOverrides }) {
+// 생성기가 쓸 의존성(@babel/parser 등)을 찾을 곳(TASK-ES-598).
+// GitHub 법정은 심사 대상 저장소(pr)에 아무것도 설치하지 않는다(잣대 쪽 trusted 에만 npm ci). 그래서 기준 커밋의 생성기가
+// "Cannot find module '@babel/parser'" 로 죽었다. 심사 대상 쪽에 node_modules 가 없으면 법정 자신(잣대 쪽 main)의 node_modules 를 NODE_PATH 로 준다.
+// 이 경로는 main 의 package-lock 으로 설치한 것이라 PR 이 바꿀 수 없다.
+const COURT_NODE_MODULES = path.resolve(__dirname, '..', '..', 'node_modules');
+function genEnv(repoDir, courtNodeModules = COURT_NODE_MODULES) {
+  const env = { ...process.env };
+  if (repoDir && fs.existsSync(path.join(repoDir, 'node_modules'))) return env;
+  if (fs.existsSync(courtNodeModules)) {
+    env.NODE_PATH = env.NODE_PATH ? courtNodeModules + path.delimiter + env.NODE_PATH : courtNodeModules;
+  }
+  return env;
+}
+
+function recomputeSplit({ repoDir, baseSha, headSha, config, changedFiles, mockOverrides, courtNodeModules }) {
   if (!repoDir || !baseSha || !headSha) return { ok: false, reason: "Missing repoDir, baseSha, or headSha" };
   if (!changedFiles) return { ok: false, reason: "changedFiles missing" };
   if (!/^[a-zA-Z0-9]+$/.test(baseSha) || !/^[a-zA-Z0-9]+$/.test(headSha)) return { ok: false, reason: "Invalid SHA" };
@@ -67,7 +81,7 @@ function recomputeSplit({ repoDir, baseSha, headSha, config, changedFiles, mockO
     }
 
     try {
-      execFileSync(process.execPath, [genScript, tmpDir, configPath], { stdio: 'pipe', encoding: 'utf8' });
+      execFileSync(process.execPath, [genScript, tmpDir, configPath], { stdio: 'pipe', encoding: 'utf8', env: genEnv(repoDir, courtNodeModules || COURT_NODE_MODULES) });
     } catch(err) {
       if (!tmpDir.startsWith(require('os').tmpdir())) throw new Error('Safety check failed');
       fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -149,4 +163,4 @@ function recomputeSplit({ repoDir, baseSha, headSha, config, changedFiles, mockO
   }
 }
 
-module.exports = { recomputeSplit };
+module.exports = { recomputeSplit, genEnv, COURT_NODE_MODULES };

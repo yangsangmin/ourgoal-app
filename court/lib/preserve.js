@@ -27,6 +27,8 @@ function verifyCellSplitProof(claimsDir, claim, ctx) {
   const proof = readJsonSafe(proofFile);
   if (!proof) return { ok: false, reason: '증명 객체 누락' };
 
+  // 저장소 경로 없이 git 을 돌리면 법정의 작업 폴더에서 돌아 엉뚱한 사유("Could not access")로 실패한다. 법정 내부 결함임을 바로 드러낸다(TASK-ES-597).
+  if (!ctx.repoDir && !ctx.gitDiff && !ctx.mockOverrides) return { ok: false, reason: '저장소 경로(repoDir) 누락 — 법정 내부 결함' };
   try {
     const { recomputeSplit } = require('./preserve-source.js');
     let changedFiles = [];

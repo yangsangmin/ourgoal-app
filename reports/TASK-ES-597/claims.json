@@ -1,0 +1,41 @@
+{
+  "task": "TASK-ES-597",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-597.md",
+  "requirements": [
+    { "id": "R1", "text": "judgeClaim 이 분열 증명 검증에 저장소 경로(repoDir)를 넘겨, 진짜 저장소에서 git diff 가 성공한다." },
+    { "id": "R2", "text": "repoDir 없이 불리면 git 을 엉뚱한 폴더에서 돌리지 않고 법정 내부 결함으로 드러낸다." },
+    { "id": "R3", "text": "자체 점검이 실제 judgeClaim 경로로 이 결함을 잡는다(수리를 되돌리면 어긋남)." }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "change": "fix",
+      "statement": "claims.js 의 분열 증명 검증 호출에 repoDir: ctx.repoDir 를 넘긴다.",
+      "touches": ["court/claims.js"],
+      "check": { "type": "codeContains", "file": "court/claims.js", "text": "outDir, repoDir: ctx.repoDir, scenarioResults" },
+      "domain": "config"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "change": "fix",
+      "statement": "preserve.js 의 verifyCellSplitProof 가 repoDir 없이 불리면 git 을 돌리지 않고 '저장소 경로(repoDir) 누락 — 법정 내부 결함' 을 돌려준다.",
+      "touches": ["court/lib/preserve.js"],
+      "check": { "type": "codeContains", "file": "court/lib/preserve.js", "text": "저장소 경로(repoDir) 누락 — 법정 내부 결함" },
+      "domain": "config"
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "change": "new",
+      "statement": "자체 점검 U-preserve-judgeclaim-passes-repodir 가 임시 git 저장소에서 judgeClaim 을 돌려 repoDir 전달과 git diff 성공을 확인한다. 수리를 되돌리면 2개 단언이 어긋난다(로컬 변이 확인).",
+      "touches": ["court/selftest/unit-preserve.js"],
+      "check": { "type": "codeContains", "file": "court/selftest/unit-preserve.js", "text": "U-preserve-judgeclaim-passes-repodir" },
+      "domain": "config"
+    }
+  ]
+}

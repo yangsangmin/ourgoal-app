@@ -189,7 +189,89 @@ const TESTS = [
       t.ok(!res.ok, '비정상 파일명 거절됨');
       t.ok(res.reason.includes('Invalid path'), '사유에 Invalid path');
     }
-  }
+  },
+  {
+    id: 'U-preserve-judgeclaim-passes-repodir',
+    title: '동작 보존 주장: judgeClaim 이 분열 증명 검증에 저장소 경로(repoDir)를 넘기고, 진짜 저장소에서 git diff 가 성공한다(TASK-ES-597)',
+    async run(t) {
+      const { execFileSync } = require('node:child_process');
+      const repo = tempDir('repo');
+      const g = args => execFileSync('git', ['-C', repo, '-c', 'user.name=court-selftest', '-c', 'user.email=court-selftest@users.noreply.github.com', '-c', 'commit.gpgsign=false', ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+      g(['init', '-q']);
+      writeTree(repo, { 'index.html': '<p>a</p>\n' });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'base']);
+      const baseSha = g(['rev-parse', 'HEAD']);
+      writeTree(repo, { 'index.html': '<p>b</p>\n' });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'head']);
+      const headSha = g(['rev-parse', 'HEAD']);
+
+      const claimsDir = tempDir('claims');
+      const steps = [{ do: 'goto', path: '/index.html' }, { do: 'click', selector: '#btn' }, { expect: 'visible', selector: '#result' }];
+      writeTree(claimsDir, { 'sc.json': { id: 'selftest-repodir', title: '시험', steps }, 'proof.json': { task: 'TASK-SELFTEST', cells: [] } });
+      const claim = { id: 'C1', req: 'R1', kind: 'behavior', change: 'preserve', domain: 'ui-behavior', statement: '보존', touches: ['index.html'], scenario: 'sc.json', proof: 'proof.json' };
+      const pass = { passed: true, failedStep: null, failKind: null, provesBehavior: true, states: [], steps: [], fixtures: [], notes: [], exceptions: [] };
+
+      const origVerify = preserveLib.verifyCellSplitProof;
+      let seen = null;
+      preserveLib.verifyCellSplitProof = (dir, c, vctx) => { seen = vctx; return origVerify(dir, c, vctx); };
+      try {
+        const ctx = { claimsDir, base: { url: 'b', sha: baseSha }, head: { url: 'h', sha: headSha }, floors: grade.loadFloors(), config: scenarioLib.loadConfig(), repoDir: repo, outDir: null, runScenario: async () => pass };
+        const res = await claimsLib.judgeClaim(ctx, claim);
+        t.ok(seen !== null, '분열 증명 검증까지 도달함');
+        t.eq(seen && seen.repoDir, repo, '분열 증명 검증에 넘긴 repoDir 가 법정의 저장소 경로와 같다');
+        const sp = res.evidence && res.evidence.splitProof;
+        t.ok(!!sp, '판정 증거에 분열 증명 결과가 남음');
+        const reason = (sp && sp.reason) || '';
+        t.ok(!/Git diff 실행 실패/.test(reason), 'git diff 가 저장소 안에서 성공함(사유: ' + (reason || '없음') + ')');
+        t.ok(!/repoDir\) 누락/.test(reason), 'repoDir 누락 사유가 아님');
+      } finally {
+        preserveLib.verifyCellSplitProof = origVerify;
+      }
+
+      const missing = preserveLib.verifyCellSplitProof(claimsDir, claim, { base: { sha: baseSha }, head: { sha: headSha }, scenarioResults: { H: pass } });
+      t.ok(!missing.ok && /repoDir\) 누락/.test(missing.reason), 'repoDir 없이 부르면 git 을 돌리지 않고 법정 내부 결함으로 알린다: ' + missing.reason);
+      fs.rmSync(repo, { recursive: true, force: true });
+      fs.rmSync(claimsDir, { recursive: true, force: true });
+    },
+  },
+  {
+    id: 'U-preserve-source-gen-deps',
+    title: '분열 증명 재생성: 심사 대상 저장소에 node_modules 가 없어도 생성기가 법정 쪽 의존성으로 돈다(TASK-ES-598)',
+    run(t) {
+      const { execFileSync } = require('node:child_process');
+      const { recomputeSplit, genEnv } = require('../lib/preserve-source.js');
+      // 법정 쪽 의존성 폴더(가짜): 생성기가 require 하는 모듈 하나
+      const deps = tempDir('deps');
+      writeTree(deps, { 'court-selftest-dep/index.js': "module.exports = s => s.replace('a', 'b');\n" });
+      // 심사 대상 저장소: node_modules 없음. 기준 커밋의 생성기는 그 모듈이 있어야 돈다.
+      const repo = tempDir('repo');
+      const g = args => execFileSync('git', ['-C', repo, '-c', 'user.name=court-selftest', '-c', 'user.email=court-selftest@users.noreply.github.com', '-c', 'commit.gpgsign=false', ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+      const gen = "const fs=require('fs'),path=require('path');const f=require('court-selftest-dep');const root=process.argv[2];const p=path.join(root,'index.html');fs.writeFileSync(p,f(fs.readFileSync(p,'utf8')));\n";
+      g(['init', '-q']);
+      writeTree(repo, { 'index.html': '<p>a</p>\n', 'docs/design/harness/module-split/gen-inline-hard.js': gen });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'base']);
+      const baseSha = g(['rev-parse', 'HEAD']);
+      writeTree(repo, { 'index.html': '<p>b</p>\n' });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'head']);
+      const headSha = g(['rev-parse', 'HEAD']);
+      const config = { task: 'TASK-SELFTEST', slot: 1, cells: [] };
+
+      const savedNodePath = process.env.NODE_PATH;
+      delete process.env.NODE_PATH;
+      try {
+        const env = genEnv(repo, deps);
+        t.eq(env.NODE_PATH, deps, '심사 대상에 node_modules 가 없으면 NODE_PATH 를 법정 쪽 의존성으로 준다');
+        const ok = recomputeSplit({ repoDir: repo, baseSha, headSha, config, changedFiles: ['index.html'], courtNodeModules: deps });
+        t.ok(ok.ok, '법정 쪽 의존성으로 기준 커밋 생성기가 돌고 바이트가 일치한다: ' + (ok.reason || 'ok'));
+        const missing = recomputeSplit({ repoDir: repo, baseSha, headSha, config, changedFiles: ['index.html'], courtNodeModules: path.join(deps, 'none') });
+        t.ok(!missing.ok && /Cannot find module/.test(missing.reason || ''), '의존성이 어디에도 없으면 생성기 실패로 정직하게 드러난다');
+      } finally {
+        if (savedNodePath === undefined) delete process.env.NODE_PATH; else process.env.NODE_PATH = savedNodePath;
+        fs.rmSync(repo, { recursive: true, force: true });
+        fs.rmSync(deps, { recursive: true, force: true });
+      }
+    },
+  },
 ];
 
 module.exports = { TESTS };

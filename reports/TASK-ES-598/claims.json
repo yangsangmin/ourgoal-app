@@ -1,0 +1,41 @@
+{
+  "task": "TASK-ES-598",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-598.md",
+  "requirements": [
+    { "id": "R1", "text": "심사 대상 쪽에 node_modules 가 없으면 생성기가 법정(잣대 쪽 main)의 node_modules 를 NODE_PATH 로 쓴다." },
+    { "id": "R2", "text": "의존성이 어디에도 없으면 생성기 실패로 정직하게 드러난다." },
+    { "id": "R3", "text": "자체 점검이 실제 recomputeSplit 으로 이것을 확인한다(수리를 되돌리면 어긋남)." }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "change": "fix",
+      "statement": "preserve-source.js 가 생성기 실행에 genEnv(repoDir, 법정 node_modules) 환경을 넘긴다.",
+      "touches": ["court/lib/preserve-source.js"],
+      "check": { "type": "codeContains", "file": "court/lib/preserve-source.js", "text": "env: genEnv(repoDir, courtNodeModules || COURT_NODE_MODULES)" },
+      "domain": "config"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "change": "fix",
+      "statement": "자체 점검이 의존성이 없는 경우 'Cannot find module' 생성기 실패로 드러나는지 확인한다.",
+      "touches": ["court/selftest/unit-preserve.js"],
+      "check": { "type": "codeContains", "file": "court/selftest/unit-preserve.js", "text": "의존성이 어디에도 없으면 생성기 실패로 정직하게 드러난다" },
+      "domain": "config"
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "change": "new",
+      "statement": "자체 점검 U-preserve-source-gen-deps 가 node_modules 없는 임시 저장소에서 가짜 의존성을 요구하는 생성기를 recomputeSplit 으로 돌려 바이트 일치를 확인한다. 환경 전달을 지우면 어긋난다(로컬 변이 확인).",
+      "touches": ["court/selftest/unit-preserve.js"],
+      "check": { "type": "codeContains", "file": "court/selftest/unit-preserve.js", "text": "U-preserve-source-gen-deps" },
+      "domain": "config"
+    }
+  ]
+}
