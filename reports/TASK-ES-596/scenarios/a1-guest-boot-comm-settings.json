@@ -1,0 +1,22 @@
+{
+  "id": "a1-guest-boot-comm-settings",
+  "title": "게스트 진입 뒤 소통·설정 탭을 오가도 오류 없이 동작한다 (A1 이전 전후 보존)",
+  "steps": [
+    { "do": "setViewport", "width": 430, "height": 932 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#btnAvatarGreetClose", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnAvatarGreetClose" },
+    { "expect": "notVisible", "selector": "#btnAvatarGreetClose" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]", "timeoutMs": 10000 },
+    { "expect": "notHasClass", "selector": ".navbtn[data-tab=\"comm\"]", "className": "active" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"comm\"]", "className": "active" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]", "timeoutMs": 10000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"settings\"]", "className": "active" },
+    { "expect": "notHasClass", "selector": ".navbtn[data-tab=\"comm\"]", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}

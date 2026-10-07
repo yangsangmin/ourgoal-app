@@ -1,0 +1,51 @@
+{
+  "task": "TASK-ES-596",
+  "label": "A1 시범 — 남은 작은 함수 2개 이전(동작 보존 확인 경로 첫 사용)",
+  "slot": "HO",
+  "cells": [
+    {
+      "key": "a11yAnnounce",
+      "file": "js/tabs/settings/a11y-announce.js",
+      "kit": "OurgoalSettingsKit",
+      "kitVar": "_settingsKit",
+      "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal A11y Announce (설정 — 화면 읽기 알림)",
+      "desc": [
+        "화면 읽기 프로그램용 실시간 알림 영역(#a11yLiveAnnouncer)에 글자를 비웠다가 50ms 뒤 다시 넣어 읽게 하는 announceToA11y."
+      ],
+      "take": [
+        {
+          "group": "11인 외부 UI/UX 감시 및 개선팀 핵심 기능 구현",
+          "names": [
+            "announceToA11y"
+          ],
+          "keepRest": true
+        }
+      ],
+      "name": "화면 읽기 알림",
+      "does": "화면 읽기 프로그램이 읽도록 실시간 알림 영역에 안내 글자를 넣는다"
+    },
+    {
+      "key": "userProfileOpen",
+      "file": "js/tabs/comm/user-profile-open.js",
+      "kit": "OurgoalCommKit",
+      "kitVar": "_commKit",
+      "beforeTag": "<script src=\"js/tabs/comm/index.js\"></script>",
+      "title": "OurGoal User Profile Open (소통 — 사용자 프로필 창 열기 위임)",
+      "desc": [
+        "동반자·피드 작성자 프로필 창 열기 openUserProfileModal — js/team-invite-comm.js 의 OurgoalTeamInviteComm.openUserProfileModal 이 있으면 그쪽에 맡긴다."
+      ],
+      "take": [
+        {
+          "group": "DM & 동반자 소통 시스템",
+          "names": [
+            "openUserProfileModal"
+          ],
+          "keepRest": true
+        }
+      ],
+      "name": "프로필 창 열기 위임",
+      "does": "동반자·피드 작성자 프로필 창 열기를 팀 초대·소통 세포에 맡긴다"
+    }
+  ]
+}
