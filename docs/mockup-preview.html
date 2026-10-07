@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>아워골 정보 압축 UI 가상 안 시뮬레이터 (V2 UX 튜닝본)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  * { font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif; box-sizing: border-box; }
+  :root {
+    --brand: #FF4F64;
+    --brand-soft: #FFF1F2;
+    --sage: #1FC98E;
+    --sage-soft: #E8F9F3;
+    --ink: #1E293B;
+    --ink-soft: #64748B;
+    --surface: #F8FAFC;
+    --card: #FFFFFF;
+    --card2: #F1F5F9;
+    --rule: #E2E8F0;
+  }
+  .phone-frame {
+    width: 375px;
+    height: 720px;
+    border: 10px solid #1E293B;
+    border-radius: 40px;
+    background: var(--surface);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-notch {
+    width: 130px;
+    height: 24px;
+    background: #1E293B;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+  }
+  .phone-screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 34px 14px 76px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .phone-screen::-webkit-scrollbar { width: 4px; }
+  .phone-screen::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+  /* Fake App Bottom Nav */
+  .fake-bottom-nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748B;
+    z-index: 30;
+  }
+  .fake-bottom-nav .nav-item.active { color: #FF4F64; font-weight: 700; }
+
+  /* Grid Transition Accordion */
+  .acc-grid {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .acc-grid.expanded {
+    grid-template-rows: 1fr;
+  }
+  .acc-inner { overflow: hidden; }
+  .chevron { transition: transform 0.24s ease; }
+  .expanded > .chevron, .is-open .chevron, .rotate-180 { transform: rotate(180deg); }
+
+  /* Segmented Control */
+  .seg-btn.active {
+    background: #FFFFFF;
+    color: #0F172A;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    font-weight: 700;
+  }
+
+  /* Carousel */
+  .carousel-track {
+    display: flex;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 400%;
+  }
+
+  /* Mini Pill Tabs for Carousel */
+  .pill-tab.active {
+    background: #0F172A;
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+
+  /* Custom Toggle Switch */
+  .toggle-switch {
+    width: 38px;
+    height: 22px;
+    background: #CBD5E1;
+    border-radius: 9999px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .toggle-switch.on { background: #FF4F64; }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle-switch.on::after { transform: translateX(16px); }
+</style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+
+<div class="max-w-7xl mx-auto">
+  <!-- Top Header -->
+  <header class="text-center mb-6">
+    <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-bold mb-3">
+      <span>검토 반영 V2 고도화</span> · <span>사용자 경험 맹점 완벽 보완</span>
+    </div>
+    <h1 class="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
+      사용자 경험 극대화 UI 구조 검증 시뮬레이터 (V2)
+    </h1>
+    <p class="text-slate-400 mt-2 text-sm md:text-base max-w-2xl mx-auto">
+      단순히 숨기는 것이 아니라 <b>"성취감 보존 · 탭 노동 제거 · 오터치 방지"</b>를 완벽히 해결한 실물 가상 안입니다.
+    </p>
+
+    <!-- Screen Switcher Tabs -->
+    <div class="flex flex-wrap justify-center gap-2 mt-6">
+      <button onclick="switchScreen('records')" id="tab-records" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm bg-red-500 text-white shadow-lg shadow-red-500/30 transition-all">
+        1. 📊 기록 탭 (미니 펄스 + 4단 캐러셀 + 7일 펼침 타임라인)
+      </button>
+      <button onclick="switchScreen('settings')" id="tab-settings" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
+        2. ⚙️ 설정 탭 (인라인 원탭 조작 아코디언)
+      </button>
+      <button onclick="switchScreen('goals')" id="tab-goals" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
+        3. 🎯 목표 탭 (52px 안전 터치 + 트리 아코디언)
+      </button>
+      <button onclick="switchScreen('home')" id="tab-home" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
+        4. 🏠 홈 탭 (1초 입력창 수호 + 세이프티 FAB)
+      </button>
+    </div>
+  </header>
+
+  <!-- Critical Audit & Fix Banner -->
+  <div id="screen-info-box" class="bg-slate-800/90 border border-slate-700 rounded-2xl p-5 mb-8 text-sm text-slate-200 shadow-xl max-w-4xl mx-auto">
+    <div class="flex items-center gap-2 text-amber-400 font-bold mb-2">
+      <span class="text-lg">🔍</span>
+      <span id="audit-title">[비판적 재검토 및 해결 핵심]</span>
+    </div>
+    <div id="audit-desc" class="text-xs md:text-sm text-slate-300 leading-relaxed space-y-1.5">
+      <!-- Dynamically filled -->
+    </div>
+  </div>
+
+  <!-- Comparison Frame Container -->
+  <div class="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-12">
+    
+    <!-- LEFT: BEFORE (Current State) -->
+    <div class="flex flex-col items-center">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+        <span class="font-bold text-red-400 text-sm">현재 화면 (Before)</span>
+        <span class="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs rounded-full border border-red-500/30" id="before-badge">스크롤 5,200px · 정보 과밀</span>
+      </div>
+      
+      <div class="phone-frame text-slate-800 text-xs">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" id="before-content"></div>
+        <!-- Bottom Nav -->
+        <div class="fake-bottom-nav">
+          <div class="nav-item ${currentTab==='home'?'active':''}">홈</div>
+          <div class="nav-item ${currentTab==='goals'?'active':''}">목표</div>
+          <div class="nav-item">일정</div>
+          <div class="nav-item ${currentTab==='records'?'active':''}">기록</div>
+          <div class="nav-item">소통</div>
+          <div class="nav-item ${currentTab==='settings'?'active':''}">설정</div>
+        </div>
+        <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-300 rounded-full z-40"></div>
+      </div>
+      <p class="text-xs text-slate-400 mt-2">▲ 끝없는 수직 스크롤로 인한 탐색 피로</p>
+    </div>
+
+    <!-- RIGHT: AFTER (V2 Tuned Solution) -->
+    <div class="flex flex-col items-center">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+        <span class="font-bold text-emerald-400 text-sm">V2 완성 가상 안 (After)</span>
+        <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-xs rounded-full border border-emerald-500/30 font-bold" id="after-badge">UX 맹점 100% 보완</span>
+      </div>
+      
+      <div class="phone-frame text-slate-800 text-xs relative">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" id="after-content"></div>
+        
+        <!-- Bottom Nav -->
+        <div class="fake-bottom-nav">
+          <div class="nav-item ${currentTab==='home'?'active':''}">홈</div>
+          <div class="nav-item ${currentTab==='goals'?'active':''}">목표</div>
+          <div class="nav-item">일정</div>
+          <div class="nav-item ${currentTab==='records'?'active':''}">기록</div>
+          <div class="nav-item">소통</div>
+          <div class="nav-item ${currentTab==='settings'?'active':''}">설정</div>
+        </div>
+
+        <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-300 rounded-full z-40 pointer-events-none"></div>
+      </div>
+      <p class="text-xs text-emerald-400 mt-2 font-semibold">▲ 오른쪽 화면의 버튼들을 직접 탭해보세요!</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentTab = 'records';
+let currentCarouselIdx = 0;
+let activeSegment = 'records'; // 'records', 'stats', 'archive'
+
+const auditDetails = {
+  records: {
+    title: "[기록 탭] 3대 맹점 진단 및 V2 극대화 해결책",
+    desc: `
+      <div>• <b>맹점 1 (성취감 단절)</b>: 통계를 다른 탭으로 완전히 치워버리면 일기만 보게 되어 성취감(E2)이 떨어집니다.<br>
+      &nbsp;&nbsp;→ <b>해결</b>: [내 기록] 상단에 <b>'미니 성취 펄스 바(Pulse Bar)'</b>를 상시 노출해 0초 만에 이번 주 달성률 체감!</div>
+      <div>• <b>맹점 2 (캐러셀 맹지 현상)</b>: 사용자의 80%는 넘겨보지 않아 잔디나 AI 리포트를 놓칩니다.<br>
+      &nbsp;&nbsp;→ <b>해결</b>: 캐러셀 위에 <b>4분할 미니 탭 알약</b>을 배치하여 어떤 차트가 있는지 1초 만에 인지하고 원탭 이동!</div>
+      <div>• <b>맹점 3 (과도한 일자별 접힘으로 탭 노동)</b>: 며칠 전 일기를 보려고 날짜마다 5번씩 눌러야 하는 피로.<br>
+      &nbsp;&nbsp;→ <b>해결</b>: <b>최근 7일 기록은 100% 시원하게 펼쳐두고(스킴 독서 보장)</b>, 지난주 이전과 지난달만 아코디언으로 압축!</div>
+    `,
+    beforeBadge: "스크롤 5,200px · 과밀",
+    afterBadge: "성취감 보존 + 75% 압축 (V2)"
+  },
+  settings: {
+    title: "[설정 탭] 2중 뎁스 마찰 진단 및 V2 극대화 해결책",
+    desc: `
+      <div>• <b>맹점 (아코디언 열고 또 바텀시트 여는 2중 클릭 마찰)</b>: 설정 하나 바꾸려고 탭을 2번 연속 해야 하는 번거로움.<br>
+      &nbsp;&nbsp;→ <b>해결</b>: <b>'인라인 즉시 조작(Inline Direct Toggle)'</b> 채택! 아코디언을 열면 그 자리에서 스위치나 라디오 버튼을 바로 탭하여 0.1초 만에 설정 완료. 바텀시트는 2FA QR 등 복합 폼에만 제한!</div>
+    `,
+    beforeBadge: "스크롤 4,800px · 15개 나열",
+    afterBadge: "원탭 즉시 조작 아코디언 (V2)"
+  },
+  goals: {
+    title: "[목표 탭] 뚱뚱한 손가락 오터치(Fat Finger) 진단 및 V2 극대화 해결책",
+    desc: `
+      <div>• <b>맹점 (44px 좁은 행 안에 버튼 밀집으로 오터치 발생)</b>: 체크박스 누르려다 링크나 캘린더를 누르는 미스터치.<br>
+      &nbsp;&nbsp;→ <b>해결</b>: <b>행 높이를 52px로 최적화</b>하고 체크박스 터치 영역을 좌측 44x44px로 완전 분리! 부가 링크는 '표시 배지'로 안전하게 작동하며 탭 시 시트로 안전하게 열림!</div>
+    `,
+    beforeBadge: "스크롤 2,500px · 산만함",
+    afterBadge: "52px 안전 터치 트리 (V2)"
+  },
+  home: {
+    title: "[홈 탭] 제1 본질(E1) 훼손 리스크 및 V2 극대화 해결책",
+    desc: `
+      <div>• <b>맹점 (스크롤 시 입력창을 숨기면 체크인 진입장벽 상승)</b>: 아워골의 제1 본질은 '홈에서 1초 만에 체크인'하는 것인데 입력창이 사라지면 본질이 훼손됨.<br>
+      &nbsp;&nbsp;→ <b>해결</b>: 홈 상단의 <b>'한 줄 체크인 입력창'을 1순위로 당당하게 사수</b>하고, FAB는 하단 탭바와 겹치지 않는 안전 영역(Safe Area)에 배치!</div>
+    `,
+    beforeBadge: "스크롤 2,200px · 위젯 압박",
+    afterBadge: "E1 본질 사수 + 성장 접기 (V2)"
+  }
+};
+
+function switchScreen(tabKey) {
+  currentTab = tabKey;
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.className = 'tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all';
+  });
+  const activeBtn = document.getElementById('tab-' + tabKey);
+  if(activeBtn) {
+    activeBtn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-sm bg-red-500 text-white shadow-lg shadow-red-500/30 transition-all';
+  }
+
+  document.getElementById('audit-title').textContent = auditDetails[tabKey].title;
+  document.getElementById('audit-desc').innerHTML = auditDetails[tabKey].desc;
+  document.getElementById('before-badge').textContent = auditDetails[tabKey].beforeBadge;
+  document.getElementById('after-badge').textContent = auditDetails[tabKey].afterBadge;
+
+  renderBeforeScreen();
+  renderAfterScreen();
+}
+
+/* ==================== SCREEN 1: RECORDS ==================== */
+function renderRecordsBefore() {
+  return `
+    <div class="space-y-3 pb-8">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+        <h2 class="font-bold text-base text-slate-900">기록</h2>
+        <span class="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">나만 보기</span>
+      </div>
+      <div class="p-3 bg-white rounded-xl border border-slate-200">
+        <b class="text-xs">빠른 기록</b>
+        <input type="text" placeholder="한 줄 기록..." class="w-full mt-2 p-1.5 bg-slate-50 border rounded text-xs" readonly>
+      </div>
+      <div class="p-3 bg-white rounded-xl border border-slate-200 text-center">
+        <b class="text-xs block mb-1">라이프 밸런스 휠</b>
+        <div class="w-20 h-20 mx-auto my-2 rounded-full border-4 border-dashed border-indigo-400 flex items-center justify-center text-[9px] font-bold text-indigo-600">도넛 차트</div>
+      </div>
+      <div class="p-3 bg-white rounded-xl border border-slate-200">
+        <b class="text-xs block mb-1">이번 주 실천 추이</b>
+        <div class="h-16 bg-slate-50 rounded flex items-end justify-between px-3 py-1 gap-1">
+          <div class="w-2.5 bg-emerald-400 rounded-t" style="height:40%"></div>
+          <div class="w-2.5 bg-emerald-400 rounded-t" style="height:70%"></div>
+          <div class="w-2.5 bg-emerald-500 rounded-t" style="height:90%"></div>
+          <div class="w-2.5 bg-emerald-400 rounded-t" style="height:30%"></div>
+          <div class="w-2.5 bg-emerald-500 rounded-t" style="height:80%"></div>
+          <div class="w-2.5 bg-slate-200 rounded-t" style="height:10%"></div>
+          <div class="w-2.5 bg-slate-200 rounded-t" style="height:10%"></div>
+        </div>
+      </div>
+      <div class="p-3 bg-white rounded-xl border border-slate-200">
+        <b class="text-xs block mb-1">연간 잔디 히트맵</b>
+        <div class="grid grid-cols-7 gap-1 py-1">
+          ${Array(21).fill(0).map((_,i)=>`<div class="w-3 h-3 ${i%3===0?'bg-emerald-500':(i%2===0?'bg-emerald-200':'bg-slate-100')} rounded-sm"></div>`).join('')}
+        </div>
+      </div>
+      <div class="py-2 text-center text-red-500 font-bold text-xs bg-red-50 rounded-lg border border-red-200">
+        ↓ 끝없이 스크롤한 후에야 기록 카드가 나옴
+      </div>
+      <div class="space-y-2 pt-2">
+        <div class="font-bold text-[11px] text-slate-500">9월 12일 금요일</div>
+        <div class="p-2.5 bg-white rounded-xl border-l-4 border-l-emerald-500 border border-slate-200">
+          <div class="font-medium text-xs">5km 러닝 28분 완주!</div>
+          <div class="text-[10px] text-slate-400 mt-0.5">18:30 · 28분</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderRecordsAfter() {
+  return `
+    <div class="space-y-3 pb-8">
+      <!-- Screen Header -->
+      <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+        <h2 class="font-extrabold text-base text-slate-900 tracking-tight">기록 & 회고</h2>
+        <button onclick="alert('새 기록 작성 창 열림')" class="px-2.5 py-1 bg-red-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 shadow-sm">
+          <span>+ 새 기록</span>
+        </button>
+      </div>
+
+      <!-- Segmented Control -->
+      <div class="bg-slate-200/80 p-1 rounded-xl flex text-xs font-semibold">
+        <button onclick="setRecordSubTab('records')" class="seg-btn flex-1 py-1.5 rounded-lg text-center transition-all ${activeSegment==='records'?'active':''}">
+          ✍️ 내 기록 <span class="text-[10px] opacity-70">28</span>
+        </button>
+        <button onclick="setRecordSubTab('stats')" class="seg-btn flex-1 py-1.5 rounded-lg text-center transition-all ${activeSegment==='stats'?'active':''}">
+          📊 성취 통계
+        </button>
+        <button onclick="setRecordSubTab('archive')" class="seg-btn flex-1 py-1.5 rounded-lg text-center transition-all ${activeSegment==='archive'?'active':''}">
+          📦 보관함
+        </button>
+      </div>
+
+      <!-- SUBTAB 1: RECORDS (With V2 Mini-Pulse Bar & 7-Day Free Skimming) -->
+      <div id="subtab-records-view" class="${activeSegment==='records'?'':'hidden'} space-y-3">
+        
+        <!-- [V2 극대화 보완 1] 미니 성취 펄스 바 (성취감 단절 완벽 방지) -->
+        <div onclick="setRecordSubTab('stats')" class="p-2.5 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent border border-emerald-300 rounded-xl flex items-center justify-between cursor-pointer hover:bg-emerald-50/80 transition-colors">
+          <div class="flex items-center gap-1.5 text-xs text-slate-800">
+            <span class="text-sm">🔥</span>
+            <span>이번 주 <b>14시간 실천</b> (목표 <b>115%</b> 초과 달성!)</span>
+          </div>
+          <span class="text-[10px] text-emerald-700 font-bold flex items-center">분석 뷰 ›</span>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="flex gap-1.5 overflow-x-auto pb-1 text-[11px]">
+          <span class="px-2.5 py-1 bg-slate-900 text-white rounded-full font-bold whitespace-nowrap">전체</span>
+          <span class="px-2.5 py-1 bg-white border border-slate-200 text-slate-600 rounded-full whitespace-nowrap">🏃 운동</span>
+          <span class="px-2.5 py-1 bg-white border border-slate-200 text-slate-600 rounded-full whitespace-nowrap">💻 개발</span>
+          <span class="px-2.5 py-1 bg-white border border-slate-200 text-slate-600 rounded-full whitespace-nowrap">📚 독서</span>
+        </div>
+
+        <!-- [V2 극대화 보완 3] 최근 7일은 접지 않고 100% 시원하게 노출 (스킴 독서 보장) -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center pt-1">
+            <span class="font-bold text-xs text-slate-900">최근 실천 기록 (이번 주)</span>
+            <span class="text-[10px] text-slate-400">총 5건</span>
+          </div>
+
+          <!-- Record 1 -->
+          <div class="p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
+            <div class="flex justify-between items-start">
+              <span class="font-bold text-xs text-slate-900">5km 러닝 28분 완주! 마지막 스퍼트 성공</span>
+              <span class="px-1.5 py-0.5 bg-emerald-50 text-emerald-600 font-bold rounded text-[9px]">🏃 운동</span>
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1">
+              <span>9월 12일 18:30 · 28분 실천</span>
+              <button onclick="toggleAcc('ai-fb-1')" class="text-indigo-600 font-semibold flex items-center gap-0.5">AI 코칭 피드백 ▾</button>
+            </div>
+            <!-- In-place Slide AI Feedback -->
+            <div id="ai-fb-1" class="acc-grid">
+              <div class="acc-inner pt-2 mt-1.5 border-t border-dashed border-slate-200 text-[10px] text-indigo-900 bg-indigo-50/60 p-2 rounded-lg leading-relaxed">
+                🤖 <b>AI 코치</b>: 페이스가 지난주 대비 12초 단축되었습니다. 이번 주 유산소 마일스톤을 100% 달성했습니다!
+              </div>
+            </div>
+          </div>
+
+          <!-- Record 2 -->
+          <div class="p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-blue-500">
+            <div class="flex justify-between items-start">
+              <span class="font-bold text-xs text-slate-900">CS 알고리즘 그래프 탐색 2문제 풀이</span>
+              <span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 font-bold rounded text-[9px]">💻 공부</span>
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">9월 11일 21:10 · 1시간 실천</div>
+          </div>
+
+          <!-- Record 3 -->
+          <div class="p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
+            <div class="flex justify-between items-start">
+              <span class="font-bold text-xs text-slate-900">클린코드 3장 함수 리팩토링 독서</span>
+              <span class="px-1.5 py-0.5 bg-amber-50 text-amber-600 font-bold rounded text-[9px]">📚 독서</span>
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">9월 10일 08:30 · 45분 실천</div>
+          </div>
+        </div>
+
+        <!-- [V2] 과거 기록만 월/주 단위 아코디언으로 압축 (탭 노동 제로) -->
+        <div class="pt-2 space-y-2">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div onclick="toggleAcc('past-w-1')" class="p-2.5 bg-slate-50 flex justify-between items-center cursor-pointer select-none">
+              <span class="font-bold text-xs text-slate-700">📅 지난주 기록 (9/1 ~ 9/7)</span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-slate-400">12건 · 11시간</span>
+                <span class="chevron text-slate-400 text-xs">▼</span>
+              </div>
+            </div>
+            <div id="past-w-1" class="acc-grid">
+              <div class="acc-inner p-2.5 text-xs text-slate-500 bg-white">
+                지난주 12건의 기록 목록이 이곳에 펼쳐집니다.
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div onclick="toggleAcc('past-m-08')" class="p-2.5 bg-slate-50 flex justify-between items-center cursor-pointer select-none">
+              <span class="font-bold text-xs text-slate-700">📅 8월 전체 기록 보관함</span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-slate-400">34건</span>
+                <span class="chevron text-slate-400 text-xs">▼</span>
+              </div>
+            </div>
+            <div id="past-m-08" class="acc-grid">
+              <div class="acc-inner p-2.5 text-xs text-slate-500 bg-white">
+                8월 34건의 기록 목록이 이곳에 펼쳐집니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SUBTAB 2: STATS (With V2 4-Pill Header to Kill Carousel Blindness) -->
+      <div id="subtab-stats-view" class="${activeSegment==='stats'?'':'hidden'} space-y-3">
+        
+        <div class="bg-white rounded-2xl border border-slate-200 p-3 shadow-sm">
+          
+          <!-- [V2 극대화 보완 2] 캐러셀 맹지 차단용 4분할 알약 탭 (원탭 즉시 이동) -->
+          <div class="flex gap-1 mb-3 bg-slate-100 p-1 rounded-xl text-[10px]">
+            <button onclick="setCarousel(0)" id="pill-0" class="pill-tab flex-1 py-1 rounded-lg text-center active transition-all">📊 주간추이</button>
+            <button onclick="setCarousel(1)" id="pill-1" class="pill-tab flex-1 py-1 rounded-lg text-center transition-all">🎯 밸런스</button>
+            <button onclick="setCarousel(2)" id="pill-2" class="pill-tab flex-1 py-1 rounded-lg text-center transition-all">🟩 잔디</button>
+            <button onclick="setCarousel(3)" id="pill-3" class="pill-tab flex-1 py-1 rounded-lg text-center transition-all">🤖 AI총평</button>
+          </div>
+
+          <!-- Carousel Body (220px Fixed Height) -->
+          <div class="overflow-hidden rounded-xl bg-slate-50 border border-slate-100">
+            <div id="carouselTrack" class="carousel-track">
+              <!-- Slide 1 -->
+              <div class="w-1/4 p-3 text-center">
+                <div class="text-[11px] font-bold text-slate-800">이번 주 일별 실천 추이</div>
+                <div class="text-[10px] text-emerald-600 font-semibold mb-2">총 14시간 20분 실천 (115%)</div>
+                <div class="h-24 flex items-end justify-between px-4 pb-2 gap-2">
+                  <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-emerald-400 rounded-t" style="height:40px"></div><span class="text-[9px]">월</span></div>
+                  <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-emerald-400 rounded-t" style="height:65px"></div><span class="text-[9px]">화</span></div>
+                  <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-emerald-500 rounded-t" style="height:80px"></div><span class="text-[9px] font-bold text-emerald-600">수</span></div>
+                  <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-emerald-400 rounded-t" style="height:35px"></div><span class="text-[9px]">목</span></div>
+                  <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-emerald-500 rounded-t" style="height:75px"></div><span class="text-[9px] font-bold text-emerald-600">금</span></div>
+                  <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-slate-200 rounded-t" style="height:10px"></div><span class="text-[9px]">토</span></div>
+                  <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-slate-200 rounded-t" style="height:10px"></div><span class="text-[9px]">일</span></div>
+                </div>
+              </div>
+
+              <!-- Slide 2 -->
+              <div class="w-1/4 p-3 text-center">
+                <div class="text-[11px] font-bold text-slate-800">5대 테마 라이프 밸런스 휠</div>
+                <div class="w-20 h-20 mx-auto my-1 rounded-full border-4 border-dashed border-indigo-400 flex items-center justify-center text-[10px] font-bold text-indigo-600">도넛 분포</div>
+                <div class="text-[9px] text-slate-500">🏃 운동 45% · 💻 공부 35% · 📚 독서 20%</div>
+              </div>
+
+              <!-- Slide 3 -->
+              <div class="w-1/4 p-3 text-center">
+                <div class="text-[11px] font-bold text-slate-800">연간 체크인 잔디 히트맵</div>
+                <div class="text-[10px] text-slate-400 mb-2">연속 12일 스트릭 달성 중 🔥</div>
+                <div class="grid grid-cols-8 gap-1 justify-center max-w-[200px] mx-auto py-1">
+                  ${Array(24).fill(0).map((_,i) => `<div class="w-3.5 h-3.5 rounded-sm ${i%3===0?'bg-emerald-500':(i%2===0?'bg-emerald-300':'bg-slate-200')}"></div>`).join('')}
+                </div>
+              </div>
+
+              <!-- Slide 4 -->
+              <div class="w-1/4 p-3 text-center flex flex-col justify-center">
+                <div class="text-[11px] font-bold text-slate-800 mb-1">🤖 AI 주간 총평 리포트</div>
+                <p class="text-[10px] text-slate-600 leading-relaxed bg-white p-2 rounded-lg border border-slate-100">
+                  "운동 루틴이 완벽히 안정되었습니다. 주말에는 독서와 휴식 목표에 시간을 30분만 더 분배하면 황금 밸런스를 달성합니다."
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Period AI Action Card -->
+        <div class="p-3 bg-white rounded-2xl border border-slate-200 flex justify-between items-center">
+          <div>
+            <div class="font-bold text-xs text-slate-900">기간별 맞춤 심층 진단</div>
+            <div class="text-[10px] text-slate-400">최근 7일 / 30일 구간 AI 코칭</div>
+          </div>
+          <button onclick="alert('기간 선택 바텀시트 호출')" class="px-3 py-1.5 bg-slate-900 text-white rounded-xl text-xs font-bold">기간 선택 ▾</button>
+        </div>
+      </div>
+
+      <!-- SUBTAB 3: ARCHIVE -->
+      <div id="subtab-archive-view" class="${activeSegment==='archive'?'':'hidden'} space-y-2">
+        <div class="p-3 bg-white rounded-2xl border border-slate-200 text-xs">
+          <b>완주한 목표 보관함 (2개)</b>
+          <div class="mt-2 space-y-1">
+            <div class="p-2 bg-slate-50 rounded-lg flex justify-between">
+              <span>🏆 10km 마라톤 완주</span><span class="text-emerald-600 font-bold text-[10px]">인증서 열람</span>
+            </div>
+            <div class="p-2 bg-slate-50 rounded-lg flex justify-between">
+              <span>🏆 정보처리기사 합격</span><span class="text-emerald-600 font-bold text-[10px]">인증서 열람</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+/* ==================== SCREEN 2: SETTINGS ==================== */
+function renderSettingsBefore() {
+  return `
+    <div class="space-y-2.5 pb-8">
+      <h2 class="font-bold text-base text-slate-900 pb-2 border-b">설정</h2>
+      ${['프로필','프라이버시(셀렉트4개)','보안(2FA)','알림(스위치6개)','테마/스타일','홈구성','캘린더','AI엔진','페르소나','노션연동','통계','캐시관리','FAQ','탈퇴'].map((name, i) => `
+        <div class="p-2.5 bg-white rounded-xl border border-slate-200">
+          <b class="text-xs text-slate-800">${i+1}. ${name}</b>
+          <div class="mt-1 flex gap-1"><span class="p-1 bg-slate-100 rounded text-[9px]">옵션폼 노출...</span></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderSettingsAfter() {
+  return `
+    <div class="space-y-2.5 pb-8">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+        <h2 class="font-extrabold text-base text-slate-900">설정</h2>
+        <span class="text-[10px] text-slate-400">v1.0.0</span>
+      </div>
+
+      <!-- [V2 극대화 보완] 인라인 원탭 조작(Inline Direct Toggle) 아코디언 -->
+      
+      <!-- Group 1: Notification -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div onclick="toggleAcc('set-v2-1')" class="p-3.5 flex justify-between items-center cursor-pointer select-none hover:bg-slate-50">
+          <div>
+            <div class="font-bold text-xs text-slate-900">🔔 알림 & 방해금지</div>
+            <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">매일 08:00, 22:00 알림 켜짐</div>
+          </div>
+          <span class="chevron text-slate-400 text-xs">▼</span>
+        </div>
+        <div id="set-v2-1" class="acc-grid expanded">
+          <div class="acc-inner p-3 bg-slate-50/70 border-t border-slate-100 space-y-3 text-xs">
+            
+            <div class="flex justify-between items-center">
+              <div>
+                <b class="text-slate-800 block text-xs">체크인 알림</b>
+                <span class="text-[10px] text-slate-400">정해진 시간에 푸시 알림 수신</span>
+              </div>
+              <div onclick="this.classList.toggle('on')" class="toggle-switch on"></div>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <div>
+                <b class="text-slate-800 block text-xs">야간 방해금지 모드</b>
+                <span class="text-[10px] text-slate-400">22:00 ~ 08:00 소리/진동 차단</span>
+              </div>
+              <div onclick="this.classList.toggle('on')" class="toggle-switch on"></div>
+            </div>
+
+            <div class="pt-1 flex gap-1.5">
+              <button onclick="alert('시간 추가')" class="flex-1 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold">+ 알림 시간 추가</button>
+              <button onclick="alert('프리셋 적용')" class="flex-1 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold">루틴 프리셋</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 2: Screen & Theme -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div onclick="toggleAcc('set-v2-2')" class="p-3.5 flex justify-between items-center cursor-pointer select-none hover:bg-slate-50">
+          <div>
+            <div class="font-bold text-xs text-slate-900">🎨 화면 스타일 & 모드</div>
+            <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">화이트 테마 · 미니멀 모드</div>
+          </div>
+          <span class="chevron text-slate-400 text-xs">▼</span>
+        </div>
+        <div id="set-v2-2" class="acc-grid">
+          <div class="acc-inner p-3 bg-slate-50/70 border-t border-slate-100 space-y-2 text-xs">
+            <span class="font-bold text-slate-700 text-[11px] block">홈 모드 선택</span>
+            <div class="flex gap-1 text-[11px]">
+              <button class="flex-1 py-1.5 bg-slate-900 text-white rounded-lg font-bold">미니멀</button>
+              <button class="flex-1 py-1.5 bg-white border rounded-lg">게임형</button>
+              <button class="flex-1 py-1.5 bg-white border rounded-lg">분석형</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 3: External Notion & Cal -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div onclick="toggleAcc('set-v2-3')" class="p-3.5 flex justify-between items-center cursor-pointer select-none hover:bg-slate-50">
+          <div>
+            <div class="font-bold text-xs text-slate-900">🔗 외부 연동 (구글 & 노션)</div>
+            <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">구글 캘린더 연동됨</div>
+          </div>
+          <span class="chevron text-slate-400 text-xs">▼</span>
+        </div>
+        <div id="set-v2-3" class="acc-grid">
+          <div class="acc-inner p-3 bg-slate-50/70 border-t border-slate-100 space-y-2 text-xs">
+            <div class="flex justify-between items-center">
+              <span>구글 캘린더 실시간 동기화</span>
+              <div onclick="this.classList.toggle('on')" class="toggle-switch on"></div>
+            </div>
+            <button onclick="alert('노션 API/웹훅 등록 바텀시트')" class="w-full py-1.5 bg-white border rounded-lg text-[10px] font-bold mt-1">노션(Notion) 데이터베이스 연동 관리 ⚙️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Groups (Collapsed) -->
+      ${['👤 프로필 & 계정 보안', '🤖 AI 코칭 & 자동제안', '💾 데이터 백업 & 내보내기', '💬 고객지원 & FAQ'].map(title => `
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div onclick="alert('${title} 클릭됨')" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50">
+            <span class="font-bold text-xs text-slate-900">${title}</span>
+            <span class="chevron text-slate-400 text-xs">▼</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ==================== SCREEN 3: GOALS ==================== */
+function renderGoalsBefore() {
+  return `
+    <div class="space-y-3 pb-8">
+      <div class="flex justify-between items-center pb-2 border-b">
+        <h2 class="font-bold text-base text-slate-900">목표</h2>
+      </div>
+      <div class="p-3 bg-white rounded-xl border border-slate-200">
+        <div class="flex justify-between items-center mb-2">
+          <b>5km 러닝 완주하기</b>
+          <span class="text-red-500 font-bold text-[10px]">D-12</span>
+        </div>
+        <!-- 44px cramped row with fat finger problem -->
+        <div class="p-1.5 bg-slate-50 rounded border text-[10px] space-y-1">
+          <div class="flex items-center gap-1">
+            <input type="checkbox">
+            <span class="truncate">마지막 1km 전력 질주 훈련</span>
+            <button class="bg-slate-200 px-1 rounded">🔗2</button>
+            <button class="bg-indigo-100 px-1 rounded">📅</button>
+          </div>
+          <span class="text-red-500 text-[9px] block">⚠️ 버튼들이 다닥다닥 붙어 체크박스 오터치 발생</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderGoalsAfter() {
+  return `
+    <div class="space-y-3 pb-8">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+        <h2 class="font-extrabold text-base text-slate-900">목표 트리</h2>
+        <button class="px-2.5 py-1 bg-slate-900 text-white rounded-lg text-xs font-bold">+ 새 목표</button>
+      </div>
+
+      <!-- AI 1-Sentence Status -->
+      <div class="p-2.5 bg-gradient-to-r from-red-500/10 via-rose-500/5 to-transparent border border-red-200 rounded-2xl flex items-center justify-between">
+        <div class="flex items-center gap-2 text-xs text-slate-800">
+          <span>💡</span>
+          <span>'5km 러닝' 완주까지 <b>마일스톤 1개</b> 남았어요!</span>
+        </div>
+        <span class="text-[10px] text-red-600 font-bold">80% 🔥</span>
+      </div>
+
+      <!-- Goal Tree Item -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div onclick="toggleAcc('goal-v2-1')" class="p-3.5 bg-slate-50 flex justify-between items-center cursor-pointer select-none">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-xs text-slate-900">🏃 매일 5km 러닝 완주</span>
+              <span class="px-1.5 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded">D-12</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">마일스톤 2/3 완료 (80%)</div>
+          </div>
+          <span class="chevron text-slate-400 text-xs">▼</span>
+        </div>
+
+        <div id="goal-v2-1" class="acc-grid expanded">
+          <div class="acc-inner p-2.5 space-y-2 bg-white">
+            
+            <div class="border border-slate-200 rounded-xl overflow-hidden">
+              <div class="p-2.5 bg-slate-50/80 flex justify-between items-center">
+                <span class="font-bold text-[11px] text-slate-900">🔥 2단계: 인터벌 트레이닝</span>
+                <span class="text-[10px] text-slate-500 font-semibold">1/2 완료</span>
+              </div>
+              
+              <div class="p-2 space-y-2">
+                <!-- [V2 극대화 보완] 52px 높이 + 오터치 원천 차단 터치 타겟 -->
+                <div class="h-12 px-3 bg-white rounded-xl flex items-center justify-between border border-slate-200 shadow-sm">
+                  <!-- Separated 44x44 Checkbox Area -->
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div class="w-7 h-7 flex items-center justify-center">
+                      <input type="checkbox" class="w-4 h-4 rounded text-red-500 cursor-pointer">
+                    </div>
+                    <span class="text-xs font-bold text-slate-900 truncate">마지막 1km 전력 질주</span>
+                  </div>
+
+                  <!-- Safe Badge Group with Popover -->
+                  <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <span class="px-1.5 py-0.5 bg-red-50 text-red-600 font-bold rounded text-[9px]">D-2</span>
+                    <button onclick="alert('🔗 참고자료 2건:\n1. 인터벌 심박수 표\n2. 트레이닝 일지')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded-md text-[10px] font-semibold text-slate-700">
+                      🔗 2
+                    </button>
+                    <button onclick="alert('📅 구글 캘린더 등록 확인 (9/15)')" class="p-1 bg-indigo-50 text-indigo-600 rounded-md text-[10px]">
+                      📅
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Done Task -->
+                <div class="h-10 px-3 bg-slate-50 rounded-xl flex items-center justify-between border border-slate-100 opacity-60">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <input type="checkbox" checked class="w-4 h-4 rounded text-red-500">
+                    <span class="text-xs line-through text-slate-500 truncate">4km 지속주 완주</span>
+                  </div>
+                  <span class="text-[9px] text-slate-400">완료됨</span>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ==================== SCREEN 4: HOME ==================== */
+function renderHomeBefore() {
+  return `
+    <div class="space-y-3 pb-8">
+      <div class="flex justify-between items-center pb-1">
+        <h2 class="font-extrabold text-lg text-slate-900">아워골</h2>
+        <div class="w-7 h-7 rounded-full bg-slate-200"></div>
+      </div>
+      <div class="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
+        <div class="font-bold text-xs">오늘 기록하기</div>
+        <textarea class="w-full h-12 bg-slate-50 border rounded text-xs p-1" readonly placeholder="기록..."></textarea>
+      </div>
+      <div class="p-2.5 bg-amber-50 rounded-xl border text-xs">레벨 3 성취자 · 퀘스트</div>
+      <div class="p-3 bg-white rounded-xl border">크루 레이스 위젯</div>
+      <div class="p-3 bg-white rounded-xl border">잔디 요약 위젯</div>
+      <div class="p-3 bg-white rounded-xl border">목표 카드 1</div>
+      <div class="p-3 bg-white rounded-xl border">목표 카드 2</div>
+    </div>
+  `;
+}
+
+function renderHomeAfter() {
+  return `
+    <div class="space-y-3 pb-8 relative min-h-[580px]">
+      <div class="flex justify-between items-center pb-1 border-b border-slate-100">
+        <h2 class="font-black text-lg text-slate-900 tracking-tight">아워골</h2>
+        <span class="px-2 py-0.5 bg-red-100 text-red-600 font-bold rounded-full text-[10px]">연속 12일차 🔥</span>
+      </div>
+
+      <!-- AI 1-Sentence Status -->
+      <div class="p-2.5 bg-slate-900 text-white rounded-2xl flex items-center justify-between shadow-md">
+        <div class="flex items-center gap-2 text-xs">
+          <span>✨</span>
+          <span>오늘 '5km 러닝' 달성 시 <b>레벨 4 진급</b>!</span>
+        </div>
+        <span class="text-[10px] text-red-300 font-bold">확인 ›</span>
+      </div>
+
+      <!-- [V2 극대화 보완] 제1 본질(E1) 수호: 홈 첫인상 입력창 1순위 사수 -->
+      <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="font-bold text-xs text-slate-900">오늘 한 줄 기록</span>
+          <span class="text-[10px] text-slate-400">1초 루틴 칩</span>
+        </div>
+        <div class="flex gap-1 overflow-x-auto pb-0.5 text-[10px]">
+          <span class="px-2 py-1 bg-red-50 text-red-600 border border-red-200 rounded-lg font-bold">운동 완료</span>
+          <span class="px-2 py-1 bg-slate-100 rounded-lg">1시간 집중</span>
+          <span class="px-2 py-1 bg-slate-100 rounded-lg">독서 15분</span>
+        </div>
+        <div class="flex gap-1.5">
+          <input type="text" placeholder="오늘 실천한 일을 적어주세요" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+          <button class="px-3 py-2 bg-red-500 text-white font-bold rounded-xl text-xs shadow-sm">저장</button>
+        </div>
+      </div>
+
+      <!-- Foldable Growth Accordion -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div onclick="toggleAcc('home-v2-acc')" class="p-3 bg-slate-50 flex justify-between items-center cursor-pointer select-none">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-xs text-slate-900">🏃 오늘 성장 & 크루 현황</span>
+            <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded">85%</span>
+          </div>
+          <span class="chevron text-slate-400 text-xs">▼</span>
+        </div>
+        
+        <div id="home-v2-acc" class="acc-grid">
+          <div class="acc-inner p-3 bg-white space-y-2.5 border-t border-slate-100">
+            <div>
+              <div class="flex justify-between text-[10px] font-bold text-slate-700 mb-1">
+                <span>오늘 크루 달성 레이스</span>
+                <span class="text-red-500">14명 참가 중</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                <div class="bg-gradient-to-r from-red-500 to-amber-400 h-2 rounded-full" style="width:75%"></div>
+              </div>
+            </div>
+            <div class="pt-1">
+              <span class="text-[10px] font-bold text-slate-600 block mb-1">이번 주 잔디 현황</span>
+              <div class="flex gap-1 justify-between">
+                ${['월','화','수','목','금','토','일'].map((d,i)=>`
+                  <div class="flex flex-col items-center gap-1">
+                    <div class="w-6 h-6 rounded-md ${i<5?'bg-emerald-500 text-white':'bg-slate-100 text-slate-400'} flex items-center justify-center text-[9px] font-bold">
+                      ${i<5?'✓':''}
+                    </div>
+                    <span class="text-[8px] text-slate-400">${d}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primary Goal Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-3 shadow-sm space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="font-extrabold text-xs text-slate-900">대표 집중 목표</span>
+          <span class="px-2 py-0.5 bg-red-100 text-red-600 font-bold rounded text-[10px]">D-12</span>
+        </div>
+        <div class="font-bold text-sm text-slate-800">매일 5km 러닝 완주하기</div>
+        <div class="w-full bg-slate-100 rounded-full h-2">
+          <div class="bg-emerald-500 h-2 rounded-full" style="width:80%"></div>
+        </div>
+      </div>
+
+      <!-- [V2] Safe-Area Floating Action Button (하단 네비게이션과 충돌 없는 위치) -->
+      <div class="absolute bottom-16 right-2 z-30">
+        <button onclick="alert('즉시 기록 작성 바텀시트 오픈')" class="w-11 h-11 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg flex items-center justify-center text-base font-bold border-2 border-white transition-transform active:scale-95">
+          ✍️
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* ==================== INTERACTION LOGIC ==================== */
+function toggleAcc(id) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('expanded');
+  const parent = el.previousElementSibling;
+  if(parent) {
+    const chev = parent.querySelector('.chevron');
+    if(chev) chev.classList.toggle('rotate-180');
+  }
+}
+
+function setRecordSubTab(tab) {
+  activeSegment = tab;
+  renderAfterScreen();
+}
+
+function setCarousel(idx) {
+  currentCarouselIdx = idx;
+  const track = document.getElementById('carouselTrack');
+  if(track) track.style.transform = `translateX(-${currentCarouselIdx * 25}%)`;
+  for(let i=0; i<4; i++) {
+    const pill = document.getElementById(`pill-${i}`);
+    if(pill) pill.className = `pill-tab flex-1 py-1 rounded-lg text-center transition-all ${i===idx?'active':''}`;
+  }
+}
+
+function renderBeforeScreen() {
+  const container = document.getElementById('before-content');
+  if(currentTab === 'records') container.innerHTML = renderRecordsBefore();
+  else if(currentTab === 'settings') container.innerHTML = renderSettingsBefore();
+  else if(currentTab === 'goals') container.innerHTML = renderGoalsBefore();
+  else if(currentTab === 'home') container.innerHTML = renderHomeBefore();
+}
+
+function renderAfterScreen() {
+  const container = document.getElementById('after-content');
+  if(currentTab === 'records') container.innerHTML = renderRecordsAfter();
+  else if(currentTab === 'settings') container.innerHTML = renderSettingsAfter();
+  else if(currentTab === 'goals') container.innerHTML = renderGoalsAfter();
+  else if(currentTab === 'home') container.innerHTML = renderHomeAfter();
+}
+
+// Initial Boot
+switchScreen('records');
+</script>
+
+</body>
+</html>

@@ -1939,11 +1939,11 @@ check('compliance: Google OAuth 2.0 실제 연동 로직(클라이언트 ID, 버
   assert.ok(html.includes('viewBox="0 0 24 24"'), '공식 구글 컬러 로고 SVG');
 
   // 4. 세션 브릿지 및 One-Tap 함수
-  assert.ok(html.includes('function startGoogleLogin('), 'Google 로그인 시작 핸들러');
-  assert.ok(html.includes('function handleGoogleUserSuccess('), 'Google 유저 인증 성공 및 Supabase 세션 브릿지');
-  assert.ok(html.includes('function initGoogleOneTap('), 'Google One-Tap 초기화 핸들러');
-  assert.ok(html.includes('function getGoogleTokenClient('), 'Google OAuth2 Token Client 생성기');
-  assert.ok(html.includes('https://www.googleapis.com/oauth2/v3/userinfo'), 'Google 사용자 정보 API 엔드포인트 연동');
+  assert.ok((html + INLINE_CELLS_SRC).includes('function startGoogleLogin('), 'Google 로그인 시작 핸들러');
+  assert.ok((html + INLINE_CELLS_SRC).includes('function handleGoogleUserSuccess('), 'Google 유저 인증 성공 및 Supabase 세션 브릿지');
+  assert.ok((html + INLINE_CELLS_SRC).includes('function initGoogleOneTap('), 'Google One-Tap 초기화 핸들러');
+  assert.ok((html + INLINE_CELLS_SRC).includes('function getGoogleTokenClient('), 'Google OAuth2 Token Client 생성기');
+  assert.ok((html + INLINE_CELLS_SRC).includes('https://www.googleapis.com/oauth2/v3/userinfo'), 'Google 사용자 정보 API 엔드포인트 연동');
   assert.ok(html.includes('google.accounts.id.disableAutoSelect'), '로그아웃 시 구글 자동선택 비활성화');
 });
 
@@ -2313,8 +2313,8 @@ check('compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth �
   assert.ok(styleSrc.includes('--ink-faint:#5F6B7A'), '기본 라이트 모드 ink-faint 4.5:1 이상(#5F6B7A, 회색 표면 위 4.9:1) 적용');
 
   // 3. OAuth 폴백 모달
-  assert.ok(html.includes('로그인 심사 준비 중'), 'OAuth 미설정 시 우아한 안내 모달');
-  assert.ok(html.includes('fallbackQuickAuthBtn'), '1초 빠른 시작 버튼 연동');
+  assert.ok((html + INLINE_CELLS_SRC).includes('로그인 심사 준비 중'), 'OAuth 미설정 시 우아한 안내 모달');
+  assert.ok((html + INLINE_CELLS_SRC).includes('fallbackQuickAuthBtn'), '1초 빠른 시작 버튼 연동');
 });
 
 /* ============ 3대 혁신 개혁 과제 단위 & 컴플라이언스 테스트 ============ */
@@ -2969,9 +2969,9 @@ check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스
 check('compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세션 보존 및 자가 치유(Self-Healing) 복구 파이프라인이 구현되어 있다', () => {
   // 1. handleGoogleUserSuccess 로그인 상태 보존 및 계정 충돌 안내 모달
   assert.ok(html.includes('state.profile && state.profile.id'), '로그인 상태에서 구글 시도시 세션 보존');
-  assert.ok(html.includes('isAccountConflict'), '계정 충돌 플래그 검증');
-  assert.ok(html.includes('기존 카카오 가입 계정 안내'), '카카오 계정 충돌 안내 모달');
-  assert.ok(html.includes('conflictKakaoLoginBtn'), '카카오 즉시 로그인 전환 버튼');
+  assert.ok((html + INLINE_CELLS_SRC).includes('isAccountConflict'), '계정 충돌 플래그 검증');
+  assert.ok((html + INLINE_CELLS_SRC).includes('기존 카카오 가입 계정 안내'), '카카오 계정 충돌 안내 모달');
+  assert.ok((html + INLINE_CELLS_SRC).includes('conflictKakaoLoginBtn'), '카카오 즉시 로그인 전환 버튼');
 
   // 2. checkRemoteSessionRevoked 오탐 방지 가드
   assert.ok(html.includes('Date.now() - myLogin < 60000'), '로그인 직후 60초 오탐 방지 가드');
@@ -2986,7 +2986,7 @@ check('compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세�
   assert.ok(html.includes('id="landRescueBtn"') && html.includes('id="authRescueBtn"'), '랜딩 및 인증 화면 세션 복구 링크');
   assert.ok(html.includes('function openLoginRescueModal'), '로그인 자가 복구 모달');
   assert.ok(html.includes('function loginWithDirectIdentifier'), '직통 식별자 복구 로그인');
-  assert.ok(html.includes('continueGoogleDirectBtn'), '구글 계정 직접 시작 버튼');
+  assert.ok((html + INLINE_CELLS_SRC).includes('continueGoogleDirectBtn'), '구글 계정 직접 시작 버튼');
   assert.ok(html.includes('unable to exchange external code'), 'OAuth 인가코드 교환 실패 에러 방어');
 });
 
@@ -5015,7 +5015,7 @@ check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출
   assert.ok(html.includes('Safari(사파리)로 열기'), 'iOS Safari 안내 모달 지원');
 
   // 2. PKCE code_verifier 2중 백업 및 복원
-  assert.ok(html.includes('-code-verifier') && html.includes('sessionStorage.setItem(sk'), 'PKCE code_verifier sessionStorage 2중 백업');
+  assert.ok((html + INLINE_CELLS_SRC).includes('-code-verifier') && (html + INLINE_CELLS_SRC).includes('sessionStorage.setItem(sk'), 'PKCE code_verifier sessionStorage 2중 백업');
   assert.ok(html.includes('localStorage.setItem(sKey, sessionStorage.getItem(sKey))'), 'PKCE code_verifier 복원 로직 배선');
 
   // 3. boot 콜백 4.0초 안전 대기
@@ -7721,7 +7721,7 @@ check('[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기�
   // 2. 카카오 1클릭 보관 및 나중에 할게요 버튼 배선 확인
   assert.ok(indexHtml.includes('id="btnGuestBackupKakao"'), 'btnGuestBackupKakao 버튼 ID 선언 확인');
   assert.ok(indexHtml.includes('id="btnGuestBackupLater"'), 'btnGuestBackupLater 버튼 ID 선언 확인');
-  assert.ok(indexHtml.includes("startOAuthLogin('kakao')"), '카카오 OAuth 연동 호출 확인');
+  assert.ok((indexHtml + INLINE_CELLS_SRC).includes("startOAuthLogin('kakao')"), '카카오 OAuth 연동 호출 확인');
   assert.ok(indexHtml.includes("localStorage.setItem('ourgoal_guest_profile'"), '게스트 프로필 스냅샷 영속화 확인');
 
   // 3. 체크인 완료 시점 트리거 배선 확인
