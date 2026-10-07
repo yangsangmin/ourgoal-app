@@ -1,0 +1,54 @@
+{
+  "task": "TASK-ES-589",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-589.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "동작 보존 심사 경로(court-preserve)가 결함 없이 재구현되었다."
+    },
+    {
+      "id": "R2",
+      "text": "헌법 커널 및 법령 전문이 동작 보존 분열 병합을 허용하도록 개정되었다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C-PRESERVE-LOGIC",
+      "req": "R1",
+      "kind": "static",
+      "change": "new",
+      "statement": "명령 주입 구멍을 닫고, DOM 전체 글자 비교 대신 스크립트를 제외한 상태 동등성을 확인하며, 생성기를 재실행해 바이트 일치를 확인한다.",
+      "touches": [
+        "court/lib/preserve.js",
+        "court/lib/preserve-source.js",
+        "court/selftest/unit-preserve.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "court/lib/preserve.js",
+        "text": "module.exports = { judgePreserve, verifyCellSplitProof"
+      },
+      "domain": "config"
+    },
+    {
+      "id": "C-CONSTITUTION",
+      "req": "R2",
+      "kind": "static",
+      "change": "fix",
+      "statement": "헌법 3사본과 법령 전문의 병합 기준이 일관되게 개정되었다.",
+      "touches": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "docs/rules/01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
+        "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md",
+        "docs/rules/CONSTITUTION_VERSIONS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "AGENTS.md",
+        "text": "v2026.10.07-PRESERVATION"
+      },
+      "domain": "config"
+    }
+  ]
+}

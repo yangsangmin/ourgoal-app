@@ -2,14 +2,14 @@
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.07-PRESERVATION (동작 보존 확인 판정 신설, CELL_SPLIT 분열 한정 위임 병합 허용 개정). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.  
+> **버전**: v2026.10.07-PRESERVATION (v2026.10.05-CELL + 작업참고 스노우볼: 모든 에이전트가 매 작업 전 최신 작업참고를 읽고 유형 분류 → 표준·이탈·탐색으로 깊게 추론하며, PR 병합마다 경험칙을 갱신하는 진화 체계 편입 개정). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.  
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
 > **사본**: `AGENTS.md` · `CLAUDE.md` · `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 는 한 글자도 다르지 않은 같은 내용으로 함께 고친다(`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
 > **법령 전문**: 조·항·호 단위 상세는 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`, 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
 
 ---
 
-<system_kernel id="ourgoal-supreme-constitution-v2026.10.07-preservation">
+<system_kernel id="ourgoal-supreme-constitution-v2026.10.06-snowball">
 
   <metadata>
     <sovereign>상민 (Supreme Decision Maker)</sovereign>

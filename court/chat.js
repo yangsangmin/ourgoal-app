@@ -41,6 +41,7 @@ const MAX_SHAS = 60, MAX_FAILED = 300;
 const ESCALATE_AT = 3; // 한 PR 에서 돌려보냄이 이만큼 쌓이면 작업자는 멈추고 상민님께 보고한다(헌법 제12조). 게시 쪽(court-publish.yml)도 이 값을 쓴다.
 const BUCKET_FAILED = '안 됨';
 const BUCKET_CONFIRMED = '화면에서 눌러 확인';
+const BUCKET_PRESERVED = '동작 보존 확인';
 const BUCKET_TEXT_ENOUGH = '글자만 확인(이 종류는 그걸로 충분)';
 const FAILED_OUTCOMES = ['아직 안 됨', '되던 기능이 고장 남'];
 
@@ -137,7 +138,7 @@ function bucketsOf(v) {
 
 // 앞서 "안 됨"이던 지시가 풀리는 길은 하나다: 법정이 다시 확인해 주는 것.
 //   화면 동작 주장이 안 됐던 지시 → "화면에서 눌러 확인"이 되어야 풀린다. 글자 확인 주장만 안 됐던 지시 → 글자 확인이 충분한 종류면 그것으로도 풀린다.
-function cleared(how, bucket) { return bucket === BUCKET_CONFIRMED || (how === 's' && bucket === BUCKET_TEXT_ENOUGH); }
+function cleared(how, bucket) { return bucket === BUCKET_CONFIRMED || bucket === BUCKET_PRESERVED || (how === 's' && bucket === BUCKET_TEXT_ENOUGH); }
 
 // 앞선 심사에서 "안 됨"이던 지시 중, 새 판정에서 법정의 확인 없이 다른 칸으로 바뀌었거나 지시 목록에서 사라진 것.
 //   여전히 "안 됨"인 것은 넣지 않는다(바뀐 것이 아니며, 그 판정은 어차피 돌려보냄이다).
@@ -346,7 +347,7 @@ module.exports = {
   emptyHistory, parseHistory, historyLine, withHistory, findPinned, reqKey, launderedReqs, nextHistory, historyCheck,
   ESCALATE_AT, EDITOR_QUERY, editorTrust, editedByText, validEditedBy, distrust, lookupEditor,
   // 아래 넷은 주장 판정기(claims.js)가 내는 글자와 같아야 한다 — 자가시험(selftest/unit.js)이 맞대어 본다.
-  BUCKET_FAILED, BUCKET_CONFIRMED, BUCKET_TEXT_ENOUGH, FAILED_OUTCOMES,
+  BUCKET_FAILED, BUCKET_CONFIRMED, BUCKET_PRESERVED, BUCKET_TEXT_ENOUGH, FAILED_OUTCOMES, cleared,
 };
 
 if (require.main === module) {

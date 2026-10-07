@@ -61,8 +61,8 @@ const SCRIPT_EXT = /\.(js|mjs|cjs|sh|ps1|py|bat|cmd)$/i;
 const CLAIMS_PATH = /^reports\/[A-Za-z0-9_-]+\/claims\.json$/;
 const CLAIMS_PATHSPEC = ':(glob)reports/*/claims.json';
 const OUT = claimsLib.OUTCOME;
-const REHEARD_OK = [OUT.CONFIRMED, OUT.TEXT_ONLY, OUT.NOTHING_TO_FIX]; // 옛 판을 다시 돌렸을 때 "문제없음"으로 보는 결과
-const OK_BUCKETS = ['화면에서 눌러 확인', '글자만 확인(이 종류는 그걸로 충분)'];
+const REHEARD_OK = [OUT.CONFIRMED, OUT.TEXT_ONLY, OUT.NOTHING_TO_FIX, OUT.PRESERVED]; // 옛 판을 다시 돌렸을 때 "문제없음"으로 보는 결과
+const OK_BUCKETS = ['화면에서 눌러 확인', '글자만 확인(이 종류는 그걸로 충분)', '동작 보존 확인'];
 // 둘째 줄 "확인 못 한 채 나가는 것" 의 순서: 필요한 확인 수준이 높은 것부터, 같은 수준에서는 아래 순서.
 const LACKING_ORDER = ['고칠 게 없었음', '코드만 확인(화면에서는 안 봄)', '확인 못 함', '확인 부족'];
 const SHORT_BUCKET = { '코드만 확인(화면에서는 안 봄)': '코드만 확인' };
@@ -202,6 +202,19 @@ const LINE_TEXT_FIND = /\.includes\(|\.test\(|\.match\(|\.indexOf\(|\.search\(/;
 
 function titleKey(t) { return String(t || '').replace(TITLE_NUMBERING, ' ').replace(/\s+/g, ' ').trim(); }
 function sameTitle(a, b) { return a === b || (titleKey(a) !== '' && titleKey(a) === titleKey(b)); }
+
+function headline(v) {
+  const hasPreserved = (v.claims || []).some(c => c.outcome === OUT.PRESERVED);
+  const hasConfirmed = (v.claims || []).some(c => c.outcome === OUT.CONFIRMED);
+  const total = v.rollup ? v.rollup.total : 0;
+  if (hasPreserved && !hasConfirmed) {
+    return '작업자가 적어 낸 지시 항목 ' + total + '건에 걸린 동작 보존 분열 시험이 전부 기준 커밋의 동작을 그대로 보존하며, 고장 난 것이 없습니다 — 시험이 지시와 같은 것을 재는지는 법정이 알 수 없습니다';
+  } else if (hasPreserved && hasConfirmed) {
+    return '작업자가 적어 낸 지시 항목 ' + total + '건에 걸린 시험이 개선 및 동작 보존을 만족하며, 고장 난 것이 없습니다 — 시험이 지시와 같은 것을 재는지는 법정이 알 수 없습니다';
+  } else {
+    return '작업자가 적어 낸 지시 항목 ' + total + '건에 걸린 시험이 전부 고치기 전엔 안 되고 고친 뒤엔 되며, 고장 난 것이 없습니다 — 시험이 지시와 같은 것을 재는지는 법정이 알 수 없습니다';
+  }
+}
 
 // 소스에서 검사 제목 줄을 뽑는다. skeleton = 제목 글자만 뺀 그 줄, body = 그 검사의 나머지 줄(들여쓰기 없는 첫 줄까지 = 닫는 줄).
 // 한 줄로 쓴 검사는 제목 줄이 곧 본문이므로 body 가 비고 skeleton 이 본문을 담는다.
@@ -542,7 +555,7 @@ async function judge(opts) {
       for (const n of v.boot.insufficient) if (!already.has(n)) warn(/^표준 점검/.test(n) ? '표준 점검 사용 불가' : '앱 띄우기 비교가 흔들림', n);
 
       if (docOk) {
-        const ctx = { claimsDir: path.join(headSnap.dir, path.dirname(v.claimsFile)), base, head, floors, config: cfg };
+        const ctx = { claimsDir: path.join(headSnap.dir, path.dirname(v.claimsFile)), base, head, floors, config: cfg, repoDir: repo, changedFiles: changed.map(f => f.path) };
         // 주장 심사 시간 예산. 화면에서 돌려 보는 주장이 많으면 GitHub 의 시간 제한에 걸려 판정서 없이 끝난다 — 성실하게 시험을 낸 작업일수록 불리해진다.
         // 예산을 넘기면 남은 화면 주장은 돌리지 않고 "확인 못 함(시간 부족)"으로 내린다(글자 확인·확인 못 함·철회는 시간이 들지 않으므로 끝까지 본다). 판정서는 반드시 남긴다.
         phase('주장 심사(' + doc.claims.length + '건)');
@@ -668,7 +681,7 @@ async function judge(opts) {
     // 법정이 보증하는 것은 "작업자가 낸 시험의 행동이 고치기 전엔 안 되고 고친 뒤엔 된다"까지다. 그 시험이 지시 문장과 같은 것을 재는지는 법정이 모른다.
     // 그래서 첫 줄은 보증 범위만 말하고, “1”을 누르시기 전에 보시는 둘째 줄에 법정이 실제로 해 본 것을 싣는다(지어낸 주장에 무관한 시험을 붙이는 길 — 독립 검수 속이기 1).
     v.verdict = '통과';
-    v.headline = '작업자가 적어 낸 지시 항목 ' + v.rollup.total + '건에 걸린 시험이 전부 고치기 전엔 안 되고 고친 뒤엔 되며, 고장 난 것이 없습니다 — 시험이 지시와 같은 것을 재는지는 법정이 알 수 없습니다';
+    v.headline = headline(v);
     const did = didPairs(v.claims);
     v.todo = '“1”이라고 하시면 배포합니다.' + (did.length ? ' 그 전에 법정이 실제로 해 본 것이 지시하신 것과 같은지 봐 주십시오: ' + did.join(' / ') : '');
   }
@@ -691,7 +704,7 @@ async function judge(opts) {
   return v;
 }
 
-module.exports = { judge, parseArgs, EXIT, detectWhere, claimHistory, strongerOldVersion, sortLacking, lackingText, verdictIdOf, titleKey, sameTitle, titleLines, retitledChecks, removedKind, basePassedOnHead, cleanupRuns, ENV_HARD, ENV_SOFT, EXIT_CALL, FAKE_TEST_OUTPUT, INTERIM_HEADLINE };
+module.exports = { judge, parseArgs, EXIT, detectWhere, claimHistory, strongerOldVersion, sortLacking, lackingText, verdictIdOf, titleKey, sameTitle, titleLines, retitledChecks, removedKind, basePassedOnHead, cleanupRuns, ENV_HARD, ENV_SOFT, EXIT_CALL, FAKE_TEST_OUTPUT, INTERIM_HEADLINE, OK_BUCKETS, REHEARD_OK, headline };
 
 if (require.main === module) {
   let args; try { args = parseArgs(process.argv.slice(2)); } catch (e) { console.error(e.message); process.exit(2); }

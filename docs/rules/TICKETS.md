@@ -644,3 +644,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-588 | INFRA | ũ���� ���� Ŭ���̾�Ʈ �ڵ� ���� | docs/specs/REQ-TASK-ES-588.md | 4�ܰ�(�ɻ� û��)
 
 - #TASK-ES-592 | INFRA | Vercel 배포 용량 절감 — .vercelignore 커밋(기록물 제외, docs/legal·런타임 유지) | docs/specs/REQ-TASK-ES-592.md · reports/TASK-ES-592/claims.json | 4단계(심사 청구)
+
+- #TASK-ES-589 | INFRA | 동작 보존 확인(court-preserve) 재구현 | docs/specs/REQ-TASK-ES-589.md | 4단계(심사 청구)

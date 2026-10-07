@@ -621,6 +621,19 @@ async function runScenario(opts) {
         await targetPage.send('Network.emulateNetworkConditions', { offline: st.offline, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
         rec.ok = true; rec.detail = (st.actor === 'peer' ? '[peer] ' : '') + (st.offline ? '오프라인' : '온라인');
       } else if (st.do === 'wait') { await sleep(st.ms); rec.ok = true; rec.detail = st.ms + 'ms'; }
+
+      if (opts.preserveOnly) {
+        try {
+          const dom = await ev('document.documentElement.outerHTML');
+          const ls = await ev('JSON.stringify(localStorage)');
+          const ss = await ev('JSON.stringify(sessionStorage)');
+          const toast = await ev('document.querySelector(".toast") ? document.querySelector(".toast").innerText : ""');
+          const err = await ev('document.querySelector(".error") ? document.querySelector(".error").innerText : ""');
+          const modal = await ev('document.querySelector(".modal") ? document.querySelector(".modal").innerText : ""');
+          if (!result.captures) result.captures = [];
+          result.captures.push({ dom, localStorage: ls, sessionStorage: ss, toast, err, modal });
+        } catch(e) {}
+      }
     }
     result.passed = result.failedStep === null && result.steps.length === scenario.steps.length && result.steps.every(s => s.ok);
   } catch (e) {
