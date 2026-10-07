@@ -1,0 +1,1006 @@
+{
+  "c1": {
+    "base": {
+      "id": "c1-guest-settings",
+      "title": "게스트가 설정 화면을 열면 크레딧 칸이 보이지 않는다",
+      "fingerprint": "fcef6a7e83c3f425",
+      "siteRev": "base",
+      "passed": false,
+      "invalid": false,
+      "errors": [],
+      "weaknesses": [],
+      "hollow": false,
+      "failedStep": 10,
+      "failKind": "expect",
+      "failReason": null,
+      "steps": [
+        {
+          "i": 1,
+          "kind": "do",
+          "name": "setViewport",
+          "ok": true,
+          "detail": "430x932"
+        },
+        {
+          "i": 2,
+          "kind": "do",
+          "name": "goto",
+          "ok": true,
+          "detail": "/index.html"
+        },
+        {
+          "i": 3,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+        },
+        {
+          "i": 4,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 380x46px"
+        },
+        {
+          "i": 5,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 1개"
+        },
+        {
+          "i": 6,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnAvatarGreetClose \"✕\" 46x46px"
+        },
+        {
+          "i": 7,
+          "kind": "expect",
+          "name": "notVisible",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 0개",
+          "vacuous": false
+        },
+        {
+          "i": 8,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": ".navbtn[data-tab=\"settings\"] → 보이는 요소 1개"
+        },
+        {
+          "i": 9,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"설정\" 66x52px"
+        },
+        {
+          "i": 10,
+          "kind": "expect",
+          "name": "notExists",
+          "ok": false,
+          "detail": "#settingsCreditsBlock → 요소 1개",
+          "vacuous": false
+        }
+      ],
+      "bootExceptions": [],
+      "exceptions": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gsi/client"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/static/array.js"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/events"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/users"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        }
+      ],
+      "dialogs": [],
+      "captures": [],
+      "fixtures": [],
+      "blockedExternal": [
+        {
+          "url": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
+          "type": "Stylesheet"
+        },
+        {
+          "url": "https://accounts.google.com/gsi/client",
+          "type": "Script"
+        },
+        {
+          "url": "https://us-assets.i.posthog.com/static/array.js",
+          "type": "Script"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/events",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/feed_posts",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/users",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/team_pings",
+          "type": "Preflight"
+        }
+      ],
+      "nonVacuousExpects": 1,
+      "vacuousExpects": 0,
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "chromeVersion": "Chrome/154.0.8037.98",
+      "startedAt": "2026-10-07T05:44:17.050Z",
+      "finishedAt": "2026-10-07T05:44:26.602Z",
+      "toolError": null,
+      "multiActor": false,
+      "hardwareDevice": false,
+      "stubs": [
+        "vendor/supabase-js-2.115.0.umd.js"
+      ],
+      "env": {
+        "userAgentRaw": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "webdriverRaw": "true",
+        "hadHeadless": true,
+        "userAgentServed": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "brandsRaw": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "brandsServed": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "hostname": "court-123456.test",
+        "webdriverSeen": "false",
+        "userAgentSeen": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "languages": "[\"ko-KR\",\"ko\"]",
+        "visibilityState": "visible",
+        "brandsSeen": "[\"Chromium\",\"Google Chrome\",\"Not A(Brand\"]"
+      },
+      "provesBehavior": false
+    },
+    "work": {
+      "id": "c1-guest-settings",
+      "title": "게스트가 설정 화면을 열면 크레딧 칸이 보이지 않는다",
+      "fingerprint": "fcef6a7e83c3f425",
+      "siteRev": "work",
+      "passed": true,
+      "invalid": false,
+      "errors": [],
+      "weaknesses": [],
+      "hollow": false,
+      "failedStep": null,
+      "failKind": null,
+      "failReason": null,
+      "steps": [
+        {
+          "i": 1,
+          "kind": "do",
+          "name": "setViewport",
+          "ok": true,
+          "detail": "430x932"
+        },
+        {
+          "i": 2,
+          "kind": "do",
+          "name": "goto",
+          "ok": true,
+          "detail": "/index.html"
+        },
+        {
+          "i": 3,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+        },
+        {
+          "i": 4,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 380x46px"
+        },
+        {
+          "i": 5,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 1개"
+        },
+        {
+          "i": 6,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnAvatarGreetClose \"✕\" 46x46px"
+        },
+        {
+          "i": 7,
+          "kind": "expect",
+          "name": "notVisible",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 0개",
+          "vacuous": false
+        },
+        {
+          "i": 8,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": ".navbtn[data-tab=\"settings\"] → 보이는 요소 1개"
+        },
+        {
+          "i": 9,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"설정\" 66x52px"
+        },
+        {
+          "i": 10,
+          "kind": "expect",
+          "name": "notExists",
+          "ok": true,
+          "detail": "#settingsCreditsBlock → 요소 0개",
+          "vacuous": true
+        }
+      ],
+      "bootExceptions": [],
+      "exceptions": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gsi/client"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/static/array.js"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/events"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/users"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        }
+      ],
+      "dialogs": [],
+      "captures": [],
+      "fixtures": [],
+      "blockedExternal": [
+        {
+          "url": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
+          "type": "Stylesheet"
+        },
+        {
+          "url": "https://accounts.google.com/gsi/client",
+          "type": "Script"
+        },
+        {
+          "url": "https://us-assets.i.posthog.com/static/array.js",
+          "type": "Script"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/events",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/feed_posts",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/users",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/team_pings",
+          "type": "Preflight"
+        }
+      ],
+      "nonVacuousExpects": 1,
+      "vacuousExpects": 1,
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "chromeVersion": "Chrome/154.0.8037.98",
+      "startedAt": "2026-10-07T05:44:26.603Z",
+      "finishedAt": "2026-10-07T05:44:30.837Z",
+      "toolError": null,
+      "multiActor": false,
+      "hardwareDevice": false,
+      "stubs": [
+        "vendor/supabase-js-2.115.0.umd.js"
+      ],
+      "env": {
+        "userAgentRaw": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "webdriverRaw": "true",
+        "hadHeadless": true,
+        "userAgentServed": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "brandsRaw": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "brandsServed": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "hostname": "court-123456.test",
+        "webdriverSeen": "false",
+        "userAgentSeen": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "languages": "[\"ko-KR\",\"ko\"]",
+        "visibilityState": "visible",
+        "brandsSeen": "[\"Chromium\",\"Google Chrome\",\"Not A(Brand\"]"
+      },
+      "provesBehavior": true
+    }
+  },
+  "c2": {
+    "base": {
+      "id": "c2-guest-features",
+      "title": "템플릿 마켓 모달에서 카드가 그려지고 복제가 기존대로 동작한다",
+      "fingerprint": "8d80765033ea0937",
+      "siteRev": "base",
+      "passed": true,
+      "invalid": false,
+      "errors": [],
+      "weaknesses": [],
+      "hollow": false,
+      "failedStep": null,
+      "failKind": null,
+      "failReason": null,
+      "steps": [
+        {
+          "i": 1,
+          "kind": "do",
+          "name": "setViewport",
+          "ok": true,
+          "detail": "430x932"
+        },
+        {
+          "i": 2,
+          "kind": "do",
+          "name": "goto",
+          "ok": true,
+          "detail": "/index.html"
+        },
+        {
+          "i": 3,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+        },
+        {
+          "i": 4,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 380x46px"
+        },
+        {
+          "i": 5,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 1개"
+        },
+        {
+          "i": 6,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnAvatarGreetClose \"✕\" 46x46px"
+        },
+        {
+          "i": 7,
+          "kind": "expect",
+          "name": "notVisible",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 0개",
+          "vacuous": false
+        },
+        {
+          "i": 8,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": ".navbtn[data-tab=\"records\"] → 보이는 요소 1개"
+        },
+        {
+          "i": 9,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"기록/통계\" 66x52px"
+        },
+        {
+          "i": 10,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#recQuickDockBar → 보이는 요소 1개"
+        },
+        {
+          "i": 11,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"📋 템플릿\" 82x44px"
+        },
+        {
+          "i": 12,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#recOpenProTemplateBtn → 보이는 요소 1개"
+        },
+        {
+          "i": 13,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#recOpenProTemplateBtn \"닫기\" 80x44px"
+        },
+        {
+          "i": 14,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#proTplMarketBtn → 보이는 요소 1개"
+        },
+        {
+          "i": 15,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#proTplMarketBtn \"마켓\" 42x44px"
+        },
+        {
+          "i": 16,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"] → 보이는 요소 1개"
+        },
+        {
+          "i": 17,
+          "kind": "expect",
+          "name": "visible",
+          "ok": true,
+          "detail": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"] → 보이는 요소 1개",
+          "vacuous": false
+        },
+        {
+          "i": 18,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"복제하기\" 189x44px"
+        },
+        {
+          "i": 19,
+          "kind": "expect",
+          "name": "textContains",
+          "ok": true,
+          "detail": "#toast → 보이는 글자: [\"[크로스핏 Fran WOD & 역도] 내 템플릿으로 복제 완료!\"]",
+          "vacuous": false
+        }
+      ],
+      "bootExceptions": [],
+      "exceptions": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gsi/client"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/static/array.js"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/events"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/users"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/rpc/template_copy_counts"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/rpc/record_template_copy"
+        }
+      ],
+      "dialogs": [],
+      "captures": [],
+      "fixtures": [],
+      "blockedExternal": [
+        {
+          "url": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
+          "type": "Stylesheet"
+        },
+        {
+          "url": "https://accounts.google.com/gsi/client",
+          "type": "Script"
+        },
+        {
+          "url": "https://us-assets.i.posthog.com/static/array.js",
+          "type": "Script"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/events",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/feed_posts",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/users",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/team_pings",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/rpc/template_copy_counts",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/rpc/record_template_copy",
+          "type": "Preflight"
+        }
+      ],
+      "nonVacuousExpects": 3,
+      "vacuousExpects": 0,
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "chromeVersion": "Chrome/154.0.8037.98",
+      "startedAt": "2026-10-07T05:44:30.837Z",
+      "finishedAt": "2026-10-07T05:44:37.189Z",
+      "toolError": null,
+      "multiActor": false,
+      "hardwareDevice": false,
+      "stubs": [
+        "vendor/supabase-js-2.115.0.umd.js"
+      ],
+      "env": {
+        "userAgentRaw": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "webdriverRaw": "true",
+        "hadHeadless": true,
+        "userAgentServed": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "brandsRaw": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "brandsServed": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "hostname": "court-123456.test",
+        "webdriverSeen": "false",
+        "userAgentSeen": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "languages": "[\"ko-KR\",\"ko\"]",
+        "visibilityState": "visible",
+        "brandsSeen": "[\"Chromium\",\"Google Chrome\",\"Not A(Brand\"]"
+      },
+      "provesBehavior": true
+    },
+    "work": {
+      "id": "c2-guest-features",
+      "title": "템플릿 마켓 모달에서 카드가 그려지고 복제가 기존대로 동작한다",
+      "fingerprint": "8d80765033ea0937",
+      "siteRev": "work",
+      "passed": true,
+      "invalid": false,
+      "errors": [],
+      "weaknesses": [],
+      "hollow": false,
+      "failedStep": null,
+      "failKind": null,
+      "failReason": null,
+      "steps": [
+        {
+          "i": 1,
+          "kind": "do",
+          "name": "setViewport",
+          "ok": true,
+          "detail": "430x932"
+        },
+        {
+          "i": 2,
+          "kind": "do",
+          "name": "goto",
+          "ok": true,
+          "detail": "/index.html"
+        },
+        {
+          "i": 3,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+        },
+        {
+          "i": 4,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 380x46px"
+        },
+        {
+          "i": 5,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 1개"
+        },
+        {
+          "i": 6,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#btnAvatarGreetClose \"✕\" 46x46px"
+        },
+        {
+          "i": 7,
+          "kind": "expect",
+          "name": "notVisible",
+          "ok": true,
+          "detail": "#btnAvatarGreetClose → 보이는 요소 0개",
+          "vacuous": false
+        },
+        {
+          "i": 8,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": ".navbtn[data-tab=\"records\"] → 보이는 요소 1개"
+        },
+        {
+          "i": 9,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"기록/통계\" 66x52px"
+        },
+        {
+          "i": 10,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#recQuickDockBar → 보이는 요소 1개"
+        },
+        {
+          "i": 11,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"📋 템플릿\" 82x44px"
+        },
+        {
+          "i": 12,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#recOpenProTemplateBtn → 보이는 요소 1개"
+        },
+        {
+          "i": 13,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#recOpenProTemplateBtn \"닫기\" 80x44px"
+        },
+        {
+          "i": 14,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": "#proTplMarketBtn → 보이는 요소 1개"
+        },
+        {
+          "i": 15,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button#proTplMarketBtn \"마켓\" 42x44px"
+        },
+        {
+          "i": 16,
+          "kind": "do",
+          "name": "waitFor",
+          "ok": true,
+          "detail": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"] → 보이는 요소 1개"
+        },
+        {
+          "i": 17,
+          "kind": "expect",
+          "name": "visible",
+          "ok": true,
+          "detail": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"] → 보이는 요소 1개",
+          "vacuous": false
+        },
+        {
+          "i": 18,
+          "kind": "do",
+          "name": "click",
+          "ok": true,
+          "detail": "클릭 button \"복제하기\" 189x44px"
+        },
+        {
+          "i": 19,
+          "kind": "expect",
+          "name": "textContains",
+          "ok": true,
+          "detail": "#toast → 보이는 글자: [\"[크로스핏 Fran WOD & 역도] 내 템플릿으로 복제 완료!\"]",
+          "vacuous": false
+        }
+      ],
+      "bootExceptions": [],
+      "exceptions": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/gsi/client"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/static/array.js"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/events"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/users"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/rpc/template_copy_counts"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/rpc/record_template_copy"
+        },
+        {
+          "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=HIDDEN_JWT",
+          "url": "/npm/@supabase/supabase-js@2"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+        },
+        {
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+        }
+      ],
+      "dialogs": [],
+      "captures": [],
+      "fixtures": [],
+      "blockedExternal": [
+        {
+          "url": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
+          "type": "Stylesheet"
+        },
+        {
+          "url": "https://accounts.google.com/gsi/client",
+          "type": "Script"
+        },
+        {
+          "url": "https://us-assets.i.posthog.com/static/array.js",
+          "type": "Script"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/events",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/feed_posts",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/users",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/team_pings",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/rpc/template_copy_counts",
+          "type": "Preflight"
+        },
+        {
+          "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/rpc/record_template_copy",
+          "type": "Preflight"
+        }
+      ],
+      "nonVacuousExpects": 3,
+      "vacuousExpects": 0,
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "chromeVersion": "Chrome/154.0.8037.98",
+      "startedAt": "2026-10-07T05:44:37.189Z",
+      "finishedAt": "2026-10-07T05:44:44.244Z",
+      "toolError": null,
+      "multiActor": false,
+      "hardwareDevice": false,
+      "stubs": [
+        "vendor/supabase-js-2.115.0.umd.js"
+      ],
+      "env": {
+        "userAgentRaw": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "webdriverRaw": "true",
+        "hadHeadless": true,
+        "userAgentServed": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "brandsRaw": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "brandsServed": [
+          "Chromium",
+          "Google Chrome",
+          "Not A(Brand"
+        ],
+        "hostname": "court-123456.test",
+        "webdriverSeen": "false",
+        "userAgentSeen": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "languages": "[\"ko-KR\",\"ko\"]",
+        "visibilityState": "visible",
+        "brandsSeen": "[\"Chromium\",\"Google Chrome\",\"Not A(Brand\"]"
+      },
+      "provesBehavior": true
+    }
+  }
+}
