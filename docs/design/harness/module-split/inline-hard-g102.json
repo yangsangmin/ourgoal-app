@@ -1,0 +1,53 @@
+{
+  "task": "TASK-ES-591",
+  "slot": "H4",
+  "slots": [
+    "H1", "H2", "H3", "H4", "HO 기관"
+  ],
+  "cells": [
+    {
+      "key": "visionTableInput",
+      "file": "js/tabs/records/vision-table-input.js",
+      "kit": "OurgoalVisionTableInputKit",
+      "kitVar": "_visionTableInputKit",
+      "afterTag": "<script src=\"js/tabs/records/voice-table-input.js\"></script>",
+      "title": "Vision Table Input",
+      "desc": [
+        "AI 사진 분석(Vision)을 이용한 표 기록 자동 채우기 모달 및 할당량 관리"
+      ],
+      "take": [
+        {
+          "group": "CSV / 엑셀 양방향 연동 & 스마트워치 매핑 & 목표 3각 추적",
+          "all": false,
+          "names": [
+            "compressImageForVision",
+            "VISION_DAILY_LIMIT",
+            "getVisionDailyQuota",
+            "decrementVisionDailyQuota",
+            "openVisionTableModal"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "curatedMarket",
+      "file": "js/tabs/goals/curated-market-data.js",
+      "kit": "OurgoalCuratedMarketDataKit",
+      "kitVar": "_curatedMarketDataKit",
+      "afterTag": "<script src=\"js/tabs/records/voice-table-input.js\"></script>",
+      "title": "Curated Market Templates Data",
+      "desc": [
+        "맞춤 템플릿 커뮤니티 마켓플레이스 큐레이션 데이터"
+      ],
+      "take": [
+        {
+          "group": "CSV / 엑셀 양방향 연동 & 스마트워치 매핑 & 목표 3각 추적",
+          "all": false,
+          "names": [
+            "CURATED_MARKET_TEMPLATES"
+          ]
+        }
+      ]
+    }
+  ]
+}

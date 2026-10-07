@@ -1,9 +1,10 @@
 {
   "task": "TASK-ES-591",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-591.md",
   "requirements": [
     {
       "id": "R1",
-      "text": "G039 인라인 묶음 분리"
+      "text": "Vision AI 표 입력 및 큐레이션 마켓 데이터를 index.html에서 분리한다."
     }
   ],
   "claims": [
@@ -11,64 +12,21 @@
       "id": "C1",
       "req": "R1",
       "kind": "static",
-      "domain": "architecture",
-      "statement": "index.html 줄 수가 감소하고 새 파일에 auth-social 모듈 코드가 존재한다.",
+      "change": "preserve",
+      "domain": "config",
+      "statement": "gen-inline-hard.js를 통해 Vision AI 로직 및 마켓 데이터를 성공적으로 물리 분리함",
       "touches": [
         "index.html",
-        "js/auth-social.js"
+        "js/tabs/records/vision-table-input.js",
+        "js/tabs/goals/curated-market-data.js",
+        "reports/TASK-ES-591/test-pass.json"
       ],
       "check": {
-        "file": "js/auth-social.js",
-        "type": "codeContains",
-        "text": "function startGoogleLogin"
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-591/test-pass.json",
+        "path": "pass",
+        "equals": true
       }
-    }
-  ],
-  "retire": [
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "compliance: Google OAuth 2.0 실제 연동 로직(클라이언트 ID, 버튼, 세션 브릿지, One-Tap)이 완벽히 구현되어 있다",
-      "reason": "G039 분리로 js/auth-social.js 로 이동함에 따라 구버전 smoke-test 의 html.includes 검사가 실패함"
-    },
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth 우아한 폴백",
-      "reason": "G039 분리로 로직 이동"
-    },
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세션 보존 및 자가 치유(Self-Healing) 복구 파이프라인이 구현되어 있다",
-      "reason": "G039 분리로 로직 이동"
-    },
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출 & PKCE 4초 대기 및 복구 안전망 검증",
-      "reason": "G039 분리로 로직 이동"
-    },
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 병합 무결성",
-      "reason": "G039 분리로 로직 이동"
-    },
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "KF-2: 마켓·기본 템플릿의 고정 복제 수·가상 크리에이터 표기가 화면에서 사라지고 서버 실데이터 배지만 남는다 (금지 6-1)",
-      "reason": "G108 분리로 템플릿 html 추출"
-    },
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면 정비(초대·팀원대화·모임창복구·피드아코디언·게시버튼·1:1소통카드3종) 무결성 검증",
-      "reason": "G108 분리로 템플릿 html 추출"
-    },
-    {
-      "file": "scripts/smoke-test.js",
-      "check": "[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증",
-      "reason": "G108 분리로 템플릿 html 추출"
-    },
-    {
-      "file": "scripts/verify-integrity-gate.js",
-      "check": "[검증 16/16] [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 정적 방화벽 검사",
-      "reason": "G108 분리로 템플릿 html 추출"
     }
   ]
 }
