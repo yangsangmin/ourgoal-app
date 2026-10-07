@@ -1,0 +1,49 @@
+{
+  "task": "TASK-ES-595",
+  "requirementsSource": "reports/TASK-ES-595/AUDIT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "#859(G054) 에서 openModal 의 arguments[2] 를 thirdArg 로 손 수정한 것이 원본과 같은 동작인지, 원본 고정본과 현재 세포를 같은 입력으로 대조하는 검사를 smoke-test 에 추가해 재증명한다(기존 검사 변경 0, 추가만)."
+    },
+    {
+      "id": "R2",
+      "text": "#855·#856·#858 의 「기존 검사 폐기 신청」 실체(지워진 check 수·바뀐 단언)를 점검해 기록한다."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "js/core/modal-open.js 머리 주석(「글자 그대로 옮겼다」)이 사실과 다른 것은 제품 파일이라 이 PR 에서 고치지 않고 B2(세포 등록 줄 추가 PR)에서 바로잡는다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원본 openModal(0ff85932 index.html 3805~3856줄)을 글자 그대로 고정한 대조용 파일이 있다.",
+      "touches": ["tests/fixtures/open-modal-before-es591.js"],
+      "check": { "type": "codeContains", "file": "tests/fixtures/open-modal-before-es591.js", "text": "if(arguments[2] && typeof arguments[2] === 'function') finalOnMount = arguments[2];" }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "smoke-test 에 원본 고정본과 js/core/modal-open.js 를 같은 입력 10종으로 대조하는 검사가 추가돼 있다(npm test 로 실행된다).",
+      "touches": ["scripts/smoke-test.js"],
+      "check": { "type": "codeContains", "file": "scripts/smoke-test.js", "text": "openModal 동치 대조 — #859(G054) 손 수정" }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "폐기 신청 실체 점검 기록(지워진 check 0, 단언 범위 확대)이 있다.",
+      "touches": ["reports/TASK-ES-595/AUDIT.md"],
+      "check": { "type": "fileExists", "file": "reports/TASK-ES-595/AUDIT.md" }
+    }
+  ]
+}
