@@ -234,6 +234,44 @@ const TESTS = [
       fs.rmSync(claimsDir, { recursive: true, force: true });
     },
   },
+  {
+    id: 'U-preserve-source-gen-deps',
+    title: '분열 증명 재생성: 심사 대상 저장소에 node_modules 가 없어도 생성기가 법정 쪽 의존성으로 돈다(TASK-ES-598)',
+    run(t) {
+      const { execFileSync } = require('node:child_process');
+      const { recomputeSplit, genEnv } = require('../lib/preserve-source.js');
+      // 법정 쪽 의존성 폴더(가짜): 생성기가 require 하는 모듈 하나
+      const deps = tempDir('deps');
+      writeTree(deps, { 'court-selftest-dep/index.js': "module.exports = s => s.replace('a', 'b');\n" });
+      // 심사 대상 저장소: node_modules 없음. 기준 커밋의 생성기는 그 모듈이 있어야 돈다.
+      const repo = tempDir('repo');
+      const g = args => execFileSync('git', ['-C', repo, '-c', 'user.name=court-selftest', '-c', 'user.email=court-selftest@users.noreply.github.com', '-c', 'commit.gpgsign=false', ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+      const gen = "const fs=require('fs'),path=require('path');const f=require('court-selftest-dep');const root=process.argv[2];const p=path.join(root,'index.html');fs.writeFileSync(p,f(fs.readFileSync(p,'utf8')));\n";
+      g(['init', '-q']);
+      writeTree(repo, { 'index.html': '<p>a</p>\n', 'docs/design/harness/module-split/gen-inline-hard.js': gen });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'base']);
+      const baseSha = g(['rev-parse', 'HEAD']);
+      writeTree(repo, { 'index.html': '<p>b</p>\n' });
+      g(['add', '-A']); g(['commit', '-q', '-m', 'head']);
+      const headSha = g(['rev-parse', 'HEAD']);
+      const config = { task: 'TASK-SELFTEST', slot: 1, cells: [] };
+
+      const savedNodePath = process.env.NODE_PATH;
+      delete process.env.NODE_PATH;
+      try {
+        const env = genEnv(repo, deps);
+        t.eq(env.NODE_PATH, deps, '심사 대상에 node_modules 가 없으면 NODE_PATH 를 법정 쪽 의존성으로 준다');
+        const ok = recomputeSplit({ repoDir: repo, baseSha, headSha, config, changedFiles: ['index.html'], courtNodeModules: deps });
+        t.ok(ok.ok, '법정 쪽 의존성으로 기준 커밋 생성기가 돌고 바이트가 일치한다: ' + (ok.reason || 'ok'));
+        const missing = recomputeSplit({ repoDir: repo, baseSha, headSha, config, changedFiles: ['index.html'], courtNodeModules: path.join(deps, 'none') });
+        t.ok(!missing.ok && /Cannot find module/.test(missing.reason || ''), '의존성이 어디에도 없으면 생성기 실패로 정직하게 드러난다');
+      } finally {
+        if (savedNodePath === undefined) delete process.env.NODE_PATH; else process.env.NODE_PATH = savedNodePath;
+        fs.rmSync(repo, { recursive: true, force: true });
+        fs.rmSync(deps, { recursive: true, force: true });
+      }
+    },
+  },
 ];
 
 module.exports = { TESTS };
