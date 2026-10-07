@@ -2152,7 +2152,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/ui-helpers.js"></script><script src="js/tabs/records/template-record-detail.js"></script><script src="js/core/app-boot.js"></script><script src="js/core/all-view-render.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
-<script src="js/core/modal.js"></script>
+<script src="js/core/modal.js"></script><script src="js/core/modal-open.js"></script>
 <script src="js/core/confirm.js"></script>
 <!-- OurGoal Shipyard Architecture: Home Mega-Block & Sub-Blocks (홈 메가블록 및 소블록 외판) -->
 <script src="js/tabs/home/sub-heatmap.js"></script>
@@ -2688,6 +2688,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get ensureUserRow(){ return ensureUserRow; },
     get getAttribution(){ return getAttribution; }
   });
+  /* [#TASK-ES-591] js/core/modal-open.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var _modalOpenKit = window.OurgoalModalOpenKit;
+  var openModal = _modalOpenKit.openModal;
   /* [어려움 이음매 자리 H2] */
   /* [#TASK-ES-481] js/tabs/goals/goals-ia-actions.js · js/tabs/goals/template-encyclopedia.js · js/tabs/records/archive-toggle.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var switchGoalsSubTab = _goalsKit.switchGoalsSubTab;
@@ -2812,6 +2815,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-591] js/creator-templates-legacy.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var _creatorTemplatesLegacyKit = window.OurgoalCreatorTemplatesLegacyKit;
   var cloneTemplate = _creatorTemplatesLegacyKit.cloneTemplate;
+  /* [#TASK-ES-591] js/creator-templates-legacy.js — 가져오기 0개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [어려움 이음매 자리 H3] */
   /* [#TASK-ES-467] js/tabs/records/trend-metrics-chart.js · js/tabs/records/pro-templates.js · js/tabs/records/pro-template-modals.js — 가져오기 9개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var TREND_METRICS = _recordsKit.TREND_METRICS;
@@ -3800,60 +3804,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ Modal helper & Android Hardware Back Handler ============ */
   var _modalHistoryPushed = false;
   var _modalDismissGraceUntil = 0;
-  /* [#TASK-ES-471] isModalDismissCooldown → js/core/modal-helper.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
-
-  function openModal(html, onMount){
-    window._modalOpenAt = Date.now();
-    var overlay = document.getElementById('modalOverlay');
-    var sheet = document.getElementById('modalSheet');
-    if(!overlay || !sheet) return;
-
-    var finalHtml = '';
-    var finalOnMount = null;
-
-    if(html && typeof html === 'object'){
-      var title = html.title || '';
-      var body = html.body || html.content || html.html || '';
-      finalOnMount = html.onOpen || html.onMount || onMount;
-      finalHtml = (title ? '<div class="modal-head" style="margin-bottom:12px;padding-right:44px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">' + title + '</h3></div>' : '') + body;
-    } else if(typeof html === 'string' && typeof onMount === 'string'){
-      finalHtml = '<div class="modal-head" style="margin-bottom:12px;padding-right:44px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">' + html + '</h3></div>' + onMount;
-      if(arguments[2] && typeof arguments[2] === 'function') finalOnMount = arguments[2];
-    } else {
-      finalHtml = html || '';
-      finalOnMount = (typeof onMount === 'function') ? onMount : null;
-    }
-
-    // [#UIUX-19] 70세 어르신 인지 배려 우측 상단 44px 큼직한 ✕ 닫기 버튼 자동 주입
-    if(finalHtml.indexOf('modal-sheet-close') === -1){
-      finalHtml = '<button type="button" class="modal-sheet-close touch-target-44" aria-label="닫기" title="닫기" onclick="if(typeof window.triggerHaptic===\'function\') window.triggerHaptic(12); closeModal();">✕</button>' + finalHtml;
-    }
-
-    // [#UIUX-23] 2중 바텀시트 적재(Stacking) 방지: 이미 열려있을 경우 단일 포커스 전환
-    sheet.style.transform = '';
-    sheet.innerHTML = finalHtml;
-    overlay.classList.add('active');
-    if(finalOnMount){
-      try { finalOnMount(sheet); } catch(mErr){ console.error('[openModal] mount error:', mErr); }
-    }
-
-    var dismissHandler = function(e){
-      if(e.target === overlay){
-        e.preventDefault();
-        e.stopPropagation();
-        closeModal();
-      }
-    };
-    overlay.onclick = dismissHandler;
-    overlay.ontouchend = dismissHandler;
-
-    try {
-      if(!_modalHistoryPushed && typeof window!=='undefined' && window.history && history.pushState){
-        history.pushState({ ourgoal_modal: true }, '');
-        _modalHistoryPushed = true;
-      }
-    } catch(e){}
-  }
+  /* [#TASK-ES-591] openModal → js/core/modal-open.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   /* [#TASK-ES-471] closeModal · openBottomSheetAlert · openBottomSheetConfirm → js/core/modal-helper.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
 
   if(typeof window !== 'undefined'){
