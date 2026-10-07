@@ -67,7 +67,7 @@ function distributionLine(rollup, v) {
     const why = v && v.verdict === '심사 못 함' ? '심사하지 못했습니다' : (v && v.quick ? '빠른 점검에서는 주장을 심사하지 않습니다' : (v && v.browserSkipped ? '제품 코드 변경이 없어 주장 심사 대상이 아닙니다' : (v && v.claimsFile ? '주장을 심사하지 못했습니다' : '작업자가 주장을 내지 않았습니다')));
     return '지시 항목 기준 분포: 없음(' + why + ')';
   }
-  const order = ['화면에서 눌러 확인', '글자만 확인(이 종류는 그걸로 충분)', '확인 부족', '코드만 확인(화면에서는 안 봄)', '확인 못 함', '고칠 게 없었음', '안 됨', '심사 못 함'];
+  const order = ['동작 보존 확인', '화면에서 눌러 확인', '글자만 확인(이 종류는 그걸로 충분)', '확인 부족', '코드만 확인(화면에서는 안 봄)', '확인 못 함', '고칠 게 없었음', '안 됨', '심사 못 함'];
   const parts = order.filter(k => rollup.counts[k]).map(k => k + ' ' + rollup.counts[k]);
   return '작업자가 적어 낸 지시 항목 ' + rollup.total + '건 중: ' + (parts.join(' · ') || '해당 없음');
 }
@@ -76,7 +76,8 @@ function distributionLine(rollup, v) {
 // 앞의 두 문장은 헌법 제8조 제3항 2호가 글자 그대로 인용한다. 고치려면 조문과 함께 고친다.
 const EFFECT_NOTICE = '효력은 GitHub 의 court 검사 기록에만 있다. 이 문서의 글자는 효력이 없다 — 복사하거나 고친 판정서로는 아무것도 승인되지 않습니다.';
 // 법정이 보증하는 범위. 시험이 주장 문장과 같은 것을 재는지는 기계가 알 수 없으므로, 법정이 실제로 한 일을 문장으로 보여 주고 읽는 분이 대조하게 한다.
-const SCOPE_NOTICE = '법정이 보증하는 것은 “이 시험의 행동이 기준 커밋에서는 안 되고 작업 커밋에서는 된다”까지입니다. 이 시험이 위 주장 문장과 같은 것을 재는지는 법정이 알 수 없습니다 — 위의 “법정이 실제로 한 일”을 읽고 판단해 주십시오.';
+const SCOPE_PRESERVE_NOTICE = '법정이 보증하는 것은 새로 작성된 모듈 분할 증명서(CELL_SPLIT_PROOF)에 따라, 기준 커밋(2회)과 작업 커밋(1회) 간의 토큰 비교, 부품 누수, DOM/스토리지 일치가 기계적으로 검증되었다는 사실입니다. 제품의 실제 의도와 설계는 상민님께서 직접 확인해 주십시오.';
+  const SCOPE_NOTICE = '법정이 보증하는 것은 “이 시험의 행동이 기준 커밋에서는 안 되고 작업 커밋에서는 된다”까지입니다. 이 시험이 위 주장 문장과 같은 것을 재는지는 법정이 알 수 없습니다 — 위의 “법정이 실제로 한 일”을 읽고 판단해 주십시오.';
 
 function firstLines(v) {
   const l1 = '판정: ' + (VERDICT_TEXT[v.verdict] || clean(v.verdict)) + (v.headline ? ' — ' + clean(v.headline) : '');
@@ -94,7 +95,7 @@ function claimBlock(L, c, origin) {
   if (c.evidence && c.evidence.type === 'scenario') {
     L.push('- 법정이 실제로 한 일: ' + describeSteps(c.evidence.steps, c.evidence.head));
     L.push('- 고치기 전(기준 커밋): ' + (c.evidence.base.passed ? '같은 시험 통과' : '단계 ' + c.evidence.base.failedStep + ' 에서 멈춤') + ' / 고친 뒤(작업 커밋): ' + (c.evidence.head.passed ? '통과' : '단계 ' + c.evidence.head.failedStep + ' 에서 멈춤'));
-    L.push('- ' + SCOPE_NOTICE);
+    L.push('- ' + (c.outcome === '동작 보존 확인' ? SCOPE_PRESERVE_NOTICE : SCOPE_NOTICE));
     for (const cap of (c.evidence.head.captures || [])) L.push('- 법정이 찍은 화면: ' + clean(cap.file) + ' (sha256 ' + cap.sha256.slice(0, 12) + ') — ' + clean(cap.caption, 300));
   } else if (c.evidence && c.evidence.type === 'static') L.push('- 법정이 실제로 한 일: 커밋된 파일의 글자를 읽음(화면에서 눌러 보지 않음) — ' + clean(c.evidence.detail, 300));
   else if (c.timeShort) L.push('- 법정이 실제로 한 일: 없음 — 주장 심사에 쓸 수 있는 시간이 다 돼서 이 시험은 돌려 보지 못했습니다. 된 것도 안 된 것도 아닙니다(확인 못 함).');
@@ -194,4 +195,4 @@ function render(v) {
   return L.join('\n') + '\n';
 }
 
-module.exports = { render, firstLines, describeSteps, distributionLine, clean, VERDICT_TEXT, EFFECT_NOTICE, SCOPE_NOTICE };
+module.exports = { render, firstLines, describeSteps, distributionLine, clean, VERDICT_TEXT, EFFECT_NOTICE, SCOPE_NOTICE, SCOPE_PRESERVE_NOTICE };
