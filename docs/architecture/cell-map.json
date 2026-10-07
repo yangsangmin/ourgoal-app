@@ -9,26 +9,29 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "29eb9880f13a70637ff8e11e55c4d83f2fe32feb",
-  "short": "29eb9880",
-  "committedAt": "2026-10-07T19:39:46+09:00",
-  "subject": "[E2] #TASK-ES-591 fix: 인라인 어려움 세포화 시범 (G108 크리에이터 템플릿)"
+  "commit": "2e20d3f982c44b2aff9a59d67d86c101c557b906",
+  "short": "2e20d3f9",
+  "committedAt": "2026-10-07T21:35:05+09:00",
+  "subject": "[E3] #TASK-ES-591 refactor: 인라인 어려움 구역 H1 - modalOpen 분열 (G054) (#859)"
  },
  "summary": {
-  "cells": 342,
-  "files": 341,
-  "jsLines": 87322,
+  "cells": 346,
+  "files": 345,
+  "jsLines": 88082,
   "kinds": {
    "organ": 56,
-   "tab": 181,
+   "tab": 184,
    "hybrid": 104,
    "future": 1
   },
-  "descriptionsHand": 339,
+  "descriptionsHand": 340,
   "descriptionsPending": [
    "auth-social",
+   "avatar/level-badge",
    "creator-templates-legacy",
-   "goals/template-encyclopedia-modal"
+   "goals/curated-market-data",
+   "goals/template-encyclopedia-modal",
+   "records/vision-table-input"
   ],
   "oversize": {
    "limit": 800,
@@ -41,11 +44,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 4820,
-   "functionDecls": 47
+   "inlineScriptLines": 4144,
+   "functionDecls": 34
   },
   "health": {
-   "undifferentiatedLines": 4820,
+   "undifferentiatedLines": 4144,
    "globalLinks": 260,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -63,7 +66,7 @@
    },
    "duplicateCells": {
     "toast": 1,
-    "modalBridge": 0,
+    "modalBridge": 1,
     "recap": 3,
     "timer": 4,
     "selfOverlay": 9,
@@ -84,9 +87,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 181,
+   "count": 184,
    "large": 6,
-   "small": 175
+   "small": 178
   },
   {
    "key": "hybrid",
@@ -132,6 +135,7 @@
     "goals/ai-status",
     "goals/ai-status-refresh",
     "goals/attachments",
+    "goals/curated-market-data",
     "goals/focus-autopilot",
     "goals/goal-archive",
     "goals/goal-category-templates",
@@ -172,7 +176,7 @@
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 11617,
+   "lines": 11772,
    "over800": 0
   },
   {
@@ -216,15 +220,17 @@
     "records/table-analytics-view",
     "records/table-csv-sync",
     "records/table-stopwatch",
+    "records/template-record-detail",
     "records/theme-classifier",
     "records/theme-export-csv",
     "records/theme-picker",
     "records/trend-metrics-chart",
     "records/trend-multi-metric-svg",
+    "records/vision-table-input",
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 9375,
+   "lines": 9855,
    "over800": 0
   },
   {
@@ -353,6 +359,7 @@
     "avatar/craft-engine",
     "avatar/dynamic-album",
     "avatar/feature-cards",
+    "avatar/level-badge",
     "avatar/modal/bind-craft",
     "avatar/modal/bind-deck",
     "avatar/modal/bind-period",
@@ -381,7 +388,7 @@
     "data/avatar-personas/istj",
     "data/avatar-personas/istp"
    ],
-   "lines": 8662,
+   "lines": 8787,
    "over800": 0
   },
   {
@@ -1721,7 +1728,9 @@
    "tasks": [
     "TASK-ES-591"
    ],
-   "reqs": [],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-591.md"
+   ],
    "prs": [
     {
      "number": 855,
@@ -1791,6 +1800,7 @@
     "data/avatar-personas/istp"
    ],
    "calledBy": [
+    "avatar/level-badge",
     "core/profile-topbar",
     "goals/ai-status",
     "home/sub-onescreen",
@@ -1801,9 +1811,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatar"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2077,6 +2085,56 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "avatar/level-badge",
+   "file": "js/avatar/level-badge.js",
+   "kind": "unclassified",
+   "kindName": "unclassified",
+   "size": null,
+   "area": "family-avatar",
+   "tabs": [],
+   "name": "avatar/level-badge",
+   "nameSource": "derived",
+   "does": "Level Badge UI",
+   "doesSource": "header",
+   "header": [
+    "Level Badge UI",
+    "아바타 및 경험치 레벨 배지 렌더링, 커스텀 아바타 여부 확인",
+    "#TASK-ES-592(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3542~3551 · 3552~3601 · 3602~3638줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 125,
+   "over800": false,
+   "exposes": [
+    "OurgoalLevelBadgeKit"
+   ],
+   "calls": [
+    "avatar-system",
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalLevelBadgeKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-592"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-592.md"
+   ],
+   "prs": []
   },
   {
    "id": "avatar/modal/bind-craft",
@@ -3880,6 +3938,7 @@
    "calls": [],
    "calledBy": [
     "auth-social",
+    "avatar/level-badge",
     "avatar/xp",
     "calendar/calendar-core",
     "calendar/day-bg-picker",
@@ -3942,6 +4001,7 @@
     "goals/ai-status",
     "goals/ai-status-refresh",
     "goals/attachments",
+    "goals/curated-market-data",
     "goals/focus-autopilot",
     "goals/goal-archive",
     "goals/goal-category-templates",
@@ -4012,11 +4072,13 @@
     "records/table-analytics-view",
     "records/table-csv-sync",
     "records/table-stopwatch",
+    "records/template-record-detail",
     "records/theme-classifier",
     "records/theme-export-csv",
     "records/theme-picker",
     "records/trend-metrics-chart",
     "records/trend-multi-metric-svg",
+    "records/vision-table-input",
     "records/voice-table-input",
     "records/weekly-recap",
     "sanctuary-weekly-recap",
@@ -6234,7 +6296,9 @@
    "tasks": [
     "TASK-ES-591"
    ],
-   "reqs": [],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-591.md"
+   ],
    "prs": []
   },
   {
@@ -13282,6 +13346,57 @@
    ]
   },
   {
+   "id": "goals/curated-market-data",
+   "file": "js/tabs/goals/curated-market-data.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "goals",
+   "tabs": [
+    "goals"
+   ],
+   "name": "goals/curated-market-data",
+   "nameSource": "derived",
+   "does": "Curated Market Templates Data",
+   "doesSource": "header",
+   "header": [
+    "Curated Market Templates Data",
+    "맞춤 템플릿 커뮤니티 마켓플레이스 큐레이션 데이터",
+    "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 5185~5315줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 155,
+   "over800": false,
+   "exposes": [
+    "OurgoalCuratedMarketDataKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalCuratedMarketDataKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-591"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-591.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "goals/focus-autopilot",
    "file": "js/tabs/goals/focus-autopilot.js",
    "kind": "tab",
@@ -15561,7 +15676,9 @@
    "tasks": [
     "TASK-ES-591"
    ],
-   "reqs": [],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-591.md"
+   ],
    "prs": []
   },
   {
@@ -18505,6 +18622,65 @@
    ]
   },
   {
+   "id": "records/template-record-detail",
+   "file": "js/tabs/records/template-record-detail.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 상세 모달",
+   "nameSource": "hand",
+   "does": "기존 전문 템플릿 기록의 상세 모달 조회와 URL 해시 딥링크 탐지를 맡는다",
+   "doesSource": "hand",
+   "header": [
+    "전문 템플릿 기록 상세 모달·딥링크 (template-record-detail)",
+    "기존 전문 템플릿 기록의 상세 모달 조회와 URL 해시 딥링크 탐지를 맡는다. 동작 변경 없이 생성기로 옮긴다.",
+    "#TASK-ES-585(전문 템플릿 기록 상세 모달·딥링크 책임 원문 분열): index.html 인라인 IIFE 의 구간(이전 전 7287~7411 · 7412~7428줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 168,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-585"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-585.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "records/theme-classifier",
    "file": "js/tabs/records/theme-classifier.js",
    "kind": "tab",
@@ -18822,6 +18998,57 @@
    ]
   },
   {
+   "id": "records/vision-table-input",
+   "file": "js/tabs/records/vision-table-input.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "records/vision-table-input",
+   "nameSource": "derived",
+   "does": "Vision Table Input",
+   "doesSource": "header",
+   "header": [
+    "Vision Table Input",
+    "AI 사진 분석(Vision)을 이용한 표 기록 자동 채우기 모달 및 할당량 관리",
+    "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4905~4943 · 4944~4946 · 4947~4955 · 4956~4962 · 4963~5184줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
+    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
+   ],
+   "lines": 312,
+   "over800": false,
+   "exposes": [
+    "OurgoalVisionTableInputKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalVisionTableInputKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-591"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-591.md"
+   ],
+   "prs": []
+  },
+  {
    "id": "records/voice-table-input",
    "file": "js/tabs/records/voice-table-input.js",
    "kind": "tab",
@@ -19102,9 +19329,7 @@
     "core/app-scope"
    ],
    "calledBy": [],
-   "readsFromIndexHtml": [
-    "_modalOpenAt"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
     "OurgoalSettingsKit"
@@ -20769,6 +20994,7 @@
     "core/virtual-user-helpers",
     "customize",
     "notify-engine",
+    "records/template-record-detail",
     "settings/sub-appearance",
     "settings/sub-data",
     "settings/sub-integrations",
@@ -20936,7 +21162,8 @@
     "core/trash-bin",
     "core/ui-helpers",
     "core/view-dispatch",
-    "core/virtual-user-helpers"
+    "core/virtual-user-helpers",
+    "records/template-record-detail"
    ],
    "calledBy": [
     "settings/index",
@@ -21035,7 +21262,8 @@
     "core/trash-bin",
     "core/ui-helpers",
     "core/view-dispatch",
-    "core/virtual-user-helpers"
+    "core/virtual-user-helpers",
+    "records/template-record-detail"
    ],
    "calledBy": [
     "settings/index",
@@ -21128,7 +21356,8 @@
     "core/trash-bin",
     "core/ui-helpers",
     "core/view-dispatch",
-    "core/virtual-user-helpers"
+    "core/virtual-user-helpers",
+    "records/template-record-detail"
    ],
    "calledBy": [
     "settings/index",
@@ -21238,7 +21467,8 @@
     "core/ui-helpers",
     "core/view-dispatch",
     "core/virtual-user-helpers",
-    "notify-engine"
+    "notify-engine",
+    "records/template-record-detail"
    ],
    "calledBy": [
     "settings/index",
@@ -21329,7 +21559,8 @@
     "core/trash-bin",
     "core/ui-helpers",
     "core/view-dispatch",
-    "core/virtual-user-helpers"
+    "core/virtual-user-helpers",
+    "records/template-record-detail"
    ],
    "calledBy": [
     "settings/index",
@@ -21428,7 +21659,8 @@
     "core/trash-bin",
     "core/ui-helpers",
     "core/view-dispatch",
-    "core/virtual-user-helpers"
+    "core/virtual-user-helpers",
+    "records/template-record-detail"
    ],
    "calledBy": [
     "settings/index",
