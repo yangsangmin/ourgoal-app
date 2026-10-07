@@ -1,0 +1,27 @@
+{
+  "task": "TASK-ES-599",
+  "requirementsSource": "docs/rules/TICKETS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "OurgoalLevelBadgeKit 새 전역 허용으로 npm test 복구"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "tests",
+      "statement": "테스트 코드에서 OurgoalLevelBadgeKit 전역 변수를 허용하여 테스트를 통과시킨다.",
+      "touches": [
+        "tests/avatar-personas-split.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/avatar-personas-split.test.js",
+        "text": "OurgoalLevelBadgeKit"
+      }
+    }
+  ]
+}
