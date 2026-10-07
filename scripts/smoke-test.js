@@ -10209,6 +10209,54 @@ check('compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로�
   assert.ok(!extractFn('loadLocalSettings').includes('googleCalendarConnected = true'), 'loadLocalSettings 다른 계정 연동 설정 복사 없음');
 });
 
+check('[#TASK-ES-595] openModal 동치 대조 — #859(G054) 손 수정(arguments[2] → thirdArg) 전후가 같은 입력에 같은 결과', () => {
+  const vm = require('vm');
+  const before = fs.readFileSync(path.join(__dirname, '..', 'tests', 'fixtures', 'open-modal-before-es591.js'), 'utf8');
+  const after = fs.readFileSync(path.join(__dirname, '..', 'js', 'core', 'modal-open.js'), 'utf8');
+  function harness(kind) {
+    const log = [];
+    const mk = (id) => ({ id, style: {}, innerHTML: '', onclick: null, ontouchend: null, classList: { add(c) { log.push(id + '+' + c); } } });
+    const overlay = mk('modalOverlay'), sheet = mk('modalSheet');
+    const st = { pushed: false };
+    const ctx = { console: { error: (...a) => log.push('err:' + a.map(String).join(' ')) }, Date: { now: () => 1000 } };
+    ctx.document = { getElementById: (id) => (id === 'modalOverlay' ? overlay : id === 'modalSheet' ? sheet : null) };
+    ctx.history = { pushState: (o) => log.push('push:' + JSON.stringify(o)) };
+    ctx.window = ctx; ctx.globalThis = ctx;
+    ctx.closeModal = () => log.push('close');
+    if (kind === 'before') {
+      Object.defineProperty(ctx, '_modalHistoryPushed', { get: () => st.pushed, set: (v) => { st.pushed = v; } });
+      vm.createContext(ctx); vm.runInContext(before + '\nthis.__open = openModal;', ctx);
+      return { open: ctx.__open, overlay, sheet, log, st };
+    }
+    ctx.OurgoalAppScope = { scope: { closeModal: ctx.closeModal } };
+    Object.defineProperty(ctx.OurgoalAppScope.scope, '_modalHistoryPushed', { get: () => st.pushed, set: (v) => { st.pushed = v; } });
+    vm.createContext(ctx); vm.runInContext(after, ctx);
+    return { open: ctx.OurgoalModalOpenKit.openModal, overlay, sheet, log, st };
+  }
+  const cases = [
+    ['문자열 하나', () => ['<p>a</p>']],
+    ['문자열+onMount', (h) => ['<p>b</p>', (el) => h.log.push('mount2:' + (el === h.sheet))]],
+    ['제목+본문', () => ['제목', '<p>c</p>']],
+    ['제목+본문+세번째 함수', (h) => ['제목', '<p>d</p>', (el) => h.log.push('mount3:' + (el === h.sheet))]],
+    ['제목+본문+세번째 함수 아님', () => ['제목', '<p>e</p>', 'x']],
+    ['문자열+onMount+세번째 함수', (h) => ['<p>f</p>', () => h.log.push('m-a'), () => h.log.push('m-b')]],
+    ['객체 + onOpen', (h) => [{ title: 'T', body: '<i>g</i>', onOpen: () => h.log.push('onOpen') }]],
+    ['객체 + 두번째 onMount', (h) => [{ html: '<i>h</i>' }, () => h.log.push('mount-obj')]],
+    ['mount 예외', () => ['<p>i</p>', () => { throw new Error('boom'); }]],
+    ['빈 값', () => [null]],
+  ];
+  for (const [label, argsOf] of cases) {
+    const b = harness('before'), a = harness('after');
+    b.open(...argsOf(b)); a.open(...argsOf(a));
+    b.open('두번째', '<p>z</p>'); a.open('두번째', '<p>z</p>');
+    assert.strictEqual(a.sheet.innerHTML, b.sheet.innerHTML, label + ': 시트 HTML 동일');
+    assert.deepStrictEqual(a.log, b.log, label + ': 마운트·클래스·history 기록 동일');
+    assert.strictEqual(a.st.pushed, b.st.pushed, label + ': history 플래그 동일');
+    assert.strictEqual(typeof a.overlay.onclick, typeof b.overlay.onclick, label + ': 바깥 눌러 닫기 처리기 동일');
+    assert.ok(b.log.length > 0, label + ': 대조가 빈 기록끼리 비교한 것이 아님');
+  }
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
