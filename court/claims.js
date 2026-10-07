@@ -7,7 +7,7 @@ const path = require('node:path');
 const grade = require('./lib/grade');
 const { stripByExt } = require('./lib/strip');
 const { validateScenario, isHollow, scenarioFingerprint, runScenario } = require('./lib/scenario');
-const { verifyCellSplitProof } = require('./lib/preserve');
+const preserveLib = require('./lib/preserve'); // 모듈 참조로 부른다 — 자체 점검이 실제로 넘긴 인자(repoDir 등)를 가로채 확인한다(TASK-ES-597)
 
 const KINDS = ['behavior', 'static', 'unverified', 'withdrawn'];
 // 주장의 세기. 법정이 직접 돌려 보는 종류(behavior·static)가 "강한 판"이다. 강한 판을 약한 종류로 바꾸면 법정은 옛 판을 다시 돌려 본다(judge.js).
@@ -305,7 +305,8 @@ async function judgeClaim(ctx, claim) {
       out.notes.push('확인 부족: 이 종류는 ' + grade.label(ef.floor) + ' 수준으로 봐야 하는데 기준/작업 실행이 요구 수준에 미달했다');
       return out;
     }
-    const splitProof = verifyCellSplitProof(claimsDir, claim, { base, head, outDir, scenarioResults: { H, B, B2 } });
+    // repoDir 를 꼭 넘긴다(TASK-ES-597): 빠지면 git diff 가 법정의 작업 폴더(저장소 아님)에서 돌아 "Could not access <sha>" 로 늘 실패했다.
+    const splitProof = preserveLib.verifyCellSplitProof(claimsDir, claim, { base, head, outDir, repoDir: ctx.repoDir, scenarioResults: { H, B, B2 } });
     out.evidence.splitProof = splitProof;
     if (!splitProof.ok) {
       out.outcome = OUTCOME.UNVERIFIED;

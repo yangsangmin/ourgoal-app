@@ -654,3 +654,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-594 | INFRA | 미분화 덩어리 해체 B0 — 세포 자기 등록 기관 설계(새 기관 추가·대조·옛 배선 철거, 생성기 배선 철거 모드 사양) | docs/architecture/CELL-REGISTRY-DESIGN.md | 4단계(심사 청구)
 
 - #TASK-ES-595 | INFRA | 10-07 G0xx 분열 PR 품질 점검·보정 — 폐기 신청 실체 점검(삭제 0, 단언 범위 확대), #859 openModal 손 수정 동치 재증명(원본 고정본 대조 검사 추가) | reports/TASK-ES-595/AUDIT.md | 4단계(심사 청구)
+- #TASK-ES-597 | INFRA | 법정 「동작 보존 확인」 경로 수리 — judgeClaim 이 분열 증명 검증에 repoDir 를 넘기지 않아 GitHub 에서 git diff 가 늘 실패하던 결함(PR #864 판정 D956DC5D 에서 발견) + 실제 경로 자체 점검 | court/claims.js · court/lib/preserve.js · court/selftest/unit-preserve.js | 4단계(심사 청구)
