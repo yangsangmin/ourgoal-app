@@ -5,6 +5,10 @@
     {
       "id": "R1",
       "text": "Vision AI 표 입력 및 큐레이션 마켓 데이터를 index.html에서 분리한다."
+    },
+    {
+      "id": "R2",
+      "text": "modalOpen 분리"
     }
   ],
   "claims": [
@@ -19,6 +23,25 @@
         "index.html",
         "js/tabs/records/vision-table-input.js",
         "js/tabs/goals/curated-market-data.js",
+        "reports/TASK-ES-591/test-pass.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-591/test-pass.json",
+        "path": "pass",
+        "equals": true
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "change": "preserve",
+      "domain": "config",
+      "statement": "modalOpen 분리 완료",
+      "touches": [
+        "index.html",
+        "js/core/modal-open.js",
         "reports/TASK-ES-591/test-pass.json"
       ],
       "check": {
