@@ -1,0 +1,16 @@
+{
+  "id": "c1-guest-settings",
+  "title": "게스트가 설정 화면을 열면 크레딧 칸이 보이지 않는다",
+  "steps": [
+    { "do": "setViewport", "width": 430, "height": 932 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#btnAvatarGreetClose", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnAvatarGreetClose" },
+    { "expect": "notVisible", "selector": "#btnAvatarGreetClose" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]", "timeoutMs": 10000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "notExists", "selector": "#settingsCreditsBlock" }
+  ]
+}

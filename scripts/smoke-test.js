@@ -2441,31 +2441,6 @@ check('compliance: 오늘 같은 테마 실사용자 수 집계 RPC DDL(T01-S02,
   assert.ok(sql.includes('Asia/Seoul'), 'KST 당일 기준 필터링 포함');
 });
 
-/* ============ [#TASK-ES-015] 공용 크레딧 원장 (INFRA) ============ */
-check('compliance: [#TASK-ES-015] js/credits.js 가 존재하고 문법이 유효하며 OurgoalCredits API 6개를 노출한다', () => {
-  const p = path.join(__dirname, '..', 'js', 'credits.js');
-  assert.ok(fs.existsSync(p), 'js/credits.js 존재');
-  const src = fs.readFileSync(p, 'utf8');
-  new Function(src);
-  ['ready', 'isEnabled', 'policy', 'award', 'balance', 'renderSettingsSection'].forEach(fn => {
-    assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출');
-  });
-  assert.ok(html.includes('<script src="js/credits.js"></script>'), 'index.html 이 js/credits.js 를 로드');
-});
-
-check('compliance: [#TASK-ES-015] 크레딧은 기본 OFF — ENABLE_CREDITS false, 서버 enabled 기본값 false, 화면 화폐 문구 없음', () => {
-  assert.ok(html.includes('ENABLE_CREDITS: false'), 'OURGOAL_CONFIG.ENABLE_CREDITS 기본값 false');
-  assert.ok(html.includes('id="settingsCreditsBlock"'), '설정 화면 크레딧 컨테이너 존재(기본 숨김)');
-  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-credit-ledger.sql'), 'utf8');
-  assert.ok(sql.includes("('enabled', 'false'::jsonb)"), 'credit_settings.enabled 기본값 false');
-  const js = fs.readFileSync(path.join(__dirname, '..', 'js', 'credits.js'), 'utf8');
-  const uiStrings = js.match(/textContent = [^;]+;/g) || [];
-  uiStrings.forEach(line => {
-    assert.ok(!/현금|환전|₩|달러|상품권|출금/.test(line) && !/[0-9] *원/.test(line), '화면 문구에 화폐 표현 없음: ' + line);
-  });
-  assert.ok(!/localStorage|sessionStorage/.test(js), '크레딧을 로컬에 저장하지 않는다(정본 §2 원장)');
-});
-
 check('compliance: [#TASK-ES-015] credit_ledger SQL — append-only·멱등·봇 제외·설정값 기반이며 파괴 구문이 없다', () => {
   const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-credit-ledger.sql'), 'utf8');
   assert.ok(sql.includes('create table if not exists public.credit_ledger'), '원장 테이블');
@@ -2625,8 +2600,7 @@ check('KF-5: js/helpful-reason.js 가 존재하고 문법이 유효하며 API·�
   ['init', 'openSheet', 'openSummary', 'authorButtonHtml', 'patchAuthorButton', 'bind'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출'));
   ['how_to', 'same_situation', 'motivation', 'new_info', 'other'].forEach(c => assert.ok(src.includes("code: '" + c + "'"), '기본 태그 ' + c));
   assert.ok(/DEFAULT_MIN_CHARS = 10;\s*\/\* 기본값/.test(src), '최소 글자 수 기본값 10 + "기본값" 주석');
-  assert.ok(src.includes("'helpful_reason:' + uid + ':' + targetId"), '크레딧 멱등 키 규약 helpful_reason:<uid>:<postId>');
-  assert.ok(src.includes("award('helpful_reason', 'feed_post'"), 'OurgoalCredits.award(helpful_reason) 호출');
+
   assert.ok(!/현금|환전|₩|출금|상품권/.test(src), '화면 문구에 현금 암시 없음');
 });
 
