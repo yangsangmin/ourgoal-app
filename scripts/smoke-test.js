@@ -3196,7 +3196,7 @@ check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장�
 check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 테마·홈구성 모달 정상화가 완벽히 구현되어 있다', () => {
   // 1. 레벨 표시 중복 제거 및 게이지 바 확장
   assert.strictEqual(html.includes('<span class="level-num"'), false, '레벨 배지 내 중복 Lv.X 텍스트 제거 확인');
-  assert.ok(html.includes('id="btnOpenAvatarModal"'), '내 아바타 바꾸기 버튼 유지 확인');
+  assert.ok(html.includes('id="btnOpenAvatarModal"') || AVATAR_SRC.includes('id="btnOpenAvatarModal"'), '내 아바타 바꾸기 버튼 유지 확인');
 
   // 2. 오늘의 카드 더보기 버튼 헤더 인라인 이동
   assert.ok(html.includes('<div class="ct-label" style="margin:0;">오늘의 카드</div>') || html.includes('<div class="ct-label" style="margin:0;">오늘의 미션</div>'), '오늘의 카드 라벨 헤더 플렉스 컨테이너');
@@ -6834,7 +6834,7 @@ check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과�
   assert.ok(trackerSrc.includes("maxWidth = '340px'"), '[47] 시간기록 모달 340px 컴팩트 크기 축소 확인');
 
   // [48] 아바타 아이콘 크기 일괄 확대
-  assert.ok(indexHtml.includes('size: 54') && indexHtml.includes('width:54px;height:54px;'), '[48] 홈 EXP 바 아바타 54px 확대 확인');
+  assert.ok((indexHtml.includes('size: 54') || AVATAR_SRC.includes('size: 54')) && (indexHtml.includes('width:54px;height:54px;') || AVATAR_SRC.includes('width:54px;height:54px;')), '[48] 홈 EXP 바 아바타 54px 확대 확인');
   assert.ok(indexHtml.includes('style="width:46px;height:46px;"'), '[48] 상단바 우측 프로필 아바타 46px 확대 확인');
   assert.ok(indexHtml.includes('avatarHtml(72)'), '[48] 설정창 프로필 아바타 72px 확대 확인');
 
@@ -8246,7 +8246,7 @@ check('[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무
   // 5. index.html 배선 (도감 진입 버튼, 홈 화면 회차별 반응 칩, 마일스톤 축하) 검증
   assert.ok(indexHtml.includes('id="btnOpenDynamicAlbum"'), '설정 탭 프로필 카드 내 btnOpenDynamicAlbum 버튼 누락');
   assert.ok(indexHtml.includes('btnOpenDynamic.onclick'), 'renderSettingsScreen 내 btnOpenDynamicAlbum 클릭 핸들러 누락');
-  assert.ok(indexHtml.includes('dynamic-avatar-bubble-chip'), '홈 화면 레벨 뱃지 내 상황별 말풍선 칩 누락');
+  assert.ok(indexHtml.includes('dynamic-avatar-bubble-chip') || avatarSrc.includes('dynamic-avatar-bubble-chip'), '홈 화면 레벨 뱃지 내 상황별 말풍선 칩 누락');
   assert.ok(indexHtml.includes('milestone_break'), 'celebrateMilestoneDone 내 마일스톤 아바타 연동 누락');
 
   // 6. ui.css 도감 및 카드 스타일 검증
@@ -9141,9 +9141,9 @@ check('compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이
   assert.ok(avatarJs.includes('handle아바타_Item32Action = handle아바타_Item32Action'), 'handle아바타_Item32Action 노출');
   assert.ok(avatarJs.includes('og_task-32_cache'), 'og_task-32_cache 원자적 영속화 키 정의');
 
-  // 2. index.html 아바타 확대 및 본문 DOM 마크업 검증
-  assert.ok(indexHtml.includes('renderAvatarHtml(p.level, state.profile, { size: 72,'), 'levelBadgeHtml 내 아바타 사이즈 72px 확대');
-  assert.ok(indexHtml.includes('width:72px;height:72px;'), 'levelBadgeHtml placeholder 72px 확대');
+  // 2. index.html 및 아바타 모듈 본문 DOM 마크업 검증
+  assert.ok(avatarJs.includes('renderAvatarHtml(p.level, L.state.profile, { size: 72,') || avatarJs.includes('renderAvatarHtml(p.level, state.profile, { size: 72,'), 'levelBadgeHtml 내 아바타 사이즈 72px 확대');
+  assert.ok(avatarJs.includes('width:72px;height:72px;'), 'levelBadgeHtml placeholder 72px 확대');
   assert.ok(indexHtml.includes('av.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 52, compact: true });'), 'updateTopAvatar 내 아바타 사이즈 52px 확대');
   assert.ok(indexHtml.includes('id="topAvatar" style="width:52px;height:52px;"'), 'topAvatar 컨테이너 52px 지정');
   assert.ok(indexHtml.includes('id="og-task-32-container"'), 'index.html #og-task-32-container 마크업 탑재');
@@ -9515,6 +9515,7 @@ check('TASK-ES-297: 시간기록 모달창 세부설명 간소화 및 창 크기
 check('TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 검증', () => {
   const compJs = COMPONENTS_SRC;
   const indexHtml = APP_SRC;
+  const avatarJs = AVATAR_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9523,13 +9524,13 @@ check('TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 �
   assert.ok(compJs.includes('enlargeAvatarIconsBatch'), 'enlargeAvatarIconsBatch 함수 정의');
   assert.ok(compJs.includes('og_task-48_cache'), 'og_task-48_cache 원자적 영속화 키 정의');
 
-  // 2. index.html 컨테이너 및 액션 버튼 검증
+  // 2. index.html 및 아바타 모듈 컨테이너 및 액션 버튼 검증
   assert.ok(indexHtml.includes('id="og-task-48-container"'), 'index.html #og-task-48-container 마크업 탑재');
   assert.ok(indexHtml.includes('id="og-task-48-action-btn"'), 'index.html #og-task-48-action-btn 버튼 마크업 탑재');
   assert.ok(indexHtml.includes('handle아바타_Item48Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
-  assert.ok(indexHtml.includes('size: 76') && indexHtml.includes('width:76px;height:76px;'), 'index.html levelBadgeHtml 76px 아바타 확대');
+  assert.ok(avatarJs.includes('size: 76') && avatarJs.includes('width:76px;height:76px;'), 'index.html levelBadgeHtml 76px 아바타 확대');
   assert.ok(indexHtml.includes('id="topAvatar" style="width:56px;height:56px;"'), 'index.html topAvatar 56px 확대');
-  assert.ok(indexHtml.includes('avatarHtml(76)'), 'index.html 설정창 아바타 76px 확대');
+  assert.ok(indexHtml.includes('avatarHtml(76)') || avatarJs.includes('avatarHtml(76)'), 'index.html 설정창 아바타 76px 확대');
 
   // 3. ui.css 스타일 및 반응형 검증
   assert.ok(uiCss.includes('#og-task-48-container'), 'ui.css #og-task-48-container 스타일 정의');

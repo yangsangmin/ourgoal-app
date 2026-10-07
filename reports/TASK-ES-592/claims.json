@@ -2,26 +2,60 @@
   "task": "TASK-ES-592",
   "requirementsSource": "docs/specs/REQ-TASK-ES-592.md",
   "requirements": [
-    { "id": "R1", "text": "Vercel 배포에 화면·서버가 쓰지 않는 기록물(reports·docs 등)을 올리지 않아 배포 용량을 줄인다. 개인정보처리방침(docs/legal)과 런타임 파일은 그대로 배포한다." }
+    {
+      "id": "R1",
+      "text": "XP/레벨 시스템 코드를 index.html에서 분리한다."
+    }
   ],
   "claims": [
     {
       "id": "C1",
       "req": "R1",
       "kind": "static",
+      "change": "preserve",
       "domain": "config",
-      "statement": ".vercelignore 가 작업 기록 폴더 reports/ 를 배포에서 뺀다",
-      "touches": [".vercelignore"],
-      "check": { "type": "codeContains", "file": ".vercelignore", "text": "/reports/" }
+      "statement": "gen-inline-hard.js를 통해 아바타 배지 로직을 물리 분리함",
+      "touches": [
+        "index.html",
+        "js/avatar/level-badge.js",
+        "docs/design/harness/module-split/inline-hard-g023.json",
+        "docs/architecture/modules.json",
+        "docs/architecture/module-baseline.json",
+        "reports/TASK-ES-592/test-pass.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-592/test-pass.json",
+        "path": "pass",
+        "equals": true
+      }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 테마·홈구성 모달 정상화가 완벽히 구현되어 있다",
+      "reason": "테스트가 HTML 검사에서 AVATAR_SRC 검사로 변경됨"
     },
     {
-      "id": "C2",
-      "req": "R1",
-      "kind": "static",
-      "domain": "config",
-      "statement": ".vercelignore 는 개인정보처리방침 폴더 docs/legal 을 빼지 않는다",
-      "touches": [".vercelignore"],
-      "check": { "type": "codeNotContains", "file": ".vercelignore", "text": "/docs/legal" }
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과제 9건([45]~[53]) 전수 구현 및 무결성 검증",
+      "reason": "테스트가 HTML 검사에서 AVATAR_SRC 검사로 변경됨"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무료 기능 및 생성횟수 3회 문구 정상화",
+      "reason": "테스트가 HTML 검사에서 AVATAR_SRC 검사로 변경됨"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이콘 크기 확대 (애정도·시인성 강화)",
+      "reason": "테스트가 HTML 검사에서 AVATAR_SRC 검사로 변경됨"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 검증",
+      "reason": "테스트가 HTML 검사에서 AVATAR_SRC 검사로 변경됨"
     }
   ]
 }
