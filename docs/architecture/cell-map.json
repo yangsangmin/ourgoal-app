@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "2e20d3f982c44b2aff9a59d67d86c101c557b906",
-  "short": "2e20d3f9",
-  "committedAt": "2026-10-07T21:35:05+09:00",
-  "subject": "[E3] #TASK-ES-591 refactor: 인라인 어려움 구역 H1 - modalOpen 분열 (G054) (#859)"
+  "commit": "11c8e9dddeb6f6cceeb661ed8c6055fee445695c",
+  "short": "11c8e9dd",
+  "committedAt": "2026-10-07T22:18:43+09:00",
+  "subject": "Merge pull request #861 from yangsangmin/chore/2026-10-07-task-es-593-map-refresh"
  },
  "summary": {
-  "cells": 347,
-  "files": 346,
+  "cells": 349,
+  "files": 348,
   "jsLines": 88160,
   "kinds": {
    "organ": 57,
-   "tab": 184,
+   "tab": 186,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 340,
+  "descriptionsHand": 342,
   "descriptionsPending": [
    "auth-social",
    "avatar/level-badge",
@@ -45,11 +45,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 4144,
-   "functionDecls": 34
+   "inlineScriptLines": 4134,
+   "functionDecls": 32
   },
   "health": {
-   "undifferentiatedLines": 4144,
+   "undifferentiatedLines": 4134,
    "globalLinks": 260,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -88,9 +88,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 184,
+   "count": 186,
    "large": 6,
-   "small": 178
+   "small": 180
   },
   {
    "key": "hybrid",
@@ -288,7 +288,8 @@
     "comm/sub-companions",
     "comm/sub-crew",
     "comm/sub-feed",
-    "comm/user-blocks"
+    "comm/user-blocks",
+    "comm/user-profile-open"
    ],
    "lines": 4881,
    "over800": 0
@@ -300,6 +301,7 @@
    "desc": "프로필·화면·알림·보안·연동·데이터",
    "cells": [
     "settings/index",
+    "settings/a11y-announce",
     "settings/account-actions",
     "settings/account-entry",
     "settings/adaptive-ux",
@@ -3972,6 +3974,7 @@
     "comm/story-canvas",
     "comm/story-card-send",
     "comm/user-blocks",
+    "comm/user-profile-open",
     "core/all-view-render",
     "core/app-boot",
     "core/app-enter",
@@ -4085,6 +4088,7 @@
     "records/voice-table-input",
     "records/weekly-recap",
     "sanctuary-weekly-recap",
+    "settings/a11y-announce",
     "settings/account-actions",
     "settings/account-entry",
     "settings/adaptive-ux",
@@ -13097,6 +13101,45 @@
    ]
   },
   {
+   "id": "comm/user-profile-open",
+   "file": "js/tabs/comm/user-profile-open.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "프로필 창 열기 위임",
+   "nameSource": "hand",
+   "does": "동반자·피드 작성자 프로필 창 열기를 팀 초대·소통 세포에 맡긴다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope",
+    "team-invite-comm"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
    "id": "goals/ai-agent",
    "file": "js/tabs/goals/ai-agent.js",
    "kind": "tab",
@@ -19236,6 +19279,44 @@
    ]
   },
   {
+   "id": "settings/a11y-announce",
+   "file": "js/tabs/settings/a11y-announce.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "화면 읽기 알림",
+   "nameSource": "hand",
+   "does": "화면 읽기 프로그램이 읽도록 실시간 알림 영역에 안내 글자를 넣는다",
+   "doesSource": "hand",
+   "header": [],
+   "lines": 0,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [],
+   "reqs": [],
+   "prs": []
+  },
+  {
    "id": "settings/account-actions",
    "file": "js/tabs/settings/account-actions.js",
    "kind": "tab",
@@ -22815,6 +22896,7 @@
     "comm/feed-list",
     "comm/goal-certificate-share",
     "comm/render",
+    "comm/user-profile-open",
     "core/app-enter",
     "creator-templates-legacy",
     "goals/focus-autopilot",
