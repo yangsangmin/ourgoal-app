@@ -1,12 +1,25 @@
 {
+  "task": "TASK-ES-591",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-591.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Vision AI 표 입력 및 큐레이션 마켓 데이터를 index.html에서 분리한다."
+    }
+  ],
   "claims": [
     {
-      "claim": "Vision AI 표 입력 및 마켓 큐레이션 데이터 분리 완료",
-      "checked": true,
-      "method": "index.html에서 함수를 js/tabs/records/vision-table-input.js와 js/tabs/goals/curated-market-data.js로 물리적 분리",
-      "evidence": "gen-inline-hard.js AST 추출 성공",
-      "testOk": true,
-      "verdict": "pass"
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "change": "preserve",
+      "domain": "config",
+      "statement": "gen-inline-hard.js를 통해 Vision AI 로직 및 마켓 데이터를 성공적으로 물리 분리함",
+      "touches": [
+        "index.html",
+        "js/tabs/records/vision-table-input.js",
+        "js/tabs/goals/curated-market-data.js"
+      ]
     }
   ]
 }
