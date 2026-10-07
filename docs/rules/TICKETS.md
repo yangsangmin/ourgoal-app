@@ -650,3 +650,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-585 | INFRA | [시험지 선행 · 기록 상세 모달 분열] | 오케스트레이터 배정(2026-10-07), REQ docs/specs/REQ-TASK-ES-585.md
 
 - #TASK-ES-593 | INFRA | 미분화 덩어리 해체 단계 0 — 인라인 지도·신고서·기준선·세포지도 현재 main 기준 재생성, avatar/level-badge 종류 확정(모듈 가드 실패 복구), core/modal-open 신고서 등록 | docs/architecture/INLINE-SCRIPT-MAP.md · docs/architecture/module-baseline.json | 4단계(심사 청구)
+
+- #TASK-ES-594 | INFRA | 미분화 덩어리 해체 B0 — 세포 자기 등록 기관 설계(새 기관 추가·대조·옛 배선 철거, 생성기 배선 철거 모드 사양) | docs/architecture/CELL-REGISTRY-DESIGN.md | 4단계(심사 청구)
