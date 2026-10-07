@@ -1,0 +1,25 @@
+{
+  "id": "c2-guest-features",
+  "title": "템플릿 마켓 모달에서 카드가 그려지고 복제가 기존대로 동작한다",
+  "steps": [
+    { "do": "setViewport", "width": 430, "height": 932 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#btnAvatarGreetClose", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnAvatarGreetClose" },
+    { "expect": "notVisible", "selector": "#btnAvatarGreetClose" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]", "timeoutMs": 10000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#recQuickDockBar" },
+    { "do": "click", "selector": "#recQuickDockBar button:nth-child(4)" },
+    { "do": "waitFor", "selector": "#recOpenProTemplateBtn" },
+    { "do": "click", "selector": "#recOpenProTemplateBtn" },
+    { "do": "waitFor", "selector": "#proTplMarketBtn" },
+    { "do": "click", "selector": "#proTplMarketBtn" },
+    { "do": "waitFor", "selector": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"]" },
+    { "expect": "visible", "selector": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"]" },
+    { "do": "click", "selector": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"]" },
+    { "expect": "textContains", "selector": "#toast", "text": "복제", "timeoutMs": 3000 }
+  ]
+}

@@ -49,17 +49,8 @@
     return code;
   }
 
-  /* 설정값(태그 목록·최소 글자 수)은 크레딧 정책과 같은 RPC 에서 1회 읽는다 */
   function loadPolicy(){
-    if(policyLoaded || !window.OurgoalCredits || !window.OurgoalCredits.policy) return Promise.resolve();
-    policyLoaded = true;
-    return window.OurgoalCredits.policy().then(function(p){
-      if(p && Array.isArray(p.helpful_reason_tags) && p.helpful_reason_tags.length){
-        var ok = p.helpful_reason_tags.filter(function(t){ return t && t.code && t.label; });
-        if(ok.length) tags = ok;
-      }
-      if(p && typeof p.min_reason_chars === 'number' && p.min_reason_chars > 0) minChars = p.min_reason_chars;
-    }).catch(function(){ /* 조용히 기본값 */ });
+    return Promise.resolve();
   }
 
   /* 기기 저장 폴백 — settings.helpfulReasons[targetId] = { tag, text, createdAt } */
@@ -85,31 +76,24 @@
   /* ---------- 저장 ---------- */
   function save(it, tag, text){
     var targetId = String(it.id);
-    var uid = myId();
-    if(serverOk === false || isVirtualMine(it) || !deps.sb || !uid){
-      return Promise.resolve({ ok: localSave(targetId, tag, text), local: true, credit: 0 });
+    if(serverOk === false || isVirtualMine(it) || !deps.sb || !myId()){
+      return Promise.resolve({ ok: localSave(targetId, tag, text), local: true });
     }
     return deps.sb.rpc('save_helpful_reason', { p_target_type: 'feed_post', p_target_id: targetId, p_reason_tag: tag, p_reason_text: text || null })
       .then(function(res){
         if(res.error){
-          if(missingSchema(res.error)){ serverOk = false; return { ok: localSave(targetId, tag, text), local: true, credit: 0 }; }
+          if(missingSchema(res.error)){ serverOk = false; return { ok: localSave(targetId, tag, text), local: true }; }
           var msg = String(res.error.message || '');
           if(/helpful reaction required/.test(msg)) toast('먼저 도움돼요를 눌러주세요');
           else if(/own content/.test(msg)) toast('내 글에는 남길 수 없어요');
           else toast('잠시 후 다시 시도해주세요');
-          return { ok: false, credit: 0 };
+          return { ok: false };
         }
         serverOk = true;
         var d = res.data || {};
-        var granted = typeof d.credit_granted === 'number' ? d.credit_granted : 0;
-        /* 서버가 적립했으면 같은 멱등 키라 아래 호출은 0을 돌려준다(이중 지급 없음) */
-        var p = window.OurgoalCredits && window.OurgoalCredits.award
-          ? window.OurgoalCredits.award('helpful_reason', 'feed_post', targetId, 'helpful_reason:' + uid + ':' + targetId)
-          : Promise.resolve(0);
-        return p.then(function(n){ return { ok: true, credit: Math.max(granted, n || 0), pass: !!d.quality_pass, minChars: d.min_chars || minChars }; })
-                .catch(function(){ return { ok: true, credit: granted, pass: !!d.quality_pass, minChars: d.min_chars || minChars }; });
+        return { ok: true, pass: !!d.quality_pass, minChars: d.min_chars || minChars };
       })
-      .catch(function(){ return { ok: localSave(targetId, tag, text), local: true, credit: 0 }; });
+      .catch(function(){ return { ok: localSave(targetId, tag, text), local: true }; });
   }
 
   /* ---------- 시트 ---------- */
@@ -152,8 +136,7 @@
             save(it, picked.value, text.value.trim().slice(0, TEXT_MAX)).then(function(r){
               deps.closeModal();
               if(!r || !r.ok) return;
-              if(r.credit > 0) toast('+' + r.credit + ' 크레딧 · 이유가 전해졌어요');
-              else if(r.pass === false && text.value.trim()) toast('이유가 전해졌어요. 조금 더 구체적으로 적으면 좋아요');
+              if(r.pass === false && text.value.trim()) toast('이유가 전해졌어요. 조금 더 구체적으로 적으면 좋아요');
               else toast('이유가 전해졌어요');
             });
           });

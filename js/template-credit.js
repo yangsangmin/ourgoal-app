@@ -1,18 +1,15 @@
 /*
  * 아워골 — 템플릿 복제 크레딧 (KF-2 #TASK-ES-017, E3)
  *
- * 규격: 「아워골 수익화 모델(정립/구현)」 §1·§2·§3, KF-2 요구사항정의서 v2.
+ * 규격: KF-2 요구사항정의서 v2.
  *   - 복제 수는 서버 실데이터(template_copies)만 표시한다. 값이 없거나 0이면 아무 숫자도 보이지 않는다.
- *   - 원작자 크레딧 구간 판정·적립은 서버 RPC(record_template_copy) 안에서만. 클라이언트는 결과만 본다.
- *   - 광고는 없다(#TASK-ES-516, 상민님 결정 2026-10-06).
- *   - 화면에 돈을 연상시키는 문구를 쓰지 않는다. 크레딧은 앱 안에서만 쓰인다.
  *
  * 서버가 아직 준비되지 않았을 때(테이블·RPC 없음: PGRST202/205, 42P01, 404)는 전부 조용히 실패하고
  * 복제 자체는 기존대로 동작한다. 오류 토스트를 띄우지 않는다.
  *
  * 사용(index.html 이 부팅 마지막에 init 으로 앱 핸들을 넘긴다):
  *   OurgoalTemplateCredit.init({ sb, getState, toast })
- *   OurgoalTemplateCredit.recordCopy(templateId, ownerUserId)   → Promise<{count,recorded,awarded}|null>
+ *   OurgoalTemplateCredit.recordCopy(templateId, ownerUserId)   → Promise<{count,recorded}|null>
  *   OurgoalTemplateCredit.counts(templateIds)                   → Promise<object|null>  (id → 복제 수)
  *   OurgoalTemplateCredit.fillCounts(rootEl)                    → [data-tplcount] 배지를 서버값으로 채운다
  */
@@ -25,7 +22,7 @@
 
   function init(d) {
     deps = d || {};
-    /* 공용 크레딧 모듈(js/credits.js)은 window.sb 를 찾는다. 앱의 sb 는 IIFE 안에 있어 여기서 한 번 노출한다. */
+    /* 앱의 sb 는 IIFE 안에 있어 여러 모듈(team-chat·dm·auth-safety 등)이 쓰는 window.sb 를 여기서 한 번 노출한다 — 크레딧 삭제(#TASK-ES-588)와 무관하게 유지 */
     if (deps.sb && !global.sb) { try { global.sb = deps.sb; } catch (e) { /* noop */ } }
   }
 
@@ -64,7 +61,7 @@
     return (st.profile && st.profile.id) || (st.user && st.user.id) || null;
   }
 
-  /* 복제 직후 호출. 서버가 세고, 구간에 닿으면 원작자에게 적립한다(설정값 null 이면 0). */
+  /* 복제 직후 호출. 서버가 센다. */
   function recordCopy(templateId, ownerUserId) {
     if (!templateId) return Promise.resolve(null);
     if (!currentUserId()) return Promise.resolve(null); /* 로그인 전 로컬 복제는 세지 않는다 */

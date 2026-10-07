@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-588",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-588.md",
+  "requirements": [
+    { "id": "R1", "text": "크레딧(돈) 클라이언트 코드 삭제" },
+    { "id": "R2", "text": "돈 아닌 기능 유지(복제 수 배지·도움돼요 이유 쓰기)" }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 10,
+      "domain": "settings",
+      "statement": "게스트 시나리오 — 설정 화면을 열면 #settingsCreditsBlock 이 없다",
+      "touches": ["index.html"],
+      "scenario": "scenarios/c1-guest-settings.json"
+    },
+    {
+      "id": "S1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 에 js/credits.js 로드가 없다 (js/credits.js 삭제도 포함)",
+      "touches": ["index.html", "js/credits.js"],
+      "check": { "type": "codeNotContains", "file": "index.html", "text": "js/credits.js" }
+    },
+    {
+      "id": "S2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/tabs/settings/render.js 에 OurgoalCredits 가 없다",
+      "touches": ["js/tabs/settings/render.js"],
+      "check": { "type": "codeNotContains", "file": "js/tabs/settings/render.js", "text": "OurgoalCredits" }
+    },
+    {
+      "id": "S3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/cell-map-export.js 에 'credits' 설명이 지워졌다",
+      "touches": ["scripts/cell-map-export.js"],
+      "check": { "type": "codeNotContains", "file": "scripts/cell-map-export.js", "text": "credits" }
+    },
+    {
+      "id": "S4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/template-credit.js 에 global.sb = deps.sb 노출이 유지되어 로그인 기능들의 연결이 보존된다",
+      "touches": ["js/template-credit.js"],
+      "check": { "type": "codeContains", "file": "js/template-credit.js", "text": "global.sb = deps.sb" }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "home",
+      "statement": "목표 탭 템플릿 마켓 모달에서 카드가 그려지고 복제가 기존대로 동작한다",
+      "touches": ["js/template-credit.js"],
+      "scenario": "scenarios/c2-guest-features.json"
+    },
+    {
+      "id": "C3_A",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "도움돼요 이유 쓰기 코드는 남아 있고 크레딧 호출만 빠졌다(코드 글자 확인). 화면 동작은 로그인 사용자 피드에서만 닿아 게스트로 못 쟀다",
+      "touches": ["js/helpful-reason.js"],
+      "check": { "type": "codeNotContains", "file": "js/helpful-reason.js", "text": "OurgoalCredits" }
+    },
+    {
+      "id": "C3_B",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "도움돼요 이유 쓰기 API(openSheet)가 그대로 노출되어 기존 동작을 보존한다",
+      "touches": ["js/helpful-reason.js"],
+      "check": { "type": "codeContains", "file": "js/helpful-reason.js", "text": "openSheet: openSheet" }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-015] js/credits.js 가 존재하고 문법이 유효하며 OurgoalCredits API 6개를 노출한다",
+      "reason": "js/credits.js 삭제됨"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-015] 크레딧은 기본 OFF — ENABLE_CREDITS false, 서버 enabled 기본값 false, 화면 화폐 문구 없음",
+      "reason": "관련 html 요소 삭제됨"
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "KF-5: js/helpful-reason.js 가 존재하고 문법이 유효하며 API·기본 태그 5종·기본 최소 글자 수를 정의한다",
+      "reason": "도움돼요 이유 쓰기의 크레딧 관련 단언 2건 삭제됨"
+    }
+  ]
+}

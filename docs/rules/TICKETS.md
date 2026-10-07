@@ -641,3 +641,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-584 | INFRA | 공통 경험칙·도구 adapter 적용/증거 연결 최소 CLI | docs/specs/REQ-TASK-ES-584-SHARED-LEARNING.md · reports/TASK-ES-584/claims.json | 4단계(심사 청구)
 
 - #TASK-ES-586 | INFRA | 공통학습 fallback 사본과 생성지도 일괄 동기화 | docs/specs/REQ-TASK-ES-586-LEARNING-FALLBACK-SYNC.md · reports/TASK-ES-586/measurement.json | 4단계(심사 청구)
+- #TASK-ES-588 | INFRA | ũ���� ���� Ŭ���̾�Ʈ �ڵ� ���� | docs/specs/REQ-TASK-ES-588.md | 4�ܰ�(�ɻ� û��)
