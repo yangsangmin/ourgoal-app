@@ -641,8 +641,10 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-584 | INFRA | 공통 경험칙·도구 adapter 적용/증거 연결 최소 CLI | docs/specs/REQ-TASK-ES-584-SHARED-LEARNING.md · reports/TASK-ES-584/claims.json | 4단계(심사 청구)
 
 - #TASK-ES-586 | INFRA | 공통학습 fallback 사본과 생성지도 일괄 동기화 | docs/specs/REQ-TASK-ES-586-LEARNING-FALLBACK-SYNC.md · reports/TASK-ES-586/measurement.json | 4단계(심사 청구)
-- #TASK-ES-588 | INFRA | ũ���� ���� Ŭ���̾�Ʈ �ڵ� ���� | docs/specs/REQ-TASK-ES-588.md | 4�ܰ�(�ɻ� û��)
+- #TASK-ES-588 | INFRA | ũ���� ���� Ŭ���̾�Ʈ �ڵ� ���� | docs/specs/REQ-TASK-ES-588.md | 4�ܰ�(�ɻ� û��)
 
 - #TASK-ES-592 | INFRA | Vercel 배포 용량 절감 — .vercelignore 커밋(기록물 제외, docs/legal·런타임 유지) | docs/specs/REQ-TASK-ES-592.md · reports/TASK-ES-592/claims.json | 4단계(심사 청구)
 
 - #TASK-ES-589 | INFRA | 동작 보존 확인(court-preserve) 재구현 | docs/specs/REQ-TASK-ES-589.md | 4단계(심사 청구)
+
+- #TASK-ES-585 | INFRA | [시험지 선행 · 기록 상세 모달 분열] | 오케스트레이터 배정(2026-10-07), REQ docs/specs/REQ-TASK-ES-585.md
