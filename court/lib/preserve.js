@@ -133,7 +133,7 @@ async function judgePreserve(ctx, claim, out) {
   }
 
   if (B.passed !== B2.passed || B.failedStep !== B2.failedStep) {
-    out.outcome = claimsLib.OUTCOME.PRESERVED;
+    out.outcome = claimsLib.OUTCOME.UNSTABLE;
     out.notes.push('기준 2회 실행 결과가 다릅니다.');
     return out;
   }
@@ -234,7 +234,7 @@ async function judgePreserve(ctx, claim, out) {
     return out;
   }
 
-  out.outcome = claimsLib.OUTCOME.UNSTABLE;
+  out.outcome = claimsLib.OUTCOME.PRESERVED;
   out.achieved = achievedGrade;
   out.meetsFloor = true;
   return out;
