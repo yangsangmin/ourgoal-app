@@ -44,7 +44,9 @@ const FN_NAMES = [
   'rescaleGoal'
 ];
 
-const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
+const INLINE_CELLS_SRC = require('../tests/helpers/inline-bundle').withInlineCells('');
+const fnSource = mainScript + INLINE_CELLS_SRC;
+const extracted = FN_NAMES.map(name => extractFunction(fnSource, name)).join('\n');
 
 const sandboxSrc =
   'var window = {};\n' +
