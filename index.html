@@ -2169,7 +2169,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/render.js"></script>
 <script src="js/tabs/goals/result-modal.js"></script>
 <script src="js/tabs/goals/team-goal-modals.js"></script><script src="js/tabs/goals/template-quick-import.js"></script><script src="js/tabs/goals/result-input.js"></script><script src="js/tabs/goals/prompt-encyclopedia.js"></script><script src="js/tabs/goals/notion-record-convert.js"></script><script src="js/tabs/goals/goal-math.js"></script><script src="js/tabs/goals/goal-export.js"></script>
-<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/new-goal-modal.js"></script><script src="js/tabs/goals/goals-ia-actions.js"></script><script src="js/tabs/goals/template-encyclopedia.js"></script><script src="js/tabs/goals/focus-autopilot.js"></script><script src="js/tabs/goals/routine-screen.js"></script><script src="js/tabs/goals/team-goals-guide.js"></script><script src="js/tabs/goals/goal-update-suggest.js"></script><script src="js/tabs/goals/attachments.js"></script><script src="js/tabs/goals/team-goals-screen.js"></script><script src="js/tabs/goals/routine-detail-modal.js"></script><script src="js/tabs/goals/goal-archive.js"></script><script src="js/tabs/goals/goal-category-templates.js"></script><script src="js/tabs/goals/starter-goal-templates.js"></script><script src="js/tabs/goals/team-comments.js"></script><script src="js/tabs/goals/goal-order.js"></script><script src="js/tabs/goals/personal-goals-guide.js"></script><script src="js/tabs/goals/team-level-goals.js"></script><script src="js/tabs/goals/team-goal-edit-modal.js"></script><script src="js/tabs/goals/shift-routines.js"></script><script src="js/tabs/goals/goal-detail-drawer.js"></script><script src="js/tabs/goals/template-encyclopedia-modal.js"></script><script src="js/tabs/goals/index.js"></script>
+<script src="js/tabs/goals/ai-agent.js"></script><script src="js/tabs/goals/ai-status.js"></script><script src="js/tabs/goals/schedule-setup.js"></script><script src="js/tabs/goals/starter-goal.js"></script><script src="js/tabs/goals/ai-local-fallback.js"></script><script src="js/tabs/goals/ai-status-refresh.js"></script><script src="js/tabs/goals/topic-region-picker.js"></script><script src="js/tabs/goals/team-state.js"></script><script src="js/tabs/goals/team-goal-prompt.js"></script><script src="js/tabs/goals/new-goal-modal.js"></script><script src="js/tabs/goals/goals-ia-actions.js"></script><script src="js/tabs/goals/template-encyclopedia.js"></script><script src="js/tabs/goals/focus-autopilot.js"></script><script src="js/tabs/goals/routine-screen.js"></script><script src="js/tabs/goals/team-goals-guide.js"></script><script src="js/tabs/goals/goal-update-suggest.js"></script><script src="js/tabs/goals/attachments.js"></script><script src="js/tabs/goals/team-goals-screen.js"></script><script src="js/tabs/goals/routine-detail-modal.js"></script><script src="js/tabs/goals/goal-archive.js"></script><script src="js/tabs/goals/goal-category-templates.js"></script><script src="js/tabs/goals/starter-goal-templates.js"></script><script src="js/tabs/goals/team-comments.js"></script><script src="js/tabs/goals/goal-order.js"></script><script src="js/tabs/goals/personal-goals-guide.js"></script><script src="js/tabs/goals/team-level-goals.js"></script><script src="js/tabs/goals/team-goal-edit-modal.js"></script><script src="js/tabs/goals/shift-routines.js"></script><script src="js/tabs/goals/goal-detail-drawer.js"></script><script src="js/tabs/goals/template-encyclopedia-modal.js"></script><script src="js/tabs/goals/goal-rescale.js"></script><script src="js/tabs/goals/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
 <script src="js/tabs/records/sub-timeline.js"></script>
 <script src="js/tabs/records/sub-timer.js"></script>
@@ -2597,6 +2597,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get updateAppBadge(){ return updateAppBadge; }
   });
   /* [#TASK-ES-600] js/tabs/records/quick-checkin.js — 가져오기 0개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  /* [#TASK-ES-601] js/tabs/goals/goal-rescale.js — 가져오기 0개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [어려움 이음매 자리 H1] */
   /* [#TASK-ES-466] js/tabs/comm/crew-pacing.js · js/tabs/records/share-to-feed.js · js/tabs/settings/app-evaluation.js · js/tabs/goals/new-goal-modal.js — 가져오기 15개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var applyCrewPacingUI = _commKit.applyCrewPacingUI;
@@ -3828,41 +3829,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-437] gaugeSvg → js/tabs/goals/result-input.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* [#TASK-ES-442] goalProgress · msCounts → js/tabs/goals/goal-math.js 로 옮김(인라인 스크립트 세포화 P0) */
-  /* ============ 목표 일정 리스케일링 ============ */
-  function rescaleGoal(goal, scaleRatio){
-    if(!goal) return null;
-    scaleRatio = typeof scaleRatio === 'number' ? scaleRatio : 0.5;
-    var now = new Date();
-    var todayStr = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
-    var curCount = typeof goal.rescaledCount === 'number' ? goal.rescaledCount : (parseInt(goal.rescaledCount, 10) || 0);
-    goal.rescaledCount = curCount + 1;
-    goal.lastRescaledAt = todayStr;
-
-    if(Array.isArray(goal.milestones)){
-      goal.milestones.forEach(function(m, idx){
-        if(m && m.status !== 'done'){
-          var mDate = new Date(now);
-          mDate.setDate(mDate.getDate() + (idx + 1) * 7);
-          m.dueDate = mDate.getFullYear() + '-' + pad(mDate.getMonth() + 1) + '-' + pad(mDate.getDate());
-          if(Array.isArray(m.tasks)){
-            m.tasks.forEach(function(t, tIdx){
-              if(t && typeof t === 'object' && !t.done){
-                var tDate = new Date(now);
-                tDate.setDate(tDate.getDate() + (idx * 7) + (tIdx + 1) * 2);
-                t.dueDate = tDate.getFullYear() + '-' + pad(tDate.getMonth() + 1) + '-' + pad(tDate.getDate());
-              }
-            });
-          }
-        }
-      });
-    }
-
-    var goalDue = new Date(now);
-    var msCount = (goal.milestones && goal.milestones.length) ? goal.milestones.length : 2;
-    goalDue.setDate(goalDue.getDate() + Math.max(14, msCount * 7 + 7));
-    goal.dueDate = goalDue.getFullYear() + '-' + pad(goalDue.getMonth() + 1) + '-' + pad(goalDue.getDate());
-    return goal;
-  }
+  /* [#TASK-ES-601] rescaleGoal → js/tabs/goals/goal-rescale.js 로 옮김(목표 일정 리스케일링 분리 (G056) — 앞 주석 포함) */
   /* [#TASK-ES-437] hybridDashboardHtml → js/tabs/goals/result-input.js 로 옮김(인라인 스크립트 세포화 P0) */
   /* [#TASK-ES-562] RESULT_UNITS → js/tabs/goals/goal-category-templates.js 로 옮김(인라인 3단계 구역 Z5 표준 1 — 앞 주석 포함) */
 
