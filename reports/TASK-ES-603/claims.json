@@ -1,0 +1,791 @@
+{
+  "task": "TASK-ES-603",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-603-CELL-REGISTRY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "기존 목표 일정 재계산 세포 등록 복구"
+    },
+    {
+      "id": "R2",
+      "text": "미사용 보존 빠른 체크인 세포 등록 복구"
+    },
+    {
+      "id": "R3",
+      "text": "기존 HAND_FIELDS·names/cells 전수 보존과 새 두 설명 보충"
+    },
+    {
+      "id": "R4",
+      "text": "기존 생성기로 하향 기준선·세포지도·인라인 지도 갱신 및 동일성 측정"
+    },
+    {
+      "id": "R5",
+      "text": "기존 실패·REQ 검사·전경 npm 실행·제품/시험/금고 무변경 원시와 실제 결과 보존"
+    },
+    {
+      "id": "R6",
+      "text": "실제 설정 내용과 보고 기록 주장 분리 및 미측정·root 인계 명시"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C01",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 goals/goal-rescale의 실제 경로·tab 종류·small 크기·책임과 생성 필드가 기록되어 있다.",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "file": "docs/architecture/modules.json",
+        "type": "codeContains",
+        "text": "    {\n      \"id\": \"goals/goal-rescale\",\n      \"file\": \"js/tabs/goals/goal-rescale.js\",\n      \"layer\": \"tabs\",\n      \"tab\": \"goals\",\n      \"size\": \"small\",\n      \"kind\": \"tab\",\n      \"role\": \"목표 일정 재계산 — rescaleGoal로 미완료 마일스톤·할 일·목표 기한을 현재 날짜 기준으로 갱신하고 재계산 횟수·날짜를 남기는 기존 보존 함수\",\n      \"spans\": [],\n      \"provides\": [],\n      \"requires\": [],\n      \"contributes\": [],\n      \"owns\": [],\n      \"capabilities\": [],\n      \"planned\": {\n        \"provides\": [],\n        \"contributes\": []\n      },\n      \"emits\": [],\n      \"listens\": [],\n      \"domRoot\": null,\n      \"ownerKeys\": [],\n      \"dependsOn\": [\n        \"OurgoalAppScope\"\n      ]\n    }"
+      }
+    },
+    {
+      "id": "C02",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설명 파일에 goals/goal-rescale 이름이 기록되어 있다.",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "file": "docs/architecture/cell-descriptions.json",
+        "type": "jsonPath",
+        "path": "names.goals/goal-rescale",
+        "equals": "목표 일정 재계산"
+      }
+    },
+    {
+      "id": "C03",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설명 파일에 goals/goal-rescale의 담당 설명이 기록되어 있다.",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "file": "docs/architecture/cell-descriptions.json",
+        "type": "jsonPath",
+        "path": "cells.goals/goal-rescale",
+        "equals": "목표 일정 재계산 — 미완료 마일스톤·할 일과 목표 기한을 현재 날짜 기준으로 다시 정하고 재계산 횟수·날짜를 남기는 보존 함수. 운영 호출·서버 검증은 이번 업무에서 측정하지 않았다."
+      }
+    },
+    {
+      "id": "C04",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성 지도에 goals/goal-rescale의 이름과 담당 설명 및 hand 출처가 기록되어 있다.",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "file": "docs/architecture/cell-map.json",
+        "type": "codeContains",
+        "text": "  {\n   \"id\": \"goals/goal-rescale\",\n   \"file\": \"js/tabs/goals/goal-rescale.js\",\n   \"kind\": \"tab\",\n   \"kindName\": \"탭 세포(작은 세포)\",\n   \"size\": \"small\",\n   \"area\": \"goals\",\n   \"tabs\": [\n    \"goals\"\n   ],\n   \"name\": \"목표 일정 재계산\",\n   \"nameSource\": \"hand\",\n   \"does\": \"목표 일정 재계산 — 미완료 마일스톤·할 일과 목표 기한을 현재 날짜 기준으로 다시 정하고 재계산 횟수·날짜를 남기는 보존 함수. 운영 호출·서버 검증은 이번 업무에서 측정하지 않았다.\",\n   \"doesSource\": \"hand\","
+      }
+    },
+    {
+      "id": "C05",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 records/quick-checkin의 실제 경로·tab 종류·small 크기·책임과 생성 필드가 기록되어 있다.",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "file": "docs/architecture/modules.json",
+        "type": "codeContains",
+        "text": "    {\n      \"id\": \"records/quick-checkin\",\n      \"file\": \"js/tabs/records/quick-checkin.js\",\n      \"layer\": \"tabs\",\n      \"tab\": \"records\",\n      \"size\": \"small\",\n      \"kind\": \"tab\",\n      \"role\": \"미사용 빠른 체크인 보존 함수 — buildCheckinRecord로 비공개 기록 객체를 만들고 saveQuickCheckin에 기록 추가·EXP·프로필 저장·신호·뷰 갱신·팀 인증·계측 경로를 보존(운영 호출·서버 검증 미측정)\",\n      \"spans\": [],\n      \"provides\": [],\n      \"requires\": [],\n      \"contributes\": [],\n      \"owns\": [],\n      \"capabilities\": [],\n      \"planned\": {\n        \"provides\": [],\n        \"contributes\": []\n      },\n      \"emits\": [\n        \"checkin:created\",\n        \"record:saved\"\n      ],\n      \"listens\": [],\n      \"domRoot\": null,\n      \"ownerKeys\": [],\n      \"dependsOn\": [\n        \"OurgoalAppScope\",\n        \"OurgoalEvents\",\n        \"OurgoalStore\",\n        \"sb\"\n      ]\n    }"
+      }
+    },
+    {
+      "id": "C06",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설명 파일에 records/quick-checkin 이름이 기록되어 있다.",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "file": "docs/architecture/cell-descriptions.json",
+        "type": "jsonPath",
+        "path": "names.records/quick-checkin",
+        "equals": "빠른 체크인(미사용 보존)"
+      }
+    },
+    {
+      "id": "C07",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설명 파일에 records/quick-checkin의 담당 설명이 기록되어 있다.",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "file": "docs/architecture/cell-descriptions.json",
+        "type": "jsonPath",
+        "path": "cells.records/quick-checkin",
+        "equals": "빠른 체크인(미사용 보존) — 글·목표로 비공개 기록 객체를 만들고 기록 추가·EXP·프로필 저장·신호·뷰 갱신·팀 인증·계측 경로가 담긴 미사용 보존 함수. 운영 호출·서버 검증은 이번 업무에서 측정하지 않았다."
+      }
+    },
+    {
+      "id": "C08",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성 지도에 records/quick-checkin의 이름과 담당 설명 및 hand 출처가 기록되어 있다.",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "file": "docs/architecture/cell-map.json",
+        "type": "codeContains",
+        "text": "  {\n   \"id\": \"records/quick-checkin\",\n   \"file\": \"js/tabs/records/quick-checkin.js\",\n   \"kind\": \"tab\",\n   \"kindName\": \"탭 세포(작은 세포)\",\n   \"size\": \"small\",\n   \"area\": \"records\",\n   \"tabs\": [\n    \"records\"\n   ],\n   \"name\": \"빠른 체크인(미사용 보존)\",\n   \"nameSource\": \"hand\",\n   \"does\": \"빠른 체크인(미사용 보존) — 글·목표로 비공개 기록 객체를 만들고 기록 추가·EXP·프로필 저장·신호·뷰 갱신·팀 인증·계측 경로가 담긴 미사용 보존 함수. 운영 호출·서버 검증은 이번 업무에서 측정하지 않았다.\",\n   \"doesSource\": \"hand\","
+      }
+    },
+    {
+      "id": "C09",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준선 파일의 생성 자료 형식이 유지되어 있다.",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "file": "docs/architecture/module-baseline.json",
+        "type": "jsonPath",
+        "path": "schema",
+        "equals": "ourgoal.module-baseline/1"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준선에 생성기가 추가한 하향 측정 이력의 날짜가 기록되어 있다.",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "file": "docs/architecture/module-baseline.json",
+        "type": "codeContains",
+        "text": "\"date\": \"2026-10-09\""
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 JSON 지도는 index.html을 입력으로 기록한다.",
+      "touches": [
+        "docs/architecture/inline-script-map.json"
+      ],
+      "check": {
+        "file": "docs/architecture/inline-script-map.json",
+        "type": "jsonPath",
+        "path": "source.file",
+        "equals": "index.html"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 JSON 생성 지도에 이전된 rescaleGoal 이름이 없다.",
+      "touches": [
+        "docs/architecture/inline-script-map.json"
+      ],
+      "check": {
+        "file": "docs/architecture/inline-script-map.json",
+        "type": "codeNotContains",
+        "text": "rescaleGoal"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 Markdown 생성 지도에 이전된 rescaleGoal 이름이 없다.",
+      "touches": [
+        "docs/architecture/INLINE-SCRIPT-MAP.md"
+      ],
+      "check": {
+        "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+        "type": "codeNotContains",
+        "text": "rescaleGoal"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 JSON 생성 지도에 이전된 buildCheckinRecord 이름이 없다.",
+      "touches": [
+        "docs/architecture/inline-script-map.json"
+      ],
+      "check": {
+        "file": "docs/architecture/inline-script-map.json",
+        "type": "codeNotContains",
+        "text": "buildCheckinRecord"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 Markdown 생성 지도에 이전된 buildCheckinRecord 이름이 없다.",
+      "touches": [
+        "docs/architecture/INLINE-SCRIPT-MAP.md"
+      ],
+      "check": {
+        "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+        "type": "codeNotContains",
+        "text": "buildCheckinRecord"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 JSON 생성 지도에 이전된 saveQuickCheckin 이름이 없다.",
+      "touches": [
+        "docs/architecture/inline-script-map.json"
+      ],
+      "check": {
+        "file": "docs/architecture/inline-script-map.json",
+        "type": "codeNotContains",
+        "text": "saveQuickCheckin"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 Markdown 생성 지도에 이전된 saveQuickCheckin 이름이 없다.",
+      "touches": [
+        "docs/architecture/INLINE-SCRIPT-MAP.md"
+      ],
+      "check": {
+        "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+        "type": "codeNotContains",
+        "text": "saveQuickCheckin"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 기존 신고 손 필드 전수 대조의 불일치 수가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "preservation.existingHandMismatchCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 기존 설명 전수 대조의 불일치 수가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "preservation.descriptionMismatchCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 새 두 설명만 추가한 대조 결과가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "preservation.onlyTwoNewDescriptions",
+        "equals": true
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 생성 표준 출력과 재실행 바이트 동일성 대조가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "generatorIdentity.result.byteChecks",
+        "equals": [
+          {
+            "file": "docs/architecture/modules.json",
+            "first": "e46156628492b125ada0298d48b0bc1911eb8e64640cabe91cd9ff958cf23123",
+            "repeated": "e46156628492b125ada0298d48b0bc1911eb8e64640cabe91cd9ff958cf23123",
+            "byteIdentical": true
+          },
+          {
+            "file": "docs/architecture/module-baseline.json",
+            "first": "9ee38a0668d8bd78fc6f5b1af33f10f395b8514341dfc67a16d47d31db382ad3",
+            "repeated": "9ee38a0668d8bd78fc6f5b1af33f10f395b8514341dfc67a16d47d31db382ad3",
+            "byteIdentical": true
+          },
+          {
+            "file": "docs/architecture/cell-descriptions.json",
+            "first": "2da16dc2302a81213abc95095cdee54c1a37f50e01791d2039271a81e92e4df8",
+            "repeated": "2da16dc2302a81213abc95095cdee54c1a37f50e01791d2039271a81e92e4df8",
+            "byteIdentical": true
+          },
+          {
+            "file": "docs/architecture/cell-map.json",
+            "first": "aacc3841743220bfbb9e1505276bccd10db70f108c13c289375b9d444692428f",
+            "repeated": "aacc3841743220bfbb9e1505276bccd10db70f108c13c289375b9d444692428f",
+            "byteIdentical": true
+          },
+          {
+            "file": "docs/architecture/inline-script-map.json",
+            "first": "d43f0f1abad49ac13caa11f0349ed74a8ce728a50b252ea734fe8d9a925851da",
+            "repeated": "d43f0f1abad49ac13caa11f0349ed74a8ce728a50b252ea734fe8d9a925851da",
+            "byteIdentical": true
+          },
+          {
+            "file": "docs/architecture/INLINE-SCRIPT-MAP.md",
+            "first": "80506b307953f682d51ea0b14df037753d91bdf9432a28b50bc2a83e9a07772d",
+            "repeated": "80506b307953f682d51ea0b14df037753d91bdf9432a28b50bc2a83e9a07772d",
+            "byteIdentical": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 기준선 하향 비교의 증가 목록이 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "preservation.baseline.comparison.failures",
+        "equals": []
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 최초 가드의 실제 종료코드가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "initialGuard.exitCode",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 최종 직접 가드의 실제 종료코드가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "finalGuard.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 npm 전경 실행의 실제 종료코드가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "tests.npmTest.exitCode",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 제품 파일 변경 수 대조가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "scope.productCodeChangeCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 시험 파일 변경 수 대조가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "scope.testChangeCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 금고 파일 변경 수 대조가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "scope.vaultChangeCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고에 규범 파일 변경 수 대조가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "scope.normChangeCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고는 작업자 기록임을 명시한다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "type",
+        "equals": "작업자 측정, 판정 아님"
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 보고의 법정 판정 칸은 미측정으로 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/measurement.json"
+      ],
+      "check": {
+        "file": "reports/TASK-ES-603/measurement.json",
+        "type": "jsonPath",
+        "path": "limitations.courtVerdict",
+        "equals": null
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "최종 생성 지도는 기존 cell-map-export 생성기를 출처로 기록한다.",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/cell-map.json",
+        "path": "source.generator",
+        "equals": "scripts/cell-map-export.js"
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "최종 생성 지도에서 Git 불가 fallback의 commit:null 표기가 사라졌다(현재 출처 일치는 별도 고정 조립 기록으로 대조).",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "docs/architecture/cell-map.json",
+        "text": "\"commit\": null"
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고정 조립 기록에는 실제 최종 생성 지도 출처와 측정 HEAD의 일치 대조가 기록되어 있다(Court 재측정 주장 아님).",
+      "touches": [
+        "reports/TASK-ES-603/root-assembly.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-603/root-assembly.json",
+        "path": "finalSnapshot.sourceMatchesHEAD",
+        "equals": true
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고정 조립 기록에는 원 native 하향 기준선 이력 전체 바이트의 보존 대조가 기록되어 있다(null 출처를 실제 commit으로 바꾸지 않음).",
+      "touches": [
+        "reports/TASK-ES-603/root-assembly.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-603/root-assembly.json",
+        "path": "baseline.nativeHistoryUnchanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고정 조립 기록에는 기존 신고서 HAND_FIELDS 전수 불일치 수0이 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/root-assembly.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-603/root-assembly.json",
+        "path": "preservation.existingHandMismatchCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고정 조립 기록에는 최종 지도와 기존 생성기 --stdout 실제 바이트 비교가 기록되어 있다.",
+      "touches": [
+        "reports/TASK-ES-603/root-assembly.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-603/root-assembly.json",
+        "path": "deterministic.cellMapStdoutByteIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "별도 root의 native 종료 직후 독립 npm 측정 종료코드0을 원 receipt/raw로 보존한 기록이다(최종 조립 이전 스냅샷 범위).",
+      "touches": [
+        "reports/TASK-ES-603/root-assembly.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-603/root-assembly.json",
+        "path": "independentNativeNpm.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "최종 생성 지도 출처 복원 뒤 실제 조립 도구 npm 종료코드0이 새 원시와 함께 기록되어 있다(원 native 실패를 덮어쓰지 않음).",
+      "touches": [
+        "reports/TASK-ES-603/root-assembly.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-603/root-assembly.json",
+        "path": "finalNpm.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "최종 조립 기록의 Court 판정은 null이며 작업자·독립 로컬 측정을 Court 완료로 승격하지 않았다.",
+      "touches": [
+        "reports/TASK-ES-603/root-assembly.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-603/root-assembly.json",
+        "path": "limitations.CourtVerdict",
+        "equals": null
+      }
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "source": {
+        "path": "js/tabs/goals/goal-rescale.js",
+        "sha256": "5f984c38379b37cd054ebc8daa032c6cc76b0d6cf6cb6b68e36f1c0f3bfd439f"
+      },
+      "finding": "scaleRatio 지정 뒤 기한 계산에서 사용하지 않음",
+      "fixed": false
+    },
+    {
+      "source": {
+        "path": "js/tabs/records/quick-checkin.js",
+        "sha256": "38c338021931a857f86c00dbee2eddabfa6364124215594432486f013f141d01"
+      },
+      "finding": "미사용 보존 함수에 L.MOCK_GROUPS 참조 및 team_pings 실패를 삼키는 경로가 있음",
+      "fixed": false
+    },
+    {
+      "taskId": "TASK-ES-602",
+      "finding": "별도 일곱 설명 보충은 이 작업에서 수행·청구하지 않음",
+      "fixed": false
+    }
+  ],
+  "limitations": {
+    "remoteFetch": {
+      "execution": {
+        "path": "reports/TASK-ES-603/raw/fetch-tool-result.json",
+        "sha256": "b721c9a66efb8fb58a4e0124242cd4e51f3cb4714612a7a6bb6f59e93fb1c4ce"
+      },
+      "refreshed": false,
+      "reason": "공유 Git FETCH_HEAD 쓰기 Permission denied"
+    },
+    "internalGit": {
+      "probe": {
+        "label": "nested-process-probe",
+        "command": [
+          "node",
+          "-e",
+          "const c=require('child_process');for(const exe of ['C:/Program Files/Git/cmd/git.exe',process.execPath]){const r=c.spawnSync(exe,exe.endsWith('git.exe')?['rev-parse','HEAD']:['--version'],{encoding:'utf8',windowsHide:true});console.log(JSON.stringify({exe,status:r.status,error:String(r.error||''),stdout:r.stdout,stderr:r.stderr}));}"
+        ],
+        "cwd": "C:\\dev\\wt\\yangvis-ourgoal-registry-01a11bfe",
+        "environment": {
+          "NODE_PATH": "C:/dev/ourgoal-app/node_modules"
+        },
+        "capture": "PowerShell native foreground stdout/stderr UTF-8 stream files",
+        "startedAt": "2026-10-09T07:31:21.3069707Z",
+        "endedAt": "2026-10-09T07:31:21.3793498Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stdout": {
+          "path": "reports/TASK-ES-603/raw/native-nested-process-probe.stdout.txt",
+          "sha256": "ba7d656e9694c0413469dbcee8e6d922e0c71cf38144330d6f8ad68b535b7a1c"
+        },
+        "stderr": {
+          "path": "reports/TASK-ES-603/raw/native-nested-process-probe.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "gitAvailableToGenerator": false,
+      "generatedMapSource": {
+        "repo": "yangsangmin/ourgoal-app",
+        "generator": "scripts/cell-map-export.js",
+        "basisPaths": [
+          "js",
+          "index.html",
+          "docs/architecture/modules.json",
+          "docs/architecture/module-baseline.json"
+        ],
+        "commit": null,
+        "short": null,
+        "committedAt": null,
+        "subject": null
+      },
+      "generatedBaselineCommit": null,
+      "missingHistory": "기존 생성기의 Git 불가 fallback에서 prs가 빈 배열로 생성됨. 입력 코드·설명 측정과 분리한다.",
+      "rootNextAction": "권한이 허용된 root 실행 환경에서 기존 생성기를 재실행하여 Git 출처·이력을 복원하고 npm test 전체를 다시 실행한다. TASK-ES-602 새 일곱 설명도 보존한다."
+    },
+    "runtime": {
+      "productionCalls": null,
+      "serverVerification": null,
+      "realAccounts": null,
+      "mobile": null
+    },
+    "courtVerdict": null,
+    "courtRun": false,
+    "merge": false,
+    "deployment": false,
+    "commit": false,
+    "push": false,
+    "pullRequest": false,
+    "externalSync": false
+  },
+  "retire": []
+}

@@ -5,7 +5,10 @@
       "id": "index-html",
       "file": "index.html",
       "role": "미분화 덩어리 — 아직 세포로 분화되지 않은 인라인 스크립트(여기서 세포를 하나씩 떼어 낸다)",
-      "emits": [],
+      "emits": [
+        "checkin:created",
+        "record:saved"
+      ],
       "listens": []
     }
   ],
@@ -5630,32 +5633,6 @@
       ]
     },
     {
-      "id": "goals/goal-rescale",
-      "file": "js/tabs/goals/goal-rescale.js",
-      "layer": "tabs",
-      "tab": "goals",
-      "size": "small",
-      "kind": "tab",
-      "role": "목표 일정 재계산 — rescaleGoal로 미완료 마일스톤·할 일·목표 기한을 현재 날짜 기준으로 갱신하고 재계산 횟수·날짜를 남기는 기존 보존 함수",
-      "spans": [],
-      "provides": [],
-      "requires": [],
-      "contributes": [],
-      "owns": [],
-      "capabilities": [],
-      "planned": {
-        "provides": [],
-        "contributes": []
-      },
-      "emits": [],
-      "listens": [],
-      "domRoot": null,
-      "ownerKeys": [],
-      "dependsOn": [
-        "OurgoalAppScope"
-      ]
-    },
-    {
       "id": "goals/goal-update-suggest",
       "file": "js/tabs/goals/goal-update-suggest.js",
       "layer": "tabs",
@@ -7296,38 +7273,6 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope"
-      ]
-    },
-    {
-      "id": "records/quick-checkin",
-      "file": "js/tabs/records/quick-checkin.js",
-      "layer": "tabs",
-      "tab": "records",
-      "size": "small",
-      "kind": "tab",
-      "role": "미사용 빠른 체크인 보존 함수 — buildCheckinRecord로 비공개 기록 객체를 만들고 saveQuickCheckin에 기록 추가·EXP·프로필 저장·신호·뷰 갱신·팀 인증·계측 경로를 보존(운영 호출·서버 검증 미측정)",
-      "spans": [],
-      "provides": [],
-      "requires": [],
-      "contributes": [],
-      "owns": [],
-      "capabilities": [],
-      "planned": {
-        "provides": [],
-        "contributes": []
-      },
-      "emits": [
-        "checkin:created",
-        "record:saved"
-      ],
-      "listens": [],
-      "domRoot": null,
-      "ownerKeys": [],
-      "dependsOn": [
-        "OurgoalAppScope",
-        "OurgoalEvents",
-        "OurgoalStore",
-        "sb"
       ]
     },
     {

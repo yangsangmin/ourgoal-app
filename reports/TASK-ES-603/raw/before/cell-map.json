@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "4d906fd1c9efdf40b7dc267de53904e0a0bc4421",
-  "short": "4d906fd1",
-  "committedAt": "2026-10-08T13:53:14+09:00",
-  "subject": "Merge pull request #869 from yangsangmin/es601-a3a"
+  "commit": "11c8e9dddeb6f6cceeb661ed8c6055fee445695c",
+  "short": "11c8e9dd",
+  "committedAt": "2026-10-07T22:18:43+09:00",
+  "subject": "Merge pull request #861 from yangsangmin/chore/2026-10-07-task-es-593-map-refresh"
  },
  "summary": {
-  "cells": 351,
-  "files": 350,
-  "jsLines": 88409,
+  "cells": 349,
+  "files": 348,
+  "jsLines": 88160,
   "kinds": {
    "organ": 57,
-   "tab": 188,
+   "tab": 186,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 344,
+  "descriptionsHand": 342,
   "descriptionsPending": [
    "auth-social",
    "avatar/level-badge",
@@ -45,11 +45,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 4003,
-   "functionDecls": 29
+   "inlineScriptLines": 4134,
+   "functionDecls": 32
   },
   "health": {
-   "undifferentiatedLines": 4003,
+   "undifferentiatedLines": 4134,
    "globalLinks": 260,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -88,9 +88,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 188,
+   "count": 186,
    "large": 6,
-   "small": 182
+   "small": 180
   },
   {
    "key": "hybrid",
@@ -146,7 +146,6 @@
     "goals/goal-export",
     "goals/goal-math",
     "goals/goal-order",
-    "goals/goal-rescale",
     "goals/goal-update-suggest",
     "goals/goals-ia-actions",
     "goals/new-goal-modal",
@@ -178,7 +177,7 @@
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 11831,
+   "lines": 11772,
    "over800": 0
   },
   {
@@ -207,7 +206,6 @@
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
-    "records/quick-checkin",
     "records/record-assistant",
     "records/record-card-wire",
     "records/record-cards",
@@ -233,7 +231,7 @@
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 9982,
+   "lines": 9855,
    "over800": 0
   },
   {
@@ -293,7 +291,7 @@
     "comm/user-blocks",
     "comm/user-profile-open"
    ],
-   "lines": 4912,
+   "lines": 4881,
    "over800": 0
   },
   {
@@ -351,7 +349,7 @@
     "settings/widget-settings-modal",
     "settings/withdraw-modal"
    ],
-   "lines": 7029,
+   "lines": 6997,
    "over800": 0
   },
   {
@@ -4019,7 +4017,6 @@
     "goals/goal-export",
     "goals/goal-math",
     "goals/goal-order",
-    "goals/goal-rescale",
     "goals/goal-update-suggest",
     "goals/goals-ia-actions",
     "goals/new-goal-modal",
@@ -4069,7 +4066,6 @@
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
-    "records/quick-checkin",
     "records/record-assistant",
     "records/record-card-wire",
     "records/record-cards",
@@ -4747,7 +4743,6 @@
     "home/sub-today",
     "records/checkin-capture",
     "records/index",
-    "records/quick-checkin",
     "records/sub-retrospect",
     "records/sub-timeline",
     "records/sub-timer",
@@ -4761,7 +4756,9 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalEvents"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5620,14 +5617,15 @@
     "core/registry",
     "core/view-dispatch",
     "goals/focus-autopilot",
-    "records/checkin-capture",
-    "records/quick-checkin"
+    "records/checkin-capture"
    ],
    "readsFromIndexHtml": [
     "state"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalStore"
+   ],
    "emits": [
     "state:updated"
    ],
@@ -9156,7 +9154,6 @@
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
-    "records/quick-checkin",
     "records/record-assistant",
     "records/record-card-wire",
     "records/record-cards",
@@ -9278,7 +9275,6 @@
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
-    "records/quick-checkin",
     "records/record-assistant",
     "records/record-card-wire",
     "records/record-cards",
@@ -13118,17 +13114,10 @@
    "nameSource": "hand",
    "does": "동반자·피드 작성자 프로필 창 열기를 팀 초대·소통 세포에 맡긴다",
    "doesSource": "hand",
-   "header": [
-    "OurGoal User Profile Open (소통 — 사용자 프로필 창 열기 위임)",
-    "동반자·피드 작성자 프로필 창 열기 openUserProfileModal — js/team-invite-comm.js 의 OurgoalTeamInviteComm.openUserProfileModal 이 있으면 그쪽에 맡긴다.",
-    "#TASK-ES-596(A1 시범 — 남은 작은 함수 2개 이전(동작 보존 확인 경로 첫 사용)): index.html 인라인 IIFE 의 구간(이전 전 6220~6226줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
-    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
-   ],
-   "lines": 31,
+   "header": [],
+   "lines": 0,
    "over800": false,
-   "exposes": [
-    "OurgoalCommKit"
-   ],
+   "exposes": [],
    "calls": [
     "core/app-scope",
     "team-invite-comm"
@@ -13136,9 +13125,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13148,18 +13135,9 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [
-    "TASK-ES-596"
-   ],
+   "tasks": [],
    "reqs": [],
-   "prs": [
-    {
-     "number": 864,
-     "task": "TASK-ES-596",
-     "title": "refactor(TASK-ES-596): A1 미분화 덩어리 작은 함수 2개 생성기 이전",
-     "date": "2026-10-08"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "goals/ai-agent",
@@ -14059,64 +14037,6 @@
      "task": "TASK-ES-545",
      "title": "[INFRA] #TASK-ES-545 refactor: 인라인 3단계 Z2 1차 — 「RENDER: 팀 목표」·「DM & 동반자」 묶음을 세포 4개로 동작 그대로 옮김",
      "date": "2026-10-06"
-    }
-   ]
-  },
-  {
-   "id": "goals/goal-rescale",
-   "file": "js/tabs/goals/goal-rescale.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "goals",
-   "tabs": [
-    "goals"
-   ],
-   "name": "목표 일정 재계산",
-   "nameSource": "hand",
-   "does": "목표 일정 재계산 — 미완료 마일스톤·할 일과 목표 기한을 현재 날짜 기준으로 다시 정하고 재계산 횟수·날짜를 남기는 보존 함수. 운영 호출·서버 검증은 이번 업무에서 측정하지 않았다.",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Goal Rescale",
-    "G056 목표 일정 리스케일링 (rescaleGoal) 분리",
-    "#TASK-ES-601(목표 일정 리스케일링 분리 (G056)): index.html 인라인 IIFE 의 구간(이전 전 3831~3865줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
-    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
-   ],
-   "lines": 59,
-   "over800": false,
-   "exposes": [
-    "OurgoalGoalsKit"
-   ],
-   "calls": [
-    "core/app-scope"
-   ],
-   "calledBy": [],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
-   "emits": [],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-601"
-   ],
-   "reqs": [
-    "docs/specs/REQ-TASK-ES-601.md"
-   ],
-   "prs": [
-    {
-     "number": 869,
-     "task": null,
-     "title": "[E2] #TASK-ES-601 chore: 목표 일정 리스케일링 분리 (G056, A3 트랙)",
-     "date": "2026-10-08"
     }
    ]
   },
@@ -17844,64 +17764,6 @@
    ]
   },
   {
-   "id": "records/quick-checkin",
-   "file": "js/tabs/records/quick-checkin.js",
-   "kind": "tab",
-   "kindName": "탭 세포(작은 세포)",
-   "size": "small",
-   "area": "records",
-   "tabs": [
-    "records"
-   ],
-   "name": "빠른 체크인(미사용 보존)",
-   "nameSource": "hand",
-   "does": "빠른 체크인(미사용 보존) — 글·목표로 비공개 기록 객체를 만들고 기록 추가·EXP·프로필 저장·신호·뷰 갱신·팀 인증·계측 경로가 담긴 미사용 보존 함수. 운영 호출·서버 검증은 이번 업무에서 측정하지 않았다.",
-   "doesSource": "hand",
-   "header": [
-    "OurGoal Quick Checkin (미사용 빠른 체크인 캡처본 유지)",
-    "G062 5대 테마 온톨로지에서 분리되지 않고 원본에 남았던 buildCheckinRecord와 saveQuickCheckin을 세포로 옮긴다.",
-    "미사용 함수이나 제품 및 법정의 동작 보존을 위해 그대로 옮긴다.",
-    "#TASK-ES-600(빠른 체크인 분리 (G062 잔여)): index.html 인라인 IIFE 의 구간(이전 전 3983~4006 · 4007~4082줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
-   ],
-   "lines": 127,
-   "over800": false,
-   "exposes": [
-    "OurgoalRecordsKit"
-   ],
-   "calls": [
-    "core/app-scope",
-    "core/event-bus",
-    "core/store",
-    "template-credit"
-   ],
-   "calledBy": [
-    "sanctuary-record-feed",
-    "sanctuary-v3-engine"
-   ],
-   "readsFromIndexHtml": [],
-   "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
-   "emits": [
-    "checkin:created",
-    "record:saved"
-   ],
-   "listens": [],
-   "provides": [],
-   "requiresAbilities": [],
-   "contributes": [],
-   "planned": {
-    "provides": [],
-    "contributes": []
-   },
-   "tasks": [
-    "TASK-ES-600"
-   ],
-   "reqs": [],
-   "prs": []
-  },
-  {
    "id": "records/record-assistant",
    "file": "js/tabs/records/record-assistant.js",
    "kind": "tab",
@@ -19430,26 +19292,17 @@
    "nameSource": "hand",
    "does": "화면 읽기 프로그램이 읽도록 실시간 알림 영역에 안내 글자를 넣는다",
    "doesSource": "hand",
-   "header": [
-    "OurGoal A11y Announce (설정 — 화면 읽기 알림)",
-    "화면 읽기 프로그램용 실시간 알림 영역(#a11yLiveAnnouncer)에 글자를 비웠다가 50ms 뒤 다시 넣어 읽게 하는 announceToA11y.",
-    "#TASK-ES-596(A1 시범 — 남은 작은 함수 2개 이전(동작 보존 확인 경로 첫 사용)): index.html 인라인 IIFE 의 구간(이전 전 4114~4121줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
-    "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
-   ],
-   "lines": 32,
+   "header": [],
+   "lines": 0,
    "over800": false,
-   "exposes": [
-    "OurgoalSettingsKit"
-   ],
+   "exposes": [],
    "calls": [
     "core/app-scope"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19459,18 +19312,9 @@
     "provides": [],
     "contributes": []
    },
-   "tasks": [
-    "TASK-ES-596"
-   ],
+   "tasks": [],
    "reqs": [],
-   "prs": [
-    {
-     "number": 864,
-     "task": "TASK-ES-596",
-     "title": "refactor(TASK-ES-596): A1 미분화 덩어리 작은 함수 2개 생성기 이전",
-     "date": "2026-10-08"
-    }
-   ]
+   "prs": []
   },
   {
    "id": "settings/account-actions",
@@ -24024,7 +23868,6 @@
     "creator-templates-legacy",
     "goal-edit-ux",
     "goals/team-goals-screen",
-    "records/quick-checkin",
     "settings/guest-migration",
     "team-chat",
     "team-companion-search",
