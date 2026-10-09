@@ -1,0 +1,80 @@
+{
+  "schema": "agy604-public-independent-historical-run-receipts/1",
+  "taskId": "TASK-ES-604",
+  "historicalExporter": {
+    "source": {
+      "basename": "generator-run-receipt.json",
+      "sha256": "1927036a3d94de4a3d00014c3a0422d73704905ea694874c221140e60d6b68ec",
+      "availability": "private-local-original"
+    },
+    "program": {
+      "label": "node",
+      "sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5"
+    },
+    "script": {
+      "file": "scripts/cell-map-export.js",
+      "sha256": "fc2b499ef96d08d2043dbe914f1d33fc552ceb129d56759be2512d9755221807"
+    },
+    "argv": [
+      "scripts/cell-map-export.js",
+      "--stdout"
+    ],
+    "cwd": "source-bound worktree",
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-10-09T11:28:56.238Z",
+    "endedAt": "2026-10-09T11:28:59.229Z",
+    "stdout": {
+      "file": "reports/TASK-ES-604/raw/generator.stdout.json",
+      "sha256": "9ece5c57dabb1f6856ab33760372d30389ab87c8576f94904e31245b2bef1896",
+      "bytes": 772847
+    },
+    "stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "category": "empty"
+    },
+    "before": {
+      "basename": "before.json",
+      "sha256": "252552c8f82e808006f7f9300901a6825aeb9d1ca1a9974c829152b492df1741",
+      "availability": "private-local-original"
+    },
+    "freshOutsideRepositoryScratch": true,
+    "nativeOrModelCalls": 0,
+    "envelope": {
+      "basename": "replay-envelope.json",
+      "sha256": "0bac6144bae8978e115179a83db5027ce7ec4c7dd90769b4dc13696b3f3d3537",
+      "availability": "private-local-original"
+    }
+  },
+  "historicalAudit": {
+    "source": {
+      "basename": "audit-execution.json",
+      "sha256": "80667231affa206b1b8452673959d8180466b62da5adc5304dcb113bb3c498fa",
+      "availability": "private-local-original"
+    },
+    "code": {
+      "basename": "replay-audit.cjs",
+      "sha256": "facb4c8cb790b1e7cf55773b5dc3843e2950de64b211bfc06f376a394f4eb204",
+      "availability": "private-local-original"
+    },
+    "beforeExitCode": 0,
+    "afterExitCode": 0,
+    "afterStdoutSha256": "0f39814c0ae0bf7defc741b94247bd93dc35043adce11bd984a301d3e6354d57",
+    "afterStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "afterStderrBytes": 0,
+    "envelope": {
+      "basename": "replay-envelope.json",
+      "sha256": "0bac6144bae8978e115179a83db5027ce7ec4c7dd90769b4dc13696b3f3d3537",
+      "availability": "private-local-original"
+    },
+    "orchestration": {
+      "basename": "run-reviewed-agy604-replay.cjs",
+      "sha256": "259eaf0350636f14a2c1de63bd31072c7eb562321c71262804711723ae284ef9",
+      "availability": "private-local-original"
+    }
+  },
+  "receiptMeaning": "Normalized public argv/cwd labels retain source SHA and historical exits. Exact private absolute argv is retained unchanged at local origin. This preparation did not execute those commands.",
+  "executedDuringPreparation": false,
+  "courtVerdict": null
+}

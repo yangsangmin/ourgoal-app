@@ -1,0 +1,55 @@
+READING-ONLY SOURCE PROJECTION — DO NOT EXECUTE
+Original replay-audit.cjs SHA256: facb4c8cb790b1e7cf55773b5dc3843e2950de64b211bfc06f376a394f4eb204
+Private location/execution bindings were replaced by symbols. This file was not the executed code and is not a portable replay implementation.
+The original exact code and original binding envelope remain at private local origin.
+
+'use strict';
+// Root calls this bounded audit before/after its separate official --stdout child.
+// This code does not call the worker measurement, an AI/native CLI or a network.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process');
+const O=__dirname,R="<PRIVATE_EVIDENCE_ROOT>",WT='<WORKTREE>';
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),hash=p=>sha(fs.readFileSync(p)),read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
+const nodeSha='3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5';
+const exporterPath=WT+'/scripts/cell-map-export.js',exporterSha='fc2b499ef96d08d2043dbe914f1d33fc552ceb129d56759be2512d9755221807';
+const targetIds=['auth-social','avatar/level-badge','core/modal-open','creator-templates-legacy','goals/curated-market-data','goals/template-encyclopedia-modal','records/vision-table-input'];
+const [phase,folderArg]=process.argv.slice(2),folder=folderArg&&path.resolve(folderArg);
+if(!['before','after'].includes(phase)||!folder||path.dirname(folder)!==path.resolve(R)||!/^agy604-independent-replay-\d{13}$/.test(path.basename(folder)))throw Error('REPLAY_OUTPUT_SCOPE');
+if(fs.existsSync(folder)&&fs.lstatSync(folder).isSymbolicLink())throw Error('REPLAY_OUTPUT_LINK');
+const specPath=R+'/agy-retry-trust-r2/spec.json',spec=read(specPath),specSha='0c0009e1a525b47887dd27bc3fb62c007efa3cad2241a5b186c119ab72342375';
+const baselinePath=R+'/agy-map-evidence-preflight-review/protected-input-baseline.json',baseline=read(baselinePath),closurePath=R+'/agy-retry-preflight-review/config-drift-closure.raw.json',closure=read(closurePath);
+function git(args){return cp.execFileSync('git',['--no-optional-locks','-C',WT,...args],{encoding:'utf8',windowsHide:true,timeout:10000,maxBuffer:16*1024*1024}).trim();}
+function capture(){
+ if(hash(specPath)!==specSha||hash(baselinePath)!=='544350a4198d58344e3ccdd6a02fad87e080faa0d4bf7b8f39f50198c3d8b2a8'||hash(closurePath)!=='39a4d39b04319d5db78a1f8a1ededa33e071a6ed54a87419bc9e92f34f08eec9')throw Error('CONTRACT_CHANGED');
+ const inputs=spec.inputFiles.map(r=>({...r,currentSha256:hash(r.path),exact:hash(r.path)===r.sha256}));
+ const protectedRows=baseline.tracked.map(r=>({file:r.file,expectedSha256:r.sha256,currentSha256:fs.existsSync(r.path)?hash(r.path):null})),changed=protectedRows.filter(r=>r.expectedSha256!==r.currentSha256);
+ const configs=baseline.configFiles.map(r=>({path:r.path,originalSha256:r.sha256,expectedSha256:path.resolve(r.path)===path.resolve(closure.path)?closure.currentSha256:r.sha256,currentSha256:hash(r.path)}));
+ const dir='<PRIVATE_RUNTIME>-rebuild-01a11bfe/control/revisions',latest=fs.readdirSync(dir).filter(n=>/^\d+\.json$/.test(n)).sort().at(-1),snapshot=read(dir+'/'+latest),task=snapshot.tasks['TASK-ES-604'];
+ const head=git(['rev-parse','HEAD']),branch=git(['rev-parse','--abbrev-ref','HEAD']),basis=git(['log','-1','--first-parent','--format=%H','HEAD','--','js','index.html','docs/architecture/modules.json','docs/architecture/module-baseline.json']);
+ const request=read(WT+'/<PRIVATE_INPUTS>/r2/request.json');
+ const checks={nodeBinary:hash(process.execPath)===nodeSha,exporter:hash(exporterPath)===exporterSha,approvedSeven:JSON.stringify(request.targets)===JSON.stringify(targetIds),input19:inputs.length===19&&inputs.every(r=>r.exact),protected5139:protectedRows.length===5139&&changed.length===0,configClosure:configs.every(r=>r.currentSha256===r.expectedSha256),settings547:hash('<PROFILE>/.gemini/antigravity-cli/settings.json')==='54753e57cce63d32a02b3cf6c1de485f1dc8b256732b1519477c71801e172083',canonical713:hash('<CANONICAL_KNOWLEDGE>/WORK-REFERENCE.md')==='713eeb92abc8e307dbcaa494f399b42a2e72fb44faa41b8c8b9fce4907dd1bee',canonicalCa711:hash('<PROFILE>/AGENTS.md')==='ca7118866d2774c2608887fb89da6c09e5b240646a4849f10ff93e3c7e6b3b8e',head:head===spec.sourceCommit,branch:branch==='codex/task-es-604-yangvis-native-map-evidence',sameInput2Exited:task.inputRevision===2&&task.execution?.id==='<INPUT2_EXECUTION_ID>'&&task.execution?.exited===true&&task.execution?.alive===false,instruction:sha(task.instruction)===spec.instructionSha256};
+ const result={measuredAt:new Date().toISOString(),spec:{path:specPath,sha256:specSha},inputs,protected:{baseline:{path:baselinePath,sha256:hash(baselinePath)},count:protectedRows.length,currentRowsSha256:sha(JSON.stringify(protectedRows)),changed},configs,configClosure:{path:closurePath,sha256:hash(closurePath)},head,branch,structureBasisCommit:basis,settingsSha256:hash('<PROFILE>/.gemini/antigravity-cli/settings.json'),executionId:task.execution?.id||null,inputRevision:task.inputRevision,actual:{model:task.actual?.model??null,effort:task.actual?.effort??null},checks};
+ if(Object.values(checks).some(v=>v!==true))throw Error('REPLAY_SOURCE_GUARD_FAILED');return result;
+}
+const frozenPath=path.join(O,'worker-output-freeze.json'),frozen=read(frozenPath);
+for(const r of frozen.outputs)if(hash(r.path)!==r.sha256)throw Error('ORIGINAL_WORKER_OUTPUT_CHANGED');
+const save=(file,v)=>{fs.writeFileSync(file,JSON.stringify(v,null,2)+'\n',{encoding:'utf8',flag:'wx'});return {path:file,sha256:hash(file)};};
+if(phase==='before'){
+ if(fs.existsSync(folder))throw Error('REPLAY_FOLDER_ALREADY_EXISTS');const source=capture();fs.mkdirSync(folder,{recursive:false});
+ const result={schema:'independent-agy604-replay-before/1',rootAssembly:true,workerOutputFreeze:{path:frozenPath,sha256:hash(frozenPath)},source,originalOutputs:frozen.outputs};
+ console.log(JSON.stringify(save(path.join(folder,'before.json'),result))); 
+}else{
+ const beforePath=path.join(folder,'before.json'),before=read(beforePath);if(fs.lstatSync(beforePath).isSymbolicLink()||before.schema!=='independent-agy604-replay-before/1'||before.workerOutputFreeze.sha256!==hash(frozenPath)||Object.values(before.source.checks).some(v=>v!==true)||before.source.spec.sha256!==specSha||before.source.executionId!=='<INPUT2_EXECUTION_ID>'||before.source.inputRevision!==2)throw Error('REPLAY_BEFORE_CHANGED');
+ const source=capture(),rawPath=path.join(folder,'generator.stdout.raw.json');if(fs.lstatSync(rawPath).isSymbolicLink())throw Error('REPLAY_RAW_LINK');
+ const rawBytes=fs.readFileSync(rawPath),generated=JSON.parse(rawBytes),existing=read(WT+'/docs/architecture/cell-map.json'),descriptions=read(WT+'/docs/architecture/cell-descriptions.json'),beforeDescriptions=read(WT+'/<PRIVATE_INPUTS>/cell-descriptions-before.json'),modules=read(WT+'/docs/architecture/modules.json'),request=read(WT+'/<PRIVATE_INPUTS>/r2/request.json');
+ const worker=read(WT+'/reports/TASK-ES-604/measurement.json'),workerRaw=WT+'/reports/TASK-ES-604/raw/generator.stdout.json';
+ const ids=targetIds;
+ const semantic=c=>({id:c.id,name:c.name,does:c.does,nameSource:c.nameSource,doesSource:c.doesSource}),targets=ids.map(id=>{const g=generated.cells.filter(c=>c.id===id),e=existing.cells.filter(c=>c.id===id),m=modules.cells.filter(c=>c.id===id),w=worker.targets.results.filter(c=>c.id===id);const matched=g.length===1&&e.length===1&&m.length===1&&w.length===1&&g[0].name===descriptions.names[id]&&g[0].does===descriptions.cells[id]&&g[0].nameSource==='hand'&&g[0].doesSource==='hand'&&JSON.stringify(semantic(g[0]))===JSON.stringify(semantic(e[0]))&&JSON.stringify(semantic(g[0]))===JSON.stringify(w[0].generated)&&hash(path.join(WT,m[0].file))===w[0].fileSha256;return {id,matched};});
+ const freshIds=generated.cells.map(c=>c.id),oldIds=existing.cells.map(c=>c.id),allSemantic=generated.cells.length===existing.cells.length&&new Set(freshIds).size===freshIds.length&&new Set(oldIds).size===oldIds.length&&generated.cells.every(g=>existing.cells.some(e=>e.id===g.id&&JSON.stringify(semantic(g))===JSON.stringify(semantic(e))));
+ const runPath=path.join(folder,'generator-run-receipt.json'),run=read(runPath),samePath=(a,b)=>typeof a==='string'&&typeof b==='string'&&path.resolve(a)===path.resolve(b);
+ if(fs.lstatSync(runPath).isSymbolicLink())throw Error('REPLAY_RUN_RECEIPT_LINK');
+ const runBound=run.schema==='root-agy604-official-exporter-run/1'&&samePath(run.program.path,process.execPath)&&run.program.sha256===nodeSha&&samePath(run.script.path,exporterPath)&&run.script.sha256===exporterSha&&JSON.stringify(run.args)===JSON.stringify([exporterPath,'--stdout'])&&samePath(run.cwd,WT)&&run.exitCode===0&&run.signal===null&&run.stdout.sha256===hash(rawPath)&&run.stdout.bytes===rawBytes.length&&samePath(run.stdout.path,rawPath)&&run.before.sha256===hash(beforePath)&&samePath(run.before.path,beforePath)&&samePath(run.scratchPath,path.join(folder,'scratch'))&&run.nativeOrModelCalls===0;
+ const checks={rootExporterRunBound:runBound,approvedSeven:JSON.stringify(request.targets)===JSON.stringify(ids),targetsSeven:targets.length===7&&targets.every(t=>t.matched),semantic351:generated.cells.length===351&&allSemantic,rawSummary351:generated.summary.cells===351,descriptionsOriginalExact:JSON.stringify(descriptions)===JSON.stringify(beforeDescriptions),sourceStructureBasis:generated.source.commit===source.structureBasisCommit,sourceHeadC8:source.head===spec.sourceCommit,originalWorkerRawSHAReported:hash(workerRaw)===worker.generator.stdoutSha256,rootReplayRawExact:hash(rawPath)===hash(workerRaw),protectedBeforeAfterExact:before.source.protected.currentRowsSha256===source.protected.currentRowsSha256&&source.protected.changed.length===0,configsBeforeAfterExact:JSON.stringify(before.source.configs)===JSON.stringify(source.configs),settingsBeforeAfterExact:before.source.settingsSha256===source.settingsSha256,originalWorkerSixUnchanged:frozen.outputs.every(r=>hash(r.path)===r.sha256)};
+ const result={schema:'independent-agy604-replay-measurement/1',rootAssembly:true,workerCodeReplayed:false,officialExporterReplayedByRoot:runBound,runReceipt:{path:runPath,sha256:hash(runPath)},before:{path:beforePath,sha256:hash(beforePath)},workerOutputFreeze:{path:frozenPath,sha256:hash(frozenPath)},raw:{path:rawPath,sha256:hash(rawPath)},source,targets,checks,pass:Object.values(checks).every(Boolean),preservationMeaning:'Final byte equality against the independently captured original5139 baseline and before/after replay; transient writes are not observed.',workerPreservationConstantsAcceptedAsMeasurement:false,courtVerdict:null,webNotionSync:null,measuredAt:new Date().toISOString()};
+ console.log(JSON.stringify(save(path.join(folder,'measurement.json'),result)));
+ if(!result.pass)process.exitCode=1;
+}
