@@ -1,0 +1,586 @@
+{
+  "task": "TASK-ES-605",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-605-YANGVIS-GUIDE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "여섯 단계(지시하기·도구/모델/노력 선택·진행과 다음 행동 읽기·보류/중단/재개/지시 변경·지도와 근거 확인·법정과 완료 확인)의 화면 위치·행동·확인 방법을 비개발자가 한국어로 따라갈 수 있는 안내서를 쓰고, 단계별 필수 설명 항목(request.json mustExplain)을 모두 담으며, 명령·JSON 편집·토큰 붙여넣기를 상민님께 넘기지 않고 식별자는 안내서 끝 근거표에만 둔다."
+    },
+    {
+      "id": "R2",
+      "text": "실제 화면 소스(app.js·index.html)의 네 제어 selector·label·상태 제약·이벤트/피드백 배선과 여섯 단계 식별자를 대조하는 재현 가능한 측정 코드(node 내장 모듈만)를 쓰고, 명령·cwd·measuredAt·sourceCommit·exitCode·원시 stdout·입력/소스/산출 SHA 를 기록에 남긴다."
+    },
+    {
+      "id": "R3",
+      "text": "제품·지도·공통 원문·시험·금고·Git 설정을 보존하고(추적 파일 SHA 전수 대조), 검사하지 않은 것(실제 제어 단추 E2E·실계정·Telegram 왕복·Windows 전체 재부팅·Claude artifact 되읽기·장기 효과·Court 판정·준비 당시 native 605 산출물)은 미검증/null 로 남긴다."
+    }
+  ],
+  "outOfScopeReports": [
+    "이 작업은 아워골 제품 파일(index.html·js·css)·지도·modules·scripts·tests·court·금고·헌법·지시함·Git 설정·생산 양비스를 바꾸지 않았다. 보존 증명은 measurement.json preservation 칸(작업자 측정).",
+    "측정은 소스/부품 측정(vm 격리 로드·문자열 대조·준비 DOM 관측 대조)이며 실제 제어 단추 실행 E2E·실계정 실행·운영 API 읽기가 아니다. 준비 담당의 DOM 관측(2026-10-09T09:33:00.707Z)은 이 세션의 재측정이 아니다.",
+    "커밋·push·PR·법정 판정·독립 검토·병합·task-link sync·세포지도·경험칙 갱신·Telegram·외부 전송·추가 모델 호출은 root 별도 후속이며 이 주장 파일은 그것을 주장하지 않는다.",
+    "Git config 해시는 준비 담당의 산출 방법을 알 수 없어 후보 방법별 해시만 기록했고 동일성은 미확인(null)이다. 설정 원문·신원·토큰은 출력하지 않았다.",
+    "법정은 docs/**·reports/** 를 neutral 로 보므로 아래 주장은 모두 config 분야 글자 확인(L1)이다. 그것이 실제 화면·실계정·Court 판정을 뜻하지 않는다."
+  ],
+  "claims": [
+    {
+      "id": "C01",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "비개발자용 안내서 파일이 커밋된 트리에 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "fileExists", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md" }
+    },
+    {
+      "id": "C02",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 1단계(지시하기) 절이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "## 1단계. 지시하기" }
+    },
+    {
+      "id": "C03",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 2단계(도구·모델·노력 선택) 절이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "## 2단계. 도구·모델·노력 선택" }
+    },
+    {
+      "id": "C04",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 3단계(진행과 다음 행동 읽기) 절이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "## 3단계. 진행과 다음 행동 읽기" }
+    },
+    {
+      "id": "C05",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 4단계(보류·중단·재개·지시 변경) 절이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "## 4단계. 보류·중단·재개·지시 변경" }
+    },
+    {
+      "id": "C06",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 5단계(지도와 근거 확인) 절이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "## 5단계. 지도와 근거 확인" }
+    },
+    {
+      "id": "C07",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 6단계(법정과 완료 확인) 절이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "## 6단계. 법정과 완료 확인" }
+    },
+    {
+      "id": "C08",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 1단계(지시하기)의 필수 설명 항목 누락 배열이 빈 배열로 기록되어 있다(항목별 개별 문구 대조).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "stages.0.missing.mustExplain", "equals": [] }
+    },
+    {
+      "id": "C09",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 2단계(도구·모델·노력 선택)의 필수 설명 항목 누락 배열이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "stages.1.missing.mustExplain", "equals": [] }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 3단계(진행과 다음 행동 읽기)의 필수 설명 항목 누락 배열이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "stages.2.missing.mustExplain", "equals": [] }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 4단계(보류·중단·재개·지시 변경)의 필수 설명 항목 누락 배열이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "stages.3.missing.mustExplain", "equals": [] }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 5단계(지도와 근거 확인)의 필수 설명 항목 누락 배열이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "stages.4.missing.mustExplain", "equals": [] }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 6단계(법정과 완료 확인)의 필수 설명 항목 누락 배열이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "stages.5.missing.mustExplain", "equals": [] }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 여섯 단계의 화면 문구(라벨)가 소스와 안내서 양쪽에 없는 건수가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "summary.labelsMissingTotal", "equals": 0 }
+    },
+    {
+      "id": "C15",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 안내서 본문(근거표 밖)에 나타난 식별자 수가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "guide.identifiersOutsideEvidenceTable", "equals": 0 }
+    },
+    {
+      "id": "C16",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 안내서 본문의 코드 블록 수가 0 으로 기록되어 있다(상민님께 명령을 넘기지 않음).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "guide.bodyFencedCodeBlocks", "equals": 0 }
+    },
+    {
+      "id": "C17",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 안내서의 명령형 줄 목록이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "guide.commandLikeLines", "equals": [] }
+    },
+    {
+      "id": "C18",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 안내서가 configured 를 화면에 없는 세 번째 칸처럼 꾸미지 않았음이 false 로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "guide.configuredFakeColumn", "equals": false }
+    },
+    {
+      "id": "C19",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 화면 소스 문구 그대로 노력 설정이 전달 설정이지 내부 사고량 측정이 아니라는 설명이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "노력 설정은 실행기에 전달된 설정이며 내부 사고량의 측정이 아닙니다." }
+    },
+    {
+      "id": "C20",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 중단이 이미 반영된 결과를 되돌린다는 약속이 아니라는 설명이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "중단은 이미 반영된 결과를 되돌린다는 약속이 아닙니다" }
+    },
+    {
+      "id": "C21",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 접수와 실행 시작이 별개라는 설명이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "접수와 실행 시작은 별개" }
+    },
+    {
+      "id": "C22",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 실제 근거 칸의 미확인을 요청값으로 채워 읽지 않는다는 설명이 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "「미확인」을 요청값으로 채워 읽지 않습니다" }
+    },
+    {
+      "id": "C23",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서가 스스로를 사용 설명서(새 규범 아님)로 밝히고 있다.",
+      "touches": ["docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md"],
+      "check": { "type": "codeContains", "file": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md", "text": "이 문서는 사용 설명서입니다" }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 코드 파일이 커밋된 트리에 있다.",
+      "touches": ["reports/TASK-ES-605/measure-guide.cjs"],
+      "check": { "type": "fileExists", "file": "reports/TASK-ES-605/measure-guide.cjs" }
+    },
+    {
+      "id": "C25",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 명령의 원시 stdout 파일이 커밋된 트리에 있다.",
+      "touches": ["reports/TASK-ES-605/raw/measure.stdout.json"],
+      "check": { "type": "fileExists", "file": "reports/TASK-ES-605/raw/measure.stdout.json" }
+    },
+    {
+      "id": "C26",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 재실행 명령이 node 와 측정 코드 경로로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "command", "equals": ["node", "reports/TASK-ES-605/measure-guide.cjs"] }
+    },
+    {
+      "id": "C27",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 측정 명령의 실제 종료 코드가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "exitCode", "equals": 0 }
+    },
+    {
+      "id": "C28",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 원시 stdout 의 경로를 가리킨다(그 SHA 는 stdout 바깥인 이 기록에만 있다).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "raw.stdout.path", "equals": "reports/TASK-ES-605/raw/measure.stdout.json" }
+    },
+    {
+      "id": "C29",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 생산 화면 소스를 직접 읽은 모드(live-source)가 기록되어 있다(발췌 snapshot 모드 아님).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "mode", "equals": "live-source" }
+    },
+    {
+      "id": "C30",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 생산 app.js 의 SHA-256 이 입력 기록과 같은 값으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "productionSources.appJs.sha256", "equals": "0a21c2ee58ea3496d5f738819d371185cb8c305f6f81d639df0d9d65e65f912f" }
+    },
+    {
+      "id": "C31",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 생산 index.html 의 SHA-256 이 입력 기록과 같은 값으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "productionSources.indexHtml.sha256", "equals": "dd520a115704c7405a2c7d3854443a041167a3f188c5495597b5df4bb1bd20b1" }
+    },
+    {
+      "id": "C32",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 생산 소스 3개의 SHA 가 입력 3종(발췌·준비 관측·보존 기록)과 모두 일치함이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "summary.productionSourcesMatchAllInputs", "equals": true }
+    },
+    {
+      "id": "C33",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 입력 발췌의 줄 범위가 실제 생산 파일과 모두 같음이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "excerptConsistency.allEqual", "equals": true }
+    },
+    {
+      "id": "C34",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 app.js 의 Node export(controlAllowed·statusInfo)를 vm 격리 로드로 읽었음이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "componentProbe.loaded", "equals": true }
+    },
+    {
+      "id": "C35",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 제어 규칙 행렬의 불변식(질문·계획 비실행 제어 없음, 완료·readOnly·개정 없음·보관 모드 제어 없음, 재개 상태 한정, 보류/중단 상태 제약)이 전부 참으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "summary.componentInvariantsAllTrue", "equals": true }
+    },
+    {
+      "id": "C36",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 상태 질문·계획만 작업은 보류·중단·재개가 허용되지 않고 지시 변경만 허용됨이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "componentProbe.invariants.queryPlanNoExecutionControls", "equals": true }
+    },
+    {
+      "id": "C37",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 완료된 작업은 네 제어가 모두 허용되지 않음이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "componentProbe.invariants.completedNoControls", "equals": true }
+    },
+    {
+      "id": "C38",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 읽기 전용(readOnly) 작업은 네 제어가 모두 허용되지 않음이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "componentProbe.invariants.readOnlyNoControls", "equals": true }
+    },
+    {
+      "id": "C39",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 네 제어의 action·label·selector 가 소스의 라벨 쌍·data-control 템플릿과 일치함이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-605/measurement.json",
+        "path": "controls.four",
+        "equals": [
+          { "action": "pause", "label": "보류 요청", "selector": "[data-control=\"pause\"]", "labelPairInSource": true, "dataControlTemplateInSource": true, "dangerClass": null },
+          { "action": "stop", "label": "중단 요청", "selector": "[data-control=\"stop\"]", "labelPairInSource": true, "dataControlTemplateInSource": true, "dangerClass": true },
+          { "action": "resume", "label": "재개 요청", "selector": "[data-control=\"resume\"]", "labelPairInSource": true, "dataControlTemplateInSource": true, "dangerClass": null },
+          { "action": "change", "label": "지시 변경", "selector": "[data-control=\"change\"]", "labelPairInSource": true, "dataControlTemplateInSource": true, "dangerClass": null }
+        ]
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 네 제어의 배선 항목(controlAllowed·control·controls 정의, 클릭 분기, disabled, 피드백 자리, 변경 상자, expectedRevision, 토스트·알림·이유 문구)이 전부 소스에 있음이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "summary.controlsWiringAllPresent", "equals": true }
+    },
+    {
+      "id": "C41",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 준비 담당의 실제 DOM 관측(네 단추 disabled 값)이 controlAllowed 계산과 일치함이 기록되어 있다(준비 관측이며 이 세션의 재측정 아님).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "controls.domObservation.consistentWithControlAllowed", "equals": true }
+    },
+    {
+      "id": "C42",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 준비 담당 DOM 관측의 관측 시각을 입력 그대로 묶어 기록한다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "controls.domObservation.measuredAt", "equals": "2026-10-09T09:33:00.707Z" }
+    },
+    {
+      "id": "C43",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 여섯 단계 selector 가 소스에서 해석되지 않거나 근거표에 없는 건수가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "summary.selectorsMissingTotal", "equals": 0 }
+    },
+    {
+      "id": "C44",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 여섯 단계 코드 함수가 app.js 에 정의되지 않았거나 근거표에 없는 건수가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "summary.functionsMissingTotal", "equals": 0 }
+    },
+    {
+      "id": "C45",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 실제 제어 단추 클릭 E2E 를 수행하지 않았음을 null 로 기록한다(소스/부품 측정임을 명시).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "controls.realClickE2E", "equals": null }
+    },
+    {
+      "id": "C46",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 입력이 요청한 기준 커밋이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "sourceCommit.requested", "equals": "c8b8ddfb666a39bbae75b50da7f3b290e0701869" }
+    },
+    {
+      "id": "C47",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 보존 기록(preservation-before)의 추적 파일 전수 SHA 대조 불일치 수가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "preservation.tracked.mismatchedCount", "equals": 0 }
+    },
+    {
+      "id": "C48",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 추적 파일 전수 대조의 누락 수가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "preservation.tracked.missingCount", "equals": 0 }
+    },
+    {
+      "id": "C49",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 허용 목록 밖 변경(입력 폴더 제외)이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "summary.nonAllowlistedChanges", "equals": [] }
+    },
+    {
+      "id": "C50",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 측정 코드가 Git 설정 쓰기 명령을 실행하지 않았음이 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "preservation.gitConfig.configWriteCommandsRun", "equals": false }
+    },
+    {
+      "id": "C51",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 Git config 해시 동일성을 미확인(null)으로 남긴다(준비 담당의 산출 방법 미상, 원문 출력 없음).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "preservation.gitConfig.matched", "equals": null }
+    },
+    {
+      "id": "C52",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 실제 Telegram 왕복을 미검사(null)로 남긴다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "limitations.telegramRealRoundTrip", "equals": null }
+    },
+    {
+      "id": "C53",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 Windows 전체 재부팅 뒤 동작을 미검사(null)로 남긴다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "limitations.windowsFullReboot", "equals": null }
+    },
+    {
+      "id": "C54",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 Claude artifact 되읽기를 미확인(null)으로 남긴다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "limitations.claudeArtifactReadback", "equals": null }
+    },
+    {
+      "id": "C55",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 장기 효과를 null 로 남긴다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "limitations.longTermEffect", "equals": null }
+    },
+    {
+      "id": "C56",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 Court 판정을 null 로 남긴다(판정은 GitHub Court 만 낸다).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "limitations.courtVerdict", "equals": null }
+    },
+    {
+      "id": "C57",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 실제 제어 단추 E2E 를 null 로 남긴다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "limitations.realControlButtonE2E", "equals": null }
+    },
+    {
+      "id": "C58",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록이 준비 당시 native 605 산출물 확인을 null 로 남긴다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "limitations.nativeOutputAtPreparation", "equals": null }
+    },
+    {
+      "id": "C59",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 REQ 의 독립 8원칙 서식 검사(①~⑧ 독립 헤더·② 네 낱말·⑥ 재검증·반론 2개) 결함이 빈 배열로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "req.lint8.issues", "equals": [] }
+    },
+    {
+      "id": "C60",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 안내서의 헌법 금지 낱말 적중 수가 0 으로 기록되어 있다.",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "guide.antiPatternHits", "equals": 0 }
+    },
+    {
+      "id": "C61",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록에 안내서의 유니코드 이스케이프(\\uXXXX 조립) 수가 0 으로 기록되어 있다(한글 리터럴).",
+      "touches": ["reports/TASK-ES-605/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-605/measurement.json", "path": "guide.escapedUnicodeCount", "equals": 0 }
+    }
+  ]
+}

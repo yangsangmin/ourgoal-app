@@ -1,0 +1,4023 @@
+{
+  "schema": "ourgoal.task-es-605.measure-guide.stdout/1",
+  "taskId": "TASK-ES-605",
+  "type": "작업자 측정, 판정 아님 — 소스/부품 측정이며 실제 제어 단추 실행 E2E 가 아니다",
+  "measuredAt": "2026-10-09T10:59:39.369Z",
+  "runtime": {
+    "node": "v24.15.0",
+    "platform": "win32",
+    "arch": "x64",
+    "cwd": "C:\\dev\\wt\\yangvis-ourgoal-guide-01a11bfe",
+    "root": "C:\\dev\\wt\\yangvis-ourgoal-guide-01a11bfe"
+  },
+  "mode": "live-source",
+  "notes": [],
+  "inputs": {
+    "request": {
+      "path": ".yangvis-inputs/request.json",
+      "exists": true,
+      "bytes": 7325,
+      "sha256": "0ad813d03861004e0e4633adcead087a1a5082c47ef014f09bf7d22652a247ad",
+      "eol": "LF",
+      "lines": 209,
+      "error": null,
+      "parsed": true,
+      "parseError": null
+    },
+    "prompt": {
+      "path": ".yangvis-inputs/prompt.md",
+      "exists": true,
+      "bytes": 5779,
+      "sha256": "701e96fce64a0669c671cd56a68471c15cfea7d2e2024f2a5c5a07b034ef9c92",
+      "eol": "LF",
+      "lines": 18,
+      "error": null,
+      "parsed": false,
+      "parseError": null,
+      "note": "지시 전문은 해시만 기록(중앙 복제 금지)"
+    },
+    "uiSourceExcerpts": {
+      "path": ".yangvis-inputs/ui-source-excerpts.json",
+      "exists": true,
+      "bytes": 29455,
+      "sha256": "56b0153223c3ce00d3fa466bc5d30b697aff4ff49b6e1df2442a6a8d7fde7472",
+      "eol": "LF",
+      "lines": 75,
+      "error": null,
+      "parsed": true,
+      "parseError": null
+    },
+    "publicObservation": {
+      "path": ".yangvis-inputs/public-observation.json",
+      "exists": true,
+      "bytes": 16820,
+      "sha256": "302a2bdf3c0ea6c623954b39d617d70ff5dc5ef258a11c35fc315526a361339c",
+      "eol": "LF",
+      "lines": 700,
+      "error": null,
+      "parsed": true,
+      "parseError": null
+    },
+    "transportSupport": {
+      "path": ".yangvis-inputs/transport-support.json",
+      "exists": true,
+      "bytes": 1789,
+      "sha256": "556475ddb9c9bd7dfd2052f21f589e18302fc20a76888f949555ab8f2e050adf",
+      "eol": "LF",
+      "lines": 55,
+      "error": null,
+      "parsed": true,
+      "parseError": null
+    },
+    "preservationBefore": {
+      "path": ".yangvis-inputs/preservation-before.json",
+      "exists": true,
+      "bytes": 839125,
+      "sha256": "10663ddd52d012d08d166235c75c46d2f7dc3a32fa41457ee49236594cb0634e",
+      "eol": "LF",
+      "lines": 20610,
+      "error": null,
+      "parsed": true,
+      "parseError": null
+    }
+  },
+  "guidelines": {
+    "agentsMd": {
+      "path": "AGENTS.md",
+      "exists": true,
+      "bytes": 64272,
+      "sha256": "ca7118866d2774c2608887fb89da6c09e5b240646a4849f10ff93e3c7e6b3b8e",
+      "eol": "CRLF",
+      "lines": 731,
+      "error": null
+    },
+    "claudeMd": {
+      "path": "CLAUDE.md",
+      "exists": true,
+      "bytes": 64272,
+      "sha256": "ca7118866d2774c2608887fb89da6c09e5b240646a4849f10ff93e3c7e6b3b8e",
+      "eol": "CRLF",
+      "lines": 731,
+      "error": null
+    },
+    "workReferenceLocal": {
+      "path": "C:/dev/agent-knowledge/WORK-REFERENCE.md",
+      "exists": true,
+      "bytes": 50548,
+      "sha256": "713eeb92abc8e307dbcaa494f399b42a2e72fb44faa41b8c8b9fce4907dd1bee",
+      "eol": "LF",
+      "lines": 382,
+      "error": null,
+      "basis": {
+        "pr": 871,
+        "commit": "c8b8ddfb"
+      }
+    },
+    "workReferenceRepoCopy": {
+      "path": "docs/agents/WORK-REFERENCE.md",
+      "exists": true,
+      "bytes": 49373,
+      "sha256": "2a28b0e85f427cf42c7dfa1fa83a95d52e31d45935e11a031751e05b2ff25033",
+      "eol": "CRLF",
+      "lines": 377,
+      "error": null,
+      "basis": {
+        "pr": 842,
+        "commit": "66ce3a630d1c7dfc81550901f6356b2c0fb8b6b9"
+      }
+    },
+    "moduleBlueprint": {
+      "path": "docs/architecture/MODULE-BLUEPRINT.md",
+      "exists": true,
+      "bytes": 28190,
+      "sha256": "e43bce1a699899b790bfb6060e829ec532e7ecb5055dae16a0f11dcaef195d04",
+      "eol": "CRLF",
+      "lines": 253,
+      "error": null
+    },
+    "modulesJson": {
+      "path": "docs/architecture/modules.json",
+      "exists": true,
+      "bytes": 280170,
+      "sha256": "a8536d20fa1cb93c6542307318b45397f9e72a0739794ea57071a2b0006f80ef",
+      "eol": "CRLF",
+      "lines": 10274,
+      "error": null,
+      "cells": 351
+    },
+    "directivesOriginMain": {
+      "sha256": "7b3d277bd5a5fbdeeada2fea8f8ad43180a3e7de95dafc841479ee5eea90b585",
+      "openDirectivesNone": true
+    }
+  },
+  "sourceCommit": {
+    "requested": "c8b8ddfb666a39bbae75b50da7f3b290e0701869",
+    "preservationBefore": "c8b8ddfb666a39bbae75b50da7f3b290e0701869",
+    "headFromGit": "c8b8ddfb666a39bbae75b50da7f3b290e0701869",
+    "originMainLocalRef": "c8b8ddfb666a39bbae75b50da7f3b290e0701869",
+    "headMatchesRequested": true,
+    "headMatchesOriginMain": true,
+    "rawFailures": {
+      "head": null,
+      "originMain": null
+    },
+    "note": "네트워크 fetch 는 이 스크립트가 하지 않는다(로컬 ref 값)"
+  },
+  "productionDir": "C:\\dev\\command-center\\hud\\yangvis",
+  "productionSources": {
+    "indexHtml": {
+      "path": "C:\\dev\\command-center\\hud\\yangvis\\index.html",
+      "exists": true,
+      "bytes": 3647,
+      "sha256": "dd520a115704c7405a2c7d3854443a041167a3f188c5495597b5df4bb1bd20b1",
+      "eol": "LF",
+      "lines": 40,
+      "error": null,
+      "expectedSha256": {
+        "uiSourceExcerpts": "dd520a115704c7405a2c7d3854443a041167a3f188c5495597b5df4bb1bd20b1",
+        "publicObservation": "dd520a115704c7405a2c7d3854443a041167a3f188c5495597b5df4bb1bd20b1",
+        "preservationBefore": "dd520a115704c7405a2c7d3854443a041167a3f188c5495597b5df4bb1bd20b1"
+      },
+      "matchesInputs": {
+        "uiSourceExcerpts": true,
+        "publicObservation": true,
+        "preservationBefore": true
+      }
+    },
+    "appJs": {
+      "path": "C:\\dev\\command-center\\hud\\yangvis\\app.js",
+      "exists": true,
+      "bytes": 71790,
+      "sha256": "0a21c2ee58ea3496d5f738819d371185cb8c305f6f81d639df0d9d65e65f912f",
+      "eol": "LF",
+      "lines": 361,
+      "error": null,
+      "expectedSha256": {
+        "uiSourceExcerpts": "0a21c2ee58ea3496d5f738819d371185cb8c305f6f81d639df0d9d65e65f912f",
+        "publicObservation": "0a21c2ee58ea3496d5f738819d371185cb8c305f6f81d639df0d9d65e65f912f",
+        "preservationBefore": "0a21c2ee58ea3496d5f738819d371185cb8c305f6f81d639df0d9d65e65f912f"
+      },
+      "matchesInputs": {
+        "uiSourceExcerpts": true,
+        "publicObservation": true,
+        "preservationBefore": true
+      }
+    },
+    "stylesCss": {
+      "path": "C:\\dev\\command-center\\hud\\yangvis\\styles.css",
+      "exists": true,
+      "bytes": 28119,
+      "sha256": "832f0232a71a5ae5f5f2484725ec402470477c84a775e90957c9c7bcc1e728ba",
+      "eol": "CRLF",
+      "lines": 31,
+      "error": null,
+      "expectedSha256": {
+        "uiSourceExcerpts": "832f0232a71a5ae5f5f2484725ec402470477c84a775e90957c9c7bcc1e728ba",
+        "publicObservation": "832f0232a71a5ae5f5f2484725ec402470477c84a775e90957c9c7bcc1e728ba",
+        "preservationBefore": "832f0232a71a5ae5f5f2484725ec402470477c84a775e90957c9c7bcc1e728ba"
+      },
+      "matchesInputs": {
+        "uiSourceExcerpts": true,
+        "publicObservation": true,
+        "preservationBefore": true
+      }
+    }
+  },
+  "productionReadFailures": [],
+  "excerptConsistency": {
+    "checked": true,
+    "ranges": [
+      {
+        "file": "app.js",
+        "firstLine": 4,
+        "lastLine": 14,
+        "equal": true,
+        "liveSha256": "aac0d5ef2ca8b739d2245306772d44bfd7d4ed58cb853bd52c6a7542afb598e3",
+        "excerptSha256": "aac0d5ef2ca8b739d2245306772d44bfd7d4ed58cb853bd52c6a7542afb598e3"
+      },
+      {
+        "file": "app.js",
+        "firstLine": 24,
+        "lastLine": 33,
+        "equal": true,
+        "liveSha256": "d6dcade7a4e7364ed36e30b78e859240fc6d353da54939c45e5af3427a69fbbe",
+        "excerptSha256": "d6dcade7a4e7364ed36e30b78e859240fc6d353da54939c45e5af3427a69fbbe"
+      },
+      {
+        "file": "app.js",
+        "firstLine": 188,
+        "lastLine": 196,
+        "equal": true,
+        "liveSha256": "9f5e955ececa62c9f245684ea3fd6962cdfc9ea1f0266337c677f1ed5d1854f2",
+        "excerptSha256": "9f5e955ececa62c9f245684ea3fd6962cdfc9ea1f0266337c677f1ed5d1854f2"
+      },
+      {
+        "file": "app.js",
+        "firstLine": 209,
+        "lastLine": 230,
+        "equal": true,
+        "liveSha256": "d5c005993f0912724a4718a5a9d684ba759f465fc5dfae630815e088ab7cfa5c",
+        "excerptSha256": "d5c005993f0912724a4718a5a9d684ba759f465fc5dfae630815e088ab7cfa5c"
+      },
+      {
+        "file": "app.js",
+        "firstLine": 239,
+        "lastLine": 249,
+        "equal": true,
+        "liveSha256": "302f3342d3f9d3a67b66d3e04127ec0515de18634fc0309fc14205112a54949e",
+        "excerptSha256": "302f3342d3f9d3a67b66d3e04127ec0515de18634fc0309fc14205112a54949e"
+      },
+      {
+        "file": "app.js",
+        "firstLine": 302,
+        "lastLine": 328,
+        "equal": true,
+        "liveSha256": "a07670e9a306cd1f0b96c9070a07f788f66b97e6e4a04dea683993a0a12bd65b",
+        "excerptSha256": "a07670e9a306cd1f0b96c9070a07f788f66b97e6e4a04dea683993a0a12bd65b"
+      },
+      {
+        "file": "app.js",
+        "firstLine": 335,
+        "lastLine": 350,
+        "equal": true,
+        "liveSha256": "821e8cf1a068b41e61c8d4b8cc2fbb6acf2b8217654c10de4c821f68a5c91a3b",
+        "excerptSha256": "821e8cf1a068b41e61c8d4b8cc2fbb6acf2b8217654c10de4c821f68a5c91a3b"
+      },
+      {
+        "file": "index.html",
+        "firstLine": 15,
+        "lastLine": 40,
+        "equal": true,
+        "liveSha256": "bd9e6703fdedf21c274942fc205eaf847eb7e19bbffd7cd4545850f12d54f2be",
+        "excerptSha256": "bd9e6703fdedf21c274942fc205eaf847eb7e19bbffd7cd4545850f12d54f2be"
+      }
+    ],
+    "allEqual": true
+  },
+  "componentProbe": {
+    "loaded": true,
+    "mode": "live-source",
+    "isolation": "node:vm createContext — document · window · fetch · setInterval 없음, 네트워크 0, 실제 DOM 0",
+    "exportsKeys": [
+      "escape",
+      "safeHref",
+      "statusInfo",
+      "controlAllowed",
+      "modelsFor",
+      "effortsFor"
+    ],
+    "error": null,
+    "statusLabels": {
+      "query": "상태 질문",
+      "plan": "계획만",
+      "awaiting-selection": "설정 선택 대기",
+      "queued": "실행 대기",
+      "admission-pending": "실행 조건 확인",
+      "running": "실행 중",
+      "blocked": "막힘",
+      "pause-requested": "보류 요청 · 확인 전",
+      "paused": "보류 확인",
+      "stop-requested": "중단 요청 · 확인 전",
+      "stopped": "중단 확인",
+      "verification-pending": "결과 검증 대기",
+      "completed": "작업 완료",
+      "failed": "실행 실패",
+      "automation-finished-product-not-claimed": "자동화 종료 · 제품 미확인",
+      "execution-unmeasured": "실행 상태 미확인",
+      "recorded-intake": "기존 접수 기록",
+      "reported-complete": "기존 완료 보고 · 검증 미확인",
+      "coordination": "작업 연계 기록",
+      "(unknown)": "상태 미확인"
+    },
+    "matrix": [
+      {
+        "status": "query",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "query",
+        "execution": "alive",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "query",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "plan",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "plan",
+        "execution": "alive",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "plan",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "awaiting-selection",
+        "execution": "none",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "awaiting-selection",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "awaiting-selection",
+        "execution": "ended",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "queued",
+        "execution": "none",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "queued",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "queued",
+        "execution": "ended",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "admission-pending",
+        "execution": "none",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "admission-pending",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "admission-pending",
+        "execution": "ended",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "running",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "running",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "running",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "blocked",
+        "execution": "none",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "blocked",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "blocked",
+        "execution": "ended",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "pause-requested",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "pause-requested",
+        "execution": "alive",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "pause-requested",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "paused",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "paused",
+        "execution": "alive",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "paused",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "stop-requested",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "stop-requested",
+        "execution": "alive",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "stop-requested",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "stopped",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "stopped",
+        "execution": "alive",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "stopped",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": true,
+          "change": true
+        }
+      },
+      {
+        "status": "verification-pending",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "verification-pending",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "verification-pending",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "completed",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": false
+        }
+      },
+      {
+        "status": "completed",
+        "execution": "alive",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": false
+        }
+      },
+      {
+        "status": "completed",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": false
+        }
+      },
+      {
+        "status": "failed",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "failed",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "failed",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "automation-finished-product-not-claimed",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "automation-finished-product-not-claimed",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "automation-finished-product-not-claimed",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "execution-unmeasured",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "execution-unmeasured",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "execution-unmeasured",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "recorded-intake",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "recorded-intake",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "recorded-intake",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "reported-complete",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "reported-complete",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "reported-complete",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "coordination",
+        "execution": "none",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "coordination",
+        "execution": "alive",
+        "allowed": {
+          "pause": true,
+          "stop": true,
+          "resume": false,
+          "change": true
+        }
+      },
+      {
+        "status": "coordination",
+        "execution": "ended",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": true
+        }
+      }
+    ],
+    "special": [
+      {
+        "label": "readOnly=true (running · alive)",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": false
+        }
+      },
+      {
+        "label": "revision=null (running · alive)",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": false
+        }
+      },
+      {
+        "label": "completed (ended)",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": false
+        }
+      },
+      {
+        "label": "task=null",
+        "allowed": {
+          "pause": false,
+          "stop": false,
+          "resume": false,
+          "change": false
+        }
+      }
+    ],
+    "archiveMode": {
+      "label": "running · alive · __YANGVIS_ARCHIVE=true",
+      "allowed": {
+        "pause": false,
+        "stop": false,
+        "resume": false,
+        "change": false
+      }
+    },
+    "invariants": {
+      "queryPlanNoExecutionControls": true,
+      "completedNoControls": true,
+      "readOnlyNoControls": true,
+      "revisionNullNoControls": true,
+      "nullTaskNoControls": true,
+      "archiveModeNoControls": true,
+      "changeAlwaysAllowedUnlessCompletedReadOnlyOrNoRevision": true,
+      "resumeOnlyPausedStoppedBlocked": true,
+      "pauseStopNeverAfterRequestOrConfirm": true,
+      "pauseStopWhenAliveExecution": true,
+      "pauseStopWithoutExecutionOnlyQueuedLikeStatuses": true,
+      "pauseStopAfterEndedExecutionOnlyQueuedLikeStatuses": true,
+      "verificationPendingEndedOnlyChange": true
+    },
+    "capabilityFilter": [
+      {
+        "tool": "claude",
+        "toolStatus": "verified",
+        "modelsTotal": 4,
+        "modelsSelectable": [
+          "claude-fable-5-1",
+          "claude-opus-5-5",
+          "claude-sonnet-5-5",
+          "claude-haiku-5-5"
+        ],
+        "modelsExcluded": [],
+        "effortsOfFirstSelectable": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "executionVerifiedAny": false,
+        "accountModelAccessKnown": false
+      },
+      {
+        "tool": "codex",
+        "toolStatus": "verified",
+        "modelsTotal": 10,
+        "modelsSelectable": [
+          "gpt-6.1-sol",
+          "gpt-6-astra",
+          "gpt-6-sol",
+          "gpt-6-luna",
+          "gpt-reserve",
+          "gpt-5.6-sol",
+          "gpt-5.6-terra",
+          "gpt-5.6-luna",
+          "gpt-5.5",
+          "codex-auto-review"
+        ],
+        "modelsExcluded": [],
+        "effortsOfFirstSelectable": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max",
+          "ultra"
+        ],
+        "executionVerifiedAny": false,
+        "accountModelAccessKnown": false
+      },
+      {
+        "tool": "antigravity",
+        "toolStatus": "verified",
+        "modelsTotal": 18,
+        "modelsSelectable": [
+          "gemini-3.8-flash-high",
+          "claude-opus-5-5-high"
+        ],
+        "modelsExcluded": [
+          {
+            "id": "gemini-3.8-flash-medium",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.8-flash-low",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.7-flash-high",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.7-flash-medium",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.7-flash-low",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.6-flash-high",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.6-flash-medium",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.6-flash-low",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.1-pro-high",
+            "status": "unverified"
+          },
+          {
+            "id": "gemini-3.1-pro-low",
+            "status": "unverified"
+          },
+          {
+            "id": "claude-opus-5-5-low",
+            "status": "unverified"
+          },
+          {
+            "id": "claude-opus-5-5-medium",
+            "status": "unverified"
+          },
+          {
+            "id": "claude-sonnet-5-5-low",
+            "status": "unverified"
+          },
+          {
+            "id": "claude-sonnet-5-5-medium",
+            "status": "unverified"
+          },
+          {
+            "id": "claude-sonnet-5-5-high",
+            "status": "unverified"
+          },
+          {
+            "id": "gpt-oss-120b-medium",
+            "status": "unverified"
+          }
+        ],
+        "effortsOfFirstSelectable": [
+          "high"
+        ],
+        "executionVerifiedAny": false,
+        "accountModelAccessKnown": false
+      }
+    ],
+    "note": "부품 측정(순수 함수 호출)이며 실제 제어 단추 실행 E2E 가 아니다"
+  },
+  "controls": {
+    "four": [
+      {
+        "action": "pause",
+        "label": "보류 요청",
+        "selector": "[data-control=\"pause\"]",
+        "labelPairInSource": true,
+        "dataControlTemplateInSource": true,
+        "dangerClass": null
+      },
+      {
+        "action": "stop",
+        "label": "중단 요청",
+        "selector": "[data-control=\"stop\"]",
+        "labelPairInSource": true,
+        "dataControlTemplateInSource": true,
+        "dangerClass": true
+      },
+      {
+        "action": "resume",
+        "label": "재개 요청",
+        "selector": "[data-control=\"resume\"]",
+        "labelPairInSource": true,
+        "dataControlTemplateInSource": true,
+        "dangerClass": null
+      },
+      {
+        "action": "change",
+        "label": "지시 변경",
+        "selector": "[data-control=\"change\"]",
+        "labelPairInSource": true,
+        "dataControlTemplateInSource": true,
+        "dangerClass": null
+      }
+    ],
+    "wiring": [
+      {
+        "name": "controlAllowed 정의",
+        "present": true
+      },
+      {
+        "name": "control(action, instruction) 정의",
+        "present": true
+      },
+      {
+        "name": "controls(task) 렌더 정의",
+        "present": true
+      },
+      {
+        "name": "클릭 분기 target.dataset.control",
+        "present": true
+      },
+      {
+        "name": "허용 안 되면 disabled",
+        "present": true
+      },
+      {
+        "name": "controlPending 중 비활성",
+        "present": true
+      },
+      {
+        "name": "비활성 title 문구",
+        "present": true
+      },
+      {
+        "name": "피드백 자리 #control-feedback",
+        "present": true
+      },
+      {
+        "name": "요청 중 문구",
+        "present": true
+      },
+      {
+        "name": "변경 상자 #change-box · #change-instruction · 변경 접수",
+        "present": true
+      },
+      {
+        "name": "변경 접수 빈 입력 안내",
+        "present": true
+      },
+      {
+        "name": "expectedRevision 동봉",
+        "present": true
+      },
+      {
+        "name": "제어 요청 경로 /control",
+        "present": true
+      },
+      {
+        "name": "토스트 · 중단",
+        "present": true
+      },
+      {
+        "name": "토스트 · 보류",
+        "present": true
+      },
+      {
+        "name": "토스트 · 재개/변경",
+        "present": true
+      },
+      {
+        "name": "요청 알림 · stop-requested",
+        "present": true
+      },
+      {
+        "name": "요청 알림 · pause-requested",
+        "present": true
+      },
+      {
+        "name": "이유 · readOnly",
+        "present": true
+      },
+      {
+        "name": "이유 · revision null",
+        "present": true
+      },
+      {
+        "name": "이유 · completed",
+        "present": true
+      },
+      {
+        "name": "이유 · query/plan",
+        "present": true
+      },
+      {
+        "name": "이유 · 기본",
+        "present": true
+      },
+      {
+        "name": "오류 문구",
+        "present": true
+      },
+      {
+        "name": "상태 라벨 · pause-requested",
+        "present": true
+      },
+      {
+        "name": "상태 라벨 · paused",
+        "present": true
+      },
+      {
+        "name": "상태 라벨 · stop-requested",
+        "present": true
+      },
+      {
+        "name": "상태 라벨 · stopped",
+        "present": true
+      },
+      {
+        "name": "사건 라벨 · 지휘 개정 충돌 확인",
+        "present": true
+      },
+      {
+        "name": "query/plan 접수 안내(비실행)",
+        "present": true
+      },
+      {
+        "name": "query/plan 모드 안내(비실행)",
+        "present": true
+      },
+      {
+        "name": "상세 창 작업 지휘 제목",
+        "present": true
+      },
+      {
+        "name": "index.html 에 제어 단추 없음(상세 창에서 동적 렌더)",
+        "present": true
+      }
+    ],
+    "wiringAllPresent": true,
+    "domObservation": {
+      "source": ".yangvis-inputs/public-observation.json",
+      "kind": "preparer observation (read-only GET/DOM), not native live remeasurement",
+      "measuredAt": "2026-10-09T09:33:00.707Z",
+      "observedAppJsSha256": "0a21c2ee58ea3496d5f738819d371185cb8c305f6f81d639df0d9d65e65f912f",
+      "liveAppJsSha256": "0a21c2ee58ea3496d5f738819d371185cb8c305f6f81d639df0d9d65e65f912f",
+      "observedTaskId": "TASK-ES-604",
+      "observedTaskSummary": {
+        "status": "verification-pending",
+        "readOnly": false,
+        "revision": 8,
+        "executionExited": true,
+        "executionEndedAt": "2026-10-09T09:19:03.995Z",
+        "progress": null,
+        "eta": null,
+        "requested": {
+          "tool": "antigravity",
+          "model": "gemini-3.8-flash-high",
+          "effort": "high"
+        },
+        "actual": {
+          "tool": "antigravity",
+          "model": null,
+          "effort": null,
+          "measuredAt": "2026-10-09T09:32:57.159Z"
+        }
+      },
+      "buttons": [
+        {
+          "action": "pause",
+          "observed": {
+            "selector": "[data-control=\"pause\"]",
+            "label": "보류 요청",
+            "disabled": true
+          },
+          "selectorMatchesSource": true,
+          "labelMatchesSource": true,
+          "controlAllowedForObservedTask": false,
+          "disabledConsistent": true
+        },
+        {
+          "action": "stop",
+          "observed": {
+            "selector": "[data-control=\"stop\"]",
+            "label": "중단 요청",
+            "disabled": true
+          },
+          "selectorMatchesSource": true,
+          "labelMatchesSource": true,
+          "controlAllowedForObservedTask": false,
+          "disabledConsistent": true
+        },
+        {
+          "action": "resume",
+          "observed": {
+            "selector": "[data-control=\"resume\"]",
+            "label": "재개 요청",
+            "disabled": true
+          },
+          "selectorMatchesSource": true,
+          "labelMatchesSource": true,
+          "controlAllowedForObservedTask": false,
+          "disabledConsistent": true
+        },
+        {
+          "action": "change",
+          "observed": {
+            "selector": "[data-control=\"change\"]",
+            "label": "지시 변경",
+            "disabled": false
+          },
+          "selectorMatchesSource": true,
+          "labelMatchesSource": true,
+          "controlAllowedForObservedTask": true,
+          "disabledConsistent": true
+        }
+      ],
+      "consistentWithControlAllowed": true,
+      "blockedMutationCount": 0,
+      "pageErrorCount": 0,
+      "observedShaEqualsLive": true
+    },
+    "realClickE2E": null,
+    "serverBehaviorMeasured": false
+  },
+  "stages": [
+    {
+      "id": "S1",
+      "title": "지시하기",
+      "titleInGuide": true,
+      "counts": {
+        "selectors": 6,
+        "sourceFunctions": 3,
+        "labels": 34,
+        "mustExplain": 5
+      },
+      "selectors": [
+        {
+          "selector": "[data-action=\"focus-composer\"]",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#instruction",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": true,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-mode=\"execute\"]",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-mode=\"query\"]",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-mode=\"plan\"]",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#send",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": true,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "sourceFunctions": [
+        {
+          "name": "submitInstruction",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "mutation",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "responseView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "labels": [
+        {
+          "label": "양비스에게 말하세요",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "새 지시 쓰기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 지시",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "상태 질문",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "계획만",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시 보내기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "도구 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시할 대상",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "아워골",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "양비스 · 아워골 지원",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시나 질문을 먼저 적어주세요.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "접수 확인 중…",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시를 저장하고 접수 응답을 기다립니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시가 접수됐습니다. 실제 실행은 설정과 실행 조건 확인 후 시작합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "상태 질문이 접수됐습니다. 작업 실행은 요청하지 않았습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "계획 요청이 접수됐습니다. 작업 실행은 요청하지 않았습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "접수 기록을 저장했습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "작성한 지시와 요청 번호를 유지합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "응답 시간이 초과됐습니다",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "다음 행동",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "양비스의 답변",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "양비스의 계획",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "답변 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "아직 확인된 답변이 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 지시 개정의 답변입니다. 실제 작업 실행 결과와 구분합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 지시는 접수 후 실행 조건을 확인합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "상태를 묻습니다. 실행 지시를 보내지 않습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "계획만 요청합니다. 실행 지시를 보내지 않습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정 선택 대기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 대기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 조건 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 중",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 시작",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "담당 실행 관측",
+          "inSource": true,
+          "inGuide": true
+        }
+      ],
+      "mustExplain": [
+        {
+          "text": "아워골 대상",
+          "phrasesSpecified": true,
+          "phrases": [
+            "지시할 대상",
+            "아워골",
+            "양비스 · 아워골 지원"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "실행 지시·상태 질문·계획만의 차이",
+          "phrasesSpecified": true,
+          "phrases": [
+            "실행 지시",
+            "상태 질문",
+            "계획만",
+            "세 방식의 차이"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "질문과 계획은 실제 실행하지 않음",
+          "phrasesSpecified": true,
+          "phrases": [
+            "질문과 계획은 실제로 실행하지 않습니다",
+            "실행 지시를 보내지 않습니다",
+            "작업 실행은 요청하지 않았습니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "접수와 실행 시작은 별개",
+          "phrasesSpecified": true,
+          "phrases": [
+            "접수와 실행 시작은 별개",
+            "접수 기록을 저장했습니다.",
+            "실행 시작"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "작업번호와 다음 행동 확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "작업번호",
+            "다음 행동",
+            "개정 N"
+          ],
+          "missingPhrases": [],
+          "present": true
+        }
+      ],
+      "identifiersInBody": [],
+      "missing": {
+        "selectors": [],
+        "sourceFunctions": [],
+        "labels": [],
+        "mustExplain": []
+      }
+    },
+    {
+      "id": "S2",
+      "title": "도구·모델·노력 선택",
+      "titleInGuide": true,
+      "counts": {
+        "selectors": 9,
+        "sourceFunctions": 3,
+        "labels": 37,
+        "mustExplain": 7
+      },
+      "selectors": [
+        {
+          "selector": "[data-action=\"toggle-settings\"]",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#composer-tool",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#composer-model",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#composer-effort",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-tab=\"settings\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#selection-tool",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": true,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#selection-model",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": true,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#selection-effort",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": true,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-action=\"select-settings\"]",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "sourceFunctions": [
+        {
+          "name": "selectionFields",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "settingsView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "selectSettings",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "labels": [
+        {
+          "label": "도구 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시할 대상",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 도구",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "모델",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "노력 설정",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "선택 후 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "도구를 먼저 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "모델 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "모델을 먼저 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지원 설정 없음",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "미지원",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지원 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지원 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "확인된 도구와 설정만 선택할 수 있습니다. 선택하지 않으면 접수 후 설정을 확인합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "노력 설정은 내부에서 얼마나 생각했는지에 대한 측정이 아닙니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 도구의 지원 근거가 아직 없습니다. 지시를 먼저 접수하고 설정 확인을 기다립니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "요청한 설정과 실제 설정",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "요청",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실제 근거",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실제 설정 관측",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "노력 설정은 실행기에 전달된 설정이며 내부 사고량의 측정이 아닙니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정 근거 열기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 설정을 선택해주세요",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 작업의 선택 질문에 답합니다. 요청한 설정의 지원 확인이 끝나야 실행으로 넘어갑니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "이 작업에 대한 권장 설정 근거는 아직 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "이 설정으로 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 답할 설정 선택 질문이 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "도구별 확인된 지원",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "출처 문서",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "선택 저장과 개정 확인 중…",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정을 선택했습니다. 실제 실행 조건을 확인합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지원이 확인된 실행 도구와 모델을 선택해주세요.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지원이 확인된 실행 도구가 없어 선택할 수 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정 · 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "막힌 이유",
+          "inSource": true,
+          "inGuide": true
+        }
+      ],
+      "mustExplain": [
+        {
+          "text": "지원 확인·미지원·미확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "지원 확인",
+            "미지원",
+            "지원 미확인",
+            "실제로 실행에 성공했다는 뜻이 아닙니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "requested/configured/actual 구분",
+          "phrasesSpecified": true,
+          "phrases": [
+            "요청(requested)",
+            "전달 설정(configured)",
+            "실제 근거(actual)"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "현재 UI 비교는 요청·실제 근거 두 칸; configured는 실행기 전달 근거 개념으로만 설명",
+          "phrasesSpecified": true,
+          "phrases": [
+            "「요청」과 「실제 근거」 두 칸뿐",
+            "별도 칸이 아니라"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "actual model/effort null을 요청값으로 채우지 않음",
+          "phrasesSpecified": true,
+          "phrases": [
+            "「미확인」을 요청값으로 채워 읽지 않습니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "노력은 전달 설정이며 실제 내부 사고량 측정 아님",
+          "phrasesSpecified": true,
+          "phrases": [
+            "노력 설정은 전달 설정입니다",
+            "내부 사고량의 측정이 아닙니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "선택 저장 뒤 실행 조건 확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "선택 저장 뒤에도 실행 조건 확인이 남아 있습니다",
+            "설정을 선택했습니다. 실제 실행 조건을 확인합니다."
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "기존 native 구독만·추가API과금/구매/extraUsage변경 금지·잔여quota 미확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "기존 구독 범위 안에서만",
+            "추가 API 과금",
+            "새 사용량 구매",
+            "추가 사용량(extra usage) 설정 변경",
+            "잔여 사용량과 비용은 측정하지 않았으므로 미확인"
+          ],
+          "missingPhrases": [],
+          "present": true
+        }
+      ],
+      "identifiersInBody": [],
+      "missing": {
+        "selectors": [],
+        "sourceFunctions": [],
+        "labels": [],
+        "mustExplain": []
+      }
+    },
+    {
+      "id": "S3",
+      "title": "진행과 다음 행동 읽기",
+      "titleInGuide": true,
+      "counts": {
+        "selectors": 6,
+        "sourceFunctions": 4,
+        "labels": 83,
+        "mustExplain": 5
+      },
+      "selectors": [
+        {
+          "selector": "[data-route=\"overview\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-route=\"flow\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-route=\"tasks\"]",
+          "literal": true,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": ".status",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": ".action-callout",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": ".measured-note",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "sourceFunctions": [
+        {
+          "name": "overviewView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "flowView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "detailOverview",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "eventLabel",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "labels": [
+        {
+          "label": "아워골 지휘",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "작업 흐름",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "작업 상세",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "마지막 관측",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "확인되지 않은 진행률·예상 시각은 추정하지 않습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "선택하면 다음으로",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "풀어야 할 막힘",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "중단을 확인하는 중",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "결과를 확인할 차례",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지금 진행하는 일",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "먼저 볼 작업",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "이어지는 행동",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "추가로 관측된 다음 작업이 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "필수 가동 조건",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 조건 측정 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "진행과 결과",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "전체 작업 보기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "작업 / 다음 행동",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 상태",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실제 도구 · 모델",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "관측 시각",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 관측 중",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 종료 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 상태 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "EVENTS, NOT ESTIMATES",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "일이 흘러온 길.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "기록된 사건",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "대기 · 요청",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실패",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "병렬·선후 관계는 기록된 연결만 표시",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "마지막 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "이 작업의 실제 단계 사건이 아직 관측되지 않았습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "선행 작업",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "병렬 연결",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "확인 필요",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "진행 · 대기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "작업 완료",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "양비스 운영",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "제목이나 지시 원문으로 찾기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "완료된 작업과 정본 동기화 상태를 각각 표시합니다. 실행 종료만으로 작업 완료를 선언하지 않습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "다음 행동",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "막힌 이유",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "처음 받은 지시",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "끝났다고 말할 기준",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "측정 가능한 완료 기준 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 관측",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 담당",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "프로세스 생존 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "살아 있음 · 관측됨",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "종료 관측됨",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "진행률 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "예상 종료 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 담당의 기술 근거 펼치기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "결과 검증 대기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 종료",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 동기화 대기 · 작업 상태와 별도로 확인합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 동기화 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 되읽기 기록",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 동기화 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "자동화 종료 · 제품 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "기존 완료 보고 · 검증 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시 접수",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시 접수·보관",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정 선택 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 담당 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 시작 요청",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 시작",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "담당 실행 관측",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 실패",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "결과 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지휘 변경 접수",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 조건 확인 필요",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "시작 확인 실패",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "담당 확인 필요",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "이전 실행 기록 보존",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "수신 공백·현재 지시 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "권장 설정 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "답변·계획 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지휘 개정 충돌 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설계 검토 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "독립 검증 단계",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "후속 담당에게 이관",
+          "inSource": true,
+          "inGuide": true
+        }
+      ],
+      "mustExplain": [
+        {
+          "text": "담당·막힌 이유·다음 행동·관측시각",
+          "phrasesSpecified": true,
+          "phrases": [
+            "담당 · 막힌 이유 · 다음 행동 · 관측 시각"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "실제 작업 흐름·병렬/대기/실패/재시도",
+          "phrasesSpecified": true,
+          "phrases": [
+            "작업 흐름은 실제로 남은 사건",
+            "병렬",
+            "대기",
+            "실패",
+            "재시도"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "진행률/ETA null은 미확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "「진행률 미확인」 · 「예상 종료 미확인」은 미확인입니다",
+            "퍼센트와 예상 시각을 추정하지 않습니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "실행 종료·결과 검증 대기·작업 완료 구분",
+          "phrasesSpecified": true,
+          "phrases": [
+            "실행 종료 · 결과 검증 대기 · 작업 완료는 다른 말입니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "작업 완료와 정본 sync pending 구분",
+          "phrasesSpecified": true,
+          "phrases": [
+            "작업 완료와 정본 동기화는 별개입니다",
+            "정본 동기화 대기 · 작업 상태와 별도로 확인합니다."
+          ],
+          "missingPhrases": [],
+          "present": true
+        }
+      ],
+      "identifiersInBody": [],
+      "missing": {
+        "selectors": [],
+        "sourceFunctions": [],
+        "labels": [],
+        "mustExplain": []
+      }
+    },
+    {
+      "id": "S4",
+      "title": "보류·중단·재개·지시 변경",
+      "titleInGuide": true,
+      "counts": {
+        "selectors": 6,
+        "sourceFunctions": 3,
+        "labels": 36,
+        "mustExplain": 6
+      },
+      "selectors": [
+        {
+          "selector": "[data-control=\"pause\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-control=\"stop\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-control=\"resume\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-control=\"change\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#change-instruction",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": true,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-action=\"submit-change\"]",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "sourceFunctions": [
+        {
+          "name": "controls",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "controlAllowed",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "control",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "labels": [
+        {
+          "label": "작업 지휘",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "보류 요청",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "중단 요청",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "재개 요청",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지시 변경",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "변경할 지시",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "변경 접수",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "변경할 지시를 적어주세요.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 상태에서 지원하지 않는 제어입니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "기존 정본을 읽는 작업입니다. 현재 실행을 제어하는 작업이 아니므로 제어할 수 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "개정 번호가 확인되지 않아 제어할 수 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "완료된 작업은 제어할 수 없습니다. 후속 지시는 새 작업으로 접수합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "상태 질문·계획만 요청은 실행하지 않으므로 중단·재개가 없습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행이 없거나 해당 상태에서 허용되지 않는 제어는 비활성화됩니다. 요청과 실제 확인은 구분됩니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "요청 저장과 상태 확인 중…",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "보류 요청을 접수했습니다. 실제 확인을 기다립니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "중단 요청을 접수했습니다. 실제 종료 확인은 작업 상태에서 읽습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "변경 요청을 접수했습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "보류 요청 · 확인 전",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "보류 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "중단 요청 · 확인 전",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "중단 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "막힘",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 대기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "설정 선택 대기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 조건 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "보류를 요청했습니다. 실행이 멈췄다는 근거는 아직 확인되지 않았습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "중단을 요청했습니다. 실제 실행 종료는 아직 확인되지 않았습니다. 이미 반영된 결과와 기록은 보존됩니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "상태를 다시 읽어 확인해주세요.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지휘 변경 접수",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지휘 개정 충돌 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "시작 전 지휘 반영",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 직전 최신 지휘 반영",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "다른 작업들이 실행 자리를 사용 중입니다. 사용하지 않는 작업창을 닫거나 해당 작업이 끝나면 재개할 수 있습니다",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "작업 완료",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "결과 검증 대기",
+          "inSource": true,
+          "inGuide": true
+        }
+      ],
+      "mustExplain": [
+        {
+          "text": "보류 요청과 보류 확인 구분",
+          "phrasesSpecified": true,
+          "phrases": [
+            "보류 요청과 보류 확인은 다릅니다",
+            "보류 요청 · 확인 전",
+            "보류 확인"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "중단 요청과 중단 확인 구분",
+          "phrasesSpecified": true,
+          "phrases": [
+            "중단 요청과 중단 확인도 다릅니다",
+            "중단 요청 · 확인 전",
+            "중단 확인"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "중단은 이미 반영된 결과를 되돌린다는 약속 아님",
+          "phrasesSpecified": true,
+          "phrases": [
+            "중단은 이미 반영된 결과를 되돌린다는 약속이 아닙니다",
+            "이미 반영된 결과와 기록은 보존됩니다."
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "재개 허용 상태와 조건 재확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "재개는 「보류 확인」 · 「중단 확인」 · 「막힘」에서만",
+            "실행 조건(실행 자리 등)을 다시 확인합니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "비활성 이유",
+          "phrasesSpecified": true,
+          "phrases": [
+            "비활성 이유",
+            "현재 상태에서 지원하지 않는 제어입니다.",
+            "기존 정본을 읽는 작업입니다. 현재 실행을 제어하는 작업이 아니므로 제어할 수 없습니다.",
+            "개정 번호가 확인되지 않아 제어할 수 없습니다.",
+            "완료된 작업은 제어할 수 없습니다. 후속 지시는 새 작업으로 접수합니다.",
+            "상태 질문·계획만 요청은 실행하지 않으므로 중단·재개가 없습니다.",
+            "실행이 없거나 해당 상태에서 허용되지 않는 제어는 비활성화됩니다. 요청과 실제 확인은 구분됩니다."
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "개정 충돌은 최신 기록 다시 확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "개정 충돌",
+            "지휘 개정 충돌 확인",
+            "최신 기록을 다시 읽고"
+          ],
+          "missingPhrases": [],
+          "present": true
+        }
+      ],
+      "identifiersInBody": [],
+      "missing": {
+        "selectors": [],
+        "sourceFunctions": [],
+        "labels": [],
+        "mustExplain": []
+      }
+    },
+    {
+      "id": "S5",
+      "title": "지도와 근거 확인",
+      "titleInGuide": true,
+      "counts": {
+        "selectors": 7,
+        "sourceFunctions": 5,
+        "labels": 71,
+        "mustExplain": 6
+      },
+      "selectors": [
+        {
+          "selector": "[data-route=\"structure\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-node]",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-node-link]",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "#structure-search",
+          "literal": true,
+          "template": false,
+          "valueInSource": true,
+          "idRef": true,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-tab=\"evidence\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-tab=\"events\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": "[data-route=\"knowledge\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "sourceFunctions": [
+        {
+          "name": "structureView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "mapBasis",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "evidenceView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "eventsView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "knowledgeView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "labels": [
+        {
+          "label": "세포 연결",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "어디가, 무엇을 맡는지.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "전체 구조에서 세포의 책임으로. 구현과 실행 관측을 구분합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "전체 구조",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "세포 이름 · 책임으로 찾기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "찾기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "구성요소",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "영역",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "세포",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "양비스 지휘 구조 · 등록된 연결",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "아워골 구조 · 프로젝트에서 영역으로",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "양비스 지휘 배선 · 아워골 영역",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "책임과 연결 선택",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "프로젝트 · 눌러서 영역 보기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "영역 · 눌러서 세포 보기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "등록된 지휘 요소",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "화살표는 등록된 구조 연결입니다. 실제 실행의 순서는 ‘작업 흐름’에서 확인합니다. 표시 범위 바깥의 연결도 오른쪽에서 읽을 수 있습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "세포 지도의 근거가 아직 없습니다",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "책임과 연결을 추측해 그리지 않습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "CELL / RESPONSIBILITY",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "세부 책임 설명 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "등록",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "등록 근거 있음",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "등록 확인 안 됨",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "구현",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "구현 근거 있음",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "파일 존재 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본에 로드 등록",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 관측",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "관측 근거 있음",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "책임 · 담당",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "영향과 연결",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "등록된 연결 없음",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "출처 · 관측 시각",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "구현 파일",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "근거 열기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "경로 복사",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "제공하는 능력",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "필요한 능력",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "보내는 신호",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "받는 신호",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 기준 커밋",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "관련 작업",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지도 출처",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지도 기준",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "원격 main",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지도 기준과 최신 main에 차이가 있습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지도 기준 차이",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "검증 · 결과",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "검증과 결과",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "검증 결과가 아직 없습니다",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "산출물과 검증 근거가 확인되기 전에는 완료를 추정하지 않습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본과 원시 기록",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 열기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "이 작업의 API 원시 기록",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 받은 작업 자료 펼치기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "변경 기록",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "접수부터 지금까지",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "유입 경로",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "전체 변경 기록 읽기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "다음 기록 더 보기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "최신 기록에서 다시 읽기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "저장된 기록 시점",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "현재 작업이 변경됐습니다. 읽던 기록 시점은 그대로 유지합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "지식 · 개선",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "다음 일을 바꾸는 근거.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "최신 작업참고와 교훈. 적용 여부와 효과 확인을 함께 읽습니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "근거, 교훈, 작업참고 찾기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "효과 상태",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "아직 조회된 지식과 개선 근거가 없습니다",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "교훈이 등록됐다는 사실과 실제 효과가 확인됐다는 사실을 나누어 표시합니다.",
+          "inSource": true,
+          "inGuide": true
+        }
+      ],
+      "mustExplain": [
+        {
+          "text": "전체 구조→영역→세포와 연결",
+          "phrasesSpecified": true,
+          "phrases": [
+            "전체 구조 → 영역 → 세포와 연결"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "등록·구현·실행 관측 구분",
+          "phrasesSpecified": true,
+          "phrases": [
+            "등록 · 구현 · 실행 관측은 다른 세 가지입니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "지도 화살표는 등록 구조이며 실제 작업 흐름 아님",
+          "phrasesSpecified": true,
+          "phrases": [
+            "지도의 화살표는 등록된 구조 연결",
+            "실제 작업 흐름이 아닙니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "지도 기준 commit·최신 main 차이·관측시각",
+          "phrasesSpecified": true,
+          "phrases": [
+            "지도 기준 커밋과 원격 main 의 차이, 관측 시각",
+            "지도 기준과 최신 main에 차이가 있습니다."
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "정본·원시·변경 근거",
+          "phrasesSpecified": true,
+          "phrases": [
+            "정본 · 원시 기록 · 변경 기록 셋을 구분합니다"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "교훈 등록과 장기 효과 확인은 별개",
+          "phrasesSpecified": true,
+          "phrases": [
+            "교훈이 등록된 것과 장기 효과가 확인된 것은 별개입니다",
+            "효과 상태"
+          ],
+          "missingPhrases": [],
+          "present": true
+        }
+      ],
+      "identifiersInBody": [],
+      "missing": {
+        "selectors": [],
+        "sourceFunctions": [],
+        "labels": [],
+        "mustExplain": []
+      }
+    },
+    {
+      "id": "S6",
+      "title": "법정과 완료 확인",
+      "titleInGuide": true,
+      "counts": {
+        "selectors": 2,
+        "sourceFunctions": 2,
+        "labels": 13,
+        "mustExplain": 5
+      },
+      "selectors": [
+        {
+          "selector": "[data-tab=\"evidence\"]",
+          "literal": false,
+          "template": true,
+          "valueInSource": true,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "selector": ".sync-note",
+          "literal": true,
+          "template": false,
+          "valueInSource": null,
+          "idRef": false,
+          "resolvable": true,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "sourceFunctions": [
+        {
+          "name": "evidenceView",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        },
+        {
+          "name": "syncText",
+          "definedInAppJs": true,
+          "definitionCount": 1,
+          "inGuideEvidence": true,
+          "inGuideBody": false
+        }
+      ],
+      "labels": [
+        {
+          "label": "검증 · 결과",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "검증과 결과",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "근거 열기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 동기화 대기 · 작업 상태와 별도로 확인합니다.",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 동기화 확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 되읽기 기록",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "정본 동기화 미확인",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "결과 검증 대기",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "작업 완료",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "독립 검증 단계",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "실행 담당과 별도로 결과 근거를 확인합니다",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "후속 담당에게 이관",
+          "inSource": true,
+          "inGuide": true
+        },
+        {
+          "label": "변경 기록",
+          "inSource": true,
+          "inGuide": true
+        }
+      ],
+      "mustExplain": [
+        {
+          "text": "작업자 측정·native 수신·독립 검토·GitHub Court 구분",
+          "phrasesSpecified": true,
+          "phrases": [
+            "작업자 측정",
+            "native 수신",
+            "독립 검토",
+            "GitHub Court"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "Court artifact verdict/head/실행 근거가 정본",
+          "phrasesSpecified": true,
+          "phrases": [
+            "artifact",
+            "verdict",
+            "head",
+            "정본"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "작업 완료와 배포/원격 검증/지도 sync 별개",
+          "phrasesSpecified": true,
+          "phrases": [
+            "작업 완료와 배포 · 원격 검증 · 지도 동기화는 별개"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "준비 당시 native605 산출물 미확인",
+          "phrasesSpecified": true,
+          "phrases": [
+            "준비 당시",
+            "TASK-ES-605",
+            "산출물은 아직 없었으므로 미확인"
+          ],
+          "missingPhrases": [],
+          "present": true
+        },
+        {
+          "text": "실제 Telegram 왕복 미검사·Windows 전체 재부팅 미검사·Claude artifact 되읽기 미확인·장기 효과 null",
+          "phrasesSpecified": true,
+          "phrases": [
+            "Telegram 왕복(미검사)",
+            "Windows 전체 재부팅 뒤 동작(미검사)",
+            "Claude artifact 되읽기(미확인)",
+            "장기 효과(없음, null)"
+          ],
+          "missingPhrases": [],
+          "present": true
+        }
+      ],
+      "identifiersInBody": [],
+      "missing": {
+        "selectors": [],
+        "sourceFunctions": [],
+        "labels": [],
+        "mustExplain": []
+      }
+    }
+  ],
+  "guide": {
+    "path": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md",
+    "exists": true,
+    "bytes": 43348,
+    "sha256": "ab7974f1a57333a6e638d5de614f0b484253083b9bd376508f31d0f852122333",
+    "eol": "LF",
+    "lines": 313,
+    "error": null,
+    "hasEvidenceHeading": true,
+    "stageHeadings": [
+      {
+        "heading": "## 1단계. 지시하기",
+        "present": true
+      },
+      {
+        "heading": "## 2단계. 도구·모델·노력 선택",
+        "present": true
+      },
+      {
+        "heading": "## 3단계. 진행과 다음 행동 읽기",
+        "present": true
+      },
+      {
+        "heading": "## 4단계. 보류·중단·재개·지시 변경",
+        "present": true
+      },
+      {
+        "heading": "## 5단계. 지도와 근거 확인",
+        "present": true
+      },
+      {
+        "heading": "## 6단계. 법정과 완료 확인",
+        "present": true
+      }
+    ],
+    "stageHeadingsAllPresent": true,
+    "bodyFencedCodeBlocks": 0,
+    "commandLikeLines": [],
+    "escapedUnicodeCount": 0,
+    "forbidden77Count": 0,
+    "antiPatternHits": 0,
+    "antiPatternDetail": [],
+    "configuredFakeColumn": false,
+    "identifiersOutsideEvidenceTable": 0,
+    "identifiersOutsideEvidenceTableDetail": [],
+    "mentionsNotE2E": true,
+    "mentionsNotRegulation": true,
+    "statusDictionaryRows": 31
+  },
+  "req": {
+    "path": "docs/specs/REQ-TASK-ES-605-YANGVIS-GUIDE.md",
+    "exists": true,
+    "bytes": 25834,
+    "sha256": "8f52a57d9f9ebde1f13e151130f9b64681b57be2b074c6b59ed1af66bdd41f3d",
+    "eol": "LF",
+    "lines": 121,
+    "error": null,
+    "lint8": {
+      "issues": []
+    },
+    "has5Stage": true,
+    "typeClassification": "(다) 탐색 · 새 유형",
+    "hasTypeClassificationRationale": true,
+    "hasRequirementIds": true,
+    "prematureCompletionMarks": 0,
+    "antiPatternHits": 0,
+    "forbidden77Count": 0
+  },
+  "plan": {
+    "path": ".claude/plan-TASK-ES-605.md",
+    "exists": true,
+    "bytes": 9701,
+    "sha256": "07a5c00a5263698319b096eab1839845ce1fb288ff9f6d0006b21b4259493f68",
+    "eol": "LF",
+    "lines": 44,
+    "error": null,
+    "unchecked": 1,
+    "checked": 10,
+    "has5Stage": true,
+    "hasTypeClassification": true,
+    "prematureCompletionMarks": 0
+  },
+  "preservation": {
+    "trackedListSource": "git ls-files -z (대조) + preservation-before tracked 목록(해시 기준)",
+    "gitLsFilesRawFailure": null,
+    "gitVsInput": {
+      "gitCount": 5139,
+      "inputCount": 5139,
+      "inGitNotInInput": [],
+      "inInputNotInGit": []
+    },
+    "tracked": {
+      "inputCount": 5139,
+      "compared": 5139,
+      "mismatchedCount": 0,
+      "missingCount": 0,
+      "mismatched": [],
+      "missing": []
+    },
+    "status": {
+      "changes": [
+        {
+          "code": "??",
+          "path": ".claude/plan-TASK-ES-605.md",
+          "category": "allowlisted-output"
+        },
+        {
+          "code": "??",
+          "path": ".yangvis-inputs/",
+          "category": "input-dir(read-only, provided by root)"
+        },
+        {
+          "code": "??",
+          "path": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md",
+          "category": "allowlisted-output"
+        },
+        {
+          "code": "??",
+          "path": "docs/specs/REQ-TASK-ES-605-YANGVIS-GUIDE.md",
+          "category": "allowlisted-output"
+        },
+        {
+          "code": "??",
+          "path": "reports/TASK-ES-605/",
+          "category": "allowlisted-output"
+        }
+      ],
+      "nonAllowlistedChanges": []
+    },
+    "gitConfig": {
+      "inputSha256": "aa362b808db4faa3117121f385d386a133e110780dac0466f3a625628dab6d9d",
+      "candidates": [
+        {
+          "method": "common-dir config file bytes",
+          "sha256": "ffcec3822c3693b25c1a19050cc3cae7b685dadd0057337d11e55f06a007639f"
+        },
+        {
+          "method": "git-dir config.worktree file bytes",
+          "sha256": null,
+          "error": {
+            "code": "ENOENT",
+            "message": "ENOENT: no such file or directory, open 'C:\\dev\\ourgoal-app\\.git\\worktrees\\yangvis-ourgoal-guide-01a11bfe\\config.worktree'"
+          }
+        },
+        {
+          "method": "git config --list",
+          "sha256": "65c4dac1f31f778e16ea1adddc93d48f35adaa4b95b7f550c8a789b975ae9961",
+          "sha256Crlf": "9d825c5de3029529528df62db5caa55996815faf6102a0e16373753b0fb0f152"
+        },
+        {
+          "method": "git config --local --list",
+          "sha256": "4a69bd11d534c0908dc80cf762dd2739ac687fee7b14daf3615fdf9490621397",
+          "sha256Crlf": "5af07d42eef5ecdda88b6d8c6ac947fd230a1901abeb0b994241ea738b7ae32a"
+        },
+        {
+          "method": "git config --list --show-origin",
+          "sha256": "89b6c756001f0a63fcab8ee9940c3ef6f2ab69bb12bdfa59c02522501337a376",
+          "sha256Crlf": "08b543fa2bc2adcdc128756134babd6dde21747b14aa7ef6df8227bb94737a1a"
+        },
+        {
+          "method": "git config --global --list",
+          "sha256": "859e84f21755621b4f82ee7281f6f0de98594d1b6631d1c6504da89c5c32faf4",
+          "sha256Crlf": "b671f4bf410ea04fabdc8fcd8e526fffb62129993450e1c4c0ff427dc1ffeefe"
+        },
+        {
+          "method": "git config --system --list",
+          "sha256": "597e5339d48d8e5e82f31744799d8c36f027b34ab788accb2f83a1d2a54a44f3",
+          "sha256Crlf": "6ab2af6881c592f28c3b88f7299e9e486887b2dfe47cc74f9935c8a140aac14e"
+        },
+        {
+          "method": "git config --worktree --list",
+          "sha256": null,
+          "error": {
+            "code": "EXIT_128",
+            "message": "fatal: unable to read config file 'C:/dev/ourgoal-app/.git/worktrees/yangvis-ourgoal-guide-01a11bfe/config.worktree': No"
+          }
+        }
+      ],
+      "matched": null,
+      "note": "준비 담당의 해시 산출 방법을 알 수 없어 동일성 미확인(null). 이 스크립트는 설정 원문·신원·토큰을 출력하지 않으며 설정 쓰기 명령을 실행하지 않는다",
+      "configWriteCommandsRun": false
+    }
+  },
+  "outputsAtMeasurement": [
+    {
+      "path": "docs/agents/YANGVIS-OURGOAL-OPERATOR-GUIDE.md",
+      "exists": true,
+      "hashed": true,
+      "bytes": 43348,
+      "sha256": "ab7974f1a57333a6e638d5de614f0b484253083b9bd376508f31d0f852122333",
+      "eol": "LF",
+      "lines": 313
+    },
+    {
+      "path": "docs/specs/REQ-TASK-ES-605-YANGVIS-GUIDE.md",
+      "exists": true,
+      "hashed": true,
+      "bytes": 25834,
+      "sha256": "8f52a57d9f9ebde1f13e151130f9b64681b57be2b074c6b59ed1af66bdd41f3d",
+      "eol": "LF",
+      "lines": 121
+    },
+    {
+      "path": "reports/TASK-ES-605/measure-guide.cjs",
+      "exists": true,
+      "hashed": true,
+      "bytes": 61714,
+      "sha256": "6d925cb8bdbabb3e366e29c67d73a5be183d4b0c22a25e4f8f06f428ae049b5a",
+      "eol": "LF",
+      "lines": 549
+    },
+    {
+      "path": "reports/TASK-ES-605/measurement.json",
+      "exists": true,
+      "hashed": false,
+      "reason": "후속 manifest 범위(자기 참조 방지) — SHA 는 커밋 트리 · PR diff 가 정본"
+    },
+    {
+      "path": "reports/TASK-ES-605/claims.json",
+      "exists": true,
+      "hashed": false,
+      "reason": "후속 manifest 범위(자기 참조 방지) — SHA 는 커밋 트리 · PR diff 가 정본"
+    },
+    {
+      "path": "reports/TASK-ES-605/raw/measure.stdout.json",
+      "exists": true,
+      "hashed": false,
+      "reason": "후속 manifest 범위(자기 참조 방지) — SHA 는 커밋 트리 · PR diff 가 정본"
+    },
+    {
+      "path": ".claude/plan-TASK-ES-605.md",
+      "exists": true,
+      "hashed": true,
+      "bytes": 9701,
+      "sha256": "07a5c00a5263698319b096eab1839845ce1fb288ff9f6d0006b21b4259493f68",
+      "eol": "LF",
+      "lines": 44
+    }
+  ],
+  "limitations": {
+    "realControlButtonE2E": null,
+    "realAccountExecutionSuccess": null,
+    "remainingQuotaOrCost": null,
+    "liveApiRead": null,
+    "liveApiReadNote": "same-origin wrapper 인증이 Node 측정기에 없어 운영 API 를 읽지 않았다(GET 포함 0). 준비 담당 스냅샷(public-observation.json)만 사용",
+    "telegramRealRoundTrip": null,
+    "windowsFullReboot": null,
+    "claudeArtifactReadback": null,
+    "longTermEffect": null,
+    "courtVerdict": null,
+    "nativeOutputAtPreparation": null,
+    "serverSideControlHandling": null
+  },
+  "summary": {
+    "mode": "live-source",
+    "productionSourcesMatchAllInputs": true,
+    "excerptAllEqual": true,
+    "componentProbeLoaded": true,
+    "componentInvariantsAllTrue": true,
+    "controlsWiringAllPresent": true,
+    "controlsLabelSelectorAllInSource": true,
+    "domObservationConsistent": true,
+    "stagesMeasured": 6,
+    "stagesWithMissing": [],
+    "selectorsMissingTotal": 0,
+    "functionsMissingTotal": 0,
+    "labelsMissingTotal": 0,
+    "mustExplainMissingTotal": 0,
+    "mustExplainTotal": 34,
+    "guideIdentifiersOutsideEvidenceTable": 0,
+    "guideBodyFencedCodeBlocks": 0,
+    "guideCommandLikeLines": 0,
+    "reqLintIssues": 0,
+    "preservationMismatchCount": 0,
+    "preservationMissingCount": 0,
+    "gitConfigMatched": null,
+    "nonAllowlistedChanges": []
+  }
+}
