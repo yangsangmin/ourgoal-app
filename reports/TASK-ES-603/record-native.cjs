@@ -1,0 +1,12 @@
+'use strict';
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const root = path.resolve(__dirname, '../..');
+const statePath = path.join(__dirname, 'execution-state.json');
+const [label, exitCode, startedAt, endedAt, stdoutPath, stderrPath, ...command] = process.argv.slice(2);
+const ref = p => ({ path: p, sha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(root, p))).digest('hex') });
+const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+state.executions.push({ label, command, cwd: root, environment: { NODE_PATH: process.env.NODE_PATH || null }, capture: 'PowerShell native foreground stdout/stderr UTF-8 stream files', startedAt, endedAt, exitCode: Number(exitCode), signal: null, error: null, stdout: ref(stdoutPath), stderr: ref(stderrPath) });
+fs.writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n', 'utf8');
+console.log(JSON.stringify({ label, exitCode: Number(exitCode), stdout: stdoutPath, stderr: stderrPath }));

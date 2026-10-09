@@ -1,0 +1,73 @@
+{
+  "task": "TASK-ES-600",
+  "requirementsSource": "docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "A2a (시험지 선행): buildCheckinRecord 테스트는 합본 읽기로 index.html에서 분리된 세포를 정상적으로 읽는다."
+    },
+    {
+      "id": "R2",
+      "text": "A2b (G062 잔여): index.html 내 미사용 함수인 buildCheckinRecord와 saveQuickCheckin을 세포(js/tabs/records/quick-checkin.js)로 온전히 이전한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js는 INLINE_CELLS_SRC를 통해 합본을 읽어들인다.",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "file": "scripts/smoke-test.js",
+        "type": "codeContains",
+        "text": "INLINE_CELLS_SRC"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/tabs/records/quick-checkin.js 파일에 buildCheckinRecord가 존재한다.",
+      "touches": [
+        "js/tabs/records/quick-checkin.js"
+      ],
+      "check": {
+        "file": "js/tabs/records/quick-checkin.js",
+        "type": "codeContains",
+        "text": "function buildCheckinRecord("
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/tabs/records/quick-checkin.js 파일에 saveQuickCheckin이 존재한다.",
+      "touches": [
+        "js/tabs/records/quick-checkin.js"
+      ],
+      "check": {
+        "file": "js/tabs/records/quick-checkin.js",
+        "type": "codeContains",
+        "text": "async function saveQuickCheckin("
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "index.html에서 함수를 떼어내도 앱 구동에 이상이 없다.",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/std-enter-as-guest.json"
+    }
+  ]
+}

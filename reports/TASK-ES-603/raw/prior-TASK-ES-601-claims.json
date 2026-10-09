@@ -1,0 +1,39 @@
+{
+  "task": "TASK-ES-601",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-601.md",
+  "requirements": [
+    { "id": "A3a", "text": "chaos-monkey-test.js 가 index.html 뿐만 아니라 분리된 셀들도 함께 읽어(rescaleGoal 등) 테스트를 수행할 수 있어야 한다. 단언이나 기대값은 변경하지 않는다." },
+    { "id": "A3b", "text": "목표 일정 리스케일링(rescaleGoal) 함수를 js/tabs/goals/goal-rescale.js 로 동작 보존하며 분리한다." }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "A3a",
+      "kind": "static",
+      "change": "preserve",
+      "statement": "chaos-monkey-test.js 에 INLINE_CELLS_SRC 를 도입하여 분리된 셀에서도 함수를 찾도록 수정함.",
+      "touches": ["scripts/chaos-monkey-test.js"],
+      "check": { "type": "codeContains", "file": "scripts/chaos-monkey-test.js", "text": "withInlineCells" },
+      "domain": "script"
+    },
+    {
+      "id": "C2",
+      "req": "A3b",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/tabs/goals/goal-rescale.js 파일에 rescaleGoal 함수가 존재한다.",
+      "touches": ["js/tabs/goals/goal-rescale.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/goals/goal-rescale.js", "text": "function rescaleGoal(" }
+    },
+    {
+      "id": "C3",
+      "req": "A3b",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "rescaleGoal 함수가 외부로 분리되어도 게스트 시나리오가 정상 동작한다.",
+      "touches": ["index.html"],
+      "scenario": "scenarios/std-enter-as-guest.json"
+    }
+  ]
+}

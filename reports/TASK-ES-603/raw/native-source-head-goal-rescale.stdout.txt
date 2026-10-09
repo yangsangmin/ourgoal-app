@@ -1,0 +1,59 @@
+﻿/**
+ * OurGoal Goal Rescale
+ *
+ * G056 목표 일정 리스케일링 (rescaleGoal) 분리
+ * #TASK-ES-601(목표 일정 리스케일링 분리 (G056)): index.html 인라인 IIFE 의 구간(이전 전 3831~3865줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.
+ * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다.
+ * index.html 은 IIFE 머리에서 이 키트의 이름 중 인라인에서 쓰는 것을 같은 이름으로 가져온다. window 노출 줄·상태 변수 선언은 원래 자리에 그대로 있다.
+ * 설계: docs/architecture/INLINE-HARD-SPLIT-DESIGN.md · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
+ */
+(function(global) {
+  'use strict';
+  // L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수를 getter(대입하는 이름은 setter)로 읽는 통로. 값은 읽을 때마다 살아 있는 값이다.
+  var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
+  // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
+  var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
+
+  /* ---- 이전 전 index.html 3831~3865줄(#TASK-ES-601 생성기 표지) ---- */
+  /* ============ 목표 일정 리스케일링 ============ */
+  function rescaleGoal(goal, scaleRatio){
+    if(!goal) return null;
+    scaleRatio = typeof scaleRatio === 'number' ? scaleRatio : 0.5;
+    var now = new Date();
+    var todayStr = now.getFullYear() + '-' + L.pad(now.getMonth() + 1) + '-' + L.pad(now.getDate());
+    var curCount = typeof goal.rescaledCount === 'number' ? goal.rescaledCount : (parseInt(goal.rescaledCount, 10) || 0);
+    goal.rescaledCount = curCount + 1;
+    goal.lastRescaledAt = todayStr;
+
+    if(Array.isArray(goal.milestones)){
+      goal.milestones.forEach(function(m, idx){
+        if(m && m.status !== 'done'){
+          var mDate = new Date(now);
+          mDate.setDate(mDate.getDate() + (idx + 1) * 7);
+          m.dueDate = mDate.getFullYear() + '-' + L.pad(mDate.getMonth() + 1) + '-' + L.pad(mDate.getDate());
+          if(Array.isArray(m.tasks)){
+            m.tasks.forEach(function(t, tIdx){
+              if(t && typeof t === 'object' && !t.done){
+                var tDate = new Date(now);
+                tDate.setDate(tDate.getDate() + (idx * 7) + (tIdx + 1) * 2);
+                t.dueDate = tDate.getFullYear() + '-' + L.pad(tDate.getMonth() + 1) + '-' + L.pad(tDate.getDate());
+              }
+            });
+          }
+        }
+      });
+    }
+
+    var goalDue = new Date(now);
+    var msCount = (goal.milestones && goal.milestones.length) ? goal.milestones.length : 2;
+    goalDue.setDate(goalDue.getDate() + Math.max(14, msCount * 7 + 7));
+    goal.dueDate = goalDue.getFullYear() + '-' + L.pad(goalDue.getMonth() + 1) + '-' + L.pad(goalDue.getDate());
+    return goal;
+  }
+
+  K.rescaleGoal = rescaleGoal;
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = K;
+  }
+})(typeof window !== 'undefined' ? window : globalThis);
