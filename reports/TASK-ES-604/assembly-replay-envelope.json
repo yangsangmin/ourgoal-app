@@ -1,0 +1,207 @@
+{
+  "schema": "agy604-public-historical-replay-envelope/1",
+  "taskId": "TASK-ES-604",
+  "originalEnvelope": {
+    "basename": "replay-envelope.json",
+    "sha256": "0bac6144bae8978e115179a83db5027ce7ec4c7dd90769b4dc13696b3f3d3537",
+    "availability": "private-local-original"
+  },
+  "scope": "Historical exact local context; not a current authorization or portable execution envelope.",
+  "historicalContext": {
+    "inputRevision": 2,
+    "worktreeHead": "c8b8ddfb666a39bbae75b50da7f3b290e0701869",
+    "branch": "codex/task-es-604-yangvis-native-map-evidence",
+    "structureBasisCommit": "76ac598ec35231a93619138dce98fec87fd8c509",
+    "settingsSha256": "54753e57cce63d32a02b3cf6c1de485f1dc8b256732b1519477c71801e172083",
+    "canonicalWorkReferenceSha256": "713eeb92abc8e307dbcaa494f399b42a2e72fb44faa41b8c8b9fce4907dd1bee",
+    "canonicalAgentsSha256": "ca7118866d2774c2608887fb89da6c09e5b240646a4849f10ff93e3c7e6b3b8e",
+    "actualModel": null,
+    "actualEffort": null,
+    "nativeExitCode": 0,
+    "nativeObservation": {
+      "basename": "observation-1791544147626.json",
+      "sha256": "3bd2045399050e684895611764d1efe71b0ac7a9445f882ef940964a3c47333c",
+      "availability": "private-local-original"
+    },
+    "nativeObservationSha256": "3bd2045399050e684895611764d1efe71b0ac7a9445f882ef940964a3c47333c"
+  },
+  "code": {
+    "executedOriginalAudit": {
+      "basename": "replay-audit.cjs",
+      "sha256": "facb4c8cb790b1e7cf55773b5dc3843e2950de64b211bfc06f376a394f4eb204",
+      "availability": "private-local-original"
+    },
+    "readingOnlyProjection": {
+      "file": "assembly-independent-audit.source.txt",
+      "sha256": "94547e5f3e52e1485eced945603284734a5b727307b29d117e6d93616ff5a43e"
+    },
+    "validation": {
+      "basename": "review-actual-replay.cjs",
+      "sha256": "8d28842ed2a0a0110040096680b4dd56624f0d9e13c9b995818bcbda91c82f49",
+      "availability": "private-local-original"
+    },
+    "orchestrator": {
+      "basename": "run-reviewed-agy604-replay.cjs",
+      "sha256": "259eaf0350636f14a2c1de63bd31072c7eb562321c71262804711723ae284ef9",
+      "availability": "private-local-original"
+    }
+  },
+  "program": {
+    "label": "node",
+    "sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5"
+  },
+  "officialExporter": {
+    "file": "scripts/cell-map-export.js",
+    "sha256": "fc2b499ef96d08d2043dbe914f1d33fc552ceb129d56759be2512d9755221807",
+    "argv": [
+      "scripts/cell-map-export.js",
+      "--stdout"
+    ],
+    "cwd": "bound worktree"
+  },
+  "dependencyBindings": [
+    {
+      "file": "scripts/module-metrics.js",
+      "sha256": "ae8eef49a5b2a3b0e77d735d94b3927df6858d02908ab1e70fd488d9741d5e49"
+    },
+    {
+      "file": "js/core/slots.js",
+      "sha256": "f8bf86ec40283a837c3b0b305e3dee8944b1175904d8f0e585c12a46548c066b"
+    }
+  ],
+  "phases": [
+    "original-code before capture",
+    "official exporter --stdout into fresh outside-repository scratch",
+    "original-code after comparison"
+  ],
+  "outputContract": {
+    "freshOutsideRepositoryFolder": true,
+    "exclusiveNewFileWrites": true,
+    "originalWorkerOutputsNeverOverwritten": true
+  },
+  "requiredGuards": {
+    "sourceAndAuditorSHAExactBeforeEachPhase": true,
+    "originalSixUnchangedBeforeAfter": true,
+    "currentInput19MatchesSpec": true,
+    "protected5139AgainstOriginalBaselineAndBeforeAfter": true,
+    "gitConfigOriginalPlusOnlyReviewed605TrackingTwoKeys": true,
+    "settings547Canonical713AndCa711Exact": true,
+    "sameInput2Exited": true,
+    "stdoutOnlyArgv": true,
+    "noOtherNativeCLIModelOrAuth": true,
+    "noNetwork": true,
+    "noWorkerMeasurementInvocation": true,
+    "noDefaultExporterInvocation": true
+  },
+  "replayRequirements": {
+    "mustVerifyEveryCodeAndInputSHA": true,
+    "originalWorkerScriptMustNotBeInvoked": true,
+    "originalSixMustRemainByteExact": true,
+    "freshRootOwnedOutputFolder": true,
+    "exactOfficialArgv": [
+      "scripts/cell-map-export.js",
+      "--stdout"
+    ],
+    "officialChildNoTrackedProductWrites": true,
+    "temporarySnapshotOnlyWithinFreshScratch": true,
+    "exclusiveNewFileWrites": true,
+    "actual5139AndConfigBaselineComparisonRequired": true,
+    "strictFailurePropagation": true,
+    "rawJsonMustParseAndMatchSameSevenAnd351Semantics": true,
+    "canonicalAndSettingsBindingsMayNotBeSilentlyBypassed": true,
+    "noAuthNativeModelNetworkInvocation": true,
+    "noTaskAuthorityConfigurationMutation": true,
+    "errorHandling": "Classify/hash errors and retain raw privately at origin; do not centralize command/conversation or raw credential/config text."
+  },
+  "inputBindings": [
+    {
+      "binding": "input-01",
+      "sha256": "a88b60faf98569c792d8bc99e3973fd1f98fd2d235b2d22d7d8c5f09ca8fd443"
+    },
+    {
+      "binding": "input-02",
+      "sha256": "db722a3aaabd3334dfedc07bf319111b0ea02558bb8961811d1ff8352e1d51ac"
+    },
+    {
+      "binding": "input-03",
+      "sha256": "ffa9c8fec89d6dc6273073ddda268aac4944a9ec348632b13fb7e4f1ac851625"
+    },
+    {
+      "binding": "input-04",
+      "sha256": "ca7118866d2774c2608887fb89da6c09e5b240646a4849f10ff93e3c7e6b3b8e"
+    },
+    {
+      "binding": "input-05",
+      "sha256": "e43bce1a699899b790bfb6060e829ec532e7ecb5055dae16a0f11dcaef195d04"
+    },
+    {
+      "binding": "input-06",
+      "sha256": "a8536d20fa1cb93c6542307318b45397f9e72a0739794ea57071a2b0006f80ef"
+    },
+    {
+      "binding": "input-07",
+      "sha256": "db722a3aaabd3334dfedc07bf319111b0ea02558bb8961811d1ff8352e1d51ac"
+    },
+    {
+      "binding": "input-08",
+      "sha256": "013d19c4ea97fb08efde14ba75857c27d9e7001b1e80ee59f1e4c35ca4dd07e1"
+    },
+    {
+      "binding": "input-09",
+      "sha256": "fc2b499ef96d08d2043dbe914f1d33fc552ceb129d56759be2512d9755221807"
+    },
+    {
+      "binding": "input-10",
+      "sha256": "b4ab32212d77c3ad1c157d4414aadbb211402068279a2a45983f44810f9c8500"
+    },
+    {
+      "binding": "input-11",
+      "sha256": "7faa55c484097aedd260fa270b860a00c62efa1615c27e088fb38586d500bd16"
+    },
+    {
+      "binding": "input-12",
+      "sha256": "dfd81ca1b53eaa375a5b40820bc91f214d1b1720b50df63d31f0613a1e1835a8"
+    },
+    {
+      "binding": "input-13",
+      "sha256": "4d141f3167849e8af68a5767cd60a5a6f6b212ce79484a9e33e31f5a0c4d8816"
+    },
+    {
+      "binding": "input-14",
+      "sha256": "64271a16037eb81a3f7375f7ea6673e8e9804b21d6a35da4ac2dfff20fe851bf"
+    },
+    {
+      "binding": "input-15",
+      "sha256": "b5529375ab8d159ae61af304b7bd55f3747da11da54df8f8fd56f0a585bddcd7"
+    },
+    {
+      "binding": "input-16",
+      "sha256": "280248b260c4a3e00519c25819424ef3a3af4a054edd54ce7ebdbbdf89b8946c"
+    },
+    {
+      "binding": "input-17",
+      "sha256": "448329c07fc218ca6ef701e88e2702316ec8ef4688ec603847b3f18d55541f4d"
+    },
+    {
+      "binding": "input-18",
+      "sha256": "9e7ab9724afb9c4619fb14c0145f7cedf7d934aa9677f8ec7f4a0597e014eea6"
+    },
+    {
+      "binding": "input-19",
+      "sha256": "fca4ec90cf74da699021776520e3831cc6dcde6ef2fe6f8c0f10e61da5d70cf6"
+    }
+  ],
+  "currentContextEligible": false,
+  "limitations": [
+    "Original worker C34-C38 assertions merely read a stored value; they do not prove preservation.",
+    "Only final protected byte equality for bound original5139/config and the replay before/after is measurable; transient writes and unbound files are not observed.",
+    "Original worker script has no separate-output option and overwrites three worker evidence files, so it must not be replayed.",
+    "Source-safe alternative still requires actual root replay receipts to complete acceptance.",
+    "The exact historical canonical WORK-REFERENCE guard differs from the currently observed canonical file. It was not bypassed or rerun during preparation.",
+    "The public source projection is reading-only; restoring private exact bindings requires a separate reviewed context."
+  ],
+  "safeToReplayOriginalWorkerScript": false,
+  "portableInstallationClaim": false,
+  "courtVerdict": null,
+  "webNotionSync": null
+}
