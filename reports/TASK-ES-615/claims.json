@@ -12,7 +12,11 @@
     },
     {
       "id": "R3",
-      "text": "허용하지 않은 것을 허용으로 적지 않는다 — 묶음 4 보류, 묶음 5 는 헌법 개정 절차, 시험 변경은 그때의 「금고 변경 승인」 문구, 표에 없던 OURGOAL_CONFIG 는 결심 대기."
+      "text": "허용하지 않은 것을 허용으로 적지 않는다 — 묶음 5 는 헌법 개정 절차, 시험 변경은 그때의 「금고 변경 승인」 문구, 표에 없던 OURGOAL_CONFIG 는 결심 대기."
+    },
+    {
+      "id": "R4",
+      "text": "묶음 4(944줄 함수 openProTemplateRecordModal)를 상민님 「권장안대로 진행해.」에 따라 A안으로 기록한다 — 안전망 시험 → 제자리 다섯 조각(옮기기가 아니라 고치기 PR, MODE_4A) → 조각별 옮기기. 한 번에 다시 쓰기와 800줄 예외는 하지 않는다."
     }
   ],
   "outOfScopeReports": [
@@ -211,14 +215,14 @@
       "req": "R3",
       "kind": "static",
       "domain": "config",
-      "statement": "DIR-004 가 묶음 4·5 를 범위 밖으로 적는다",
+      "statement": "DIR-004 가 묶음 5(saveGoogleToken)를 범위 밖으로 적는다",
       "touches": [
         "docs/directives/ACTIVE.md"
       ],
       "check": {
         "type": "codeContains",
         "file": "docs/directives/ACTIVE.md",
-        "text": "944줄 함수 openProTemplateRecordModal 과 saveGoogleToken 은 이 지시의 범위가 아니다"
+        "text": "saveGoogleToken 은 이 지시의 범위가 아니다(아래 결심 대기)."
       }
     },
     {
@@ -279,6 +283,96 @@
         "type": "codeContains",
         "file": "docs/rules/TICKETS.md",
         "text": "- #TASK-ES-615 | INFRA | 지시함 DIR-004 등록"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 (라)가 944줄 함수를 A안으로 진행한다고 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "(라) 944줄 함수 openProTemplateRecordModal(전문 템플릿 기록 창)은 A안으로 진행한다"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 제자리 정리 단계를 고치기 PR(MODE_4A)로 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "이 단계는 옮기기가 아니라 고치기 PR 이므로 일반 개발 절차(헌법 MODE_4A · 화면 시나리오 주장 · 법정 판정)로 간다"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 하지 않는 것(한 번에 다시 쓰기 · 800줄 예외)을 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "하지 않는 것: 한 번에 다시 써서 옮기기, 800줄 상한 예외로 통째 옮기기(금고 변경)."
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 6.3 에 944줄 함수 A안 절이 있다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "### 6.3 944줄 함수 `openProTemplateRecordModal` — A안"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 944줄 함수 줄이 없다(결심됨)",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| 944줄 함수 openProTemplateRecordModal(전문 템플릿 기록 창) 처리"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 머리에 묶음 4 에 대한 상민님 원문이 글자 그대로 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-615-DIR-004-SCOPE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-615-DIR-004-SCOPE.md",
+        "text": "  3. 「권장안대로 진행해.」"
       }
     }
   ]
