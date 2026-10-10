@@ -13,10 +13,10 @@ const out = {
   task: 'TASK-ES-611',
   requirementsSource: 'docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md',
   requirements: [
-    { id: 'R1', text: '세포가 키트에 단 이름을 등록 기관(OurgoalCellRegistry.provide)에 스스로 등록하는 줄을 세포 파일 끝에 더한다. 등록 기관은 compare 모드라 값을 보관만 하므로 앱 동작은 그대로다.' },
+    { id: 'R1', text: '세포가 키트에 단 이름을 등록 기관(OurgoalCellRegistry.provide)에 스스로 등록하는 줄을 세포 파일 끝에 더한다. 등록 기관은 compare 모드라 값을 보관만 하므로 앱 동작은 그대로다 — 바뀐 세포 파일의 단독 로드 회귀 0, 새 전역 0.' },
     { id: 'R2', text: '대조: 등록한 이름마다 옛 경로(통로 getter 값·window 값)와 등록 값이 === 로 같다 — 등록 수 > 0, 불일치 0, 이중 등록 0, 초과 0. 등록하지 못한 이름은 누락으로 남기고 사유를 적는다.' },
     { id: 'R3', text: '등록 줄은 손이 아니라 결정론 생성기(gen-cell-provide.js)로 넣는다(멱등). 세포의 기존 글자·함수 본문은 바꾸지 않는다.' },
-    { id: 'R4', text: '증명 하한(설계 4절 「새 기관 추가」): index.html 변경 0 · 새 전역 0 · 800줄 상한 초과 0 · module-load 새 회귀 0 · npm test 검사 수 동일·폐기 0 · inlineScriptLines 불변 · tests/ 변경 0 · 금고 변경 0.' },
+    { id: 'R4', text: '증명 하한(설계 4절 「새 기관 추가」): index.html 변경 0 · 800줄 상한 초과 0 · npm test 검사 수 동일·폐기 0 · inlineScriptLines 불변 · tests/ 변경 0 · 금고 변경 0.' },
   ],
   outOfScopeReports: [
     { text: '배선 철거(가져오기 줄·통로 getter·window 대입 삭제)와 등록 기관 own 모드는 이 PR 에 없다(설계 6절 B3 부터). IIFE 안에 정의가 남은 이름 ' + plan.iifeOwned.length + '개와 생성기가 건너뛴 이름(' + plan.skipped.map(s => s.name).join('·') + ')은 등록하지 않았고 누락으로 남는다 — 사유는 provide-plan.json 의 iifeOwned·skipped.', cannotBecause: 'out-of-scope-feature' },
@@ -35,8 +35,8 @@ const out = {
     st('C9', 'R3', '생성기를 다시 돌려도 바뀌는 파일이 0 이다(멱등) — 저장된 계획 파일은 재실행 산출이다.', R + 'provide-plan.json', 'counts.changedThisRun', 0, ['docs/design/harness/module-split/gen-cell-provide.js']),
     st('C10', 'R3', '생성기 계획에 있는 이름이 전부 페이지에서 실제로 등록됐고, 계획에 없는 이름은 등록되지 않았다.', M, 'summary.generator.planMatchesPage', true),
     st('C11', 'R4', '측정 기록의 index.html 순증가가 0 줄이다(이 PR 은 index.html 을 바꾸지 않는다).', M, 'summary.changed.indexHtml.netLineGrowth', 0),
-    st('C12', 'R4', '모듈 로드 탐침 결과 파일에서 기준 대비 새 회귀 목록이 비어 있다(js/ 바로 아래 부품 + 바뀐 세포 파일 전부 단독 로드).', R + 'module-load.json', 'regressions', []),
-    st('C13', 'R4', '바뀐 세포 파일을 단독 로드했을 때 등록하는 전역 목록이 기준과 다른 파일이 0 이다(새 전역 0).', M, 'summary.newGlobals.count', 0),
+    st('C12', 'R1', '모듈 로드 탐침 결과 파일에서 기준 대비 새 회귀 목록이 비어 있다(js/ 바로 아래 부품 + 바뀐 세포 파일 전부 단독 로드).', R + 'module-load.json', 'regressions', []),
+    st('C13', 'R1', '바뀐 세포 파일을 단독 로드했을 때 등록하는 전역 목록이 기준과 다른 파일이 0 이다(새 전역 0).', M, 'summary.newGlobals.count', 0),
     st('C14', 'R4', '등록 블록을 더한 뒤 800줄을 넘는 세포 파일이 없다.', M, 'summary.lines.over800', []),
     st('C15', 'R4', '인라인 스크립트 줄 수(module-metrics inlineScriptLines)가 기준과 같다.', M, 'summary.ratchet.inlineScriptLinesSame', true),
     st('C16', 'R4', 'npm test 를 기준 트리(origin/main)와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄·요약이 같다(폐기 0).', M, 'summary.npmTest.same', true),

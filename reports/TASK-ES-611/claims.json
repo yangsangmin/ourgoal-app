@@ -4,7 +4,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "세포가 키트에 단 이름을 등록 기관(OurgoalCellRegistry.provide)에 스스로 등록하는 줄을 세포 파일 끝에 더한다. 등록 기관은 compare 모드라 값을 보관만 하므로 앱 동작은 그대로다."
+      "text": "세포가 키트에 단 이름을 등록 기관(OurgoalCellRegistry.provide)에 스스로 등록하는 줄을 세포 파일 끝에 더한다. 등록 기관은 compare 모드라 값을 보관만 하므로 앱 동작은 그대로다 — 바뀐 세포 파일의 단독 로드 회귀 0, 새 전역 0."
     },
     {
       "id": "R2",
@@ -16,7 +16,7 @@
     },
     {
       "id": "R4",
-      "text": "증명 하한(설계 4절 「새 기관 추가」): index.html 변경 0 · 새 전역 0 · 800줄 상한 초과 0 · module-load 새 회귀 0 · npm test 검사 수 동일·폐기 0 · inlineScriptLines 불변 · tests/ 변경 0 · 금고 변경 0."
+      "text": "증명 하한(설계 4절 「새 기관 추가」): index.html 변경 0 · 800줄 상한 초과 0 · npm test 검사 수 동일·폐기 0 · inlineScriptLines 불변 · tests/ 변경 0 · 금고 변경 0."
     }
   ],
   "outOfScopeReports": [
@@ -367,7 +367,7 @@
     },
     {
       "id": "C12",
-      "req": "R4",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "모듈 로드 탐침 결과 파일에서 기준 대비 새 회귀 목록이 비어 있다(js/ 바로 아래 부품 + 바뀐 세포 파일 전부 단독 로드).",
@@ -383,7 +383,7 @@
     },
     {
       "id": "C13",
-      "req": "R4",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "바뀐 세포 파일을 단독 로드했을 때 등록하는 전역 목록이 기준과 다른 파일이 0 이다(새 전역 0).",
