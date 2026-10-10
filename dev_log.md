@@ -6049,3 +6049,5 @@
 - 기준PR842 로컬정본54개를 byte복사하고 기존GitLF 원문43개/PR837 참고를 docs/agents/history에 보존. 임시registry canonicalUnavailable fallback bootstrap 전체참고receipt대조. module-specs 수정0, module-guard 감소갱신·cell/inline 지도2회hash재현. npm test exit0. reports/TASK-ES-586/measurement.json은작업자측정이며효과개선null. 제품·기존시험·금고 변경0.
 
 - 2026-10-11 TASK-ES-612: 생성 지도 일괄 갱신(main f0af028f, PR #883 병합 뒤) — cell-map.json(세포 352, core/cell-registry 추가)·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-612-GENERATED-MAPS-SYNC-5.md
+
+- 2026-10-11 TASK-ES-613: 생성 지도 일괄 갱신(main c42a61ae, PR #885 병합 뒤) — cell-map.json(세포 352, 등록 블록 반영)·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-613-GENERATED-MAPS-SYNC-6.md
