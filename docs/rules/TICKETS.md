@@ -661,3 +661,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 - #TASK-ES-599 | FIX | [테스트 복구] OurgoalLevelBadgeKit 전역 허용 | 상민님 지시 | 진행중
 - #TASK-ES-606 | INFRA | 헌법 개정 초안 v2026.10.10-OUTCOME — 코덱스 조사 보고서(헌법 시행착오와 개정 방향)의 8사례·9개선안을 삭제 0·완화 0 커널 개정(완료 세 구분·지시 원문 대응·4.4 신설·MERGE_GATE 7·[PASS] 제거·버전 정합 검사·금고 등재)으로 만든다 | docs/specs/REQ-TASK-ES-606-CONSTITUTION-OUTCOME.md | 4단계(심사 청구 · 승인선 ⑤ 결심 대기)
+- #TASK-ES-601 | INFRA | 지시함 DIR-003 등록 — 미분화 덩어리 해체 B 트랙 착수 지시 + CELL-REGISTRY-DESIGN 8절 결심 ⑤·③ 결과 기록(상민님 2026-10-10 「허용」) | docs/directives/ACTIVE.md · docs/architecture/CELL-REGISTRY-DESIGN.md | 4단계(심사 청구)
