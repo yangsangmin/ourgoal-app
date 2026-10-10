@@ -660,3 +660,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-598 | INFRA | 법정 「동작 보존 확인」 재생성 단계 수리 — 심사 대상 저장소에 의존성이 없어 기준 커밋 생성기가 '@babel/parser' 를 못 찾던 결함(PR #864 재심 F53D61B2 에서 발견), 법정 쪽 node_modules 를 NODE_PATH 로 제공 + 자체 점검 | court/lib/preserve-source.js · court/selftest/unit-preserve.js | 4단계(심사 청구)
 
 - #TASK-ES-599 | FIX | [테스트 복구] OurgoalLevelBadgeKit 전역 허용 | 상민님 지시 | 진행중
+- #TASK-ES-606 | INFRA | 헌법 개정 초안 v2026.10.10-OUTCOME — 코덱스 조사 보고서(헌법 시행착오와 개정 방향)의 8사례·9개선안을 삭제 0·완화 0 커널 개정(완료 세 구분·지시 원문 대응·4.4 신설·MERGE_GATE 7·[PASS] 제거·버전 정합 검사·금고 등재)으로 만든다 | docs/specs/REQ-TASK-ES-606-CONSTITUTION-OUTCOME.md | 4단계(심사 청구 · 승인선 ⑤ 결심 대기)
