@@ -1,0 +1,121 @@
+{
+  "task": "TASK-ES-610",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-610-CELL-REGISTRY-B1.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/core/cell-registry.js(OurgoalCellRegistry · compare 모드만: 등록 값 보관, OurgoalAppScope·window 불변) 를 추가하고 index.html 에 로드 줄 하나만(순증가 0) 더해 앱 동작을 보존한다. 새 전역은 OurgoalCellRegistry 하나다."
+    },
+    {
+      "id": "R2",
+      "text": "scripts/probes/cell-registry-compare.js 가 게스트 부팅 뒤 OurgoalCellRegistry.report() 를 JSON 으로 쓴다(scope 전체 이름 + index.html window 노출 이름, 함수 === · 상태 getter 값 · 호출 순서 배열). 첫 측정의 불일치·누락 목록을 가공 없이 reports 에 저장한다."
+    },
+    {
+      "id": "R3",
+      "text": "gen-inline-hard.js 에 mode:\"unwire\" 를 더한다 — 지정 키트의 가져오기 줄·expose getter/setter 속성·window 대입 줄 세 종류만 지우고, names 밖 이름·함수 본문·그 밖의 글자는 바꾸지 않는다. B1 은 모드 추가와 단위 시험 증명만(실제 철거 0)."
+    },
+    {
+      "id": "R4",
+      "text": "증명 하한(설계 4절 「새 기관 추가」): npm test 검사 수 동일·폐기 0, inlineScriptLines 가 기준선 4003 에서 늘지 않음, module-load 새 회귀 0, tests/ 수정 0."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "등록 기관의 own 모드(기관이 직접 expose·window 대입)는 B1 에서 동작하지 않는다(설계 3.1 — B3 배선 철거부터). mode(name, 'own') 은 오류를 돌려준다. 기존 세포 파일에 provide 등록 줄을 넣는 것은 B2 이며 이 PR 에는 없다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 진입해 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성(active)이 되고 앞 탭은 비활성이 되며 예외가 없다 — 등록 기관 로드 줄을 더하기 전과 같다.",
+      "touches": ["index.html", "js/core/cell-registry.js"],
+      "scenario": "scenarios/b1-guest-boot-six-tabs.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침(court/probes/module-load.js 읽기 전용 실행) 결과 파일에서 기준 대비 새 회귀 목록이 비어 있다(새 파일 js/core/cell-registry.js 단독 로드 ok, 등록 전역 OurgoalCellRegistry 하나).",
+      "touches": ["reports/TASK-ES-610/module-load.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/module-load.json", "path": "regressions", "equals": [] }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록(measurement.json)의 새 전역 목록이 OurgoalCellRegistry 하나다.",
+      "touches": ["reports/TASK-ES-610/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/measurement.json", "path": "summary.newGlobals", "equals": ["OurgoalCellRegistry"] }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "대조 탐침 결과 파일이 게스트 부팅을 끝내고 report() 를 받아 쓰였다(ok true).",
+      "touches": ["reports/TASK-ES-610/cell-registry-compare.json", "scripts/probes/cell-registry-compare.js"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/cell-registry-compare.json", "path": "ok", "equals": true }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "첫 측정의 불일치 수는 0 이다(등록이 0 이라 대조할 값이 없다 — 공허하지 않도록 누락 수를 C6 에서 따로 적는다).",
+      "touches": ["reports/TASK-ES-610/cell-registry-compare.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/cell-registry-compare.json", "path": "counts.mismatches", "equals": 0 }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "첫 측정의 누락(등록되지 않은 이름) 수는 622 다 — scope 이름 423 + window 노출 이름 199. 이 목록이 B2 의 등록 범위다.",
+      "touches": ["reports/TASK-ES-610/cell-registry-compare.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/cell-registry-compare.json", "path": "counts.missing", "equals": 622 }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "unwire 모드 단위 시험 8건(세 종류만 삭제·빈 껍데기 제거·쉼표 1글자·names 밖 보존·잔존 참조 정지·정의문 보호·없는 이름 정지·종류 끄기·실제 index.html 철거·A1 시범 기준 트리 재생성 바이트 동일)이 전부 ok 다.",
+      "touches": ["reports/TASK-ES-610/unwire-unit.json", "docs/design/harness/module-split/gen-inline-hard.js", "docs/design/harness/module-split/unwire-check-b1.js"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/unwire-unit.json", "path": "ok", "equals": true }
+    },
+    {
+      "id": "C8",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록의 index.html 순증가가 0 줄이다(로드 태그를 app-scope.js 태그와 같은 줄에 두었다).",
+      "touches": ["reports/TASK-ES-610/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/measurement.json", "path": "summary.indexHtml.netLineGrowth", "equals": 0 }
+    },
+    {
+      "id": "C9",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록의 inlineScriptLines 가 기준선과 같다(4003, 출처 node scripts/module-metrics.js).",
+      "touches": ["reports/TASK-ES-610/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/measurement.json", "path": "summary.inlineScriptLines.same", "equals": true }
+    },
+    {
+      "id": "C10",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 를 기준 트리(origin/main)와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 수 요약이 같다(폐기 0, tests/ 수정 0).",
+      "touches": ["reports/TASK-ES-610/measurement.json"],
+      "check": { "type": "jsonPath", "file": "reports/TASK-ES-610/measurement.json", "path": "summary.npmTest.same", "equals": true }
+    }
+  ]
+}
