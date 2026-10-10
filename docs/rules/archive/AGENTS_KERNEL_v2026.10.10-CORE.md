@@ -1,15 +1,15 @@
-# [정본] 아워골 최고 헌법 v2026.10.11-ALIGNED (OurGoal Supreme Constitution v2026.10.11-ALIGNED)
+# [정본] 아워골 최고 헌법 v2026.10.10-CORE (OurGoal Supreme Constitution v2026.10.10-CORE)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.11-ALIGNED (법령 전문 통합 개정 — 법령 전문을 이 커널의 해설·상세·부록으로 재정의(조문 14.5 신설, 충돌 시 커널 우선), 커널↔전문 차이 M1·M2·M4·M6·M10·M12 정합, Tri-Sync 두 층 구분(11.1). 조문 내용 변경은 11.1 한 구절·14.5 신설). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
+> **버전**: v2026.10.10-CORE (커널 정본 하나 개정 — 정본은 이 파일 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나, `CLAUDE.md`·`AGENTS.md` 는 정본을 가리키는 포인터. 세 사본 동일 유지 의무를 「정본 1 + 포인터 2」 검사로 바꿈. 조문 내용 변경 0). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
 > **정본**: 이 파일 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다. `CLAUDE.md` 는 Claude Code 가 기동 때 본문처럼 읽어 들이는 가져오기 포인터(`@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 한 줄), `AGENTS.md` 는 코덱스 등 다른 도구용 포인터·핵심 요약이다. 포인터는 정본 경로와 읽기 지시만 담고 개정 때 바뀌지 않는다(`node court/appendix.js --versions` 가 대조). (`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
-> **법령 전문**: 조·항·호 단위 해설·상세·부록은 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`(이 커널과 다르면 커널이 우선한다 — 조문 14.5), 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
+> **법령 전문**: 조·항·호 단위 상세는 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`, 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
 
 ---
 
-<system_kernel id="ourgoal-supreme-constitution-v2026.10.11-aligned">
+<system_kernel id="ourgoal-supreme-constitution-v2026.10.10-core">
 
   <metadata>
     <sovereign>상민 (Supreme Decision Maker)</sovereign>
@@ -544,7 +544,7 @@
     </article>
 
     <article id="ARTICLE_11" title="Tri-Sync 동기화 및 Step 0 사전검증">
-      <clause id="11.1">클라이언트, 백엔드 DB, Realtime 이벤트 간의 데이터 상태는 항상 Tri-Sync 매커니즘으로 상호 동기화되어야 한다. 이 Tri-Sync 는 데이터 층(클라이언트·DB·Realtime)이다. 기록 층의 3자 동기화(노션·옵시디언·커맨드센터 저널)는 법령 전문 제11조 제1항이 정하며, 같은 이름의 다른 층이다.</clause>
+      <clause id="11.1">클라이언트, 백엔드 DB, Realtime 이벤트 간의 데이터 상태는 항상 Tri-Sync 매커니즘으로 상호 동기화되어야 한다.</clause>
       <clause id="11.2">코드 수정 전 Step 0 단계에서 기존 기능 및 스키마 영향을 정밀 사전검증한다.</clause>
       <clause id="11.3">세포지도 상시 연동(CELL_MAP): 원격 main 병합마다 병합한 세션이 웹 세포지도·노션 세포지도를 측정값으로 갱신하고, 노션 「아워골 프로젝트 컨트롤타워」 허브 페이지 최상단에 두 세포지도 링크와 마지막 갱신 시각·출처 커밋을 유지한다.</clause>
       <clause id="11.4">세포지도에는 origin/main 에서 스크립트가 낸 측정값만 싣는다. 갱신 뒤 되읽어 대조하고, 갱신하지 못하면 pending 으로 남겨 다음 세션이 첫 턴에 처리한다.</clause>
@@ -573,7 +573,6 @@
       <clause id="14.2">헌법 개정은 오직 최고결정권자 상민님의 명시적 개정 명령에 의해서만 가능하다.</clause>
       <clause id="14.3">헌법 커널의 정본은 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다. `CLAUDE.md`(Claude Code 가져오기 줄)·`AGENTS.md`(다른 도구용 포인터·요약)는 정본 경로와 읽기 지시만 담고 개정 때 바뀌지 않으며, `node court/appendix.js --versions` 가 포인터에 커널 본문이 없고 정본 경로가 있음을 대조한다. 개정은 정본만 고친다. 개정의 효력은 상민님의 "헌법 개정 승인" 뒤 그 PR 이 원격 main 에 병합된 때 발생하며, 버전 대장(`docs/rules/CONSTITUTION_VERSIONS.md`)에 그 PR 의 병합 기록을 근거로 한 행을 더한다. 개정 PR 은 커널 세 사본 · 법령 전문 머리의 「현행 커널 버전」 · 버전 대장의 새 행(승인 근거 칸에 그 PR 의 주소, 병합 커밋은 병합 뒤 기입) · 직전 커널의 archive 사본을 같은 PR 에 담는다. 커널 버전·법령 전문 머리·대장 마지막 행·세 사본이 서로 다르면 `node court/appendix.js --check` 가 불일치로 알린다.</clause>
       <clause id="14.4">상민님이 새 지침·의도를 주면, 세션은 그것이 모든 세션에 지속되어야 하는 규칙인지 판단하고, 그렇다면 헌법 개정 초안 PR(병합 금지·결심 대기)로 올린다. 개인 메모리·전역 지침에만 남겨 다른 세션·다른 도구가 모르게 두지 않는다.</clause>
-      <clause id="14.5">법령 전문(`docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`)은 이 커널의 해설·상세·부록이다. 전문의 조문 번호(제1~15조)는 이 커널의 조문 번호와 같고, 전문과 커널이 다르면 커널이 우선한다. 전문 본문의 개정도 승인선 ⑤ 이며, 커널의 조문을 바꾸지 않는 전문 개정은 전문 판(머리의 「법령 전문 판」)만 올리고 버전 대장에 적는다.</clause>
     </article>
 
     <article id="ARTICLE_15" title="Server-First 스토리지 및 수명주기 4단계 검증">
