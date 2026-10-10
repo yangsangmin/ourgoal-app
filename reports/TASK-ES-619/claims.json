@@ -1,0 +1,521 @@
+{
+  "task": "TASK-ES-619",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-619-GEN-UNWIRE-EXT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "여러 실행: 한 설정에서 unwire 실행을 배열로 받아 차례로 적용한다(앞 실행이 지운 결과 위에 다음 실행). 단일 객체 꼴은 그대로 동작하고, 안전 검사는 실행마다 그대로다. 새 줄 종류가 아니다."
+    },
+    {
+      "id": "R2",
+      "text": "X1: `_xxxKit` 꼴이 아닌 손잡이(`_ui`·`_xp`)의 가져오기 줄을 받되, IIFE 최상위에서 `var <kitVar> = window.…` 로 선언된 손잡이임을 검사한다."
+    },
+    {
+      "id": "R3",
+      "text": "X3: 한 줄을 나눠 쓰는 window 대입을 그 줄 안에서 그 대입 글자만 지운다(선택 플래그 sharedLine). 남는 글자를 재파싱으로 대조하고 애매하면 멈춘다."
+    },
+    {
+      "id": "R4",
+      "text": "X2: 손잡이의 맨이름 참조가 0 일 때만 손잡이 줄을 지우는 선택 플래그(dropKitVar). 참조가 남으면 멈춘다."
+    },
+    {
+      "id": "R5",
+      "text": "기존 경로 무변화와 닫힌 목록: 옮기기 경로는 글자 하나 지나지 않고, 단일 객체 설정의 출력은 바이트 동일하며, 닫힌 목록 밖의 줄은 어떤 플래그로도 지워지지 않는다. 제품 코드·tests·금고 변경 0, 저장소 index.html 실제 철거 0."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "실제 철거(이 확장으로 지울 이름을 고르는 일 · 시험이 그 글자를 붙잡는 이름 제외 · 화면 시나리오)는 이 PR 에 없다. 단위 시험 R2 는 생성기가 그 줄을 지울 수 있음을 보인 것이며, 그 이름을 실제로 지워도 되는지는 철거 PR 이 잰다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "unstate · region · sweep · finalize 모드(X4~X9)는 이 PR 에 없다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 커밋의 실제 index.html 사본에서 unwire-plan.json 의 실행을 기준 생성기로 차례로 돌린 결과와, 고친 생성기에 배열 한 번으로 돌린 결과가 바이트 단위로 같다.",
+      "touches": [
+        "reports/TASK-ES-619/measurement.json",
+        "docs/design/harness/module-split/gen-inline-hard.js",
+        "docs/design/harness/module-split/unwire-check-ext-619.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/measurement.json",
+        "path": "summary.sixteenVsOne.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "그 대조에 쓴 실행 수(계획 파일의 실행 전부).",
+      "touches": [
+        "reports/TASK-ES-619/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/measurement.json",
+        "path": "summary.sixteenVsOne.runs",
+        "equals": 16
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단계마다 두 생성기(기준 · 고친 것)의 단일 실행 결과 · 메타 · 출력 줄이 같았던 단계 수(실행 수와 같다).",
+      "touches": [
+        "reports/TASK-ES-619/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/measurement.json",
+        "path": "summary.sixteenVsOne.stepsSame",
+        "equals": 16
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작은 꾸러미에서 여러 실행(배열) 한 번 = 단일 객체 설정을 차례로 돌린 결과.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.M1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "뒤 실행이 멈추면 index.html 을 쓰지 않고 몇 번째 실행인지 알린다. 빈 배열은 멈춘다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.M2",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "`_ui` 처럼 `_xxxKit` 꼴이 아닌 손잡이의 가져오기 줄을 지운다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X1a",
+        "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "손잡이가 아닌 kitVar(선언 없음 · window 가 아닌 초기값 · 상태 변수 · 선언자 둘 · 이름이 아닌 글자)는 멈춘다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X1b",
+        "equals": true
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "주석과 한 줄을 나눠 쓰는 window 대입 — sharedLine 이면 대입 글자만 지우고 주석은 남긴다. 플래그가 없으면 예전처럼 멈춘다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X3a",
+        "equals": true
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "한 줄 if 블록의 두 대입 중 하나만 지우면 나머지가 남고, 둘 다 대상이면 줄째 지운다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X3b",
+        "equals": true
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "다른 문 뒤에 붙은 대입은 대입 글자만 지우고, 같은 줄의 다른 문이 그 이름을 쓰면 잔존 참조로 멈춘다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X3c",
+        "equals": true
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "sharedLine 이어도 쉼표 연쇄 · 오른쪽이 이름이 아닌 대입 · 여러 줄 if 블록 안의 나눠 쓴 줄은 멈춘다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X3d",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 index.html 사본에서 X3 · X1 대상 이름을 지웠을 때 지운 줄은 가져오기 · getter · window 대입(과 빈 껍데기)뿐이고 줄 안에서 지운 글자는 window 대입뿐이며 나머지 줄은 순서대로 같다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.R2",
+        "equals": true
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dropKitVar: 손잡이 참조가 0 이면 손잡이 줄을 지운다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X2a",
+        "equals": true
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dropKitVar: 손잡이 참조가 남으면 멈춘다. 플래그 없이 names 가 비면 예전처럼 멈춘다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.X2b",
+        "equals": true
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 index.html 사본에서 가져오기가 남은 손잡이에 dropKitVar 를 주면 멈추고 쓰지 않는다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.R3",
+        "equals": true
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "B1 단위 시험(unwire-check-b1.js) 8건이 고친 생성기에서 그대로 통과한다 — 단일 객체 설정의 출력과 기존 옮기기 경로(A1 시범 재생성 바이트 대조) 무변화.",
+      "touches": [
+        "reports/TASK-ES-619/unwire-b1-rerun.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unwire-b1-rerun.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단일 객체 설정에서 고친 생성기와 기준 생성기가 같은 index.html · 메타 · 출력 줄을 낸다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.S1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모르는 칸(닫힌 목록 밖 기능 · 플래그 오타)은 멈춘다.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "byId.C1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기의 바뀐 구간이 unwire 머리 주석 뒤 ~ 옮기기 경로(smoke-test 주석) 앞에만 있다(옮기기 경로에서 바뀐 줄 0).",
+      "touches": [
+        "reports/TASK-ES-619/measurement.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/measurement.json",
+        "path": "summary.generator.movePathLinesChanged",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "제품 코드(js/** · index.html) · tests/ · 금고 · 지시함 · 생성 지도에서 바뀐 파일이 0 개다.",
+      "touches": [
+        "reports/TASK-ES-619/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/measurement.json",
+        "path": "summary.protectedChanged.count",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 를 기준 트리와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄 수·요약 줄이 같다.",
+      "touches": [
+        "reports/TASK-ES-619/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/measurement.json",
+        "path": "summary.npmTest.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "inlineScriptLines 가 기준과 같다(저장소 index.html 의 실제 철거 0).",
+      "touches": [
+        "reports/TASK-ES-619/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/measurement.json",
+        "path": "summary.inlineScriptLines.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "확장 단위 시험의 건수.",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json",
+        "docs/design/harness/module-split/unwire-check-ext-619.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "total",
+        "equals": 16
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "확장 단위 시험이 전부 ok 다(통과 수 = 건수).",
+      "touches": [
+        "reports/TASK-ES-619/unit-by-id.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-619/unit-by-id.json",
+        "path": "passed",
+        "equals": 16
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기가 unwire 설정을 배열로 받는다.",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "const isList = Array.isArray(CFG.unwire);"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 경로는 mode 가 unwire 일 때만 들어간다(진입 줄은 예전 그대로).",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "if (CFG.mode === 'unwire') { runUnwire(); return; }"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기가 받는 실행 칸이 닫혀 있다(그 밖의 칸은 멈춘다).",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "'sharedLine', 'dropKitVar', 'label'].includes(k)) fail("
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 5.4 에 구현된 설정 꼴이 적혀 있다.",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "### 5.4 구현된 unwire 설정 꼴 — 여러 실행 · X1 · X2 · X3 (#TASK-ES-619)"
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 머리에 상민님 원문이 글자 그대로 있다.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-619-GEN-UNWIRE-EXT.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-619-GEN-UNWIRE-EXT.md",
+        "text": "「결심필요 4번 빼고 모두 권장안대로 진행하고 4번은 자세히 설명해봐 어떤 함수인지 어떤 기능을 하던건지 자세히, 어떻게 진행하는게 좋을지, 권장안이 뭔지」"
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-619 한 줄이 있다.",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-619 | INFRA | 생성기 unwire 확장"
+      }
+    }
+  ]
+}
