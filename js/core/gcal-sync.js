@@ -492,6 +492,8 @@
     requestGoogleToken: K.requestGoogleToken, restoreGoogleToken: K.restoreGoogleToken, syncAllToGoogleCalendar: K.syncAllToGoogleCalendar
   }, { window: [
     'gcalTokenStatus', 'getGoogleAccessToken', 'isGoogleCalendarConnected', 'requestGoogleToken', 'restoreGoogleToken'
+  ], windowOnly: [
+    'requestGoogleToken'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

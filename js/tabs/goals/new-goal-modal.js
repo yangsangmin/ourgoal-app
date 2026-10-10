@@ -358,6 +358,8 @@
     localGoalTemplate: K.localGoalTemplate, promptNewGoal: K.promptNewGoal
   }, { window: [
     'localGoalTemplate', 'promptNewGoal'
+  ], windowOnly: [
+    'localGoalTemplate'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

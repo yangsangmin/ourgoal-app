@@ -127,6 +127,8 @@
     switchGoalsSubTab: K.switchGoalsSubTab
   }, { window: [
     'adoptTemplateAsMyGoal', 'renderGoalStatsChart', 'switchGoalStatPeriod', 'switchGoalsSubTab'
+  ], windowOnly: [
+    'adoptTemplateAsMyGoal', 'switchGoalStatPeriod', 'switchGoalsSubTab'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

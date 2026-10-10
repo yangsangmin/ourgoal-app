@@ -113,6 +113,8 @@
     renderLapRowsHtml: K.renderLapRowsHtml, renderStopwatchWidgetHtml: K.renderStopwatchWidgetHtml
   }, { window: [
     'renderLapRowsHtml', 'renderStopwatchWidgetHtml'
+  ], windowOnly: [
+    'renderLapRowsHtml', 'renderStopwatchWidgetHtml'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

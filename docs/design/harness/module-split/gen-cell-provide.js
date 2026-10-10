@@ -295,12 +295,18 @@ function blockFor(entry) {
     const items = entry.kits[kp].slice().sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
     const kv = 'K' + (kitPaths.length > 1 ? i : '');
     const win = items.filter(x => x.window).map(x => x.name);
+    // [B3a #TASK-ES-614] window 에만 나가는 이름(통로 getter 가 없던 이름) — 등록 기관이 own 적용 때 통로에는 내주지 않게 따로 적는다. 없으면 블록 글자는 B2 와 같다.
+    const winOnly = items.filter(x => x.window && !x.scope).map(x => x.name);
     L.push('  var ' + kv + ' = ' + guard + ';');
     L.push('  if (' + kv + ') R.provide(' + JSON.stringify(entry.owner).replace(/"/g, "'") + ', {');
     packed(items.map(x => x.name + ': ' + kv + '.' + x.member), '    ', ',').forEach(l => L.push(l));
     if (win.length) {
       L.push('  }, { window: [');
       packed(win.map(n => "'" + n + "'"), '    ', ',').forEach(l => L.push(l));
+      if (winOnly.length) {
+        L.push('  ], windowOnly: [');
+        packed(winOnly.map(n => "'" + n + "'"), '    ', ',').forEach(l => L.push(l));
+      }
       L.push('  ] });');
     } else L.push('  }, { window: [] });');
   });

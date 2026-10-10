@@ -198,6 +198,8 @@
     closeAvatarLevelUpModal: K.closeAvatarLevelUpModal, openAvatarLevelUpModal: K.openAvatarLevelUpModal
   }, { window: [
     'closeAvatarLevelUpModal', 'openAvatarLevelUpModal'
+  ], windowOnly: [
+    'closeAvatarLevelUpModal'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

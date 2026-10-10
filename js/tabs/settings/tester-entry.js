@@ -75,6 +75,8 @@
     enterAsTesterB: K.enterAsTesterB
   }, { window: [
     'enterAsTesterB'
+  ], windowOnly: [
+    'enterAsTesterB'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

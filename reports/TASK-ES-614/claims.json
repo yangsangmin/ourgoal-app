@@ -1,0 +1,562 @@
+{
+  "task": "TASK-ES-614",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "등록 기관이 세포가 등록한 이름을 직접 통로(OurgoalAppScope)와 window 에 내준다(own). 적용은 인라인 IIFE 바로 앞 한 번(commit)이며 앱 동작은 그대로다 — 모듈 로드 회귀 0, 새 전역 0, index.html 순증가 0."
+    },
+    {
+      "id": "R2",
+      "text": "own 이 내주는 값이 옛 배선 값과 같다: 등록한 이름 전수 대조에서 own 수 > 0, 불일치 0, 초과 0, 이중 등록 0 이고, 기준 트리와 작업 트리의 이름별 값 지문 차이가 0 이다."
+    },
+    {
+      "id": "R3",
+      "text": "옛 배선이 없어도 own 만으로 충분함을 전 키트 모의 철거로 잰다: 저장소 밖 사본에서 현행 생성기 unwire 로 배선을 지운 뒤(시험이 배선 글자를 붙잡는 이름은 남김) 대조·시나리오·모듈 로드·시험이 기준과 같다. 저장소의 실제 철거는 0 이고, 철거 계획 파일을 남긴다."
+    },
+    {
+      "id": "R4",
+      "text": "증명 하한: tests/ 변경 0 · 금고 변경 0 · 생성기 gen-inline-hard.js 변경 0 · 800줄 상한 초과 0 · inlineScriptLines 불변 · npm test 검사 수 동일·폐기 0."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "실제 배선 철거는 이 PR 에 없다(B3 부터 — 철거 PR 은 index.html 만 바꾼다). 시험 소스에 배선 글자가 있는 이름 42개는 철거 계획에서 뺐고 시험은 고치지 않았다(지시함 DIR-004 (다)). 생성기가 멈춘 이름(defaultProfile·loadProfile·saveProfile·setTab)과 kitVar 꼴 때문에 못 도는 손잡이(_ui·_xp)는 생성기를 고치지 않고 계획 파일에 사유와 함께 남겼다(설계 5.2 X1·X3).",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 진입해 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성(active)이 되고 앞 탭은 비활성이 되며 예외가 없다 — 등록 기관이 IIFE 바로 앞에서 이름을 먼저 내주기 전과 같다.",
+      "touches": [
+        "index.html",
+        "js/core/cell-registry.js",
+        "js/core/cell-registry-commit.js",
+        "js/avatar/xp.js",
+        "js/core/gcal-sync.js",
+        "js/core/home-cockpit.js",
+        "js/core/modal-helper.js",
+        "js/core/profile-load.js",
+        "js/core/profile-topbar.js",
+        "js/core/toast-renderer.js",
+        "js/tabs/calendar/lockscreen-image.js",
+        "js/tabs/calendar/render.js",
+        "js/tabs/comm/crew-pacing.js",
+        "js/tabs/comm/feed-post-preview.js",
+        "js/tabs/goals/ai-agent.js",
+        "js/tabs/goals/ai-status.js",
+        "js/tabs/goals/attachments.js",
+        "js/tabs/goals/focus-autopilot.js",
+        "js/tabs/goals/goal-detail-drawer.js",
+        "js/tabs/goals/goals-ia-actions.js",
+        "js/tabs/goals/new-goal-modal.js",
+        "js/tabs/goals/schedule-setup.js",
+        "js/tabs/goals/template-encyclopedia-modal.js",
+        "js/tabs/goals/template-encyclopedia.js",
+        "js/tabs/home/today-mission.js",
+        "js/tabs/records/ai-feedback-catalog.js",
+        "js/tabs/records/archive-toggle.js",
+        "js/tabs/records/checkin-feedback.js",
+        "js/tabs/records/csv-export.js",
+        "js/tabs/records/first-checkin-tutorial.js",
+        "js/tabs/records/table-stopwatch.js",
+        "js/tabs/records/weekly-recap.js",
+        "js/tabs/settings/account-entry.js",
+        "js/tabs/settings/adaptive-ux.js",
+        "js/tabs/settings/app-evaluation.js",
+        "js/tabs/settings/app-lock-pin.js",
+        "js/tabs/settings/avatar-greeting.js",
+        "js/tabs/settings/avatar-levelup-modal.js",
+        "js/tabs/settings/dev-debug-gate.js",
+        "js/tabs/settings/feedback-bot-setup.js",
+        "js/tabs/settings/guest-backup-nudge.js",
+        "js/tabs/settings/inapp-landing.js",
+        "js/tabs/settings/pwa-install.js",
+        "js/tabs/settings/quick-actions.js",
+        "js/tabs/settings/render.js",
+        "js/tabs/settings/tester-entry.js"
+      ],
+      "scenario": "scenarios/b3a-guest-boot-six-tabs.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "마크업의 인라인 처리기(onclick=\"closeAvatarGreetingPopup…\" · \"switchGoalsSubTab…\" · \"switchGoalStatPeriod…\")가 window 이름으로 불려, 목표 탭에서 하위 탭(개인→루틴→성취통계→개인)과 통계 기간(주간→월간)을 누르면 누른 것이 활성이 되고 앞의 것은 비활성이 되며 예외가 없다 — own 적용 전과 같다.",
+      "touches": [
+        "index.html",
+        "js/core/cell-registry.js",
+        "js/core/cell-registry-commit.js",
+        "js/avatar/xp.js",
+        "js/core/gcal-sync.js",
+        "js/core/home-cockpit.js",
+        "js/core/modal-helper.js",
+        "js/core/profile-load.js",
+        "js/core/profile-topbar.js",
+        "js/core/toast-renderer.js",
+        "js/tabs/calendar/lockscreen-image.js",
+        "js/tabs/calendar/render.js",
+        "js/tabs/comm/crew-pacing.js",
+        "js/tabs/comm/feed-post-preview.js",
+        "js/tabs/goals/ai-agent.js",
+        "js/tabs/goals/ai-status.js",
+        "js/tabs/goals/attachments.js",
+        "js/tabs/goals/focus-autopilot.js",
+        "js/tabs/goals/goal-detail-drawer.js",
+        "js/tabs/goals/goals-ia-actions.js",
+        "js/tabs/goals/new-goal-modal.js",
+        "js/tabs/goals/schedule-setup.js",
+        "js/tabs/goals/template-encyclopedia-modal.js",
+        "js/tabs/goals/template-encyclopedia.js",
+        "js/tabs/home/today-mission.js",
+        "js/tabs/records/ai-feedback-catalog.js",
+        "js/tabs/records/archive-toggle.js",
+        "js/tabs/records/checkin-feedback.js",
+        "js/tabs/records/csv-export.js",
+        "js/tabs/records/first-checkin-tutorial.js",
+        "js/tabs/records/table-stopwatch.js",
+        "js/tabs/records/weekly-recap.js",
+        "js/tabs/settings/account-entry.js",
+        "js/tabs/settings/adaptive-ux.js",
+        "js/tabs/settings/app-evaluation.js",
+        "js/tabs/settings/app-lock-pin.js",
+        "js/tabs/settings/avatar-greeting.js",
+        "js/tabs/settings/avatar-levelup-modal.js",
+        "js/tabs/settings/dev-debug-gate.js",
+        "js/tabs/settings/feedback-bot-setup.js",
+        "js/tabs/settings/guest-backup-nudge.js",
+        "js/tabs/settings/inapp-landing.js",
+        "js/tabs/settings/pwa-install.js",
+        "js/tabs/settings/quick-actions.js",
+        "js/tabs/settings/render.js",
+        "js/tabs/settings/tester-entry.js"
+      ],
+      "scenario": "scenarios/b3a-inline-handlers-goals.json"
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침 결과에서 기준 대비 작업 트리의 새 회귀 목록이 비어 있다(js/ 바로 아래 부품 + 바뀐 js 파일·새 파일 단독 로드).",
+      "touches": [
+        "reports/TASK-ES-614/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/module-load.json",
+        "path": "work.regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "바뀐 js 파일을 단독 로드했을 때 등록하는 전역 목록이 기준과 다른 파일이 0 이다(새 전역 0).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.newGlobals.changedFilesGlobalsDiffer",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록의 index.html 순증가가 0 줄이다(commit 태그는 IIFE 바로 앞 태그 줄 끝에 같은 줄로 붙였다).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.changed.indexHtml.netLineGrowth",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "commit 태그와 인라인 IIFE 사이에 다른 스크립트 태그가 0 개다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.overlap.tagsBetweenCommitAndIife",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "대조 탐침 결과 파일이 게스트 부팅을 끝내고 report() 를 받아 쓰였다(ok true).",
+      "touches": [
+        "reports/TASK-ES-614/cell-registry-compare.json",
+        "scripts/probes/cell-registry-compare.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/cell-registry-compare.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "등록 기관이 실제로 내준(own) 이름 수는 438 이다(0 이 아니다).",
+      "touches": [
+        "reports/TASK-ES-614/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/cell-registry-compare.json",
+        "path": "counts.own",
+        "equals": 438
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "등록한 이름을 통로 값·window 값과 === 로 대조한 횟수는 534 이고 불일치는 0 이다.",
+      "touches": [
+        "reports/TASK-ES-614/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/cell-registry-compare.json",
+        "path": "counts.mismatches",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "초과(등록했는데 통로·window 어디에도 없던 이름)는 0 이다 — window 에만 나가던 이름을 통로에 새로 내주지 않는다.",
+      "touches": [
+        "reports/TASK-ES-614/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/cell-registry-compare.json",
+        "path": "counts.extra",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이중 등록은 0 이다.",
+      "touches": [
+        "reports/TASK-ES-614/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/cell-registry-compare.json",
+        "path": "counts.conflicts",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 트리와 작업 트리에서 통로 이름마다 잰 값 지문의 차이가 0 이다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.fingerprints.baseVsWork.scope",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 트리와 작업 트리에서 window 이름마다 잰 값 지문의 차이가 0 이다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.fingerprints.baseVsWork.window",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 철거 사본(옛 배선을 845줄 지운 index.html)의 대조에서 불일치는 0 이다(이름 목록은 철거 전 결과로 고정).",
+      "touches": [
+        "reports/TASK-ES-614/cell-registry-compare.mock.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/cell-registry-compare.mock.json",
+        "path": "counts.mismatches",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 철거 사본에서 통로에서 사라진 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-614/cell-registry-compare.mock.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/cell-registry-compare.mock.json",
+        "path": "namesFrom.scopeLost",
+        "equals": []
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 트리와 모의 철거 사본에서 통로 이름마다 잰 값 지문의 차이가 0 이다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.fingerprints.baseVsMock.scope",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 트리와 모의 철거 사본에서 window 이름마다 잰 값 지문의 차이가 0 이다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.fingerprints.baseVsMock.window",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 철거 사본에서만 실패하는 시험 파일이 없다(tests/ 의 시험 파일을 기준 트리와 사본에서 하나씩 따로 실행해 종료 코드를 맞댐).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.mockUnwire.plan.testFiles.mockOnly",
+        "equals": []
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "대조군: 같은 모의 철거 사본에서 commit 태그만 빼면 게스트 부팅이 끝나지 않는다(own 적용이 실제로 이름을 내주고 있다).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.mockUnwire.withoutCommit.guestBootOk",
+        "equals": false
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "철거 계획 파일에 실행 16개가 이름 목록과 함께 있다(B3~B8 입력 — 실제 철거는 이 PR 에 없다).",
+      "touches": [
+        "reports/TASK-ES-614/unwire-plan.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/unwire-plan.json",
+        "path": "totals.runs",
+        "equals": 16
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "바뀐 세포 파일마다 등록 블록 앞 글자가 기준과 같고 블록 뒤에 글자가 없다(블록 안에서만 바뀜).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.cellBlocksOnly.allSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "등록 블록 생성기를 다시 돌려도 바뀌는 파일이 0 이다(멱등).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json",
+        "docs/design/harness/module-split/gen-cell-provide.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.provideGenerator.idempotent",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "800줄을 넘는 바뀐 js 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.lines.over800",
+        "equals": []
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 스크립트 줄 수(module-metrics inlineScriptLines)가 기준과 같다(실제 철거 0).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.ratchet.inlineScriptLinesSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 를 기준 트리(origin/main)와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄·요약이 같다(폐기 0).",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.npmTest.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/ 아래 바뀐 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.changed.testsChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "금고(court/** 등) 아래 바뀐 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.changed.vaultChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "법정이 다시 돌리는 생성기 gen-inline-hard.js 를 바꾸지 않았다.",
+      "touches": [
+        "reports/TASK-ES-614/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-614/measurement.json",
+        "path": "summary.changed.generatorInlineHardChanged",
+        "equals": []
+      }
+    }
+  ]
+}

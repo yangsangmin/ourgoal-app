@@ -618,6 +618,9 @@
   }, { window: [
     'REAL_USER_TEMPLATES', 'cheerRealUserTemplate', 'closeGoalTemplateEncyclopediaModal', 'closeTemplateEncyclopediaModal', 'copyRealUserTemplate',
     'copyUserGoalTemplate', 'openGoalTemplateEncyclopediaModal', 'openTemplateEncyclopediaModal', 'shareMyActiveGoalAsTemplate'
+  ], windowOnly: [
+    'REAL_USER_TEMPLATES', 'cheerRealUserTemplate', 'closeGoalTemplateEncyclopediaModal', 'copyRealUserTemplate', 'copyUserGoalTemplate',
+    'openGoalTemplateEncyclopediaModal', 'shareMyActiveGoalAsTemplate'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

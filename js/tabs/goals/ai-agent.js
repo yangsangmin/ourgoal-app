@@ -533,6 +533,8 @@
     sanitizeAttachments: K.sanitizeAttachments, showGoalAgentReviewStep: K.showGoalAgentReviewStep
   }, { window: [
     'showGoalAgentReviewStep'
+  ], windowOnly: [
+    'showGoalAgentReviewStep'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

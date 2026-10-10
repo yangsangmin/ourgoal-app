@@ -615,6 +615,8 @@
     updateTopNotifBadge: K.updateTopNotifBadge
   }, { window: [
     'openNotificationCenterModal', 'openProfileEditor', 'updateTopBar', 'updateTopNotifBadge'
+  ], windowOnly: [
+    'openNotificationCenterModal'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

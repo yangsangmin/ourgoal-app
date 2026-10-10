@@ -41,6 +41,8 @@
     showToast: K.toast, toast: K.toast
   }, { window: [
     'showToast', 'toast'
+  ], windowOnly: [
+    'showToast'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

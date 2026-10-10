@@ -56,6 +56,8 @@
     toggleRecordArchive: K.toggleRecordArchive
   }, { window: [
     'toggleRecordArchive'
+  ], windowOnly: [
+    'toggleRecordArchive'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

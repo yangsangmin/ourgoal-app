@@ -80,6 +80,9 @@ OurgoalCellRegistry.report()        // 대조 결과: { mismatches:[{name, owner
   - 등록 기관은 세포가 `provide` 를 부르는 순간에 통로·window 에 쓰지 않는다. IIFE 바로 앞에서 한 번 적용한다.
   - 이유(조사): window 이름 199개 중 13개를 IIFE 밖 파일도 대입한다. `js/components.js`(2252행 태그, 세포들보다 뒤)가 그중 6개를 대입하고, 지금은 IIFE 가 나중에 다시 덮는다. 기관이 세포 로드 때 바로 대입하면 철거 뒤 승자가 뒤집힌다.
   - 방식: 마지막 바깥 태그와 **같은 줄**에 동기 `<script src>` 태그 하나를 붙여 그 파일이 commit 을 부른다(index.html 순증가 0 · 인라인 스크립트 추가 0 · 새 전역 0). commit 과 IIFE 사이에 다른 태그를 두지 않는다. 구체 파일 이름과 13개 이름의 재측정 표는 own 전환 PR(#TASK-ES-614)이 정한다.
+  - 구현(#TASK-ES-614): commit 을 부르는 파일은 `js/core/cell-registry-commit.js`(세포 `core/cell-registry-commit`, 전역 0)이고 태그는 IIFE 바로 앞 줄 끝에 붙였다. `OurgoalCellRegistry.commit()` 은 한 번만 돌고, 통로에는 세포(owner)마다 `expose(owner, …)` 로 다시 쓸 수 없는 값 속성을, window 에는 `opts.window` 이름을 대입한다. `mode(name)` 은 commit 이 실제로 내준 이름에 `own` 을 돌려준다.
+  - 구현(#TASK-ES-614): window 에만 나가던 이름(통로 getter 가 없던 84개)은 세포의 등록 블록이 `opts.windowOnly` 에 따로 적는다 — 기관이 통로에는 내주지 않아 통로 이름 목록이 전과 같다(초과 0).
+  - 겹침 이름 재측정(작업자 측정 `reports/TASK-ES-614/overlap-names.json`): window 199개 중 IIFE 밖 파일도 대입하는 이름 13개(등록된 것 7), commit 시점에 이미 다른 값이 들어 있던 이름 6개(`js/components.js` 가 대입한 5개 + 요소 id 로 잡히는 `toast`), commit 뒤에 대입하는 파일 0, commit 과 IIFE 사이 태그 0.
 - **own 전환과 철거는 PR 을 나눈다 [개정]**
   - 법정의 생성기 재실행 대조는 설정 `cells` 에 없는 `js/**`·`index.html` 변경을 「Disallowed source file changed」로 거부하고, `cells` 의 파일은 생성기 산출과 바이트 단위로 같아야 한다(`court/lib/preserve-source.js` 52~60행). unwire 모드는 세포 파일을 쓰지 않으므로 철거 PR 에서 `js/core/cell-registry.js` 는 기준과 같아야 한다.
   - 그래서 own 전환(등록된 모든 이름을 기관이 내준다)은 철거보다 먼저 별도 PR 로 병합하고, 철거 PR 은 `index.html` 만 바꾼다. 그 사이에는 같은 값의 이중 노출이 된다.
@@ -94,6 +97,7 @@ OurgoalCellRegistry.report()        // 대조 결과: { mismatches:[{name, owner
 - **이름 목록은 철거 전 커밋에서 뽑아 고정 입력으로 준다 [개정]**
   - 탐침은 window 이름을 현재 `index.html` 에서 뽑는다(`windowNamesOf`). 철거 PR 에서는 지운 이름이 목록에서 사라져 검사 대상에서 빠진다.
   - 철거 PR 의 대조는 철거 전 커밋에서 뽑은 통로·window 이름 목록을 입력으로 받아, 지운 이름도 통로와 window 에 그대로 있는지 본다.
+  - 구현(#TASK-ES-614): `--names-from <이전 결과.json>`(이름 목록 고정, 결과의 `namesFrom.scopeLost`·`scopeAdded`)과 `--fingerprints`(이름마다 통로 값·window 값의 지문 — 서로 다른 트리의 값을 이름 단위로 맞댄다).
 
 ### 3.3 상태 기관 `js/core/app-state.js` (가칭, B9) [개정]
 
@@ -253,6 +257,7 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 | **B0** | 이 문서 | #862 |
 | B1 | 등록 기관(compare 모드) + 대조 탐침 + 생성기 unwire 모드 | #883 |
 | B2 | 세포마다 `provide()` 등록 줄 추가. 등록 438 · 불일치 0(작업자 측정) | #885 |
+| B3a | 등록 기관 own 적용(IIFE 직전 commit) + 전 키트 모의 철거 측정. 철거 계획은 `reports/TASK-ES-614/unwire-plan.json`(작업자 측정) | (#TASK-ES-614 PR) |
 
 ### 6.2 앞으로 [개정] — 조사 권장 순서
 

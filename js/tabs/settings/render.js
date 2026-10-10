@@ -265,6 +265,8 @@
     toggleAdvancedSettings: K.toggleAdvancedSettings
   }, { window: [
     'collapseAllSettingsSections', 'paintCacheUsage', 'toggleAdvancedSettings'
+  ], windowOnly: [
+    'collapseAllSettingsSections', 'paintCacheUsage', 'toggleAdvancedSettings'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

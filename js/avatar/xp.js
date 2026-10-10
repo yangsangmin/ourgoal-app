@@ -490,6 +490,8 @@
     triggerAvatarCelebrationPopup: K.triggerAvatarCelebrationPopup, xpForLevel: K.xpForLevel
   }, { window: [
     'levelForXP', 'levelProgress', 'notifyXpGained', 'triggerAvatarCelebrationPopup', 'xpForLevel'
+  ], windowOnly: [
+    'triggerAvatarCelebrationPopup', 'xpForLevel'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

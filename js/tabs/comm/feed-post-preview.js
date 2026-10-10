@@ -68,6 +68,8 @@
     toggleFeedPostPreview: K.toggleFeedPostPreview
   }, { window: [
     'toggleFeedPostPreview'
+  ], windowOnly: [
+    'toggleFeedPostPreview'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

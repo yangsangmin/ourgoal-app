@@ -538,6 +538,8 @@
     generateLockScreenCalendarImage: K.generateLockScreenCalendarImage, generateLockScreenScheduleCardImage: K.generateLockScreenScheduleCardImage
   }, { window: [
     'generateLockScreenCalendarImage'
+  ], windowOnly: [
+    'generateLockScreenCalendarImage'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */
