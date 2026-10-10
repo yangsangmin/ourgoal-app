@@ -1,0 +1,317 @@
+{
+  "schema": "ourgoal.task-es-610.measurement/1",
+  "taskId": "TASK-ES-610",
+  "requestedTaskTag": "TASK-ES-600 (지시 원문 번호 — PR #868 이 선점, #TASK-ES-601~609 도 사용 중이라 빈 번호 #TASK-ES-610 으로 확정 · 양비스 부모 작업 TASK-YV-8aa85377-0805-42a0-8e32-d7607aadd39f, 오케스트레이터 TASK-YV-8aa85377-0805-42a0-8e32-d7607aadd39f-ORCH-c66825121b9a)",
+  "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정(node court/chat.js <PR>)만 낸다",
+  "measuredAt": "2026-10-10T21:24:15.384Z",
+  "environment": {
+    "node": "v24.15.0",
+    "platform": "win32",
+    "arch": "x64",
+    "gitAutocrlf": "true"
+  },
+  "sourceCommit": {
+    "parentWorkerBase": "0ecaf23356cef7ee7ec0fbd260fc3edc5cc58226",
+    "worktreeHead": "a50ce802293b4f18ecf6e87840d83f889ac4a3a9",
+    "originMainAtMeasure": "a50ce802293b4f18ecf6e87840d83f889ac4a3a9",
+    "note": "부모 작업자(TASK-YV-8aa85377)는 0ecaf233 기준으로 만들었고, 오케스트레이터가 origin/main 기준 새 트리에 다시 적용해 재측정했다. 두 커밋 사이 제품 파일 차이 0(docs·헌법 문서만)"
+  },
+  "summary": {
+    "indexHtml": {
+      "insertions": 1,
+      "deletions": 1,
+      "netLineGrowth": 0
+    },
+    "inlineScriptLines": {
+      "measured": 4003,
+      "baseline": 4003,
+      "baselineDate": "2026-10-09",
+      "same": true,
+      "source": "scripts/module-metrics.js measure().ratchet.inlineScriptLines · docs/architecture/module-baseline.json 마지막 항목"
+    },
+    "windowAssignments": {
+      "measured": 260,
+      "baseline": 260,
+      "same": true
+    },
+    "newGlobals": [
+      "OurgoalCellRegistry"
+    ],
+    "newGlobalsCount": 1,
+    "newFile": {
+      "file": "js/core/cell-registry.js",
+      "loadOk": true,
+      "loadError": null,
+      "lines": 142,
+      "under800": true
+    },
+    "moduleLoad": {
+      "regressions": 0,
+      "insufficient": 1,
+      "insufficientNote": [
+        "js/goal-templates-registry.js: 양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined"
+      ],
+      "counts": {
+        "head": 83,
+        "headOk": 82,
+        "base": 83,
+        "baseOk": 82
+      },
+      "newFiles": [
+        {
+          "file": "js/core/cell-registry.js",
+          "ok": true,
+          "globals": [
+            "OurgoalCellRegistry"
+          ]
+        }
+      ]
+    },
+    "scenario": {
+      "id": "b1-guest-boot-six-tabs",
+      "basePassed": true,
+      "workPassed": true,
+      "baseExceptions": 0,
+      "workExceptions": 0,
+      "nonVacuousExpects": 13,
+      "allPassedBoth": true
+    },
+    "compare": {
+      "scopeNames": 423,
+      "windowNames": 199,
+      "registered": 0,
+      "checked": 0,
+      "mismatches": 0,
+      "missing": 622,
+      "extra": 0,
+      "conflicts": 0,
+      "guestBootOk": true,
+      "exceptions": 0,
+      "consoleErrors": 0,
+      "scopeGetterErrors": 0,
+      "windowUndefined": 0,
+      "callOrderRecorded": 0,
+      "callOrderExpected": null
+    },
+    "unwireUnit": {
+      "passed": 8,
+      "total": 8,
+      "ok": true,
+      "t7Names": [
+        "renderSettingsScreen",
+        "collapseAllSettingsSections",
+        "toggleAdvancedSettings"
+      ],
+      "t8Files": {
+        "index.html": {
+          "same": true,
+          "genBytes": 468137,
+          "headBytes": 468137
+        },
+        "js/tabs/settings/a11y-announce.js": {
+          "same": true,
+          "genBytes": 2126,
+          "headBytes": 2126
+        },
+        "js/tabs/comm/user-profile-open.js": {
+          "same": true,
+          "genBytes": 2180,
+          "headBytes": 2180
+        }
+      }
+    },
+    "npmTest": {
+      "base": {
+        "exitCode": "0",
+        "okLines": 487,
+        "failLines": 0,
+        "summaryTokens": 296
+      },
+      "work": {
+        "exitCode": "0",
+        "okLines": 487,
+        "failLines": 0,
+        "summaryTokens": 296
+      },
+      "same": true,
+      "onlyBase": 0,
+      "onlyWork": 0,
+      "retired": 0,
+      "testsChanged": [],
+      "testsUntracked": [],
+      "note": "기준 = origin/main 93b6c126 을 임시 git worktree 로 받아 전경 실행(raw/npm-test.base.log) · 작업 = 이 트리(raw/npm-test.work.log). 첫 작업 실행은 cell-map-export 시험이 git 미추적 새 파일 줄 수를 못 읽어 실패했고(16/17), 새 파일을 git add 한 뒤 17/17 — 커밋 뒤에는 추적 상태라 무관"
+    },
+    "guard": {
+      "exitCode": 0,
+      "specsCheckExitCode": 0
+    }
+  },
+  "evidence": {
+    "claims": "reports/TASK-ES-610/claims.json",
+    "scenario": "reports/TASK-ES-610/scenarios/b1-guest-boot-six-tabs.json",
+    "scenarioLocal": "reports/TASK-ES-610/scenario-local.json",
+    "moduleLoad": "reports/TASK-ES-610/module-load.json",
+    "compare": "reports/TASK-ES-610/cell-registry-compare.json",
+    "unwireUnit": "reports/TASK-ES-610/unwire-unit.json",
+    "npmCompare": "reports/TASK-ES-610/npm-test-compare.json",
+    "npmLogs": [
+      "reports/TASK-ES-610/raw/npm-test.base.log",
+      "reports/TASK-ES-610/raw/npm-test.work.log"
+    ],
+    "req": "docs/specs/REQ-TASK-ES-610-CELL-REGISTRY-B1.md",
+    "fileSha256": {
+      "js/core/cell-registry.js": "2f53946e1ec612e8b2fa4d2b9dce25b2819c0a50c0ab1fc6781745da49b1bdd0",
+      "scripts/probes/cell-registry-compare.js": "31a0e1c8a27d3eeb3b21c9755b8a3d56e0ae4e82c7c43abd042a9471b5d608a2",
+      "docs/design/harness/module-split/gen-inline-hard.js": "804dacb8a5f0a2a66739e306dc6bb17cdef978489d0c9748a09e04e650889715",
+      "docs/design/harness/module-split/unwire-check-b1.js": "c4644bb779b86197c5a849372b272a8a11593e5c8625e39954428fab1d8c7248",
+      "index.html": "ea52396dc239df6c59fe3a3aacf08b0119c43df8a4d96cd2543e4f3848b15cf6"
+    }
+  },
+  "commands": [
+    {
+      "id": "git rev-parse",
+      "argv": [
+        "git",
+        "rev-parse",
+        "origin/main"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:14.063Z",
+      "endedAt": "2026-10-10T21:24:14.127Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "a50ce802293b4f18ecf6e87840d83f889ac4a3a9\n",
+      "stderrHead": ""
+    },
+    {
+      "id": "git rev-parse",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:14.127Z",
+      "endedAt": "2026-10-10T21:24:14.189Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "a50ce802293b4f18ecf6e87840d83f889ac4a3a9\n",
+      "stderrHead": ""
+    },
+    {
+      "id": "git diff",
+      "argv": [
+        "git",
+        "diff",
+        "--numstat",
+        "HEAD",
+        "--",
+        "index.html"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:14.189Z",
+      "endedAt": "2026-10-10T21:24:14.260Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "1\t1\tindex.html\n",
+      "stderrHead": ""
+    },
+    {
+      "id": "module-guard",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/module-guard.js",
+        "--quiet"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:14.597Z",
+      "endedAt": "2026-10-10T21:24:15.095Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "✓ 모듈 가드 통과\n",
+      "stderrHead": ""
+    },
+    {
+      "id": "module-specs --check",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/module-specs.js",
+        "--check"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:15.095Z",
+      "endedAt": "2026-10-10T21:24:15.251Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "⚠ core/trash-bin: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ calendar/day-bg-picker: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ calendar/day-edit-hub: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ calendar/manual-edit-modal: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ goals/attachments: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ goals/prompt-encyclopedia: 코드가 요청하는 능력 ui.confirm 이 신고서 require",
+      "stderrHead": ""
+    },
+    {
+      "id": "git diff",
+      "argv": [
+        "git",
+        "diff",
+        "--name-only",
+        "HEAD",
+        "--",
+        "tests"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:15.257Z",
+      "endedAt": "2026-10-10T21:24:15.324Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "",
+      "stderrHead": ""
+    },
+    {
+      "id": "git ls-files",
+      "argv": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard",
+        "--",
+        "tests"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:15.324Z",
+      "endedAt": "2026-10-10T21:24:15.384Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "",
+      "stderrHead": ""
+    },
+    {
+      "id": "git config",
+      "argv": [
+        "git",
+        "config",
+        "core.autocrlf"
+      ],
+      "cwd": "C:\\dev\\wt\\task-yv-8aa85377-0805-42a0-8e32-d7607aadd39f-orch-c66825121b9a-r1-81c10914b359",
+      "startedAt": "2026-10-10T21:24:15.384Z",
+      "endedAt": "2026-10-10T21:24:15.443Z",
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutHead": "true\n",
+      "stderrHead": ""
+    }
+  ],
+  "limits": [
+    "등록(provide)이 0 인 첫 측정이라 report().mismatches 는 대조할 값이 없어 0 이다 — 공허한 0 이며, B2 가 등록 줄을 넣은 뒤의 불일치 0 과는 다르다. 누락 622 가 실제 측정값이다.",
+    "로드 중 호출 순서(callOrder) 는 note() 기록이 0 건이고 기대 배열도 없어(null) 비교하지 않았다 — B10 전까지 측정불가.",
+    "own 모드는 B1 에서 동작하지 않는다(설계 3.1). unwire 모드는 단위 시험·실제 index.html 모의 철거로만 증명했고 저장소의 index.html 에는 철거를 적용하지 않았다.",
+    "이 PC 는 git core.autocrlf=true 라 git show·git archive 출력이 CRLF 로 바뀐다. T8 은 git cat-file 원시 blob(LF)으로 법정 clone(autocrlf=false) 입력을 재현했다.",
+    "시나리오·module-load·탐침은 로컬 실행(작업자 측정)이다. 법정 판정은 PR 에서 node court/chat.js 가 낸다.",
+    "법정 모듈 로드 탐침의 「불충분 1」(js/goal-templates-registry.js, 양쪽 모두 로드 실패) 은 기준에도 있는 기존 상태다."
+  ]
+}

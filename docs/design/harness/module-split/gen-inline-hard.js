@@ -38,6 +38,136 @@ const top = iife.get('body').get('body');
 const H = n => n.loc.start.line + off, HE = n => n.loc.end.line + off;
 const fail = m => { throw new Error(m); };
 
+// ── [B1 · docs/architecture/CELL-REGISTRY-DESIGN.md 5절] 배선 철거 모드(설정 "mode": "unwire") — 상민님 2026-10-10 「허용」(결심 ⑤), 범위는 그 문서 5절 그대로.
+// 지우는 대상은 세 종류뿐이다:
+//   ① 지정 키트(unwire.kitVar)의 가져오기 줄 `var X = _kit.X;`
+//   ② OurgoalAppScope.expose('index.html', {…}) 객체의 X getter/setter 속성 줄(`get X(){ return X; }` · `, set X(v){ X = v; }`) — 객체가 비면 expose 문 전체
+//   ③ X 의 window 대입 줄 `window.X = X;` · `if(typeof window !== 'undefined'){ window.X = X; }` · 여러 줄 if 블록 안의 그 줄 — 블록이 비면 if 문 전체
+// unwire.names 에 없는 이름은 지우지 않는다. 함수 본문은 옮기거나 고치지 않는다. 그 밖의 글자는 바꾸지 않는다
+// (지운 속성이 마지막이어서 새로 마지막이 된 속성 줄 끝의 쉼표를 떼는 것만 예외 — 문법 유지). 세포 파일은 쓰지 않는다(설정 cells 는 법정 재생성 대조의 파일 목록일 뿐).
+// 안전 정지(fail): 지운 뒤에도 IIFE 안에 그 이름을 읽거나 쓰는 곳이 남으면(ReferenceError 가 될 자리) · 지울 문이 다른 글자와 한 줄을 나눠 쓰면 ·
+//   window 대입의 오른쪽이 이름이 아니면(함수 정의문은 배선이 아니다) · names 의 이름 중 지울 줄이 하나도 없는 것이 있으면 멈춘다.
+// 설정 예: { "task": "TASK-ES-6xx", "slot": "HO", "mode": "unwire", "cells": [{ "file": "js/core/cell-registry.js" }],
+//           "unwire": { "kitVar": "_settingsKit", "imports": true, "exposeGetters": true, "windowAssign": true, "names": ["…"] } }
+if (CFG.mode === 'unwire') { runUnwire(); return; }
+function runUnwire() {
+  const U = CFG.unwire || {};
+  if (typeof U.kitVar !== 'string' || !/^_\w+Kit$/.test(U.kitVar)) fail('unwire.kitVar 는 _xxxKit 꼴이어야 한다: ' + U.kitVar);
+  const names = new Set(Array.isArray(U.names) ? U.names : []);
+  if (!names.size) fail('unwire.names 가 비었다');
+  for (const n of names) if (!/^[A-Za-z_$][\w$]*$/.test(n)) fail('unwire.names 에 이름이 아닌 글자: ' + n);
+  const doImports = U.imports !== false, doExpose = U.exposeGetters !== false, doWindow = U.windowAssign !== false;
+  const del = new Set();        // 지울 줄(index.html 1-based)
+  const commaFix = new Map();   // 줄 → 쉼표를 뗀 새 글자
+  const removed = { imports: [], exposeProps: [], exposeCalls: [], windowAssigns: [], windowBlocks: [] };
+  const hit = {}; for (const n of names) hit[n] = 0;
+  const src = n => code.slice(n.start, n.end);
+  const ownLine = (st, what) => { // 문이 한 줄을 통째로 차지하는가(앞뒤에 다른 글자 0)
+    if (H(st.node) !== HE(st.node)) fail(what + ' 이(가) 여러 줄에 걸쳐 있다: ' + H(st.node));
+    if (lines[H(st.node) - 1].trim() !== src(st.node)) fail(what + ' 이(가) 다른 글자와 한 줄을 나눠 쓴다: ' + H(st.node));
+  };
+  const isWA = x => x && x.type === 'AssignmentExpression' && x.operator === '=' && x.left.type === 'MemberExpression' && !x.left.computed && x.left.object.type === 'Identifier' && x.left.object.name === 'window' && x.left.property.type === 'Identifier';
+  const isSeqWA = x => x && x.type === 'SequenceExpression' && x.expressions.every(isWA);
+  const isExposureBlock = n => n.type === 'IfStatement' && !n.alternate && n.consequent.type === 'BlockStatement' && n.consequent.body.length > 0
+    && n.consequent.body.every(b => b.type === 'ExpressionStatement' && (isWA(b.expression) || isSeqWA(b.expression)));
+  const checkRhs = (x, where) => { if (x.right.type !== 'Identifier') fail('window.' + x.left.property.name + ' 대입의 오른쪽이 이름이 아니다(' + x.right.type + ') — 배선이 아니라 정의문이라 지우지 않는다: ' + where); };
+  const headTailOnly = (st, what) => { // 여러 줄 문의 머리 줄·꼬리 줄에 그 문 말고 다른 글자가 없는가
+    const a = H(st.node), b = HE(st.node);
+    if (lines[a - 1].slice(0, st.node.loc.start.column).trim() !== '' || lines[b - 1].slice(st.node.loc.end.column).trim() !== '') fail(what + ' 의 머리·꼬리 줄에 다른 글자가 있다: ' + a + '~' + b);
+  };
+  for (const st of top) {
+    const e = st.isExpressionStatement() ? st.node.expression : null;
+    // ① 가져오기
+    if (st.isVariableDeclaration()) {
+      if (st.node.declarations.length !== 1) continue;
+      const d = st.node.declarations[0];
+      if (!d.init || d.id.type !== 'Identifier' || d.init.type !== 'MemberExpression' || d.init.computed || d.init.object.type !== 'Identifier' || d.init.object.name !== U.kitVar) continue;
+      if (!names.has(d.id.name)) continue;
+      if (d.init.property.type !== 'Identifier' || d.init.property.name !== d.id.name) fail('가져오기 이름과 키트 속성이 다르다: ' + src(st.node));
+      if (!doImports) continue;
+      ownLine(st, '가져오기 ' + d.id.name);
+      del.add(H(st.node)); hit[d.id.name]++; removed.imports.push({ name: d.id.name, line: H(st.node) });
+      continue;
+    }
+    // ② expose getter/setter
+    if (e && e.type === 'CallExpression' && e.callee.type === 'MemberExpression' && !e.callee.computed && e.callee.property.name === 'expose'
+      && ((e.callee.object.type === 'Identifier' && e.callee.object.name === 'OurgoalAppScope') || (e.callee.object.type === 'MemberExpression' && !e.callee.object.computed && e.callee.object.property.name === 'OurgoalAppScope'))
+      && e.arguments.length === 2 && e.arguments[1].type === 'ObjectExpression') {
+      if (!doExpose) continue;
+      const byLine = new Map();
+      for (const p of e.arguments[1].properties) { const l = p.loc.start.line + off; if (!byLine.has(l)) byLine.set(l, []); byLine.get(l).push(p); }
+      for (const [l, ps] of byLine) {
+        const keys = [...new Set(ps.map(p => (p.type === 'ObjectMethod' && !p.computed && p.key.type === 'Identifier' && (p.kind === 'get' || p.kind === 'set')) ? p.key.name : null))];
+        const mine = keys.filter(k => k !== null && names.has(k));
+        if (!mine.length) continue;
+        if (keys.length !== 1) fail('expose 속성 줄에 여러 이름이 섞여 있다(' + keys.join(',') + '): ' + l);
+        if (ps.some(p => p.loc.end.line + off !== l)) fail('expose 속성이 여러 줄에 걸쳐 있다: ' + l);
+        if (l === H(st.node) || l === HE(st.node)) fail('expose 속성이 머리·꼬리 줄과 한 줄을 나눠 쓴다: ' + l);
+        if (lines[l - 1].trim().replace(/,$/, '') !== code.slice(ps[0].start, ps[ps.length - 1].end)) fail('expose 속성 줄에 다른 글자가 있다: ' + l);
+        del.add(l); hit[keys[0]]++; removed.exposeProps.push({ name: keys[0], line: l, kinds: ps.map(p => p.kind) });
+      }
+      const rest = [...byLine.keys()].filter(l => !del.has(l)).sort((a, b) => a - b);
+      if (!rest.length) { headTailOnly(st, 'expose 문'); for (let l = H(st.node); l <= HE(st.node); l++) del.add(l); removed.exposeCalls.push({ line: H(st.node), endLine: HE(st.node) }); }
+      else { const last = rest[rest.length - 1]; const t = lines[last - 1]; if (/,\s*$/.test(t)) commaFix.set(last, t.replace(/,\s*$/, '')); }
+      continue;
+    }
+    // ③ window 대입
+    if (e && (isWA(e) || isSeqWA(e))) {
+      if (isSeqWA(e)) { if (e.expressions.some(x => names.has(x.left.property.name))) fail('한 줄에 여러 window 대입(쉼표 연쇄)이 있어 하나만 지울 수 없다: ' + H(st.node)); continue; }
+      const n = e.left.property.name;
+      if (!names.has(n) || !doWindow) continue;
+      checkRhs(e, '줄 ' + H(st.node));
+      ownLine(st, 'window 대입 ' + n);
+      del.add(H(st.node)); hit[n]++; removed.windowAssigns.push({ name: n, line: H(st.node) });
+      continue;
+    }
+    if (st.isIfStatement() && isExposureBlock(st.node)) {
+      if (!doWindow) continue;
+      const body = st.node.consequent.body;
+      const a = H(st.node), b = HE(st.node);
+      if (a === b) { // 한 줄 if 블록
+        const x = body[0].expression;
+        if (body.length !== 1 || !isWA(x)) { if (body.some(s => (isWA(s.expression) ? [s.expression] : s.expression.expressions).some(y => names.has(y.left.property.name)))) fail('한 줄 if 블록에 여러 window 대입이 있어 하나만 지울 수 없다: ' + a); continue; }
+        if (!names.has(x.left.property.name)) continue;
+        checkRhs(x, '줄 ' + a);
+        ownLine(st, 'window 대입 블록 ' + x.left.property.name);
+        del.add(a); hit[x.left.property.name]++; removed.windowAssigns.push({ name: x.left.property.name, line: a, block: 'one-line' });
+        continue;
+      }
+      const bodyLines = [];
+      for (const s of body) {
+        const x = s.expression, l = s.loc.start.line + off;
+        bodyLines.push(l);
+        if (isSeqWA(x)) { if (x.expressions.some(y => names.has(y.left.property.name))) fail('if 블록 안 한 줄에 여러 window 대입이 있어 하나만 지울 수 없다: ' + l); continue; }
+        const n = x.left.property.name;
+        if (!names.has(n)) continue;
+        checkRhs(x, '줄 ' + l);
+        if (s.loc.end.line + off !== l || l === a || l === b) fail('window 대입이 여러 줄이거나 if 머리·꼬리와 한 줄을 나눠 쓴다: ' + l);
+        if (lines[l - 1].trim() !== src(s)) fail('window 대입 줄에 다른 글자가 있다: ' + l);
+        del.add(l); hit[n]++; removed.windowAssigns.push({ name: n, line: l, block: a + '~' + b });
+      }
+      if (bodyLines.every(l => del.has(l))) { headTailOnly(st, 'window 대입 if 블록'); for (let l = a; l <= b; l++) del.add(l); removed.windowBlocks.push({ line: a, endLine: b }); }
+    }
+  }
+  for (const n of names) if (!hit[n]) fail('unwire.names 의 이름인데 지울 줄이 하나도 없다: ' + n);
+  // 안전: 가져오기를 지운 이름이 IIFE 안에 아직 읽히거나 대입되면 멈춘다(지운 줄 밖의 참조만 센다)
+  const remaining = [];
+  for (const n of names) {
+    const b = iScope.getBinding(n);
+    if (!b || !del.has(H(b.path.node))) continue;
+    const left = b.referencePaths.map(r => H(r.node)).concat(b.constantViolations.map(r => H(r.node))).filter(l => !del.has(l));
+    if (left.length) remaining.push(n + '(줄 ' + [...new Set(left)].sort((x, y) => x - y).join(',') + ')');
+  }
+  if (remaining.length) fail('철거한 이름을 IIFE 안에서 아직 쓰는 곳이 남는다 — 지우지 않는다: ' + remaining.join(' · '));
+  const nh = [];
+  for (let i = 0; i < lines.length; i++) { const l = i + 1; if (del.has(l)) continue; nh.push(commaFix.has(l) ? commaFix.get(l) : lines[i]); }
+  fs.writeFileSync(path.join(APP, 'index.html'), nh.join(EOL), 'utf8');
+  const meta = { task: TAG, mode: 'unwire', kitVar: U.kitVar, names: [...names], flags: { imports: doImports, exposeGetters: doExpose, windowAssign: doWindow }, removed, commaFixedLines: [...commaFix.keys()], deletedLines: [...del].sort((a, b) => a - b), htmlLinesBefore: lines.length, htmlLinesAfter: nh.length, files: {} };
+  fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1));
+  console.log('unwire', U.kitVar, '· names', names.size, '· imports', removed.imports.length, '· expose props', removed.exposeProps.length, '(calls', removed.exposeCalls.length + ')', '· window', removed.windowAssigns.length, '(blocks', removed.windowBlocks.length + ')', '· comma', commaFix.size);
+  console.log('index.html lines', lines.length, '->', nh.length);
+}
+
 // smoke-test FN_NAMES(시험지가 인라인에서 함수를 잘라 실행) — 옮기지 않는다(MODULE-SPLIT-PROTOCOL 1절 (라), 유형 F2)
 const smokeFn = (() => { const s = fs.readFileSync(path.join(APP, 'scripts', 'smoke-test.js'), 'utf8'); const m = s.match(/const FN_NAMES = \[([\s\S]*?)\];/); if (!m) fail('smoke-test FN_NAMES 못 읽음'); return new Set((m[1].match(/'([^']+)'/g) || []).map(x => x.slice(1, -1))); })();
 
