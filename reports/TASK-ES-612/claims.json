@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-612",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-612-GENERATED-MAPS-SYNC-5.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "main(f0af028f) 기준으로 생성 지도를 생성기로 다시 만들어 지금 코드와 맞춘다. 제품 코드·생성기 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포지도에 #883 이 더한 세포 core/cell-registry 가 들어 있다(cell-map-export 재생성)",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "\"id\": \"core/cell-registry\"",
+        "file": "docs/architecture/cell-map.json"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 지도(JSON)의 출처 해시가 지금 index.html 의 sha256 앞 12자다",
+      "touches": [
+        "docs/architecture/inline-script-map.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "path": "source.sha256_12",
+        "equals": "ec90a84bf5bf",
+        "file": "docs/architecture/inline-script-map.json"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 지도(MD)의 출처 줄이 같은 해시를 가리킨다",
+      "touches": [
+        "docs/architecture/INLINE-SCRIPT-MAP.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "sha256 앞 12자 `ec90a84bf5bf`",
+        "file": "docs/architecture/INLINE-SCRIPT-MAP.md"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 에 근거(병합 뒤 의무)가 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-612-GENERATED-MAPS-SYNC-5.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "병합 뒤 의무(scripts/cell-map-sync.md)",
+        "file": "docs/specs/REQ-TASK-ES-612-GENERATED-MAPS-SYNC-5.md"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-612 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- 2026-10-11 TASK-ES-612: 생성 지도 일괄 갱신",
+        "file": "dev_log.md"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-612 한 줄 기록",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- #TASK-ES-612 | INFRA | [생성 지도 일괄 갱신]",
+        "file": "docs/rules/TICKETS.md"
+      }
+    }
+  ]
+}
