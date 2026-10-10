@@ -194,6 +194,8 @@
     checkKakaoInAppBrowser: K.checkKakaoInAppBrowser, escapeKakaoInAppBrowser: K.escapeKakaoInAppBrowser
   }, { window: [
     'checkKakaoInAppBrowser', 'escapeKakaoInAppBrowser'
+  ], windowOnly: [
+    'checkKakaoInAppBrowser', 'escapeKakaoInAppBrowser'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

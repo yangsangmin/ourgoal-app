@@ -46,6 +46,8 @@
     initDevDebugButtons: K.initDevDebugButtons
   }, { window: [
     'initDevDebugButtons'
+  ], windowOnly: [
+    'initDevDebugButtons'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

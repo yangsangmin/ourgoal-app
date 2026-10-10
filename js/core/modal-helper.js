@@ -122,6 +122,8 @@
     openBottomSheetConfirm: K.openBottomSheetConfirm
   }, { window: [
     'closeModal', 'openBottomSheetAlert', 'openBottomSheetConfirm'
+  ], windowOnly: [
+    'openBottomSheetAlert', 'openBottomSheetConfirm'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

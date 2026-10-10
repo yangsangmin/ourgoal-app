@@ -66,6 +66,8 @@
     exportRecordsCsv: K.exportRecordsCsv
   }, { window: [
     'exportRecordsCsv'
+  ], windowOnly: [
+    'exportRecordsCsv'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

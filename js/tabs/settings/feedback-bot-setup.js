@@ -640,6 +640,8 @@
     refreshCustomFeedbackButtons: K.refreshCustomFeedbackButtons
   }, { window: [
     'closeFeedbackSetup', 'openFeedbackSetup'
+  ], windowOnly: [
+    'closeFeedbackSetup', 'openFeedbackSetup'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

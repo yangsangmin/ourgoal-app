@@ -161,6 +161,8 @@
     resetAppEvaluationForm: K.resetAppEvaluationForm
   }, { window: [
     'closeAppEvaluationModal', 'openAppEvaluationModal', 'resetAppEvaluationForm'
+  ], windowOnly: [
+    'closeAppEvaluationModal', 'openAppEvaluationModal', 'resetAppEvaluationForm'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

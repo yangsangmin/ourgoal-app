@@ -286,6 +286,8 @@
     sendFirstCheckinWelcomeStamps: K.sendFirstCheckinWelcomeStamps, triggerFirstCheckinCelebrationModal: K.triggerFirstCheckinCelebrationModal
   }, { window: [
     'getPeerRunnersForCategory', 'sendFirstCheckinWelcomeStamps', 'triggerFirstCheckinCelebrationModal'
+  ], windowOnly: [
+    'getPeerRunnersForCategory', 'sendFirstCheckinWelcomeStamps'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

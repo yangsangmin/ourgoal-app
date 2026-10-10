@@ -662,6 +662,8 @@
     openRecordModal: K.openRecordModal, openWeeklyRecapModal: K.openWeeklyRecapModal, weeklyRecapStats: K.weeklyRecapStats
   }, { window: [
     'findBestMoment', 'generateWeeklyRecapImage', 'openLegacyRecapCanvasModal', 'openWeeklyRecapModal', 'weeklyRecapStats'
+  ], windowOnly: [
+    'findBestMoment', 'generateWeeklyRecapImage', 'openLegacyRecapCanvasModal', 'weeklyRecapStats'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

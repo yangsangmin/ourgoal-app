@@ -535,6 +535,8 @@
     showCheckinFeedbackSheet: K.showCheckinFeedbackSheet, timeAgoStr: K.timeAgoStr, verdictClass: K.verdictClass
   }, { window: [
     'closeCheckinFeedbackSheet', 'instantShareCheckinToFeed', 'showCheckinFeedbackSheet'
+  ], windowOnly: [
+    'closeCheckinFeedbackSheet', 'instantShareCheckinToFeed'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

@@ -290,6 +290,8 @@
     calShift: K.calShift, renderCalendarScreen: K.renderCalendarScreen
   }, { window: [
     'calShift', 'renderCalendarScreen'
+  ], windowOnly: [
+    'calShift'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

@@ -333,6 +333,8 @@
     resolveUniqueDisplayName: K.resolveUniqueDisplayName, totalCompletedMilestones: K.totalCompletedMilestones
   }, { window: [
     'formatDisplayNameWithTag', 'loadProfile', 'resolveUniqueDisplayName'
+  ], windowOnly: [
+    'formatDisplayNameWithTag', 'resolveUniqueDisplayName'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */
