@@ -5,7 +5,8 @@
 // 그런데 법정이 실제로 읽는 것은 JSON 이다. 사람이 표를 손으로 옮기면 둘이 어긋나고, 어긋난 쪽이 조용히 집행된다.
 // 그래서 표는 JSON 에서 기계가 만들고, 정본 안의 표가 그 생성 결과와 글자 단위로 같은지 자가시험이 매번 대조한다.
 //   node court/appendix.js --print 2|3
-//   node court/appendix.js --check <헌법 정본 경로>
+//   node court/appendix.js --check <헌법 정본 경로>      별표 대조 + 대장 승인 근거 + 버전 정합(커널 세 사본·법령 머리·대장 마지막 행)
+//   node court/appendix.js --versions [저장소 루트]     버전 정합만
 // 종료코드: 0 일치 · 1 불일치 · 2 사용법/도구 오류(일치가 아니다)
 const fs = require('node:fs');
 const path = require('node:path');
@@ -114,6 +115,48 @@ function checkLedger(ledgerPath) {
   return { ok: true, cell: basis };
 }
 
+// [버전 정합 검사] 커널 세 사본이 같고, 커널 첫 줄의 버전 = system_kernel id = 법령 전문 머리의 「현행 커널 버전」 = 버전 대장 마지막 행의 버전 코드인가(헌법 제14조 제3항).
+// 2026-10-07 개정(PR #850) 뒤 법령 머리와 대장이 10.06 을 현행으로 안내한 채 남아, 세션이 들어오는 길마다 다른 "현행"을 만났다(TASK-ES-606).
+// 사람이 글자를 맞추는 대신 기계가 대조한다. 어긋나면 어느 쪽이 어긋났는지 적어 돌려준다.
+const KERNEL_COPIES = ['AGENTS.md', 'CLAUDE.md', '01_OURGOAL_SUPREME_CONSTITUTION_FULL.md'];
+const VERSION_RE = /v\d{4}\.\d{2}\.\d{2}-[A-Z0-9-]+/;
+function readNorm(p) { return fs.readFileSync(p, 'utf8').replace(/\r\n/g, '\n'); }
+function kernelVersion(src) { const m = (src.split('\n')[0] || '').match(VERSION_RE); return m ? m[0] : null; }
+function firstDiffLine(a, b) { const x = a.split('\n'), y = b.split('\n'); const n = Math.max(x.length, y.length); for (let i = 0; i < n; i++) if (x[i] !== y[i]) return i + 1; return 0; }
+function checkVersionCoherence(opts) {
+  const o = opts || {};
+  const root = o.root || path.join(__dirname, '..');
+  const problems = [];
+  const copies = {};
+  for (const f of KERNEL_COPIES) {
+    try { copies[f] = readNorm(path.join(root, f)); }
+    catch (e) { problems.push('커널 사본을 읽을 수 없다: ' + f + ' — ' + e.message); }
+  }
+  const names = Object.keys(copies);
+  if (!names.length) return { ok: false, version: null, problems };
+  const base = copies[names[0]];
+  for (const f of names.slice(1)) if (copies[f] !== base) problems.push('커널 사본이 다르다: ' + names[0] + ' ≠ ' + f + ' (첫 차이 ' + firstDiffLine(base, copies[f]) + '행)');
+  const version = kernelVersion(base);
+  if (!version) problems.push('커널 첫 줄에서 버전 코드(v연.월.일-이름)를 찾지 못했다: ' + names[0]);
+  if (version && !base.includes('<system_kernel id="ourgoal-supreme-constitution-' + version.toLowerCase() + '">')) problems.push('커널의 system_kernel id 가 첫 줄 버전(' + version + ')과 다르다');
+  let statuteCurrent = null;
+  try {
+    const m = readNorm(o.statute || path.join(root, 'docs', 'rules', 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md')).match(/\*\*현행 커널 버전\*\*:\s*`(v[^`]+)`/);
+    statuteCurrent = m ? m[1] : null;
+    if (!statuteCurrent) problems.push('법령 전문 머리에 「현행 커널 버전」 줄이 없다');
+    else if (version && statuteCurrent !== version) problems.push('법령 전문 머리의 현행 커널 버전(' + statuteCurrent + ')이 커널 버전(' + version + ')과 다르다');
+  } catch (e) { problems.push('법령 전문을 읽을 수 없다: ' + e.message); }
+  let ledgerLast = null;
+  try {
+    const row = lastLedgerRow(readNorm(o.ledger || path.join(root, 'docs', 'rules', 'CONSTITUTION_VERSIONS.md')));
+    const m = row ? row.match(VERSION_RE) : null;
+    ledgerLast = m ? m[0] : null;
+    if (!ledgerLast) problems.push('버전 대장 마지막 행에서 버전 코드를 찾지 못했다');
+    else if (version && ledgerLast !== version) problems.push('버전 대장 마지막 행(' + ledgerLast + ')이 커널 버전(' + version + ')과 다르다');
+  } catch (e) { problems.push('버전 대장을 읽을 수 없다: ' + e.message); }
+  return { ok: problems.length === 0, version, statuteCurrent, ledgerLast, copies: names, problems };
+}
+
 // 마커 사이 구간을 꺼낸다. 마커가 없거나 둘 이상이면 "대조했다"고 말할 수 없으므로 불일치로 돌려준다.
 function extract(src, n) {
   const m = MARKERS[n];
@@ -156,10 +199,13 @@ function check(constitutionPath, opts) {
   const ledgerPath = o.ledger || (fs.existsSync(beside) ? beside : path.join(__dirname, '..', 'docs', 'rules', 'CONSTITUTION_VERSIONS.md'));
   const led = checkLedger(ledgerPath);
   if (!led.ok) mismatches.push({ appendix: 'ledger', reason: led.reason });
+  // 커널 세 사본·법령 전문 머리·대장 마지막 행의 버전이 한 가지인가(제14조 제3항). 어느 길로 들어온 세션이든 같은 "현행"을 만나야 한다.
+  const coh = checkVersionCoherence({ root: path.join(__dirname, '..'), ledger: ledgerPath });
+  for (const p of coh.problems) mismatches.push({ appendix: 'version', reason: p });
   return { ok: mismatches.length === 0, mismatches };
 }
 
-module.exports = { renderAppendix2, renderAppendix3, check, checkLedger, lastLedgerRow, MARKERS };
+module.exports = { renderAppendix2, renderAppendix3, check, checkLedger, lastLedgerRow, checkVersionCoherence, kernelVersion, KERNEL_COPIES, MARKERS };
 
 if (require.main === module) {
   const [mode, arg] = process.argv.slice(2);
@@ -169,8 +215,12 @@ if (require.main === module) {
     const r = check(path.resolve(arg));
     console.log(JSON.stringify(r, null, 2));
     process.exit(r.ok ? 0 : 1);
+  } else if (mode === '--versions') {
+    const r = checkVersionCoherence({ root: arg ? path.resolve(arg) : undefined });
+    console.log(JSON.stringify(r, null, 2));
+    process.exit(r.ok ? 0 : 1);
   } else {
-    console.error('사용: node court/appendix.js --print 2|3\n      node court/appendix.js --check <헌법 정본 경로>');
+    console.error('사용: node court/appendix.js --print 2|3\n      node court/appendix.js --check <헌법 정본 경로>\n      node court/appendix.js --versions [저장소 루트]   커널 세 사본·법령 머리·대장 마지막 행의 버전 정합');
     process.exit(2);
   }
 }
