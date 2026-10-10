@@ -14,5 +14,6 @@ for (const f of ['AGENTS.md', 'GEMINI.md', '.agent/rules/essence-gate.md', 'docs
   console.log((fs.existsSync(path.join(root, f)) ? '✔ ' : '✖ 누락 ') + f);
 }
 const claude = fs.readFileSync(path.join(root, 'CLAUDE.md'), 'utf8');
-console.log(claude.includes('규칙 원본은 `AGENTS.md`') ? '✔ CLAUDE.md 포인터 있음' : '⚠ CLAUDE.md 맨 위에 CLAUDE.md.prepend.md 블록을 아직 넣지 않았다');
+// 2026-10-10 CORE 개정: 커널 정본은 01_OURGOAL_SUPREME_CONSTITUTION_FULL.md 하나, CLAUDE.md 는 Claude Code 가져오기 포인터(@경로 한 줄)다.
+console.log(claude.split('\n').some(l => l.trim() === '@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md') ? '✔ CLAUDE.md 가져오기 포인터(@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md) 있음' : '⚠ CLAUDE.md 에 커널 정본 가져오기 줄(@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md)이 없다');
 console.log('\n다음: main 브랜치 보호(상민님 계정 권한, 규범 변경이므로 상민님 결심 뒤에만) —\n  gh api -X PUT repos/yangsangmin/ourgoal-app/branches/main/protection --input docs/rules/branch-protection.json\n  주의: 이 설정은 법정(court) 검사를 필수로 건다. court 워크플로가 main 에 올라가 실제로 한 번 돈 것을 확인한 뒤에 적용한다(그 전에 걸면 모든 PR 이 영원히 대기한다).');

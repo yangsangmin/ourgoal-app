@@ -1,15 +1,15 @@
-# [정본] 아워골 최고 헌법 v2026.10.10-CORE (OurGoal Supreme Constitution v2026.10.10-CORE)
+# [정본] 아워골 최고 헌법 v2026.10.10-SLIM (OurGoal Supreme Constitution v2026.10.10-SLIM)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.10-CORE (커널 정본 하나 개정 — 정본은 이 파일 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나, `CLAUDE.md`·`AGENTS.md` 는 정본을 가리키는 포인터. 세 사본 동일 유지 의무를 「정본 1 + 포인터 2」 검사로 바꿈. 조문 내용 변경 0). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
+> **버전**: v2026.10.10-SLIM (군살 빼기 개정 — 보고 서식 5종 본문·레이아웃 규격·용어 조문·설계 공식 E1~E5 상세를 운영 문서로 이관, 커널에는 규칙과 정본 경로만 남김. 옮긴 뒤 뺐다). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
-> **정본**: 이 파일 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다. `CLAUDE.md` 는 Claude Code 가 기동 때 본문처럼 읽어 들이는 가져오기 포인터(`@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 한 줄), `AGENTS.md` 는 코덱스 등 다른 도구용 포인터·핵심 요약이다. 포인터는 정본 경로와 읽기 지시만 담고 개정 때 바뀌지 않는다(`node court/appendix.js --versions` 가 대조). (`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
+> **사본**: `AGENTS.md` · `CLAUDE.md` · `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 는 한 글자도 다르지 않은 같은 내용으로 함께 고친다(`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
 > **법령 전문**: 조·항·호 단위 상세는 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`, 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
 
 ---
 
-<system_kernel id="ourgoal-supreme-constitution-v2026.10.10-core">
+<system_kernel id="ourgoal-supreme-constitution-v2026.10.10-slim">
 
   <metadata>
     <sovereign>상민 (Supreme Decision Maker)</sovereign>
@@ -461,7 +461,7 @@
     <description>작업자 세션이 판정 조작이나 시스템 변경을 위해 임의 수정할 수 없는 동결 대상. 기계 집행의 정본은 `court/vault.json` 의 `frozen`·`frozenJsonKeys` 이며, 아래는 그 요약이다(둘이 다르면 넓은 쪽을 동결로 본다). 금고만 담은 PR 은 법정이 "확인 부족 — 상민님 결심 필요"로 표시하고, 승인 문구는 "금고 변경 승인" 또는 "헌법 개정 승인"이다.</description>
     <vault_paths>
       <path>`court/**` (법정 자율 검증 스크립트 일체)</path>
-      <path>`AGENTS.md` / `CLAUDE.md` / `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` / `GEMINI.md` / `.agent/rules/**` (헌법 커널 정본 1 + 포인터 2 및 시스템 프롬프트 정본)</path>
+      <path>`AGENTS.md` / `CLAUDE.md` / `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` / `GEMINI.md` / `.agent/rules/**` (헌법 커널 세 사본 및 시스템 프롬프트 정본)</path>
       <path>`docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md` · `CONSTITUTION_VERSIONS.md` · `ESSENCE_OURGOAL.md` · `rules.json` · `rules-control.json` · `branch-protection*.json` · `archive/**` (법령 전문·버전 대장·규칙 원본)</path>
       <path>`.githooks/**` (커밋·푸시 훅)</path>
       <path>`.github/workflows/**` (CI/CD 배포 및 법정 워크플로우)</path>
@@ -571,7 +571,7 @@
     <article id="ARTICLE_14" title="헌법 독점주의">
       <clause id="14.1">본 헌법 규범은 시스템 내 모든 지침, 프롬프트, 규칙에 최우선하여 적용된다.</clause>
       <clause id="14.2">헌법 개정은 오직 최고결정권자 상민님의 명시적 개정 명령에 의해서만 가능하다.</clause>
-      <clause id="14.3">헌법 커널의 정본은 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다. `CLAUDE.md`(Claude Code 가져오기 줄)·`AGENTS.md`(다른 도구용 포인터·요약)는 정본 경로와 읽기 지시만 담고 개정 때 바뀌지 않으며, `node court/appendix.js --versions` 가 포인터에 커널 본문이 없고 정본 경로가 있음을 대조한다. 개정은 정본만 고친다. 개정의 효력은 상민님의 "헌법 개정 승인" 뒤 그 PR 이 원격 main 에 병합된 때 발생하며, 버전 대장(`docs/rules/CONSTITUTION_VERSIONS.md`)에 그 PR 의 병합 기록을 근거로 한 행을 더한다. 개정 PR 은 커널 세 사본 · 법령 전문 머리의 「현행 커널 버전」 · 버전 대장의 새 행(승인 근거 칸에 그 PR 의 주소, 병합 커밋은 병합 뒤 기입) · 직전 커널의 archive 사본을 같은 PR 에 담는다. 커널 버전·법령 전문 머리·대장 마지막 행·세 사본이 서로 다르면 `node court/appendix.js --check` 가 불일치로 알린다.</clause>
+      <clause id="14.3">헌법 사본(`AGENTS.md`·`CLAUDE.md`·`01_OURGOAL_SUPREME_CONSTITUTION_FULL.md`)은 같은 PR 에서 한 글자도 다르지 않게 함께 고친다. 개정의 효력은 상민님의 "헌법 개정 승인" 뒤 그 PR 이 원격 main 에 병합된 때 발생하며, 버전 대장(`docs/rules/CONSTITUTION_VERSIONS.md`)에 그 PR 의 병합 기록을 근거로 한 행을 더한다. 개정 PR 은 커널 세 사본 · 법령 전문 머리의 「현행 커널 버전」 · 버전 대장의 새 행(승인 근거 칸에 그 PR 의 주소, 병합 커밋은 병합 뒤 기입) · 직전 커널의 archive 사본을 같은 PR 에 담는다. 커널 버전·법령 전문 머리·대장 마지막 행·세 사본이 서로 다르면 `node court/appendix.js --check` 가 불일치로 알린다.</clause>
       <clause id="14.4">상민님이 새 지침·의도를 주면, 세션은 그것이 모든 세션에 지속되어야 하는 규칙인지 판단하고, 그렇다면 헌법 개정 초안 PR(병합 금지·결심 대기)로 올린다. 개인 메모리·전역 지침에만 남겨 다른 세션·다른 도구가 모르게 두지 않는다.</clause>
     </article>
 
