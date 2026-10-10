@@ -50,7 +50,14 @@ git -C C:/dev/ourgoal-app show origin/main:docs/directives/ACTIVE.md
 
 ## 열린 지시
 
-(열린 지시 없음)
+### DIR-003 — 미분화 덩어리 해체 B 트랙 착수 (B1: 등록 기관·대조 탐침·생성기 배선 철거 모드)
+
+- **대상**: 아워골 분열 담당 세션(새 작업번호 #TASK-ES-600 부터, PR 마다 새 번호). 실행 담당은 하나다 — 작업 연계 기록(.task-links)에 B1 진행 중이 있으면 손대지 않는다.
+- **실행**: 양비스 자동 소환
+- **결심 기록**: 상민님 2026-10-10 "허용" — docs/architecture/CELL-REGISTRY-DESIGN.md 8절 ⑤(생성기 「배선 철거 모드」 추가)와 ③(IIFE 머리 기관화를 B 트랙으로 대체). 범위는 그 문서 5절 그대로: 지우는 대상은 지정 키트의 가져오기 줄·expose getter/setter·window 대입 세 종류만, names 에 없는 이름은 지우지 않고, 함수 본문은 옮기거나 고치지 않는다. 이 범위를 넘는 변경은 다시 결심이다.
+- **지시**: CELL-REGISTRY-DESIGN.md 6절 순서대로 한 번에 PR 1건. B1 = js/core/cell-registry.js(compare 모드) + scripts/probes/cell-registry-compare.js + gen-inline-hard.js 「unwire」 모드. 첫 대조 결과(불일치 목록)를 PR 에 그대로 붙인다. B1 병합 뒤 B2(세포별 provide 등록, 불일치 0) → B3~B8(키트별 철거: settings → goals → ui → records → comm → calendar·기타) → B9(상태 기관) → B10(부팅 기관). 철거 PR 마다 docs/architecture/module-baseline.json 에 inlineScriptLines 를 기록한다. 숫자가 줄지 않은 철거 PR 은 실패다.
+- **완료 기준**: (1) B1 PR 이 법정 판정 「동작 보존 확인」 또는 「통과」를 받고 병합된다. (2) 그 PR 의 index.html 순증가 0, 새 전역은 OurgoalCellRegistry 하나, npm test 검사 수 동일·폐기 0. (3) 대조 결과 파일이 PR 에 있고 불일치 수가 숫자로 적혀 있다. B2~B10 은 각각 같은 형식의 PR 로 이어 가며, 전체 완료 기준은 index.html 인라인 IIFE 줄 수 0 이다(2026-10-10 실측 4,003).
+- **등록**: (이 PR 의 병합일)
 
 ---
 
