@@ -1,7 +1,7 @@
 # index.html 인라인 스크립트 책임 묶음 지도
 
 > 생성: `NODE_PATH=<node_modules> node scripts/inline-script-map.js --write` (#TASK-ES-423). **손으로 고치지 않는다** — 다시 만들면 같은 입력에서 같은 글자가 나온다(결정적).
-> 출처: `index.html` sha256 앞 12자 `4b6b6d2a5ab4` · 큰 인라인 IIFE 2254~6234줄(3981줄) · 다른 인라인 블록 4줄(8줄), 6237줄(16줄).
+> 출처: `index.html` sha256 앞 12자 `ec90a84bf5bf` · 큰 인라인 IIFE 2254~6234줄(3981줄) · 다른 인라인 블록 4줄(8줄), 6237줄(16줄).
 
 ## 1. 요약
 

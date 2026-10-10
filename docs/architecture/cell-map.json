@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "76ac598ec35231a93619138dce98fec87fd8c509",
-  "short": "76ac598e",
-  "committedAt": "2026-10-09T17:04:09+09:00",
-  "subject": "Merge pull request #870 from yangsangmin/codex/task-es-603-yangvis-cell-registry"
+  "commit": "f0af028fb63bbd5fa7600b0139aca004ed892755",
+  "short": "f0af028f",
+  "committedAt": "2026-10-11T06:41:55+09:00",
+  "subject": "Merge pull request #883 from yangsangmin/feat/2026-10-11-task-es-610-cell-registry-b1"
  },
  "summary": {
-  "cells": 351,
-  "files": 350,
-  "jsLines": 88409,
+  "cells": 352,
+  "files": 351,
+  "jsLines": 88550,
   "kinds": {
-   "organ": 57,
+   "organ": 58,
    "tab": 188,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 351,
+  "descriptionsHand": 352,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -74,7 +74,7 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 57
+   "count": 58
   },
   {
    "key": "tab",
@@ -534,6 +534,7 @@
     "core/badges",
     "core/calendar-availability",
     "core/capabilities",
+    "core/cell-registry",
     "core/confetti",
     "core/confirm",
     "core/date-rollover",
@@ -564,7 +565,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 5593,
+   "lines": 5734,
    "over800": 0
   },
   {
@@ -3974,6 +3975,7 @@
     "core/app-enter",
     "core/badges",
     "core/calendar-availability",
+    "core/cell-registry",
     "core/confetti",
     "core/date-rollover",
     "core/deep-link-gateway",
@@ -4349,6 +4351,61 @@
      "task": "TASK-ES-356",
      "title": "[INFRA] #TASK-ES-356 feat: CORE-08 세포 골격 — 모듈 청사진·능력 등록부·꽂는 자리 15곳·신고서·래칫 가드·건강 지표·스캐폴드",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "core/cell-registry",
+   "file": "js/core/cell-registry.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "세포 등록 기관",
+   "nameSource": "hand",
+   "does": "세포가 자기 이름을 스스로 등록하고, 탐침이 옛 배선(가져오기·통로·window)이 만든 값과 등록 값을 이름마다 대조한다(B1: 대조 모드만)",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Cell Registry (세포 등록 기관 — 미분화 덩어리 배선 철거의 대조 기관)",
+    "설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.1절(B0 #TASK-ES-594) · 첫 구현 B1(compare 모드만).",
+    "index.html 인라인 IIFE 의 배선(가져오기 `var X = _kit.X` → `OurgoalAppScope.expose` getter → `window.X = X`)을 지우기 위해,",
+    "각 세포가 자기 이름을 이 기관에 스스로 등록하고(provide), 탐침이 옛 경로가 만든 값과 등록 값을 이름마다 `===` 로 대조한다(report)."
+   ],
+   "lines": 141,
+   "over800": false,
+   "exposes": [
+    "OurgoalCellRegistry"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-594",
+    "TASK-ES-610"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-610-CELL-REGISTRY-B1.md"
+   ],
+   "prs": [
+    {
+     "number": 883,
+     "task": "TASK-ES-610",
+     "title": "[INFRA] #TASK-ES-610 feat: 미분화 덩어리 해체 B1 — 세포 등록 기관(compare)·대조 탐침·생성기 unwire 모드",
+     "date": "2026-10-11"
     }
    ]
   },
