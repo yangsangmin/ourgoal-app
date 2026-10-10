@@ -1,6 +1,6 @@
 # GEMINI.md — 안티그래비티 진입 규칙 (포인터)
 
-이 프로젝트의 규칙 원본은 저장소 루트의 `AGENTS.md` 하나다. 작업을 시작하기 전에 `AGENTS.md`, `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`, `docs/rules/ESSENCE_OURGOAL.md`를 먼저 읽고 그대로 따른다.
+이 프로젝트의 규칙 원본은 저장소 루트의 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다(`AGENTS.md`·`CLAUDE.md` 는 그 포인터). 작업을 시작하기 전에 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md`, `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`, `docs/rules/ESSENCE_OURGOAL.md`를 먼저 읽고 그대로 따른다.
 
 핵심 요약 (원본이 우선):
 1. 나는 주장만 쓴다. 합격·완료는 GitHub 에서 도는 법정(court) 한 곳만 말한다. 내 세션에서 돌린 법정 출력은 예비 점검이며, 거기서 옮겨 적을 수 있는 것은 "막힌 것"뿐이다("이상 없음"은 옮겨 적지 않는다).
