@@ -1,0 +1,106 @@
+{
+  "id": "b5-notification-center-modal",
+  "title": "게스트로 홈의 종 버튼을 누르면(onclick=window.openNotificationCenterModal) 알림 센터 창이 열리고, 닫기를 누르면(통로 closeModal) 닫히며 예외가 없다 — 두 번 되풀이해도 같다 (공용 키트 배선 철거 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#closeNotifCenterBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sanctuaryBellBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryBellBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#closeNotifCenterBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "visible",
+      "selector": "#closeNotifCenterBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#closeNotifCenterBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#closeNotifCenterBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryBellBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#closeNotifCenterBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "visible",
+      "selector": "#closeNotifCenterBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#closeNotifCenterBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#closeNotifCenterBtn"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

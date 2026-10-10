@@ -14,6 +14,8 @@
 // 사용(작업 트리에서, NODE_PATH=C:/dev/ourgoal-app/node_modules):
 //   node docs/design/harness/module-split/unwire-run.js apply   <작업 트리> --task TASK-ES-6xx --runs _goalsKit:1,_goalsKit:2,_settingsKit:2 [--plan reports/TASK-ES-614/unwire-plan.json] [--label "…"]
 //       (실행 하나면 --kit _settingsKit --pass 1 로도 된다.)  실행 = <손잡이 이름>:<차수>[:옵션+옵션]   옵션: shared(X3 sharedLine) · dropkit(X2 dropKitVar)
+//       이름은 계획의 runs 에서 읽는다. 계획 당시 생성기가 못 돌리던 손잡이(X1 `_ui`·`_xp`)는 계획의 notRunnableKitVars.registeredNames 에서 읽고,
+//       --names-for <손잡이:차수>=이름+이름[,…] 으로 그 실행의 이름을 손으로 줄 수도 있다(예: 1차에서 참조가 남아 멈춘 이름을 2차로 돌릴 때).
 //   node docs/design/harness/module-split/unwire-run.js measure <작업 트리> --task TASK-ES-6xx --base <기준 트리>
 //       먼저: reports/<TASK>/raw/npm-test.{base,work}.{log,exit} (npm test 를 두 트리에서 전경으로 끝까지 돌린 것) · reports/<TASK>/scenarios/*.json
 //   node docs/design/harness/module-split/unwire-run.js claims  <작업 트리> --task TASK-ES-6xx --req docs/specs/REQ-….md
@@ -49,10 +51,16 @@ if (CMD === 'apply') {
   const runsArg = opt('--runs') || (opt('--kit') ? opt('--kit') + ':' + opt('--pass', '1') : null);
   if (!runsArg) { console.error('--runs <손잡이:차수,…> 또는 --kit/--pass 가 필요하다'); process.exit(2); }
   const want = runsArg.split(',').map(s => { const [kitVar, pass, opts] = s.trim().split(':'); return { kitVar, pass: Number(pass || 1), opts: (opts || '').split('+').filter(Boolean) }; });
+  // 이름의 출처: ① --names-for <손잡이:차수>=이름+이름,… (손으로 지정) ② 계획의 runs ③ 계획의 notRunnableKitVars.registeredNames(계획 당시 생성기가 못 돌리던 손잡이 — X1 `_ui`·`_xp`)
+  const namesFor = {}; (opt('--names-for') || '').split(',').filter(Boolean).forEach(s => { const [k, v] = s.split('='); namesFor[k.trim()] = (v || '').split('+').filter(Boolean); });
   const runs = want.map(w => {
+    const key = w.kitVar + ':' + w.pass;
     const pr = plan.runs.find(r => r.kitVar === w.kitVar && r.flags.imports === (w.pass === 1));
-    if (!pr) { console.error('계획에 그 실행이 없다: ' + w.kitVar + ':' + w.pass); process.exit(2); }
-    return { kitVar: w.kitVar, pass: w.pass, opts: w.opts, planned: pr.names.slice(), plannedDeletedLines: pr.expectedDeletedLines, names: pr.names.slice(), dropped: [] };
+    const nr = (plan.notRunnableKitVars || []).find(k => k.kitVar === w.kitVar);
+    const planned = namesFor[key] || (pr ? pr.names : (nr ? nr.registeredNames : null));
+    if (!planned) { console.error('계획에 그 실행이 없다: ' + key); process.exit(2); }
+    return { kitVar: w.kitVar, pass: w.pass, opts: w.opts, planned: planned.slice(), plannedDeletedLines: pr && !namesFor[key] ? pr.expectedDeletedLines : null, names: planned.slice(), dropped: [],
+      source: namesFor[key] ? '--names-for' : (pr ? '계획 runs' : '계획 notRunnableKitVars.registeredNames') };
   });
   const textBefore = fs.readFileSync(INDEX, 'utf8'); // 철거 전 글자(매 시도는 여기서 시작한다)
   const restore = () => fs.writeFileSync(INDEX, textBefore, { encoding: 'utf8' });
@@ -82,7 +90,7 @@ if (CMD === 'apply') {
   const after = lf(fs.readFileSync(INDEX, 'utf8')).split('\n');
   const metas = meta.runs || [meta], live = runs.filter(r => r.names.length || r.opts.includes('dropkit'));
   const cnt = m => ({ imports: m.removed.imports.length, exposeProps: m.removed.exposeProps.length, exposeCalls: m.removed.exposeCalls.length, windowAssigns: m.removed.windowAssigns.length, windowBlocks: m.removed.windowBlocks.length, commaFixedLines: m.commaFixedLines.length, inlineEdits: (m.inlineEdits || []).length, kitVarLine: m.removed.kitVarLine ? 1 : 0, deletedLines: m.deletedLines.length });
-  const outRuns = live.map((r, i) => ({ order: i + 1, kitVar: r.kitVar, pass: r.pass, options: r.opts, plannedNames: r.planned.length, plannedDeletedLines: r.plannedDeletedLines, names: r.names.length, droppedFromPlan: r.dropped,
+  const outRuns = live.map((r, i) => ({ order: i + 1, kitVar: r.kitVar, pass: r.pass, options: r.opts, namesSource: r.source, plannedNames: r.planned.length, plannedDeletedLines: r.plannedDeletedLines, names: r.names.length, droppedFromPlan: r.dropped,
     removed: cnt(metas[i]), htmlLines: [metas[i].htmlLinesBefore, metas[i].htmlLinesAfter], deletedLineNumbers: metas[i].deletedLines, commaFixedLineNumbers: metas[i].commaFixedLines, inlineEdits: metas[i].inlineEdits || [], removedDetail: metas[i].removed }));
   const skipped = runs.filter(r => !live.includes(r)).map(r => ({ kitVar: r.kitVar, pass: r.pass, plannedNames: r.planned.length, droppedFromPlan: r.dropped, why: '지울 이름이 남지 않아 실행에서 뺌' }));
   const tot = k => outRuns.reduce((a, r) => a + r.removed[k], 0);
