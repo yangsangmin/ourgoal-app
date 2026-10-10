@@ -1,0 +1,285 @@
+{
+  "task": "TASK-ES-615",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-615-DIR-004-SCOPE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "조사 결과를 설계 문서(CELL-REGISTRY-DESIGN.md)로 옮기고 생성기가 다루는 줄 종류를 닫힌 목록(U1~U3 + X1~X9)으로 적는다. 제품 코드·생성기 변경 0."
+    },
+    {
+      "id": "R2",
+      "text": "상민님 2026-10-11 결심(6묶음 중 4번 빼고 권장안대로)을 지시함 DIR-004 로 등록한다 — 묶음 1·3 허용 한도, 묶음 6 완료 기준 확정(인라인 IIFE 0), 병합 방식. DIR-003 본문은 그대로 둔다."
+    },
+    {
+      "id": "R3",
+      "text": "허용하지 않은 것을 허용으로 적지 않는다 — 묶음 4 보류, 묶음 5 는 헌법 개정 절차, 시험 변경은 그때의 「금고 변경 승인」 문구, 표에 없던 OURGOAL_CONFIG 는 결심 대기."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "원문 1 「남은 미분화작업 모두 진행」의 실제 줄 지우기는 이 PR 에 없다. PR 마다 새 작업번호로 이어 간다(own 전환 #TASK-ES-614 부터).",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "설계 문서의 수치 가운데 7.1 에 재측정이라고 적지 않은 값(잔존 참조·상태 이름 분류·시험 수·예상 줄 수·예상 PR 수)은 조사 담당 측정(f0af028f)이며 이 PR 이 다시 재지 않았다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 5절에 이번에 넓힌 줄 종류 목록(X1~X9) 절이 있다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "### 5.2 2026-10-11 에 넓힌 아홉 종류"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 5절이 닫힌 목록 밖의 줄 종류는 다시 결심이라고 적는다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "**이 목록 밖의 줄 종류는 다시 결심이다.**"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 3.1 이 own 모드 적용 시점을 IIFE 직전 commit 으로 적는다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "**own 적용 시점 — IIFE 직전 한 번(commit) [개정]**"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 3.3 이 상태 이전의 원칙(맨이름 참조 0 인 이름만)을 적는다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "**원칙 — 맨이름 참조가 0 이 된 이름만 소유를 옮긴다**"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 3.4 가 부팅을 연속 구역 감싸기로 적는다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "### 3.4 부팅 — 연속 구역 감싸기 (B10) [개정]"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서에 동작이 깨질 수 있는 지점 절이 있다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "## 9. 동작이 깨질 수 있는 지점"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 7.1 에 재측정 출력이 있다(이 PR 이 소유한 기록 — main 을 합쳐도 이 줄은 그대로다)",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "iifeFirst 2254 · iifeLast 6234 · iifeLines 3981 · topStatements 923 · sum 3981"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "지시함 열린 지시에 DIR-004 가 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "### DIR-004 — 미분화 덩어리 해체 범위 확대"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 완료 기준을 인라인 IIFE 줄 수 0 으로 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "(1) 전체 완료 기준은 index.html 의 인라인 IIFE(미분화 덩어리) 줄 수 0 이다."
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 돈 근처 3곳의 허용 한도(글자 그대로 자리만)를 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "내용을 한 글자도 바꾸지 않고 자리만 옮긴다"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-003 의 지시 줄이 그대로 있다(본문 불변)",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "- **지시**: CELL-REGISTRY-DESIGN.md 6절 순서대로 한 번에 PR 1건. B1 = js/core/cell-registry.js(compare 모드)"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 「금고 변경 승인」 문구를 대신하지 않는다고 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "이 지시는 그 문구를 대신하지 않는다"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 묶음 4·5 를 범위 밖으로 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "944줄 함수 openProTemplateRecordModal 과 saveGoogleToken 은 이 지시의 범위가 아니다"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 표에 없던 OURGOAL_CONFIG 가 따로 올라 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| OURGOAL_CONFIG(빈 설정 객체 선언과 window 복사 줄, 경험칙 L033 이 돈 근처로 분류)의 자리 이동"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 8.1 이 묶음 2 의 문구 조건을 적는다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "**이 문서와 DIR-004 는 그 문구를 대신하지 않는다.**"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 머리에 상민님 원문이 글자 그대로 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-615-DIR-004-SCOPE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-615-DIR-004-SCOPE.md",
+        "text": "「결심필요 4번 빼고 모두 권장안대로 진행하고 4번은 자세히 설명해봐 어떤 함수인지 어떤 기능을 하던건지 자세히, 어떻게 진행하는게 좋을지, 권장안이 뭔지」"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-615 한 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-615 | INFRA | 지시함 DIR-004 등록"
+      }
+    }
+  ]
+}
