@@ -226,9 +226,9 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 
 | 기호 | 줄 꼴 | 동작 | 모드 | 정지 조건 | 조사 줄 수 |
 |---|---|---|---|---|--:|
-| X1 | `_ui`·`_xp` 처럼 이름이 `_xxxKit` 꼴이 아닌 손잡이의 가져오기 줄 `var X = _k.X;` | 삭제 | unwire 확장 | U1 과 같다. 손잡이는 IIFE 최상위에서 `var _k = window.…` 로 선언된 것만 | 10 |
-| X2 | 키트 손잡이 줄 `var _k = window.X;` | 삭제 | finalize | 그 손잡이의 참조가 하나라도 남음 | 15 |
-| X3 | 다른 글자와 한 줄을 나눠 쓰는 window 대입(한 줄 if 블록의 일부, 주석·다른 문과 같은 줄) | 그 줄 안에서 해당 대입 글자만 삭제 | unwire 확장 | 오른쪽이 이름이 아님 · 지운 뒤 남는 글자가 온전한 문이 아님 | 4 |
+| X1 | `_ui`·`_xp` 처럼 이름이 `_xxxKit` 꼴이 아닌 손잡이의 가져오기 줄 `var X = _k.X;` | 삭제 | unwire 확장(구현 #TASK-ES-619 — `kitVar` 검사) | U1 과 같다. 손잡이는 IIFE 최상위에서 `var _k = window.…` 로 선언된 것만 | 10 |
+| X2 | 키트 손잡이 줄 `var _k = window.X;` | 삭제 | unwire 선택 플래그 `dropKitVar`(구현 #TASK-ES-619) · finalize | 그 손잡이의 참조가 하나라도 남음 | 15 |
+| X3 | 다른 글자와 한 줄을 나눠 쓰는 window 대입(한 줄 if 블록의 일부, 주석·다른 문과 같은 줄) | 그 줄 안에서 해당 대입 글자만 삭제 | unwire 선택 플래그 `sharedLine`(구현 #TASK-ES-619) | 오른쪽이 이름이 아님 · 지운 뒤 남는 글자가 온전한 문이 아님 | 4 |
 | X4 | 상태 이름의 expose getter/setter 속성 줄(3.3 S1) | 삭제 | unstate | U2 와 같다 + 그 이름의 맨이름 참조가 남음 | 66 |
 | X5 | 상태 선언문 `var X = 초기값;`(3.3 R1) | `window.OurgoalAppState.define('X', 초기값 원문);` 또는 `defineVar` 로 1:1 바꿔 쓰기. 초기값 글자와 자리는 그대로 | unstate | 맨이름 참조가 남음 · 다른 문과 한 줄 · 선언자 여럿 · 초기값에 자기 이름 | 최대 63문 |
 | X6 | 상태의 일회 window 복사 줄 `window.X = X;`(3.3 R2) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓰기 | unstate | 같은 줄에 다른 글자 | 7 |
@@ -247,6 +247,37 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 | `openProTemplateRecordModal`(944줄 한 함수) | 세포 파일 800줄 상한(헌법 CELL_SPLIT 7호). 한 함수라 글자 그대로는 나눌 수 없다 — 나누면 「고치기」다 | 8절 묶음 4 — 보류 |
 | `saveGoogleToken` 의 `arguments[1]` | 헌법 CELL_SPLIT 5호(옮긴 함수의 최상위 `this`·`arguments` 0) | 8절 묶음 5 — 헌법 개정 절차 |
 | 배선 글자를 단언하는 시험(조사: `window.X = X;` 문자열 25종 중 22종이 IIFE 에만 있다. 정규식 단언은 못 세어 하한) | 시험의 기대값·단언을 바꾸는 일은 「금고 변경 승인」 문구가 필요하다(L008) | 8절 묶음 2 — 해당 이름은 남겨 두고 진행 |
+
+### 5.4 구현된 unwire 설정 꼴 — 여러 실행 · X1 · X2 · X3 (#TASK-ES-619)
+
+`gen-inline-hard.js` 의 `mode: "unwire"` 경로에만 더했다. 기존 옮기기 경로와 단일 객체 설정의 출력은 바이트 단위로 그대로다(단위 시험으로 확인 — 아래).
+
+```json
+{ "task": "TASK-ES-6xx", "slot": "HO", "mode": "unwire",
+  "cells": [{ "file": "js/core/cell-registry.js" }],
+  "unwire": [
+    { "kitVar": "_uiKit", "names": ["…"] },
+    { "kitVar": "_uiKit", "imports": false, "sharedLine": true, "names": ["…"] },
+    { "kitVar": "_ui", "names": ["…"], "dropKitVar": true }
+  ] }
+```
+
+- **여러 실행**: `unwire` 는 객체 하나(5.1 의 꼴) 또는 실행의 배열이다. 배열이면 실행을 차례로 적용하고, 앞 실행이 지운 결과를 다시 파싱해 다음 실행이 돈다. 하나라도 멈추면 `index.html` 을 쓰지 않는다. 안전 검사(잔존 참조 정지 등)는 실행마다 그대로다.
+  - 이것은 새 줄 종류가 아니다. 같은 줄 종류를 한 PR 에서 여러 키트·플래그로 돌릴 뿐이다(법정은 PR 하나에 생성기를 한 번만 돌린다).
+  - 법정은 **기준 커밋의** 생성기를 돌리므로, 배열 꼴과 아래 플래그는 이 구현이 병합된 뒤의 기준에서만 쓸 수 있다.
+- **실행의 칸**: `kitVar`(필수) · `names` · `imports` · `exposeGetters` · `windowAssign`(기본 켜짐, `false` 로 끈다) · `sharedLine` · `dropKitVar`(기본 꺼짐, `true` 로 켠다) · `label`(읽는 사람용, 동작 없음). **그 밖의 칸이 있으면 멈춘다** — 플래그 오타로 목록 밖 동작이 켜지지 않는다.
+- **X1 `kitVar`**: `_xxxKit` 꼴이 아니어도 된다(`_ui`·`_xp`). 대신 IIFE 최상위에서 `var <kitVar> = window.…;` 로 한 번(선언자 하나) 선언된 손잡이여야 한다. 선언이 없거나, 초기값이 `window` 로 시작하는 멤버식이 아니거나, 선언자가 여럿이면 멈춘다. 이 검사는 `_xxxKit` 꼴 이름에도 똑같이 건다.
+- **X3 `sharedLine: true`**: 다른 글자와 한 줄을 나눠 쓰는 window 대입을 그 줄 안에서 그 대입 글자만 지운다. 받는 꼴은 셋이다.
+  1. 주석이나 다른 문과 같은 줄에 있는 최상위 `window.X = X;`
+  2. 한 줄 if 블록 안의 여러 대입 가운데 `names` 에 있는 것(전부 대상이면 블록째 지운다)
+  3. 주석이나 다른 문과 같은 줄에 있는 한 줄 if 블록(대입 하나)
+  - 빈칸 규칙: 지운 글자 바로 뒤의 빈칸을 함께 지운다. 그 뒤에 아무것도 없으면(줄 끝이었으면) 앞쪽 빈칸을 지운다. 줄에 글자가 남지 않으면 줄을 지운다.
+  - 플래그가 있어도 멈추는 것: 쉼표 연쇄 대입 · 오른쪽이 이름이 아닌 대입(정의문) · 여러 줄 if 블록 안의 나눠 쓴 줄 · 여러 줄에 걸친 문.
+  - 플래그가 없으면 이 꼴들은 예전처럼 멈춘다.
+- **X2 `dropKitVar: true`**: 그 실행의 삭제를 반영한 뒤 손잡이의 맨이름 참조(읽기·대입)가 0 이면 손잡이 줄 `var <kitVar> = window.…;` 을 지운다. 참조가 하나라도 남거나 손잡이 선언이 다른 글자와 한 줄을 나눠 쓰면 멈춘다. 이 플래그가 있을 때만 `names` 가 비어도 된다(손잡이 줄만 지우는 실행).
+- **사후 대조(모든 실행)**: 결과를 다시 파싱해 토큰열이 「이전 토큰열 − 지우기로 한 줄의 토큰 − 줄 안에서 지운 글자의 토큰 − 뗀 쉼표」와 같은지, 남은 주석이 그대로인지 본다. 다르면 쓰지 않고 멈춘다. 닫힌 목록 밖의 글자가 바뀌지 않았음을 생성기가 스스로 검사하는 장치다.
+- **단위 시험**: `docs/design/harness/module-split/unwire-check-ext-619.js`(16건 — B1 시험 8건 재실행 · 단일 객체 설정의 기준 생성기 대비 바이트 동일 · 여러 실행 · X1 · X3 · X2 · 모르는 칸 · 실제 `index.html` 사본에서 `reports/TASK-ES-614/unwire-plan.json` 16실행을 기준 생성기로 차례로 돌린 결과와 배열 한 번의 결과가 바이트 동일). 결과는 `reports/TASK-ES-619/unwire-ext-unit.json`(작업자 측정).
+- **이 구현에 없는 것**: `unstate` · `region` · `sweep` · `finalize` 모드(X4~X9). 각각 별도 PR 로 사양을 공개하고 단위 시험을 붙인다.
 
 ## 6. 순서와 범위
 

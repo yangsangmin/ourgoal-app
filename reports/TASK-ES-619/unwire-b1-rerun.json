@@ -1,0 +1,144 @@
+{
+ "tool": "docs/design/harness/module-split/unwire-check-b1.js",
+ "type": "작업자 측정, 판정 아님",
+ "generator": "docs/design/harness/module-split/gen-inline-hard.js",
+ "app": "C:\\dev\\wt\\es619-gen-unwire",
+ "measuredAt": "2026-10-10T23:18:19.560Z",
+ "tmp": "C:\\Users\\HP\\AppData\\Local\\Temp\\unwire-b1-0frhjz",
+ "results": [
+  {
+   "id": "T1",
+   "title": "세 종류만 지우고 빈 expose 문·빈 if 블록은 통째로, 새 마지막 속성의 쉼표만 뗀다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "stderr": "",
+    "deleted": [
+     8,
+     9,
+     14,
+     16,
+     18,
+     19,
+     20,
+     24,
+     25,
+     28,
+     30,
+     31,
+     32
+    ],
+    "comma": [
+     15
+    ],
+    "diffAt": null
+   }
+  },
+  {
+   "id": "T2",
+   "title": "names 밖 이름(keepMe)·다른 키트(gamma)·함수 본문·상태 변수는 글자 그대로",
+   "ok": true,
+   "detail": {}
+  },
+  {
+   "id": "T3",
+   "title": "철거할 이름을 함수 본문이 아직 쓰면 멈추고 index.html 을 쓰지 않는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "stderr": "C:\\dev\\wt\\es619-gen-unwire\\docs\\design\\harness\\module-split\\gen-inline-hard.js:82\r\n    catch (err) { if (isList) err.message = '[unwire 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; throw err; }\r\n                                                                                            "
+   }
+  },
+  {
+   "id": "T4",
+   "title": "window.X = function(){…} 정의문은 지우지 않고 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "stderr": "C:\\dev\\wt\\es619-gen-unwire\\docs\\design\\harness\\module-split\\gen-inline-hard.js:82\r\n    catch (err) { if (isList) err.message = '[unwire 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; throw err; }\r\n                                                                                            "
+   }
+  },
+  {
+   "id": "T5",
+   "title": "names 의 이름 중 지울 줄이 하나도 없으면 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "stderr": "C:\\dev\\wt\\es619-gen-unwire\\docs\\design\\harness\\module-split\\gen-inline-hard.js:82\r\n    catch (err) { if (isList) err.message = '[unwire 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; throw err; }\r\n                                                                                            "
+   }
+  },
+  {
+   "id": "T6",
+   "title": "imports:false 면 가져오기 줄은 남기고 expose·window 만 지운다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "stderr": "",
+    "diffAt": null
+   }
+  },
+  {
+   "id": "T7",
+   "title": "실제 index.html 에서 참조 없는 _settingsKit 이름 3개 철거 — 지운 줄이 세 종류(와 그 빈 껍데기)뿐이고 나머지 줄은 순서대로 같다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "stderr": "",
+    "names": [
+     "renderSettingsScreen",
+     "collapseAllSettingsSections",
+     "toggleAdvancedSettings"
+    ],
+    "deleted": [
+     2275,
+     2276,
+     2277,
+     3023,
+     3455,
+     6102,
+     6103
+    ],
+    "comma": [],
+    "kinds": {
+     "import": 3,
+     "expose": 2,
+     "window": 2
+    }
+   }
+  },
+  {
+   "id": "T8",
+   "title": "수정된 생성기가 A1 시범(e8c34e42) 기준 트리에서 같은 설정으로 index.html·세포 2개를 바이트 그대로 다시 만든다(기존 경로 무변화)",
+   "ok": true,
+   "detail": {
+    "archiveStatus": 0,
+    "tarStatus": 0,
+    "tarErr": "",
+    "inputCr": 0,
+    "genStatus": 0,
+    "stderr": "",
+    "stdout": "move 2 wrap 0 keep 3 · edits 0 · bridged 0 · exposed 0 · imports 2",
+    "files": {
+     "index.html": {
+      "same": true,
+      "genBytes": 468137,
+      "headBytes": 468137
+     },
+     "js/tabs/settings/a11y-announce.js": {
+      "same": true,
+      "genBytes": 2126,
+      "headBytes": 2126
+     },
+     "js/tabs/comm/user-profile-open.js": {
+      "same": true,
+      "genBytes": 2180,
+      "headBytes": 2180
+     }
+    }
+   }
+  }
+ ],
+ "passed": 8,
+ "total": 8,
+ "ok": true
+}
