@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "c42a61aedbf98858d9dd8057c607fb253eb1d239",
-  "short": "c42a61ae",
-  "committedAt": "2026-10-11T07:20:33+09:00",
-  "subject": "Merge pull request #885 from yangsangmin/feat/2026-10-11-task-es-611-cell-registry-b2"
+  "commit": "a3bad12a60644591311c70c3049d2f3e32f024ad",
+  "short": "a3bad12a",
+  "committedAt": "2026-10-11T07:59:08+09:00",
+  "subject": "Merge pull request #889 from yangsangmin/feat/2026-10-11-task-es-614-cell-registry-own"
  },
  "summary": {
-  "cells": 352,
-  "files": 351,
-  "jsLines": 90457,
+  "cells": 353,
+  "files": 352,
+  "jsLines": 90618,
   "kinds": {
-   "organ": 58,
+   "organ": 59,
    "tab": 188,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 352,
+  "descriptionsHand": 353,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -74,7 +74,7 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 58
+   "count": 59
   },
   {
    "key": "tab",
@@ -113,7 +113,7 @@
     "home/sub-today",
     "home/today-mission"
    ],
-   "lines": 1370,
+   "lines": 1372,
    "over800": 0
   },
   {
@@ -170,7 +170,7 @@
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 12270,
+   "lines": 12291,
    "over800": 0
   },
   {
@@ -225,7 +225,7 @@
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 10335,
+   "lines": 10349,
    "over800": 0
   },
   {
@@ -250,7 +250,7 @@
     "calendar/sub-month-view",
     "calendar/sub-photo-diary"
    ],
-   "lines": 4262,
+   "lines": 4266,
    "over800": 0
   },
   {
@@ -285,7 +285,7 @@
     "comm/user-blocks",
     "comm/user-profile-open"
    ],
-   "lines": 5129,
+   "lines": 5133,
    "over800": 0
   },
   {
@@ -343,7 +343,7 @@
     "settings/widget-settings-modal",
     "settings/withdraw-modal"
    ],
-   "lines": 7444,
+   "lines": 7472,
    "over800": 0
   },
   {
@@ -385,7 +385,7 @@
     "data/avatar-personas/istj",
     "data/avatar-personas/istp"
    ],
-   "lines": 8812,
+   "lines": 8814,
    "over800": 0
   },
   {
@@ -534,6 +534,7 @@
     "core/badges",
     "core/calendar-availability",
     "core/capabilities",
+    "core/cell-registry-commit",
     "core/cell-registry",
     "core/confetti",
     "core/confirm",
@@ -565,7 +566,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 6028,
+   "lines": 6114,
    "over800": 0
   },
   {
@@ -2799,7 +2800,7 @@
     "XP_RULES · XP_LOG_MAX · xpForLevel · levelForXP · levelProgress · triggerAvatarCelebrationPopup · awardXP · notifyXpGained",
     "바꾼 것: 인라인 스코프 이름은 L.<이름>(state · nowISO), 저장은 어댑터 xpStore 하나로 모음 — 저장 위치는 그대로 state.profile.settings.xp."
    ],
-   "lines": 495,
+   "lines": 497,
    "over800": false,
    "exposes": [
     "OurgoalAvatarParts"
@@ -2837,15 +2838,23 @@
     "TASK-ES-384",
     "TASK-ES-395",
     "TASK-ES-421",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md",
     "docs/specs/REQ-TASK-ES-395-AVATAR-XP.md",
     "docs/specs/REQ-TASK-ES-421-XP-SERVER-LEDGER.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -4412,30 +4421,28 @@
    ]
   },
   {
-   "id": "core/cell-registry",
-   "file": "js/core/cell-registry.js",
+   "id": "core/cell-registry-commit",
+   "file": "js/core/cell-registry-commit.js",
    "kind": "organ",
    "kindName": "기관",
    "size": null,
    "area": "organ-core",
    "tabs": [],
-   "name": "세포 등록 기관",
+   "name": "세포 등록 적용 시점",
    "nameSource": "hand",
-   "does": "세포가 자기 이름을 스스로 등록하고, 탐침이 옛 배선(가져오기·통로·window)이 만든 값과 등록 값을 이름마다 대조한다(B1: 대조 모드만)",
+   "does": "세포들이 등록 기관에 등록한 이름을, 바깥 스크립트가 모두 로드된 뒤(인라인 덩어리 바로 앞) 한 번에 통로와 window 로 내주게 한다",
    "doesSource": "hand",
    "header": [
-    "OurGoal Cell Registry (세포 등록 기관 — 미분화 덩어리 배선 철거의 대조 기관)",
-    "설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.1절(B0 #TASK-ES-594) · 첫 구현 B1(compare 모드만).",
-    "index.html 인라인 IIFE 의 배선(가져오기 `var X = _kit.X` → `OurgoalAppScope.expose` getter → `window.X = X`)을 지우기 위해,",
-    "각 세포가 자기 이름을 이 기관에 스스로 등록하고(provide), 탐침이 옛 경로가 만든 값과 등록 값을 이름마다 `===` 로 대조한다(report)."
+    "OurGoal Cell Registry Commit (세포 등록 기관의 own 적용 시점 — index.html 인라인 IIFE 바로 앞에서 한 번)",
+    "설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.1절 own 모드 · #TASK-ES-614(B3a).",
+    "세포들이 등록 기관(js/core/cell-registry.js)에 등록한 이름을, 기관이 직접 통로(OurgoalAppScope)와 window 에 내주게 한다(OurgoalCellRegistry.commit()).",
+    "왜 따로 있는가(시점): 같은 window 이름을 세포 말고 다른 바깥 파일도 쓰는 경우가 있고, 지금까지는 맨 뒤에 도는 인라인 IIFE 가 그 이름을 다시 덮어 이겼다."
    ],
-   "lines": 141,
+   "lines": 16,
    "over800": false,
-   "exposes": [
-    "OurgoalCellRegistry"
-   ],
+   "exposes": [],
    "calls": [
-    "core/app-scope"
+    "core/cell-registry"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
@@ -4451,13 +4458,77 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-594",
-    "TASK-ES-610"
+    "TASK-ES-614"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-610-CELL-REGISTRY-B1.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "core/cell-registry",
+   "file": "js/core/cell-registry.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "세포 등록 기관",
+   "nameSource": "hand",
+   "does": "세포가 자기 이름을 스스로 등록하고, 탐침이 옛 배선(가져오기·통로·window)이 만든 값과 등록 값을 이름마다 대조한다(B1: 대조 모드만)",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Cell Registry (세포 등록 기관 — 미분화 덩어리 배선 철거의 대조 기관)",
+    "설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.1절(B0 #TASK-ES-594) · 첫 구현 B1(compare 모드만) · own 적용 B3a(#TASK-ES-614).",
+    "index.html 인라인 IIFE 의 배선(가져오기 `var X = _kit.X` → `OurgoalAppScope.expose` getter → `window.X = X`)을 지우기 위해,",
+    "각 세포가 자기 이름을 이 기관에 스스로 등록하고(provide), 탐침이 옛 경로가 만든 값과 등록 값을 이름마다 `===` 로 대조한다(report)."
+   ],
+   "lines": 199,
+   "over800": false,
+   "exposes": [
+    "OurgoalCellRegistry"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "core/cell-registry-commit"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-594",
+    "TASK-ES-610",
+    "TASK-ES-614"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-610-CELL-REGISTRY-B1.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+   ],
+   "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 883,
      "task": "TASK-ES-610",
@@ -4934,7 +5005,7 @@
     "같은 구획 주석 아래(휴지통 묶음)에 있던 것을 책임 단위로 나눴다. 토큰 클라이언트 상태 변수(googleTokenClient)와 window 노출 문은 원래 자리, 캘린더 사용 가능(calendarAvailable)은 smoke 시험지 FN_NAMES 라, 토큰 저장(saveGoogleToken)은 함수 최상위 arguments 를 써서(헌법 CELL_SPLIT 5) 남겼다.",
     "#TASK-ES-482(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 6729~6733 · 6734~6763 · 6764~6787 · 6788~6823 · 6824~6872 · 6873~6928 · 6929~6933 · 6959~6985 · 6986~6991 · 7000~7013 · 7014~7049 · 7050~7067 · 7068~7131 · 7132~7190줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 497,
+   "lines": 499,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -4967,13 +5038,21 @@
    },
    "tasks": [
     "TASK-ES-482",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-482-INLINE-ORGAN-H3.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -5080,7 +5159,7 @@
     "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 4070~4092 · 4094~4114 · 4116~4138 · 4140~4200 · 4201~4306줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 282,
+   "lines": 284,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers",
@@ -5117,13 +5196,21 @@
    },
    "tasks": [
     "TASK-ES-471",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -5156,7 +5243,7 @@
     "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 6234~6237 · 6291~6306 · 6307~6326 · 6327~6355 · 6363~6371줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 127,
+   "lines": 129,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -5189,13 +5276,21 @@
    },
    "tasks": [
     "TASK-ES-471",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -5350,7 +5445,7 @@
     "기본 프로필(defaultProfile — 함수 끝 줄에 노출 문이 붙어 있어 옮기면 그 줄이 잘린다)·앱 상태(state)·window 노출 줄은 원래 자리에 그대로 있다.",
     "#TASK-ES-522(인라인 3단계 Z1 로그인·계정 2차): index.html 인라인 IIFE 의 구간(이전 전 3555~3559 · 3576~3603 · 3605~3617 · 3619~3650 · 3651~3861줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 338,
+   "lines": 340,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -5399,13 +5494,21 @@
    },
    "tasks": [
     "TASK-ES-522",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-522-STAGE3-Z1-C.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -5438,7 +5541,7 @@
     "#TASK-ES-499(인라인 어려움 기관 묶음 이전 4차): index.html 인라인 IIFE 의 구간(이전 전 5436~5443 · 5444~5482 · 5483~5501 · 5502~5799 · 5803~5865 · 5867~5885 · 5889~5900 · 5901~5908 · 5909~6004줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 620,
+   "lines": 622,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers",
@@ -5476,14 +5579,22 @@
    "tasks": [
     "TASK-ES-499",
     "TASK-ES-516",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-499-INLINE-ORGAN-4.md",
     "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -6156,7 +6267,7 @@
     "기존 앱 스코프 getter/setter로 Confetti Undo와 같은 타이머를 쓰며 새 연결·타이머·API를 만들지 않는다. UiHelpers 원본 파일은 수정하지 않는다.",
     "#TASK-ES-569(기록 테마 분류와 공용 토스트 표시 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 3419~3427줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 46,
+   "lines": 48,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -6189,13 +6300,21 @@
    },
    "tasks": [
     "TASK-ES-569",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-569-RECORD-THEME.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -11347,7 +11466,7 @@
     "lsDrawRoundRect · generateLockScreenCalendarImage(이전 전 11377~11654줄)",
     "generateLockScreenScheduleCardImage(이전 전 11904~12126줄)"
    ],
-   "lines": 543,
+   "lines": 545,
    "over800": false,
    "exposes": [
     "OurgoalCalendarKit"
@@ -11377,15 +11496,23 @@
     "TASK-ES-379",
     "TASK-ES-423",
     "TASK-ES-431",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-431-LOCKSCREEN-STREAK.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -11640,7 +11767,7 @@
     "WEEKDAYS_KR(요일 머리글) · calWeekStart(주 시작일) · calShift(월·주·일 이동) · renderCalendarScreen(일정 화면 전체 렌더)",
     "날짜 칸 calCellHtml 은 index.html 에 남아 있다(동결 시험지 verify-integrity-gate #TASK-ES-197 이 index.html 에서 그 글자를 찾는다) — L.calCellHtml 로 부른다."
    ],
-   "lines": 295,
+   "lines": 297,
    "over800": false,
    "exposes": [
     "OurgoalCalendarKit"
@@ -11673,15 +11800,23 @@
     "TASK-ES-197",
     "TASK-ES-358",
     "TASK-ES-360",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-197-CALENDAR-PHOTO-DIARY-AND-HEATMAP.md",
     "docs/specs/REQ-TASK-ES-358-RECORDS-CELL.md",
     "docs/specs/REQ-TASK-ES-360-CALENDAR-CELL.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -12061,7 +12196,7 @@
     "window 노출 네 줄은 index.html 원래 자리에 그대로 있다(인라인 onclick·바깥 파일이 그 이름을 찾는다).",
     "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 9722~9858 · 9859~9921 · 9922~9940 · 9941~9948줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 271,
+   "lines": 273,
    "over800": false,
    "exposes": [
     "OurgoalCommKit"
@@ -12088,13 +12223,21 @@
    },
    "tasks": [
     "TASK-ES-466",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -12344,7 +12487,7 @@
     "toggleFeedPostPreview(이전 전 17370~17406줄 · 구획 「[#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼」)",
     "묶음의 함수 선언을 글자 그대로 옮겼다(묶음 전체가 함수뿐이면 구획 주석까지 통째로). 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>,"
    ],
-   "lines": 73,
+   "lines": 75,
    "over800": false,
    "exposes": [
     "OurgoalCommKit"
@@ -12371,15 +12514,23 @@
     "TASK-ES-301",
     "TASK-ES-423",
     "TASK-ES-444",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-301-FEED-POST-PREVIEW-MODAL.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -13698,7 +13849,7 @@
     "goalAgentSnapshot · requestGoalAgentDiff · sanitizeAttachments(이전 전 18895~18949줄, 구획 주석 포함 · 구획 「대화로 목표 관리 (AI diff 제안 + 확인 후 반영)」)",
     "renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep(이전 전 19514~19908줄 · 구획 「목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)」)"
    ],
-   "lines": 538,
+   "lines": 540,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -13725,14 +13876,22 @@
    "tasks": [
     "TASK-ES-423",
     "TASK-ES-436",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -13907,7 +14066,7 @@
     "computeGoalStatusHash · localGoalStatusSummary · generateGoalStatusSummary(이전 전 20142~20191줄 · 구획 「현재 종합상황 (AI 요약)」)",
     "milestonesForMission(이전 전 20240~20244줄 · 구획 「오늘의 미션」)"
    ],
-   "lines": 175,
+   "lines": 177,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -13934,14 +14093,22 @@
    "tasks": [
     "TASK-ES-423",
     "TASK-ES-436",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -13976,7 +14143,7 @@
     "window 노출 묶음(if 안 window.X = …)은 index.html 원래 자리에 그대로 있다(js/calendar-attachment.js 등이 그 이름을 찾는다).",
     "#TASK-ES-483(인라인 어려움 구역 H1 3차): index.html 인라인 IIFE 의 구간(이전 전 8647~8659 · 8660~8675 · 8676~8729 · 8730~9009 · 9016~9062 · 9063~9100 · 9101~9132 · 9133~9206줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 609,
+   "lines": 611,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -14001,13 +14168,21 @@
    },
    "tasks": [
     "TASK-ES-483",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -14093,7 +14268,7 @@
     "초집중 타이머 상태 변수(focusTimerInterval·focusTimerSeconds·focusTimerRunning)와 FEED_POSTS_CACHE 는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다.",
     "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 9594~9726 · 9727~10083줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 529,
+   "lines": 531,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -14124,13 +14299,21 @@
    },
    "tasks": [
     "TASK-ES-476",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -14301,7 +14484,7 @@
     "#TASK-ES-572(알림 헬퍼·목표 상세 서랍 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 5536~5565 · 5566~5569 · 5570~5582줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 87,
+   "lines": 89,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -14326,13 +14509,21 @@
    },
    "tasks": [
     "TASK-ES-572",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-572-NEXT-CELLS.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -14819,7 +15010,7 @@
     "마크업 onclick 과 js/tabs/goals/render.js · js/sanctuary-v3-engine.js 가 window 이름으로 부른다 — window 노출 줄(window.currentGoalStatPeriod 초기값 포함)은 index.html 원래 자리에 그대로 있다.",
     "같은 묶음의 스마트 태그 칩·빠른 목표 추가·목표 상세 서랍 함수(selectSmartTag·handleGoalFastAddSubmit·openGoalDetailDrawer·closeGoalDetailDrawer·toggleMilestoneInDrawer)는 옮기지 않았다 — 그 화면이 게스트 화면에서 보이지 않거나(CSS 숨김) 여는 길이 없어 화면 시나리오로 잴 수 없다(별도 티켓)."
    ],
-   "lines": 132,
+   "lines": 134,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit",
@@ -14847,14 +15038,22 @@
    "tasks": [
     "TASK-ES-481",
     "TASK-ES-515",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
     "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -14963,7 +15162,7 @@
     "showNewGoal* 를 window 에 다는 로드 중 문은 bindNewGoalStepExports 로 감싸 index.html 원래 자리에서 부른다.",
     "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 14145~14148 · 14152~14194 · 14195~14219 · 14220~14279 · 14280~14282 · 14283~14359 · 14360~14452 · 14453~14456줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 363,
+   "lines": 365,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit",
@@ -14992,13 +15191,21 @@
    },
    "tasks": [
     "TASK-ES-466",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -15604,7 +15811,7 @@
     "formatSchedulePillHtml · openScheduleSetupModal · applyScheduleUpdate(이전 전 20402~20630줄 · 구획 「목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #」)",
     "openScheduleSetupModal = 목표·마일스톤·할일 일정 설정 바텀시트 · applyScheduleUpdate = 저장 · formatSchedulePillHtml = 디데이·기간 알약."
    ],
-   "lines": 268,
+   "lines": 270,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -15631,15 +15838,23 @@
     "TASK-ES-259",
     "TASK-ES-423",
     "TASK-ES-436",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-259-GOALS-SCHEDULE-SYNC.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -16613,7 +16828,7 @@
     "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4709~4890 · 4895~4901 · 4902~4906 · 4909~4946 · 4947~4953 · 4954~4958 · 4959~4972 · 4974~5007 · 5009~5015 · 5016~5020 · 5021~5061 · 5063~5155 · 5156~5234 · 5245~5249 · 5250~5259 · 5263~5269줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 623,
+   "lines": 626,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -16642,13 +16857,21 @@
    },
    "tasks": [
     "TASK-ES-591",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-591.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -16677,7 +16900,7 @@
     "분류·종류·검색 상태 변수(_subtabTplDomain·_subtabTplType·_subtabTplCat·_subtabTplQuery)는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다. window 노출 줄도 원래 자리에 그대로 있다.",
     "#TASK-ES-481(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 14384~14441 · 14442~14485 · 14486~14572 · 14573~14624 · 14625~14634 · 14635~15113줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 780,
+   "lines": 782,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -16706,13 +16929,21 @@
    },
    "tasks": [
     "TASK-ES-481",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -17371,7 +17602,7 @@
     "#TASK-ES-576(오늘 미션 해시·카드 렌더 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 5351~5357 · 5361~5426줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 112,
+   "lines": 114,
    "over800": false,
    "exposes": [
     "OurgoalHomeMegaBlock"
@@ -17398,13 +17629,21 @@
    },
    "tasks": [
     "TASK-ES-576",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-576-TODAY-MISSION.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -17439,7 +17678,7 @@
     "#TASK-ES-556(인라인 3단계 구역 Z6 표준 3): index.html 인라인 IIFE 의 구간(이전 전 5351~5360 · 5365~5406 · 5407~5498 · 5504~5506줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 192,
+   "lines": 194,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -17468,14 +17707,22 @@
    "tasks": [
     "TASK-ES-225",
     "TASK-ES-556",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-225-GEMINI-QUOTA-BACKOFF.md",
     "docs/specs/REQ-TASK-ES-556-STAGE3-Z56-C.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -17646,7 +17893,7 @@
     "마크업 onclick 이 window 이름으로 부른다 — window 노출 줄은 index.html 원래 자리에 그대로 있다.",
     "같은 묶음에 있던 달력 융합 칩·빠른 스톱워치 함수는 #TASK-ES-515 에서 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」). CSV 내보내기(exportRecordsCsv)는 내려받기 뒤 토스트를 게스트 화면 시나리오로 확인하지 못해 옮기지 않았다(별도 티켓)."
    ],
-   "lines": 61,
+   "lines": 63,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -17675,14 +17922,22 @@
    "tasks": [
     "TASK-ES-481",
     "TASK-ES-515",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-481-INLINE-H2.md",
     "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -17789,7 +18044,7 @@
     "#TASK-ES-492(인라인 어려움 기관 묶음 이전 3차): index.html 인라인 IIFE 의 구간(이전 전 8469~8470 · 8471~8539 · 8540~8559 · 8560~8791 · 8792~8799 · 8804~8884 · 8886~8950 · 8951~8959줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 540,
+   "lines": 542,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -17818,13 +18073,21 @@
    },
    "tasks": [
     "TASK-ES-492",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -17928,7 +18191,7 @@
     "#TASK-ES-571(기록 CSV 내보내기 책임 분열): index.html 인라인 IIFE 의 구간(이전 전 5595~5629줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 71,
+   "lines": 73,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -17956,13 +18219,21 @@
    },
    "tasks": [
     "TASK-ES-571",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-571-RECORDS-CSV.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -18137,7 +18408,7 @@
     "window 노출 세 줄은 index.html 원래 자리에 그대로 있다.",
     "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 5171~5202 · 5203~5215 · 5216~5237 · 5239~5247 · 5248~5254 · 5255~5293 · 5295~5411줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 291,
+   "lines": 293,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -18165,13 +18436,21 @@
    },
    "tasks": [
     "TASK-ES-476",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -19848,7 +20127,7 @@
     "옮긴 선언(이전 전 줄): playTimerBeep(26538~26553) · STOPWATCH_STATE(26554~26563) · renderStopwatchWidgetHtml(26564~26594) · renderLapRowsHtml(26595~26615)",
     "playTimerBeep·STOPWATCH_STATE·renderStopwatchWidgetHtml·renderLapRowsHtml = 전문 템플릿 표 안 스톱워치·인터벌 타이머 위젯과 랩 줄. formatStopwatchTime(시험지 smoke 가 글자로 읽음)·window 노출 문은 index.html 제자리(시험지 stopwatch-* 는 #TASK-ES-447 로 인라인 합본을 읽는다)."
    ],
-   "lines": 118,
+   "lines": 120,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -19879,16 +20158,24 @@
     "TASK-ES-423",
     "TASK-ES-447",
     "TASK-ES-448",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -20460,7 +20747,7 @@
     "기록 탭 로드 중 처리기 등록 문 네 개(시간 기록 단추 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).",
     "#TASK-ES-515: 늘 숨어 있던 옛 세그먼트 막대의 등록 문(처리기)을 막대와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」)."
    ],
-   "lines": 667,
+   "lines": 669,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -20490,15 +20777,23 @@
     "TASK-ES-465",
     "TASK-ES-474",
     "TASK-ES-515",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md",
     "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md",
     "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -20673,7 +20968,7 @@
     "showLastAuthBadge · initRememberedAuthFields — 「P0: 최근 로그인 뱃지 & 아이디 저장 & 로그인 유지」(이전 전 6386~6397줄, 구획 주석 포함)",
     "openChangePasswordModal — 「P0: 설정 화면 내 비밀번호 변경 모달」(이전 전 6416~6421줄, 구획 주석 포함)"
    ],
-   "lines": 115,
+   "lines": 117,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -20699,13 +20994,21 @@
    },
    "tasks": [
     "TASK-ES-437",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-437-INLINE-P0-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -20740,7 +21043,7 @@
     "getUxMode · switchUxMode(이전 전 12760~12775줄 · 구획 「Adaptive UX Mode」)",
     "renderAdaptiveModeBar(이전 전 12778~12788줄 · 구획 「Adaptive UX Mode」)"
    ],
-   "lines": 76,
+   "lines": 78,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -20767,14 +21070,22 @@
    "tasks": [
     "TASK-ES-423",
     "TASK-ES-444",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -20883,7 +21194,7 @@
     "같은 묶음 끝의 홈 「새 목표」 단추 처리기(#homeAddGoal → promptNewGoal)도 로드 중 문이라 함께 감싸 옮겼다. 처리기 등록은 index.html 원래 자리에서 bind 함수를 불러 순서가 같다.",
     "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 14009~14013 · 14014~14018 · 14031~14035 · 14036~14042 · 14046~14128 · 14129~14133줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 166,
+   "lines": 168,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -20908,13 +21219,21 @@
    },
    "tasks": [
     "TASK-ES-466",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21015,7 +21334,7 @@
     "isHashedAppLockPin — 「[71] 앱 잠금 PIN (이 기기)」(이전 전 4058~4060줄)",
     "appLockCryptoAvailable — 「[71] 앱 잠금 PIN (이 기기)」(이전 전 4061~4063줄)"
    ],
-   "lines": 271,
+   "lines": 273,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -21040,13 +21359,21 @@
    },
    "tasks": [
     "TASK-ES-442",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21140,7 +21467,7 @@
     "openAvatarGreetingPopup — 「#TASK-ES-165: 앱 진입 아바타 인사 팝업」(이전 전 3448~3528줄)",
     "closeAvatarGreetingPopup — 「#TASK-ES-165: 앱 진입 아바타 인사 팝업」(이전 전 3530~3548줄)"
    ],
-   "lines": 155,
+   "lines": 157,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -21167,15 +21494,23 @@
    "tasks": [
     "TASK-ES-165",
     "TASK-ES-437",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-165-avatar-greeting-popup.md",
     "docs/specs/REQ-TASK-ES-165-home-ui-renewal.md",
     "docs/specs/REQ-TASK-ES-437-INLINE-P0-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21210,7 +21545,7 @@
     "처리기 등록 문 네 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. window 노출 두 줄·단추 요소 변수 선언·3줄 이하 등록은 원래 자리에 그대로 있다.",
     "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 3323~3330 · 3331~3373 · 3374~3378 · 3388~3392 · 3395~3418 · 3421~3434 · 3437~3479줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 203,
+   "lines": 205,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -21236,13 +21571,21 @@
    },
    "tasks": [
     "TASK-ES-476",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21343,7 +21686,7 @@
     "initDevDebugButtons — 「[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼」(이전 전 5324~5338줄)",
     "로컬 개발 호스트에서 ?debug=true 일 때만 테스터 버튼을 보이고, 운영에서는 지운다."
    ],
-   "lines": 51,
+   "lines": 53,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -21370,14 +21713,22 @@
    "tasks": [
     "TASK-ES-223",
     "TASK-ES-442",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-223-PURGE-DEV-DEBUG-BUTTONS.md",
     "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21479,7 +21830,7 @@
     "#TASK-ES-492(인라인 어려움 기관 묶음 이전 3차): index.html 인라인 IIFE 의 구간(이전 전 7876~7879 · 7880~7886 · 7887~7913 · 7914~7926 · 7927~7938 · 7940~7951 · 7953~7970 · 7971~7976 · 7977~8461 · 8462~8465줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 645,
+   "lines": 647,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -21504,13 +21855,21 @@
    },
    "tasks": [
     "TASK-ES-492",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21611,7 +21970,7 @@
     "openGuestBackupNudgeModal — 「[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시」(이전 전 5928~5979줄)",
     "checkGuestBackupNudge — 「[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시」(이전 전 5981~6012줄)"
    ],
-   "lines": 123,
+   "lines": 125,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -21637,14 +21996,22 @@
    "tasks": [
     "TASK-ES-224",
     "TASK-ES-437",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-224-GUEST-BACKUP-NUDGE.md",
     "docs/specs/REQ-TASK-ES-437-INLINE-P0-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21807,7 +22174,7 @@
     "#TASK-ES-515: 늘 숨어 있던(display:none) 첫 화면 「이메일로 가입하기」 단추의 처리기를 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」).",
     "첫 화면 단추 처리기 등록 문 세 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다."
    ],
-   "lines": 199,
+   "lines": 201,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -21833,14 +22200,22 @@
    "tasks": [
     "TASK-ES-476",
     "TASK-ES-515",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
     "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -22427,7 +22802,7 @@
     "renderIosPwaBanner · openIosPwaInstallGuideModal(이전 전 13052~13189줄 · 구획 「iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)」)",
     "initKeyboardShield(이전 전 21724~21743줄 · 구획 「[UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝」)"
    ],
-   "lines": 255,
+   "lines": 257,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22454,15 +22829,23 @@
     "TASK-ES-234",
     "TASK-ES-423",
     "TASK-ES-444",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-234-IOS-PWA-GUIDE.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -22497,7 +22880,7 @@
     "window.paintSecurityCard 는 js/tabs/settings/sub-security.js 가 찾는다 — 노출 줄은 index.html 원래 자리에 그대로 있다.",
     "같은 묶음에 있던 숨은 소통 허브·응원 바·안심 DM 시트 함수 세 개는 #TASK-ES-495 에서 마크업과 함께 지웠다(상민님 승인 정리 4건)."
    ],
-   "lines": 104,
+   "lines": 106,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22523,14 +22906,22 @@
    "tasks": [
     "TASK-ES-439",
     "TASK-ES-495",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md",
     "docs/specs/REQ-TASK-ES-495-HIDDEN-FAKE-CLEANUP.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -22571,7 +22962,7 @@
     "renderSettingsHeroCard · collapseAllSettingsSections · toggleAdvancedSettings · formatStorageBytes · paintCacheUsage ·",
     "renderSettingsScreen(머리 + 소블록 6개를 원래 순서로 호출) · 설정 아코디언 햅틱 위임 · 설정 화면 정적 버튼 바인딩"
    ],
-   "lines": 270,
+   "lines": 272,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22634,15 +23025,23 @@
     "TASK-ES-354",
     "TASK-ES-516",
     "TASK-ES-588",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md",
     "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
     "docs/specs/REQ-TASK-ES-588.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -23556,7 +23955,7 @@
     "단추 요소 변수(landTesterBBtn·authTesterBBtn)와 window 노출 줄은 원래 자리에 그대로 있다.",
     "#TASK-ES-521(인라인 3단계 Z1 로그인·계정 1차): index.html 인라인 IIFE 의 구간(이전 전 4027~4047 · 4050~4055 · 4057~4062줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 80,
+   "lines": 82,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -23583,14 +23982,22 @@
    "tasks": [
     "TASK-ES-169",
     "TASK-ES-521",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-614"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-169.md",
     "docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 889,
+     "task": "TASK-ES-614",
+     "title": "[INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(IIFE 직전 commit) · 전 키트 모의 철거 측정",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
