@@ -1,15 +1,15 @@
-# [정본] 아워골 최고 헌법 v2026.10.10-SLIM (OurGoal Supreme Constitution v2026.10.10-SLIM)
+# [정본] 아워골 최고 헌법 v2026.10.10-OUTCOME (OurGoal Supreme Constitution v2026.10.10-OUTCOME)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.10-SLIM (군살 빼기 개정 — 보고 서식 5종 본문·레이아웃 규격·용어 조문·설계 공식 E1~E5 상세를 운영 문서로 이관, 커널에는 규칙과 정본 경로만 남김. 옮긴 뒤 뺐다). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
+> **버전**: v2026.10.10-OUTCOME (완료의 세 구분·지시 원문 대응·검사 정정 요건·선행 PR 확인·보고 서식 성공 기본값 제거·유효 규칙 정합 검사·커널 사본 금고 등재 개정). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.  
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
 > **사본**: `AGENTS.md` · `CLAUDE.md` · `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 는 한 글자도 다르지 않은 같은 내용으로 함께 고친다(`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
 > **법령 전문**: 조·항·호 단위 상세는 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`, 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
 
 ---
 
-<system_kernel id="ourgoal-supreme-constitution-v2026.10.10-slim">
+<system_kernel id="ourgoal-supreme-constitution-v2026.10.10-outcome">
 
   <metadata>
     <sovereign>상민 (Supreme Decision Maker)</sovereign>
@@ -409,10 +409,24 @@
   <!-- SECTION 5: PRODUCT DESIGN FORMULAS & LIFECYCLE (5대 축 제품 철학)  -->
   <!-- ===================================================================== -->
   <product_design_formulas>
-  본질 축 E1~E5(E1_CHECKIN 초간단 미세 체크인 · E2_REFLECTION 본질 회고 및 시각화 · E3_PEER_CONNECTION 무오염 동료 연결 · E4_INFRASTRUCTURE 원격 원장 인프라 · E5_FIXES 품질 유지 및 결함 박멸)의 정의는 기획정본 `docs/rules/MASTER_PLAN_OURGOAL.md` 1.4.1절이 정본이다(v2026.10.10-SLIM 에서 이관).
-  <data_lifecycle_4steps>
-  유저 데이터 영속성 검증을 위해 (1) 생성 -> (2) 파기 시뮬레이션(localStorage/캐시 삭제) -> (3) 페이지 리로드 -> (4) 원격 DB 자가치유 복원 입증(deepStrictEqual) 4단계를 청구한다.
-  </data_lifecycle_4steps>
+    <axis id="E1_CHECKIN" name="초간단 미세 체크인">
+      10초 이내에 완료 가능한 직관적 입력 UX. 인지적 과부하 금지.
+    </axis>
+    <axis id="E2_REFLECTION" name="본질 회고 및 시각화">
+      노션(Notion) 수준의 직관적 데이터 시각화 및 에센스 루프 제공.
+    </axis>
+    <axis id="E3_PEER_CONNECTION" name="무오염 동료 연결">
+      상업적 금전 크레딧 배제. 오가닉 스트릭, 배지, 시각적 성취감 중심의 순수한 동기부여.
+    </axis>
+    <axis id="E4_INFRASTRUCTURE" name="원격 원장 인프라">
+      Supabase 기반 데이터 영속화, 실시간 동기화, 제로 컨피그 지능형 백엔드.
+      <data_lifecycle_4steps>
+        유저 데이터 영속성 검증을 위해 (1) 생성 -> (2) 파기 시뮬레이션(localStorage/캐시 삭제) -> (3) 페이지 리로드 -> (4) 원격 DB 자가치유 복원 입증(deepStrictEqual) 4단계를 청구한다.
+      </data_lifecycle_4steps>
+    </axis>
+    <axis id="E5_FIXES" name="품질 유지 및 결함 박멸">
+      버그 0건 지향, 4위 1체 완결 배선, 모바일 퍼스트 반응형 레이아웃 보장.
+    </axis>
   </product_design_formulas>
 
 
@@ -494,7 +508,7 @@
       <clause id="3.1">모든 UI 요소는 마크업 + 이벤트 리스너 + 비즈니스 로직 + 사용자 피드백이 완결되게 결속되어야 한다(4위 1체).</clause>
       <clause id="3.2">CSS를 악용한 은폐(display:none !important 등) 및 가짜 대체 레이어 덮어쓰기 행위를 엄격히 금지하며 시맨틱 3단계를 이행한다.</clause>
       <clause id="3.3">단일 .js 소블록 파일의 순수 로직 크기는 800줄을 초과할 수 없으며, 초과 시 하위 소블록으로 자가분열해야 한다. 자가분열은 세포 분열 절차(CELL_SPLIT)와 증명 하한(CELL_SPLIT_PROOF)으로 한다. 800줄은 상한이며 자르는 기준은 책임 단위다.</clause>
-      <clause id="3.4">모바일 레이아웃 규격(375px 기준 하단 네비게이션 차폐 방지 여백 calc(var(--nav-h, 64px) + env(...) + 48px), 480px 이하 1fr 적층)은 `docs/design/02-design-system.md` 「6. 레이아웃 규격」절이 정본이다(v2026.10.10-SLIM 에서 이관).</clause>
+      <clause id="3.4">모바일 375px 해상도 기준 하단 네비게이션 차폐 방지 여백(calc(var(--nav-h, 64px) + env(...) + 48px)) 및 480px 이하 1fr 적층 레이아웃 규격을 준수한다.</clause>
       <clause id="3.5">아워골 앱은 세포골격(CELL_SKELETON)으로 구성한다. 모든 기능은 네 종류(기관·탭 세포·하이브리드·미래) 중 하나의 세포이며, 세포끼리는 신호·능력·꽂는 자리 세 길로만 맞물린다. 다른 세포의 내부를 직접 참조하지 않는다.</clause>
       <clause id="3.6">모든 세포는 신고서(`docs/architecture/modules.json`)를 갖고, 모듈 가드(`scripts/module-guard.js`)를 통과해야 한다. 기준선(`docs/architecture/module-baseline.json`)은 손으로 고치지 않으며 `--update` 로만 바꾼다.</clause>
       <clause id="3.7">세포 추가·분열·융합은 작업 세션이 결정하고, 세포 소멸은 승인선 ③(기존 기능의 실제 삭제), 구조 재편(세포 종류·꽂는 자리 목록·연결 방식 변경)은 승인선 ⑤로 상민님이 결정한다.</clause>
@@ -528,7 +542,7 @@
 
     <article id="ARTICLE_08" title="6단계 작업 보고 체계 및 5대 고정 블록 서식">
       <clause id="8.1">작업 진행 상황은 REQ -> PLAN -> Code -> Draft PR -> Main Merge -> Verification의 6단계를 엄격히 준수한다.</clause>
-      <clause id="8.2">PR 본문과 저장소 보고서는 [개요, REQ/PLAN, 핵심 변경사항, Claims, 법정 판정서]의 5대 고정 블록 서식을 미세 변형 없이 준수한다. 서식 본문의 정본은 `docs/rules/REPORT-TEMPLATES.md` 다.</clause>
+      <clause id="8.2">PR 본문과 저장소 보고서는 [개요, REQ/PLAN, 핵심 변경사항, Claims, 법정 판정서]의 5대 고정 블록 서식을 미세 변형 없이 준수한다.</clause>
       <clause id="8.3">상민님께 드리는 대화 보고는 쉬운 말로, 결심이 필요 없으면 "한 것 / 측정으로 검증한 것 / 다음에 열리는 것" 세 덩어리로 쓰고 질문으로 끝내지 않는다. 결심이 필요하면 제5조 제3항 형식을 쓴다. "애매하게" 보고하지 않는다 — 결국 뭐가 문제고 뭐 하면 되는지 한 줄로 적는다. 완료를 말할 때는 계획 완료·사용 가능·효과 확인을 구분한다(GUARD_05 2).</clause>
     </article>
 
@@ -540,7 +554,8 @@
     </article>
 
     <article id="ARTICLE_10" title="용어 헌법 및 정량 표기 규칙">
-    <clause id="10.1">용어·정량 표기(잔디 → 공식 용어 '히트맵(Heatmap)' 통일, 기능 수량은 과거 77종이 아닌 현행 '320종')는 `docs/design/02-design-system.md` 「7. 용어·정량 표기」절이 정본이다(v2026.10.10-SLIM 에서 이관). 히트맵 용어 위반은 `scripts/smoke-test.js` 가 검사한다.</clause>
+      <clause id="10.1">시스템 내 잔디 표기는 공식 용어인 '히트맵(Heatmap)'으로 통일한다.</clause>
+      <clause id="10.2">기능 수량 표기 시 과거 기준인 77종/77가지를 금지하고, 현행 정본 규격인 '320종'으로 명확히 표기한다.</clause>
     </article>
 
     <article id="ARTICLE_11" title="Tri-Sync 동기화 및 Step 0 사전검증">
@@ -587,14 +602,132 @@
   <!-- SECTION 8: SITUATIONAL REPORTING TEMPLATES (상황별 보고 서식 강제)    -->
   <!-- ===================================================================== -->
   <situational_reporting_templates>
-  <rule id="mandatory_formatting">
-  에이전트는 작업 상황 및 진입 모드에 맞춰 정의된 보고 서식을 단 1자도 임의 변형 없이 100% 준수해야 한다(적용 대상: PR 본문·저장소 보고서. 상민님 대화 보고는 제8조 제3항).
-  서식 내 필수 섹션을 누락하거나 구조를 변경하는 행위는 위헌(CRITICAL_HALT)으로 간주된다.
-  서식의 대괄호 칸은 측정값과 그 출처로 채우고, 못 잰 칸은 「측정불가」로 둔다. 성공값(PASS 등)이 미리 적힌 칸은 두지 않는다 — 서식이 성공을 기본값으로 유도하지 않게 한다.
-  </rule>
-  <rule id="template_registry">
-  서식 본문 5종(TEMPLATE_MODE_1_ANALYSIS · TEMPLATE_MODE_2_PLAN · TEMPLATE_MODE_4A_DRAFT_PR · TEMPLATE_MODE_4B_DEPLOY · TEMPLATE_HALT_DECISION)의 정본은 `docs/rules/REPORT-TEMPLATES.md` 다(v2026.10.10-SLIM 에서 커널 본문을 글자 그대로 이관). 서식의 칸·제목·순서를 바꾸는 것은 그 문서의 PR(법정 심사)이고, 이 규칙을 바꾸는 것은 헌법 개정(승인선 ⑤)이다.
-  </rule>
+    <rule id="mandatory_formatting">
+      에이전트는 작업 상황 및 진입 모드에 맞춰 정의된 보고 서식을 단 1자도 임의 변형 없이 100% 준수해야 한다(적용 대상: PR 본문·저장소 보고서. 상민님 대화 보고는 제8조 제3항).
+      서식 내 필수 섹션을 누락하거나 구조를 변경하는 행위는 위헌(CRITICAL_HALT)으로 간주된다.
+      서식의 대괄호 칸은 측정값과 그 출처로 채우고, 못 잰 칸은 「측정불가」로 둔다. 성공값(PASS 등)이 미리 적힌 칸은 두지 않는다 — 서식이 성공을 기본값으로 유도하지 않게 한다.
+    </rule>
+
+    <template id="TEMPLATE_MODE_1_ANALYSIS" target_mode="MODE_1">
+      <name>분석 및 영향도 검토 보고서</name>
+      <structure_markdown>
+### 🔍 [MODE_1] 분석 및 영향도 검토 보고서
+* **작업 대상**: [기능명 / 이슈 번호]
+* **검토 목적**: [상민님의 질의 요약]
+
+#### 1. 구조 및 영향도 분석
+- **수정/영향 대상 파일**: 
+- **연관 모듈 및 컴포넌트**: 
+
+#### 2. 사이드 이펙트 및 위헌 리스크
+- **데이터 영속성 영향**: [Supabase DB 및 Tri-Sync 영향 여부]
+- **기존 방어 코드 영향**: [Step 0 정독 결과 기존 로직 훼손 여부]
+
+#### 3. 추천 구현 방향 및 선택지
+- **선택지 A**: [장점 및 단점]
+- **선택지 B**: [장점 및 단점]
+- **최종 권장안**: [이유 명시]
+      </structure_markdown>
+    </template>
+
+    <template id="TEMPLATE_MODE_2_PLAN" target_mode="MODE_2">
+      <name>구상 및 기획 초안 보고서 (REQ / PLAN)</name>
+      <structure_markdown>
+### 📋 [MODE_2] 구상 및 기획 초안 보고서
+* **Task ID**: 
+* **작업 개요**: [작업 범위 명시]
+
+#### 1. REQ (요구사항 정의서)
+- **대상 DOM ID**: 
+- **대상 함수명**: 
+- **수정/생성 파일**: 
+
+#### 2. PLAN (작업계획서 - 문제해결 8원칙)
+- [ ] 1. 목표 정의: ...
+- [ ] 2. 현상 분석: ...
+- [ ] 3. 원인 추정: ...
+- [ ] 4. 대안 탐색: ...
+- [ ] 5. 실행 계획: ...
+- [ ] 6. 절차 재검증 및 반론 격파: [반론 2가지 및 논리적 격파]
+- [ ] 7. 즉시 실행: ...
+- [ ] 8. 성과 측정: ...
+* **체크리스트 마감 규칙**: 본 작업계획서는 [4단계: 심사 청구]까지만 등록함.
+      </structure_markdown>
+    </template>
+
+    <template id="TEMPLATE_MODE_4A_DRAFT_PR" target_mode="MODE_4A">
+      <name>5대 고정 블록 표준 구현 보고서 (Draft PR)</name>
+      <structure_markdown>
+### 🚀 [MODE_4A] 5대 고정 블록 표준 구현 보고서
+* **PR 번호**: 
+* **Task ID**: 
+
+#### [블록 1] 개요
+- **작업 내용**: [구현된 기능 및 버그 수정 요약]
+
+#### [블록 2] REQ / PLAN 및 구체적 식별자
+- **구체적 식별자**: DOM , 함수 , 파일 
+- **PLAN 체크리스트**: [4단계: 심사 청구] 완료 상태
+
+#### [블록 3] 핵심 변경사항
+- **수정 파일 목록**:  (+XX lines, -YY lines)
+- **소블록 자가분열 준수**: [바뀐 js 파일별 줄 수 · 측정 명령 / 측정불가]
+- **세포 영향**: 바뀐 세포(신고서 id) · `node scripts/module-guard.js` 결과 · 기준선 `--update` 여부(올렸다면 사유)
+
+#### [블록 4] Claims (주장)
+-  기록 완료
+- **주장 항목**: [구현 사실 및 무손실 입증 사실]
+
+#### [블록 5] 독립 법정 판정서 (GitHub Court Verdict)
+
+      </structure_markdown>
+    </template>
+
+    <template id="TEMPLATE_MODE_4B_DEPLOY" target_mode="MODE_4B">
+      <name>배포 승인 및 최종 병합 보고서</name>
+      <structure_markdown>
+### 🚢 [MODE_4B] 배포 승인 및 최종 병합 보고서
+* **Main Merge Commit**: 
+* **상민님 승인 명령**: '[승인 키워드]'
+
+#### 1. 병합 및 배포 현황
+- **원격 main 병합 완료**: [병합 커밋 해시 · PR 병합 기록 주소]
+- **Vercel / Production 배포 상태**: [배포 주소 응답 코드 · 측정 시각 / 측정불가]
+
+#### 2. PLAN 체크리스트 최종 승격
+- [ ] [5단계: 배포 완료] — 원격 main 병합 커밋을 확인한 뒤 [x]
+- [ ] [6단계: 원격 검증 완료] — 운영 주소 실측 뒤 [x]
+
+#### 3. 원격 원장(Supabase) 및 Tri-Sync 상태
+- **DB Realtime 동기화**: [확인한 시나리오 · 확인 수준(별표 2) / 측정불가]
+- **데이터 자가치유 복원 입증**: [수명주기 4단계 실측 결과 · 출처 / 측정불가]
+
+#### 4. 세포지도 갱신 (제11조 제3항)
+- **출처 커밋**: [병합 커밋]
+- **웹 세포지도 · 노션 세포지도 · 허브 최상단**: [갱신·되읽기 대조 완료 / pending — 사유]
+      </structure_markdown>
+    </template>
+
+    <template id="TEMPLATE_HALT_DECISION" target_mode="PIN_02">
+      <name>3회 핑퐁 정지 및 상민님 결심 요청 보고서</name>
+      <structure_markdown>
+### ⚠️ [결심 필요] 서브에이전트 3회 핑퐁 정지 보고서
+* **Task ID**: 
+* **정지 사유**: 빌더-레드팀 간 수정-반려 3회 초과 (PIN_02 트립와이어 발동)
+
+#### 1. 대립 및 병목 개요
+- **빌더 에이전트 주장**: [구현 방식 및 당위성]
+- **레드팀 감찰 지적**: [지적된 헌법 위반 또는 결함 내용]
+
+#### 2. 대립 지점 상세
+- **쟁점 1**: ...
+- **쟁점 2**: ...
+
+#### 3. 상민님 결심 요청 항목 (Decision Required)
+- [ ] **선택지 A**: [상민님의 결정이 필요한 안건 A]
+- [ ] **선택지 B**: [상민님의 결정이 필요한 안건 B]
+      </structure_markdown>
+    </template>
   </situational_reporting_templates>
 
 </system_kernel>

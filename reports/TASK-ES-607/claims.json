@@ -1,0 +1,244 @@
+{
+  "task": "TASK-ES-607",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-607-CONSTITUTION-SLIM.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "상민님 원문 「헌법개정승인. 권장대로 진행」(이관 후보 결심 패킷 A안) 의 PR-1 — 보고 서식 5종·조문 3.4·제10조·설계 공식 E1~E5 를 운영 문서로 옮긴 뒤 커널에서 뺀다(옮긴 뒤 뺀다)"
+    },
+    {
+      "id": "R2",
+      "text": "커널 세 사본은 같은 글자이고, 법령 머리·버전 대장·archive 가 한 묶음으로 갱신된다(조문 14.3)"
+    },
+    {
+      "id": "R3",
+      "text": "지키라는 규칙(mandatory_formatting·8.2·수명주기 4단계)은 커널에 남고, 옮긴 본문은 글자 그대로 보존된다 — 삭제 조항 0"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "커널에 보고 서식 본문(5대 고정 블록 제목 줄)이 더 이상 없다",
+      "touches": [
+        "AGENTS.md"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "AGENTS.md",
+        "text": "#### [블록 1] 개요"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "서식 본문 5종의 정본 docs/rules/REPORT-TEMPLATES.md 가 있고 5대 고정 블록 서식을 담는다",
+      "touches": [
+        "docs/rules/REPORT-TEMPLATES.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/REPORT-TEMPLATES.md",
+        "text": "<template id=\"TEMPLATE_MODE_4A_DRAFT_PR\" target_mode=\"MODE_4A\">"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "커널에 서식 규칙 mandatory_formatting 이 그대로 남아 있다(성공값 미기재 규칙 포함)",
+      "touches": [
+        "AGENTS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "AGENTS.md",
+        "text": "성공값(PASS 등)이 미리 적힌 칸은 두지 않는다"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "커널에 서식 정본 경로 규칙 template_registry 가 있다",
+      "touches": [
+        "AGENTS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "AGENTS.md",
+        "text": "<rule id=\"template_registry\">"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "조문 3.4 가 디자인 시스템 6절을 정본으로 가리킨다",
+      "touches": [
+        "AGENTS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "AGENTS.md",
+        "text": "「6. 레이아웃 규격」절이 정본이다"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "디자인 시스템 문서에 레이아웃 규격 6절과 용어·정량 표기 7절이 있다",
+      "touches": [
+        "docs/design/02-design-system.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/02-design-system.md",
+        "text": "## 7. 용어·정량 표기"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "제10조는 10.1 하나로 디자인 시스템 7절을 정본으로 가리키고, 히트맵 집행이 smoke-test 임을 명시한다",
+      "touches": [
+        "AGENTS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "AGENTS.md",
+        "text": "히트맵 용어 위반은 `scripts/smoke-test.js` 가 검사한다"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기획정본에 본질 축 E1~E5 절(E4·E5 포함)이 있다",
+      "touches": [
+        "docs/rules/MASTER_PLAN_OURGOAL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/MASTER_PLAN_OURGOAL.md",
+        "text": "E4 (원격 원장 인프라) E4_INFRASTRUCTURE"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "데이터 수명주기 4단계 집행 규칙은 커널에 남아 있다",
+      "touches": [
+        "AGENTS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "AGENTS.md",
+        "text": "<data_lifecycle_4steps>"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세 사본 모두 v2026.10.10-SLIM 커널 id 를 갖는다(CLAUDE.md)",
+      "touches": [
+        "CLAUDE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "CLAUDE.md",
+        "text": "<system_kernel id=\"ourgoal-supreme-constitution-v2026.10.10-slim\">"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세 사본 모두 v2026.10.10-SLIM 커널 id 를 갖는다(01_FULL)",
+      "touches": [
+        "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
+        "text": "<system_kernel id=\"ourgoal-supreme-constitution-v2026.10.10-slim\">"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "법령 전문 머리의 현행 커널 버전이 v2026.10.10-SLIM 이다",
+      "touches": [
+        "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md",
+        "text": "- **현행 커널 버전**: `v2026.10.10-SLIM`"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "버전 대장에 v2026.10.10-SLIM 행이 있다",
+      "touches": [
+        "docs/rules/CONSTITUTION_VERSIONS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/CONSTITUTION_VERSIONS.md",
+        "text": "| **`v2026.10.10-SLIM`** (커널) | 2026-10-10 |"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "직전 커널 v2026.10.10-OUTCOME 원문이 archive 에 보관됐다",
+      "touches": [
+        "docs/rules/archive/AGENTS_KERNEL_v2026.10.10-OUTCOME.md"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "docs/rules/archive/AGENTS_KERNEL_v2026.10.10-OUTCOME.md"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮긴 서식 본문은 글자 그대로다 — 다섯째 서식(결심 정지 보고서)의 식별자 줄이 정본 문서에 그대로 있다(3,139자 전체 동일은 REQ 6절 세션 측정)",
+      "touches": [
+        "docs/rules/REPORT-TEMPLATES.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/REPORT-TEMPLATES.md",
+        "text": "<template id=\"TEMPLATE_HALT_DECISION\" target_mode=\"PIN_02\">"
+      }
+    }
+  ]
+}
