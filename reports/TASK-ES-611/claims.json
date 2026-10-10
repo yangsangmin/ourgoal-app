@@ -1,0 +1,481 @@
+{
+  "task": "TASK-ES-611",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "세포가 키트에 단 이름을 등록 기관(OurgoalCellRegistry.provide)에 스스로 등록하는 줄을 세포 파일 끝에 더한다. 등록 기관은 compare 모드라 값을 보관만 하므로 앱 동작은 그대로다."
+    },
+    {
+      "id": "R2",
+      "text": "대조: 등록한 이름마다 옛 경로(통로 getter 값·window 값)와 등록 값이 === 로 같다 — 등록 수 > 0, 불일치 0, 이중 등록 0, 초과 0. 등록하지 못한 이름은 누락으로 남기고 사유를 적는다."
+    },
+    {
+      "id": "R3",
+      "text": "등록 줄은 손이 아니라 결정론 생성기(gen-cell-provide.js)로 넣는다(멱등). 세포의 기존 글자·함수 본문은 바꾸지 않는다."
+    },
+    {
+      "id": "R4",
+      "text": "증명 하한(설계 4절 「새 기관 추가」): index.html 변경 0 · 새 전역 0 · 800줄 상한 초과 0 · module-load 새 회귀 0 · npm test 검사 수 동일·폐기 0 · inlineScriptLines 불변 · tests/ 변경 0 · 금고 변경 0."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "배선 철거(가져오기 줄·통로 getter·window 대입 삭제)와 등록 기관 own 모드는 이 PR 에 없다(설계 6절 B3 부터). IIFE 안에 정의가 남은 이름 84개와 생성기가 건너뛴 이름(switchTab·renderTeamGoalsScreen)은 등록하지 않았고 누락으로 남는다 — 사유는 provide-plan.json 의 iifeOwned·skipped.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 진입해 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성(active)이 되고 앞 탭은 비활성이 되며 예외가 없다 — 세포 파일 끝에 등록 줄을 더하기 전과 같다.",
+      "touches": [
+        "js/auth-social.js",
+        "js/avatar/level-badge.js",
+        "js/avatar/xp.js",
+        "js/core/all-view-render.js",
+        "js/core/app-enter.js",
+        "js/core/badges.js",
+        "js/core/calendar-availability.js",
+        "js/core/confetti.js",
+        "js/core/date-rollover.js",
+        "js/core/default-profile.js",
+        "js/core/gcal-sync.js",
+        "js/core/gcal-token.js",
+        "js/core/home-cockpit.js",
+        "js/core/modal-helper.js",
+        "js/core/modal-open.js",
+        "js/core/profile-load.js",
+        "js/core/profile-topbar.js",
+        "js/core/registry-init.js",
+        "js/core/server-records-sync.js",
+        "js/core/streak-badge.js",
+        "js/core/supabase-auth.js",
+        "js/core/telemetry.js",
+        "js/core/time-keys.js",
+        "js/core/toast-renderer.js",
+        "js/core/trash-bin.js",
+        "js/core/ui-helpers.js",
+        "js/core/view-dispatch.js",
+        "js/core/virtual-user-helpers.js",
+        "js/creator-templates-legacy.js",
+        "js/tabs/calendar/calendar-core.js",
+        "js/tabs/calendar/day-bg-picker.js",
+        "js/tabs/calendar/day-edit-hub.js",
+        "js/tabs/calendar/lockscreen-hub.js",
+        "js/tabs/calendar/lockscreen-image.js",
+        "js/tabs/calendar/lockscreen-live.js",
+        "js/tabs/calendar/manual-edit-modal.js",
+        "js/tabs/calendar/render.js",
+        "js/tabs/calendar/schedule-done-toggle.js",
+        "js/tabs/comm/cheer-notify.js",
+        "js/tabs/comm/crew-pacing.js",
+        "js/tabs/comm/feed-comments.js",
+        "js/tabs/comm/feed-list.js",
+        "js/tabs/comm/feed-post-preview.js",
+        "js/tabs/comm/feed-posts-sync.js",
+        "js/tabs/comm/first-cheer.js",
+        "js/tabs/comm/goal-certificate-share.js",
+        "js/tabs/comm/manito-basics.js",
+        "js/tabs/comm/manito-real.js",
+        "js/tabs/comm/peer-invite-text.js",
+        "js/tabs/comm/peer-invite.js",
+        "js/tabs/comm/render.js",
+        "js/tabs/comm/sample-data.js",
+        "js/tabs/comm/share-card.js",
+        "js/tabs/comm/shared-groups.js",
+        "js/tabs/comm/story-canvas.js",
+        "js/tabs/comm/story-card-send.js",
+        "js/tabs/comm/user-blocks.js",
+        "js/tabs/comm/user-profile-open.js",
+        "js/tabs/goals/ai-agent.js",
+        "js/tabs/goals/ai-local-fallback.js",
+        "js/tabs/goals/ai-status-refresh.js",
+        "js/tabs/goals/ai-status.js",
+        "js/tabs/goals/attachments.js",
+        "js/tabs/goals/focus-autopilot.js",
+        "js/tabs/goals/goal-archive.js",
+        "js/tabs/goals/goal-category-templates.js",
+        "js/tabs/goals/goal-detail-drawer.js",
+        "js/tabs/goals/goal-export.js",
+        "js/tabs/goals/goal-math.js",
+        "js/tabs/goals/goal-order.js",
+        "js/tabs/goals/goal-update-suggest.js",
+        "js/tabs/goals/goals-ia-actions.js",
+        "js/tabs/goals/new-goal-modal.js",
+        "js/tabs/goals/notion-record-convert.js",
+        "js/tabs/goals/personal-goals-guide.js",
+        "js/tabs/goals/prompt-encyclopedia.js",
+        "js/tabs/goals/render.js",
+        "js/tabs/goals/result-input.js",
+        "js/tabs/goals/result-modal.js",
+        "js/tabs/goals/routine-detail-modal.js",
+        "js/tabs/goals/routine-screen.js",
+        "js/tabs/goals/schedule-setup.js",
+        "js/tabs/goals/shift-routines.js",
+        "js/tabs/goals/starter-goal-templates.js",
+        "js/tabs/goals/starter-goal.js",
+        "js/tabs/goals/team-comments.js",
+        "js/tabs/goals/team-goal-edit-modal.js",
+        "js/tabs/goals/team-goal-modals.js",
+        "js/tabs/goals/team-goal-prompt.js",
+        "js/tabs/goals/team-goals-guide.js",
+        "js/tabs/goals/team-level-goals.js",
+        "js/tabs/goals/team-state.js",
+        "js/tabs/goals/template-encyclopedia-modal.js",
+        "js/tabs/goals/template-encyclopedia.js",
+        "js/tabs/goals/template-quick-import.js",
+        "js/tabs/goals/topic-region-picker.js",
+        "js/tabs/home/home-render.js",
+        "js/tabs/home/quest-summary.js",
+        "js/tabs/home/today-mission.js",
+        "js/tabs/records/ai-feedback-catalog.js",
+        "js/tabs/records/ai-feedback.js",
+        "js/tabs/records/archive-toggle.js",
+        "js/tabs/records/checkin-feedback.js",
+        "js/tabs/records/checkin-helpers.js",
+        "js/tabs/records/csv-export.js",
+        "js/tabs/records/export-theme.js",
+        "js/tabs/records/first-checkin-tutorial.js",
+        "js/tabs/records/growth-chart.js",
+        "js/tabs/records/heatmap-summary.js",
+        "js/tabs/records/mic-permission-guide.js",
+        "js/tabs/records/photo-proof.js",
+        "js/tabs/records/pro-report-export.js",
+        "js/tabs/records/pro-template-modals.js",
+        "js/tabs/records/pro-templates.js",
+        "js/tabs/records/record-assistant.js",
+        "js/tabs/records/record-card-wire.js",
+        "js/tabs/records/record-cards.js",
+        "js/tabs/records/record-heatmap-levels.js",
+        "js/tabs/records/record-heatmap-report.js",
+        "js/tabs/records/render.js",
+        "js/tabs/records/share-to-feed.js",
+        "js/tabs/records/table-analytics-engine.js",
+        "js/tabs/records/table-analytics-view.js",
+        "js/tabs/records/table-stopwatch.js",
+        "js/tabs/records/template-record-detail.js",
+        "js/tabs/records/theme-classifier.js",
+        "js/tabs/records/theme-export-csv.js",
+        "js/tabs/records/theme-picker.js",
+        "js/tabs/records/trend-metrics-chart.js",
+        "js/tabs/records/trend-multi-metric-svg.js",
+        "js/tabs/records/weekly-recap.js",
+        "js/tabs/settings/a11y-announce.js",
+        "js/tabs/settings/account-actions.js",
+        "js/tabs/settings/account-entry.js",
+        "js/tabs/settings/adaptive-ux.js",
+        "js/tabs/settings/app-defaults.js",
+        "js/tabs/settings/app-evaluation.js",
+        "js/tabs/settings/app-lock-pin-format.js",
+        "js/tabs/settings/app-lock-pin.js",
+        "js/tabs/settings/avatar-greeting.js",
+        "js/tabs/settings/avatar-levelup-modal.js",
+        "js/tabs/settings/comm-tour.js",
+        "js/tabs/settings/dev-debug-gate.js",
+        "js/tabs/settings/device-session.js",
+        "js/tabs/settings/feedback-bot-setup.js",
+        "js/tabs/settings/first-login-guide.js",
+        "js/tabs/settings/guest-backup-nudge.js",
+        "js/tabs/settings/guest-migration.js",
+        "js/tabs/settings/inapp-landing.js",
+        "js/tabs/settings/login-devices.js",
+        "js/tabs/settings/notification-helper.js",
+        "js/tabs/settings/notify-soft-ask.js",
+        "js/tabs/settings/notify-timer.js",
+        "js/tabs/settings/notion-sync.js",
+        "js/tabs/settings/onboarding.js",
+        "js/tabs/settings/privacy-badges.js",
+        "js/tabs/settings/pwa-install.js",
+        "js/tabs/settings/quick-actions.js",
+        "js/tabs/settings/render.js",
+        "js/tabs/settings/session-entry.js",
+        "js/tabs/settings/support-modals.js",
+        "js/tabs/settings/tab-guide.js",
+        "js/tabs/settings/tester-entry.js",
+        "js/tabs/settings/theme-apply.js",
+        "js/tabs/settings/ux-telemetry.js",
+        "js/tabs/settings/web-push.js",
+        "js/tabs/settings/widget-settings-modal.js"
+      ],
+      "scenario": "scenarios/b2-guest-boot-six-tabs.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "대조 탐침 결과 파일이 게스트 부팅을 끝내고 report() 를 받아 쓰였다(ok true).",
+      "touches": [
+        "reports/TASK-ES-611/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/cell-registry-compare.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "등록된 이름 수는 438 이다(0 이 아니다 — B1 의 공허한 0 과 다르다).",
+      "touches": [
+        "reports/TASK-ES-611/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/cell-registry-compare.json",
+        "path": "counts.registered",
+        "equals": 438
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "등록한 이름을 옛 경로 값과 === 로 대조한 횟수는 534 이고 불일치는 0 이다.",
+      "touches": [
+        "reports/TASK-ES-611/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/cell-registry-compare.json",
+        "path": "counts.mismatches",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이중 등록(같은 이름을 다른 세포가 다시 등록)은 0 이다.",
+      "touches": [
+        "reports/TASK-ES-611/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/cell-registry-compare.json",
+        "path": "counts.conflicts",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "초과(등록했는데 통로·window 어디에도 없는 이름)는 0 이다.",
+      "touches": [
+        "reports/TASK-ES-611/cell-registry-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/cell-registry-compare.json",
+        "path": "counts.extra",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "누락 88 가운데 사유 없는 것은 없다(IIFE 안에 정의가 남은 이름과 생성기가 사유를 적고 건너뛴 이름뿐).",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.compare.missingClass.unexplained",
+        "equals": []
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "바뀐 세포 파일마다 등록 블록을 걷어 내면 기준(origin/main) 파일과 글자가 같다 — 세포의 기존 글자·함수 본문 변경 0.",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.appendOnly.allSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기를 다시 돌려도 바뀌는 파일이 0 이다(멱등) — 저장된 계획 파일은 재실행 산출이다.",
+      "touches": [
+        "reports/TASK-ES-611/provide-plan.json",
+        "docs/design/harness/module-split/gen-cell-provide.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/provide-plan.json",
+        "path": "counts.changedThisRun",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기 계획에 있는 이름이 전부 페이지에서 실제로 등록됐고, 계획에 없는 이름은 등록되지 않았다.",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.generator.planMatchesPage",
+        "equals": true
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정 기록의 index.html 순증가가 0 줄이다(이 PR 은 index.html 을 바꾸지 않는다).",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.changed.indexHtml.netLineGrowth",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침 결과 파일에서 기준 대비 새 회귀 목록이 비어 있다(js/ 바로 아래 부품 + 바뀐 세포 파일 전부 단독 로드).",
+      "touches": [
+        "reports/TASK-ES-611/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/module-load.json",
+        "path": "regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "바뀐 세포 파일을 단독 로드했을 때 등록하는 전역 목록이 기준과 다른 파일이 0 이다(새 전역 0).",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.newGlobals.count",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "등록 블록을 더한 뒤 800줄을 넘는 세포 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.lines.over800",
+        "equals": []
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "인라인 스크립트 줄 수(module-metrics inlineScriptLines)가 기준과 같다.",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.ratchet.inlineScriptLinesSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 를 기준 트리(origin/main)와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄·요약이 같다(폐기 0).",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.npmTest.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/ 아래 바뀐 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.changed.testsChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "금고(court/** 등) 아래 바뀐 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-611/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-611/measurement.json",
+        "path": "summary.changed.vaultChanged",
+        "equals": []
+      }
+    }
+  ]
+}

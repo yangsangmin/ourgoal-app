@@ -1,0 +1,139 @@
+{
+  "id": "b2-guest-boot-six-tabs",
+  "title": "게스트 진입 뒤 여섯 탭을 차례로 눌러도 탭이 바뀌고 오류가 없다 (세포 등록 줄 추가 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
