@@ -763,3 +763,18 @@
     module.exports = K;
   }
 })(typeof window !== 'undefined' ? window : globalThis);
+/* ==== [세포 등록 시작 · gen-cell-provide.js] 이 세포가 키트에 단 이름을 등록 기관(js/core/cell-registry.js)에 스스로 등록한다 — 대조(compare) 전용, 동작 변화 0. 생성기 산출이므로 손으로 고치지 않는다. ==== */
+(function (g) {
+  var R = g.OurgoalCellRegistry;
+  if (!R) return;
+  var K = g.OurgoalGoalsKit;
+  if (K) R.provide('goals/template-encyclopedia', {
+    PERSONAL_TEMPLATES_REAL: K.PERSONAL_TEMPLATES_REAL, ROUTINE_TEMPLATES_AI: K.ROUTINE_TEMPLATES_AI,
+    ROUTINE_TEMPLATES_REAL: K.ROUTINE_TEMPLATES_REAL, TEAM_TEMPLATES_AI: K.TEAM_TEMPLATES_AI, TEAM_TEMPLATES_REAL: K.TEAM_TEMPLATES_REAL,
+    renderTemplateEncyclopediaScreen: K.renderTemplateEncyclopediaScreen
+  }, { window: [
+    'PERSONAL_TEMPLATES_REAL', 'ROUTINE_TEMPLATES_AI', 'ROUTINE_TEMPLATES_REAL', 'TEAM_TEMPLATES_AI', 'TEAM_TEMPLATES_REAL',
+    'renderTemplateEncyclopediaScreen'
+  ] });
+})(typeof window !== 'undefined' ? window : globalThis);
+/* ==== [세포 등록 끝] ==== */
