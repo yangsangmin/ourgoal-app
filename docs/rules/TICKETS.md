@@ -660,3 +660,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-598 | INFRA | 법정 「동작 보존 확인」 재생성 단계 수리 — 심사 대상 저장소에 의존성이 없어 기준 커밋 생성기가 '@babel/parser' 를 못 찾던 결함(PR #864 재심 F53D61B2 에서 발견), 법정 쪽 node_modules 를 NODE_PATH 로 제공 + 자체 점검 | court/lib/preserve-source.js · court/selftest/unit-preserve.js | 4단계(심사 청구)
 
 - #TASK-ES-599 | FIX | [테스트 복구] OurgoalLevelBadgeKit 전역 허용 | 상민님 지시 | 진행중
+- #TASK-ES-601 | INFRA | 지시함 DIR-003 등록 — 미분화 덩어리 해체 B 트랙 착수 지시 + CELL-REGISTRY-DESIGN 8절 결심 ⑤·③ 결과 기록(상민님 2026-10-10 「허용」) | docs/directives/ACTIVE.md · docs/architecture/CELL-REGISTRY-DESIGN.md | 4단계(심사 청구)
