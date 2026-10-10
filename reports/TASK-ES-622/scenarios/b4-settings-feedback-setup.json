@@ -1,0 +1,93 @@
+{
+  "id": "b4-settings-feedback-setup",
+  "title": "게스트로 설정 탭에서 데이터 묶음과 고급 설정을 펼쳐 「맞춤 피드백 봇 설정하기」를 누르면 설정 화면이 열리고, 뒤로를 누르면(closeFeedbackSetup) 닫히며 예외가 없다 (설정 키트 2차 배선 철거 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#advancedSettingsSummary",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#advancedSettingsSummary"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#settingsCustomFeedbackBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#fbSetupBack"
+    },
+    {
+      "do": "click",
+      "selector": "#settingsCustomFeedbackBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#fbSetupBack",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": "#fbSetupBack"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#fbSetupBack"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

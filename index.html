@@ -2338,7 +2338,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get openShareToFeedModal(){ return openShareToFeedModal; },
     get openTemplateMarketModal(){ return openTemplateMarketModal; },
     get pad(){ return pad; },
-    get renderArchivedGoals(){ return renderArchivedGoals; },
     get renderLifeBalanceWheel(){ return renderLifeBalanceWheel; },
     get renderRecordFeedbackSlot(){ return renderRecordFeedbackSlot; },
     get renderRecordHeatmap(){ return renderRecordHeatmap; },
@@ -2380,8 +2379,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get renderRecordsScreen(){ return renderRecordsScreen; },
     get saveLocalSettings(){ return saveLocalSettings; },
     get toggleScheduleDone(){ return toggleScheduleDone; },
-    get uid(){ return uid; },
-    get wireAttachmentChipClicks(){ return wireAttachmentChipClicks; }
+    get uid(){ return uid; }
   });
 
   /* ============ [#TASK-ES-370] 목표 탭 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 일정 탭 #TASK-ES-360 과 같은 틀) ============
@@ -2392,61 +2390,37 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.OurgoalAppScope.expose('index.html', {
     get VISIBILITY_LABELS(){ return VISIBILITY_LABELS; },
     get XP_RULES(){ return XP_RULES; },
-    get archiveGoal(){ return archiveGoal; },
     get awardXP(){ return awardXP; },
-    get celebrateMilestoneDone(){ return celebrateMilestoneDone; },
     get computeGoalStatusHash(){ return computeGoalStatusHash; },
-    get exportGoalSnapshot(){ return exportGoalSnapshot; },
     get formatSchedulePillHtml(){ return formatSchedulePillHtml; },
     get getEffectiveStandardDateKey(){ return getEffectiveStandardDateKey; },
     get getKSTDateKey(){ return getKSTDateKey; },
-    get goalAchievement(){ return goalAchievement; },
     get isModalDismissCooldown(){ return isModalDismissCooldown; },
     get moveToTrash(){ return moveToTrash; },
     get openAddAttachmentModal(){ return openAddAttachmentModal; },
-    get openResultModal(){ return openResultModal; },
     get openScheduleSetupModal(){ return openScheduleSetupModal; },
     get promptNewGoal(){ return promptNewGoal; },
     get refreshGoalStatusSummary(){ return refreshGoalStatusSummary; },
-    get renderGoalStatsChart(){ return renderGoalStatsChart; },
     get renderInlineAttachmentChips(){ return renderInlineAttachmentChips; },
     get renderLevelBadge(){ return renderLevelBadge; },
-    get renderPersonalGoalsEmptyGuideHtml(){ return renderPersonalGoalsEmptyGuideHtml; },
-    get renderPromptEncyclopediaHtml(){ return renderPromptEncyclopediaHtml; },
-    get renderRoutineGoalsScreen(){ return renderRoutineGoalsScreen; },
     get renderTeamGoalsScreen(){ return renderTeamGoalsScreen; },
-    get renderTemplateEncyclopediaScreen(){ return renderTemplateEncyclopediaScreen; },
     get reorderMilestones(){ return reorderMilestones; },
-    get resultPct(){ return resultPct; },
-    get shiftGoalOrder(){ return shiftGoalOrder; },
-    get sortGoalsByOrder(){ return sortGoalsByOrder; },
-    get toDateTimeLocalValue(){ return toDateTimeLocalValue; },
-    get topicPill(){ return topicPill; },
-    get wirePromptEncyclopediaEvents(){ return wirePromptEncyclopediaEvents; }
+    get toDateTimeLocalValue(){ return toDateTimeLocalValue; }
   });
 
   /* ============ [#TASK-ES-453] 인라인 스크립트 세포화 P1 이음매 3 — 목표 종합상황 AI 요약 새로 고침 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-status-refresh.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
   var refreshGoalStatusSummary = _goalsKit.refreshGoalStatusSummary;
-  window.OurgoalAppScope.expose('index.html', {
-    get generateGoalStatusSummary(){ return generateGoalStatusSummary; }
-  });
 
   /* ============ [#TASK-ES-375] 목표 탭 모듈 이음매 2차 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-370 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/result-modal.js · goal-export.js 로 옮긴 함수 중 이 스코프에서 부르는 것(위 1차 노출의 getter 포함)을 같은 이름으로 가져온다(전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매(설정·기록·일정·목표 1차)가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). */
-  var openResultModal = _goalsKit.openResultModal;
-  var exportGoalSnapshot = _goalsKit.exportGoalSnapshot;
-  var archiveGoal = _goalsKit.archiveGoal;
   window.OurgoalAppScope.expose('index.html', {
     get buildInviteLinkSuffix(){ return buildInviteLinkSuffix; },
     get burstConfetti(){ return burstConfetti; },
-    get convertTextToNotionDbRecord(){ return convertTextToNotionDbRecord; },
     get download(){ return download; },
-    get generateGoalCertificateImage(){ return generateGoalCertificateImage; },
-    get goalProgress(){ return goalProgress; },
-    get topicLabel(){ return topicLabel; }
+    get generateGoalCertificateImage(){ return generateGoalCertificateImage; }
   });
 
   /* ============ [#TASK-ES-379] 소통 탭 모듈 이음매 1차 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 목표 탭 #TASK-ES-370·#TASK-ES-375 와 같은 틀) ============
@@ -2485,13 +2459,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var renderHomeGrassSummary = _recordsKit.renderHomeGrassSummary;
   var openIosPwaInstallGuideModal = _settingsKit.openIosPwaInstallGuideModal;
   var initKeyboardShield = _settingsKit.initKeyboardShield;
-  var quickCreateStarterGoal = _goalsKit.quickCreateStarterGoal;
-  var localTodayMission = _goalsKit.localTodayMission;
-  var localNextActionSuggestion = _goalsKit.localNextActionSuggestion;
   var generateMzStoryCanvas = _commKit.generateMzStoryCanvas;
   window.OurgoalAppScope.expose('index.html', {
-    get SIM_PERSONAS(){ return SIM_PERSONAS; },
-    get STARTER_GOAL_TEMPLATES(){ return STARTER_GOAL_TEMPLATES; }
+    get SIM_PERSONAS(){ return SIM_PERSONAS; }
   });
 
   /* ============ [#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 소통 탭 #TASK-ES-379 와 같은 틀) ============
@@ -2502,9 +2472,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openCalendarDayEditHubModal = _calendarKit.openCalendarDayEditHubModal;
   var openSelectCompanionForStoryModal = _commKit.openSelectCompanionForStoryModal;
   var openSelectTeamForStoryModal = _commKit.openSelectTeamForStoryModal;
-  window.OurgoalAppScope.expose('index.html', {
-    get groupState(){ return groupState; }
-  });
 
   /* ============ [#TASK-ES-432] 인라인 스크립트 세포화 2차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀) ============
      ① 가져오기: js/tabs/comm/cheer-notify.js 로 옮긴 함수 중 이 스코프에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 소통 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -2521,7 +2488,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      구획 주석(=== 줄)을 쓰지 않는다 — 지도(scripts/inline-script-map.js)의 묶음 번호가 밀리지 않게 1차 이음매 묶음에 붙는다. */
   /* [어려움 이음매 자리 Z56] */
   /* [#TASK-ES-562] js/tabs/settings/app-lock-pin-format.js · js/tabs/goals/goal-category-templates.js · js/tabs/settings/auth-screen-actions.js · js/tabs/settings/guide-buttons.js · js/tabs/settings/support-inquiry-bind.js — 가져오기 8개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var GOAL_TEMPLATES = _goalsKit.GOAL_TEMPLATES;
   var openForgotPasswordModal = _settingsKit.openForgotPasswordModal;
   var bindAuthTabButtons = _settingsKit.bindAuthTabButtons;
   var bindTabGuideHubButton = _settingsKit.bindTabGuideHubButton;
@@ -2573,20 +2539,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var bindAppEvalSubmit = _settingsKit.bindAppEvalSubmit;
   var bindHomeAddGoal = _settingsKit.bindHomeAddGoal;
   var promptNewGoal = _goalsKit.promptNewGoal;
-  var localGoalTemplate = _goalsKit.localGoalTemplate;
   var bindNewGoalStepExports = _goalsKit.bindNewGoalStepExports;
   window.OurgoalAppScope.expose('index.html', {
-    get GOAL_TEMPLATES(){ return GOAL_TEMPLATES; },
     get btnSubmitEval(){ return btnSubmitEval; },
-    get categoryPickerHtml(){ return categoryPickerHtml; },
     get compressImage(){ return compressImage; },
     get ensureFeedPostsLoaded(){ return ensureFeedPostsLoaded; },
     get modalEvalElem(){ return modalEvalElem; },
     get renderCommScreen(){ return renderCommScreen; },
     get showUndoPrivacyToast(){ return showUndoPrivacyToast; },
-    get templateMilestones(){ return templateMilestones; },
-    get trackGoalCreated(){ return trackGoalCreated; },
-    get wireCategoryPicker(){ return wireCategoryPicker; }
+    get trackGoalCreated(){ return trackGoalCreated; }
   });
   /* [#TASK-ES-476] js/tabs/settings/avatar-levelup-modal.js · js/tabs/settings/inapp-landing.js · js/tabs/records/first-checkin-tutorial.js · js/tabs/goals/focus-autopilot.js — 가져오기 18개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var closeAvatarLevelUpModal = _settingsKit.closeAvatarLevelUpModal;
@@ -2602,7 +2563,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var getPeerRunnersForCategory = _recordsKit.getPeerRunnersForCategory;
   var sendFirstCheckinWelcomeStamps = _recordsKit.sendFirstCheckinWelcomeStamps;
   var triggerFirstCheckinCelebrationModal = _recordsKit.triggerFirstCheckinCelebrationModal;
-  var openFocusAutoPilotModal = _goalsKit.openFocusAutoPilotModal;
   var openMzShareCardModal = _goalsKit.openMzShareCardModal;
   window.OurgoalAppScope.expose('index.html', {
     get avLvModalElem(){ return avLvModalElem; },
@@ -2629,13 +2589,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var renderInlineAttachmentChips = _goalsKit.renderInlineAttachmentChips;
   var openAttachmentViewer = _goalsKit.openAttachmentViewer;
   var openAddAttachmentModal = _goalsKit.openAddAttachmentModal;
-  var wireAttachmentChipClicks = _goalsKit.wireAttachmentChipClicks;
-  var normalizeSequentialMilestoneDates = _goalsKit.normalizeSequentialMilestoneDates;
-  var applyGoalAgentOp = _goalsKit.applyGoalAgentOp;
   window.OurgoalAppScope.expose('index.html', {
     get EXTERNAL_DATA(){ return EXTERNAL_DATA; },
-    get btnShowGuide(){ return btnShowGuide; },
-    get sanitizeAttachments(){ return sanitizeAttachments; }
+    get btnShowGuide(){ return btnShowGuide; }
   });
   /* [#TASK-ES-513] js/tabs/settings/device-session.js — 가져오기 5개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var getDeviceId = _settingsKit.getDeviceId;
@@ -2650,57 +2606,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openModal = _modalOpenKit.openModal;
   /* [어려움 이음매 자리 H2] */
   /* [#TASK-ES-481] js/tabs/goals/goals-ia-actions.js · js/tabs/goals/template-encyclopedia.js · js/tabs/records/archive-toggle.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var switchGoalsSubTab = _goalsKit.switchGoalsSubTab;
-  var switchGoalStatPeriod = _goalsKit.switchGoalStatPeriod;
-  var renderGoalStatsChart = _goalsKit.renderGoalStatsChart;
-  var adoptTemplateAsMyGoal = _goalsKit.adoptTemplateAsMyGoal;
-  var ROUTINE_TEMPLATES_AI = _goalsKit.ROUTINE_TEMPLATES_AI;
-  var ROUTINE_TEMPLATES_REAL = _goalsKit.ROUTINE_TEMPLATES_REAL;
-  var TEAM_TEMPLATES_AI = _goalsKit.TEAM_TEMPLATES_AI;
-  var TEAM_TEMPLATES_REAL = _goalsKit.TEAM_TEMPLATES_REAL;
-  var PERSONAL_TEMPLATES_REAL = _goalsKit.PERSONAL_TEMPLATES_REAL;
-  var renderTemplateEncyclopediaScreen = _goalsKit.renderTemplateEncyclopediaScreen;
   var toggleRecordArchive = _recordsKit.toggleRecordArchive;
   window.OurgoalAppScope.expose('index.html', {
     get _subtabTplCat(){ return _subtabTplCat; }, set _subtabTplCat(v){ _subtabTplCat = v; },
     get _subtabTplDomain(){ return _subtabTplDomain; }, set _subtabTplDomain(v){ _subtabTplDomain = v; },
     get _subtabTplQuery(){ return _subtabTplQuery; }, set _subtabTplQuery(v){ _subtabTplQuery = v; },
     get _subtabTplType(){ return _subtabTplType; }, set _subtabTplType(v){ _subtabTplType = v; },
-    get cloneTemplate(){ return cloneTemplate; },
-    get importTemplateInstantly(){ return importTemplateInstantly; }
+    get cloneTemplate(){ return cloneTemplate; }
   });
   /* [#TASK-ES-493] js/tabs/goals/routine-screen.js · js/tabs/goals/team-goals-guide.js — 가져오기 5개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var renderRoutineGoalsScreen = _goalsKit.renderRoutineGoalsScreen;
-  var renderTeamCreateHeroCardHtml = _goalsKit.renderTeamCreateHeroCardHtml;
   var renderTeamGoalsEmptyGuideHtml = _goalsKit.renderTeamGoalsEmptyGuideHtml;
-  var wireTeamGoalsGuideEvents = _goalsKit.wireTeamGoalsGuideEvents;
-  var getTeamGoalTemplatePreset = _goalsKit.getTeamGoalTemplatePreset;
   window.OurgoalAppScope.expose('index.html', {
-    get SHIFT_WORK_PRESETS(){ return SHIFT_WORK_PRESETS; },
-    get applyShiftWorkRoutines(){ return applyShiftWorkRoutines; },
-    get openRoutineDetailModal(){ return openRoutineDetailModal; },
-    get openShiftCycleModal(){ return openShiftCycleModal; },
-    get openShiftWorkCustomModal(){ return openShiftWorkCustomModal; },
-    get openTeamLinkedPersonalGoalModal(){ return openTeamLinkedPersonalGoalModal; },
     get promptNewGroup(){ return promptNewGroup; }
   });
   /* [#TASK-ES-497] js/tabs/goals/team-goals-screen.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var renderTeamGoalsScreen = _goalsKit.renderTeamGoalsScreen;
   window.OurgoalAppScope.expose('index.html', {
-    get TEAM_COMMENTS_CACHE(){ return TEAM_COMMENTS_CACHE; },
     get blockUser(){ return blockUser; },
-    get canManageTeamGoals(){ return canManageTeamGoals; },
     get collapseAllTeamGoalAccordions(){ return collapseAllTeamGoalAccordions; },
-    get ensureTeamCommentsLoaded(){ return ensureTeamCommentsLoaded; },
-    get getGroupLevelGoals(){ return getGroupLevelGoals; },
     get loadSharedGroups(){ return loadSharedGroups; },
-    get openLevelGroupDetailModal(){ return openLevelGroupDetailModal; },
-    get openTeamGoalEditModal(){ return openTeamGoalEditModal; },
-    get openTeamInviteModal(){ return openTeamInviteModal; },
-    get promptNewTeamGoal(){ return promptNewTeamGoal; },
-    get renderTeamGoalsEmptyGuideHtml(){ return renderTeamGoalsEmptyGuideHtml; },
-    get teamCommentsBlockHtml(){ return teamCommentsBlockHtml; },
-    get wireTeamGoalsGuideEvents(){ return wireTeamGoalsGuideEvents; }
+    get renderTeamGoalsEmptyGuideHtml(){ return renderTeamGoalsEmptyGuideHtml; }
   });
   /* [#TASK-ES-526] js/tabs/records/table-csv-sync.js · js/tabs/records/voice-table-input.js · js/tabs/records/theme-export-csv.js · js/tabs/comm/peer-invite-text.js — 가져오기 10개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var downloadTableAsCsv = _recordsKit.downloadTableAsCsv;
@@ -2720,16 +2645,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-545] js/tabs/goals/team-comments.js · js/tabs/comm/user-blocks.js · js/tabs/goals/goal-order.js · js/tabs/settings/widget-modal-opener.js — 가져오기 13개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var canManageTeamGoals = _goalsKit.canManageTeamGoals;
   var TEAM_COMMENTS_CACHE = _goalsKit.TEAM_COMMENTS_CACHE;
-  var setupRealtimeChannelsOnce = _goalsKit.setupRealtimeChannelsOnce;
-  var ensureTeamCommentsLoaded = _goalsKit.ensureTeamCommentsLoaded;
   var teamCommentsBlockHtml = _goalsKit.teamCommentsBlockHtml;
   var filterHidden = _commKit.filterHidden;
   var filterBlockedPosts = _commKit.filterBlockedPosts;
   var blockUser = _commKit.blockUser;
   var openBlockedUsersModal = _commKit.openBlockedUsersModal;
-  var sortGoalsByOrder = _goalsKit.sortGoalsByOrder;
-  var shiftGoalOrder = _goalsKit.shiftGoalOrder;
-  var reorderGoal = _goalsKit.reorderGoal;
   var bindWidgetModalOpener = _settingsKit.bindWidgetModalOpener;
   window.OurgoalAppScope.expose('index.html', {
     get REALTIME_CHANNELS_SETUP(){ return REALTIME_CHANNELS_SETUP; }, set REALTIME_CHANNELS_SETUP(v){ REALTIME_CHANNELS_SETUP = v; },
@@ -2737,20 +2657,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get setupUserSessionRealtime(){ return setupUserSessionRealtime; }
   });
   /* [#TASK-ES-552] js/tabs/goals/personal-goals-guide.js · js/tabs/goals/team-level-goals.js · js/tabs/goals/team-goal-edit-modal.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var renderPersonalGoalsEmptyGuideHtml = _goalsKit.renderPersonalGoalsEmptyGuideHtml;
-  var isMockGroup = _goalsKit.isMockGroup;
   var getGroupLevelGoals = _goalsKit.getGroupLevelGoals;
-  var openLevelGroupDetailModal = _goalsKit.openLevelGroupDetailModal;
   var collapseAllTeamGoalAccordions = _goalsKit.collapseAllTeamGoalAccordions;
-  var openTeamGoalEditModal = _goalsKit.openTeamGoalEditModal;
   /* [#TASK-ES-591] js/tabs/goals/template-encyclopedia-modal.js — 가져오기 10개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var REAL_USER_TEMPLATES = _goalsKit.REAL_USER_TEMPLATES;
   var openTemplateEncyclopediaModal = _goalsKit.openTemplateEncyclopediaModal;
   var closeTemplateEncyclopediaModal = _goalsKit.closeTemplateEncyclopediaModal;
   var switchTemplateEncyclopediaTab = _goalsKit.switchTemplateEncyclopediaTab;
-  var cheerRealUserTemplate = _goalsKit.cheerRealUserTemplate;
   var copyRealUserTemplate = _goalsKit.copyRealUserTemplate;
-  var shareMyActiveGoalAsTemplate = _goalsKit.shareMyActiveGoalAsTemplate;
   var bindTemplateEncyclopediaModalClick = _goalsKit.bindTemplateEncyclopediaModalClick;
   var bindTemplateEncyclopediaEscape = _goalsKit.bindTemplateEncyclopediaEscape;
   var bindHeaderTemplateEncyclopediaClick = _goalsKit.bindHeaderTemplateEncyclopediaClick;
@@ -2791,7 +2704,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   });
   /* [#TASK-ES-520] js/tabs/goals/goal-archive.js · js/tabs/records/record-heatmap-levels.js · js/tabs/records/table-analytics-engine.js · js/tabs/records/trend-multi-metric-svg.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var goalAchievement = _goalsKit.goalAchievement;
-  var renderArchivedGoals = _goalsKit.renderArchivedGoals;
   var bindArchivedPeriodSetter = _goalsKit.bindArchivedPeriodSetter;
   var bindArchivedPageSetter = _goalsKit.bindArchivedPageSetter;
   var HEATMAP_WEEKS = _recordsKit.HEATMAP_WEEKS;
@@ -2831,7 +2743,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get drawShareWatermark(){ return drawShareWatermark; },
     get enterApp(){ return enterApp; },
     get formatPeerInviteMessage(){ return formatPeerInviteMessage; },
-    get gaugeSvg(){ return gaugeSvg; },
     get genAnonName(){ return genAnonName; },
     get generateShareImage(){ return generateShareImage; },
     get hashStr(){ return hashStr; },
@@ -2873,12 +2784,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get copyGroupInviteLink(){ return copyGroupInviteLink; },
     get getAIAnalysisPrompt(){ return getAIAnalysisPrompt; },
     get getSupabaseAuthToken(){ return getSupabaseAuthToken; },
-    get getTeamGoalTemplatePreset(){ return getTeamGoalTemplatePreset; },
-    get groupCheckedToday(){ return groupCheckedToday; },
-    get groupStreak(){ return groupStreak; },
-    get isMockGroup(){ return isMockGroup; },
     get openPeerInviteSuccessModal(){ return openPeerInviteSuccessModal; },
-    get renderTeamCreateHeroCardHtml(){ return renderTeamCreateHeroCardHtml; },
     get setRecordsSegment(){ return setRecordsSegment; },
     get setRecordsSlide(){ return setRecordsSlide; },
     get shareGroupToKakao(){ return shareGroupToKakao; },
@@ -3042,9 +2948,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openNotificationCenterModal = _uiKit.openNotificationCenterModal;
   var bindScheduleReminderStart = _uiKit.bindScheduleReminderStart;
   window.OurgoalAppScope.expose('index.html', {
-    get openHallOfFame(){ return openHallOfFame; },
-    get regionPickerHtml(){ return regionPickerHtml; },
-    get wireRegionPicker(){ return wireRegionPicker; }
+    get openHallOfFame(){ return openHallOfFame; }
   });
   /* [#TASK-ES-536] js/tabs/settings/notify-timer.js · js/tabs/settings/web-push.js · js/core/date-rollover.js · js/core/deep-link-gateway.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var setupDateRolloverWatcher = _uiKit.setupDateRolloverWatcher;
@@ -3054,7 +2958,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get renderTodayMissionCard(){ return renderTodayMissionCard; }
   });
   /* [#TASK-ES-537] js/tabs/goals/routine-detail-modal.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var openRoutineDetailModal = _goalsKit.openRoutineDetailModal;
   /* [#TASK-ES-521] js/core/supabase-auth.js · js/tabs/settings/tester-entry.js · js/tabs/settings/account-actions.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var getSupabaseAuthToken = _uiKit.getSupabaseAuthToken;
   var GOOGLE_OAUTH_CLIENT_ID = _uiKit.GOOGLE_OAUTH_CLIENT_ID;
@@ -3069,7 +2972,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get _pendingAuthSession(){ return _pendingAuthSession; }, set _pendingAuthSession(v){ _pendingAuthSession = v; },
     get authTesterBBtn(){ return authTesterBBtn; },
     get landTesterBBtn(){ return landTesterBBtn; },
-    get performLogout(){ return performLogout; },
     get resyncBtn(){ return resyncBtn; }
   });
   /* [#TASK-ES-548] js/core/app-enter.js · js/tabs/calendar/manual-edit-modal.js · js/tabs/settings/ux-telemetry.js · js/tabs/goals/starter-goal-templates.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -3082,13 +2984,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var bindOfflineNotice = _uiKit.bindOfflineNotice;
   var openCalendarManualEditModal = _calendarKit.openCalendarManualEditModal;
   var bindRageTapTelemetry = _settingsKit.bindRageTapTelemetry;
-  var STARTER_GOAL_TEMPLATES = _goalsKit.STARTER_GOAL_TEMPLATES;
   window.OurgoalAppScope.expose('index.html', {
     get checkSocialNotifications(){ return checkSocialNotifications; },
     get checkStreakFreeze(){ return checkStreakFreeze; },
-    get getDeviceId(){ return getDeviceId; },
     get renderFirstCheckinTutorialBanner(){ return renderFirstCheckinTutorialBanner; },
-    get setupRealtimeChannelsOnce(){ return setupRealtimeChannelsOnce; },
     get updateTopNotifBadge(){ return updateTopNotifBadge; }
   });
   /* [#TASK-ES-522] js/core/profile-load.js · js/core/server-records-sync.js · js/tabs/settings/withdraw-modal.js — 가져오기 7개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -3115,19 +3014,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get badgeContext(){ return badgeContext; },
     get initFeedbackTierBar(){ return initFeedbackTierBar; },
     get initHomeCockpit(){ return initHomeCockpit; },
-    get msCounts(){ return msCounts; },
-    get openFocusAutoPilotModal(){ return openFocusAutoPilotModal; },
-    get quickCreateStarterGoal(){ return quickCreateStarterGoal; },
     get renderCrewPacingWidget(){ return renderCrewPacingWidget; },
     get renderQuickCheckinGuideChips(){ return renderQuickCheckinGuideChips; },
-    get renderTodayGlancePill(){ return renderTodayGlancePill; },
-    get reorderGoal(){ return reorderGoal; }
+    get renderTodayGlancePill(){ return renderTodayGlancePill; }
   });
   /* [#TASK-ES-568] js/tabs/goals/shift-routines.js · js/tabs/records/growth-chart.js · js/tabs/home/quest-summary.js — 가져오기 8개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var SHIFT_WORK_PRESETS = _goalsKit.SHIFT_WORK_PRESETS;
-  var applyShiftWorkRoutines = _goalsKit.applyShiftWorkRoutines;
-  var openShiftWorkCustomModal = _goalsKit.openShiftWorkCustomModal;
-  var openShiftCycleModal = _goalsKit.openShiftCycleModal;
   var renderLifeBalanceWheel = _recordsKit.renderLifeBalanceWheel;
   var renderRecordThemeFilters = _recordsKit.renderRecordThemeFilters;
   var renderTodayGlancePill = _homeKit.renderTodayGlancePill;
@@ -3142,9 +3033,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-571] js/tabs/records/csv-export.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var exportRecordsCsv = _recordsKit.exportRecordsCsv;
   /* [#TASK-ES-572] js/tabs/settings/notification-helper.js · js/tabs/goals/goal-detail-drawer.js — 가져오기 5개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var openGoalDetailDrawer = _goalsKit.openGoalDetailDrawer;
-  var closeGoalDetailDrawer = _goalsKit.closeGoalDetailDrawer;
-  var toggleMilestoneInDrawer = _goalsKit.toggleMilestoneInDrawer;
   /* [#TASK-ES-574] js/core/default-profile.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var defaultProfile = _uiKit.defaultProfile;
   /* [#TASK-ES-575] js/core/calendar-availability.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -3152,9 +3040,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-576] js/tabs/home/today-mission.js — 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var computeTodayMissionHash = _homeKit.computeTodayMissionHash;
   var renderTodayMissionCard = _homeKit.renderTodayMissionCard;
-  window.OurgoalAppScope.expose('index.html', {
-    get requestTodayMission(){ return requestTodayMission; }
-  });
   /* [#TASK-ES-578] js/tabs/records/theme-picker.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var openThemePickerModal = _recordsKit.openThemePickerModal;
   /* [#TASK-ES-581] js/core/all-view-render.js · js/core/app-boot.js — 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -3182,14 +3067,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
-  var sanitizeAttachments = _goalsKit.sanitizeAttachments;
-  var showGoalAgentReviewStep = _goalsKit.showGoalAgentReviewStep;
   var sendGoalAgentMessage = _goalsKit.sendGoalAgentMessage;
   var computeGoalStatusHash = _goalsKit.computeGoalStatusHash;
-  var localGoalStatusSummary = _goalsKit.localGoalStatusSummary;
-  var generateGoalStatusSummary = _goalsKit.generateGoalStatusSummary;
-  var requestTodayMission = _goalsKit.requestTodayMission;
-  var celebrateMilestoneDone = _goalsKit.celebrateMilestoneDone;
   var formatSchedulePillHtml = _goalsKit.formatSchedulePillHtml;
   var openScheduleSetupModal = _goalsKit.openScheduleSetupModal;
   var applyScheduleUpdate = _goalsKit.applyScheduleUpdate;
@@ -3201,15 +3080,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get DONE_KEYWORDS(){ return DONE_KEYWORDS; },
     get GeminiQuotaDispatcher(){ return GeminiQuotaDispatcher; },
     get THEME_FEEDBACK_PROMPTS(){ return THEME_FEEDBACK_PROMPTS; },
-    get TOPICS(){ return TOPICS; },
-    get applyGoalAgentOp(){ return applyGoalAgentOp; },
     get classifyRecordTheme(){ return classifyRecordTheme; },
     get dispatchFullViewPropagation(){ return dispatchFullViewPropagation; },
-    get localNextActionSuggestion(){ return localNextActionSuggestion; },
-    get localTodayMission(){ return localTodayMission; },
-    get milestonesForAI(){ return milestonesForAI; },
-    get normalizeSequentialMilestoneDates(){ return normalizeSequentialMilestoneDates; },
-    get renderGoalsScreen(){ return renderGoalsScreen; }
+    get milestonesForAI(){ return milestonesForAI; }
   });
 
   /* ============ [#TASK-ES-446] 인라인 스크립트 세포화 P2-1 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀) ============
@@ -3229,7 +3102,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get HEATMAP_WEEKS(){ return HEATMAP_WEEKS; },
     get computeTableAnalytics(){ return computeTableAnalytics; },
     get heatmapLevel(){ return heatmapLevel; },
-    get maybeShowGoalUpdateModal(){ return maybeShowGoalUpdateModal; },
     get openRecordModal(){ return openRecordModal; },
     get renderFeedbackSlot(){ return renderFeedbackSlot; },
     get requestAIFeedback(){ return requestAIFeedback; },
@@ -3245,13 +3117,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var EXTERNAL_DATA = _commKit.EXTERNAL_DATA;
   var CREATOR_TEMPLATES = _commKit.CREATOR_TEMPLATES;
   var VISIBILITY_LABELS = _commKit.VISIBILITY_LABELS;
-  var TOPICS = _goalsKit.TOPICS;
-  var topicLabel = _goalsKit.topicLabel;
-  var topicPill = _goalsKit.topicPill;
-  var regionPickerHtml = _goalsKit.regionPickerHtml;
-  var wireRegionPicker = _goalsKit.wireRegionPicker;
-  var categoryPickerHtml = _goalsKit.categoryPickerHtml;
-  var wireCategoryPicker = _goalsKit.wireCategoryPicker;
   var SHARE_PLATFORMS = _commKit.SHARE_PLATFORMS;
   var drawShareWatermark = _commKit.drawShareWatermark;
   var buildInviteLinkSuffix = _commKit.buildInviteLinkSuffix;
@@ -3262,9 +3127,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var ensureFeedPostsLoaded = _commKit.ensureFeedPostsLoaded;
   var setupFeedPostsRealtime = _commKit.setupFeedPostsRealtime;
   var groupState = _goalsKit.groupState;
-  var groupCheckedToday = _goalsKit.groupCheckedToday;
-  var groupStreak = _goalsKit.groupStreak;
-  var promptNewTeamGoal = _goalsKit.promptNewTeamGoal;
   var MANITO_EMOJI = _commKit.MANITO_EMOJI;
   var MANITO_WELCOME_STAMPS = _commKit.MANITO_WELCOME_STAMPS;
   var MANITO_STAMPS = _commKit.MANITO_STAMPS;
@@ -3285,7 +3147,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get daysFromNow(){ return daysFromNow; },
     get getFeedComments(){ return getFeedComments; },
     get openRecordModal(){ return openRecordModal; },
-    get openTemplateEncyclopediaModal(){ return openTemplateEncyclopediaModal; },
     get openThemePickerModal(){ return openThemePickerModal; },
     get setFeedComments(){ return setFeedComments; }
   });
@@ -3304,18 +3165,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var openAvatarGreetingPopup = _settingsKit.openAvatarGreetingPopup;
   var closeAvatarGreetingPopup = _settingsKit.closeAvatarGreetingPopup;
   var showLegalModal = _settingsKit.showLegalModal;
-  var openTeamLinkedPersonalGoalModal = _goalsKit.openTeamLinkedPersonalGoalModal;
-  var openTeamInviteModal = _goalsKit.openTeamInviteModal;
-  var importTemplateInstantly = _goalsKit.importTemplateInstantly;
-  var templateMilestones = _goalsKit.templateMilestones;
-  var gaugeSvg = _goalsKit.gaugeSvg;
   var applyQuickCunningText = _recordsKit.applyQuickCunningText;
   var checkStreakFreeze = _recordsKit.checkStreakFreeze;
   window.OurgoalAppScope.expose('index.html', {
-    get GOAL_TEMPLATES(){ return GOAL_TEMPLATES; },
     get MOCK_GROUPS(){ return MOCK_GROUPS; },
     get __avatarGreetTimer(){ return __avatarGreetTimer; }, set __avatarGreetTimer(v){ __avatarGreetTimer = v; },
-    get closeTemplateEncyclopediaModal(){ return closeTemplateEncyclopediaModal; },
     get isValidRealUser(){ return isValidRealUser; },
     get maybeApplyStreakFreeze(){ return maybeApplyStreakFreeze; },
     get maybeGrantAvatarCraftBonus(){ return maybeGrantAvatarCraftBonus; },
@@ -3327,21 +3181,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      ① 가져오기: js/tabs/settings/login-devices.js · js/tabs/settings/app-lock-pin.js · js/tabs/settings/dev-debug-gate.js · js/tabs/settings/guest-migration.js · js/tabs/settings/tab-guide.js · js/tabs/settings/onboarding.js · js/tabs/goals/prompt-encyclopedia.js · js/tabs/goals/notion-record-convert.js · js/tabs/calendar/schedule-done-toggle.js · js/tabs/goals/goal-math.js · js/tabs/settings/app-defaults.js 로 옮긴 선언 중 이 스코프에서 쓰는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
   var initDevDebugButtons = _settingsKit.initDevDebugButtons;
-  var renderPromptEncyclopediaHtml = _goalsKit.renderPromptEncyclopediaHtml;
-  var wirePromptEncyclopediaEvents = _goalsKit.wirePromptEncyclopediaEvents;
-  var convertTextToNotionDbRecord = _goalsKit.convertTextToNotionDbRecord;
   var toggleScheduleDone = _calendarKit.toggleScheduleDone;
-  var goalProgress = _goalsKit.goalProgress;
-  var msCounts = _goalsKit.msCounts;
-  var resultPct = _goalsKit.resultPct;
   window.OurgoalAppScope.expose('index.html', {
     get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; },
     get _promptEncyclopediaOpen(){ return _promptEncyclopediaOpen; }, set _promptEncyclopediaOpen(v){ _promptEncyclopediaOpen = v; },
     get _promptTabState(){ return _promptTabState; }, set _promptTabState(v){ _promptTabState = v; },
     get enterApp(){ return enterApp; },
     get gcalEventsKey(){ return gcalEventsKey; },
-    get getDeviceId(){ return getDeviceId; },
-    get performLogout(){ return performLogout; },
     get purgeLegacySharedGcalKeys(){ return purgeLegacySharedGcalKeys; },
     get renderFirstCheckinTutorialBanner(){ return renderFirstCheckinTutorialBanner; }
   });
@@ -3445,7 +3291,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   if(typeof window !== 'undefined'){ window.renderLevelBadge = renderLevelBadge; }
   /* ============ [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 ============ */
   /* [#TASK-ES-476] filterHarmfulWords · openAvatarLevelUpModal · closeAvatarLevelUpModal → js/tabs/settings/avatar-levelup-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.closeAvatarLevelUpModal = closeAvatarLevelUpModal;
 
   // 아바타 레벨업 모달 이벤트 배선 (#TASK-ES-150)
   var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');
@@ -3506,16 +3351,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ [80] 템플릿백과사전 1초 자동이식 선택 연동 및 로드맵-목표상태 동기화 ============ */
   /* [#TASK-ES-437] importTemplateInstantly → js/tabs/goals/template-quick-import.js 로 옮김(인라인 스크립트 세포화 P0) */
-  window.importTemplateInstantly = importTemplateInstantly;
 
   
   /* ============ [82] 팀 목표 내 '팀 연계 개인목표' 생성 모달 ============ */
   /* [#TASK-ES-437] openTeamLinkedPersonalGoalModal → js/tabs/goals/team-goal-modals.js 로 옮김(인라인 스크립트 세포화 P0) */
-  window.openTeamLinkedPersonalGoalModal = openTeamLinkedPersonalGoalModal;
 
   /* ============ [83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능 ============ */
   /* [#TASK-ES-437] openTeamInviteModal → js/tabs/goals/team-goal-modals.js 로 옮김(인라인 스크립트 세포화 P0) */
-  window.openTeamInviteModal = openTeamInviteModal;
 
   
   /* ============ [88] 오늘의 3초 체크인 목표 버튼 선택 시 플레이스홀더(백그라운드 가이드) 예시 문구 렌더링 ============ */
@@ -3539,7 +3381,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ [#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저 감지 및 Android Chrome 자동 탈출 & iOS Safari 플로팅 가이드 배너 ============ */
   /* [#TASK-ES-476] escapeKakaoInAppBrowser · checkKakaoInAppBrowser → js/tabs/settings/inapp-landing.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   checkKakaoInAppBrowser();
-  window.checkKakaoInAppBrowser = checkKakaoInAppBrowser;
 
   var landNickQuickLink = document.getElementById('landNickQuickLink');
   bindLandNickQuickLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandNickQuickLink 로 옮김 — 원래 자리에서 부른다 */
@@ -3561,7 +3402,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   } else {
     initDevDebugButtons();
   }
-  window.initDevDebugButtons = initDevDebugButtons;
 
   /* ============ 소셜 로그인 (카카오 / 실제 구글 OAuth 연동) ============ */
   /* [#TASK-ES-591] sha256Hex · parseJwtPayload · handleGoogleUserSuccess → js/auth-social.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
@@ -4016,7 +3856,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 맞춤 피드백 봇 설정 ============ */
   /* [#TASK-ES-492] customFeedbackStatusSuffix · refreshCustomFeedbackButtons · getSavedFeedbackPresets · persistFeedbackPresets · openFeedbackSetup → js/tabs/settings/feedback-bot-setup.js 로 옮김(인라인 어려움 기관 묶음 이전 3차 — 앞 주석 포함) */
   /* [#TASK-ES-492] closeFeedbackSetup → js/tabs/settings/feedback-bot-setup.js 로 옮김(인라인 어려움 기관 묶음 이전 3차 — 앞 주석 포함) */
-  window.closeFeedbackSetup = closeFeedbackSetup;
   /* [#TASK-ES-492] generateCustomFeedbackPrompt · fbBotBubbleHtml · renderFeedbackSetup · openFeedbackSetupGated → js/tabs/settings/feedback-bot-setup.js 로 옮김(인라인 어려움 기관 묶음 이전 3차 — 앞 주석 포함) */
   document.getElementById('customFeedbackBtn').addEventListener('click', openFeedbackSetupGated);
   document.getElementById('settingsCustomFeedbackBtn').addEventListener('click', openFeedbackSetupGated);
@@ -4048,19 +3887,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ [#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작용 ============ */
   /* [#TASK-ES-591] REAL_USER_TEMPLATES → js/tabs/goals/template-encyclopedia-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.REAL_USER_TEMPLATES = REAL_USER_TEMPLATES;
 
   var _tplActiveTab = 'realUser';
   var _tplAiCurCat = 'all';
   /* [#TASK-ES-591] openTemplateEncyclopediaModal · closeTemplateEncyclopediaModal → js/tabs/goals/template-encyclopedia-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.openTemplateEncyclopediaModal = openTemplateEncyclopediaModal;
-  window.closeTemplateEncyclopediaModal = closeTemplateEncyclopediaModal;
   /* [#TASK-ES-591] switchTemplateEncyclopediaTab · getLikedTemplateMap · setLikedTemplateMap · cheerRealUserTemplate → js/tabs/goals/template-encyclopedia-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.cheerRealUserTemplate = cheerRealUserTemplate;
   /* [#TASK-ES-591] copyRealUserTemplate → js/tabs/goals/template-encyclopedia-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.copyRealUserTemplate = copyRealUserTemplate;
   /* [#TASK-ES-591] getUserSharedTemplates · saveUserSharedTemplates · shareMyActiveGoalAsTemplate → js/tabs/goals/template-encyclopedia-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.shareMyActiveGoalAsTemplate = shareMyActiveGoalAsTemplate;
   /* [#TASK-ES-591] renderRealUserTemplatesList · renderAiTemplatesList → js/tabs/goals/template-encyclopedia-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   // 모달 닫기 및 탭 클릭 바인딩
@@ -4081,13 +3914,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   // 전역 함수 노출
   window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal;
-  window.closeGoalTemplateEncyclopediaModal = closeTemplateEncyclopediaModal;
   window.copyUserGoalTemplate = copyRealUserTemplate;
 
   /* ============ [#TASK-ES-146] 아워골 평가해주기 90% 팝업 ============ */
   /* [#TASK-ES-466] openAppEvaluationModal · closeAppEvaluationModal → js/tabs/settings/app-evaluation.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.openAppEvaluationModal = openAppEvaluationModal;
-  window.closeAppEvaluationModal = closeAppEvaluationModal;
 
   var btnEvalBanner = document.getElementById('btnOpenEvalModal');
   if(btnEvalBanner){
@@ -4136,7 +3966,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-483] wireAttachmentChipClicks · normalizeSequentialMilestoneDates · buildGoalFromAgentData · applyGoalAgentOp → js/tabs/goals/attachments.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
   /* ============ 목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5) ============ */
   /* [#TASK-ES-436] renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep → js/tabs/goals/ai-agent.js 로 옮김(인라인 스크립트 세포화 P1) */
-  window.showGoalAgentReviewStep = showGoalAgentReviewStep;
   /* [#TASK-ES-436] sendGoalAgentMessage → js/tabs/goals/ai-agent.js 로 옮김(인라인 스크립트 세포화 P1) */
   var toggleAgentBtn = document.getElementById('btnToggleGoalAgent');
   if(toggleAgentBtn){
@@ -4183,25 +4012,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.formatSchedulePillHtml = formatSchedulePillHtml;
     window.openScheduleSetupModal = openScheduleSetupModal;
     window.applyScheduleUpdate = applyScheduleUpdate;
-    window.localGoalStatusSummary = localGoalStatusSummary;
-    window.localGoalTemplate = localGoalTemplate;
     window.computeGoalStatusHash = computeGoalStatusHash;
     window.refreshGoalStatusSummary = refreshGoalStatusSummary;
   }
 
   /* ============ [#TASK-ES-220] [생각 메모장 91번] 교대근무자 가변형 루틴 프리셋 & 자동 스케줄러 ============ */
   /* [#TASK-ES-568] SHIFT_WORK_PRESETS · applyShiftWorkRoutines · openShiftWorkCustomModal · openShiftCycleModal → js/tabs/goals/shift-routines.js 로 옮김(잔여 책임 분열 — 교대근무 루틴·성장차트·홈 퀘스트 — 앞 주석 포함) */
-  window.applyShiftWorkRoutines = applyShiftWorkRoutines;
-  window.openShiftWorkCustomModal = openShiftWorkCustomModal;
-  window.openShiftCycleModal = openShiftCycleModal;
-  window.SHIFT_WORK_PRESETS = SHIFT_WORK_PRESETS;
 
   /* ============ [#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달 ============ */
   /* [#TASK-ES-537] openRoutineDetailModal → js/tabs/goals/routine-detail-modal.js 로 옮김(인라인 3단계 기관 — 데일리 루틴 상세·편집 창 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.openRoutineDetailModal = openRoutineDetailModal;
-    window.renderRoutineGoalsScreen = renderRoutineGoalsScreen;
-  }
   /* [#TASK-ES-493] openAddRoutineModal → js/tabs/goals/routine-screen.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   /* ============ RENDER: TEMPLATE ENCYCLOPEDIA SUBTAB (#TASK-ES-187) ============ */
@@ -4213,14 +4032,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _subtabTplCat = 'all';
   var _subtabTplQuery = '';
   /* [#TASK-ES-481] ROUTINE_TEMPLATES_AI · ROUTINE_TEMPLATES_REAL · TEAM_TEMPLATES_AI · TEAM_TEMPLATES_REAL · PERSONAL_TEMPLATES_REAL · renderTemplateEncyclopediaScreen → js/tabs/goals/template-encyclopedia.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.renderTemplateEncyclopediaScreen = renderTemplateEncyclopediaScreen;
   window._subtabTplDomain = _subtabTplDomain;
   window._subtabTplType = _subtabTplType;
-  window.ROUTINE_TEMPLATES_AI = ROUTINE_TEMPLATES_AI;
-  window.ROUTINE_TEMPLATES_REAL = ROUTINE_TEMPLATES_REAL;
-  window.TEAM_TEMPLATES_AI = TEAM_TEMPLATES_AI;
-  window.TEAM_TEMPLATES_REAL = TEAM_TEMPLATES_REAL;
-  window.PERSONAL_TEMPLATES_REAL = PERSONAL_TEMPLATES_REAL;
 
   /* ==========================================================================
      [UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA (#TASK-UIUX-PHASE4-GOALS)
@@ -4240,7 +4053,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   window.selectSmartTag = selectSmartTag;
   /* [#TASK-ES-481] switchGoalsSubTab → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.switchGoalsSubTab = switchGoalsSubTab;
 
   function handleGoalFastAddSubmit(){
     var input = document.getElementById('goalFastAddInput');
@@ -4275,16 +4087,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   window.handleGoalFastAddSubmit = handleGoalFastAddSubmit;
   /* [#TASK-ES-572] openGoalDetailDrawer · closeGoalDetailDrawer · toggleMilestoneInDrawer → js/tabs/goals/goal-detail-drawer.js 로 옮김(알림 헬퍼·목표 상세 서랍 책임 분열 — 앞 주석 포함) */
-  window.openGoalDetailDrawer = openGoalDetailDrawer;
-  window.closeGoalDetailDrawer = closeGoalDetailDrawer;
-  window.toggleMilestoneInDrawer = toggleMilestoneInDrawer;
 
   window.currentGoalStatPeriod = 'week';
   /* [#TASK-ES-481] switchGoalStatPeriod · renderGoalStatsChart → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.switchGoalStatPeriod = switchGoalStatPeriod;
-  window.renderGoalStatsChart = renderGoalStatsChart;
   /* [#TASK-ES-481] adoptTemplateAsMyGoal → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.adoptTemplateAsMyGoal = adoptTemplateAsMyGoal;
 
   /* ============ [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS ============ */
   /* [#TASK-ES-481] toggleRecordArchive → js/tabs/records/archive-toggle.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
@@ -4352,7 +4158,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135) ============ */
   /* [#TASK-ES-552] renderPersonalGoalsEmptyGuideHtml → js/tabs/goals/personal-goals-guide.js 로 옮김(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집 — 앞 주석 포함) */
   /* [#TASK-ES-552] isMockGroup → js/tabs/goals/team-level-goals.js 로 옮김(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){ window.isMockGroup = isMockGroup; }
   /* [#TASK-ES-493] renderTeamCreateHeroCardHtml · renderTeamGoalsEmptyGuideHtml → js/tabs/goals/team-goals-guide.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if (typeof window !== 'undefined') {
     window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;
@@ -6078,12 +5883,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     });
   }
-  window.openMzShareCardModal = openMzShareCardModal;
-  window.renderGoalsScreen = renderGoalsScreen;
   window.renderCalendarScreen = renderCalendarScreen;
   window.setTab = setTab;
   window.MOCK_GROUPS = MOCK_GROUPS;
-  window.groupState = groupState;
   window.openModal = openModal;
   window.closeModal = closeModal;
 
