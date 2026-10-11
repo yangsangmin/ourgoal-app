@@ -1,0 +1,217 @@
+{
+  "task": "TASK-ES-691",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-691-DECISION-WAIT-ROWS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "미분화 덩어리 해체 뒤 새로 남는 것 일곱 줄을 지시함 「결심 대기」 표에 올린다(성격 · 상태 칸 포함). 이 칸의 줄은 AI 가 스스로 진행하지 않는다."
+    },
+    {
+      "id": "R2",
+      "text": "줄마다 근거 위치(파일 · 행 · 앞선 문서의 절)를 붙인다. 법정이 확인 못 한 항목은 대장에서 스크립트로 뽑는다."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "이 PR 은 줄을 올리기만 한다. 고치기 · 금고 변경 · 실계정 확인은 하지 않는다(각각 상민님 결심 뒤 새 지시).",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: 법정의 생성기 재실행 대조가 새 폴더를 「예상 밖 파일」로 본다(`cou",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "법정의 생성기 재실행 대조가 새 폴더를 「예상 밖 파일」로 본다(`court/lib/preserve-sour"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: 채점 기준인 무결성 게이트(`scripts/verify-integrity",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "채점 기준인 무결성 게이트(`scripts/verify-integrity-gate.js`)가 금고 목록에 없"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: `renderTeamGoalsScreen` 나누기(`js/tabs/goa",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "`renderTeamGoalsScreen` 나누기(`js/tabs/goals/team-goals-screen"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: 옛 생성기 단위 시험 `docs/design/harness/module-",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "옛 생성기 단위 시험 `docs/design/harness/module-split/unwire-check-b"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: 실계정으로만 확인할 수 있는 것 — 법정이 「확인 못 함」으로 남긴 9항",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "실계정으로만 확인할 수 있는 것 — 법정이 「확인 못 함」으로 남긴 9항목(PR 6건, `reports/TA"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: 옮기며 그대로 둔 기존 결함 후보 7건과 작은 것들(`reports/TA",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "옮기며 그대로 둔 기존 결함 후보 7건과 작은 것들(`reports/TASK-ES-691/remaining."
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: 부팅 파일(`js/app/boot.js`)이 오지 않으면 예외 없이 앱이",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "부팅 파일(`js/app/boot.js`)이 오지 않으면 예외 없이 앱이 뜨지 않는다 — 랜딩 화면은 보이는"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 칸의 머리말은 그대로다(AI 는 이 칸을 스스로 진행하지 않는다)",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "## 결심 대기 (상민님만 결정한다 — AI 는 이 칸을 스스로 진행하지 않는다)"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "표의 앞선 줄은 그대로다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| Google Play 개발자 계정 등록($25 결제·신분 확인) | 돈 |"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부팅 파일이 안 올 때의 측정 기록이 있다",
+      "touches": [
+        "reports/TASK-ES-691/boot-file-missing.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-691/boot-file-missing.json",
+        "text": "머리 — js/app/boot.js 404"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "근거 위치 문서가 있다",
+      "touches": [
+        "reports/TASK-ES-691/remaining.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-691/remaining.md",
+        "text": "# 미분화 덩어리 해체 뒤에 남은 것 — 근거 위치"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "법정이 확인 못 한 항목 표가 있다",
+      "touches": [
+        "reports/TASK-ES-691/not-confirmed.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-691/not-confirmed.md",
+        "text": "# 법정이 「확인 못 함」으로 남긴 항목"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-691 한 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-691 | INFRA | 지시함 「결심 대기」 표에 미분화 덩어리 해체 뒤 남은 것 일곱 줄"
+      }
+    }
+  ]
+}
