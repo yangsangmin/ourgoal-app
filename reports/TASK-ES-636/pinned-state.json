@@ -1,0 +1,85 @@
+{
+ "tool": "reports/TASK-ES-636/pinned-state.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T02:07:48.934Z",
+ "scannedTestSources": 137,
+ "movableNames": 50,
+ "newFailingChecks": [
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "check": "✗ [FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+   "detail": "사유: 프롬프트 백과사전 아코디언 접힘 구조 누락",
+   "exit": [
+    0,
+    1
+   ]
+  }
+ ],
+ "failingFiles": [
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "vault": true,
+   "class": "court/vault.json baseTests(기준 시험지) · 헌법 별표 3 금고 목록"
+  }
+ ],
+ "pinnedCount": 1,
+ "pinned": {
+  "_promptEncyclopediaOpen": [
+   {
+    "file": "scripts/verify-integrity-gate.js",
+    "vault": true,
+    "class": "court/vault.json baseTests(기준 시험지) · 헌법 별표 3 금고 목록",
+    "sites": [
+     {
+      "line": 954,
+      "text": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+     }
+    ]
+   }
+  ]
+ },
+ "textOnlyCount": 3,
+ "textOnly": {
+  "_googleOneTapNonce": [
+   {
+    "file": "tests/google-session-guard.test.js",
+    "vault": false,
+    "class": "그 밖의 시험 파일",
+    "sites": [
+     {
+      "line": 152,
+      "text": "var names = ['function parseJwtPayload(', 'async function handleGoogleUserSuccess(', 'function failGoogleSession(', 'async function enterWithVerifiedGoogleCredential(', 'var _googleOneTapNonce = null;', 'function initGoo"
+     }
+    ]
+   }
+  ],
+  "_modalHistoryPushed": [
+   {
+    "file": "tests/fixtures/open-modal-before-es591.js",
+    "vault": false,
+    "class": "그 밖의 시험 파일",
+    "sites": [
+     {
+      "line": 50,
+      "text": "_modalHistoryPushed = true;"
+     }
+    ]
+   }
+  ],
+  "REALTIME_CHANNELS_SETUP": [
+   {
+    "file": "tests/guest-null-client-es377.test.js",
+    "vault": false,
+    "class": "그 밖의 시험 파일",
+    "sites": [
+     {
+      "line": 48,
+      "text": "const body = '\"use strict\";\\nvar REALTIME_CHANNELS_SETUP = false; var USER_SESSION_CHANNEL = null; var FEED_POSTS_CACHE = null;\\n' +"
+     }
+    ]
+   }
+  ]
+ },
+ "unexplainedFailingFiles": [],
+ "note": "pinned = 새로 깨진 검사가 든 시험 소스에 배선 글자가 있는 이름(이전 계획에서 뺀다). textOnly = 깨지지 않은 시험 소스에 같은 글자가 있는 이름(빼지 않는다 — 실제로 깨지지 않았다)."
+}
