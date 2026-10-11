@@ -4,18 +4,14 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "index.html 의 상태 선언 아홉 문을 다듬는다 — 겹친 선언 한 쌍 삭제 · 줄 끝 주석 셋을 윗줄로 · 한 줄에 쓴 선언과 window 복사를 두 줄로. 앱 동작은 그대로다."
+      "text": "index.html 의 상태 선언 아홉 문을 다듬는다 — 겹친 선언 한 쌍 삭제 · 줄 끝 주석 셋을 윗줄로 · 한 줄에 쓴 선언과 window 복사를 두 줄로. 바뀐 글자는 그 허용한 차이뿐이고(실행 글자는 겹친 선언 두 문이 빠진 것 말고 같고, 주석은 종류·글자·순서가 같고, 줄 수는 그대로다) 앱 동작은 그대로다."
     },
     {
       "id": "R2",
-      "text": "바뀐 글자는 허용한 차이뿐이다: 실행 글자는 겹친 선언 두 문이 빠진 것 말고 같고, 주석은 종류·글자·순서가 같고, 줄 수는 그대로다."
-    },
-    {
-      "id": "R3",
       "text": "고친 뒤에는 생성기 unstate 가 여섯 이름을 옮길 수 있다(저장소 밖 사본의 모의 — 이 PR 은 상태 이전을 하지 않는다)."
     },
     {
-      "id": "R4",
+      "id": "R3",
       "text": "증명 하한: 여섯 이름의 통로 값·접근자·쓰기 왕복과 통로·window 이름 값 지문이 기준과 같음 · 모듈 로드 새 회귀 0 · npm test 와 시험 하나씩 동일 · 인라인 줄 수 불변 · tests·금고·생성기·생성 지도 변경 0."
     }
   ],
@@ -72,7 +68,7 @@
     },
     {
       "id": "C4",
-      "req": "R2",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "작업 트리 인라인 IIFE 의 토큰열(주석 제외)은 기준의 토큰열에서 겹친 선언 두 문의 토큰을 뺀 것과 같다.",
@@ -88,7 +84,7 @@
     },
     {
       "id": "C5",
-      "req": "R2",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "지운 두 문은 앞에 있는 같은 이름 선언과 글자가 같다(같은 초기값).",
@@ -104,7 +100,7 @@
     },
     {
       "id": "C6",
-      "req": "R2",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "앞 선언과 지운 선언 사이의 최상위 문은 글자 값 선언문뿐이고 그 이름에 값을 넣지 않는다.",
@@ -120,7 +116,7 @@
     },
     {
       "id": "C7",
-      "req": "R2",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "주석은 종류·글자·순서가 기준과 같다(줄 끝에서 윗줄로 자리만 옮겼다).",
@@ -136,7 +132,7 @@
     },
     {
       "id": "C8",
-      "req": "R2",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "index.html 의 줄 수 변화가 0 이다.",
@@ -152,7 +148,7 @@
     },
     {
       "id": "C9",
-      "req": "R2",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "인라인 IIFE 스크립트 밖의 글자는 기준과 같다.",
@@ -168,7 +164,7 @@
     },
     {
       "id": "C10",
-      "req": "R2",
+      "req": "R1",
       "kind": "static",
       "domain": "config",
       "statement": "글자 대조 전체가 기대대로다(여섯 이름이 한 번씩, 자기 줄에 혼자 선언되고 window.shareContent 복사 줄이 혼자 있다).",
@@ -184,7 +180,7 @@
     },
     {
       "id": "C11",
-      "req": "R3",
+      "req": "R2",
       "kind": "static",
       "domain": "config",
       "statement": "작업 트리의 사본에서 생성기 unstate 가 여섯 이름을 하나씩도, 한 번에도 옮긴다.",
@@ -200,7 +196,7 @@
     },
     {
       "id": "C12",
-      "req": "R3",
+      "req": "R2",
       "kind": "static",
       "domain": "config",
       "statement": "기준 트리의 사본에서는 여섯 이름 가운데 옮겨지는 것이 없다(전부 정지 조건에 걸린다).",
@@ -216,7 +212,7 @@
     },
     {
       "id": "C13",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름이 없다(기준을 두 번 재도 다른 이름은 뺐다).",
@@ -232,7 +228,7 @@
     },
     {
       "id": "C14",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "기준 이름 목록으로 맞댄 통로 이름의 값 지문이 다른 이름이 없다.",
@@ -248,7 +244,7 @@
     },
     {
       "id": "C15",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "window 이름의 값 지문이 다른 이름이 없다.",
@@ -264,7 +260,7 @@
     },
     {
       "id": "C16",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "통로에서 사라진 이름이 없다.",
@@ -280,7 +276,7 @@
     },
     {
       "id": "C17",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "모듈 로드 탐침 결과에서 기준 대비 새 회귀 목록이 비어 있다.",
@@ -296,7 +292,7 @@
     },
     {
       "id": "C18",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "npm test 의 종료 코드·검사 줄 수·요약 줄이 기준 트리와 작업 트리에서 같다.",
@@ -312,7 +308,7 @@
     },
     {
       "id": "C19",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "시험 파일을 하나씩 돌렸을 때 종료 코드나 ok 줄 수가 기준과 다른 파일이 0개다.",
@@ -328,7 +324,7 @@
     },
     {
       "id": "C20",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "인라인 스크립트 줄 수가 기준과 같다.",
@@ -344,7 +340,7 @@
     },
     {
       "id": "C21",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "바뀐 제품 파일은 index.html 하나다.",
@@ -360,7 +356,7 @@
     },
     {
       "id": "C22",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "이 작업이 바꾼 파일 가운데 tests/ 아래 파일이 없다.",
@@ -376,7 +372,7 @@
     },
     {
       "id": "C23",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "이 작업이 바꾼 파일 가운데 금고 파일이 없다.",
@@ -392,7 +388,7 @@
     },
     {
       "id": "C24",
-      "req": "R4",
+      "req": "R3",
       "kind": "static",
       "domain": "config",
       "statement": "이 작업이 바꾼 파일 가운데 생성기·생성 지도·기준선 파일이 없다.",

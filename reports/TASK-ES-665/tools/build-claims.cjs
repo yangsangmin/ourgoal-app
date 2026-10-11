@@ -1,6 +1,7 @@
 'use strict';
 // 주장 파일(reports/TASK-ES-665/claims.json)을 만든다. 값은 측정 파일의 경로로만 건다. 사용: node build-claims.cjs <작업 트리>
 // 손으로 고친 PR 이라 생성기 재실행 대조(proof)가 없다 — 동작 주장은 시나리오로만 걸고(선례 #922), 나머지는 작업자 측정 파일의 값에 건 기록 주장이다.
+// 주장 배치도 #922 를 따른다: 「고친 것과 그 글자」 항목(R1)에 시나리오 주장과 글자 대조 기록 주장을 함께 건다. 법정은 증명 파일이 없는 보존 주장을 「확인 못 함」으로 돌려준다 — 그 사실은 PR 본문과 court-local.json 에 그대로 적는다.
 const fs = require('fs'), path = require('path');
 const WORK = path.resolve(process.argv[2]);
 const R = 'reports/TASK-ES-665/';
@@ -9,10 +10,9 @@ const out = {
   task: 'TASK-ES-665',
   requirementsSource: 'docs/specs/REQ-TASK-ES-665-STATE-DECL-TIDY.md',
   requirements: [
-    { id: 'R1', text: 'index.html 의 상태 선언 아홉 문을 다듬는다 — 겹친 선언 한 쌍 삭제 · 줄 끝 주석 셋을 윗줄로 · 한 줄에 쓴 선언과 window 복사를 두 줄로. 앱 동작은 그대로다.' },
-    { id: 'R2', text: '바뀐 글자는 허용한 차이뿐이다: 실행 글자는 겹친 선언 두 문이 빠진 것 말고 같고, 주석은 종류·글자·순서가 같고, 줄 수는 그대로다.' },
-    { id: 'R3', text: '고친 뒤에는 생성기 unstate 가 여섯 이름을 옮길 수 있다(저장소 밖 사본의 모의 — 이 PR 은 상태 이전을 하지 않는다).' },
-    { id: 'R4', text: '증명 하한: 여섯 이름의 통로 값·접근자·쓰기 왕복과 통로·window 이름 값 지문이 기준과 같음 · 모듈 로드 새 회귀 0 · npm test 와 시험 하나씩 동일 · 인라인 줄 수 불변 · tests·금고·생성기·생성 지도 변경 0.' },
+    { id: 'R1', text: 'index.html 의 상태 선언 아홉 문을 다듬는다 — 겹친 선언 한 쌍 삭제 · 줄 끝 주석 셋을 윗줄로 · 한 줄에 쓴 선언과 window 복사를 두 줄로. 바뀐 글자는 그 허용한 차이뿐이고(실행 글자는 겹친 선언 두 문이 빠진 것 말고 같고, 주석은 종류·글자·순서가 같고, 줄 수는 그대로다) 앱 동작은 그대로다.' },
+    { id: 'R2', text: '고친 뒤에는 생성기 unstate 가 여섯 이름을 옮길 수 있다(저장소 밖 사본의 모의 — 이 PR 은 상태 이전을 하지 않는다).' },
+    { id: 'R3', text: '증명 하한: 여섯 이름의 통로 값·접근자·쓰기 왕복과 통로·window 이름 값 지문이 기준과 같음 · 모듈 로드 새 회귀 0 · npm test 와 시험 하나씩 동일 · 인라인 줄 수 불변 · tests·금고·생성기·생성 지도 변경 0.' },
   ],
   outOfScopeReports: [
     { text: '손으로 고친 PR 이라 법정의 생성기 재실행 대조가 없다. 「허용한 차이 말고 0」은 작업자 PC 에서 기준·작업의 토큰열을 맞댄 측정(token-diff.json)이고, 법정이 다시 잰 것이 아니다.' },
@@ -33,27 +33,27 @@ const out = {
   ],
 };
 const st = (id, req, statement, file, p, eq) => out.claims.push({ id, req, kind: 'static', domain: 'config', statement, touches: [R + file], check: { type: 'jsonPath', file: R + file, path: p, equals: eq } });
-st('C4', 'R2', '작업 트리 인라인 IIFE 의 토큰열(주석 제외)은 기준의 토큰열에서 겹친 선언 두 문의 토큰을 뺀 것과 같다.', 'token-diff.json', 'workEqualsBaseMinusRemoved', true);
-st('C5', 'R2', '지운 두 문은 앞에 있는 같은 이름 선언과 글자가 같다(같은 초기값).', 'token-diff.json', 'allRemovedAreSameTextAsFirst', true);
-st('C6', 'R2', '앞 선언과 지운 선언 사이의 최상위 문은 글자 값 선언문뿐이고 그 이름에 값을 넣지 않는다.', 'token-diff.json', 'nothingBetweenTouchesTheNames', true);
-st('C7', 'R2', '주석은 종류·글자·순서가 기준과 같다(줄 끝에서 윗줄로 자리만 옮겼다).', 'token-diff.json', 'comments.sameTypeTextOrder', true);
-st('C8', 'R2', 'index.html 의 줄 수 변화가 0 이다.', 'token-diff.json', 'lines.netGrowth', 0);
-st('C9', 'R2', '인라인 IIFE 스크립트 밖의 글자는 기준과 같다.', 'token-diff.json', 'outsideInlineScriptSame', true);
-st('C10', 'R2', '글자 대조 전체가 기대대로다(여섯 이름이 한 번씩, 자기 줄에 혼자 선언되고 window.shareContent 복사 줄이 혼자 있다).', 'token-diff.json', 'ok', true);
-st('C11', 'R3', '작업 트리의 사본에서 생성기 unstate 가 여섯 이름을 하나씩도, 한 번에도 옮긴다.', 'unstate-mock.json', 'allTargetsMoveInWork', true);
-st('C12', 'R3', '기준 트리의 사본에서는 여섯 이름 가운데 옮겨지는 것이 없다(전부 정지 조건에 걸린다).', 'unstate-mock.json', 'noTargetMovesInBase', true);
-st('C13', 'R4', '상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름이 없다(기준을 두 번 재도 다른 이름은 뺐다).', 'measurement.json', 'summary.stateProbe.differing', []);
-st('C14', 'R4', '기준 이름 목록으로 맞댄 통로 이름의 값 지문이 다른 이름이 없다.', 'measurement.json', 'summary.names.scopeFingerprintDiff', []);
-st('C15', 'R4', 'window 이름의 값 지문이 다른 이름이 없다.', 'measurement.json', 'summary.names.windowFingerprintDiff', []);
-st('C16', 'R4', '통로에서 사라진 이름이 없다.', 'measurement.json', 'summary.names.scopeLost', []);
-st('C17', 'R4', '모듈 로드 탐침 결과에서 기준 대비 새 회귀 목록이 비어 있다.', 'module-load.json', 'regressions', []);
-st('C18', 'R4', 'npm test 의 종료 코드·검사 줄 수·요약 줄이 기준 트리와 작업 트리에서 같다.', 'npm-test-compare.json', 'allSame', true);
-st('C19', 'R4', '시험 파일을 하나씩 돌렸을 때 종료 코드나 ok 줄 수가 기준과 다른 파일이 0개다.', 'tests-all-compare.json', 'differingCount', 0);
-st('C20', 'R4', '인라인 스크립트 줄 수가 기준과 같다.', 'measurement.json', 'summary.ratchet.inlineScriptLinesSame', true);
-st('C21', 'R4', '바뀐 제품 파일은 index.html 하나다.', 'measurement.json', 'summary.changed.onlyIndexHtml', true);
-st('C22', 'R4', '이 작업이 바꾼 파일 가운데 tests/ 아래 파일이 없다.', 'measurement.json', 'summary.changed.testsChanged', []);
-st('C23', 'R4', '이 작업이 바꾼 파일 가운데 금고 파일이 없다.', 'measurement.json', 'summary.changed.vaultChanged', []);
-st('C24', 'R4', '이 작업이 바꾼 파일 가운데 생성기·생성 지도·기준선 파일이 없다.', 'measurement.json', 'summary.changed.generatedMapsChanged', []);
+st('C4', 'R1', '작업 트리 인라인 IIFE 의 토큰열(주석 제외)은 기준의 토큰열에서 겹친 선언 두 문의 토큰을 뺀 것과 같다.', 'token-diff.json', 'workEqualsBaseMinusRemoved', true);
+st('C5', 'R1', '지운 두 문은 앞에 있는 같은 이름 선언과 글자가 같다(같은 초기값).', 'token-diff.json', 'allRemovedAreSameTextAsFirst', true);
+st('C6', 'R1', '앞 선언과 지운 선언 사이의 최상위 문은 글자 값 선언문뿐이고 그 이름에 값을 넣지 않는다.', 'token-diff.json', 'nothingBetweenTouchesTheNames', true);
+st('C7', 'R1', '주석은 종류·글자·순서가 기준과 같다(줄 끝에서 윗줄로 자리만 옮겼다).', 'token-diff.json', 'comments.sameTypeTextOrder', true);
+st('C8', 'R1', 'index.html 의 줄 수 변화가 0 이다.', 'token-diff.json', 'lines.netGrowth', 0);
+st('C9', 'R1', '인라인 IIFE 스크립트 밖의 글자는 기준과 같다.', 'token-diff.json', 'outsideInlineScriptSame', true);
+st('C10', 'R1', '글자 대조 전체가 기대대로다(여섯 이름이 한 번씩, 자기 줄에 혼자 선언되고 window.shareContent 복사 줄이 혼자 있다).', 'token-diff.json', 'ok', true);
+st('C11', 'R2', '작업 트리의 사본에서 생성기 unstate 가 여섯 이름을 하나씩도, 한 번에도 옮긴다.', 'unstate-mock.json', 'allTargetsMoveInWork', true);
+st('C12', 'R2', '기준 트리의 사본에서는 여섯 이름 가운데 옮겨지는 것이 없다(전부 정지 조건에 걸린다).', 'unstate-mock.json', 'noTargetMovesInBase', true);
+st('C13', 'R3', '상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름이 없다(기준을 두 번 재도 다른 이름은 뺐다).', 'measurement.json', 'summary.stateProbe.differing', []);
+st('C14', 'R3', '기준 이름 목록으로 맞댄 통로 이름의 값 지문이 다른 이름이 없다.', 'measurement.json', 'summary.names.scopeFingerprintDiff', []);
+st('C15', 'R3', 'window 이름의 값 지문이 다른 이름이 없다.', 'measurement.json', 'summary.names.windowFingerprintDiff', []);
+st('C16', 'R3', '통로에서 사라진 이름이 없다.', 'measurement.json', 'summary.names.scopeLost', []);
+st('C17', 'R3', '모듈 로드 탐침 결과에서 기준 대비 새 회귀 목록이 비어 있다.', 'module-load.json', 'regressions', []);
+st('C18', 'R3', 'npm test 의 종료 코드·검사 줄 수·요약 줄이 기준 트리와 작업 트리에서 같다.', 'npm-test-compare.json', 'allSame', true);
+st('C19', 'R3', '시험 파일을 하나씩 돌렸을 때 종료 코드나 ok 줄 수가 기준과 다른 파일이 0개다.', 'tests-all-compare.json', 'differingCount', 0);
+st('C20', 'R3', '인라인 스크립트 줄 수가 기준과 같다.', 'measurement.json', 'summary.ratchet.inlineScriptLinesSame', true);
+st('C21', 'R3', '바뀐 제품 파일은 index.html 하나다.', 'measurement.json', 'summary.changed.onlyIndexHtml', true);
+st('C22', 'R3', '이 작업이 바꾼 파일 가운데 tests/ 아래 파일이 없다.', 'measurement.json', 'summary.changed.testsChanged', []);
+st('C23', 'R3', '이 작업이 바꾼 파일 가운데 금고 파일이 없다.', 'measurement.json', 'summary.changed.vaultChanged', []);
+st('C24', 'R3', '이 작업이 바꾼 파일 가운데 생성기·생성 지도·기준선 파일이 없다.', 'measurement.json', 'summary.changed.generatedMapsChanged', []);
 fs.writeFileSync(path.join(WORK, R, 'claims.json'), JSON.stringify(out, null, 2) + '\n', { encoding: 'utf8' });
 const errs = require(path.join(WORK, 'court', 'claims.js')).validateClaims(out, { claimsFile: R + 'claims.json' });
 console.log('claims', out.claims.length, 'tokens', m.tokens.removedTokens, 'errors', JSON.stringify(errs));
