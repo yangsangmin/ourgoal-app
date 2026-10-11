@@ -1,0 +1,195 @@
+{
+  "id": "r2-template-subtab-filters",
+  "title": "게스트로 목표 탭의 템플릿 백과사전에 들어가면 처음에 개인·AI·전체가 골라져 있고, 분류 칩·검색어·종류(AI/실제)·영역(개인/루틴/팀)을 바꾸면 고른 단추가 강조되며, 돌아왔을 때 고른 분류가 남아 있다 (템플릿 하위 탭 상태 정의 줄 넷을 구역 함수로 옮기기 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTemplate"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#encyclDomainPersonal",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#encyclDomainPersonal",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#encyclDomainRoutine",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#subtabTplBtnAi",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#subtabTplBtnReal",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"all\"]",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#subtabTplSearchClear"
+    },
+    {
+      "do": "click",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"health\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"health\"]",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"all\"]",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#templateEncyclopediaView",
+      "text": "풀코스 마라톤 Sub-4"
+    },
+    {
+      "do": "type",
+      "selector": "#subtabTplSearchInp",
+      "text": "마라톤"
+    },
+    {
+      "expect": "exists",
+      "selector": "#subtabTplSearchClear"
+    },
+    {
+      "expect": "attr",
+      "selector": "#subtabTplSearchInp",
+      "name": "value",
+      "equals": "마라톤"
+    },
+    {
+      "do": "click",
+      "selector": "#subtabTplSearchClear"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#subtabTplSearchClear"
+    },
+    {
+      "expect": "attr",
+      "selector": "#subtabTplSearchInp",
+      "name": "value",
+      "equals": ""
+    },
+    {
+      "do": "click",
+      "selector": "#subtabTplBtnReal"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#subtabTplBtnReal",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#subtabTplBtnAi",
+      "className": "btn-primary"
+    },
+    {
+      "do": "click",
+      "selector": "#encyclDomainRoutine"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#encyclDomainRoutine",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#encyclDomainPersonal",
+      "className": "btn-primary"
+    },
+    {
+      "do": "click",
+      "selector": "#encyclDomainTeam"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#encyclDomainTeam",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#encyclDomainRoutine",
+      "className": "btn-primary"
+    },
+    {
+      "do": "click",
+      "selector": "#encyclDomainPersonal"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#encyclDomainPersonal",
+      "className": "btn-primary"
+    },
+    {
+      "do": "click",
+      "selector": "#subtabTplBtnAi"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#subtabTplBtnAi",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"health\"]",
+      "className": "btn-primary"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

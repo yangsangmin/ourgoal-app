@@ -1,0 +1,72 @@
+{
+  "task": "TASK-ES-676",
+  "label": "구역 이전 2차 — 남은 로드 시점 문(상태 기관 정의 줄 · window 복사 줄)을 구역 함수로",
+  "slot": "HO",
+  "mode": "region",
+  "cells": [
+    {
+      "key": "bootStateSeeds",
+      "file": "js/core/boot-state-seeds.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Boot State Seeds (앱 시동 — 템플릿 하위 탭 초깃값 · 토큰 저장 함수의 window 손잡이)",
+      "desc": [
+        "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 복사 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+        "bootGoogleTokenSaveHandle — 구글 캘린더 토큰 저장 함수를 window 에 단다.",
+        "bootTemplateSubtabFilterState — 템플릿 백과사전 하위 탭의 분류 · 검색어 초깃값을 상태 기관에 맡긴다.",
+        "bootTemplateSubtabKindState — 템플릿 백과사전 하위 탭의 영역(개인·루틴·팀) · 종류(AI·실제) 초깃값을 상태 기관에 맡긴다."
+      ],
+      "regions": [
+        {
+          "name": "bootGoogleTokenSaveHandle",
+          "group": "[#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템",
+          "from": "if(typeof window !== 'undefined'){",
+          "to": "if(typeof window !== 'undefined'){"
+        },
+        {
+          "name": "bootTemplateSubtabFilterState",
+          "group": "RENDER: TEMPLATE ENCYCLOPEDIA SUBTAB (#TASK-ES-187)"
+        },
+        {
+          "name": "bootTemplateSubtabKindState",
+          "group": "[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템",
+          "from": "window.OurgoalAppState.defineVar('_subtabTplDomain'",
+          "to": "window.OurgoalAppState.defineVar('_subtabTplType'"
+        }
+      ]
+    },
+    {
+      "key": "bootCommSeeds",
+      "file": "js/core/boot-comm-seeds.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Boot Comm Seeds (앱 시동 — 상태 기관에 맡기는 초깃값: 예시 모임 · 공유 함수 · 피드 캐시)",
+      "desc": [
+        "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 복사 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+        "bootSampleGroups — 예시 모임 목록(배열)을 상태 기관에 MOCK_GROUPS 로 맡긴다.",
+        "bootShareHandle — 공유 엔진에 넘기는 공유 함수를 상태 기관에 shareContent 로 맡기고 window 에도 단다.",
+        "bootFeedCacheState — 소통 피드 캐시의 초깃값(아직 안 불러옴 = null)을 상태 기관에 맡긴다."
+      ],
+      "regions": [
+        {
+          "name": "bootSampleGroups",
+          "group": "캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명)",
+          "from": "window.OurgoalAppState.define('MOCK_GROUPS'",
+          "to": "window.OurgoalAppState.define('MOCK_GROUPS'"
+        },
+        {
+          "name": "bootShareHandle",
+          "group": "캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명)",
+          "from": "window.OurgoalAppState.define('shareContent'",
+          "to": "window.shareContent = "
+        },
+        {
+          "name": "bootFeedCacheState",
+          "group": "소통 피드 (Supabase feed_posts, 실시간 동기화)"
+        }
+      ]
+    }
+  ]
+}
