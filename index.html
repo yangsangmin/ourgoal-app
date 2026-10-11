@@ -2628,7 +2628,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
   var initDevDebugButtons = _settingsKit.initDevDebugButtons;
   window.OurgoalAppScope.expose('index.html', {
-    get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; },
+    get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; }, set USER_SESSION_CHANNEL(v){ USER_SESSION_CHANNEL = v; },
     get _promptEncyclopediaOpen(){ return _promptEncyclopediaOpen; }, set _promptEncyclopediaOpen(v){ _promptEncyclopediaOpen = v; }
   });
 
