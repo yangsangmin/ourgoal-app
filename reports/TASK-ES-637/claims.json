@@ -4,7 +4,7 @@
  "requirements": [
   {
    "id": "R1",
-   "text": "index.html 인라인 IIFE 에서 통로에 노출된 상태 이름 49개의 소유를 상태 기관(js/core/app-state.js)으로 옮긴다(생성기 unstate — getter/setter 줄 삭제 · 선언문을 define/defineVar 로 바꿔 쓰기 · window 복사 줄 오른쪽 바꿔 쓰기). 앱 동작은 그대로다."
+   "text": "index.html 인라인 IIFE 에서 통로에 노출된 상태 이름 50개의 소유를 상태 기관(js/core/app-state.js)으로 옮긴다(생성기 unstate — getter/setter 줄 삭제 · 선언문을 define/defineVar 로 바꿔 쓰기 · window 복사 줄 오른쪽 바꿔 쓰기). 앱 동작은 그대로다."
   },
   {
    "id": "R2",
@@ -52,13 +52,26 @@
    "kind": "behavior",
    "change": "preserve",
    "domain": "ui-behavior",
+   "statement": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 「AI 목표 어시스턴트」 제목 줄(통로 toggleAgentBtn 에 걸린 누름)을 누르면 서랍이 열려 입력칸이 보이고, 다시 누르면 닫히며 예외가 없다 (상태 이전 1차 전후 보존) — 상태 이전 전과 같다. index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/e1-goal-agent-drawer.json",
+   "proof": "proof.json",
+   "id": "C2"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
    "statement": "목표 탭의 하위 탭(개인·루틴·통계)과 통계 기간(주·월)을 눌러 바꾸면 누른 것이 활성이 되며 예외가 없다 (상태 이전 1차 전후 보존) — 상태 이전 전과 같다. index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
    "touches": [
     "index.html"
    ],
    "scenario": "scenarios/e1-goals-subtabs-periods.json",
    "proof": "proof.json",
-   "id": "C2"
+   "id": "C3"
   },
   {
    "req": "R1",
@@ -71,7 +84,7 @@
    ],
    "scenario": "scenarios/e1-guest-boot-six-tabs.json",
    "proof": "proof.json",
-   "id": "C3"
+   "id": "C4"
   },
   {
    "req": "R1",
@@ -84,7 +97,7 @@
    ],
    "scenario": "scenarios/e1-new-goal-modal.json",
    "proof": "proof.json",
-   "id": "C4"
+   "id": "C5"
   },
   {
    "req": "R2",
@@ -101,7 +114,7 @@
     "path": "summary.stateProbe.differingCount",
     "equals": 0
    },
-   "id": "C5"
+   "id": "C6"
   },
   {
    "req": "R2",
@@ -117,7 +130,7 @@
     "path": "summary.stateProbe.organMatchesProof",
     "equals": true
    },
-   "id": "C6"
+   "id": "C7"
   },
   {
    "req": "R2",
@@ -133,7 +146,7 @@
     "path": "summary.stateProbe.writable.work.roundtripOk",
     "equals": 30
    },
-   "id": "C7"
+   "id": "C8"
   },
   {
    "req": "R2",
@@ -149,7 +162,7 @@
     "path": "summary.stateProbe.exceptions.work",
     "equals": 0
    },
-   "id": "C8"
+   "id": "C9"
   },
   {
    "req": "R2",
@@ -165,7 +178,7 @@
     "path": "summary.registryCompare.scopeLost",
     "equals": []
    },
-   "id": "C9"
+   "id": "C10"
   },
   {
    "req": "R2",
@@ -181,7 +194,7 @@
     "path": "summary.registryCompare.differingScope",
     "equals": []
    },
-   "id": "C10"
+   "id": "C11"
   },
   {
    "req": "R2",
@@ -197,7 +210,7 @@
     "path": "summary.registryCompare.differingWindow",
     "equals": []
    },
-   "id": "C11"
+   "id": "C12"
   },
   {
    "req": "R3",
@@ -213,7 +226,7 @@
     "path": "summary.changed.onlyIndexHtml",
     "equals": true
    },
-   "id": "C12"
+   "id": "C13"
   },
   {
    "req": "R3",
@@ -230,7 +243,7 @@
     "path": "summary.replay.rebuiltEqualsWork",
     "equals": true
    },
-   "id": "C13"
+   "id": "C14"
   },
   {
    "req": "R3",
@@ -246,7 +259,7 @@
     "path": "summary.kindsOnly.deletedOutsideListedKinds",
     "equals": []
    },
-   "id": "C14"
+   "id": "C15"
   },
   {
    "req": "R3",
@@ -262,7 +275,7 @@
     "path": "summary.kindsOnly.exposePropsNotTrivialAccessorOfProofName",
     "equals": []
    },
-   "id": "C15"
+   "id": "C16"
   },
   {
    "req": "R3",
@@ -278,7 +291,7 @@
     "path": "summary.kindsOnly.namesOutsideProof",
     "equals": []
    },
-   "id": "C16"
+   "id": "C17"
   },
   {
    "req": "R3",
@@ -294,7 +307,7 @@
     "path": "summary.kindsOnly.editedLinesEqualExpected",
     "equals": true
    },
-   "id": "C17"
+   "id": "C18"
   },
   {
    "req": "R4",
@@ -310,7 +323,7 @@
     "path": "summary.inlineScriptLines.decreased",
     "equals": true
    },
-   "id": "C18"
+   "id": "C19"
   },
   {
    "req": "R4",
@@ -326,7 +339,7 @@
     "path": "summary.inlineScriptLines.equalsDeletedLines",
     "equals": true
    },
-   "id": "C19"
+   "id": "C20"
   },
   {
    "req": "R4",
@@ -343,7 +356,7 @@
     "path": "summary.baseline.recordedEqualsMeasured",
     "equals": true
    },
-   "id": "C20"
+   "id": "C21"
   },
   {
    "req": "R4",
@@ -359,7 +372,7 @@
     "path": "regressions",
     "equals": []
    },
-   "id": "C21"
+   "id": "C22"
   },
   {
    "req": "R4",
@@ -375,7 +388,7 @@
     "path": "summary.npmTest.same",
     "equals": true
    },
-   "id": "C22"
+   "id": "C23"
   },
   {
    "req": "R4",
@@ -391,7 +404,7 @@
     "path": "summary.testsEach.sameAsBase",
     "equals": true
    },
-   "id": "C23"
+   "id": "C24"
   },
   {
    "req": "R4",
@@ -407,7 +420,7 @@
     "path": "summary.guard.integrityGateExitCode",
     "equals": 0
    },
-   "id": "C24"
+   "id": "C25"
   },
   {
    "req": "R4",
@@ -423,7 +436,7 @@
     "path": "summary.changed.testsChanged",
     "equals": []
    },
-   "id": "C25"
+   "id": "C26"
   },
   {
    "req": "R4",
@@ -439,7 +452,7 @@
     "path": "summary.changed.vaultChanged",
     "equals": []
    },
-   "id": "C26"
+   "id": "C27"
   },
   {
    "req": "R4",
@@ -455,7 +468,7 @@
     "path": "summary.changed.generatorChanged",
     "equals": []
    },
-   "id": "C27"
+   "id": "C28"
   },
   {
    "req": "R4",
@@ -471,7 +484,7 @@
     "path": "summary.changed.organChanged",
     "equals": []
    },
-   "id": "C28"
+   "id": "C29"
   },
   {
    "req": "R5",
@@ -486,9 +499,9 @@
     "type": "jsonPath",
     "file": "reports/TASK-ES-637/remaining-state.json",
     "path": "totals.moved",
-    "equals": 49
+    "equals": 50
    },
-   "id": "C29"
+   "id": "C30"
   },
   {
    "req": "R5",
@@ -504,7 +517,7 @@
     "path": "totals.stoppedByGenerator",
     "equals": 13
    },
-   "id": "C30"
+   "id": "C31"
   },
   {
    "req": "R5",
@@ -518,9 +531,9 @@
     "type": "jsonPath",
     "file": "reports/TASK-ES-637/remaining-state.json",
     "path": "totals.notExposed",
-    "equals": 17
+    "equals": 16
    },
-   "id": "C31"
+   "id": "C32"
   }
  ]
 }

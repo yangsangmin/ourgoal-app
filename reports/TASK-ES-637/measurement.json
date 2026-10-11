@@ -2,7 +2,7 @@
  "schema": "ourgoal.unstate-run.measurement/1",
  "taskId": "TASK-ES-637",
  "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정(node court/chat.js <PR>)만 낸다",
- "measuredAt": "2026-10-11T02:36:12.167Z",
+ "measuredAt": "2026-10-11T02:48:17.456Z",
  "environment": {
   "node": "v24.15.0",
   "platform": "win32",
@@ -10,13 +10,13 @@
   "gitAutocrlf": "true"
  },
  "sourceCommit": {
-  "baseTreeHead": "a5d8c0cc4ba28820172c15e5ea1e4f8f790be07f",
-  "worktreeHead": "a38e08e254dd2412d46330c00a4a9adbc1c5ddf2",
+  "baseTreeHead": "b76c29e95e6b74f97156dee4178bd737ef3ec2b9",
+  "worktreeHead": "d2f34033b1ca31083dc805edcdc072f0fcf0fe32",
   "note": "기준 = origin/main 임시 git worktree(저장소 밖). 작업 = 이 트리(커밋 전 작업 상태 포함)"
  },
  "summary": {
   "changed": {
-   "files": 31,
+   "files": 32,
    "list": [
     "docs/architecture/module-baseline.json",
     "docs/rules/TICKETS.md",
@@ -48,7 +48,8 @@
     "reports/TASK-ES-637/tests-base.json",
     "reports/TASK-ES-637/tests-work.json",
     "reports/TASK-ES-637/unstate-meta.json",
-    "reports/TASK-ES-637/unstate-run.cjs"
+    "reports/TASK-ES-637/unstate-run.cjs",
+    "reports/TASK-ES-637/scenarios/e1-goal-agent-drawer.json"
    ],
    "productFiles": [
     "index.html"
@@ -56,34 +57,34 @@
    "onlyIndexHtml": true,
    "indexHtml": {
     "file": "index.html",
-    "insertions": 53,
-    "deletions": 124
+    "insertions": 54,
+    "deletions": 126
    },
-   "netLineGrowth": -71,
+   "netLineGrowth": -72,
    "testsChanged": [],
    "vaultChanged": [],
    "generatorChanged": [],
    "organChanged": []
   },
   "moved": {
-   "names": 49,
-   "define": 27,
+   "names": 50,
+   "define": 28,
    "defineVar": 22,
-   "exposed": 63,
-   "movable": 50,
+   "exposed": 64,
+   "movable": 51,
    "excluded": [
     "_promptEncyclopediaOpen"
    ],
    "stopped": 13,
-   "notExposed": 17
+   "notExposed": 16
   },
   "replay": {
    "rebuiltEqualsWork": true,
-   "baseLines": 5259,
-   "workLines": 5188,
-   "deletedLines": 71,
+   "baseLines": 5191,
+   "workLines": 5119,
+   "deletedLines": 72,
    "commaFixedLines": 2,
-   "editedLines": 51,
+   "editedLines": 52,
    "problems": [],
    "firstDiff": null,
    "note": "기준 index.html 에서 생성기가 적어 낸 줄(deletedLineNumbers)을 지우고, commaFixedLineNumbers 줄 끝 쉼표 한 글자를 떼고, 선언 머리·선언 끝·window 복사 오른쪽을 정해진 글자로 바꾼 결과 == 작업 index.html (줄바꿈만 LF 로 맞춤). 참이면 그 밖의 글자 변경 0 · 더한 줄 0"
@@ -94,19 +95,19 @@
    "exposeShellsNotShell": [],
    "namesOutsideProof": [],
    "editedLinesEqualExpected": true,
-   "declarations": 49,
+   "declarations": 50,
    "windowCopies": 1,
-   "exposeProps": 49,
+   "exposeProps": 50,
    "exposeCallsRemoved": 11,
    "everyNameHasOneDeclaration": true,
    "everyNameHadAccessor": true,
    "note": "지운 줄은 전부 대상 이름의 expose getter/setter 속성 줄(본문 return X; · X = v;)과 속성이 모두 지워진 expose 문의 머리·꼬리에 들고, 바뀐 줄은 선언 머리·선언 끝·window 복사 줄뿐이다(닫힌 목록 X4·X5·X6)"
   },
   "inlineScriptLines": {
-   "before": 2989,
-   "after": 2918,
+   "before": 2921,
+   "after": 2849,
    "decreased": true,
-   "delta": -71,
+   "delta": -72,
    "equalsDeletedLines": true,
    "source": "scripts/module-metrics.js measure().ratchet"
   },
@@ -129,8 +130,8 @@
    ]
   },
   "baseline": {
-   "recordedBefore": 2989,
-   "recorded": 2918,
+   "recordedBefore": 2921,
+   "recorded": 2849,
    "recordedEqualsMeasured": true,
    "historyGrewBy": 1
   },
@@ -140,7 +141,7 @@
    "integrityGateResult": "🎯 검증 결과: 총 38개 검사 중 38개 통과 (0개 실패)"
   },
   "stateProbe": {
-   "names": 63,
+   "names": 64,
    "bootOk": {
     "base": true,
     "work": true
@@ -158,12 +159,12 @@
    ],
    "differing": [],
    "differingCount": 0,
-   "organNames": 49,
+   "organNames": 50,
    "organMatchesProof": true,
    "transitions": {
     "get → get | 주인 index.html → index.html": 6,
     "get+set → get+set | 주인 index.html → core/app-state": 22,
-    "get → get | 주인 index.html → core/app-state": 27,
+    "get → get | 주인 index.html → core/app-state": 28,
     "get+set → get+set | 주인 index.html → index.html": 8
    },
    "writable": {
@@ -202,13 +203,13 @@
   "registryCompare": {
    "ok": true,
    "counts": {
-    "scopeNames": 423,
+    "scopeNames": 428,
     "windowNames": 19,
     "registered": 438,
-    "checked": 354,
+    "checked": 356,
     "mismatches": 0,
-    "missing": 88,
-    "extra": 84,
+    "missing": 91,
+    "extra": 82,
     "conflicts": 0,
     "own": 438,
     "ownScope": 354,
@@ -232,6 +233,14 @@
      "baseExceptions": 0,
      "workExceptions": 0,
      "nonVacuousExpects": 9
+    },
+    {
+     "id": "e1-goal-agent-drawer",
+     "basePassed": true,
+     "workPassed": true,
+     "baseExceptions": 0,
+     "workExceptions": 0,
+     "nonVacuousExpects": 3
     },
     {
      "id": "e1-goals-subtabs-periods",
@@ -379,11 +388,11 @@
   },
   "remaining": {
    "stateNamesBefore": 80,
-   "moved": 49,
-   "stateNamesLeftInIife": 31,
+   "moved": 50,
+   "stateNamesLeftInIife": 30,
    "stoppedByGenerator": 13,
    "excludedBecauseTestsPinStateText": 1,
-   "notExposed": 17
+   "notExposed": 16
   }
  },
  "limits": [
@@ -399,10 +408,10 @@
     "rev-parse",
     "HEAD"
    ],
-   "startedAt": "2026-10-11T02:35:02.227Z",
-   "endedAt": "2026-10-11T02:35:02.280Z",
+   "startedAt": "2026-10-11T02:46:56.870Z",
+   "endedAt": "2026-10-11T02:46:56.927Z",
    "exitCode": 0,
-   "stdoutHead": "a5d8c0cc4ba28820172c15e5ea1e4f8f790be07f\n",
+   "stdoutHead": "b76c29e95e6b74f97156dee4178bd737ef3ec2b9\n",
    "stderrHead": ""
   },
   {
@@ -412,10 +421,10 @@
     "rev-parse",
     "HEAD"
    ],
-   "startedAt": "2026-10-11T02:35:02.280Z",
-   "endedAt": "2026-10-11T02:35:02.330Z",
+   "startedAt": "2026-10-11T02:46:56.927Z",
+   "endedAt": "2026-10-11T02:46:56.980Z",
    "exitCode": 0,
-   "stdoutHead": "a38e08e254dd2412d46330c00a4a9adbc1c5ddf2\n",
+   "stdoutHead": "d2f34033b1ca31083dc805edcdc072f0fcf0fe32\n",
    "stderrHead": ""
   },
   {
@@ -424,14 +433,14 @@
     "git",
     "diff",
     "--numstat",
-    "a5d8c0cc4ba28820172c15e5ea1e4f8f790be07f",
+    "b76c29e95e6b74f97156dee4178bd737ef3ec2b9",
     "--"
    ],
-   "startedAt": "2026-10-11T02:35:02.330Z",
-   "endedAt": "2026-10-11T02:35:02.479Z",
+   "startedAt": "2026-10-11T02:46:56.980Z",
+   "endedAt": "2026-10-11T02:46:57.160Z",
    "exitCode": 0,
-   "stdoutHead": "14\t0\tdocs/architecture/module-baseline.json\n1\t0\tdocs/rules/TICKETS.md\n116\t0\tdocs/specs/REQ-TASK-ES-637-UNSTATE-1.md\n53\t124\tindex.html\n2174\t0\treports/TASK-ES-637/cell-registry-compare.before.json\n2181\t",
-   "stderrHead": "warning: in the working copy of 'docs/specs/REQ-TASK-ES-637-UNSTATE-1.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'reports/TASK-ES-637/raw/tests-each."
+   "stdoutHead": "14\t0\tdocs/architecture/module-baseline.json\n1\t0\tdocs/rules/TICKETS.md\n118\t0\tdocs/specs/REQ-TASK-ES-637-UNSTATE-1.md\n54\t126\tindex.html\n2188\t0\treports/TASK-ES-637/cell-registry-compare.before.json\n2195\t",
+   "stderrHead": "warning: in the working copy of 'docs/architecture/module-baseline.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/specs/REQ-TASK-ES-637-UNSTATE-1"
   },
   {
    "id": "git ls-files --others",
@@ -441,10 +450,10 @@
     "--others",
     "--exclude-standard"
    ],
-   "startedAt": "2026-10-11T02:35:02.479Z",
-   "endedAt": "2026-10-11T02:35:02.594Z",
+   "startedAt": "2026-10-11T02:46:57.160Z",
+   "endedAt": "2026-10-11T02:46:57.280Z",
    "exitCode": 0,
-   "stdoutHead": "",
+   "stdoutHead": "reports/TASK-ES-637/scenarios/e1-goal-agent-drawer.json\n",
    "stderrHead": ""
   },
   {
@@ -454,8 +463,8 @@
     "scripts/module-guard.js",
     "--quiet"
    ],
-   "startedAt": "2026-10-11T02:35:03.302Z",
-   "endedAt": "2026-10-11T02:35:03.785Z",
+   "startedAt": "2026-10-11T02:46:58.076Z",
+   "endedAt": "2026-10-11T02:46:58.585Z",
    "exitCode": 0,
    "stdoutHead": "✓ 모듈 가드 통과\n",
    "stderrHead": ""
@@ -466,8 +475,8 @@
     "C:\\Program Files\\nodejs\\node.exe",
     "scripts/verify-integrity-gate.js"
    ],
-   "startedAt": "2026-10-11T02:35:03.785Z",
-   "endedAt": "2026-10-11T02:35:04.322Z",
+   "startedAt": "2026-10-11T02:46:58.585Z",
+   "endedAt": "2026-10-11T02:46:59.185Z",
    "exitCode": 0,
    "stdoutHead": "================================================================\n🛡️  아워골 전면 무결성 헌법 5대 핵심 검증 게이트 (Integrity Gate)\n================================================================\n\n[검증 1/5] 껍데기 버튼 및 데드",
    "stderrHead": ""
@@ -482,10 +491,10 @@
     "--names",
     "<작업 트리>\\reports\\TASK-ES-637\\probe-names.json"
    ],
-   "startedAt": "2026-10-11T02:35:04.436Z",
-   "endedAt": "2026-10-11T02:35:08.968Z",
+   "startedAt": "2026-10-11T02:46:59.289Z",
+   "endedAt": "2026-10-11T02:47:03.968Z",
    "exitCode": 0,
-   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":0,\"names\":63,\"extra\":null}\n",
+   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":0,\"names\":64,\"extra\":null}\n",
    "stderrHead": ""
   },
   {
@@ -498,10 +507,10 @@
     "--names",
     "<작업 트리>\\reports\\TASK-ES-637\\probe-names.json"
    ],
-   "startedAt": "2026-10-11T02:35:08.968Z",
-   "endedAt": "2026-10-11T02:35:13.519Z",
+   "startedAt": "2026-10-11T02:47:03.968Z",
+   "endedAt": "2026-10-11T02:47:08.530Z",
    "exitCode": 0,
-   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":0,\"names\":63,\"extra\":null}\n",
+   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":0,\"names\":64,\"extra\":null}\n",
    "stderrHead": ""
   },
   {
@@ -514,10 +523,10 @@
     "--names",
     "<작업 트리>\\reports\\TASK-ES-637\\probe-names.json"
    ],
-   "startedAt": "2026-10-11T02:35:13.519Z",
-   "endedAt": "2026-10-11T02:35:18.059Z",
+   "startedAt": "2026-10-11T02:47:08.530Z",
+   "endedAt": "2026-10-11T02:47:13.031Z",
    "exitCode": 0,
-   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":49,\"names\":63,\"extra\":null}\n",
+   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":50,\"names\":64,\"extra\":null}\n",
    "stderrHead": ""
   },
   {
@@ -529,10 +538,10 @@
     "<작업 트리>\\reports\\TASK-ES-637\\cell-registry-compare.before.json",
     "--fingerprints"
    ],
-   "startedAt": "2026-10-11T02:35:18.064Z",
-   "endedAt": "2026-10-11T02:35:22.662Z",
+   "startedAt": "2026-10-11T02:47:13.035Z",
+   "endedAt": "2026-10-11T02:47:17.742Z",
    "exitCode": 0,
-   "stdoutHead": "scope 423 · window 19 · registered 438 · mismatches 0 · missing 88 · extra 84 · conflicts 0 · exceptions 0\n",
+   "stdoutHead": "scope 428 · window 19 · registered 438 · mismatches 0 · missing 91 · extra 82 · conflicts 0 · exceptions 0\n",
    "stderrHead": ""
   },
   {
@@ -546,10 +555,10 @@
     "--names-from",
     "<작업 트리>\\reports\\TASK-ES-637\\cell-registry-compare.before.json"
    ],
-   "startedAt": "2026-10-11T02:35:22.662Z",
-   "endedAt": "2026-10-11T02:35:27.252Z",
+   "startedAt": "2026-10-11T02:47:17.742Z",
+   "endedAt": "2026-10-11T02:47:22.424Z",
    "exitCode": 0,
-   "stdoutHead": "scope 423 · window 19 · registered 438 · mismatches 0 · missing 88 · extra 84 · conflicts 0 · exceptions 0\n",
+   "stdoutHead": "scope 428 · window 19 · registered 438 · mismatches 0 · missing 91 · extra 82 · conflicts 0 · exceptions 0\n",
    "stderrHead": ""
   },
   {
@@ -561,14 +570,15 @@
     "<작업 트리>",
     "<작업 트리>\\reports\\TASK-ES-637\\scenario-local.json",
     "<작업 트리>\\reports\\TASK-ES-637\\scenarios\\e1-bell-modal-settings.json",
+    "<작업 트리>\\reports\\TASK-ES-637\\scenarios\\e1-goal-agent-drawer.json",
     "<작업 트리>\\reports\\TASK-ES-637\\scenarios\\e1-goals-subtabs-periods.json",
     "<작업 트리>\\reports\\TASK-ES-637\\scenarios\\e1-guest-boot-six-tabs.json",
     "<작업 트리>\\reports\\TASK-ES-637\\scenarios\\e1-new-goal-modal.json"
    ],
-   "startedAt": "2026-10-11T02:35:27.255Z",
-   "endedAt": "2026-10-11T02:36:11.924Z",
+   "startedAt": "2026-10-11T02:47:22.427Z",
+   "endedAt": "2026-10-11T02:48:17.247Z",
    "exitCode": 0,
-   "stdoutHead": "e1-bell-modal-settings {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\ne1-goals-subtabs-periods {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\ne1-guest-boot-six-tabs {\"base\":true,",
+   "stdoutHead": "e1-bell-modal-settings {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\ne1-goal-agent-drawer {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\ne1-goals-subtabs-periods {\"base\":true,\"w",
    "stderrHead": ""
   },
   {
@@ -578,8 +588,8 @@
     "config",
     "core.autocrlf"
    ],
-   "startedAt": "2026-10-11T02:36:12.167Z",
-   "endedAt": "2026-10-11T02:36:12.228Z",
+   "startedAt": "2026-10-11T02:48:17.456Z",
+   "endedAt": "2026-10-11T02:48:17.514Z",
    "exitCode": 0,
    "stdoutHead": "true\n",
    "stderrHead": ""
