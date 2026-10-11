@@ -16,7 +16,7 @@
 - [x] 6 시나리오 16개(12 + 검토자 4) 기준 2회·작업 1회 · CSV·사진 첨부·Notion 본문 탐침 · 완료 기준: 전부 같은 결과, 저장 → 다시 열기 → 새로 고침 유지 포함
 - [x] 7 npm test(기준·작업) · 시험 파일 전부 · 무결성 게이트 · 완료 기준: 기준과 차이 0
 - [x] 8 REQ·TICKETS·claims → 게이트 → npm test → 커밋 · 완료 기준: 훅 통과
-- [ ] 9 로컬 recomputeSplit · 로컬 법정 전체 실행 · 완료 기준: `court-local.json` 에 끝까지 돈 결과가 있다
+- [x] 9 로컬 recomputeSplit · 로컬 법정 전체 실행 · 완료 기준: `court-local.json` 에 끝까지 돈 결과가 있다
 - [ ] 10 [4단계: 심사 청구] push(한 번)·PR·되읽기 · 완료 기준: `gh pr view` 의 head 가 로컬 HEAD 와 같다 — 이 표시는 push·PR 뒤에 확인되며, push 횟수를 줄이라는 운영 지시로 표시만을 위한 추가 push 는 하지 않는다
 
 ## 막힐 지점 예상(원칙 ⑧)

@@ -68,7 +68,7 @@ if (i >= 0) {
     '',
     '#### [블록 2] REQ / PLAN 및 구체적 식별자',
     '- **구체적 식별자**: 함수 ' + meta.plan.filter(p => p.action === 'move').map(p => tick(p.names[0])).join(' · ') + ' · 파일 `index.html`(구획 「템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)」) → ' + proof.cells.map(c => tick(c.file)).join(' · ') + ' · DOM `#proTable` · `.pro-tpl-cell-input` · `#proTplSelect` · `#swStartPauseBtn` · `#proGeneralSaveBtn` · `#proCalendarSaveBtn` 등(REQ 0절) · `docs/specs/REQ-TASK-ES-672-PRO-MODAL-CELLS.md`',
-    '- **PLAN 체크리스트**: [4단계: 심사 청구] 완료 상태(`.claude/plan-TASK-ES-672.md`)',
+    '- **PLAN 체크리스트**: [4단계: 심사 청구] — `.claude/plan-TASK-ES-672.md` 의 1~9 는 측정 뒤 완료 표시, 10(push · PR · 되읽기)은 push 뒤에야 확인되므로 파일에는 [ ] 로 남겼다(표시만을 위한 추가 push 를 하지 않는다 — 배포 한도).',
     '',
     '#### [블록 3] 핵심 변경사항',
     '- **수정 파일 목록**: `index.html` (+' + m.summary.indexHtmlNumstat.added + ' lines, -' + m.summary.indexHtmlNumstat.deleted + ' lines) · 새 세포 여섯 · `docs/architecture/modules.json`(신고서 6칸) · `cell-descriptions.json`(설명 6개) · `module-baseline.json`(낮아진 값 기록) · REQ · TICKETS · `reports/TASK-ES-672/**`.',
