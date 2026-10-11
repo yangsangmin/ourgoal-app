@@ -1,0 +1,251 @@
+{
+  "task": "TASK-ES-616",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-616-DIR-004-BUNDLE4.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "DIR-004 의 묶음 4(944줄 함수 openProTemplateRecordModal)를 상민님 「권장안대로 진행해.」에 따라 A안 허용으로 고친다 — 안전망 시험 → 제자리 다섯 조각(옮기기가 아니라 고치기 PR, MODE_4A) → 조각별 옮기기. 한 번에 다시 쓰기와 800줄 예외는 하지 않는다."
+    },
+    {
+      "id": "R2",
+      "text": "「결심 대기」 표에서 944줄 함수 줄을 빼고, 나머지(arguments 조항 · 시험 변경 문구 · OURGOAL_CONFIG)와 묶음 5 범위 밖 문구는 그대로 둔다."
+    },
+    {
+      "id": "R3",
+      "text": "설계 문서에 반영한다 — 6.2 순서표 5번, 6.3 A안 절, 8.1 의 묶음 4 원문."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "A안의 실제 실행(안전망 시험 · 제자리 정리 · 조각별 옮기기)은 이 PR 에 없다. 설계 6.2 의 5번에서 PR 마다 새 작업번호로 한다. 게스트로 이 창이 열리는지는 미측정이다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 (라)가 944줄 함수를 A안으로 진행한다고 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "(라) 944줄 함수 openProTemplateRecordModal(전문 템플릿 기록 창)은 A안으로 진행한다"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 제자리 정리 단계를 고치기 PR(MODE_4A)로 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "이 단계는 옮기기가 아니라 고치기 PR 이므로 일반 개발 절차(헌법 MODE_4A · 화면 시나리오 주장 · 법정 판정)로 간다"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 하지 않는 것(한 번에 다시 쓰기 · 800줄 예외)을 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "하지 않는 것: 한 번에 다시 써서 옮기기, 800줄 상한 예외로 통째 옮기기(금고 변경)."
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 결심 기록의 묶음 4 결과가 A안 허용이다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "④ 944줄 함수 — A안 허용"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 결심 기록에 묶음 4 에 대한 상민님 원문이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "세션이 묶음 4 의 선택지 A~D 와 권장 A안을 설명드린 직후의 원문 「권장안대로 진행해.」"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 944줄 함수 줄이 없다(결심됨)",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| 944줄 함수 openProTemplateRecordModal(전문 템플릿 기록 창) 처리"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-004 가 묶음 5(saveGoogleToken)를 여전히 범위 밖으로 적는다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "saveGoogleToken 은 이 지시의 범위가 아니다(아래 결심 대기)."
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 arguments 조항 줄이 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| saveGoogleToken 의 arguments — 헌법 CELL_SPLIT 5호"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 표에 OURGOAL_CONFIG 줄이 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| OURGOAL_CONFIG(빈 설정 객체 선언과 window 복사 줄, 경험칙 L033 이 돈 근처로 분류)의 자리 이동"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 6.3 에 944줄 함수 A안 절이 있다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "### 6.3 944줄 함수 `openProTemplateRecordModal` — A안"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 6.2 순서표 5번이 944줄 함수다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "| 5 | 944줄 함수 (C 트랙) |"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 8.1 에 묶음 4 원문이 있다",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "- 묶음 4 에 대한 원문(2026-10-11, 세션이 선택지 A~D 와 권장 A안을 설명드린 직후): 「권장안대로 진행해.」"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 머리에 상민님 원문이 글자 그대로 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-616-DIR-004-BUNDLE4.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-616-DIR-004-BUNDLE4.md",
+        "text": "  2. 「권장안대로 진행해.」"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 머리에 앞선 상민님 원문이 글자 그대로 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-616-DIR-004-BUNDLE4.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-616-DIR-004-BUNDLE4.md",
+        "text": "  1. 「결심필요 4번 빼고 모두 권장안대로 진행하고 4번은 자세히 설명해봐 어떤 함수인지 어떤 기능을 하던건지 자세히, 어떻게 진행하는게 좋을지, 권장안이 뭔지」"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-616 한 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-616 | INFRA | 지시함 DIR-004 보완"
+      }
+    }
+  ]
+}
