@@ -1,0 +1,878 @@
+{
+ "tool": "reports/TASK-ES-646/tools/inplace-split.cjs",
+ "task": "TASK-ES-646",
+ "entry": "openProTemplateRecordModal",
+ "before": {
+  "firstLine": 2987,
+  "lastLine": 3930,
+  "lines": 944
+ },
+ "after": {
+  "functions": {
+   "openProTemplateRecordModal": 153,
+   "bindProRecTable": 70,
+   "bindProRecTools": 238,
+   "bindProRecTrendChart": 47,
+   "bindProRecStopwatch": 264,
+   "bindProRecSave": 187
+  },
+  "totalLines": 959,
+  "lineDelta": 15
+ },
+ "pieces": [
+  {
+   "key": "table",
+   "fn": "bindProRecTable",
+   "note": "표 편집: 표의 칸을 읽어 행에 담기 · 실시간 분석 띠 · 표 다시 그리기 · 행 삭제 · 행 추가",
+   "fromLine": 3130,
+   "toLine": 3196,
+   "statements": 10,
+   "lines": 67
+  },
+  {
+   "key": "tools",
+   "fn": "bindProRecTools",
+   "note": "도구 단추: 지난 루틴 불러오기 · AI 코치 · Notion 연동 · CSV 가져오기/내려받기 · 스마트워치 · 템플릿 마켓 · AI 사진 인식 · 음성 입력 · 표 속성 편집 · 템플릿 변경 · 템플릿 생성 · 사진 첨부",
+   "fromLine": 3198,
+   "toLine": 3433,
+   "statements": 27,
+   "lines": 236
+  },
+  {
+   "key": "chart",
+   "fn": "bindProRecTrendChart",
+   "note": "성장 추이 차트: 점 설명 · 기간 칩 · 다시 그리기",
+   "fromLine": 3437,
+   "toLine": 3480,
+   "statements": 4,
+   "lines": 44
+  },
+  {
+   "key": "stopwatch",
+   "fn": "bindProRecStopwatch",
+   "note": "스톱워치·인터벌 타이머: 시작/정지 · 리셋 · 모드 · 랩 · 랩과 지금 시간을 표 칸에 기입",
+   "fromLine": 3482,
+   "toLine": 3742,
+   "statements": 26,
+   "lines": 261
+  },
+  {
+   "key": "save",
+   "fn": "bindProRecSave",
+   "note": "저장·닫기: 기기 즉시 저장 → 목표·일정·기록 연동 → 화면 갱신 → 서버 동기화 → Notion 자동 전송, 취소·돌아가기",
+   "fromLine": 3744,
+   "toLine": 3928,
+   "statements": 8,
+   "lines": 185
+  }
+ ],
+ "droppedBlankLines": [
+  3197,
+  3434,
+  3436,
+  3481,
+  3743
+ ],
+ "ctx": {
+  "data": [
+   "editRec",
+   "initialDate",
+   "isNew",
+   "allTpls",
+   "curTpl",
+   "columns",
+   "rows",
+   "attachedPhoto",
+   "sheet"
+  ],
+  "functions": {
+   "renderRowsHtml": "entry",
+   "syncCurrentRowsFromDOM": "table",
+   "updateAnalyticsBanner": "table",
+   "refreshTableBody": "table",
+   "bindRowEvents": "table",
+   "updateTrendChart": "chart",
+   "stopSwTimer": "stopwatch"
+  },
+  "members": 16
+ },
+ "edits": {
+  "total": 252,
+  "byKind": {
+   "decl": 6,
+   "read": 200,
+   "write": 16,
+   "call": 30
+  },
+  "byName": {
+   "isNew": 4,
+   "editRec": 28,
+   "allTpls": 8,
+   "curTpl": 42,
+   "columns": 41,
+   "rows": 35,
+   "initialDate": 10,
+   "attachedPhoto": 5,
+   "sheet": 49,
+   "renderRowsHtml": 1,
+   "refreshTableBody": 8,
+   "syncCurrentRowsFromDOM": 12,
+   "updateTrendChart": 2,
+   "bindRowEvents": 1,
+   "updateAnalyticsBanner": 2,
+   "stopSwTimer": 4
+  }
+ },
+ "bindings": [
+  {
+   "name": "editRec",
+   "scope": "entry",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 22,
+    "save": 6
+   },
+   "writtenIn": {},
+   "viaCtx": true
+  },
+  {
+   "name": "initialTplKey",
+   "scope": "entry",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 3
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "initialDate",
+   "scope": "entry",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 4,
+    "tools": 1,
+    "save": 5
+   },
+   "writtenIn": {},
+   "viaCtx": true
+  },
+  {
+   "name": "isNew",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1,
+    "save": 2
+   },
+   "writtenIn": {},
+   "viaCtx": true
+  },
+  {
+   "name": "allTpls",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 5,
+    "tools": 1
+   },
+   "writtenIn": {
+    "tools": 1
+   },
+   "viaCtx": true
+  },
+  {
+   "name": "curTpl",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 11,
+    "table": 1,
+    "tools": 18,
+    "chart": 1,
+    "save": 8
+   },
+   "writtenIn": {
+    "tools": 2
+   },
+   "viaCtx": true
+  },
+  {
+   "name": "columns",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 4,
+    "table": 4,
+    "tools": 19,
+    "stopwatch": 7,
+    "save": 3
+   },
+   "writtenIn": {
+    "tools": 3
+   },
+   "viaCtx": true
+  },
+  {
+   "name": "rows",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 2,
+    "table": 9,
+    "tools": 12,
+    "save": 2
+   },
+   "writtenIn": {
+    "entry": 3,
+    "table": 1,
+    "tools": 5
+   },
+   "viaCtx": true
+  },
+  {
+   "name": "defaultDateVal",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "recordDateVal",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "memoVal",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "attachedPhoto",
+   "scope": "entry",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 2,
+    "save": 1
+   },
+   "writtenIn": {
+    "tools": 1
+   },
+   "viaCtx": true
+  },
+  {
+   "name": "renderModal",
+   "scope": "entry",
+   "kind": "function",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "renderRowsHtml",
+   "scope": "entry",
+   "kind": "function",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1,
+    "table": 1
+   },
+   "writtenIn": {},
+   "viaCtx": true,
+   "owner": "entry"
+  },
+  {
+   "name": "sheet",
+   "scope": "callback",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "table": 8,
+    "tools": 21,
+    "chart": 2,
+    "stopwatch": 11,
+    "save": 7
+   },
+   "writtenIn": {},
+   "viaCtx": true
+  },
+  {
+   "name": "syncCurrentRowsFromDOM",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "table",
+   "readIn": {
+    "table": 3,
+    "tools": 9,
+    "stopwatch": 2,
+    "save": 1
+   },
+   "writtenIn": {},
+   "viaCtx": true,
+   "owner": "table"
+  },
+  {
+   "name": "updateAnalyticsBanner",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "table",
+   "readIn": {
+    "table": 2,
+    "stopwatch": 2
+   },
+   "writtenIn": {},
+   "viaCtx": true,
+   "owner": "table"
+  },
+  {
+   "name": "refreshTableBody",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "table",
+   "readIn": {
+    "table": 2,
+    "tools": 8
+   },
+   "writtenIn": {},
+   "viaCtx": true,
+   "owner": "table"
+  },
+  {
+   "name": "bindRowEvents",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "table",
+   "readIn": {
+    "table": 1,
+    "entry": 1
+   },
+   "writtenIn": {},
+   "viaCtx": true,
+   "owner": "table"
+  },
+  {
+   "name": "addNewRow",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "table",
+   "readIn": {
+    "table": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "tableBody",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "table",
+   "readIn": {
+    "table": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "addBtn2",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "table",
+   "readIn": {
+    "table": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "quickLoadBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "coachBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "notionBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "csvImportBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "csvExportBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "wearableBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "marketBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "visionBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "voiceBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "tplSelect",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 4
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "createBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "fileInp",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 3
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "photoBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "photoPrev",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "tools",
+   "readIn": {
+    "tools": 1
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "curChartPeriod",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "chart",
+   "readIn": {
+    "chart": 2
+   },
+   "writtenIn": {
+    "chart": 1
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "bindChartEvents",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "chart",
+   "readIn": {
+    "chart": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "updateTrendChart",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "chart",
+   "readIn": {
+    "tools": 2,
+    "chart": 1
+   },
+   "writtenIn": {},
+   "viaCtx": true,
+   "owner": "chart"
+  },
+  {
+   "name": "swTimerId",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 2
+   },
+   "writtenIn": {
+    "stopwatch": 2
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "swRunning",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 2
+   },
+   "writtenIn": {
+    "stopwatch": 2
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "swMode",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 11
+   },
+   "writtenIn": {
+    "stopwatch": 1
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "swTargetMs",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 5
+   },
+   "writtenIn": {
+    "stopwatch": 5
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "swElapsedMs",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 7
+   },
+   "writtenIn": {
+    "stopwatch": 3
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "swLastTick",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 1
+   },
+   "writtenIn": {
+    "stopwatch": 2
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "swLaps",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 8
+   },
+   "writtenIn": {
+    "stopwatch": 1
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "lastFocusedCell",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 6
+   },
+   "writtenIn": {
+    "stopwatch": 1
+   },
+   "viaCtx": false
+  },
+  {
+   "name": "swDisplay",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 4
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "swStartPauseBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 5
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "swResetBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "swLapBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "swInjectBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "swLapsList",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 10
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "swModeChips",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "updateSwDisplay",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 3
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "stopSwTimer",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 3,
+    "save": 4
+   },
+   "writtenIn": {},
+   "viaCtx": true,
+   "owner": "stopwatch"
+  },
+  {
+   "name": "resetSw",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "renderLapsUI",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 1
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "injectLapIntoTable",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "stopwatch",
+   "readIn": {
+    "stopwatch": 1
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "executeSave",
+   "scope": "callback",
+   "kind": "function",
+   "declaredIn": "save",
+   "readIn": {
+    "save": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "backBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "save",
+   "readIn": {
+    "save": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  },
+  {
+   "name": "cancelBtn",
+   "scope": "callback",
+   "kind": "var",
+   "declaredIn": "save",
+   "readIn": {
+    "save": 2
+   },
+   "writtenIn": {},
+   "viaCtx": false
+  }
+ ],
+ "eol": "CRLF"
+}

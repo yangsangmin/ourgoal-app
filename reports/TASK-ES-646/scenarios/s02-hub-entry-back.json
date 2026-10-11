@@ -1,0 +1,127 @@
+{
+  "id": "s02-hub-entry-back",
+  "title": "게스트로 일정 탭 날짜 허브의 「맞춤기록 작성」으로 창을 열면 돌아가기 줄이 보이고, 「돌아가기」·「취소」·「일반저장」 모두 날짜 허브로 돌아온다 (창 틀 — 날짜를 받아 열린 창의 닫기 길)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calOpenHubBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#calOpenHubBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proRecBackToHubBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proRecBackToHubBtn",
+      "text": "일정 목록으로 돌아가기"
+    },
+    {
+      "do": "click",
+      "selector": "#proRecBackToHubBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "id": "s10-save-reopen-reload",
+  "title": "첫 행 종목과 메모를 적어 「일반저장」하면 창이 닫히고 기록 카드가 하나 생기며, 카드의 수정으로 다시 열면 같은 값이 들어 있고, 한 칸을 더 고쳐 저장해도 카드는 하나이며, 새로 고침한 뒤 다시 열어도 두 값과 메모가 그대로 남아 있다 (저장 — 저장·다시 열기·수정 저장·새로 고침 뒤 유지)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "text": "안전망스쿼트",
+      "clear": true
+    },
+    {
+      "do": "type",
+      "selector": "#proRecMemo",
+      "text": "안전망 메모"
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": ".rec-card [data-recedit]",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-recedit]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet h3",
+      "text": "전문 템플릿 기록 수정"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "안전망스쿼트"
+    },
+    {
+      "expect": "attr",
+      "selector": "#proRecMemo",
+      "name": "value",
+      "equals": "안전망 메모"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"1\"][data-col=\"1\"]",
+      "text": "수정런지",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": ".rec-card [data-recedit]",
+      "equals": 1
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".rec-card [data-recedit]",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "count",
+      "selector": ".rec-card [data-recedit]",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-recedit]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "안전망스쿼트"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"1\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "수정런지"
+    },
+    {
+      "expect": "attr",
+      "selector": "#proRecMemo",
+      "name": "value",
+      "equals": "안전망 메모"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
