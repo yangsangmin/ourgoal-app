@@ -56,6 +56,9 @@ if (CMD === 'claims') {
   add('R2', 'scripts/ 아래 바뀐 파일이 없다.', M, 'changed.scriptsChanged', []);
   add('R2', '금고 아래 바뀐 파일이 없다.', M, 'changed.vaultChanged', []);
   add('R2', '생성기 · 하네스 변경이 없다.', M, 'changed.harnessChanged', []);
+  // 설명 파일 자체에 거는 주장(법정이 커밋된 트리에서 직접 본다)
+  claims.push({ id: 'C' + (++n), req: 'R1', kind: 'static', domain: 'config', statement: '설명 파일 js/app/README.md 가 커밋된 트리에 있다.', touches: [README], check: { type: 'fileExists', file: README } });
+  claims.push({ id: 'C' + (++n), req: 'R1', kind: 'static', domain: 'config', statement: '설명 파일이 부팅 파일의 이름(js/app/boot.js)과 「손으로 쓰지 않고 생성기가 만든다」를 적고 있다.', touches: [README], check: { type: 'codeContains', file: README, text: '손으로 쓰지 않고 생성기가 만든다' } });
   add('R3', '신고서(modules.json)에 js/app 아래 세포가 없다(설명 파일은 세포가 아니다).', M, 'tools.modulesJsonCellsUnderApp', 0);
   add('R3', '신고서는 바뀌지 않았다.', M, 'tools.modulesJsonChanged', false);
   add('R3', '모듈 가드 종료 코드가 0 이다.', M, 'tools.moduleGuardExit', 0);
