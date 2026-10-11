@@ -158,7 +158,7 @@
   if (!R) return;
   var K = g.OurgoalUiHelpers;
   if (K) R.provide('core/registry-init', {
-    setTab: K.setTab
+    bindNavButtonsClick: K.bindNavButtonsClick, initShipyardRegistry: K.initShipyardRegistry, setTab: K.setTab
   }, { window: [
     'setTab'
   ] });

@@ -118,8 +118,8 @@
   if (!R) return;
   var K = g.OurgoalUiHelpers;
   if (K) R.provide('core/modal-helper', {
-    closeModal: K.closeModal, isModalDismissCooldown: K.isModalDismissCooldown, openBottomSheetAlert: K.openBottomSheetAlert,
-    openBottomSheetConfirm: K.openBottomSheetConfirm
+    bindModalPopstateBack: K.bindModalPopstateBack, closeModal: K.closeModal, isModalDismissCooldown: K.isModalDismissCooldown,
+    openBottomSheetAlert: K.openBottomSheetAlert, openBottomSheetConfirm: K.openBottomSheetConfirm
   }, { window: [
     'closeModal', 'openBottomSheetAlert', 'openBottomSheetConfirm'
   ], windowOnly: [

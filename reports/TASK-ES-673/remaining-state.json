@@ -1,0 +1,51 @@
+{
+ "tool": "reports/TASK-ES-673/unstate-run.cjs measure",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T08:55:02.041Z",
+ "basis": {
+  "worktreeHead": "2a1507ebfdf03ed747b2f5a15788e959fb202ab6",
+  "base": "2a1507ebfdf03ed747b2f5a15788e959fb202ab6"
+ },
+ "totals": {
+  "stateNamesBefore": 13,
+  "moved": 9,
+  "stateNamesLeftInIife": 4,
+  "stoppedByGenerator": 1,
+  "excludedBecauseGatePinsStateText": 1,
+  "notExposed": 2
+ },
+ "byCondition": [
+  {
+   "count": 1,
+   "condition": "맨이름 참조가 남음",
+   "unlock": "그 이름을 맨이름으로 읽고 쓰는 IIFE 안 코드(함수 본문·로드 중 문)가 세포로 옮겨져 L. 통로로 읽게 되면 — 함수 이전·감싸기(구역 이전) 뒤 unstate 로 다시",
+   "names": [
+    "state"
+   ]
+  },
+  {
+   "count": 1,
+   "condition": "무결성 게이트가 상태 선언 글자를 붙잡음",
+   "unlock": "scripts/verify-integrity-gate.js 가 선언 글자(`이름 = 값;`)를 index.html 에서 찾는다 — 그 단언을 넓히는 PR(금고 변경 승인분)이 병합된 뒤 unstate 로. 이 PR 은 게이트·시험을 고치지 않았다",
+   "names": [
+    "_promptEncyclopediaOpen"
+   ]
+  },
+  {
+   "count": 2,
+   "condition": "통로에 노출되지 않음(IIFE 안에서만 쓰는 값)",
+   "unlock": "상태 기관 대상이 아니다(통로로 읽는 세포가 없다). 그 값을 쓰는 문과 함께 구역 감싸기(region, X7)로 세포 함수의 지역 변수가 되거나, 그 문이 옮겨질 때 같이 옮긴다",
+   "names": [
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY"
+   ]
+  }
+ ],
+ "stoppedDetail": [
+  {
+   "name": "state",
+   "condition": "맨이름 참조가 남음",
+   "generatorReason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: state(줄 3044,3215,3483,3812,3813,3814,3843,3844,3846,3852,3853,3854,3856,3858,3861,3862,3863,3867,3888,3908,3913,3916)"
+  }
+ ]
+}

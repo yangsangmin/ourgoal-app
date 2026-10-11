@@ -315,7 +315,7 @@
   var K = g.OurgoalRecordsKit;
   if (K) R.provide('records/export-theme', {
     buildICS: K.buildICS, buildMarkdownExport: K.buildMarkdownExport, buildWebCalUrl: K.buildWebCalUrl, exportAllCheckins: K.exportAllCheckins,
-    fetchSignedCalendarToken: K.fetchSignedCalendarToken
+    fetchSignedCalendarToken: K.fetchSignedCalendarToken, openExportThemeModal: K.openExportThemeModal
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

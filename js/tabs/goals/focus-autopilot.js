@@ -524,8 +524,6 @@
     openFocusAutoPilotModal: K.openFocusAutoPilotModal, openMzShareCardModal: K.openMzShareCardModal
   }, { window: [
     'openMzShareCardModal'
-  ], windowOnly: [
-    'openMzShareCardModal'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

@@ -191,11 +191,12 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/inapp-landing', {
+    bindLandGuestBtn: K.bindLandGuestBtn, bindLandLoginLink: K.bindLandLoginLink, bindLandNickQuickLink: K.bindLandNickQuickLink,
     checkKakaoInAppBrowser: K.checkKakaoInAppBrowser, escapeKakaoInAppBrowser: K.escapeKakaoInAppBrowser
   }, { window: [
     'checkKakaoInAppBrowser', 'escapeKakaoInAppBrowser'
   ], windowOnly: [
-    'checkKakaoInAppBrowser', 'escapeKakaoInAppBrowser'
+    'escapeKakaoInAppBrowser'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */
