@@ -1,0 +1,131 @@
+{
+  "id": "s1-template-market-browse",
+  "title": "게스트로 일정 탭 오늘 날짜의 일정 관리 창에서 맞춤기록 창을 열고 「마켓」을 누르면 템플릿 마켓 창이 열리며, 분류 알약과 검색어로 목록이 걸러진다 — 복제·미리보기는 누르지 않는다 (템플릿 마켓 창 openTemplateMarketModal 이전 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-calendar .s-cal-day-cell.today",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-calendar .s-cal-day-cell.today"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#screen-calendar button[title=\"누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hubAddProRecBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#proTplMarketBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#mktGridContainer"
+    },
+    {
+      "do": "click",
+      "selector": "#proTplMarketBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#mktGridContainer"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet",
+      "text": "아워골 맞춤 템플릿 마켓플레이스"
+    },
+    {
+      "expect": "visible",
+      "selector": ".mkt-preview-btn[data-mktkey=\"mkt_crossfit_fran\"]"
+    },
+    {
+      "do": "click",
+      "selector": "[data-mktcat=\"study\"]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".mkt-preview-btn[data-mktkey=\"mkt_crossfit_fran\"]"
+    },
+    {
+      "do": "click",
+      "selector": "[data-mktcat=\"all\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": ".mkt-preview-btn[data-mktkey=\"mkt_crossfit_fran\"]"
+    },
+    {
+      "do": "type",
+      "selector": "#mktSearchInput",
+      "text": "하이록스"
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".mkt-preview-btn[data-mktkey=\"mkt_crossfit_fran\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": ".mkt-preview-btn[data-mktkey=\"mkt_hyrox_8stations\"]"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
