@@ -62,7 +62,7 @@ const uiCss = fs.readFileSync(uiCssPath, 'utf8');
 // 5. 회귀 방지: 이벤트 리스너 및 타 뷰 바인딩 검증
 {
   assert(indexHtml.includes("state.goalViewMode = opt.dataset.msview;"), 'msViewToggle의 뷰 모드 전환 이벤트가 보존되어야 합니다.');
-  assert(indexHtml.includes("renderGoalsScreen();"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.');
+  assert(require('./helpers/inline-bundle').withInlineCells(indexHtml).includes("renderGoalsScreen();"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.'); /* #TASK-ES-666 index.html 에 있거나 옮겨 간 세포 파일에 있다(인라인 합본 — tests/helpers/inline-bundle.js) — 검사 수·기대값 그대로 */
 }
 
 console.log('[TEST] goals-only-view.test.js: all assertions completed successfully for ' + SUITE_TASK);

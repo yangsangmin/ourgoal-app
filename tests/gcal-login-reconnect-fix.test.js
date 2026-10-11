@@ -22,7 +22,7 @@ const trackJs = fs.readFileSync(trackPath, 'utf8');
 // 1. 소스 정적 구조 검증
 {
   assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
-  assert.ok(indexHtml.includes('window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출');
+  assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
   assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.restoreGoogleToken = restoreGoogleToken;'), 'restoreGoogleToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
   assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
   assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */

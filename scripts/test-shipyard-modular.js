@@ -197,6 +197,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/hidden-entry-guard.test.js');
   // #TASK-ES-620 배선 노출 도우미(tests/helpers/wiring-exposed.js): 옛 배선 글자 또는 등록 — 배선도 등록도 없는 이름·window 목록에 없는 이름·읽지 않는 세포 파일·정의 없는 등록은 거짓
   runNode('tests/wiring-exposed.test.js');
+  // #TASK-ES-666 옮겨 간 자리 도우미(tests/helpers/moved-code.js): 옛 글자 또는 세포 파일의 함수 선언·첫 문·상태 기관 호출 — 읽지 않는 파일·주석·문자열·다른 이름·다른 초기값은 거짓
+  runNode('tests/moved-code.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

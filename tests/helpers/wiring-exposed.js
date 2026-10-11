@@ -211,4 +211,4 @@ function api(root) {
   };
 }
 
-module.exports = Object.assign(api(DEFAULT_ROOT), { forRoot: root => api(root), parseWindowWiring, parseGetterWiring });
+module.exports = Object.assign(api(DEFAULT_ROOT), { forRoot: root => api(root), parseWindowWiring, parseGetterWiring, scriptTags /* #TASK-ES-666: tests/helpers/moved-code.js 가 같은 태그 읽기를 쓴다 */ });
