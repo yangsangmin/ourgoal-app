@@ -1,0 +1,168 @@
+{
+  "id": "p2s05-tool-windows-a",
+  "title": "창의 도구 단추 「AI 코치」·「Notion 연동」·「스마트워치」는 각자의 창을 열고 닫기로 닫히며, 「CSV 가져오기」는 붙여넣은 글을 「반영」하면 창이 닫힌다 (도구 — 창이 뜨는 단추 1: 열고 닫기만, 전송·연동 실행 없음) (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proCoachBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#coachCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#coachCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#coachCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proNotionExportBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#notionCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#notionCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#notionCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proWearableSyncBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#wearableCancelBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#wearableCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#wearableCancelBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proCsvImportBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#csvApplyBtn"
+    },
+    {
+      "do": "type",
+      "selector": "#csvTextInput",
+      "text": "1,가져온종목,3세트,10회,5분,-,70점"
+    },
+    {
+      "do": "click",
+      "selector": "#csvApplyBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#csvApplyBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

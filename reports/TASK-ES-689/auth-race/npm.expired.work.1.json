@@ -1,0 +1,173 @@
+{
+ "tool": "whole-run/run2/tools/auth-race.cjs (court/lib/chrome.js · static-server.js · site-host.js 읽기 전용)",
+ "type": "작업자 측정, 판정 아님",
+ "mode": "저장된 가짜 세션 있음(만료됨 — 라이브러리가 서버에 갱신을 요청한다. 외부 통신이 막혀 요청은 실패한다)",
+ "limits": "진짜 서버와는 통신하지 않는다(법정 브라우저가 외부 통신을 막는다). 연결 라이브러리는 저장소에 설치된 판(2.115.0 (node_modules))을 페이지가 뜨기 전에 심었다 — 운영 화면이 CDN 에서 받는 판과 같은지는 재지 않았다. 세션은 가짜라서 그 뒤의 서버 조회는 모두 실패한다(두 트리 같은 조건). 그래서 이 탐침이 재는 것은 「인증 사건이 누구에게 전달되는가 · 복원 진입 함수가 몇 번 불리는가」까지다.",
+ "app": "C:\\dev\\wt\\es689-finalize-p",
+ "libVersion": "2.115.0 (node_modules)",
+ "startedAt": "2026-10-11T16:15:41.046Z",
+ "endedAt": "2026-10-11T16:15:48.014Z",
+ "waitMs": 6000,
+ "boot": {
+  "ok": true,
+  "error": null,
+  "exceptions": [],
+  "consoleErrors": []
+ },
+ "summary": {
+  "line": [
+   "CREATE",
+   "REG:1",
+   "CALL:runAppBoot#1",
+   "REG:2",
+   "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError"
+  ],
+  "scripts": [
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "none",
+   "none",
+   "none",
+   "none",
+   "none",
+   "none",
+   "none",
+   "none",
+   "none"
+  ],
+  "regs": [
+   {
+    "e": "REG:1",
+    "script": "js/app/boot.js",
+    "initQueueOpen": true
+   },
+   {
+    "e": "REG:2",
+    "script": "js/app/boot.js",
+    "initQueueOpen": true
+   }
+  ],
+  "index": {
+   "create": 0,
+   "reg1": 1,
+   "reg2": 3,
+   "initDone": -1,
+   "firstSignedInDelivery": -1
+  },
+  "signedInDeliveredWithSubs": null,
+  "received": [],
+  "receivedSignedIn": 0,
+  "restoreCalls": 0,
+  "restoreCallDetail": [],
+  "initDoneBeforeReg1": false,
+  "end": {
+   "pendingAuthSession": "null",
+   "profile": "null",
+   "landingVisible": true,
+   "authVisible": false,
+   "profileIsProbeUser": false,
+   "entering": false,
+   "navVisible": false,
+   "bodyClass": "",
+   "openModals": [
+    "homeDetailPanel"
+   ],
+   "toasts": [],
+   "storageHasSession": true
+  },
+  "seeded": true,
+  "lockMode": "lockless",
+  "spyErrors": []
+ },
+ "events": [
+  {
+   "e": "CREATE",
+   "script": "js/app/boot.js",
+   "ms": 213.4,
+   "args": 2
+  },
+  {
+   "e": "REG:1",
+   "script": "js/app/boot.js",
+   "ms": 215.4,
+   "subsBefore": 1,
+   "initQueueOpen": true
+  },
+  {
+   "e": "CALL:runAppBoot#1",
+   "script": "js/app/boot.js",
+   "ms": 217.7,
+   "hasSession": false,
+   "enteringBefore": false
+  },
+  {
+   "e": "REG:2",
+   "script": "js/app/boot.js",
+   "ms": 218,
+   "subsBefore": 2,
+   "initQueueOpen": true
+  },
+  {
+   "e": "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "script": "js/app/boot.js",
+   "ms": 218.8
+  },
+  {
+   "e": "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "script": "none",
+   "ms": 257.9
+  },
+  {
+   "e": "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "script": "none",
+   "ms": 459.9
+  },
+  {
+   "e": "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "script": "none",
+   "ms": 461
+  },
+  {
+   "e": "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "script": "none",
+   "ms": 864.6
+  },
+  {
+   "e": "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "script": "none",
+   "ms": 866.9
+  },
+  {
+   "e": "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "script": "none",
+   "ms": 1681.3
+  },
+  {
+   "e": "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "script": "none",
+   "ms": 1682.5
+  },
+  {
+   "e": "FETCH:/auth/v1/token?grant_type=refresh_token",
+   "script": "none",
+   "ms": 3284.1
+  },
+  {
+   "e": "FETCHERR:/auth/v1/token?grant_type=refresh_token:TypeError",
+   "script": "none",
+   "ms": 3285.3
+  }
+ ]
+}

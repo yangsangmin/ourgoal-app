@@ -1,0 +1,41 @@
+{
+ "tool": "git commit (저장소의 커밋 훅 그대로 — --no-verify 없음)",
+ "type": "작업자 PC 기록 — 판정 아님",
+ "commit": "c6b72194",
+ "what": "새 부팅 파일 js/app/boot.js 와 바뀐 index.html 이 든 실제 커밋",
+ "exitCode": 0,
+ "hookLines": [
+  "✔ 금지 패턴 없음 · index.html 순증가 -418줄 · 변경 26635줄",
+  "✔ 본질 태그 [INFRA] 티켓 #TASK-ES-689"
+ ],
+ "forbiddenPatternStepPassed": true,
+ "hardcodedSecretBlocked": false,
+ "bypass": false,
+ "note": "공개 키 선언 두 줄은 index.html 제자리에 있고(diff 에서 더해진 줄이 아니라 문맥 줄이다) 부팅 파일에는 키 글자가 없다(이름만 읽는다) — 훅의 금지 패턴 단계가 통과했다",
+ "lineEndings": {
+  "rows": [
+   {
+    "file": "js/app/boot.js",
+    "committed": "i/lf",
+    "workingCopy": "w/lf"
+   },
+   {
+    "file": "js/core/boot-app-state.js",
+    "committed": "i/lf",
+    "workingCopy": "w/crlf"
+   },
+   {
+    "file": "js/core/boot-finish.js",
+    "committed": "i/lf",
+    "workingCopy": "w/crlf"
+   },
+   {
+    "file": "js/core/ui-helpers.js",
+    "committed": "i/lf",
+    "workingCopy": "w/crlf"
+   }
+  ],
+  "bootSameAsOtherCellsInCommit": true,
+  "note": "커밋된 판(i/)의 줄 끝은 부팅 파일과 다른 세포 파일이 같다. 작업 사본(w/)에서만 다르게 보인다 — 생성기가 방금 쓴 파일은 LF 이고, 다른 파일은 이 PC 의 git 설정(core.autocrlf)이 체크아웃 때 CRLF 로 바꿔 둔 것이다. 법정의 재실행 대조는 커밋된 판의 바이트로 맞댄다"
+ }
+}
