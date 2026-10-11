@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "3c9b9335f5c76a41d7ac10b4b2f079526fce9bb7",
-  "short": "3c9b9335",
-  "committedAt": "2026-10-11T18:07:53+09:00",
-  "subject": "Merge pull request #941 from yangsangmin/feat/2026-10-11-task-es-673-unstate-3"
+  "commit": "8e3ed7f70c1ae9a46326e3ab076515055103894d",
+  "short": "8e3ed7f7",
+  "committedAt": "2026-10-11T23:20:34+09:00",
+  "subject": "Merge pull request #958 from yangsangmin/feat/2026-10-11-task-es-686-app-folder"
  },
  "summary": {
-  "cells": 371,
-  "files": 370,
-  "jsLines": 92691,
+  "cells": 380,
+  "files": 379,
+  "jsLines": 94226,
   "kinds": {
-   "organ": 69,
-   "tab": 196,
+   "organ": 72,
+   "tab": 202,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 371,
+  "descriptionsHand": 380,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 1896,
-   "functionDecls": 22
+   "inlineScriptLines": 442,
+   "functionDecls": 1
   },
   "health": {
-   "undifferentiatedLines": 1896,
+   "undifferentiatedLines": 442,
    "globalLinks": 75,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,15 +74,15 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 69
+   "count": 72
   },
   {
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 196,
+   "count": 202,
    "large": 6,
-   "small": 190
+   "small": 196
   },
   {
    "key": "hybrid",
@@ -200,6 +200,12 @@
     "records/mic-permission-guide",
     "records/period-ai-card",
     "records/photo-proof",
+    "records/pro-record-modal",
+    "records/pro-record-save",
+    "records/pro-record-stopwatch",
+    "records/pro-record-table",
+    "records/pro-record-tools",
+    "records/pro-record-trend-chart",
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
@@ -231,7 +237,7 @@
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 10868,
+   "lines": 12080,
    "over800": 0
   },
   {
@@ -542,11 +548,14 @@
     "core/app-state",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/capabilities",
     "core/cell-registry-commit",
@@ -584,7 +593,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 7209,
+   "lines": 7532,
    "over800": 0
   },
   {
@@ -1729,9 +1738,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAuthSocialKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -1960,9 +1967,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2023,9 +2028,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2088,9 +2091,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2145,9 +2146,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalLevelBadgeKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2208,9 +2207,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2269,9 +2266,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2330,9 +2325,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2391,9 +2384,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2452,9 +2443,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2513,9 +2502,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2578,9 +2565,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2639,9 +2624,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2705,9 +2688,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2768,9 +2749,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -2836,9 +2815,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAvatarParts"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [
@@ -4048,11 +4025,14 @@
     "core/app-state",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/cell-registry",
     "core/confetti",
@@ -4146,6 +4126,12 @@
     "records/mic-permission-guide",
     "records/period-ai-card",
     "records/photo-proof",
+    "records/pro-record-modal",
+    "records/pro-record-save",
+    "records/pro-record-stopwatch",
+    "records/pro-record-table",
+    "records/pro-record-tools",
+    "records/pro-record-trend-chart",
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
@@ -4282,11 +4268,14 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
-    "core/boot-records-wiring"
+    "core/boot-records-wiring",
+    "core/boot-state-seeds"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
@@ -4459,6 +4448,142 @@
    ]
   },
   {
+   "id": "core/boot-app-state",
+   "file": "js/core/boot-app-state.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "상태 초깃값(앱 상태 객체)",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 앱의 중심 상태 객체와 프롬프트 백과사전 서랍의 접힘 값 초깃값을 상태 기관에 맡긴다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot App State (앱 시동 — 상태 기관에 맡기는 초깃값: 앱 상태 객체 · 프롬프트 서랍 접힘 값)",
+    "앱이 뜰 때 한 번 도는 상태 정의 줄 둘을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 그대로다.",
+    "bootAppStateObject — 앱의 중심 상태 객체(프로필 · 열린 탭 · 고른 목표 등)의 초깃값을 상태 기관에 state 로 맡긴다.",
+    "bootPromptDrawerState — 프롬프트 백과사전 서랍의 접힘 값(처음에는 접힘 = false)을 상태 기관에 맡긴다."
+   ],
+   "lines": 37,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-682"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-682-REGION-3.md"
+   ],
+   "prs": [
+    {
+     "number": 954,
+     "task": "TASK-ES-682",
+     "title": "[INFRA] #TASK-ES-682 refactor: 미분화 덩어리 구역 이전 3차 — 상태 기관 정의 줄 둘을 구역 함수로(생성기 region)",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-comm-seeds",
+   "file": "js/core/boot-comm-seeds.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "상태 초깃값(예시 모임·공유·피드)",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 예시 모임 목록과 공유 함수, 소통 피드 캐시의 초깃값을 상태 기관에 맡기고, 공유 팀을 아직 불러오지 않았다는 표시를 window 에 단다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot Comm Seeds (앱 시동 — 상태 기관에 맡기는 초깃값: 예시 모임 · 공유 함수 · 피드 캐시 · 공유 팀 불러옴 표시)",
+    "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 대입 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+    "bootSampleGroups — 예시 모임 목록(배열)을 상태 기관에 MOCK_GROUPS 로 맡긴다.",
+    "bootShareHandle — 공유 엔진에 넘기는 공유 함수를 상태 기관에 shareContent 로 맡기고 window 에도 단다."
+   ],
+   "lines": 215,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "SHARED_GROUPS_LOADED",
+    "shareContent"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state",
+    "viral-sharing"
+   ],
+   "calledBy": [
+    "goals/team-goals-screen",
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security",
+    "team-share",
+    "team-templates"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-676"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-676-REGION-2.md"
+   ],
+   "prs": [
+    {
+     "number": 951,
+     "task": "TASK-ES-676",
+     "title": "[INFRA] #TASK-ES-676 refactor: 미분화 덩어리 구역 이전 2차 — 남은 로드 시점 문 11개를 구역 함수 8개로(생성기 region)",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
    "id": "core/boot-early-state",
    "file": "js/core/boot-early-state.js",
    "kind": "organ",
@@ -4617,8 +4742,7 @@
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "OurgoalUiHelpers",
-    "switchTab"
+    "OurgoalUiHelpers"
    ],
    "emits": [],
    "listens": [],
@@ -4694,7 +4818,6 @@
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "MOCK_GROUPS",
     "OurgoalUiHelpers"
    ],
    "emits": [],
@@ -4773,11 +4896,7 @@
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
     "OurgoalUiHelpers",
-    "_subtabTplDomain",
-    "_subtabTplType",
-    "handleGoalFastAddSubmit",
-    "renderTeamGoalsScreen",
-    "selectSmartTag"
+    "renderTeamGoalsScreen"
    ],
    "emits": [],
    "listens": [],
@@ -4864,6 +4983,72 @@
      "number": 933,
      "task": "TASK-ES-650",
      "title": "[INFRA] #TASK-ES-650 refactor: 미분화 덩어리 구역 이전 — 앱이 뜰 때 한 번 도는 문 179개를 구역 15개로 묶어 새 세포 5개로(생성기 region, 손 편집 0)",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-state-seeds",
+   "file": "js/core/boot-state-seeds.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "상태 초깃값(닫기 단추·템플릿 하위 탭)",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 레벨업 창 닫기 단추와 템플릿 백과사전 하위 탭의 분류·검색어·영역·종류 초깃값을 상태 기관에 맡기고, 구글 캘린더 토큰 저장 함수를 window 에 단다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot State Seeds (앱 시동 — 상태 기관에 맡기는 초깃값: 레벨업 창 닫기 단추 · 템플릿 하위 탭 · 토큰 저장 함수의 window 손잡이)",
+    "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 대입 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+    "bootAvatarCloseButton — 아바타 레벨업 창의 닫기 단추 요소를 상태 기관에 맡긴다.",
+    "bootGoogleTokenSaveHandle — 구글 캘린더 토큰 저장 함수를 window 에 단다."
+   ],
+   "lines": 61,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "saveGoogleToken"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-676"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-676-REGION-2.md"
+   ],
+   "prs": [
+    {
+     "number": 951,
+     "task": "TASK-ES-676",
+     "title": "[INFRA] #TASK-ES-676 refactor: 미분화 덩어리 구역 이전 2차 — 남은 로드 시점 문 11개를 구역 함수 8개로(생성기 region)",
      "date": "2026-10-11"
     }
    ]
@@ -5354,7 +5539,7 @@
     "같은 묶음의 별칭 var checkAndHandlePeerInviteUrl(실행되는 초기값)·마니또 window 노출 문은 원래 자리에 둔다. 주소에 초대·피드·템플릿·인증서 쿼리가 붙은 경로는 법정 실행기가 쿼리 붙은 주소로 이동할 수 없어 화면 시나리오로 잴 수 없다.",
     "#TASK-ES-536(인라인 3단계 Z3 — 알림·시간·주소): index.html 인라인 IIFE 의 구간(이전 전 13366~13366줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 26,
+   "lines": 36,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -5387,12 +5572,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-536"
+    "TASK-ES-536",
+    "TASK-ES-677"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md"
+    "docs/specs/REQ-TASK-ES-536-STAGE3-Z3.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 816,
      "task": "TASK-ES-536",
@@ -5991,9 +6184,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalModalOpenKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6494,14 +6685,22 @@
    "tasks": [
     "TASK-ES-471",
     "TASK-ES-611",
-    "TASK-ES-664"
+    "TASK-ES-664",
+    "TASK-ES-677"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 940,
      "task": "TASK-ES-664",
@@ -10465,6 +10664,12 @@
     "records/mic-permission-guide",
     "records/period-ai-card",
     "records/photo-proof",
+    "records/pro-record-modal",
+    "records/pro-record-save",
+    "records/pro-record-stopwatch",
+    "records/pro-record-table",
+    "records/pro-record-tools",
+    "records/pro-record-trend-chart",
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
@@ -10591,6 +10796,12 @@
     "records/mic-permission-guide",
     "records/period-ai-card",
     "records/photo-proof",
+    "records/pro-record-modal",
+    "records/pro-record-save",
+    "records/pro-record-stopwatch",
+    "records/pro-record-table",
+    "records/pro-record-tools",
+    "records/pro-record-trend-chart",
     "records/pro-report-export",
     "records/pro-template-modals",
     "records/pro-templates",
@@ -11943,9 +12154,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12012,9 +12221,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12087,9 +12294,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12157,9 +12362,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12297,9 +12500,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12366,9 +12567,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12453,9 +12652,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12527,9 +12724,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12598,9 +12793,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12668,9 +12861,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -12751,9 +12942,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCalendarKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13028,9 +13217,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13098,9 +13285,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13233,9 +13418,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13311,9 +13494,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13383,9 +13564,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13461,9 +13640,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13534,9 +13711,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13605,9 +13780,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13741,9 +13914,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13811,9 +13982,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13879,9 +14048,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -13945,9 +14112,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14012,9 +14177,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14082,9 +14245,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14160,9 +14321,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14228,13 +14387,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "goals/team-goals-screen"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit",
-    "SHARED_GROUPS_LOADED"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14298,9 +14456,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14367,9 +14523,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14624,9 +14778,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14695,9 +14847,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCommKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15136,9 +15286,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalCuratedMarketDataKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17811,7 +17959,9 @@
     "OurgoalGoalsKit"
    ],
    "calls": [
+    "comm/shared-groups",
     "core/app-scope",
+    "core/boot-comm-seeds",
     "goal-edit-ux",
     "team-invite-comm",
     "team-leader-check",
@@ -17823,12 +17973,9 @@
     "team-share",
     "viral-sharing"
    ],
-   "readsFromIndexHtml": [
-    "SHARED_GROUPS_LOADED"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "FEED_POSTS_CACHE",
     "OurgoalGoalsKit"
    ],
    "emits": [],
@@ -18870,9 +19017,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -18949,9 +19094,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19022,9 +19165,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19093,9 +19234,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19180,9 +19319,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "checkin:created",
     "record:saved"
@@ -19253,9 +19390,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19330,9 +19465,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19399,9 +19532,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19468,9 +19599,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19545,9 +19674,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19624,9 +19751,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19701,9 +19826,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19778,9 +19901,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19847,9 +19968,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -19987,9 +20106,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20058,9 +20175,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20119,9 +20234,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20153,6 +20266,420 @@
      "task": "TASK-ES-444",
      "title": "[INFRA] #TASK-ES-444 refactor: 인라인 스크립트 세포화 P1 구역 2차 — 일정·소통·기록·설정·목표 15묶음 함수 27개 세포 12개로 이전(동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "records/pro-record-modal",
+   "file": "js/tabs/records/pro-record-modal.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 기록 창",
+   "nameSource": "hand",
+   "does": "전문(맞춤) 템플릿 기록 창을 열어 고른 템플릿·날짜·행을 꾸러미에 담고 창을 그린 뒤 조각 다섯을 정해진 순서로 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Pro Record Modal (기록 — 전문 템플릿 기록 창의 진입점과 창 틀)",
+    "openProTemplateRecordModal — 「전문(맞춤) 템플릿 기록」 창을 연다: 고른 템플릿·날짜·행을 꾸러미(ctx)에 담고 창의 마크업을 그린 뒤 조각 다섯을 정해진 순서로 부른다.",
+    "조각을 부르는 순서(표 편집 → 도구 단추 → 행 삭제 연결 → 성장 추이 차트 → 스톱워치 → 저장·닫기)는 바꾸지 않는다 — 도구 단추의 처리기가 차트 조각이 꾸러미에 등록하는 함수를 부른다.",
+    "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴)."
+   ],
+   "lines": 192,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-646",
+    "TASK-ES-672",
+    "TASK-ES-677"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-646-PRO-MODAL-INPLACE.md",
+    "docs/specs/REQ-TASK-ES-672-PRO-MODAL-CELLS.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
+   ],
+   "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
+    {
+     "number": 949,
+     "task": "TASK-ES-672",
+     "title": "[INFRA] #TASK-ES-672 refactor: 전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전(944줄 함수 A안 3단계) — 인라인 스크립트 1645 → 751줄",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "records/pro-record-save",
+   "file": "js/tabs/records/pro-record-save.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 기록 창의 저장",
+   "nameSource": "hand",
+   "does": "기록을 기기에 바로 저장하고 목표·일정에 연동한 뒤 화면을 갱신하고 서버에 동기화하며 취소와 돌아가기를 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Pro Record Save (기록 — 전문 템플릿 기록 창의 저장·닫기)",
+    "bindProRecSave — 일반저장 · 일정연동저장(기기 즉시 저장 → 목표·일정·기록 연동 → 화면 갱신 → 서버 동기화 → Notion 자동 전송)과 취소·돌아가기를 연결한다.",
+    "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴).",
+    "#TASK-ES-672(전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전 — 진입점 · 표 편집 · 도구 단추 · 성장 추이 차트 · 스톱워치·인터벌 타이머 · 저장·닫기 (지시함 DIR-004 (라) A안 ③)): index.html 인라인 IIFE 의 구간(이전 전 3487~3673줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 222,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-646",
+    "TASK-ES-672",
+    "TASK-ES-677"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-646-PRO-MODAL-INPLACE.md",
+    "docs/specs/REQ-TASK-ES-672-PRO-MODAL-CELLS.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
+   ],
+   "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
+    {
+     "number": 949,
+     "task": "TASK-ES-672",
+     "title": "[INFRA] #TASK-ES-672 refactor: 전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전(944줄 함수 A안 3단계) — 인라인 스크립트 1645 → 751줄",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "records/pro-record-stopwatch",
+   "file": "js/tabs/records/pro-record-stopwatch.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 기록 창의 스톱워치",
+   "nameSource": "hand",
+   "does": "스톱워치와 인터벌 타이머를 시작·정지·리셋하고 랩을 찍어 랩과 지금 시간을 표 칸에 넣는다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Pro Record Stopwatch (기록 — 전문 템플릿 기록 창의 스톱워치·인터벌 타이머)",
+    "bindProRecStopwatch — 시작/정지 · 리셋 · 모드 · 랩 · 랩과 지금 시간을 표 칸에 기입하기를 연결하고, 타이머를 멈추는 함수를 꾸러미(ctx)에 등록한다.",
+    "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴).",
+    "#TASK-ES-672(전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전 — 진입점 · 표 편집 · 도구 단추 · 성장 추이 차트 · 스톱워치·인터벌 타이머 · 저장·닫기 (지시함 DIR-004 (라) A안 ③)): index.html 인라인 IIFE 의 구간(이전 전 3223~3486줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 299,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-646",
+    "TASK-ES-672",
+    "TASK-ES-677"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-646-PRO-MODAL-INPLACE.md",
+    "docs/specs/REQ-TASK-ES-672-PRO-MODAL-CELLS.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
+   ],
+   "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
+    {
+     "number": 949,
+     "task": "TASK-ES-672",
+     "title": "[INFRA] #TASK-ES-672 refactor: 전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전(944줄 함수 A안 3단계) — 인라인 스크립트 1645 → 751줄",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "records/pro-record-table",
+   "file": "js/tabs/records/pro-record-table.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 기록 창의 표 편집",
+   "nameSource": "hand",
+   "does": "표의 칸을 읽어 행에 담고 실시간 분석 띠와 표를 다시 그리며 행을 더하고 지운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Pro Record Table (기록 — 전문 템플릿 기록 창의 표 편집)",
+    "bindProRecTable — 표의 칸을 읽어 행에 담기 · 실시간 분석 띠 · 표 다시 그리기 · 행 삭제 · 행 추가를 연결하고, 다른 조각이 부르는 함수 넷을 꾸러미(ctx)에 등록한다.",
+    "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴).",
+    "#TASK-ES-672(전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전 — 진입점 · 표 편집 · 도구 단추 · 성장 추이 차트 · 스톱워치·인터벌 타이머 · 저장·닫기 (지시함 DIR-004 (라) A안 ③)): index.html 인라인 IIFE 의 구간(이전 전 2868~2937줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 105,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-646",
+    "TASK-ES-672",
+    "TASK-ES-677"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-646-PRO-MODAL-INPLACE.md",
+    "docs/specs/REQ-TASK-ES-672-PRO-MODAL-CELLS.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
+   ],
+   "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
+    {
+     "number": 949,
+     "task": "TASK-ES-672",
+     "title": "[INFRA] #TASK-ES-672 refactor: 전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전(944줄 함수 A안 3단계) — 인라인 스크립트 1645 → 751줄",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "records/pro-record-tools",
+   "file": "js/tabs/records/pro-record-tools.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 기록 창의 도구 단추",
+   "nameSource": "hand",
+   "does": "지난 루틴 불러오기·AI 코치·Notion 연동·CSV 가져오기와 내려받기·스마트워치·템플릿 마켓·AI 사진 인식·음성 입력·표 속성 편집·템플릿 변경과 생성·사진 첨부 단추를 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Pro Record Tools (기록 — 전문 템플릿 기록 창의 도구 단추)",
+    "bindProRecTools — 지난 루틴 불러오기 · AI 코치 · Notion 연동 · CSV 가져오기/내려받기 · 스마트워치 · 템플릿 마켓 · AI 사진 인식 · 음성 입력 · 표 속성 편집 · 템플릿 변경 · 템플릿 생성 · 사진 첨부 단추를 연결한다.",
+    "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴).",
+    "#TASK-ES-672(전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전 — 진입점 · 표 편집 · 도구 단추 · 성장 추이 차트 · 스톱워치·인터벌 타이머 · 저장·닫기 (지시함 DIR-004 (라) A안 ③)): index.html 인라인 IIFE 의 구간(이전 전 2938~3175줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 273,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-646",
+    "TASK-ES-672",
+    "TASK-ES-677"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-646-PRO-MODAL-INPLACE.md",
+    "docs/specs/REQ-TASK-ES-672-PRO-MODAL-CELLS.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
+   ],
+   "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
+    {
+     "number": 949,
+     "task": "TASK-ES-672",
+     "title": "[INFRA] #TASK-ES-672 refactor: 전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전(944줄 함수 A안 3단계) — 인라인 스크립트 1645 → 751줄",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "records/pro-record-trend-chart",
+   "file": "js/tabs/records/pro-record-trend-chart.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "전문 템플릿 기록 창의 성장 추이 차트",
+   "nameSource": "hand",
+   "does": "성장 추이 차트의 기간 칩과 점 설명을 연결하고 템플릿이 바뀌면 차트를 다시 그린다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Pro Record Trend Chart (기록 — 전문 템플릿 기록 창의 성장 추이 차트)",
+    "bindProRecTrendChart — 성장 추이 차트의 점 설명 · 기간 칩 · 다시 그리기를 연결하고, 차트를 다시 그리는 함수를 꾸러미(ctx)에 등록한다.",
+    "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴).",
+    "#TASK-ES-672(전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전 — 진입점 · 표 편집 · 도구 단추 · 성장 추이 차트 · 스톱워치·인터벌 타이머 · 저장·닫기 (지시함 DIR-004 (라) A안 ③)): index.html 인라인 IIFE 의 구간(이전 전 3176~3222줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 82,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-646",
+    "TASK-ES-672",
+    "TASK-ES-677"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-646-PRO-MODAL-INPLACE.md",
+    "docs/specs/REQ-TASK-ES-672-PRO-MODAL-CELLS.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
+   ],
+   "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
+    {
+     "number": 949,
+     "task": "TASK-ES-672",
+     "title": "[INFRA] #TASK-ES-672 refactor: 전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전(944줄 함수 A안 3단계) — 인라인 스크립트 1645 → 751줄",
+     "date": "2026-10-11"
     }
    ]
   },
@@ -20190,9 +20717,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20264,9 +20789,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20278,13 +20801,21 @@
    },
    "tasks": [
     "TASK-ES-467",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-677"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -20333,9 +20864,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20347,13 +20876,21 @@
    },
    "tasks": [
     "TASK-ES-467",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-677"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-467-INLINE-HARD-H3.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -20405,9 +20942,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "checkin:created",
     "record:saved"
@@ -20460,9 +20995,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20533,9 +21066,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20606,9 +21137,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20679,9 +21208,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20748,9 +21275,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20823,9 +21348,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20904,9 +21427,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -20976,10 +21497,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit",
-    "openShareToFeedModal"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21032,7 +21550,7 @@
     "window.renderStopwatchWidgetHtml · window.renderLapRowsHtml 노출 묶음은 index.html 원래 자리에 그대로 있다.",
     "#TASK-ES-523(인라인 3단계 Z4 이동 2차(활용가이드·공개 범위 배지·스톱워치 시간 글자)): index.html 인라인 IIFE 의 구간(이전 전 10472~10485줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 39,
+   "lines": 49,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -21046,9 +21564,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21059,12 +21575,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-523"
+    "TASK-ES-523",
+    "TASK-ES-677"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md"
+    "docs/specs/REQ-TASK-ES-523-STAGE3-Z4-C.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 820,
      "task": "TASK-ES-523",
@@ -21296,9 +21820,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21365,9 +21887,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21424,7 +21944,7 @@
     "같은 묶음의 사진 표 채우기(compressImageForVision·AI 사진 분석 하루 한도·openVisionTableModal)와 마켓 템플릿 자료(CURATED_MARKET_TEMPLATES)는 index.html 원래 자리에 남겼다(#TASK-ES-526 REQ 4절).",
     "#TASK-ES-526(인라인 3단계 Z4 이동 3차(표 CSV·웨어러블·목표 연동 · 음성 표 입력 · 테마별 기록 CSV · 함께 목표 초대 글자)): index.html 인라인 IIFE 의 구간(이전 전 9399~9428 · 9429~9459 · 9460~9507 · 9508~9560 · 9561~9606줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 241,
+   "lines": 252,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -21438,9 +21958,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21451,12 +21969,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-526"
+    "TASK-ES-526",
+    "TASK-ES-677"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-526-STAGE3-Z4-D.md"
+    "docs/specs/REQ-TASK-ES-526-STAGE3-Z4-D.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 821,
      "task": "TASK-ES-526",
@@ -21485,7 +22011,7 @@
     "옮긴 선언(이전 전 줄): playTimerBeep(26538~26553) · STOPWATCH_STATE(26554~26563) · renderStopwatchWidgetHtml(26564~26594) · renderLapRowsHtml(26595~26615)",
     "playTimerBeep·STOPWATCH_STATE·renderStopwatchWidgetHtml·renderLapRowsHtml = 전문 템플릿 표 안 스톱워치·인터벌 타이머 위젯과 랩 줄. formatStopwatchTime(시험지 smoke 가 글자로 읽음)·window 노출 문은 index.html 제자리(시험지 stopwatch-* 는 #TASK-ES-447 로 인라인 합본을 읽는다)."
    ],
-   "lines": 120,
+   "lines": 118,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -21499,9 +22025,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21517,7 +22041,8 @@
     "TASK-ES-447",
     "TASK-ES-448",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-677"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
@@ -21525,9 +22050,16 @@
     "docs/specs/REQ-TASK-ES-447-INLINE-TEST-BUNDLE-P2.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -21583,9 +22115,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21728,9 +22258,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21797,9 +22325,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21866,9 +22392,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -21935,9 +22459,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22012,9 +22534,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22071,7 +22591,7 @@
     "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4905~4943 · 4944~4946 · 4947~4955 · 4956~4962 · 4963~5184줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 312,
+   "lines": 322,
    "over800": false,
    "exposes": [
     "OurgoalVisionTableInputKit"
@@ -22082,9 +22602,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalVisionTableInputKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22095,12 +22613,21 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-591"
+    "TASK-ES-591",
+    "TASK-ES-677"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-591.md"
+    "docs/specs/REQ-TASK-ES-591.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    }
+   ]
   },
   {
    "id": "records/voice-table-input",
@@ -22122,7 +22649,7 @@
     "#TASK-ES-526(인라인 3단계 Z4 이동 3차(표 CSV·웨어러블·목표 연동 · 음성 표 입력 · 테마별 기록 CSV · 함께 목표 초대 글자)): index.html 인라인 IIFE 의 구간(이전 전 9885~9942 · 9943~10130줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 272,
+   "lines": 282,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -22136,9 +22663,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22149,12 +22674,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-526"
+    "TASK-ES-526",
+    "TASK-ES-677"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-526-STAGE3-Z4-D.md"
+    "docs/specs/REQ-TASK-ES-526-STAGE3-Z4-D.md",
+    "docs/specs/REQ-TASK-ES-677-PROVIDE-3.md"
    ],
    "prs": [
+    {
+     "number": 950,
+     "task": "TASK-ES-677",
+     "title": "[INFRA] #TASK-ES-677 미분화 덩어리 해체 등록 3차 — 막혔던 두 이름과 #949 뒤 새로 통로로 나간 이름 18개 등록 · window 전용 2개 통로 승격(세포 15개, 생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 821,
      "task": "TASK-ES-526",
@@ -22197,9 +22730,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalRecordsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22289,9 +22820,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22355,9 +22884,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22432,9 +22959,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22515,9 +23040,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22591,9 +23114,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22665,9 +23186,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22747,9 +23266,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22813,9 +23330,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22888,9 +23403,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22955,9 +23468,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23033,9 +23544,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23115,9 +23624,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23181,9 +23688,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23248,9 +23753,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23333,9 +23836,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23407,9 +23908,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23489,9 +23988,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23555,9 +24052,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23633,9 +24128,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23701,9 +24194,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23767,9 +24258,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -23937,9 +24426,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24003,9 +24490,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24069,9 +24554,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24139,9 +24622,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24205,9 +24686,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24272,9 +24751,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24338,9 +24815,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24404,9 +24879,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24490,9 +24963,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24574,11 +25045,14 @@
     "core/app-scope",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -24617,9 +25091,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24717,9 +25189,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24793,11 +25263,14 @@
     "core/app-scope",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -24832,9 +25305,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -24902,11 +25373,14 @@
     "core/app-scope",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -24941,9 +25415,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25004,11 +25476,14 @@
     "core/app-scope",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/confetti",
     "core/confirm",
@@ -25044,9 +25519,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25124,11 +25597,14 @@
     "core/app-scope",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -25164,9 +25640,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25226,11 +25700,14 @@
     "core/app-scope",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -25265,9 +25742,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25335,11 +25810,14 @@
     "core/app-scope",
     "core/badges",
     "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
     "core/boot-home-wiring",
     "core/boot-records-wiring",
+    "core/boot-state-seeds",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -25374,9 +25852,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25442,9 +25918,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25508,9 +25982,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25578,9 +26050,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25651,9 +26121,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25740,9 +26208,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25806,9 +26272,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25872,9 +26336,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -25946,9 +26408,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -26012,9 +26472,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -26079,9 +26537,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -26153,9 +26609,7 @@
    "calledBy": [],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalSettingsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -27303,20 +27757,20 @@
    ],
    "calls": [
     "comm/dm-ledger",
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-finish",
     "goals/goal-archive",
     "goals/team-goals-screen",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
-    "template-credit"
+    "template-credit",
+    "viral-sharing"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "shareContent"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -27386,20 +27840,20 @@
     "OurgoalTeamCommKit"
    ],
    "calls": [
+    "core/boot-comm-seeds",
     "core/boot-early-state",
     "core/boot-finish",
     "goal-templates-data",
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
-    "template-credit"
+    "template-credit",
+    "viral-sharing"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "shareContent"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -28208,16 +28662,15 @@
     "team-invite-comm"
    ],
    "calledBy": [
+    "core/boot-comm-seeds",
     "core/deep-link-gateway",
-    "sanctuary-weekly-recap"
+    "sanctuary-weekly-recap",
+    "team-share",
+    "team-templates"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalViralSharing",
-    "handleDeepLinkRouting",
-    "shareContent"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
