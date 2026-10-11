@@ -36,10 +36,12 @@ let sLine = -1, eLine = -1;
 for (let i = 0; i < lines.length; i++) {
   if (lines[i].trim() === '<script>' && (lines[i + 1] || '').trim() === '(function(){' && (lines[i + 2] || '').includes('"use strict"')) { sLine = i + 1; break; }
 }
-if (sLine < 0) throw new Error('큰 인라인 IIFE 를 못 찾음');
-for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }
+// #TASK-ES-668: 큰 인라인 IIFE 가 없으면(덩어리를 다 비운 뒤) 오류로 죽지 않고 「묶음 0 · 줄 0」 지도를 낸다.
+// 문이 하나도 없는 빈 IIFE 를 읽은 것으로 보고 아래 계산을 그대로 돈다(머리 묶음도 만들지 않는다). IIFE 가 있으면 예전과 글자 하나 다르지 않게 돈다.
+const NO_IIFE = sLine < 0;
+if (!NO_IIFE) for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }
 const off = sLine; // AST 줄 1 = html 줄 sLine+1
-const code = lines.slice(sLine, eLine).join('\n');
+const code = NO_IIFE ? '(function(){\n"use strict";\n})();' : lines.slice(sLine, eLine).join('\n');
 const ast = parser.parse(code, { sourceType: 'script', ranges: true });
 const H = n => n.loc.start.line + off;
 const HE = n => n.loc.end.line + off;
@@ -66,7 +68,7 @@ const isHeader = c => c.type === 'CommentBlock' && /^\s*=+/.test(c.value);
 const headerTitle = c => (c.value.split('\n').map(l => l.replace(/=+/g, ' ').replace(/\s+/g, ' ').trim()).find(l => l) || '(제목 없음)');
 const groups = [];
 const firstLine = sLine + 1; // `(function(){` 줄
-groups.push({ title: '(IIFE 머리 — "use strict" 와 첫 구획 앞)', start: firstLine, stmts: [] });
+if (!NO_IIFE) groups.push({ title: '(IIFE 머리 — "use strict" 와 첫 구획 앞)', start: firstLine, stmts: [] });
 for (const st of top) {
   const hs = (st.node.leadingComments || []).filter(isHeader);
   for (const c of hs) {
@@ -299,7 +301,7 @@ const movable = jsonGroups.filter(g => !g.seam && (g.functions.length || g.vars.
 const order = movable.slice().sort((a, b) => a.score - b.score || b.lines - a.lines || (a.id < b.id ? -1 : 1));
 const data = {
   schema: 'ourgoal.inline-script-map/1',
-  source: { file: 'index.html', sha256_12: sha, iifeHtmlLines: [sLine + 1, eLine], otherInlineBlocks: otherInline },
+  source: NO_IIFE ? { file: 'index.html', sha256_12: sha, iifeHtmlLines: null, noIife: true, otherInlineBlocks: otherInline } : { file: 'index.html', sha256_12: sha, iifeHtmlLines: [sLine + 1, eLine], otherInlineBlocks: otherInline },
   weights: W,
   totals: {
     iifeLines: totalLines, groups: groups.length, seamGroups: groups.filter(g => g.seam).length, movableGroups: movable.length,
@@ -321,7 +323,7 @@ const md = [];
 md.push('# index.html 인라인 스크립트 책임 묶음 지도');
 md.push('');
 md.push('> 생성: `NODE_PATH=<node_modules> node scripts/inline-script-map.js --write` (#TASK-ES-423). **손으로 고치지 않는다** — 다시 만들면 같은 입력에서 같은 글자가 나온다(결정적).');
-md.push(`> 출처: \`index.html\` sha256 앞 12자 \`${sha}\` · 큰 인라인 IIFE ${sLine + 1}~${eLine}줄(${totalLines}줄)` + (otherInline.length ? ` · 다른 인라인 블록 ${otherInline.map(b => b.startLine + '줄(' + b.lines + '줄)').join(', ')}` : '') + '.');
+md.push(`> 출처: \`index.html\` sha256 앞 12자 \`${sha}\` · ${NO_IIFE ? '큰 인라인 IIFE 없음(0줄)' : `큰 인라인 IIFE ${sLine + 1}~${eLine}줄(${totalLines}줄)`}` + (otherInline.length ? ` · 다른 인라인 블록 ${otherInline.map(b => b.startLine + '줄(' + b.lines + '줄)').join(', ')}` : '') + '.');
 md.push('');
 md.push('## 1. 요약');
 md.push('');
@@ -408,5 +410,6 @@ if (WRITE) {
   fs.writeFileSync(OUT_MD, mdText, 'utf8');
   fs.writeFileSync(OUT_JSON, jsonText, 'utf8');
 }
+if (NO_IIFE) console.log('큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 줄 0 으로 적는다)');
 console.log(`인라인 지도: 묶음 ${T.groups} · 옮길 대상 ${T.movableGroups} · IIFE ${totalLines}줄 · 함수 ${T.functions} · window ${T.windowAssignments} · 출처 ${sha}` + (WRITE ? ' → 기록함' : ''));
 console.log('권장 순서 상위 10: ' + order.slice(0, 10).map(g => `${g.id}(${g.lines}줄·${g.score})`).join(' '));

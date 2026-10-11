@@ -39,7 +39,8 @@ function windowNamesOf(indexHtml) {
   const lines = html.split('\n').map(l => l.replace(/\r$/, ''));
   let s = -1, e = -1;
   for (let i = 0; i < lines.length; i++) if (lines[i].trim() === '<script>' && (lines[i + 1] || '').trim() === '(function(){' && (lines[i + 2] || '').includes('"use strict"')) { s = i + 1; break; }
-  if (s < 0) throw new Error('index.html 인라인 IIFE 를 찾지 못했다');
+  // #TASK-ES-668: 인라인 IIFE 가 없으면(덩어리를 다 비운 뒤) 오류로 죽지 않는다 — IIFE 가 window 에 다는 이름은 0 개다(이름 목록은 --names-from 으로 고정해 준다).
+  if (s < 0) return { names: [], sites: [], iifeLines: null, noIife: true };
   for (let i = s; i < lines.length; i++) if (lines[i].startsWith('</script>')) { e = i; break; }
   const code = lines.slice(s, e).join('\n');
   const ast = parser.parse(code, { sourceType: 'script' });
@@ -144,7 +145,7 @@ async function realClick(page, pt) {
   const out = {
     tool: 'scripts/probes/cell-registry-compare.js', type: '작업자 측정, 판정 아님', startedAt, endedAt: new Date().toISOString(),
     app: APP, siteHost: host, guestBoot: { steps, error, exceptions, consoleErrors },
-    windowNamesSource: { method: 'index.html 인라인 IIFE 최상위 window 대입문 + 대입만 담은 if 블록(@babel/parser)', iifeLines: win.iifeLines, count: win.names.length, sites: win.sites.length },
+    windowNamesSource: { method: 'index.html 인라인 IIFE 최상위 window 대입문 + 대입만 담은 if 블록(@babel/parser)', noIife: winHere.noIife === true, iifeLines: win.iifeLines, count: win.names.length, sites: win.sites.length },
     counts: rep ? rep.counts : null,
     report: rep || (result && result.error ? { error: result.error } : null),
     registeredNames: result ? result.registeredNames : null,
