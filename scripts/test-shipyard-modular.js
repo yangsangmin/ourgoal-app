@@ -153,6 +153,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/core-capabilities-slots.test.js');
   runNode('tests/module-guard.test.js');
   runNode('tests/new-module.test.js');
+  // #TASK-ES-667 모듈 가드 ⑤ 의 주인 규칙(인라인 · 부팅 파일 · js/core 기관) — 오탐 사례 0건과 진짜 사례 1건을 함께 고정한다(임시 폴더의 가짜 트리에 실제 crossTabRefs 를 돌린다)
+  runNode('tests/cross-tab-inline-owned-es507.test.js');
   runNode('tests/core-toast-es361.test.js'); // #TASK-ES-361 공용 토스트 통로(ui.toast)·CORE-10
   // #TASK-ES-362: 세포 이전 중 발견된 기존 버그 수정의 부품 시험(SET-08 · CAL-03)
   runNode('tests/settings-gcal-autosync-switch.test.js');
@@ -195,6 +197,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/hidden-entry-guard.test.js');
   // #TASK-ES-620 배선 노출 도우미(tests/helpers/wiring-exposed.js): 옛 배선 글자 또는 등록 — 배선도 등록도 없는 이름·window 목록에 없는 이름·읽지 않는 세포 파일·정의 없는 등록은 거짓
   runNode('tests/wiring-exposed.test.js');
+  // #TASK-ES-666 옮겨 간 자리 도우미(tests/helpers/moved-code.js): 옛 글자 또는 세포 파일의 함수 선언·첫 문·상태 기관 호출 — 읽지 않는 파일·주석·문자열·다른 이름·다른 초기값은 거짓
+  runNode('tests/moved-code.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

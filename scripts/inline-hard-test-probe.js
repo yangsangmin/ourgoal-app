@@ -31,9 +31,12 @@ const EOL = html0.includes('\r\n') ? '\r\n' : '\n';
 const lines = html0.replace(/\r\n/g, '\n').split('\n');
 let sLine = -1, eLine = -1;
 for (let i = 0; i < lines.length; i++) if (lines[i].trim() === '<script>' && (lines[i + 1] || '').trim() === '(function(){' && (lines[i + 2] || '').includes('"use strict"')) { sLine = i + 1; break; }
-for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }
+// #TASK-ES-668: 큰 인라인 IIFE 가 없으면(덩어리를 다 비운 뒤) 오류로 죽지 않고 「묶음 0 · 시험지 0」 을 낸다 — 문이 하나도 없는 빈 IIFE 를 읽은 것으로 본다.
+// 지도가 그 사본의 index.html 로 다시 쓰여 있어야 하는 것은 그대로다(위 sha 대조). IIFE 가 있으면 예전과 글자 하나 다르지 않게 돈다.
+const NO_IIFE = sLine < 0;
+if (!NO_IIFE) for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }
 const off = sLine;
-const ast = parser.parse(lines.slice(sLine, eLine).join('\n'), { sourceType: 'script' });
+const ast = parser.parse(NO_IIFE ? '(function(){\n"use strict";\n})();' : lines.slice(sLine, eLine).join('\n'), { sourceType: 'script' });
 let iife = null; traverse(ast, { FunctionExpression(p) { if (!iife) iife = p; } });
 const iScope = iife.scope;
 const top = iife.get('body').get('body');
@@ -78,6 +81,7 @@ try {
   fs.writeFileSync(path.join(COPY, 'index.html'), html0, 'utf8');
 }
 console.log();
+if (NO_IIFE) console.log('큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다)');
 const report = {
   schema: 'inline-hard-test-probe/1', source: { indexSha256_12: sha },
   method: '표준 이음매대로 묶음을 비운 index.html(남는 문: window 노출·상태 변수·class) + 그 묶음 testIndexOnly 시험지 실행. 기준 2회 모두 통과였는데 비운 뒤 실패면 broken.',

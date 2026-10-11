@@ -1,0 +1,83 @@
+{
+  "id": "u05-goal-agent-drawer",
+  "title": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 「AI 목표 어시스턴트」 제목 줄을 누르면 서랍이 열려 입력칸이 보이고, 다시 누르면 닫히며 예외가 없다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnToggleGoalAgent",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#goalAgentInput"
+    },
+    {
+      "do": "click",
+      "selector": "#btnToggleGoalAgent"
+    },
+    {
+      "expect": "visible",
+      "selector": "#goalAgentInput"
+    },
+    {
+      "do": "click",
+      "selector": "#btnToggleGoalAgent"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#goalAgentInput"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
