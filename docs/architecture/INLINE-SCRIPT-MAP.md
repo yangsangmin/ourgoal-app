@@ -1,7 +1,7 @@
 # index.html 인라인 스크립트 책임 묶음 지도
 
 > 생성: `NODE_PATH=<node_modules> node scripts/inline-script-map.js --write` (#TASK-ES-423). **손으로 고치지 않는다** — 다시 만들면 같은 입력에서 같은 글자가 나온다(결정적).
-> 출처: `index.html` sha256 앞 12자 `fe07c8a952e2` · 큰 인라인 IIFE 2254~5220줄(2967줄) · 다른 인라인 블록 4줄(8줄), 5223줄(16줄).
+> 출처: `index.html` sha256 앞 12자 `f53cfb5e0aab` · 큰 인라인 IIFE 2254~5220줄(2967줄) · 다른 인라인 블록 4줄(8줄), 5223줄(16줄).
 
 ## 1. 요약
 
@@ -101,7 +101,7 @@
 | G023 | 2749~2752 | 4 | XP/레벨 시스템 | 0 | 0 | 빈 구획(3) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 2(1) |
 | G024 | 2753~2772 | 20 | [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 | 0 | 6 | 어려움(32) | 0 · 0 · 5 | 0 | 2/0 | 12 | 0 | 0/0 | 0 | 3(1) |
 | G025 | 2773~2778 | 6 | #TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트) | 0 | 1 | 쉬움(0) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 0(0) |
-| G026 | 2779~2790 | 12 | 뱃지 컬렉션 (명예의 전당) | 0 | 1 | 어려움(263) | 0 · 0 · 1 | 1 | 0/0 | 1 | 0 | 0/0 | 253 | 5(2) |
+| G026 | 2779~2790 | 12 | 뱃지 컬렉션 (명예의 전당) | 0 | 1 | 어려움(264) | 0 · 0 · 1 | 1 | 0/0 | 1 | 0 | 0/0 | 254 | 5(2) |
 | G027 | 2791~2793 | 3 | [70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달 | 0 | 0 | 빈 구획(0) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 1(0) |
 | G028 | 2794~2801 | 8 | [71] 앱 잠금 PIN (이 기기) — 설정·해제·앱 진입 확인 | 0 | 0 | 빈 구획(0) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 0(0) |
 | G029 | 2802~2808 | 7 | [78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용) | 0 | 2 | 쉬움(0) | 0 · 0 · 0 | 0 | 0/0 | 0 | 0 | 0/0 | 0 | 2(0) |
@@ -636,13 +636,13 @@
 
 ### G026 뱃지 컬렉션 (명예의 전당)
 
-- 2779~2790줄(12줄) · 어려움(263)
+- 2779~2790줄(12줄) · 어려움(264)
 - 함수(0): 없음
 - 변수(1): state
 - 다른 묶음 상태 — 대입: 없음 · 변경: 없음 · 읽기: isoDate
 - 로드 중 문 1: IfStatement 1
 - window 노출(1줄): state
-- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/auth-social.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/level-badge.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js 외 245
+- 바깥 js 가 window 이름을 씀: js/auth-safety.js, js/auth-social.js, js/avatar/dynamic-album.js, js/avatar/feature-cards.js, js/avatar/level-badge.js, js/avatar/modal/bind-craft.js, js/avatar/modal/bind-deck.js, js/avatar/modal/bind-save.js 외 246
 - 시험지 글자 의존: scripts/smoke-test.js, scripts/test-shipyard-modular.js, scripts/verify-integrity-gate.js, tests/routine-tab-scheduler.test.js, tests/unique-display-name.test.js (index.html 단독 읽기: tests/routine-tab-scheduler.test.js, tests/unique-display-name.test.js)
 
 ## 6. 이음매·빈 구획
