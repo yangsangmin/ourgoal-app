@@ -1,0 +1,251 @@
+{
+ "type": "작업자 측정, 판정 아님",
+ "source": "reports/TASK-ES-670/guarded-unit.json",
+ "total": 27,
+ "passed": 27,
+ "ok": true,
+ "earlierSuites": {
+  "ok": true,
+  "finalize662": {
+   "total": 45,
+   "passed": 43,
+   "failed": [
+    "B",
+    "D0"
+   ]
+  },
+  "sweep661": {
+   "total": 47,
+   "passed": 45,
+   "failed": [
+    "B",
+    "D0"
+   ]
+  },
+  "fnArguments657": {
+   "total": 22,
+   "passed": 21,
+   "failed": [
+    "D1"
+   ]
+  },
+  "region643": {
+   "total": 67,
+   "passed": 66,
+   "failed": [
+    "D0"
+   ]
+  },
+  "unstate634": "34/34",
+  "unwireExt619": "16/16",
+  "unwireB1": "8/8",
+  "onlyShapeChecksFailed": true,
+  "why": "662 의 D0 · 661 의 D0 · 657 의 D1 · 643 의 D0 는 생성기 파일의 diff 모양을 옛 기준과 맞대는 검사이고, 662 의 B · 661 의 B 는 안쪽 묶음의 그 모양 조건(한 자리에 이어진 끼워 넣기 · region 구간 동일)을 겉에서 다시 본다. 이 PR 은 region 구간의 줄 셋을 바꿨으므로 그 여섯이 구조적으로 거짓이 된다(출력 비교가 아니다 — 경험칙 L110). 그 시험 파일은 고치지 않았다. 출력을 재는 검사(재생성 바이트 동일 · 꾸러미 · 정지 · 실행 등가)는 모두 통과했다."
+ },
+ "generatorDiff": {
+  "ok": true,
+  "removed": [
+   {
+    "line": 884,
+    "text": "  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells'].includes(k)) fail('region "
+   },
+   {
+    "line": 1000,
+    "text": "    const held = toks.find(t => t.start >= s0 && t.end <= e0 && HOLD.some(w => new RegExp('(^|[^\\\\w$])' + w.re"
+   },
+   {
+    "line": 1001,
+    "text": "    if (held) fail('구역 ' + it.name + ' 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: ' + code.slice(held.start, held.end) + '"
+   }
+  ],
+  "addedCount": 32,
+  "outsideRegionSame": true,
+  "verifySame": true
+ },
+ "regionPrRegenerated": {
+  "ok": true,
+  "pr": 933,
+  "stdoutSame": true,
+  "files": {
+   "index.html": {
+    "same": true,
+    "bytes": 327546
+   },
+   "js/core/boot-early-state.js": {
+    "same": true,
+    "bytes": 8487
+   },
+   "js/core/boot-entry-wiring.js": {
+    "same": true,
+    "bytes": 20462
+   },
+   "js/core/boot-home-wiring.js": {
+    "same": true,
+    "bytes": 29204
+   },
+   "js/core/boot-records-wiring.js": {
+    "same": true,
+    "bytes": 5276
+   },
+   "js/core/boot-finish.js": {
+    "same": true,
+    "bytes": 11922
+   }
+  }
+ },
+ "lockUnchanged": [
+  {
+   "id": "K1",
+   "ok": true
+  },
+  {
+   "id": "K2",
+   "ok": true
+  },
+  {
+   "id": "K3",
+   "ok": true
+  }
+ ],
+ "allLockUnchangedOk": true,
+ "allowed": [
+  {
+   "id": "A1",
+   "ok": true
+  },
+  {
+   "id": "A2",
+   "ok": true
+  },
+  {
+   "id": "A3",
+   "ok": true
+  },
+  {
+   "id": "A4",
+   "ok": true
+  }
+ ],
+ "allAllowedOk": true,
+ "vmEquivalence": true,
+ "stops": [
+  {
+   "id": "S1",
+   "ok": true
+  },
+  {
+   "id": "S2",
+   "ok": true
+  },
+  {
+   "id": "S3",
+   "ok": true
+  },
+  {
+   "id": "S4",
+   "ok": true
+  },
+  {
+   "id": "S5",
+   "ok": true
+  },
+  {
+   "id": "S6",
+   "ok": true
+  },
+  {
+   "id": "S7",
+   "ok": true
+  },
+  {
+   "id": "S8",
+   "ok": true
+  },
+  {
+   "id": "S9",
+   "ok": true
+  },
+  {
+   "id": "S10",
+   "ok": true
+  },
+  {
+   "id": "S11",
+   "ok": true
+  },
+  {
+   "id": "S12",
+   "ok": true
+  },
+  {
+   "id": "S13",
+   "ok": true
+  }
+ ],
+ "allStopsOk": true,
+ "realIndex": [
+  {
+   "id": "R1",
+   "ok": true
+  },
+  {
+   "id": "R2",
+   "ok": true
+  },
+  {
+   "id": "R3",
+   "ok": true
+  }
+ ],
+ "allRealIndexOk": true,
+ "realIndexAllowed": {
+  "lines": {
+   "identical": 6,
+   "prefixOnly": 1,
+   "other": 0,
+   "prefixes": 3,
+   "edits": 3
+  },
+  "money": {
+   "linesInMovedBase": 5,
+   "linesInMovedCell": 5,
+   "movedLinesSameAfterStrip": true,
+   "indexBefore": 9,
+   "indexAfter": 4,
+   "cellFile": 5,
+   "cellHeader": 0,
+   "indexPlusCellAfter": 9,
+   "sameTotal": true
+  },
+  "guardedAllowed": [
+   {
+    "name": "OURGOAL_CONFIG",
+    "hits": [
+     {
+      "region": "bootAppConfigUnit",
+      "line": 2769,
+      "guardedWords": 1,
+      "prefixEdits": 0
+     },
+     {
+      "region": "bootAppConfigUnit",
+      "line": 2770,
+      "guardedWords": 2,
+      "prefixEdits": 0
+     }
+    ]
+   },
+   {
+    "name": "OurgoalTemplateCredit",
+    "hits": [
+     {
+      "region": "bootTemplatePartInitUnit",
+      "line": 4130,
+      "guardedWords": 3,
+      "prefixEdits": 3
+     }
+    ]
+   }
+  ]
+ }
+}

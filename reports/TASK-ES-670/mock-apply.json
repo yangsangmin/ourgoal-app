@@ -1,0 +1,242 @@
+{
+ "task": "TASK-ES-670",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T07:43:58.946Z",
+ "note": "측정 시점 main(5c567cd9)의 모의 적용이다. 실제 이전은 0 이다(모의 작업 폴더는 측정 뒤 지운다). 구역 함수 이름과 세포 파일은 모의용이다.",
+ "baseHead": "5c567cd9470ba034303efa9a15eb9b3686f88ebf",
+ "config": "reports/TASK-ES-670/mock-config.json",
+ "generator": {
+  "regions": [
+   {
+    "name": "bootAppConfigMock",
+    "segment": [
+     2767,
+     2770
+    ],
+    "lines": 4,
+    "statements": 2,
+    "locals": [
+     "OURGOAL_CONFIG"
+    ],
+    "edits": 0,
+    "headersMoved": [
+     2767
+    ]
+   },
+   {
+    "name": "bootTemplatePartInitMock",
+    "segment": [
+     4130,
+     4132
+    ],
+    "lines": 3,
+    "statements": 1,
+    "locals": [],
+    "edits": 3,
+    "headersMoved": []
+   }
+  ],
+  "guardedAllowed": [
+   {
+    "name": "OURGOAL_CONFIG",
+    "approval": "상민님 2026-10-11 「결심 1 : 승인, 금고 변경 승인, 결심 2 : 승인」 가운데 결심 2 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다",
+    "hits": [
+     {
+      "region": "bootAppConfigMock",
+      "line": 2769,
+      "guardedWords": 1,
+      "prefixEdits": 0
+     },
+     {
+      "region": "bootAppConfigMock",
+      "line": 2770,
+      "guardedWords": 2,
+      "prefixEdits": 0
+     }
+    ]
+   },
+   {
+    "name": "OurgoalTemplateCredit",
+    "approval": "상민님 2026-10-11 「결심 1 : 승인, 금고 변경 승인, 결심 2 : 승인」 가운데 결심 2 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다",
+    "hits": [
+     {
+      "region": "bootTemplatePartInitMock",
+      "line": 4130,
+      "guardedWords": 3,
+      "prefixEdits": 3
+     }
+    ]
+   }
+  ],
+  "edits": 3,
+  "exposed": [],
+  "htmlLines": [
+   4174,
+   4172
+  ],
+  "files": {
+   "js/core/boot-guarded-mock.js": 38
+  }
+ },
+ "prefixOnly": {
+  "ok": true,
+  "totals": {
+   "lines": 7,
+   "identical": 6,
+   "prefixOnly": 1,
+   "otherDiffLines": 0,
+   "strippedPrefixes": 3,
+   "generatorEdits": 3
+  },
+  "moneyLines": {
+   "movedBase": 5,
+   "movedCell": 5,
+   "allSameAfterStrip": true,
+   "indexBefore": 9,
+   "indexAfter": 4,
+   "cellFiles": {
+    "js/core/boot-guarded-mock.js": 5
+   },
+   "cellHeaderLines": 0,
+   "totalAfter": 9,
+   "totalSame": true
+  }
+ },
+ "guardedProbe": {
+  "ok": true,
+  "sameAsBase": true,
+  "expected": {
+   "configSetOnce": true,
+   "partInitOnce": true,
+   "configBeforePartInit": true,
+   "configIsPlainEmptyObject": true,
+   "initGetsScopeValues": true
+  },
+  "seq": [
+   "config-set",
+   "part-init"
+  ],
+  "sbIsNullInThisBrowser": true
+ },
+ "stateProbe": {
+  "names": 7,
+  "intrinsicVariance": [
+   "state"
+  ],
+  "differing": []
+ },
+ "fingerprints": {
+  "scopeNames": 522,
+  "scopeDiff": [],
+  "windowNames": 4,
+  "windowDiff": [],
+  "scopeLost": [],
+  "scopeAdded": [],
+  "mismatches": [
+   0,
+   0
+  ]
+ },
+ "scenarios": {
+  "allPassedBoth": true,
+  "rows": [
+   {
+    "id": "s1-guest-boot-six-tabs",
+    "base": true,
+    "base2": true,
+    "mock": true,
+    "exceptionsMock": 0
+   },
+   {
+    "id": "s2-template-subtab-filters",
+    "base": true,
+    "base2": true,
+    "mock": true,
+    "exceptionsMock": 0
+   },
+   {
+    "id": "s3-comm-feed-opens",
+    "base": true,
+    "base2": true,
+    "mock": true,
+    "exceptionsMock": 0
+   }
+  ]
+ },
+ "moduleLoad": {
+  "dirs": [
+   "js",
+   "js/core"
+  ],
+  "regressions": [],
+  "counts": {
+   "head": 131,
+   "headOk": 130,
+   "base": 130,
+   "baseOk": 129
+  },
+  "newFilesLoadOne": {
+   "js/core/boot-guarded-mock.js": {
+    "ok": true,
+    "error": null,
+    "globals": [
+     "OurgoalUiHelpers"
+    ]
+   }
+  },
+  "newFilesLoadOneOk": true
+ },
+ "testsAll": {
+  "files": 119,
+  "differingCount": 0,
+  "differing": []
+ },
+ "npmTest": {
+  "base": {
+   "exit": 0,
+   "checkLines": 487,
+   "okLines": 196,
+   "summaryLines": [
+    "439개 통과, 0개 실패",
+    "🎯 검증 결과: 총 38개 검사 중 38개 통과 (0개 실패)",
+    "✨ [ALL PASS] 아워골 전면 무결성 헌법 5대 검증 게이트를 완벽히 통과했습니다.",
+    "✨ [ALL PASS] 아워골 전수 인터랙션 및 엄밀 Zero Dead-Click 검증 100% 완료!",
+    "13개 통과, 0개 실패",
+    "✨ MASTER SHIPYARD MODULAR ARCHITECTURE VALIDATION 100% COMPLETE & PASS!"
+   ]
+  },
+  "mock": {
+   "exit": 0,
+   "checkLines": 487,
+   "okLines": 196,
+   "summaryLines": [
+    "439개 통과, 0개 실패",
+    "🎯 검증 결과: 총 38개 검사 중 38개 통과 (0개 실패)",
+    "✨ [ALL PASS] 아워골 전면 무결성 헌법 5대 검증 게이트를 완벽히 통과했습니다.",
+    "✨ [ALL PASS] 아워골 전수 인터랙션 및 엄밀 Zero Dead-Click 검증 100% 완료!",
+    "13개 통과, 0개 실패",
+    "✨ MASTER SHIPYARD MODULAR ARCHITECTURE VALIDATION 100% COMPLETE & PASS!"
+   ]
+  },
+  "allSame": true
+ },
+ "metrics": {
+  "inlineScriptLines": [
+   1904,
+   1902
+  ],
+  "delta": -2,
+  "windowAssignments": [
+   75,
+   75
+  ],
+  "crossTabRefs": [
+   0,
+   0
+  ]
+ },
+ "moduleGuard": {
+  "exitCode": 0
+ },
+ "ok": true
+}

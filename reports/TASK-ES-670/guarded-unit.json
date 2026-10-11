@@ -1,0 +1,503 @@
+{
+ "tool": "docs/design/harness/module-split/guarded-check-670.js",
+ "type": "작업자 측정, 판정 아님",
+ "pin": "5c567cd9470ba034303efa9a15eb9b3686f88ebf",
+ "total": 27,
+ "passed": 27,
+ "ok": true,
+ "results": [
+  {
+   "id": "B",
+   "title": "앞선 단위 시험 전부(662 45건 → 661 47건 → 657 22건 → 643 67건 → 634 34건 → 619 16건 → B1 8건)가 고친 생성기에서 생성기 diff 모양 검사 말고 모두 통과한다(모양 검사: 662 D0 · 661 D0 · 657 D1 · 643 D0, 그 조건을 겉에서 다시 보는 662 B · 661 B)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "finalize662": {
+     "total": 45,
+     "passed": 43,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "sweep661": {
+     "total": 47,
+     "passed": 45,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "fnArguments657": {
+     "total": 22,
+     "passed": 21,
+     "failed": [
+      "D1"
+     ]
+    },
+    "region643": {
+     "total": 67,
+     "passed": 66,
+     "failed": [
+      "D0"
+     ]
+    },
+    "unstate634": "34/34",
+    "unwireExt619": "16/16",
+    "unwireB1": "8/8",
+    "stderr": ""
+   }
+  },
+  {
+   "id": "D",
+   "title": "생성기 diff: 기준에서 사라진 줄은 셋(region 의 모르는 칸 검사 줄 · 잠금 검사 두 줄)뿐이고, region 구간 밖은 글자가 같다. 검사기는 기준과 같다",
+   "ok": true,
+   "detail": {
+    "pin": "5c567cd9470ba034303efa9a15eb9b3686f88ebf",
+    "baseLines": 1583,
+    "nowLines": 1612,
+    "removed": [
+     {
+      "line": 884,
+      "text": "  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells'].includes(k)) fail('region "
+     },
+     {
+      "line": 1000,
+      "text": "    const held = toks.find(t => t.start >= s0 && t.end <= e0 && HOLD.some(w => new RegExp('(^|[^\\\\w$])' + w.re"
+     },
+     {
+      "line": 1001,
+      "text": "    if (held) fail('구역 ' + it.name + ' 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: ' + code.slice(held.start, held.end) + '"
+     }
+    ],
+    "addedCount": 32,
+    "outsideRegionSame": true,
+    "verifySame": true
+   }
+  },
+  {
+   "id": "G650",
+   "title": "고친 생성기가 #933(TASK-ES-650, 구역 이전)의 기준 트리에서 같은 설정으로 index.html·세포 다섯을 바이트 그대로 다시 만들고 표준 출력이 기준 생성기와 같다(guardedAllowed 칸·guarded 줄 없음)",
+   "ok": true,
+   "detail": {
+    "pr": 933,
+    "commit": "0b643c58e87b742db8502dac3ca638bb5244c800",
+    "genStatus": [
+     0,
+     0
+    ],
+    "err": null,
+    "stdoutSame": true,
+    "stdoutFirst": "region · regions 15 · statements 179 · lines 549 · locals 11 · edits 130 · bridged 117 · exposed 109 · imports 15",
+    "files": {
+     "index.html": {
+      "same": true,
+      "bytes": 327546
+     },
+     "js/core/boot-early-state.js": {
+      "same": true,
+      "bytes": 8487
+     },
+     "js/core/boot-entry-wiring.js": {
+      "same": true,
+      "bytes": 20462
+     },
+     "js/core/boot-home-wiring.js": {
+      "same": true,
+      "bytes": 29204
+     },
+     "js/core/boot-records-wiring.js": {
+      "same": true,
+      "bytes": 5276
+     },
+     "js/core/boot-finish.js": {
+      "same": true,
+      "bytes": 11922
+     }
+    }
+   }
+  },
+  {
+   "id": "K1",
+   "title": "잠금 불변: 허용 칸이 없으면 OURGOAL_CONFIG 가 든 구역은 예전과 같은 글자로 멈춘다(기준 생성기와 오류 글자 동일)",
+   "ok": true,
+   "detail": {
+    "status": [
+     1,
+     1
+    ],
+    "err": "구역 bootAppConfig 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OURGOAL_CONFIG(줄 23)",
+    "baseErr": "구역 bootAppConfig 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OURGOAL_CONFIG(줄 23)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "K2",
+   "title": "잠금 불변: 허용 칸이 없으면 OurgoalTemplateCredit 가 든 구역은 예전과 같은 글자로 멈춘다(기준 생성기와 오류 글자 동일)",
+   "ok": true,
+   "detail": {
+    "status": [
+     1,
+     1
+    ],
+    "err": "구역 bootPartInit 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OurgoalTemplateCredit(줄 27)",
+    "baseErr": "구역 bootPartInit 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OurgoalTemplateCredit(줄 27)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "K3",
+   "title": "잠금 불변: 두 구역을 함께 적어도 허용 칸이 없으면 첫 잠긴 이름에서 멈춘다(기준 생성기와 오류 글자 동일)",
+   "ok": true,
+   "detail": {
+    "status": [
+     1,
+     1
+    ],
+    "err": "구역 bootAppConfig 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OURGOAL_CONFIG(줄 23)",
+    "baseErr": "구역 bootAppConfig 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OURGOAL_CONFIG(줄 23)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "A1",
+   "title": "허용: OURGOAL_CONFIG 만 — 선언과 window 복사 블록이 구역 함수로 간다(선언은 그 함수의 지역 변수 — 접두 0). 메타·출력에 이름·근거·구역·문 줄·낱말 수가 적힌다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "guardedAllowed": [
+     {
+      "name": "OURGOAL_CONFIG",
+      "approval": "상민님 2026-10-11 「결심 2 : 승인」 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(단위 시험용 글자)",
+      "hits": [
+       {
+        "region": "bootAppConfig",
+        "line": 23,
+        "guardedWords": 1,
+        "prefixEdits": 0
+       },
+       {
+        "region": "bootAppConfig",
+        "line": 24,
+        "guardedWords": 2,
+        "prefixEdits": 0
+       }
+      ]
+     }
+    ],
+    "guardedLines": 2,
+    "prefixOnly:bootAppConfig": true
+   }
+  },
+  {
+   "id": "A2",
+   "title": "허용: OurgoalTemplateCredit 만 — 초기화 블록이 구역 함수로 간다. 바뀐 글자는 IIFE 이름 셋의 접두 L. 뿐이다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "guardedAllowed": [
+     {
+      "name": "OurgoalTemplateCredit",
+      "approval": "상민님 2026-10-11 「결심 2 : 승인」 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(단위 시험용 글자)",
+      "hits": [
+       {
+        "region": "bootPartInit",
+        "line": 27,
+        "guardedWords": 3,
+        "prefixEdits": 3
+       }
+      ]
+     }
+    ],
+    "guardedLines": 1,
+    "prefixOnly:bootPartInit": true
+   }
+  },
+  {
+   "id": "A3",
+   "title": "허용: 둘 다(구역 둘) — 두 구역이 한 세포 파일로 간다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "guardedAllowed": [
+     {
+      "name": "OURGOAL_CONFIG",
+      "approval": "상민님 2026-10-11 「결심 2 : 승인」 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(단위 시험용 글자)",
+      "hits": [
+       {
+        "region": "bootAppConfig",
+        "line": 23,
+        "guardedWords": 1,
+        "prefixEdits": 0
+       },
+       {
+        "region": "bootAppConfig",
+        "line": 24,
+        "guardedWords": 2,
+        "prefixEdits": 0
+       }
+      ]
+     },
+     {
+      "name": "OurgoalTemplateCredit",
+      "approval": "상민님 2026-10-11 「결심 2 : 승인」 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(단위 시험용 글자)",
+      "hits": [
+       {
+        "region": "bootPartInit",
+        "line": 27,
+        "guardedWords": 3,
+        "prefixEdits": 3
+       }
+      ]
+     }
+    ],
+    "guardedLines": 3,
+    "prefixOnly:bootAppConfig": true,
+    "prefixOnly:bootPartInit": true
+   }
+  },
+  {
+   "id": "A4",
+   "title": "허용은 잠금만 푼다: 잠긴 낱말을 다른 낱말로 바꾼 같은 꾸러미를 기준 생성기(허용 칸 없음)로 돌린 index.html·세포 파일과, 허용해 돌린 산출이 그 낱말 말고 바이트 동일하다",
+   "ok": true,
+   "detail": {
+    "baseStatus": 0,
+    "baseErr": null
+   }
+  },
+  {
+   "id": "E1",
+   "title": "실행 등가(vm, 진짜 통로): 이전 전 인라인과 옮긴 뒤(세포 + 인라인)에서 window.OURGOAL_CONFIG 가 같은 꼴(빈 객체)로 달리고 부품 init 이 같은 값(sb · getState() · toast)으로 한 번 불린다",
+   "ok": true,
+   "detail": {
+    "before": {
+     "threw": null,
+     "log": "[[\"init\",7,\"function\",3,\"function\",\"getState,sb,toast\"],\"toast:ready\",\"alpha:tail\"]",
+     "config": "{\"type\":\"object\",\"keys\":0,\"plain\":true}"
+    },
+    "after": {
+     "threw": null,
+     "log": "[[\"init\",7,\"function\",3,\"function\",\"getState,sb,toast\"],\"toast:ready\",\"alpha:tail\"]",
+     "config": "{\"type\":\"object\",\"keys\":0,\"plain\":true}"
+    }
+   }
+  },
+  {
+   "id": "S1",
+   "title": "정지: OURGOAL_CONFIG 만 허용했는데 구역에 OurgoalTemplateCredit 가 있다 — 적지 않은 이름은 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "구역 bootPartInit 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OurgoalTemplateCredit(줄 27)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S2",
+   "title": "정지: 잠긴 이름 목록에 없는 이름을 허용 칸에 적었다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region allowGuarded 의 name 은 잠긴 이름(OurgoalTemplateCredit · OURGOAL_CONFIG) 가운데 하나여야 한다: SUPABASE_ANON_KEY",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S3",
+   "title": "정지: 승인 근거 글자가 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region allowGuarded 의 approval(승인 근거 글자 — 10자 이상, 한 줄)이 없다: OURGOAL_CONFIG",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S4",
+   "title": "정지: 승인 근거 글자가 너무 짧다(「ok」 같은 글자로 풀리지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region allowGuarded 의 approval(승인 근거 글자 — 10자 이상, 한 줄)이 없다: OURGOAL_CONFIG",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S5",
+   "title": "정지: 승인 근거 글자에 줄바꿈이 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region allowGuarded 의 approval(승인 근거 글자 — 10자 이상, 한 줄)이 없다: OURGOAL_CONFIG",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S6",
+   "title": "정지: 허용 칸에 같은 이름이 두 번 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region allowGuarded 에 같은 이름이 두 번 있다: OURGOAL_CONFIG",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S7",
+   "title": "정지: 허용 칸의 모르는 키",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region allowGuarded 에 모르는 칸: rewrite",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S8",
+   "title": "정지: allowGuarded 가 빈 배열이다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region 설정 allowGuarded 는 비지 않은 배열이어야 한다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S9",
+   "title": "정지: allowGuarded 가 배열이 아니다(true 같은 스위치로 풀리지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region 설정 allowGuarded 는 비지 않은 배열이어야 한다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S10",
+   "title": "정지: 허용한 이름이 어느 구역에도 없다(쓰이지 않는 허용은 적지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "region allowGuarded 에 적은 이름이 어느 구역에도 없다(쓰이지 않는 허용은 적지 않는다): OurgoalTemplateCredit",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S11",
+   "title": "정지: 허용한 문에 줄임 속성 확장이 필요하다 — 허용 한도는 접두뿐이다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "허용한 잠긴 이름 OurgoalTemplateCredit 의 문(줄 27)에 줄임 속성 확장이 필요하다 — 허용 한도는 이름 접두 L. 뿐이다. 옮기지 않는다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S12",
+   "title": "정지: sweep 설정에 allowGuarded 칸(다른 모드에서는 모르는 칸이다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "sweep 설정에 모르는 칸: allowGuarded",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S13",
+   "title": "정지: finalize 설정에 allowGuarded 칸",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정에 모르는 칸: allowGuarded",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "R1",
+   "title": "실제 index.html(PIN): 허용 없이 두 곳을 구역으로 적으면 기준 생성기와 같은 글자로 멈춘다. index.html 그대로 · 세포 파일 없음",
+   "ok": true,
+   "detail": {
+    "err": "구역 bootAppConfigUnit 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OURGOAL_CONFIG(줄 2769)",
+    "baseErr": "구역 bootAppConfigUnit 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OURGOAL_CONFIG(줄 2769)"
+   }
+  },
+  {
+   "id": "R2",
+   "title": "실제 index.html(PIN): 둘 다 허용하면 두 구역이 옮겨진다 — 옮긴 줄에서 접두 L. 말고 다른 줄 0 · 접두 수 = 생성기 바꿔 쓰기 수 · 돈 관련 낱말이 든 옮긴 줄 수가 전후 같고 그 줄들은 접두 말고 그대로 · 세포 머리 설명에 돈 관련 낱말 0",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "stdout": [
+     "region · regions 2 · statements 3 · lines 7 · locals 1 · edits 3 · bridged 3 · exposed 0 · imports 2",
+     "  region bootAppConfigUnit 2767~2770 → js/core/boot-guarded-unit.js",
+     "  region bootTemplatePartInitUnit 4130~4132 → js/core/boot-guarded-unit.js",
+     "  guarded OURGOAL_CONFIG — 구역 bootAppConfigUnit(문 줄 2769 · 잠긴 낱말 1개) · 접두 0곳 · 승인 근거: 상민님 2026-10-11 「결심 2 : 승인」 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(단위 시험용 글자)",
+     "  guarded OURGOAL_CONFIG — 구역 bootAppConfigUnit(문 줄 2770 · 잠긴 낱말 2개) · 접두 0곳 · 승인 근거: 상민님 2026-10-11 「결심 2 : 승인」 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(단위 시험용 글자)",
+     "  guarded OurgoalTemplateCredit — 구역 bootTemplatePartInitUnit(문 줄 4130 · 잠긴 낱말 3개) · 접두 3곳 · 승인 근거: 상민님 2026-10-11 「결심 2 : 승인」 — 접두 말고는 한 글자도 바꾸지 않고 옮",
+     "index.html lines 4174 -> 4172",
+     "js/core/boot-guarded-unit.js 38"
+    ],
+    "guardedAllowed": [
+     {
+      "name": "OURGOAL_CONFIG",
+      "hits": [
+       {
+        "region": "bootAppConfigUnit",
+        "line": 2769,
+        "guardedWords": 1,
+        "prefixEdits": 0
+       },
+       {
+        "region": "bootAppConfigUnit",
+        "line": 2770,
+        "guardedWords": 2,
+        "prefixEdits": 0
+       }
+      ]
+     },
+     {
+      "name": "OurgoalTemplateCredit",
+      "hits": [
+       {
+        "region": "bootTemplatePartInitUnit",
+        "line": 4130,
+        "guardedWords": 3,
+        "prefixEdits": 3
+       }
+      ]
+     }
+    ],
+    "lines": {
+     "identical": 6,
+     "prefixOnly": 1,
+     "other": 0,
+     "prefixes": 3,
+     "edits": 3
+    },
+    "money": {
+     "linesInMovedBase": 5,
+     "linesInMovedCell": 5,
+     "movedLinesSameAfterStrip": true,
+     "indexBefore": 9,
+     "indexAfter": 4,
+     "cellFile": 5,
+     "cellHeader": 0,
+     "indexPlusCellAfter": 9,
+     "sameTotal": true
+    }
+   }
+  },
+  {
+   "id": "R3",
+   "title": "실제 index.html(PIN): OurgoalTemplateCredit 만 허용하면 OURGOAL_CONFIG 에서 멈춘다. index.html 그대로 · 세포 파일 없음",
+   "ok": true,
+   "detail": {
+    "err": "구역 bootAppConfigUnit 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: OURGOAL_CONFIG(줄 2769)"
+   }
+  }
+ ]
+}
