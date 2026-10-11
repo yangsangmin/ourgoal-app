@@ -40,6 +40,193 @@ const top = iife.get('body').get('body');
 const H = n => n.loc.start.line + off, HE = n => n.loc.end.line + off;
 const fail = m => { throw new Error(m); };
 
+// ── [#TASK-ES-661 · docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 닫힌 목록 X8 — 상민님 2026-10-11 「허용」, 효력 기록 지시함 DIR-004] 빈 구획 쓸기 모드(설정 "mode": "sweep").
+// 무엇을 하는가: IIFE 최상위에서 **문이 하나도 없는 구획**(구획 주석 `/* ===` 에서 다음 구획 주석 앞까지 — 지도·옮기기 경로와 같은 규칙)의 주석 줄과 빈 줄을 지운다. 다루는 줄은 두 종류뿐이다:
+//   W1 그 구획의 주석 줄(생성기 「옮김」 표지 등 — 줄 전체가 주석인 줄. 여러 줄 주석은 통째로)   W2 그 구획의 빈 줄
+// 대상 구획은 **적용 시점의 index.html 을 재서** 정한다: "groups": "all" 이면 지금 문이 0 인 구획 전부, 제목 배열이면 그 제목의 구획만(그 구획에 문이 하나라도 있으면 멈춘다).
+// 건드리지 않는 것(지우지 않는다 — 5절 X8 의 정지·제외 조건):
+//   · 구획 주석(`/* ===` 줄) 자체 — 생성기(묶음 경계·take.group·region.group)와 지도 도구(scripts/inline-script-map.js · inline-hard-types.js · inline-hard-test-probe.js)가 묶음을 이것으로 가른다
+//   · 자리 표지(`[어려움 이음매 자리 X]`)나 1차 이음매 주석(`[#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매`)이 든 구획 — 통째로 제외한다(생성기·검사기가 자리 표지 아래 줄을 빈 줄까지로 센다)
+//   · 구획 주석과 같은 줄에 있는 주석 · "keep" 의 글자를 담은 주석(시험·가드가 글자로 붙잡는 주석 — 생성기는 모른다. 쓰는 PR 이 모의 적용 사본에서 시험 전부를 돌려 찾아 적는다) · 그런 주석과 줄을 나눠 쓰는 주석
+//   · 문이 있는 구획의 주석·빈 줄 · 첫 구획 주석 앞(머리) · 문 안의 주석 · IIFE 밖의 글자
+// 안전 정지(fail): 제목 배열의 구획에 문이 있음 · 제목에 맞는 구획 주석이 없음 · 제목 배열이 제외 구획(자리 표지·1차 이음매)을 가리킴 · 한 줄에 구획 주석 둘 · 구획 경계에 걸친 주석 ·
+//   대상 줄에 실행 글자(토큰)가 있음 · keep 의 글자를 담은 주석이 대상 구획에 없음(오타 방지) · 지울 줄이 0 · 모르는 칸. 멈추면 index.html 을 쓰지 않는다. 세포 파일은 쓰지 않는다.
+// 여러 실행: "sweep" 이 배열이면 차례로 적용한다(앞 실행 결과를 다시 파싱). 배열의 단계가 { "unwire": { … } } 이면 그 단계는 unwire 실행 하나로 돈다(unwireOnce 를 그대로 부른다 — unstate 와 같은 꼴).
+// 사후 대조(모든 실행): 다시 파싱한 토큰열(주석 제외) = 이전 토큰열(실행 글자 0 변화) · 남은 주석 = 이전 주석 − 지운 주석 · 줄 수 = 이전 − 지운 줄. 다르면 쓰지 않고 멈춘다.
+// 설정 예: { "task": "TASK-ES-6xx", "slot": "HO", "mode": "sweep", "cells": [{ "file": "js/core/cell-registry.js" }], "sweep": { "groups": "all", "keep": ["filterHarmfulWords"] } }
+//   제목으로 고르기: "sweep": { "groups": ["(구획 주석 제목)", "…"] }    여러 단계: "sweep": [ { "unwire": { "kitVar": "_uiKit", "names": ["…"] } }, { "groups": "all" } ]
+if (CFG.mode === 'sweep') { runSweep(); return; }
+function runSweep() {
+  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells', 'sweep'].includes(k)) fail('sweep 설정에 모르는 칸: ' + k);
+  const isList = Array.isArray(CFG.sweep);
+  const specs = isList ? CFG.sweep : [CFG.sweep || {}];
+  if (isList && !specs.length) fail('sweep 배열이 비었다');
+  let doc = parseUnwireDoc(lines);
+  const metas = [], logs = [];
+  for (let i = 0; i < specs.length; i++) {
+    const sp = specs[i];
+    let r;
+    try {
+      if (isList && sp && typeof sp === 'object' && !Array.isArray(sp) && Object.prototype.hasOwnProperty.call(sp, 'unwire')) { // unwire 단계 — unwireOnce 를 그대로 부른다
+        if (Object.keys(sp).length !== 1) fail('unwire 단계에는 unwire 칸 하나만 둔다');
+        r = unwireOnce(sp.unwire, doc);
+        r = { next: r.next, meta: Object.assign({ step: 'unwire' }, r.meta), log: ['unwire'].concat(r.log) };
+      } else {
+        r = sweepOnce(sp, doc);
+        if (isList) r = { next: r.next, meta: Object.assign({ step: 'sweep' }, r.meta), log: r.log };
+      }
+    } catch (err) { if (isList) err.message = '[sweep 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; throw err; }
+    metas.push(r.meta); logs.push(r.log);
+    doc = r.next;
+  }
+  fs.writeFileSync(path.join(APP, 'index.html'), doc.lines.join(EOL), { encoding: 'utf8' });
+  const meta = isList
+    ? { task: TAG, mode: 'sweep', runs: metas, htmlLinesBefore: lines.length, htmlLinesAfter: doc.lines.length, files: {} }
+    : Object.assign({ task: TAG, mode: 'sweep' }, metas[0], { files: {} });
+  fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1), { encoding: 'utf8' });
+  logs.forEach((l, i) => console.log(...(isList ? ['[' + (i + 1) + '/' + specs.length + ']'] : []), ...l));
+  console.log('index.html lines', lines.length, '->', doc.lines.length);
+}
+function sweepOnce(U, doc) {
+  const { lines, top, iScope } = doc; // 이 실행이 보는 문서(앞 실행의 결과). 파일 머리의 같은 이름을 가린다.
+  const H = n => n.loc.start.line + doc.off, HE = n => n.loc.end.line + doc.off;
+  if (!U || typeof U !== 'object' || Array.isArray(U)) fail('sweep 실행 설정은 객체여야 한다');
+  for (const k of Object.keys(U)) if (!['groups', 'keep', 'label'].includes(k)) fail('sweep 설정에 모르는 칸: ' + k);
+  const ALL = U.groups === 'all';
+  if (!ALL && !(Array.isArray(U.groups) && U.groups.length && U.groups.every(t => typeof t === 'string' && t))) fail('sweep.groups 는 "all" 이거나 구획 주석 제목의 배열이어야 한다');
+  if (!ALL && new Set(U.groups).size !== U.groups.length) fail('sweep.groups 에 같은 제목이 두 번 있다');
+  const keep = U.keep === undefined ? [] : U.keep;
+  if (!Array.isArray(keep) || !keep.every(t => typeof t === 'string' && t) || new Set(keep).size !== keep.length) fail('sweep.keep 은 비지 않은 글자의 배열이어야 한다(겹침 없이)');
+  const body = iScope.path.node.body;
+  const isComment = t => typeof t.type === 'string';
+  const sig = t => JSON.stringify([t.type.label || '', t.value === undefined ? '' : String(t.value)]);
+  const comSig = c => JSON.stringify([c.type, c.value]);
+  const codeToks = d => d.ast.tokens.filter(t => !isComment(t) && t.type.label !== 'eof');
+  const SLOT = '[어려움 이음매 자리 ', SEAM1 = '[#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매';
+  const isHeader = c => c.type === 'CommentBlock' && /^\s*=+/.test(c.value);
+  const kindOf = c => isHeader(c) ? 'header' : c.value.includes(SLOT) ? 'slot' : c.value.includes(SEAM1) ? 'seam1'
+    : /^\s*\[#[\w-]+\][^\n]*로 옮김/.test(c.value) ? 'moved' : /^\s*\[#[\w-]+\] js\/\S+ — /.test(c.value) ? 'genHead' : 'other';
+  // 최상위(문 밖) 주석 · 실행 글자가 있는 줄 · 종류별 집계(이전/이후 표에 쓴다)
+  const survey = d => {
+    const b = d.iScope.path.node.body, L = n => n.loc.start.line + d.off, LE = n => n.loc.end.line + d.off;
+    const spans = d.top.map(st => [st.node.start, st.node.end]).concat((b.directives || []).map(x => [x.start, x.end]));
+    const topComments = d.ast.comments.filter(c => c.start > b.start && c.end < b.end && !spans.some(([s, e]) => c.start >= s && c.end <= e));
+    const codeLine = new Set();
+    for (const t of codeToks(d)) for (let l = L(t); l <= LE(t); l++) codeLine.add(l);
+    const commentLine = new Map();
+    for (const c of topComments) for (let l = L(c); l <= LE(c); l++) { if (!commentLine.has(l)) commentLine.set(l, []); commentLine.get(l).push(c); }
+    return { topComments, codeLine, commentLine };
+  };
+  // 종류별 줄 수(이전/이후 표): 문이 걸친 줄(문 안의 빈 줄·주석 줄 포함)은 최상위 틈이 아니다 — 집계에서 뺀다
+  const stmtLines = d => { const s = new Set(), b = d.iScope.path.node.body, L = n => n.loc.start.line + d.off, LE = n => n.loc.end.line + d.off; for (const n of d.top.map(st => st.node).concat(b.directives || [])) for (let l = L(n); l <= LE(n); l++) s.add(l); return s; };
+  const gapTally = d => {
+    const sv = survey(d), inStmt = stmtLines(d), b = d.iScope.path.node.body, t = { header: 0, slot: 0, seam1: 0, moved: 0, genHead: 0, other: 0, blank: 0 };
+    for (let l = d.off + b.loc.start.line + 1; l < d.off + b.loc.end.line; l++) {
+      if (inStmt.has(l)) continue;
+      const cs = sv.commentLine.get(l);
+      if (cs) t[kindOf(cs[0])]++; else if (d.lines[l - 1].trim() === '') t.blank++;
+    }
+    return t;
+  };
+  const sv = survey(doc);
+  // ── 구획(구획 주석에서 다음 구획 주석 앞까지). 첫 구획 주석 앞(머리)은 구획이 아니다 — 다루지 않는다
+  const headers = sv.topComments.filter(isHeader).map(c => ({ c, line: H(c), endLine: HE(c), text: c.value }));
+  const lastLine = HE(body) - 1;
+  headers.forEach((h, i) => {
+    const nx = headers[i + 1];
+    if (nx && nx.line <= h.endLine) fail('한 줄에 구획 주석이 둘이다(줄 ' + nx.line + ') — sweep 은 구획을 줄로 가른다');
+    h.end = nx ? nx.line - 1 : lastLine;
+    h.title = h.text.split('\n')[0].replace(/^\s*=+\s*/, '').replace(/\s*=+\s*$/, '');
+  });
+  for (const h of headers) {
+    h.sts = top.filter(st => H(st.node) >= h.line && H(st.node) <= h.end);
+    h.comments = sv.topComments.filter(c => c !== h.c && H(c) >= h.line && H(c) <= h.end);
+    const has = s => h.text.includes(s) || h.comments.some(c => c.value.includes(s));
+    h.excluded = has(SLOT) ? '자리 표지가 든 구획' : has(SEAM1) ? '1차 이음매 구획' : null;
+  }
+  // ── 대상 구획
+  let targets;
+  const skipped = [];
+  if (ALL) {
+    targets = headers.filter(h => !h.sts.length && !h.excluded);
+    for (const h of headers) if (!h.sts.length && h.excluded) skipped.push({ title: h.title, line: h.line, why: h.excluded });
+  } else {
+    targets = [];
+    for (const title of U.groups) {
+      const hs = headers.filter(h => h.text.includes(title));
+      if (!hs.length) fail('구획 주석이 0개: ' + title);
+      for (const h of hs) {
+        if (h.sts.length) fail('구획에 문이 ' + h.sts.length + '개 있다 — sweep 은 문이 없는 구획만 다룬다: ' + title + ' (줄 ' + h.line + ')');
+        if (h.excluded) fail('sweep 이 다루지 않는 구획이다(' + h.excluded + '): ' + title + ' (줄 ' + h.line + ')');
+        if (targets.includes(h)) fail('sweep.groups 의 두 제목이 같은 구획을 가리킨다: ' + title + ' (줄 ' + h.line + ')');
+        targets.push(h);
+      }
+    }
+    targets.sort((a, b) => a.line - b.line);
+  }
+  if (!targets.length) fail('문이 없는 구획이 없다 — 지울 것이 없다');
+  // ── 지울 줄
+  const del = new Set(), delComments = new Set(), kept = [], keepHit = new Set();
+  const report = [];
+  for (const h of targets) {
+    const a = h.endLine + 1, b = h.end;
+    const cs = [], keptHere = new Set(), why = new Map();
+    for (const c of h.comments) {
+      if (H(c) <= h.endLine) { kept.push({ line: H(c), why: '구획 주석과 같은 줄', text: c.value.trim().slice(0, 80) }); if (HE(c) > h.endLine) fail('구획 주석 줄에서 시작해 아래로 이어지는 주석(줄 ' + H(c) + ') — 줄 단위로 가를 수 없다'); continue; }
+      if (HE(c) > b) fail('구획 경계에 걸친 주석(줄 ' + H(c) + '~' + HE(c) + ') — 다음 구획 주석과 줄을 나눠 쓴다');
+      cs.push(c);
+    }
+    const owners = new Map();
+    for (const c of cs) for (let l = H(c); l <= HE(c); l++) { if (!owners.has(l)) owners.set(l, []); owners.get(l).push(c); }
+    for (const c of cs) { const k = keep.find(s => c.value.includes(s)); if (k !== undefined) { keptHere.add(c); why.set(c, 'keep: ' + k); } }
+    for (const c of cs) for (const s of keep) if (c.value.includes(s)) keepHit.add(s);
+    for (let again = true; again;) { // 지키는 주석과 줄을 나눠 쓰는 주석은 함께 남긴다(줄 단위로만 지운다)
+      again = false;
+      for (const c of cs) if (!keptHere.has(c)) for (let l = H(c); l <= HE(c); l++) if (owners.get(l).some(o => keptHere.has(o))) { keptHere.add(c); why.set(c, '지키는 주석과 같은 줄'); again = true; break; }
+    }
+    let nc = 0, nb = 0;
+    for (let l = a; l <= b; l++) {
+      if (sv.codeLine.has(l)) fail('문이 없는 구획의 줄 ' + l + ' 에 실행 글자가 있다(닫힌 목록 밖 줄) — 쓰지 않는다');
+      const os = owners.get(l);
+      if (!os) { if (lines[l - 1].trim() !== '') fail('줄 ' + l + ' 은 주석도 빈 줄도 아니다(닫힌 목록 밖 줄) — 쓰지 않는다'); del.add(l); nb++; continue; }
+      if (os.every(o => !keptHere.has(o))) { del.add(l); nc++; }
+    }
+    for (const c of cs) { if (keptHere.has(c)) kept.push({ line: H(c), why: why.get(c), text: c.value.trim().slice(0, 80) }); else delComments.add(c); }
+    report.push({ title: h.title, line: h.line, headerLines: h.endLine - h.line + 1, end: h.end, deletedCommentLines: nc, deletedBlankLines: nb, keptComments: keptHere.size });
+  }
+  const unused = keep.filter(s => !keepHit.has(s));
+  if (unused.length) fail('sweep.keep 의 글자를 담은 주석이 대상 구획에 없다: ' + unused.join(' · '));
+  if (!del.size) fail('지울 줄이 0 — 대상 구획에 지울 주석·빈 줄이 없다');
+  const nl = lines.filter((_, i) => !del.has(i + 1));
+  const next = parseUnwireDoc(nl);
+  // ── 사후 대조: 실행 글자 0 변화 · 남은 주석 = 이전 − 지운 주석 · 줄 수
+  {
+    const want = codeToks(doc).map(sig), got = codeToks(next).map(sig);
+    let diffAt = want.length === got.length ? -1 : Math.min(want.length, got.length);
+    for (let i = 0; i < Math.min(want.length, got.length); i++) if (want[i] !== got[i]) { diffAt = i; break; }
+    if (diffAt >= 0) fail('지운 뒤 토큰열이 이전과 다르다(실행 글자 변화) — 쓰지 않는다: 토큰 ' + diffAt);
+    const wantCom = doc.ast.comments.filter(c => !delComments.has(c)).map(comSig), gotCom = next.ast.comments.map(comSig);
+    if (wantCom.length !== gotCom.length || wantCom.some((v, i) => v !== gotCom[i])) fail('지운 뒤 남은 주석이 예상과 다르다 — 쓰지 않는다');
+    if (nl.length !== lines.length - del.size) fail('지운 뒤 줄 수가 예상과 다르다 — 쓰지 않는다');
+  }
+  const byKind = {};
+  for (const l of del) { const os = sv.commentLine.get(l); if (os) { const k = kindOf(os[0]); byKind[k] = (byKind[k] || 0) + 1; } }
+  const wordsOf = s => new Set(s.match(/[A-Za-z_$][\w$]{3,}/g) || []);
+  const after = wordsOf(nl.join('\n'));
+  const vanishedWords = [...wordsOf([...delComments].map(c => c.value).join('\n'))].filter(w => !after.has(w)).sort();
+  const nCom = [...del].filter(l => sv.commentLine.has(l)).length;
+  const meta = {
+    groups: ALL ? 'all' : U.groups, keep,
+    emptyGroups: { total: headers.filter(h => !h.sts.length).length, swept: targets.length, skipped },
+    deleted: { lines: del.size, commentLines: nCom, blankLines: del.size - nCom, comments: delComments.size, commentLinesByKind: byKind },
+    kept, targets: report, removedLines: [...del].sort((a, b) => a - b),
+    gapLinesBefore: gapTally(doc), gapLinesAfter: gapTally(next),
+    vanishedWords, htmlLinesBefore: lines.length, htmlLinesAfter: nl.length,
+  };
+  const log = ['sweep', '· groups', targets.length, '· lines', del.size, '(주석 ' + nCom + ' · 빈 줄 ' + (del.size - nCom) + ')', '· kept', kept.length, '· skipped', skipped.length];
+  return { next, meta, log };
+}
+
 // ── [B1 · docs/architecture/CELL-REGISTRY-DESIGN.md 5절] 배선 철거 모드(설정 "mode": "unwire") — 상민님 2026-10-10 「허용」(결심 ⑤), 범위는 그 문서 5절 그대로.
 // 지우는 대상은 세 종류뿐이다:
 //   ① 지정 키트(unwire.kitVar)의 가져오기 줄 `var X = _kit.X;`
