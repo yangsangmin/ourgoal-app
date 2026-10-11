@@ -2,746 +2,856 @@
  "tool": "expose-window.js (저장소 밖 측정 스크립트)",
  "type": "작업자 측정, 판정 아님",
  "exposeLines": [
-  2673,
-  2684
+  2603,
+  2614
  ],
  "names": 10,
  "definedBeforeExpose": 8,
  "definedAfterExpose": [
   {
    "name": "capturePhotoBtn",
-   "line": 3171,
+   "line": 3099,
    "executingStatementsBetween": [
     {
-     "line": 2716,
-     "endLine": 2722,
+     "line": 2646,
+     "endLine": 2652,
      "text": "try{"
     },
     {
-     "line": 2746,
-     "endLine": 2746,
+     "line": 2674,
+     "endLine": 2674,
      "text": "var sb = (window.supabase && typeof window.supabase.createClient === 'function') ? window.supabase.createClient(SUPABASE"
+    },
+    {
+     "line": 2675,
+     "endLine": 2675,
+     "text": "window.OurgoalAppState.defineVar('_pendingAuthSession', null);"
+    },
+    {
+     "line": 2676,
+     "endLine": 2676,
+     "text": "bindSupabaseAuthStateListener(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/core/supabase-auth.js 의 bindSupabaseAuthStateLis"
+    },
+    {
+     "line": 2682,
+     "endLine": 2682,
+     "text": "var OURGOAL_CONFIG = {};"
+    },
+    {
+     "line": 2683,
+     "endLine": 2683,
+     "text": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }"
+    },
+    {
+     "line": 2709,
+     "endLine": 2709,
+     "text": "window.OurgoalAppState.defineVar('toastTimer',null);"
+    },
+    {
+     "line": 2715,
+     "endLine": 2720,
+     "text": "window.OurgoalAppState.define('THEMES', ["
+    },
+    {
+     "line": 2723,
+     "endLine": 2725,
+     "text": "if(typeof window !== 'undefined'){"
     },
     {
      "line": 2748,
      "endLine": 2748,
-     "text": "bindSupabaseAuthStateListener(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/core/supabase-auth.js 의 bindSupabaseAuthStateLis"
+     "text": "var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');"
     },
     {
-     "line": 2754,
-     "endLine": 2754,
-     "text": "var OURGOAL_CONFIG = {};"
+     "line": 2749,
+     "endLine": 2749,
+     "text": "if(btnAvLvClose) btnAvLvClose.addEventListener('click', closeAvatarLevelUpModal);"
+    },
+    {
+     "line": 2750,
+     "endLine": 2750,
+     "text": "var btnAvLvConfirm = document.getElementById('btnConfirmLevelUpClose');"
+    },
+    {
+     "line": 2751,
+     "endLine": 2751,
+     "text": "if(btnAvLvConfirm) btnAvLvConfirm.addEventListener('click', closeAvatarLevelUpModal);"
+    },
+    {
+     "line": 2752,
+     "endLine": 2752,
+     "text": "window.OurgoalAppState.define('avLvModalElem', document.getElementById('avatarLevelUpModal'));"
+    },
+    {
+     "line": 2753,
+     "endLine": 2753,
+     "text": "bindAvatarLevelUpBackdrop(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLe"
     },
     {
      "line": 2755,
      "endLine": 2755,
-     "text": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }"
+     "text": "window.OurgoalAppState.define('btnSaveGrowth', document.getElementById('btnSaveGrowthPrompt'));"
     },
     {
-     "line": 2787,
-     "endLine": 2792,
-     "text": "var THEMES = ["
+     "line": 2756,
+     "endLine": 2756,
+     "text": "bindAvatarGrowthPromptSave(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarG"
     },
     {
-     "line": 2795,
-     "endLine": 2797,
-     "text": "if(typeof window !== 'undefined'){"
+     "line": 2758,
+     "endLine": 2758,
+     "text": "window.OurgoalAppState.define('btnShareLv', document.getElementById('btnShareLevelUp'));"
     },
     {
-     "line": 2820,
-     "endLine": 2820,
-     "text": "var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');"
+     "line": 2759,
+     "endLine": 2759,
+     "text": "bindAvatarLevelUpShare(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLevel"
     },
     {
-     "line": 2821,
-     "endLine": 2821,
-     "text": "if(btnAvLvClose) btnAvLvClose.addEventListener('click', closeAvatarLevelUpModal);"
+     "line": 2761,
+     "endLine": 2761,
+     "text": "window.OurgoalAppState.define('btnSaveLvImg', document.getElementById('btnSaveLevelUpImage'));"
     },
     {
-     "line": 2822,
-     "endLine": 2822,
-     "text": "var btnAvLvConfirm = document.getElementById('btnConfirmLevelUpClose');"
+     "line": 2762,
+     "endLine": 2762,
+     "text": "bindAvatarLevelUpSaveImage(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarL"
     },
     {
-     "line": 2823,
-     "endLine": 2823,
-     "text": "if(btnAvLvConfirm) btnAvLvConfirm.addEventListener('click', closeAvatarLevelUpModal);"
+     "line": 2765,
+     "endLine": 2765,
+     "text": "window.OurgoalAppState.defineVar('__avatarGreetTimer', null);"
     },
     {
-     "line": 2824,
-     "endLine": 2824,
-     "text": "var avLvModalElem = document.getElementById('avatarLevelUpModal');"
+     "line": 2773,
+     "endLine": 2773,
+     "text": "var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlot"
     },
     {
-     "line": 2825,
-     "endLine": 2825,
-     "text": "bindAvatarLevelUpBackdrop(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLe"
+     "line": 2774,
+     "endLine": 2774,
+     "text": "if(typeof window !== 'undefined'){ window.state = state; }"
     },
     {
-     "line": 2827,
-     "endLine": 2827,
-     "text": "var btnSaveGrowth = document.getElementById('btnSaveGrowthPrompt');"
+     "line": 2794,
+     "endLine": 2794,
+     "text": "window.OurgoalAppState.defineVar('_promptTabState', 'real');"
+    },
+    {
+     "line": 2815,
+     "endLine": 2815,
+     "text": "window._homeDateOffset = 0;"
+    },
+    {
+     "line": 2826,
+     "endLine": 2826,
+     "text": "checkKakaoInAppBrowser();"
     },
     {
      "line": 2828,
      "endLine": 2828,
-     "text": "bindAvatarGrowthPromptSave(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarG"
+     "text": "window.OurgoalAppState.define('landNickQuickLink', document.getElementById('landNickQuickLink'));"
+    },
+    {
+     "line": 2829,
+     "endLine": 2829,
+     "text": "bindLandNickQuickLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandNickQuickLink 로"
     },
     {
      "line": 2830,
      "endLine": 2830,
-     "text": "var btnShareLv = document.getElementById('btnShareLevelUp');"
+     "text": "bindLandLoginLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandLoginLink 로 옮김 — 원래"
     },
     {
      "line": 2831,
      "endLine": 2831,
-     "text": "bindAvatarLevelUpShare(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLevel"
+     "text": "window.OurgoalAppState.define('landGuestBtn', document.getElementById('landGuestBtn'));"
     },
     {
-     "line": 2833,
-     "endLine": 2833,
-     "text": "var btnSaveLvImg = document.getElementById('btnSaveLevelUpImage');"
+     "line": 2832,
+     "endLine": 2832,
+     "text": "bindLandGuestBtn(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandGuestBtn 로 옮김 — 원래 자"
     },
     {
-     "line": 2834,
-     "endLine": 2834,
-     "text": "bindAvatarLevelUpSaveImage(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarL"
+     "line": 2836,
+     "endLine": 2836,
+     "text": "window.OurgoalAppState.define('landTesterBBtn', document.getElementById('landTesterBBtn'));"
     },
     {
-     "line": 2845,
-     "endLine": 2845,
-     "text": "var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlot"
+     "line": 2837,
+     "endLine": 2837,
+     "text": "bindLandTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindLandTesterBButton 로 "
+    },
+    {
+     "line": 2838,
+     "endLine": 2838,
+     "text": "window.OurgoalAppState.define('authTesterBBtn', document.getElementById('authTesterBBtn'));"
+    },
+    {
+     "line": 2839,
+     "endLine": 2839,
+     "text": "bindAuthTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindAuthTesterBButton 로 "
+    },
+    {
+     "line": 2841,
+     "endLine": 2841,
+     "text": "startDevDebugButtons(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 startDevDebugButtons 로 옮김 "
     },
     {
      "line": 2846,
      "endLine": 2846,
-     "text": "if(typeof window !== 'undefined'){ window.state = state; }"
+     "text": "window.OurgoalAppState.defineVar('_googleTokenClient', null);"
+    },
+    {
+     "line": 2849,
+     "endLine": 2849,
+     "text": "window.OurgoalAppState.defineVar('_googleOneTapNonce', null);"
+    },
+    {
+     "line": 2851,
+     "endLine": 2851,
+     "text": "bindKakaoLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindKakaoLoginClicks 로 옮김 — 원래 자리에서 부른다 "
+    },
+    {
+     "line": 2852,
+     "endLine": 2852,
+     "text": "bindGoogleLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindGoogleLoginClicks 로 옮김 — 원래 자리에서 부른"
+    },
+    {
+     "line": 2863,
+     "endLine": 2863,
+     "text": "window.OurgoalAppState.define('authTabButtons', document.querySelectorAll('.auth-tab'));"
+    },
+    {
+     "line": 2864,
+     "endLine": 2864,
+     "text": "bindAuthTabButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/auth-screen-actions.js 의 bindAuthTabButtons 로"
+    },
+    {
+     "line": 2867,
+     "endLine": 2867,
+     "text": "bindSignupSubmit(); /* [#TASK-ES-513] 로드 중 문(앞 주석 포함) → js/tabs/settings/device-session.js 의 bindSignupSubmit 로 옮김 — 원래 "
+    },
+    {
+     "line": 2874,
+     "endLine": 2874,
+     "text": "var fpBtn = document.getElementById('forgotPassBtn');"
+    },
+    {
+     "line": 2875,
+     "endLine": 2875,
+     "text": "if(fpBtn) fpBtn.addEventListener('click', openForgotPasswordModal);"
+    },
+    {
+     "line": 2882,
+     "endLine": 2882,
+     "text": "bindLoginSubmit(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLoginSubmit 로 옮김 — 원래 자"
+    },
+    {
+     "line": 2884,
+     "endLine": 2884,
+     "text": "window.OurgoalAppState.define('resyncBtn', document.getElementById('resyncAccountDataBtn'));"
+    },
+    {
+     "line": 2885,
+     "endLine": 2885,
+     "text": "bindResyncAccountDataButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResyncAccou"
+    },
+    {
+     "line": 2886,
+     "endLine": 2886,
+     "text": "bindLogoutButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLogoutButton 로 옮김 — 원래"
     },
     {
      "line": 2887,
      "endLine": 2887,
-     "text": "window._homeDateOffset = 0;"
+     "text": "bindResetButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResetButton 로 옮김 — 원래 자"
     },
     {
-     "line": 2898,
-     "endLine": 2898,
-     "text": "checkKakaoInAppBrowser();"
+     "line": 2891,
+     "endLine": 2891,
+     "text": "document.getElementById('withdrawBtn').addEventListener('click', openWithdrawModal);"
+    },
+    {
+     "line": 2896,
+     "endLine": 2896,
+     "text": "window.OurgoalAppState.define('tabGuideBtn', document.getElementById('btnTabGuideHub'));"
+    },
+    {
+     "line": 2897,
+     "endLine": 2897,
+     "text": "bindTabGuideHubButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindTabGuideHubButton 로"
     },
     {
      "line": 2900,
      "endLine": 2900,
-     "text": "var landNickQuickLink = document.getElementById('landNickQuickLink');"
+     "text": "window.OurgoalAppState.define('guideBtn', document.getElementById('btnRestartGuide'));"
     },
     {
      "line": 2901,
      "endLine": 2901,
-     "text": "bindLandNickQuickLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandNickQuickLink 로"
-    },
-    {
-     "line": 2902,
-     "endLine": 2902,
-     "text": "bindLandLoginLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandLoginLink 로 옮김 — 원래"
-    },
-    {
-     "line": 2903,
-     "endLine": 2903,
-     "text": "var landGuestBtn = document.getElementById('landGuestBtn');"
+     "text": "bindRestartGuideButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindRestartGuideButton"
     },
     {
      "line": 2904,
      "endLine": 2904,
-     "text": "bindLandGuestBtn(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandGuestBtn 로 옮김 — 원래 자"
+     "text": "bindInquiryButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindInquiryButtons "
     },
     {
-     "line": 2908,
-     "endLine": 2908,
-     "text": "var landTesterBBtn = document.getElementById('landTesterBBtn');"
+     "line": 2905,
+     "endLine": 2905,
+     "text": "window.OurgoalAppState.define('footEmailEl', document.getElementById('footSupportEmailLink'));"
+    },
+    {
+     "line": 2906,
+     "endLine": 2906,
+     "text": "bindSupportEmailLink(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindSupportEmailL"
     },
     {
      "line": 2909,
      "endLine": 2909,
-     "text": "bindLandTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindLandTesterBButton 로 "
+     "text": "bindTermsLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindTermsLinks 로 옮김 — 원래 자리에서 부른"
     },
     {
      "line": 2910,
      "endLine": 2910,
-     "text": "var authTesterBBtn = document.getElementById('authTesterBBtn');"
-    },
-    {
-     "line": 2911,
-     "endLine": 2911,
-     "text": "bindAuthTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindAuthTesterBButton 로 "
+     "text": "bindPrivacyLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindPrivacyLinks 로 옮김 — 원래 자리에"
     },
     {
      "line": 2913,
      "endLine": 2913,
-     "text": "startDevDebugButtons(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 startDevDebugButtons 로 옮김 "
+     "text": "bindFocusResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindFocusResync 로 옮김 — 원래 자리에서 부른다 */"
     },
     {
-     "line": 2923,
-     "endLine": 2923,
-     "text": "bindKakaoLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindKakaoLoginClicks 로 옮김 — 원래 자리에서 부른다 "
+     "line": 2914,
+     "endLine": 2914,
+     "text": "bindVisibilityResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindVisibilityResync 로 옮김 — 원래 자리에서 부"
     },
     {
-     "line": 2924,
-     "endLine": 2924,
-     "text": "bindGoogleLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindGoogleLoginClicks 로 옮김 — 원래 자리에서 부른"
+     "line": 2915,
+     "endLine": 2915,
+     "text": "bindRemoteLogoutStorageListener(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindRemoteLogoutStorageLis"
+    },
+    {
+     "line": 2916,
+     "endLine": 2916,
+     "text": "startRemoteSessionPoll(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 startRemoteSessionPoll 로 옮김 — 원래 자리"
+    },
+    {
+     "line": 2917,
+     "endLine": 2917,
+     "text": "bindOnlineSync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOnlineSync 로 옮김 — 원래 자리에서 부른다 */"
+    },
+    {
+     "line": 2918,
+     "endLine": 2918,
+     "text": "bindOfflineNotice(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOfflineNotice 로 옮김 — 원래 자리에서 부른다 */"
     },
     {
      "line": 2935,
      "endLine": 2935,
-     "text": "var authTabButtons = document.querySelectorAll('.auth-tab');"
+     "text": "window.OurgoalAppState.define('navButtons', document.querySelectorAll('.navbtn'));"
     },
     {
      "line": 2936,
      "endLine": 2936,
-     "text": "bindAuthTabButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/auth-screen-actions.js 의 bindAuthTabButtons 로"
+     "text": "window.OurgoalAppState.define('screens', document.querySelectorAll('.screen'));"
     },
     {
-     "line": 2939,
-     "endLine": 2939,
-     "text": "bindSignupSubmit(); /* [#TASK-ES-513] 로드 중 문(앞 주석 포함) → js/tabs/settings/device-session.js 의 bindSignupSubmit 로 옮김 — 원래 "
+     "line": 2941,
+     "endLine": 2941,
+     "text": "try { initShipyardRegistry(); } catch(e){ console.warn('[ShipyardRegistry] Init error:', e); }"
     },
     {
-     "line": 2946,
-     "endLine": 2946,
-     "text": "var fpBtn = document.getElementById('forgotPassBtn');"
+     "line": 2943,
+     "endLine": 2943,
+     "text": "bindNavButtonsClick(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/registry-init.js 의 bindNavButtonsClick 로 옮김 — 원래 자리에서"
     },
     {
-     "line": 2947,
-     "endLine": 2947,
-     "text": "if(fpBtn) fpBtn.addEventListener('click', openForgotPasswordModal);"
+     "line": 2945,
+     "endLine": 2945,
+     "text": "if(typeof window !== 'undefined'){ window.switchTab = setTab; }"
     },
     {
-     "line": 2954,
-     "endLine": 2954,
-     "text": "bindLoginSubmit(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLoginSubmit 로 옮김 — 원래 자"
+     "line": 2948,
+     "endLine": 2948,
+     "text": "window.OurgoalAppState.defineVar('_modalHistoryPushed', false);"
     },
     {
-     "line": 2956,
-     "endLine": 2956,
-     "text": "var resyncBtn = document.getElementById('resyncAccountDataBtn');"
+     "line": 2949,
+     "endLine": 2949,
+     "text": "window.OurgoalAppState.defineVar('_modalDismissGraceUntil', 0);"
     },
     {
-     "line": 2957,
-     "endLine": 2957,
-     "text": "bindResyncAccountDataButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResyncAccou"
-    },
-    {
-     "line": 2958,
-     "endLine": 2958,
-     "text": "bindLogoutButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLogoutButton 로 옮김 — 원래"
-    },
-    {
-     "line": 2959,
-     "endLine": 2959,
-     "text": "bindResetButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResetButton 로 옮김 — 원래 자"
-    },
-    {
-     "line": 2963,
-     "endLine": 2963,
-     "text": "document.getElementById('withdrawBtn').addEventListener('click', openWithdrawModal);"
-    },
-    {
-     "line": 2968,
-     "endLine": 2968,
-     "text": "var tabGuideBtn = document.getElementById('btnTabGuideHub');"
-    },
-    {
-     "line": 2969,
-     "endLine": 2969,
-     "text": "bindTabGuideHubButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindTabGuideHubButton 로"
-    },
-    {
-     "line": 2972,
-     "endLine": 2972,
-     "text": "var guideBtn = document.getElementById('btnRestartGuide');"
-    },
-    {
-     "line": 2973,
-     "endLine": 2973,
-     "text": "bindRestartGuideButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindRestartGuideButton"
-    },
-    {
-     "line": 2976,
-     "endLine": 2976,
-     "text": "bindInquiryButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindInquiryButtons "
+     "line": 2953,
+     "endLine": 2953,
+     "text": "bindModalPopstateBack(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/modal-helper.js 의 bindModalPopstateBack 로 옮김 — 원래 자"
     },
     {
      "line": 2977,
      "endLine": 2977,
-     "text": "var footEmailEl = document.getElementById('footSupportEmailLink');"
-    },
-    {
-     "line": 2978,
-     "endLine": 2978,
-     "text": "bindSupportEmailLink(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindSupportEmailL"
-    },
-    {
-     "line": 2981,
-     "endLine": 2981,
-     "text": "bindTermsLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindTermsLinks 로 옮김 — 원래 자리에서 부른"
-    },
-    {
-     "line": 2982,
-     "endLine": 2982,
-     "text": "bindPrivacyLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindPrivacyLinks 로 옮김 — 원래 자리에"
-    },
-    {
-     "line": 2985,
-     "endLine": 2985,
-     "text": "bindFocusResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindFocusResync 로 옮김 — 원래 자리에서 부른다 */"
-    },
-    {
-     "line": 2986,
-     "endLine": 2986,
-     "text": "bindVisibilityResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindVisibilityResync 로 옮김 — 원래 자리에서 부"
-    },
-    {
-     "line": 2987,
-     "endLine": 2987,
-     "text": "bindRemoteLogoutStorageListener(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindRemoteLogoutStorageLis"
-    },
-    {
-     "line": 2988,
-     "endLine": 2988,
-     "text": "startRemoteSessionPoll(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 startRemoteSessionPoll 로 옮김 — 원래 자리"
-    },
-    {
-     "line": 2989,
-     "endLine": 2989,
-     "text": "bindOnlineSync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOnlineSync 로 옮김 — 원래 자리에서 부른다 */"
-    },
-    {
-     "line": 2990,
-     "endLine": 2990,
-     "text": "bindOfflineNotice(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOfflineNotice 로 옮김 — 원래 자리에서 부른다 */"
-    },
-    {
-     "line": 3007,
-     "endLine": 3007,
-     "text": "var navButtons = document.querySelectorAll('.navbtn');"
-    },
-    {
-     "line": 3008,
-     "endLine": 3008,
-     "text": "var screens = document.querySelectorAll('.screen');"
-    },
-    {
-     "line": 3013,
-     "endLine": 3013,
-     "text": "try { initShipyardRegistry(); } catch(e){ console.warn('[ShipyardRegistry] Init error:', e); }"
-    },
-    {
-     "line": 3015,
-     "endLine": 3015,
-     "text": "bindNavButtonsClick(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/registry-init.js 의 bindNavButtonsClick 로 옮김 — 원래 자리에서"
-    },
-    {
-     "line": 3017,
-     "endLine": 3017,
-     "text": "if(typeof window !== 'undefined'){ window.switchTab = setTab; }"
-    },
-    {
-     "line": 3025,
-     "endLine": 3025,
-     "text": "bindModalPopstateBack(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/modal-helper.js 의 bindModalPopstateBack 로 옮김 — 원래 자"
-    },
-    {
-     "line": 3049,
-     "endLine": 3049,
      "text": "bindScheduleReminderStart(); /* [#TASK-ES-499] 로드 중 문(앞 주석 포함) → js/core/profile-topbar.js 의 bindScheduleReminderStart 로"
     },
     {
-     "line": 3085,
-     "endLine": 3087,
+     "line": 2984,
+     "endLine": 2984,
+     "text": "window.OurgoalAppState.defineVar('googleTokenClient', null);"
+    },
+    {
+     "line": 3013,
+     "endLine": 3015,
      "text": "if(typeof window !== 'undefined'){"
     },
     {
-     "line": 3130,
-     "endLine": 3130,
+     "line": 3058,
+     "endLine": 3058,
      "text": "bindRageTapTelemetry(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/tabs/settings/ux-telemetry.js 의 bindRageTapTelemetry 로 옮김"
     },
     {
-     "line": 3150,
-     "endLine": 3150,
-     "text": "var focusTimerSeconds = 25 * 60;"
+     "line": 3077,
+     "endLine": 3077,
+     "text": "window.OurgoalAppState.defineVar('focusTimerInterval', null);"
     },
     {
-     "line": 3158,
-     "endLine": 3158,
+     "line": 3078,
+     "endLine": 3078,
+     "text": "window.OurgoalAppState.defineVar('focusTimerSeconds', 25 * 60);"
+    },
+    {
+     "line": 3079,
+     "endLine": 3079,
+     "text": "window.OurgoalAppState.defineVar('focusTimerRunning', false);"
+    },
+    {
+     "line": 3086,
+     "endLine": 3086,
      "text": "var qRoutineRow = document.getElementById('quickRoutineRow');"
     },
     {
-     "line": 3159,
-     "endLine": 3159,
+     "line": 3087,
+     "endLine": 3087,
      "text": "bindQuickRoutineChips(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 bindQuickRoutineC"
     },
     {
-     "line": 3164,
-     "endLine": 3164,
+     "line": 3092,
+     "endLine": 3092,
      "text": "startVoiceCheckin(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 startVoiceCheckin 로 옮"
     }
    ]
   },
   {
    "name": "qRoutineRow",
-   "line": 3158,
+   "line": 3086,
    "executingStatementsBetween": [
     {
-     "line": 2716,
-     "endLine": 2722,
+     "line": 2646,
+     "endLine": 2652,
      "text": "try{"
     },
     {
-     "line": 2746,
-     "endLine": 2746,
+     "line": 2674,
+     "endLine": 2674,
      "text": "var sb = (window.supabase && typeof window.supabase.createClient === 'function') ? window.supabase.createClient(SUPABASE"
+    },
+    {
+     "line": 2675,
+     "endLine": 2675,
+     "text": "window.OurgoalAppState.defineVar('_pendingAuthSession', null);"
+    },
+    {
+     "line": 2676,
+     "endLine": 2676,
+     "text": "bindSupabaseAuthStateListener(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/core/supabase-auth.js 의 bindSupabaseAuthStateLis"
+    },
+    {
+     "line": 2682,
+     "endLine": 2682,
+     "text": "var OURGOAL_CONFIG = {};"
+    },
+    {
+     "line": 2683,
+     "endLine": 2683,
+     "text": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }"
+    },
+    {
+     "line": 2709,
+     "endLine": 2709,
+     "text": "window.OurgoalAppState.defineVar('toastTimer',null);"
+    },
+    {
+     "line": 2715,
+     "endLine": 2720,
+     "text": "window.OurgoalAppState.define('THEMES', ["
+    },
+    {
+     "line": 2723,
+     "endLine": 2725,
+     "text": "if(typeof window !== 'undefined'){"
     },
     {
      "line": 2748,
      "endLine": 2748,
-     "text": "bindSupabaseAuthStateListener(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/core/supabase-auth.js 의 bindSupabaseAuthStateLis"
+     "text": "var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');"
     },
     {
-     "line": 2754,
-     "endLine": 2754,
-     "text": "var OURGOAL_CONFIG = {};"
+     "line": 2749,
+     "endLine": 2749,
+     "text": "if(btnAvLvClose) btnAvLvClose.addEventListener('click', closeAvatarLevelUpModal);"
+    },
+    {
+     "line": 2750,
+     "endLine": 2750,
+     "text": "var btnAvLvConfirm = document.getElementById('btnConfirmLevelUpClose');"
+    },
+    {
+     "line": 2751,
+     "endLine": 2751,
+     "text": "if(btnAvLvConfirm) btnAvLvConfirm.addEventListener('click', closeAvatarLevelUpModal);"
+    },
+    {
+     "line": 2752,
+     "endLine": 2752,
+     "text": "window.OurgoalAppState.define('avLvModalElem', document.getElementById('avatarLevelUpModal'));"
+    },
+    {
+     "line": 2753,
+     "endLine": 2753,
+     "text": "bindAvatarLevelUpBackdrop(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLe"
     },
     {
      "line": 2755,
      "endLine": 2755,
-     "text": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }"
+     "text": "window.OurgoalAppState.define('btnSaveGrowth', document.getElementById('btnSaveGrowthPrompt'));"
     },
     {
-     "line": 2787,
-     "endLine": 2792,
-     "text": "var THEMES = ["
+     "line": 2756,
+     "endLine": 2756,
+     "text": "bindAvatarGrowthPromptSave(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarG"
     },
     {
-     "line": 2795,
-     "endLine": 2797,
-     "text": "if(typeof window !== 'undefined'){"
+     "line": 2758,
+     "endLine": 2758,
+     "text": "window.OurgoalAppState.define('btnShareLv', document.getElementById('btnShareLevelUp'));"
     },
     {
-     "line": 2820,
-     "endLine": 2820,
-     "text": "var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');"
+     "line": 2759,
+     "endLine": 2759,
+     "text": "bindAvatarLevelUpShare(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLevel"
     },
     {
-     "line": 2821,
-     "endLine": 2821,
-     "text": "if(btnAvLvClose) btnAvLvClose.addEventListener('click', closeAvatarLevelUpModal);"
+     "line": 2761,
+     "endLine": 2761,
+     "text": "window.OurgoalAppState.define('btnSaveLvImg', document.getElementById('btnSaveLevelUpImage'));"
     },
     {
-     "line": 2822,
-     "endLine": 2822,
-     "text": "var btnAvLvConfirm = document.getElementById('btnConfirmLevelUpClose');"
+     "line": 2762,
+     "endLine": 2762,
+     "text": "bindAvatarLevelUpSaveImage(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarL"
     },
     {
-     "line": 2823,
-     "endLine": 2823,
-     "text": "if(btnAvLvConfirm) btnAvLvConfirm.addEventListener('click', closeAvatarLevelUpModal);"
+     "line": 2765,
+     "endLine": 2765,
+     "text": "window.OurgoalAppState.defineVar('__avatarGreetTimer', null);"
     },
     {
-     "line": 2824,
-     "endLine": 2824,
-     "text": "var avLvModalElem = document.getElementById('avatarLevelUpModal');"
+     "line": 2773,
+     "endLine": 2773,
+     "text": "var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlot"
     },
     {
-     "line": 2825,
-     "endLine": 2825,
-     "text": "bindAvatarLevelUpBackdrop(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLe"
+     "line": 2774,
+     "endLine": 2774,
+     "text": "if(typeof window !== 'undefined'){ window.state = state; }"
     },
     {
-     "line": 2827,
-     "endLine": 2827,
-     "text": "var btnSaveGrowth = document.getElementById('btnSaveGrowthPrompt');"
+     "line": 2794,
+     "endLine": 2794,
+     "text": "window.OurgoalAppState.defineVar('_promptTabState', 'real');"
+    },
+    {
+     "line": 2815,
+     "endLine": 2815,
+     "text": "window._homeDateOffset = 0;"
+    },
+    {
+     "line": 2826,
+     "endLine": 2826,
+     "text": "checkKakaoInAppBrowser();"
     },
     {
      "line": 2828,
      "endLine": 2828,
-     "text": "bindAvatarGrowthPromptSave(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarG"
+     "text": "window.OurgoalAppState.define('landNickQuickLink', document.getElementById('landNickQuickLink'));"
+    },
+    {
+     "line": 2829,
+     "endLine": 2829,
+     "text": "bindLandNickQuickLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandNickQuickLink 로"
     },
     {
      "line": 2830,
      "endLine": 2830,
-     "text": "var btnShareLv = document.getElementById('btnShareLevelUp');"
+     "text": "bindLandLoginLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandLoginLink 로 옮김 — 원래"
     },
     {
      "line": 2831,
      "endLine": 2831,
-     "text": "bindAvatarLevelUpShare(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarLevel"
+     "text": "window.OurgoalAppState.define('landGuestBtn', document.getElementById('landGuestBtn'));"
     },
     {
-     "line": 2833,
-     "endLine": 2833,
-     "text": "var btnSaveLvImg = document.getElementById('btnSaveLevelUpImage');"
+     "line": 2832,
+     "endLine": 2832,
+     "text": "bindLandGuestBtn(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandGuestBtn 로 옮김 — 원래 자"
     },
     {
-     "line": 2834,
-     "endLine": 2834,
-     "text": "bindAvatarLevelUpSaveImage(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/avatar-levelup-modal.js 의 bindAvatarL"
+     "line": 2836,
+     "endLine": 2836,
+     "text": "window.OurgoalAppState.define('landTesterBBtn', document.getElementById('landTesterBBtn'));"
     },
     {
-     "line": 2845,
-     "endLine": 2845,
-     "text": "var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlot"
+     "line": 2837,
+     "endLine": 2837,
+     "text": "bindLandTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindLandTesterBButton 로 "
+    },
+    {
+     "line": 2838,
+     "endLine": 2838,
+     "text": "window.OurgoalAppState.define('authTesterBBtn', document.getElementById('authTesterBBtn'));"
+    },
+    {
+     "line": 2839,
+     "endLine": 2839,
+     "text": "bindAuthTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindAuthTesterBButton 로 "
+    },
+    {
+     "line": 2841,
+     "endLine": 2841,
+     "text": "startDevDebugButtons(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 startDevDebugButtons 로 옮김 "
     },
     {
      "line": 2846,
      "endLine": 2846,
-     "text": "if(typeof window !== 'undefined'){ window.state = state; }"
+     "text": "window.OurgoalAppState.defineVar('_googleTokenClient', null);"
+    },
+    {
+     "line": 2849,
+     "endLine": 2849,
+     "text": "window.OurgoalAppState.defineVar('_googleOneTapNonce', null);"
+    },
+    {
+     "line": 2851,
+     "endLine": 2851,
+     "text": "bindKakaoLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindKakaoLoginClicks 로 옮김 — 원래 자리에서 부른다 "
+    },
+    {
+     "line": 2852,
+     "endLine": 2852,
+     "text": "bindGoogleLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindGoogleLoginClicks 로 옮김 — 원래 자리에서 부른"
+    },
+    {
+     "line": 2863,
+     "endLine": 2863,
+     "text": "window.OurgoalAppState.define('authTabButtons', document.querySelectorAll('.auth-tab'));"
+    },
+    {
+     "line": 2864,
+     "endLine": 2864,
+     "text": "bindAuthTabButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/auth-screen-actions.js 의 bindAuthTabButtons 로"
+    },
+    {
+     "line": 2867,
+     "endLine": 2867,
+     "text": "bindSignupSubmit(); /* [#TASK-ES-513] 로드 중 문(앞 주석 포함) → js/tabs/settings/device-session.js 의 bindSignupSubmit 로 옮김 — 원래 "
+    },
+    {
+     "line": 2874,
+     "endLine": 2874,
+     "text": "var fpBtn = document.getElementById('forgotPassBtn');"
+    },
+    {
+     "line": 2875,
+     "endLine": 2875,
+     "text": "if(fpBtn) fpBtn.addEventListener('click', openForgotPasswordModal);"
+    },
+    {
+     "line": 2882,
+     "endLine": 2882,
+     "text": "bindLoginSubmit(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLoginSubmit 로 옮김 — 원래 자"
+    },
+    {
+     "line": 2884,
+     "endLine": 2884,
+     "text": "window.OurgoalAppState.define('resyncBtn', document.getElementById('resyncAccountDataBtn'));"
+    },
+    {
+     "line": 2885,
+     "endLine": 2885,
+     "text": "bindResyncAccountDataButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResyncAccou"
+    },
+    {
+     "line": 2886,
+     "endLine": 2886,
+     "text": "bindLogoutButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLogoutButton 로 옮김 — 원래"
     },
     {
      "line": 2887,
      "endLine": 2887,
-     "text": "window._homeDateOffset = 0;"
+     "text": "bindResetButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResetButton 로 옮김 — 원래 자"
     },
     {
-     "line": 2898,
-     "endLine": 2898,
-     "text": "checkKakaoInAppBrowser();"
+     "line": 2891,
+     "endLine": 2891,
+     "text": "document.getElementById('withdrawBtn').addEventListener('click', openWithdrawModal);"
+    },
+    {
+     "line": 2896,
+     "endLine": 2896,
+     "text": "window.OurgoalAppState.define('tabGuideBtn', document.getElementById('btnTabGuideHub'));"
+    },
+    {
+     "line": 2897,
+     "endLine": 2897,
+     "text": "bindTabGuideHubButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindTabGuideHubButton 로"
     },
     {
      "line": 2900,
      "endLine": 2900,
-     "text": "var landNickQuickLink = document.getElementById('landNickQuickLink');"
+     "text": "window.OurgoalAppState.define('guideBtn', document.getElementById('btnRestartGuide'));"
     },
     {
      "line": 2901,
      "endLine": 2901,
-     "text": "bindLandNickQuickLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandNickQuickLink 로"
-    },
-    {
-     "line": 2902,
-     "endLine": 2902,
-     "text": "bindLandLoginLink(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandLoginLink 로 옮김 — 원래"
-    },
-    {
-     "line": 2903,
-     "endLine": 2903,
-     "text": "var landGuestBtn = document.getElementById('landGuestBtn');"
+     "text": "bindRestartGuideButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindRestartGuideButton"
     },
     {
      "line": 2904,
      "endLine": 2904,
-     "text": "bindLandGuestBtn(); /* [#TASK-ES-476] 로드 중 문(앞 주석 포함) → js/tabs/settings/inapp-landing.js 의 bindLandGuestBtn 로 옮김 — 원래 자"
+     "text": "bindInquiryButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindInquiryButtons "
     },
     {
-     "line": 2908,
-     "endLine": 2908,
-     "text": "var landTesterBBtn = document.getElementById('landTesterBBtn');"
+     "line": 2905,
+     "endLine": 2905,
+     "text": "window.OurgoalAppState.define('footEmailEl', document.getElementById('footSupportEmailLink'));"
+    },
+    {
+     "line": 2906,
+     "endLine": 2906,
+     "text": "bindSupportEmailLink(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindSupportEmailL"
     },
     {
      "line": 2909,
      "endLine": 2909,
-     "text": "bindLandTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindLandTesterBButton 로 "
+     "text": "bindTermsLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindTermsLinks 로 옮김 — 원래 자리에서 부른"
     },
     {
      "line": 2910,
      "endLine": 2910,
-     "text": "var authTesterBBtn = document.getElementById('authTesterBBtn');"
-    },
-    {
-     "line": 2911,
-     "endLine": 2911,
-     "text": "bindAuthTesterBButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/tester-entry.js 의 bindAuthTesterBButton 로 "
+     "text": "bindPrivacyLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindPrivacyLinks 로 옮김 — 원래 자리에"
     },
     {
      "line": 2913,
      "endLine": 2913,
-     "text": "startDevDebugButtons(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 startDevDebugButtons 로 옮김 "
+     "text": "bindFocusResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindFocusResync 로 옮김 — 원래 자리에서 부른다 */"
     },
     {
-     "line": 2923,
-     "endLine": 2923,
-     "text": "bindKakaoLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindKakaoLoginClicks 로 옮김 — 원래 자리에서 부른다 "
+     "line": 2914,
+     "endLine": 2914,
+     "text": "bindVisibilityResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindVisibilityResync 로 옮김 — 원래 자리에서 부"
     },
     {
-     "line": 2924,
-     "endLine": 2924,
-     "text": "bindGoogleLoginClicks(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/auth-social.js 의 bindGoogleLoginClicks 로 옮김 — 원래 자리에서 부른"
+     "line": 2915,
+     "endLine": 2915,
+     "text": "bindRemoteLogoutStorageListener(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindRemoteLogoutStorageLis"
+    },
+    {
+     "line": 2916,
+     "endLine": 2916,
+     "text": "startRemoteSessionPoll(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 startRemoteSessionPoll 로 옮김 — 원래 자리"
+    },
+    {
+     "line": 2917,
+     "endLine": 2917,
+     "text": "bindOnlineSync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOnlineSync 로 옮김 — 원래 자리에서 부른다 */"
+    },
+    {
+     "line": 2918,
+     "endLine": 2918,
+     "text": "bindOfflineNotice(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOfflineNotice 로 옮김 — 원래 자리에서 부른다 */"
     },
     {
      "line": 2935,
      "endLine": 2935,
-     "text": "var authTabButtons = document.querySelectorAll('.auth-tab');"
+     "text": "window.OurgoalAppState.define('navButtons', document.querySelectorAll('.navbtn'));"
     },
     {
      "line": 2936,
      "endLine": 2936,
-     "text": "bindAuthTabButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/auth-screen-actions.js 의 bindAuthTabButtons 로"
+     "text": "window.OurgoalAppState.define('screens', document.querySelectorAll('.screen'));"
     },
     {
-     "line": 2939,
-     "endLine": 2939,
-     "text": "bindSignupSubmit(); /* [#TASK-ES-513] 로드 중 문(앞 주석 포함) → js/tabs/settings/device-session.js 의 bindSignupSubmit 로 옮김 — 원래 "
+     "line": 2941,
+     "endLine": 2941,
+     "text": "try { initShipyardRegistry(); } catch(e){ console.warn('[ShipyardRegistry] Init error:', e); }"
     },
     {
-     "line": 2946,
-     "endLine": 2946,
-     "text": "var fpBtn = document.getElementById('forgotPassBtn');"
+     "line": 2943,
+     "endLine": 2943,
+     "text": "bindNavButtonsClick(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/registry-init.js 의 bindNavButtonsClick 로 옮김 — 원래 자리에서"
     },
     {
-     "line": 2947,
-     "endLine": 2947,
-     "text": "if(fpBtn) fpBtn.addEventListener('click', openForgotPasswordModal);"
+     "line": 2945,
+     "endLine": 2945,
+     "text": "if(typeof window !== 'undefined'){ window.switchTab = setTab; }"
     },
     {
-     "line": 2954,
-     "endLine": 2954,
-     "text": "bindLoginSubmit(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLoginSubmit 로 옮김 — 원래 자"
+     "line": 2948,
+     "endLine": 2948,
+     "text": "window.OurgoalAppState.defineVar('_modalHistoryPushed', false);"
     },
     {
-     "line": 2956,
-     "endLine": 2956,
-     "text": "var resyncBtn = document.getElementById('resyncAccountDataBtn');"
+     "line": 2949,
+     "endLine": 2949,
+     "text": "window.OurgoalAppState.defineVar('_modalDismissGraceUntil', 0);"
     },
     {
-     "line": 2957,
-     "endLine": 2957,
-     "text": "bindResyncAccountDataButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResyncAccou"
-    },
-    {
-     "line": 2958,
-     "endLine": 2958,
-     "text": "bindLogoutButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindLogoutButton 로 옮김 — 원래"
-    },
-    {
-     "line": 2959,
-     "endLine": 2959,
-     "text": "bindResetButton(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/tabs/settings/account-actions.js 의 bindResetButton 로 옮김 — 원래 자"
-    },
-    {
-     "line": 2963,
-     "endLine": 2963,
-     "text": "document.getElementById('withdrawBtn').addEventListener('click', openWithdrawModal);"
-    },
-    {
-     "line": 2968,
-     "endLine": 2968,
-     "text": "var tabGuideBtn = document.getElementById('btnTabGuideHub');"
-    },
-    {
-     "line": 2969,
-     "endLine": 2969,
-     "text": "bindTabGuideHubButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindTabGuideHubButton 로"
-    },
-    {
-     "line": 2972,
-     "endLine": 2972,
-     "text": "var guideBtn = document.getElementById('btnRestartGuide');"
-    },
-    {
-     "line": 2973,
-     "endLine": 2973,
-     "text": "bindRestartGuideButton(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/guide-buttons.js 의 bindRestartGuideButton"
-    },
-    {
-     "line": 2976,
-     "endLine": 2976,
-     "text": "bindInquiryButtons(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindInquiryButtons "
+     "line": 2953,
+     "endLine": 2953,
+     "text": "bindModalPopstateBack(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/modal-helper.js 의 bindModalPopstateBack 로 옮김 — 원래 자"
     },
     {
      "line": 2977,
      "endLine": 2977,
-     "text": "var footEmailEl = document.getElementById('footSupportEmailLink');"
-    },
-    {
-     "line": 2978,
-     "endLine": 2978,
-     "text": "bindSupportEmailLink(); /* [#TASK-ES-562] 로드 중 문(앞 주석 포함) → js/tabs/settings/support-inquiry-bind.js 의 bindSupportEmailL"
-    },
-    {
-     "line": 2981,
-     "endLine": 2981,
-     "text": "bindTermsLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindTermsLinks 로 옮김 — 원래 자리에서 부른"
-    },
-    {
-     "line": 2982,
-     "endLine": 2982,
-     "text": "bindPrivacyLinks(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/tabs/settings/boot-wiring.js 의 bindPrivacyLinks 로 옮김 — 원래 자리에"
-    },
-    {
-     "line": 2985,
-     "endLine": 2985,
-     "text": "bindFocusResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindFocusResync 로 옮김 — 원래 자리에서 부른다 */"
-    },
-    {
-     "line": 2986,
-     "endLine": 2986,
-     "text": "bindVisibilityResync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindVisibilityResync 로 옮김 — 원래 자리에서 부"
-    },
-    {
-     "line": 2987,
-     "endLine": 2987,
-     "text": "bindRemoteLogoutStorageListener(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindRemoteLogoutStorageLis"
-    },
-    {
-     "line": 2988,
-     "endLine": 2988,
-     "text": "startRemoteSessionPoll(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 startRemoteSessionPoll 로 옮김 — 원래 자리"
-    },
-    {
-     "line": 2989,
-     "endLine": 2989,
-     "text": "bindOnlineSync(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOnlineSync 로 옮김 — 원래 자리에서 부른다 */"
-    },
-    {
-     "line": 2990,
-     "endLine": 2990,
-     "text": "bindOfflineNotice(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/core/app-enter.js 의 bindOfflineNotice 로 옮김 — 원래 자리에서 부른다 */"
-    },
-    {
-     "line": 3007,
-     "endLine": 3007,
-     "text": "var navButtons = document.querySelectorAll('.navbtn');"
-    },
-    {
-     "line": 3008,
-     "endLine": 3008,
-     "text": "var screens = document.querySelectorAll('.screen');"
-    },
-    {
-     "line": 3013,
-     "endLine": 3013,
-     "text": "try { initShipyardRegistry(); } catch(e){ console.warn('[ShipyardRegistry] Init error:', e); }"
-    },
-    {
-     "line": 3015,
-     "endLine": 3015,
-     "text": "bindNavButtonsClick(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/registry-init.js 의 bindNavButtonsClick 로 옮김 — 원래 자리에서"
-    },
-    {
-     "line": 3017,
-     "endLine": 3017,
-     "text": "if(typeof window !== 'undefined'){ window.switchTab = setTab; }"
-    },
-    {
-     "line": 3025,
-     "endLine": 3025,
-     "text": "bindModalPopstateBack(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/modal-helper.js 의 bindModalPopstateBack 로 옮김 — 원래 자"
-    },
-    {
-     "line": 3049,
-     "endLine": 3049,
      "text": "bindScheduleReminderStart(); /* [#TASK-ES-499] 로드 중 문(앞 주석 포함) → js/core/profile-topbar.js 의 bindScheduleReminderStart 로"
     },
     {
-     "line": 3085,
-     "endLine": 3087,
+     "line": 2984,
+     "endLine": 2984,
+     "text": "window.OurgoalAppState.defineVar('googleTokenClient', null);"
+    },
+    {
+     "line": 3013,
+     "endLine": 3015,
      "text": "if(typeof window !== 'undefined'){"
     },
     {
-     "line": 3130,
-     "endLine": 3130,
+     "line": 3058,
+     "endLine": 3058,
      "text": "bindRageTapTelemetry(); /* [#TASK-ES-548] 로드 중 문(앞 주석 포함) → js/tabs/settings/ux-telemetry.js 의 bindRageTapTelemetry 로 옮김"
     },
     {
-     "line": 3150,
-     "endLine": 3150,
-     "text": "var focusTimerSeconds = 25 * 60;"
+     "line": 3077,
+     "endLine": 3077,
+     "text": "window.OurgoalAppState.defineVar('focusTimerInterval', null);"
+    },
+    {
+     "line": 3078,
+     "endLine": 3078,
+     "text": "window.OurgoalAppState.defineVar('focusTimerSeconds', 25 * 60);"
+    },
+    {
+     "line": 3079,
+     "endLine": 3079,
+     "text": "window.OurgoalAppState.defineVar('focusTimerRunning', false);"
     }
    ]
   }

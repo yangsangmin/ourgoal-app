@@ -5,7 +5,7 @@
 - 지시함(origin/main): **DIR-003**(줄을 지우는 PR 마다 기준선에 inlineScriptLines 기록 — 줄지 않으면 실패) · **DIR-004**(CELL-REGISTRY-DESIGN.md 6.2절 순서 3 「함수 이전·감싸기」 — 기존 CELL_SPLIT, 함수 본문의 글자는 고치지 않는다 · index.html 을 바꾸는 PR 은 한 번에 하나).
 - 분류: INFRA · 작업 유형(SNOWBALL 분류): **(가) 표준 — 「어려운 인라인 묶음 감싸기·함수 이전」**(경험칙 L016 · `docs/architecture/INLINE-HARD-SPLIT-DESIGN.md` 2-1·2-2·2-3절) + 법정 「동작 보존 확인」 경로. 직전 선례 PR #911(TASK-ES-638, 판정 「통과」·동작 보존 확인 4)과 같은 방식·서류·증명이다. 작업참고 **기준 PR #905**(eab4365b).
 - 이 작업 세션은 빌더(서브에이전트)다. 병합은 하지 않는다(오케스트레이터 몫).
-- 기준 main: b76c29e9(#911 병합 뒤).
+- 기준 main: 453ba6b7(#914 상태 이전 TASK-ES-637 병합 뒤). 착수·첫 push 는 b76c29e9 → eb653a7e(#912) 기준이었다. #914 가 index.html 의 상태 이름 50개 선언을 `window.OurgoalAppState.define/defineVar` 호출로 바꾸고 그 getter/setter 를 지웠으므로, 손으로 합치지 않고 main 판 index.html 로 같은 `proof.json` 을 다시 돌렸고(L010) 신고서·세포 설명·기준선도 main 판에서 다시 만들었으며 측정을 전부 다시 했다.
 - 측정은 전부 「작업자 측정, 판정 아님」이다. 판정은 GitHub 법정만 낸다.
 
 ## 0. 요구 (지시 항목)
@@ -27,7 +27,7 @@
 - 감싼 함수 7개: `bindQuickRoutineChips` · `startVoiceCheckin` · `bindCapturePhoto`(키트 `OurgoalRecordsKit`) / `defineSendTeamGoalComment` · `bindTeamCommentClick` · `bindTeamCommentKeydown`(`OurgoalGoalsKit`) / `definePurgeSampleRecords`(`OurgoalRecordsKit`). 옮긴 함수 2개: `selectSmartTag` · `handleGoalFastAddSubmit`(`OurgoalGoalsKit`)
 - DOM: `#quickRoutineRow` · `[data-quickroutine]` · `#captureInput` · `#captureSave` · `#micBtn` · `#micStatus` · `#capturePhotoBtn` · `#capturePhotoInput` · `#capturePhotoPreview` · `[data-cmtsend]` · `[data-cmtinput]` · `#recSamplePurgeBtn` · `#recSamplePurgeBox` · `#btnSheetConfirmOk` · `#goalFastAddInput` · `#btnGoalFastAddSubmit` · `#chipTagHealth` · `#chipTagStudy` · `#chipTagCareer` · `#chipTagHabit`
 - 생성기 `docs/design/harness/module-split/gen-inline-hard.js`(변경 0) · 검사기 `verify-inline-hard.js`(변경 0) · 설정 `reports/TASK-ES-640/proof.json`(자리 표지 `HO`)
-- 이전 전 index.html(b76c29e9) 문 줄: 3137~3144 · 3150~3218 · 3228~3256 · 3543~3580 · 3582~3603 · 3605~3626 · 4846~4868(감싸기) · 3426~3436 · 3440~3470(함수) (출처 `reports/TASK-ES-640/measurement.json` `generator.wrapped` · `gen-inline-hard-meta.json` `plan`)
+- 이전 전 index.html(453ba6b7) 문 줄: 3065~3072 · 3078~3146 · 3156~3184 · 3471~3508 · 3510~3531 · 3533~3554 · 4774~4796(감싸기) · 3354~3364 · 3368~3398(함수) (출처 `reports/TASK-ES-640/measurement.json` `generator.wrapped` · `gen-inline-hard-meta.json` `plan`)
 
 ## 1. [원칙 ①] 문제를 정확히 파악한다
 
@@ -48,10 +48,11 @@
 
 ## 4. [원칙 ④] 재검토 (반례·부작용)
 
-- **대입 이름 `pendingCapturePhoto`(L047)** → index.html 에서 이 이름의 통로 노출은 한 줄뿐이고 그 줄에 `get`·`set` 이 함께 있다(생성 뒤 index.html 2366행, grep). 검사기: `assignedL` = [`pendingCapturePhoto`] · `noSetter` [] · `lastGetterNoSetter` []. 이전 뒤 덩어리 안의 이 이름은 선언 줄과 그 노출 줄뿐이다. 다만 대입이 실제로 도는 길(사진을 골랐을 때)은 파일 고르기 창이 필요해 화면으로 재지 못했다(8절).
+- **대입 이름 `pendingCapturePhoto`(L047)** → index.html 에서 이 이름의 통로 노출은 한 줄뿐이고 그 줄에 `get`·`set` 이 함께 있다(생성 뒤 index.html 2355행, grep). 검사기: `assignedL` = [`pendingCapturePhoto`] · `noSetter` [] · `lastGetterNoSetter` []. 이전 뒤 덩어리 안의 이 이름은 선언 줄과 그 노출 줄뿐이다. 다만 대입이 실제로 도는 길(사진을 골랐을 때)은 파일 고르기 창이 필요해 화면으로 재지 못했다(8절).
 - **window 이름의 값 지문** → window 이름 19개 중 4개(`selectSmartTag` · `handleGoalFastAddSubmit` · `sendTeamGoalComment` · `purgeSampleRecordsOneClick`)의 지문이 달라졌다. 지문은 「종류:이름:인자 수:함수 글자 해시」인데, 네 함수는 본문이 세포로 옮겨지며 인라인 이름에 `L.` 접두가 붙어 **해시만** 달라졌고 종류·이름·인자 수는 같다. 이 넷 말고 달라진 window 이름은 0, 통로 이름 428개는 지문 차이 0, 사라진 이름 0(`name-fingerprints.json`). 본문의 토큰 동일은 검사기가 본다.
 - **새 통로 getter 10개** → 8개는 기준에서 등록 기관이 내주던 이름, 2개(`capturePhotoBtn` · `qRoutineRow`)는 통로에 처음 생긴다(이 둘을 `L.` 로 읽는 기존 js 코드 0곳). getter 줄 뒤에 값이 정해지는 것은 이 둘뿐이다(`expose-window.json`). 재철거는 철거 빌더 몫으로 남긴다(오케스트레이터 결정).
 - **`typeof X` 꼴** → 옮긴 코드의 `typeof TEAM_COMMENTS_CACHE !== 'undefined'` · `typeof MOCK_GROUPS !== 'undefined'` · `typeof toast === 'function'` 등은 `typeof L.X` 가 된다. 이 이름들은 통로에 값이 있어 결과가 같다(통로 지문 대조에 포함).
+- **상태 기관과의 겹침(#914 뒤 재확인, `accessor-probe.json`)** → index.html 의 상태 기관 이름은 50개다. 새 세포가 `L.` 로 읽는 이름 22개 가운데 기관이 주인인 이름 0 · 새 세포가 대입하는 이름(`pendingCapturePhoto`) 가운데 기관이 주인인 이름 0 · 생성기가 새로 단 getter 10개 가운데 기관 이름과 겹치는 것 0. 그래서 index.html 의 노출이 기관의 접근자를 뒤에서 덮어 setter 가 사라지는 일(L047 꼴)은 이번 범위에 없다. 브라우저에서 부팅 뒤 실측: 22개 이름 모두 통로에 있고 값이 undefined 인 것 0, 주인은 22개 모두 `index.html`, `pendingCapturePhoto` 는 get·set 접근자이고 실제로 써 보고 되읽은 값이 같았으며 원래 값으로 돌려놓았다.
 - **단독 로드(L018)** → 세포 파일은 함수 정의만 한다. 새 파일 넷 단독 로드 ok, 기준 대비 회귀 [].
 - **이중 처리기** → `addEventListener`·`on<이벤트>` 대입 수가 이전 전 IIFE = 새 IIFE + 새 세포(검사기 `listeners`).
 - **모듈 가드** → 전역 직접 대입 75 → 75, 탭 간 직접 참조 0 → 0(window 대입 글자가 세포로 갔지만 지표는 늘지 않았다 — `measurement.json` `summary`).
@@ -81,10 +82,11 @@
 | 산출물 | 무엇을 쟀나 | 결과 |
 |---|---|---|
 | `verify-inline-hard.json` | 토큰 동일(접두 제외) · 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · this/arguments 0 · 이중 처리기 0 · 키트 변수 뒤 가져오기 · 마지막 노출 setter · 800줄 이하 | `ok: true` |
-| `measurement.json` | 인라인 줄 수 · index.html 줄 수 · 새 파일 줄 수 · 바뀐 파일 분류 | inlineScriptLines 2921 → 2687(−234) · 함수 선언 29 → 26 · index.html 5190 → 4956 · 새 파일 146 · 122 · 53 · 72줄 · tests/금고/생성기/생성 지도 변경 0 |
+| `measurement.json` | 인라인 줄 수 · index.html 줄 수 · 새 파일 줄 수 · 바뀐 파일 분류 | inlineScriptLines 2849 → 2615(−234) · 함수 선언 29 → 26 · index.html 5118 → 4884 · 새 파일 146 · 122 · 53 · 72줄 · tests/금고/생성기/생성 지도 변경 0 |
 | `module-load.json` | 법정 모듈 로드 탐침 기준 대 작업 | 회귀 [] · 새 파일 넷 단독 로드 ok |
 | `cell-registry-compare.base.json` · `cell-registry-compare.json` · `name-fingerprints.json` | 통로·window 이름 값 지문(기준 이름 목록 고정) | 통로 428 지문 차이 0 · 사라진 이름 0 · 새로 생긴 이름 2 · window 19 중 옮긴 함수 4개만 해시 차이(4절) |
 | `expose-window.json` | 새 getter 10개의 값이 정해지는 시점 | 4절 |
+| `accessor-probe.json` | 상태 기관 이름과의 겹침(정적) · 통로 접근자 꼴과 대입 실측(브라우저) | 겹침 0 · `pendingCapturePhoto` 쓰기·되읽기 같음 |
 | `scenarios/*.json` · `scenario-local.json` | 게스트 시나리오 4개, 기준 2회·작업 1회 | 4개 모두 세 실행 통과 · 행동이 만든 변화 단언 있음 · 예외 0 |
 | `raw/npm-test.{base,work}.{log,exit}` · `npm-test-compare.json` | npm test 전경 실행 | 종료 코드 0 · 0, ✓ 줄 487 · 487, ok 줄 196 · 196 |
 | `tests-all-compare.json` | tests/*.test.js 전부와 npm test 네 단계·module-guard 를 파일마다 실행 | 119개 파일 중 종료 코드·ok 줄 수가 다른 파일 0 |
@@ -94,8 +96,8 @@
 
 ## 8. [원칙 ⑧] 막힐 지점 예상 · 성과 측정
 
-- **예상**: TASK-ES-637(상태 변수 선언을 `window.OurgoalAppState.define…` 으로 바꾸고 getter 를 지움)이 먼저 병합된다 → main 판 index.html 로 같은 설정을 다시 돌린다(L010). 그때 `pendingCapturePhoto` 의 setter 줄이 그대로인지 다시 본다.
+- **예상했고 실제로 만난 것**: TASK-ES-637(#914)이 먼저 병합됐다 → main 판 index.html 로 같은 설정을 다시 돌렸다(L010). 다시 확인한 것은 4절 「상태 기관과의 겹침」.
 - **측정불가(화면)**: 퀵 루틴 칩(요소가 마크업에 없다) · 음성 인식이 실제로 켜져 받아 적는 길(헤드리스 브라우저에서는 권한 안내 창으로 간다) · 사진을 고른 뒤 미리보기·첨부 대기·지우기(파일 고르기 창) · 팀 목표 댓글을 실제로 보내는 길(게스트 화면에 보내기 단추 없음, 팀은 로그인 필요) · 빠른 추가의 서버 저장(게스트는 로컬 저장).
-- **성과 측정**: inlineScriptLines 2921 → 2687(−234, 출처 `measurement.json` `summary.inlineScriptLines`). 감싼 문 7개 211줄(앞 주석 포함 구간 221줄) + 함수 2개. 대신 생긴 줄은 호출 7 · 가져오기 9 · 표지 1 · getter 10 + 껍데기 2 · 옮김 표지 2.
+- **성과 측정**: inlineScriptLines 2849 → 2615(−234, 출처 `measurement.json` `summary.inlineScriptLines`). 감싼 문 7개 211줄(앞 주석 포함 구간 221줄) + 함수 2개. 대신 생긴 줄은 호출 7 · 가져오기 9 · 표지 1 · getter 10 + 껍데기 2 · 옮김 표지 2.
 - **남은 것(원문 「남은 미분화작업 모두」 대비)**: 4줄 이상 로드 중 문 가운데 이번까지로 감싸기 묶음 W1~W7 은 끝난다. 남는 것은 다시 단 getter 의 재철거, 돈 근처 3곳, 상태 이전(637~), `setupUserSessionRealtime`, 3줄 이하 호출문·var 의 구역 이전, 그리고 결심 대기(944줄 함수 · `saveGoogleToken`).
 - **PLAN 체크리스트**: [4단계: 심사 청구]까지만 기록한다(`.claude/plan-TASK-ES-640.md`).

@@ -14,7 +14,7 @@
 - [x] REQ(8원칙)·claims·proof·TICKETS · 예상 20분 · 완료 기준: verify-integrity-gate → npm test 종료 코드 0
 - [x] 커밋 → 로컬 recomputeSplit ok:true · judge.js 전체 실행 · 예상 20분 · 완료 기준: 결과가 court-local.json 에 있다
 - [ ] origin/main 합치기 → push → PR 열기(5대 고정 블록) → `gh pr view` 되읽기 · 예상 10분 · 완료 기준: PR 번호·head 가 되읽은 값과 같다
-- [ ] TASK-ES-637 병합 뒤 main 판 index.html 로 생성기 재실행·측정 재실행 · 완료 기준: 재실행 뒤 recomputeSplit ok:true
+- [x] TASK-ES-637 병합 뒤 main 판 index.html 로 생성기 재실행·측정 재실행 · 완료 기준: 재실행 뒤 recomputeSplit ok:true
 - [ ] [4단계: 심사 청구] 오케스트레이터에 보고 · 완료 기준: 보고에 PR 번호·수치·한계가 있다
 
 ## 막힐 지점 예상(원칙 ⑧)
