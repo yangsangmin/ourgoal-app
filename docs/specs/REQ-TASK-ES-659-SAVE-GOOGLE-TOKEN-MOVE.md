@@ -99,7 +99,7 @@ IIFE 최상위에 남은 함수 선언 가운데 하나다. 이 함수는 둘째
 | `scenario-local.json` · `scenarios/s1-guest-boot-six-tabs.json` | 게스트 시동·여섯 탭 시나리오(기준 2회·작업 1회) |
 | `npm-test-compare.json` · `tests-all-compare.json` · `raw/` | npm test 비교 · 시험 파일 하나씩 종료 코드 비교 |
 | `measurement.json` | 줄 수·지표·기준선·바뀐 파일 분류 |
-| `recompute.json` · `court-local.json` | 로컬 `recomputeSplit` · 로컬 법정 전체 실행(커밋 뒤) |
+| `court-local.json` | 로컬 법정 전체 실행 요약과 로컬 `recomputeSplit` 결과(커밋 뒤) |
 
 ## 8. [원칙 ⑧] 막힐 지점 예상 · 성과 측정
 
