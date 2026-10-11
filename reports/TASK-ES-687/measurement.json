@@ -1,0 +1,721 @@
+{
+ "tool": "reports/TASK-ES-687/tools/measure.cjs",
+ "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정만 낸다",
+ "measuredAt": "2026-10-11T15:52:21.001Z",
+ "base": "bd0011965f13e27990c7d3ee70b25efd7f7451f1",
+ "head": "bd0011965f13e27990c7d3ee70b25efd7f7451f1",
+ "changed": {
+  "files": 56,
+  "productFiles": [],
+  "testsChanged": [],
+  "scriptsChanged": [],
+  "vaultChanged": [],
+  "harnessChanged": [
+   "docs/design/harness/module-split/finalize-check-687.js",
+   "docs/design/harness/module-split/gen-inline-hard.js"
+  ],
+  "designDocsChanged": [
+   "docs/architecture/CELL-REGISTRY-DESIGN.md"
+  ],
+  "generatedMapsChanged": []
+ },
+ "unit": {
+  "total": 51,
+  "passed": 51,
+  "failed": []
+ },
+ "npmTest": {
+  "base": {
+   "exit": 0,
+   "ok": 487,
+   "okDot": 203,
+   "fail": 0
+  },
+  "work": {
+   "exit": 0,
+   "ok": 487,
+   "okDot": 203,
+   "fail": 0
+  },
+  "same": true
+ },
+ "integrityGateExit": 0,
+ "evidence959": {
+  "source": "전 구간 대조 2회차(다른 담당)가 잰 결과 파일을 글자 그대로 옮긴 것 — reports/TASK-ES-687/evidence-959/",
+  "rows": [
+   {
+    "run": "cdn.prev.1",
+    "received": [
+     "SIGNED_IN:listener1:session",
+     "SIGNED_IN:listener2:session",
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "session",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "run": "cdn.prev.2",
+    "received": [
+     "SIGNED_IN:listener1:session",
+     "SIGNED_IN:listener2:session",
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "session",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "run": "cdn.head.1",
+    "received": [
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "null",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": true,
+    "signedInDeliveredWithSubs": 1,
+    "appListenersReceivedSignedIn": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "NOTIFY:SIGNED_IN:subs=1:queued",
+     "NOTIFY:SIGNED_IN:subs=1:direct",
+     "INITDONE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#2"
+    ]
+   },
+   {
+    "run": "cdn.head.2",
+    "received": [
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "null",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": true,
+    "signedInDeliveredWithSubs": 1,
+    "appListenersReceivedSignedIn": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "NOTIFY:SIGNED_IN:subs=1:queued",
+     "NOTIFY:SIGNED_IN:subs=1:direct",
+     "INITDONE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#2"
+    ]
+   },
+   {
+    "run": "prev.1",
+    "received": [
+     "SIGNED_IN:listener1:session",
+     "SIGNED_IN:listener2:session",
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "session",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "run": "prev.2",
+    "received": [
+     "SIGNED_IN:listener1:session",
+     "SIGNED_IN:listener2:session",
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "session",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "run": "prev.3",
+    "received": [
+     "SIGNED_IN:listener1:session",
+     "SIGNED_IN:listener2:session",
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "session",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "run": "head.1",
+    "received": [
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "null",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": true,
+    "signedInDeliveredWithSubs": 1,
+    "appListenersReceivedSignedIn": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "NOTIFY:SIGNED_IN:subs=1:queued",
+     "NOTIFY:SIGNED_IN:subs=1:direct",
+     "INITDONE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#2"
+    ]
+   },
+   {
+    "run": "head.2",
+    "received": [
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "null",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": true,
+    "signedInDeliveredWithSubs": 1,
+    "appListenersReceivedSignedIn": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "NOTIFY:SIGNED_IN:subs=1:queued",
+     "NOTIFY:SIGNED_IN:subs=1:direct",
+     "INITDONE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#2"
+    ]
+   },
+   {
+    "run": "head.3",
+    "received": [
+     "INITIAL_SESSION:listener1:session",
+     "INITIAL_SESSION:listener2:session"
+    ],
+    "end": {
+     "pendingAuthSession": "null",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": true,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": true
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": true,
+    "signedInDeliveredWithSubs": 1,
+    "appListenersReceivedSignedIn": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "NOTIFY:SIGNED_IN:subs=1:queued",
+     "NOTIFY:SIGNED_IN:subs=1:direct",
+     "INITDONE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#2"
+    ]
+   },
+   {
+    "run": "prev.nosession",
+    "received": [
+     "INITIAL_SESSION:listener1:null",
+     "INITIAL_SESSION:listener2:null"
+    ],
+    "end": {
+     "pendingAuthSession": "null",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": false,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": false
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "INITDONE",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   },
+   {
+    "run": "head.nosession",
+    "received": [
+     "INITIAL_SESSION:listener1:null",
+     "INITIAL_SESSION:listener2:null"
+    ],
+    "end": {
+     "pendingAuthSession": "null",
+     "profile": "null",
+     "landingVisible": true,
+     "authVisible": false,
+     "profileIsProbeUser": false,
+     "entering": false,
+     "navVisible": false,
+     "bodyClass": "",
+     "openModals": [
+      "homeDetailPanel"
+     ],
+     "toasts": [],
+     "storageHasSession": false
+    },
+    "lib": "2.115.0",
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": true,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "INITDONE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   }
+  ],
+  "prevAllDeliverToAppListeners": true,
+  "headNoneDeliverToAppListeners": true,
+  "noSessionReceivedSame": true,
+  "noSessionNote": "세션이 없으면 두 쪽 모두 앱 수신기가 INITIAL_SESSION(null)만 받고 끝 상태가 같다. 사건 줄 자체는 초기화가 끝나는 자리(수신기 걸기 앞/뒤)만 다르다 — 그래서 게스트 시나리오로는 차이가 드러나지 않는다"
+ },
+ "mock": {
+  "source": "reports/TASK-ES-687/mock/mock-apply.json",
+  "base": "bd0011965f13e27990c7d3ee70b25efd7f7451f1",
+  "html": [
+   2712,
+   2294
+  ],
+  "bootLines": 75,
+  "inlineBlockLines": 4,
+  "words": {
+   "blockIsScriptPlusTwoLines": true,
+   "keyLinesByteIdenticalToBase": true,
+   "bootHasNoValueText": true,
+   "bigIifeLeft": false
+  },
+  "metrics": {
+   "base": {
+    "inlineScriptLines": 442,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "mock": {
+    "inlineScriptLines": 24,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "note": "공식 지표는 최상위 var 로 생기는 전역 이름을 세지 않는다(windowAssignments 는 그대로다) — 새 전역 둘은 지표로 보이지 않는다"
+  },
+  "commitHook": {
+   "exitCode": 0,
+   "hookLines": [
+    "✔ 금지 패턴 없음 · index.html 순증가 -418줄 · 변경 545줄",
+    "✔ 본질 태그 [INFRA] 티켓 #TASK-ES-687"
+   ],
+   "forbiddenPatternStepPassed": true,
+   "hardcodedSecretBlocked": false,
+   "bypass": false,
+   "indexHtmlAddedLines": 1,
+   "addedLinesHaveKeyText": false,
+   "note": "index.html 의 diff 에서 더해진 줄은 부팅 태그를 붙인 줄 하나뿐이다 — 남긴 선언 두 줄은 문맥 줄(바뀌지 않은 줄)로 남는다"
+  },
+  "compare": {
+   "mismatches": 0,
+   "scopeLost": [],
+   "differingScope": 0,
+   "differingWindow": 0,
+   "exceptions": 0
+  },
+  "order": {
+   "events": [
+    364,
+    364
+   ],
+   "eventsSame": true,
+   "bootCalls": [
+    27,
+    27
+   ],
+   "bootCallsSame": true,
+   "fakeEvents": [
+    366,
+    366
+   ],
+   "fakeEventsSame": true,
+   "fake": {
+    "base": {
+     "scopeSbIsFake": true,
+     "createClientBeforeDefineSb": true,
+     "eventsBetween": 0
+    },
+    "mock": {
+     "scopeSbIsFake": true,
+     "createClientBeforeDefineSb": true,
+     "eventsBetween": 0
+    }
+   }
+  },
+  "authRace": {
+   "allSameAsPrev": true,
+   "appListenersReceiveSignedIn": true,
+   "byLib": [
+    {
+     "lib": "npm",
+     "withSession": {
+      "prevRunsSame": true,
+      "mockRunsSameAsPrev": true
+     },
+     "noSession": {
+      "mockRunsSameAsPrev": true
+     }
+    },
+    {
+     "lib": "cdn",
+     "withSession": {
+      "prevRunsSame": true,
+      "mockRunsSameAsPrev": true
+     },
+     "noSession": {
+      "mockRunsSameAsPrev": true
+     }
+    }
+   ],
+   "runs": 16
+  },
+  "npmTest": {
+   "exitCode": 0,
+   "ok": 487,
+   "okDot": 203,
+   "fail": 0
+  },
+  "scenarios": {
+   "ran": 30,
+   "allPassed": true
+  },
+  "globalNameScan": {
+   "hits": 0,
+   "scripts": 372,
+   "scanned": 372,
+   "missing": 0
+  }
+ }
+}

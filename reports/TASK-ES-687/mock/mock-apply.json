@@ -1,0 +1,923 @@
+{
+ "tool": "reports/TASK-ES-687/tools/mock-apply.cjs",
+ "type": "작업자 측정, 판정 아님 — 저장소 밖 사본에서 돌린 모의다(실제 적용은 결심 뒤의 다른 PR)",
+ "measuredAt": "2026-10-11T15:37:45.326Z",
+ "base": "bd0011965f13e27990c7d3ee70b25efd7f7451f1",
+ "generator": {
+  "stdout": [
+   "finalize · handles 2 · imports 28 · calls 27 · removed lines 418 (껍데기 3 · 문 61 · 주석 270 · 빈 줄 84)",
+   "  relay renderTeamGoalsScreen — 가져오기 줄 2323 · getter 줄 2276(expose 문 줄 2275~2277) → js/app/boot.js · 근거: 주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계",
+   "  keepGlobalConst 「var SUPABASE_URL」 — 줄 2425 의 문자열 상수 선언(SUPABASE_URL · 값 40자)을 껍데기 없는 최상위 스크립트에 줄 그대로 남긴다(전역 이름이 된다) · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 선언 두 줄만 제자리에 남긴다(규칙은 건드리지 않는다)",
+   "  keepGlobalConst 「var SUPABASE_ANON_KEY」 — 줄 2426 의 문자열 상수 선언(SUPABASE_ANON_KEY · 값 208자)을 껍데기 없는 최상위 스크립트에 줄 그대로 남긴다(전역 이름이 된다) · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 선언 두 줄만 제자리에 남긴다(규칙은 건드리지 않는다)",
+   "  keepGlobalConst(읽는 문) 줄 2427 「window.OurgoalAppState.define('sb'」 — 남긴 전역 이름(SUPABASE_URL · SUPABASE_ANON_KEY)을 읽는 상태 선언, 부팅 파일로 간다",
+   "  keepGlobalConst(전역 이름 검사) 같은 전역 범위의 스크립트 372개(읽은 것 372 · 없는 파일 0)와 index.html 의 블록 밖 글자에 그 이름 0",
+   "index.html lines 2712 -> 2294",
+   "js/app/boot.js 73"
+  ],
+  "statements": {
+   "total": 61,
+   "handles": 2,
+   "imports": 28,
+   "calls": 27
+  },
+  "removed": {
+   "lines": 418,
+   "shell": 3,
+   "statementLines": 61,
+   "commentLines": 270,
+   "blankLines": 84
+  },
+  "html": [
+   2712,
+   2294
+  ],
+  "files": {
+   "js/app/boot.js": 73
+  },
+  "relayed": [
+   {
+    "name": "renderTeamGoalsScreen",
+    "movedTo": "js/app/boot.js"
+   }
+  ],
+  "keptGlobalConst": {
+   "reason": "커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 선언 두 줄만 제자리에 남긴다(규칙은 건드리지 않는다)",
+   "statements": [
+    {
+     "match": "var SUPABASE_URL",
+     "name": "SUPABASE_URL",
+     "line": 2425,
+     "valueLength": 40,
+     "readBy": [
+      2427
+     ]
+    },
+    {
+     "match": "var SUPABASE_ANON_KEY",
+     "name": "SUPABASE_ANON_KEY",
+     "line": 2426,
+     "valueLength": 208,
+     "readBy": [
+      2427
+     ]
+    }
+   ],
+   "readers": [
+    {
+     "match": "window.OurgoalAppState.define('sb'",
+     "line": 2427,
+     "endLine": 2427,
+     "reads": [
+      "SUPABASE_URL",
+      "SUPABASE_ANON_KEY"
+     ],
+     "movedTo": "js/app/boot.js"
+    }
+   ],
+   "globalNames": [
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY"
+   ],
+   "globalNameScan": {
+    "hits": 0,
+    "scripts": 372,
+    "scanned": 372,
+    "missing": 0
+   },
+   "movedEarlierOver": {
+    "statements": 32,
+    "calls": [
+     "bootApplySavedTheme"
+    ],
+    "note": "남긴 선언은 원래 이 문들 뒤에 있었다 — 이제 그 앞(인라인)에서 돈다. 문자열 상수 선언이라 차례에 무관하고, 앞의 문 가운데 그 이름을 읽는 것은 없다(있으면 멈춘다)"
+   },
+   "inline": {
+    "statements": 2,
+    "bodyLines": 2,
+    "shellLines": 2,
+    "iifeShell": false
+   },
+   "boot": {
+    "statements": 59,
+    "handles": 2,
+    "imports": 27,
+    "calls": 27,
+    "readers": 1
+   }
+  }
+ },
+ "spec": {
+  "kindWrittenByTool": "unclassified",
+  "dependsOn": [
+   "OurgoalAppScope",
+   "OurgoalAppState",
+   "OurgoalGoalsKit",
+   "OurgoalUiHelpers",
+   "supabase"
+  ],
+  "guardExitBeforeKind": 1,
+  "kindSetByHand": "organ",
+  "guardExitAfter": 0
+ },
+ "metrics": {
+  "base": {
+   "inlineScriptLines": 442,
+   "indexFunctionDecls": 1,
+   "windowAssignments": 75,
+   "oversizeJsFiles": {
+    "count": 0,
+    "files": {}
+   },
+   "crossTabRefs": 0
+  },
+  "mock": {
+   "inlineScriptLines": 24,
+   "indexFunctionDecls": 1,
+   "windowAssignments": 75,
+   "oversizeJsFiles": {
+    "count": 0,
+    "files": {}
+   },
+   "crossTabRefs": 0
+  },
+  "note": "공식 지표는 최상위 var 로 생기는 전역 이름을 세지 않는다(windowAssignments 는 그대로다) — 새 전역 둘은 지표로 보이지 않는다"
+ },
+ "words": {
+  "baseHtmlLines": 2712,
+  "mockHtmlLines": 2294,
+  "tagLine": 2256,
+  "inlineBlock": [
+   "<script>",
+   "  var SUPABASE_URL = '…';",
+   "  var SUPABASE_ANON_KEY = '…';",
+   "</script><script src=\"js/app/boot.js\"></script>"
+  ],
+  "blockIsScriptPlusTwoLines": true,
+  "keyLinesByteIdenticalToBase": true,
+  "bootLines": 75,
+  "bootHasNoValueText": true,
+  "bootReadsNames": 1,
+  "bigIifeLeft": false
+ },
+ "commitHook": {
+  "exitCode": 0,
+  "hookLines": [
+   "✔ 금지 패턴 없음 · index.html 순증가 -418줄 · 변경 545줄",
+   "✔ 본질 태그 [INFRA] 티켓 #TASK-ES-687"
+  ],
+  "forbiddenPatternStepPassed": true,
+  "hardcodedSecretBlocked": false,
+  "bypass": false,
+  "indexHtmlAddedLines": 1,
+  "addedLinesHaveKeyText": false,
+  "note": "index.html 의 diff 에서 더해진 줄은 부팅 태그를 붙인 줄 하나뿐이다 — 남긴 선언 두 줄은 문맥 줄(바뀌지 않은 줄)로 남는다"
+ },
+ "compare": {
+  "base": {
+   "scopeNames": 539,
+   "windowNames": 0,
+   "registered": 545,
+   "checked": 471,
+   "mismatches": 0,
+   "missing": 68,
+   "extra": 74,
+   "conflicts": 0,
+   "own": 545,
+   "ownScope": 471,
+   "ownWindow": 181,
+   "lateProvides": 0
+  },
+  "mock": {
+   "scopeNames": 539,
+   "windowNames": 0,
+   "registered": 545,
+   "checked": 471,
+   "mismatches": 0,
+   "missing": 68,
+   "extra": 74,
+   "conflicts": 0,
+   "own": 545,
+   "ownScope": 471,
+   "ownWindow": 181,
+   "lateProvides": 0
+  },
+  "ok": true,
+  "scopeLost": [],
+  "differingScope": [],
+  "differingWindow": [],
+  "exceptions": 0
+ },
+ "order": {
+  "events": [
+   364,
+   364
+  ],
+  "eventsSame": true,
+  "bootCalls": [
+   27,
+   27
+  ],
+  "bootCallsSame": true,
+  "fakeEvents": [
+   366,
+   366
+  ],
+  "fakeEventsSame": true,
+  "fake": {
+   "base": {
+    "scopeSbIsFake": true,
+    "createClientBeforeDefineSb": true,
+    "eventsBetween": 0
+   },
+   "mock": {
+    "scopeSbIsFake": true,
+    "createClientBeforeDefineSb": true,
+    "eventsBetween": 0
+   }
+  }
+ },
+ "authRace": {
+  "tool": "reports/TASK-ES-687/tools/auth-race.cjs",
+  "cdnLib": {
+   "file": "supabase-at2.default.js",
+   "sha256": "36d1ad9948fdbba9c3d696e27050f70aafce88981938b6a814a6ad8abdf171ba",
+   "note": "운영 화면이 CDN 에서 받는 판을 내려받아 둔 파일(전 구간 대조 2회차 담당이 받은 것) — 저장소에는 넣지 않았다"
+  },
+  "rows": [
+   {
+    "name": "npm.prev.1",
+    "tree": "직전 main",
+    "lib": "2.115.0 (node_modules)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "npm.prev.2",
+    "tree": "직전 main",
+    "lib": "2.115.0 (node_modules)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "npm.mock.1",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.115.0 (node_modules)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "npm.mock.2",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.115.0 (node_modules)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "npm.mock.3",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.115.0 (node_modules)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "npm.prev.nosession",
+    "tree": "직전 main",
+    "lib": "2.115.0 (node_modules)",
+    "session": false,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "restoreCalls": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "INITDONE",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   },
+   {
+    "name": "npm.mock.nosession.1",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.115.0 (node_modules)",
+    "session": false,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "restoreCalls": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "INITDONE",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   },
+   {
+    "name": "npm.mock.nosession.2",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.115.0 (node_modules)",
+    "session": false,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "restoreCalls": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "INITDONE",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   },
+   {
+    "name": "cdn.prev.1",
+    "tree": "직전 main",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "cdn.prev.2",
+    "tree": "직전 main",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "cdn.mock.1",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "cdn.mock.2",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "cdn.mock.3",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": true,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": 3,
+    "appListenersReceivedSignedIn": 2,
+    "restoreCalls": 3,
+    "pendingAuthSessionAtEnd": "session",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "NOTIFY:SIGNED_IN:subs=3:queued",
+     "NOTIFY:SIGNED_IN:subs=3:direct",
+     "EV:SIGNED_IN:listener1:session",
+     "CALL:restoreSessionAndEnter#2",
+     "EV:SIGNED_IN:listener2:session",
+     "CALL:restoreSessionAndEnter#3",
+     "INITDONE",
+     "RET:restoreSessionAndEnter#3:true",
+     "EV:INITIAL_SESSION:listener1:session",
+     "EV:INITIAL_SESSION:listener2:session",
+     "CALL:restoreSessionAndEnter#4",
+     "RET:restoreSessionAndEnter#4:true"
+    ]
+   },
+   {
+    "name": "cdn.prev.nosession",
+    "tree": "직전 main",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": false,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "inline"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "restoreCalls": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "INITDONE",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   },
+   {
+    "name": "cdn.mock.nosession.1",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": false,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "restoreCalls": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "INITDONE",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   },
+   {
+    "name": "cdn.mock.nosession.2",
+    "tree": "모의(keepGlobalConst)",
+    "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+    "session": false,
+    "bootOk": true,
+    "exceptions": 0,
+    "listenerScripts": [
+     "js/app/boot.js"
+    ],
+    "initDoneBeforeFirstListener": false,
+    "signedInDeliveredWithSubs": null,
+    "appListenersReceivedSignedIn": 0,
+    "restoreCalls": 0,
+    "pendingAuthSessionAtEnd": "null",
+    "line": [
+     "CREATE",
+     "REG:1",
+     "CALL:runAppBoot#1",
+     "REG:2",
+     "INITDONE",
+     "EV:INITIAL_SESSION:listener1:null",
+     "EV:INITIAL_SESSION:listener2:null"
+    ]
+   }
+  ],
+  "byLib": [
+   {
+    "lib": "npm",
+    "withSession": {
+     "prevRunsSame": true,
+     "mockRunsSameAsPrev": true
+    },
+    "noSession": {
+     "mockRunsSameAsPrev": true
+    }
+   },
+   {
+    "lib": "cdn",
+    "withSession": {
+     "prevRunsSame": true,
+     "mockRunsSameAsPrev": true
+    },
+    "noSession": {
+     "mockRunsSameAsPrev": true
+    }
+   }
+  ],
+  "allSameAsPrev": true,
+  "appListenersReceiveSignedIn": true
+ },
+ "npmTest": {
+  "exitCode": 0,
+  "ok": 487,
+  "okDot": 203,
+  "fail": 0
+ },
+ "scenarios": null,
+ "steps": [
+  {
+   "id": "1 생성기 finalize(relay · keepGlobalConst)",
+   "exitCode": 0,
+   "ms": 2089
+  },
+  {
+   "id": "2 module-specs --write",
+   "exitCode": 0,
+   "ms": 210
+  },
+  {
+   "id": "2 module-guard(종류를 정하기 전)",
+   "exitCode": 1,
+   "ms": 508
+  },
+  {
+   "id": "2 세포 설명",
+   "exitCode": 0,
+   "ms": 84
+  },
+  {
+   "id": "2 module-guard --update",
+   "exitCode": 0,
+   "ms": 479
+  },
+  {
+   "id": "2 module-guard(뒤)",
+   "exitCode": 0,
+   "ms": 491
+  },
+  {
+   "id": "4 git commit(훅 그대로)",
+   "exitCode": 0,
+   "ms": 6947
+  },
+  {
+   "id": "5 대조 탐침(기준)",
+   "exitCode": 0,
+   "ms": 4715
+  },
+  {
+   "id": "5 대조 탐침(모의)",
+   "exitCode": 0,
+   "ms": 4578
+  },
+  {
+   "id": "5 시점 탐침 base",
+   "exitCode": 0,
+   "ms": 4460
+  },
+  {
+   "id": "5 시점 탐침(가짜 연결) base",
+   "exitCode": 0,
+   "ms": 4599
+  },
+  {
+   "id": "5 시점 탐침 mock",
+   "exitCode": 0,
+   "ms": 4472
+  },
+  {
+   "id": "5 시점 탐침(가짜 연결) mock",
+   "exitCode": 0,
+   "ms": 4583
+  },
+  {
+   "id": "6 auth-race npm.prev.1",
+   "exitCode": 0,
+   "ms": 7131
+  },
+  {
+   "id": "6 auth-race npm.prev.2",
+   "exitCode": 0,
+   "ms": 6960
+  },
+  {
+   "id": "6 auth-race npm.mock.1",
+   "exitCode": 0,
+   "ms": 6996
+  },
+  {
+   "id": "6 auth-race npm.mock.2",
+   "exitCode": 0,
+   "ms": 7067
+  },
+  {
+   "id": "6 auth-race npm.mock.3",
+   "exitCode": 0,
+   "ms": 6995
+  },
+  {
+   "id": "6 auth-race npm.prev.nosession",
+   "exitCode": 0,
+   "ms": 7034
+  },
+  {
+   "id": "6 auth-race npm.mock.nosession.1",
+   "exitCode": 0,
+   "ms": 6998
+  },
+  {
+   "id": "6 auth-race npm.mock.nosession.2",
+   "exitCode": 0,
+   "ms": 7003
+  },
+  {
+   "id": "6 auth-race cdn.prev.1",
+   "exitCode": 0,
+   "ms": 7041
+  },
+  {
+   "id": "6 auth-race cdn.prev.2",
+   "exitCode": 0,
+   "ms": 7082
+  },
+  {
+   "id": "6 auth-race cdn.mock.1",
+   "exitCode": 0,
+   "ms": 7054
+  },
+  {
+   "id": "6 auth-race cdn.mock.2",
+   "exitCode": 0,
+   "ms": 6964
+  },
+  {
+   "id": "6 auth-race cdn.mock.3",
+   "exitCode": 0,
+   "ms": 7033
+  },
+  {
+   "id": "6 auth-race cdn.prev.nosession",
+   "exitCode": 0,
+   "ms": 7041
+  },
+  {
+   "id": "6 auth-race cdn.mock.nosession.1",
+   "exitCode": 0,
+   "ms": 6978
+  },
+  {
+   "id": "6 auth-race cdn.mock.nosession.2",
+   "exitCode": 0,
+   "ms": 7001
+  },
+  {
+   "id": "7 npm test(모의)",
+   "exitCode": null,
+   "ms": 1
+  }
+ ],
+ "npmTestNote": "npm test 는 모의 트리(생성기 결과를 임시 가지에 커밋한 상태)에서 따로 돌렸다"
+}

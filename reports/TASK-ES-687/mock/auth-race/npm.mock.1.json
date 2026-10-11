@@ -1,0 +1,205 @@
+{
+ "tool": "whole-run/run2/tools/auth-race.cjs (court/lib/chrome.js · static-server.js · site-host.js 읽기 전용)",
+ "type": "작업자 측정, 판정 아님",
+ "mode": "저장된 가짜 세션 있음(만료 전 — 통신 없이 복구되는 길)",
+ "limits": "진짜 서버와는 통신하지 않는다(법정 브라우저가 외부 통신을 막는다). 연결 라이브러리는 저장소에 설치된 판(2.115.0 (node_modules))을 페이지가 뜨기 전에 심었다 — 운영 화면이 CDN 에서 받는 판과 같은지는 재지 않았다. 세션은 가짜라서 그 뒤의 서버 조회는 모두 실패한다(두 트리 같은 조건). 그래서 이 탐침이 재는 것은 「인증 사건이 누구에게 전달되는가 · 복원 진입 함수가 몇 번 불리는가」까지다.",
+ "app": "C:\\Users\\HP\\AppData\\Local\\Temp\\es687-mock",
+ "libVersion": "2.115.0 (node_modules)",
+ "startedAt": "2026-10-11T15:36:07.080Z",
+ "endedAt": "2026-10-11T15:36:13.999Z",
+ "waitMs": 6000,
+ "boot": {
+  "ok": true,
+  "error": null,
+  "exceptions": [],
+  "consoleErrors": []
+ },
+ "summary": {
+  "line": [
+   "CREATE",
+   "REG:1",
+   "CALL:runAppBoot#1",
+   "REG:2",
+   "NOTIFY:SIGNED_IN:subs=3:queued",
+   "NOTIFY:SIGNED_IN:subs=3:direct",
+   "EV:SIGNED_IN:listener1:session",
+   "CALL:restoreSessionAndEnter#2",
+   "EV:SIGNED_IN:listener2:session",
+   "CALL:restoreSessionAndEnter#3",
+   "INITDONE",
+   "RET:restoreSessionAndEnter#3:true",
+   "EV:INITIAL_SESSION:listener1:session",
+   "EV:INITIAL_SESSION:listener2:session",
+   "CALL:restoreSessionAndEnter#4",
+   "RET:restoreSessionAndEnter#4:true"
+  ],
+  "scripts": [
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js"
+  ],
+  "regs": [
+   {
+    "e": "REG:1",
+    "script": "js/app/boot.js",
+    "initQueueOpen": true
+   },
+   {
+    "e": "REG:2",
+    "script": "js/app/boot.js",
+    "initQueueOpen": true
+   }
+  ],
+  "index": {
+   "create": 0,
+   "reg1": 1,
+   "reg2": 3,
+   "initDone": 10,
+   "firstSignedInDelivery": 5
+  },
+  "signedInDeliveredWithSubs": 3,
+  "received": [
+   "SIGNED_IN:listener1:session",
+   "SIGNED_IN:listener2:session",
+   "INITIAL_SESSION:listener1:session",
+   "INITIAL_SESSION:listener2:session"
+  ],
+  "receivedSignedIn": 2,
+  "restoreCalls": 3,
+  "restoreCallDetail": [
+   "CALL:restoreSessionAndEnter#2:enteringBefore=false@js/app/boot.js",
+   "CALL:restoreSessionAndEnter#3:enteringBefore=true@js/app/boot.js",
+   "RET:restoreSessionAndEnter#3:true@js/app/boot.js",
+   "CALL:restoreSessionAndEnter#4:enteringBefore=true@js/app/boot.js",
+   "RET:restoreSessionAndEnter#4:true@js/app/boot.js"
+  ],
+  "initDoneBeforeReg1": false,
+  "end": {
+   "pendingAuthSession": "session",
+   "profile": "null",
+   "landingVisible": true,
+   "authVisible": false,
+   "profileIsProbeUser": false,
+   "entering": true,
+   "navVisible": false,
+   "bodyClass": "",
+   "openModals": [
+    "homeDetailPanel"
+   ],
+   "toasts": [],
+   "storageHasSession": true
+  },
+  "seeded": true,
+  "lockMode": "lockless",
+  "spyErrors": []
+ },
+ "events": [
+  {
+   "e": "CREATE",
+   "script": "js/app/boot.js",
+   "ms": 165.4,
+   "args": 2
+  },
+  {
+   "e": "REG:1",
+   "script": "js/app/boot.js",
+   "ms": 167.4,
+   "subsBefore": 1,
+   "initQueueOpen": true
+  },
+  {
+   "e": "CALL:runAppBoot#1",
+   "script": "js/app/boot.js",
+   "ms": 169.6,
+   "hasSession": false,
+   "enteringBefore": false
+  },
+  {
+   "e": "REG:2",
+   "script": "js/app/boot.js",
+   "ms": 170,
+   "subsBefore": 2,
+   "initQueueOpen": true
+  },
+  {
+   "e": "NOTIFY:SIGNED_IN:subs=3:queued",
+   "script": "js/app/boot.js",
+   "ms": 170.5
+  },
+  {
+   "e": "NOTIFY:SIGNED_IN:subs=3:direct",
+   "script": "js/app/boot.js",
+   "ms": 170.7
+  },
+  {
+   "e": "EV:SIGNED_IN:listener1:session",
+   "script": "js/app/boot.js",
+   "ms": 170.8
+  },
+  {
+   "e": "CALL:restoreSessionAndEnter#2",
+   "script": "js/app/boot.js",
+   "ms": 170.9,
+   "hasSession": true,
+   "enteringBefore": false
+  },
+  {
+   "e": "EV:SIGNED_IN:listener2:session",
+   "script": "js/app/boot.js",
+   "ms": 171.5
+  },
+  {
+   "e": "CALL:restoreSessionAndEnter#3",
+   "script": "js/app/boot.js",
+   "ms": 171.5,
+   "hasSession": true,
+   "enteringBefore": true
+  },
+  {
+   "e": "INITDONE",
+   "script": "js/app/boot.js",
+   "ms": 171.6,
+   "subs": 3
+  },
+  {
+   "e": "RET:restoreSessionAndEnter#3:true",
+   "script": "js/app/boot.js",
+   "ms": 172
+  },
+  {
+   "e": "EV:INITIAL_SESSION:listener1:session",
+   "script": "js/app/boot.js",
+   "ms": 172
+  },
+  {
+   "e": "EV:INITIAL_SESSION:listener2:session",
+   "script": "js/app/boot.js",
+   "ms": 172
+  },
+  {
+   "e": "CALL:restoreSessionAndEnter#4",
+   "script": "js/app/boot.js",
+   "ms": 172,
+   "hasSession": true,
+   "enteringBefore": true
+  },
+  {
+   "e": "RET:restoreSessionAndEnter#4:true",
+   "script": "js/app/boot.js",
+   "ms": 172.1
+  }
+ ]
+}
