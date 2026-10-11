@@ -297,6 +297,230 @@ function unwireOnce(U, doc) {
   return { next, meta, log };
 }
 
+// ── [#TASK-ES-634 · docs/architecture/CELL-REGISTRY-DESIGN.md 3.3절 · 5절 닫힌 목록 X4·X5·X6 — 상민님 2026-10-11 「허용」, 효력 기록 지시함 DIR-004] 상태 이전 모드(설정 "mode": "unstate").
+// 통로에 노출된 IIFE 상태 변수의 소유를 상태 기관(window.OurgoalAppState — js/core/app-state.js, 이 생성기는 만들지 않는다)으로 옮긴다. 다루는 줄은 세 종류뿐이다:
+//   S1(X4) 그 이름의 OurgoalAppScope.expose getter/setter 속성 줄 — 삭제(객체가 비면 expose 문 전체, 새로 마지막이 된 속성의 쉼표 한 글자). 본문이 `return X;`·`X = v;` 꼴이 아니면 멈춘다.
+//   R1(X5) 선언문 `var X = <초기값>;` — `var X =` 를 `window.OurgoalAppState.define('X',` 로, 끝의 `;` 를 `);` 로 바꿔 쓴다. 초기값 글자와 자리는 그대로다.
+//          그 이름의 마지막 노출 문(지우기 직전)에 `set X` 가 있었으면 define 대신 defineVar 를 쓴다 — 사람이 아니라 생성기가 정한다(L047).
+//   R2(X6) 자기 일회 window 복사 줄 `window.X = X;` — 오른쪽 이름만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓴다(자리·시점 유지).
+// 안전 정지(fail): 그 이름의 맨이름 참조(읽기·대입)가 지운 줄·바꿔 쓴 글자 밖에 하나라도 남으면 · 초기값에 자기 이름이 나오면 · 선언이 없거나 여럿이면 · 선언자가 여럿이면 ·
+//   초기값이 없으면 · 선언문이 다른 글자와 한 줄을 나눠 쓰면 · 통로에 노출되지 않은 이름이면 · window 복사 줄이 다른 글자와 한 줄을 나눠 쓰거나 쉼표 연쇄면 ·
+//   선언이 첫 노출 문보다 앞이고 그 사이에 실행되는 문이 있으면(노출 시점이 달라진다) 멈춘다. 함수 본문은 옮기거나 고치지 않는다. 세포 파일은 쓰지 않는다.
+// 여러 실행: "unstate" 가 배열이면 차례로 적용한다(앞 실행 결과를 다시 파싱). 배열의 단계가 { "unwire": { … } } 이면 그 단계는 위 unwire 실행 하나로 돈다(unwireOnce 를 그대로 부른다 — 법정은 PR 하나에 생성기를 한 번만 돌린다).
+// 사후 대조(모든 실행): 다시 파싱한 토큰열 = 이전 토큰열 − 지운 줄의 토큰 − 뗀 쉼표, 그리고 바꿔 쓴 자리는 정해진 토큰열로 바뀜. 남은 주석은 그대로. 다르면 쓰지 않고 멈춘다.
+// 설정 예: { "task": "TASK-ES-6xx", "slot": "HO", "mode": "unstate", "cells": [{ "file": "js/core/app-state.js" }], "unstate": { "names": ["toastTimer", "…"] } }
+//   여러 단계: "unstate": [ { "names": ["…"] }, { "unwire": { "kitVar": "_uiKit", "names": ["…"] } }, { "names": ["…"] } ]
+if (CFG.mode === 'unstate') { runUnstate(); return; }
+function runUnstate() {
+  const isList = Array.isArray(CFG.unstate);
+  const specs = isList ? CFG.unstate : [CFG.unstate || {}];
+  if (isList && !specs.length) fail('unstate 배열이 비었다');
+  let doc = parseUnwireDoc(lines);
+  const metas = [], logs = [];
+  for (let i = 0; i < specs.length; i++) {
+    const sp = specs[i];
+    let r;
+    try {
+      if (isList && sp && typeof sp === 'object' && !Array.isArray(sp) && Object.prototype.hasOwnProperty.call(sp, 'unwire')) { // unwire 단계 — 위 unwireOnce 를 그대로 부른다
+        if (Object.keys(sp).length !== 1) fail('unwire 단계에는 unwire 칸 하나만 둔다');
+        r = unwireOnce(sp.unwire, doc);
+        r = { next: r.next, meta: Object.assign({ step: 'unwire' }, r.meta), log: ['unwire'].concat(r.log) };
+      } else {
+        r = unstateOnce(sp, doc);
+        if (isList) r = { next: r.next, meta: Object.assign({ step: 'unstate' }, r.meta), log: r.log };
+      }
+    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; throw err; }
+    metas.push(r.meta); logs.push(r.log);
+    doc = r.next;
+  }
+  fs.writeFileSync(path.join(APP, 'index.html'), doc.lines.join(EOL), 'utf8');
+  const meta = isList
+    ? { task: TAG, mode: 'unstate', runs: metas, htmlLinesBefore: lines.length, htmlLinesAfter: doc.lines.length, files: {} }
+    : Object.assign({ task: TAG, mode: 'unstate' }, metas[0], { files: {} });
+  fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1), 'utf8');
+  logs.forEach((l, i) => console.log(...(isList ? ['[' + (i + 1) + '/' + specs.length + ']'] : []), ...l));
+  console.log('index.html lines', lines.length, '->', doc.lines.length);
+}
+function unstateOnce(U, doc) {
+  const { lines, code, top, iScope } = doc; // 이 실행이 보는 문서(앞 실행의 결과). 파일 머리의 같은 이름을 가린다.
+  const H = n => n.loc.start.line + doc.off, HE = n => n.loc.end.line + doc.off;
+  if (!U || typeof U !== 'object' || Array.isArray(U)) fail('unstate 실행 설정은 객체여야 한다');
+  for (const k of Object.keys(U)) if (!['names', 'label'].includes(k)) fail('unstate 설정에 모르는 칸: ' + k);
+  const names = new Set(Array.isArray(U.names) ? U.names : []);
+  if (!names.size) fail('unstate.names 가 비었다');
+  for (const n of names) if (typeof n !== 'string' || !/^[A-Za-z_$][\w$]*$/.test(n)) fail('unstate.names 에 이름이 아닌 글자: ' + n);
+  const ORGAN = 'window.OurgoalAppState', SCOPE = 'window.OurgoalAppScope.scope';
+  const del = new Set();        // 지울 줄(index.html 1-based)
+  const commaFix = new Map();   // 줄 → 쉼표를 뗀 새 글자
+  const subs = [];              // 바꿔 쓸 글자 구간 { line, c0, c1, s, e, text, sigs }
+  const removed = { exposeProps: [], exposeCalls: [] }, rewritten = { declarations: [], windowCopies: [] }, api = Object.create(null);
+  const st8 = Object.create(null); for (const n of names) st8[n] = { decls: [], expose: [], copies: [] };
+  const src = n => code.slice(n.start, n.end);
+  const isWA = x => x && x.type === 'AssignmentExpression' && x.operator === '=' && x.left.type === 'MemberExpression' && !x.left.computed && x.left.object.type === 'Identifier' && x.left.object.name === 'window' && x.left.property.type === 'Identifier';
+  const isSeqWA = x => x && x.type === 'SequenceExpression' && x.expressions.every(isWA);
+  const isExposureBlock = n => n.type === 'IfStatement' && !n.alternate && n.consequent.type === 'BlockStatement' && n.consequent.body.length > 0
+    && n.consequent.body.every(b => b.type === 'ExpressionStatement' && (isWA(b.expression) || isSeqWA(b.expression)));
+  const isExposeCall = e => !!e && e.type === 'CallExpression' && e.callee.type === 'MemberExpression' && !e.callee.computed && e.callee.property.name === 'expose'
+    && ((e.callee.object.type === 'Identifier' && e.callee.object.name === 'OurgoalAppScope') || (e.callee.object.type === 'MemberExpression' && !e.callee.object.computed && e.callee.object.property.name === 'OurgoalAppScope'))
+    && e.arguments.length === 2 && e.arguments[1].type === 'ObjectExpression';
+  const isCopy = x => isWA(x) && names.has(x.left.property.name) && x.right.type === 'Identifier' && x.right.name === x.left.property.name; // 자기 일회 window 복사 `window.X = X`
+  const trivialAccessor = p => { // getter 는 `return X;`, setter 는 `X = v;` 하나뿐인가
+    const b = p.body.body, k = p.key.name;
+    if (p.kind === 'get') return p.params.length === 0 && b.length === 1 && b[0].type === 'ReturnStatement' && !!b[0].argument && b[0].argument.type === 'Identifier' && b[0].argument.name === k;
+    return p.params.length === 1 && p.params[0].type === 'Identifier' && b.length === 1 && b[0].type === 'ExpressionStatement' && b[0].expression.type === 'AssignmentExpression' && b[0].expression.operator === '='
+      && b[0].expression.left.type === 'Identifier' && b[0].expression.left.name === k && b[0].expression.right.type === 'Identifier' && b[0].expression.right.name === p.params[0].name;
+  };
+  const headTailOnly = (st, what) => { // 문의 머리 줄·꼬리 줄에 그 문 말고 다른 글자가 없는가
+    const a = H(st.node), b = HE(st.node);
+    if (lines[a - 1].slice(0, st.node.loc.start.column).trim() !== '' || lines[b - 1].slice(st.node.loc.end.column).trim() !== '') fail(what + ' 이(가) 다른 글자와 한 줄을 나눠 쓴다: ' + a + (a === b ? '' : '~' + b));
+  };
+  top.forEach((st, idx) => {
+    const e = st.isExpressionStatement() ? st.node.expression : null;
+    if (st.isVariableDeclaration()) { for (const d of st.node.declarations) if (d.id.type === 'Identifier' && names.has(d.id.name)) st8[d.id.name].decls.push({ st, d, idx }); return; }
+    // S1(X4): expose getter/setter
+    if (isExposeCall(e)) {
+      const byLine = new Map();
+      for (const p of e.arguments[1].properties) { const l = p.loc.start.line + doc.off; if (!byLine.has(l)) byLine.set(l, []); byLine.get(l).push(p); }
+      for (const [l, ps] of byLine) {
+        const keys = [...new Set(ps.map(p => (p.type === 'ObjectMethod' && !p.computed && p.key.type === 'Identifier' && (p.kind === 'get' || p.kind === 'set')) ? p.key.name : null))];
+        const mine = keys.filter(k => k !== null && names.has(k));
+        if (!mine.length) continue;
+        if (keys.length !== 1) fail('expose 속성 줄에 여러 이름이 섞여 있다(' + keys.join(',') + '): ' + l);
+        if (ps.some(p => p.loc.end.line + doc.off !== l)) fail('expose 속성이 여러 줄에 걸쳐 있다: ' + l);
+        if (l === H(st.node) || l === HE(st.node)) fail('expose 속성이 머리·꼬리 줄과 한 줄을 나눠 쓴다: ' + l);
+        if (lines[l - 1].trim().replace(/,$/, '') !== code.slice(ps[0].start, ps[ps.length - 1].end)) fail('expose 속성 줄에 다른 글자가 있다: ' + l);
+        if (!ps.every(trivialAccessor)) fail('expose 속성의 본문이 `return X;`·`X = v;` 꼴이 아니다 — 지우지 않는다: ' + l);
+        del.add(l); st8[keys[0]].expose.push({ line: l, idx, kinds: ps.map(p => p.kind) }); removed.exposeProps.push({ name: keys[0], line: l, kinds: ps.map(p => p.kind) });
+      }
+      const rest = [...byLine.keys()].filter(l => !del.has(l)).sort((a, b) => a - b);
+      if (![...byLine.keys()].some(l => del.has(l))) return;
+      if (!rest.length) { headTailOnly(st, 'expose 문'); for (let l = H(st.node); l <= HE(st.node); l++) del.add(l); removed.exposeCalls.push({ line: H(st.node), endLine: HE(st.node) }); }
+      else { const last = rest[rest.length - 1]; const t = lines[last - 1]; if (/,\s*$/.test(t)) commaFix.set(last, t.replace(/,\s*$/, '')); }
+      return;
+    }
+    // R2(X6): 자기 일회 window 복사 줄 — 받는 꼴은 unwire 의 window 대입 줄과 같다(줄을 통째로 차지하는 문 · 그런 줄만 담은 if 블록)
+    if (e && (isWA(e) || isSeqWA(e))) {
+      if (isSeqWA(e)) { if (e.expressions.some(isCopy)) fail('window 복사가 쉼표 연쇄 안에 있어 바꿔 쓰지 않는다: ' + H(st.node)); return; }
+      if (!isCopy(e)) return;
+      if (H(st.node) !== HE(st.node) || lines[H(st.node) - 1].trim() !== src(st.node)) fail('window 복사 줄이 다른 글자와 한 줄을 나눠 쓴다: ' + H(st.node));
+      st8[e.left.property.name].copies.push({ rhs: e.right, line: H(st.node) });
+      return;
+    }
+    if (st.isIfStatement() && isExposureBlock(st.node)) {
+      const body = st.node.consequent.body, a = H(st.node), b = HE(st.node);
+      for (const s of body) {
+        const x = s.expression, l = s.loc.start.line + doc.off;
+        if (isSeqWA(x)) { if (x.expressions.some(isCopy)) fail('window 복사가 쉼표 연쇄 안에 있어 바꿔 쓰지 않는다: ' + l); continue; }
+        if (!isCopy(x)) continue;
+        if (a === b) { if (body.length !== 1 || lines[a - 1].trim() !== src(st.node)) fail('한 줄 if 블록의 window 복사가 다른 글자와 한 줄을 나눠 쓴다: ' + a); }
+        else if (s.loc.end.line + doc.off !== l || l === a || l === b || lines[l - 1].trim() !== src(s)) fail('window 복사 줄에 다른 글자가 있다: ' + l);
+        st8[x.left.property.name].copies.push({ rhs: x.right, line: l });
+      }
+    }
+  });
+  // 바꿔 쓴 자리에 들어갈 토큰열(사후 대조용) — 온전한 견본 문을 토큰으로 갈라 얻는다
+  const isComment = t => typeof t.type === 'string';
+  const sig = t => (t.type.label || '') + '\u0000' + (t.value === undefined ? '' : String(t.value));
+  const sample = text => parser.parse(text, { sourceType: 'script', tokens: true }).tokens.filter(t => !isComment(t) && t.type.label !== 'eof').map(sig);
+  const toks = doc.ast.tokens.filter(t => !isComment(t)), comments = doc.ast.tokens.filter(isComment);
+  const quietBetween = (stmts, from, to) => { // 두 최상위 문 사이에 「실행되는」 문이 없는가(선언·함수 선언·노출·window 복사만 있으면 조용하다)
+    for (let i = from + 1; i < to; i++) {
+      const t = stmts[i].node, x = t.type === 'ExpressionStatement' ? t.expression : null;
+      if (t.type === 'FunctionDeclaration' || isExposeCall(x) || isExposureBlock(t)) continue;
+      if (x && (isSeqWA(x) || isWA(x)) && (isSeqWA(x) ? x.expressions : [x]).every(y => /^(Identifier|NullLiteral|BooleanLiteral|NumericLiteral|StringLiteral)$/.test(y.right.type))) continue;
+      if (t.type === 'VariableDeclaration' && t.declarations.every(d => !d.init || /^(Identifier|NullLiteral|BooleanLiteral|NumericLiteral|StringLiteral)$/.test(d.init.type) || (d.init.type === 'MemberExpression' && !d.init.computed && d.init.object.type === 'Identifier'))) continue;
+      return H(t);
+    }
+    return 0;
+  };
+  for (const n of names) {
+    const info = st8[n];
+    if (!info.decls.length) fail('unstate.names 의 이름인데 IIFE 최상위 선언이 없다: ' + n);
+    if (info.decls.length !== 1) fail('같은 이름의 선언이 여럿이다 — 옮기지 않는다: ' + n + '(줄 ' + info.decls.map(x => H(x.st.node)).join(',') + ')');
+    const { st, d, idx } = info.decls[0];
+    if (st.node.kind !== 'var') fail('var 선언이 아니다 — 옮기지 않는다: ' + n + ' 줄 ' + H(st.node));
+    if (st.node.declarations.length !== 1) fail('선언자가 여럿인 선언문이다 — 옮기지 않는다: ' + n + ' 줄 ' + H(st.node));
+    const bd = iScope.getBinding(n);
+    if (!bd || bd.path.node !== d) fail('선언을 IIFE 바인딩에서 찾지 못했다: ' + n);
+    if (!d.init) fail('초기값이 없는 선언이다 — 옮기지 않는다: ' + n + ' 줄 ' + H(st.node));
+    headTailOnly(st, '선언문 ' + n);
+    if (!info.expose.length) fail('통로에 노출되지 않은 이름이다(상태 기관 대상이 아니다): ' + n);
+    const ts = toks.filter(t => t.start >= st.node.start && t.end <= st.node.end), semi = ts[ts.length - 1];
+    if (ts.length < 5 || ts[0].type.label !== 'var' || ts[1].type.label !== 'name' || ts[1].value !== n || ts[2].type.label !== '=' || semi.type.label !== ';' || semi.end !== st.node.end) fail('선언문이 `var X = 초기값;` 꼴이 아니다 — 옮기지 않는다: ' + n + ' 줄 ' + H(st.node));
+    if (ts[0].loc.start.line !== ts[2].loc.end.line) fail('선언문의 `var X =` 가 여러 줄에 걸쳐 있다: ' + n + ' 줄 ' + H(st.node));
+    if (comments.some(c => c.start >= ts[0].start && c.end <= ts[2].end)) fail('선언문의 `var X =` 사이에 주석이 있다: ' + n + ' 줄 ' + H(st.node));
+    const lastIdx = Math.max(...info.expose.map(x => x.idx)), firstIdx = Math.min(...info.expose.map(x => x.idx));
+    const lastKinds = new Set(); for (const x of info.expose) if (x.idx === lastIdx) for (const k of x.kinds) lastKinds.add(k);
+    if (!lastKinds.has('get')) fail('마지막 노출 문에 getter 가 없다 — 옮기지 않는다: ' + n);
+    api[n] = lastKinds.has('set') ? 'defineVar' : 'define'; // 마지막 노출 문(지우기 직전)에 set 이 있었는가로 정한다
+    if (idx < firstIdx) { const q = quietBetween(top, idx, firstIdx); if (q) fail('선언이 첫 노출보다 앞이고 그 사이에 실행되는 문이 있다(노출 시점이 달라진다) — 옮기지 않는다: ' + n + ' 줄 ' + H(st.node) + ' · 사이의 문 ' + q); }
+    const head = ORGAN + '.' + api[n] + "('" + n + "',", s8 = sample(ORGAN + '.' + api[n] + "('" + n + "', 0);");
+    subs.push({ line: ts[0].loc.start.line + doc.off, c0: ts[0].loc.start.column, c1: ts[2].loc.end.column, s: ts[0].start, e: ts[2].end, text: head, sigs: s8.slice(0, s8.length - 3) });
+    subs.push({ line: semi.loc.start.line + doc.off, c0: semi.loc.start.column, c1: semi.loc.end.column, s: semi.start, e: semi.end, text: ');', sigs: s8.slice(s8.length - 2) });
+    rewritten.declarations.push({ name: n, line: H(st.node), endLine: HE(st.node), api: api[n] });
+    for (const c of info.copies) {
+      const s9 = sample(SCOPE + '.' + n + ';');
+      subs.push({ line: c.rhs.loc.start.line + doc.off, c0: c.rhs.loc.start.column, c1: c.rhs.loc.end.column, s: c.rhs.start, e: c.rhs.end, text: SCOPE + '.' + n, sigs: s9.slice(0, s9.length - 1) });
+      rewritten.windowCopies.push({ name: n, line: c.line });
+    }
+  }
+  // 안전: 옮길 이름의 맨이름 참조가 지운 줄·바꿔 쓴 글자 밖에 하나라도 남으면 멈춘다
+  const inSub = nd => subs.some(r => nd.start >= r.s && nd.end <= r.e);
+  const remaining = [];
+  for (const n of names) {
+    const bd = iScope.getBinding(n), d = st8[n].decls[0].d;
+    const left = bd.referencePaths.map(r => r.node).concat(bd.constantViolations.map(r => r.node)).filter(nd => !del.has(H(nd)) && !inSub(nd));
+    const self = left.filter(nd => nd.start >= d.init.start && nd.end <= d.init.end);
+    if (self.length) fail('초기값에 자기 이름이 나온다 — 옮기지 않는다: ' + n + ' 줄 ' + H(self[0]));
+    if (left.length) remaining.push(n + '(줄 ' + [...new Set(left.map(H))].sort((x, y) => x - y).join(',') + ')');
+  }
+  if (remaining.length) fail('옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: ' + remaining.join(' · '));
+  // 줄 글자 바꿔 쓰기(오른쪽부터)
+  const edits = new Map(), byLine = new Map();
+  for (const r of subs) {
+    if (del.has(r.line)) fail('바꿔 쓸 줄과 지울 줄이 겹친다: ' + r.line);
+    if (commaFix.has(r.line)) fail('바꿔 쓸 줄과 쉼표 떼기가 겹친다: ' + r.line);
+    if (lines[r.line - 1].slice(r.c0, r.c1) !== code.slice(r.s, r.e)) fail('바꿔 쓸 글자의 줄 안 자리를 찾지 못했다: ' + r.line);
+    if (!byLine.has(r.line)) byLine.set(r.line, []);
+    byLine.get(r.line).push(r);
+  }
+  for (const [l, rs] of byLine) {
+    const sorted = rs.slice().sort((p, q) => q.c0 - p.c0);
+    for (let i = 1; i < sorted.length; i++) if (sorted[i].c1 > sorted[i - 1].c0) fail('바꿔 쓸 구간이 서로 겹친다: ' + l);
+    let t = lines[l - 1];
+    for (const r of sorted) t = t.slice(0, r.c0) + r.text + t.slice(r.c1);
+    edits.set(l, t);
+  }
+  const nh = [];
+  for (let i = 0; i < lines.length; i++) { const l = i + 1; if (del.has(l)) continue; nh.push(edits.has(l) ? edits.get(l) : commaFix.has(l) ? commaFix.get(l) : lines[i]); }
+  // 사후 대조: 다시 파싱한 토큰열 = 이전 토큰열에서 지운 줄의 토큰·뗀 쉼표를 빼고, 바꿔 쓴 구간을 정해진 토큰열로 바꾼 것. 주석은 지운 줄의 것만 빠진다.
+  const next = parseUnwireDoc(nh);
+  const tokLine = t => t.loc.start.line + doc.off, commaTok = new Set();
+  for (const l of commaFix.keys()) {
+    const onLine = toks.filter(t => tokLine(t) === l), last = onLine[onLine.length - 1];
+    if (!last || last.type.label !== ',') fail('쉼표를 뗀 줄의 마지막 토큰이 쉼표가 아니다: ' + l);
+    commaTok.add(last);
+  }
+  const want = [], emitted = new Set();
+  for (const t of toks) {
+    if (del.has(tokLine(t)) || commaTok.has(t)) continue;
+    const r = subs.find(x => t.start >= x.s && t.end <= x.e);
+    if (!r) { want.push(sig(t)); continue; }
+    if (!emitted.has(r)) { emitted.add(r); for (const g of r.sigs) want.push(g); }
+  }
+  if (emitted.size !== subs.length) fail('바꿔 쓸 구간 가운데 토큰을 찾지 못한 것이 있다 — 쓰지 않는다');
+  const got = next.ast.tokens.filter(t => !isComment(t)).map(sig);
+  let diffAt = want.length === got.length ? -1 : Math.min(want.length, got.length);
+  for (let i = 0; i < Math.min(want.length, got.length); i++) if (want[i] !== got[i]) { diffAt = i; break; }
+  if (diffAt >= 0) fail('바꿔 쓴 뒤 다시 파싱한 토큰열이 예상과 다르다(닫힌 목록 밖 글자 변화) — 쓰지 않는다: 토큰 ' + diffAt + ' 기대 ' + JSON.stringify(want[diffAt]) + ' 실제 ' + JSON.stringify(got[diffAt]));
+  const wantCom = comments.filter(t => !del.has(tokLine(t))).map(t => t.value), gotCom = next.ast.tokens.filter(isComment).map(t => t.value);
+  if (wantCom.length !== gotCom.length || wantCom.some((v, i) => v !== gotCom[i])) fail('바꿔 쓴 뒤 남은 주석이 예상과 다르다 — 쓰지 않는다');
+  const meta = { names: [...names], api, removed, rewritten, commaFixedLines: [...commaFix.keys()], deletedLines: [...del].sort((a, b) => a - b), editedLines: [...edits.keys()].sort((a, b) => a - b), htmlLinesBefore: lines.length, htmlLinesAfter: nh.length };
+  const nVar = Object.values(api).filter(v => v === 'defineVar').length;
+  const log = ['unstate', '· names', names.size, '· define', names.size - nVar, '· defineVar', nVar, '· expose props', removed.exposeProps.length, '(calls', removed.exposeCalls.length + ')', '· window copies', rewritten.windowCopies.length, '· comma', commaFix.size];
+  return { next, meta, log };
+}
+
 // smoke-test FN_NAMES(시험지가 인라인에서 함수를 잘라 실행) — 옮기지 않는다(MODULE-SPLIT-PROTOCOL 1절 (라), 유형 F2)
 const smokeFn = (() => { const s = fs.readFileSync(path.join(APP, 'scripts', 'smoke-test.js'), 'utf8'); const m = s.match(/const FN_NAMES = \[([\s\S]*?)\];/); if (!m) fail('smoke-test FN_NAMES 못 읽음'); return new Set((m[1].match(/'([^']+)'/g) || []).map(x => x.slice(1, -1))); })();
 
