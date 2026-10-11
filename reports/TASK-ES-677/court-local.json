@@ -1,0 +1,33 @@
+{
+ "tool": "node court/judge.js --repo . --head HEAD --out <임시 폴더> --json",
+ "type": "작업자 PC 에서 실행한 예비 점검 — 판정이 아니다. 판정은 GitHub 법정만 낸다",
+ "head": "7c61124de47038cb9bf1d7f0028013832e18ccc7",
+ "base": "67ca0e4ad24adef0d3424e297c20ec629867ce70",
+ "baseSource": "merge-base",
+ "verdict": null,
+ "verdictId": null,
+ "note": "로컬 법정은 판정을 내지 못했다. 처음 push(세 이름) 전에 전체 실행을 두 번 돌렸고 두 번 다 판정을 내기 전에 실행이 끝났다(exit 127 — 법정이 시작할 때 미리 써 두는 「심사 못 함」 판정서만 남았다. 첫 번째는 화면 점검 단계, 두 번째는 주장 심사 단계). 원인은 재지 못했다(측정불가 — 같은 PC 에서 다른 작업의 법정·시험이 함께 돌고 있었다). 범위를 고친 이번 push(18개 + 통로로 올린 2개)에서는 로컬 법정을 다시 돌리지 않았다.",
+ "runs": [
+  {
+   "exit": 127,
+   "lastStage": "화면 점검(앱 띄우기·표준 점검)",
+   "verdictWritten": "심사 못 함(미리 써 둔 판정서)"
+  },
+  {
+   "exit": 127,
+   "lastStage": "주장 심사(55건)",
+   "verdictWritten": "심사 못 함(미리 써 둔 판정서)"
+  }
+ ],
+ "insteadChecked": {
+  "measurement": "reports/TASK-ES-677/measurement.json (기준 f227a756 — 세 트리 전체 측정)",
+  "postMerge": "reports/TASK-ES-677/post-merge-check.json (#951 을 합친 뒤 — 등록 계획 · 대조 탐침 · npm test)",
+  "npmTest": {
+   "exitCode": 0,
+   "okLines": 487
+  },
+  "integrityGate": "ALL PASS",
+  "moduleGuard": "통과"
+ },
+ "recomputeSplitNote": "해당 없음 — 이 PR 은 index.html 을 바꾸지 않고 철거 생성기를 돌리지 않는다(증명 파일 없음). 등록 2차(#940)에서는 같은 꼴의 화면 보존 주장 12건이 「확인 못 함(증명 파일 지정 누락)」으로 찍혔다"
+}

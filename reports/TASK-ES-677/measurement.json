@@ -1,0 +1,871 @@
+{
+ "schema": "ourgoal.provide-run.measurement/1",
+ "taskId": "TASK-ES-677",
+ "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정만 낸다",
+ "measuredAt": "2026-10-11T11:15:00.186Z",
+ "environment": {
+  "node": "v24.15.0",
+  "platform": "win32"
+ },
+ "sourceCommit": {
+  "baseTreeHead": "f227a756b04b6a3dab4ce044d265e404b5acb9f8",
+  "worktreeHead": "19e6db99a4a82c83384d3ffac3e5a7a07e9d5053",
+  "note": "기준 = origin/main 임시 worktree. 모의 = 기준 + 이 PR 의 세포 파일 + 새로 등록한 이름의 배선을 지운 index.html(저장소 밖). 대조군 = 기준에서 같은 배선만 지운 것(등록 없음)"
+ },
+ "summary": {
+  "changed": {
+   "files": 65,
+   "jsChanged": 15,
+   "indexHtmlChanged": false,
+   "testsChanged": [],
+   "vaultChanged": [],
+   "unwireGeneratorChanged": [],
+   "scriptsChanged": [],
+   "harnessChanged": []
+  },
+  "plan": {
+   "existingNames": 527,
+   "plannedNow": 58,
+   "alreadyRegistered": 39,
+   "added": 18,
+   "upgradedFromWindowOnly": [
+    "renderLapRowsHtml",
+    "renderStopwatchWidgetHtml"
+   ],
+   "excluded": [],
+   "newBlockFiles": 11,
+   "filesToChange": 15,
+   "skipped": [
+    {
+     "name": "renderTeamGoalsScreen",
+     "reason": "등록 블록을 붙이면 800줄 상한을 넘는다(798 → 808줄) — 세포를 책임 단위로 나눈 뒤 등록한다"
+    }
+   ],
+   "skippedOver800": [
+    "renderTeamGoalsScreen"
+   ],
+   "iifeOwnedScope": 2,
+   "iifeOwnedWindow": 2,
+   "byKit": {
+    "_ui": {
+     "kitPath": "OurgoalUiHelpers",
+     "imports": 2,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 1,
+     "notExposedNoRefs": 1
+    },
+    "_xp": {
+     "kitPath": "OurgoalAvatarParts.xp",
+     "imports": 2,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_recordsKit": {
+     "kitPath": "OurgoalRecordsKit",
+     "imports": 31,
+     "registeredImports": 15,
+     "unwireReady": 15,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_calendarKit": {
+     "kitPath": "OurgoalCalendarKit",
+     "imports": 4,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 1,
+     "notExposedNoRefs": 0
+    },
+    "_goalsKit": {
+     "kitPath": "OurgoalGoalsKit",
+     "imports": 3,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_modalOpenKit": {
+     "kitPath": "OurgoalModalOpenKit",
+     "imports": 1,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_visionTableInputKit": {
+     "kitPath": "OurgoalVisionTableInputKit",
+     "imports": 1,
+     "registeredImports": 1,
+     "unwireReady": 1,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_levelBadgeKit": {
+     "kitPath": "OurgoalLevelBadgeKit",
+     "imports": 1,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_uiKit": {
+     "kitPath": "OurgoalUiHelpers",
+     "imports": 32,
+     "registeredImports": 2,
+     "unwireReady": 2,
+     "blockedByIifeRefs": 0,
+     "notExposed": 17,
+     "notExposedNoRefs": 0
+    },
+    "_commKit": {
+     "kitPath": "OurgoalCommKit",
+     "imports": 1,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 1,
+     "notExposedNoRefs": 0
+    }
+   }
+  },
+  "blocks": {
+   "before": 527,
+   "after": 545,
+   "lost": [],
+   "added": 18,
+   "addedEqualsPlan": true,
+   "changedEntries": 2,
+   "upgradedFromWindowOnly": [
+    "renderLapRowsHtml",
+    "renderStopwatchWidgetHtml"
+   ],
+   "upgradedEqualsPlan": true,
+   "otherChangedEntries": [],
+   "duplicateNames": [],
+   "filesChanged": 15,
+   "filesEqualPlan": true,
+   "outsideBlockChanged": [],
+   "over800": [],
+   "newBlockFiles": 11,
+   "addedWindow": [],
+   "addedScopeOnly": 18,
+   "note": "기준·작업 트리의 js/** 전부에서 등록 블록을 글자(정규식)로 읽어 이름 단위로 맞댄 것 — 생성기의 블록 읽기(AST)와 다른 방법이다"
+  },
+  "oneLineBlockFiles": [],
+  "registry": {
+   "base": {
+    "ok": true,
+    "counts": {
+     "scopeNames": 539,
+     "windowNames": 3,
+     "registered": 527,
+     "checked": 454,
+     "mismatches": 0,
+     "missing": 88,
+     "extra": 74,
+     "conflicts": 0,
+     "own": 527,
+     "ownScope": 451,
+     "ownWindow": 181,
+     "lateProvides": 0
+    },
+    "scopeLost": null,
+    "exceptions": 0,
+    "consoleErrors": 0,
+    "firstException": "",
+    "differing": {
+     "scope": [],
+     "window": []
+    }
+   },
+   "work": {
+    "ok": true,
+    "counts": {
+     "scopeNames": 539,
+     "windowNames": 3,
+     "registered": 545,
+     "checked": 472,
+     "mismatches": 0,
+     "missing": 70,
+     "extra": 74,
+     "conflicts": 0,
+     "own": 545,
+     "ownScope": 471,
+     "ownWindow": 181,
+     "lateProvides": 0
+    },
+    "scopeLost": [],
+    "exceptions": 0,
+    "consoleErrors": 0,
+    "firstException": "",
+    "differing": {
+     "scope": [],
+     "window": []
+    }
+   },
+   "intrinsicVariance": {
+    "scope": [],
+    "window": []
+   },
+   "registeredGrewBy": 18,
+   "extraSameAsBase": true,
+   "missingFellBy": 18
+  },
+  "nameProbe": {
+   "names": 20,
+   "valueDifferingWork": [],
+   "accessor": {
+    "base": {
+     "get · index.html": 20
+    },
+    "work": {
+     "get · index.html": 20
+    },
+    "mock": {
+     "data · records/pro-record-save": 1,
+     "data · records/pro-record-stopwatch": 1,
+     "data · records/pro-record-table": 1,
+     "data · records/pro-record-tools": 1,
+     "data · records/pro-record-trend-chart": 1,
+     "data · records/table-csv-sync": 4,
+     "data · records/stopwatch-format": 1,
+     "data · records/pro-templates": 1,
+     "data · core/deep-link-gateway": 1,
+     "data · records/pro-record-modal": 1,
+     "data · records/pro-template-modals": 1,
+     "data · records/vision-table-input": 1,
+     "data · records/voice-table-input": 1,
+     "data · records/table-stopwatch": 3,
+     "data · core/registry-init": 1
+    }
+   },
+   "bootExceptions": {
+    "base": 0,
+    "work": 0,
+    "mock": 0
+   }
+  },
+  "scenarios": {
+   "work": [
+    {
+     "id": "v01-guest-boot-six-tabs",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 13
+    },
+    {
+     "id": "v02-goals-subtabs-periods",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 10
+    },
+    {
+     "id": "v03-bell-modal-settings",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 9
+    },
+    {
+     "id": "v04-new-goal-modal",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 6
+    },
+    {
+     "id": "v05-goal-agent-drawer",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 3
+    },
+    {
+     "id": "v06-settings-legal-links",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 4
+    },
+    {
+     "id": "v07-auth-forgot-password",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 1
+    },
+    {
+     "id": "v08-checkin-mic-guide",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 2
+    },
+    {
+     "id": "v09-team-comment-passthrough",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 2
+    },
+    {
+     "id": "v10-sample-purge",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 3
+    },
+    {
+     "id": "v11-goal-fast-add",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 4
+    },
+    {
+     "id": "v12-records-export-modal",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 4
+    }
+   ],
+   "count": 12,
+   "allPassedBoth": true
+  },
+  "moduleLoad": {
+   "regressions": 0,
+   "insufficient": 1
+  },
+  "npmTest": {
+   "base": {
+    "exit": 0,
+    "ok": 487,
+    "okDot": 203,
+    "fail": 0
+   },
+   "other": {
+    "exit": 0,
+    "ok": 487,
+    "okDot": 203,
+    "fail": 0,
+    "failLines": []
+   },
+   "onlyBase": [],
+   "onlyOther": [],
+   "same": true
+  },
+  "testsEach": {
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      439,
+      439
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      38,
+      38
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      3,
+      3
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      7,
+      7
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    }
+   ],
+   "testFiles": 115,
+   "failedBase": 26,
+   "failedOther": 26,
+   "onlyOther": [],
+   "onlyBase": [],
+   "sameAsBase": true
+  },
+  "inlineScriptLines": {
+   "base": 751,
+   "work": 751,
+   "same": true
+  },
+  "ratchet": {
+   "oversizeJsFiles": [
+    0,
+    0
+   ],
+   "crossTabRefs": [
+    0,
+    0
+   ],
+   "windowAssignments": [
+    75,
+    75
+   ]
+  },
+  "guard": {
+   "exitCode": 0,
+   "integrityGateExitCode": 0
+  },
+  "mockUnwire": {
+   "unwire": {
+    "before": {
+     "htmlLines": 3021,
+     "iifeLines": 729,
+     "imports": 78,
+     "getterNames": 60,
+     "windowNames": 3
+    },
+    "after": {
+     "htmlLines": 2979,
+     "iifeLines": 687,
+     "imports": 58,
+     "getterNames": 40,
+     "windowNames": 3
+    },
+    "deletedLinesTotal": 42,
+    "excluded": 0,
+    "notRunnableKitVars": [
+     {
+      "kitVar": "_ui",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     },
+     {
+      "kitVar": "_xp",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     }
+    ]
+   },
+   "inlineScriptLines": {
+    "base": 751,
+    "mock": 709,
+    "delta": -42
+   },
+   "registry": {
+    "ok": true,
+    "counts": {
+     "scopeNames": 539,
+     "windowNames": 3,
+     "registered": 545,
+     "checked": 472,
+     "mismatches": 0,
+     "missing": 70,
+     "extra": 74,
+     "conflicts": 0,
+     "own": 545,
+     "ownScope": 471,
+     "ownWindow": 181,
+     "lateProvides": 0
+    },
+    "scopeLost": [],
+    "exceptions": 0,
+    "consoleErrors": 0,
+    "firstException": "",
+    "differing": {
+     "scope": [],
+     "window": []
+    }
+   },
+   "nameValueDiffering": [],
+   "scenarios": {
+    "rows": [
+     {
+      "id": "v01-guest-boot-six-tabs",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 13
+     },
+     {
+      "id": "v02-goals-subtabs-periods",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 10
+     },
+     {
+      "id": "v03-bell-modal-settings",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 9
+     },
+     {
+      "id": "v04-new-goal-modal",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 6
+     },
+     {
+      "id": "v05-goal-agent-drawer",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 3
+     },
+     {
+      "id": "v06-settings-legal-links",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 4
+     },
+     {
+      "id": "v07-auth-forgot-password",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 1
+     },
+     {
+      "id": "v08-checkin-mic-guide",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 2
+     },
+     {
+      "id": "v09-team-comment-passthrough",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 2
+     },
+     {
+      "id": "v10-sample-purge",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 3
+     },
+     {
+      "id": "v11-goal-fast-add",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 4
+     },
+     {
+      "id": "v12-records-export-modal",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 4
+     }
+    ],
+    "allPassedBoth": true
+   },
+   "npmTest": {
+    "base": {
+     "exit": 0,
+     "ok": 487,
+     "okDot": 203,
+     "fail": 0
+    },
+    "other": {
+     "exit": 0,
+     "ok": 487,
+     "okDot": 203,
+     "fail": 0,
+     "failLines": []
+    },
+    "onlyBase": [],
+    "onlyOther": [],
+    "same": true
+   },
+   "testsEach": {
+    "scripts": [
+     {
+      "script": "scripts/smoke-test.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       439,
+       439
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     },
+     {
+      "script": "scripts/verify-integrity-gate.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       38,
+       38
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     },
+     {
+      "script": "scripts/verify-all-clicks.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       3,
+       3
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     },
+     {
+      "script": "scripts/test-shipyard-modular.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       7,
+       7
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     }
+    ],
+    "testFiles": 115,
+    "failedBase": 26,
+    "failedOther": 26,
+    "onlyOther": [],
+    "onlyBase": [],
+    "sameAsBase": true
+   }
+  },
+  "mockAll": null,
+  "control": {
+   "unwire": {
+    "before": {
+     "htmlLines": 3021,
+     "iifeLines": 729,
+     "imports": 78,
+     "getterNames": 60,
+     "windowNames": 3
+    },
+    "after": {
+     "htmlLines": 2979,
+     "iifeLines": 687,
+     "imports": 58,
+     "getterNames": 40,
+     "windowNames": 3
+    },
+    "deletedLinesTotal": 42,
+    "excluded": 0,
+    "notRunnableKitVars": [
+     {
+      "kitVar": "_ui",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     },
+     {
+      "kitVar": "_xp",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     }
+    ]
+   },
+   "bootFailed": false,
+   "bootError": null,
+   "exceptions": 1,
+   "firstException": "TypeError: L.checkAndHandlePeerInviteUrl is not a function",
+   "scopeLostCount": 20,
+   "note": "등록 없이 같은 배선을 지우면 구역 함수가 통로에서 그 이름을 찾지 못해 부팅이 멈춘다 — 모의 철거가 통과하는 까닭이 이번 등록임을 보이는 대조군"
+  }
+ },
+ "limits": [
+  "법정 판정이 아니다. 모의 철거·대조군은 저장소 밖 사본이다 — 이 PR 은 index.html 을 바꾸지 않는다.",
+  "화면 시나리오는 게스트로 닿는 범위다. 로그인 뒤에만 불리는 이름은 대조 탐침의 값 일치(===)와 지문으로만 쟀다.",
+  "시험이 배선 글자를 붙잡는지는 모의 철거 사본의 npm test 와 시험 하나씩으로 쟀다(깨지는 것이 있으면 목록)."
+ ],
+ "commands": [
+  {
+   "id": "git rev-parse",
+   "startedAt": "2026-10-11T11:10:21.433Z",
+   "endedAt": "2026-10-11T11:10:21.490Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "git rev-parse",
+   "startedAt": "2026-10-11T11:10:21.490Z",
+   "endedAt": "2026-10-11T11:10:21.541Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "git diff",
+   "startedAt": "2026-10-11T11:10:21.541Z",
+   "endedAt": "2026-10-11T11:10:21.747Z",
+   "exitCode": 0,
+   "stderrHead": "warning: in the working copy of 'docs/specs/REQ-TASK-ES-677-PROVIDE-3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'reports/TASK-ES-677/cell-registry-c"
+  },
+  {
+   "id": "git ls-files",
+   "startedAt": "2026-10-11T11:10:21.748Z",
+   "endedAt": "2026-10-11T11:10:21.870Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry base",
+   "startedAt": "2026-10-11T11:10:23.027Z",
+   "endedAt": "2026-10-11T11:10:27.657Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry base2",
+   "startedAt": "2026-10-11T11:10:27.657Z",
+   "endedAt": "2026-10-11T11:10:32.273Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry work",
+   "startedAt": "2026-10-11T11:10:32.273Z",
+   "endedAt": "2026-10-11T11:10:36.847Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry mock",
+   "startedAt": "2026-10-11T11:10:36.847Z",
+   "endedAt": "2026-10-11T11:10:41.401Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry ctrl",
+   "startedAt": "2026-10-11T11:10:41.401Z",
+   "endedAt": "2026-10-11T11:10:45.993Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "name-probe name-probe.base.json",
+   "startedAt": "2026-10-11T11:10:45.998Z",
+   "endedAt": "2026-10-11T11:10:50.698Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "name-probe name-probe.work.json",
+   "startedAt": "2026-10-11T11:10:50.698Z",
+   "endedAt": "2026-10-11T11:10:55.267Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "name-probe name-probe.mock.json",
+   "startedAt": "2026-10-11T11:10:55.267Z",
+   "endedAt": "2026-10-11T11:10:59.870Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "scenario work",
+   "startedAt": "2026-10-11T11:10:59.873Z",
+   "endedAt": "2026-10-11T11:12:58.086Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "scenario mock",
+   "startedAt": "2026-10-11T11:12:58.086Z",
+   "endedAt": "2026-10-11T11:14:56.962Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "module-guard",
+   "startedAt": "2026-10-11T11:14:58.924Z",
+   "endedAt": "2026-10-11T11:14:59.419Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "verify-integrity-gate",
+   "startedAt": "2026-10-11T11:14:59.419Z",
+   "endedAt": "2026-10-11T11:15:00.186Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  }
+ ]
+}

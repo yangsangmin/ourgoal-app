@@ -1,0 +1,196 @@
+{
+ "tool": "reports/TASK-ES-614/mock-unwire.cjs",
+ "type": "작업자 측정, 판정 아님 — 저장소 밖 사본에서의 모의 철거(실제 철거 0)",
+ "measuredAt": "2026-10-11T11:02:54.499Z",
+ "generator": "docs/design/harness/module-split/gen-inline-hard.js mode:\"unwire\" (이 PR 에서 변경 0)",
+ "task": "TASK-ES-677-CTRL",
+ "excluded": {},
+ "before": {
+  "htmlLines": 3021,
+  "iifeLines": 729,
+  "imports": 78,
+  "getterNames": 60,
+  "windowNames": 3
+ },
+ "after": {
+  "htmlLines": 2979,
+  "iifeLines": 687,
+  "imports": 58,
+  "getterNames": 40,
+  "windowNames": 3
+ },
+ "deletedLinesTotal": 42,
+ "passes": [
+  {
+   "label": "_uiKit 1차",
+   "kitVar": "_uiKit",
+   "flags": {
+    "imports": true,
+    "exposeGetters": true,
+    "windowAssign": true
+   },
+   "names": [
+    "handleDeepLinkRouting",
+    "switchTab"
+   ],
+   "dropped": [],
+   "tries": 1,
+   "removed": {
+    "imports": 2,
+    "exposeProps": 2,
+    "exposeCalls": 1,
+    "windowAssigns": 0,
+    "windowBlocks": 0,
+    "commaFixedLines": 1,
+    "deletedLines": 6
+   },
+   "htmlLines": [
+    3021,
+    3015
+   ]
+  },
+  {
+   "label": "_recordsKit 1차",
+   "kitVar": "_recordsKit",
+   "flags": {
+    "imports": true,
+    "exposeGetters": true,
+    "windowAssign": true
+   },
+   "names": [
+    "bindProRecSave",
+    "bindProRecStopwatch",
+    "bindProRecTable",
+    "bindProRecTools",
+    "bindProRecTrendChart",
+    "downloadTableAsCsv",
+    "formatStopwatchTime",
+    "getAllProTemplates",
+    "openCsvImportModal",
+    "openProTemplateRecordModal",
+    "openTemplateColumnEditModal",
+    "openVoiceTableModal",
+    "openWearableSyncModal",
+    "playTimerBeep",
+    "renderLapRowsHtml",
+    "renderStopwatchWidgetHtml",
+    "syncRecordToMatchingGoals"
+   ],
+   "dropped": [],
+   "tries": 1,
+   "removed": {
+    "imports": 17,
+    "exposeProps": 17,
+    "exposeCalls": 0,
+    "windowAssigns": 0,
+    "windowBlocks": 0,
+    "commaFixedLines": 0,
+    "deletedLines": 34
+   },
+   "htmlLines": [
+    3015,
+    2981
+   ]
+  },
+  {
+   "label": "_visionTableInputKit 1차",
+   "kitVar": "_visionTableInputKit",
+   "flags": {
+    "imports": true,
+    "exposeGetters": true,
+    "windowAssign": true
+   },
+   "names": [
+    "openVisionTableModal"
+   ],
+   "dropped": [],
+   "tries": 1,
+   "removed": {
+    "imports": 1,
+    "exposeProps": 1,
+    "exposeCalls": 0,
+    "windowAssigns": 0,
+    "windowBlocks": 0,
+    "commaFixedLines": 0,
+    "deletedLines": 2
+   },
+   "htmlLines": [
+    2981,
+    2979
+   ]
+  }
+ ],
+ "byKit": [
+  {
+   "kitVar": "_goalsKit",
+   "passes": 0,
+   "names": 0,
+   "deletedLines": 0
+  },
+  {
+   "kitVar": "_uiKit",
+   "passes": 1,
+   "names": 2,
+   "deletedLines": 6
+  },
+  {
+   "kitVar": "_recordsKit",
+   "passes": 1,
+   "names": 17,
+   "deletedLines": 34
+  },
+  {
+   "kitVar": "_commKit",
+   "passes": 0,
+   "names": 0,
+   "deletedLines": 0
+  },
+  {
+   "kitVar": "_calendarKit",
+   "passes": 0,
+   "names": 0,
+   "deletedLines": 0
+  },
+  {
+   "kitVar": "_levelBadgeKit",
+   "passes": 0,
+   "names": 0,
+   "deletedLines": 0
+  },
+  {
+   "kitVar": "_modalOpenKit",
+   "passes": 0,
+   "names": 0,
+   "deletedLines": 0
+  },
+  {
+   "kitVar": "_visionTableInputKit",
+   "passes": 1,
+   "names": 1,
+   "deletedLines": 2
+  }
+ ],
+ "notRunnableKitVars": [
+  {
+   "kitVar": "_ui",
+   "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+   "registeredNames": []
+  },
+  {
+   "kitVar": "_xp",
+   "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+   "registeredNames": []
+  }
+ ],
+ "registeredStillWired": {
+  "count": 0,
+  "names": [],
+  "note": "등록됐지만 모의 철거 뒤에도 getter 줄 또는 window 줄이 남은 이름(제외·생성기 정지·kitVar 꼴 때문)"
+ },
+ "importOnlyWithRefs": {
+  "count": 0,
+  "names": [],
+  "note": "등록됐고 자기 getter·window 줄은 없는데 IIFE 안 다른 코드가 아직 써서 가져오기 줄을 못 지우는 이름"
+ },
+ "notes": []
+}
