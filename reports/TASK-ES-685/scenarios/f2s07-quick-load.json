@@ -1,0 +1,118 @@
+{
+  "id": "f2s07-quick-load",
+  "title": "첫 행 종목을 고쳐 「일반저장」한 뒤 새로 연 창에서 「루틴 불러오기」를 누르면 방금 저장한 기록의 행이 표에 들어온다 (도구 — 지난 루틴 불러오기) (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 서버 연결 블록만 인라인에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "text": "안전망스쿼트",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "벤치프레스"
+    },
+    {
+      "do": "click",
+      "selector": "#proQuickLoadBtn"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "안전망스쿼트"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

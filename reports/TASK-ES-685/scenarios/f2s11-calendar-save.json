@@ -1,0 +1,218 @@
+{
+  "id": "f2s11-calendar-save",
+  "title": "「일정연동저장」을 누르면 창이 닫히고 일정 탭 날짜 허브에 그 기록으로 가는 일정이 하나 생기며, 그 기록을 수정해 다시 일정연동저장해도 일정은 하나이고, 새로 고침한 뒤에도 일정이 하나 남아 있다 (저장 — 일정 연동 저장·같은 일정 갱신·새로 고침 뒤 유지) (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 서버 연결 블록만 인라인에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "text": "일정연동종목",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#proCalendarSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calOpenHubBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#calOpenHubBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "[data-hubrec]",
+      "equals": 1
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet .sched-title",
+      "text": "헬스(#record="
+    },
+    {
+      "do": "click",
+      "selector": ".modal-sheet-close"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".rec-card [data-recedit]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-recedit]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "일정연동종목"
+    },
+    {
+      "do": "type",
+      "selector": "#proRecMemo",
+      "text": "일정 다시 저장"
+    },
+    {
+      "do": "click",
+      "selector": "#proCalendarSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calOpenHubBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#calOpenHubBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "[data-hubrec]",
+      "equals": 1
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#calOpenHubBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#calOpenHubBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubAddProRecBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "[data-hubrec]",
+      "equals": 1
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

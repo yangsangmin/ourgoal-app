@@ -1,0 +1,209 @@
+{
+  "id": "f2s03-table-edit",
+  "title": "창에서 행을 추가하고 칸에 값을 넣으면 실시간 분석 띠의 합계가 바뀌고, 행을 지우면 번호가 다시 매겨지며, 마지막 한 행을 지우면 빈 행으로 돌아간다 (표 편집 — 행 추가·칸 입력·행 삭제) (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 서버 연결 블록만 인라인에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proAnalyticsWrap",
+      "text": "18 세트"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 5
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"1\"]",
+      "text": "플랭크"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"2\"]",
+      "text": "3세트"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proAnalyticsWrap",
+      "text": "21 세트"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn2"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 6
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "플랭크"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"2\"]",
+      "name": "value",
+      "equals": "3세트"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"5\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 5
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"0\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "스쿼트"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"3\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "플랭크"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proAnalyticsWrap",
+      "text": "16 세트"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"3\"]"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"2\"]"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"1\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 1
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "스쿼트"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"0\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 1
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": ""
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"0\"]",
+      "name": "value",
+      "equals": "1"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

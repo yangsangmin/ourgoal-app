@@ -1,0 +1,136 @@
+{
+  "id": "f2x4-voice-sim-chip-insert",
+  "title": "검토자 추가 4 — 음성 입력 창의 시뮬레이션 칩(마이크 없이 누를 수 있음)을 누르면 행 넣기 콜백(도구 조각)이 돈다 → 「이 행 표에 추가하기」 → 닫기 → 다시 열기 (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 서버 연결 블록만 인라인에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proVoiceInputBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#voiceCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCloseMicGuide"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnCloseMicGuide"
+    },
+    {
+      "do": "click",
+      "selector": ".quick-prose-chip[data-voicesim=\"벤치프레스 80kg 10회 3세트 45분\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#voiceConfirmRowBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#voiceConfirmRowBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#voiceConfirmRowBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#voiceCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#voiceCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "do": "click",
+      "selector": "#proCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
