@@ -12,8 +12,8 @@
 - [x] saveGoogleToken 모의 이전 + 시험 전부 비교 · 예상 30분 · 완료 기준: mock-tests.json ok true, gcal-login-reconnect-fix 종료 코드 같음
 - [x] REQ(8원칙)·claims·TICKETS·설계 문서 한 줄 · 예상 20분 · 완료 기준: verify-integrity-gate → npm test 종료 코드 0
 - [x] 커밋 → judge.js 전체 실행 · 예상 15분 · 완료 기준: 결과가 court-local.json 에 있다
-- [ ] origin/main 합치기 → push → PR 열기(사양 공개, 5대 고정 블록) → `gh pr view` 되읽기 · 예상 10분 · 완료 기준: PR 번호·head 가 되읽은 값과 같다
-- [ ] [4단계: 심사 청구] 오케스트레이터에 보고 · 완료 기준: 보고에 PR 번호·단위 시험 수·모의 결과가 있다
+- [x] origin/main 합치기 → push → PR 열기(#929)(사양 공개, 5대 고정 블록) → `gh pr view` 되읽기 · 예상 10분 · 완료 기준: PR 번호·head 가 되읽은 값과 같다
+- [x] [4단계: 심사 청구] 오케스트레이터에 보고 · 완료 기준: 보고에 PR 번호·단위 시험 수·모의 결과가 있다
 - [ ] (다음 PR — 이 PR 병합 뒤) saveGoogleToken 실제 이전
 
 ## 막힐 지점 예상(원칙 ⑧)
