@@ -1,0 +1,605 @@
+{
+ "tool": "docs/design/harness/module-split/unstate-check-634.js",
+ "type": "작업자 측정, 판정 아님",
+ "generator": "docs/design/harness/module-split/gen-inline-hard.js",
+ "baseGenerator": "ba02c8408487e1a920250076226d87b3b86e278f:docs/design/harness/module-split/gen-inline-hard.js",
+ "realIndexHtml": "ba02c8408487e1a920250076226d87b3b86e278f:index.html",
+ "app": "C:\\dev\\wt\\es634-gen-unstate",
+ "measuredAt": "2026-10-11T01:29:45.381Z",
+ "tmp": "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-634-nA2SsL",
+ "results": [
+  {
+   "id": "B",
+   "title": "unwire 확장 시험 16건(#TASK-ES-619 — B1 시험 8건 재실행 포함)이 고친 생성기에서 그대로 통과",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "passed": 16,
+    "total": 16,
+    "b1": "8/8",
+    "each": [
+     "B:ok",
+     "S1:ok",
+     "M1:ok",
+     "M2:ok",
+     "X1a:ok",
+     "X1b:ok",
+     "X3a:ok",
+     "X3b:ok",
+     "X3c:ok",
+     "X3d:ok",
+     "X2a:ok",
+     "X2b:ok",
+     "C1:ok",
+     "R1:ok",
+     "R2:ok",
+     "R3:ok"
+    ],
+    "a1Files": {
+     "index.html": {
+      "same": true,
+      "genBytes": 468137,
+      "headBytes": 468137
+     },
+     "js/tabs/settings/a11y-announce.js": {
+      "same": true,
+      "genBytes": 2126,
+      "headBytes": 2126
+     },
+     "js/tabs/comm/user-profile-open.js": {
+      "same": true,
+      "genBytes": 2180,
+      "headBytes": 2180
+     }
+    }
+   }
+  },
+  {
+   "id": "U1",
+   "title": "unwire 설정(단일 객체 · 배열+dropKitVar): 고친 생성기 = 기준 생성기(index.html · 메타 · 출력 줄)",
+   "ok": true,
+   "detail": [
+    {
+     "new": 0,
+     "base": 0,
+     "same": true,
+     "err": null
+    },
+    {
+     "new": 0,
+     "base": 0,
+     "same": true,
+     "err": null
+    }
+   ]
+  },
+  {
+   "id": "T1",
+   "title": "S1 getter/setter 줄 삭제 · R1 선언문 → define/defineVar(여러 줄 초기값 포함) · R2 window 복사 세 꼴의 오른쪽 바꿔 쓰기. names 밖(keep · alpha · bump · 손잡이)은 글자 그대로",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "api": {
+     "counter": "defineVar",
+     "label": "define",
+     "themes": "define"
+    },
+    "deleted": [
+     11,
+     12,
+     14
+    ],
+    "edited": [
+     16,
+     17,
+     19,
+     22,
+     24,
+     25,
+     27
+    ],
+    "diffAt": null
+   }
+  },
+  {
+   "id": "S1",
+   "title": "expose 문의 속성이 모두 대상이면 문 전체를 지운다. 대상이 없는 expose 문은 끝 쉼표까지 그대로다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "diffAt": null
+   }
+  },
+  {
+   "id": "R1",
+   "title": "초기값 글자 보존: 괄호 친 식 · 초기값 앞 주석 · 문자열 안의 같은 글자 · 함수식 · `;` 앞 빈칸 · 조건식",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "diffAt": null
+   }
+  },
+  {
+   "id": "K1",
+   "title": "define/defineVar 는 「지우기 직전 마지막 노출 문에 set 이 있었는가」로 생성기가 정한다(L047)",
+   "ok": true,
+   "detail": [
+    {
+     "why": "getter 만",
+     "want": "define",
+     "got": "define",
+     "ok": true,
+     "err": null
+    },
+    {
+     "why": "get+set",
+     "want": "defineVar",
+     "got": "defineVar",
+     "ok": true,
+     "err": null
+    },
+    {
+     "why": "앞에는 set, 마지막엔 getter 만(L047)",
+     "want": "define",
+     "got": "define",
+     "ok": true,
+     "err": null
+    },
+    {
+     "why": "앞에는 getter 만, 마지막에 set",
+     "want": "defineVar",
+     "got": "defineVar",
+     "ok": true,
+     "err": null
+    },
+    {
+     "why": "마지막 문에서 get 과 set 이 다른 줄",
+     "want": "defineVar",
+     "got": "defineVar",
+     "ok": true,
+     "err": null
+    }
+   ]
+  },
+  {
+   "id": "Z01",
+   "title": "정지: 맨이름 참조가 남음(함수 본문이 읽는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: counter(줄 23)\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z02",
+   "title": "정지: 맨이름 대입이 남음(함수 본문이 쓴다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: label(줄 23)\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z03",
+   "title": "정지: 선언문이 다른 문과 한 줄을 나눠 씀",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "선언문 label 이(가) 다른 글자와 한 줄을 나눠 쓴다: 17\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z04",
+   "title": "정지: 선언문이 주석과 한 줄을 나눠 씀",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "선언문 label 이(가) 다른 글자와 한 줄을 나눠 쓴다: 17\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z05",
+   "title": "정지: 선언자가 여럿",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "선언자가 여럿인 선언문이다 — 옮기지 않는다: counter 줄 16\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z06",
+   "title": "정지: 초기값에 자기 이름",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "초기값에 자기 이름이 나온다 — 옮기지 않는다: counter 줄 16\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z07",
+   "title": "정지: 같은 이름의 선언이 여럿",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: counter(줄 16,17)\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z08",
+   "title": "정지: 초기값이 없음",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "초기값이 없는 선언이다 — 옮기지 않는다: counter 줄 16\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z09",
+   "title": "정지: 통로에 노출되지 않은 이름",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "통로에 노출되지 않은 이름이다(상태 기관 대상이 아니다): hidden\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z10",
+   "title": "정지: 선언이 없는 이름",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unstate.names 의 이름인데 IIFE 최상위 선언이 없다: nothingHere\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z11",
+   "title": "정지: getter 본문이 `return X;` 꼴이 아님",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "expose 속성의 본문이 `return X;`·`X = v;` 꼴이 아니다 — 지우지 않는다: 12\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z12",
+   "title": "정지: setter 본문이 `X = v;` 꼴이 아님",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "expose 속성의 본문이 `return X;`·`X = v;` 꼴이 아니다 — 지우지 않는다: 11\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z13",
+   "title": "정지: window 복사 줄이 다른 글자와 한 줄을 나눠 씀",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "window 복사 줄이 다른 글자와 한 줄을 나눠 쓴다: 24\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z14",
+   "title": "정지: 한 줄 if 블록의 window 복사가 다른 대입과 한 줄",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "한 줄 if 블록의 window 복사가 다른 글자와 한 줄을 나눠 쓴다: 25\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z15",
+   "title": "정지: window 복사가 쉼표 연쇄 안",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "window 복사가 쉼표 연쇄 안에 있어 바꿔 쓰지 않는다: 24\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z16",
+   "title": "정지: 다른 이름으로 다는 window 대입(별칭)은 바꿔 쓰지 않고 참조로 남아 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: label(줄 24)\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z17",
+   "title": "정지: var 선언이 아님",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "var 선언이 아니다 — 옮기지 않는다: counter 줄 16\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z18",
+   "title": "정지: `var X =` 사이에 주석",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "선언문의 `var X =` 사이에 주석이 있다: counter 줄 16\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z19",
+   "title": "정지: 모르는 칸",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unstate 설정에 모르는 칸: moveBodies\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z20",
+   "title": "정지: names 가 빔",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unstate.names 가 비었다\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z21",
+   "title": "정지: 선언이 첫 노출보다 앞이고 그 사이에 실행되는 문(호출)이 있음",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "선언이 첫 노출보다 앞이고 그 사이에 실행되는 문이 있다(노출 시점이 달라진다) — 옮기지 않는다: early 줄 7 · 사이의 문 8\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "Z22",
+   "title": "선언이 첫 노출보다 앞이어도 그 사이가 선언·함수 선언뿐이면 옮긴다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null
+   }
+  },
+  {
+   "id": "M1",
+   "title": "여러 실행: 배열(unstate · { unwire } · unstate) 한 번 = 단계를 따로 차례로 돌린 결과(바이트 동일)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "seq": [
+     0,
+     0,
+     0
+    ],
+    "sameSeq": true,
+    "steps": [
+     "unstate",
+     "unwire",
+     "unstate"
+    ],
+    "diffAt": null
+   }
+  },
+  {
+   "id": "M2",
+   "title": "뒤 실행이 멈추면 쓰지 않고 몇 번째 실행인지 알린다. 빈 배열 · unwire 단계에 다른 칸 · 단일 객체 꼴의 unwire 칸은 멈춘다",
+   "ok": true,
+   "detail": {
+    "bad": "[unstate 실행 2/2] 옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: keep(줄 22)\r",
+    "empty": "const fail = m => { throw new Error(m); };\r",
+    "extra": "[unstate 실행 1/1] unwire 단계에는 unwire 칸 하나만 둔다\r",
+    "single": "unstate 설정에 모르는 칸: unwire\r",
+    "unchanged": true
+   }
+  },
+  {
+   "id": "V1",
+   "title": "모의 기관 등가: 진짜 app-scope.js + 설계 3.3 계약대로 만든 견본 기관에서, 바꿔 쓰기 전·후 꾸러미의 관찰값(통로 읽기·쓰기 · getter 전용 이름에 쓰기 · window 일회 복사 · 같은 객체)이 같다",
+   "ok": true,
+   "detail": {
+    "err": null,
+    "before": {
+     "read": {
+      "counter": 0,
+      "label": "a (label) b",
+      "themes": "[{\"id\":\"a\"},{\"id\":\"b\"}]",
+      "keep": "{\"n\":1}",
+      "alpha": "function"
+     },
+     "window": {
+      "label": "a (label) b",
+      "counter": 0,
+      "themesSame": true,
+      "bump": 2
+     },
+     "setCounter": 7,
+     "setLabelStrict": "throw:TypeError",
+     "mutate": 3,
+     "descriptor": [
+      "counter:get+set",
+      "label:get",
+      "themes:get"
+     ],
+     "windowCounterAfterSet": 0
+    },
+    "after": {
+     "read": {
+      "counter": 0,
+      "label": "a (label) b",
+      "themes": "[{\"id\":\"a\"},{\"id\":\"b\"}]",
+      "keep": "{\"n\":1}",
+      "alpha": "function"
+     },
+     "window": {
+      "label": "a (label) b",
+      "counter": 0,
+      "themesSame": true,
+      "bump": 2
+     },
+     "setCounter": 7,
+     "setLabelStrict": "throw:TypeError",
+     "mutate": 3,
+     "descriptor": [
+      "counter:get+set",
+      "label:get",
+      "themes:get"
+     ],
+     "windowCounterAfterSet": 0
+    }
+   }
+  },
+  {
+   "id": "P1",
+   "title": "실제 index.html: 통로에 노출된 상태 이름 63개 중 지금 옮길 수 있는 50개를 한 번에 돌려 성공하고 결과가 다시 파싱된다(생성기 사후 토큰 대조 통과)",
+   "ok": true,
+   "detail": {
+    "pin": "ba02c8408487e1a920250076226d87b3b86e278f",
+    "stateNames": 80,
+    "exposed": 63,
+    "notExposed": 17,
+    "movable": 50,
+    "stopped": 13,
+    "status": 0,
+    "err": null,
+    "reparse": "ok",
+    "htmlLines": [
+     5406,
+     5338
+    ],
+    "deleted": 68,
+    "edited": 52,
+    "define": 27,
+    "defineVar": 23
+   }
+  },
+  {
+   "id": "P2",
+   "title": "실제 index.html: 지운 줄은 대상 이름의 getter/setter(와 빈 expose 껍데기)뿐, 바뀐 줄은 선언 머리 · 선언 끝 `;` · window 복사 오른쪽뿐, 나머지 줄은 순서대로 같다(정규식 감사)",
+   "ok": true,
+   "detail": {
+    "ok": true,
+    "kinds": {
+     "accessor": 50,
+     "comma": 3,
+     "wrapper": 18,
+     "head": 50,
+     "tail": 50,
+     "copy": 1
+    },
+    "decls": 50,
+    "copies": 1,
+    "exposeProps": 50,
+    "exposeCalls": 9,
+    "bad": null
+   }
+  },
+  {
+   "id": "P3",
+   "title": "계획 파일: 대상 이름 50개 · 이름별 API · 멈춘 이름 13개와 사유 · 예상 줄 변화(모의 적용 사본의 앱 부팅은 기관이 없어 측정불가)",
+   "ok": true,
+   "detail": {
+    "written": "reports/TASK-ES-634/unstate-plan.json",
+    "totals": {
+     "stateNames": 80,
+     "exposed": 63,
+     "notExposed": 17,
+     "movable": 50,
+     "stopped": 13,
+     "define": 27,
+     "defineVar": 23,
+     "deletedLines": 68,
+     "editedLines": 52,
+     "exposeProps": 50,
+     "exposeCallsRemoved": 9,
+     "commaFixedLines": 3,
+     "windowCopies": 1,
+     "htmlLines": [
+      5406,
+      5338
+     ]
+    },
+    "stopped": [
+     {
+      "name": "sb",
+      "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: sb(줄 3629,3631,3635,3704,5268,5283,5296,5302,5327)"
+     },
+     {
+      "name": "state",
+      "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: state(줄 3108,3110,3111,3112,3114,3379,3576,3577,3578,3629,3634,3680,3681,3689,3690,3691,3692,3698,3718,3719,3742,3743,3795,3811,3812,3813,3814,3815,3816,4003,4082,4241,4509,4835,4836,4837,4866,4867,4869,4875,4876,4877,4879,4881,4884,4885,4886,4890,4911,4931,4936,4939,4979,4992,4993,5269,5284,5285,5290,5302,5311,5319,5324,5327)"
+     },
+     {
+      "name": "pendingCapturePhoto",
+      "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: pendingCapturePhoto(줄 3312,3320,3324)"
+     },
+     {
+      "name": "capturePhotoInput",
+      "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: capturePhotoInput(줄 3304,3306,3308,3327)"
+     },
+     {
+      "name": "capturePhotoPreview",
+      "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: capturePhotoPreview(줄 3313,3314,3315,3319,3322,3325,3326)"
+     },
+     {
+      "name": "_subtabTplCat",
+      "reason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplCat(줄 3523,3528)"
+     },
+     {
+      "name": "_subtabTplQuery",
+      "reason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplQuery(줄 3524,3529)"
+     },
+     {
+      "name": "_subtabTplDomain",
+      "reason": "선언문 _subtabTplDomain 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3526"
+     },
+     {
+      "name": "_subtabTplType",
+      "reason": "선언문 _subtabTplType 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3527"
+     },
+     {
+      "name": "USER_SESSION_CHANNEL",
+      "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: USER_SESSION_CHANNEL(줄 3630,3631,3632,3635)"
+     },
+     {
+      "name": "MOCK_GROUPS",
+      "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: MOCK_GROUPS(줄 3721,3722,3745,3746,5321,5324)"
+     },
+     {
+      "name": "shareContent",
+      "reason": "window 복사 줄이 다른 글자와 한 줄을 나눠 쓴다: 5187"
+     },
+     {
+      "name": "FEED_POSTS_CACHE",
+      "reason": "선언문 FEED_POSTS_CACHE 이(가) 다른 글자와 한 줄을 나눠 쓴다: 5196"
+     }
+    ]
+   }
+  }
+ ],
+ "passed": 34,
+ "total": 34,
+ "ok": true
+}

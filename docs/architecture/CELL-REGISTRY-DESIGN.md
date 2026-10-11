@@ -111,35 +111,57 @@ OurgoalCellRegistry.report()        // 대조 결과: { mismatches:[{name, owner
 - 그래서 IIFE 안의 맨이름 참조(선언·자기 expose 속성·자기 window 복사 줄 제외)가 0 이 된 이름만 옮긴다. unwire 의 안전 검사와 같은 기준이고, 저장소가 둘이 되는 순간이 없다.
 - 조사: 지금 조건을 만족하는 노출 이름은 63개 중 55개다. 기다려야 하는 8개는 `sb` · `state` · `MOCK_GROUPS` · `pendingCapturePhoto` · `capturePhotoInput` · `capturePhotoPreview` · `USER_SESSION_CHANNEL` · `shareContent` 이고, 함수 이전·감싸기가 끝나면 풀린다.
 
-**기관 API(손으로 쓰는 새 기관, B1 과 같은 PR 종류)**
+**기관 API — 확정(#TASK-ES-634)**
+
+생성기가 내는 글자가 이 API 를 부른다. 기관 구현(`js/core/app-state.js` · 로드 줄)은 다음 PR 이며, 아래 계약을 그대로 따른다(손으로 쓰는 새 기관, B1 과 같은 PR 종류).
 
 ```js
-OurgoalAppState.define(name, value)      // 통로에 getter 만 달고 값을 넣는다
-OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는다
+window.OurgoalAppState.define(name, value)      // 읽기 전용 — 통로에 getter 만 단다
+window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 get/set 짝을 단다
 ```
 
-- 접근자는 그 이름의 첫 define 때 한 번만 단다. 그래서 이전 PR 은 `index.html` 만 바뀐다(3.1 의 법정 제약과 같은 이유).
+| 항목 | 계약 |
+|---|---|
+| 전역 | `window.OurgoalAppState` 하나(새 전역 1개). `js/core/app-scope.js` 뒤, 인라인 IIFE 앞에서 동기 태그로 로드한다 |
+| 인자 | `name` 은 글자열(생성기가 따옴표로 낸 이름 그대로). `value` 는 호출 시점에 평가된 초기값이다. 복사하지 않고 그대로 보관한다(같은 객체) |
+| 접근자를 다는 시점 | 그 이름의 **첫 define/defineVar 호출 때 한 번**. `OurgoalAppScope.expose('core/app-state', …)` 로 통로(`OurgoalAppScope.scope`)에 단다. getter 는 보관한 현재 값을 돌려주고, `defineVar` 의 setter 는 보관 값을 바꾼다 |
+| 이미 있던 속성 | 그 이름에 속성이 이미 있어도(선언 줄보다 먼저 누가 `L.X = v` 로 만든 데이터 속성 등) 다시 정의해 덮는다. 예전에 선언 줄의 초기값 대입이 앞선 쓰기를 덮던 것과 같다 |
+| 같은 이름을 두 번 | 오류를 던진다(이름 하나에 선언 하나 — 생성기는 선언이 하나인 이름만 바꿔 쓴다) |
+| 반환값 | 쓰지 않는다(생성기가 낸 줄은 식 문이다) |
+| window | 기관은 window 에 상태 이름을 달지 않는다. 일회 복사 줄이 원래 자리에서 통로 값을 읽어 단다(R2) |
+| 읽기 전용 이름에 쓰기 | `define` 으로 단 이름에 `L.X = v` 를 하면 지금의 getter 전용 노출과 똑같이 동작한다(엄격 모드에서 TypeError). 기관이 따로 막거나 풀지 않는다 |
 
-**생성기 `"mode": "unstate"` — 지정한 이름에 대해 (줄 종류는 5절 X4·X5·X6)**
+- 견본: 단위 시험 `docs/design/harness/module-split/unstate-check-634.js` 의 `SAMPLE_ORGAN` 이 이 계약대로 만든 견본이고, 시험 V1 이 진짜 `js/core/app-scope.js` 위에서 바꿔 쓰기 전·후 꾸러미의 관찰값이 같음을 본다. 견본은 진짜 기관을 대신하지 않는다.
+- 접근자를 첫 define 때 달기 때문에 이전 PR 은 `index.html` 만 바뀐다(3.1 의 법정 제약과 같은 이유).
+
+**생성기 `"mode": "unstate"` — 지정한 이름에 대해 (줄 종류는 5절 X4·X5·X6 · 구현 #TASK-ES-634, 설정 꼴은 5.5)**
 
 | 기호 | 줄 종류 | 동작 |
 |---|---|---|
 | S1 | 그 이름의 expose getter/setter 속성 줄 | 삭제(unwire 의 getter 삭제와 같은 꼴, 대상이 상태 이름) |
-| R1 | 선언문 `var X = <초기값>;` | `window.OurgoalAppState.define('X', <초기값 원문>);` 로 1:1 바꿔 쓴다. 지우기 직전 **마지막 노출 줄**에 `set X` 가 있었으면 `defineVar` |
+| R1 | 선언문 `var X = <초기값>;` | `window.OurgoalAppState.define('X', <초기값 원문>);` 로 1:1 바꿔 쓴다. 지우기 직전 **마지막 노출 문**에 `set X` 가 있었으면 `defineVar` |
 | R2 | 자기 일회 window 복사 줄 `window.X = X;`(조사: 7줄) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓴다. 자리와 시점 유지 |
 
-- 안전 정지 조건: 그 이름의 맨이름 참조가 하나라도 남음 · 선언문이 다른 문과 한 줄을 나눠 씀 · 선언자가 여럿 · 초기값에 자기 이름이 나옴.
+- 안전 정지 조건(구현): 그 이름의 맨이름 참조(읽기·대입)가 지운 줄·바꿔 쓴 글자 밖에 남음 · 초기값에 자기 이름 · 선언이 없거나 같은 이름의 선언이 여럿 · 선언자가 여럿 · `var` 가 아님 · 초기값이 없음 · 선언문이 다른 글자와 한 줄을 나눠 씀 · `var X =` 사이에 주석 · 통로에 노출되지 않은 이름 · getter/setter 본문이 `return X;`·`X = v;` 꼴이 아님 · window 복사 줄이 다른 글자와 한 줄을 나눠 쓰거나 쉼표 연쇄 안 · 선언이 첫 노출 문보다 앞이고 그 사이에 실행되는 문이 있음(아래 「노출 시점」) · 모르는 칸.
+- R2 가 받는 window 복사 줄은 unwire 의 window 대입 줄과 같은 꼴이다: 줄을 통째로 차지하는 `window.X = X;` · 그런 대입 하나만 담은 한 줄 if 블록 · 여러 줄 if 블록 안에서 줄을 통째로 차지하는 대입. 다른 이름으로 다는 대입(`window.Y = X`)은 바꿔 쓰지 않으며, 맨이름 참조로 남아 생성기가 멈춘다.
+- 노출 시점: 예전에는 통로 속성이 **노출 문** 자리에서 생겼고, 바뀐 뒤에는 **선언 줄** 자리에서 생긴다. 노출 문이 선언보다 앞이면 그 사이의 읽기는 전·후 모두 `undefined` 다(지금 옮길 수 있는 이름은 전부 이 경우다 — 재측정). 선언이 노출 문보다 앞이면 그 사이에 예전에는 속성이 없었고 바뀐 뒤에는 값이 읽힌다. 그 사이에 실행되는 최상위 문(호출 등)이 있으면 생성기가 멈춘다. 선언·함수 선언·노출·window 복사만 있으면 돈다.
 - 세포 파일은 쓰지 않는다. 설정의 `cells` 에는 변하지 않는 `js/core/app-state.js` 만 적는다.
 - 초기값 대입이 **원래 자리에 그대로** 남는다. 그래서 `sb` 초기값 직후의 `bindSupabaseAuthStateListener()` 같은 순서가 보존된다. 초기값을 기관 파일 로드 시점으로 당기지 않는다.
 - 초기화 전 읽기는 지금도 `undefined`(끌어올려진 var), 바뀐 뒤에도 `undefined`(속성 없음)다. 다른 점은 `'X' in scope` 뿐이며, 이것이 무해하다는 것은 **추측**이다(이전 PR 에서 측정한다).
 
 **L047 해소**
 - 기관이 이름마다 한 곳에서 한 번 get(+set)을 단다. `index.html` 의 그 이름 속성은 같은 PR 에서 모두 지워지므로 뒤에서 덮을 노출이 없다.
-- 쓰기 가능 여부는 사람이 아니라 생성기가 「마지막 노출 줄」 기준으로 정한다.
+- 쓰기 가능 여부는 사람이 아니라 생성기가 「마지막 노출 문」(그 이름의 속성이 든 expose 문 가운데 맨 뒤의 것) 기준으로 정한다. 앞쪽 노출에 setter 가 있었어도 마지막 노출이 getter 뿐이면 `define` 이다 — 지금 실제로 살아 있는 접근자와 같다.
 
 **대조**
 - 사전(정적): 이전 대상 이름마다 통로 접근자의 get/set 유무와 생성기가 고를 `define`/`defineVar` 가 같은지 본다.
 - PR(동적, 기준 대 작업): 게스트 부팅 뒤 대상 이름의 통로 값 요약(typeof·길이·JSON 가능한 값), 일회 window 복사 줄의 동일성(`window[n] === scope[n]`), 기존 시나리오, module-load 탐침, npm test.
+
+**재측정(#TASK-ES-634 — 기준 ba02c840, `reports/TASK-ES-634/unstate-plan.json`, 저장소 밖 사본에 모의 적용)**
+- 상태 이름 80개 중 통로에 노출된 것은 63개, 그중 **지금 옮길 수 있는 것은 50개**다(`define` 27 · `defineVar` 23).
+- 모의 적용 시 지워지는 줄 68(getter/setter 속성 50줄 + 속성이 모두 지워진 expose 문 9개의 머리·꼬리), 바뀌는 줄 52(선언 머리·꼬리와 window 복사 1줄), 쉼표를 떼는 줄 3. index.html 5406줄 → 5338줄(줄 수는 끝의 빈 줄 포함).
+- 멈춘 13개: 맨이름 참조가 남음 7(`sb` · `state` · `pendingCapturePhoto` · `capturePhotoInput` · `capturePhotoPreview` · `USER_SESSION_CHANNEL` · `MOCK_GROUPS`) / 같은 이름의 선언이 둘 2(`_subtabTplCat` · `_subtabTplQuery`) / 선언문이 다른 글자와 한 줄을 나눠 씀 3(`_subtabTplDomain` · `_subtabTplType` · `FEED_POSTS_CACHE`) / window 복사 줄이 다른 글자와 한 줄을 나눠 씀 1(`shareContent`).
+- 재지 않은 것: 모의 적용 사본의 앱 부팅·화면 동작(기관 파일이 아직 없다 — 측정불가) · 시험이 이 이름들의 글자를 단언하는지(이전 PR 이 npm test 로 잰다).
 
 **줄 효과와 PR(조사, 추정)**
 - getter/setter 66줄 + 상태 전용 expose 껍데기가 지워진다. 1차(55개)는 약 57줄.
@@ -229,9 +251,9 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 | X1 | `_ui`·`_xp` 처럼 이름이 `_xxxKit` 꼴이 아닌 손잡이의 가져오기 줄 `var X = _k.X;` | 삭제 | unwire 확장(구현 #TASK-ES-619 — `kitVar` 검사) | U1 과 같다. 손잡이는 IIFE 최상위에서 `var _k = window.…` 로 선언된 것만 | 10 |
 | X2 | 키트 손잡이 줄 `var _k = window.X;` | 삭제 | unwire 선택 플래그 `dropKitVar`(구현 #TASK-ES-619) · finalize | 그 손잡이의 참조가 하나라도 남음 | 15 |
 | X3 | 다른 글자와 한 줄을 나눠 쓰는 window 대입(한 줄 if 블록의 일부, 주석·다른 문과 같은 줄) | 그 줄 안에서 해당 대입 글자만 삭제 | unwire 선택 플래그 `sharedLine`(구현 #TASK-ES-619) | 오른쪽이 이름이 아님 · 지운 뒤 남는 글자가 온전한 문이 아님 | 4 |
-| X4 | 상태 이름의 expose getter/setter 속성 줄(3.3 S1) | 삭제 | unstate | U2 와 같다 + 그 이름의 맨이름 참조가 남음 | 66 |
-| X5 | 상태 선언문 `var X = 초기값;`(3.3 R1) | `window.OurgoalAppState.define('X', 초기값 원문);` 또는 `defineVar` 로 1:1 바꿔 쓰기. 초기값 글자와 자리는 그대로 | unstate | 맨이름 참조가 남음 · 다른 문과 한 줄 · 선언자 여럿 · 초기값에 자기 이름 | 최대 63문 |
-| X6 | 상태의 일회 window 복사 줄 `window.X = X;`(3.3 R2) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓰기 | unstate | 같은 줄에 다른 글자 | 7 |
+| X4 | 상태 이름의 expose getter/setter 속성 줄(3.3 S1) | 삭제 | unstate(구현 #TASK-ES-634) | U2 와 같다 + 그 이름의 맨이름 참조가 남음 | 66 |
+| X5 | 상태 선언문 `var X = 초기값;`(3.3 R1) | `window.OurgoalAppState.define('X', 초기값 원문);` 또는 `defineVar` 로 1:1 바꿔 쓰기. 초기값 글자와 자리는 그대로 | unstate(구현 #TASK-ES-634) | 맨이름 참조가 남음 · 다른 문과 한 줄 · 선언자 여럿 · 초기값에 자기 이름 | 최대 63문 |
+| X6 | 상태의 일회 window 복사 줄 `window.X = X;`(3.3 R2) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓰기 | unstate(구현 #TASK-ES-634) | 같은 줄에 다른 글자 · 쉼표 연쇄 | 7 |
 | X7 | 연속 구역 감싸기(3.4 M1a~M1e): 로드 중 호출문·if·try·식 문, 바꿔 쓴 define 줄, 노출 안 된 var 의 지역화, 남은 `window.X = X` 줄, 구역 안 주석·빈 줄 | 세포 함수 본문으로 옮기고 원래 자리에 부르는 한 줄 + 머리 가져오기 한 줄 | region | 3.4 의 정지 목록 | 로드 중 문 360줄 중 남는 것 + var 230줄 |
 | X8 | 문이 없는 구획의 주석·빈 줄 | 삭제 | sweep | 구획에 문이 하나라도 있음 · 함수 이전 생성기가 기대는 자리 표지·구획 주석·「1차 이음매」 주석 | 최대 743(주석 514 + 빈 줄 229, 1.1) |
 | X9 | IIFE 껍데기 3줄 + `<script>`·`</script>` 2줄, 그때 남은 주석·빈 줄·구역 함수 가져오기·호출 줄. 부팅 태그 한 줄 붙임과 `js/app/boot.js` 생성 | 삭제 + 생성 | finalize | IIFE 최상위에 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 하나라도 있음 | 5 + 잔여 |
@@ -277,7 +299,39 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 - **X2 `dropKitVar: true`**: 그 실행의 삭제를 반영한 뒤 손잡이의 맨이름 참조(읽기·대입)가 0 이면 손잡이 줄 `var <kitVar> = window.…;` 을 지운다. 참조가 하나라도 남거나 손잡이 선언이 다른 글자와 한 줄을 나눠 쓰면 멈춘다. 이 플래그가 있을 때만 `names` 가 비어도 된다(손잡이 줄만 지우는 실행).
 - **사후 대조(모든 실행)**: 결과를 다시 파싱해 토큰열이 「이전 토큰열 − 지우기로 한 줄의 토큰 − 줄 안에서 지운 글자의 토큰 − 뗀 쉼표」와 같은지, 남은 주석이 그대로인지 본다. 다르면 쓰지 않고 멈춘다. 닫힌 목록 밖의 글자가 바뀌지 않았음을 생성기가 스스로 검사하는 장치다.
 - **단위 시험**: `docs/design/harness/module-split/unwire-check-ext-619.js`(16건 — B1 시험 8건 재실행 · 단일 객체 설정의 기준 생성기 대비 바이트 동일 · 여러 실행 · X1 · X3 · X2 · 모르는 칸 · 실제 `index.html` 사본에서 `reports/TASK-ES-614/unwire-plan.json` 16실행을 기준 생성기로 차례로 돌린 결과와 배열 한 번의 결과가 바이트 동일). 결과는 `reports/TASK-ES-619/unwire-ext-unit.json`(작업자 측정).
-- **이 구현에 없는 것**: `unstate` · `region` · `sweep` · `finalize` 모드(X4~X9). 각각 별도 PR 로 사양을 공개하고 단위 시험을 붙인다.
+- **이 구현에 없는 것**: `region` · `sweep` · `finalize` 모드(X7~X9). 각각 별도 PR 로 사양을 공개하고 단위 시험을 붙인다. `unstate`(X4~X6)는 #TASK-ES-634 가 더했다(5.5).
+
+### 5.5 구현된 unstate 설정 꼴 — X4 · X5 · X6 (#TASK-ES-634)
+
+`gen-inline-hard.js` 에 `mode: "unstate"` 경로를 더했다. 옮기기 경로와 unwire 경로의 글자는 한 줄도 바뀌지 않았다(생성기 diff 는 한 자리에 끼워 넣은 줄뿐 — 측정 `reports/TASK-ES-634/measurement.json`).
+
+```json
+{ "task": "TASK-ES-6xx", "slot": "HO", "mode": "unstate",
+  "cells": [{ "file": "js/core/app-state.js" }],
+  "unstate": { "names": ["toastTimer", "…"] } }
+```
+
+여러 단계(법정은 PR 하나에 생성기를 한 번만 돌린다):
+
+```json
+  "unstate": [
+    { "names": ["…"] },
+    { "unwire": { "kitVar": "_uiKit", "names": ["…"] } },
+    { "names": ["…"] }
+  ]
+```
+
+- **실행의 칸**: `names`(필수) · `label`(읽는 사람용, 동작 없음). 그 밖의 칸이 있으면 멈춘다.
+- **여러 실행**: `unstate` 는 객체 하나 또는 단계의 배열이다. 배열이면 차례로 적용하고 앞 단계의 결과를 다시 파싱해 다음 단계가 돈다. 하나라도 멈추면 `index.html` 을 쓰지 않는다.
+  - 배열의 단계가 `{ "unwire": { … } }`(칸 하나)이면 그 단계는 5.4 의 unwire 실행 하나로 돈다. 생성기의 unwire 함수를 그대로 부르므로 결과는 `mode:"unwire"` 로 따로 돌린 것과 같다(단위 시험 M1).
+  - 단일 객체 꼴에서는 `unwire` 칸을 받지 않는다.
+- **무엇을 하는가**: `names` 의 이름마다 ① expose getter/setter 속성 줄을 지우고(X4) ② 선언문의 `var X =` 를 `window.OurgoalAppState.define('X',` 또는 `defineVar('X',` 로, 끝의 `;` 를 `);` 로 바꿔 쓰고(X5) ③ 자기 일회 window 복사 줄의 오른쪽 이름을 `window.OurgoalAppScope.scope.X` 로 바꿔 쓴다(X6). 초기값의 글자는 괄호·주석·빈칸까지 그대로 남는다.
+- **define / defineVar**: 그 이름의 마지막 노출 문에 `set X` 가 있었으면 `defineVar`, 없으면 `define`. 설정으로 고를 수 없다.
+- **정지 조건**: 3.3 의 「안전 정지 조건(구현)」 전부.
+- **사후 대조(모든 실행)**: 결과를 다시 파싱해 토큰열이 「이전 토큰열 − 지운 줄의 토큰 − 뗀 쉼표, 그리고 바꿔 쓴 자리는 정해진 토큰열」과 같은지, 남은 주석이 그대로인지 본다. 다르면 쓰지 않고 멈춘다.
+- **`cells`**: 법정 대조가 `cells` 의 파일을 요구하므로 변하지 않는 `js/core/app-state.js` 를 적는다(unwire 단계를 섞으면 `js/core/cell-registry.js` 도). 그래서 이 모드를 쓰는 PR 은 기관 파일이 병합된 뒤에만 낼 수 있다.
+- **단위 시험**: `docs/design/harness/module-split/unstate-check-634.js`(34건 — unwire 확장 시험 16건과 그 안의 B1 시험 8건 재실행 · unwire 설정의 기준 생성기 대비 바이트 동일 · S1·R1·R2 · define/defineVar 선택 · 정지 조건과 경계 22건 · 여러 실행 · 모의 기관 등가 · 실제 `index.html` 사본 모의 적용과 줄 단위 감사). 결과는 `reports/TASK-ES-634/unstate-unit.json`, 계획은 `reports/TASK-ES-634/unstate-plan.json`(작업자 측정).
+- **이 구현에 없는 것**: 상태 기관 파일과 로드 줄 · 실제 상태 이전 · `region` · `sweep` · `finalize`.
 
 ## 6. 순서와 범위
 
