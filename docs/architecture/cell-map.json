@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "c6798552d9b1fe55e2de5fb511c4ee37b296b781",
-  "short": "c6798552",
-  "committedAt": "2026-10-11T13:09:09+09:00",
-  "subject": "Merge pull request #920 from yangsangmin/feat/2026-10-11-task-es-648-unwire-regrown"
+  "commit": "529e43709ba65929e4b0e4f4049033d466e3dd2f",
+  "short": "529e4370",
+  "committedAt": "2026-10-11T13:41:04+09:00",
+  "subject": "Merge pull request #923 from yangsangmin/feat/2026-10-11-task-es-653-user-session-realtime-move"
  },
  "summary": {
-  "cells": 363,
-  "files": 362,
-  "jsLines": 91592,
+  "cells": 364,
+  "files": 363,
+  "jsLines": 91635,
   "kinds": {
    "organ": 62,
-   "tab": 195,
+   "tab": 196,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 363,
+  "descriptionsHand": 364,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 2350,
-   "functionDecls": 19
+   "inlineScriptLines": 2340,
+   "functionDecls": 18
   },
   "health": {
-   "undifferentiatedLines": 2350,
+   "undifferentiatedLines": 2340,
    "globalLinks": 75,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 195,
+   "count": 196,
    "large": 6,
-   "small": 189
+   "small": 190
   },
   {
    "key": "hybrid",
@@ -344,13 +344,14 @@
     "settings/tab-guide",
     "settings/tester-entry",
     "settings/theme-apply",
+    "settings/user-session-realtime",
     "settings/ux-telemetry",
     "settings/web-push",
     "settings/widget-modal-opener",
     "settings/widget-settings-modal",
     "settings/withdraw-modal"
    ],
-   "lines": 7541,
+   "lines": 7584,
    "over800": 0
   },
   {
@@ -4173,6 +4174,7 @@
     "settings/tab-guide",
     "settings/tester-entry",
     "settings/theme-apply",
+    "settings/user-session-realtime",
     "settings/ux-telemetry",
     "settings/web-push",
     "settings/widget-modal-opener",
@@ -24605,6 +24607,64 @@
      "task": "TASK-ES-437",
      "title": "[INFRA] #TASK-ES-437 refactor: 인라인 스크립트 세포화 P0 구역 1차(#749 대체) — 19묶음 24선언을 세포 10개로 이전(인라인 −724줄, 동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "settings/user-session-realtime",
+   "file": "js/tabs/settings/user-session-realtime.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "settings",
+   "tabs": [
+    "settings"
+   ],
+   "name": "원격 로그아웃 채널 구독",
+   "nameSource": "hand",
+   "does": "로그인한 사용자의 세션 채널을 구독해, 다른 기기에서 모든 기기 원격 로그아웃을 실행하면 이 기기를 로그아웃한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal User Session Realtime (설정 — 원격 로그아웃 실시간 채널 구독)",
+    "setupUserSessionRealtime — 로그인한 사용자의 세션 채널(user_session_<사용자 id>)을 구독한다. 이미 열린 채널(USER_SESSION_CHANNEL)이 있으면 닫고 다시 연다.",
+    "다른 기기에서 「모든 기기 원격 로그아웃」 방송(remote_logout)이 오면, 남기기로 한 기기가 이 기기가 아닐 때 로그아웃한다.",
+    "#TASK-ES-653(세션 실시간 채널 구독 함수 이전 — setupUserSessionRealtime): index.html 인라인 IIFE 의 구간(이전 전 3272~3289줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 43,
+   "over800": false,
+   "exposes": [
+    "OurgoalSettingsKit"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalSettingsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-653"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-653-USER-SESSION-REALTIME-MOVE.md"
+   ],
+   "prs": [
+    {
+     "number": 923,
+     "task": "TASK-ES-653",
+     "title": "[INFRA] #TASK-ES-653 refactor: 미분화 덩어리 함수 이전 — setupUserSessionRealtime(원격 로그아웃 실시간 채널 구독)을 세포 js/tabs/settings/user-session-realtime.js 로 · 인라인 −10줄",
+     "date": "2026-10-11"
     }
    ]
   },
