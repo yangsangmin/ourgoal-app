@@ -210,7 +210,8 @@
   if (!R) return;
   var K = g.OurgoalGoalsKit;
   if (K) R.provide('goals/goal-archive', {
-    goalAchievement: K.goalAchievement, renderArchivedGoals: K.renderArchivedGoals
+    bindArchivedPageSetter: K.bindArchivedPageSetter, bindArchivedPeriodSetter: K.bindArchivedPeriodSetter, goalAchievement: K.goalAchievement,
+    renderArchivedGoals: K.renderArchivedGoals
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

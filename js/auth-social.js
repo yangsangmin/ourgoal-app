@@ -350,7 +350,7 @@
   if (!R) return;
   var K = g.OurgoalAuthSocialKit;
   if (K) R.provide('auth-social', {
-    startOAuthLogin: K.startOAuthLogin
+    bindGoogleLoginClicks: K.bindGoogleLoginClicks, bindKakaoLoginClicks: K.bindKakaoLoginClicks, startOAuthLogin: K.startOAuthLogin
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

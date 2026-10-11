@@ -1,0 +1,974 @@
+{
+ "schema": "ourgoal.provide-run.measurement/1",
+ "taskId": "TASK-ES-664",
+ "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정만 낸다",
+ "measuredAt": "2026-10-11T08:49:51.736Z",
+ "environment": {
+  "node": "v24.15.0",
+  "platform": "win32"
+ },
+ "sourceCommit": {
+  "baseTreeHead": "2a1507ebfdf03ed747b2f5a15788e959fb202ab6",
+  "worktreeHead": "891eb55dd999849e771d4bb91cfc91e4b076587c",
+  "note": "기준 = origin/main 임시 worktree. 모의 = 기준 + 이 PR 의 세포 파일 + 새로 등록한 이름의 배선을 지운 index.html(저장소 밖). 대조군 = 기준에서 같은 배선만 지운 것(등록 없음)"
+ },
+ "summary": {
+  "changed": {
+   "files": 103,
+   "jsChanged": 49,
+   "indexHtmlChanged": false,
+   "testsChanged": [],
+   "vaultChanged": [],
+   "unwireGeneratorChanged": [],
+   "scriptsChanged": [],
+   "harnessChanged": [
+    "docs/design/harness/module-split/gen-cell-provide.js"
+   ]
+  },
+  "plan": {
+   "existingNames": 438,
+   "plannedNow": 126,
+   "alreadyRegistered": 34,
+   "added": 89,
+   "upgradedFromWindowOnly": [
+    "checkKakaoInAppBrowser",
+    "closeAppEvaluationModal",
+    "closeAvatarLevelUpModal",
+    "closeFeedbackSetup",
+    "initDevDebugButtons",
+    "openAppEvaluationModal",
+    "openMzShareCardModal",
+    "showLegalModal"
+   ],
+   "excluded": [
+    "handleDeepLinkRouting",
+    "switchTab"
+   ],
+   "newBlockFiles": 21,
+   "filesToChange": 49,
+   "skipped": [
+    {
+     "name": "handleDeepLinkRouting",
+     "reason": "--exclude: 통로 값은 키트의 handleDeepLinkRouting, window 값은 다른 파일이 단 같은 이름의 다른 함수다 — 값이 서로 다른 이름"
+    },
+    {
+     "name": "switchTab",
+     "reason": "--exclude: 통로 값은 switchTab 함수, window 값은 setTab 함수다(구역 함수가 window.switchTab = L.setTab 로 단다) — 값이 서로 다른 이름"
+    },
+    {
+     "name": "renderTeamGoalsScreen",
+     "reason": "등록 블록을 붙이면 800줄 상한을 넘는다(798 → 808줄) — 세포를 책임 단위로 나눈 뒤 등록한다"
+    }
+   ],
+   "iifeOwnedScope": 12,
+   "iifeOwnedWindow": 3,
+   "byKit": {
+    "_ui": {
+     "kitPath": "OurgoalUiHelpers",
+     "imports": 2,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 2,
+     "notExposedNoRefs": 1
+    },
+    "_xp": {
+     "kitPath": "OurgoalAvatarParts.xp",
+     "imports": 2,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 2,
+     "notExposedNoRefs": 0
+    },
+    "_settingsKit": {
+     "kitPath": "OurgoalSettingsKit",
+     "imports": 45,
+     "registeredImports": 36,
+     "unwireReady": 36,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_recordsKit": {
+     "kitPath": "OurgoalRecordsKit",
+     "imports": 43,
+     "registeredImports": 15,
+     "unwireReady": 14,
+     "blockedByIifeRefs": 1,
+     "notExposed": 23,
+     "notExposedNoRefs": 0
+    },
+    "_calendarKit": {
+     "kitPath": "OurgoalCalendarKit",
+     "imports": 4,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 4,
+     "notExposedNoRefs": 0
+    },
+    "_goalsKit": {
+     "kitPath": "OurgoalGoalsKit",
+     "imports": 24,
+     "registeredImports": 14,
+     "unwireReady": 14,
+     "blockedByIifeRefs": 0,
+     "notExposed": 2,
+     "notExposedNoRefs": 0
+    },
+    "_modalOpenKit": {
+     "kitPath": "OurgoalModalOpenKit",
+     "imports": 1,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_authSocialKit": {
+     "kitPath": "OurgoalAuthSocialKit",
+     "imports": 2,
+     "registeredImports": 2,
+     "unwireReady": 2,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_visionTableInputKit": {
+     "kitPath": "OurgoalVisionTableInputKit",
+     "imports": 1,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 1,
+     "notExposedNoRefs": 0
+    },
+    "_curatedMarketDataKit": {
+     "kitPath": "OurgoalCuratedMarketDataKit",
+     "imports": 1,
+     "registeredImports": 1,
+     "unwireReady": 1,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    },
+    "_levelBadgeKit": {
+     "kitPath": "OurgoalLevelBadgeKit",
+     "imports": 1,
+     "registeredImports": 0,
+     "unwireReady": 0,
+     "blockedByIifeRefs": 0,
+     "notExposed": 1,
+     "notExposedNoRefs": 0
+    },
+    "_uiKit": {
+     "kitPath": "OurgoalUiHelpers",
+     "imports": 56,
+     "registeredImports": 20,
+     "unwireReady": 20,
+     "blockedByIifeRefs": 0,
+     "notExposed": 23,
+     "notExposedNoRefs": 0
+    },
+    "_commKit": {
+     "kitPath": "OurgoalCommKit",
+     "imports": 2,
+     "registeredImports": 1,
+     "unwireReady": 1,
+     "blockedByIifeRefs": 0,
+     "notExposed": 0,
+     "notExposedNoRefs": 0
+    }
+   }
+  },
+  "blocks": {
+   "before": 438,
+   "after": 527,
+   "lost": [],
+   "added": 89,
+   "addedEqualsPlan": true,
+   "changedEntries": 8,
+   "upgradedFromWindowOnly": [
+    "checkKakaoInAppBrowser",
+    "closeAppEvaluationModal",
+    "closeAvatarLevelUpModal",
+    "closeFeedbackSetup",
+    "initDevDebugButtons",
+    "openAppEvaluationModal",
+    "openMzShareCardModal",
+    "showLegalModal"
+   ],
+   "upgradedEqualsPlan": true,
+   "otherChangedEntries": [],
+   "duplicateNames": [],
+   "filesChanged": 49,
+   "filesEqualPlan": true,
+   "outsideBlockChanged": [],
+   "over800": [],
+   "newBlockFiles": 21,
+   "addedWindow": [
+    "saveGoogleToken"
+   ],
+   "addedScopeOnly": 88,
+   "note": "기준·작업 트리의 js/** 전부에서 등록 블록을 글자(정규식)로 읽어 이름 단위로 맞댄 것 — 생성기의 블록 읽기(AST)와 다른 방법이다"
+  },
+  "registry": {
+   "base": {
+    "ok": true,
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 3,
+     "registered": 438,
+     "checked": 362,
+     "mismatches": 0,
+     "missing": 163,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 438,
+     "ownScope": 354,
+     "ownWindow": 180,
+     "lateProvides": 0
+    },
+    "scopeLost": null,
+    "exceptions": 0,
+    "consoleErrors": 0,
+    "firstException": "",
+    "differing": {
+     "scope": [],
+     "window": []
+    }
+   },
+   "work": {
+    "ok": true,
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 3,
+     "registered": 527,
+     "checked": 452,
+     "mismatches": 0,
+     "missing": 73,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 527,
+     "ownScope": 451,
+     "ownWindow": 181,
+     "lateProvides": 0
+    },
+    "scopeLost": [],
+    "exceptions": 0,
+    "consoleErrors": 0,
+    "firstException": "",
+    "differing": {
+     "scope": [],
+     "window": []
+    }
+   },
+   "intrinsicVariance": {
+    "scope": [],
+    "window": []
+   },
+   "registeredGrewBy": 89,
+   "extraSameAsBase": true,
+   "missingFellBy": 90
+  },
+  "nameProbe": {
+   "names": 97,
+   "valueDifferingWork": [],
+   "accessor": {
+    "base": {
+     "get · index.html": 97
+    },
+    "work": {
+     "get · index.html": 97
+    },
+    "mock": {
+     "data · goals/curated-market-data": 1,
+     "data · comm/sample-data": 1,
+     "data · settings/app-evaluation": 5,
+     "data · goals/goal-archive": 2,
+     "data · settings/auth-screen-actions": 2,
+     "data · settings/tester-entry": 2,
+     "data · settings/avatar-levelup-modal": 5,
+     "data · records/checkin-capture": 2,
+     "data · records/checkin-input-wiring": 3,
+     "data · core/app-enter": 6,
+     "data · goals/goal-agent-toggle": 1,
+     "data · auth-social": 2,
+     "data · goals/template-encyclopedia-modal": 4,
+     "data · records/external-import": 2,
+     "data · settings/support-inquiry-bind": 2,
+     "data · settings/inapp-landing": 4,
+     "data · settings/session-entry": 1,
+     "data · settings/account-actions": 4,
+     "data · core/modal-helper": 1,
+     "data · core/registry-init": 2,
+     "data · goals/new-goal-modal": 1,
+     "data · settings/boot-wiring": 4,
+     "data · settings/ux-telemetry": 1,
+     "data · records/weekly-recap": 4,
+     "data · settings/guide-buttons": 2,
+     "data · core/profile-topbar": 1,
+     "data · core/pwa-service-worker": 1,
+     "data · settings/render": 2,
+     "data · settings/device-session": 1,
+     "data · core/supabase-auth": 1,
+     "data · goals/team-comment-send": 3,
+     "data · settings/widget-modal-opener": 1,
+     "data · records/template-record-detail": 1,
+     "data · core/module-connect": 5,
+     "data · records/sample-purge": 1,
+     "data · goals/goal-fast-add": 2,
+     "data · settings/pwa-install": 1,
+     "data · records/export-theme": 1,
+     "data · settings/feedback-bot-setup": 2,
+     "data · records/template-market": 1,
+     "data · settings/withdraw-modal": 1,
+     "data · records/ai-feedback-providers": 1,
+     "data · core/app-boot": 1,
+     "get · index.html": 1,
+     "data · goals/ai-agent": 1,
+     "data · settings/user-session-realtime": 1,
+     "data · settings/dev-debug-gate": 1,
+     "data · goals/focus-autopilot": 1,
+     "data · settings/account-entry": 1
+    }
+   },
+   "bootExceptions": {
+    "base": 0,
+    "work": 0,
+    "mock": 0
+   }
+  },
+  "scenarios": {
+   "work": [
+    {
+     "id": "p01-guest-boot-six-tabs",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 13
+    },
+    {
+     "id": "p02-goals-subtabs-periods",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 10
+    },
+    {
+     "id": "p03-bell-modal-settings",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 9
+    },
+    {
+     "id": "p04-new-goal-modal",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 6
+    },
+    {
+     "id": "p05-goal-agent-drawer",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 3
+    },
+    {
+     "id": "p06-settings-legal-links",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 4
+    },
+    {
+     "id": "p07-auth-forgot-password",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 1
+    },
+    {
+     "id": "p08-checkin-mic-guide",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 2
+    },
+    {
+     "id": "p09-team-comment-passthrough",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 2
+    },
+    {
+     "id": "p10-sample-purge",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 3
+    },
+    {
+     "id": "p11-goal-fast-add",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 4
+    },
+    {
+     "id": "p12-records-export-modal",
+     "basePassed": true,
+     "otherPassed": true,
+     "otherExceptions": 0,
+     "nonVacuousExpects": 4
+    }
+   ],
+   "count": 12,
+   "allPassedBoth": true
+  },
+  "moduleLoad": {
+   "regressions": 0,
+   "insufficient": 1
+  },
+  "npmTest": {
+   "base": {
+    "exit": 0,
+    "ok": 487,
+    "okDot": 172,
+    "fail": 0
+   },
+   "other": {
+    "exit": 0,
+    "ok": 487,
+    "okDot": 172,
+    "fail": 0,
+    "failLines": []
+   },
+   "onlyBase": [],
+   "onlyOther": [],
+   "same": true
+  },
+  "testsEach": {
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      439,
+      439
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      38,
+      38
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      3,
+      3
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": [
+      0,
+      0
+     ],
+     "ok": [
+      7,
+      7
+     ],
+     "fails": [
+      0,
+      0
+     ],
+     "newFails": []
+    }
+   ],
+   "testFiles": 114,
+   "failedBase": 26,
+   "failedOther": 26,
+   "onlyOther": [],
+   "onlyBase": [],
+   "sameAsBase": true
+  },
+  "inlineScriptLines": {
+   "base": 1917,
+   "work": 1917,
+   "same": true
+  },
+  "ratchet": {
+   "oversizeJsFiles": [
+    0,
+    0
+   ],
+   "crossTabRefs": [
+    0,
+    0
+   ],
+   "windowAssignments": [
+    75,
+    75
+   ]
+  },
+  "guard": {
+   "exitCode": 0,
+   "integrityGateExitCode": 0
+  },
+  "mockUnwire": {
+   "unwire": {
+    "before": {
+     "htmlLines": 4187,
+     "iifeLines": 1895,
+     "imports": 186,
+     "getterNames": 138,
+     "windowNames": 3
+    },
+    "after": {
+     "htmlLines": 3992,
+     "iifeLines": 1700,
+     "imports": 91,
+     "getterNames": 42,
+     "windowNames": 3
+    },
+    "deletedLinesTotal": 195,
+    "excluded": 1,
+    "notRunnableKitVars": [
+     {
+      "kitVar": "_ui",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     },
+     {
+      "kitVar": "_xp",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     }
+    ]
+   },
+   "inlineScriptLines": {
+    "base": 1917,
+    "mock": 1722,
+    "delta": -195
+   },
+   "registry": {
+    "ok": true,
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 3,
+     "registered": 527,
+     "checked": 452,
+     "mismatches": 0,
+     "missing": 73,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 527,
+     "ownScope": 451,
+     "ownWindow": 181,
+     "lateProvides": 0
+    },
+    "scopeLost": [],
+    "exceptions": 0,
+    "consoleErrors": 0,
+    "firstException": "",
+    "differing": {
+     "scope": [],
+     "window": []
+    }
+   },
+   "nameValueDiffering": [],
+   "scenarios": {
+    "rows": [
+     {
+      "id": "p01-guest-boot-six-tabs",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 13
+     },
+     {
+      "id": "p02-goals-subtabs-periods",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 10
+     },
+     {
+      "id": "p03-bell-modal-settings",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 9
+     },
+     {
+      "id": "p04-new-goal-modal",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 6
+     },
+     {
+      "id": "p05-goal-agent-drawer",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 3
+     },
+     {
+      "id": "p06-settings-legal-links",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 4
+     },
+     {
+      "id": "p07-auth-forgot-password",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 1
+     },
+     {
+      "id": "p08-checkin-mic-guide",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 2
+     },
+     {
+      "id": "p09-team-comment-passthrough",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 2
+     },
+     {
+      "id": "p10-sample-purge",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 3
+     },
+     {
+      "id": "p11-goal-fast-add",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 4
+     },
+     {
+      "id": "p12-records-export-modal",
+      "basePassed": true,
+      "otherPassed": true,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 4
+     }
+    ],
+    "allPassedBoth": true
+   },
+   "npmTest": {
+    "base": {
+     "exit": 0,
+     "ok": 487,
+     "okDot": 172,
+     "fail": 0
+    },
+    "other": {
+     "exit": 0,
+     "ok": 487,
+     "okDot": 172,
+     "fail": 0,
+     "failLines": []
+    },
+    "onlyBase": [],
+    "onlyOther": [],
+    "same": true
+   },
+   "testsEach": {
+    "scripts": [
+     {
+      "script": "scripts/smoke-test.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       439,
+       439
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     },
+     {
+      "script": "scripts/verify-integrity-gate.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       38,
+       38
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     },
+     {
+      "script": "scripts/verify-all-clicks.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       3,
+       3
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     },
+     {
+      "script": "scripts/test-shipyard-modular.js",
+      "exit": [
+       0,
+       0
+      ],
+      "ok": [
+       7,
+       7
+      ],
+      "fails": [
+       0,
+       0
+      ],
+      "newFails": []
+     }
+    ],
+    "testFiles": 114,
+    "failedBase": 26,
+    "failedOther": 26,
+    "onlyOther": [],
+    "onlyBase": [],
+    "sameAsBase": true
+   }
+  },
+  "mockAll": {
+   "note": "붙잡힌 이름을 빼지 않고 새로 등록한 이름의 배선을 전부 지운 사본의 시험 결과 — 여기서만 깨지는 시험이 「시험이 배선 글자를 붙잡는 곳」이다",
+   "deletedLinesTotal": 202,
+   "onlyOther": [
+    {
+     "file": "tests/gcal-login-reconnect-fix.test.js",
+     "tail": "AssertionError [ERR_ASSERTION]: saveGoogleToken 전역 노출 |   actual: false, |   expected: true,"
+    }
+   ],
+   "pinned": [
+    {
+     "name": "saveGoogleToken",
+     "line": "window.saveGoogleToken = saveGoogleToken;",
+     "test": "tests/gcal-login-reconnect-fix.test.js",
+     "testLine": 25,
+     "assertion": "indexHtml.includes('window.saveGoogleToken = saveGoogleToken;') — 「saveGoogleToken 전역 노출」",
+     "unlock": "그 단언을 「옛 배선 글자 또는 등록」으로 넓히는 시험 수정(같은 파일의 다른 단언은 #TASK-ES-620 에서 이미 넓혔다) — 시험 변경은 따로 결심"
+    }
+   ]
+  },
+  "control": {
+   "unwire": {
+    "before": {
+     "htmlLines": 4187,
+     "iifeLines": 1895,
+     "imports": 186,
+     "getterNames": 138,
+     "windowNames": 3
+    },
+    "after": {
+     "htmlLines": 3985,
+     "iifeLines": 1693,
+     "imports": 90,
+     "getterNames": 41,
+     "windowNames": 2
+    },
+    "deletedLinesTotal": 202,
+    "excluded": 0,
+    "notRunnableKitVars": [
+     {
+      "kitVar": "_ui",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     },
+     {
+      "kitVar": "_xp",
+      "why": "현행 생성기는 kitVar 가 _xxxKit 꼴일 때만 돈다(runUnwire 첫 줄) — 고치지 않았다",
+      "registeredNames": []
+     }
+    ]
+   },
+   "bootFailed": true,
+   "bootError": "게스트 부팅 단계 실패: .navbtn[data-tab=\"home\"]",
+   "exceptions": 1,
+   "firstException": "TypeError: L.bindSupabaseAuthStateListener is not a function",
+   "scopeLostCount": 0,
+   "note": "등록 없이 같은 배선을 지우면 구역 함수가 통로에서 그 이름을 찾지 못해 부팅이 멈춘다 — 모의 철거가 통과하는 까닭이 이번 등록임을 보이는 대조군"
+  }
+ },
+ "limits": [
+  "법정 판정이 아니다. 모의 철거·대조군은 저장소 밖 사본이다 — 이 PR 은 index.html 을 바꾸지 않는다.",
+  "화면 시나리오는 게스트로 닿는 범위다. 로그인 뒤에만 불리는 이름은 대조 탐침의 값 일치(===)와 지문으로만 쟀다.",
+  "시험이 배선 글자를 붙잡는지는 모의 철거 사본의 npm test 와 시험 하나씩으로 쟀다(깨지는 것이 있으면 목록)."
+ ],
+ "commands": [
+  {
+   "id": "git rev-parse",
+   "startedAt": "2026-10-11T08:44:26.142Z",
+   "endedAt": "2026-10-11T08:44:26.238Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "git rev-parse",
+   "startedAt": "2026-10-11T08:44:26.238Z",
+   "endedAt": "2026-10-11T08:44:26.314Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "git diff",
+   "startedAt": "2026-10-11T08:44:26.314Z",
+   "endedAt": "2026-10-11T08:44:26.621Z",
+   "exitCode": 0,
+   "stderrHead": "warning: in the working copy of 'reports/TASK-ES-664/cell-registry-compare.base.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'reports/TASK-ES-664/cel"
+  },
+  {
+   "id": "git ls-files",
+   "startedAt": "2026-10-11T08:44:26.621Z",
+   "endedAt": "2026-10-11T08:44:26.773Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry base",
+   "startedAt": "2026-10-11T08:44:28.895Z",
+   "endedAt": "2026-10-11T08:44:34.343Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry base2",
+   "startedAt": "2026-10-11T08:44:34.343Z",
+   "endedAt": "2026-10-11T08:44:39.761Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry work",
+   "startedAt": "2026-10-11T08:44:39.761Z",
+   "endedAt": "2026-10-11T08:44:44.666Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry mock",
+   "startedAt": "2026-10-11T08:44:44.666Z",
+   "endedAt": "2026-10-11T08:44:50.347Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "registry ctrl",
+   "startedAt": "2026-10-11T08:44:50.347Z",
+   "endedAt": "2026-10-11T08:45:14.108Z",
+   "exitCode": 1,
+   "stderrHead": ""
+  },
+  {
+   "id": "name-probe name-probe.base.json",
+   "startedAt": "2026-10-11T08:45:14.115Z",
+   "endedAt": "2026-10-11T08:45:19.531Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "name-probe name-probe.work.json",
+   "startedAt": "2026-10-11T08:45:19.531Z",
+   "endedAt": "2026-10-11T08:45:25.083Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "name-probe name-probe.mock.json",
+   "startedAt": "2026-10-11T08:45:25.083Z",
+   "endedAt": "2026-10-11T08:45:30.962Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "scenario work",
+   "startedAt": "2026-10-11T08:45:30.963Z",
+   "endedAt": "2026-10-11T08:47:42.552Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "scenario mock",
+   "startedAt": "2026-10-11T08:47:42.552Z",
+   "endedAt": "2026-10-11T08:49:47.739Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "module-guard",
+   "startedAt": "2026-10-11T08:49:50.111Z",
+   "endedAt": "2026-10-11T08:49:50.712Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "verify-integrity-gate",
+   "startedAt": "2026-10-11T08:49:50.712Z",
+   "endedAt": "2026-10-11T08:49:51.736Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  }
+ ]
+}

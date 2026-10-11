@@ -637,11 +637,11 @@
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/feedback-bot-setup', {
     closeFeedbackSetup: K.closeFeedbackSetup, fbBotBubbleHtml: K.fbBotBubbleHtml, openFeedbackSetup: K.openFeedbackSetup,
-    refreshCustomFeedbackButtons: K.refreshCustomFeedbackButtons
+    openFeedbackSetupGated: K.openFeedbackSetupGated, refreshCustomFeedbackButtons: K.refreshCustomFeedbackButtons
   }, { window: [
     'closeFeedbackSetup', 'openFeedbackSetup'
   ], windowOnly: [
-    'closeFeedbackSetup', 'openFeedbackSetup'
+    'openFeedbackSetup'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

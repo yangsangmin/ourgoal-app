@@ -272,8 +272,8 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/session-entry', {
-    loginWithDirectIdentifier: K.loginWithDirectIdentifier, openLoginRescueModal: K.openLoginRescueModal,
-    restoreSessionAndEnter: K.restoreSessionAndEnter
+    bindLoginRescueButtons: K.bindLoginRescueButtons, loginWithDirectIdentifier: K.loginWithDirectIdentifier,
+    openLoginRescueModal: K.openLoginRescueModal, restoreSessionAndEnter: K.restoreSessionAndEnter
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */
