@@ -2258,8 +2258,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      ① 가져오기: 바깥 파일로 옮긴 함수를 이 스코프에서 같은 이름으로 부른다(전역에 새 이름을 만들지 않는다).
      ② 공용 헬퍼: 여러 탭이 같이 쓰는 순수 헬퍼는 js/core/ui-helpers.js(window.OurgoalUiHelpers)에 있다. 같은 이름으로 가져온다.
      ③ 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프의 공용 상태·함수를 window.OurgoalAppScope.scope 한 곳에만 getter 로 노출한다(목록은 스코프 분석으로 뽑았다 — 옮긴 코드가 실제로 쓰는 이름만). 모든 탭이 같은 통로를 쓴다. */
-  var _ui = window.OurgoalUiHelpers;
-  var a11ySwitch = _ui.a11ySwitch;
   /* [#TASK-ES-395] EXP 세포 가져오기 — js/avatar/xp.js(window.OurgoalAvatarParts.xp)로 옮긴 EXP 이름을 같은 이름으로 부른다. 지급 호출처·app-scope getter 는 글자 그대로다. */
 
   /* ============ [#TASK-ES-358] 기록 탭 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md) ============
