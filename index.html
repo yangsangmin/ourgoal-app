@@ -2266,22 +2266,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var XP_RULES = _xp.XP_RULES;
   var awardXP = _xp.awardXP;
   var _settingsKit = window.OurgoalSettingsKit;
-  var collapseAllSettingsSections = _settingsKit.collapseAllSettingsSections;
-  var toggleAdvancedSettings = _settingsKit.toggleAdvancedSettings;
   var bindSettingsHapticDelegate = _settingsKit.bindSettingsHapticDelegate;
   var bindSettingsStaticHandlers = _settingsKit.bindSettingsStaticHandlers;
   window.OurgoalAppScope.expose('index.html', {
     get THEMES(){ return THEMES; },
     get googleTokenClient(){ return googleTokenClient; }, set googleTokenClient(v){ googleTokenClient = v; },
-    get isGoogleCalendarConnected(){ return isGoogleCalendarConnected; },
-    get openAvatarGreetingPopup(){ return openAvatarGreetingPopup; },
-    get openCustomerInquiryModal(){ return openCustomerInquiryModal; },
-    get openItemReportModal(){ return openItemReportModal; },
-    get openModal(){ return openModal; },
-    get saveProfile(){ return saveProfile; },
-    get setTab(){ return setTab; },
-    get state(){ return state; },
-    get triggerHaptic(){ return triggerHaptic; }
+    get state(){ return state; }
   });
 
   /* ============ [#TASK-ES-358] 기록 탭 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md) ============
@@ -2290,12 +2280,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _recordsKit = window.OurgoalRecordsKit;
   var renderRecordsScreen = _recordsKit.renderRecordsScreen;
   window.OurgoalAppScope.expose('index.html', {
-    get defaultProfile(){ return defaultProfile; },
-    get openModal(){ return openModal; },
     get openProTemplateRecordModal(){ return openProTemplateRecordModal; },
-    get openShareToFeedModal(){ return openShareToFeedModal; },
     get openTemplateMarketModal(){ return openTemplateMarketModal; },
-    get saveProfile(){ return saveProfile; },
     get state(){ return state; }, set state(v){ state = v; },
     get switchTab(){ return switchTab; }
   });
@@ -2305,11 +2291,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프의 공용 상태·함수를 window.OurgoalAppScope.scope 한 곳에만 getter 로 노출한다(목록은 스코프 분석으로 뽑았다 — 옮긴 코드가 실제로 쓰는 이름 중 앞선 이음매(설정·기록)가 아직 노출하지 않은 것만 더한다). */
   var _calendarKit = window.OurgoalCalendarKit;
   var renderCalendarScreen = _calendarKit.renderCalendarScreen;
-  window.OurgoalAppScope.expose('index.html', {
-    get getGoogleAccessToken(){ return getGoogleAccessToken; },
-    get openLockScreenHubModal(){ return openLockScreenHubModal; },
-    get renderAttachmentChipsHtml(){ return renderAttachmentChipsHtml; }
-  });
 
   /* ============ [#TASK-ES-370] 목표 탭 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 일정 탭 #TASK-ES-360 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/render.js 로 옮긴 renderGoalsScreen 을 이 스코프에서 같은 이름으로 부른다(전역에 새 이름을 만들지 않는다).
@@ -2317,22 +2298,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _goalsKit = window.OurgoalGoalsKit;
   var renderGoalsScreen = _goalsKit.renderGoalsScreen;
   window.OurgoalAppScope.expose('index.html', {
-    get computeGoalStatusHash(){ return computeGoalStatusHash; },
-    get formatSchedulePillHtml(){ return formatSchedulePillHtml; },
-    get getEffectiveStandardDateKey(){ return getEffectiveStandardDateKey; },
-    get getKSTDateKey(){ return getKSTDateKey; },
-    get openAddAttachmentModal(){ return openAddAttachmentModal; },
-    get openScheduleSetupModal(){ return openScheduleSetupModal; },
-    get promptNewGoal(){ return promptNewGoal; },
-    get refreshGoalStatusSummary(){ return refreshGoalStatusSummary; },
-    get renderInlineAttachmentChips(){ return renderInlineAttachmentChips; },
     get renderTeamGoalsScreen(){ return renderTeamGoalsScreen; }
   });
 
   /* ============ [#TASK-ES-453] 인라인 스크립트 세포화 P1 이음매 3 — 목표 종합상황 AI 요약 새로 고침 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-status-refresh.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
-  var refreshGoalStatusSummary = _goalsKit.refreshGoalStatusSummary;
 
   /* ============ [#TASK-ES-375] 목표 탭 모듈 이음매 2차 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-370 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/result-modal.js · goal-export.js 로 옮긴 함수 중 이 스코프에서 부르는 것(위 1차 노출의 getter 포함)을 같은 이름으로 가져온다(전역에 새 이름을 만들지 않는다).
@@ -2351,12 +2322,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ [#TASK-ES-444] 인라인 스크립트 세포화 P1 이음매 2 — 일정 배경·잠금화면 라이브, 소통 창·스토리 캔버스, 사진 인증, 목표 스타터·로컬 문장, 설정(적응형 UX·PWA 설치) (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/calendar/day-bg-picker.js · js/tabs/calendar/lockscreen-live.js · js/tabs/comm/first-cheer.js · js/tabs/comm/feed-post-preview.js · js/tabs/records/photo-proof.js · js/tabs/records/heatmap-summary.js · js/tabs/settings/adaptive-ux.js · js/tabs/settings/pwa-install.js · js/tabs/goals/starter-goal.js · js/tabs/goals/ai-local-fallback.js · js/tabs/comm/story-canvas.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
-  var buildLockScreenCardPayload = _calendarKit.buildLockScreenCardPayload;
-  var syncLockScreenLiveCard = _calendarKit.syncLockScreenLiveCard;
-  var toggleFeedPostPreview = _commKit.toggleFeedPostPreview;
   var openPhotoViewerModal = _recordsKit.openPhotoViewerModal;
   var compressImage = _recordsKit.compressImage;
-  var openIosPwaInstallGuideModal = _settingsKit.openIosPwaInstallGuideModal;
   var initKeyboardShield = _settingsKit.initKeyboardShield;
 
   /* ============ [#TASK-ES-423] 인라인 스크립트 세포화 1차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 소통 탭 #TASK-ES-379 와 같은 틀) ============
@@ -2384,7 +2351,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get authTabButtons(){ return authTabButtons; },
     get footEmailEl(){ return footEmailEl; },
     get guideBtn(){ return guideBtn; },
-    get startFirstLoginGuide(){ return startFirstLoginGuide; },
     get tabGuideBtn(){ return tabGuideBtn; }
   });
   /* [어려움 이음매 자리 H0 시범 #TASK-ES-439] */
@@ -2409,7 +2375,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var bindAppEvalBackdrop = _settingsKit.bindAppEvalBackdrop;
   var bindAppEvalSubmit = _settingsKit.bindAppEvalSubmit;
   var bindHomeAddGoal = _settingsKit.bindHomeAddGoal;
-  var promptNewGoal = _goalsKit.promptNewGoal;
   var bindNewGoalStepExports = _goalsKit.bindNewGoalStepExports;
   window.OurgoalAppScope.expose('index.html', {
     get btnSubmitEval(){ return btnSubmitEval; },
@@ -2441,10 +2406,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var maybeShowGoalUpdateModal = _goalsKit.maybeShowGoalUpdateModal;
   var bindImportExternalBtn = _recordsKit.bindImportExternalBtn;
   var bindPersonalGuideBtn = _recordsKit.bindPersonalGuideBtn;
-  var renderAttachmentChipsHtml = _goalsKit.renderAttachmentChipsHtml;
-  var renderInlineAttachmentChips = _goalsKit.renderInlineAttachmentChips;
-  var openAttachmentViewer = _goalsKit.openAttachmentViewer;
-  var openAddAttachmentModal = _goalsKit.openAddAttachmentModal;
   window.OurgoalAppScope.expose('index.html', {
     get btnShowGuide(){ return btnShowGuide; }
   });
@@ -2464,22 +2425,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get _subtabTplType(){ return _subtabTplType; }, set _subtabTplType(v){ _subtabTplType = v; }
   });
   /* [#TASK-ES-493] js/tabs/goals/routine-screen.js · js/tabs/goals/team-goals-guide.js — 가져오기 5개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var renderTeamGoalsEmptyGuideHtml = _goalsKit.renderTeamGoalsEmptyGuideHtml;
   /* [#TASK-ES-497] js/tabs/goals/team-goals-screen.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var renderTeamGoalsScreen = _goalsKit.renderTeamGoalsScreen;
-  window.OurgoalAppScope.expose('index.html', {
-    get collapseAllTeamGoalAccordions(){ return collapseAllTeamGoalAccordions; },
-    get renderTeamGoalsEmptyGuideHtml(){ return renderTeamGoalsEmptyGuideHtml; }
-  });
   /* [#TASK-ES-526] js/tabs/records/table-csv-sync.js · js/tabs/records/voice-table-input.js · js/tabs/records/theme-export-csv.js · js/tabs/comm/peer-invite-text.js — 가져오기 10개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var downloadTableAsCsv = _recordsKit.downloadTableAsCsv;
   var openCsvImportModal = _recordsKit.openCsvImportModal;
   var openWearableSyncModal = _recordsKit.openWearableSyncModal;
   var syncRecordToMatchingGoals = _recordsKit.syncRecordToMatchingGoals;
   var openVoiceTableModal = _recordsKit.openVoiceTableModal;
-  window.OurgoalAppScope.expose('index.html', {
-    get openMicPermissionGuideModal(){ return openMicPermissionGuideModal; }
-  });
   /* [#TASK-ES-545] js/tabs/goals/team-comments.js · js/tabs/comm/user-blocks.js · js/tabs/goals/goal-order.js · js/tabs/settings/widget-modal-opener.js — 가져오기 13개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var canManageTeamGoals = _goalsKit.canManageTeamGoals;
   var TEAM_COMMENTS_CACHE = _goalsKit.TEAM_COMMENTS_CACHE;
@@ -2491,7 +2444,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   });
   /* [#TASK-ES-552] js/tabs/goals/personal-goals-guide.js · js/tabs/goals/team-level-goals.js · js/tabs/goals/team-goal-edit-modal.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var getGroupLevelGoals = _goalsKit.getGroupLevelGoals;
-  var collapseAllTeamGoalAccordions = _goalsKit.collapseAllTeamGoalAccordions;
   /* [#TASK-ES-591] js/tabs/goals/template-encyclopedia-modal.js — 가져오기 10개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var openTemplateEncyclopediaModal = _goalsKit.openTemplateEncyclopediaModal;
   var closeTemplateEncyclopediaModal = _goalsKit.closeTemplateEncyclopediaModal;
@@ -2525,15 +2477,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var fmtYYMMDD = _recordsKit.fmtYYMMDD;
   var openCreateCustomTemplateModal = _recordsKit.openCreateCustomTemplateModal;
   var openTemplateColumnEditModal = _recordsKit.openTemplateColumnEditModal;
-  window.OurgoalAppScope.expose('index.html', {
-    get renderMultiMetricSvg(){ return renderMultiMetricSvg; }
-  });
   /* [#TASK-ES-520] js/tabs/goals/goal-archive.js · js/tabs/records/record-heatmap-levels.js · js/tabs/records/table-analytics-engine.js · js/tabs/records/trend-multi-metric-svg.js — 가져오기 11개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var goalAchievement = _goalsKit.goalAchievement;
   var bindArchivedPeriodSetter = _goalsKit.bindArchivedPeriodSetter;
   var bindArchivedPageSetter = _goalsKit.bindArchivedPageSetter;
   var computeTrendChartData = _recordsKit.computeTrendChartData;
-  var renderMultiMetricSvg = _recordsKit.renderMultiMetricSvg;
   /* [어려움 이음매 자리 H4] */
   /* [#TASK-ES-461] js/tabs/comm/goal-certificate-share.js · js/tabs/settings/session-entry.js · js/tabs/comm/manito-real.js · js/tabs/comm/peer-invite.js — 가져오기 12개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var bindLoginRescueButtons = _settingsKit.bindLoginRescueButtons;
@@ -2543,8 +2491,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get REAL_MANITO_PARTNERS_CACHE(){ return REAL_MANITO_PARTNERS_CACHE; }, set REAL_MANITO_PARTNERS_CACHE(v){ REAL_MANITO_PARTNERS_CACHE = v; },
     get _isEnteringApp(){ return _isEnteringApp; }, set _isEnteringApp(v){ _isEnteringApp = v; },
     get checkAndHandlePeerInviteUrl(){ return checkAndHandlePeerInviteUrl; },
-    get loadProfile(){ return loadProfile; },
-    get restoreGoogleToken(){ return restoreGoogleToken; },
     get saveGoogleToken(){ return saveGoogleToken; }
   });
   /* [#TASK-ES-474] js/tabs/comm/shared-groups.js · js/tabs/records/export-theme.js · js/tabs/records/weekly-recap.js — 가져오기 20개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -2567,7 +2513,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get shareContent(){ return shareContent; }
   });
   /* [#TASK-ES-523] js/tabs/settings/first-login-guide.js · js/tabs/settings/privacy-badges.js · js/tabs/records/stopwatch-format.js — 가져오기 3개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var startFirstLoginGuide = _settingsKit.startFirstLoginGuide;
   var formatStopwatchTime = _recordsKit.formatStopwatchTime;
   /* [#TASK-ES-591] js/tabs/records/vision-table-input.js · js/tabs/goals/curated-market-data.js — 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var _visionTableInputKit = window.OurgoalVisionTableInputKit;
@@ -2585,8 +2530,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var pad = _uiKit.pad;
   var nowISO = _uiKit.nowISO;
   var fmtTime = _uiKit.fmtTime;
-  var getKSTDateKey = _uiKit.getKSTDateKey;
-  var getEffectiveStandardDateKey = _uiKit.getEffectiveStandardDateKey;
   var track = _uiKit.track;
   var dayIndexSinceSignup = _uiKit.dayIndexSinceSignup;
   var dDay = _uiKit.dDay;
@@ -2606,32 +2549,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get _modalDismissGraceUntil(){ return _modalDismissGraceUntil; }, set _modalDismissGraceUntil(v){ _modalDismissGraceUntil = v; },
     get _modalHistoryPushed(){ return _modalHistoryPushed; }, set _modalHistoryPushed(v){ _modalHistoryPushed = v; },
     get navButtons(){ return navButtons; },
-    get screens(){ return screens; },
-    get syncLockScreenLiveCard(){ return syncLockScreenLiveCard; }
+    get screens(){ return screens; }
   });
   /* [#TASK-ES-482] js/core/confetti.js · js/core/badges.js · js/core/trash-bin.js · js/core/gcal-sync.js — 가져오기 19개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var burstConfetti = _uiKit.burstConfetti;
   var isGoogleCalendarConnected = _uiKit.isGoogleCalendarConnected;
   var syncAllToGoogleCalendar = _uiKit.syncAllToGoogleCalendar;
-  var restoreGoogleToken = _uiKit.restoreGoogleToken;
-  var requestGoogleToken = _uiKit.requestGoogleToken;
-  var getGoogleAccessToken = _uiKit.getGoogleAccessToken;
   window.OurgoalAppScope.expose('index.html', {
     get toastTimer(){ return toastTimer; }, set toastTimer(v){ toastTimer = v; }
   });
   /* [#TASK-ES-486] js/core/streak-badge.js · js/tabs/calendar/lockscreen-hub.js · js/tabs/calendar/calendar-core.js · js/core/view-dispatch.js — 가져오기 15개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var openLockScreenHubModal = _calendarKit.openLockScreenHubModal;
   var isoDate = _calendarKit.isoDate;
   var toLocalInputValue = _calendarKit.toLocalInputValue;
   var dispatchFullViewPropagation = _uiKit.dispatchFullViewPropagation;
-  window.OurgoalAppScope.expose('index.html', {
-    get buildLockScreenCardPayload(){ return buildLockScreenCardPayload; }
-  });
   /* [#TASK-ES-492] js/tabs/settings/feedback-bot-setup.js · js/tabs/records/checkin-feedback.js — 가져오기 12개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var closeFeedbackSetup = _settingsKit.closeFeedbackSetup;
   var openFeedbackSetupGated = _settingsKit.openFeedbackSetupGated;
   var renderFeedbackSlot = _recordsKit.renderFeedbackSlot;
-  var instantShareCheckinToFeed = _recordsKit.instantShareCheckinToFeed;
   var renderRecordFeedbackSlot = _recordsKit.renderRecordFeedbackSlot;
   var timeAgoStr = _recordsKit.timeAgoStr;
   /* [#TASK-ES-499] js/core/profile-topbar.js — 가져오기 8개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -2667,7 +2601,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var bindOfflineNotice = _uiKit.bindOfflineNotice;
   var bindRageTapTelemetry = _settingsKit.bindRageTapTelemetry;
   /* [#TASK-ES-522] js/core/profile-load.js · js/core/server-records-sync.js · js/tabs/settings/withdraw-modal.js — 가져오기 7개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var loadProfile = _uiKit.loadProfile;
   var openWithdrawModal = _settingsKit.openWithdrawModal;
   /* [#TASK-ES-556] js/tabs/home/home-render.js · js/tabs/records/mic-permission-guide.js · js/tabs/records/ai-feedback-catalog.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var _homeKit = window.OurgoalHomeMegaBlock;
@@ -2678,10 +2611,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-571] js/tabs/records/csv-export.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-572] js/tabs/settings/notification-helper.js · js/tabs/goals/goal-detail-drawer.js — 가져오기 5개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-574] js/core/default-profile.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var defaultProfile = _uiKit.defaultProfile;
   /* [#TASK-ES-575] js/core/calendar-availability.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-576] js/tabs/home/today-mission.js — 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var computeTodayMissionHash = _homeKit.computeTodayMissionHash;
   /* [#TASK-ES-578] js/tabs/records/theme-picker.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-581] js/core/all-view-render.js · js/core/app-boot.js — 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var runAppBoot = _uiKit.runAppBoot;
@@ -2693,10 +2624,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
   var sendGoalAgentMessage = _goalsKit.sendGoalAgentMessage;
-  var computeGoalStatusHash = _goalsKit.computeGoalStatusHash;
-  var formatSchedulePillHtml = _goalsKit.formatSchedulePillHtml;
-  var openScheduleSetupModal = _goalsKit.openScheduleSetupModal;
-  var applyScheduleUpdate = _goalsKit.applyScheduleUpdate;
   var requestAIFeedback = _recordsKit.requestAIFeedback;
   var requestServerAIFeedback = _recordsKit.requestServerAIFeedback;
 
@@ -2715,8 +2642,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var MOCK_PEOPLE = _commKit.MOCK_PEOPLE;
   var daysFromNow = _commKit.daysFromNow;
   var groupState = _goalsKit.groupState;
-  var openCustomerInquiryModal = _settingsKit.openCustomerInquiryModal;
-  var openItemReportModal = _settingsKit.openItemReportModal;
   var playTimerBeep = _recordsKit.playTimerBeep;
   var renderStopwatchWidgetHtml = _recordsKit.renderStopwatchWidgetHtml;
   var renderLapRowsHtml = _recordsKit.renderLapRowsHtml;
@@ -2736,8 +2661,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ [#TASK-ES-437] 인라인 스크립트 세포화 P0 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/settings/theme-apply.js · js/tabs/settings/avatar-greeting.js · js/tabs/settings/account-entry.js · js/tabs/settings/guest-backup-nudge.js · js/tabs/goals/team-goal-modals.js · js/tabs/goals/template-quick-import.js · js/tabs/goals/result-input.js · js/tabs/settings/notion-sync.js · js/tabs/records/checkin-helpers.js · js/tabs/settings/comm-tour.js 로 옮긴 선언 중 이 스코프에서 쓰는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
-  var openAvatarGreetingPopup = _settingsKit.openAvatarGreetingPopup;
-  var closeAvatarGreetingPopup = _settingsKit.closeAvatarGreetingPopup;
   var showLegalModal = _settingsKit.showLegalModal;
   window.OurgoalAppScope.expose('index.html', {
     get MOCK_GROUPS(){ return MOCK_GROUPS; },
@@ -2787,10 +2710,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-471] uid · newId · pad · nowISO · fmtTime · fmtDateLabel · getKSTDateKey → js/core/time-keys.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* ============ [#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가 표준시 00:00) 기준 날짜 키 ============ */
   /* [#TASK-ES-471] getEffectiveStandardDateKey · dateKey → js/core/time-keys.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.getKSTDateKey = getKSTDateKey;
-    window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;
-  }
   /* [#TASK-ES-471] parseAttribution · getSid · getAttribution · recordLanding · track · dayIndexSinceSignup · trackGoalCreated · fmtDuration · dDay → js/core/telemetry.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* [#TASK-ES-354 CORE-07] download → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   /* ============ Confetti ============ */
@@ -2798,9 +2717,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   var toastTimer=null;
   /* [#TASK-ES-569] toast → js/core/toast-renderer.js 로 옮김(기록 테마 분류와 공용 토스트 표시 책임 분열 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.showToast = toast;
-  }
   /* [#TASK-ES-482] showUndoPrivacyToast → js/core/confetti.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   /* [#TASK-ES-442] defaultSettings → js/tabs/settings/app-defaults.js 로 옮김(인라인 스크립트 세포화 P0) */
@@ -2857,13 +2773,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ #TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트) ============ */
   var __avatarGreetTimer = null;
   /* [#TASK-ES-437] openAvatarGreetingPopup · closeAvatarGreetingPopup → js/tabs/settings/avatar-greeting.js 로 옮김(인라인 스크립트 세포화 P0) */
-  window.openAvatarGreetingPopup = openAvatarGreetingPopup;
-  window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;
 
   /* [#TASK-ES-437] showLevelUpBanner → js/tabs/settings/avatar-greeting.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* ============ 뱃지 컬렉션 (명예의 전당) ============ */
-  /* [#TASK-ES-574] defaultProfile → js/core/default-profile.js 로 옮김(기본 프로필 생성 책임 분열 — 앞 주석 포함) */ window.defaultProfile = defaultProfile;
+  /* [#TASK-ES-574] defaultProfile → js/core/default-profile.js 로 옮김(기본 프로필 생성 책임 분열 — 앞 주석 포함) */
 
   var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
   if(typeof window !== 'undefined'){ window.state = state; }
@@ -2912,7 +2826,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-471] initDimensionSliders → js/core/home-cockpit.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* [#TASK-ES-471] initHomeCockpit → js/core/home-cockpit.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   /* [#TASK-ES-471] renderQuickCheckinGuideChips · saveProfile → js/core/home-cockpit.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){ window.loadProfile = loadProfile; window.saveProfile = saveProfile; }
 
   /* [#TASK-ES-522] syncServerRecords → js/core/server-records-sync.js 로 옮김(인라인 3단계 Z1 로그인·계정 2차 — 앞 주석 포함) */
 
@@ -3039,7 +2952,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합 ============ */
   /* [#TASK-ES-523] maybeShowFirstLoginGuide · startFirstLoginGuide → js/tabs/settings/first-login-guide.js 로 옮김(인라인 3단계 Z4 이동 2차(활용가이드·공개 범위 배지·스톱워치 시간 글자) — 앞 주석 포함) */
-  window.startFirstLoginGuide = startFirstLoginGuide;
 
   var navButtons = document.querySelectorAll('.navbtn');
   var screens = document.querySelectorAll('.screen');
@@ -3051,7 +2963,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-471] setTab → js/core/registry-init.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
   bindNavButtonsClick(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/registry-init.js 의 bindNavButtonsClick 로 옮김 — 원래 자리에서 부른다 */
   /* [#TASK-ES-471] switchTab → js/core/registry-init.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){ window.setTab = setTab; window.switchTab = setTab; }
+  if(typeof window !== 'undefined'){ window.switchTab = setTab; }
 
   /* ============ Modal helper & Android Hardware Back Handler ============ */
   var _modalHistoryPushed = false;
@@ -3059,16 +2971,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-591] openModal → js/core/modal-open.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   /* [#TASK-ES-471] closeModal · openBottomSheetAlert · openBottomSheetConfirm → js/core/modal-helper.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
 
-  if(typeof window !== 'undefined'){
-    window.openModal = openModal;
-  }
   bindModalPopstateBack(); /* [#TASK-ES-471] 로드 중 문(앞 주석 포함) → js/core/modal-helper.js 의 bindModalPopstateBack 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 이용약관 & 개인정보처리방침 모달 ============ */
   /* [#TASK-ES-437] showLegalModal → js/tabs/settings/account-entry.js 로 옮김(인라인 스크립트 세포화 P0) */
-  if(typeof window !== 'undefined'){
-    window.showLegalModal = showLegalModal;
-  }
 
   /* [#TASK-ES-437] gaugeSvg → js/tabs/goals/result-input.js 로 옮김(인라인 스크립트 세포화 P0) */
 
@@ -3127,10 +3033,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-482] restoreGoogleToken · gcalTokenStatus → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if(typeof window !== 'undefined'){
     window.saveGoogleToken = saveGoogleToken;
-    window.restoreGoogleToken = restoreGoogleToken;
-    window.isGoogleCalendarConnected = isGoogleCalendarConnected;
-    window.requestGoogleToken = requestGoogleToken;
-    window.getGoogleAccessToken = getGoogleAccessToken;
   }
   /* [#TASK-ES-482] ensureGoogleTokenClient · requestGoogleToken · getGoogleAccessToken · openGcalImportModal · openGcalExportModal → js/core/gcal-sync.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   /* [#TASK-ES-486] isoDate · toLocalInputValue · toDateTimeLocalValue · pushCalendarEvent · quickSyncToCalendar · calendarItemsByDate · calCellHtml → js/tabs/calendar/calendar-core.js 로 옮김(인라인 어려움 기관 묶음 이전 2차 — 앞 주석 포함) */
@@ -3158,11 +3060,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   ========================================================================= */
   /* [#TASK-ES-486] openLockScreenHubModal → js/tabs/calendar/lockscreen-hub.js 로 옮김(인라인 어려움 기관 묶음 이전 2차 — 앞 주석 포함) */
 
-  if(typeof window !== 'undefined'){
-    window.openLockScreenHubModal = openLockScreenHubModal;
-    window.syncLockScreenLiveCard = syncLockScreenLiveCard;
-    window.buildLockScreenCardPayload = buildLockScreenCardPayload;
-  }
   /* [#TASK-ES-486] streakBadgeHtml · computeStreakDays · updateAppBadge · STREAK_FREEZE_MAX · maybeGrantStreakFreeze · maybeApplyStreakFreeze · maybeGrantAvatarCraftBonus → js/core/streak-badge.js 로 옮김(인라인 어려움 기관 묶음 이전 2차 — 앞 주석 포함) */
 
   /* [#TASK-ES-600] buildCheckinRecord · saveQuickCheckin → js/tabs/records/quick-checkin.js 로 옮김(빠른 체크인 분리 (G062 잔여) — 앞 주석 포함) */
@@ -3183,7 +3080,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234) ============ */
   /* [#TASK-ES-444] renderIosPwaBanner · openIosPwaInstallGuideModal → js/tabs/settings/pwa-install.js 로 옮김(인라인 스크립트 세포화 P1) */
-  window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal;
 
   /* [#TASK-ES-548] STARTER_GOAL_TEMPLATES → js/tabs/goals/starter-goal-templates.js 로 옮김(인라인 3단계 구역 Z5 표준 2 — 앞 주석 포함) */
 
@@ -3220,7 +3116,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227) ============ */
   /* [#TASK-ES-556] openMicPermissionGuideModal → js/tabs/records/mic-permission-guide.js 로 옮김(인라인 3단계 구역 Z6 표준 3 — 앞 주석 포함) */
-  window.openMicPermissionGuideModal = openMicPermissionGuideModal;
 
   /* ============ 음성 체크인 (Web Speech API) ============ */
   (function setupVoiceCheckin(){
@@ -3362,17 +3257,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   document.getElementById('fbSetupBack').addEventListener('click', closeFeedbackSetup);
   /* [#TASK-ES-492] verdictClass · renderFeedbackSlot · getUserAvatarHtml · showCheckinFeedbackSheet · closeCheckinFeedbackSheet → js/tabs/records/checkin-feedback.js 로 옮김(인라인 어려움 기관 묶음 이전 3차 — 앞 주석 포함) */
   /* [#TASK-ES-492] instantShareCheckinToFeed → js/tabs/records/checkin-feedback.js 로 옮김(인라인 어려움 기관 묶음 이전 3차 — 앞 주석 포함) */
-  window.instantShareCheckinToFeed = instantShareCheckinToFeed;
   /* [#TASK-ES-492] renderRecordFeedbackSlot · timeAgoStr → js/tabs/records/checkin-feedback.js 로 옮김(인라인 어려움 기관 묶음 이전 3차 — 앞 주석 포함) */
   /* ============ 목표 & 기록 선택 피드 공유 모달 (전면 고도화) ============ */
   /* [#TASK-ES-466] addSimulatedCheerAndReplyToPost · openShareToFeedModal → js/tabs/records/share-to-feed.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  window.openShareToFeedModal = openShareToFeedModal;
 
   /* ==========================================================================
      [#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼
      ========================================================================== */
   /* [#TASK-ES-444] toggleFeedPostPreview → js/tabs/comm/feed-post-preview.js 로 옮김(인라인 스크립트 세포화 P1) */
-  window.toggleFeedPostPreview = toggleFeedPostPreview;
 
   /* ============ 외부 데이터 불러오기 (mock) ============ */
   bindImportExternalBtn(); /* [#TASK-ES-483] 로드 중 문(앞 주석 포함) → js/tabs/records/external-import.js 의 bindImportExternalBtn 로 옮김 — 원래 자리에서 부른다 */
@@ -3409,8 +3301,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   bindHeaderTemplateEncyclopediaClick(); /* [#TASK-ES-591] 로드 중 문(앞 주석 포함) → js/tabs/goals/template-encyclopedia-modal.js 의 bindHeaderTemplateEncyclopediaClick 로 옮김 — 원래 자리에서 부른다 */
 
   // 전역 함수 노출
-  window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal;
-  window.copyUserGoalTemplate = copyRealUserTemplate;
 
   /* ============ [#TASK-ES-146] 아워골 평가해주기 90% 팝업 ============ */
   /* [#TASK-ES-466] openAppEvaluationModal · closeAppEvaluationModal → js/tabs/settings/app-evaluation.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
@@ -3442,9 +3332,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ New goal modal ============ */
   /* [#TASK-ES-466] promptNewGoal → js/tabs/goals/new-goal-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.promptNewGoal = promptNewGoal;
-  }
   /* [#TASK-ES-466] localGoalTemplate · generateGoalTemplate · showNewGoalChatStep · showNewGoalLoadingStep · showNewGoalReviewStep · showNewGoalManualForm → js/tabs/goals/new-goal-modal.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   bindNewGoalStepExports(); /* [#TASK-ES-466] 로드 중 문(앞 주석 포함) → js/tabs/goals/new-goal-modal.js 의 bindNewGoalStepExports 로 옮김 — 원래 자리에서 부른다 */
 
@@ -3453,12 +3340,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
   /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
   /* [#TASK-ES-483] renderAttachmentChipsHtml · renderInlineAttachmentChips · openAttachmentViewer · openAddAttachmentModal → js/tabs/goals/attachments.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.openAddAttachmentModal = openAddAttachmentModal;
-    window.openAttachmentViewer = openAttachmentViewer;
-    window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;
-    window.renderInlineAttachmentChips = renderInlineAttachmentChips;
-  }
   /* [#TASK-ES-483] wireAttachmentChipClicks · normalizeSequentialMilestoneDates · buildGoalFromAgentData · applyGoalAgentOp → js/tabs/goals/attachments.js 로 옮김(인라인 어려움 구역 H1 3차 — 앞 주석 포함) */
   /* ============ 목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5) ============ */
   /* [#TASK-ES-436] renderGoalOpsFullPreviewHtml · showGoalAgentLoadingStep · showGoalAgentReviewStep → js/tabs/goals/ai-agent.js 로 옮김(인라인 스크립트 세포화 P1) */
@@ -3494,9 +3375,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-436] requestTodayMission → js/tabs/goals/ai-status.js 로 옮김(인라인 스크립트 세포화 P1) */
   /* ============ [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 ============ */
   /* [#TASK-ES-576] computeTodayMissionHash → js/tabs/home/today-mission.js 로 옮김(오늘 미션 해시·카드 렌더 책임 분열 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.computeTodayMissionHash = computeTodayMissionHash;
-  }
   /* [#TASK-ES-576] renderTodayMissionCard → js/tabs/home/today-mission.js 로 옮김(오늘 미션 해시·카드 렌더 책임 분열 — 앞 주석 포함) */
 
   /* [#TASK-ES-444] localNextActionSuggestion → js/tabs/goals/ai-local-fallback.js 로 옮김(인라인 스크립트 세포화 P1 — 구획 주석 포함) */
@@ -3504,13 +3382,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #TASK-ES-135) ============ */
   /* [#TASK-ES-436] formatSchedulePillHtml · openScheduleSetupModal · applyScheduleUpdate → js/tabs/goals/schedule-setup.js 로 옮김(인라인 스크립트 세포화 P1) */
-  if(typeof window !== 'undefined'){
-    window.formatSchedulePillHtml = formatSchedulePillHtml;
-    window.openScheduleSetupModal = openScheduleSetupModal;
-    window.applyScheduleUpdate = applyScheduleUpdate;
-    window.computeGoalStatusHash = computeGoalStatusHash;
-    window.refreshGoalStatusSummary = refreshGoalStatusSummary;
-  }
 
   /* ============ [#TASK-ES-220] [생각 메모장 91번] 교대근무자 가변형 루틴 프리셋 & 자동 스케줄러 ============ */
   /* [#TASK-ES-568] SHIFT_WORK_PRESETS · applyShiftWorkRoutines · openShiftWorkCustomModal · openShiftCycleModal → js/tabs/goals/shift-routines.js 로 옮김(잔여 책임 분열 — 교대근무 루틴·성장차트·홈 퀘스트 — 앞 주석 포함) */
@@ -3653,11 +3524,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-552] renderPersonalGoalsEmptyGuideHtml → js/tabs/goals/personal-goals-guide.js 로 옮김(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집 — 앞 주석 포함) */
   /* [#TASK-ES-552] isMockGroup → js/tabs/goals/team-level-goals.js 로 옮김(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집 — 앞 주석 포함) */
   /* [#TASK-ES-493] renderTeamCreateHeroCardHtml · renderTeamGoalsEmptyGuideHtml → js/tabs/goals/team-goals-guide.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
-  if (typeof window !== 'undefined') {
-    window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;
-  }
   /* [#TASK-ES-552] getGroupLevelGoals · openLevelGroupDetailModal · collapseAllTeamGoalAccordions → js/tabs/goals/team-level-goals.js 로 옮김(인라인 3단계 Z2 팀·소통 — 개인 목표 가이드·팀 수준별 목표·팀 목표 편집 — 앞 주석 포함) */
-  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;
   /* [#TASK-ES-497] renderTeamGoalsScreen → js/tabs/goals/team-goals-screen.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   if (typeof window !== 'undefined') {
     window.renderTeamGoalsScreen = renderTeamGoalsScreen;
@@ -3759,7 +3626,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진 ============ */
   /* [#TASK-ES-467] TREND_METRICS → js/tabs/records/trend-metrics-chart.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   /* [#TASK-ES-520] renderMultiMetricSvg → js/tabs/records/trend-multi-metric-svg.js 로 옮김(인라인 3단계 Z4 — FN_NAMES 묶음(목표 보관·히트맵·표 집계·표 추이·여러 지표 SVG) — 앞 주석 포함) */
-  window.renderMultiMetricSvg = renderMultiMetricSvg;
   /* [#TASK-ES-467] renderWeekChart → js/tabs/records/trend-metrics-chart.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   /* [#TASK-ES-520] HEATMAP_WEEKS · HEATMAP_LEVELS · heatmapLevel · filterRecordsByQuery → js/tabs/records/record-heatmap-levels.js 로 옮김(인라인 3단계 Z4 — FN_NAMES 묶음(목표 보관·히트맵·표 집계·표 추이·여러 지표 SVG) — 앞 주석 포함) */
@@ -3781,9 +3647,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ ⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯 (In-Table Stopwatch) ============ */
   /* [#TASK-ES-523] formatStopwatchTime → js/tabs/records/stopwatch-format.js 로 옮김(인라인 3단계 Z4 이동 2차(활용가이드·공개 범위 배지·스톱워치 시간 글자) — 앞 주석 포함) */
   /* [#TASK-ES-448] playTimerBeep · STOPWATCH_STATE · renderStopwatchWidgetHtml · renderLapRowsHtml → js/tabs/records/table-stopwatch.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
-  if (typeof window !== 'undefined') {
-    window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;
-  }
   /* [#TASK-ES-446] pushRecordToNotion · openProCoachReportModal · openProNotionExportModal → js/tabs/records/pro-report-export.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* [#TASK-ES-591] compressImageForVision · VISION_DAILY_LIMIT · getVisionDailyQuota · decrementVisionDailyQuota · openVisionTableModal → js/tabs/records/vision-table-input.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
@@ -5227,13 +5090,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-596] openUserProfileModal → js/tabs/comm/user-profile-open.js 로 옮김(A1 시범 — 남은 작은 함수 2개 이전(동작 보존 확인 경로 첫 사용) — 앞 주석 포함) */
   /* [#TASK-ES-448] openNotificationSoftAskModal → js/tabs/settings/notify-soft-ask.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   /* [#TASK-ES-448] openCustomerInquiryModal → js/tabs/settings/support-modals.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.openCustomerInquiryModal = openCustomerInquiryModal;
-  }
   /* [#TASK-ES-448] openItemReportModal → js/tabs/settings/support-modals.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
-  if(typeof window !== 'undefined'){
-    window.openItemReportModal = openItemReportModal;
-  }
   bindWidgetModalOpener(); /* [#TASK-ES-545] 로드 중 문(앞 주석 포함) → js/tabs/settings/widget-modal-opener.js 의 bindWidgetModalOpener 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ [#TASK-ES-354 CORE-07·SET-07] 설정 탭 렌더 → js/tabs/settings/render.js · sub-*.js 로 옮김 ============
@@ -5241,8 +5098,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      과 설정 화면 정적 바인딩. 함수는 이 IIFE 맨 위에서 같은 이름으로 가져온다. 아래 호출·노출 줄은 이전 전과 같은 순서를 지키려고 같은 자리에 둔다. */
   // 설정 아코디언 인터랙션 12ms 햅틱 배선 (#TASK-ES-218)
   bindSettingsHapticDelegate();
-  window.collapseAllSettingsSections = collapseAllSettingsSections;
-  window.toggleAdvancedSettings = toggleAdvancedSettings;
   // 체크인 시간 추가·테스트 알림·내보내기·가져오기 버튼 바인딩
   bindSettingsStaticHandlers();
   /* [#TASK-ES-572] isWithinDND · generateDynamicNotification → js/tabs/settings/notification-helper.js 로 옮김(알림 헬퍼·목표 상세 서랍 책임 분열 — 앞 주석 포함) */
@@ -5359,9 +5214,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     });
   }
-  window.setTab = setTab;
   window.MOCK_GROUPS = MOCK_GROUPS;
-  window.openModal = openModal;
 
   window.addEventListener('appinstalled', function(){ try{ track('app_installed_pwa', { source: 'pwa', goal_type: null, day_index: dayIndexSinceSignup() }); }catch(e){} });
 })();
