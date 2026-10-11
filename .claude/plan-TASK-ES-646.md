@@ -21,7 +21,7 @@
 - [x] 2-5 npm test·시험 파일 전부·무결성 게이트·모듈 로드·대조 탐침 지문·CSV 내려받기 · 완료 기준: 기준과 차이가 이 함수 말고 0(`measurement.json`)
 - [x] 2-6 모듈 가드 래칫(사유와 함께 --update) · 완료 기준: `node scripts/module-guard.js` 종료 코드 0
 - [x] 2-7 REQ·TICKETS·claims · 완료 기준: 무결성 게이트·npm test 종료 코드 0(서류 뒤 재실행)
-- [ ] 2-8 커밋·origin/main 합치기·재검증·로컬 법정 전체 실행 · 완료 기준: `court-local.json` 에 끝까지 돈 결과가 있다
+- [x] 2-8 커밋·origin/main 합치기·재검증·로컬 법정 전체 실행 · 완료 기준: `court-local.json` 에 끝까지 돈 결과가 있다
 - [ ] 2-9 [4단계: 심사 청구] push·PR·되읽기 · 완료 기준: `gh pr view` 의 head 가 로컬 HEAD 와 같다
 
 ## 막힐 지점 예상(원칙 ⑧)과 실제

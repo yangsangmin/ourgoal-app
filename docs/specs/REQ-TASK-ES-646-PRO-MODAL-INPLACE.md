@@ -211,7 +211,7 @@ function bindProRecSave(ctx){ <원래 줄 그대로> }
 | `raw/npm-test.{base,work}.{log,exit}` · `npm-test-compare.json` | npm test 전경 실행 | 종료 코드 0 · 0 · ✓ 줄 487 · 487 · ok 줄 196 · 196 · 검사 줄 글자 같음 true |
 | `tests-all-compare.json` | 시험 파일 119개를 하나씩 실행 | 기준과 다른 파일 **0** (종료 코드가 0 이 아닌 파일은 기준 26 · 작업 26 — 같은 파일, 이 PR 과 무관한 기존 상태) |
 | `measurement.json` | 지표 · 바뀐 파일 | 인라인 스크립트 줄 수 2311 → 2326(**+15**) · index.html 함수 선언 수 17 → 22(**+5**) · window 대입 75 → 75 · index.html +204 −189 · 바뀐 제품 파일 ["index.html"] · js 0 · 시험 0 · 금고 0 · 생성기 0 · 생성 지도 0 · 모듈 가드 종료 코드 0 · 기준선 사유 기록 true |
-| `court-local.json` | 로컬 법정 전체 실행(작업자 PC 예비 점검 — 판정 아님) | 커밋 뒤 기록 |
+| `court-local.json` | 로컬 법정 전체 실행(작업자 PC 예비 점검 — 판정 아님) | 판정 줄 「확인 부족」 · 작업자가 적어 낸 지시 항목 12건 중 9건은 필요한 수준까지 확인하지 못했습니다 · 종료 코드 3 · 끝까지 돌았는가 true |
 <!-- measure:end -->
 
 ### 7.1 재현 방법 (독립 검토용 — 한 줄씩)
