@@ -1,0 +1,910 @@
+{
+ "tool": "docs/design/harness/module-split/gen-cell-provide.js",
+ "type": "생성기 계획(작업자 산출, 판정 아님)",
+ "write": true,
+ "keep": {
+  "existingFiles": 188,
+  "existingNames": 527,
+  "plannedNow": 4,
+  "alreadyRegistered": 1,
+  "added": 3,
+  "addedNames": [
+   "handleDeepLinkRouting",
+   "renderTeamGoalsScreen",
+   "switchTab"
+  ],
+  "upgradedFromWindowOnly": [],
+  "upgradedEntries": [],
+  "excluded": [],
+  "filesToChange": [
+   "js/core/deep-link-gateway.js",
+   "js/core/registry-init.js",
+   "js/tabs/goals/team-goals-screen.js"
+  ],
+  "newBlockFiles": [
+   "js/core/deep-link-gateway.js",
+   "js/tabs/goals/team-goals-screen.js"
+  ],
+  "differs": []
+ },
+ "keepNote": "--keep: registered · files · counts.registered* 는 이번에 **더하는** 이름만이다. 기존 등록(keep.existingNames 개)은 그대로 둔다",
+ "index": {
+  "iifeLines": [
+   2254,
+   3876
+  ],
+  "scriptTags": 366,
+  "registryTagOrder": 7,
+  "registryTagLine": 2151,
+  "kitVars": {
+   "_ui": {
+    "path": "OurgoalUiHelpers",
+    "line": 2261
+   },
+   "_xp": {
+    "path": "OurgoalAvatarParts.xp",
+    "line": 2265
+   },
+   "_recordsKit": {
+    "path": "OurgoalRecordsKit",
+    "line": 2275
+   },
+   "_calendarKit": {
+    "path": "OurgoalCalendarKit",
+    "line": 2286
+   },
+   "_goalsKit": {
+    "path": "OurgoalGoalsKit",
+    "line": 2292
+   },
+   "_commKit": {
+    "path": "OurgoalCommKit",
+    "line": 2309
+   },
+   "_modalOpenKit": {
+    "path": "OurgoalModalOpenKit",
+    "line": 2341
+   },
+   "_visionTableInputKit": {
+    "path": "OurgoalVisionTableInputKit",
+    "line": 2379
+   },
+   "_levelBadgeKit": {
+    "path": "OurgoalLevelBadgeKit",
+    "line": 2382
+   },
+   "_uiKit": {
+    "path": "OurgoalUiHelpers",
+    "line": 2386
+   }
+  },
+  "imports": 72,
+  "scopeGetterNames": 7,
+  "scopeSetterNames": 2,
+  "windowNames": 3,
+  "windowSites": 3
+ },
+ "counts": {
+  "registeredNames": 3,
+  "registeredScope": 3,
+  "registeredWindow": 0,
+  "files": 3,
+  "skipped": 0,
+  "iifeOwnedScope": 3,
+  "iifeOwnedWindow": 2,
+  "changedThisRun": 3,
+  "unchangedThisRun": 0,
+  "staleBlocksRemoved": 0
+ },
+ "byKit": {
+  "_ui": {
+   "kitPath": "OurgoalUiHelpers",
+   "imports": 2,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 2,
+   "notExposedNoRefs": 1
+  },
+  "_xp": {
+   "kitPath": "OurgoalAvatarParts.xp",
+   "imports": 2,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 2,
+   "notExposedNoRefs": 0
+  },
+  "_recordsKit": {
+   "kitPath": "OurgoalRecordsKit",
+   "imports": 25,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 25,
+   "notExposedNoRefs": 0
+  },
+  "_calendarKit": {
+   "kitPath": "OurgoalCalendarKit",
+   "imports": 4,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 4,
+   "notExposedNoRefs": 0
+  },
+  "_goalsKit": {
+   "kitPath": "OurgoalGoalsKit",
+   "imports": 3,
+   "registeredImports": 1,
+   "unwireReady": 1,
+   "blockedByIifeRefs": 0,
+   "notExposed": 2,
+   "notExposedNoRefs": 0
+  },
+  "_modalOpenKit": {
+   "kitPath": "OurgoalModalOpenKit",
+   "imports": 1,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 1,
+   "notExposedNoRefs": 0
+  },
+  "_visionTableInputKit": {
+   "kitPath": "OurgoalVisionTableInputKit",
+   "imports": 1,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 1,
+   "notExposedNoRefs": 0
+  },
+  "_levelBadgeKit": {
+   "kitPath": "OurgoalLevelBadgeKit",
+   "imports": 1,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 1,
+   "notExposedNoRefs": 0
+  },
+  "_uiKit": {
+   "kitPath": "OurgoalUiHelpers",
+   "imports": 32,
+   "registeredImports": 2,
+   "unwireReady": 2,
+   "blockedByIifeRefs": 0,
+   "notExposed": 29,
+   "notExposedNoRefs": 0
+  },
+  "_commKit": {
+   "kitPath": "OurgoalCommKit",
+   "imports": 1,
+   "registeredImports": 0,
+   "unwireReady": 0,
+   "blockedByIifeRefs": 0,
+   "notExposed": 1,
+   "notExposedNoRefs": 0
+  }
+ },
+ "byKitNote": "imports=IIFE 가 그 키트에서 가져오는 이름 수 · registeredImports=그중 통로/window 로 나가 등록된 것 · unwireReady=등록됐고 IIFE 안에 getter·window 대입 말고는 참조가 없는 것(철거 후보) · blockedByIifeRefs=등록됐지만 IIFE 안 다른 코드가 아직 그 이름을 쓰는 것 · notExposed=통로·window 로 나가지 않아 등록 대상이 아닌 가져오기(그중 notExposedNoRefs 는 IIFE 안 참조도 0)",
+ "files": [
+  {
+   "file": "js/core/deep-link-gateway.js",
+   "owner": "core/deep-link-gateway",
+   "names": 1,
+   "kits": [
+    "OurgoalUiHelpers"
+   ]
+  },
+  {
+   "file": "js/core/registry-init.js",
+   "owner": "core/registry-init",
+   "names": 4,
+   "kits": [
+    "OurgoalUiHelpers"
+   ]
+  },
+  {
+   "file": "js/tabs/goals/team-goals-screen.js",
+   "owner": "goals/team-goals-screen",
+   "names": 1,
+   "kits": [
+    "OurgoalGoalsKit"
+   ]
+  }
+ ],
+ "oneLineBlocks": [
+  {
+   "file": "js/tabs/goals/team-goals-screen.js",
+   "linesBefore": 798,
+   "linesWithNormalBlock": 808,
+   "linesWithOneLineBlock": 799
+  }
+ ],
+ "oneLineBlocksNote": "--compact-over-limit: 보통 꼴 블록을 붙이면 800줄을 넘는 세포에만 한 줄 꼴 블록을 붙였다(상한은 그대로)",
+ "registered": [
+  {
+   "name": "handleDeepLinkRouting",
+   "kinds": "scope",
+   "import": "handleDeepLinkRouting",
+   "kit": "OurgoalUiHelpers",
+   "kitVar": "_uiKit",
+   "member": "handleDeepLinkRouting",
+   "file": "js/core/deep-link-gateway.js",
+   "owner": "core/deep-link-gateway",
+   "assigners": [
+    "js/core/deep-link-gateway.js"
+   ]
+  },
+  {
+   "name": "renderTeamGoalsScreen",
+   "kinds": "scope",
+   "import": "renderTeamGoalsScreen",
+   "kit": "OurgoalGoalsKit",
+   "kitVar": "_goalsKit",
+   "member": "renderTeamGoalsScreen",
+   "file": "js/tabs/goals/team-goals-screen.js",
+   "owner": "goals/team-goals-screen",
+   "assigners": [
+    "js/tabs/goals/team-goals-screen.js"
+   ]
+  },
+  {
+   "name": "switchTab",
+   "kinds": "scope",
+   "import": "switchTab",
+   "kit": "OurgoalUiHelpers",
+   "kitVar": "_uiKit",
+   "member": "switchTab",
+   "file": "js/core/registry-init.js",
+   "owner": "core/registry-init",
+   "assigners": [
+    "js/core/registry-init.js"
+   ]
+  }
+ ],
+ "skipped": [],
+ "iifeOwned": [
+  {
+   "name": "state",
+   "kind": "scope",
+   "returns": "state",
+   "setter": true,
+   "line": 2279
+  },
+  {
+   "name": "openProTemplateRecordModal",
+   "kind": "scope",
+   "returns": "openProTemplateRecordModal",
+   "setter": false,
+   "line": 2278
+  },
+  {
+   "name": "_promptEncyclopediaOpen",
+   "kind": "scope",
+   "returns": "_promptEncyclopediaOpen",
+   "setter": true,
+   "line": 2487
+  },
+  {
+   "name": "shareContent",
+   "kind": "window",
+   "rhs": null,
+   "rhsType": "MemberExpression",
+   "line": 3847
+  },
+  {
+   "name": "SHARED_GROUPS_LOADED",
+   "kind": "window",
+   "rhs": null,
+   "rhsType": "BooleanLiteral",
+   "line": 3864
+  }
+ ],
+ "iifeOwnedNote": "IIFE 안에 정의가 남아 있어 세포가 없는 이름(함수 이전·B9 상태 기관·B10 부팅 기관 몫). scope: 통로 getter 가 가져오기 이름을 돌려주지 않는다 · window: 대입 오른쪽이 가져오기 이름이 아니다",
+ "importRefs": {
+  "escapeHtml": {
+   "getter": 0,
+   "window": 0,
+   "other": 10,
+   "otherLines": [
+    2782,
+    2797,
+    2812,
+    2846,
+    2846
+   ]
+  },
+  "a11ySwitch": {
+   "getter": 0,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "XP_RULES": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3587
+   ]
+  },
+  "awardXP": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3587
+   ]
+  },
+  "renderRecordsScreen": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    3601,
+    3644
+   ]
+  },
+  "renderCalendarScreen": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3603
+   ]
+  },
+  "renderGoalsScreen": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3602
+   ]
+  },
+  "openCalendarDayEditHubModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 3,
+   "otherLines": [
+    3607,
+    3659,
+    3666
+   ]
+  },
+  "maybeShowGoalUpdateModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3646
+   ]
+  },
+  "openModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2858
+   ]
+  },
+  "renderTeamGoalsScreen": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "downloadTableAsCsv": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3004
+   ]
+  },
+  "openCsvImportModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2984
+   ]
+  },
+  "openWearableSyncModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3013
+   ]
+  },
+  "syncRecordToMatchingGoals": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3598
+   ]
+  },
+  "openVoiceTableModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3074
+   ]
+  },
+  "getAllProTemplates": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    2718,
+    3140
+   ]
+  },
+  "getProTemplateByKey": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3116
+   ]
+  },
+  "fmtYYMMDD": {
+   "getter": 0,
+   "window": 0,
+   "other": 3,
+   "otherLines": [
+    2826,
+    2956,
+    3507
+   ]
+  },
+  "openCreateCustomTemplateModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3136
+   ]
+  },
+  "openTemplateColumnEditModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3090
+   ]
+  },
+  "computeTrendChartData": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    2772,
+    3211
+   ]
+  },
+  "formatStopwatchTime": {
+   "getter": 0,
+   "window": 0,
+   "other": 4,
+   "otherLines": [
+    3246,
+    3390,
+    3421,
+    3476
+   ]
+  },
+  "openVisionTableModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3054
+   ]
+  },
+  "renderLevelBadge": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3604
+   ]
+  },
+  "uid": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3555
+   ]
+  },
+  "newId": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3506
+   ]
+  },
+  "pad": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    2733,
+    2733
+   ]
+  },
+  "nowISO": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    3533,
+    3564
+   ]
+  },
+  "saveLocalSettings": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3595
+   ]
+  },
+  "saveProfile": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    3613,
+    3640
+   ]
+  },
+  "switchTab": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "closeModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 4,
+   "otherLines": [
+    3043,
+    3490,
+    3609,
+    3667
+   ]
+  },
+  "burstConfetti": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3631
+   ]
+  },
+  "isGoogleCalendarConnected": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3574
+   ]
+  },
+  "syncAllToGoogleCalendar": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3575
+   ]
+  },
+  "isoDate": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    2553,
+    2553
+   ]
+  },
+  "toLocalInputValue": {
+   "getter": 0,
+   "window": 0,
+   "other": 3,
+   "otherLines": [
+    2733,
+    2734,
+    3498
+   ]
+  },
+  "renderFeedbackSlot": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3643
+   ]
+  },
+  "renderRecordFeedbackSlot": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    3634,
+    3642
+   ]
+  },
+  "resizeImageToDataUrl": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3167
+   ]
+  },
+  "handleDeepLinkRouting": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "toast": {
+   "getter": 0,
+   "window": 0,
+   "other": 15,
+   "otherLines": [
+    2947,
+    2956,
+    2994,
+    3033,
+    3064
+   ]
+  },
+  "openTemplateMarketModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3042
+   ]
+  },
+  "saveGoogleToken": {
+   "getter": 1,
+   "window": 1,
+   "other": 0,
+   "otherLines": []
+  },
+  "bootApplySavedTheme": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2477
+   ]
+  },
+  "bootAuthStateListener": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2494
+   ]
+  },
+  "bootThemeList": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2521
+   ]
+  },
+  "bootAvatarLevelUpWiring": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2545
+   ]
+  },
+  "bootExposeAppState": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2554
+   ]
+  },
+  "bootPromptTabState": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2574
+   ]
+  },
+  "bootEntryAndAccountWiring": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2594
+   ]
+  },
+  "bootGoogleTokenState": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2599
+   ]
+  },
+  "bootHomeAndGoalWiring": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2643
+   ]
+  },
+  "bootGoalsAndTeamState": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2675
+   ]
+  },
+  "bootRecordsWiring": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3674
+   ]
+  },
+  "bootRecordsExportWiring": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3680
+   ]
+  },
+  "bootSharedGroupsState": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3863
+   ]
+  },
+  "bootCommSettingsAndStart": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3871
+   ]
+  },
+  "bootInstallAndServiceWorker": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3875
+   ]
+  },
+  "bootAppConfig": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2498
+   ]
+  },
+  "bootTemplatePartHandles": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3873
+   ]
+  },
+  "requestAIFeedback": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3637
+   ]
+  },
+  "renderAnalyticsHtml": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    2778,
+    2888
+   ]
+  },
+  "renderTrendSvgChart": {
+   "getter": 0,
+   "window": 0,
+   "other": 2,
+   "otherLines": [
+    2772,
+    3212
+   ]
+  },
+  "pushRecordToNotion": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3617
+   ]
+  },
+  "openProCoachReportModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2966
+   ]
+  },
+  "openProNotionExportModal": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2975
+   ]
+  },
+  "daysFromNow": {
+   "getter": 0,
+   "window": 0,
+   "other": 17,
+   "otherLines": [
+    3684,
+    3693,
+    3708,
+    3717,
+    3732
+   ]
+  },
+  "playTimerBeep": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3312
+   ]
+  },
+  "renderStopwatchWidgetHtml": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    2775
+   ]
+  },
+  "renderLapRowsHtml": {
+   "getter": 0,
+   "window": 0,
+   "other": 1,
+   "otherLines": [
+    3337
+   ]
+  }
+ },
+ "fileNotes": []
+}
