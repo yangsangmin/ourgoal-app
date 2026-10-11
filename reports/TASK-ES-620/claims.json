@@ -937,6 +937,166 @@
     "path": "changedScope.vaultCourtConstitutionDirectivesGenerator",
     "equals": []
    }
+  },
+  {
+   "id": "C58",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 합친 main 그대로의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.compare.mainNpmTestExitBefore",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C59",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 합친 main 에 이 변경을 얹은 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.compare.mainNpmTestExitAfter",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C60",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 합친 main 그대로의 npm test ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.compare.mainCheckLinesBefore",
+    "equals": 487
+   }
+  },
+  {
+   "id": "C61",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 합친 main 에 이 변경을 얹은 npm test ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.compare.mainCheckLinesAfter",
+    "equals": 487
+   }
+  },
+  {
+   "id": "C62",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 합친 main 의 시험지로 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.remaining.main-before__mock-before",
+    "equals": 57
+   }
+  },
+  {
+   "id": "C63",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 이 변경의 시험지와 병합된 게이트로 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.remaining.main-after__mock-after",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C64",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 모의 철거 사본 · 이 변경의 시험지와 병합된 게이트의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.runs.mock-after.npmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C65",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 재확인 기록: 모의 철거 사본 · 이 변경의 시험지와 병합된 게이트의 npm test ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "summary.runs.mock-after.npmTestCheckLines",
+    "equals": 487
+   }
+  },
+  {
+   "id": "C66",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "changedScope.product",
+    "equals": []
+   }
+  },
+  {
+   "id": "C67",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트 병합 뒤 범위 기록: 이 변경이 바꾼 금고·법정·헌법·지시함·생성기 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge-2.json",
+    "path": "changedScope.vaultCourtConstitutionDirectivesGenerator",
+    "equals": []
+   }
   }
  ],
  "retire": [

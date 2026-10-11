@@ -86,6 +86,19 @@ if (fs.existsSync(path.join(DIR, 'post-merge.json'))) {
   rec('R5', '합친 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.', 'post-merge.json', 'changedScope.product');
   rec('R5', '합친 뒤 범위 기록: 이 변경이 바꾼 금고·법정·헌법·지시함·생성기 파일 목록.', 'post-merge.json', 'changedScope.vaultCourtConstitutionDirectivesGenerator');
 }
+// 짝 PR(게이트) 병합 뒤의 main 을 합치고 다시 잰 재확인 기록(있을 때만 — 앞의 주장은 그대로 두고 뒤에 더한다)
+if (fs.existsSync(path.join(DIR, 'post-merge-2.json'))) {
+  rec('R4', '게이트 병합 뒤 재확인 기록: 합친 main 그대로의 npm test 종료 코드.', 'post-merge-2.json', 'summary.compare.mainNpmTestExitBefore');
+  rec('R4', '게이트 병합 뒤 재확인 기록: 합친 main 에 이 변경을 얹은 npm test 종료 코드.', 'post-merge-2.json', 'summary.compare.mainNpmTestExitAfter');
+  rec('R4', '게이트 병합 뒤 재확인 기록: 합친 main 그대로의 npm test ✓ 줄 수.', 'post-merge-2.json', 'summary.compare.mainCheckLinesBefore');
+  rec('R4', '게이트 병합 뒤 재확인 기록: 합친 main 에 이 변경을 얹은 npm test ✓ 줄 수.', 'post-merge-2.json', 'summary.compare.mainCheckLinesAfter');
+  rec('R1', '게이트 병합 뒤 재확인 기록: 합친 main 의 시험지로 모의 철거 사본에서만 실패하는 단언 줄 수.', 'post-merge-2.json', 'summary.remaining.main-before__mock-before');
+  rec('R4', '게이트 병합 뒤 재확인 기록: 이 변경의 시험지와 병합된 게이트로 모의 철거 사본에서만 실패하는 단언 줄 수.', 'post-merge-2.json', 'summary.remaining.main-after__mock-after');
+  rec('R4', '게이트 병합 뒤 재확인 기록: 모의 철거 사본 · 이 변경의 시험지와 병합된 게이트의 npm test 종료 코드.', 'post-merge-2.json', 'summary.runs.mock-after.npmTestExit');
+  rec('R4', '게이트 병합 뒤 재확인 기록: 모의 철거 사본 · 이 변경의 시험지와 병합된 게이트의 npm test ✓ 줄 수.', 'post-merge-2.json', 'summary.runs.mock-after.npmTestCheckLines');
+  rec('R5', '게이트 병합 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.', 'post-merge-2.json', 'changedScope.product');
+  rec('R5', '게이트 병합 뒤 범위 기록: 이 변경이 바꾼 금고·법정·헌법·지시함·생성기 파일 목록.', 'post-merge-2.json', 'changedScope.vaultCourtConstitutionDirectivesGenerator');
+}
 
 // retire — 검사 제목별(scripts/smoke-test.js), 파일 단위(scripts/test-calendar-attachments.js — check 제목이 없는 시험지)
 const retire = [];

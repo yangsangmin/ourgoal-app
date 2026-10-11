@@ -90,7 +90,7 @@ for (const f of (POST ? [] : ['broken-assertions.json', 'control-group.json', 'c
 }
 // 서류를 다 쓴 뒤 npm test 를 전경으로 끝까지 돌린 원시 로그(reports/<작업번호>/raw/npm-test.<이름>.log · .exit)의 종료 코드와 줄 수를 옮겨 적는다
 {
-  const rawRel = POST ? 'raw/post-merge' : 'raw', rawDir = path.join(DIR, rawRel); // 합친 뒤의 로그는 raw/post-merge/ 에 따로 둔다
+  const rawRel = POST ? 'raw/' + OUTNAME.slice(0, -5) : 'raw', rawDir = path.join(DIR, rawRel); // 합친 뒤의 로그는 raw/<결과 파일 이름>/ 에 따로 둔다(post-merge.json → raw/post-merge/)
   out.rawNpmTestLogs = {};
   if (fs.existsSync(rawDir)) for (const e of fs.readdirSync(rawDir).filter(n => /^npm-test\..+\.exit$/.test(n)).sort()) {
     const name = e.replace(/^npm-test\./, '').replace(/\.exit$/, ''), L = fs.readFileSync(path.join(rawDir, 'npm-test.' + name + '.log'), 'utf8').split(/\r?\n/);
