@@ -22,7 +22,7 @@
 - [x] 2-6 모듈 가드 래칫(사유와 함께 --update) · 완료 기준: `node scripts/module-guard.js` 종료 코드 0
 - [x] 2-7 REQ·TICKETS·claims · 완료 기준: 무결성 게이트·npm test 종료 코드 0(서류 뒤 재실행)
 - [x] 2-8 커밋·origin/main 합치기·재검증·로컬 법정 전체 실행 · 완료 기준: `court-local.json` 에 끝까지 돈 결과가 있다
-- [ ] 2-9 [4단계: 심사 청구] push·PR·되읽기 · 완료 기준: `gh pr view` 의 head 가 로컬 HEAD 와 같다
+- [ ] 2-9 [4단계: 심사 청구] push·PR·되읽기 · 완료 기준: `gh pr view` 의 head 가 로컬 HEAD 와 같다 — 이 표시는 push·PR 생성 뒤에 확인된다. push 횟수를 줄이라는 운영 지시(Vercel 배포 하루 한도)로 표시만을 위한 추가 push 는 하지 않는다(PR 번호·head 는 오케스트레이터 보고에 적는다)
 
 ## 막힐 지점 예상(원칙 ⑧)과 실제
 
