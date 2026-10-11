@@ -1,0 +1,562 @@
+{
+ "schema": "ourgoal.unwire-run.measurement/2",
+ "taskId": "TASK-ES-684",
+ "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정(node court/chat.js <PR>)만 낸다",
+ "measuredAt": "2026-10-11T13:23:56.214Z",
+ "environment": {
+  "node": "v24.15.0",
+  "platform": "win32",
+  "gitAutocrlf": "true"
+ },
+ "sourceCommit": {
+  "baseTreeHead": "6da0375a60ba03cb805b167a2b6fd7ddf22a17c5",
+  "worktreeHead": "6da0375a60ba03cb805b167a2b6fd7ddf22a17c5",
+  "note": "기준 = origin/main 임시 git worktree(저장소 밖). 작업 = 이 트리(작업 트리 상태 그대로)"
+ },
+ "summary": {
+  "unwire": {
+   "runs": [
+    {
+     "order": 1,
+     "kitVar": "_ui",
+     "pass": 1,
+     "options": [
+      "dropkit"
+     ],
+     "names": 0,
+     "plannedNames": 0,
+     "droppedFromPlan": [],
+     "removed": {
+      "imports": 0,
+      "exposeProps": 0,
+      "exposeCalls": 0,
+      "windowAssigns": 0,
+      "windowBlocks": 0,
+      "commaFixedLines": 0,
+      "inlineEdits": 0,
+      "kitVarLine": 1,
+      "deadImports": 1,
+      "deletedLines": 2
+     },
+     "htmlLines": [
+      2714,
+      2712
+     ]
+    }
+   ],
+   "skippedRuns": [],
+   "totals": {
+    "runs": 1,
+    "names": 0,
+    "plannedNames": 0,
+    "droppedFromPlan": 0,
+    "removed": {
+     "imports": 0,
+     "exposeProps": 0,
+     "exposeCalls": 0,
+     "windowAssigns": 0,
+     "windowBlocks": 0,
+     "commaFixedLines": 0,
+     "inlineEdits": 0,
+     "kitVarLine": 1,
+     "deadImports": 1,
+     "deletedLines": 2
+    },
+    "htmlLines": [
+     2714,
+     2712
+    ]
+   },
+   "removedNames": 0,
+   "removedScopeNames": 0,
+   "removedWindowNames": 0
+  },
+  "changed": {
+   "files": 37,
+   "productFiles": [
+    "index.html"
+   ],
+   "onlyIndexHtml": true,
+   "indexHtml": {
+    "file": "index.html",
+    "insertions": 0,
+    "deletions": 2
+   },
+   "testsChanged": [],
+   "vaultChanged": [],
+   "generatorChanged": [],
+   "otherGeneratedMapsChanged": []
+  },
+  "onlyDeletions": {
+   "rebuiltEqualsWork": true,
+   "baseLines": 2714,
+   "workLines": 2712,
+   "runs": 1,
+   "note": "기준 index.html 에서 실행마다 생성기가 적어 낸 줄(deletedLineNumbers)을 지우고 commaFixedLineNumbers 줄 끝 쉼표 한 글자를 떼고 inlineEdits 를 반영한 결과 == 작업 index.html (줄바꿈만 LF 로 맞춤). 참이면 그 밖의 글자 변경 0 · 더한 줄 0"
+  },
+  "kindsOnly": {
+   "deletedOutsideListedKinds": [],
+   "namesOutsideProof": [],
+   "allImportLinesAreKitImports": true,
+   "allRunsReplayed": true,
+   "perRun": [
+    {
+     "order": 1,
+     "kitVar": "_ui",
+     "pass": 1,
+     "linesBeforeMatch": true,
+     "deletedOutsideListedKinds": [],
+     "namesOutsideProof": [],
+     "importLinesAreKitImports": true,
+     "inlineEditBeforeMatches": true,
+     "commaFixedAreOneCharEach": true
+    }
+   ],
+   "extendedKindsUsed": {
+    "sharedLine": 0,
+    "dropKitVar": 1,
+    "nonKitHandle": 1
+   },
+   "note": "실행마다: 지운 줄이 전부 가져오기 줄 · expose getter/setter 속성 줄(과 빈 껍데기) · window 대입 줄(과 빈 블록 껍데기) · (설정에 있을 때만) 손잡이 줄·한 줄 안 삭제 줄에 든다"
+  },
+  "deadImports": {
+   "names": [
+    "a11ySwitch"
+   ],
+   "rows": [
+    {
+     "name": "a11ySwitch",
+     "run": 1,
+     "kitVar": "_ui",
+     "kit": "OurgoalUiHelpers",
+     "line": 2262,
+     "lineIsPlainKitImport": true,
+     "reason": "설정 탭 세포들은 키트(window.OurgoalUiHelpers)에서 직접 부른다 — index.html 의 이 지역 변수를 읽는 곳이 없다(참조 0 · 글자열 0 · eval/new Function/with 0 — #TASK-ES-677 사실 보고). 2026-10-11 상민님 결심 ③(삭제)",
+     "definedIn": "js/core/ui-helpers.js",
+     "definedAtLine": 37,
+     "runtimeBase": {
+      "own": true,
+      "data": true,
+      "accessor": false,
+      "type": "function",
+      "onScope": false
+     },
+     "runtimeWork": {
+      "own": true,
+      "data": true,
+      "accessor": false,
+      "type": "function",
+      "onScope": false
+     }
+    }
+   ],
+   "allPlainKitImports": true,
+   "allDataPropertiesAtRuntime": true,
+   "noneOnScope": true,
+   "bootExceptions": {
+    "base": 0,
+    "work": 0
+   },
+   "note": "죽은 가져오기 = IIFE 안에서 읽는 곳이 하나도 없는 지역 변수 선언. 지워도 통로·window 의 값은 달라질 것이 없다(처음부터 통로에 없는 이름이다) — 키트 속성 읽기 한 번이 사라질 뿐이고, 그 속성은 데이터 속성이라 읽기에 부수효과가 없다"
+  },
+  "inlineScriptLines": {
+   "before": 444,
+   "after": 442,
+   "decreasedBy": 2,
+   "decreased": true,
+   "source": "scripts/module-metrics.js measure().ratchet.inlineScriptLines — 기준 트리, 작업 트리"
+  },
+  "ratchet": {
+   "indexFunctionDecls": [
+    1,
+    1
+   ],
+   "windowAssignments": [
+    75,
+    75
+   ],
+   "oversizeJsFiles": [
+    0,
+    0
+   ],
+   "crossTabRefs": [
+    0,
+    0
+   ]
+  },
+  "baseline": {
+   "file": "docs/architecture/module-baseline.json",
+   "lastInlineScriptLines": [
+    444,
+    442
+   ],
+   "recordedEqualsMeasured": true,
+   "historyEntries": [
+    75,
+    76
+   ]
+  },
+  "guard": {
+   "exitCode": 0
+  },
+  "compare": {
+   "scopeNames": 539,
+   "windowNames": 0,
+   "registered": 545,
+   "checked": 471,
+   "mismatches": 0,
+   "missing": 68,
+   "extra": 74,
+   "conflicts": 0,
+   "own": 545,
+   "ownScope": 471,
+   "ownWindow": 181,
+   "lateProvides": 0,
+   "ok": true,
+   "namesFixedFrom": "cell-registry-compare.before.json",
+   "scopeLost": [],
+   "scopeAdded": [],
+   "exceptions": 0,
+   "consoleErrors": 0,
+   "before": {
+    "scopeNames": 539,
+    "windowNames": 0,
+    "registered": 545,
+    "checked": 471,
+    "mismatches": 0,
+    "missing": 68,
+    "extra": 74,
+    "conflicts": 0,
+    "own": 545,
+    "ownScope": 471,
+    "ownWindow": 181,
+    "lateProvides": 0
+   },
+   "windowNamesLeftInIife": 0,
+   "modes": {
+    "own": 545,
+    "compare": 0
+   }
+  },
+  "fingerprints": {
+   "names": {
+    "scope": 539,
+    "window": 0
+   },
+   "differingScope": [],
+   "differingWindow": [],
+   "removedNamesStillPresent": {
+    "scope": "0/0",
+    "window": "0/0"
+   },
+   "removedNamesAbsent": []
+  },
+  "scenarios": [
+   {
+    "id": "a501-guest-boot-six-tabs",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 13
+   },
+   {
+    "id": "a502-goals-subtabs-periods",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 10
+   },
+   {
+    "id": "a503-bell-modal-settings",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 9
+   },
+   {
+    "id": "a504-new-goal-modal",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 6
+   },
+   {
+    "id": "a505-goal-agent-drawer",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 3
+   },
+   {
+    "id": "a506-settings-legal-links",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 4
+   },
+   {
+    "id": "a507-auth-forgot-password",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 1
+   },
+   {
+    "id": "a508-checkin-mic-guide",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 2
+   },
+   {
+    "id": "a509-team-comment-passthrough",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 2
+   },
+   {
+    "id": "a510-sample-purge",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 3
+   },
+   {
+    "id": "a511-goal-fast-add",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 4
+   },
+   {
+    "id": "a512-records-export-modal",
+    "basePassed": true,
+    "workPassed": true,
+    "baseExceptions": 0,
+    "workExceptions": 0,
+    "nonVacuousExpects": 4
+   }
+  ],
+  "scenariosAllPassedBoth": true,
+  "moduleLoad": {
+   "regressions": 0,
+   "insufficient": [
+    "js/goal-templates-registry.js: 양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined"
+   ],
+   "counts": {
+    "head": 83,
+    "headOk": 82,
+    "base": 83,
+    "baseOk": 82
+   }
+  },
+  "npmTest": {
+   "base": {
+    "exitCode": 0,
+    "okLines": 487,
+    "okDotLines": 203,
+    "failLines": 0
+   },
+   "work": {
+    "exitCode": 0,
+    "okLines": 487,
+    "okDotLines": 203,
+    "failLines": 0
+   },
+   "same": true,
+   "onlyBase": 0,
+   "onlyWork": 0,
+   "retired": 0
+  }
+ },
+ "commands": [
+  {
+   "id": "git rev-parse HEAD",
+   "argv": [
+    "git",
+    "rev-parse",
+    "HEAD"
+   ],
+   "startedAt": "2026-10-11T13:21:39.268Z",
+   "endedAt": "2026-10-11T13:21:39.330Z",
+   "exitCode": 0,
+   "stdoutHead": "6da0375a60ba03cb805b167a2b6fd7ddf22a17c5\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "git rev-parse HEAD",
+   "argv": [
+    "git",
+    "rev-parse",
+    "HEAD"
+   ],
+   "startedAt": "2026-10-11T13:21:39.330Z",
+   "endedAt": "2026-10-11T13:21:39.387Z",
+   "exitCode": 0,
+   "stdoutHead": "6da0375a60ba03cb805b167a2b6fd7ddf22a17c5\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "git diff --numstat",
+   "argv": [
+    "git",
+    "diff",
+    "--numstat",
+    "6da0375a60ba03cb805b167a2b6fd7ddf22a17c5",
+    "--"
+   ],
+   "startedAt": "2026-10-11T13:21:39.387Z",
+   "endedAt": "2026-10-11T13:21:39.544Z",
+   "exitCode": 0,
+   "stdoutHead": "14\t0\tdocs/architecture/module-baseline.json\n1\t0\tdocs/rules/TICKETS.md\n0\t2\tindex.html\n",
+   "stderrHead": "warning: in the working copy of 'docs/architecture/module-baseline.json', LF will be replaced by CRLF the next time Git touches it\n"
+  },
+  {
+   "id": "git ls-files --others",
+   "argv": [
+    "git",
+    "ls-files",
+    "--others",
+    "--exclude-standard"
+   ],
+   "startedAt": "2026-10-11T13:21:39.544Z",
+   "endedAt": "2026-10-11T13:21:39.667Z",
+   "exitCode": 0,
+   "stdoutHead": "docs/specs/REQ-TASK-ES-684-UNWIRE-5.md\nreports/TASK-ES-684/dead-imports.json\nreports/TASK-ES-684/iife-composition.cjs\nreports/TASK-ES-684/iife-composition.json\nreports/TASK-ES-684/pinned-names-now.exc",
+   "stderrHead": ""
+  },
+  {
+   "id": "dead-import probe dead-import-probe.base.json",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "<작업 트리>\\reports\\TASK-ES-636\\state-probe.cjs",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\es684-base",
+    "<작업 트리>\\reports\\TASK-ES-684\\dead-import-probe.base.json",
+    "--names",
+    "<작업 트리>\\reports\\TASK-ES-684\\dead-import-names.json",
+    "--eval",
+    "({\"a11ySwitch\":(function(){try{var o=window.OurgoalUiHelpers;var d=Object.getOwnPropertyDescriptor(o,'a11ySwitch');return{own:!!d,data:!!d&&('value' in d),accessor:!!d&&(!!d.get||!!d.set),type:d?typeof d.value:null,onScope:Object.prototype.hasOwnProperty.call(window.OurgoalAppScope.scope,'a11ySwitch')};}catch(e){return{error:String(e&&e.message||e)};}})()})"
+   ],
+   "startedAt": "2026-10-11T13:21:39.673Z",
+   "endedAt": "2026-10-11T13:21:44.365Z",
+   "exitCode": 0,
+   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":67,\"names\":1,\"extra\":{\"a11ySwitch\":{\"own\":true,\"data\":true,\"accessor\":false,\"type\":\"function\",",
+   "stderrHead": ""
+  },
+  {
+   "id": "dead-import probe dead-import-probe.work.json",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "<작업 트리>\\reports\\TASK-ES-636\\state-probe.cjs",
+    "<작업 트리>",
+    "<작업 트리>\\reports\\TASK-ES-684\\dead-import-probe.work.json",
+    "--names",
+    "<작업 트리>\\reports\\TASK-ES-684\\dead-import-names.json",
+    "--eval",
+    "({\"a11ySwitch\":(function(){try{var o=window.OurgoalUiHelpers;var d=Object.getOwnPropertyDescriptor(o,'a11ySwitch');return{own:!!d,data:!!d&&('value' in d),accessor:!!d&&(!!d.get||!!d.set),type:d?typeof d.value:null,onScope:Object.prototype.hasOwnProperty.call(window.OurgoalAppScope.scope,'a11ySwitch')};}catch(e){return{error:String(e&&e.message||e)};}})()})"
+   ],
+   "startedAt": "2026-10-11T13:21:44.365Z",
+   "endedAt": "2026-10-11T13:21:48.992Z",
+   "exitCode": 0,
+   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":67,\"names\":1,\"extra\":{\"a11ySwitch\":{\"own\":true,\"data\":true,\"accessor\":false,\"type\":\"function\",",
+   "stderrHead": ""
+  },
+  {
+   "id": "module-guard",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "scripts/module-guard.js",
+    "--quiet"
+   ],
+   "startedAt": "2026-10-11T13:21:49.747Z",
+   "endedAt": "2026-10-11T13:21:50.277Z",
+   "exitCode": 0,
+   "stdoutHead": "✓ 모듈 가드 통과\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "probe base",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "<작업 트리>\\scripts\\probes\\cell-registry-compare.js",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\es684-base",
+    "<작업 트리>\\reports\\TASK-ES-684\\cell-registry-compare.before.json",
+    "--fingerprints"
+   ],
+   "startedAt": "2026-10-11T13:21:50.278Z",
+   "endedAt": "2026-10-11T13:21:54.842Z",
+   "exitCode": 0,
+   "stdoutHead": "scope 539 · window 0 · registered 545 · mismatches 0 · missing 68 · extra 74 · conflicts 0 · exceptions 0\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "probe work",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "<작업 트리>\\scripts\\probes\\cell-registry-compare.js",
+    "<작업 트리>",
+    "<작업 트리>\\reports\\TASK-ES-684\\cell-registry-compare.json",
+    "--fingerprints",
+    "--names-from",
+    "<작업 트리>\\reports\\TASK-ES-684\\cell-registry-compare.before.json"
+   ],
+   "startedAt": "2026-10-11T13:21:54.842Z",
+   "endedAt": "2026-10-11T13:21:59.456Z",
+   "exitCode": 0,
+   "stdoutHead": "scope 539 · window 0 · registered 545 · mismatches 0 · missing 68 · extra 74 · conflicts 0 · exceptions 0\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "scenario-local",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "<작업 트리>\\docs\\design\\harness\\module-split\\scenario-local-z56.js",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\es684-base",
+    "<작업 트리>",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenario-local.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a501-guest-boot-six-tabs.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a502-goals-subtabs-periods.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a503-bell-modal-settings.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a504-new-goal-modal.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a505-goal-agent-drawer.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a506-settings-legal-links.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a507-auth-forgot-password.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a508-checkin-mic-guide.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a509-team-comment-passthrough.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a510-sample-purge.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a511-goal-fast-add.json",
+    "<작업 트리>\\reports\\TASK-ES-684\\scenarios\\a512-records-export-modal.json"
+   ],
+   "startedAt": "2026-10-11T13:21:59.459Z",
+   "endedAt": "2026-10-11T13:23:56.066Z",
+   "exitCode": 0,
+   "stdoutHead": "a501-guest-boot-six-tabs {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\na502-goals-subtabs-periods {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\na503-bell-modal-settings {\"base\"",
+   "stderrHead": ""
+  },
+  {
+   "id": "git config core.autocrlf",
+   "argv": [
+    "git",
+    "config",
+    "core.autocrlf"
+   ],
+   "startedAt": "2026-10-11T13:23:56.214Z",
+   "endedAt": "2026-10-11T13:23:56.265Z",
+   "exitCode": 0,
+   "stdoutHead": "true\n",
+   "stderrHead": ""
+  }
+ ]
+}
