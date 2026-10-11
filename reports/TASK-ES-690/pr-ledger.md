@@ -1,10 +1,10 @@
-# DIR-003·DIR-004 구간의 병합 PR 대장 (f0af028f → 13250583)
+# DIR-003·DIR-004 구간의 병합 PR 대장 (f0af028f → c9bd38b9)
 
 `reports/TASK-ES-690/tools/pr-ledger.cjs` 산출이다(손으로 옮겨 적은 칸 없음). 판정 글자·판정번호·주소는 GitHub 의 법정 댓글(github-actions)에서, 줄 수는 각 병합 커밋과 바로 앞 커밋에서 그 커밋의 `scripts/module-metrics.js` 를 돌려 읽었다.
 
-- 병합 78건 · 판정: 통과 69 · 확인 부족(막지는 않지만, 확인 못 한 채 나가는 것이 있습니다) 9 · court 검사: SUCCESS 78
-- 공식 지표 inlineScriptLines 4003 → 442 (PR 별 증감의 합 -3561) · 줄을 지운 PR 25건(합 -3580) · 줄이 늘어난 PR 2건(#936 +15 · #954 +4)
-- 덩어리(IIFE) 줄 수 3981 → 420 · index.html 6272 → 2711줄 · js 파일 351 → 379 · 세포(modules.json) 352 → 380
+- 병합 79건 · 판정: 통과 70 · 확인 부족(막지는 않지만, 확인 못 한 채 나가는 것이 있습니다) 9 · court 검사: SUCCESS 79
+- 공식 지표 inlineScriptLines 4003 → 24 (PR 별 증감의 합 -3979) · 줄을 지운 PR 26건(합 -3998) · 줄이 늘어난 PR 2건(#936 +15 · #954 +4)
+- 덩어리(IIFE) 줄 수 3981 → 0 · index.html 6272 → 2293줄 · js 파일 351 → 380 · 세포(modules.json) 352 → 381
 
 | PR | 병합(UTC) | 인라인 줄 앞 → 뒤 | 증감 | 판정 | 판정번호 | 항목 집계(법정 댓글) | 심사 커밋 = PR 머리 | 판정 주소 | 제목 |
 |---|---|---|---|---|---|---|---|---|---|
@@ -86,3 +86,4 @@
 | #958 | 2026-10-11 14:20:34 | 442 → 442 | 0 | 통과 | 5447451D | 4건: 글자만 확인 4 | 같음 | https://github.com/yangsangmin/ourgoal-app/pull/958#issuecomment-6109981801 | #TASK-ES-686 부팅 기관 폴더 js/app 에 설명 한 장 — 마지막 정리(#TASK-ES-685)의 선행(법정 재실 |
 | #960 | 2026-10-11 15:25:17 | 442 → 442 | 0 | 통과 | 03FE237B |  | 같음 | https://github.com/yangsangmin/ourgoal-app/pull/960#issuecomment-6110562577 | #TASK-ES-688 chore: 생성 지도 일괄 갱신(main 8e3ed7f7, 병합 묶음 #943~#958 뒤) |
 | #961 | 2026-10-11 15:57:34 | 442 → 442 | 0 | 통과 | 6EE6BF16 |  | 같음 | https://github.com/yangsangmin/ourgoal-app/pull/961#issuecomment-6110841273 | #TASK-ES-687 생성기 명시적 옵션 keepGlobalConst — 상수 선언만 인라인에, 연결 만들기는 부팅 파일로( |
+| #962 | 2026-10-11 17:12:43 | 442 → 24 | -418 | 통과 | CE2B675A | 5건: 동작 보존 확인 1 · 글자만 확인 4 | 같음 | https://github.com/yangsangmin/ourgoal-app/pull/962#issuecomment-6111467089 | #TASK-ES-689 미분화 덩어리 해체 마지막 정리(finalize · P안) — 시동 문을 js/app/boot.js 로 |
