@@ -4,7 +4,7 @@
  * 앱이 뜰 때 첫 화면과 계정 둘레의 단추를 원래 순서 그대로 연결하는 구역 함수다.
  * bootEntryAndAccountWiring — 인앱 브라우저 확인, 첫 화면의 둘러보기·로그인 단추, 소셜 로그인, 가입·로그인·비밀번호 찾기, 다시 동기화·로그아웃·초기화·탈퇴, 활용 가이드·문의·약관 링크, 다시 켜졌을 때 동기화와 오프라인 알림, 아래 탭 단추와 창 뒤로가기, 일정 알림 시작을 차례로 건다.
  * bootGoogleTokenState — 구글 캘린더 연결용 값 자리를 만든다.
- * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 2776~2939 · 2944~2946줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
+ * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 2782~2945 · 2950~2952줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 구역 안에서만 쓰던 var 는 그 함수의 지역 변수가 됐다.
  * 로드 중 바로 돌던 문들은 순서 그대로 함수 하나로 감싸 index.html 원래 자리에서 부른다. index.html 은 IIFE 머리에서 그 함수를 같은 이름으로 가져온다.
  * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,7 +16,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 2776~2939줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2782~2945줄(#TASK-ES-650 생성기 표지) ---- */
   function bootEntryAndAccountWiring() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* ============ [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업 ============ */
   window._homeDateOffset = 0;
@@ -184,7 +184,7 @@
   L.bindScheduleReminderStart(); /* [#TASK-ES-499] 로드 중 문(앞 주석 포함) → js/core/profile-topbar.js 의 bindScheduleReminderStart 로 옮김 — 원래 자리에서 부른다 */
   } /* bootEntryAndAccountWiring */
 
-  /* ---- 이전 전 index.html 2944~2946줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2950~2952줄(#TASK-ES-650 생성기 표지) ---- */
   function bootGoogleTokenState() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* [#TASK-ES-482] getTrashList · autoPurgeExpiredTrash · moveToTrash · restoreFromTrash · permanentDeleteFromTrash · emptyTrash · toastWithTrashUndo · openTrashModal → js/core/trash-bin.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 

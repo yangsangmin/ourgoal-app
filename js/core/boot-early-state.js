@@ -7,7 +7,7 @@
  * bootThemeList — 알림 글 타이머 자리와 화면 테마 목록을 만들고 window 에도 단다.
  * bootAvatarLevelUpWiring — 아바타 레벨업 창의 닫기·확인·바깥 누름·성장 문구 저장·공유·그림 저장 단추를 연결하고 인사 팝업 타이머 자리를 만든다.
  * bootExposeAppState — 앱의 상태 객체를 window 에 단다. bootPromptTabState — 프롬프트 백과 탭의 현재 칸 값을 만든다.
- * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 2608~2615 · 2637~2638 · 2668~2687 · 2711~2727 · 2736~2736 · 2756~2756줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
+ * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 2614~2621 · 2643~2644 · 2674~2693 · 2717~2733 · 2742~2742 · 2762~2762줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 구역 안에서만 쓰던 var 는 그 함수의 지역 변수가 됐다.
  * 로드 중 바로 돌던 문들은 순서 그대로 함수 하나로 감싸 index.html 원래 자리에서 부른다. index.html 은 IIFE 머리에서 그 함수를 같은 이름으로 가져온다.
  * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -19,7 +19,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 2608~2615줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2614~2621줄(#TASK-ES-650 생성기 표지) ---- */
   function bootApplySavedTheme() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
 
   try{
@@ -31,13 +31,13 @@
   }catch(e){}
   } /* bootApplySavedTheme */
 
-  /* ---- 이전 전 index.html 2637~2638줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2643~2644줄(#TASK-ES-650 생성기 표지) ---- */
   function bootAuthStateListener() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   window.OurgoalAppState.defineVar('_pendingAuthSession', null);
   L.bindSupabaseAuthStateListener(); /* [#TASK-ES-521] 로드 중 문(앞 주석 포함) → js/core/supabase-auth.js 의 bindSupabaseAuthStateListener 로 옮김 — 원래 자리에서 부른다 */
   } /* bootAuthStateListener */
 
-  /* ---- 이전 전 index.html 2668~2687줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2674~2693줄(#TASK-ES-650 생성기 표지) ---- */
   function bootThemeList() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* ============ Confetti ============ */
   /* [#TASK-ES-482] burstConfetti → js/core/confetti.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
@@ -61,7 +61,7 @@
   }
   } /* bootThemeList */
 
-  /* ---- 이전 전 index.html 2711~2727줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2717~2733줄(#TASK-ES-650 생성기 표지) ---- */
   function bootAvatarLevelUpWiring() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnAvLvClose) L.btnAvLvClose.addEventListener('click', L.closeAvatarLevelUpModal);
   var btnAvLvConfirm = document.getElementById('btnConfirmLevelUpClose');
@@ -82,12 +82,12 @@
   window.OurgoalAppState.defineVar('__avatarGreetTimer', null);
   } /* bootAvatarLevelUpWiring */
 
-  /* ---- 이전 전 index.html 2736~2736줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2742~2742줄(#TASK-ES-650 생성기 표지) ---- */
   function bootExposeAppState() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(typeof window !== 'undefined'){ window.state = L.state; }
   } /* bootExposeAppState */
 
-  /* ---- 이전 전 index.html 2756~2756줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2762~2762줄(#TASK-ES-650 생성기 표지) ---- */
   function bootPromptTabState() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   window.OurgoalAppState.defineVar('_promptTabState', 'real');
   } /* bootPromptTabState */

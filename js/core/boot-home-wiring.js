@@ -4,7 +4,7 @@
  * 앱이 뜰 때 홈과 목표 둘레의 단추를 원래 순서 그대로 연결하는 구역 함수다.
  * bootHomeAndGoalWiring — 집중 타이머 값, 퀵 루틴 칩·음성 체크인·사진 첨부·글자 수 힌트·기록 단추, 맞춤 피드백 봇 설정 열고 닫기, 가이드 단추, 템플릿 백과 창의 닫기·탭·바깥 누름, 앱 평가 창, 새 목표 단추, 성장 자랑하기 단추, AI 목표 어시스턴트 서랍과 보내기, 보관함 기간·쪽 설정을 차례로 건다.
  * bootGoalsAndTeamState — 템플릿 분류 값과 빠른 목표 추가 함수를 window 에 달고, 입력칸 가림 방지를 시작하고, 실시간 채널 값 자리를 만들고, 팀 목표 화면 함수와 팀 댓글 보내기를 연결한다.
- * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 3016~3193 · 3225~3291줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
+ * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 2996~3173 · 3205~3271줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 구역 안에서만 쓰던 var 는 그 함수의 지역 변수가 됐다.
  * 로드 중 바로 돌던 문들은 순서 그대로 함수 하나로 감싸 index.html 원래 자리에서 부른다. index.html 은 IIFE 머리에서 그 함수를 같은 이름으로 가져온다.
  * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -16,7 +16,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 3016~3193줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 2996~3173줄(#TASK-ES-650 생성기 표지) ---- */
   function bootHomeAndGoalWiring() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* ============ UX Telemetry (Hesitation & Rage Tap) ============ */
   /* [#TASK-ES-548] _uxTelemetry → js/tabs/settings/ux-telemetry.js 로 옮김(인라인 3단계 구역 Z5 표준 2 — 앞 주석 포함) */
@@ -198,7 +198,7 @@
   L.bindArchivedPageSetter(); /* [#TASK-ES-520] 로드 중 문(앞 주석 포함) → js/tabs/goals/goal-archive.js 의 bindArchivedPageSetter 로 옮김 — 원래 자리에서 부른다 */
   } /* bootHomeAndGoalWiring */
 
-  /* ---- 이전 전 index.html 3225~3291줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3205~3271줄(#TASK-ES-650 생성기 표지) ---- */
   function bootGoalsAndTeamState() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* [#TASK-ES-481] ROUTINE_TEMPLATES_AI · ROUTINE_TEMPLATES_REAL · TEAM_TEMPLATES_AI · TEAM_TEMPLATES_REAL · PERSONAL_TEMPLATES_REAL · renderTemplateEncyclopediaScreen → js/tabs/goals/template-encyclopedia.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   window._subtabTplDomain = L._subtabTplDomain;

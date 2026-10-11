@@ -5,7 +5,7 @@
  * bootSharedGroupsState — 모임 목록을 불러왔는지 표시하는 값 자리를 만든다.
  * bootCommSettingsAndStart — 초대 링크 처리 함수와 응원 관련 값 자리, 위젯 창 열기, 설정 화면의 정적 연결, 날짜 바뀜 감지 값, 로그인 구조 단추, 계정 보안 부품 연결, 앱 시작(runAppBoot), 반응·도움돼요·팀 초대·팀 연계 목표·팀 공개 범위 부품 연결을 차례로 한다.
  * bootInstallAndServiceWorker — 서비스 워커를 등록하고, 모임 견본 목록을 window 에 달고, 홈 화면에 설치됐을 때의 기록을 듣는다.
- * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 4481~4481 · 4489~4551 · 4557~4561줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
+ * #TASK-ES-650(구역 이전 — 앱이 뜰 때 한 번 도는 문을 순서 그대로 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 4461~4461 · 4469~4531 · 4537~4541줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 구역 안에서만 쓰던 var 는 그 함수의 지역 변수가 됐다.
  * 로드 중 바로 돌던 문들은 순서 그대로 함수 하나로 감싸 index.html 원래 자리에서 부른다. index.html 은 IIFE 머리에서 그 함수를 같은 이름으로 가져온다.
  * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -17,12 +17,12 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 4481~4481줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4461~4461줄(#TASK-ES-650 생성기 표지) ---- */
   function bootSharedGroupsState() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   window.OurgoalAppState.defineVar('SHARED_GROUPS_LOADED', false);
   } /* bootSharedGroupsState */
 
-  /* ---- 이전 전 index.html 4489~4551줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4469~4531줄(#TASK-ES-650 생성기 표지) ---- */
   function bootCommSettingsAndStart() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
     /* ============ 통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임) ============ */
   /* [#TASK-ES-536] handleDeepLinkRouting → js/core/deep-link-gateway.js 로 옮김(인라인 3단계 Z3 — 알림·시간·주소 — 앞 주석 포함) */
@@ -89,7 +89,7 @@
   if(window.OurgoalTeamVisibilityLevels && typeof window.OurgoalTeamVisibilityLevels.init==='function'){ window.OurgoalTeamVisibilityLevels.init({ getState:function(){return L.state;}, getProfile:function(){return L.state.profile;}, saveProfile:L.saveProfile, toast:L.toast, openModal:L.openModal, closeModal:L.closeModal, triggerHaptic:(typeof L.triggerHaptic==='function'?L.triggerHaptic:null), dDay:L.dDay, uid:L.uid, daysFromNow:L.daysFromNow, MOCK_GROUPS:L.MOCK_GROUPS, getGroupState:L.groupState, canManageTeamGoals:L.canManageTeamGoals, renderTeamGoalsScreen:L.renderTeamGoalsScreen, getGroupLevelGoals:L.getGroupLevelGoals, getTeamCommentsCache:function(){return L.TEAM_COMMENTS_CACHE;}, teamCommentsBlockHtml:L.teamCommentsBlockHtml }); }
   } /* bootCommSettingsAndStart */
 
-  /* ---- 이전 전 index.html 4557~4561줄(#TASK-ES-650 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 4537~4541줄(#TASK-ES-650 생성기 표지) ---- */
   function bootInstallAndServiceWorker() { /* [#TASK-ES-650] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* ============ PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) ============ */
   L.bindServiceWorker(); /* [#TASK-ES-638] 로드 중 문(앞 주석 포함) → js/core/pwa-service-worker.js 의 bindServiceWorker 로 옮김 — 원래 자리에서 부른다 */
