@@ -215,6 +215,7 @@ window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 
   2. 남은 주석·빈 줄, 손잡이, 가져오기, 호출 줄을 지운다.
   3. IIFE 껍데기 3줄과 `<script>`·`</script>` 2줄을 지운다.
   4. 앞 태그 줄 끝에 `<script src="js/app/boot.js"></script>` 를 붙인다. `defer` 없이 같은 자리, 동기 태그다.
+- 구현 기록(#TASK-ES-662)과 설정 꼴은 5.8, 전제까지 남은 것의 실측은 6.4, IIFE 가 사라지면 깨지는 도구·시험과 서비스워커 소견은 9.1.
 
 **호출 순서 대조**
 - 정적: 구역 함수 본문의 문 순서 = 이전 전 줄 순서. 법정의 생성기 재실행 바이트 대조가 증명한다.
@@ -273,7 +274,7 @@ window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 
 | X6 | 상태의 일회 window 복사 줄 `window.X = X;`(3.3 R2) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓰기 | unstate(구현 #TASK-ES-634) | 같은 줄에 다른 글자 · 쉼표 연쇄 | 7 |
 | X7 | 연속 구역 감싸기(3.4 M1a~M1e): 로드 중 호출문·if·try·식 문, 바꿔 쓴 define 줄, 노출 안 된 var 의 지역화, 남은 `window.X = X` 줄, 구역 안 주석·빈 줄 | 세포 함수 본문으로 옮기고 원래 자리에 부르는 한 줄 + 머리 가져오기 한 줄 | region(구현 #TASK-ES-643 — 5.6) | 3.4 의 정지 목록 | 로드 중 문 360줄 중 남는 것 + var 230줄 |
 | X8 | 문이 없는 구획의 주석·빈 줄 | 삭제 | sweep(구현 #TASK-ES-661 — 5.7) | 구획에 문이 하나라도 있음 · 함수 이전 생성기가 기대는 자리 표지·구획 주석·「1차 이음매」 주석(구현의 정지·제외 목록은 5.7) | 최대 743(주석 514 + 빈 줄 229, 1.1) |
-| X9 | IIFE 껍데기 3줄 + `<script>`·`</script>` 2줄, 그때 남은 주석·빈 줄·구역 함수 가져오기·호출 줄. 부팅 태그 한 줄 붙임과 `js/app/boot.js` 생성 | 삭제 + 생성 | finalize | IIFE 최상위에 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 하나라도 있음 | 5 + 잔여 |
+| X9 | IIFE 껍데기 3줄 + `<script>`·`</script>` 2줄, 그때 남은 주석·빈 줄·구역 함수 가져오기·호출 줄. 부팅 태그 한 줄 붙임과 `js/app/boot.js` 생성 | 삭제 + 생성 | finalize(구현 #TASK-ES-662 — 5.8) | IIFE 최상위에 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 하나라도 있음 | 5 + 잔여 |
 
 - 이번 허용은 줄 **종류**에 대한 것이다. 모드를 실제로 더하는 PR 마다 사양을 PR 본문에 공개하고, 단위 시험으로 **이 목록 밖의 글자를 건드리지 않음**을 증명한다(B1 의 `unwire-check-b1.js` 와 같은 꼴). 기존 설정의 재생성 결과가 바이트 단위로 그대로인지도 본다.
 - 모든 모드는 함수 본문의 글자를 고치지 않는다. 바꿔도 되는 글자는 생성기가 붙이는 이름 접두(`L.` 등, 헌법 CELL_SPLIT 1호)와 위 표에 적은 바꿔 쓰기뿐이다.
@@ -445,6 +446,37 @@ window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 
   - **이 수치는 지금 main 의 값일 뿐이다.** 구역 이전(#TASK-ES-650)이 로드 중 문을 옮기면 문이 없는 구획이 늘어난다. 실제 sweep PR 은 그때의 index.html 로 다시 재고, 시험이 붙잡는 주석도 그때 다시 찾는다.
 - **이 구현에 없는 것**: 실제 쓸기(index.html 변경) · 구획 주석 삭제 · 문이 있는 구획의 「옮김」 표지 삭제 · `finalize`(X9).
 
+### 5.8 구현된 finalize 설정 꼴 — X9 (#TASK-ES-662)
+
+`gen-inline-hard.js` 에 `mode: "finalize"` 경로를 더했다. 옮기기 · unwire · unstate · region · sweep 경로의 글자는 한 줄도 바뀌지 않았다(생성기 diff 는 한 자리에 끼워 넣은 줄뿐 — 단위 시험 D0). 검사기(`verify-inline-hard.js`)는 바꾸지 않았다.
+
+```json
+{ "task": "TASK-ES-6xx", "mode": "finalize", "label": "…",
+  "cells": [{ "file": "js/app/boot.js",
+              "title": "OurGoal App Boot (부팅 — 구역 함수를 순서대로 부른다)",
+              "desc": ["…"] }] }
+```
+
+- **전제(아니면 멈춘다 — 3.4)**: IIFE 최상위 문이 세 종류뿐이다.
+  1. 키트 손잡이 `var _k = window.X;`(`window.X.y` 포함 — unwire X1 이 받는 손잡이 꼴과 같다)
+  2. 구역 함수 가져오기 `var f = _k.f;` — 이름과 속성이 같고, 최상위에서 한 번 이상 불린다
+  3. 구역 함수 호출문 `f();` — 가져온 이름을 인자 없이 부른다
+  - 그 밖의 문이 하나라도 있으면 **종류별 수를 오류 글자에 적고** 멈춘다: 함수 선언 · expose 문 · 상태 선언(define) · 그 밖의 var · window 대입 · if 문 · try 문 · 구역 함수가 아닌 호출문(인자 있음 · 키트 경유 · 가져오지 않은 이름) · 호출되지 않는 가져오기(재철거가 먼저다) · 쓰이지 않는 손잡이 · 이름이 다른 가져오기.
+- **하는 일(X9 — 네 가지뿐)**
+  1. `js/app/boot.js` 를 만든다. IIFE 껍데기와 남은 문(손잡이 · 가져오기 · 호출)을 **글자 그대로, 같은 순서로** 담는다. 주석·빈 줄은 옮기지 않는다(3.4 「남은 주석·빈 줄 … 을 지운다」).
+  2. index.html 에서 `<script>` 줄부터 `</script>` 줄까지를 지운다(껍데기 3줄 + 태그 2줄 + 남은 문 · 주석 · 빈 줄).
+  3. `<script>` 바로 앞 줄(script 태그로 끝나는 줄)의 끝에 `<script src="js/app/boot.js"></script>` 를 붙인다 — **defer·async 없이 같은 자리의 동기 태그**다.
+  4. 그 밖의 글자는 바꾸지 않는다. 다른 인라인 스크립트 블록(접속 통계 조각 · ESC 키 처리기 — 8.1 묶음 6)은 건드리지 않는다.
+- **「구역 함수를 같은 순서로 부른다」를 글자 그대로 옮기기로 구현한 까닭**: 가져오기를 건너뛰고 `window.키트.f()` 로 고쳐 부르면 ① 값을 잡는 시점이 「머리에서 한 번」에서 「부를 때」로 바뀌고 ② 함수의 `this` 가 `undefined` 에서 키트 객체로 바뀐다. 둘 다 「글자를 고치지 않는다」(5.2 끝) 밖이다. 그래서 문을 고쳐 쓰지 않고 IIFE 를 통째로 파일로 옮기는 꼴로 했다(단위 시험 E1 · E2 가 vm 에서 호출 순서 · this · 인자 수 · 가져오기 시점 값 고정을 인라인 IIFE 와 맞댄다).
+- **칸**: 맨 위 `task` · `label` · `slot`(있어도 쓰지 않는다) · `mode` · `cells`. 세포 `file` · `title` · `desc`. `cells` 는 하나여야 하고 `file` 은 `js/app/boot.js` 로 정해져 있다. **그 밖의 칸이 있으면 멈춘다**(`defer` 같은 칸은 없다).
+- **정지 조건(전부 — 멈추면 index.html 도 부팅 파일도 쓰지 않는다)**: 전제 미충족 · 구역 함수 호출문이 하나도 없음 · 같은 이름의 손잡이·가져오기 둘 · `<script>` / `(function(){` / `"use strict";` / `})();` / `</script>` 줄에 다른 글자가 있음 · 스크립트 블록에 IIFE 밖의 문이 있음 · IIFE 가 인자를 받거나 넘김 · 지시문이 `"use strict"` 하나가 아님 · `<script>` 앞 줄이 script 태그로 끝나지 않음 · 부팅 파일이 이미 있음 · index.html 에 부팅 파일 글자가 이미 있음 · `cells` 꼴 · `title`·`desc` 꼴(주석을 닫는 글자·줄바꿈 포함) · 모르는 칸.
+- **사후 대조**: 쓰기 전에 ① 부팅 파일을 다시 파싱한 토큰열(주석 제외)이 이전 IIFE 스크립트의 토큰열과 같고(실행 글자 0 변화) ② 새 index.html 에 큰 인라인 IIFE 가 없고 부팅 파일 글자가 꼭 한 번 있고 ③ 줄 수가 「이전 − 지운 줄」이고 ④ 지운 구간 밖의 줄이 태그를 붙인 한 줄 말고 그대로인지 본다. 다르면 쓰지 않고 멈춘다.
+- **메타**: `scriptHtmlLines` · `statements`(손잡이 · 가져오기 · 호출 수) · `handles` · `callOrder` · `removed`(껍데기 5 · 문 줄 · 주석 줄 · 빈 줄) · `tag`(붙인 줄 번호 · 글자 · `sync`) · `files`.
+- **이 모드를 쓰는 PR 이 생성기 밖에서 해야 하는 일**(생성기는 하지 않는다): `node scripts/module-specs.js --write`(새 파일 신고서) · `cell-descriptions.json` 한 칸 · `module-guard --update` · 9.1 의 선행 PR 들이 먼저 병합돼 있을 것.
+- **단위 시험**: `docs/design/harness/module-split/finalize-check-662.js`(45건 — 빈 구획 쓸기 시험 47건과 그 안의 657 22건 · 643 67건 · 634 34건 · 619 16건 · B1 8건 · 병합된 PR 셋 재생성 재실행 · 생성기 diff 가 끼워 넣기뿐 · 전제를 채운 꼴 6 · vm 실행 등가 2 · 정지 31 · 실제 `index.html` 은 전제 미충족으로 정지 · 재실행 정지 · 생성기와 따로 한 감사 · 부팅 파일 단독 로드 기록). 결과는 `reports/TASK-ES-662/finalize-unit.json`(작업자 측정).
+  - 앞선 묶음의 생성기 diff 모양 검사 셋(661 의 D0 · 657 의 D1 · 643 의 D0)은 생성기에 줄을 더하면 구조적으로 거짓이 된다(L110). 그 시험 파일은 고치지 않았고, 이번 시험의 D0 가 같은 것을 기준 커밋 대비로 다시 잰다.
+- **이 구현에 없는 것**: 실제 finalize(index.html 변경 · `js/app/boot.js`) — 전제까지 남은 것은 6.4 · IIFE 를 찾는 도구·시험의 선행 수정(9.1) · 서비스워커 변경(9.1 — 필요 없다고 읽었다).
+
 ## 6. 순서와 범위
 
 ### 6.1 지금까지 (병합된 것)
@@ -490,6 +522,80 @@ window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 
 - 하지 않는 것: 한 번에 다시 써서 옮기기(선택지 B), 800줄 상한 예외로 통째 옮기기(선택지 D — 금고 변경).
 - 예상되는 막힘(**추측**, 미측정): ②는 함수 선언과 줄 수를 덩어리 안에서 잠시 늘린다. 모듈 가드의 래칫(인라인 스크립트 줄 · index.html 함수 선언)이 늘면 실패하므로, 조각 하나를 나누고 바로 옮기는 식으로 번갈아 하거나 기준선을 사유와 함께 올려야 한다(헌법 ratchet 2). 어느 쪽인지는 ② 착수 PR 이 측정해 정한다.
 - 이 함수 안에는 템플릿 마켓 버튼 연결이 있다(돈 근처 낱말). 조각을 옮길 때도 묶음 3 의 한도(내용은 한 글자도 안 바꾸고 자리만)를 지키고, ②의 제자리 정리에서도 그 버튼의 동작·문구는 바꾸지 않는다.
+
+### 6.4 finalize 전제까지 남은 것 — 실측 (#TASK-ES-662, ed20750c 기준)
+
+작업자 측정이다(출처 `reports/TASK-ES-662/finalize-gap.json` — 도구 `reports/TASK-ES-662/tools/finalize-gap.cjs`). finalize 의 전제는 「IIFE 최상위 문이 키트 손잡이 · 구역 함수 가져오기 · 구역 함수 호출문뿐」(5.8)이다. 지금 IIFE 는 2,289줄 · 최상위 문 399개이고, 생성기 finalize 를 지금 main 에 돌리면 전제 밖의 문 240개를 세고 멈춘다(단위 시험 R1).
+
+**「구역 이전 예정」의 뜻**: 구역 계획기(`reports/TASK-ES-643/region-plan.cjs`)를 지금 main 에 돌린 결과다 — 구역 13개 · 문 180개(생성기 region 이 그 설정을 통과). **실제 구역 이전 PR(#TASK-ES-650, 병합 전)이 구역을 다르게 잡으면 달라진다.** 「남는 것」은 그 계획을 저장소 밖 작업 폴더에 흉내 낸 사본에서 쟀다. 그 사본에서 시험을 하나씩 돌린 결과는 기준과 같았다(다른 것은 가칭 세포 파일의 세포지도 칸 하나뿐 — 계획기 가칭의 한계). 즉 지금 계획에 든 문 가운데 시험이 붙잡는 것은 없다.
+
+**표 1 — 지금 main 의 최상위 문 399개**
+
+| 종류 | 문 | 줄 | 구역 이전 예정 | 그 뒤 남는 문 | 남는 것이 풀리는 단계 |
+|---|--:|--:|--:|--:|---|
+| 로드 중 호출문(맨이름 `f();`) | 73 | 73 | 73 | 0 | 구역 이전 |
+| 그 밖의 호출문(`a.b(…)`) | 13 | 15 | 13 | 0 | 구역 이전 |
+| 상태 선언 줄(`OurgoalAppState.define…`) | 56 | 61 | 56 | 0 | 구역 이전(M1b) |
+| if 문 | 21 | 37 | 18 | 3 | **결심 필요** 3(표 3 의 ①②③) |
+| try 문 | 2 | 8 | 2 | 0 | 구역 이전 |
+| window 대입 문 | 9 | 9 | 8 | 1 | **방법 미정** 1(표 4 의 ㉢) |
+| 노출 안 된 var | 14 | 14 | 10 | 4 | 상태 이전 뒤 구역 이전 2(`SUPABASE_URL` · `SUPABASE_ANON_KEY`) · **결심 필요** 2(①의 선언 · ④) |
+| 통로에 노출된 var(상태) | 12 | 155 | 0 | 12 | 상태 이전 3(`sb` · `state` · `MOCK_GROUPS`) · **결심 필요** 1(⑤) · **방법 미정** 8(㉠㉡㉢) |
+| 함수 선언(`openProTemplateRecordModal`) | 1 | 944 | 0 | 1 | 944줄 3단계 |
+| expose 문 | 16 | 64 | 0 | 16(+1) | 재철거 · 상태 이전에 딸려 사라진다(표 2) |
+| 키트 가져오기 | 169 | 169 | 0 | 169(+13) | 표 2 |
+| 키트 손잡이 | 13 | 13 | 0 | 13 | finalize 가 옮긴다(가져오기가 다 지워진 손잡이는 재철거 X2) |
+| **합** | **399** | **1,562** | **180** | 219 | |
+
+- 줄 수는 문이 걸친 줄이다(주석·빈 줄 제외). 구역 이전 뒤 사본의 최상위 문은 246개다 — 남는 219 + 구역 함수 가져오기 13 + 구역 함수 호출문 13 + 구역 감싸기가 머리에 더한 expose 문 1.
+
+**표 2 — 구역 이전 뒤 남는 가져오기 182개와 expose 문 17개(통로 getter 141개)**
+
+| 갈래 | 수 | 풀리는 단계 |
+|---|--:|---|
+| 구역 함수 가져오기(최상위에서 불린다) | 13 | 전제 충족 — finalize 가 옮긴다 |
+| 참조가 통로 getter 뿐이고 등록 기관이 내주는 이름 | 27 | **재철거**(unwire U1·U2) |
+| 통로 getter 도 참조도 없는 가져오기(`a11ySwitch`) | 1 | **재철거**(U1) |
+| 참조가 통로 getter 뿐인데 **등록 기관이 내주지 않는** 이름(주로 구역 함수가 통로로 읽는 `bind…` 들) | 91 | **등록 → 재철거**: 그 세포에 등록 블록을 다는 PR(`gen-cell-provide.js`, 세포 파일 변경)로 대조 0 을 본 뒤 재철거 |
+| 남은 함수 선언(944줄)이 맨이름으로 부르는 이름 | 47 | **944줄 3단계 뒤 재철거**(그중 11개는 등록도 먼저: `downloadTableAsCsv` · `openCsvImportModal` · `openWearableSyncModal` · `syncRecordToMatchingGoals` · `openVoiceTableModal` · `getAllProTemplates` · `openTemplateColumnEditModal` · `formatStopwatchTime` · `openVisionTableModal` · `openTemplateMarketModal` · `playTimerBeep`) |
+| 남는 다른 문이 맨이름으로 쓰는 이름 | 3 | 그 문이 풀린 뒤 재철거: `isoDate`(`state` 초기값) · `daysFromNow`(`MOCK_GROUPS` 초기값) · `toast`(944줄 함수 + 돈 근처 블록 ②) |
+| **합** | **182** | |
+
+- expose 문 17개의 getter 141개: 가져오기 이름 126 · 상태 이름 14 · 함수 선언 1. 가져오기 이름의 getter 는 재철거(U2), 상태 이름의 getter 는 상태 이전(X4), 함수 선언의 getter 는 그 함수가 옮겨져 가져오기로 바뀐 뒤 재철거로 사라진다. 구역 감싸기는 getter 를 109개 더한다(구역 함수가 통로로 읽는 이름) — 「등록 → 재철거」 91개의 대부분이 이것이다.
+- 944줄 함수는 IIFE 이름 49개를 맨이름으로 쓴다(가져오기 48 · 상태 `state` 1).
+
+**표 3 — 결심 필요(빠짐없이)**
+
+| # | 무엇 | 줄 | 왜 결심인가 | 풀리면 |
+|---|---|--:|---|---|
+| ① | `var OURGOAL_CONFIG = {};` 와 그 window 복사 블록 | 2 | 지시함 「결심 대기」(8.1 — 묶음 3 표에 없던 돈 근처 후보). 생성기 region 이 이 글자를 보면 멈춘다 | 구역 이전 |
+| ② | 돈 근처 `OurgoalTemplateCredit.init` 블록 | 3 | 허용 한도가 「글자를 한 글자도 바꾸지 않고 자리만」인데 구역 감싸기는 IIFE 이름(`sb` · `state` · `toast`)에 `L.` 접두를 붙인다. 후보: ㈎ 한도에 「이름 접두 `L.`」를 넣는 결심(#917 의 함수 이전은 접두를 한도 안으로 봤다) ㈏ 그대로 둔다 — 그러면 finalize 불가 | 구역 이전. **이 블록이 `sb` · `state` 의 상태 이전과 `toast` 가져오기의 재철거를 막고 있다** |
+| ③ | `window.SHARED_GROUPS_LOADED = false` 블록 | 1 | 모듈 가드 ⑤(`scripts/module-metrics.js`, #TASK-ES-507)가 「index.html 인라인이 window 에 다는 이름」을 인라인 소유로 빼 준다. 세포로 가면 가드가 실패한다(9.1 실측). 가드 규칙과 그 시험을 바꾸는 일이다 | 구역 이전 |
+| ④ | `var btnAvLvClose = …` 앞 표지 주석의 `filterHarmfulWords` 글자 | 1 | `tests/avatar-10slots-growth.test.js` 가 index.html 에서 그 글자를 찾는다. 시험이 읽는 범위를 넓히는 시험지 선행 PR(tests/ 변경) | 구역 이전 |
+| ⑤ | `var _promptEncyclopediaOpen = false;` | 1 | 시험이 상태 선언 글자를 붙잡는다(#TASK-ES-649 측정). 그 단언을 고치는 「금고 변경 승인」 | 상태 이전 |
+| ⑥ | IIFE 를 찾다가 죽는 도구 다섯 · 모듈 가드 ⑤ 규칙 · index.html 한 파일만 읽는 시험(9.1) | – | finalize 전에 선행 PR 이 필요하고, 시험·기준 시험지·가드를 바꾸는 부분은 승인 사안이다 | finalize |
+
+**표 4 — 방법 미정(후보 해법)**
+
+| # | 무엇 | 문 | 왜 막히나 | 후보 |
+|---|---|--:|---|---|
+| ㉠ | `_subtabTplCat` · `_subtabTplQuery` — 같은 이름의 선언이 둘씩 | 4 | unstate(X5)는 선언이 여럿이면 멈춘다 | ㈎ 겹친 선언 한 쌍을 지우는 고치기 PR(같은 초기값을 두 번 넣는 줄 — 동작 주장) 뒤 상태 이전 ㈏ X5 를 「같은 초기값의 겹친 선언」에 한해 넓히는 결심 |
+| ㉡ | `_subtabTplDomain` · `_subtabTplType` · `FEED_POSTS_CACHE` — 선언문이 다른 글자(뒤 주석)와 한 줄 | 3 | X5 의 「다른 글자와 한 줄」 정지 | ㈎ 줄 끝 주석을 떼는 선행 PR ㈏ X5 를 「선언 + 줄 끝 주석」에 한해 넓히는 결심(주석은 실행 글자가 아니다) |
+| ㉢ | `var shareContent = function…; window.shareContent = shareContent;` — 선언과 자기 window 복사가 한 줄 | 2 | X5 · X6 의 「다른 글자와 한 줄」 정지 | ㈎ 줄을 둘로 나누는 선행 PR(순증가 1줄 — index.html 순증가 0 규칙 때문에 같은 PR 에서 다른 줄을 줄여야 한다) ㈏ X5·X6 을 이 꼴에 한해 넓히는 결심 |
+
+- 「방법 미정」 9문은 모두 **상태 이전의 정지 조건**에 걸린 것이고, 후보가 둘씩 있다. 고치기 PR 쪽(㈎)은 결심 없이 할 수 있지만 index.html 을 손으로 고치는 PR 이고, 닫힌 목록을 넓히는 쪽(㈏)은 결심이다.
+- 상태 이름은 IIFE 에 24개 남아 있다(#TASK-ES-649 측정 `reports/TASK-ES-649/remaining-state.json`): 통로에 노출된 10개(위 12문 — `sb` · `state` · `MOCK_GROUPS` · ⑤ · ㉠㉡㉢)와 노출되지 않은 14개(DOM 참조·상수 — 구역 이전이 지역 변수로 가져간다. 그중 `SUPABASE_URL` · `SUPABASE_ANON_KEY` · ①의 `OURGOAL_CONFIG` · ④의 `btnAvLvClose` 넷이 위 표에 남는다).
+
+**0줄까지의 순서(이 측정이 가리키는 것)**
+
+1. 구역 이전(#TASK-ES-650 — 문 180개 예정) → sweep(문이 0 이 된 구획의 주석·빈 줄).
+2. 재철거 1: 28개(등록된 이름 27 + 참조가 없는 가져오기 1).
+3. 등록 → 재철거 2: 구역 함수가 통로로 읽는 이름 91개.
+4. 944줄 3단계(안전망 → 제자리 조각 → 조각 옮기기) → 재철거 3(47개 — 11개는 등록 먼저).
+5. 결심 ①~⑤ 와 방법 미정 ㉠~㉢ 을 풀어 남은 상태 10개·var 4개·if 3개·window 대입 1개를 상태 이전·구역 이전으로 옮긴다. ② 가 `sb` · `state` 를, `state` 가 `isoDate` 를, `MOCK_GROUPS` 가 `daysFromNow` 를 붙잡고 있다.
+6. 9.1 의 선행 PR(⑥) → finalize.
+
+**결심 ①~⑥ 가운데 하나라도 풀리지 않으면 IIFE 는 0 이 되지 않는다.** 그때 남는 최소 꼴은 「손잡이 + 가져오기 + 그 문들」이다.
 
 ## 7. 측정 방법 (재현)
 
@@ -559,3 +665,44 @@ window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 
 | 서비스워커 캐시 | `sw.js` 에 `APP_SHELL` 캐시가 있다 | 새 부팅 파일이 옛 캐시와 섞이는지는 **미측정**(추측상 위험). finalize PR 전에 잰다 |
 | IIFE 를 찾는 도구 | `scripts/inline-script-map.js` · `inline-hard-types.js` · `inline-hard-test-probe.js` · `scripts/probes/cell-registry-compare.js` · 생성기 자신 | 마지막 PR 전에 「없음 = 0」으로 처리하는 선행 PR |
 | `index.html` 을 합본 없이 읽는 시험지 | 약 59개 파일. 실제로 IIFE 글자에 기대는지는 **측정불가**(조사 세션은 읽기 전용이었다) | `scripts/inline-hard-test-probe.js` 로 실측한 뒤 시험지 선행 PR(읽는 범위만 넓힘, 단언·기대값 0 변경 — L021) |
+
+### 9.1 재측정 — IIFE 가 사라지면 깨지는 것 · 서비스워커 (#TASK-ES-662, ed20750c 기준)
+
+작업자 측정이다(출처 `reports/TASK-ES-662/iife-gone-reactions.json`). 고치지 않았다 — 목록이다.
+
+**모의본**: 기준 커밋의 index.html 에서 큰 인라인 IIFE 블록을 통째로 `js/app/boot.js` 로 빼고(글자 그대로) 같은 자리에 동기 태그를 달았다(`reports/TASK-ES-662/tools/make-empty-mock.cjs`). finalize 의 산출이 아니라 도구·시험의 반응을 보려는 것이다. 이 모의본은 앱이 그대로 뜬다 — 게스트 시동과 여섯 탭 시나리오가 기준 2회·모의 1회 모두 통과했다(바깥 동기 스크립트가 같은 자리에서 같은 순서로 돈다는 실측).
+
+**도구**
+
+| 도구 | 기준 | 모의본 | 반응 |
+|---|---|---|---|
+| `scripts/inline-script-map.js`(지도) | 돈다 | **죽는다** | `큰 인라인 IIFE 를 못 찾음` 예외 |
+| `scripts/inline-hard-types.js`(유형표) | 돈다 | **죽는다** | 지도가 index.html 과 다르다는 예외(지도를 다시 쓸 수 없으니 풀 길이 없다) |
+| `scripts/inline-hard-test-probe.js`(시험지 선행 실측기) | 돈다 | **죽는다** | 같은 사유 |
+| `scripts/probes/cell-registry-compare.js`(대조 탐침) | 돈다 | **죽는다** | `index.html 인라인 IIFE 를 찾지 못했다` 예외 |
+| 생성기 `gen-inline-hard.js`(모든 모드 — 머리에서 IIFE 를 찾는다) | 설정대로 멈춤 | **죽는다** | `TypeError`(IIFE 를 못 찾은 채 줄을 읽는다). 법정의 생성기 재실행 대조(`recomputeSplit`)는 **기준 커밋의** index.html 에 돌리므로 finalize PR 자체의 대조에는 걸리지 않는다 — 그 뒤의 PR 이 이 생성기를 쓰면 죽는다 |
+| `scripts/module-metrics.js`(공식 지표) | 돈다 | 돈다 | 「없음 = 0」으로 센다: `inlineScriptLines` 2311 → 22(남은 두 블록) · `indexFunctionDecls` 17 → 1. **`crossTabRefs` 0 → 1** — 인라인이 window 에 다는 이름을 「인라인 소유」로 빼 주던 규칙(#TASK-ES-507)이 바깥 파일에는 듣지 않는다 |
+| `scripts/module-guard.js`(모듈 가드) | 통과 | **실패** | 사유 셋: ⑤ 탭 간 직접 참조 0 → 1(`js/tabs/goals/team-goals-screen.js` 22행의 `window.SHARED_GROUPS_LOADED` 읽기 — **실제로 남는 문제**) · ④ 800줄 초과 파일 0 → 1 · 신고서 없는 세포(뒤의 둘은 모의본의 한계 — IIFE 를 통째로 한 파일에 담아 2,289줄이고 신고서를 쓰지 않았다) |
+| `scripts/module-specs.js`(신고서 검사) | 돈다 | 돈다 | – |
+
+- 법정(`court/**`)에는 IIFE 를 글자로 찾는 코드가 없다(검색 0건). 시험 `tests/wiring-exposed.test.js` 는 그 글자를 담고 있지만 모의본에서 결과가 같았다.
+- **선행 PR 이 필요한 것**: 위 「죽는다」 다섯(지도 · 유형표 · 실측기 · 대조 탐침 · 생성기)을 「IIFE 없음 = 묶음 0 / 이름 0」으로 처리하게 하는 일, 그리고 모듈 가드 ⑤ 의 「인라인 소유」 규칙을 부팅 구역 세포까지 넓히는 일. 뒤의 것은 가드와 그 시험(`tests/cross-tab-inline-owned-es507.test.js` 등)을 바꾸는 일이라 승인 사안이다.
+
+**시험·기준 시험지** — 하나씩 돌린 119개(tests/*.test.js 114 + npm test 네 단계 + 모듈 가드) 가운데 기준에서 통과하다 모의본에서 실패하는 것이 **17개**다. 예외로 죽는 것은 없고 전부 단언 실패다.
+
+| 까닭(첫 오류 글자로 가름) | 파일 |
+|---|---|
+| index.html 에서 글자를 찾는다(그 글자가 지금 IIFE 안에 있다) | `tests/account-withdrawal-modal.test.js` · `tests/avatar-10slots-growth.test.js`(`filterHarmfulWords`) · `tests/gcal-login-reconnect-fix.test.js`(`window.saveGoogleToken = saveGoogleToken;`) · `tests/stopwatch-lap-inputs.test.js` · `tests/stopwatch-table-hint.test.js` · `tests/team-goal-guide-hint.test.js`(`window.renderTeamGoalsScreen` 노출) · `tests/theme-system-v4.test.js` · `scripts/smoke-test.js`(통과 줄 439 → 418) · `scripts/verify-integrity-gate.js`(38 → 37) · `scripts/verify-all-clicks.js`(처리기 없는 단추 5개로 셈) |
+| 모듈 가드(⑤ 「인라인 소유」 규칙 + 모의본의 한계 ④·신고서) | `scripts/module-guard.js` · `tests/module-guard.test.js` · `tests/new-module.test.js` · `tests/cross-tab-guarded-init-es502.test.js` · `tests/cross-tab-inline-owned-es507.test.js` · `scripts/test-shipyard-modular.js`(가드 실패로 중단 — 통과 줄 203 → 5) |
+| 세포지도 생성기 시험 | `tests/cell-map-export-es414.test.js`(분열 이력의 800줄 초과 목록 단언 — 오류 글자 `0 !== 1`. 모의용 `js/app/boot.js` 가 2,289줄이라 걸렸다. 실제 부팅 파일은 수십 줄이다 — 모의본의 한계) |
+
+- **이 목록은 상한이다.** 글자 의존 시험은 그 글자가 「합본」(`tests/helpers/inline-bundle.js` 가 index.html 뒤에 붙이는 세포 파일들)이 읽는 자리로 옮겨지면 풀릴 수 있다. 모의본의 `js/app/boot.js` 는 합본이 읽지 않는다. 반대로 합본을 쓰지 않고 index.html 한 파일만 읽는 시험은 그 글자가 세포로 가는 순간(구역 이전·상태 이전 단계에서) 먼저 깨진다 — 그때 그 PR 이 「시험이 붙잡는 줄」로 빼 둔 것이 6.4 의 「결심 필요」에 쌓인다.
+- 시험·기준 시험지(`scripts/smoke-test.js` · `verify-integrity-gate.js` · `verify-all-clicks.js` 는 `court/vault.json` 의 기준 시험지다)를 바꾸는 선행 PR 은 읽는 범위만 넓히는 것이어도 승인 사안으로 다룬다(L008 · L021).
+
+**서비스워커(`sw.js` — 코드를 읽었다. 오프라인 동작은 재지 않았다)**
+
+- `APP_SHELL` 은 `['/']` 하나다. 설치 때 미리 담는 것은 첫 화면 HTML 뿐이고 **스크립트는 하나도 담지 않는다**.
+- `fetch` 처리기는 `req.mode === 'navigate'`(페이지 이동) 요청만 다룬다 — 통신 먼저, 실패하면 캐시의 그 페이지, 없으면 `'/'`, 그것도 없으면 안내 문구. **`<script src>` 요청은 서비스워커가 가로채지 않는다.** 지금 있는 바깥 스크립트 100여 개가 모두 그렇다.
+- 그래서 `js/app/boot.js` 는 `APP_SHELL` 에 넣지 않아도 지금의 다른 세포 파일과 같은 처지다(브라우저의 일반 캐시에 있으면 오프라인에서도 읽히고 없으면 못 읽는다 — 이미 그런 상태다). 넣는다면 「스크립트도 미리 담는다」는 새 정책이고 `sw.js` 는 제품 파일이라 주장이 필요한 별도 PR 이다. **finalize 의 전제 조건이 아니다.**
+- 옛 캐시와 섞이는 경우: 오프라인에서 캐시의 옛 HTML(IIFE 가 든 판)이 뜨면 그 HTML 은 부팅 파일을 부르지 않는다. 옛 HTML + 새 세포 파일이 섞이는 위험은 세포를 옮기는 모든 PR 에 이미 있던 것이고 finalize 가 새로 만드는 종류가 아니다. `vercel.json` 에 캐시 헤더 설정은 없다(`headers` 칸 없음).
+- 부팅 파일은 키트가 먼저 로드돼 있어야 도는 파일이다. 단독으로 읽으면 예외가 난다(단위 시험 L — 법정 모듈 로드 탐침 `loadOne` 결과 `ok: false`). 법정의 기본 탐침 범위에 `js/app/` 이 드는지는 실제 finalize PR 이 잰다.

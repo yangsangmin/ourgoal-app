@@ -1,0 +1,437 @@
+{
+  "task": "TASK-ES-662",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-662-GEN-FINALIZE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "생성기(gen-inline-hard.js)에 mode:\"finalize\" 를 더한다 — 전제(IIFE 최상위 문이 키트 손잡이 · 구역 함수 가져오기 · 구역 함수 호출문뿐)가 맞으면 부팅 파일 js/app/boot.js 를 만들고 IIFE 블록을 지우고 앞 태그 줄 끝에 defer 없는 동기 태그를 붙인다. 전제가 아니면 멈춘다."
+    },
+    {
+      "id": "R2",
+      "text": "실행 글자는 바뀌지 않는다: 부팅 파일의 토큰열이 이전 IIFE 스크립트와 같고, 호출 순서 · this · 인자 수 · 가져오기 시점 값 고정이 인라인 IIFE 와 같다. 지운 구간 밖의 줄은 태그를 붙인 한 줄 말고 그대로다."
+    },
+    {
+      "id": "R3",
+      "text": "기존 경로(옮기기 · unwire · unstate · region · sweep)는 바이트 무변화이고, 제품 코드(js/** · index.html) · tests/ · 금고 변경 0 · 실제 finalize 0 이다."
+    },
+    {
+      "id": "R4",
+      "text": "「finalize 전제까지 남은 것」을 지금 main 에서 재서 종류별·단계별 표로 남긴다(구역 이전 예정은 따로 표시, 결심 필요와 방법 미정은 빠짐없이)."
+    },
+    {
+      "id": "R5",
+      "text": "IIFE 가 사라지면 깨지는 도구·시험을 현재 index.html 사본의 모의본에서 재서 목록으로 남기고(고치지 않는다), 서비스워커에 부팅 파일이 들어가야 하는지 코드를 읽어 적는다."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "지금 main 은 finalize 의 전제에 못 미친다 — 생성기 finalize 를 지금 index.html 에 돌리면 전제 밖의 문 240개를 세고 멈춘다. 이 PR 은 모드와 실측 표만 낸다."
+    },
+    {
+      "text": "「구역 이전 예정」은 구역 계획기(#TASK-ES-643)를 지금 main 에 돌린 결과다. 실제 구역 이전 PR(#TASK-ES-650, 병합 전)이 구역을 다르게 잡으면 「남는 것」의 수가 달라진다."
+    },
+    {
+      "text": "앞선 단위 시험 재실행에서 세 건이 실패한다: 661 묶음의 D0 · 657 묶음의 D1 · 643 묶음의 D0. 셋 다 출력이 아니라 생성기 파일의 diff 모양을 옛 기준과 맞대는 검사라 생성기에 줄을 더하면 구조적으로 거짓이 된다. 그 시험 파일은 고치지 않았다."
+    },
+    {
+      "text": "IIFE 가 사라진 모의본은 finalize 의 산출이 아니라 IIFE 글자를 통째로 바깥 파일로 뺀 것이다. 깨지는 시험 17개는 상한이다(글자가 합본이 읽는 세포로 가면 풀릴 수 있다). 모듈 가드 실패 사유 가운데 800줄 초과와 신고서 없음은 모의본의 한계다."
+    },
+    {
+      "text": "서비스워커 소견은 sw.js 코드를 읽은 것이다. 오프라인에서의 실제 동작은 재지 않았다."
+    },
+    {
+      "text": "부팅 파일은 키트가 먼저 로드돼야 도는 파일이라 단독으로 읽으면 예외가 난다(법정 모듈 로드 탐침 loadOne 결과 ok:false). 법정의 기본 탐침 범위에 js/app/ 이 드는지는 실제 finalize PR 이 잰다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "전제를 채운 꾸러미 여섯(손잡이·가져오기·호출 · window.A.b 손잡이와 여러 줄 문 · CRLF · 다른 인라인 블록 · label/slot · 블록 뒤 글자)이 모두 기대한 부팅 파일과 index.html 을 낸다.",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "allPreconditionMetOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "정지 꾸러미 서른하나(전제 미충족 종류마다 · 껍데기 꼴 · 앞 줄 · 이미 있는 부팅 파일 · 설정 꼴)가 모두 멈추고 index.html 을 바이트 그대로 두며 부팅 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "allStopsOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 index.html(기준 커밋)에서 finalize 는 전제 미충족으로 멈추고 아무것도 쓰지 않는다.",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "realIndexStops.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "한 번 돌린 결과에 다시 돌리면 멈추고 아무것도 바뀌지 않는다.",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "rerunStops",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "vm 실행 등가 둘(호출 순서 · this · 인자 수 / 가져오기 시점 값 고정)이 인라인 IIFE 와 부팅 파일에서 같다.",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "allVmEquivalenceOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기와 따로 다시 파싱한 감사에서, 성공한 꾸러미 전부의 부팅 파일 토큰열이 이전 IIFE 스크립트와 같고 새 index.html 이 「이전 − IIFE 블록 + 태그 하나」이며 태그에 defer·async 가 없다.",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "audit.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기 diff 는 기준 커밋 대비 한 자리에 끼워 넣은 줄뿐이고 검사기는 기준과 같다.",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "generatorDiff.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "앞선 단위 시험 재실행에서 실패는 생성기 diff 모양 검사 셋(661 의 D0 · 657 의 D1 · 643 의 D0)뿐이다(병합된 unwire · unstate · 옮기기 PR 재생성 바이트 동일 포함).",
+      "touches": [
+        "reports/TASK-ES-662/unit-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/unit-summary.json",
+        "path": "earlierSuites.onlyShapeChecksFailed",
+        "equals": true
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 시험 45건이 모두 기대대로다.",
+      "touches": [
+        "reports/TASK-ES-662/finalize-unit.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/finalize-unit.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업이 바꾼 파일 가운데 제품 코드(index.html · js/** · sw.js)가 없다.",
+      "touches": [
+        "reports/TASK-ES-662/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/measurement.json",
+        "path": "changed.productFiles",
+        "equals": []
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업이 바꾼 파일 가운데 tests/ 아래 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-662/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/measurement.json",
+        "path": "changed.testsChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업이 바꾼 파일 가운데 금고 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-662/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/measurement.json",
+        "path": "changed.vaultChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 의 종료 코드·검사 줄 수·요약 줄이 기준 트리와 작업 트리에서 같다.",
+      "touches": [
+        "reports/TASK-ES-662/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/measurement.json",
+        "path": "npmTest.allSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "「남은 것」 표의 합이 맞는다: 구역 이전을 흉내 낸 사본의 최상위 문 수 = 손잡이 + 가져오기 + expose 문 + 함수 선언 + 구역 호출 + 그 밖.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "afterRegion.sumOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "남는 가져오기의 갈래별 수의 합이 가져오기 전체 수와 같다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "afterRegion.importsSumOk",
+        "equals": true
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "지금 main 의 최상위 문 수가 399 이다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "now.topStatements",
+        "equals": 399
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "그 가운데 구역 이전 예정(계획기 기준)이 180 문이다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "now.regionPlanned",
+        "equals": 180
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구역 이전 뒤 남는 그 밖의 문 가운데 결심이 필요한 것이 6 문이다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "afterRegion.others.decisionNeeded",
+        "equals": 6
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "방법이 정해지지 않은 것이 9 문이다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "afterRegion.others.methodUndetermined",
+        "equals": 9
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "IIFE 가 사라진 모의본에서 죽는 도구 목록이 측정 파일에 있는 그대로다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "iifeGone.toolsDead",
+        "equals": [
+          "inline-script-map",
+          "inline-hard-types",
+          "inline-hard-test-probe",
+          "cell-registry-compare",
+          "gen-inline-hard",
+          "module-guard"
+        ]
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "그 모의본에서 기준에서 통과하다 실패하는 시험·기준 시험지가 17 개다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "iifeGone.testsNewlyFailing",
+        "equals": 17
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "그 모의본(IIFE 글자를 바깥 동기 스크립트로 뺀 것)은 게스트 시동·여섯 탭 시나리오를 기준과 같이 통과한다.",
+      "touches": [
+        "reports/TASK-ES-662/gap-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-662/gap-summary.json",
+        "path": "emptyMockBoots",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기에 finalize 모드의 들머리가 있다.",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "if (CFG.mode === 'finalize') { runFinalize(); return; }"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기가 부팅 파일의 토큰열이 이전 IIFE 와 다르면 쓰지 않고 멈춘다.",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "fail('부팅 파일의 토큰열이 이전 IIFE 와 다르다(실행 글자 변화) — 쓰지 않는다: 토큰 ' + diffAt);"
+      }
+    }
+  ]
+}

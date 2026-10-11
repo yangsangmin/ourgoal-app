@@ -227,6 +227,143 @@ function sweepOnce(U, doc) {
   return { next, meta, log };
 }
 
+// ── [#TASK-ES-662 · docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 닫힌 목록 X9(+X2) — 상민님 2026-10-11 「허용」, 효력 기록 지시함 DIR-004] 마지막 모드(설정 "mode": "finalize").
+// 전제(아니면 멈춘다): IIFE 최상위 문이 세 종류뿐이다 — ① 키트 손잡이 `var _k = window.X;`(`window.X.y` 포함 — unwire X1 과 같은 꼴) ② 구역 함수 가져오기 `var f = _k.f;`(이름과 속성이 같고, 최상위에서 한 번 이상 불린다) ③ 구역 함수 호출문 `f();`(인자 없음).
+//   함수 선언 · expose 문 · 상태 선언 · 그 밖의 var · window 대입 · if · try · 구역 함수가 아닌 호출문 · 호출되지 않는 가져오기 · 쓰이지 않는 손잡이가 하나라도 있으면 종류별 수를 적고 멈춘다.
+// 하는 일(네 가지뿐):
+//   F1 부팅 파일 js/app/boot.js 를 만든다 — IIFE 껍데기와 남은 문(손잡이 · 가져오기 · 호출)을 **글자 그대로, 같은 순서로** 담는다. 주석·빈 줄은 옮기지 않는다.
+//      (부르는 방식을 바꾸지 않는다: 가져오기를 건너뛰고 `window.키트.f()` 로 부르면 값을 잡는 시점과 this 가 달라진다 — 그래서 문을 고쳐 쓰지 않고 그대로 옮긴다.)
+//   F2 index.html 에서 `<script>` 줄부터 `</script>` 줄까지(껍데기 5줄 · 남은 문 · 주석 · 빈 줄)를 지운다.
+//   F3 `<script>` 바로 앞 줄(script 태그로 끝나는 줄) 끝에 `<script src="js/app/boot.js"></script>` 를 붙인다 — defer·async 없이 같은 자리의 동기 태그(로드 순서 = 실행 순서. /ui.js(defer)가 호출 시점에 읽는 window 이름이 그때 이미 있어야 한다).
+//   그 밖의 글자는 바꾸지 않는다. 다른 인라인 스크립트 블록(접속 통계 조각 · ESC 키 처리기)은 건드리지 않는다.
+// 안전 정지(fail): 전제 미충족 · `<script>`/`(function(){`/`"use strict";`/`})();`/`</script>` 줄에 다른 글자 · 스크립트 블록에 IIFE 밖의 문 · IIFE 가 인자를 받거나 넘김 · 같은 이름의 손잡이·가져오기 둘 ·
+//   앞 줄이 script 태그로 끝나지 않음 · 부팅 파일이 이미 있음 · index.html 에 부팅 파일 글자가 이미 있음 · cells 가 `js/app/boot.js` 하나가 아님 · title·desc 꼴 · 모르는 칸. 멈추면 아무것도 쓰지 않는다.
+// 사후 대조: ① 부팅 파일을 다시 파싱한 토큰열(주석 제외) = 이전 IIFE 스크립트의 토큰열(실행 글자 0 변화) ② 새 index.html 에 큰 인라인 IIFE 가 없고 부팅 태그가 꼭 한 번 있다 ③ 줄 수 = 이전 − 지운 줄 ④ 지운 구간 밖의 줄은 태그를 붙인 한 줄 말고 그대로다. 다르면 쓰지 않고 멈춘다.
+// 설정 예: { "task": "TASK-ES-6xx", "mode": "finalize", "label": "…", "cells": [{ "file": "js/app/boot.js", "title": "OurGoal App Boot (부팅 — 구역 함수를 순서대로 부른다)", "desc": ["…"] }] }
+if (CFG.mode === 'finalize') { runFinalize(); return; }
+function runFinalize() {
+  const BOOT = 'js/app/boot.js', BOOT_TAG = '<script src="' + BOOT + '"></script>';
+  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells'].includes(k)) fail('finalize 설정에 모르는 칸: ' + k);
+  if (typeof TAG !== 'string' || !TAG) fail('finalize 설정 task 가 없다');
+  if (!Array.isArray(CFG.cells) || CFG.cells.length !== 1 || !CFG.cells[0] || typeof CFG.cells[0] !== 'object') fail('finalize 설정 cells 는 부팅 파일 하나여야 한다');
+  const C = CFG.cells[0];
+  for (const k of Object.keys(C)) if (!['file', 'title', 'desc'].includes(k)) fail('finalize 세포 설정에 모르는 칸: ' + k);
+  if (C.file !== BOOT) fail('finalize 의 부팅 파일은 ' + BOOT + ' 로 정해져 있다: ' + C.file);
+  if (typeof C.title !== 'string' || !C.title || !Array.isArray(C.desc) || !C.desc.length || !C.desc.every(d => typeof d === 'string' && d)) fail('finalize 세포 title · desc(비지 않은 글자의 배열)가 없다');
+  if ([C.title].concat(C.desc).some(d => d.includes('*/') || /[\r\n]/.test(d))) fail('finalize 세포 title · desc 에 주석을 닫는 글자나 줄바꿈이 있다');
+  if (fs.existsSync(path.join(APP, BOOT))) fail('부팅 파일이 이미 있다: ' + BOOT);
+  if (html.includes(BOOT)) fail('index.html 에 이미 부팅 파일 글자가 있다: ' + BOOT);
+  const doc = parseUnwireDoc(lines);
+  const { top, iScope } = doc;
+  const s = doc.off; // lines[s - 1] = `<script>` 줄, lines[s] = `(function(){` 줄
+  let e = -1; for (let i = s; i < lines.length; i++) if (lines[i].startsWith('</script>')) { e = i; break; }
+  const H = n => n.loc.start.line + s, HE = n => n.loc.end.line + s;
+  const iifeFn = iScope.path.node, body = iifeFn.body, prog = doc.ast.program.body;
+  const isComment = t => typeof t.type === 'string';
+  const sig = t => JSON.stringify([t.type.label || '', t.value === undefined ? '' : String(t.value)]);
+  const codeToks = a => a.tokens.filter(t => !isComment(t) && t.type.label !== 'eof').map(sig);
+  // ── 껍데기 꼴: 다섯 줄이 정해진 글자뿐이어야 한다(줄 안의 다른 글자를 함께 지우지 않게)
+  if (lines[s - 1] !== '<script>') fail('`<script>` 줄에 다른 글자가 있다(줄 ' + s + ')');
+  if (lines[s] !== '(function(){') fail('`(function(){` 줄에 다른 글자가 있다(줄 ' + (s + 1) + ')');
+  if (lines[s + 1].trim() !== '"use strict";') fail('`"use strict";` 줄에 다른 글자가 있다(줄 ' + (s + 2) + ')');
+  if (lines[e - 1] !== '})();') fail('`})();` 줄에 다른 글자가 있다(줄 ' + e + ')');
+  if (lines[e] !== '</script>') fail('`</script>` 줄에 다른 글자가 있다(줄 ' + (e + 1) + ')');
+  const call = prog.length === 1 && prog[0].type === 'ExpressionStatement' ? prog[0].expression : null;
+  if (!call || call.type !== 'CallExpression' || call.callee !== iifeFn) fail('스크립트 블록에 IIFE 밖의 문이 있다 — finalize 는 IIFE 하나뿐인 블록만 다룬다');
+  if (iifeFn.params.length || call.arguments.length || iifeFn.id || iifeFn.async || iifeFn.generator) fail('IIFE 가 인자를 받거나 넘기거나 이름이 있다 — 껍데기 꼴이 다르다');
+  if ((body.directives || []).length !== 1 || body.directives[0].value.value !== 'use strict') fail('IIFE 머리의 지시문이 "use strict" 하나가 아니다');
+  if (!/<script src="[^"]+"><\/script>$/.test(lines[s - 2] || '')) fail('`<script>` 앞 줄이 script 태그로 끝나지 않는다 — 부팅 태그를 붙일 자리가 없다(줄 ' + (s - 1) + ')');
+  // ── 전제: 최상위 문이 손잡이 · 구역 함수 가져오기 · 구역 함수 호출문뿐
+  const oneVar = st => (st.isVariableDeclaration() && st.node.kind === 'var' && st.node.declarations.length === 1 && st.node.declarations[0].id.type === 'Identifier') ? st.node.declarations[0] : null;
+  const plainMember = n => !!n && n.type === 'MemberExpression' && !n.computed && n.object.type === 'Identifier' && n.property.type === 'Identifier';
+  const rootWin = n => { let x = n; while (x && x.type === 'MemberExpression' && !x.computed) x = x.object; return !!x && x.type === 'Identifier' && x.name === 'window'; };
+  const winChain = n => { let x = n; if (!x || x.type !== 'MemberExpression') return false; while (x.type === 'MemberExpression') { if (x.computed || x.property.type !== 'Identifier') return false; x = x.object; } return x.type === 'Identifier' && x.name === 'window'; }; // window.A · window.A.b — unwire(X1)가 받는 손잡이 꼴과 같다
+  const calleeText = x => (x.callee.type === 'MemberExpression' ? doc.code.slice(x.callee.start, x.callee.end) : '');
+  const handles = new Map(), imports = new Map(), calls = [], bad = [];
+  const kindOfOther = st => {
+    const n = st.node, d = oneVar(st);
+    if (n.type === 'FunctionDeclaration') return '함수 선언';
+    if (n.type === 'VariableDeclaration') {
+      if (d && d.init && d.init.type === 'MemberExpression' && rootWin(d.init)) return '손잡이 꼴이 아닌 window 읽기 var';
+      if (d && plainMember(d.init) && handles.has(d.init.object.name)) return '이름이 다른 가져오기';
+      return '그 밖의 var';
+    }
+    if (n.type === 'ExpressionStatement' && n.expression.type === 'CallExpression') {
+      const t = calleeText(n.expression);
+      if (/^window\.OurgoalAppScope\.expose$/.test(t)) return 'expose 문';
+      if (/^window\.OurgoalAppState\.(define|defineVar)$/.test(t)) return '상태 선언(define)';
+      return '구역 함수가 아닌 호출문';
+    }
+    if (n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.left.type === 'MemberExpression' && rootWin(n.expression.left)) return 'window 대입';
+    if (n.type === 'IfStatement') return 'if 문';
+    if (n.type === 'TryStatement') return 'try 문';
+    return n.type;
+  };
+  for (const st of top) {
+    const d = oneVar(st), x = st.isExpressionStatement() ? st.node.expression : null;
+    if (d && winChain(d.init)) {
+      if (handles.has(d.id.name) || imports.has(d.id.name)) fail('같은 이름의 손잡이·가져오기가 둘이다: ' + d.id.name + ' (줄 ' + H(st.node) + ')');
+      handles.set(d.id.name, { kit: doc.code.slice(d.init.start, d.init.end).slice('window.'.length), line: H(st.node), used: 0 });
+    } else if (d && plainMember(d.init) && handles.has(d.init.object.name) && d.init.property.name === d.id.name) {
+      if (handles.has(d.id.name) || imports.has(d.id.name)) fail('같은 이름의 손잡이·가져오기가 둘이다: ' + d.id.name + ' (줄 ' + H(st.node) + ')');
+      imports.set(d.id.name, { handle: d.init.object.name, line: H(st.node), called: 0, st });
+      handles.get(d.init.object.name).used++;
+    } else if (x && x.type === 'CallExpression' && !x.optional && x.callee.type === 'Identifier' && imports.has(x.callee.name) && x.arguments.length === 0) {
+      imports.get(x.callee.name).called++;
+      calls.push({ name: x.callee.name, line: H(st.node) });
+    } else bad.push({ kind: kindOfOther(st), line: H(st.node), text: doc.code.slice(st.node.start, st.node.end).split('\n')[0].slice(0, 60) });
+  }
+  for (const [n, im] of imports) if (!im.called) bad.push({ kind: '호출되지 않는 가져오기', line: im.line, text: 'var ' + n + ' = ' + im.handle + '.' + n + ';' });
+  for (const [n, h] of handles) if (!h.used) bad.push({ kind: '쓰이지 않는 손잡이', line: h.line, text: 'var ' + n + ' = window.' + h.kit + ';' });
+  if (bad.length) {
+    bad.sort((a, b) => a.line - b.line);
+    const by = {}; for (const b of bad) by[b.kind] = (by[b.kind] || 0) + 1;
+    fail('finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 ' + bad.length + '개 있다(' + Object.keys(by).sort().map(k => k + ' ' + by[k]).join(' · ') + '). 첫 문: 줄 ' + bad[0].line + ' 「' + bad[0].text + '」');
+  }
+  if (!calls.length) fail('finalize 전제 미충족 — 구역 함수 호출문이 없다(부를 것이 없는 부팅 파일은 만들지 않는다)');
+  // ── F1: 부팅 파일(문을 글자 그대로, 같은 순서로)
+  const LABEL = CFG.label || '인라인 IIFE 마지막 정리';
+  const text = st => doc.code.slice(st.node.start, st.node.end);
+  const boot = ['/**', ' * ' + C.title, ' *'].concat(C.desc.map(d => ' * ' + d), [
+    ' * #' + TAG + '(' + LABEL + '): index.html 인라인 IIFE 에 마지막까지 남아 있던 문(키트 손잡이 ' + handles.size + '개 · 구역 함수 가져오기 ' + imports.size + '개 · 구역 함수 호출 ' + calls.length + '개)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로, 같은 순서로 옮겼다.',
+    ' * 주석·빈 줄은 옮기지 않았다. index.html 에는 큰 인라인 IIFE 가 더 없고, 그 자리(앞 태그 줄 끝)의 동기 script 태그가 이 파일을 부른다 — defer·async 를 붙이지 않는다(로드 순서가 곧 실행 순서다).',
+    ' * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 X9',
+    ' */',
+    '(function(){', '  "use strict";'], top.map(st => '  ' + text(st)), ['})();', '']);
+  // ── F2 · F3: IIFE 블록을 지우고 앞 줄 끝에 부팅 태그를 붙인다
+  const nh = lines.slice(0, s - 2).concat([lines[s - 2] + BOOT_TAG], lines.slice(e + 1));
+  const removed = e - s + 2;
+  // ── 사후 대조
+  {
+    let bootAst; try { bootAst = parser.parse(boot.join('\n'), { sourceType: 'script', tokens: true }); } catch (err) { fail('만든 부팅 파일이 파싱되지 않는다 — 쓰지 않는다: ' + err.message); }
+    const want = codeToks(doc.ast), got = codeToks(bootAst);
+    let diffAt = want.length === got.length ? -1 : Math.min(want.length, got.length);
+    for (let i = 0; i < Math.min(want.length, got.length); i++) if (want[i] !== got[i]) { diffAt = i; break; }
+    if (diffAt >= 0) fail('부팅 파일의 토큰열이 이전 IIFE 와 다르다(실행 글자 변화) — 쓰지 않는다: 토큰 ' + diffAt);
+    if (nh.some((l, i) => l.trim() === '<script>' && (nh[i + 1] || '').trim() === '(function(){' && (nh[i + 2] || '').includes('"use strict"'))) fail('지운 뒤에도 큰 인라인 IIFE 가 남아 있다 — 쓰지 않는다');
+    if (nh.join('\n').split(BOOT).length !== 2) fail('부팅 태그가 꼭 한 번이 아니다 — 쓰지 않는다');
+    if (nh.length !== lines.length - removed) fail('지운 뒤 줄 수가 예상과 다르다 — 쓰지 않는다');
+    if (nh.slice(0, s - 2).join('\n') !== lines.slice(0, s - 2).join('\n') || nh.slice(s - 1).join('\n') !== lines.slice(e + 1).join('\n') || nh[s - 2].slice(0, lines[s - 2].length) !== lines[s - 2]) fail('지운 구간 밖의 글자가 달라졌다 — 쓰지 않는다');
+  }
+  const stmtLine = new Set(); for (const st of top) for (let l = H(st.node); l <= HE(st.node); l++) stmtLine.add(l);
+  let blank = 0, comment = 0; for (let l = s + 3; l <= e - 1; l++) if (!stmtLine.has(l)) { if (lines[l - 1].trim() === '') blank++; else comment++; }
+  fs.mkdirSync(path.dirname(path.join(APP, BOOT)), { recursive: true });
+  fs.writeFileSync(path.join(APP, BOOT), boot.join('\n'), { encoding: 'utf8' });
+  fs.writeFileSync(path.join(APP, 'index.html'), nh.join(EOL), { encoding: 'utf8' });
+  const meta = {
+    task: TAG, mode: 'finalize', scriptHtmlLines: [s, e + 1],
+    statements: { total: top.length, handles: handles.size, imports: imports.size, calls: calls.length },
+    handles: [...handles].map(([n, h]) => ({ name: n, kit: h.kit, imports: h.used })), callOrder: calls.map(c => c.name),
+    removed: { lines: removed, shell: 5, statementLines: stmtLine.size, commentLines: comment, blankLines: blank },
+    tag: { line: s - 1, text: BOOT_TAG, sync: true },
+    htmlLinesBefore: lines.length, htmlLinesAfter: nh.length, files: { [BOOT]: boot.length - 1 },
+  };
+  fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1), { encoding: 'utf8' });
+  console.log('finalize', '· handles', handles.size, '· imports', imports.size, '· calls', calls.length, '· removed lines', removed, '(껍데기 5 · 문 ' + stmtLine.size + ' · 주석 ' + comment + ' · 빈 줄 ' + blank + ')');
+  console.log('index.html lines', lines.length, '->', nh.length);
+  console.log(BOOT, boot.length - 1);
+}
+
 // ── [B1 · docs/architecture/CELL-REGISTRY-DESIGN.md 5절] 배선 철거 모드(설정 "mode": "unwire") — 상민님 2026-10-10 「허용」(결심 ⑤), 범위는 그 문서 5절 그대로.
 // 지우는 대상은 세 종류뿐이다:
 //   ① 지정 키트(unwire.kitVar)의 가져오기 줄 `var X = _kit.X;`

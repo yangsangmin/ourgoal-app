@@ -1,0 +1,761 @@
+{
+ "tool": "docs/design/harness/module-split/finalize-check-662.js",
+ "type": "작업자 측정, 판정 아님",
+ "pin": "ed20750cc1d0079c4c185cca2afb8a6d1e3192a4",
+ "total": 45,
+ "passed": 45,
+ "ok": true,
+ "results": [
+  {
+   "id": "B",
+   "title": "빈 구획 쓸기 시험 47건(#TASK-ES-661 — 657 22건 · 643 67건 · 634 34건 · 619 16건 · B1 8건 · 병합된 PR 셋 재생성 포함)이 고친 생성기에서 D0 말고 모두 통과하고, 안쪽 657 은 D1 · 643 은 D0 말고 모두 통과한다(셋 다 생성기 diff 의 모양 비교)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "total": 47,
+    "passed": 46,
+    "failed": [
+     "D0"
+    ],
+    "sweepD0": {
+     "inserted": 324,
+     "commonHead": 42,
+     "commonTail": 1217,
+     "baseLines": 1259
+    },
+    "inner657": {
+     "total": 22,
+     "passed": 21,
+     "failed": [
+      "D1"
+     ],
+     "region643": {
+      "total": 67,
+      "passed": 66,
+      "failed": [
+       "D0"
+      ],
+      "innerB": {
+       "status": 0,
+       "passed": 34,
+       "total": 34,
+       "ext619": "16/16",
+       "b1": "8/8",
+       "failed": [],
+       "stderr": ""
+      }
+     }
+    },
+    "stderr": ""
+   }
+  },
+  {
+   "id": "D0",
+   "title": "생성기 diff 는 한 자리에 끼워 넣은 줄뿐이다(기준 생성기의 줄은 하나도 바뀌지 않았다). 검사기는 기준과 같다",
+   "ok": true,
+   "detail": {
+    "pin": "ed20750cc1d0079c4c185cca2afb8a6d1e3192a4",
+    "baseLines": 1446,
+    "nowLines": 1583,
+    "inserted": 137,
+    "commonHead": 229,
+    "commonTail": 1217,
+    "firstInserted": "// ── [#TASK-ES-662 · docs/architecture/CELL-REGISTRY-DESIGN",
+    "verifySame": true
+   }
+  },
+  {
+   "id": "F1",
+   "title": "옮김: 손잡이 하나 · 가져오기 둘 · 호출 둘(구획 주석 · 자리 표지 · 「옮김」 표지 · 호출 줄 옆 주석 · 빈 줄 섞임) → 부팅 파일에 문만 같은 순서로, index.html 은 IIFE 블록이 사라지고 앞 줄 끝에 동기 태그 하나",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "sameHtml": true,
+     "sameTokens": true,
+     "tokens": 41,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ],
+     "iifeLeft": false,
+     "removedLines": 19
+    },
+    "meta": {
+     "statements": {
+      "total": 5,
+      "handles": 1,
+      "imports": 2,
+      "calls": 2
+     },
+     "removed": {
+      "lines": 19,
+      "shell": 5,
+      "statementLines": 5,
+      "commentLines": 7,
+      "blankLines": 2
+     },
+     "tag": {
+      "line": 8,
+      "text": "<script src=\"js/app/boot.js\"></script>",
+      "sync": true
+     },
+     "callOrder": [
+      "bootOne",
+      "bootTwo"
+     ],
+     "files": {
+      "js/app/boot.js": 16
+     }
+    }
+   }
+  },
+  {
+   "id": "F2",
+   "title": "옮김: 손잡이 둘(`window.A` · `window.A.b`) · 여러 줄에 걸친 가져오기 · 같은 구역 함수를 두 번 부름 · 호출 줄 옆 // 주석 → 문은 글자 그대로(여러 줄 문 포함), 주석만 빠진다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "sameHtml": true,
+     "sameTokens": true,
+     "tokens": 65,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ],
+     "iifeLeft": false,
+     "removedLines": 15
+    },
+    "meta": {
+     "statements": {
+      "total": 9,
+      "handles": 2,
+      "imports": 3,
+      "calls": 4
+     },
+     "removed": {
+      "lines": 15,
+      "shell": 5,
+      "statementLines": 10,
+      "commentLines": 0,
+      "blankLines": 0
+     },
+     "tag": {
+      "line": 8,
+      "text": "<script src=\"js/app/boot.js\"></script>",
+      "sync": true
+     },
+     "callOrder": [
+      "bootOne",
+      "bootX",
+      "bootTwo",
+      "bootOne"
+     ],
+     "files": {
+      "js/app/boot.js": 20
+     }
+    }
+   }
+  },
+  {
+   "id": "F3",
+   "title": "옮김: 줄 끝이 CRLF 인 index.html 은 CRLF 그대로 쓰고, 부팅 파일은 LF 로 쓴다(다른 세포 파일과 같다)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "audit": {
+     "ok": true,
+     "sameHtml": true,
+     "sameTokens": true,
+     "tokens": 41,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ],
+     "iifeLeft": false,
+     "removedLines": 19
+    }
+   }
+  },
+  {
+   "id": "F4",
+   "title": "그대로: 다른 인라인 스크립트 블록(앞의 접속 통계 조각 · 뒤의 ESC 키 처리기)과 그 밖의 줄은 한 글자도 바뀌지 않는다. 인라인 `<script>` 줄 수는 3 → 2",
+   "ok": true,
+   "detail": {}
+  },
+  {
+   "id": "F5",
+   "title": "옮김: label 이 없으면 기본 글자를 쓰고, slot 칸이 있어도 같은 결과다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "sameHtml": true,
+     "sameTokens": true,
+     "tokens": 41,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ],
+     "iifeLeft": false,
+     "removedLines": 19
+    },
+    "meta": {
+     "statements": {
+      "total": 5,
+      "handles": 1,
+      "imports": 2,
+      "calls": 2
+     },
+     "removed": {
+      "lines": 19,
+      "shell": 5,
+      "statementLines": 5,
+      "commentLines": 7,
+      "blankLines": 2
+     },
+     "tag": {
+      "line": 8,
+      "text": "<script src=\"js/app/boot.js\"></script>",
+      "sync": true
+     },
+     "callOrder": [
+      "bootOne",
+      "bootTwo"
+     ],
+     "files": {
+      "js/app/boot.js": 16
+     }
+    }
+   }
+  },
+  {
+   "id": "F6",
+   "title": "옮김: IIFE 블록 바로 뒤에 다른 글자(빈 줄 없이 다음 태그)가 와도 그 줄은 그대로다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "sameHtml": true,
+     "sameTokens": true,
+     "tokens": 41,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ],
+     "iifeLeft": false,
+     "removedLines": 19
+    },
+    "meta": {
+     "statements": {
+      "total": 5,
+      "handles": 1,
+      "imports": 2,
+      "calls": 2
+     },
+     "removed": {
+      "lines": 19,
+      "shell": 5,
+      "statementLines": 5,
+      "commentLines": 7,
+      "blankLines": 2
+     },
+     "tag": {
+      "line": 8,
+      "text": "<script src=\"js/app/boot.js\"></script>",
+      "sync": true
+     },
+     "callOrder": [
+      "bootOne",
+      "bootTwo"
+     ],
+     "files": {
+      "js/app/boot.js": 16
+     }
+    }
+   }
+  },
+  {
+   "id": "E1",
+   "title": "실행 등가: 이전 인라인 IIFE 글자와 부팅 파일을 같은 가짜 키트 위에서 돌리면 호출 순서 · 호출 수 · 각 호출의 this(undefined) · 인자 수(0)가 같다",
+   "ok": true,
+   "detail": {
+    "inline": {
+     "log": [
+      "bootOne|this=undefined|args=0",
+      "bootX|this=undefined|args=0",
+      "bootTwo|this=undefined|args=0",
+      "bootOne|this=undefined|args=0"
+     ],
+     "threw": null
+    },
+    "boot": {
+     "log": [
+      "bootOne|this=undefined|args=0",
+      "bootX|this=undefined|args=0",
+      "bootTwo|this=undefined|args=0",
+      "bootOne|this=undefined|args=0"
+     ],
+     "threw": null
+    }
+   }
+  },
+  {
+   "id": "E2",
+   "title": "실행 등가: 가져오기는 머리에서 한 번 값을 잡는다 — 키트 속성이 그 뒤에 바뀌어도 잡아 둔 값이 불린다(인라인 IIFE 와 부팅 파일이 같다. `window.키트.f()` 로 바꿔 쓰지 않은 까닭)",
+   "ok": true,
+   "detail": {
+    "inline": {
+     "log": [
+      "bootOne|this=undefined|args=0",
+      "bootX|this=undefined|args=0",
+      "bootTwo|this=undefined|args=0",
+      "bootOne|this=undefined|args=0"
+     ],
+     "threw": null
+    },
+    "boot": {
+     "log": [
+      "bootOne|this=undefined|args=0",
+      "bootX|this=undefined|args=0",
+      "bootTwo|this=undefined|args=0",
+      "bootOne|this=undefined|args=0"
+     ],
+     "threw": null
+    }
+   }
+  },
+  {
+   "id": "S1",
+   "title": "정지: 함수 선언이 남았다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(함수 선언 1). 첫 문: 줄 14 「function left(){ return 1; }」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S2",
+   "title": "정지: expose 문이 남았다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(expose 문 1). 첫 문: 줄 14 「window.OurgoalAppScope.expose('index.html', {」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S3",
+   "title": "정지: 상태 선언(define) 줄이 남았다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(상태 선언(define) 1). 첫 문: 줄 14 「window.OurgoalAppState.define('counter', 0);」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S4",
+   "title": "정지: 그 밖의 var 가 남았다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(그 밖의 var 1). 첫 문: 줄 14 「var state = { a: 1 };」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S5",
+   "title": "정지: window 대입이 남았다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(window 대입 1). 첫 문: 줄 14 「window.bootOne = bootOne;」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S6",
+   "title": "정지: if 문이 남았다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(if 문 1). 첫 문: 줄 14 「if(typeof window !== 'undefined'){ window.FLAG = false; }」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S7",
+   "title": "정지: try 문이 남았다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(try 문 1). 첫 문: 줄 14 「try{ bootOne(); }catch(e){}」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S8",
+   "title": "정지: 인자를 넘기는 호출문",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 2개 있다(구역 함수가 아닌 호출문 1 · 호출되지 않는 가져오기 1). 첫 문: 줄 13 「var bootOne = _aKit.bootOne;」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S9",
+   "title": "정지: 키트 경유 호출문(`_aKit.bootOne()` — 가져온 이름으로 부르지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(구역 함수가 아닌 호출문 1). 첫 문: 줄 15 「_aKit.bootOne();」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S10",
+   "title": "정지: 가져오지 않은 이름을 부른다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(구역 함수가 아닌 호출문 1). 첫 문: 줄 15 「other();」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S11",
+   "title": "정지: 호출되지 않는 가져오기(재철거가 먼저다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(호출되지 않는 가져오기 1). 첫 문: 줄 14 「var dangling = _aKit.dangling;」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S12",
+   "title": "정지: 쓰이지 않는 손잡이",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(쓰이지 않는 손잡이 1). 첫 문: 줄 14 「var _bKit = window.OurgoalBKit;」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S13",
+   "title": "정지: 이름이 속성과 다른 가져오기",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 2개 있다(구역 함수가 아닌 호출문 1 · 이름이 다른 가져오기 1). 첫 문: 줄 14 「var alias = _aKit.bootTwo;」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S14",
+   "title": "정지: 계산된 속성으로 읽는 손잡이 꼴",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 3개 있다(구역 함수가 아닌 호출문 1 · 그 밖의 var 2). 첫 문: 줄 12 「var _aKit = window['OurgoalAKit'];」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S15",
+   "title": "정지: let 선언(손잡이·가져오기는 var 만)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 3개 있다(구역 함수가 아닌 호출문 1 · 그 밖의 var 2). 첫 문: 줄 12 「let _aKit = window.OurgoalAKit;」",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S16",
+   "title": "정지: 호출문이 하나도 없다(빈 IIFE — 부를 것이 없는 부팅 파일은 만들지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — 구역 함수 호출문이 없다(부를 것이 없는 부팅 파일은 만들지 않는다)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S17",
+   "title": "정지: 같은 이름의 가져오기가 둘",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "같은 이름의 손잡이·가져오기가 둘이다: bootOne (줄 14)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S18",
+   "title": "정지: `})();` 줄에 다른 글자가 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "`})();` 줄에 다른 글자가 있다(줄 15)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S19",
+   "title": "정지: `</script>` 줄에 다른 글자가 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "`</script>` 줄에 다른 글자가 있다(줄 16)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S20",
+   "title": "정지: `\"use strict\";` 줄에 다른 글자가 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "`\"use strict\";` 줄에 다른 글자가 있다(줄 11)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S21",
+   "title": "정지: 스크립트 블록에 IIFE 밖의 문이 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "`})();` 줄에 다른 글자가 있다(줄 16)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S22",
+   "title": "정지: IIFE 가 인자를 넘긴다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "`})();` 줄에 다른 글자가 있다(줄 15)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S23",
+   "title": "정지: `<script>` 앞 줄이 script 태그로 끝나지 않는다(부팅 태그를 붙일 자리가 없다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "`<script>` 앞 줄이 script 태그로 끝나지 않는다 — 부팅 태그를 붙일 자리가 없다(줄 9)",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S24",
+   "title": "정지: 부팅 파일이 이미 있다(덮어쓰지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "부팅 파일이 이미 있다: js/app/boot.js",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S25",
+   "title": "정지: index.html 에 부팅 파일 글자가 이미 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "index.html 에 이미 부팅 파일 글자가 있다: js/app/boot.js",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S26",
+   "title": "정지: cells 가 둘이다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 cells 는 부팅 파일 하나여야 한다",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S27",
+   "title": "정지: 부팅 파일 경로가 정해진 것과 다르다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 의 부팅 파일은 js/app/boot.js 로 정해져 있다: js/core/boot.js",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S28",
+   "title": "정지: 세포 설정의 모르는 칸(defer 같은 칸은 없다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 세포 설정에 모르는 칸: defer",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S29",
+   "title": "정지: title 이 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 세포 title · desc(비지 않은 글자의 배열)가 없다",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S30",
+   "title": "정지: desc 에 주석을 닫는 글자가 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 세포 title · desc 에 주석을 닫는 글자나 줄바꿈이 있다",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "S31",
+   "title": "정지: 맨 위 모르는 칸(다른 모드의 칸을 섞지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정에 모르는 칸: sweep",
+    "htmlSame": true,
+    "bootSame": true
+   }
+  },
+  {
+   "id": "R1",
+   "title": "실제 index.html(PIN): 전제 미충족으로 멈추고 종류별 수를 적는다. index.html 은 그대로이고 부팅 파일은 생기지 않는다",
+   "ok": true,
+   "detail": {
+    "pin": "ed20750cc1d0079c4c185cca2afb8a6d1e3192a4",
+    "status": 1,
+    "count": 240,
+    "kinds": "expose 문 16 · if 문 21 · try 문 2 · window 대입 9 · 구역 함수가 아닌 호출문 13 · 그 밖의 var 26 · 상태 선언(define) 56 · 함수 선언 1 · 호출되지 않는 가져오기 96",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "R2",
+   "title": "한 번 돌린 결과에 다시 돌리면 멈추고(큰 인라인 IIFE 가 더 없다) index.html · 부팅 파일이 그대로다",
+   "ok": true,
+   "detail": {
+    "status": [
+     0,
+     1
+    ],
+    "err": "TypeError: Cannot read properties of undefined (reading 'startsWith')"
+   }
+  },
+  {
+   "id": "A",
+   "title": "감사: 성공한 꾸러미 전부에서 부팅 파일의 토큰열(주석 제외)이 이전 IIFE 스크립트와 같고, 새 index.html 은 「이전 − IIFE 블록 줄 + 앞 줄 끝의 태그 하나」이며, 부팅 태그에 defer·async 가 없다(생성기와 따로 다시 파싱)",
+   "ok": true,
+   "detail": {
+    "count": 5,
+    "cases": [
+     {
+      "id": "F1",
+      "ok": true,
+      "removed": 19,
+      "tokens": 41
+     },
+     {
+      "id": "F2",
+      "ok": true,
+      "removed": 15,
+      "tokens": 65
+     },
+     {
+      "id": "F3",
+      "ok": true,
+      "removed": 19,
+      "tokens": 41
+     },
+     {
+      "id": "F5",
+      "ok": true,
+      "removed": 19,
+      "tokens": 41
+     },
+     {
+      "id": "F6",
+      "ok": true,
+      "removed": 19,
+      "tokens": 41
+     }
+    ]
+   }
+  },
+  {
+   "id": "L",
+   "title": "(기록) 법정 모듈 로드 탐침 loadOne 이 꾸러미의 부팅 파일을 단독으로 읽은 결과를 그대로 싣는다 — 부팅 파일은 키트가 로드된 뒤에만 도는 파일이다(결과가 ok 가 아니어도 이 항목은 실패가 아니다)",
+   "ok": true,
+   "detail": {
+    "loadOne": {
+     "ok": false,
+     "error": "TypeError: Cannot read properties of undefined (reading 'bootOne')",
+     "globals": []
+    },
+    "threw": null,
+    "note": "법정의 기본 탐침 범위(js/*.js)에 js/app/ 이 드는지는 실제 finalize PR 이 잰다"
+   }
+  }
+ ]
+}
