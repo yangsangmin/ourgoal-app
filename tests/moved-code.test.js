@@ -24,7 +24,8 @@ function tree(opts) {
   const root = path.join(TMP, 't' + (++seq));
   const files = Object.assign({ 'js/core/app-state.js': '/* 상태 기관(시험용) */' }, opts.files || {});
   for (const rel of Object.keys(files)) { const f = path.join(root, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, files[rel], { encoding: 'utf8' }); }
-  const html = ['<!doctype html><html><head>', ...(opts.tags || []), ...(opts.inline === undefined ? [] : ['<script>', '(function(){', '"use strict";', opts.inline, '})();', '</script>']), '</head><body></body></html>'].join('\n');
+  // raw: index.html 머리 안의 줄을 통째로 준다(#TASK-ES-678 — 인라인 스크립트와 태그의 앞뒤 순서를 시험이 정한다)
+  const html = ['<!doctype html><html><head>', ...(opts.raw || [...(opts.tags || []), ...(opts.inline === undefined ? [] : ['<script>', '(function(){', '"use strict";', opts.inline, '})();', '</script>'])]), '</head><body></body></html>'].join('\n');
   fs.mkdirSync(root, { recursive: true });
   fs.writeFileSync(path.join(root, 'index.html'), html, { encoding: 'utf8' });
   return { root, html, m: moved.forRoot(root) };
@@ -113,6 +114,72 @@ try {
       const x = tree({ files: { [CORE]: src }, tags: [STATE_TAG, TAG(CORE)] });
       assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpen = false;'), false, src.slice(40, 120));
     }
+  });
+
+  // ---- #TASK-ES-678: 상태 기관 호출이 index.html 의 인라인 스크립트(덩어리) 안에 있는 중간 단계 ----
+  // 상태 이전(unstate)은 먼저 덩어리 안에서 `var X = 초기값;` 을 `window.OurgoalAppState.defineVar('X', 초기값);` 으로 바꾼다. 그 줄이 세포로 가는 것은 그 뒤다.
+  const IIFE = body => ['<script>', '(function(){', '"use strict";', body, '})();', '</script>'];
+  const DEF_LINE = "  window.OurgoalAppState.defineVar('_demoOpen', false);";
+
+  t('#678 상태: 호출이 상태 기관 태그 뒤의 인라인 스크립트(덩어리) 안에 있으면 참 — 옛 선언 글자도 세포 파일의 호출도 없다', () => {
+    const x = tree({ raw: [STATE_TAG, ...IIFE(DEF_LINE + "\n  window.OurgoalAppState.define('DEMO_LIST', [ 'a', pad(1) ]);")] });
+    assert.strictEqual(x.html.includes('_demoOpen = false;'), false, '시험 전제: 옛 선언 글자 없음');
+    assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpen = false;'), true);
+    assert.strictEqual(x.m.textOrStateDefined(x.html, 'var _demoOpen = false;'), true);
+    assert.strictEqual(x.m.textOrStateDefined(x.html, "DEMO_LIST = ['a', pad(1)];"), true);
+    assert.deepStrictEqual(x.m.stateDefines('_demoOpen').map(d => [d.file, d.kind]), [['index.html(인라인)', 'defineVar']]);
+    const nested = tree({ raw: [STATE_TAG, ...IIFE('  function bootInline(){\n  ' + DEF_LINE + '\n  }\n  bootInline();')] });
+    assert.strictEqual(nested.m.textOrStateDefined(nested.html, '_demoOpen = false;'), true, '인라인 안쪽 함수 속의 호출도 같다(세포 파일과 같은 식)');
+  });
+
+  t('#678 상태(인라인): 초기값·이름이 다르면 거짓', () => {
+    const x = tree({ raw: [STATE_TAG, ...IIFE(DEF_LINE)] });
+    assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpen = true;'), false);
+    assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpened = false;'), false);
+    const t2 = tree({ raw: [STATE_TAG, ...IIFE(DEF_LINE.replace('false', 'true'))] });
+    assert.strictEqual(t2.m.textOrStateDefined(t2.html, '_demoOpen = false;'), false, '호출의 초기값이 true 면 false 선언과 다르다');
+    const t3 = tree({ raw: [STATE_TAG, ...IIFE(DEF_LINE.replace('_demoOpen', '_demoOpenOther'))] });
+    assert.strictEqual(t3.m.textOrStateDefined(t3.html, '_demoOpen = false;'), false);
+  });
+
+  t('#678 상태(인라인): 상태 기관 태그보다 앞의 스크립트 · 기관 태그 없음 · 미뤄 읽는 기관 태그는 거짓', () => {
+    for (const raw of [[...IIFE(DEF_LINE), STATE_TAG], IIFE(DEF_LINE), [TAG('js/core/app-state.js', 'defer'), ...IIFE(DEF_LINE)], ['<!-- ' + STATE_TAG + ' -->', ...IIFE(DEF_LINE)]]) {
+      const x = tree({ raw });
+      assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpen = false;'), false, raw.join(' ').slice(0, 120));
+    }
+  });
+
+  t('#678 상태(인라인): 주석·문자열 안의 호출 글자, 다른 객체의 define, HTML 주석 안의 스크립트, 자바스크립트가 아닌 type 은 거짓', () => {
+    const bodies = ['  /* ' + DEF_LINE.trim() + ' */', '  // ' + DEF_LINE.trim(), '  var s = "' + DEF_LINE.trim() + '";', "  var tpl = `" + DEF_LINE.trim() + "`;",
+      "  window.OtherState.defineVar('_demoOpen', false);", "  var o = { defineVar: function(){} }; o.defineVar('_demoOpen', false);", "  window.OurgoalAppState.defineVar(name, false);", "  window.OurgoalAppState.defineVar('_demoOpen');"];
+    for (const body of bodies) {
+      const x = tree({ raw: [STATE_TAG, ...IIFE(body)] });
+      assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpen = false;'), false, body);
+    }
+    const inHtmlComment = tree({ raw: [STATE_TAG, '<!--', ...IIFE(DEF_LINE), '-->'] });
+    assert.strictEqual(inHtmlComment.m.textOrStateDefined(inHtmlComment.html, '_demoOpen = false;'), false, 'HTML 주석 안의 스크립트');
+    for (const type of ['text/template', 'application/json', 'text/plain']) {
+      const x = tree({ raw: [STATE_TAG, '<script type="' + type + '">', DEF_LINE, '</script>'] });
+      assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpen = false;'), false, type);
+    }
+    const srcTag = tree({ raw: [STATE_TAG, '<script src="js/none.js">' + DEF_LINE + '</script>'] });
+    assert.strictEqual(srcTag.m.textOrStateDefined(srcTag.html, '_demoOpen = false;'), false, 'src 가 있는 태그 안의 글자는 실행되지 않는다');
+  });
+
+  t('#678 상태(인라인): type 이 없거나 자바스크립트인 스크립트는 읽는다 · 코드로 읽히지 않는 스크립트는 거짓', () => {
+    for (const open of ['<script>', '<script type="text/javascript">', '<script type="module">']) {
+      const x = tree({ raw: [STATE_TAG, open, DEF_LINE, '</script>'] });
+      assert.strictEqual(x.m.textOrStateDefined(x.html, '_demoOpen = false;'), true, open);
+    }
+    const broken = tree({ raw: [STATE_TAG, '<script>', 'function (( {{{ ' + DEF_LINE, '</script>'] });
+    assert.doesNotThrow(() => broken.m.textOrStateDefined(broken.html, '_demoOpen = false;'), '깨진 스크립트에서 던지지 않는다');
+  });
+
+  t('#678 함수 선언·첫 문 갈래는 인라인 스크립트를 보지 않는다(넓힌 것은 상태 기관 호출뿐이다)', () => {
+    const x = tree({ raw: [STATE_TAG, ...IIFE("  function cleanWords(text){ if(!window.__FORCE_DEMO) return ''; return text; }")] });
+    assert.strictEqual(x.m.cellFunctions('cleanWords').length, 0);
+    assert.strictEqual(x.m.textOrFunctionDefined('(다른 글자)', '옛 표지', 'cleanWords'), false);
+    assert.strictEqual(x.m.textOrFunctionStartsWith('(다른 글자)', '옛 표지', 'cleanWords', "if(!window.__FORCE_DEMO) return '';"), false);
   });
 
   t('정해진 꼴이 아닌 글자·이름은 오류(엉뚱한 글자로 조용히 통과하지 않는다)', () => {
