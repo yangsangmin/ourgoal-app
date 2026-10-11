@@ -13,6 +13,10 @@
 //   textOrStateDefined(source, 옛 선언 글자 `이름 = 초기값;`)
 //       (나) = 상태 기관(js/core/app-state.js)을 index.html 이 먼저 읽고, 그 뒤에 읽는 세포 파일에
 //              `window.OurgoalAppState.define('이름', 초기값)`(또는 defineVar) 호출이 있으며 초기값 글자가 옛 선언의 초기값과 같다.
+//              [#TASK-ES-678] 같은 호출이 index.html 의 인라인 스크립트(src 없는 <script>) 가운데 상태 기관 태그보다 **뒤에** 있는 것에 있어도 같다.
+//              상태 이전(unstate)은 먼저 덩어리(인라인 IIFE) 안에서 선언을 그 호출로 바꾸고, 그 줄이 세포·부팅 파일로 가는 것은 그 뒤의 일이다 —
+//              그 중간 단계에서도 「같은 이름·같은 초기값이 상태 기관으로 만들어진다」를 같은 식으로 본다. 인라인 스크립트도 @babel/parser 로 읽는다
+//              (주석·문자열 안의 글자, 상태 기관 태그보다 앞의 스크립트, HTML 주석 안의 스크립트, 자바스크립트가 아닌 type 의 스크립트는 거짓).
 // 옛 글자가 정해진 꼴이 아니거나 이름이 식별자가 아니면 오류를 던진다(엉뚱한 글자로 조용히 통과하는 일을 막는다).
 // 파서는 (나)를 볼 때만 읽는다. 없으면 오류를 던진다 — NODE_PATH 로 저장소의 node_modules(@babel/parser)를 알려 준다.
 const fs = require('fs');
@@ -102,13 +106,37 @@ function cellFunctions(name, root) {
   }
   return found;
 }
+// [#TASK-ES-678] index.html 의 인라인 스크립트(src 없는 <script> … </script>): [{ src: 'index.html(인라인)', at, text, ast }]
+// HTML 주석 안의 스크립트는 읽지 않는다(주석을 같은 길이의 빈칸으로 바꾼 글자에서 찾는다 — 자리 번호는 그대로다).
+// type 이 자바스크립트가 아닌 스크립트(템플릿·JSON 등)는 실행되지 않으므로 읽지 않는다.
+const INLINE_SRC = 'index.html(인라인)';
+const JS_TYPE_RE = /^(?:|module|(?:text|application)\/(?:java|ecma)script)$/i;
+const inlineCache = new Map();
+function inlineScripts(root) {
+  const key = path.resolve(root || DEFAULT_ROOT);
+  if (inlineCache.has(key)) return inlineCache.get(key);
+  const out = [];
+  inlineCache.set(key, out);
+  let html;
+  try { html = fs.readFileSync(path.join(key, 'index.html'), 'utf8'); } catch (e) { return out; }
+  const live = html.replace(/<!--[\s\S]*?-->/g, m => ' '.repeat(m.length));
+  const re = /<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi;
+  for (let m = re.exec(live); m; m = re.exec(live)) {
+    if (/\bsrc\s*=/i.test(m[1])) continue;
+    const type = /\btype\s*=\s*(["'])([^"']*)\1/i.exec(m[1]);
+    if (type && !JS_TYPE_RE.test(type[2].trim())) continue;
+    out.push({ src: INLINE_SRC, at: m.index, text: m[2], ast: null });
+  }
+  return out;
+}
 // 상태 기관 호출 `window.OurgoalAppState.define('이름', 초기값)`(defineVar 포함)을 세포 파일에서 찾는다: [{ file, kind, init }]
+// [#TASK-ES-678] index.html 의 인라인 스크립트 가운데 상태 기관 태그보다 뒤에 있는 것도 같은 식으로 본다(file 은 'index.html(인라인)').
 function stateDefines(name, root) {
   if (!ID_RE.test(String(name))) throw new Error('moved-code: 상태 이름이 식별자가 아니다: ' + JSON.stringify(name));
   const all = cells(root), organ = all.find(c => c.src === APP_STATE_JS);
   const found = [];
   if (!organ) return found; // 상태 기관을 읽지 않으면 define 호출은 값을 만들지 못한다
-  for (const cell of all) {
+  for (const cell of all.concat(inlineScripts(root))) {
     if (cell.at <= organ.at || cell.text.indexOf('OurgoalAppState') < 0 || cell.text.indexOf(name) < 0) continue;
     const ast = astOf(cell);
     if (!ast) continue;
