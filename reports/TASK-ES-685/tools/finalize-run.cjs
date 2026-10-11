@@ -21,7 +21,7 @@ const BOOT = 'js/app/boot.js', CELL_ID = 'app/boot', TAG = '<script src="' + BOO
 const wj = (f, o) => { fs.mkdirSync(path.dirname(path.join(DIR, f)), { recursive: true }); fs.writeFileSync(path.join(DIR, f), JSON.stringify(o, null, 1) + '\n', { encoding: 'utf8' }); };
 const rj = f => JSON.parse(fs.readFileSync(path.join(DIR, f), 'utf8'));
 const lf = s => s.replace(/\r\n/g, '\n');
-const redact = s => String(s).replace(/eyJ[A-Za-z0-9._-]+/g, '(가림)'); // 공개 키 글자는 보고 파일에 옮기지 않는다(커밋 훅의 금지 패턴)
+const redact = s => String(s).replace(/eyJ[A-Za-z0-9._-]+/g, '(가림)').replace(/https:\/\/[a-z0-9]+\.supabase\.co/g, '(서버 주소 가림)'); // 공개 키·서버 주소 글자는 보고 파일에 옮기지 않는다(키 꼴 글자는 커밋 훅의 금지 패턴)
 const commands = [];
 function run(id, args, cwd, env) { const t0 = new Date().toISOString(); const r = cp.spawnSync(args[0], args.slice(1), { cwd: cwd || ROOT, encoding: 'utf8', env: Object.assign({}, process.env, env || {}), maxBuffer: 256 * 1024 * 1024 }); commands.push({ id, startedAt: t0, endedAt: new Date().toISOString(), exitCode: r.status, stderrHead: redact((r.stderr || '').slice(0, 200)) }); return r; }
 const must = (r, what) => { if (r.status !== 0) { console.error(what + ' 실패: ' + redact(((r.stderr || '') + (r.stdout || '')).slice(0, 600))); process.exit(1); } return r; };
@@ -116,6 +116,7 @@ const rawLines = f => fs.readFileSync(f).toString('latin1').split('\n'); // 바�
 
 if (CMD === 'measure') {
   const BASE = path.resolve(opt('--base'));
+  { const mf = path.join(DIR, 'finalize-meta.json'), raw = fs.readFileSync(mf, 'utf8'), red = redact(raw); if (red !== raw) fs.writeFileSync(mf, red, { encoding: 'utf8' }); } // 생성기 메타의 문 글자 앞머리에 든 서버 주소도 가린다(값은 그대로 — 글자만)
   const fm = rj('finalize-meta.json'), meta = fm.meta, proof = rj('proof.json');
   const baseHead = git(['rev-parse', 'HEAD'], BASE).stdout.trim(), workHead = git(['rev-parse', 'HEAD']).stdout.trim();
   const numstat = L(git(['diff', '--numstat', baseHead, '--']).stdout).map(l => { const [a, d, f] = l.split('\t'); return { file: f, insertions: Number(a), deletions: Number(d) }; });
