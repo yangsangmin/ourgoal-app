@@ -1,0 +1,110 @@
+{
+  "id": "b7-comm-subtabs",
+  "title": "게스트로 소통 탭에 들어가 하위 구획을 group→manito→share→feed 순서로 누르면(화면을 다시 그리며 통로의 renderCommGroups·renderCommManito·renderCommShare·renderCommFeed 를 부른다) 누른 구획이 활성이 되고 앞 구획은 비활성이 되며 예외가 없다 (소통 키트 배선 철거 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "className": "active"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".comm-subtab[data-sub=\"group\"]",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"group\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".comm-subtab[data-sub=\"group\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"manito\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".comm-subtab[data-sub=\"manito\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".comm-subtab[data-sub=\"group\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"share\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".comm-subtab[data-sub=\"share\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".comm-subtab[data-sub=\"manito\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"feed\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".comm-subtab[data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".comm-subtab[data-sub=\"share\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
