@@ -1,0 +1,335 @@
+{
+ "task": "TASK-ES-686",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-686-APP-FOLDER.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "부팅 기관 폴더 js/app 에 설명 파일 README.md 한 장을 둔다(이 폴더가 무엇이고 무엇을 두지 않는지)."
+  },
+  {
+   "id": "R2",
+   "text": "제품 코드 · index.html · 시험 · 금고 · 생성기는 바꾸지 않는다."
+  },
+  {
+   "id": "R3",
+   "text": "신고서 도구 · 모듈 가드 · 지표가 설명 파일을 세포로 세지 않고, npm test 와 무결성 게이트가 기준과 같다."
+  },
+  {
+   "id": "R4",
+   "text": "이 폴더를 먼저 두는 까닭(법정 재실행 대조가 새 폴더에서 멈추는 결함)의 재현 절차를 보고 폴더에 남긴다."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "법정 코드의 status 읽기 한 줄을 고치는 일은 금고라 하지 않는다 — 작업 끝 보고에서 법정 결함으로 올린다.",
+   "cannotBecause": "out-of-scope-feature"
+  },
+  {
+   "text": "부팅 파일 js/app/boot.js 자체는 이 PR 에 없다 — 다음 PR(#TASK-ES-685)이 생성기로 만든다.",
+   "cannotBecause": "out-of-scope-feature"
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "js/ 아래에서 바뀐 것은 설명 파일 js/app/README.md 하나다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "changed.onlyReadmeUnderJs",
+    "equals": true
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일에 키 꼴 글자나 서버 주소가 없다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "readme.hasKeyLikeText",
+    "equals": false
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "코드 파일(.js · .html · .css — 보고 폴더의 도구 제외)은 하나도 바뀌지 않았다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "changed.codeFilesChanged",
+    "equals": []
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "index.html 은 바뀌지 않았다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "changed.indexHtmlChanged",
+    "equals": false
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests/ 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "changed.testsChanged",
+    "equals": []
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "scripts/ 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "changed.scriptsChanged",
+    "equals": []
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "금고 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "changed.vaultChanged",
+    "equals": []
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 · 하네스 변경이 없다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "changed.harnessChanged",
+    "equals": []
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일 js/app/README.md 가 커밋된 트리에 있다.",
+   "touches": [
+    "js/app/README.md"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "js/app/README.md"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설명 파일이 부팅 파일의 이름(js/app/boot.js)과 「손으로 쓰지 않고 생성기가 만든다」를 적고 있다.",
+   "touches": [
+    "js/app/README.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/app/README.md",
+    "text": "손으로 쓰지 않고 생성기가 만든다"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서(modules.json)에 js/app 아래 세포가 없다(설명 파일은 세포가 아니다).",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "tools.modulesJsonCellsUnderApp",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "신고서는 바뀌지 않았다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "tools.modulesJsonChanged",
+    "equals": false
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 가드 종료 코드가 0 이다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "tools.moduleGuardExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "공식 지표(인라인 줄 수 · index 함수 선언 · window 대입 · 탭 간 참조)가 기준선 마지막 기록과 같다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "tools.metricsEqualBaselineLast",
+    "equals": true
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 가 기준·작업에서 종료 코드 0 이고 검사 수가 같다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "npmTest.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "무결성 게이트 종료 코드가 0 이다.",
+   "touches": [
+    "reports/TASK-ES-686/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/measurement.json",
+    "path": "tools.integrityGateExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "재현: 기준에 없던 폴더에 생성기가 파일을 만들면 법정과 같은 방식으로 읽은 status 줄이 폴더 한 줄이라 허용 목록과 맞지 않는다.",
+   "touches": [
+    "reports/TASK-ES-686/court-newdir-repro.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/court-newdir-repro.json",
+    "path": "summary.failsWhenFolderIsNew",
+    "equals": true
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "재현: 그 폴더가 기준에 이미 있으면 같은 읽기 방식으로 걸리지 않는다.",
+   "touches": [
+    "reports/TASK-ES-686/court-newdir-repro.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/court-newdir-repro.json",
+    "path": "summary.passesWhenFolderExistsInBase",
+    "equals": true
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "재현: status 를 파일 단위(--untracked-files=all)로 읽으면 폴더가 새것이어도 걸리지 않는다(법정 수정안 — 이 PR 은 하지 않는다).",
+   "touches": [
+    "reports/TASK-ES-686/court-newdir-repro.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-686/court-newdir-repro.json",
+    "path": "summary.passesWithUntrackedAll",
+    "equals": true
+   }
+  }
+ ]
+}
