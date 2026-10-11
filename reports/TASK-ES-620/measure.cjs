@@ -14,6 +14,8 @@ const argv = process.argv.slice(2);
 const RAW = path.resolve(argv[0]), WT = path.resolve(argv[1]), TASK = argv[2];
 const opt = (k, d) => (argv.indexOf(k) >= 0 ? argv[argv.indexOf(k) + 1] : d);
 const BASE = opt('--base', null), PAIRS = opt('--pairs', '').split(',').filter(Boolean).map(s => s.split(':'));
+// --out-name post-merge.json: origin/main 을 합친 뒤의 빠른 재확인 결과를 따로 적는다(본 측정 measurement.json 은 그대로 둔다)
+const OUTNAME = opt('--out-name', 'measurement.json'), POST = OUTNAME !== 'measurement.json';
 const DIR = path.join(WT, 'reports', TASK);
 const rj = f => JSON.parse(fs.readFileSync(path.join(RAW, f), 'utf8'));
 const has = f => fs.existsSync(path.join(RAW, f));
@@ -21,6 +23,7 @@ const names = [...new Set(fs.readdirSync(RAW).map(f => /^plain-(.+)\.json$/.exec
 const out = { tool: 'reports/' + TASK + '/measure.cjs', type: '작업자 측정, 판정 아님 — 각 측정 도구의 산출을 옮겨 적은 것', task: TASK, measuredAt: new Date().toISOString(), baseCommit: BASE,
   note: '트리 이름: main-before(기준 커밋 그대로) · main-after(#TASK-ES-620 시험지) · main-gate(#TASK-ES-623 게이트만) · main-both(둘 다) · mock-*(같은 시험지 + 배선을 전부 지운 index.html — reports/TASK-ES-620/mock-unwire-all.json). 원시 결과 파일은 저장소 밖 작업자 PC 임시 폴더에 있다.',
   runs: {}, softAsserts: {}, remaining: {}, courtSandbox: {} };
+if (POST) out.note = 'origin/main 을 합친 뒤의 빠른 재확인이다(본 측정은 measurement.json). 그대로 실행은 npm test 경로만, 줄 단위 조사는 npm test 경로 스크립트와 바꾼 시험 파일만 돌렸다. 트리 이름은 measurement.json 과 같다. remaining 의 main-before__mock-before 는 고치기 전 시험지로 모의 철거 사본에서만 실패하는 단언 줄이다.';
 for (const n of names) {
   const p = rj('plain-' + n + '.json');
   out.runs[n] = { label: p.label, scope: p.scope || 'npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부', npmTest: { exit: p.npmTest.exit, checkLines: p.npmTest.checkLines, okLines: p.npmTest.okLines, failLines: p.npmTest.failLines },
@@ -57,7 +60,7 @@ out.summary = { runs: names.reduce((m, n) => { m[n] = brief(n); return m; }, {})
     mockSmokeFailsBefore: nz('mock-before', r => r.scripts[0].fails.length), mockSmokeFailsAfter: nz('mock-after', r => r.scripts[0].fails.length),
     mockSmokeCheckLinesBefore: nz('mock-before', r => r.scripts[0].checkLines), mockSmokeCheckLinesAfter: nz('mock-after', r => r.scripts[0].checkLines),
     mockGateFailsBefore: nz('mock-before', r => r.scripts[1].fails.length), mockGateFailsAfter: nz('mock-after', r => r.scripts[1].fails.length),
-    mockTestFilesFailedBefore: nz('mock-before', r => r.testFiles.failed.length), mockTestFilesFailedAfter: nz('mock-after', r => r.testFiles.failed.length),
+    mockTestFilesFailedBefore: nz('mock-before', r => (r.testFiles ? r.testFiles.failed.length : null)), mockTestFilesFailedAfter: nz('mock-after', r => (r.testFiles ? r.testFiles.failed.length : null)),
     mockAfterFailedTestFilesSameAsMainAfter: sameFailed('main-after', 'mock-after'),
     bothMainNpmTestExit: nz('main-both', r => r.npmTest.exit), bothMockNpmTestExit: nz('mock-both', r => r.npmTest.exit),
     bothMockCheckLines: nz('mock-both', r => r.npmTest.checkLines), bothMainCheckLines: nz('main-both', r => r.npmTest.checkLines),
@@ -71,7 +74,9 @@ out.summary = { runs: names.reduce((m, n) => { m[n] = brief(n); return m; }, {})
   courtSandboxSmokeFailedTitlesSame: { mockAfterVsMainBefore: out.courtSandbox['mock-after'] && out.courtSandbox['main-before'] ? JSON.stringify(out.courtSandbox['mock-after'].runners[0].failedTitles) === JSON.stringify(out.courtSandbox['main-before'].runners[0].failedTitles) : null,
     mockBothVsMainBefore: out.courtSandbox['mock-both'] && out.courtSandbox['main-before'] ? JSON.stringify(out.courtSandbox['mock-both'].runners[0].failedTitles) === JSON.stringify(out.courtSandbox['main-before'].runners[0].failedTitles) : null,
     gateMockBothFailed: out.courtSandbox['mock-both'] ? out.courtSandbox['mock-both'].runners[1].failed : null } };
-for (const f of ['broken-assertions.json', 'control-group.json', 'changed-assertions.json', 'mock-unwire-all.json']) if (fs.existsSync(path.join(DIR, f))) { const j = JSON.parse(fs.readFileSync(path.join(DIR, f), 'utf8')); out.summary[f.replace('.json', '')] = j.summary || { deletedLinesTotal: j.deletedLinesTotal, before: j.before, after: j.after, registeredStillWired: j.registeredStillWired && j.registeredStillWired.count, droppedByGenerator: j.passes && j.passes.reduce((a, p) => a + p.dropped.length, 0), runs: j.passes && j.passes.length }; }
+const mockBrief = j => ({ deletedLinesTotal: j.deletedLinesTotal, before: j.before, after: j.after, registeredStillWired: j.registeredStillWired && j.registeredStillWired.count, droppedByGenerator: j.passes && j.passes.reduce((a, p) => a + p.dropped.length, 0), runs: j.passes && j.passes.length });
+if (POST && has('mock-unwire-all.json')) out.summary['mock-unwire-all'] = mockBrief(rj('mock-unwire-all.json'));
+for (const f of (POST ? [] : ['broken-assertions.json', 'control-group.json', 'changed-assertions.json', 'mock-unwire-all.json'])) if (fs.existsSync(path.join(DIR, f))) { const j = JSON.parse(fs.readFileSync(path.join(DIR, f), 'utf8')); out.summary[f.replace('.json', '')] = j.summary || { deletedLinesTotal: j.deletedLinesTotal, before: j.before, after: j.after, registeredStillWired: j.registeredStillWired && j.registeredStillWired.count, droppedByGenerator: j.passes && j.passes.reduce((a, p) => a + p.dropped.length, 0), runs: j.passes && j.passes.length }; }
 // 이 변경이 바꾼 파일의 범위(기준 커밋 대비 — 커밋한 것 + 아직 커밋하지 않은 것 + 새 파일. 작업 폴더 안의 작업계획서 .claude/ 는 커밋하지 않으므로 뺀다)
 {
   const cp = require('child_process');
@@ -85,13 +90,13 @@ for (const f of ['broken-assertions.json', 'control-group.json', 'changed-assert
 }
 // 서류를 다 쓴 뒤 npm test 를 전경으로 끝까지 돌린 원시 로그(reports/<작업번호>/raw/npm-test.<이름>.log · .exit)의 종료 코드와 줄 수를 옮겨 적는다
 {
-  const rawDir = path.join(DIR, 'raw');
+  const rawRel = POST ? 'raw/post-merge' : 'raw', rawDir = path.join(DIR, rawRel); // 합친 뒤의 로그는 raw/post-merge/ 에 따로 둔다
   out.rawNpmTestLogs = {};
   if (fs.existsSync(rawDir)) for (const e of fs.readdirSync(rawDir).filter(n => /^npm-test\..+\.exit$/.test(n)).sort()) {
     const name = e.replace(/^npm-test\./, '').replace(/\.exit$/, ''), L = fs.readFileSync(path.join(rawDir, 'npm-test.' + name + '.log'), 'utf8').split(/\r?\n/);
-    out.rawNpmTestLogs[name] = { log: 'reports/' + TASK + '/raw/npm-test.' + name + '.log', exit: Number(fs.readFileSync(path.join(rawDir, e), 'utf8').trim()), checkLines: L.filter(l => /^\s*✓ /.test(l)).length, okLines: L.filter(l => /^\s*ok · /.test(l)).length, failLines: L.filter(l => /^\s*(✗|✖|not ok)/.test(l)).length };
+    out.rawNpmTestLogs[name] = { log: 'reports/' + TASK + '/' + rawRel + '/npm-test.' + name + '.log', exit: Number(fs.readFileSync(path.join(rawDir, e), 'utf8').trim()), checkLines: L.filter(l => /^\s*✓ /.test(l)).length, okLines: L.filter(l => /^\s*ok · /.test(l)).length, failLines: L.filter(l => /^\s*(✗|✖|not ok)/.test(l)).length };
   }
 }
 fs.mkdirSync(DIR, { recursive: true });
-fs.writeFileSync(path.join(DIR, 'measurement.json'), JSON.stringify(out, null, 1) + '\n', 'utf8');
+fs.writeFileSync(path.join(DIR, OUTNAME), JSON.stringify(out, null, 1) + '\n', 'utf8');
 console.log(JSON.stringify(out.summary, null, 1));

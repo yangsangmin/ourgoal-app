@@ -777,6 +777,166 @@
     "path": "changedScope.vaultCourtConstitutionDirectivesGenerator",
     "equals": []
    }
+  },
+  {
+   "id": "C48",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고치기 전 시험지의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.compare.mainNpmTestExitBefore",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C49",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고친 시험지의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.compare.mainNpmTestExitAfter",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C50",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고치기 전 시험지의 npm test ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.compare.mainCheckLinesBefore",
+    "equals": 487
+   }
+  },
+  {
+   "id": "C51",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고친 시험지의 npm test ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.compare.mainCheckLinesAfter",
+    "equals": 487
+   }
+  },
+  {
+   "id": "C52",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고치기 전 시험지로 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.remaining.main-before__mock-before",
+    "equals": 57
+   }
+  },
+  {
+   "id": "C53",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고친 시험지로 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.remaining.main-after__mock-after",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C54",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 트리에서 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.remaining.main-both__mock-both",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C55",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "summary.compare.bothMockNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C56",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "changedScope.product",
+    "equals": []
+   }
+  },
+  {
+   "id": "C57",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 범위 기록: 이 변경이 바꾼 금고·법정·헌법·지시함·생성기 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-620/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-620/post-merge.json",
+    "path": "changedScope.vaultCourtConstitutionDirectivesGenerator",
+    "equals": []
+   }
   }
  ],
  "retire": [

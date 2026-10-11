@@ -73,6 +73,20 @@ rec('R5', '남긴 것 기록: 미등록 이름 목록이 적혀 있다.', 'windo
 rec('R5', '범위 기록: 이 변경이 바꾼 제품 파일(index.html · js/) 목록이 적혀 있다.', 'measurement.json', 'changedScope.product');
 rec('R5', '범위 기록: 이 변경이 바꾼 금고·법정·헌법·지시함·생성기 파일 목록이 적혀 있다.', 'measurement.json', 'changedScope.vaultCourtConstitutionDirectivesGenerator');
 
+// origin/main 을 합친 뒤의 빠른 재확인 기록(있을 때만)
+if (fs.existsSync(path.join(DIR, 'post-merge.json'))) {
+  rec('R4', '합친 뒤 재확인 기록: 고치기 전 시험지의 npm test 종료 코드.', 'post-merge.json', 'summary.compare.mainNpmTestExitBefore');
+  rec('R4', '합친 뒤 재확인 기록: 고친 시험지의 npm test 종료 코드.', 'post-merge.json', 'summary.compare.mainNpmTestExitAfter');
+  rec('R4', '합친 뒤 재확인 기록: 고치기 전 시험지의 npm test ✓ 줄 수.', 'post-merge.json', 'summary.compare.mainCheckLinesBefore');
+  rec('R4', '합친 뒤 재확인 기록: 고친 시험지의 npm test ✓ 줄 수.', 'post-merge.json', 'summary.compare.mainCheckLinesAfter');
+  rec('R1', '합친 뒤 재확인 기록: 고치기 전 시험지로 모의 철거 사본에서만 실패하는 단언 줄 수.', 'post-merge.json', 'summary.remaining.main-before__mock-before');
+  rec('R4', '합친 뒤 재확인 기록: 고친 시험지로 모의 철거 사본에서만 실패하는 단언 줄 수.', 'post-merge.json', 'summary.remaining.main-after__mock-after');
+  rec('R4', '합친 뒤 재확인 기록: 두 PR 을 다 얹은 트리에서 모의 철거 사본에서만 실패하는 단언 줄 수.', 'post-merge.json', 'summary.remaining.main-both__mock-both');
+  rec('R4', '합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 npm test 종료 코드.', 'post-merge.json', 'summary.compare.bothMockNpmTestExit');
+  rec('R5', '합친 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.', 'post-merge.json', 'changedScope.product');
+  rec('R5', '합친 뒤 범위 기록: 이 변경이 바꾼 금고·법정·헌법·지시함·생성기 파일 목록.', 'post-merge.json', 'changedScope.vaultCourtConstitutionDirectivesGenerator');
+}
+
 // retire — 검사 제목별(scripts/smoke-test.js), 파일 단위(scripts/test-calendar-attachments.js — check 제목이 없는 시험지)
 const retire = [];
 const smoke = byFile['scripts/smoke-test.js'] || [];

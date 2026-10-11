@@ -12,8 +12,11 @@ const pkg = JSON.parse(fs.readFileSync(path.join(TREE, 'package.json'), 'utf8'))
 const npmScripts = pkg.scripts.test.split('&&').map(s => s.trim().replace(/^node\s+/, ''));
 const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
 const rel = f => path.relative(TREE, f).replace(/\\/g, '/');
-const otherScripts = fs.readdirSync(path.join(TREE, 'scripts')).filter(n => /^test-.*\.js$/.test(n)).map(n => 'scripts/' + n).filter(s => !npmScripts.includes(s)).sort();
-const testFiles = walk(path.join(TREE, 'tests')).filter(f => /\.test\.js$/.test(f)).map(rel).sort();
+// --entries-from <changed-assertions.json …>: 그 표에 든 시험 파일만 돈다(npm test 경로 스크립트 4개는 늘 돈다). main 을 합친 뒤의 빠른 재확인용이다 — 전수 조사는 이 옵션 없이 한다.
+const fromIdx = process.argv.indexOf('--entries-from');
+const ONLY = fromIdx >= 0 ? new Set(process.argv.slice(fromIdx + 1).flatMap(f => JSON.parse(fs.readFileSync(path.resolve(f), 'utf8')).changed.map(r => r.file))) : null;
+const otherScripts = fs.readdirSync(path.join(TREE, 'scripts')).filter(n => /^test-.*\.js$/.test(n)).map(n => 'scripts/' + n).filter(s => !npmScripts.includes(s) && (!ONLY || ONLY.has(s))).sort();
+const testFiles = walk(path.join(TREE, 'tests')).filter(f => /\.test\.js$/.test(f)).map(rel).filter(f => !ONLY || ONLY.has(f)).sort();
 const srcCache = {};
 const linesOf = f => { if (!srcCache[f]) { try { srcCache[f] = fs.readFileSync(path.join(TREE, f), 'utf8').split(/\r?\n/); } catch (e) { srcCache[f] = []; } } return srcCache[f]; };
 const CHECK_TITLE_RE = /\bcheck\(\s*(['"`])((?:[^\\]|\\.)*?)\1/; // court/vault-check.js 와 같은 꼴(읽기만 했다)
@@ -37,7 +40,7 @@ function runOne(entry, group) {
   return { entry, group, softExit: r.status, timedOut: !!(r.error && r.error.code === 'ETIMEDOUT'), failedAsserts: fails, otherEnds: other };
 }
 
-const out = { tool: 'reports/TASK-ES-620/run-asserts.cjs', type: '작업자 측정, 판정 아님 — 던지지 않는 단언으로 돌린 단언 전수 조사(종료 코드는 증거 아님)', tree: TREE, measuredAt: new Date().toISOString(), node: process.version, entries: [] };
+const out = { tool: 'reports/TASK-ES-620/run-asserts.cjs', type: '작업자 측정, 판정 아님 — 던지지 않는 단언으로 돌린 단언 조사(종료 코드는 증거 아님)', scope: ONLY ? 'npm test 경로 스크립트 + 표에 든 시험 파일만(' + [...ONLY].length + '개 파일)' : '전수(npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부)', tree: TREE, measuredAt: new Date().toISOString(), node: process.version, entries: [] };
 for (const s of npmScripts) out.entries.push(runOne(s, 'npm-test'));
 for (const s of otherScripts) out.entries.push(runOne(s, 'scripts-test-other'));
 for (const f of testFiles) out.entries.push(runOne(f, 'tests'));
