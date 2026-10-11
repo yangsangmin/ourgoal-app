@@ -683,3 +683,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-627 | INFRA | [생성 지도 일괄 갱신] 10회차(main 9d039044, PR #896 병합 뒤 — 공용 키트 1차·2차+_ui 손잡이 철거 반영) | docs/specs/REQ-TASK-ES-627-GENERATED-MAPS-SYNC-10.md · reports/TASK-ES-627/claims.json | 4단계(심사 청구)
 - #TASK-ES-628 | INFRA | 미분화 덩어리 해체 B7 — 소통 키트(_commKit) 배선 철거 1차·2차: index.html 인라인 IIFE 의 가져오기 줄·통로 getter 줄·window 대입 줄을 생성기 unwire 여러 실행(한 설정 2칸)으로 삭제(이름 57개, 제품 변경은 index.html 하나) · 기준선 inlineScriptLines 기록 | docs/specs/REQ-TASK-ES-628-UNWIRE-COMM.md · reports/TASK-ES-628/claims.json | 4단계(심사 청구)
 - #TASK-ES-629 | INFRA | [생성 지도 일괄 갱신] 11회차(main bc8af5bc, PR #898 병합 뒤 — 기록 키트 1차·2차 철거 반영) | docs/specs/REQ-TASK-ES-629-GENERATED-MAPS-SYNC-11.md · reports/TASK-ES-629/claims.json | 4단계(심사 청구)
+- #TASK-ES-631 | INFRA | [생성 지도 일괄 갱신] 12회차(main a83a1d80, PR #902 병합 뒤 — 소통 키트 1차·2차 철거 반영) | docs/specs/REQ-TASK-ES-631-GENERATED-MAPS-SYNC-12.md · reports/TASK-ES-631/claims.json | 4단계(심사 청구)
