@@ -1,4 +1,4 @@
-# 법정이 「확인 못 함」으로 남긴 항목 (f0af028f → 13250583)
+# 법정이 「확인 못 함」으로 남긴 항목 (f0af028f → c9bd38b9)
 
 `reports/TASK-ES-691/tools/not-confirmed.cjs` 가 대장(`reports/TASK-ES-690/pr-ledger.json`)에서 뽑았다. 글자는 GitHub 의 법정 댓글(github-actions)에 있는 것이다 — 「지시 내용」 칸은 작업자가 주장 파일에 적어 낸 문장이고, 「결과」 칸은 법정이 적은 것이다.
 

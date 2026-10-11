@@ -26,11 +26,12 @@ const has = (id, req, statement, file, text) => ({ id, req, kind: 'static', doma
 const claims = rows.map((r, i) => has('C' + (i + 1), 'R1', '결심 대기 표에 줄이 있다: ' + r.split('|')[1].trim().slice(0, 40), F, r.split('|')[1].trim().slice(0, 60)));
 claims.push(has('C' + (claims.length + 1), 'R1', '결심 대기 칸의 머리말은 그대로다(AI 는 이 칸을 스스로 진행하지 않는다)', F, '## 결심 대기 (상민님만 결정한다 — AI 는 이 칸을 스스로 진행하지 않는다)'));
 claims.push(has('C' + (claims.length + 1), 'R1', '표의 앞선 줄은 그대로다', F, '| Google Play 개발자 계정 등록($25 결제·신분 확인) | 돈 |'));
+claims.push(has('C' + (claims.length + 1), 'R2', '부팅 파일이 안 올 때의 측정 기록이 있다', 'reports/TASK-ES-691/boot-file-missing.json', '머리 — js/app/boot.js 404'));
 claims.push(has('C' + (claims.length + 1), 'R2', '근거 위치 문서가 있다', 'reports/TASK-ES-691/remaining.md', '# 미분화 덩어리 해체 뒤에 남은 것 — 근거 위치'));
 claims.push(has('C' + (claims.length + 1), 'R2', '법정이 확인 못 한 항목 표가 있다', 'reports/TASK-ES-691/not-confirmed.md', '# 법정이 「확인 못 함」으로 남긴 항목'));
-claims.push(has('C' + (claims.length + 1), 'R1', '티켓 대장에 ES-691 한 줄이 있다', 'docs/rules/TICKETS.md', '- #TASK-ES-691 | INFRA | 지시함 「결심 대기」 표에 미분화 덩어리 해체 뒤 남은 것 여섯 줄'));
+claims.push(has('C' + (claims.length + 1), 'R1', '티켓 대장에 ES-691 한 줄이 있다', 'docs/rules/TICKETS.md', '- #TASK-ES-691 | INFRA | 지시함 「결심 대기」 표에 미분화 덩어리 해체 뒤 남은 것 일곱 줄'));
 const out = { task: 'TASK-ES-691', requirementsSource: 'docs/specs/REQ-TASK-ES-691-DECISION-WAIT-ROWS.md',
-  requirements: [ { id: 'R1', text: '미분화 덩어리 해체 뒤 새로 남는 것 여섯 줄을 지시함 「결심 대기」 표에 올린다(성격 · 상태 칸 포함). 이 칸의 줄은 AI 가 스스로 진행하지 않는다.' }, { id: 'R2', text: '줄마다 근거 위치(파일 · 행 · 앞선 문서의 절)를 붙인다. 법정이 확인 못 한 항목은 대장에서 스크립트로 뽑는다.' } ],
+  requirements: [ { id: 'R1', text: '미분화 덩어리 해체 뒤 새로 남는 것 일곱 줄을 지시함 「결심 대기」 표에 올린다(성격 · 상태 칸 포함). 이 칸의 줄은 AI 가 스스로 진행하지 않는다.' }, { id: 'R2', text: '줄마다 근거 위치(파일 · 행 · 앞선 문서의 절)를 붙인다. 법정이 확인 못 한 항목은 대장에서 스크립트로 뽑는다.' } ],
   outOfScopeReports: [ { text: '이 PR 은 줄을 올리기만 한다. 고치기 · 금고 변경 · 실계정 확인은 하지 않는다(각각 상민님 결심 뒤 새 지시).', cannotBecause: 'out-of-scope-feature' } ],
   claims };
 fs.writeFileSync(path.join(DIR, 'claims.json'), JSON.stringify(out, null, 2) + '\n', { encoding: 'utf8' });

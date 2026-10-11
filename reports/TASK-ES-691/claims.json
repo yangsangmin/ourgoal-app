@@ -4,7 +4,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "미분화 덩어리 해체 뒤 새로 남는 것 여섯 줄을 지시함 「결심 대기」 표에 올린다(성격 · 상태 칸 포함). 이 칸의 줄은 AI 가 스스로 진행하지 않는다."
+      "text": "미분화 덩어리 해체 뒤 새로 남는 것 일곱 줄을 지시함 「결심 대기」 표에 올린다(성격 · 상태 칸 포함). 이 칸의 줄은 AI 가 스스로 진행하지 않는다."
     },
     {
       "id": "R2",
@@ -113,6 +113,21 @@
       "req": "R1",
       "kind": "static",
       "domain": "config",
+      "statement": "결심 대기 표에 줄이 있다: 부팅 파일(`js/app/boot.js`)이 오지 않으면 예외 없이 앱이",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "부팅 파일(`js/app/boot.js`)이 오지 않으면 예외 없이 앱이 뜨지 않는다 — 랜딩 화면은 보이는"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
       "statement": "결심 대기 칸의 머리말은 그대로다(AI 는 이 칸을 스스로 진행하지 않는다)",
       "touches": [
         "docs/directives/ACTIVE.md"
@@ -124,7 +139,7 @@
       }
     },
     {
-      "id": "C8",
+      "id": "C9",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -139,7 +154,22 @@
       }
     },
     {
-      "id": "C9",
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부팅 파일이 안 올 때의 측정 기록이 있다",
+      "touches": [
+        "reports/TASK-ES-691/boot-file-missing.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-691/boot-file-missing.json",
+        "text": "머리 — js/app/boot.js 404"
+      }
+    },
+    {
+      "id": "C11",
       "req": "R2",
       "kind": "static",
       "domain": "config",
@@ -154,7 +184,7 @@
       }
     },
     {
-      "id": "C10",
+      "id": "C12",
       "req": "R2",
       "kind": "static",
       "domain": "config",
@@ -169,7 +199,7 @@
       }
     },
     {
-      "id": "C11",
+      "id": "C13",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -180,7 +210,7 @@
       "check": {
         "type": "codeContains",
         "file": "docs/rules/TICKETS.md",
-        "text": "- #TASK-ES-691 | INFRA | 지시함 「결심 대기」 표에 미분화 덩어리 해체 뒤 남은 것 여섯 줄"
+        "text": "- #TASK-ES-691 | INFRA | 지시함 「결심 대기」 표에 미분화 덩어리 해체 뒤 남은 것 일곱 줄"
       }
     }
   ]

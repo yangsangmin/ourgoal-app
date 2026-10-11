@@ -3,7 +3,7 @@
 - Task ID: **TASK-ES-691** · 분류: INFRA(문서) · 제품 코드(index.html · js/** · 생성기 · tests · court) 변경 0.
 - 작업 유형(SNOWBALL 분류): **(가) 표준** — 지시함 「결심 대기」 표 변경 PR. 선례 PR #887 · #888(그 표에 줄을 더하고 뺀 PR — 상민님 병합).
 - **상민님이 병합하실 PR 이다.** 지시함 변경이라 AI 는 병합할 수 없다(헌법 MODE_4B 병합 기준 5 · 조항 9.3 · CODEOWNERS).
-- 선행: 완료 기록 PR(#TASK-ES-690) 뒤에 병합한다 — 이 PR 은 그 위에 쌓았다(같은 표를 건드린다).
+- 선행: 완료 기록 PR(#TASK-ES-690, PR #964)은 병합됐다(8abaef69). 이 PR 은 그 뒤의 main 을 합쳐 올린다.
 - 이 문서를 쓴 작업자는 빌더(서브에이전트)다. 상민님과의 채팅을 직접 보지 못했다.
 
 ## 왜 완료 기록 PR 과 갈랐나
@@ -14,15 +14,15 @@
 
 | ID | 지시 | 완료 기준 |
 |---|---|---|
-| R1 | 새로 남는 것 여섯 줄을 「결심 대기」 표에 올린다 — 법정 재실행 대조의 새 폴더 결함 · 채점 기준 게이트가 금고 밖 도우미에 기댐 · `renderTeamGoalsScreen` 큰 함수 · 옛 단위 시험 T7 · 실계정으로만 확인할 수 있는 것 · 그대로 둔 기존 결함 후보 | `docs/directives/ACTIVE.md` 의 표에 여섯 줄이 성격 · 상태 칸과 함께 있다. 칸 머리말(「AI 는 이 칸을 스스로 진행하지 않는다」)과 앞선 줄은 그대로다 |
-| R2 | 줄마다 근거 위치를 붙인다 | `reports/TASK-ES-691/remaining.md`(파일 · 행 · 앞선 문서의 절) · `not-confirmed.md`(법정이 「확인 못 함」으로 남긴 항목 — 대장에서 스크립트로 뽑음) |
+| R1 | 새로 남는 것 일곱 줄을 「결심 대기」 표에 올린다 — 법정 재실행 대조의 새 폴더 결함 · 채점 기준 게이트가 금고 밖 도우미에 기댐 · `renderTeamGoalsScreen` 큰 함수 · 옛 단위 시험 T7 · 실계정으로만 확인할 수 있는 것 · 그대로 둔 기존 결함 후보 · 부팅 파일이 오지 않으면 예외 없이 앱이 뜨지 않음(지휘 세션이 #964 병합 뒤 더하라고 한 줄) | `docs/directives/ACTIVE.md` 의 표에 일곱 줄이 성격 · 상태 칸과 함께 있다. 칸 머리말(「AI 는 이 칸을 스스로 진행하지 않는다」)과 앞선 줄은 그대로다 |
+| R2 | 줄마다 근거 위치를 붙인다 | `reports/TASK-ES-691/remaining.md`(파일 · 행 · 앞선 문서의 절) · `not-confirmed.md`(법정이 「확인 못 함」으로 남긴 항목 — 대장에서 스크립트로 뽑음) · `boot-file-missing.json`(부팅 파일이 안 올 때의 측정) |
 
 - 이 PR 이 하지 않는 것: 고치기 · 금고 변경 · 실계정 확인. 표의 줄은 상민님 결심을 기다리는 목록일 뿐이다.
 
 ### 구체 식별자
 
 - 고친 파일: `docs/directives/ACTIVE.md`(「결심 대기」 표) · `docs/rules/TICKETS.md`
-- 새 파일: 이 문서 · `reports/TASK-ES-691/claims.json` · `remaining.md` · `not-confirmed.md` · `not-confirmed.json` · `text/decision-rows.md` · `tools/not-confirmed.cjs` · `tools/render-rows.cjs`
+- 새 파일: 이 문서 · `reports/TASK-ES-691/claims.json` · `remaining.md` · `not-confirmed.md` · `not-confirmed.json` · `boot-file-missing.json` · `text/decision-rows.md` · `tools/not-confirmed.cjs` · `tools/render-rows.cjs` · `tools/missing-file.cjs`
 - 문서가 가리키는 식별자(변경 0, 읽기만): `court/lib/preserve-source.js` `recomputeSplit` · `scripts/verify-integrity-gate.js` 19 · 23 · 30행 · `tests/helpers/inline-bundle.js` · `wiring-exposed.js` · `moved-code.js` · `js/tabs/goals/team-goals-screen.js` `renderTeamGoalsScreen` · `docs/design/harness/module-split/unwire-check-b1.js` T7 · `js/tabs/records/table-analytics-engine.js` 249행 · `js/tabs/records/pro-record-save.js` `executeSave` · `js/tabs/records/pro-record-stopwatch.js` 233행 · `#quickRoutineRow`
 - DOM: 이 PR 은 화면을 바꾸지 않는다(해당 없음).
 
@@ -60,11 +60,11 @@
 
 ## 7. [원칙 ⑦] 단계별 실행 결과
 
-<!--SUMMARY_LINE-->「결심 대기」 표에 여섯 줄을 올렸다. 근거는 `reports/TASK-ES-691/remaining.md` · `not-confirmed.md` 에 있다.<!--/SUMMARY_LINE-->
+<!--SUMMARY_LINE-->「결심 대기」 표에 일곱 줄을 올렸다. 근거는 `reports/TASK-ES-691/remaining.md` · `not-confirmed.md` · `boot-file-missing.json` 에 있다.<!--/SUMMARY_LINE-->
 
-- **못 잰 것**: 결함 후보 4 · 5(저장 함수의 try 없음 · focusin 수신기 누적)는 코드만 읽었다. 화면에서 무엇이 달라지는지는 재지 않았다.
+- **못 잰 것**: 결함 후보 4 · 5(저장 함수의 try 없음 · focusin 수신기 누적)는 코드만 읽었다. 화면에서 무엇이 달라지는지는 재지 않았다. 부팅 파일이 운영에서 실제로 안 오는 순간이 얼마나 생기는지, 운영의 응답 머리는 재지 못했다. 운영 화면 확인은 지휘 세션의 측정이며 다시 재지 않았다.
 
 ## 8. [원칙 ⑧] 막힐 지점 예상
 
-- 완료 기록 PR 이 먼저 병합돼야 한다(같은 표) → 그 뒤에 main 을 합쳐 올린다.
+- 완료 기록 PR 이 먼저 병합돼야 한다(같은 표) → 병합됐다(PR #964). 그 뒤의 main 을 합쳐 올린다.
 - 마지막 정리 적용 PR 뒤에 대장이 다시 만들어지면 「확인 못 함」 항목 수가 바뀔 수 있다 → `not-confirmed.cjs` · `render-rows.cjs` 를 다시 돌린다.
