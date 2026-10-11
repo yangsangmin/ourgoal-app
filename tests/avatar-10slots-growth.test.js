@@ -73,7 +73,7 @@ function runTest() {
   assert.strictEqual(nonWearingDelete, true, '비착용 아바타는 정상 삭제되어야 합니다.');
 
   // 4. index.html 유해 단어 필터링 검증
-  assert.ok(indexHtml.includes('filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.');
+  assert.ok(require('./helpers/moved-code').textOrFunctionDefined(indexHtml, 'filterHarmfulWords', 'filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.'); /* #TASK-ES-666 덩어리(IIFE)에 있거나 옮겨 간 자리에 있다(tests/helpers/moved-code.js) — 검사 수·기대값 그대로 */
   assert.ok(indexHtml.includes('avatarLevelUpModal'), 'avatarLevelUpModal 엘리먼트가 존재해야 합니다.');
   assert.ok(indexHtml.includes('btnShareLevelUp'), 'SNS 공유 버튼(btnShareLevelUp)이 존재해야 합니다.');
   assert.ok(indexHtml.includes('btnSaveLevelUpImage'), '이미지 저장 버튼(btnSaveLevelUpImage)이 존재해야 합니다.');

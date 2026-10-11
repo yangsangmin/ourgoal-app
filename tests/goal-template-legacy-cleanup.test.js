@@ -40,7 +40,7 @@ async function runTests() {
   assert.ok(indexHtml.includes('// [#TASK-ES-315, 64] 목표탭 내 기존 60선 창 영구 제거 (템플릿백과사전 일원화)'), 'renderGoalsScreen 내 60선 창 제거 주석 및 로직 확인');
 
   // 소통탭 templatesHtml 빈 문자열 반환 확인
-  assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');
+  assert.ok(require('./helpers/moved-code').textOrFunctionStartsWith(indexHtml, '(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)', 'templatesHtml', "if(!window.__FORCE_LEGACY_TEMPLATES_CARD) return '';"), 'index.html 내 templatesHtml 무해화 확인'); /* #TASK-ES-666 덩어리(IIFE)에 있거나 옮겨 간 자리에 있다(tests/helpers/moved-code.js) — 검사 수·기대값 그대로 */
 
   // team-invite-comm.js renderTemplatesAccordionHtml 빈 문자열 반환 확인
   assert.ok(teamInviteJs.includes('// [#TASK-ES-315, 64] 목표탭 및 소통탭 구형 60선 창 영구 제거 (템플릿백과사전 일원화)'), 'team-invite-comm.js 내 60선 아코디언 무해화 확인');
