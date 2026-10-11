@@ -10,7 +10,7 @@
 - 지시함(origin/main) 열린 지시: **DIR-003**(줄을 지우는 PR 마다 기준선에 inlineScriptLines 기록) · **DIR-004**(닫힌 목록 X7 region — 돈 근처는 「내용을 한 글자도 바꾸지 않고 자리만」).
 - 작업 유형(SNOWBALL 분류): **(가) 표준 — 「구역 감싸기(region) 이전」** + 법정 「동작 보존 확인」 경로. 선례 #933(구역 이전) · #917(돈 근처 함수 이전 — 줄 단위 접두-만 비교 · 돈 관련 낱말 줄 수). 선행 PR **#938**(#TASK-ES-670 — 생성기 `allowGuarded`)가 병합된 뒤의 본 이전이다. 작업참고 **기준 PR #931**(cc325e0a).
 - 이 작업 세션은 빌더(서브에이전트)다. 병합은 하지 않는다(오케스트레이터 몫). push 는 번호 선점 1회 + 마무리 1회다.
-- 기준 main: 4b447225(#938 병합 뒤).
+- 기준 main: **ce9c52fd**(#936 944줄 함수 제자리 정리 병합 뒤). 처음에는 4b447225(#938 병합 뒤)에서 만들었고, push 전에 #936 이 병합돼 main 판 index.html 에 같은 `proof.json` 을 다시 돌려 전부 다시 쟀다(L010 — 손으로 충돌을 풀지 않았다). 아래 줄 번호와 수치는 다시 잰 값이다.
 - 측정은 전부 「작업자 측정, 판정 아님」이다. 판정은 GitHub 법정만 낸다.
 
 ## 0. 요구 (지시 항목)
@@ -26,7 +26,7 @@
 ### 구체 식별자
 
 - 파일: `index.html`(인라인 IIFE) → 새 세포 `js/core/boot-app-handles.js`(키트 `OurgoalUiHelpers`, 태그는 `js/core/ui-helpers.js` 태그 바로 뒤 같은 줄)
-- 구역 함수: `bootAppConfig`(이전 전 2767~2770행 — 구획 주석 두 줄 + `var OURGOAL_CONFIG = {};` + `if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }`) · `bootTemplatePartHandles`(4130~4132행 — `if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){ window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast }); }`)
+- 구역 함수: `bootAppConfig`(이전 전 2767~2770행 — 구획 주석 두 줄 + `var OURGOAL_CONFIG = {};` + `if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }`) · `bootTemplatePartHandles`(4145~4147행 — `if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){ window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast }); }`)
 - 통로로 읽는 이름: `sb` · `state` · `toast`(접두 3곳 — 모두 이미 통로에 있다). `OURGOAL_CONFIG` 는 구역 안에서만 쓰여 그 함수의 지역 변수가 된다(접두 0).
 - 생성기 `gen-inline-hard.js`(변경 0) · 설정 `reports/TASK-ES-671/proof.json`(`mode: "region"` · `allowGuarded` 둘 — 승인 근거 글자 포함 · 구역 둘)
 
@@ -91,9 +91,9 @@ IIFE 최상위에 「결심 필요」로 남아 있던 문 가운데 둘이다(�
 
 ## 8. [원칙 ⑧] 막힐 지점 예상 · 성과 측정
 
-- **예상**: 944줄 정리(#936)·재철거 2차가 먼저 병합돼 index.html 이 충돌하면 손으로 풀지 않고 main 판 index.html 에 같은 `proof.json` 을 다시 돌려 재측정한다(L010).
+- **예상과 실제**: 944줄 정리(#936)가 push 전에 병합됐다. index.html 은 글자로는 자동으로 합쳐졌지만 둘째 구역의 줄 번호가 달라져(4130 → 4145) 세포 파일의 표지 줄이 바뀌므로, main 판 index.html 과 기준선으로 되돌린 뒤 같은 `proof.json` 으로 생성기를 다시 돌리고 전부 다시 쟀다(L010). 재철거 2차가 또 먼저 병합되면 같은 절차로 한다.
 - **측정불가**: 실서버에서 템플릿 부품이 서버 연결로 하는 일(R4) — 법정·작업자 PC 모두 외부 통신이 막혀 있다. 「확인 못 함」으로 적는다.
-- **성과 측정**: 인라인 스크립트 줄 수 1904 → 1902(−2) · IIFE 최상위의 「결심 필요」 문 3개(①의 2문 · ②)가 구역 함수 호출 2줄이 됐다 · 기준선 66번째 기록.
-- **풀린 것(미리 보기 — 저장소 밖 사본에 생성기 unstate)**: `sb` 는 기준에서 「맨이름 참조가 남는다(4131행)」로 멈추고 작업 트리에서는 옮겨진다. `state` 는 944줄 함수가 맨이름으로 읽어 여전히 멈춘다. 상태 이전은 이 PR 이 하지 않는다.
+- **성과 측정**: 인라인 스크립트 줄 수 1919 → 1917(−2) · IIFE 최상위의 「결심 필요」 문 3개(①의 2문 · ②)가 구역 함수 호출 2줄이 됐다 · 기준선 67번째 기록.
+- **풀린 것(미리 보기 — 저장소 밖 사본에 생성기 unstate)**: `sb` 는 기준에서 「맨이름 참조가 남는다(4146행)」로 멈추고 작업 트리에서는 옮겨진다. `state` 는 944줄 함수가 맨이름으로 읽어 여전히 멈춘다. 상태 이전은 이 PR 이 하지 않는다.
 - **다음에 열리는 것**: `sb` 의 상태 이전(그 뒤 `SUPABASE_URL` · `SUPABASE_ANON_KEY` 가 `sb` 와 한 구역으로 갈 수 있다) · `toast` 가져오기의 재철거(944줄 함수가 남아 있는 동안은 아직).
 - **PLAN 체크리스트**: [4단계: 심사 청구]까지만 기록한다(`.claude/plan-TASK-ES-671.md`).
