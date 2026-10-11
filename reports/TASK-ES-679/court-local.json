@@ -1,0 +1,799 @@
+{
+ "tool": "node court/judge.js --repo . --head HEAD --out <임시 폴더> (법정 코드를 읽기만 쓴 작업자 PC 실행 — --quick 없이 화면 시나리오·생성기 재실행 대조 포함)",
+ "type": "작업자 PC 에서 실행한 예비 점검 — 판정이 아니다. 판정은 GitHub 법정만 낸다",
+ "head": {
+  "rev": "HEAD",
+  "sha": "7c35f8d24b8f3e438619271c697e7d9c4ebe088a"
+ },
+ "base": {
+  "rev": null,
+  "sha": "f7d14ee5e00ad879bf620ff45d809011fa79e593"
+ },
+ "baseSource": "merge-base",
+ "verdictId": "7F554790",
+ "verdict": "통과",
+ "headline": "작업자가 적어 낸 지시 항목 7건에 걸린 동작 보존 분열 시험이 전부 기준 커밋의 동작을 그대로 보존하며, 고장 난 것이 없습니다 — 시험이 지시와 같은 것을 재는지는 법정이 알 수 없습니다",
+ "todo": "“1”이라고 하시면 배포합니다. 그 전에 법정이 실제로 해 본 것이 지시하신 것과 같은지 봐 주십시오: C1 주장 “게스트로 진입해 아바타 인사 팝업을 닫고 홈→목표→기록→일정→소통→설정→…” ← 법정이 해 본 것: “.navbtn[data-tab=\"home\"]” 가 “active” 상태여야 함 → “.navbtn[data-tab=\"settings\"]” 가 “active” 상태가 아니어야 함 → 오류가 없어야 … / C2 주장 “첫 행 종목과 메모를 적어 「일반저장」하면 창이 닫히고 기록 카드가 하나…” ← 법정이 해 본 것: attr 확인 → “proTableBody tr” 개수 확인 → 오류가 없어야 함 / C3 주장 “「일정연동저장」을 누르면 창이 닫히고 일정 탭 날짜 허브에 그 기록으로 …” ← 법정이 해 본 것: “hubAddProRecBtn” 가 보여야 함 → “[data-hubrec]” 개수 확인 → 오류가 없어야 함 / 외 1건은 판정서의 “법정이 실제로 한 일”에",
+ "note": "심사 대상은 이 파일을 더하기 직전의 커밋 7c35f8d2 다(기준 origin/main f7d14ee5 — #950 을 합친 뒤). 그 뒤 커밋은 이 파일만 더한다(제품·증명·주장·시나리오 파일 동일). 실행은 끝까지 돌았다(종료 코드 0).",
+ "coverage": {
+  "productFiles": 1,
+  "claimed": 1,
+  "unclaimed": []
+ },
+ "vaultViolations": [],
+ "moduleRegressions": [],
+ "bootRegressions": [],
+ "findings": [
+  {
+   "severity": "warn",
+   "title": "이 작업이 만든 검사 스크립트 4개"
+  }
+ ],
+ "notChecked": [],
+ "rollup": [
+  {
+   "id": "R1",
+   "bucket": "동작 보존 확인",
+   "note": null,
+   "floor": "L3",
+   "claims": [
+    "C1",
+    "C2",
+    "C3",
+    "C4"
+   ]
+  },
+  {
+   "id": "R2",
+   "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+   "note": null,
+   "floor": "L1",
+   "claims": [
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C13"
+   ]
+  },
+  {
+   "id": "R3",
+   "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+   "note": null,
+   "floor": "L1",
+   "claims": [
+    "C29",
+    "C30",
+    "C31",
+    "C32",
+    "C33",
+    "C34"
+   ]
+  },
+  {
+   "id": "R4",
+   "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+   "note": null,
+   "floor": "L1",
+   "claims": [
+    "C35",
+    "C36",
+    "C37",
+    "C38",
+    "C39",
+    "C40",
+    "C41",
+    "C42",
+    "C43",
+    "C44",
+    "C45"
+   ]
+  },
+  {
+   "id": "R5",
+   "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+   "note": null,
+   "floor": "L1",
+   "claims": [
+    "C46",
+    "C47",
+    "C48",
+    "C49",
+    "C50",
+    "C51",
+    "C52"
+   ]
+  },
+  {
+   "id": "R6",
+   "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+   "note": null,
+   "floor": "L1",
+   "claims": [
+    "C14",
+    "C15",
+    "C16",
+    "C17",
+    "C18",
+    "C19",
+    "C20",
+    "C21",
+    "C22",
+    "C23"
+   ]
+  },
+  {
+   "id": "R7",
+   "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+   "note": null,
+   "floor": "L1",
+   "claims": [
+    "C24",
+    "C25",
+    "C26",
+    "C27",
+    "C28"
+   ]
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "floorRaised": false,
+   "reason": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ]
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "floorRaised": false,
+   "reason": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ]
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "floorRaised": false,
+   "reason": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ]
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "floorRaised": false,
+   "reason": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ]
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C16",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C17",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C18",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C19",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C20",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C21",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C22",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C23",
+   "req": "R6",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C24",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C25",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C26",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C27",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C28",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C29",
+   "req": "R3",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C30",
+   "req": "R3",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C31",
+   "req": "R3",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C32",
+   "req": "R3",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C33",
+   "req": "R3",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C34",
+   "req": "R3",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C35",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C36",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C37",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C38",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C39",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C40",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C41",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C42",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C43",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C44",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C45",
+   "req": "R4",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C46",
+   "req": "R5",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C47",
+   "req": "R5",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C48",
+   "req": "R5",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C49",
+   "req": "R5",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C50",
+   "req": "R5",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C51",
+   "req": "R5",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  },
+  {
+   "id": "C52",
+   "req": "R5",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "floorRaised": false,
+   "reason": null,
+   "notes": []
+  }
+ ],
+ "recomputeSplitDirect": {
+  "tool": "court/lib/preserve-source.js recomputeSplit({repoDir, baseSha, headSha, config: proof.json, changedFiles}) — mockOverrides 없이 실제 커밋 대상",
+  "base": "f7d14ee5e00ad879bf620ff45d809011fa79e593",
+  "head": "7c35f8d24b8f3e438619271c697e7d9c4ebe088a",
+  "result": {
+   "ok": true,
+   "details": {
+    "checkedFiles": [
+     {
+      "file": "index.html",
+      "genLength": 259871,
+      "headLength": 259871
+     },
+     {
+      "file": "js/core/app-state.js",
+      "genLength": 3749,
+      "headLength": 3749
+     }
+    ]
+   }
+  }
+ }
+}
