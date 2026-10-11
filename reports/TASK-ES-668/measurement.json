@@ -1,0 +1,4085 @@
+{
+ "task": "TASK-ES-668",
+ "tool": "reports/TASK-ES-666/tools/summary.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "baseCommit": "2a1507eb",
+ "measuredAt": "2026-10-11T08:57:53.015Z",
+ "finishedMark": "2026-10-11T08:56:52Z",
+ "mock": {
+  "A": {
+   "made": {
+    "type": "작업자 측정, 판정 아님",
+    "scriptHtmlLines": [
+     2253,
+     4149
+    ],
+    "movedLines": 1895,
+    "htmlLines": [
+     4187,
+     2290
+    ],
+    "bootFile": "js/app/boot.js(IIFE 글자 그대로 — 모의용)",
+    "inlineScriptBlocksLeft": 2
+   },
+   "before": {
+    "first": "base",
+    "second": "mockA",
+    "firstFailedLines": 161,
+    "secondFailedLines": 201,
+    "entries": [
+     131,
+     131
+    ],
+    "onlyInSecond": 40,
+    "byFile": {
+     "scripts/smoke-test.js": 23,
+     "scripts/test-shipyard-modular.js": 1,
+     "scripts/verify-integrity-gate.js": 1,
+     "tests/avatar-10slots-growth.test.js": 1,
+     "tests/cross-tab-guarded-init-es502.test.js": 1,
+     "tests/cross-tab-inline-owned-es507.test.js": 1,
+     "tests/gcal-login-reconnect-fix.test.js": 1,
+     "tests/goal-template-legacy-cleanup.test.js": 1,
+     "tests/goals-only-view.test.js": 1,
+     "tests/goals-schedule-sync.test.js": 1,
+     "tests/module-guard.test.js": 2,
+     "tests/new-module.test.js": 1,
+     "tests/stopwatch-lap-inputs.test.js": 1,
+     "tests/stopwatch-table-hint.test.js": 3,
+     "tests/trio-es143-es145.test.js": 1
+    },
+    "list": [
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1131,
+      "check": "compliance: 전문적(내 전용 템플릿) 기록하기 UI 요소 및 안내멘트가 존재한다",
+      "message": "일정연동 안내멘트 포함",
+      "src": "assert.ok(html.includes('*일정연동 저장은 오늘 기록이 링크화되어 일정에 기록됩니다.'), '일정연동 안내멘트 포함');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1203,
+      "check": "compliance: 4대 혁신 기능(자동 통계, 1초 루틴 로드, AI 프로 코치, Notion 연동) 및 캘린더 일자 수정 허브 모달이 모두 구현되어 있다",
+      "message": "1초 루틴 불러오기 버튼 존재",
+      "src": "assert.ok(html.includes('id=\"proQuickLoadBtn\"'), '1초 루틴 불러오기 버튼 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1275,
+      "check": "compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다",
+      "message": "CSV 가져오기 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proCsvImportBtn\"'), 'CSV 가져오기 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1276,
+      "check": "compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다",
+      "message": "CSV 내보내기 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proCsvExportBtn\"'), 'CSV 내보내기 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1277,
+      "check": "compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다",
+      "message": "스마트워치 연동 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proWearableSyncBtn\"'), '스마트워치 연동 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1349,
+      "check": "compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다",
+      "message": "모달 내 AI 사진인식 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proVisionOcrBtn\"'), '모달 내 AI 사진인식 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1353,
+      "check": "compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다",
+      "message": "모달 내 음성 입력 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proVoiceInputBtn\"'), '모달 내 음성 입력 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1359,
+      "check": "compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다",
+      "message": "기록 모달 내 마켓 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proTplMarketBtn\"'), '기록 모달 내 마켓 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1589,
+      "check": "compliance: 3종 혁신 기능(비주얼 성장 차트, 인앱 스톱워치, 노션 다이렉트 푸시) UI 및 연동 스펙이 완벽히 구비되어 있다",
+      "message": "기록 모달 내 차트 컨테이너",
+      "src": "assert.ok(html.includes('proTrendChartWrap'), '기록 모달 내 차트 컨테이너');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1595,
+      "check": "compliance: 3종 혁신 기능(비주얼 성장 차트, 인앱 스톱워치, 노션 다이렉트 푸시) UI 및 연동 스펙이 완벽히 구비되어 있다",
+      "message": "표 셀 기입 하이라이트 애니메이션",
+      "src": "assert.ok(html.includes('cell-highlight-flash'), '표 셀 기입 하이라이트 애니메이션');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2734,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "워크숍 프리셋 모임 ID",
+      "src": "assert.ok(html.includes(\"id:'g-workshop'\"), '워크숍 프리셋 모임 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2735,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "단체여행 프리셋 모임 ID",
+      "src": "assert.ok(html.includes(\"id:'g-travel'\"), '단체여행 프리셋 모임 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2736,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "워크숍 팀 목표 ID",
+      "src": "assert.ok(html.includes(\"id:'tg-ws-1'\"), '워크숍 팀 목표 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2737,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "단체여행 팀 목표 ID",
+      "src": "assert.ok(html.includes(\"id:'tg-tr-1'\"), '단체여행 팀 목표 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2790,
+      "check": "compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기(아코디언)가 구현되어 있다",
+      "message": "워크숍 1단계 태스크 ID",
+      "src": "assert.ok(html.includes('t-ws-1a1'), '워크숍 1단계 태스크 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2791,
+      "check": "compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기(아코디언)가 구현되어 있다",
+      "message": "단체여행 1단계 태스크 ID",
+      "src": "assert.ok(html.includes('t-tr-1a1'), '단체여행 1단계 태스크 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 6074,
+      "check": "compliance: [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증",
+      "message": "셀 미선택 시 친절한 가이드 토스트 출력",
+      "src": "assert.ok(indexSrc.includes(\"toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨')\"), '셀 미선택 시 친절한 가이드 토스트 출력');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 7837,
+      "check": "[#TASK-ES-229] 팀 목표 및 소통 탭 내 가상 샘플 그룹(MOCK_GROUPS) 분리 및 [💡 활용 예시] 배지·새 팀 만들기 전면화",
+      "message": "MOCK_GROUPS 항목에 isMock:true 플래그 설정",
+      "src": "assert.ok(indexHtml.includes('isMock:true'), 'MOCK_GROUPS 항목에 isMock:true 플래그 설정');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 8464,
+      "check": "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+      "message": "미선택 셀 클릭 시 안내 토스트 멘트 일원화 검증",
+      "src": "assert.ok(indexHtml.includes(\"toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨')\"), '미선택 셀 클릭 시 안내 토스트 멘트 일원화 검증');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 8467,
+      "check": "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+      "message": "시간 열 판별 정규식 탑재 검증",
+      "src": "assert.ok(indexHtml.includes('isTimeCol = /(시간|타임|휴식|초|time|duration|sec|min)/i.test'), '시간 열 판별 정규식 탑재 검증');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 8468,
+      "check": "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+      "message": "시간 열 placeholder 스마트 분기 검증",
+      "src": "assert.ok(indexHtml.includes(\"colName + ' (분:초 또는 초)'\"), '시간 열 placeholder 스마트 분기 검증');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 9766,
+      "check": "TASK-ES-306: 스톱워치 구간기록별 텍스트 입력창 UI 정돈 및 시인성 개선 (랩 컨테이너, 텍스트 인풋, 즉시 기입 배선) 검증",
+      "message": "injectLapIntoTable 함수 탑재",
+      "src": "assert.ok(indexHtml.includes('injectLapIntoTable'), 'injectLapIntoTable 함수 탑재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 9980,
+      "check": "compliance: [#TASK-ES-315] [64] 기존 \\'AI 추천 목표템플릿 예시 60선\\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증",
+      "message": "index.html 내 templatesHtml 무해화 확인",
+      "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+     },
+     {
+      "file": "scripts/test-shipyard-modular.js",
+      "line": 150,
+      "check": null,
+      "message": "scripts/module-guard.js must pass (exit 1)",
+      "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+     },
+     {
+      "file": "scripts/verify-integrity-gate.js",
+      "line": 954,
+      "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+      "message": "프롬프트 백과사전 아코디언 접힘 구조 누락",
+      "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+     },
+     {
+      "file": "tests/avatar-10slots-growth.test.js",
+      "line": 76,
+      "check": null,
+      "message": "filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.",
+      "src": "assert.ok(indexHtml.includes('filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.');"
+     },
+     {
+      "file": "tests/cross-tab-guarded-init-es502.test.js",
+      "line": 67,
+      "check": null,
+      "message": "Expected values to be strictly equal:",
+      "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+     },
+     {
+      "file": "tests/cross-tab-inline-owned-es507.test.js",
+      "line": 67,
+      "check": null,
+      "message": "Expected values to be strictly equal:",
+      "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+     },
+     {
+      "file": "tests/gcal-login-reconnect-fix.test.js",
+      "line": 25,
+      "check": null,
+      "message": "saveGoogleToken 전역 노출",
+      "src": "assert.ok(indexHtml.includes('window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출');"
+     },
+     {
+      "file": "tests/goal-template-legacy-cleanup.test.js",
+      "line": 43,
+      "check": null,
+      "message": "index.html 내 templatesHtml 무해화 확인",
+      "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+     },
+     {
+      "file": "tests/goals-only-view.test.js",
+      "line": 65,
+      "check": null,
+      "message": "뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.",
+      "src": "assert(indexHtml.includes(\"renderGoalsScreen();\"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.');"
+     },
+     {
+      "file": "tests/goals-schedule-sync.test.js",
+      "line": 98,
+      "check": null,
+      "message": "목표 및 캘린더 뷰 갱신",
+      "src": "assert.ok(indexHtml.includes('renderGoalsScreen();') && indexHtml.includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신');"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 61,
+      "check": null,
+      "message": "가드가 통과해야 한다:",
+      "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 62,
+      "check": null,
+      "message": "The expression evaluated to a falsy value:",
+      "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+     },
+     {
+      "file": "tests/new-module.test.js",
+      "line": 65,
+      "check": null,
+      "message": "새 세포를 더해도 모듈 가드 통과:",
+      "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+     },
+     {
+      "file": "tests/stopwatch-lap-inputs.test.js",
+      "line": 27,
+      "check": null,
+      "message": "스톱워치 랩 표 기입 함수 확인",
+      "src": "assert.ok(html.includes('injectLapIntoTable'), '스톱워치 랩 표 기입 함수 확인');"
+     },
+     {
+      "file": "tests/stopwatch-table-hint.test.js",
+      "line": 25,
+      "check": null,
+      "message": "미선택 셀 클릭 시 안내 토스트 문구 일원화 확인",
+      "src": "assert.ok("
+     },
+     {
+      "file": "tests/stopwatch-table-hint.test.js",
+      "line": 33,
+      "check": null,
+      "message": "시간 관련 열 판별 정규식 탑재 확인",
+      "src": "assert.ok("
+     },
+     {
+      "file": "tests/stopwatch-table-hint.test.js",
+      "line": 37,
+      "check": null,
+      "message": "시간 관련 열 placeholder 분기 처리 확인",
+      "src": "assert.ok("
+     },
+     {
+      "file": "tests/trio-es143-es145.test.js",
+      "line": 50,
+      "check": null,
+      "message": "관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함",
+      "src": "assert.ok(indexHtml.includes('b.classList.add(\\'active\\')') || indexHtml.includes('b.classList.remove(\\'active\\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함');"
+     }
+    ],
+    "onlyInFirst": 0,
+    "entryEndDifferences": [
+     {
+      "entry": "scripts/verify-all-clicks.js",
+      "first": "0/0",
+      "second": "1/1"
+     },
+     {
+      "entry": "scripts/test-shipyard-modular.js",
+      "first": "0/9",
+      "second": "0/12"
+     },
+     {
+      "entry": "tests/module-guard.test.js",
+      "first": "0/1",
+      "second": "0/2"
+     },
+     {
+      "entry": "tests/new-module.test.js",
+      "first": "0/6",
+      "second": "0/7"
+     }
+    ]
+   },
+   "afterAll": {
+    "first": "mainAll",
+    "second": "afterA",
+    "firstFailedLines": 161,
+    "secondFailedLines": 193,
+    "entries": [
+     132,
+     132
+    ],
+    "onlyInSecond": 32,
+    "byFile": {
+     "scripts/smoke-test.js": 22,
+     "scripts/test-shipyard-modular.js": 1,
+     "scripts/verify-integrity-gate.js": 1,
+     "tests/gcal-login-reconnect-fix.test.js": 1,
+     "tests/module-guard.test.js": 2,
+     "tests/new-module.test.js": 1,
+     "tests/stopwatch-lap-inputs.test.js": 1,
+     "tests/stopwatch-table-hint.test.js": 3
+    },
+    "list": [
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1134,
+      "check": "compliance: 전문적(내 전용 템플릿) 기록하기 UI 요소 및 안내멘트가 존재한다",
+      "message": "일정연동 안내멘트 포함",
+      "src": "assert.ok(html.includes('*일정연동 저장은 오늘 기록이 링크화되어 일정에 기록됩니다.'), '일정연동 안내멘트 포함');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1206,
+      "check": "compliance: 4대 혁신 기능(자동 통계, 1초 루틴 로드, AI 프로 코치, Notion 연동) 및 캘린더 일자 수정 허브 모달이 모두 구현되어 있다",
+      "message": "1초 루틴 불러오기 버튼 존재",
+      "src": "assert.ok(html.includes('id=\"proQuickLoadBtn\"'), '1초 루틴 불러오기 버튼 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1278,
+      "check": "compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다",
+      "message": "CSV 가져오기 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proCsvImportBtn\"'), 'CSV 가져오기 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1279,
+      "check": "compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다",
+      "message": "CSV 내보내기 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proCsvExportBtn\"'), 'CSV 내보내기 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1280,
+      "check": "compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다",
+      "message": "스마트워치 연동 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proWearableSyncBtn\"'), '스마트워치 연동 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1352,
+      "check": "compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다",
+      "message": "모달 내 AI 사진인식 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proVisionOcrBtn\"'), '모달 내 AI 사진인식 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1356,
+      "check": "compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다",
+      "message": "모달 내 음성 입력 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proVoiceInputBtn\"'), '모달 내 음성 입력 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1362,
+      "check": "compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다",
+      "message": "기록 모달 내 마켓 버튼 마크업 존재",
+      "src": "assert.ok(html.includes('id=\"proTplMarketBtn\"'), '기록 모달 내 마켓 버튼 마크업 존재');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1592,
+      "check": "compliance: 3종 혁신 기능(비주얼 성장 차트, 인앱 스톱워치, 노션 다이렉트 푸시) UI 및 연동 스펙이 완벽히 구비되어 있다",
+      "message": "기록 모달 내 차트 컨테이너",
+      "src": "assert.ok(html.includes('proTrendChartWrap'), '기록 모달 내 차트 컨테이너');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 1598,
+      "check": "compliance: 3종 혁신 기능(비주얼 성장 차트, 인앱 스톱워치, 노션 다이렉트 푸시) UI 및 연동 스펙이 완벽히 구비되어 있다",
+      "message": "표 셀 기입 하이라이트 애니메이션",
+      "src": "assert.ok(html.includes('cell-highlight-flash'), '표 셀 기입 하이라이트 애니메이션');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2737,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "워크숍 프리셋 모임 ID",
+      "src": "assert.ok(html.includes(\"id:'g-workshop'\"), '워크숍 프리셋 모임 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2738,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "단체여행 프리셋 모임 ID",
+      "src": "assert.ok(html.includes(\"id:'g-travel'\"), '단체여행 프리셋 모임 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2739,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "워크숍 팀 목표 ID",
+      "src": "assert.ok(html.includes(\"id:'tg-ws-1'\"), '워크숍 팀 목표 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2740,
+      "check": "compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다",
+      "message": "단체여행 팀 목표 ID",
+      "src": "assert.ok(html.includes(\"id:'tg-tr-1'\"), '단체여행 팀 목표 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2793,
+      "check": "compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기(아코디언)가 구현되어 있다",
+      "message": "워크숍 1단계 태스크 ID",
+      "src": "assert.ok(html.includes('t-ws-1a1'), '워크숍 1단계 태스크 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 2794,
+      "check": "compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기(아코디언)가 구현되어 있다",
+      "message": "단체여행 1단계 태스크 ID",
+      "src": "assert.ok(html.includes('t-tr-1a1'), '단체여행 1단계 태스크 ID');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 6077,
+      "check": "compliance: [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증",
+      "message": "셀 미선택 시 친절한 가이드 토스트 출력",
+      "src": "assert.ok(indexSrc.includes(\"toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨')\"), '셀 미선택 시 친절한 가이드 토스트 출력');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 7840,
+      "check": "[#TASK-ES-229] 팀 목표 및 소통 탭 내 가상 샘플 그룹(MOCK_GROUPS) 분리 및 [💡 활용 예시] 배지·새 팀 만들기 전면화",
+      "message": "MOCK_GROUPS 항목에 isMock:true 플래그 설정",
+      "src": "assert.ok(indexHtml.includes('isMock:true'), 'MOCK_GROUPS 항목에 isMock:true 플래그 설정');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 8467,
+      "check": "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+      "message": "미선택 셀 클릭 시 안내 토스트 멘트 일원화 검증",
+      "src": "assert.ok(indexHtml.includes(\"toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨')\"), '미선택 셀 클릭 시 안내 토스트 멘트 일원화 검증');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 8470,
+      "check": "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+      "message": "시간 열 판별 정규식 탑재 검증",
+      "src": "assert.ok(indexHtml.includes('isTimeCol = /(시간|타임|휴식|초|time|duration|sec|min)/i.test'), '시간 열 판별 정규식 탑재 검증');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 8471,
+      "check": "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+      "message": "시간 열 placeholder 스마트 분기 검증",
+      "src": "assert.ok(indexHtml.includes(\"colName + ' (분:초 또는 초)'\"), '시간 열 placeholder 스마트 분기 검증');"
+     },
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 9769,
+      "check": "TASK-ES-306: 스톱워치 구간기록별 텍스트 입력창 UI 정돈 및 시인성 개선 (랩 컨테이너, 텍스트 인풋, 즉시 기입 배선) 검증",
+      "message": "injectLapIntoTable 함수 탑재",
+      "src": "assert.ok(indexHtml.includes('injectLapIntoTable'), 'injectLapIntoTable 함수 탑재');"
+     },
+     {
+      "file": "scripts/test-shipyard-modular.js",
+      "line": 150,
+      "check": null,
+      "message": "scripts/module-guard.js must pass (exit 1)",
+      "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+     },
+     {
+      "file": "scripts/verify-integrity-gate.js",
+      "line": 961,
+      "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+      "message": "프롬프트 백과사전 아코디언 접힘 구조 누락",
+      "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && textOrStateDefined(indexHtml, '_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+     },
+     {
+      "file": "tests/gcal-login-reconnect-fix.test.js",
+      "line": 25,
+      "check": null,
+      "message": "saveGoogleToken 전역 노출",
+      "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 61,
+      "check": null,
+      "message": "가드가 통과해야 한다:",
+      "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 62,
+      "check": null,
+      "message": "The expression evaluated to a falsy value:",
+      "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+     },
+     {
+      "file": "tests/new-module.test.js",
+      "line": 65,
+      "check": null,
+      "message": "새 세포를 더해도 모듈 가드 통과:",
+      "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+     },
+     {
+      "file": "tests/stopwatch-lap-inputs.test.js",
+      "line": 27,
+      "check": null,
+      "message": "스톱워치 랩 표 기입 함수 확인",
+      "src": "assert.ok(html.includes('injectLapIntoTable'), '스톱워치 랩 표 기입 함수 확인');"
+     },
+     {
+      "file": "tests/stopwatch-table-hint.test.js",
+      "line": 25,
+      "check": null,
+      "message": "미선택 셀 클릭 시 안내 토스트 문구 일원화 확인",
+      "src": "assert.ok("
+     },
+     {
+      "file": "tests/stopwatch-table-hint.test.js",
+      "line": 33,
+      "check": null,
+      "message": "시간 관련 열 판별 정규식 탑재 확인",
+      "src": "assert.ok("
+     },
+     {
+      "file": "tests/stopwatch-table-hint.test.js",
+      "line": 37,
+      "check": null,
+      "message": "시간 관련 열 placeholder 분기 처리 확인",
+      "src": "assert.ok("
+     }
+    ],
+    "onlyInFirst": 0,
+    "entryEndDifferences": [
+     {
+      "entry": "scripts/verify-all-clicks.js",
+      "first": "0/0",
+      "second": "1/1"
+     },
+     {
+      "entry": "scripts/test-shipyard-modular.js",
+      "first": "0/9",
+      "second": "0/12"
+     },
+     {
+      "entry": "tests/module-guard.test.js",
+      "first": "0/1",
+      "second": "0/2"
+     },
+     {
+      "entry": "tests/new-module.test.js",
+      "first": "0/6",
+      "second": "0/7"
+     }
+    ]
+   }
+  },
+  "B": {
+   "made": {
+    "topStatements": 255,
+    "byKind": {
+     "키트 손잡이": 13,
+     "가져오기(재철거)": 169,
+     "expose 문(재철거)": 17,
+     "구역 함수 가져오기": 17,
+     "구역 함수 호출문": 17,
+     "노출 안 된 var(지역 변수로)": 2,
+     "상태 var → define": 11,
+     "가져온 이름의 window 줄(재철거)": 1,
+     "함수 선언": 6,
+     "상태의 window 복사 줄(오른쪽만 통로로)": 1,
+     "if 문": 1
+    },
+    "byDestination": {
+     "drop": 199,
+     "boot": 35,
+     "core": 15,
+     "tab": 6
+    },
+    "movedFunctions": [
+     "openProTemplateRecordModal",
+     "bindProRecTable",
+     "bindProRecTools",
+     "bindProRecTrendChart",
+     "bindProRecStopwatch",
+     "bindProRecSave"
+    ],
+    "movedFunctionFiles": [
+     "js/tabs/records/zz-mock-moved-functions.js",
+     "js/tabs/records/zz-mock-moved-functions-2.js"
+    ],
+    "movedFunctionFileMaxLines": 534,
+    "stateDefines": [
+     "sb",
+     "btnAvLvClose",
+     "state",
+     "_promptEncyclopediaOpen",
+     "_subtabTplCat",
+     "_subtabTplQuery",
+     "_subtabTplDomain",
+     "_subtabTplType",
+     "MOCK_GROUPS",
+     "shareContent",
+     "FEED_POSTS_CACHE"
+    ],
+    "localVars": [
+     "SUPABASE_URL",
+     "SUPABASE_ANON_KEY"
+    ],
+    "rewiredDropped": [
+     "saveGoogleToken"
+    ],
+    "comments": {
+     "outsideStatements": 239,
+     "followed": 54,
+     "dropped": 185,
+     "sections": 32
+    },
+    "limits": [
+     "이름 접두 L. 을 붙이지 않았다",
+     "옮긴 함수는 한 파일이 700줄을 넘지 않게 여러 파일로 나눠 담았다(함수 하나가 그보다 크면 그 파일은 넘는다)",
+     "새 파일의 신고서를 쓰지 않았다",
+     "앱이 뜨는지는 보지 않는다"
+    ],
+    "files": {
+     "js/tabs/records/zz-mock-moved-functions.js": 534,
+     "js/tabs/records/zz-mock-moved-functions-2.js": 466,
+     "js/core/zz-mock-boot-rest.js": 230,
+     "js/app/boot.js": 42
+    }
+   },
+   "before": {
+    "first": "base",
+    "second": "mockB",
+    "firstFailedLines": 161,
+    "secondFailedLines": 175,
+    "entries": [
+     131,
+     131
+    ],
+    "onlyInSecond": 14,
+    "byFile": {
+     "scripts/smoke-test.js": 1,
+     "scripts/test-shipyard-modular.js": 1,
+     "scripts/verify-integrity-gate.js": 1,
+     "tests/avatar-10slots-growth.test.js": 1,
+     "tests/cross-tab-guarded-init-es502.test.js": 1,
+     "tests/cross-tab-inline-owned-es507.test.js": 1,
+     "tests/gcal-login-reconnect-fix.test.js": 1,
+     "tests/goal-template-legacy-cleanup.test.js": 1,
+     "tests/goals-only-view.test.js": 1,
+     "tests/goals-schedule-sync.test.js": 1,
+     "tests/module-guard.test.js": 2,
+     "tests/new-module.test.js": 1,
+     "tests/trio-es143-es145.test.js": 1
+    },
+    "list": [
+     {
+      "file": "scripts/smoke-test.js",
+      "line": 9980,
+      "check": "compliance: [#TASK-ES-315] [64] 기존 \\'AI 추천 목표템플릿 예시 60선\\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증",
+      "message": "index.html 내 templatesHtml 무해화 확인",
+      "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+     },
+     {
+      "file": "scripts/test-shipyard-modular.js",
+      "line": 150,
+      "check": null,
+      "message": "scripts/module-guard.js must pass (exit 1)",
+      "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+     },
+     {
+      "file": "scripts/verify-integrity-gate.js",
+      "line": 954,
+      "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+      "message": "프롬프트 백과사전 아코디언 접힘 구조 누락",
+      "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+     },
+     {
+      "file": "tests/avatar-10slots-growth.test.js",
+      "line": 76,
+      "check": null,
+      "message": "filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.",
+      "src": "assert.ok(indexHtml.includes('filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.');"
+     },
+     {
+      "file": "tests/cross-tab-guarded-init-es502.test.js",
+      "line": 67,
+      "check": null,
+      "message": "Expected values to be strictly equal:",
+      "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+     },
+     {
+      "file": "tests/cross-tab-inline-owned-es507.test.js",
+      "line": 67,
+      "check": null,
+      "message": "Expected values to be strictly equal:",
+      "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+     },
+     {
+      "file": "tests/gcal-login-reconnect-fix.test.js",
+      "line": 25,
+      "check": null,
+      "message": "saveGoogleToken 전역 노출",
+      "src": "assert.ok(indexHtml.includes('window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출');"
+     },
+     {
+      "file": "tests/goal-template-legacy-cleanup.test.js",
+      "line": 43,
+      "check": null,
+      "message": "index.html 내 templatesHtml 무해화 확인",
+      "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+     },
+     {
+      "file": "tests/goals-only-view.test.js",
+      "line": 65,
+      "check": null,
+      "message": "뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.",
+      "src": "assert(indexHtml.includes(\"renderGoalsScreen();\"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.');"
+     },
+     {
+      "file": "tests/goals-schedule-sync.test.js",
+      "line": 98,
+      "check": null,
+      "message": "목표 및 캘린더 뷰 갱신",
+      "src": "assert.ok(indexHtml.includes('renderGoalsScreen();') && indexHtml.includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신');"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 61,
+      "check": null,
+      "message": "가드가 통과해야 한다:",
+      "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 62,
+      "check": null,
+      "message": "The expression evaluated to a falsy value:",
+      "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+     },
+     {
+      "file": "tests/new-module.test.js",
+      "line": 65,
+      "check": null,
+      "message": "새 세포를 더해도 모듈 가드 통과:",
+      "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+     },
+     {
+      "file": "tests/trio-es143-es145.test.js",
+      "line": 50,
+      "check": null,
+      "message": "관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함",
+      "src": "assert.ok(indexHtml.includes('b.classList.add(\\'active\\')') || indexHtml.includes('b.classList.remove(\\'active\\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함');"
+     }
+    ],
+    "onlyInFirst": 0,
+    "entryEndDifferences": [
+     {
+      "entry": "scripts/test-shipyard-modular.js",
+      "first": "0/9",
+      "second": "0/12"
+     },
+     {
+      "entry": "tests/module-guard.test.js",
+      "first": "0/1",
+      "second": "0/2"
+     },
+     {
+      "entry": "tests/new-module.test.js",
+      "first": "0/6",
+      "second": "0/7"
+     }
+    ]
+   },
+   "afterAll": {
+    "first": "mainAll",
+    "second": "afterB",
+    "firstFailedLines": 161,
+    "secondFailedLines": 166,
+    "entries": [
+     132,
+     132
+    ],
+    "onlyInSecond": 5,
+    "byFile": {
+     "scripts/test-shipyard-modular.js": 1,
+     "tests/gcal-login-reconnect-fix.test.js": 1,
+     "tests/module-guard.test.js": 2,
+     "tests/new-module.test.js": 1
+    },
+    "list": [
+     {
+      "file": "scripts/test-shipyard-modular.js",
+      "line": 150,
+      "check": null,
+      "message": "scripts/module-guard.js must pass (exit 1)",
+      "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+     },
+     {
+      "file": "tests/gcal-login-reconnect-fix.test.js",
+      "line": 25,
+      "check": null,
+      "message": "saveGoogleToken 전역 노출",
+      "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 61,
+      "check": null,
+      "message": "가드가 통과해야 한다:",
+      "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 62,
+      "check": null,
+      "message": "The expression evaluated to a falsy value:",
+      "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+     },
+     {
+      "file": "tests/new-module.test.js",
+      "line": 65,
+      "check": null,
+      "message": "새 세포를 더해도 모듈 가드 통과:",
+      "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+     }
+    ],
+    "onlyInFirst": 0,
+    "entryEndDifferences": [
+     {
+      "entry": "scripts/test-shipyard-modular.js",
+      "first": "0/9",
+      "second": "0/12"
+     },
+     {
+      "entry": "tests/module-guard.test.js",
+      "first": "0/1",
+      "second": "0/2"
+     },
+     {
+      "entry": "tests/new-module.test.js",
+      "first": "0/6",
+      "second": "0/7"
+     }
+    ]
+   },
+   "afterAllRegistered": {
+    "first": "mainAll",
+    "second": "afterBreg",
+    "firstFailedLines": 161,
+    "secondFailedLines": 165,
+    "entries": [
+     132,
+     132
+    ],
+    "onlyInSecond": 4,
+    "byFile": {
+     "scripts/test-shipyard-modular.js": 1,
+     "tests/module-guard.test.js": 2,
+     "tests/new-module.test.js": 1
+    },
+    "list": [
+     {
+      "file": "scripts/test-shipyard-modular.js",
+      "line": 150,
+      "check": null,
+      "message": "scripts/module-guard.js must pass (exit 1)",
+      "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 61,
+      "check": null,
+      "message": "가드가 통과해야 한다:",
+      "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+     },
+     {
+      "file": "tests/module-guard.test.js",
+      "line": 62,
+      "check": null,
+      "message": "The expression evaluated to a falsy value:",
+      "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+     },
+     {
+      "file": "tests/new-module.test.js",
+      "line": 65,
+      "check": null,
+      "message": "새 세포를 더해도 모듈 가드 통과:",
+      "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+     }
+    ],
+    "onlyInFirst": 0,
+    "entryEndDifferences": [
+     {
+      "entry": "scripts/test-shipyard-modular.js",
+      "first": "0/9",
+      "second": "0/12"
+     },
+     {
+      "entry": "tests/module-guard.test.js",
+      "first": "0/1",
+      "second": "0/2"
+     },
+     {
+      "entry": "tests/new-module.test.js",
+      "first": "0/6",
+      "second": "0/7"
+     }
+    ]
+   },
+   "limitsRemoved": {
+    "before": {
+     "first": "base",
+     "second": "limB",
+     "firstFailedLines": 161,
+     "secondFailedLines": 175,
+     "entries": [
+      131,
+      131
+     ],
+     "onlyInSecond": 14,
+     "byFile": {
+      "scripts/smoke-test.js": 1,
+      "scripts/test-shipyard-modular.js": 1,
+      "scripts/verify-integrity-gate.js": 1,
+      "tests/avatar-10slots-growth.test.js": 1,
+      "tests/cross-tab-guarded-init-es502.test.js": 1,
+      "tests/cross-tab-inline-owned-es507.test.js": 1,
+      "tests/gcal-login-reconnect-fix.test.js": 1,
+      "tests/goal-template-legacy-cleanup.test.js": 1,
+      "tests/goals-only-view.test.js": 1,
+      "tests/goals-schedule-sync.test.js": 1,
+      "tests/module-guard.test.js": 2,
+      "tests/new-module.test.js": 1,
+      "tests/trio-es143-es145.test.js": 1
+     },
+     "list": [
+      {
+       "file": "scripts/smoke-test.js",
+       "line": 9980,
+       "check": "compliance: [#TASK-ES-315] [64] 기존 \\'AI 추천 목표템플릿 예시 60선\\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증",
+       "message": "index.html 내 templatesHtml 무해화 확인",
+       "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+      },
+      {
+       "file": "scripts/test-shipyard-modular.js",
+       "line": 150,
+       "check": null,
+       "message": "scripts/module-guard.js must pass (exit 1)",
+       "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+      },
+      {
+       "file": "scripts/verify-integrity-gate.js",
+       "line": 954,
+       "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+       "message": "프롬프트 백과사전 아코디언 접힘 구조 누락",
+       "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+      },
+      {
+       "file": "tests/avatar-10slots-growth.test.js",
+       "line": 76,
+       "check": null,
+       "message": "filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.",
+       "src": "assert.ok(indexHtml.includes('filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.');"
+      },
+      {
+       "file": "tests/cross-tab-guarded-init-es502.test.js",
+       "line": 67,
+       "check": null,
+       "message": "Expected values to be strictly equal:",
+       "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+      },
+      {
+       "file": "tests/cross-tab-inline-owned-es507.test.js",
+       "line": 67,
+       "check": null,
+       "message": "Expected values to be strictly equal:",
+       "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+      },
+      {
+       "file": "tests/gcal-login-reconnect-fix.test.js",
+       "line": 25,
+       "check": null,
+       "message": "saveGoogleToken 전역 노출",
+       "src": "assert.ok(indexHtml.includes('window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출');"
+      },
+      {
+       "file": "tests/goal-template-legacy-cleanup.test.js",
+       "line": 43,
+       "check": null,
+       "message": "index.html 내 templatesHtml 무해화 확인",
+       "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+      },
+      {
+       "file": "tests/goals-only-view.test.js",
+       "line": 65,
+       "check": null,
+       "message": "뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.",
+       "src": "assert(indexHtml.includes(\"renderGoalsScreen();\"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.');"
+      },
+      {
+       "file": "tests/goals-schedule-sync.test.js",
+       "line": 98,
+       "check": null,
+       "message": "목표 및 캘린더 뷰 갱신",
+       "src": "assert.ok(indexHtml.includes('renderGoalsScreen();') && indexHtml.includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신');"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 61,
+       "check": null,
+       "message": "가드가 통과해야 한다:",
+       "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 62,
+       "check": null,
+       "message": "The expression evaluated to a falsy value:",
+       "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+      },
+      {
+       "file": "tests/new-module.test.js",
+       "line": 65,
+       "check": null,
+       "message": "새 세포를 더해도 모듈 가드 통과:",
+       "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+      },
+      {
+       "file": "tests/trio-es143-es145.test.js",
+       "line": 50,
+       "check": null,
+       "message": "관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함",
+       "src": "assert.ok(indexHtml.includes('b.classList.add(\\'active\\')') || indexHtml.includes('b.classList.remove(\\'active\\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함');"
+      }
+     ],
+     "onlyInFirst": 0,
+     "entryEndDifferences": [
+      {
+       "entry": "scripts/test-shipyard-modular.js",
+       "first": "0/9",
+       "second": "0/12"
+      },
+      {
+       "entry": "tests/module-guard.test.js",
+       "first": "0/1",
+       "second": "0/2"
+      },
+      {
+       "entry": "tests/new-module.test.js",
+       "first": "0/6",
+       "second": "0/7"
+      }
+     ]
+    },
+    "afterAll": {
+     "first": "mainAll",
+     "second": "limAfterB",
+     "firstFailedLines": 161,
+     "secondFailedLines": 162,
+     "entries": [
+      132,
+      132
+     ],
+     "onlyInSecond": 1,
+     "byFile": {
+      "tests/gcal-login-reconnect-fix.test.js": 1
+     },
+     "list": [
+      {
+       "file": "tests/gcal-login-reconnect-fix.test.js",
+       "line": 25,
+       "check": null,
+       "message": "saveGoogleToken 전역 노출",
+       "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+      }
+     ],
+     "onlyInFirst": 0,
+     "entryEndDifferences": []
+    },
+    "afterAllRegistered": {
+     "first": "mainAll",
+     "second": "limAfterBreg",
+     "firstFailedLines": 161,
+     "secondFailedLines": 161,
+     "entries": [
+      132,
+      132
+     ],
+     "onlyInSecond": 0,
+     "byFile": {},
+     "list": [],
+     "onlyInFirst": 0,
+     "entryEndDifferences": []
+    }
+   },
+   "perPr": {
+    "666": {
+     "first": "main666",
+     "second": "afterB666",
+     "firstFailedLines": 161,
+     "secondFailedLines": 169,
+     "entries": [
+      132,
+      132
+     ],
+     "onlyInSecond": 8,
+     "byFile": {
+      "scripts/test-shipyard-modular.js": 1,
+      "scripts/verify-integrity-gate.js": 1,
+      "tests/cross-tab-guarded-init-es502.test.js": 1,
+      "tests/cross-tab-inline-owned-es507.test.js": 1,
+      "tests/gcal-login-reconnect-fix.test.js": 1,
+      "tests/module-guard.test.js": 2,
+      "tests/new-module.test.js": 1
+     },
+     "list": [
+      {
+       "file": "scripts/test-shipyard-modular.js",
+       "line": 150,
+       "check": null,
+       "message": "scripts/module-guard.js must pass (exit 1)",
+       "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+      },
+      {
+       "file": "scripts/verify-integrity-gate.js",
+       "line": 954,
+       "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+       "message": "프롬프트 백과사전 아코디언 접힘 구조 누락",
+       "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+      },
+      {
+       "file": "tests/cross-tab-guarded-init-es502.test.js",
+       "line": 67,
+       "check": null,
+       "message": "Expected values to be strictly equal:",
+       "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+      },
+      {
+       "file": "tests/cross-tab-inline-owned-es507.test.js",
+       "line": 67,
+       "check": null,
+       "message": "Expected values to be strictly equal:",
+       "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+      },
+      {
+       "file": "tests/gcal-login-reconnect-fix.test.js",
+       "line": 25,
+       "check": null,
+       "message": "saveGoogleToken 전역 노출",
+       "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 61,
+       "check": null,
+       "message": "가드가 통과해야 한다:",
+       "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 62,
+       "check": null,
+       "message": "The expression evaluated to a falsy value:",
+       "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+      },
+      {
+       "file": "tests/new-module.test.js",
+       "line": 65,
+       "check": null,
+       "message": "새 세포를 더해도 모듈 가드 통과:",
+       "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+      }
+     ],
+     "onlyInFirst": 0,
+     "entryEndDifferences": [
+      {
+       "entry": "scripts/test-shipyard-modular.js",
+       "first": "0/9",
+       "second": "0/12"
+      },
+      {
+       "entry": "tests/module-guard.test.js",
+       "first": "0/1",
+       "second": "0/2"
+      },
+      {
+       "entry": "tests/new-module.test.js",
+       "first": "0/6",
+       "second": "0/7"
+      }
+     ]
+    },
+    "667": {
+     "first": "main667",
+     "second": "afterB667",
+     "firstFailedLines": 161,
+     "secondFailedLines": 173,
+     "entries": [
+      131,
+      131
+     ],
+     "onlyInSecond": 12,
+     "byFile": {
+      "scripts/smoke-test.js": 1,
+      "scripts/test-shipyard-modular.js": 1,
+      "scripts/verify-integrity-gate.js": 1,
+      "tests/avatar-10slots-growth.test.js": 1,
+      "tests/gcal-login-reconnect-fix.test.js": 1,
+      "tests/goal-template-legacy-cleanup.test.js": 1,
+      "tests/goals-only-view.test.js": 1,
+      "tests/goals-schedule-sync.test.js": 1,
+      "tests/module-guard.test.js": 2,
+      "tests/new-module.test.js": 1,
+      "tests/trio-es143-es145.test.js": 1
+     },
+     "list": [
+      {
+       "file": "scripts/smoke-test.js",
+       "line": 9980,
+       "check": "compliance: [#TASK-ES-315] [64] 기존 \\'AI 추천 목표템플릿 예시 60선\\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증",
+       "message": "index.html 내 templatesHtml 무해화 확인",
+       "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+      },
+      {
+       "file": "scripts/test-shipyard-modular.js",
+       "line": 150,
+       "check": null,
+       "message": "scripts/module-guard.js must pass (exit 1)",
+       "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+      },
+      {
+       "file": "scripts/verify-integrity-gate.js",
+       "line": 954,
+       "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+       "message": "프롬프트 백과사전 아코디언 접힘 구조 누락",
+       "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+      },
+      {
+       "file": "tests/avatar-10slots-growth.test.js",
+       "line": 76,
+       "check": null,
+       "message": "filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.",
+       "src": "assert.ok(indexHtml.includes('filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.');"
+      },
+      {
+       "file": "tests/gcal-login-reconnect-fix.test.js",
+       "line": 25,
+       "check": null,
+       "message": "saveGoogleToken 전역 노출",
+       "src": "assert.ok(indexHtml.includes('window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출');"
+      },
+      {
+       "file": "tests/goal-template-legacy-cleanup.test.js",
+       "line": 43,
+       "check": null,
+       "message": "index.html 내 templatesHtml 무해화 확인",
+       "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+      },
+      {
+       "file": "tests/goals-only-view.test.js",
+       "line": 65,
+       "check": null,
+       "message": "뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.",
+       "src": "assert(indexHtml.includes(\"renderGoalsScreen();\"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.');"
+      },
+      {
+       "file": "tests/goals-schedule-sync.test.js",
+       "line": 98,
+       "check": null,
+       "message": "목표 및 캘린더 뷰 갱신",
+       "src": "assert.ok(indexHtml.includes('renderGoalsScreen();') && indexHtml.includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신');"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 61,
+       "check": null,
+       "message": "가드가 통과해야 한다:",
+       "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 62,
+       "check": null,
+       "message": "The expression evaluated to a falsy value:",
+       "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+      },
+      {
+       "file": "tests/new-module.test.js",
+       "line": 65,
+       "check": null,
+       "message": "새 세포를 더해도 모듈 가드 통과:",
+       "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+      },
+      {
+       "file": "tests/trio-es143-es145.test.js",
+       "line": 50,
+       "check": null,
+       "message": "관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함",
+       "src": "assert.ok(indexHtml.includes('b.classList.add(\\'active\\')') || indexHtml.includes('b.classList.remove(\\'active\\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함');"
+      }
+     ],
+     "onlyInFirst": 0,
+     "entryEndDifferences": [
+      {
+       "entry": "scripts/test-shipyard-modular.js",
+       "first": "0/9",
+       "second": "0/12"
+      },
+      {
+       "entry": "tests/module-guard.test.js",
+       "first": "0/1",
+       "second": "0/2"
+      },
+      {
+       "entry": "tests/new-module.test.js",
+       "first": "0/6",
+       "second": "0/7"
+      }
+     ]
+    },
+    "669": {
+     "first": "main669",
+     "second": "afterB669",
+     "firstFailedLines": 161,
+     "secondFailedLines": 175,
+     "entries": [
+      131,
+      131
+     ],
+     "onlyInSecond": 14,
+     "byFile": {
+      "scripts/smoke-test.js": 1,
+      "scripts/test-shipyard-modular.js": 1,
+      "scripts/verify-integrity-gate.js": 1,
+      "tests/avatar-10slots-growth.test.js": 1,
+      "tests/cross-tab-guarded-init-es502.test.js": 1,
+      "tests/cross-tab-inline-owned-es507.test.js": 1,
+      "tests/gcal-login-reconnect-fix.test.js": 1,
+      "tests/goal-template-legacy-cleanup.test.js": 1,
+      "tests/goals-only-view.test.js": 1,
+      "tests/goals-schedule-sync.test.js": 1,
+      "tests/module-guard.test.js": 2,
+      "tests/new-module.test.js": 1,
+      "tests/trio-es143-es145.test.js": 1
+     },
+     "list": [
+      {
+       "file": "scripts/smoke-test.js",
+       "line": 9980,
+       "check": "compliance: [#TASK-ES-315] [64] 기존 \\'AI 추천 목표템플릿 예시 60선\\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증",
+       "message": "index.html 내 templatesHtml 무해화 확인",
+       "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+      },
+      {
+       "file": "scripts/test-shipyard-modular.js",
+       "line": 150,
+       "check": null,
+       "message": "scripts/module-guard.js must pass (exit 1)",
+       "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
+      },
+      {
+       "file": "scripts/verify-integrity-gate.js",
+       "line": 961,
+       "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+       "message": "프롬프트 백과사전 아코디언 접힘 구조 누락",
+       "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && textOrStateDefined(indexHtml, '_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+      },
+      {
+       "file": "tests/avatar-10slots-growth.test.js",
+       "line": 76,
+       "check": null,
+       "message": "filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.",
+       "src": "assert.ok(indexHtml.includes('filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.');"
+      },
+      {
+       "file": "tests/cross-tab-guarded-init-es502.test.js",
+       "line": 67,
+       "check": null,
+       "message": "Expected values to be strictly equal:",
+       "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+      },
+      {
+       "file": "tests/cross-tab-inline-owned-es507.test.js",
+       "line": 67,
+       "check": null,
+       "message": "Expected values to be strictly equal:",
+       "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
+      },
+      {
+       "file": "tests/gcal-login-reconnect-fix.test.js",
+       "line": 25,
+       "check": null,
+       "message": "saveGoogleToken 전역 노출",
+       "src": "assert.ok(indexHtml.includes('window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출');"
+      },
+      {
+       "file": "tests/goal-template-legacy-cleanup.test.js",
+       "line": 43,
+       "check": null,
+       "message": "index.html 내 templatesHtml 무해화 확인",
+       "src": "assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');"
+      },
+      {
+       "file": "tests/goals-only-view.test.js",
+       "line": 65,
+       "check": null,
+       "message": "뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.",
+       "src": "assert(indexHtml.includes(\"renderGoalsScreen();\"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.');"
+      },
+      {
+       "file": "tests/goals-schedule-sync.test.js",
+       "line": 98,
+       "check": null,
+       "message": "목표 및 캘린더 뷰 갱신",
+       "src": "assert.ok(indexHtml.includes('renderGoalsScreen();') && indexHtml.includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신');"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 61,
+       "check": null,
+       "message": "가드가 통과해야 한다:",
+       "src": "assert.strictEqual(r.status, 0, '가드가 통과해야 한다:\\n' + r.stdout + r.stderr);"
+      },
+      {
+       "file": "tests/module-guard.test.js",
+       "line": 62,
+       "check": null,
+       "message": "The expression evaluated to a falsy value:",
+       "src": "assert.ok(/모듈 가드 통과/.test(r.stdout));"
+      },
+      {
+       "file": "tests/new-module.test.js",
+       "line": 65,
+       "check": null,
+       "message": "새 세포를 더해도 모듈 가드 통과:",
+       "src": "assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\\n' + g.stdout + g.stderr);"
+      },
+      {
+       "file": "tests/trio-es143-es145.test.js",
+       "line": 50,
+       "check": null,
+       "message": "관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함",
+       "src": "assert.ok(indexHtml.includes('b.classList.add(\\'active\\')') || indexHtml.includes('b.classList.remove(\\'active\\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함');"
+      }
+     ],
+     "onlyInFirst": 0,
+     "entryEndDifferences": [
+      {
+       "entry": "scripts/test-shipyard-modular.js",
+       "first": "0/9",
+       "second": "0/12"
+      },
+      {
+       "entry": "tests/module-guard.test.js",
+       "first": "0/1",
+       "second": "0/2"
+      },
+      {
+       "entry": "tests/new-module.test.js",
+       "first": "0/6",
+       "second": "0/7"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "pins": {
+  "A": {
+   "brokenAssertLines": 40,
+   "withTextPin": 34,
+   "withoutTextPin": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62",
+    "tests/new-module.test.js:65"
+   ],
+   "byWhere": {
+    "함수 선언": 24,
+    "상태·그 밖의 var": 8,
+    "주석": 3,
+    "if 문": 1
+   },
+   "rows": [
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1131,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1203,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1275,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1276,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1277,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1349,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1353,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1359,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1589,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)",
+      "함수 선언(bindProRecTrendChart)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1595,
+     "where": [
+      "함수 선언(bindProRecStopwatch)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2734,
+     "where": [
+      "상태·그 밖의 var(MOCK_GROUPS)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2735,
+     "where": [
+      "상태·그 밖의 var(MOCK_GROUPS)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2736,
+     "where": [
+      "상태·그 밖의 var(MOCK_GROUPS)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2737,
+     "where": [
+      "상태·그 밖의 var(MOCK_GROUPS)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2790,
+     "where": [
+      "상태·그 밖의 var(MOCK_GROUPS)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2791,
+     "where": [
+      "상태·그 밖의 var(MOCK_GROUPS)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 6074,
+     "where": [
+      "함수 선언(bindProRecStopwatch)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 7837,
+     "where": [
+      "상태·그 밖의 var(MOCK_GROUPS)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 8464,
+     "where": [
+      "함수 선언(bindProRecStopwatch)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 8467,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 8468,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 9766,
+     "where": [
+      "함수 선언(bindProRecStopwatch)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 9980,
+     "where": [
+      "주석(문 밖)"
+     ],
+     "inComment": true
+    },
+    {
+     "file": "scripts/test-shipyard-modular.js",
+     "line": 150,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "line": 954,
+     "where": [
+      "상태·그 밖의 var(_promptEncyclopediaOpen)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/avatar-10slots-growth.test.js",
+     "line": 76,
+     "where": [
+      "주석(문 밖)"
+     ],
+     "inComment": true
+    },
+    {
+     "file": "tests/cross-tab-guarded-init-es502.test.js",
+     "line": 67,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/cross-tab-inline-owned-es507.test.js",
+     "line": 67,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/gcal-login-reconnect-fix.test.js",
+     "line": 25,
+     "where": [
+      "if 문"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/goal-template-legacy-cleanup.test.js",
+     "line": 43,
+     "where": [
+      "주석(문 밖)"
+     ],
+     "inComment": true
+    },
+    {
+     "file": "tests/goals-only-view.test.js",
+     "line": 65,
+     "where": [
+      "함수 선언(bindProRecSave)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/goals-schedule-sync.test.js",
+     "line": 98,
+     "where": [
+      "함수 선언(bindProRecSave)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/module-guard.test.js",
+     "line": 61,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/module-guard.test.js",
+     "line": 62,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/new-module.test.js",
+     "line": 65,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/stopwatch-lap-inputs.test.js",
+     "line": 27,
+     "where": [
+      "함수 선언(bindProRecStopwatch)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/stopwatch-table-hint.test.js",
+     "line": 25,
+     "where": [
+      "함수 선언(bindProRecStopwatch)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/stopwatch-table-hint.test.js",
+     "line": 33,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/stopwatch-table-hint.test.js",
+     "line": 37,
+     "where": [
+      "함수 선언(openProTemplateRecordModal)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/trio-es143-es145.test.js",
+     "line": 50,
+     "where": [
+      "함수 선언(bindProRecTrendChart)"
+     ],
+     "inComment": false
+    }
+   ]
+  },
+  "B": {
+   "brokenAssertLines": 14,
+   "withTextPin": 8,
+   "withoutTextPin": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62",
+    "tests/new-module.test.js:65"
+   ],
+   "byWhere": {
+    "주석": 3,
+    "상태·그 밖의 var": 1,
+    "if 문": 1,
+    "함수 선언": 4
+   },
+   "rows": [
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 9980,
+     "where": [
+      "주석(문 밖)"
+     ],
+     "inComment": true
+    },
+    {
+     "file": "scripts/test-shipyard-modular.js",
+     "line": 150,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "line": 954,
+     "where": [
+      "상태·그 밖의 var(_promptEncyclopediaOpen)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/avatar-10slots-growth.test.js",
+     "line": 76,
+     "where": [
+      "주석(문 밖)"
+     ],
+     "inComment": true
+    },
+    {
+     "file": "tests/cross-tab-guarded-init-es502.test.js",
+     "line": 67,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/cross-tab-inline-owned-es507.test.js",
+     "line": 67,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/gcal-login-reconnect-fix.test.js",
+     "line": 25,
+     "where": [
+      "if 문"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/goal-template-legacy-cleanup.test.js",
+     "line": 43,
+     "where": [
+      "주석(문 밖)"
+     ],
+     "inComment": true
+    },
+    {
+     "file": "tests/goals-only-view.test.js",
+     "line": 65,
+     "where": [
+      "함수 선언(bindProRecSave)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/goals-schedule-sync.test.js",
+     "line": 98,
+     "where": [
+      "함수 선언(bindProRecSave)"
+     ],
+     "inComment": false
+    },
+    {
+     "file": "tests/module-guard.test.js",
+     "line": 61,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/module-guard.test.js",
+     "line": 62,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/new-module.test.js",
+     "line": 65,
+     "where": [],
+     "inComment": false
+    },
+    {
+     "file": "tests/trio-es143-es145.test.js",
+     "line": 50,
+     "where": [
+      "함수 선언(bindProRecTrendChart)"
+     ],
+     "inComment": false
+    }
+   ]
+  }
+ },
+ "main": {
+  "asserts": {
+   "666": {
+    "first": "base",
+    "second": "main666",
+    "firstFailedLines": 161,
+    "secondFailedLines": 161,
+    "entries": [
+     131,
+     132
+    ],
+    "onlyInSecond": 0,
+    "byFile": {},
+    "list": [],
+    "onlyInFirst": 0,
+    "entryEndDifferences": [
+     {
+      "entry": "tests/moved-code.test.js",
+      "first": null,
+      "second": "0/0"
+     }
+    ]
+   },
+   "667": {
+    "first": "base",
+    "second": "main667",
+    "firstFailedLines": 161,
+    "secondFailedLines": 161,
+    "entries": [
+     131,
+     131
+    ],
+    "onlyInSecond": 0,
+    "byFile": {},
+    "list": [],
+    "onlyInFirst": 0,
+    "entryEndDifferences": []
+   },
+   "669": {
+    "first": "base",
+    "second": "main669",
+    "firstFailedLines": 161,
+    "secondFailedLines": 161,
+    "entries": [
+     131,
+     131
+    ],
+    "onlyInSecond": 0,
+    "byFile": {},
+    "list": [],
+    "onlyInFirst": 0,
+    "entryEndDifferences": []
+   },
+   "all": {
+    "first": "base",
+    "second": "mainAll",
+    "firstFailedLines": 161,
+    "secondFailedLines": 161,
+    "entries": [
+     131,
+     132
+    ],
+    "onlyInSecond": 0,
+    "byFile": {},
+    "list": [],
+    "onlyInFirst": 0,
+    "entryEndDifferences": [
+     {
+      "entry": "tests/moved-code.test.js",
+      "first": null,
+      "second": "0/0"
+     }
+    ]
+   }
+  },
+  "plain": {
+   "base": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 172,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": 0
+    },
+    "clicks": {
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": 0
+    },
+    "shipyard": {
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 172,
+     "fails": 0
+    },
+    "otherScripts": 13,
+    "otherScriptsFailed": [
+     "scripts/test-calendar-attachments.js",
+     "scripts/test-universal-import.js"
+    ],
+    "testFiles": 114,
+    "testFilesExit0": 88,
+    "testFilesFailed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   },
+   "main666": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 184,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": 0
+    },
+    "clicks": {
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": 0
+    },
+    "shipyard": {
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 184,
+     "fails": 0
+    },
+    "otherScripts": 13,
+    "otherScriptsFailed": [
+     "scripts/test-calendar-attachments.js",
+     "scripts/test-universal-import.js"
+    ],
+    "testFiles": 115,
+    "testFilesExit0": 89,
+    "testFilesFailed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   },
+   "main667": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 185,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": 0
+    },
+    "clicks": {
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": 0
+    },
+    "shipyard": {
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 185,
+     "fails": 0
+    },
+    "otherScripts": 13,
+    "otherScriptsFailed": [
+     "scripts/test-calendar-attachments.js",
+     "scripts/test-universal-import.js"
+    ],
+    "testFiles": 114,
+    "testFilesExit0": 88,
+    "testFilesFailed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   },
+   "main668": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 172,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": 0
+    },
+    "clicks": {
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": 0
+    },
+    "shipyard": {
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 172,
+     "fails": 0
+    },
+    "otherScripts": 13,
+    "otherScriptsFailed": [
+     "scripts/test-calendar-attachments.js",
+     "scripts/test-universal-import.js"
+    ],
+    "testFiles": 114,
+    "testFilesExit0": 88,
+    "testFilesFailed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   },
+   "main669": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 172,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": 0
+    },
+    "clicks": {
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": 0
+    },
+    "shipyard": {
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 172,
+     "fails": 0
+    },
+    "otherScripts": 13,
+    "otherScriptsFailed": [
+     "scripts/test-calendar-attachments.js",
+     "scripts/test-universal-import.js"
+    ],
+    "testFiles": 114,
+    "testFilesExit0": 88,
+    "testFilesFailed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   },
+   "mainAll": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 185,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": 0
+    },
+    "clicks": {
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": 0
+    },
+    "shipyard": {
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 185,
+     "fails": 0
+    },
+    "otherScripts": 13,
+    "otherScriptsFailed": [
+     "scripts/test-calendar-attachments.js",
+     "scripts/test-universal-import.js"
+    ],
+    "testFiles": 115,
+    "testFilesExit0": 89,
+    "testFilesFailed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   }
+  }
+ },
+ "mockPlain": {
+  "mockA": {
+   "npmTestExit": 1,
+   "checkLines": 427,
+   "okLines": 0,
+   "smoke": {
+    "exit": 1,
+    "checkLines": 427,
+    "okLines": 0,
+    "fails": 12
+   },
+   "gate": {
+    "exit": 1,
+    "checkLines": 37,
+    "okLines": 0,
+    "fails": 1
+   },
+   "clicks": {
+    "exit": 1,
+    "checkLines": 3,
+    "okLines": 0,
+    "fails": 0
+   },
+   "shipyard": {
+    "exit": 1,
+    "checkLines": 5,
+    "okLines": 0,
+    "fails": 1
+   },
+   "otherScripts": 13,
+   "otherScriptsFailed": [
+    "scripts/test-calendar-attachments.js",
+    "scripts/test-universal-import.js"
+   ],
+   "testFiles": 114,
+   "testFilesExit0": 80,
+   "testFilesFailed": [
+    "tests/achievement-stats-shell-button-removal.test.js",
+    "tests/app-evaluation-notice.test.js",
+    "tests/avatar-10slots-growth.test.js",
+    "tests/avatar-icon-enlarge-all.test.js",
+    "tests/avatar-welcome-modal.test.js",
+    "tests/calendar-photo-diary-dismiss-guide.test.js",
+    "tests/comm-feed-cleanup.test.js",
+    "tests/comm-post-feed-button-fix.test.js",
+    "tests/component-modularization.test.js",
+    "tests/cross-tab-guarded-init-es502.test.js",
+    "tests/cross-tab-inline-owned-es507.test.js",
+    "tests/dm-delivery-read-receipt.test.js",
+    "tests/dm-keyboard-autofocus-fix.test.js",
+    "tests/enlarge-avatar-icons.test.js",
+    "tests/feed-ai-bot-reduction.test.js",
+    "tests/feed-post-category-diversity.test.js",
+    "tests/feed-post-photo-upload.test.js",
+    "tests/feed-post-selectable-targets.test.js",
+    "tests/feed-share-latest-record.test.js",
+    "tests/gcal-login-reconnect-fix.test.js",
+    "tests/goal-ai-advice-status.test.js",
+    "tests/goal-template-legacy-cleanup.test.js",
+    "tests/goals-only-view.test.js",
+    "tests/goals-schedule-sync.test.js",
+    "tests/goals-smart-attachments.test.js",
+    "tests/module-guard.test.js",
+    "tests/new-module.test.js",
+    "tests/records-stats-metrics.test.js",
+    "tests/remove-duplicate-home-layout-button.test.js",
+    "tests/routine-tab-scheduler.test.js",
+    "tests/settings-collapse-default.test.js",
+    "tests/stopwatch-lap-inputs.test.js",
+    "tests/stopwatch-table-hint.test.js",
+    "tests/trio-es143-es145.test.js"
+   ]
+  },
+  "afterA": {
+   "npmTestExit": 1,
+   "checkLines": 428,
+   "okLines": 0,
+   "smoke": {
+    "exit": 1,
+    "checkLines": 428,
+    "okLines": 0,
+    "fails": 11
+   },
+   "gate": {
+    "exit": 1,
+    "checkLines": 37,
+    "okLines": 0,
+    "fails": 1
+   },
+   "clicks": {
+    "exit": 1,
+    "checkLines": 3,
+    "okLines": 0,
+    "fails": 0
+   },
+   "shipyard": {
+    "exit": 1,
+    "checkLines": 5,
+    "okLines": 0,
+    "fails": 1
+   },
+   "otherScripts": 13,
+   "otherScriptsFailed": [
+    "scripts/test-calendar-attachments.js",
+    "scripts/test-universal-import.js"
+   ],
+   "testFiles": 115,
+   "testFilesExit0": 84,
+   "testFilesFailed": [
+    "tests/achievement-stats-shell-button-removal.test.js",
+    "tests/app-evaluation-notice.test.js",
+    "tests/avatar-icon-enlarge-all.test.js",
+    "tests/avatar-welcome-modal.test.js",
+    "tests/calendar-photo-diary-dismiss-guide.test.js",
+    "tests/comm-feed-cleanup.test.js",
+    "tests/comm-post-feed-button-fix.test.js",
+    "tests/component-modularization.test.js",
+    "tests/dm-delivery-read-receipt.test.js",
+    "tests/dm-keyboard-autofocus-fix.test.js",
+    "tests/enlarge-avatar-icons.test.js",
+    "tests/feed-ai-bot-reduction.test.js",
+    "tests/feed-post-category-diversity.test.js",
+    "tests/feed-post-photo-upload.test.js",
+    "tests/feed-post-selectable-targets.test.js",
+    "tests/feed-share-latest-record.test.js",
+    "tests/gcal-login-reconnect-fix.test.js",
+    "tests/goal-ai-advice-status.test.js",
+    "tests/goal-template-legacy-cleanup.test.js",
+    "tests/goals-only-view.test.js",
+    "tests/goals-schedule-sync.test.js",
+    "tests/goals-smart-attachments.test.js",
+    "tests/module-guard.test.js",
+    "tests/new-module.test.js",
+    "tests/records-stats-metrics.test.js",
+    "tests/remove-duplicate-home-layout-button.test.js",
+    "tests/routine-tab-scheduler.test.js",
+    "tests/settings-collapse-default.test.js",
+    "tests/stopwatch-lap-inputs.test.js",
+    "tests/stopwatch-table-hint.test.js",
+    "tests/trio-es143-es145.test.js"
+   ]
+  },
+  "mockB": {
+   "npmTestExit": 1,
+   "checkLines": 438,
+   "okLines": 0,
+   "smoke": {
+    "exit": 1,
+    "checkLines": 438,
+    "okLines": 0,
+    "fails": 1
+   },
+   "gate": {
+    "exit": 1,
+    "checkLines": 37,
+    "okLines": 0,
+    "fails": 1
+   },
+   "clicks": {
+    "exit": 0,
+    "checkLines": 3,
+    "okLines": 0,
+    "fails": 0
+   },
+   "shipyard": {
+    "exit": 1,
+    "checkLines": 5,
+    "okLines": 0,
+    "fails": 1
+   },
+   "otherScripts": 13,
+   "otherScriptsFailed": [
+    "scripts/test-calendar-attachments.js",
+    "scripts/test-universal-import.js"
+   ],
+   "testFiles": 114,
+   "testFilesExit0": 82,
+   "testFilesFailed": [
+    "tests/achievement-stats-shell-button-removal.test.js",
+    "tests/app-evaluation-notice.test.js",
+    "tests/avatar-10slots-growth.test.js",
+    "tests/avatar-icon-enlarge-all.test.js",
+    "tests/avatar-welcome-modal.test.js",
+    "tests/calendar-photo-diary-dismiss-guide.test.js",
+    "tests/comm-feed-cleanup.test.js",
+    "tests/comm-post-feed-button-fix.test.js",
+    "tests/component-modularization.test.js",
+    "tests/cross-tab-guarded-init-es502.test.js",
+    "tests/cross-tab-inline-owned-es507.test.js",
+    "tests/dm-delivery-read-receipt.test.js",
+    "tests/dm-keyboard-autofocus-fix.test.js",
+    "tests/enlarge-avatar-icons.test.js",
+    "tests/feed-ai-bot-reduction.test.js",
+    "tests/feed-post-category-diversity.test.js",
+    "tests/feed-post-photo-upload.test.js",
+    "tests/feed-post-selectable-targets.test.js",
+    "tests/feed-share-latest-record.test.js",
+    "tests/gcal-login-reconnect-fix.test.js",
+    "tests/goal-ai-advice-status.test.js",
+    "tests/goal-template-legacy-cleanup.test.js",
+    "tests/goals-only-view.test.js",
+    "tests/goals-schedule-sync.test.js",
+    "tests/goals-smart-attachments.test.js",
+    "tests/module-guard.test.js",
+    "tests/new-module.test.js",
+    "tests/records-stats-metrics.test.js",
+    "tests/remove-duplicate-home-layout-button.test.js",
+    "tests/routine-tab-scheduler.test.js",
+    "tests/settings-collapse-default.test.js",
+    "tests/trio-es143-es145.test.js"
+   ]
+  },
+  "afterB": {
+   "npmTestExit": 1,
+   "checkLines": 485,
+   "okLines": 0,
+   "smoke": {
+    "exit": 0,
+    "checkLines": 439,
+    "okLines": 0,
+    "fails": 0
+   },
+   "gate": {
+    "exit": 0,
+    "checkLines": 38,
+    "okLines": 0,
+    "fails": 0
+   },
+   "clicks": {
+    "exit": 0,
+    "checkLines": 3,
+    "okLines": 0,
+    "fails": 0
+   },
+   "shipyard": {
+    "exit": 1,
+    "checkLines": 5,
+    "okLines": 0,
+    "fails": 1
+   },
+   "otherScripts": 13,
+   "otherScriptsFailed": [
+    "scripts/test-calendar-attachments.js",
+    "scripts/test-universal-import.js"
+   ],
+   "testFiles": 115,
+   "testFilesExit0": 86,
+   "testFilesFailed": [
+    "tests/achievement-stats-shell-button-removal.test.js",
+    "tests/app-evaluation-notice.test.js",
+    "tests/avatar-icon-enlarge-all.test.js",
+    "tests/avatar-welcome-modal.test.js",
+    "tests/calendar-photo-diary-dismiss-guide.test.js",
+    "tests/comm-feed-cleanup.test.js",
+    "tests/comm-post-feed-button-fix.test.js",
+    "tests/component-modularization.test.js",
+    "tests/dm-delivery-read-receipt.test.js",
+    "tests/dm-keyboard-autofocus-fix.test.js",
+    "tests/enlarge-avatar-icons.test.js",
+    "tests/feed-ai-bot-reduction.test.js",
+    "tests/feed-post-category-diversity.test.js",
+    "tests/feed-post-photo-upload.test.js",
+    "tests/feed-post-selectable-targets.test.js",
+    "tests/feed-share-latest-record.test.js",
+    "tests/gcal-login-reconnect-fix.test.js",
+    "tests/goal-ai-advice-status.test.js",
+    "tests/goal-template-legacy-cleanup.test.js",
+    "tests/goals-only-view.test.js",
+    "tests/goals-schedule-sync.test.js",
+    "tests/goals-smart-attachments.test.js",
+    "tests/module-guard.test.js",
+    "tests/new-module.test.js",
+    "tests/records-stats-metrics.test.js",
+    "tests/remove-duplicate-home-layout-button.test.js",
+    "tests/routine-tab-scheduler.test.js",
+    "tests/settings-collapse-default.test.js",
+    "tests/trio-es143-es145.test.js"
+   ]
+  },
+  "limAfterBreg": {
+   "npmTestExit": 0,
+   "checkLines": 487,
+   "okLines": 185,
+   "smoke": {
+    "exit": 0,
+    "checkLines": 439,
+    "okLines": 0,
+    "fails": 0
+   },
+   "gate": {
+    "exit": 0,
+    "checkLines": 38,
+    "okLines": 0,
+    "fails": 0
+   },
+   "clicks": {
+    "exit": 0,
+    "checkLines": 3,
+    "okLines": 0,
+    "fails": 0
+   },
+   "shipyard": {
+    "exit": 0,
+    "checkLines": 7,
+    "okLines": 185,
+    "fails": 0
+   },
+   "otherScripts": 13,
+   "otherScriptsFailed": [
+    "scripts/test-calendar-attachments.js",
+    "scripts/test-universal-import.js"
+   ],
+   "testFiles": 115,
+   "testFilesExit0": 89,
+   "testFilesFailed": [
+    "tests/achievement-stats-shell-button-removal.test.js",
+    "tests/app-evaluation-notice.test.js",
+    "tests/avatar-icon-enlarge-all.test.js",
+    "tests/avatar-welcome-modal.test.js",
+    "tests/calendar-photo-diary-dismiss-guide.test.js",
+    "tests/comm-feed-cleanup.test.js",
+    "tests/comm-post-feed-button-fix.test.js",
+    "tests/component-modularization.test.js",
+    "tests/dm-delivery-read-receipt.test.js",
+    "tests/dm-keyboard-autofocus-fix.test.js",
+    "tests/enlarge-avatar-icons.test.js",
+    "tests/feed-ai-bot-reduction.test.js",
+    "tests/feed-post-category-diversity.test.js",
+    "tests/feed-post-photo-upload.test.js",
+    "tests/feed-post-selectable-targets.test.js",
+    "tests/feed-share-latest-record.test.js",
+    "tests/goal-ai-advice-status.test.js",
+    "tests/goal-template-legacy-cleanup.test.js",
+    "tests/goals-only-view.test.js",
+    "tests/goals-schedule-sync.test.js",
+    "tests/goals-smart-attachments.test.js",
+    "tests/records-stats-metrics.test.js",
+    "tests/remove-duplicate-home-layout-button.test.js",
+    "tests/routine-tab-scheduler.test.js",
+    "tests/settings-collapse-default.test.js",
+    "tests/trio-es143-es145.test.js"
+   ]
+  }
+ },
+ "metrics": {
+  "base": {
+   "ratchet": {
+    "inlineScriptLines": 1917,
+    "indexFunctionDecls": 22,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "crossTabRefs": [],
+   "organOwnedNames": null,
+   "inlineOwnedNames": 4
+  },
+  "mainAll": {
+   "ratchet": {
+    "inlineScriptLines": 1917,
+    "indexFunctionDecls": 22,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "crossTabRefs": [],
+   "organOwnedNames": 32,
+   "inlineOwnedNames": 4
+  },
+  "main667": {
+   "ratchet": {
+    "inlineScriptLines": 1917,
+    "indexFunctionDecls": 22,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "crossTabRefs": [],
+   "organOwnedNames": 32,
+   "inlineOwnedNames": 4
+  },
+  "mockA": {
+   "ratchet": {
+    "inlineScriptLines": 22,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 1,
+     "files": {
+      "js/app/boot.js": 1895
+     }
+    },
+    "crossTabRefs": 1
+   },
+   "crossTabRefs": [
+    {
+     "from": "goals",
+     "to": "comm",
+     "file": "js/tabs/goals/team-goals-screen.js",
+     "line": 22
+    }
+   ],
+   "organOwnedNames": null,
+   "inlineOwnedNames": 1
+  },
+  "mockB": {
+   "ratchet": {
+    "inlineScriptLines": 22,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 74,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 1
+   },
+   "crossTabRefs": [
+    {
+     "from": "goals",
+     "to": "comm",
+     "file": "js/tabs/goals/team-goals-screen.js",
+     "line": 22
+    }
+   ],
+   "organOwnedNames": null,
+   "inlineOwnedNames": 1
+  },
+  "afterA": {
+   "ratchet": {
+    "inlineScriptLines": 22,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 1,
+     "files": {
+      "js/app/boot.js": 1895
+     }
+    },
+    "crossTabRefs": 0
+   },
+   "crossTabRefs": [],
+   "organOwnedNames": 35,
+   "inlineOwnedNames": 1
+  },
+  "afterB": {
+   "ratchet": {
+    "inlineScriptLines": 22,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 74,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "crossTabRefs": [],
+   "organOwnedNames": 34,
+   "inlineOwnedNames": 1
+  },
+  "afterB667": {
+   "ratchet": {
+    "inlineScriptLines": 22,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 74,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "crossTabRefs": [],
+   "organOwnedNames": 34,
+   "inlineOwnedNames": 1
+  },
+  "mainSame": true,
+  "organOwnedOnMain": [
+   "MANITO_STAMP_COOLDOWN",
+   "MOCK_GROUPS",
+   "OURGOAL_CONFIG",
+   "OurgoalAppScope",
+   "OurgoalAppState",
+   "OurgoalBlockRegistry",
+   "OurgoalCapabilities",
+   "OurgoalCellRegistry",
+   "OurgoalEventBus",
+   "OurgoalEvents",
+   "OurgoalRegistry",
+   "OurgoalSlots",
+   "OurgoalStateStore",
+   "OurgoalStore",
+   "OurgoalUiHelpers",
+   "THEMES",
+   "_dateRolloverInterval",
+   "_homeDateOffset",
+   "_modalOpenAt",
+   "_schedReminderPoller",
+   "_subtabTplDomain",
+   "_subtabTplType",
+   "checkAndHandleDateRollover",
+   "currentGoalStatPeriod",
+   "handleGoalFastAddSubmit",
+   "renderTeamGoalsScreen",
+   "selectSmartTag",
+   "selectedGoalSmartTag",
+   "setupDateRolloverWatcher",
+   "startScheduleReminderPoller",
+   "state",
+   "switchTab"
+  ]
+ },
+ "guard": {
+  "base": {
+   "exit": 0,
+   "failures": []
+  },
+  "mainAll": {
+   "exit": 0,
+   "failures": []
+  },
+  "main667": {
+   "exit": 0,
+   "failures": []
+  },
+  "mockA": {
+   "exit": 1,
+   "failures": [
+    "- ⑤ 탭 간 직접 참조 수: 0 → 1 (+1) — 늘었다",
+    "- ④ 800줄 초과 js 파일 수: 0 → 1 (+1) — 늘었다",
+    "- ④ js/app/boot.js: 새로 800줄을 넘었다(1895줄) — 책임 단위로 나눈다",
+    "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+   ]
+  },
+  "mockB": {
+   "exit": 1,
+   "failures": [
+    "- ⑤ 탭 간 직접 참조 수: 0 → 1 (+1) — 늘었다",
+    "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/core/zz-mock-boot-rest.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions-2.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+   ]
+  },
+  "afterA": {
+   "exit": 1,
+   "failures": [
+    "- ④ 800줄 초과 js 파일 수: 0 → 1 (+1) — 늘었다",
+    "- ④ js/app/boot.js: 새로 800줄을 넘었다(1895줄) — 책임 단위로 나눈다",
+    "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+   ]
+  },
+  "afterB": {
+   "exit": 1,
+   "failures": [
+    "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/core/zz-mock-boot-rest.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions-2.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+   ]
+  },
+  "afterB667": {
+   "exit": 1,
+   "failures": [
+    "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/core/zz-mock-boot-rest.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions-2.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+    "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+   ]
+  }
+ },
+ "relax": {
+  "limB": {
+   "crossTabRefsMeasured": 1,
+   "baselineCrossTabRefs": 0,
+   "guardBeforeRelax": {
+    "exit": 1,
+    "failures": [
+     "- ⑤ 탭 간 직접 참조 수: 0 → 1 (+1) — 늘었다",
+     "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/core/zz-mock-boot-rest.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions-2.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+    ]
+   },
+   "guardAfterRelax": {
+    "exit": 1,
+    "failures": [
+     "- ⑤ 탭 간 직접 참조 수: 0 → 1 (+1) — 늘었다"
+    ],
+    "lastLine": "  규칙: docs/architecture/MODULE-BLUEPRINT.md 「래칫」. 꼭 늘려야 하면 --update --reason \"<20자 이상 사유>\""
+   },
+   "specKindSetToOrgan": [
+    "js/app/boot.js"
+   ]
+  },
+  "limAfterB": {
+   "crossTabRefsMeasured": 0,
+   "baselineCrossTabRefs": 0,
+   "guardBeforeRelax": {
+    "exit": 1,
+    "failures": [
+     "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/core/zz-mock-boot-rest.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions-2.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+    ]
+   },
+   "guardAfterRelax": {
+    "exit": 0,
+    "failures": [],
+    "lastLine": "✓ 모듈 가드 통과"
+   },
+   "specKindSetToOrgan": [
+    "js/app/boot.js"
+   ]
+  },
+  "limAfterBreg": {
+   "crossTabRefsMeasured": 0,
+   "baselineCrossTabRefs": 0,
+   "guardBeforeRelax": {
+    "exit": 1,
+    "failures": [
+     "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/core/zz-mock-boot-rest.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions-2.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+    ]
+   },
+   "guardAfterRelax": {
+    "exit": 0,
+    "failures": [],
+    "lastLine": "✓ 모듈 가드 통과"
+   },
+   "specKindSetToOrgan": [
+    "js/app/boot.js"
+   ]
+  },
+  "ctl": {
+   "crossTabRefsMeasured": 0,
+   "baselineCrossTabRefs": 0,
+   "guardBeforeRelax": {
+    "exit": 1,
+    "failures": [
+     "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/core/zz-mock-boot-rest.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions-2.js — node scripts/module-specs.js --write 후 종류·능력을 적는다",
+     "- 신고서: 신고서 없는 세포: js/tabs/records/zz-mock-moved-functions.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
+    ]
+   },
+   "guardAfterRelax": {
+    "exit": 0,
+    "failures": [],
+    "lastLine": "✓ 모듈 가드 통과"
+   },
+   "specKindSetToOrgan": [
+    "js/app/boot.js"
+   ]
+  }
+ },
+ "control": {
+  "summary": {
+   "variants": 17,
+   "allAsExpected": true,
+   "byPr": [
+    {
+     "pr": 666,
+     "variants": 9,
+     "asExpected": 9
+    },
+    {
+     "pr": 667,
+     "variants": 3,
+     "asExpected": 3
+    },
+    {
+     "pr": 669,
+     "variants": 5,
+     "asExpected": 5
+    }
+   ],
+   "extraLines": 0
+  },
+  "treeRestored": true,
+  "variants": [
+   {
+    "id": "F1",
+    "pr": 666,
+    "what": "세포 js/tabs/settings/avatar-levelup-modal.js 의 함수 선언 이름을 filterHarmfulWords → filterHarmfulWordsGone 으로 바꿈(그 이름의 함수 선언이 사라짐)",
+    "newlyFailing": [
+     "tests/avatar-10slots-growth.test.js:76"
+    ],
+    "expected": [
+     "tests/avatar-10slots-growth.test.js:76"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "F2",
+    "pr": 666,
+    "what": "index.html 에서 js/tabs/settings/avatar-levelup-modal.js 의 <script src> 태그를 뺌(읽지 않는 파일은 세포가 아니다)",
+    "newlyFailing": [
+     "tests/avatar-10slots-growth.test.js:76"
+    ],
+    "expected": [
+     "tests/avatar-10slots-growth.test.js:76"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "F3",
+    "pr": 666,
+    "what": "세포 js/tabs/settings/avatar-levelup-modal.js 의 함수 선언 이름을 바꾸고 옛 이름은 주석 안에만 남김(주석 안의 글자는 선언이 아니다)",
+    "newlyFailing": [
+     "tests/avatar-10slots-growth.test.js:76"
+    ],
+    "expected": [
+     "tests/avatar-10slots-growth.test.js:76"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "S1",
+    "pr": 666,
+    "what": "js/creator-templates-legacy.js 의 templatesHtml 첫 문(무해화 반환문)을 다른 문으로 바꿈",
+    "newlyFailing": [
+     "scripts/smoke-test.js:9983",
+     "tests/goal-template-legacy-cleanup.test.js:43"
+    ],
+    "expected": [
+     "scripts/smoke-test.js:9983",
+     "tests/goal-template-legacy-cleanup.test.js:43"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "S2",
+    "pr": 666,
+    "what": "js/creator-templates-legacy.js 의 templatesHtml 첫 문 앞에 다른 문을 끼움(무해화 반환문이 둘째 문이 됨)",
+    "newlyFailing": [
+     "scripts/smoke-test.js:9983",
+     "tests/goal-template-legacy-cleanup.test.js:43"
+    ],
+    "expected": [
+     "scripts/smoke-test.js:9983",
+     "tests/goal-template-legacy-cleanup.test.js:43"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "G1",
+    "pr": 669,
+    "what": "구역 세포(모의)에서 상태 기관 호출 줄 defineVar('_promptEncyclopediaOpen', false) 를 지움",
+    "newlyFailing": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "expected": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "G2",
+    "pr": 669,
+    "what": "상태 기관 호출의 초기값을 false → true 로 바꿈",
+    "newlyFailing": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "expected": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "G3",
+    "pr": 669,
+    "what": "상태 기관 호출의 이름을 다른 이름으로 바꿈",
+    "newlyFailing": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "expected": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "G4",
+    "pr": 669,
+    "what": "호출을 주석으로 바꿈(주석 안의 호출 글자는 상태 선언이 아니다)",
+    "newlyFailing": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "expected": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "G5",
+    "pr": 669,
+    "what": "index.html 에서 상태 기관(js/core/app-state.js)의 <script src> 태그를 뺌(기관을 읽지 않으면 호출은 값을 만들지 못한다)",
+    "newlyFailing": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "expected": [
+     "scripts/verify-integrity-gate.js:961"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "R1",
+    "pr": 666,
+    "what": "세포 js/core/gcal-token-save.js 의 등록 블록 window 목록에서 saveGoogleToken 을 뺌(모의 등록을 되돌림)",
+    "newlyFailing": [
+     "tests/gcal-login-reconnect-fix.test.js:25"
+    ],
+    "expected": [
+     "tests/gcal-login-reconnect-fix.test.js:25"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "B1",
+    "pr": 666,
+    "what": "합본이 읽는 파일 전부(index.html + 인라인에서 옮겨 간 세포)에서 글자 renderGoalsScreen(); 을 지움",
+    "newlyFailing": [
+     "tests/goals-only-view.test.js:65",
+     "tests/goals-schedule-sync.test.js:98"
+    ],
+    "expected": [
+     "tests/goals-only-view.test.js:65",
+     "tests/goals-schedule-sync.test.js:98"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": {
+     "renderGoalsScreen();": 15
+    }
+   },
+   {
+    "id": "B2",
+    "pr": 666,
+    "what": "합본이 읽는 파일 전부에서 글자 b.classList.add('active') · b.classList.remove('active') 를 지움",
+    "newlyFailing": [
+     "tests/trio-es143-es145.test.js:50"
+    ],
+    "expected": [
+     "tests/trio-es143-es145.test.js:50"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": {
+     "b.classList.add('active')": 4,
+     "b.classList.remove('active')": 8
+    }
+   },
+   {
+    "id": "B3",
+    "pr": 666,
+    "what": "옮겨 간 함수의 세포(모의 탭 세포)에서만 글자 renderGoalsScreen(); 을 지움 — 다른 세포에도 그 글자가 있으면 단언은 참으로 남는다(기대: 새로 실패 0)",
+    "newlyFailing": [],
+    "expected": [],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": {
+     "renderGoalsScreen();": 15
+    }
+   },
+   {
+    "id": "M1",
+    "pr": 667,
+    "what": "구역 세포(모의)에서 기관이 window 에 다는 줄 window.SHARED_GROUPS_LOADED = false 를 지움(기관이 주인이 아니게 됨 → ⑤ 가 다시 1)",
+    "newlyFailing": [
+     "scripts/test-shipyard-modular.js:150",
+     "tests/cross-tab-guarded-init-es502.test.js:67",
+     "tests/cross-tab-inline-owned-es507.test.js:67",
+     "tests/module-guard.test.js:61",
+     "tests/module-guard.test.js:62",
+     "tests/new-module.test.js:65"
+    ],
+    "expected": [
+     "scripts/test-shipyard-modular.js:150",
+     "tests/cross-tab-inline-owned-es507.test.js:67",
+     "tests/cross-tab-guarded-init-es502.test.js:67",
+     "tests/new-module.test.js:65",
+     "tests/module-guard.test.js:61",
+     "tests/module-guard.test.js:62"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "M2",
+    "pr": 667,
+    "what": "그 줄을 방어 초기화 꼴(if(!window.X) window.X = false)로 바꿈 — 없으면 채우기는 주인이 아니다(⑤ 가 다시 1)",
+    "newlyFailing": [
+     "scripts/test-shipyard-modular.js:150",
+     "tests/cross-tab-guarded-init-es502.test.js:67",
+     "tests/cross-tab-inline-owned-es507.test.js:67",
+     "tests/module-guard.test.js:61",
+     "tests/module-guard.test.js:62",
+     "tests/new-module.test.js:65"
+    ],
+    "expected": [
+     "scripts/test-shipyard-modular.js:150",
+     "tests/cross-tab-inline-owned-es507.test.js:67",
+     "tests/cross-tab-guarded-init-es502.test.js:67",
+     "tests/new-module.test.js:65",
+     "tests/module-guard.test.js:61",
+     "tests/module-guard.test.js:62"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   },
+   {
+    "id": "M3",
+    "pr": 667,
+    "what": "그 줄을 js/core 밖의 옛 파일(js/zz-control-legacy.js)로 옮김 — 기관이 아닌 파일이 다는 이름은 주인이 아니다(⑤ 가 다시 1)",
+    "newlyFailing": [
+     "scripts/test-shipyard-modular.js:150",
+     "tests/cross-tab-guarded-init-es502.test.js:67",
+     "tests/cross-tab-inline-owned-es507.test.js:67",
+     "tests/module-guard.test.js:61",
+     "tests/module-guard.test.js:62",
+     "tests/new-module.test.js:65"
+    ],
+    "expected": [
+     "scripts/test-shipyard-modular.js:150",
+     "tests/cross-tab-inline-owned-es507.test.js:67",
+     "tests/cross-tab-guarded-init-es502.test.js:67",
+     "tests/new-module.test.js:65",
+     "tests/module-guard.test.js:61",
+     "tests/module-guard.test.js:62"
+    ],
+    "extraNewlyFailing": [],
+    "asExpected": true,
+    "textOccurrencesInBundleFiles": null
+   }
+  ]
+ },
+ "tools": {
+  "main": {
+   "mapExit": [
+    0,
+    0
+   ],
+   "mapOutputSame": true,
+   "typesExit": [
+    0,
+    0
+   ],
+   "typesOutputSame": true,
+   "writtenFilesSame": true,
+   "mapHead": [
+    "인라인 지도: 묶음 52 · 옮길 대상 16 · IIFE 1895줄 · 함수 7 · window 3 · 출처 be466049ef41 → 기록함"
+   ],
+   "typesHead": [
+    "어려움 3묶음 1527줄 · 출처 be466049ef41"
+   ],
+   "committedMapStale": [
+    "M docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
+    "M docs/architecture/INLINE-SCRIPT-MAP.md",
+    "M docs/architecture/inline-hard-types.json",
+    "M docs/architecture/inline-script-map.json"
+   ]
+  },
+  "mock": {
+   "beforeA": {
+    "map": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockA/scripts/inline-script-map.js:39",
+      "if (sLine < 0) throw new Error('큰 인라인 IIFE 를 못 찾음');"
+     ],
+     "message": "Error: 큰 인라인 IIFE 를 못 찾음"
+    },
+    "types": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockA/scripts/inline-hard-types.js:55",
+      "  throw new Error('지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 ' + MAP.source.sha256_12 + ' · 지금 ' + sha + ')');"
+     ],
+     "message": "Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 e8c01d4986e3 · 지금 804da07bb977)"
+    },
+    "testProbe": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockA/scripts/inline-hard-test-probe.js:29",
+      "if (MAP.source.sha256_12 !== sha) throw new Error('사본 index.html 이 지도와 다르다(지도 ' + MAP.source.sha256_12 + ' · 사본 ' + sha + ')');"
+     ],
+     "message": "Error: 사본 index.html 이 지도와 다르다(지도 e8c01d4986e3 · 사본 804da07bb977)"
+    },
+    "generator": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockA/docs/design/harness/module-split/gen-inline-hard.js:32",
+      "for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }"
+     ],
+     "message": "TypeError: Cannot read properties of undefined (reading 'startsWith')",
+     "treeUnchanged": true
+    }
+   },
+   "beforeB": {
+    "map": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockB/scripts/inline-script-map.js:39",
+      "if (sLine < 0) throw new Error('큰 인라인 IIFE 를 못 찾음');"
+     ],
+     "message": "Error: 큰 인라인 IIFE 를 못 찾음"
+    },
+    "types": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockB/scripts/inline-hard-types.js:55",
+      "  throw new Error('지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 ' + MAP.source.sha256_12 + ' · 지금 ' + sha + ')');"
+     ],
+     "message": "Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 e8c01d4986e3 · 지금 103f031b53ad)"
+    },
+    "testProbe": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockB/scripts/inline-hard-test-probe.js:29",
+      "if (MAP.source.sha256_12 !== sha) throw new Error('사본 index.html 이 지도와 다르다(지도 ' + MAP.source.sha256_12 + ' · 사본 ' + sha + ')');"
+     ],
+     "message": "Error: 사본 index.html 이 지도와 다르다(지도 e8c01d4986e3 · 사본 103f031b53ad)"
+    },
+    "generator": {
+     "exit": 1,
+     "head": [
+      "<임시 폴더>/es666-n-toolMockB/docs/design/harness/module-split/gen-inline-hard.js:32",
+      "for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }"
+     ],
+     "message": "TypeError: Cannot read properties of undefined (reading 'startsWith')",
+     "treeUnchanged": true
+    }
+   },
+   "afterA": {
+    "map": {
+     "exit": 0,
+     "head": [
+      "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 줄 0 으로 적는다)",
+      "인라인 지도: 묶음 0 · 옮길 대상 0 · IIFE 0줄 · 함수 0 · window 0 · 출처 804da07bb977 → 기록함"
+     ],
+     "message": "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 줄 0 으로 적는다)"
+    },
+    "types": {
+     "exit": 0,
+     "head": [
+      "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다)",
+      "어려움 0묶음 0줄 · 출처 804da07bb977"
+     ],
+     "message": "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다)"
+    },
+    "testProbe": {
+     "exit": 0,
+     "head": [
+      "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다)",
+      "시험지 0개(기준 실패 0 · 흔들림 0) · 묶음 0 중 시험지 선행 필요 0 · 깨지는 시험지 0개"
+     ],
+     "message": "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다)"
+    },
+    "generator": {
+     "exit": 3,
+     "head": [
+      "gen-inline-hard: 옮길 덩어리가 없다 — <임시 폴더>/es666-n-toolA/index.html 에 큰 인라인 IIFE(`<script>` 다음 줄 `(function(){`, 그 다음 줄 \"use strict\")가 없다. 아무 파일도 쓰지 않았다(종료 코드 3)."
+     ],
+     "message": "gen-inline-hard: 옮길 덩어리가 없다 — <임시 폴더>/es666-n-toolA/index.html 에 큰 인라인 IIFE(`<script>` 다음 줄 `(function(){`, 그 다음 줄 \"use strict\")가 없다. 아무 파일도 쓰지 않았다(종료 코드 3).",
+     "treeUnchanged": true
+    }
+   },
+   "afterB": {
+    "map": {
+     "exit": 0,
+     "head": [
+      "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 줄 0 으로 적는다)",
+      "인라인 지도: 묶음 0 · 옮길 대상 0 · IIFE 0줄 · 함수 0 · window 0 · 출처 103f031b53ad → 기록함"
+     ],
+     "message": "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 줄 0 으로 적는다)"
+    },
+    "types": {
+     "exit": 0,
+     "head": [
+      "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다)",
+      "어려움 0묶음 0줄 · 출처 103f031b53ad"
+     ],
+     "message": "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다)"
+    },
+    "testProbe": {
+     "exit": 0,
+     "head": [
+      "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다)",
+      "시험지 0개(기준 실패 0 · 흔들림 0) · 묶음 0 중 시험지 선행 필요 0 · 깨지는 시험지 0개"
+     ],
+     "message": "큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다)"
+    },
+    "generator": {
+     "exit": 3,
+     "head": [
+      "gen-inline-hard: 옮길 덩어리가 없다 — <임시 폴더>/es666-n-toolB/index.html 에 큰 인라인 IIFE(`<script>` 다음 줄 `(function(){`, 그 다음 줄 \"use strict\")가 없다. 아무 파일도 쓰지 않았다(종료 코드 3)."
+     ],
+     "message": "gen-inline-hard: 옮길 덩어리가 없다 — <임시 폴더>/es666-n-toolB/index.html 에 큰 인라인 IIFE(`<script>` 다음 줄 `(function(){`, 그 다음 줄 \"use strict\")가 없다. 아무 파일도 쓰지 않았다(종료 코드 3).",
+     "treeUnchanged": true
+    }
+   }
+  },
+  "probe": {
+   "main_base": {
+    "exit": 0,
+    "ok": true,
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 3,
+     "registered": 438,
+     "checked": 362,
+     "mismatches": 0,
+     "missing": 163,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 438,
+     "ownScope": 354,
+     "ownWindow": 180,
+     "lateProvides": 0
+    },
+    "windowNames": 3,
+    "noIife": null,
+    "head": null
+   },
+   "main_work": {
+    "exit": 0,
+    "ok": true,
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 3,
+     "registered": 438,
+     "checked": 362,
+     "mismatches": 0,
+     "missing": 163,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 438,
+     "ownScope": 354,
+     "ownWindow": 180,
+     "lateProvides": 0
+    },
+    "windowNames": 3,
+    "noIife": false,
+    "head": null
+   },
+   "mockA_base": {
+    "exit": 1,
+    "ok": null,
+    "counts": null,
+    "windowNames": null,
+    "noIife": null,
+    "head": [
+     "Error: index.html 인라인 IIFE 를 찾지 못했다"
+    ]
+   },
+   "mockA_work": {
+    "exit": 0,
+    "ok": true,
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 3,
+     "registered": 438,
+     "checked": 362,
+     "mismatches": 0,
+     "missing": 163,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 438,
+     "ownScope": 354,
+     "ownWindow": 180,
+     "lateProvides": 0
+    },
+    "windowNames": 3,
+    "noIife": true,
+    "head": null
+   },
+   "mockA_work_nonames": {
+    "exit": 0,
+    "ok": true,
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 0,
+     "registered": 438,
+     "checked": 362,
+     "mismatches": 0,
+     "missing": 160,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 438,
+     "ownScope": 354,
+     "ownWindow": 180,
+     "lateProvides": 0
+    },
+    "windowNames": 0,
+    "noIife": true,
+    "head": null
+   },
+   "mainCountsSame": true
+  }
+ },
+ "harness": {
+  "tests": [
+   {
+    "test": "guarded-check-670",
+    "exitBase": 0,
+    "exitWork": 1,
+    "lastLineBase": "27/27 통과",
+    "lastLineWork": "26/27 통과 · 실패: D",
+    "failedLinesBase": [],
+    "failedLinesWork": [
+     "FAIL D 생성기 diff: 기준에서 사라진 줄은 셋(region 의 모르는 칸 검사 줄 · 잠금 검사 두 줄)뿐이고, region 구간 밖은 글자가 같다. 검사기는 기준과 같다 {\"pin\":\"5c567cd9470ba034303efa9a15eb9b3686f88ebf\",\"baseLines\":1583,\"nowLines\":1615,\"removed\":[{\"lin"
+    ],
+    "outputSame": false
+   }
+  ],
+  "exitsSame": false,
+  "nonZeroInBoth": [],
+  "changedByThisWork": [
+   "guarded-check-670"
+  ],
+  "base": {
+   "total": 27,
+   "passed": 27,
+   "failed": [],
+   "inner": {
+    "finalize662": {
+     "total": 45,
+     "passed": 43,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "sweep661": {
+     "total": 47,
+     "passed": 45,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "fnArguments657": {
+     "total": 22,
+     "passed": 21,
+     "failed": [
+      "D1"
+     ]
+    },
+    "region643": {
+     "total": 67,
+     "passed": 66,
+     "failed": [
+      "D0"
+     ]
+    },
+    "unstate634": "34/34",
+    "unwireExt619": "16/16",
+    "unwireB1": "8/8"
+   }
+  },
+  "work": {
+   "total": 27,
+   "passed": 26,
+   "failed": [
+    "D"
+   ],
+   "inner": {
+    "finalize662": {
+     "total": 45,
+     "passed": 43,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "sweep661": {
+     "total": 47,
+     "passed": 45,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "fnArguments657": {
+     "total": 22,
+     "passed": 21,
+     "failed": [
+      "D1"
+     ]
+    },
+    "region643": {
+     "total": 67,
+     "passed": 66,
+     "failed": [
+      "D0"
+     ]
+    },
+    "unstate634": "34/34",
+    "unwireExt619": "16/16",
+    "unwireB1": "8/8"
+   }
+  },
+  "innerSame": true,
+  "newlyFailedChecks": [
+   "D"
+  ],
+  "totalsSame": true
+ },
+ "summary": {
+  "mockA": {
+   "before": 40,
+   "afterAll": 32,
+   "beforeByFile": {
+    "scripts/smoke-test.js": 23,
+    "scripts/test-shipyard-modular.js": 1,
+    "scripts/verify-integrity-gate.js": 1,
+    "tests/avatar-10slots-growth.test.js": 1,
+    "tests/cross-tab-guarded-init-es502.test.js": 1,
+    "tests/cross-tab-inline-owned-es507.test.js": 1,
+    "tests/gcal-login-reconnect-fix.test.js": 1,
+    "tests/goal-template-legacy-cleanup.test.js": 1,
+    "tests/goals-only-view.test.js": 1,
+    "tests/goals-schedule-sync.test.js": 1,
+    "tests/module-guard.test.js": 2,
+    "tests/new-module.test.js": 1,
+    "tests/stopwatch-lap-inputs.test.js": 1,
+    "tests/stopwatch-table-hint.test.js": 3,
+    "tests/trio-es143-es145.test.js": 1
+   }
+  },
+  "mockB": {
+   "before": 14,
+   "afterAll": 5,
+   "afterAllRegistered": 4,
+   "beforeByFile": {
+    "scripts/smoke-test.js": 1,
+    "scripts/test-shipyard-modular.js": 1,
+    "scripts/verify-integrity-gate.js": 1,
+    "tests/avatar-10slots-growth.test.js": 1,
+    "tests/cross-tab-guarded-init-es502.test.js": 1,
+    "tests/cross-tab-inline-owned-es507.test.js": 1,
+    "tests/gcal-login-reconnect-fix.test.js": 1,
+    "tests/goal-template-legacy-cleanup.test.js": 1,
+    "tests/goals-only-view.test.js": 1,
+    "tests/goals-schedule-sync.test.js": 1,
+    "tests/module-guard.test.js": 2,
+    "tests/new-module.test.js": 1,
+    "tests/trio-es143-es145.test.js": 1
+   },
+   "limitsRemovedBefore": 14,
+   "limitsRemovedAfterAll": 1,
+   "limitsRemovedAfterAllRegistered": 0,
+   "remainingAfterAllRegistered": [],
+   "only666": 8,
+   "only667": 12,
+   "only669": 14
+  },
+  "main": {
+   "newlyFailingAll": 0,
+   "newlyFailing666": 0,
+   "newlyFailing667": 0,
+   "newlyFailing669": 0,
+   "goneAll": 0,
+   "npmTestExit": {
+    "base": 0,
+    "main666": 0,
+    "main667": 0,
+    "main668": 0,
+    "main669": 0,
+    "mainAll": 0
+   },
+   "checkLines": {
+    "main666": [
+     487,
+     487
+    ],
+    "main667": [
+     487,
+     487
+    ],
+    "main668": [
+     487,
+     487
+    ],
+    "main669": [
+     487,
+     487
+    ],
+    "mainAll": [
+     487,
+     487
+    ]
+   },
+   "okLines": {
+    "main666": [
+     172,
+     184
+    ],
+    "main667": [
+     172,
+     185
+    ],
+    "main668": [
+     172,
+     172
+    ],
+    "main669": [
+     172,
+     172
+    ],
+    "mainAll": [
+     172,
+     185
+    ]
+   },
+   "testFilesExit0": {
+    "main666": [
+     88,
+     89
+    ],
+    "main667": [
+     88,
+     88
+    ],
+    "main668": [
+     88,
+     88
+    ],
+    "main669": [
+     88,
+     88
+    ],
+    "mainAll": [
+     88,
+     89
+    ]
+   },
+   "testFiles": {
+    "main666": [
+     114,
+     115
+    ],
+    "main667": [
+     114,
+     114
+    ],
+    "main668": [
+     114,
+     114
+    ],
+    "main669": [
+     114,
+     114
+    ],
+    "mainAll": [
+     114,
+     115
+    ]
+   },
+   "smokeCheckLines": [
+    439,
+    439
+   ],
+   "gateCheckLines": [
+    38,
+    38
+   ]
+  },
+  "metrics": {
+   "mainSame": true,
+   "crossTabRefs": {
+    "base": 0,
+    "main667": 0,
+    "mockA": 1,
+    "mockB": 1,
+    "afterA": 0,
+    "afterB667": 0
+   },
+   "guardExit": {
+    "base": 0,
+    "main667": 0
+   },
+   "limBGuardFailures": 1,
+   "limAfterBGuardExit": 0
+  },
+  "control": {
+   "variants": 17,
+   "allAsExpected": true,
+   "byPr": [
+    {
+     "pr": 666,
+     "variants": 9,
+     "asExpected": 9
+    },
+    {
+     "pr": 667,
+     "variants": 3,
+     "asExpected": 3
+    },
+    {
+     "pr": 669,
+     "variants": 5,
+     "asExpected": 5
+    }
+   ],
+   "treeRestored": true
+  },
+  "tools": {
+   "mainMapOutputSame": true,
+   "mainTypesOutputSame": true,
+   "mainWrittenFilesSame": true,
+   "mainProbeCountsSame": true,
+   "mockExitBefore": {
+    "A": [
+     1,
+     1,
+     1,
+     1
+    ],
+    "B": [
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "mockExitAfter": {
+    "A": [
+     0,
+     0,
+     0,
+     3
+    ],
+    "B": [
+     0,
+     0,
+     0,
+     3
+    ]
+   },
+   "harnessBase": {
+    "total": 27,
+    "passed": 27,
+    "failed": []
+   },
+   "harnessWork": {
+    "total": 27,
+    "passed": 26,
+    "failed": [
+     "D"
+    ]
+   },
+   "harnessInnerSame": true,
+   "harnessNewlyFailedChecks": [
+    "D"
+   ],
+   "generatorTreeUnchangedAfter": [
+    true,
+    true
+   ],
+   "probeMockAExit": [
+    1,
+    0,
+    0
+   ],
+   "harnessExitsSame": false,
+   "harnessNonZeroInBoth": [],
+   "harnessChangedByThisWork": [
+    "guarded-check-670"
+   ]
+  }
+ },
+ "changedScope": {
+  "appCode": [],
+  "frozen": [],
+  "baseTests": [],
+  "courtProduct": [
+   "scripts/inline-hard-test-probe.js",
+   "scripts/inline-hard-types.js",
+   "scripts/inline-script-map.js",
+   "scripts/probes/cell-registry-compare.js"
+  ],
+  "generator": [
+   "docs/design/harness/module-split/gen-inline-hard.js"
+  ],
+  "docsAndReports": 6,
+  "vaultByConstitution": []
+ },
+ "changedFiles": [
+  "docs/design/harness/module-split/gen-inline-hard.js",
+  "docs/rules/TICKETS.md",
+  "docs/specs/REQ-TASK-ES-668-TOOLS-NO-IIFE.md",
+  "scripts/inline-hard-test-probe.js",
+  "scripts/inline-hard-types.js",
+  "scripts/inline-script-map.js",
+  "scripts/probes/cell-registry-compare.js"
+ ]
+}
