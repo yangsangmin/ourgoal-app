@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "b57a8a102eb8244893be10bb74d986e3586773e2",
-  "short": "b57a8a10",
-  "committedAt": "2026-10-11T10:51:04+09:00",
-  "subject": "Merge pull request #907 from yangsangmin/feat/2026-10-11-task-es-632-unwire-pinned"
+  "commit": "9022e3832780c9a4a88efa74848b9c2965eca760",
+  "short": "9022e383",
+  "committedAt": "2026-10-11T11:14:26+09:00",
+  "subject": "Merge pull request #909 from yangsangmin/feat/2026-10-11-task-es-636-app-state"
  },
  "summary": {
-  "cells": 353,
-  "files": 352,
-  "jsLines": 90618,
+  "cells": 354,
+  "files": 353,
+  "jsLines": 90679,
   "kinds": {
-   "organ": 59,
+   "organ": 60,
    "tab": 188,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 353,
+  "descriptionsHand": 354,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -74,7 +74,7 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 59
+   "count": 60
   },
   {
    "key": "tab",
@@ -531,6 +531,7 @@
     "core/app-boot",
     "core/app-enter",
     "core/app-scope",
+    "core/app-state",
     "core/badges",
     "core/calendar-availability",
     "core/capabilities",
@@ -566,7 +567,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 6114,
+   "lines": 6175,
    "over800": 0
   },
   {
@@ -4001,6 +4002,7 @@
     "core/all-view-render",
     "core/app-boot",
     "core/app-enter",
+    "core/app-state",
     "core/badges",
     "core/calendar-availability",
     "core/cell-registry",
@@ -4190,6 +4192,62 @@
      "task": "TASK-ES-358",
      "title": "[E2] #TASK-ES-358 refactor: 기록 탭 렌더 7함수를 js/tabs/records/ 세포로 동작 그대로 이전",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "core/app-state",
+   "file": "js/core/app-state.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "앱 상태 보관소",
+   "nameSource": "hand",
+   "does": "여러 화면이 함께 보는 값(지금 진행 중인지 표시, 잠깐 들고 있는 목록, 방금 고른 선택 등)을 한곳에서 맡아 두고, 필요한 화면이 같은 값을 읽고 쓰게 한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal App State (상태 기관 — 미분화 덩어리의 공용 상태를 맡아 보관하고 통로에 내준다)",
+    "설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.3절 「기관 API — 확정」(#TASK-ES-634) · 구현 #TASK-ES-636.",
+    "index.html 인라인 IIFE 의 상태 변수(`var X = 초기값;` + 통로 getter/setter)를 생성기 unstate 모드가",
+    "`window.OurgoalAppState.define('X', 초기값);` / `defineVar('X', 초기값);` 로 바꿔 쓴다. 그 줄이 이 기관을 부른다."
+   ],
+   "lines": 61,
+   "over800": false,
+   "exposes": [
+    "OurgoalAppState"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-634",
+    "TASK-ES-636"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-634-GEN-UNSTATE.md",
+    "docs/specs/REQ-TASK-ES-636-APP-STATE-ORGAN.md"
+   ],
+   "prs": [
+    {
+     "number": 909,
+     "task": "TASK-ES-636",
+     "title": "[INFRA] #TASK-ES-636 feat: 상태 기관 js/core/app-state.js + 로드 줄 (B9 새 기관 — 모의 이전 49개로 충분성 증명 · 실제 이전 0)",
+     "date": "2026-10-11"
     }
    ]
   },
