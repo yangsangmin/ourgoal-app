@@ -1,0 +1,338 @@
+{
+ "task": "TASK-ES-640",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T02:51:04.809Z",
+ "base": {
+  "head": "b76c29e95e6b74f97156dee4178bd737ef3ec2b9"
+ },
+ "summary": {
+  "inlineScriptLines": {
+   "before": 2921,
+   "after": 2687,
+   "delta": -234
+  },
+  "indexFunctionDecls": {
+   "before": 29,
+   "after": 26
+  },
+  "windowAssignments": {
+   "before": 75,
+   "after": 75
+  },
+  "crossTabRefs": {
+   "before": 0,
+   "after": 0
+  },
+  "oversizeJsFiles": {
+   "before": 0,
+   "after": 0
+  },
+  "indexHtmlLines": {
+   "before": 5190,
+   "after": 4956,
+   "delta": -234
+  },
+  "indexHtmlNumstat": {
+   "added": 33,
+   "deleted": 267
+  }
+ },
+ "generator": {
+  "wraps": 7,
+  "moves": 2,
+  "wrapped": [
+   {
+    "cell": "checkinInputWiring",
+    "name": "bindQuickRoutineChips",
+    "segment": [
+     3137,
+     3144
+    ],
+    "stmt": [
+     3137,
+     3144
+    ],
+    "stmtLines": 8
+   },
+   {
+    "cell": "checkinInputWiring",
+    "name": "startVoiceCheckin",
+    "segment": [
+     3149,
+     3218
+    ],
+    "stmt": [
+     3150,
+     3218
+    ],
+    "stmtLines": 69
+   },
+   {
+    "cell": "checkinInputWiring",
+    "name": "bindCapturePhoto",
+    "segment": [
+     3228,
+     3256
+    ],
+    "stmt": [
+     3228,
+     3256
+    ],
+    "stmtLines": 29
+   },
+   {
+    "cell": "teamCommentSend",
+    "name": "defineSendTeamGoalComment",
+    "segment": [
+     3540,
+     3580
+    ],
+    "stmt": [
+     3543,
+     3580
+    ],
+    "stmtLines": 38
+   },
+   {
+    "cell": "teamCommentSend",
+    "name": "bindTeamCommentClick",
+    "segment": [
+     3581,
+     3603
+    ],
+    "stmt": [
+     3582,
+     3603
+    ],
+    "stmtLines": 22
+   },
+   {
+    "cell": "teamCommentSend",
+    "name": "bindTeamCommentKeydown",
+    "segment": [
+     3604,
+     3626
+    ],
+    "stmt": [
+     3605,
+     3626
+    ],
+    "stmtLines": 22
+   },
+   {
+    "cell": "samplePurge",
+    "name": "definePurgeSampleRecords",
+    "segment": [
+     4842,
+     4868
+    ],
+    "stmt": [
+     4846,
+     4868
+    ],
+    "stmtLines": 23
+   }
+  ],
+  "wrappedStmtLinesTotal": 211,
+  "wrappedSegmentLinesTotal": 221,
+  "imports": 9,
+  "newExposeGetters": 10,
+  "newExposeGetterNames": [
+   "TEAM_COMMENTS_CACHE",
+   "capturePhotoBtn",
+   "compressImage",
+   "dispatchFullViewPropagation",
+   "openMicPermissionGuideModal",
+   "openPhotoViewerModal",
+   "qRoutineRow",
+   "renderRecordsScreen",
+   "triggerHapticFeedback",
+   "uid"
+  ],
+  "edits": 110,
+  "headLinesAdded": 22
+ },
+ "newFiles": {
+  "js/tabs/records/checkin-input-wiring.js": {
+   "lines": 146,
+   "under800": true
+  },
+  "js/tabs/goals/team-comment-send.js": {
+   "lines": 122,
+   "under800": true
+  },
+  "js/tabs/records/sample-purge.js": {
+   "lines": 53,
+   "under800": true
+  },
+  "js/tabs/goals/goal-fast-add.js": {
+   "lines": 72,
+   "under800": true
+  }
+ },
+ "verify": {
+  "ok": true,
+  "notExposed": [],
+  "noSetter": [],
+  "thisArgs": [],
+  "callsOk": true,
+  "importBeforeKit": [],
+  "lastGetterNoSetter": [],
+  "restSame": true,
+  "listeners": {
+   "origIIFE": 79,
+   "newIIFE": 66,
+   "cells": 13,
+   "same": true
+  }
+ },
+ "moduleLoad": {
+  "regressions": [],
+  "counts": {
+   "head": 83,
+   "headOk": 82,
+   "base": 83,
+   "baseOk": 82
+  },
+  "wideRegressions": [],
+  "wideCounts": {
+   "head": 221,
+   "headOk": 220,
+   "base": 217,
+   "baseOk": 216
+  },
+  "newFilesLoadOneOk": true
+ },
+ "names": {
+  "scopeLost": [],
+  "scopeAdded": [
+   "capturePhotoBtn",
+   "qRoutineRow"
+  ],
+  "scopeFingerprintDiff": 0,
+  "scopeNames": 428,
+  "windowFingerprintDiff": 4,
+  "windowNames": 19
+ },
+ "scenarios": {
+  "allPassedBoth": true,
+  "rows": [
+   {
+    "id": "s1-checkin-mic-guide",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "nonVacuousExpectsWork": 2,
+    "exceptionsWork": 0
+   },
+   {
+    "id": "s2-team-comment-passthrough",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "nonVacuousExpectsWork": 2,
+    "exceptionsWork": 0
+   },
+   {
+    "id": "s3-sample-purge",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "nonVacuousExpectsWork": 3,
+    "exceptionsWork": 0
+   },
+   {
+    "id": "s4-goal-fast-add",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "nonVacuousExpectsWork": 4,
+    "exceptionsWork": 0
+   }
+  ]
+ },
+ "npmTest": {
+  "baseExit": 0,
+  "workExit": 0,
+  "checkLines": [
+   487,
+   487
+  ],
+  "okLines": [
+   196,
+   196
+  ],
+  "same": {
+   "exit": true,
+   "checkLines": true,
+   "okLines": true,
+   "summaryLines": true
+  }
+ },
+ "testsAll": {
+  "files": 119,
+  "differingCount": 0
+ },
+ "baseline": {
+  "lastInlineScriptLines": 2687,
+  "recordedEqualsMeasured": true,
+  "historyLength": 58
+ },
+ "guard": {
+  "exitCode": 0
+ },
+ "changedFiles": {
+  "all": [
+   ".claude/plan-TASK-ES-640.md",
+   "docs/architecture/cell-descriptions.json",
+   "docs/architecture/module-baseline.json",
+   "docs/architecture/modules.json",
+   "docs/rules/TICKETS.md",
+   "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md",
+   "index.html",
+   "js/tabs/goals/goal-fast-add.js",
+   "js/tabs/goals/team-comment-send.js",
+   "js/tabs/records/checkin-input-wiring.js",
+   "js/tabs/records/sample-purge.js",
+   "reports/TASK-ES-640/cell-registry-compare.base.json",
+   "reports/TASK-ES-640/cell-registry-compare.json",
+   "reports/TASK-ES-640/claims.json",
+   "reports/TASK-ES-640/expose-window.json",
+   "reports/TASK-ES-640/gen-inline-hard-meta.json",
+   "reports/TASK-ES-640/measurement.json",
+   "reports/TASK-ES-640/module-load.json",
+   "reports/TASK-ES-640/name-fingerprints.json",
+   "reports/TASK-ES-640/npm-test-compare.json",
+   "reports/TASK-ES-640/proof.json",
+   "reports/TASK-ES-640/raw/npm-test.base.exit",
+   "reports/TASK-ES-640/raw/npm-test.base.log",
+   "reports/TASK-ES-640/raw/npm-test.work.exit",
+   "reports/TASK-ES-640/raw/npm-test.work.log",
+   "reports/TASK-ES-640/scenario-local.json",
+   "reports/TASK-ES-640/scenarios/s1-checkin-mic-guide.json",
+   "reports/TASK-ES-640/scenarios/s2-team-comment-passthrough.json",
+   "reports/TASK-ES-640/scenarios/s3-sample-purge.json",
+   "reports/TASK-ES-640/scenarios/s4-goal-fast-add.json",
+   "reports/TASK-ES-640/tests-all-compare.json",
+   "reports/TASK-ES-640/tools/expose-window.cjs",
+   "reports/TASK-ES-640/tools/measure.cjs",
+   "reports/TASK-ES-640/tools/module-load.cjs",
+   "reports/TASK-ES-640/tools/name-fingerprints.cjs",
+   "reports/TASK-ES-640/tools/run-tests.cjs",
+   "reports/TASK-ES-640/tools/scenario-local.cjs",
+   "reports/TASK-ES-640/tools/set-requires.cjs",
+   "reports/TASK-ES-640/verify-inline-hard.json"
+  ],
+  "product": [
+   "index.html",
+   "js/tabs/goals/goal-fast-add.js",
+   "js/tabs/goals/team-comment-send.js",
+   "js/tabs/records/checkin-input-wiring.js",
+   "js/tabs/records/sample-purge.js"
+  ],
+  "tests": [],
+  "vault": [],
+  "generator": [],
+  "generatedMaps": []
+ }
+}
