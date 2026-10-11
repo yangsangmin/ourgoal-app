@@ -1,0 +1,72 @@
+{
+ "tool": "court/probes/module-load.js (읽기 전용 — compare(probeModules(기준), probeModules(작업)) · loadOne(작업, 새 파일))",
+ "type": "작업자 측정, 판정 아님",
+ "baseHead": "5e2fc92cbe6e3913db31dd5316618c86f2bf4ce4",
+ "measuredAt": "2026-10-11T02:07:53.696Z",
+ "regressions": [],
+ "insufficient": [
+  {
+   "file": "js/goal-templates-registry.js",
+   "note": "양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined"
+  }
+ ],
+ "fixed": [],
+ "counts": {
+  "head": 83,
+  "headOk": 82,
+  "base": 83,
+  "baseOk": 82
+ },
+ "wide": {
+  "dirs": [
+   "js",
+   "js/core",
+   "js/tabs/settings",
+   "js/tabs/goals"
+  ],
+  "regressions": [],
+  "insufficient": [
+   {
+    "file": "js/goal-templates-registry.js",
+    "note": "양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined"
+   }
+  ],
+  "fixed": [],
+  "counts": {
+   "head": 220,
+   "headOk": 219,
+   "base": 216,
+   "baseOk": 215
+  }
+ },
+ "newFilesLoadOne": {
+  "js/tabs/settings/boot-wiring.js": {
+   "ok": true,
+   "error": null,
+   "globals": [
+    "OurgoalSettingsKit"
+   ]
+  },
+  "js/tabs/goals/goal-agent-toggle.js": {
+   "ok": true,
+   "error": null,
+   "globals": [
+    "OurgoalGoalsKit"
+   ]
+  },
+  "js/core/module-connect.js": {
+   "ok": true,
+   "error": null,
+   "globals": [
+    "OurgoalUiHelpers"
+   ]
+  },
+  "js/core/pwa-service-worker.js": {
+   "ok": true,
+   "error": null,
+   "globals": [
+    "OurgoalUiHelpers"
+   ]
+  }
+ }
+}

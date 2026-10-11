@@ -1,0 +1,21 @@
+{
+  "id": "s4-boot-tabs",
+  "title": "게스트로 들어와 기록 탭과 일정 탭을 오가도 예외 없이 화면이 바뀐다 (서비스 워커 등록 bindServiceWorker 가 시동 끝에서 불린 뒤에도 앱이 같게 돈다)",
+  "steps": [
+    { "do": "setViewport", "width": 430, "height": 932 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#btnAvatarGreetClose", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnAvatarGreetClose" },
+    { "expect": "notVisible", "selector": "#btnAvatarGreetClose" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]", "timeoutMs": 10000 },
+    { "expect": "notHasClass", "selector": ".navbtn[data-tab=\"records\"]", "className": "active" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"records\"]", "className": "active" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"calendar\"]", "className": "active" },
+    { "expect": "notHasClass", "selector": ".navbtn[data-tab=\"records\"]", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}
