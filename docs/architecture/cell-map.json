@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "6eeacd5843efc700b0c5a408b035c6313d4ec947",
-  "short": "6eeacd58",
-  "committedAt": "2026-10-11T14:14:12+09:00",
-  "subject": "Merge pull request #927 from yangsangmin/feat/2026-10-11-task-es-649-unstate-2"
+  "commit": "bb0b2ea61dc900978a8d7da5a6e95b08cf204cea",
+  "short": "bb0b2ea6",
+  "committedAt": "2026-10-11T14:47:04+09:00",
+  "subject": "Merge pull request #930 from yangsangmin/feat/2026-10-11-task-es-659-save-google-token"
  },
  "summary": {
-  "cells": 364,
-  "files": 363,
-  "jsLines": 91635,
+  "cells": 365,
+  "files": 364,
+  "jsLines": 91687,
   "kinds": {
-   "organ": 62,
+   "organ": 63,
    "tab": 196,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 364,
+  "descriptionsHand": 365,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 2331,
-   "functionDecls": 18
+   "inlineScriptLines": 2311,
+   "functionDecls": 17
   },
   "health": {
-   "undifferentiatedLines": 2331,
+   "undifferentiatedLines": 2311,
    "globalLinks": 75,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,7 +74,7 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 62
+   "count": 63
   },
   {
    "key": "tab",
@@ -552,6 +552,7 @@
     "core/default-profile",
     "core/event-bus",
     "core/gcal-sync",
+    "core/gcal-token-save",
     "core/gcal-token",
     "core/home-cockpit",
     "core/modal-helper",
@@ -577,7 +578,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 6328,
+   "lines": 6380,
    "over800": 0
   },
   {
@@ -4019,6 +4020,7 @@
     "core/default-profile",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/modal-open",
@@ -5113,6 +5115,70 @@
      "task": "TASK-ES-482",
      "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/gcal-token-save",
+   "file": "js/core/gcal-token-save.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "구글 캘린더 토큰 저장",
+   "nameSource": "hand",
+   "does": "구글 캘린더 접근 토큰을 지금 로그인한 계정의 키에만 저장하고, 예전 공용 키를 지운다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Google Calendar Token Save (기관 — 구글 캘린더 토큰 저장)",
+    "saveGoogleToken — 구글 캘린더 접근 토큰을 지금 로그인한 계정(uid) 키에만 저장한다. 둘째 인자(이메일)는 arguments[1] 로 읽는다.",
+    "계정 격리 도우미(키 이름·주인 확인·공용 키 정리)는 js/core/gcal-token.js, 토큰 받기·복원·동기화는 js/core/gcal-sync.js 가 맡는다. 이 세포는 저장 한 가지만 한다.",
+    "#TASK-ES-659(구글 캘린더 토큰 저장 함수 이전 — saveGoogleToken): index.html 인라인 IIFE 의 구간(이전 전 2947~2973줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
+   ],
+   "lines": 52,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-659"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-659-SAVE-GOOGLE-TOKEN-MOVE.md"
+   ],
+   "prs": [
+    {
+     "number": 930,
+     "task": "TASK-ES-659",
+     "title": "[INFRA] #TASK-ES-659 refactor: 미분화 덩어리 함수 이전 — saveGoogleToken(구글 캘린더 토큰 저장)을 세포로 선언째 글자 그대로(함수 선언 자신의 arguments 1곳 · 인라인 −20줄)",
+     "date": "2026-10-11"
     }
    ]
   },
@@ -23498,6 +23564,7 @@
     "core/default-profile",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/module-connect",
@@ -23695,6 +23762,7 @@
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/module-connect",
@@ -23797,6 +23865,7 @@
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/module-connect",
@@ -23893,6 +23962,7 @@
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/module-connect",
@@ -24005,6 +24075,7 @@
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/module-connect",
@@ -24100,6 +24171,7 @@
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/module-connect",
@@ -24202,6 +24274,7 @@
     "core/event-bus",
     "core/gcal-sync",
     "core/gcal-token",
+    "core/gcal-token-save",
     "core/home-cockpit",
     "core/modal-helper",
     "core/module-connect",
