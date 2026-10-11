@@ -1,0 +1,187 @@
+{
+  "id": "s12-interval-finish",
+  "title": "모드 칩 「60초 휴식」을 고르고 시작하면 60초 뒤 타이머가 스스로 멈춰 단추가 「▶ 시작」으로 돌아오고 표시가 00:00.0 이 된다 (스톱워치·인터벌 타이머 — 정해 둔 시간이 다 되면 끝남)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-sw-mode-chip[data-swmode=\"rest60\"]"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "01:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "일시정지"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "▶ 시작"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
