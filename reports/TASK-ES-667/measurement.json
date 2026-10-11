@@ -2,20 +2,20 @@
  "task": "TASK-ES-667",
  "tool": "reports/TASK-ES-666/tools/summary.cjs",
  "type": "작업자 측정, 판정 아님",
- "baseCommit": "2a1507eb",
- "measuredAt": "2026-10-11T08:57:53.015Z",
- "finishedMark": "2026-10-11T08:56:52Z",
+ "baseCommit": "42b5511f",
+ "measuredAt": "2026-10-11T09:40:55.372Z",
+ "finishedMark": "2026-10-11T09:40:46Z",
  "mock": {
   "A": {
    "made": {
     "type": "작업자 측정, 판정 아님",
     "scriptHtmlLines": [
      2253,
-     4149
+     4128
     ],
-    "movedLines": 1895,
+    "movedLines": 1874,
     "htmlLines": [
-     4187,
+     4166,
      2290
     ],
     "bootFile": "js/app/boot.js(IIFE 글자 그대로 — 모의용)",
@@ -358,17 +358,16 @@
     "first": "mainAll",
     "second": "afterA",
     "firstFailedLines": 161,
-    "secondFailedLines": 193,
+    "secondFailedLines": 192,
     "entries": [
      132,
      132
     ],
-    "onlyInSecond": 32,
+    "onlyInSecond": 31,
     "byFile": {
      "scripts/smoke-test.js": 22,
      "scripts/test-shipyard-modular.js": 1,
      "scripts/verify-integrity-gate.js": 1,
-     "tests/gcal-login-reconnect-fix.test.js": 1,
      "tests/module-guard.test.js": 2,
      "tests/new-module.test.js": 1,
      "tests/stopwatch-lap-inputs.test.js": 1,
@@ -544,13 +543,6 @@
       "src": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && textOrStateDefined(indexHtml, '_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
      },
      {
-      "file": "tests/gcal-login-reconnect-fix.test.js",
-      "line": 25,
-      "check": null,
-      "message": "saveGoogleToken 전역 노출",
-      "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
-     },
-     {
       "file": "tests/module-guard.test.js",
       "line": 61,
       "check": null,
@@ -627,22 +619,23 @@
   },
   "B": {
    "made": {
-    "topStatements": 255,
+    "topStatements": 250,
     "byKind": {
      "키트 손잡이": 13,
      "가져오기(재철거)": 169,
-     "expose 문(재철거)": 17,
+     "expose 문(재철거)": 12,
      "구역 함수 가져오기": 17,
      "구역 함수 호출문": 17,
      "노출 안 된 var(지역 변수로)": 2,
-     "상태 var → define": 11,
+     "식 문": 9,
+     "상태 var → define": 2,
      "가져온 이름의 window 줄(재철거)": 1,
      "함수 선언": 6,
-     "상태의 window 복사 줄(오른쪽만 통로로)": 1,
+     "window 대입 문": 1,
      "if 문": 1
     },
     "byDestination": {
-     "drop": 199,
+     "drop": 194,
      "boot": 35,
      "core": 15,
      "tab": 6
@@ -661,17 +654,8 @@
     ],
     "movedFunctionFileMaxLines": 534,
     "stateDefines": [
-     "sb",
-     "btnAvLvClose",
      "state",
-     "_promptEncyclopediaOpen",
-     "_subtabTplCat",
-     "_subtabTplQuery",
-     "_subtabTplDomain",
-     "_subtabTplType",
-     "MOCK_GROUPS",
-     "shareContent",
-     "FEED_POSTS_CACHE"
+     "_promptEncyclopediaOpen"
     ],
     "localVars": [
      "SUPABASE_URL",
@@ -847,15 +831,14 @@
     "first": "mainAll",
     "second": "afterB",
     "firstFailedLines": 161,
-    "secondFailedLines": 166,
+    "secondFailedLines": 165,
     "entries": [
      132,
      132
     ],
-    "onlyInSecond": 5,
+    "onlyInSecond": 4,
     "byFile": {
      "scripts/test-shipyard-modular.js": 1,
-     "tests/gcal-login-reconnect-fix.test.js": 1,
      "tests/module-guard.test.js": 2,
      "tests/new-module.test.js": 1
     },
@@ -866,13 +849,6 @@
       "check": null,
       "message": "scripts/module-guard.js must pass (exit 1)",
       "src": "assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);"
-     },
-     {
-      "file": "tests/gcal-login-reconnect-fix.test.js",
-      "line": 25,
-      "check": null,
-      "message": "saveGoogleToken 전역 노출",
-      "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
      },
      {
       "file": "tests/module-guard.test.js",
@@ -979,6 +955,14 @@
      }
     ]
    },
+   "registerAttempt": [
+    {
+     "name": "saveGoogleToken",
+     "file": "js/core/gcal-token-save.js",
+     "why": "이미 등록 블록이 있다(이 도구는 새 블록만 단다)",
+     "added": false
+    }
+   ],
    "limitsRemoved": {
     "before": {
      "first": "base",
@@ -1128,24 +1112,14 @@
      "first": "mainAll",
      "second": "limAfterB",
      "firstFailedLines": 161,
-     "secondFailedLines": 162,
+     "secondFailedLines": 161,
      "entries": [
       132,
       132
      ],
-     "onlyInSecond": 1,
-     "byFile": {
-      "tests/gcal-login-reconnect-fix.test.js": 1
-     },
-     "list": [
-      {
-       "file": "tests/gcal-login-reconnect-fix.test.js",
-       "line": 25,
-       "check": null,
-       "message": "saveGoogleToken 전역 노출",
-       "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
-      }
-     ],
+     "onlyInSecond": 0,
+     "byFile": {},
+     "list": [],
      "onlyInFirst": 0,
      "entryEndDifferences": []
     },
@@ -1170,18 +1144,17 @@
      "first": "main666",
      "second": "afterB666",
      "firstFailedLines": 161,
-     "secondFailedLines": 169,
+     "secondFailedLines": 168,
      "entries": [
       132,
       132
      ],
-     "onlyInSecond": 8,
+     "onlyInSecond": 7,
      "byFile": {
       "scripts/test-shipyard-modular.js": 1,
       "scripts/verify-integrity-gate.js": 1,
       "tests/cross-tab-guarded-init-es502.test.js": 1,
       "tests/cross-tab-inline-owned-es507.test.js": 1,
-      "tests/gcal-login-reconnect-fix.test.js": 1,
       "tests/module-guard.test.js": 2,
       "tests/new-module.test.js": 1
      },
@@ -1213,13 +1186,6 @@
        "check": null,
        "message": "Expected values to be strictly equal:",
        "src": "assert.strictEqual(metrics.crossTabRefs(path.join(__dirname, '..')).length, 0);"
-      },
-      {
-       "file": "tests/gcal-login-reconnect-fix.test.js",
-       "line": 25,
-       "check": null,
-       "message": "saveGoogleToken 전역 노출",
-       "src": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출'); /* #TASK-ES-666 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
       },
       {
        "file": "tests/module-guard.test.js",
@@ -1551,8 +1517,9 @@
    ],
    "byWhere": {
     "함수 선언": 24,
-    "상태·그 밖의 var": 8,
+    "호출문": 7,
     "주석": 3,
+    "상태·그 밖의 var": 1,
     "if 문": 1
    },
    "rows": [
@@ -1641,7 +1608,7 @@
      "file": "scripts/smoke-test.js",
      "line": 2734,
      "where": [
-      "상태·그 밖의 var(MOCK_GROUPS)"
+      "호출문"
      ],
      "inComment": false
     },
@@ -1649,7 +1616,7 @@
      "file": "scripts/smoke-test.js",
      "line": 2735,
      "where": [
-      "상태·그 밖의 var(MOCK_GROUPS)"
+      "호출문"
      ],
      "inComment": false
     },
@@ -1657,7 +1624,7 @@
      "file": "scripts/smoke-test.js",
      "line": 2736,
      "where": [
-      "상태·그 밖의 var(MOCK_GROUPS)"
+      "호출문"
      ],
      "inComment": false
     },
@@ -1665,7 +1632,7 @@
      "file": "scripts/smoke-test.js",
      "line": 2737,
      "where": [
-      "상태·그 밖의 var(MOCK_GROUPS)"
+      "호출문"
      ],
      "inComment": false
     },
@@ -1673,7 +1640,7 @@
      "file": "scripts/smoke-test.js",
      "line": 2790,
      "where": [
-      "상태·그 밖의 var(MOCK_GROUPS)"
+      "호출문"
      ],
      "inComment": false
     },
@@ -1681,7 +1648,7 @@
      "file": "scripts/smoke-test.js",
      "line": 2791,
      "where": [
-      "상태·그 밖의 var(MOCK_GROUPS)"
+      "호출문"
      ],
      "inComment": false
     },
@@ -1697,7 +1664,7 @@
      "file": "scripts/smoke-test.js",
      "line": 7837,
      "where": [
-      "상태·그 밖의 var(MOCK_GROUPS)"
+      "호출문"
      ],
      "inComment": false
     },
@@ -2557,7 +2524,7 @@
     "scripts/test-universal-import.js"
    ],
    "testFiles": 115,
-   "testFilesExit0": 84,
+   "testFilesExit0": 85,
    "testFilesFailed": [
     "tests/achievement-stats-shell-button-removal.test.js",
     "tests/app-evaluation-notice.test.js",
@@ -2575,7 +2542,6 @@
     "tests/feed-post-photo-upload.test.js",
     "tests/feed-post-selectable-targets.test.js",
     "tests/feed-share-latest-record.test.js",
-    "tests/gcal-login-reconnect-fix.test.js",
     "tests/goal-ai-advice-status.test.js",
     "tests/goal-template-legacy-cleanup.test.js",
     "tests/goals-only-view.test.js",
@@ -2696,7 +2662,7 @@
     "scripts/test-universal-import.js"
    ],
    "testFiles": 115,
-   "testFilesExit0": 86,
+   "testFilesExit0": 87,
    "testFilesFailed": [
     "tests/achievement-stats-shell-button-removal.test.js",
     "tests/app-evaluation-notice.test.js",
@@ -2714,7 +2680,6 @@
     "tests/feed-post-photo-upload.test.js",
     "tests/feed-post-selectable-targets.test.js",
     "tests/feed-share-latest-record.test.js",
-    "tests/gcal-login-reconnect-fix.test.js",
     "tests/goal-ai-advice-status.test.js",
     "tests/goal-template-legacy-cleanup.test.js",
     "tests/goals-only-view.test.js",
@@ -2797,7 +2762,7 @@
  "metrics": {
   "base": {
    "ratchet": {
-    "inlineScriptLines": 1917,
+    "inlineScriptLines": 1896,
     "indexFunctionDecls": 22,
     "windowAssignments": 75,
     "oversizeJsFiles": {
@@ -2812,7 +2777,7 @@
   },
   "mainAll": {
    "ratchet": {
-    "inlineScriptLines": 1917,
+    "inlineScriptLines": 1896,
     "indexFunctionDecls": 22,
     "windowAssignments": 75,
     "oversizeJsFiles": {
@@ -2827,7 +2792,7 @@
   },
   "main667": {
    "ratchet": {
-    "inlineScriptLines": 1917,
+    "inlineScriptLines": 1896,
     "indexFunctionDecls": 22,
     "windowAssignments": 75,
     "oversizeJsFiles": {
@@ -2848,7 +2813,7 @@
     "oversizeJsFiles": {
      "count": 1,
      "files": {
-      "js/app/boot.js": 1895
+      "js/app/boot.js": 1874
      }
     },
     "crossTabRefs": 1
@@ -2894,7 +2859,7 @@
     "oversizeJsFiles": {
      "count": 1,
      "files": {
-      "js/app/boot.js": 1895
+      "js/app/boot.js": 1874
      }
     },
     "crossTabRefs": 0
@@ -2987,7 +2952,7 @@
    "failures": [
     "- ⑤ 탭 간 직접 참조 수: 0 → 1 (+1) — 늘었다",
     "- ④ 800줄 초과 js 파일 수: 0 → 1 (+1) — 늘었다",
-    "- ④ js/app/boot.js: 새로 800줄을 넘었다(1895줄) — 책임 단위로 나눈다",
+    "- ④ js/app/boot.js: 새로 800줄을 넘었다(1874줄) — 책임 단위로 나눈다",
     "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
    ]
   },
@@ -3005,7 +2970,7 @@
    "exit": 1,
    "failures": [
     "- ④ 800줄 초과 js 파일 수: 0 → 1 (+1) — 늘었다",
-    "- ④ js/app/boot.js: 새로 800줄을 넘었다(1895줄) — 책임 단위로 나눈다",
+    "- ④ js/app/boot.js: 새로 800줄을 넘었다(1874줄) — 책임 단위로 나눈다",
     "- 신고서: 신고서 없는 세포: js/app/boot.js — node scripts/module-specs.js --write 후 종류·능력을 적는다"
    ]
   },
@@ -3289,7 +3254,7 @@
    {
     "id": "R1",
     "pr": 666,
-    "what": "세포 js/core/gcal-token-save.js 의 등록 블록 window 목록에서 saveGoogleToken 을 뺌(모의 등록을 되돌림)",
+    "what": "세포 js/core/gcal-token-save.js 의 등록 블록 window 목록에서 saveGoogleToken 을 뺌(등록을 되돌림)",
     "newlyFailing": [
      "tests/gcal-login-reconnect-fix.test.js:25"
     ],
@@ -3435,10 +3400,10 @@
    "typesOutputSame": true,
    "writtenFilesSame": true,
    "mapHead": [
-    "인라인 지도: 묶음 52 · 옮길 대상 16 · IIFE 1895줄 · 함수 7 · window 3 · 출처 be466049ef41 → 기록함"
+    "인라인 지도: 묶음 52 · 옮길 대상 11 · IIFE 1874줄 · 함수 6 · window 3 · 출처 64780aa650c6 → 기록함"
    ],
    "typesHead": [
-    "어려움 3묶음 1527줄 · 출처 be466049ef41"
+    "어려움 2묶음 1344줄 · 출처 64780aa650c6"
    ],
    "committedMapStale": [
     "M docs/architecture/INLINE-HARD-SPLIT-DESIGN.md",
@@ -3463,7 +3428,7 @@
       "<임시 폴더>/es666-n-toolMockA/scripts/inline-hard-types.js:55",
       "  throw new Error('지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 ' + MAP.source.sha256_12 + ' · 지금 ' + sha + ')');"
      ],
-     "message": "Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 e8c01d4986e3 · 지금 804da07bb977)"
+     "message": "Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 64780aa650c6 · 지금 804da07bb977)"
     },
     "testProbe": {
      "exit": 1,
@@ -3471,7 +3436,7 @@
       "<임시 폴더>/es666-n-toolMockA/scripts/inline-hard-test-probe.js:29",
       "if (MAP.source.sha256_12 !== sha) throw new Error('사본 index.html 이 지도와 다르다(지도 ' + MAP.source.sha256_12 + ' · 사본 ' + sha + ')');"
      ],
-     "message": "Error: 사본 index.html 이 지도와 다르다(지도 e8c01d4986e3 · 사본 804da07bb977)"
+     "message": "Error: 사본 index.html 이 지도와 다르다(지도 64780aa650c6 · 사본 804da07bb977)"
     },
     "generator": {
      "exit": 1,
@@ -3498,7 +3463,7 @@
       "<임시 폴더>/es666-n-toolMockB/scripts/inline-hard-types.js:55",
       "  throw new Error('지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 ' + MAP.source.sha256_12 + ' · 지금 ' + sha + ')');"
      ],
-     "message": "Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 e8c01d4986e3 · 지금 103f031b53ad)"
+     "message": "Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 64780aa650c6 · 지금 103f031b53ad)"
     },
     "testProbe": {
      "exit": 1,
@@ -3506,7 +3471,7 @@
       "<임시 폴더>/es666-n-toolMockB/scripts/inline-hard-test-probe.js:29",
       "if (MAP.source.sha256_12 !== sha) throw new Error('사본 index.html 이 지도와 다르다(지도 ' + MAP.source.sha256_12 + ' · 사본 ' + sha + ')');"
      ],
-     "message": "Error: 사본 index.html 이 지도와 다르다(지도 e8c01d4986e3 · 사본 103f031b53ad)"
+     "message": "Error: 사본 index.html 이 지도와 다르다(지도 64780aa650c6 · 사본 103f031b53ad)"
     },
     "generator": {
      "exit": 1,
@@ -3594,15 +3559,15 @@
     "counts": {
      "scopeNames": 522,
      "windowNames": 3,
-     "registered": 438,
-     "checked": 362,
+     "registered": 527,
+     "checked": 452,
      "mismatches": 0,
-     "missing": 163,
+     "missing": 73,
      "extra": 76,
      "conflicts": 0,
-     "own": 438,
-     "ownScope": 354,
-     "ownWindow": 180,
+     "own": 527,
+     "ownScope": 451,
+     "ownWindow": 181,
      "lateProvides": 0
     },
     "windowNames": 3,
@@ -3615,15 +3580,15 @@
     "counts": {
      "scopeNames": 522,
      "windowNames": 3,
-     "registered": 438,
-     "checked": 362,
+     "registered": 527,
+     "checked": 452,
      "mismatches": 0,
-     "missing": 163,
+     "missing": 73,
      "extra": 76,
      "conflicts": 0,
-     "own": 438,
-     "ownScope": 354,
-     "ownWindow": 180,
+     "own": 527,
+     "ownScope": 451,
+     "ownWindow": 181,
      "lateProvides": 0
     },
     "windowNames": 3,
@@ -3646,15 +3611,15 @@
     "counts": {
      "scopeNames": 522,
      "windowNames": 3,
-     "registered": 438,
-     "checked": 362,
+     "registered": 527,
+     "checked": 452,
      "mismatches": 0,
-     "missing": 163,
+     "missing": 73,
      "extra": 76,
      "conflicts": 0,
-     "own": 438,
-     "ownScope": 354,
-     "ownWindow": 180,
+     "own": 527,
+     "ownScope": 451,
+     "ownWindow": 181,
      "lateProvides": 0
     },
     "windowNames": 3,
@@ -3667,15 +3632,15 @@
     "counts": {
      "scopeNames": 522,
      "windowNames": 0,
-     "registered": 438,
-     "checked": 362,
+     "registered": 527,
+     "checked": 451,
      "mismatches": 0,
-     "missing": 160,
+     "missing": 71,
      "extra": 76,
      "conflicts": 0,
-     "own": 438,
-     "ownScope": 354,
-     "ownWindow": 180,
+     "own": 527,
+     "ownScope": 451,
+     "ownWindow": 181,
      "lateProvides": 0
     },
     "windowNames": 0,
@@ -3796,7 +3761,7 @@
  "summary": {
   "mockA": {
    "before": 40,
-   "afterAll": 32,
+   "afterAll": 31,
    "beforeByFile": {
     "scripts/smoke-test.js": 23,
     "scripts/test-shipyard-modular.js": 1,
@@ -3817,7 +3782,7 @@
   },
   "mockB": {
    "before": 14,
-   "afterAll": 5,
+   "afterAll": 4,
    "afterAllRegistered": 4,
    "beforeByFile": {
     "scripts/smoke-test.js": 1,
@@ -3835,10 +3800,10 @@
     "tests/trio-es143-es145.test.js": 1
    },
    "limitsRemovedBefore": 14,
-   "limitsRemovedAfterAll": 1,
+   "limitsRemovedAfterAll": 0,
    "limitsRemovedAfterAllRegistered": 0,
    "remainingAfterAllRegistered": [],
-   "only666": 8,
+   "only666": 7,
    "only667": 12,
    "only669": 14
   },
@@ -4068,7 +4033,7 @@
    "tests/cross-tab-inline-owned-es507.test.js"
   ],
   "generator": [],
-  "docsAndReports": 8,
+  "docsAndReports": 10,
   "vaultByConstitution": []
  },
  "changedFiles": [

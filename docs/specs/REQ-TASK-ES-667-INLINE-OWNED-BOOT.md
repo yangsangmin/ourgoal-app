@@ -2,8 +2,8 @@
 
 - 작업번호: TASK-ES-667 · 종류: **FIX**(모듈 측정기 `scripts/module-metrics.js` 와 그 시험 — 앱 코드 `index.html` · `js/**` 변경 0)
 - 묶음: 같은 승인으로 나눈 PR 네 개 — TASK-ES-666(시험지·기준 시험지·공용 도우미) · TASK-ES-667(모듈 측정기 ⑤ 규칙) · TASK-ES-668(도구 다섯 개) · TASK-ES-669(금고: 무결성 게이트 한 줄). 책임 단위로 나눴고 어느 순서로 병합돼도 main 의 `npm test` 가 깨지지 않게 했다(아래 4절·6절).
-- 작업참고: `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #934**(끝까지 읽음 — 이 작업에 쓴 경험칙: L021 · L023 · L048 · L067 · L085 · L110).
-- 측정 기준: `origin/main` 2a1507eb. main 과 함께 움직이는 수는 이 PR 이 가진 `reports/TASK-ES-667/measurement.json` 을 가리킨다(`baseCommit` 칸이 잰 커밋이다).
+- 작업참고: `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #941**(끝까지 읽음 — 이 작업에 쓴 경험칙: L021 · L023 · L048 · L067 · L085 · L110).
+- 측정 기준: `origin/main` 42b5511f — 이 가지에 그 커밋을 합친 뒤 측정 한 벌을 전부 다시 돌린 값이다(앞선 기준 커밋에서 잰 값은 싣지 않았다). main 과 함께 움직이는 수는 이 PR 이 가진 `reports/TASK-ES-667/measurement.json` 을 가리킨다(`baseCommit` 칸이 잰 커밋이다).
 - 이 문서는 작업 세션의 서류다. 효력·근거가 아니며, 아래 수치는 전부 **작업자 측정(판정 아님)** 이다. 판정은 GitHub 법정만 낸다.
 
 ## 0. 요구 (상민님 원문 · 지시 항목)
@@ -107,9 +107,9 @@
 
 | 트리 | ① 인라인 줄 | ② 함수 선언 | ③ window 대입 | ④ 800줄 초과 | ⑤ 탭 간 참조 | 가드 종료 코드 |
 |---|--:|--:|--:|--:|--:|--:|
-| 현재 main · 고치기 전 | 1917 | 22 | 75 | 0 | 0 | 0 |
-| 현재 main · 이 PR(667) | 1917 | 22 | 75 | 0 | 0 | 0 |
-| 현재 main · 네 PR | 1917 | 22 | 75 | 0 | 0 | 0 |
+| 현재 main · 고치기 전 | 1896 | 22 | 75 | 0 | 0 | 0 |
+| 현재 main · 이 PR(667) | 1896 | 22 | 75 | 0 | 0 | 0 |
+| 현재 main · 네 PR | 1896 | 22 | 75 | 0 | 0 | 0 |
 | (가) · 고치기 전 | 22 | 1 | 75 | 1 | 1 | 1 |
 | (가) · 네 PR | 22 | 1 | 75 | 1 | 0 | 1 |
 | (나) · 고치기 전 | 22 | 1 | 74 | 0 | 1 | 1 |
@@ -134,13 +134,14 @@
 
 | 모의본 | 고치기 전(모의본에서만 깨지는 단언 줄) | 네 PR 을 얹은 뒤 | 남은 것 |
 |---|--:|--:|---|
-| (가) IIFE 를 통째로 `js/app/boot.js` 로 뺀 것(662 도구) | 40 | 32 | 글자가 `js/app/boot.js` 한 파일에 통째로 있어 합본이 읽지 않는다(실제 finalize 의 꼴이 아니다 — 줄 목록 `measurement.json` `mock.A.afterAll.list`) |
-| (나) 남은 줄이 각자 갈 곳으로 간 꼴(`reports/TASK-ES-666/tools/make-final-mock.cjs`) | 14 | 5 | `scripts/test-shipyard-modular.js:150` scripts/module-guard.js must pass (exit 1) · `tests/gcal-login-reconnect-fix.test.js:25` saveGoogleToken 전역 노출 · `tests/module-guard.test.js:61` 가드가 통과해야 한다 · `tests/module-guard.test.js:62` The expression evaluated to a falsy value · `tests/new-module.test.js:65` 새 세포를 더해도 모듈 가드 통과 |
+| (가) IIFE 를 통째로 `js/app/boot.js` 로 뺀 것(662 도구) | 40 | 31 | 글자가 `js/app/boot.js` 한 파일에 통째로 있어 합본이 읽지 않는다(실제 finalize 의 꼴이 아니다 — 줄 목록 `measurement.json` `mock.A.afterAll.list`) |
+| (나) 남은 줄이 각자 갈 곳으로 간 꼴(`reports/TASK-ES-666/tools/make-final-mock.cjs`) | 14 | 4 | `scripts/test-shipyard-modular.js:150` scripts/module-guard.js must pass (exit 1) · `tests/module-guard.test.js:61` 가드가 통과해야 한다 · `tests/module-guard.test.js:62` The expression evaluated to a falsy value · `tests/new-module.test.js:65` 새 세포를 더해도 모듈 가드 통과 |
 | (나) + `saveGoogleToken` 등록 흉내 | – | 4 | `scripts/test-shipyard-modular.js:150` scripts/module-guard.js must pass (exit 1) · `tests/module-guard.test.js:61` 가드가 통과해야 한다 · `tests/module-guard.test.js:62` The expression evaluated to a falsy value · `tests/new-module.test.js:65` 새 세포를 더해도 모듈 가드 통과 |
-| (나)에서 흉내의 한계(새 세포 파일에 신고서 없음)를 걷어 낸 것 | 14 | 1 | `tests/gcal-login-reconnect-fix.test.js:25` saveGoogleToken 전역 노출 |
+| (나)에서 흉내의 한계(새 세포 파일에 신고서 없음)를 걷어 낸 것 | 14 | 0 | 없음 |
 | (나) + 등록 흉내 + 한계 걷어 냄 | – | 0 | 없음 |
 
-- PR 하나만 얹었을 때 (나)에서만 깨지는 줄(「기준 + 그 PR」 과 「(나) + 그 PR」 을 맞댐): 666 만 8줄 · 667 만 12줄 · 669 만 14줄(고치기 전 14줄). 넷을 다 얹어야 위 표의 수가 된다.
+- 「등록 흉내」(`--register saveGoogleToken`)는 이 기준 커밋에서는 아무것도 바꾸지 않는다 — 그 이름은 등록 2차(#940)로 이미 등록 기관에 등록돼 있다(모의본 도구 기록: 「이미 등록 블록이 있다(이 도구는 새 블록만 단다)」). 그래서 「등록 흉내」가 붙은 줄은 붙지 않은 줄과 같다.
+- PR 하나만 얹었을 때 (나)에서만 깨지는 줄(「기준 + 그 PR」 과 「(나) + 그 PR」 을 맞댐): 666 만 7줄 · 667 만 12줄 · 669 만 14줄(고치기 전 14줄). 넷을 다 얹어야 위 표의 수가 된다.
 - 이 PR 이 푸는 줄: `tests/cross-tab-guarded-init-es502.test.js` · `tests/cross-tab-inline-owned-es507.test.js` 의 「지금 저장소 ⑤ 0」 단언, 그리고 가드 종료 코드를 보는 줄들(`scripts/test-shipyard-modular.js` · `tests/module-guard.test.js` · `tests/new-module.test.js` — 이 셋은 한계를 걷어 내야 0 이 된다).
 
 ### 7.4 현재 main — 종료 코드 · 검사 수
