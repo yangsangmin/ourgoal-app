@@ -1,0 +1,1529 @@
+{
+ "tool": "reports/TASK-ES-623/measure.cjs",
+ "type": "작업자 측정, 판정 아님 — 각 측정 도구의 산출을 옮겨 적은 것",
+ "task": "TASK-ES-623",
+ "measuredAt": "2026-10-11T00:20:28.792Z",
+ "baseCommit": "4134955f882714bb7204559dd5b48a854cfad0dd",
+ "note": "트리 이름: main-before(기준 커밋 그대로) · main-after(#TASK-ES-620 시험지) · main-gate(#TASK-ES-623 게이트만) · main-both(둘 다) · mock-*(같은 시험지 + 배선을 전부 지운 index.html — reports/TASK-ES-620/mock-unwire-all.json). 원시 결과 파일은 저장소 밖 작업자 PC 임시 폴더에 있다.",
+ "runs": {
+  "main-after": {
+   "label": "현재 main · 고친 시험지(#TASK-ES-620 작업 폴더)",
+   "scope": "npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부",
+   "npmTest": {
+    "exit": 0,
+    "checkLines": 487,
+    "okLines": 172,
+    "failLines": []
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 172,
+     "fails": []
+    }
+   ],
+   "otherScripts": {
+    "count": 13,
+    "failed": [
+     {
+      "script": "scripts/test-calendar-attachments.js",
+      "exit": 1,
+      "tail": "AssertionError [ERR_ASSERTION]: 스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지"
+     },
+     {
+      "script": "scripts/test-universal-import.js",
+      "exit": 1,
+      "tail": "throw new AssertionError(obj); | AssertionError [ERR_ASSERTION]: 52주 영업 실적이어야 함"
+     }
+    ]
+   },
+   "testFiles": {
+    "count": 114,
+    "exit0": 88,
+    "failed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   }
+  },
+  "main-before": {
+   "label": "현재 main · 고치기 전 시험지",
+   "scope": "npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부",
+   "npmTest": {
+    "exit": 0,
+    "checkLines": 487,
+    "okLines": 156,
+    "failLines": []
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 156,
+     "fails": []
+    }
+   ],
+   "otherScripts": {
+    "count": 13,
+    "failed": [
+     {
+      "script": "scripts/test-calendar-attachments.js",
+      "exit": 1,
+      "tail": "AssertionError [ERR_ASSERTION]: 스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지"
+     },
+     {
+      "script": "scripts/test-universal-import.js",
+      "exit": 1,
+      "tail": "throw new AssertionError(obj); | AssertionError [ERR_ASSERTION]: 52주 영업 실적이어야 함"
+     }
+    ]
+   },
+   "testFiles": {
+    "count": 113,
+    "exit0": 87,
+    "failed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   }
+  },
+  "main-both": {
+   "label": "현재 main · 고친 시험지(#TASK-ES-620) + 고친 게이트(#TASK-ES-623)",
+   "scope": "npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부",
+   "npmTest": {
+    "exit": 0,
+    "checkLines": 487,
+    "okLines": 172,
+    "failLines": []
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 172,
+     "fails": []
+    }
+   ],
+   "otherScripts": {
+    "count": 13,
+    "failed": [
+     {
+      "script": "scripts/test-calendar-attachments.js",
+      "exit": 1,
+      "tail": "AssertionError [ERR_ASSERTION]: 스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지"
+     },
+     {
+      "script": "scripts/test-universal-import.js",
+      "exit": 1,
+      "tail": "throw new AssertionError(obj); | AssertionError [ERR_ASSERTION]: 52주 영업 실적이어야 함"
+     }
+    ]
+   },
+   "testFiles": {
+    "count": 114,
+    "exit0": 88,
+    "failed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   }
+  },
+  "main-gate": {
+   "label": "현재 main · 고친 게이트만(#TASK-ES-623 작업 폴더, 도우미 없음)",
+   "scope": "npm test 경로만(그 밖의 scripts/test-*.js · tests/*.test.js 는 돌리지 않음)",
+   "npmTest": {
+    "exit": 0,
+    "checkLines": 487,
+    "okLines": 156,
+    "failLines": []
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 156,
+     "fails": []
+    }
+   ],
+   "otherScripts": null,
+   "testFiles": null
+  },
+  "mock-after": {
+   "label": "모의 철거 사본 · 고친 시험지(#TASK-ES-620)",
+   "scope": "npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부",
+   "npmTest": {
+    "exit": 1,
+    "checkLines": 476,
+    "okLines": 0,
+    "failLines": [
+     "✗ [FAIL] [검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사"
+    ]
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 1,
+     "checkLines": 37,
+     "okLines": 0,
+     "fails": [
+      {
+       "check": "✗ [FAIL] [검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사",
+       "detail": "사유: window.promptNewGoal 전역 배선 누락"
+      }
+     ]
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 172,
+     "fails": []
+    }
+   ],
+   "otherScripts": {
+    "count": 13,
+    "failed": [
+     {
+      "script": "scripts/test-calendar-attachments.js",
+      "exit": 1,
+      "tail": "AssertionError [ERR_ASSERTION]: 스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지"
+     },
+     {
+      "script": "scripts/test-universal-import.js",
+      "exit": 1,
+      "tail": "throw new AssertionError(obj); | AssertionError [ERR_ASSERTION]: 52주 영업 실적이어야 함"
+     }
+    ]
+   },
+   "testFiles": {
+    "count": 114,
+    "exit0": 88,
+    "failed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   }
+  },
+  "mock-before": {
+   "label": "모의 철거 사본 · 고치기 전 시험지",
+   "scope": "npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부",
+   "npmTest": {
+    "exit": 1,
+    "checkLines": 414,
+    "okLines": 0,
+    "failLines": [
+     "✗ compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다",
+     "✗ compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증",
+     "✗ compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증",
+     "✗ compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증",
+     "✗ compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증",
+     "✗ compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증",
+     "✗ compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증",
+     "✗ compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증",
+     "✗ compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증",
+     "✗ compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·Nms 즉각 미리보기) 무결성 검증",
+     "✗ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증",
+     "✗ [#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성",
+     "✗ [#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성",
+     "✗ [#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성",
+     "✗ [#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성",
+     "✗ compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지",
+     "✗ compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증",
+     "✗ compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+     "✗ compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증",
+     "✗ compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증",
+     "✗ compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증",
+     "✗ TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증",
+     "✗ TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증",
+     "✗ TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증",
+     "✗ TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증"
+    ]
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 1,
+     "checkLines": 414,
+     "okLines": 0,
+     "fails": [
+      {
+       "check": "✗ compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다",
+       "detail": "전역 바인딩"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증",
+       "detail": "window.openAddAttachmentModal 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증",
+       "detail": "openCustomerInquiryModal 함수 window 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증",
+       "detail": "getKSTDateKey 전역 바인딩"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증",
+       "detail": "formatSchedulePillHtml window 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증",
+       "detail": "window.showToast = toast 전역 별칭 선언"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증",
+       "detail": "openAvatarGreetingPopup 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증",
+       "detail": "openItemReportModal 함수가 전역에 노출되어야 함"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증",
+       "detail": "openLockScreenHubModal 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·Nms 즉각 미리보기) 무결성 검증",
+       "detail": "syncLockScreenLiveCard 전역 노출"
+      },
+      {
+       "check": "✗ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증",
+       "detail": "window.promptNewGoal 전역 배선 완료"
+      },
+      {
+       "check": "✗ [#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성",
+       "detail": "window.instantShareCheckinToFeed 노출 누락"
+      },
+      {
+       "check": "✗ [#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성",
+       "detail": "window.openMicPermissionGuideModal 노출 누락"
+      },
+      {
+       "check": "✗ [#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성",
+       "detail": "openIosPwaInstallGuideModal 전역 노출 확인"
+      },
+      {
+       "check": "✗ [#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성",
+       "detail": "toggleAdvancedSettings 전역 노출 확인"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지",
+       "detail": "computeGoalStatusHash 노출 확인"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증",
+       "detail": "renderTeamGoalsEmptyGuideHtml window 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+       "detail": "renderStopwatchWidgetHtml window 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증",
+       "detail": "getEffectiveStandardDateKey 전역 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증",
+       "detail": "isGoogleCalendarConnected 전역 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증",
+       "detail": "window.renderInlineAttachmentChips 바인딩"
+      },
+      {
+       "check": "✗ TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증",
+       "detail": "index.html window.collapseAllSettingsSections 노출"
+      },
+      {
+       "check": "✗ TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증",
+       "detail": "index.html window.toggleFeedPostPreview 노출"
+      },
+      {
+       "check": "✗ TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증",
+       "detail": "index.html window.collapseAllTeamGoalAccordions 노출"
+      },
+      {
+       "check": "✗ TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증",
+       "detail": "index.html window.openGoalTemplateEncyclopediaModal 노출"
+      }
+     ]
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 1,
+     "checkLines": 37,
+     "okLines": 0,
+     "fails": [
+      {
+       "check": "✗ [FAIL] [검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사",
+       "detail": "사유: window.promptNewGoal 전역 배선 누락"
+      }
+     ]
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 1,
+     "checkLines": 6,
+     "okLines": 88,
+     "fails": []
+    }
+   ],
+   "otherScripts": {
+    "count": 13,
+    "failed": [
+     {
+      "script": "scripts/test-calendar-attachments.js",
+      "exit": 1,
+      "tail": "AssertionError [ERR_ASSERTION]: 스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지"
+     },
+     {
+      "script": "scripts/test-universal-import.js",
+      "exit": 1,
+      "tail": "throw new AssertionError(obj); | AssertionError [ERR_ASSERTION]: 52주 영업 실적이어야 함"
+     }
+    ]
+   },
+   "testFiles": {
+    "count": 113,
+    "exit0": 77,
+    "failed": [
+     "tests/achievement-graph-multiset.test.js",
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/ai-conditional-call-optimization.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-preview-modal.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/gcal-login-reconnect-fix.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goal-templates-encyclopedia.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/stopwatch-table-hint.test.js",
+     "tests/team-fold-state-es409.test.js",
+     "tests/team-goal-guide-hint.test.js",
+     "tests/team-goals-collapse-default.test.js",
+     "tests/team-level-accordion-es406.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   }
+  },
+  "mock-both": {
+   "label": "모의 철거 사본 · 고친 시험지(#TASK-ES-620) + 고친 게이트(#TASK-ES-623)",
+   "scope": "npm test 경로 + 그 밖의 scripts/test-*.js + tests/*.test.js 전부",
+   "npmTest": {
+    "exit": 0,
+    "checkLines": 487,
+    "okLines": 172,
+    "failLines": []
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 0,
+     "checkLines": 439,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "checkLines": 38,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 0,
+     "checkLines": 7,
+     "okLines": 172,
+     "fails": []
+    }
+   ],
+   "otherScripts": {
+    "count": 13,
+    "failed": [
+     {
+      "script": "scripts/test-calendar-attachments.js",
+      "exit": 1,
+      "tail": "AssertionError [ERR_ASSERTION]: 스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지"
+     },
+     {
+      "script": "scripts/test-universal-import.js",
+      "exit": 1,
+      "tail": "throw new AssertionError(obj); | AssertionError [ERR_ASSERTION]: 52주 영업 실적이어야 함"
+     }
+    ]
+   },
+   "testFiles": {
+    "count": 114,
+    "exit0": 88,
+    "failed": [
+     "tests/achievement-stats-shell-button-removal.test.js",
+     "tests/app-evaluation-notice.test.js",
+     "tests/avatar-icon-enlarge-all.test.js",
+     "tests/avatar-welcome-modal.test.js",
+     "tests/calendar-photo-diary-dismiss-guide.test.js",
+     "tests/comm-feed-cleanup.test.js",
+     "tests/comm-post-feed-button-fix.test.js",
+     "tests/component-modularization.test.js",
+     "tests/dm-delivery-read-receipt.test.js",
+     "tests/dm-keyboard-autofocus-fix.test.js",
+     "tests/enlarge-avatar-icons.test.js",
+     "tests/feed-ai-bot-reduction.test.js",
+     "tests/feed-post-category-diversity.test.js",
+     "tests/feed-post-photo-upload.test.js",
+     "tests/feed-post-selectable-targets.test.js",
+     "tests/feed-share-latest-record.test.js",
+     "tests/goal-ai-advice-status.test.js",
+     "tests/goal-template-legacy-cleanup.test.js",
+     "tests/goals-only-view.test.js",
+     "tests/goals-schedule-sync.test.js",
+     "tests/goals-smart-attachments.test.js",
+     "tests/records-stats-metrics.test.js",
+     "tests/remove-duplicate-home-layout-button.test.js",
+     "tests/routine-tab-scheduler.test.js",
+     "tests/settings-collapse-default.test.js",
+     "tests/trio-es143-es145.test.js"
+    ]
+   }
+  },
+  "mock-gate": {
+   "label": "모의 철거 사본 · 고친 게이트만(#TASK-ES-623, 도우미 없음)",
+   "scope": "npm test 경로만(그 밖의 scripts/test-*.js · tests/*.test.js 는 돌리지 않음)",
+   "npmTest": {
+    "exit": 1,
+    "checkLines": 414,
+    "okLines": 0,
+    "failLines": [
+     "✗ compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다",
+     "✗ compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증",
+     "✗ compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증",
+     "✗ compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증",
+     "✗ compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증",
+     "✗ compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증",
+     "✗ compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증",
+     "✗ compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증",
+     "✗ compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증",
+     "✗ compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·Nms 즉각 미리보기) 무결성 검증",
+     "✗ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증",
+     "✗ [#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성",
+     "✗ [#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성",
+     "✗ [#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성",
+     "✗ [#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성",
+     "✗ compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지",
+     "✗ compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증",
+     "✗ compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+     "✗ compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증",
+     "✗ compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증",
+     "✗ compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증",
+     "✗ TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증",
+     "✗ TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증",
+     "✗ TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증",
+     "✗ TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증"
+    ]
+   },
+   "scripts": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 1,
+     "checkLines": 414,
+     "okLines": 0,
+     "fails": [
+      {
+       "check": "✗ compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다",
+       "detail": "전역 바인딩"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증",
+       "detail": "window.openAddAttachmentModal 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증",
+       "detail": "openCustomerInquiryModal 함수 window 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증",
+       "detail": "getKSTDateKey 전역 바인딩"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증",
+       "detail": "formatSchedulePillHtml window 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증",
+       "detail": "window.showToast = toast 전역 별칭 선언"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증",
+       "detail": "openAvatarGreetingPopup 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증",
+       "detail": "openItemReportModal 함수가 전역에 노출되어야 함"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증",
+       "detail": "openLockScreenHubModal 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·Nms 즉각 미리보기) 무결성 검증",
+       "detail": "syncLockScreenLiveCard 전역 노출"
+      },
+      {
+       "check": "✗ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증",
+       "detail": "window.promptNewGoal 전역 배선 완료"
+      },
+      {
+       "check": "✗ [#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성",
+       "detail": "window.instantShareCheckinToFeed 노출 누락"
+      },
+      {
+       "check": "✗ [#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성",
+       "detail": "window.openMicPermissionGuideModal 노출 누락"
+      },
+      {
+       "check": "✗ [#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성",
+       "detail": "openIosPwaInstallGuideModal 전역 노출 확인"
+      },
+      {
+       "check": "✗ [#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성",
+       "detail": "toggleAdvancedSettings 전역 노출 확인"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지",
+       "detail": "computeGoalStatusHash 노출 확인"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증",
+       "detail": "renderTeamGoalsEmptyGuideHtml window 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+       "detail": "renderStopwatchWidgetHtml window 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증",
+       "detail": "getEffectiveStandardDateKey 전역 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증",
+       "detail": "isGoogleCalendarConnected 전역 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증",
+       "detail": "window.renderInlineAttachmentChips 바인딩"
+      },
+      {
+       "check": "✗ TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증",
+       "detail": "index.html window.collapseAllSettingsSections 노출"
+      },
+      {
+       "check": "✗ TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증",
+       "detail": "index.html window.toggleFeedPostPreview 노출"
+      },
+      {
+       "check": "✗ TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증",
+       "detail": "index.html window.collapseAllTeamGoalAccordions 노출"
+      },
+      {
+       "check": "✗ TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증",
+       "detail": "index.html window.openGoalTemplateEncyclopediaModal 노출"
+      }
+     ]
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 1,
+     "checkLines": 37,
+     "okLines": 0,
+     "fails": [
+      {
+       "check": "✗ [FAIL] [검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사",
+       "detail": "사유: window.promptNewGoal 전역 배선 누락"
+      }
+     ]
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "checkLines": 3,
+     "okLines": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 1,
+     "checkLines": 6,
+     "okLines": 88,
+     "fails": []
+    }
+   ],
+   "otherScripts": null,
+   "testFiles": null
+  }
+ },
+ "softAsserts": {
+  "main-after": {
+   "entries": 131,
+   "testFiles": 114,
+   "failedAssertLines": 159
+  },
+  "main-before": {
+   "entries": 130,
+   "testFiles": 113,
+   "failedAssertLines": 160
+  },
+  "main-both": {
+   "entries": 131,
+   "testFiles": 114,
+   "failedAssertLines": 159
+  },
+  "mock-after": {
+   "entries": 131,
+   "testFiles": 114,
+   "failedAssertLines": 160
+  },
+  "mock-before": {
+   "entries": 130,
+   "testFiles": 113,
+   "failedAssertLines": 216
+  },
+  "mock-both": {
+   "entries": 131,
+   "testFiles": 114,
+   "failedAssertLines": 159
+  }
+ },
+ "remaining": {
+  "main-after__mock-after": {
+   "failingOnlyInMock": 1,
+   "failingOnlyInMain": 0,
+   "byFile": {
+    "scripts/verify-integrity-gate.js": 1
+   },
+   "rows": [
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "line": 728,
+     "check": "[검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사",
+     "message": "window.promptNewGoal 전역 배선 누락",
+     "assertion": "assert.ok(html.includes('window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 누락');"
+    }
+   ]
+  },
+  "main-both__mock-both": {
+   "failingOnlyInMock": 0,
+   "failingOnlyInMain": 0,
+   "byFile": {},
+   "rows": []
+  }
+ },
+ "courtSandbox": {
+  "main-after": {
+   "label": "현재 main · 고친 시험지(#TASK-ES-620)",
+   "runners": [
+    {
+     "file": "scripts/smoke-test.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3,
+     "failedTitles": [
+      "compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다",
+      "compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다",
+      "[#TASK-ES-595] openModal 동치 대조 — #859(G054) 손 수정(arguments[2] → thirdArg) 전후가 같은 입력에 같은 결과"
+     ],
+     "death": null
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0,
+     "failedTitles": [],
+     "death": null
+    }
+   ]
+  },
+  "main-before": {
+   "label": "현재 main · 고치기 전 시험지",
+   "runners": [
+    {
+     "file": "scripts/smoke-test.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3,
+     "failedTitles": [
+      "compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다",
+      "compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다",
+      "[#TASK-ES-595] openModal 동치 대조 — #859(G054) 손 수정(arguments[2] → thirdArg) 전후가 같은 입력에 같은 결과"
+     ],
+     "death": null
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0,
+     "failedTitles": [],
+     "death": null
+    }
+   ]
+  },
+  "main-both": {
+   "label": "현재 main · #TASK-ES-620 + #TASK-ES-623",
+   "runners": [
+    {
+     "file": "scripts/smoke-test.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3,
+     "failedTitles": [
+      "compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다",
+      "compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다",
+      "[#TASK-ES-595] openModal 동치 대조 — #859(G054) 손 수정(arguments[2] → thirdArg) 전후가 같은 입력에 같은 결과"
+     ],
+     "death": null
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0,
+     "failedTitles": [],
+     "death": null
+    }
+   ]
+  },
+  "mock-after": {
+   "label": "모의 철거 사본 · 고친 시험지(#TASK-ES-620)",
+   "runners": [
+    {
+     "file": "scripts/smoke-test.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3,
+     "failedTitles": [
+      "compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다",
+      "compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다",
+      "[#TASK-ES-595] openModal 동치 대조 — #859(G054) 손 수정(arguments[2] → thirdArg) 전후가 같은 입력에 같은 결과"
+     ],
+     "death": null
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 37,
+     "failed": 1,
+     "failedTitles": [
+      "[검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사"
+     ],
+     "death": null
+    }
+   ]
+  },
+  "mock-before": {
+   "label": "모의 철거 사본 · 고치기 전 시험지",
+   "runners": [
+    {
+     "file": "scripts/smoke-test.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 411,
+     "failed": 28,
+     "failedTitles": [
+      "compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다",
+      "compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다",
+      "compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증",
+      "compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증",
+      "compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증",
+      "compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증",
+      "compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증",
+      "compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증",
+      "compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증",
+      "compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증",
+      "compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·0ms 즉각 미리보기) 무결성 검증",
+      "[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증",
+      "[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성",
+      "[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성",
+      "[#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성",
+      "[#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성",
+      "compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지",
+      "compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증",
+      "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+      "compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증",
+      "compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증",
+      "compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증",
+      "TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증",
+      "TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증",
+      "TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증",
+      "TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증",
+      "compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다",
+      "[#TASK-ES-595] openModal 동치 대조 — #859(G054) 손 수정(arguments[2] → thirdArg) 전후가 같은 입력에 같은 결과"
+     ],
+     "death": null
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 37,
+     "failed": 1,
+     "failedTitles": [
+      "[검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사"
+     ],
+     "death": null
+    }
+   ]
+  },
+  "mock-both": {
+   "label": "모의 철거 사본 · #TASK-ES-620 + #TASK-ES-623",
+   "runners": [
+    {
+     "file": "scripts/smoke-test.js",
+     "exit": 1,
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3,
+     "failedTitles": [
+      "compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다",
+      "compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다",
+      "[#TASK-ES-595] openModal 동치 대조 — #859(G054) 손 수정(arguments[2] → thirdArg) 전후가 같은 입력에 같은 결과"
+     ],
+     "death": null
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "exit": 0,
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0,
+     "failedTitles": [],
+     "death": null
+    }
+   ]
+  }
+ },
+ "summary": {
+  "runs": {
+   "main-after": {
+    "npmTestExit": 0,
+    "npmTestCheckLines": 487,
+    "npmTestOkLines": 172,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "fails": 0
+    },
+    "testFiles": {
+     "count": 114,
+     "exit0": 88
+    }
+   },
+   "main-before": {
+    "npmTestExit": 0,
+    "npmTestCheckLines": 487,
+    "npmTestOkLines": 156,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "fails": 0
+    },
+    "testFiles": {
+     "count": 113,
+     "exit0": 87
+    }
+   },
+   "main-both": {
+    "npmTestExit": 0,
+    "npmTestCheckLines": 487,
+    "npmTestOkLines": 172,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "fails": 0
+    },
+    "testFiles": {
+     "count": 114,
+     "exit0": 88
+    }
+   },
+   "main-gate": {
+    "npmTestExit": 0,
+    "npmTestCheckLines": 487,
+    "npmTestOkLines": 156,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "fails": 0
+    },
+    "testFiles": null
+   },
+   "mock-after": {
+    "npmTestExit": 1,
+    "npmTestCheckLines": 476,
+    "npmTestOkLines": 0,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 1,
+     "checkLines": 37,
+     "fails": 1
+    },
+    "testFiles": {
+     "count": 114,
+     "exit0": 88
+    }
+   },
+   "mock-before": {
+    "npmTestExit": 1,
+    "npmTestCheckLines": 414,
+    "npmTestOkLines": 0,
+    "smoke": {
+     "exit": 1,
+     "checkLines": 414,
+     "fails": 25
+    },
+    "gate": {
+     "exit": 1,
+     "checkLines": 37,
+     "fails": 1
+    },
+    "testFiles": {
+     "count": 113,
+     "exit0": 77
+    }
+   },
+   "mock-both": {
+    "npmTestExit": 0,
+    "npmTestCheckLines": 487,
+    "npmTestOkLines": 172,
+    "smoke": {
+     "exit": 0,
+     "checkLines": 439,
+     "fails": 0
+    },
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "fails": 0
+    },
+    "testFiles": {
+     "count": 114,
+     "exit0": 88
+    }
+   },
+   "mock-gate": {
+    "npmTestExit": 1,
+    "npmTestCheckLines": 414,
+    "npmTestOkLines": 0,
+    "smoke": {
+     "exit": 1,
+     "checkLines": 414,
+     "fails": 25
+    },
+    "gate": {
+     "exit": 1,
+     "checkLines": 37,
+     "fails": 1
+    },
+    "testFiles": null
+   }
+  },
+  "compare": {
+   "mainNpmTestExitBefore": 0,
+   "mainNpmTestExitAfter": 0,
+   "mainCheckLinesBefore": 487,
+   "mainCheckLinesAfter": 487,
+   "mainOkLinesBefore": 156,
+   "mainOkLinesAfter": 172,
+   "mainTestFilesNewlyFailedAfter": [],
+   "mockSmokeFailsBefore": 25,
+   "mockSmokeFailsAfter": 0,
+   "mockSmokeCheckLinesBefore": 414,
+   "mockSmokeCheckLinesAfter": 439,
+   "mockGateFailsBefore": 1,
+   "mockGateFailsAfter": 1,
+   "mockTestFilesFailedBefore": 36,
+   "mockTestFilesFailedAfter": 26,
+   "mockAfterFailedTestFilesSameAsMainAfter": true,
+   "bothMainNpmTestExit": 0,
+   "bothMockNpmTestExit": 0,
+   "bothMockCheckLines": 487,
+   "bothMainCheckLines": 487,
+   "bothMockFailedTestFilesSameAsMain": true,
+   "gateOnlyMainNpmTestExit": 0,
+   "gateOnlyMainGateCheckLines": 38,
+   "gateOnlyMainGateFails": 0,
+   "gateOnlyMockGateCheckLines": 37,
+   "gateOnlyMockGateFails": 1,
+   "bothMockGateCheckLines": 38,
+   "bothMockGateFails": 0
+  },
+  "remaining": {
+   "main-after__mock-after": 1,
+   "main-both__mock-both": 0
+  },
+  "courtSandbox": {
+   "main-after": [
+    {
+     "file": "scripts/smoke-test.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0
+    }
+   ],
+   "main-before": [
+    {
+     "file": "scripts/smoke-test.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0
+    }
+   ],
+   "main-both": [
+    {
+     "file": "scripts/smoke-test.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0
+    }
+   ],
+   "mock-after": [
+    {
+     "file": "scripts/smoke-test.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 37,
+     "failed": 1
+    }
+   ],
+   "mock-before": [
+    {
+     "file": "scripts/smoke-test.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 411,
+     "failed": 28
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 37,
+     "failed": 1
+    }
+   ],
+   "mock-both": [
+    {
+     "file": "scripts/smoke-test.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 436,
+     "failed": 3
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "isolated": true,
+     "watched": true,
+     "passed": 38,
+     "failed": 0
+    }
+   ]
+  },
+  "courtSandboxSmokeFailedTitlesSame": {
+   "mockAfterVsMainBefore": true,
+   "mockBothVsMainBefore": true,
+   "gateMockBothFailed": 0
+  },
+  "control-group": {
+   "variants": 5,
+   "allAsExpected": true
+  },
+  "changed-assertions": {
+   "changedLines": 1,
+   "byFile": {
+    "scripts/verify-integrity-gate.js": 1
+   },
+   "names": [
+    "promptNewGoal"
+   ],
+   "nameCount": 1,
+   "legacyTextKeptAll": true,
+   "kinds": {
+    "includes → windowExposed": 1
+   },
+   "checks": 1,
+   "additions": 6,
+   "removedOnly": 0,
+   "newFiles": []
+  }
+ },
+ "changedScope": {
+  "base": "4134955f882714bb7204559dd5b48a854cfad0dd",
+  "all": [
+   "docs/rules/TICKETS.md",
+   "docs/specs/REQ-TASK-ES-623-GATE-WIRING-TEXT.md",
+   "reports/TASK-ES-623/build-claims.cjs",
+   "reports/TASK-ES-623/changed-assertions.json",
+   "reports/TASK-ES-623/claims.json",
+   "reports/TASK-ES-623/control-group.json",
+   "reports/TASK-ES-623/measurement.json",
+   "reports/TASK-ES-623/raw/npm-test.main-both.exit",
+   "reports/TASK-ES-623/raw/npm-test.main-both.log",
+   "reports/TASK-ES-623/raw/npm-test.main-gate.exit",
+   "reports/TASK-ES-623/raw/npm-test.main-gate.log",
+   "reports/TASK-ES-623/raw/npm-test.mock-both.exit",
+   "reports/TASK-ES-623/raw/npm-test.mock-both.log",
+   "scripts/verify-integrity-gate.js"
+  ],
+  "product": [],
+  "vaultCourtConstitutionDirectivesGenerator": [
+   "scripts/verify-integrity-gate.js"
+  ],
+  "tests": [],
+  "docsAndReports": [
+   "docs/rules/TICKETS.md",
+   "docs/specs/REQ-TASK-ES-623-GATE-WIRING-TEXT.md",
+   "reports/TASK-ES-623/build-claims.cjs",
+   "reports/TASK-ES-623/changed-assertions.json",
+   "reports/TASK-ES-623/claims.json",
+   "reports/TASK-ES-623/control-group.json",
+   "reports/TASK-ES-623/measurement.json",
+   "reports/TASK-ES-623/raw/npm-test.main-both.exit",
+   "reports/TASK-ES-623/raw/npm-test.main-both.log",
+   "reports/TASK-ES-623/raw/npm-test.main-gate.exit",
+   "reports/TASK-ES-623/raw/npm-test.main-gate.log",
+   "reports/TASK-ES-623/raw/npm-test.mock-both.exit",
+   "reports/TASK-ES-623/raw/npm-test.mock-both.log"
+  ]
+ },
+ "rawNpmTestLogs": {
+  "main-both": {
+   "log": "reports/TASK-ES-623/raw/npm-test.main-both.log",
+   "exit": 0,
+   "checkLines": 487,
+   "okLines": 172,
+   "failLines": 0
+  },
+  "main-gate": {
+   "log": "reports/TASK-ES-623/raw/npm-test.main-gate.log",
+   "exit": 0,
+   "checkLines": 487,
+   "okLines": 156,
+   "failLines": 0
+  },
+  "mock-both": {
+   "log": "reports/TASK-ES-623/raw/npm-test.mock-both.log",
+   "exit": 0,
+   "checkLines": 487,
+   "okLines": 172,
+   "failLines": 0
+  }
+ }
+}

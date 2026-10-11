@@ -17,6 +17,12 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 const INLINE_CELLS_SRC = require('../tests/helpers/inline-bundle').withInlineCells('');
+// #TASK-ES-623: 「window.X = X;」 옛 배선 글자를 찾던 단언은, 그 글자가 있거나(고치기 전과 같은 판정) 같은 이름·같은 값이 세포의 등록 블록(OurgoalCellRegistry.provide)으로 window 에 나갈 때 참이다.
+// 등록 블록은 공용 도우미 tests/helpers/wiring-exposed.js(#TASK-ES-620 PR 이 들여온다)가 @babel/parser 로 읽는다. 배선도 등록도 없으면 거짓이다. 검사 수·기대값은 그대로다.
+// 도우미 파일이 아직 없으면(그 PR 보다 먼저 병합된 경우) 옛 배선 글자만 본다 — 고치기 전과 같은 판정이라, 병합 순서가 바뀌어도 게이트가 죽거나 느슨해지지 않는다.
+const WIRING_HELPER = path.join(__dirname, '..', 'tests', 'helpers', 'wiring-exposed.js');
+const WIRING = fs.existsSync(WIRING_HELPER) ? require(WIRING_HELPER) : null;
+function windowExposed(source, legacyText) { return WIRING ? WIRING.windowExposed(source, legacyText) : source.includes(legacyText); }
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const INDEX_HTML = path.join(ROOT_DIR, 'index.html');
@@ -725,7 +731,7 @@ check('[검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체
   const sanctuaryContent = fs.readFileSync(sanctuaryPath, 'utf8');
 
   // 1. 전역 함수 배선 확인
-  assert.ok(html.includes('window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 누락');
+  assert.ok(windowExposed(html, 'window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 누락');
   assert.ok(html.includes('window.showNewGoalManualForm = showNewGoalManualForm;'), 'window.showNewGoalManualForm 전역 배선 누락');
 
   // 2. 세부 마일스톤 뷰 + 새 목표 버튼 마크업 및 리스너 배선 확인
