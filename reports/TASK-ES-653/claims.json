@@ -50,15 +50,14 @@
       "id": "C2",
       "req": "R3",
       "kind": "unverified",
-      "domain": "ui-behavior",
+      "domain": "multi-user",
       "statement": "로그인한 뒤 세션 채널이 구독되고, 다른 기기에서 모든 기기 원격 로그아웃을 실행하면 이 기기가 로그아웃된다 — 이전 전과 같다.",
       "touches": [
         "js/tabs/settings/user-session-realtime.js"
       ],
       "unverified": {
-        "reason": "tool-cannot-measure",
-        "cannotBecause": "needs-login",
-        "who": "실계정으로 두 기기에 로그인할 수 있는 사람(운영 실계정 하네스 docs/design/harness/real-account-check.js 또는 진짜 기기 두 대)",
+        "reason": "needs-live-server",
+        "who": "실서버에 실계정으로 두 기기에서 로그인할 수 있는 사람 — 법정은 외부 통신을 막아 로그인도 실시간 방송도 할 수 없다(운영 실계정 하네스 docs/design/harness/real-account-check.js 또는 진짜 기기 두 대)",
         "how": [
           "같은 계정으로 기기 A · 기기 B 에 로그인한다",
           "기기 A 의 설정 → 계정 보안 → 다른 기기 로그아웃을 실행한다",
