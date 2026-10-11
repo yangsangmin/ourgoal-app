@@ -1,0 +1,77 @@
+{
+  "id": "x09-team-comment-passthrough",
+  "title": "게스트로 소통 탭에서 모임 구획 단추를 누르고 Enter 를 눌러도 구획이 바뀌고 예외가 없다 (재철거 3차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".comm-subtab[data-sub=\"group\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".comm-subtab[data-sub=\"group\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"group\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".comm-subtab[data-sub=\"group\"]",
+      "className": "active"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".comm-subtab[data-sub=\"group\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
