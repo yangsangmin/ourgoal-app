@@ -521,6 +521,356 @@ function unstateOnce(U, doc) {
   return { next, meta, log };
 }
 
+// ── [#TASK-ES-643 · docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 닫힌 목록 X7 — 상민님 2026-10-11 「허용」, 효력 기록 지시함 DIR-004] 연속 구역 감싸기 모드(설정 "mode": "region").
+// 아래는 전부 mode:"region" 경로 안에서만 돈다. 옮기기 경로(이 줄 아래)·unwire·unstate 경로의 글자는 바꾸지 않았다(이 블록을 한 자리에 끼워 넣었을 뿐 — 새 경로다. 옮기기 경로의 코드를 부르지 않는다).
+// 무엇을 하는가: IIFE 최상위에서 **연달아 있는 문 여럿**(구역)을 순서 그대로 세포 함수 하나의 본문으로 옮기고, 원래 자리에 그 함수를 부르는 한 줄을, 머리 이음매 자리에 가져오기 한 줄을 남긴다.
+//   옮기기 경로의 「감싸기」(4줄 이상 문 **하나**를 함수 하나로)와 산출 꼴(세포 파일 틀 · 부르는 줄 · 머리 가져오기 · 통로 getter · script 태그)이 같다. 다른 점은 셋이다:
+//   ① 문 하나가 아니라 연속 구역이다(3줄 이하 문 포함 — M1a) ② 구역 안에서만 쓰는 노출 안 된 var 는 그 함수의 지역 변수가 된다(M1c — 옮기기 경로는 「IIFE 로 끌어올려지는 선언」이면 감싸지 않는다)
+//   ③ window 노출 줄도 구역에 들면 함께 간다(`window.X = X;` → `window.X = L.X;` — M1d, 구역 함수가 원래 자리에서 불리므로 시점은 그대로다. 옮기기 경로는 노출 줄을 원래 자리에 둔다).
+//   기관이 바꿔 쓴 `window.OurgoalAppState.define…` 줄은 글자 그대로 간다(M1b). 구역 안 주석·빈 줄은 따라간다(M1e — 첫 문의 앞 주석·빈 줄 포함. 마지막 문 뒤의 주석·빈 줄은 남는다).
+// 바꾸는 글자는 이름 접두 `L.` 뿐이다(헌법 CELL_SPLIT 1호 — IIFE 스코프 이름을 통로로 읽는다. 대입하면 setter). 그 밖의 글자·문 순서는 그대로다. 단계마다 try/catch 를 넣지 않는다.
+// 구역 경계는 줄 번호가 아니라 구획 주석 제목(`/* ===` 줄에 든 글자)으로 정한다: { "name", "group" [, "groupTo"] [, "from"] [, "to"] [, "headerPick"] }
+//   · group 만            → 그 묶음(구획 주석 ~ 다음 구획 주석 앞)의 최상위 문 전부
+//   · groupTo             → group 묶음부터 groupTo 묶음까지(연달아 있는 묶음들)
+//   · from / to(문 글자 닻) → 그 범위 안에서 **글자가 이 문자열로 시작하는 최상위 문**(꼭 하나여야 한다)부터 / 까지. 묶음 안에 구역에 넣을 수 없는 문이 끼어 있을 때 그 앞뒤를 가른다.
+//   구획 주석의 행방: 구역이 묶음의 첫 문에서 시작하고 그 묶음의 문이 모두 (어느) 구역에 들면 구획 주석도 따라간다. 문이 남으면 구획 주석은 index.html 에 남는다(남은 문의 묶음 이름이 그대로).
+//   구역 안쪽에 든 구획 주석(뒤 묶음의 것)은 그 묶음의 문이 모두 구역에 들 때만 받는다 — 아니면 멈춘다(그 묶음에서 구역을 나눈다).
+// 안전 정지(fail — index.html·세포 파일을 쓰지 않는다): 구역 안에 함수 선언 · 키트 손잡이(`var _k = window.…`) · 키트 가져오기(`var X = _k.X`) · expose 문 · 통로에 노출된 이름의 var 선언(상태 이전이 먼저) ·
+//   구역 밖에서 읽거나 쓰는 var · let/const/class · 호출문·식 문·if·try·var 밖의 문 종류(for·while·switch·블록…) · 최상위 this/arguments/return · 줄 중간에서 시작하거나 끝나는 구역(앞뒤 문과 한 줄을 나눠 씀 · 경계에 걸친 주석) ·
+//   머리 이음매 자리보다 앞에 있는 구역 · 서로 겹치는 구역 · 제목·닻이 하나로 정해지지 않음 · 이미 있는 이름의 구역 함수 · 이미 있는 세포 파일 · 저장소 js/** 어디에도 없는 키트(새 전역을 만들지 않는다) · 800줄을 넘는 세포 파일 ·
+//   돈 근처·결심 대기 대상(`OurgoalTemplateCredit` · `OURGOAL_CONFIG` — L. 접두도 글자 변경이라 「글자 그대로 자리만」 한도 밖이다) · 설정의 모르는 칸.
+// 사후 대조: 세포 파일과 새 index.html 을 다시 파싱하고, 구역 함수 본문의 토큰열에서 `L.` 접두(와 줄임 속성 `{a}` → `{a: L.a}`)만 걷어 낸 것이 이전 전 구역의 토큰열과 같은지, 주석이 그대로인지 본다. 다르면 쓰지 않고 멈춘다.
+// 설정 예: { "task": "TASK-ES-6xx", "slot": "HO", "mode": "region", "label": "…",
+//           "cells": [ { "key": "bootLanding", "file": "js/…/boot-landing.js", "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit", "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+//                        "title": "…", "desc": ["…"], "regions": [ { "name": "bootLandingLinks", "group": "랜딩 페이지", "from": "window.OurgoalAppState.define('landNickQuickLink'", "to": "bindLandGuestBtn();" } ] } ] }
+if (CFG.mode === 'region') { runRegion(); return; }
+function runRegion() {
+  const doc = parseUnwireDoc(lines);
+  const { code, top, iScope } = doc, off = doc.off, eLine = off + code.split('\n').length;
+  const H = n => n.loc.start.line + off, HE = n => n.loc.end.line + off;
+  const ID = /^[A-Za-z_$][\w$]*$/, iife = iScope.path;
+  const HOLD = ['OurgoalTemplateCredit', 'OURGOAL_CONFIG']; // 돈 근처(DIR-004 묶음 3 — 글자 그대로 자리만) · 결심 대기 — 구역에 넣지 않는다
+  const isComment = t => typeof t.type === 'string';
+  const toks = doc.ast.tokens.filter(t => !isComment(t) && t.type.label !== 'eof');
+  const LABEL = CFG.label || '연속 구역 감싸기';
+
+  // ── 설정 검사(모르는 칸은 멈춘다 — 오타로 목록 밖 동작이 켜지지 않게)
+  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells'].includes(k)) fail('region 설정에 모르는 칸: ' + k);
+  if (typeof TAG !== 'string' || !/^TASK-[A-Z0-9-]+$/.test(TAG)) fail('region 설정 task 가 작업 번호가 아니다: ' + TAG);
+  if (typeof CFG.slot !== 'string' || !CFG.slot) fail('region 설정 slot 이 없다');
+  if (!Array.isArray(CFG.cells) || !CFG.cells.length) fail('region 설정 cells 가 비었다');
+  const seenName = new Set(), seenKey = new Set(), seenFile = new Set();
+  for (const c of CFG.cells) {
+    if (!c || typeof c !== 'object' || Array.isArray(c)) fail('region 설정 cells 의 칸은 객체여야 한다');
+    for (const k of Object.keys(c)) if (!['key', 'file', 'kit', 'kitVar', 'beforeTag', 'afterTag', 'title', 'desc', 'regions'].includes(k)) fail('region 설정 cells 에 모르는 칸: ' + k);
+    if (typeof c.key !== 'string' || !ID.test(c.key) || seenKey.has(c.key)) fail('region 세포 key 가 이름이 아니거나 겹친다: ' + c.key);
+    seenKey.add(c.key);
+    if (typeof c.file !== 'string' || !/^js\/[A-Za-z0-9_\-./]+\.js$/.test(c.file) || c.file.includes('..') || seenFile.has(c.file)) fail('region 세포 file 이 js/ 아래 경로가 아니거나 겹친다: ' + c.file);
+    seenFile.add(c.file);
+    if (fs.existsSync(path.join(APP, c.file))) fail('region 세포 파일이 이미 있다(덮어쓰지 않는다): ' + c.file);
+    if (typeof c.kit !== 'string' || !ID.test(c.kit)) fail('region 세포 kit 이 이름이 아니다: ' + c.kit);
+    if (typeof c.kitVar !== 'string' || !ID.test(c.kitVar)) fail('region 세포 kitVar 가 이름이 아니다: ' + c.kitVar);
+    if ((typeof c.beforeTag === 'string') === (typeof c.afterTag === 'string')) fail('region 세포는 beforeTag · afterTag 가운데 꼭 하나를 적는다: ' + c.key);
+    if (typeof c.title !== 'string' || !c.title || !Array.isArray(c.desc) || !c.desc.length || c.desc.some(d => typeof d !== 'string')) fail('region 세포 title · desc 가 없다: ' + c.key);
+    if ([c.title].concat(c.desc).some(d => d.includes('*/') || /[\r\n]/.test(d))) fail('region 세포 title · desc 에 주석을 닫는 글자나 줄바꿈이 있다: ' + c.key);
+    if (!Array.isArray(c.regions) || !c.regions.length) fail('region 세포 regions 가 비었다: ' + c.key);
+    for (const r of c.regions) {
+      if (!r || typeof r !== 'object' || Array.isArray(r)) fail('region 구역 설정은 객체여야 한다');
+      for (const k of Object.keys(r)) if (!['name', 'group', 'groupTo', 'from', 'to', 'headerPick'].includes(k)) fail('region 구역 설정에 모르는 칸: ' + k);
+      if (typeof r.name !== 'string' || !ID.test(r.name)) fail('region 구역 name 이 이름이 아니다: ' + r.name);
+      if (seenName.has(r.name)) fail('region 구역 name 이 겹친다: ' + r.name);
+      seenName.add(r.name);
+      if (iScope.hasBinding(r.name) || (iScope.hasGlobal && iScope.hasGlobal(r.name))) fail('구역 함수 이름이 이미 있다: ' + r.name);
+      for (const k of ['group', 'groupTo', 'from', 'to']) if (r[k] !== undefined && (typeof r[k] !== 'string' || !r[k])) fail('region 구역 ' + k + ' 가 빈 글자다: ' + r.name);
+      if (typeof r.group !== 'string') fail('region 구역 group(구획 주석 제목)이 없다: ' + r.name);
+      if (r.headerPick !== undefined && r.headerPick !== 'nonEmpty') fail('region 구역 headerPick 은 nonEmpty 만 받는다: ' + r.name);
+    }
+  }
+  // 새 전역을 만들지 않는다: 키트는 저장소 js/** 의 어느 파일엔가 이미 있어야 한다
+  const jsFiles = []; (function walk(d) { fs.readdirSync(d, { withFileTypes: true }).forEach(e => { const p = path.join(d, e.name); if (e.isDirectory()) return walk(p); if (e.name.endsWith('.js')) jsFiles.push(p); }); })(path.join(APP, 'js'));
+  const jsText = new Map(jsFiles.map(p => [path.relative(APP, p).replace(/\\/g, '/'), fs.readFileSync(p, 'utf8')]));
+  for (const c of CFG.cells) if (![...jsText.values()].some(t => new RegExp('(?:global|window)\\.' + c.kit.replace(/\$/g, '\\$') + '\\b').test(t))) fail('키트 ' + c.kit + ' 가 저장소 js/** 어디에도 없다 — 구역 감싸기는 새 전역을 만들지 않는다');
+
+  // ── IIFE 머리의 현재 상태(AST): 통로 getter·setter · 키트 손잡이 · 키트 가져오기
+  const rootWin = n => { let x = n; while (x && x.type === 'MemberExpression' && !x.computed) x = x.object; return !!x && x.type === 'Identifier' && x.name === 'window'; };
+  const isExposeCall = st => { const x = st.isExpressionStatement() && st.node.expression; return !!x && x.type === 'CallExpression' && x.callee.type === 'MemberExpression' && !x.callee.computed && x.callee.property.name === 'expose' && x.callee.object.type === 'MemberExpression' && !x.callee.object.computed && x.callee.object.property.name === 'OurgoalAppScope'; };
+  const oneVar = st => (st.isVariableDeclaration() && st.node.declarations.length === 1 && st.node.declarations[0].id.type === 'Identifier') ? st.node.declarations[0] : null;
+  const isHandle = st => { const d = oneVar(st); return !!d && !!d.init && d.init.type === 'MemberExpression' && rootWin(d.init); };
+  const handleOf = new Map(); // 손잡이 이름 → { kit(window.<한 단계>일 때만), line }
+  for (const st of top) if (isHandle(st)) { const d = oneVar(st), i = d.init; handleOf.set(d.id.name, { kit: (!i.computed && i.object.type === 'Identifier' && i.object.name === 'window') ? i.property.name : null, line: H(st.node) }); }
+  const isKitImport = st => { const d = oneVar(st); return !!d && !!d.init && d.init.type === 'MemberExpression' && !d.init.computed && d.init.object.type === 'Identifier' && handleOf.has(d.init.object.name); };
+  const getters = new Set(), setters = new Set();
+  for (const st of top) if (isExposeCall(st)) { const o = st.node.expression.arguments[1]; if (o && o.type === 'ObjectExpression') for (const p of o.properties) if (p.type === 'ObjectMethod' && !p.computed && p.key.type === 'Identifier') { if (p.kind === 'get') getters.add(p.key.name); if (p.kind === 'set') setters.add(p.key.name); } }
+
+  // ── 묶음 경계(옮기기 경로·지도와 같은 규칙: 구획 주석 `/* ===` 에서 다음 구획 주석 앞까지)
+  const isHeader = c => c.type === 'CommentBlock' && /^\s*=+/.test(c.value);
+  const headers = [];
+  for (const st of top) for (const c of (st.node.leadingComments || [])) if (isHeader(c)) headers.push({ line: c.loc.start.line + off, endLine: c.loc.end.line + off, text: c.value });
+  const groupEnd = h => { const i = headers.indexOf(h); return i + 1 < headers.length ? headers[i + 1].line - 1 : eLine; };
+  const groupSts = h => top.filter(st => H(st.node) >= h.line && HE(st.node) <= groupEnd(h));
+  const pickHeader = (title, pick, who) => {
+    let hs = headers.filter(h => h.text.includes(title));
+    if (hs.length > 1 && pick === 'nonEmpty') hs = hs.filter(h => groupSts(h).length > 0);
+    if (hs.length !== 1) fail('구획 주석이 ' + hs.length + '개: ' + title + ' (구역 ' + who + ')');
+    return hs[0];
+  };
+  const dirEnd = (iife.node.body.directives || []).reduce((m, d) => Math.max(m, HE(d)), H(iife.node.body));
+  const text = st => code.slice(st.node.start, st.node.end);
+
+  // ── 구역마다 문을 정한다
+  const items = [];
+  for (const c of CFG.cells) for (const r of c.regions) {
+    const h1 = pickHeader(r.group, r.headerPick, r.name), h2 = r.groupTo ? pickHeader(r.groupTo, r.headerPick, r.name) : h1;
+    if (h2.line < h1.line) fail('groupTo 묶음이 group 묶음보다 앞에 있다: ' + r.name);
+    const S = top.filter(st => H(st.node) >= h1.line && HE(st.node) <= groupEnd(h2));
+    if (!S.length) fail('구역에 최상위 문이 없다: ' + r.name);
+    const anchor = (a, what) => { const m = S.filter(st => text(st).startsWith(a)); if (m.length !== 1) fail('구역 ' + r.name + ' 의 ' + what + ' 닻에 맞는 문이 ' + m.length + '개다(꼭 하나여야 한다): ' + a); return S.indexOf(m[0]); };
+    const iFrom = r.from ? anchor(r.from, 'from') : 0, iTo = r.to ? anchor(r.to, 'to') : S.length - 1;
+    if (iTo < iFrom) fail('구역 ' + r.name + ' 의 to 문이 from 문보다 앞에 있다');
+    const sts = S.slice(iFrom, iTo + 1), first = sts[0], last = sts[sts.length - 1], k = top.indexOf(first);
+    const prevEnd = k ? HE(top[k - 1].node) : dirEnd;
+    const gh = headers.filter(h => h.line > prevEnd && h.line <= H(first.node)).pop() || null; // 첫 문 바로 앞의 구획 주석(이 문이 그 묶음의 첫 문)
+    items.push({ cell: c.key, file: c.file, name: r.name, spec: r, sts, first, last, prevEnd, gh, start: H(first.node), end: HE(last.node), segStart: prevEnd + 1, locals: [], bridged: new Set(), edits: 0, headersMoved: [] });
+  }
+  // 문 종류 검사(닫힌 목록: 호출문·식 문 · if · try · var)
+  for (const it of items) for (const st of it.sts) {
+    const at = '(구역 ' + it.name + ', 줄 ' + H(st.node) + ')';
+    if (st.isFunctionDeclaration()) fail('구역 안에 함수 선언이 있다 — 함수 이전이 먼저다: ' + st.node.id.name + ' ' + at);
+    if (st.isVariableDeclaration()) {
+      if (st.node.kind !== 'var') fail('구역 안에 ' + st.node.kind + ' 선언이 있다 ' + at);
+      if (st.node.declarations.some(d => d.id.type !== 'Identifier')) fail('구역 안 var 선언이 구조 분해다 ' + at);
+      if (isHandle(st)) fail('구역 안에 키트 손잡이가 있다: ' + oneVar(st).id.name + ' ' + at);
+      if (isKitImport(st)) fail('구역 안에 키트 가져오기가 있다: ' + oneVar(st).id.name + ' ' + at);
+    } else if (st.isExpressionStatement()) {
+      if (isExposeCall(st)) fail('구역 안에 expose 문이 있다 ' + at);
+    } else if (!st.isIfStatement() && !st.isTryStatement()) fail('구역에 넣을 수 없는 문 종류: ' + st.node.type + ' ' + at);
+    let bad = 0;
+    st.traverse({ Function(q) { if (!q.isArrowFunctionExpression()) q.skip(); }, ThisExpression() { bad++; }, Identifier(q) { if (q.node.name === 'arguments' && q.isReferencedIdentifier()) bad++; } });
+    if (bad) fail('구역 안 문의 최상위에 this/arguments 가 있다 ' + at);
+    st.traverse({ ReturnStatement(q) { const fp = q.getFunctionParent(); if (fp && fp.node === iife.node) fail('구역 안 문의 최상위에 return 이 있다 ' + at); } });
+  }
+  // 겹침 · 묶음과 구획 주석의 행방
+  items.sort((a, b) => a.start - b.start);
+  for (let i = 1; i < items.length; i++) if (items[i].start <= items[i - 1].end) fail('구역이 서로 겹친다: ' + items[i - 1].name + ' · ' + items[i].name);
+  const covered = st => items.some(it => it.sts.includes(st));
+  for (const it of items) {
+    if (it.gh) { if (groupSts(it.gh).every(covered)) { it.segStart = it.gh.line; it.headersMoved.push(it.gh.line); } else it.segStart = it.gh.endLine + 1; }
+    for (const h of headers) if (h !== it.gh && h.line >= it.segStart && h.line <= it.end) {
+      if (!groupSts(h).every(covered)) fail('구역 ' + it.name + ' 이 묶음 중간에서 끝난다 — 그 묶음의 구획 주석(줄 ' + h.line + ')이 구역에 들었는데 그 묶음의 문이 다 들지 않았다. 그 묶음에서 구역을 나눈다');
+      it.headersMoved.push(h.line);
+    }
+  }
+  // 줄 경계: 구역은 온전한 줄들이어야 한다
+  for (const it of items) {
+    if (it.start <= it.prevEnd || it.segStart <= it.prevEnd) fail('구역 ' + it.name + ' 이 줄 중간에서 시작한다(앞 문과 한 줄을 나눠 쓴다): ' + it.start);
+    if (toks.some(t => t.loc.start.line + off === it.start && t.start < it.first.node.start)) fail('구역 ' + it.name + ' 이 줄 중간에서 시작한다(앞 문과 한 줄을 나눠 쓴다): ' + it.start);
+    if (toks.some(t => t.loc.start.line + off === it.end && t.start >= it.last.node.end)) fail('구역 ' + it.name + ' 이 줄 중간에서 끝난다(뒤 문과 한 줄을 나눠 쓴다): ' + it.end);
+    for (const cm of doc.ast.comments || []) {
+      const a = cm.loc.start.line + off, b = cm.loc.end.line + off;
+      if ((a < it.segStart && b >= it.segStart) || (a <= it.end && b > it.end)) fail('구역 ' + it.name + ' 의 경계에 주석이 걸쳐 있다: ' + a + '~' + b);
+    }
+    const s0 = code.split('\n').slice(0, it.segStart - 1 - off).join('\n').length + (it.segStart - 1 - off > 0 ? 1 : 0), e0 = code.split('\n').slice(0, it.end - off).join('\n').length;
+    it.c0 = s0; it.c1 = e0;
+    const held = toks.find(t => t.start >= s0 && t.end <= e0 && HOLD.some(w => new RegExp('(^|[^\\w$])' + w.replace(/\$/g, '\\$') + '($|[^\\w$])').test(code.slice(t.start, t.end))));
+    if (held) fail('구역 ' + it.name + ' 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: ' + code.slice(held.start, held.end) + '(줄 ' + (held.loc.start.line + off) + ')');
+  }
+  // 구역 안에서 선언되는 IIFE 이름: 노출 안 됐고 모든 참조가 그 구역 안이면 지역 변수(M1c), 아니면 멈춘다
+  const inItem = l => items.find(it => l >= it.segStart && l <= it.end) || null;
+  for (const n of Object.keys(iScope.bindings).sort()) {
+    const b = iScope.bindings[n], dl = H(b.path.node), it = inItem(dl);
+    if (!it) continue;
+    if (b.kind !== 'var') fail('구역 안에 var 가 아닌 선언이 있다: ' + n + '(' + b.kind + ', 줄 ' + dl + ', 구역 ' + it.name + ')');
+    if (getters.has(n)) fail('구역 안에 통로에 노출된 이름의 var 선언이 있다 — 상태 이전(unstate)이 먼저다: ' + n + '(줄 ' + dl + ', 구역 ' + it.name + ')');
+    const outs = b.referencePaths.concat(b.constantViolations).map(r => H(r.node)).filter(l => !(l >= it.segStart && l <= it.end));
+    if (outs.length) fail('구역 안 var 를 구역 밖에서 읽거나 쓴다 — 지역 변수로 만들 수 없다: ' + n + '(구역 ' + it.name + ', 밖의 줄 ' + [...new Set(outs)].sort((a, b) => a - b).join(',') + ')');
+    it.locals.push(n);
+  }
+
+  // ── 이름 바꿔 쓰기(구역 안): IIFE 스코프 이름 → L.<이름>. 지역이 된 이름은 그대로
+  const edits = [], bridged = new Map(), shortEdits = new Set();
+  for (const it of items) for (const st of it.sts) {
+    st.traverse({
+      Identifier(p) {
+        const nm = p.node.name, par = p.parent;
+        if ((p.parentPath.isMemberExpression() || p.parentPath.isOptionalMemberExpression()) && par.property === p.node && !par.computed) return;
+        if (p.parentPath.isObjectProperty() && par.key === p.node && !par.computed && !par.shorthand) return;
+        if (p.parentPath.isObjectMethod() && par.key === p.node && !par.computed) return;
+        if (p.parentPath.isClassMethod() && par.key === p.node && !par.computed) return;
+        if (p.parentPath.isLabeledStatement() || p.parentPath.isBreakStatement() || p.parentPath.isContinueStatement()) return;
+        const b = p.scope.getBinding(nm);
+        if (!b || b.scope !== iScope) return;
+        if (it.locals.includes(nm)) return; // 이 구역의 지역 변수 — 그대로
+        const isWrite = (p.parentPath.isAssignmentExpression() && par.left === p.node) || p.parentPath.isUpdateExpression() || (p.parentPath.isAssignmentPattern() && par.left === p.node) || p.parentPath.isArrayPattern() || (p.parentPath.isObjectProperty() && p.parentPath.parentPath.isObjectPattern());
+        if (isWrite && b.kind === 'const') fail('const 에 대입: ' + nm);
+        if (!bridged.has(nm)) bridged.set(nm, { assigned: false, kind: b.kind });
+        if (isWrite) bridged.get(nm).assigned = true;
+        it.bridged.add(nm);
+        if (p.parentPath.isObjectProperty() && par.shorthand) { edits.push({ start: par.start, end: par.end, text: nm + ': L.' + nm }); shortEdits.add(par.start); return; }
+        edits.push({ start: p.node.start, end: p.node.end, text: 'L.' + nm });
+      }
+    });
+  }
+  const seen = new Set();
+  const uniq = edits.filter(e => { const k = e.start + ':' + e.end; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => b.start - a.start);
+  let newCode = code;
+  for (const e of uniq) newCode = newCode.slice(0, e.start) + e.text + newCode.slice(e.end);
+  const newLines = newCode.split('\n');
+  if (newLines.length !== code.split('\n').length) fail('줄 수가 바뀜');
+  const range = (a, b) => { const o = []; for (let l = a; l <= b; l++) o.push(newLines[l - 1 - off]); return o; };
+  for (const it of items) it.edits = uniq.filter(e => e.start >= it.c0 && e.end <= it.c1).length;
+
+  // ── 세포 파일(옮기기 경로의 감싸기와 같은 틀: 키트에 단다 · L 통로 · 생성기 표지)
+  const outFiles = {};
+  for (const c of CFG.cells) {
+    const its = items.filter(i => i.cell === c.key);
+    const body = [];
+    let prevEnd = -2;
+    for (const it of its) {
+      if (it.segStart !== prevEnd + 1 && body.length) body.push('');
+      body.push('  /* ---- 이전 전 index.html ' + it.segStart + '~' + it.end + '줄(#' + TAG + ' 생성기 표지) ---- */');
+      body.push('  function ' + it.name + '() { /* [#' + TAG + '] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */');
+      body.push(...range(it.segStart, it.end));
+      body.push('  } /* ' + it.name + ' */');
+      prevEnd = it.end;
+    }
+    outFiles[c.file] = [
+      '/**',
+      ' * ' + c.title,
+      ' *',
+      ...c.desc.map(d => ' * ' + d),
+      ' * #' + TAG + '(' + LABEL + '): index.html 인라인 IIFE 의 연속 구역(이전 전 ' + its.map(i => i.segStart + '~' + i.end).join(' · ') + '줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.',
+      ' * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 구역 안에서만 쓰던 var 는 그 함수의 지역 변수가 됐다.',
+      ' * 로드 중 바로 돌던 문들은 순서 그대로 함수 하나로 감싸 index.html 원래 자리에서 부른다. index.html 은 IIFE 머리에서 그 함수를 같은 이름으로 가져온다.',
+      ' * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md',
+      ' */',
+      '(function(global) {',
+      "  'use strict';",
+      '  // L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수를 getter(대입하는 이름은 setter)로 읽는 통로. 값은 읽을 때마다 살아 있는 값이다.',
+      '  var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};',
+      '  // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다',
+      '  var K = global.' + c.kit + ' = global.' + c.kit + ' || {};',
+      '',
+      ...body,
+      '',
+      ...its.map(i => '  K.' + i.name + ' = ' + i.name + ';'),
+      '',
+      "  if (typeof module !== 'undefined' && module.exports) {",
+      '    module.exports = K;',
+      '  }',
+      "})(typeof window !== 'undefined' ? window : globalThis);",
+      '',
+    ];
+    if (outFiles[c.file].length - 1 > 800) fail('세포 파일이 800줄을 넘는다(헌법 CELL_SPLIT 7호) — 구역을 여러 세포로 나눈다: ' + c.file + ' ' + (outFiles[c.file].length - 1) + '줄');
+  }
+
+  // ── index.html 새 판: (1) 구역 → 부르는 한 줄 (2) 머리 이음매 자리에 가져오기·통로 (3) script 태그(같은 줄)
+  const SLOT_RE = new RegExp('^  /\\* \\[어려움 이음매 자리 ' + CFG.slot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[ \\]]');
+  const slot0 = lines.findIndex(l => SLOT_RE.test(l));
+  if (slot0 < 0) fail('머리 이음매 자리 표지가 없다: ' + CFG.slot);
+  let insertAt = slot0 + 1;
+  while (insertAt < lines.length && !/^  \/\* \[어려움 이음매 자리 /.test(lines[insertAt]) && lines[insertAt].trim() !== '') insertAt++;
+  for (const it of items) if (it.segStart < insertAt + 1) fail('구역 ' + it.name + ' 이 머리 이음매 자리보다 앞에 있다(가져오기 전에 부르게 된다): ' + it.segStart);
+  let nh = lines.slice();
+  const cellByKey = Object.fromEntries(CFG.cells.map(c => [c.key, c]));
+  for (const it of items.slice().sort((a, b) => b.segStart - a.segStart))
+    nh.splice(it.segStart - 1, it.end - it.segStart + 1, '  ' + it.name + '(); /* [#' + TAG + '] 로드 중 구역(주석·빈 줄 포함 ' + (it.end - it.segStart + 1) + '줄) → ' + it.file + ' 의 ' + it.name + ' 로 옮김 — 원래 자리에서 부른다 */');
+  const head = ['  /* [#' + TAG + '] ' + CFG.cells.map(c => c.file).join(' · ') + ' — 구역 함수 가져오기 ' + items.length + '개 · 통로 노출은 스코프 분석으로 뽑았다 */'];
+  const kitVarsAdded = [];
+  for (const c of CFG.cells) {
+    const hd = handleOf.get(c.kitVar);
+    if (hd) { if (hd.kit !== c.kit) fail('키트 변수 이름이 다른 키트에 쓰였다: ' + c.kitVar); if (hd.line > insertAt) fail('키트 손잡이 ' + c.kitVar + ' 가 머리 이음매 자리보다 뒤에 있다: ' + hd.line); }
+    else if (!kitVarsAdded.some(k => k.kitVar === c.kitVar && k.kit === c.kit)) {
+      if (iScope.hasBinding(c.kitVar) || kitVarsAdded.some(k => k.kitVar === c.kitVar)) fail('키트 변수 이름이 이미 다른 뜻으로 쓰인다: ' + c.kitVar);
+      head.push('  var ' + c.kitVar + ' = window.' + c.kit + ';'); kitVarsAdded.push({ kitVar: c.kitVar, kit: c.kit });
+    }
+    for (const it of items.filter(i => i.cell === c.key)) head.push('  var ' + it.name + ' = ' + c.kitVar + '.' + it.name + ';');
+  }
+  const exposeList = [...bridged.keys()].sort().filter(n => !getters.has(n) || (bridged.get(n).assigned && !setters.has(n)));
+  if (exposeList.length) {
+    head.push("  window.OurgoalAppScope.expose('index.html', {");
+    exposeList.forEach((n, i) => head.push('    get ' + n + '(){ return ' + n + '; }' + (bridged.get(n).assigned ? ', set ' + n + '(v){ ' + n + ' = v; }' : '') + (i === exposeList.length - 1 ? '' : ',')));
+    head.push('  });');
+  }
+  nh.splice(insertAt, 0, ...head);
+  // 덮어쓰는 키트(유형 M): 어떤 js 파일이 global.<키트> = { … } 로 통째로 새로 대입하면 그 파일 태그 뒤(afterTag)에만 넣는다
+  const overwriters = kit => [...jsText.entries()].filter(([, t]) => new RegExp('(?:global|window)\\.' + kit + '\\s*=(?!=)').test(t) && !new RegExp('(?:global|window)\\.' + kit + '\\s*=\\s*(?:global|window)\\.' + kit + '\\s*\\|\\|').test(t)).map(([f]) => f);
+  const tags = [];
+  for (const c of CFG.cells) {
+    const tagStr = '<script src="' + c.file + '"></script>', anchorTag = c.afterTag || c.beforeTag;
+    if (nh.some(l => l.includes(tagStr))) fail('세포 태그가 이미 있다: ' + c.file);
+    if (!c.afterTag) { const ow = overwriters(c.kit); if (ow.length) fail('키트 ' + c.kit + ' 를 통째로 새로 대입하는 파일이 있다(' + ow.join(', ') + ') — 그 태그 뒤에 넣도록 설정에 afterTag 를 쓴다(유형 M)'); }
+    const hits = nh.reduce((a, l, i) => (l.includes(anchorTag) ? a.concat(i) : a), []);
+    if (hits.length !== 1) fail('태그가 ' + hits.length + '개: ' + anchorTag);
+    nh[hits[0]] = c.afterTag ? nh[hits[0]].replace(c.afterTag, c.afterTag + tagStr) : nh[hits[0]].replace(c.beforeTag, tagStr + c.beforeTag);
+    if (!(hits[0] < doc.off)) fail('세포 태그가 인라인 IIFE 뒤에 있다: ' + c.file);
+    tags.push({ file: c.file, line: hits[0] + 1, where: c.afterTag ? 'after' : 'before' });
+  }
+
+  // ── 사후 대조: 다시 파싱 · 구역 함수 본문의 토큰열에서 L. 접두만 걷어 낸 것 == 이전 전 구역의 토큰열 · 주석 그대로
+  const sig = t => (t.type.label || '') + '\u0000' + (t.value === undefined ? '' : String(t.value));
+  const next = parseUnwireDoc(nh);
+  for (const it of items) {
+    const want = toks.filter(t => t.start >= it.c0 && t.end <= it.c1);
+    const wantCom = doc.ast.tokens.filter(t => isComment(t) && t.start >= it.c0 && t.end <= it.c1).map(t => t.value);
+    let got;
+    try { got = parser.parse('function ' + it.name + '(){\n' + range(it.segStart, it.end).join('\n') + '\n}', { sourceType: 'script', tokens: true, strictMode: true }).tokens; }
+    catch (err) { fail('구역 함수 본문이 파싱되지 않는다 — 쓰지 않는다: ' + it.name + ' — ' + err.message); }
+    const gotCom = got.filter(isComment).map(t => t.value);
+    got = got.filter(t => !isComment(t) && t.type.label !== 'eof').slice(5, -1); // function 이름 ( ) { … }
+    const isL = (j, nm) => got[j] && got[j].type.label === 'name' && got[j].value === 'L' && got[j + 1] && got[j + 1].type.label === '.' && got[j + 2] && got[j + 2].type.label === 'name' && got[j + 2].value === nm;
+    let j = 0, prefixes = 0;
+    for (let i = 0; i < want.length; i++) {
+      const w = want[i], nm = w.type.label === 'name' ? w.value : null;
+      if (nm !== null && it.bridged.has(nm) && isL(j, nm)) { j += 3; prefixes++; continue; }
+      if (!got[j] || sig(got[j]) !== sig(w)) fail('구역 함수 본문의 토큰열이 예상과 다르다(닫힌 목록 밖 글자 변화) — 쓰지 않는다: ' + it.name + ' 토큰 ' + i + ' 기대 ' + JSON.stringify(sig(w)) + ' 실제 ' + JSON.stringify(got[j] ? sig(got[j]) : null));
+      j++;
+      if (nm !== null && shortEdits.has(w.start) && got[j] && got[j].type.label === ':' && isL(j + 1, nm)) { j += 4; prefixes++; } // 줄임 속성 {a} → {a: L.a}
+    }
+    if (j !== got.length) fail('구역 함수 본문에 예상 밖의 토큰이 더 있다 — 쓰지 않는다: ' + it.name);
+    if (prefixes !== it.edits) fail('구역 함수 본문의 L. 접두 수(' + prefixes + ')가 바꿔 쓴 자리 수(' + it.edits + ')와 다르다 — 쓰지 않는다: ' + it.name);
+    if (wantCom.length !== gotCom.length || wantCom.some((v, x) => v !== gotCom[x])) fail('구역 함수 본문의 주석이 이전 전과 다르다 — 쓰지 않는다: ' + it.name);
+  }
+  for (const [f, arr] of Object.entries(outFiles)) { try { parser.parse(arr.join('\n'), { sourceType: 'script' }); } catch (err) { fail('세포 파일이 파싱되지 않는다 — 쓰지 않는다: ' + f + ' — ' + err.message); } }
+  // 새 index.html 의 IIFE 토큰열 = 이전 토큰열 − 구역 토큰 + 부르는 줄(이름 ( ) ;) + 머리 줄 토큰
+  {
+    const headToks = parser.parse(head.join('\n'), { sourceType: 'script', tokens: true }).tokens.filter(t => !isComment(t) && t.type.label !== 'eof').map(sig);
+    const callSig = nm => [{ type: { label: 'name' }, value: nm }, { type: { label: '(' } }, { type: { label: ')' } }, { type: { label: ';' } }].map(sig);
+    const insertOff = code.split('\n').slice(0, insertAt - off).join('\n').length;
+    const want = [];
+    let headDone = false; const done = new Set();
+    for (const t of toks) {
+      if (!headDone && t.start > insertOff) { want.push(...headToks); headDone = true; }
+      const it = items.find(x => t.start >= x.c0 && t.end <= x.c1);
+      if (it) { if (!done.has(it)) { done.add(it); want.push(...callSig(it.name)); } continue; }
+      want.push(sig(t));
+    }
+    const got = next.ast.tokens.filter(t => !isComment(t) && t.type.label !== 'eof').map(sig);
+    let diffAt = want.length === got.length ? -1 : Math.min(want.length, got.length);
+    for (let i = 0; i < Math.min(want.length, got.length); i++) if (want[i] !== got[i]) { diffAt = i; break; }
+    if (diffAt >= 0) fail('새 index.html 의 토큰열이 예상과 다르다(닫힌 목록 밖 글자 변화) — 쓰지 않는다: 토큰 ' + diffAt + ' 기대 ' + JSON.stringify(want[diffAt]) + ' 실제 ' + JSON.stringify(got[diffAt]));
+  }
+
+  fs.writeFileSync(path.join(APP, 'index.html'), nh.join(EOL), 'utf8');
+  for (const [f, arr] of Object.entries(outFiles)) { fs.mkdirSync(path.dirname(path.join(APP, f)), { recursive: true }); fs.writeFileSync(path.join(APP, f), arr.join('\n'), 'utf8'); }
+  const kindOf = st => st.isVariableDeclaration() ? 'var' : st.isIfStatement() ? 'if' : st.isTryStatement() ? 'try' : (st.node.expression.type === 'CallExpression' ? 'call' : 'expr');
+  const meta = {
+    task: TAG, mode: 'region', slot: CFG.slot, scriptHtmlLines: [doc.off + 1, eLine],
+    regions: items.map(it => ({ cell: it.cell, file: it.file, name: it.name, group: it.spec.group, groupTo: it.spec.groupTo || null, from: it.spec.from || null, to: it.spec.to || null,
+      segment: [it.segStart, it.end], lines: it.end - it.segStart + 1, stmt: [it.start, it.end], statements: it.sts.map(st => ({ line: H(st.node), endLine: HE(st.node), kind: kindOf(st) })),
+      headersMoved: it.headersMoved, locals: it.locals, bridged: [...it.bridged].sort(), edits: it.edits })),
+    imports: items.map(it => ({ n: it.name, cell: it.cell })), kitVarsAdded,
+    bridged: [...bridged.keys()].sort().map(n => ({ n, assigned: bridged.get(n).assigned, kind: bridged.get(n).kind, exposedBefore: getters.has(n), setterBefore: setters.has(n) })), exposed: exposeList,
+    head: { insertAfterLine: insertAt, lines: head.length }, tags, edits: uniq.length,
+    htmlLinesBefore: lines.length, htmlLinesAfter: nh.length,
+    files: Object.fromEntries(Object.entries(outFiles).map(([f, a]) => [f, a.length - 1])),
+  };
+  fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1), 'utf8');
+  console.log('region', '· regions', items.length, '· statements', items.reduce((a, it) => a + it.sts.length, 0), '· lines', items.reduce((a, it) => a + it.end - it.segStart + 1, 0), '· locals', items.reduce((a, it) => a + it.locals.length, 0), '· edits', uniq.length, '· bridged', bridged.size, '· exposed', exposeList.length, '· imports', items.length);
+  for (const it of items) console.log('  region', it.name, it.segStart + '~' + it.end, '→', it.file);
+  console.log('index.html lines', lines.length, '->', nh.length);
+  for (const [f, a] of Object.entries(outFiles)) console.log(f, a.length - 1);
+}
+
 // smoke-test FN_NAMES(시험지가 인라인에서 함수를 잘라 실행) — 옮기지 않는다(MODULE-SPLIT-PROTOCOL 1절 (라), 유형 F2)
 const smokeFn = (() => { const s = fs.readFileSync(path.join(APP, 'scripts', 'smoke-test.js'), 'utf8'); const m = s.match(/const FN_NAMES = \[([\s\S]*?)\];/); if (!m) fail('smoke-test FN_NAMES 못 읽음'); return new Set((m[1].match(/'([^']+)'/g) || []).map(x => x.slice(1, -1))); })();
 

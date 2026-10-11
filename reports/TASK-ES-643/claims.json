@@ -1,0 +1,1712 @@
+{
+  "task": "TASK-ES-643",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-643-GEN-REGION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "gen-inline-hard.js 에 mode:\"region\" 을 더한다 — 연달아 있는 로드 중 문(M1a 3줄 이하 포함 호출문·if·try·식 문 · M1b 기관 define 줄 · M1c 구역 안에서만 쓰는 노출 안 된 var · M1d 남은 window 복사 줄 · M1e 구역 안 주석·빈 줄)을 순서 그대로 세포 함수 본문으로 옮기고, 원래 자리에 부르는 한 줄과 머리에 가져오기 한 줄을 남긴다."
+    },
+    {
+      "id": "R2",
+      "text": "구역 경계는 줄 번호가 아니라 구획 주석 제목(과 문 글자 닻)으로 지정한다."
+    },
+    {
+      "id": "R3",
+      "text": "안전 정지: 구역 안의 함수 선언 · 키트 가져오기 · 손잡이 · expose 문 · 노출된 이름의 var 선언 · 구역 밖에서 참조되는 var · 최상위 this/arguments/return · 줄 중간에서 시작하거나 끝나는 구역 · 닫힌 목록 밖의 문 종류와 칸. 멈추면 아무것도 쓰지 않는다."
+    },
+    {
+      "id": "R4",
+      "text": "생성되는 세포 파일의 꼴(키트에 다는 방식 · L. 접두 · 800줄 상한 · 한 세포에 구역 여럿)은 옮기기 경로의 감싸기 산출과 맞춘다. 등록 블록을 만들지 않는다."
+    },
+    {
+      "id": "R5",
+      "text": "기존 경로(옮기기 · unwire · unstate)는 바이트 무변화다. 제품 코드(js/** · index.html) · tests/ · 금고 변경 0, 저장소 index.html 의 실제 구역 이전 0."
+    },
+    {
+      "id": "R6",
+      "text": "옮기기 경로의 감싸기와 무엇이 다른지, 그 경로를 부르는지 새 경로인지를 설계 5절에 적는다."
+    },
+    {
+      "id": "R7",
+      "text": "지금 main 의 실제 모양을 다시 재서 구역 계획(구획 주석 제목으로 경계 지정)을 남기고, 사본에 모의 적용한 결과가 파싱되고 · 실행 순서가 보존되고 · 저장소 밖 사본에서 앱이 실제로 뜨는지 잰다. 돈 근처 줄과 OURGOAL_CONFIG 는 구역에서 뺀다."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "실제 구역 이전(index.html 변경) · sweep · finalize 모드(X8·X9)는 이 PR 에 없다. 구역 함수 이름 · 세포 파일 · 키트는 계획기의 가칭이며 실제 PR 이 정한다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "모의 사본의 화면 시나리오는 게스트 범위까지다 — 로그인 뒤 화면과 숨겨진 진입로는 측정불가. 호출 순서의 동적 대조 탐침(설계 3.4 의 안)은 만들지 않았다(미검증) — 순서는 줄 순서의 정적 대조와 꾸러미의 vm 실행 등가로만 쟀다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "M1a~M1e 한 번에: 묶음 전체를 구역 함수로 — index.html(부르는 한 줄 · 머리 가져오기 · 통로 getter · script 태그)과 세포 파일이 기대 글자와 같다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "docs/design/harness/module-split/gen-inline-hard.js",
+        "docs/design/harness/module-split/region-check-643.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "M1a: 호출문 · if · try · 식 문(3줄 이하 포함 · window 리터럴 대입 포함)이 순서 그대로 본문에 있고 IIFE 이름에만 L. 접두가 붙었다(전역 log · document · String 은 그대로)",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M1a",
+        "equals": true
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "M1b: 기관 define 줄은 글자 그대로 옮겨진다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M1b",
+        "equals": true
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "M1c: 구역 안에서만 쓰는 노출 안 된 var 는 선언·참조 모두 접두 없이 지역 변수가 되고 통로 getter 가 생기지 않는다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M1c",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "M1d: 남은 window 복사 줄은 오른쪽 이름에 L. 접두만 붙어 옮겨진다(`window.X = X;` → `window.X = L.X;` · 한 줄 if 블록 꼴 포함)",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M1d",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "M1e: 구역 안 주석·빈 줄과 첫 문의 앞 주석(구획 주석 포함)은 따라가고, 마지막 문 뒤의 주석은 index.html 에 남는다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M1e",
+        "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실행 등가: 감싸기 전 꾸러미와 감싼 꾸러미 셋(M1 · M2 · M4)을 진짜 통로·상태 기관 위에서 실행한 기록 — 호출 순서·인자, 통로 값, window 값, 걸린 누름 수, 누른 뒤 상태 — 이 같다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "docs/design/harness/module-split/region-check-643.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.V1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 경로는 mode 가 region 일 때만 들어간다.",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "if (CFG.mode === 'region') { runRegion(); return; }"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "묶음 일부(from·to 닻): 구획 주석은 남고, 블록 속 var 는 지역 변수가 되고, 이미 setter 가 있는 이름의 대입에는 통로 줄을 더하지 않는다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M2",
+        "equals": true
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "여러 묶음(groupTo): 가~다 묶음의 문과 안쪽 구획 주석 · 빈 묶음의 구획 주석이 순서 그대로 한 함수로 가고, 원래 자리에는 한 줄만 남는다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M3",
+        "equals": true
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "같은 제목의 구획 주석이 둘이면 멈추고, headerPick:\"nonEmpty\" 면 문이 든 묶음 하나를 고른다(빈 묶음의 구획 주석은 남는다)",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M7",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구역 설정의 칸이 닫혀 있다 — 줄 번호를 받는 칸이 없다(그 밖의 칸은 멈춘다).",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "if (!['name', 'group', 'groupTo', 'from', 'to', 'headerPick'].includes(k)) fail("
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z01 정지: 구역 안에 함수 선언 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z01",
+        "equals": true
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z02 정지: 구역 안에 키트 손잡이 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z02",
+        "equals": true
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z03 정지: 구역 안에 키트 가져오기 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z03",
+        "equals": true
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z04 정지: 구역 안에 expose 문 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z04",
+        "equals": true
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z05 정지: 구역 안에 통로에 노출된 이름의 var 선언(상태 이전이 먼저) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z05",
+        "equals": true
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z06 정지: 구역 안 var 를 구역 밖에서 읽는다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z06",
+        "equals": true
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z07 정지: 구역 안 var 를 구역 밖에서 쓴다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z07",
+        "equals": true
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z08 정지: 구역 안 var 를 구역 밖의 함수가 닫아 쓴다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z08",
+        "equals": true
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z09 정지: 구역 안에 let 선언 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z09",
+        "equals": true
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z10 정지: 구역 안에 const 선언 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z10",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z11 정지: 닫힌 목록 밖의 문 종류(for) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z11",
+        "equals": true
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z12 정지: 닫힌 목록 밖의 문 종류(블록) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z12",
+        "equals": true
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z13 정지: 최상위 this — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z13",
+        "equals": true
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z14 정지: 최상위 arguments — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z14",
+        "equals": true
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z15 정지: 최상위 return — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z15",
+        "equals": true
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z16 정지: 줄 중간에서 시작하는 구역(앞 문과 한 줄) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z16",
+        "equals": true
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z17 정지: 줄 중간에서 끝나는 구역(뒤 문과 한 줄) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z17",
+        "equals": true
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z18 정지: 구역 경계에 걸친 주석 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z18",
+        "equals": true
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z19 정지: 머리 이음매 자리보다 앞에 있는 구역 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z19",
+        "equals": true
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z20 정지: 구역 함수 이름이 이미 IIFE 이름이다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z20",
+        "equals": true
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z21 정지: 구역 함수 이름이 IIFE 안에서 쓰는 전역 이름이다(가져오기 줄이 그 전역을 가린다) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z21",
+        "equals": true
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z22 정지: 세포 파일이 이미 있다(덮어쓰지 않는다) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z22",
+        "equals": true
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z23 정지: 저장소 js/** 어디에도 없는 키트(새 전역을 만들지 않는다) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z23",
+        "equals": true
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z24 정지: 세포 파일이 800줄을 넘는다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z24",
+        "equals": true
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z25 정지: 돈 근처(OurgoalTemplateCredit) — 구역에 넣지 않는다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z25",
+        "equals": true
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z26 정지: 결심 대기(OURGOAL_CONFIG) — 구역에 넣지 않는다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z26",
+        "equals": true
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z27 정지: 설정 맨 위의 모르는 칸 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z27",
+        "equals": true
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z28 정지: 세포 설정의 모르는 칸(옮기기 경로의 take) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z28",
+        "equals": true
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z29 정지: 구역 설정의 모르는 칸(줄 번호로 경계를 줄 수 없다) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z29",
+        "equals": true
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z30 정지: 구획 주석 제목이 없다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z30",
+        "equals": true
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z31 정지: from 닻에 맞는 문이 둘 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z31",
+        "equals": true
+      }
+    },
+    {
+      "id": "C44",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z32 정지: to 닻에 맞는 문이 없다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z32",
+        "equals": true
+      }
+    },
+    {
+      "id": "C45",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z33 정지: to 문이 from 문보다 앞 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z33",
+        "equals": true
+      }
+    },
+    {
+      "id": "C46",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z34 정지: 서로 겹치는 구역 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z34",
+        "equals": true
+      }
+    },
+    {
+      "id": "C47",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z35 정지: 구역이 묶음 중간에서 끝난다(안쪽 구획 주석의 묶음에 문이 남는다) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z35",
+        "equals": true
+      }
+    },
+    {
+      "id": "C48",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z36 정지: 머리 이음매 자리 표지가 없다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z36",
+        "equals": true
+      }
+    },
+    {
+      "id": "C49",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z37 정지: 키트 변수 이름이 다른 키트에 쓰였다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z37",
+        "equals": true
+      }
+    },
+    {
+      "id": "C50",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z38 정지: 키트를 통째로 새로 대입하는 파일이 있는데 beforeTag 를 썼다(유형 M) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z38",
+        "equals": true
+      }
+    },
+    {
+      "id": "C51",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z39 정지: 태그가 없다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z39",
+        "equals": true
+      }
+    },
+    {
+      "id": "C52",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z40 정지: beforeTag · afterTag 를 둘 다 적었다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z40",
+        "equals": true
+      }
+    },
+    {
+      "id": "C53",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z41 정지: const 에 대입 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z41",
+        "equals": true
+      }
+    },
+    {
+      "id": "C54",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z42 정지: 구조 분해 var — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z42",
+        "equals": true
+      }
+    },
+    {
+      "id": "C55",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z43 정지: regions 가 비었다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z43",
+        "equals": true
+      }
+    },
+    {
+      "id": "C56",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z44 정지: 구역에 최상위 문이 없다(빈 묶음) — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z44",
+        "equals": true
+      }
+    },
+    {
+      "id": "C57",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z45 정지: 세포 파일 경로가 js/ 아래가 아니다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z45",
+        "equals": true
+      }
+    },
+    {
+      "id": "C58",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "Z46 정지(원자성): 구역 하나가 멈추면 다른 구역·세포도 쓰지 않는다 — 멈추고 index.html 을 쓰지 않고 세포 파일을 만들지 않는다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.Z46",
+        "equals": true
+      }
+    },
+    {
+      "id": "C59",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "정지 조건 시험의 건수.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.stops",
+        "equals": 46
+      }
+    },
+    {
+      "id": "C60",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "정지 조건 시험이 전부 ok 다(통과 수 = 건수).",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.stopsPassed",
+        "equals": 46
+      }
+    },
+    {
+      "id": "C61",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포 둘 · 구역 셋: 머리 가져오기(없는 손잡이는 만든다)와 통로 getter(밖에서 선언한 var keep 포함)가 기대 글자와 같고, 부르는 줄은 원래 순서 그대로이며, 세포 안 함수는 줄 순서로 놓인다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M4",
+        "equals": true
+      }
+    },
+    {
+      "id": "C62",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "키트를 통째로 새로 대입하는 파일이 있으면 afterTag 로 그 태그 뒤(같은 줄)에 세포 태그를 넣는다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M6",
+        "equals": true
+      }
+    },
+    {
+      "id": "C63",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "CRLF 입력: index.html 은 CRLF 그대로, 세포 파일은 LF(옮기기 경로와 같다). 줄 내용은 LF 입력의 결과와 같다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M8",
+        "equals": true
+      }
+    },
+    {
+      "id": "C64",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "같은 입력·같은 설정 = 같은 출력(index.html · 세포)",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.M9",
+        "equals": true
+      }
+    },
+    {
+      "id": "C65",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구역 세포 파일은 옮기기 경로와 같은 글자로 이미 있는 키트에 단다.",
+      "touches": [
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-inline-hard.js",
+        "text": "'  var K = global.' + c.kit + ' = global.' + c.kit + ' || {};',"
+      }
+    },
+    {
+      "id": "C66",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기의 기준 줄은 한 줄도 바뀌지 않았다(앞 공통 줄 수 + 뒤 공통 줄 수 = 기준 줄 수 — 끼워 넣기뿐).",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.generator.insertOnly",
+        "equals": true
+      }
+    },
+    {
+      "id": "C67",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기에서 바뀌거나 지워진 기준 줄이 0 이다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.generator.baseLinesChanged",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C68",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "끼워 넣은 자리는 unstate 블록(unstateOnce) 뒤다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.generator.insertedAfterUnstate",
+        "equals": true
+      }
+    },
+    {
+      "id": "C69",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "끼워 넣은 자리는 옮기기 경로(smoke-test 주석) 바로 앞이다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.generator.insertedBeforeMovePath",
+        "equals": true
+      }
+    },
+    {
+      "id": "C70",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "끼워 넣은 줄은 옮기기 경로의 이름(groupRange · wrapSafe · finalPlan · outPieces · smokeFn)을 쓰지 않는다 — 새 경로다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.generator.callsIntoMovePath",
+        "equals": false
+      }
+    },
+    {
+      "id": "C71",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상태 이전 시험 34건(#TASK-ES-634 — unwire 확장 16건 · B1 8건 재실행 포함)이 고친 생성기에서 그대로 통과",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.B",
+        "equals": true
+      }
+    },
+    {
+      "id": "C72",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기 diff 는 한 자리에 끼워 넣은 줄뿐이다(기준 생성기의 줄은 하나도 바뀌지 않았다)",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.D0",
+        "equals": true
+      }
+    },
+    {
+      "id": "C73",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 생성기가 #911(감싸기 이전 1차)의 기준 트리에서 같은 설정으로 index.html·세포 4개를 바이트 그대로 다시 만든다(옮기기·감싸기 경로 무변화)",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.G1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C74",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "unstate · unwire 설정을 고친 생성기와 기준 생성기(PIN)에 돌린 결과·메타·출력(성공하는 꼴 · 멈추는 꼴 모두)이 같다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.U1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C75",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "제품 코드(js/** · index.html) · tests/ · scripts/ · 금고 · 지시함 · 생성 지도·신고서에서 바뀐 파일이 0 개다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.protectedChanged.count",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C76",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 를 기준 트리와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄 수·요약 줄이 같다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.npmTest.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C77",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "inlineScriptLines 가 기준과 같다(저장소 index.html 의 실제 구역 이전 0).",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.inlineScriptLines.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C78",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "무결성 게이트 종료 코드가 0 이다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.integrityGate.exitCode",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C79",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 시험의 건수.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "docs/design/harness/module-split/region-check-643.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.total",
+        "equals": 67
+      }
+    },
+    {
+      "id": "C80",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 시험이 전부 ok 다(통과 수 = 건수).",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.passed",
+        "equals": 67
+      }
+    },
+    {
+      "id": "C81",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 문서 5.6 에 구현된 설정 꼴이 적혀 있다.",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "### 5.6 구현된 region 설정 꼴 — X7 (#TASK-ES-643)"
+      }
+    },
+    {
+      "id": "C82",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 5.6 에 옮기기 경로의 감싸기와 무엇이 다르고 재사용하는지가 적혀 있다.",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "**옮기기 경로의 감싸기와의 관계 — 새 경로다(옮기기 경로의 코드를 부르지 않는다)**"
+      }
+    },
+    {
+      "id": "C83",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 5.6 에 등록 기관과의 관계가 적혀 있다.",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "- **등록 기관과의 관계**: 구역 함수는 등록 블록(`OurgoalCellRegistry.provide`)을 만들지 않는다."
+      }
+    },
+    {
+      "id": "C84",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 3.4 에 구현 기록이 있다.",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "- **구현 기록(#TASK-ES-643 — 설정 꼴과 세부 규칙은 5.6)**"
+      }
+    },
+    {
+      "id": "C85",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 index.html(PIN): 구역 계획의 설정을 저장소 밖 사본에 돌리면 성공하고 index.html 인라인과 세포 파일이 다시 파싱된다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "docs/design/harness/module-split/gen-inline-hard.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.P1",
+        "equals": true
+      }
+    },
+    {
+      "id": "C86",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 index.html: 바뀐 것은 구역 줄 → 부르는 한 줄 · 머리 이음매 자리의 끼운 줄(가져오기·손잡이·통로 getter 꼴뿐) · script 태그 줄뿐이고 나머지 줄은 순서대로 같다",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.P2",
+        "equals": true
+      }
+    },
+    {
+      "id": "C87",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "실제 index.html: 구역 함수 본문 줄에서 L. 접두만 걷어 내면 이전 전 구역의 줄과 같다(문 순서 = 이전 전 줄 순서) · 세포 800줄 이하 · 돈 근처·결심 대기 줄은 글자 그대로 제자리",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.byId.P3",
+        "equals": true
+      }
+    },
+    {
+      "id": "C88",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구역 계획의 구역 수(계획 기준 커밋 e5f34779 에 고정된 입력 — main 을 합쳐도 이 파일의 값은 그대로다).",
+      "touches": [
+        "reports/TASK-ES-643/region-plan.json",
+        "reports/TASK-ES-643/region-plan.cjs"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/region-plan.json",
+        "path": "totals.regions",
+        "equals": 19
+      }
+    },
+    {
+      "id": "C89",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구역 계획에 든 최상위 문 수.",
+      "touches": [
+        "reports/TASK-ES-643/region-plan.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/region-plan.json",
+        "path": "totals.statementsInRegions",
+        "equals": 174
+      }
+    },
+    {
+      "id": "C90",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구역 계획의 설정을 저장소 밖 사본에 생성기로 돌리면 성공한다.",
+      "touches": [
+        "reports/TASK-ES-643/region-plan.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/region-plan.json",
+        "path": "generator.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C91",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "돈 근처(OurgoalTemplateCredit)·결심 대기(OURGOAL_CONFIG) 줄이 든 구역이 0 개다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.plan.holdInRegions",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C92",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 적용 뒤에도 돈 근처·결심 대기 줄은 index.html 에 글자 그대로 있다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.unit.realCopy.holdSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C93",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본에서 게스트 화면 시나리오가 기준·모의 양쪽 통과한다(앱이 실제로 뜬다).",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "reports/TASK-ES-643/region-mock.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.scenariosAllPassedBoth",
+        "equals": true
+      }
+    },
+    {
+      "id": "C94",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: 대조 탐침(기준 이름 목록 고정)에서 통로에서 사라진 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.scopeLost",
+        "equals": []
+      }
+    },
+    {
+      "id": "C95",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: 이름별 통로 값 지문 차이가 없다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.differingScope",
+        "equals": []
+      }
+    },
+    {
+      "id": "C96",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: window 값 지문이 다른 이름 목록(구역에 든 window 함수식 정의문의 이름 — 함수 글자에 L. 접두가 붙어 지문이 달라진다. 없으면 빈 목록).",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.differingWindow",
+        "equals": []
+      }
+    },
+    {
+      "id": "C97",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: 게스트 부팅 예외가 0 건이다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.bootExceptions",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C98",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: 상태 탐침(값 요약 · 접근자 종류 · 주인 · 쓰기 왕복)이 기준과 다른 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.stateDiffering",
+        "equals": []
+      }
+    },
+    {
+      "id": "C99",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: 모듈 로드 새 회귀가 없다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.moduleLoadRegressions",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C100",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: npm test 의 종료 코드 · ✓ 줄 · ok 줄 수가 기준과 같다.",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.npmSameCounts",
+        "equals": true
+      }
+    },
+    {
+      "id": "C101",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 사본: 시험을 하나씩 돌렸을 때 모의에서만 깨지는 시험 파일이 없다(붙잡힌 글자 두 건을 계획에서 뺀 뒤).",
+      "touches": [
+        "reports/TASK-ES-643/measurement.json",
+        "reports/TASK-ES-643/region-pins.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/measurement.json",
+        "path": "summary.mock.testsEachNewFail",
+        "equals": []
+      }
+    },
+    {
+      "id": "C102",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 적용 뒤 inlineScriptLines 예상값(계획 기준 커밋에 고정된 측정).",
+      "touches": [
+        "reports/TASK-ES-643/region-mock.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-643/region-mock.json",
+        "path": "summary.inlineScriptLines.after",
+        "equals": 2201
+      }
+    },
+    {
+      "id": "C103",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 머리에 상민님 원문이 글자 그대로 있다.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-643-GEN-REGION.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-643-GEN-REGION.md",
+        "text": "「결심필요 4번 빼고 모두 권장안대로 진행하고 4번은 자세히 설명해봐 어떤 함수인지 어떤 기능을 하던건지 자세히, 어떻게 진행하는게 좋을지, 권장안이 뭔지」"
+      }
+    },
+    {
+      "id": "C104",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-643 한 줄이 있다.",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-643 | INFRA | 생성기 region 모드"
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+ "tool": "node court/judge.js --repo . --head HEAD --out <임시 폴더> (법정 코드를 읽기만 쓴 작업자 PC 실행)",
+ "type": "작업자 PC 에서 실행한 예비 점검 — 판정이 아니다. 판정은 GitHub 법정만 낸다",
+ "head": "78ad323de93124207a737db16b46bd594bb16840",
+ "base": "27d0d8579d21c3e90cef5055332e4e39678f35c6",
+ "baseSource": "merge-base",
+ "verdict": "통과",
+ "verdictId": "C9B35DD3",
+ "headline": "제품 코드 변경이 없고, 기존 검사도 깨지지 않았습니다",
+ "note": "심사 대상은 이 파일을 더하기 직전 커밋이다(그 뒤 커밋은 이 파일만 더한다). --repo 는 의존성(node_modules)이 있는 이 작업 폴더다(L088)",
+ "findings": [],
+ "baseTests": {
+  "ran": true,
+  "runners": [
+   {
+    "file": "scripts/smoke-test.js",
+    "isolated": true,
+    "watched": true,
+    "base": {
+     "passed": 436,
+     "failed": 3
+    },
+    "head": {
+     "passed": 436,
+     "failed": 3
+    },
+    "vanished": 0,
+    "forgery": 0
+   },
+   {
+    "file": "scripts/verify-integrity-gate.js",
+    "isolated": true,
+    "watched": true,
+    "base": {
+     "passed": 38,
+     "failed": 0
+    },
+    "head": {
+     "passed": 38,
+     "failed": 0
+    },
+    "vanished": 0,
+    "forgery": 0
+   }
+  ],
+  "newlyBroken": [],
+  "killedByProduct": [],
+  "forgery": [],
+  "toolErrors": [],
+  "insufficient": []
+ }
+}
