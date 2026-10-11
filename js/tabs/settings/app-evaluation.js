@@ -157,12 +157,13 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/app-evaluation', {
+    bindAppEvalBackdrop: K.bindAppEvalBackdrop, bindAppEvalSubmit: K.bindAppEvalSubmit, bindHomeAddGoal: K.bindHomeAddGoal,
     closeAppEvaluationModal: K.closeAppEvaluationModal, openAppEvaluationModal: K.openAppEvaluationModal,
     resetAppEvaluationForm: K.resetAppEvaluationForm
   }, { window: [
     'closeAppEvaluationModal', 'openAppEvaluationModal', 'resetAppEvaluationForm'
   ], windowOnly: [
-    'closeAppEvaluationModal', 'openAppEvaluationModal', 'resetAppEvaluationForm'
+    'resetAppEvaluationForm'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

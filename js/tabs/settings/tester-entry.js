@@ -72,7 +72,7 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/tester-entry', {
-    enterAsTesterB: K.enterAsTesterB
+    bindAuthTesterBButton: K.bindAuthTesterBButton, bindLandTesterBButton: K.bindLandTesterBButton, enterAsTesterB: K.enterAsTesterB
   }, { window: [
     'enterAsTesterB'
   ], windowOnly: [

@@ -152,8 +152,8 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/device-session', {
-    checkRemoteSessionRevoked: K.checkRemoteSessionRevoked, getDeviceId: K.getDeviceId, performLogout: K.performLogout,
-    setDeviceLoginTime: K.setDeviceLoginTime
+    bindSignupSubmit: K.bindSignupSubmit, checkRemoteSessionRevoked: K.checkRemoteSessionRevoked, getDeviceId: K.getDeviceId,
+    performLogout: K.performLogout, setDeviceLoginTime: K.setDeviceLoginTime
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */
