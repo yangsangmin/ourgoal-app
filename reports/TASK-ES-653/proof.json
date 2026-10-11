@@ -1,0 +1,22 @@
+{
+  "task": "TASK-ES-653",
+  "label": "세션 실시간 채널 구독 함수 이전 — setupUserSessionRealtime",
+  "slot": "HO",
+  "cells": [
+    {
+      "key": "userSessionRealtime",
+      "file": "js/tabs/settings/user-session-realtime.js",
+      "kit": "OurgoalSettingsKit",
+      "kitVar": "_settingsKit",
+      "beforeTag": "<script src=\"js/tabs/settings/index.js\"></script>",
+      "title": "OurGoal User Session Realtime (설정 — 원격 로그아웃 실시간 채널 구독)",
+      "desc": [
+        "setupUserSessionRealtime — 로그인한 사용자의 세션 채널(user_session_<사용자 id>)을 구독한다. 이미 열린 채널(USER_SESSION_CHANNEL)이 있으면 닫고 다시 연다.",
+        "다른 기기에서 「모든 기기 원격 로그아웃」 방송(remote_logout)이 오면, 남기기로 한 기기가 이 기기가 아닐 때 로그아웃한다."
+      ],
+      "take": [
+        { "group": "RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만)", "names": ["setupUserSessionRealtime"], "keepRest": true }
+      ]
+    }
+  ]
+}
