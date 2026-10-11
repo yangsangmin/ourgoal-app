@@ -1,0 +1,781 @@
+{
+  "task": "TASK-ES-682",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-682-REGION-3.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "상태 이전 4차가 남긴 상태 기관 정의 줄 2개(state · _promptEncyclopediaOpen)를 생성기 region 으로 구역 함수 2개(새 세포 하나)로 옮기고 원래 자리에 부르는 한 줄씩 남긴다. 게스트 화면의 동작을 보존한다(손 편집 0)."
+    },
+    {
+      "id": "R2",
+      "text": "바꾸는 글자는 통로 접두 L. 뿐이다. index.html 은 구역 줄이 부르는 줄로 바뀌고 머리 가져오기 줄·script 태그·(생성기가 다는) 통로 getter 가 더해진 것 말고 그대로다."
+    },
+    {
+      "id": "R3",
+      "text": "옮긴 문은 같은 자리·같은 순서로 돈다: state 가 상태 기관에 맡겨지는 순간과 바로 다음 window.state 대입의 순서가 기준과 같다."
+    },
+    {
+      "id": "R4",
+      "text": "옮긴 이름의 값 · 접근자 종류 · 주인 · window 복사가 기준과 같고, 통로에서 사라지거나 새로 생긴 이름이 없다."
+    },
+    {
+      "id": "R5",
+      "text": "증명 하한: 모듈 로드 새 회귀 0 · npm test 와 시험 하나씩 동일 · 모듈 가드·무결성 게이트 통과 · tests·금고·생성기·생성 지도·기관 파일 변경 0 · 기준선 기록."
+    },
+    {
+      "id": "R6",
+      "text": "finalize 전제까지 남은 것을 문 종류별 문 수·줄 수와 풀리는 조건으로 다시 재서 보고 파일로 남긴다."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "탐침(시점 · 상태 객체 · 상태 · 대조)은 게스트로 띄운 임시 브라우저의 작업자 PC 측정이다. 법정이 그 탐침을 다시 돌린 것은 아니다. 로그인 뒤 화면은 재지 못했다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "알고 넘어가는 차이 ①: 이 PR 은 인라인 스크립트 줄 수를 줄이지 않고 늘린다. 한 줄짜리 정의 문은 부르는 줄 + 가져오기 줄이 되고, 구역 본문이 통로로 읽는 이름의 getter(expose 문 3줄)가 다시 달린다. 대신 finalize 가 받지 않는 문(상태 정의 줄)이 받는 문(구역 함수 가져오기·호출)으로 바뀐다. 기준선은 사유를 적어 올렸다(module-guard --update --reason)."
+    },
+    {
+      "text": "알고 넘어가는 차이 ②: 재철거가 지운 통로 getter 를 생성기가 index.html 머리에 다시 달았다(이름은 주장의 목록). 값 지문은 같고 통로의 이름 수도 그대로지만 그 이름의 접근자 종류와 주인 표시가 바뀐다. 다음 재철거가 지운다."
+    },
+    {
+      "text": "sweep 적용 조사(reports/TASK-ES-682/sweep-survey.json)는 저장소 밖 모의본에서 한 조사다. 이 PR 은 sweep 을 하지 않는다."
+    },
+    {
+      "text": "서버 주소·공개 키 선언과 sb 정의 줄은 이 PR 의 대상이 아니다(결심 대기).",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 진입해 아바타 인사 팝업을 닫고 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성이 되고 예외가 없다 (구역 이전 3차 전후 보존) 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/core/boot-app-state.js"
+      ],
+      "scenario": "scenarios/h1-guest-boot-six-tabs.json",
+      "proof": "proof.json",
+      "id": "C1"
+    },
+    {
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "첫 행 종목과 메모를 적어 「일반저장」하면 창이 닫히고 기록 카드가 하나 생기며, 카드의 수정으로 다시 열면 같은 값이 들어 있고, 한 칸을 더 고쳐 저장해도 카드는 하나이며, 새로 고침한 뒤 다시 열어도 두 값과 메모가 그대로 남아 있다 (저장 — 저장·다시 열기·수정 저장·새로 고침 뒤 유지) — 앱 상태 객체 정의 줄을 구역 함수로 옮기기 전후 보존 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/core/boot-app-state.js"
+      ],
+      "scenario": "scenarios/h2-record-save-reopen-reload.json",
+      "proof": "proof.json",
+      "id": "C2"
+    },
+    {
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "「일정연동저장」을 누르면 창이 닫히고 일정 탭 날짜 허브에 그 기록으로 가는 일정이 하나 생기며, 그 기록을 수정해 다시 일정연동저장해도 일정은 하나이고, 새로 고침한 뒤에도 일정이 하나 남아 있다 (저장 — 일정 연동 저장·같은 일정 갱신·새로 고침 뒤 유지) — 앱 상태 객체 정의 줄을 구역 함수로 옮기기 전후 보존 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/core/boot-app-state.js"
+      ],
+      "scenario": "scenarios/h3-record-calendar-save.json",
+      "proof": "proof.json",
+      "id": "C3"
+    },
+    {
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "검토자 추가 1 — 행을 둘 추가해 값을 넣고 가운데 행을 지운 뒤 저장 → 수정으로 다시 열어 행 순서 확인 → 첫 행을 지우고 수정 저장 → 새로 고침 뒤 다시 열어 순서 확인 — 앱 상태 객체 정의 줄을 구역 함수로 옮기기 전후 보존 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/core/boot-app-state.js"
+      ],
+      "scenario": "scenarios/h4-record-rows-delete-save-reopen.json",
+      "proof": "proof.json",
+      "id": "C4"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮긴 줄을 기준과 줄 단위로 맞댔을 때 접두 L. 말고 다른 줄이 0줄이다.",
+      "touches": [
+        "reports/TASK-ES-682/prefix-only-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/prefix-only-check.json",
+        "path": "totals.otherDiffLines",
+        "equals": 0
+      },
+      "id": "C5"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "걷어 낸 접두 수가 생성기가 적은 바꿔 쓰기 수와 같다.",
+      "touches": [
+        "reports/TASK-ES-682/prefix-only-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/prefix-only-check.json",
+        "path": "totals.strippedPrefixes",
+        "equals": 2
+      },
+      "id": "C6"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮긴 구역 수.",
+      "touches": [
+        "reports/TASK-ES-682/prefix-only-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/prefix-only-check.json",
+        "path": "totals.regions",
+        "equals": 2
+      },
+      "id": "C7"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮긴 최상위 문 수.",
+      "touches": [
+        "reports/TASK-ES-682/prefix-only-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/prefix-only-check.json",
+        "path": "totals.statements",
+        "equals": 2
+      },
+      "id": "C8"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "되짚기: 기준 index.html 에서 구역 줄을 빼고 부르는 줄·머리 줄·script 태그 줄을 넣은 것이 작업 index.html 과 줄 단위로 같다.",
+      "touches": [
+        "reports/TASK-ES-682/prefix-only-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/prefix-only-check.json",
+        "path": "replay.rebuiltEqualsWork",
+        "equals": true
+      },
+      "id": "C9"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "머리에 더한 가져오기 줄이 설정의 이름·키트 변수로 만든 글자와 같다.",
+      "touches": [
+        "reports/TASK-ES-682/prefix-only-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/prefix-only-check.json",
+        "path": "replay.headImportsEqualExpected",
+        "equals": true
+      },
+      "id": "C10"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "script 태그 줄에서 새 세포의 태그 글자를 빼면 기준 줄과 같다.",
+      "touches": [
+        "reports/TASK-ES-682/prefix-only-check.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/prefix-only-check.json",
+        "path": "replay.tagLineIsBasePlusNewTags",
+        "equals": true
+      },
+      "id": "C11"
+    },
+    {
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기가 index.html 머리에 단 통로 getter 의 이름 목록 — 구역 본문이 통로로 읽는 이름 가운데 index.html 에 getter 가 없던 것(등록 기관이 이미 통로에 내주는 이름이다. 다음 재철거가 지운다).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "generator.exposed",
+        "equals": [
+          "isoDate"
+        ]
+      },
+      "id": "C12"
+    },
+    {
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부팅 동안의 사건 줄(상태 기관 정의 · 통로 노출 · window 대입)과 사건마다의 통로 이름 수가, 생성기가 다시 단 getter 를 통로에 다는 사건을 빼면 기준과 작업에서 글자 그대로 같다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "order.sameAsBaseExceptNewGetterExpose",
+        "equals": true
+      },
+      "id": "C13"
+    },
+    {
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준에서 두 번 잰 사건 줄이 서로 같다(본질 변동 없음).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "order.baseRepeatSame",
+        "equals": true
+      },
+      "id": "C14"
+    },
+    {
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 쪽에 더 있는 사건 수.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "order.newGetterExpose.extraEvents",
+        "equals": 1
+      },
+      "id": "C15"
+    },
+    {
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리에서 state 정의 사건의 자리(0부터).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "order.indexOf.work.state",
+        "equals": 219
+      },
+      "id": "C16"
+    },
+    {
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리에서 window.state 대입 사건의 자리(0부터) — state 정의(와 그 정의가 통로에 다는 사건) 바로 뒤다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "order.indexOf.work.windowState",
+        "equals": 221
+      },
+      "id": "C17"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상태 객체 탐침(앱 상태 객체의 동일성 · 통째 대입 왕복 · 템플릿 부품의 getState · 프롬프트 서랍 접힘 값을 읽고 쓰는 세포 함수)의 기록이 기준과 작업에서 통째로 같다(주인 표시·기관 종류 포함).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateObject.sameAsBase",
+        "equals": true
+      },
+      "id": "C18"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상태 객체 탐침을 기준에서 두 번 돌린 기록이 서로 같다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateObject.baseRepeatSame",
+        "equals": true
+      },
+      "id": "C19"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리에서 통로의 state · window.state · 템플릿 부품의 getState() 가 같은 객체다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateObject.state.sameObjectEverywhereWork",
+        "equals": true
+      },
+      "id": "C20"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리에서 state 를 통째로 다시 대입하는 왕복이 된다(통로·getState 는 새 객체, window.state 는 예전 객체, 되돌림).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateObject.state.reassignWorkOk",
+        "equals": true
+      },
+      "id": "C21"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리에서 프롬프트 서랍 접힘 값이 처음에 false 이고, 읽는 그리기 함수와 쓰는 단추 처리기가 돈다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateObject.promptOpen.workOk",
+        "equals": true
+      },
+      "id": "C22"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름은, 생성기가 getter 를 다시 단 이름 말고는 없다(기준을 두 번 재도 다른 이름은 뺐다).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateProbe.differingBeyondRegrownGetter",
+        "equals": []
+      },
+      "id": "C23"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "getter 가 다시 달려 접근자 종류·주인 표시가 달라진 이름 목록(상태 탐침에 넣은 이름 가운데).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateProbe.differingRegrownGetter",
+        "equals": []
+      },
+      "id": "C24"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상태 기관이 맡은 이름 목록이 기준과 같다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "stateProbe.organNamesSame",
+        "equals": true
+      },
+      "id": "C25"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "통로 이름의 값 지문이 기준과 다른 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "fingerprints.scopeDiff",
+        "equals": []
+      },
+      "id": "C26"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "window 이름의 값 지문이 기준과 다른 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "fingerprints.windowDiff",
+        "equals": []
+      },
+      "id": "C27"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "통로에서 사라진 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "fingerprints.scopeLost",
+        "equals": []
+      },
+      "id": "C28"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "통로에 새로 생긴 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "fingerprints.scopeAdded",
+        "equals": []
+      },
+      "id": "C29"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침의 새 회귀 수.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "moduleLoad.regressions",
+        "equals": 0
+      },
+      "id": "C30"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 세포 파일이 단독으로 로드된다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "moduleLoad.newFilesLoadOneOk",
+        "equals": true
+      },
+      "id": "C31"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 가 기준 트리와 작업 트리에서 종료 코드 0 이고 검사 줄 수·요약 줄이 같다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "npmTest.same",
+        "equals": true
+      },
+      "id": "C32"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시험 스크립트와 tests/*.test.js 를 하나씩 돌린 결과(실패 집합·꼬리 글자)가 기준과 같다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "testsEach.sameAsBase",
+        "equals": true
+      },
+      "id": "C33"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 가드 종료 코드.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "moduleGuard.exitCode",
+        "equals": 0
+      },
+      "id": "C34"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "무결성 게이트 종료 코드(프롬프트 서랍 접힘 값의 정의 줄이 세포로 간 뒤).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "integrityGate.exitCode",
+        "equals": 0
+      },
+      "id": "C35"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "바뀐 제품 파일은 index.html 과 새 세포 파일뿐이다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "changed.productFilesAreIndexAndNewCells",
+        "equals": true
+      },
+      "id": "C36"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/ 아래 바뀐 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "changed.testsChanged",
+        "equals": []
+      },
+      "id": "C37"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "금고 아래 바뀐 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "changed.vaultChanged",
+        "equals": []
+      },
+      "id": "C38"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기·검사기 파일 변경이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "changed.generatorChanged",
+        "equals": []
+      },
+      "id": "C39"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성 지도 3종 변경이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "changed.mapsChanged",
+        "equals": []
+      },
+      "id": "C40"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상태 기관·통로·등록 기관 파일 변경이 없다.",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "changed.organChanged",
+        "equals": []
+      },
+      "id": "C41"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업의 측정 기록에서 인라인 스크립트 줄 수 변화(늘었다 — 한 줄짜리 문이 부르는 줄 + 가져오기 줄로 바뀌고 getter 가 다시 달려서다. 사유를 적어 기준선에 올렸다).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "metrics.delta",
+        "equals": 4
+      },
+      "id": "C42"
+    },
+    {
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준선 마지막 기록의 인라인 스크립트 줄 수가 측정값과 같다(module-guard --update --reason 으로 기록).",
+      "touches": [
+        "reports/TASK-ES-682/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/measurement.json",
+        "path": "baseline.recordedEqualsMeasured",
+        "equals": true
+      },
+      "id": "C43"
+    },
+    {
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "finalize 전제를 막는 최상위 문 수(이 PR 을 반영한 index.html — 생성기 finalize 가 임시 사본에서 낸 수와 같다).",
+      "touches": [
+        "reports/TASK-ES-682/finalize-gap.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/finalize-gap.json",
+        "path": "totals.blockingStatements",
+        "equals": 8
+      },
+      "id": "C44"
+    },
+    {
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "그 문들이 차지하는 줄 수.",
+      "touches": [
+        "reports/TASK-ES-682/finalize-gap.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/finalize-gap.json",
+        "path": "totals.blockingLines",
+        "equals": 12
+      },
+      "id": "C45"
+    },
+    {
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "finalize 가 받는 문(손잡이 · 구역 함수 가져오기 · 구역 함수 호출문) 수.",
+      "touches": [
+        "reports/TASK-ES-682/finalize-gap.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-682/finalize-gap.json",
+        "path": "totals.allowedStatements",
+        "equals": 58
+      },
+      "id": "C46"
+    }
+  ]
+}
