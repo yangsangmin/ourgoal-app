@@ -2176,7 +2176,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/period-ai-card.js"></script>
 <script src="js/tabs/records/checkin-helpers.js"></script><script src="js/tabs/records/render.js"></script>
-<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/checkin-feedback.js"></script><script src="js/tabs/records/export-theme.js"></script><script src="js/tabs/records/weekly-recap.js"></script><script src="js/tabs/records/external-import.js"></script><script src="js/tabs/records/stopwatch-format.js"></script><script src="js/tabs/records/record-heatmap-levels.js"></script><script src="js/tabs/records/table-analytics-engine.js"></script><script src="js/tabs/records/trend-multi-metric-svg.js"></script><script src="js/tabs/records/table-csv-sync.js"></script><script src="js/tabs/records/voice-table-input.js"></script><script src="js/tabs/goals/curated-market-data.js"></script><script src="js/tabs/records/vision-table-input.js"></script><script src="js/tabs/records/theme-export-csv.js"></script><script src="js/tabs/records/mic-permission-guide.js"></script><script src="js/tabs/records/ai-feedback-catalog.js"></script><script src="js/tabs/records/growth-chart.js"></script><script src="js/tabs/records/theme-classifier.js"></script><script src="js/tabs/records/csv-export.js"></script><script src="js/tabs/records/theme-picker.js"></script><script src="js/tabs/records/quick-checkin.js"></script><script src="js/tabs/records/checkin-input-wiring.js"></script><script src="js/tabs/records/sample-purge.js"></script><script src="js/tabs/records/index.js"></script>
+<script src="js/tabs/records/ai-feedback.js"></script><script src="js/tabs/records/ai-feedback-providers.js"></script><script src="js/tabs/records/photo-proof.js"></script><script src="js/tabs/records/heatmap-summary.js"></script><script src="js/tabs/records/record-cards.js"></script><script src="js/tabs/records/record-heatmap-report.js"></script><script src="js/tabs/records/record-assistant.js"></script><script src="js/tabs/records/table-analytics-view.js"></script><script src="js/tabs/records/pro-report-export.js"></script><script src="js/tabs/records/record-card-wire.js"></script><script src="js/tabs/records/table-stopwatch.js"></script><script src="js/tabs/records/checkin-capture.js"></script><script src="js/tabs/records/share-to-feed.js"></script><script src="js/tabs/records/trend-metrics-chart.js"></script><script src="js/tabs/records/pro-templates.js"></script><script src="js/tabs/records/pro-template-modals.js"></script><script src="js/tabs/records/archive-toggle.js"></script><script src="js/tabs/records/first-checkin-tutorial.js"></script><script src="js/tabs/records/checkin-feedback.js"></script><script src="js/tabs/records/export-theme.js"></script><script src="js/tabs/records/weekly-recap.js"></script><script src="js/tabs/records/external-import.js"></script><script src="js/tabs/records/stopwatch-format.js"></script><script src="js/tabs/records/record-heatmap-levels.js"></script><script src="js/tabs/records/table-analytics-engine.js"></script><script src="js/tabs/records/trend-multi-metric-svg.js"></script><script src="js/tabs/records/table-csv-sync.js"></script><script src="js/tabs/records/voice-table-input.js"></script><script src="js/tabs/goals/curated-market-data.js"></script><script src="js/tabs/records/vision-table-input.js"></script><script src="js/tabs/records/theme-export-csv.js"></script><script src="js/tabs/records/mic-permission-guide.js"></script><script src="js/tabs/records/ai-feedback-catalog.js"></script><script src="js/tabs/records/growth-chart.js"></script><script src="js/tabs/records/theme-classifier.js"></script><script src="js/tabs/records/csv-export.js"></script><script src="js/tabs/records/theme-picker.js"></script><script src="js/tabs/records/quick-checkin.js"></script><script src="js/tabs/records/checkin-input-wiring.js"></script><script src="js/tabs/records/sample-purge.js"></script><script src="js/tabs/records/template-market.js"></script><script src="js/tabs/records/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
 <script src="js/tabs/calendar/sub-month-view.js"></script>
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
@@ -2611,6 +2611,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get renderRecordsScreen(){ return renderRecordsScreen; },
     get triggerHapticFeedback(){ return triggerHapticFeedback; },
     get uid(){ return uid; }
+  });
+  /* [#TASK-ES-645] js/tabs/records/template-market.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var openTemplateMarketModal = _recordsKit.openTemplateMarketModal;
+  window.OurgoalAppScope.expose('index.html', {
+    get CURATED_MARKET_TEMPLATES(){ return CURATED_MARKET_TEMPLATES; },
+    get saveLocalSettings(){ return saveLocalSettings; }
   });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
@@ -3380,236 +3386,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013) ============
      [#TASK-ES-516] 복제 앞뒤의 보상형 광고 함수는 상민님 결정(2026-10-06)으로 지웠다. 복제는 아래 본체가 바로 한다. */
-  function executeDirectTemplateClone(tpl, onSelectTemplate){
-    var customTemplates = (state.settings && state.settings.customTemplates) || [];
-    var existing = customTemplates.find(function(t){ return t.title === tpl.title; });
-    if(existing){
-      toast('이미 복제된 템플릿입니다: ' + tpl.title);
-      closeModal();
-      if(typeof onSelectTemplate === 'function') onSelectTemplate(existing);
-      return existing;
-    }
-    var newTpl = {
-      key: 'tpl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-      icon: tpl.icon,
-      title: tpl.title,
-      columns: tpl.columns.slice(),
-      defaultRows: (tpl.defaultRows || []).slice()
-    };
-    customTemplates.push(newTpl);
-    if(!state.settings) state.settings = {};
-    state.settings.customTemplates = customTemplates;
-    var uidVal = (state.profile && state.profile.id) || (state.user && state.user.id) || 'local';
-    if(state.profile && !state.profile.settings) state.profile.settings = {};
-    if(state.profile && state.profile.settings) state.profile.settings.customTemplates = customTemplates;
-    saveLocalSettings(uidVal, state.settings);
-    toast('[' + newTpl.title + '] 내 템플릿으로 복제 완료!');
-    if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.recordCopy(tpl.key || tpl.title, tpl.ownerUserId || null); // KF-2 #TASK-ES-017: 서버 실복제 기록 (복제 뒤 광고 없음)
-    closeModal();
-    if(typeof onSelectTemplate === 'function') onSelectTemplate(newTpl);
-    return newTpl;
-  }
-
-  /* 🏪 템플릿 마켓플레이스 모달 */
-  function openTemplateMarketModal(onSelectTemplate){
-    var curCategory = 'all';
-    var searchQuery = '';
-
-    function filterTemplates(){
-      return CURATED_MARKET_TEMPLATES.filter(function(t){
-        var matchCat = curCategory === 'all' || t.category === curCategory;
-        if(!matchCat) return false;
-        if(!searchQuery) return true;
-        var q = searchQuery.toLowerCase();
-        return t.title.toLowerCase().includes(q) ||
-               t.description.toLowerCase().includes(q) ||
-               t.author.toLowerCase().includes(q) ||
-               t.columns.join(' ').toLowerCase().includes(q);
-      });
-    }
-
-    function renderGridHtml(tpls){
-      if(!tpls.length){
-        return '<div class="empty-state" style="padding:28px 0;"><p>검색 조건에 맞는 템플릿이 없습니다.</p></div>';
-      }
-      return '<div class="market-grid">' +
-        tpls.map(function(t, idx){
-          return '<div class="market-card">' +
-            '<div>' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;">' +
-                '<span class="pro-tpl-badge" style="font-size:.8125rem;">' + t.icon + ' ' + escapeHtml(t.title) + '</span>' +
-                '<span class="market-badge" data-tplcount="' + t.key + '" style="background:var(--card2);color:var(--ink-soft);font-size:.6875rem;display:none;"></span>' + /* KF-2 #TASK-ES-017: 복제 수는 서버 실데이터만(js/template-credit.js). 없으면 숨김 */
-              '</div>' +
-              '<div class="faint" style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.4;">' +
-                escapeHtml(t.description) +
-              '</div>' +
-              '<div style="font-size:.7rem;color:var(--ink-faint);margin-bottom:8px;">' +
-                '작성자: <b>' + escapeHtml(t.author) + '</b>' +
-              '</div>' +
-              '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">' +
-                t.columns.slice(0, 4).map(function(c){
-                  return '<span style="font-size:.6875rem;padding:2px 6px;background:var(--card2);border-radius:6px;border:1px solid var(--rule);">' + escapeHtml(c) + '</span>';
-                }).join('') +
-                (t.columns.length > 4 ? '<span style="font-size:.6875rem;padding:2px 6px;color:var(--ink-faint);">+' + (t.columns.length - 4) + '</span>' : '') +
-              '</div>' +
-            '</div>' +
-            '<div style="display:flex;gap:6px;margin-top:6px;">' +
-              '<button class="btn btn-ghost btn-sm mkt-preview-btn" data-mktkey="' + t.key + '" type="button" style="flex:1;font-size:.8125rem;padding:5px 0;">미리보기</button>' +
-              '<button class="btn btn-primary btn-sm mkt-clone-btn" data-mktkey="' + t.key + '" type="button" style="flex:1.2;font-size:.8125rem;padding:5px 0;">복제하기</button>' +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>';
-    }
-
-    var html = '<h3>아워골 맞춤 템플릿 마켓플레이스</h3>' +
-      '<div style="padding:10px 14px;background:var(--surface-2);border-radius:12px;margin-bottom:12px;font-size:.8125rem;color:var(--ink);line-height:1.45;">' +
-        '<b>검증된 전문가와 커뮤니티의 노션형 표 템플릿을 원클릭으로 내 앱에 복제하세요.</b><br>' +
-        '<span style="font-size:.8125rem;color:var(--ink-soft);">크로스핏, 하이록스, 자격증 수험, 주식 매매일지 등 1초 만에 그대로 복제되어 즉시 기록할 수 있습니다.</span>' +
-      '</div>' +
-      '<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;-webkit-overflow-scrolling:touch;" id="mktCategoryPills">' +
-        '<button class="dday-pill active" data-mktcat="all" type="button" style="cursor:pointer;background:var(--chip);color:var(--paper);font-size:.8125rem;">전체</button>' +
-        '<button class="dday-pill" data-mktcat="workout" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.8125rem;">운동/피트니스</button>' +
-        '<button class="dday-pill" data-mktcat="study" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.8125rem;">공부/수험</button>' +
-        '<button class="dday-pill" data-mktcat="business" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.8125rem;">비즈니스/재테크</button>' +
-        '<button class="dday-pill" data-mktcat="life" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.8125rem;">라이프/루틴</button>' +
-      '</div>' +
-      '<div style="display:flex;gap:8px;margin-bottom:10px;">' +
-        '<input type="search" id="mktSearchInput" placeholder="템플릿 검색 (예: 크로스핏, 공인중개사, 주식, 식단...)" style="font-size:.875rem;padding:7px 12px;flex:1;border-radius:10px;border:1px solid var(--rule);">' +
-        '<button class="btn btn-ghost btn-sm" id="mktShareMyTplBtn" type="button" style="white-space:nowrap;font-size:.8125rem;padding:0 10px;" title="내가 만든 템플릿 코드 공유">내 템플릿 공유</button>' +
-      '</div>' +
-      '<div id="mktGridContainer">' +
-        renderGridHtml(CURATED_MARKET_TEMPLATES) +
-      '</div>' +
-      '<div id="mktDetailPreviewWrap" style="display:none;margin-top:14px;padding:12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-          '<b style="font-size:.875rem;" id="mktPreviewTitle">템플릿 미리보기</b>' +
-          '<button class="btn btn-ghost btn-sm" id="mktClosePreviewBtn" type="button" style="font-size:.8125rem;">닫기</button>' +
-        '</div>' +
-        '<div style="display:flex;gap:6px;margin-top:6px;">' +
-          '<button class="btn btn-ghost btn-sm" id="mktPreviewShareBtn" type="button" style="flex:1;border:1px solid var(--brand-strong);color:var(--brand-strong);font-weight:700;font-size:.8125rem;padding:7px 0;">🔗 템플릿 공유</button>' +
-          '<button class="btn btn-primary btn-sm btn-transplant" id="mktPreviewCloneBtn" type="button" style="flex:1.5;font-size:.8125rem;padding:7px 0;">⚡ 내 목표에 바로 담기 (1초 자동 이식)</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="modal-actions" style="margin-top:14px;">' +
-        '<button class="btn btn-ghost" id="mktModalCloseBtn" type="button">닫기</button>' +
-      '</div>';
-
-    openModal(html, function(sheet){
-      sheet.querySelector('#mktModalCloseBtn').onclick = closeModal;
-
-      var gridBox = sheet.querySelector('#mktGridContainer');
-      var searchInp = sheet.querySelector('#mktSearchInput');
-      var prevWrap = sheet.querySelector('#mktDetailPreviewWrap');
-      var prevTitle = sheet.querySelector('#mktPreviewTitle');
-      var prevTableBox = sheet.querySelector('#mktPreviewTableBox');
-      var prevCloneBtn = sheet.querySelector('#mktPreviewCloneBtn');
-      var closePrevBtn = sheet.querySelector('#mktClosePreviewBtn');
-      var curPreviewTpl = null;
-      if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.fillCounts(gridBox);
-
-      function updateGrid(){
-        var filtered = filterTemplates();
-        gridBox.innerHTML = renderGridHtml(filtered);
-        bindGridEvents();
-        if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.fillCounts(gridBox);
-      }
-
-      function cloneTemplate(tpl){
-        if(!tpl) return;
-        executeDirectTemplateClone(tpl, onSelectTemplate);
-      }
-
-      function bindGridEvents(){
-        sheet.querySelectorAll('.mkt-clone-btn').forEach(function(btn){
-          btn.onclick = function(){
-            var key = btn.dataset.mktkey;
-            var tpl = CURATED_MARKET_TEMPLATES.find(function(t){ return t.key === key; });
-            if(tpl) cloneTemplate(tpl);
-          };
-        });
-        sheet.querySelectorAll('.mkt-preview-btn').forEach(function(btn){
-          btn.onclick = function(){
-            var key = btn.dataset.mktkey;
-            var tpl = CURATED_MARKET_TEMPLATES.find(function(t){ return t.key === key; });
-            if(!tpl) return;
-            curPreviewTpl = tpl;
-            prevTitle.textContent = tpl.icon + ' ' + tpl.title + ' (기본 ' + (tpl.defaultRows || []).length + '개 행)';
-            var tableHtml = '<table class="pro-notion-table" style="font-size:.8125rem;">' +
-              '<thead><tr>' + tpl.columns.map(function(c){ return '<th>' + escapeHtml(c) + '</th>'; }).join('') + '</tr></thead>' +
-              '<tbody>' +
-                (tpl.defaultRows || []).map(function(r){
-                  return '<tr>' + tpl.columns.map(function(_, ci){ return '<td>' + escapeHtml(r[ci] || '-') + '</td>'; }).join('') + '</tr>';
-                }).join('') +
-              '</tbody></table>';
-            prevTableBox.innerHTML = tableHtml;
-            prevWrap.style.display = 'block';
-            prevWrap.scrollIntoView({ behavior: 'smooth' });
-          };
-        });
-      }
-
-      if(closePrevBtn){
-        closePrevBtn.onclick = function(){ prevWrap.style.display = 'none'; curPreviewTpl = null; };
-      }
-      if(prevCloneBtn){
-        prevCloneBtn.onclick = function(){
-          if(curPreviewTpl) cloneTemplate(curPreviewTpl);
-        };
-      }
-      var prevShareBtn = sheet.querySelector('#mktPreviewShareBtn'); if(prevShareBtn){ prevShareBtn.onclick = function(){ if(!curPreviewTpl) return; shareContent({ type: 'template', id: curPreviewTpl.key || curPreviewTpl.title, title: curPreviewTpl.title, desc: (curPreviewTpl.desc || (curPreviewTpl.title + ' 노션형 맞춤 목표 템플릿')), text: '[아워골 목표 템플릿] \'' + curPreviewTpl.title + '\' 템플릿으로 함께 성장해요! 📋' }); }; }
-
-      // 카테고리 필터 클릭
-      sheet.querySelectorAll('#mktCategoryPills button').forEach(function(btn){
-        btn.onclick = function(){
-          sheet.querySelectorAll('#mktCategoryPills button').forEach(function(b){
-            b.classList.remove('active');
-            b.style.background = 'var(--card)';
-            b.style.color = 'var(--ink)';
-            b.style.border = '1px solid var(--rule)';
-          });
-          btn.classList.add('active');
-          btn.style.background = 'var(--chip)';
-          btn.style.color = 'var(--paper)';
-          btn.style.border = 'none';
-          curCategory = btn.dataset.mktcat;
-          updateGrid();
-        };
-      });
-
-      // 실시간 검색
-      if(searchInp){
-        searchInp.oninput = function(){
-          searchQuery = searchInp.value.trim();
-          updateGrid();
-        };
-      }
-
-      // 내 템플릿 마켓 공유 버튼
-      var shareBtn = sheet.querySelector('#mktShareMyTplBtn');
-      if(shareBtn){
-        shareBtn.onclick = function(){
-          var myTpls = (state.settings && state.settings.customTemplates) || [];
-          if(!myTpls.length){
-            toast('공유할 내 맞춤 템플릿이 없습니다. 새 템플릿을 먼저 생성해보세요!');
-            return;
-          }
-          var jsonStr = JSON.stringify(myTpls, null, 2);
-          if(navigator.clipboard && navigator.clipboard.writeText){
-            navigator.clipboard.writeText(jsonStr).then(function(){
-              toast('내 맞춤 템플릿 ' + myTpls.length + '개 설정 코드가 클립보드에 복사되었습니다!');
-            }).catch(function(){
-              window.prompt('아래 템플릿 코드를 복사하여 공유하세요:', jsonStr);
-            });
-          } else {
-            window.prompt('아래 템플릿 코드를 복사하여 공유하세요:', jsonStr);
-          }
-        };
-      }
-
-      bindGridEvents();
-    });
-  }
+  /* [#TASK-ES-645] executeDirectTemplateClone · openTemplateMarketModal → js/tabs/records/template-market.js 로 옮김(돈 근처 함수 2개 글자 그대로 이전 — 템플릿 마켓 창 · 템플릿 복제 본체(지시함 DIR-004 (나): 내용은 한 글자도 바꾸지 않고 자리만) — 앞 주석 포함) */
 
   /* 📋 전문적(내 전용 템플릿) 기록하기 메인 창 */
   function openProTemplateRecordModal(editRec, initialTplKey, initialDate){
