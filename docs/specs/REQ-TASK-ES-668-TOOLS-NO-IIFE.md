@@ -2,8 +2,8 @@
 
 - 작업번호: TASK-ES-668 · 종류: **INFRA**(작업 도구 네 개 `scripts/**` 와 생성기 `docs/design/harness/**` — 앱 코드 `index.html` · `js/**` 변경 0)
 - 묶음: 같은 승인으로 나눈 PR 네 개 — TASK-ES-666(시험지·기준 시험지·공용 도우미) · TASK-ES-667(모듈 측정기 ⑤ 규칙) · TASK-ES-668(도구 다섯 개) · TASK-ES-669(금고: 무결성 게이트 한 줄). 책임 단위로 나눴고 어느 순서로 병합돼도 main 의 `npm test` 가 깨지지 않게 했다(아래 4절·6절).
-- 작업참고: `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #934**(끝까지 읽음 — 이 작업에 쓴 경험칙: L021 · L023 · L048 · L067 · L085 · L110).
-- 측정 기준: `origin/main` 2a1507eb. main 과 함께 움직이는 수는 이 PR 이 가진 `reports/TASK-ES-668/measurement.json` 을 가리킨다(`baseCommit` 칸이 잰 커밋이다).
+- 작업참고: `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #941**(끝까지 읽음 — 이 작업에 쓴 경험칙: L021 · L023 · L048 · L067 · L085 · L110).
+- 측정 기준: `origin/main` 42b5511f — 이 가지에 그 커밋을 합친 뒤 측정 한 벌을 전부 다시 돌린 값이다(앞선 기준 커밋에서 잰 값은 싣지 않았다). main 과 함께 움직이는 수는 이 PR 이 가진 `reports/TASK-ES-668/measurement.json` 을 가리킨다(`baseCommit` 칸이 잰 커밋이다).
 - 이 문서는 작업 세션의 서류다. 효력·근거가 아니며, 아래 수치는 전부 **작업자 측정(판정 아님)** 이다. 판정은 GitHub 법정만 낸다.
 
 ## 0. 요구 (상민님 원문 · 지시 항목)
@@ -111,8 +111,8 @@
 
 | 도구 | 종료 코드(고치기 전 → 고친 뒤) | 출력 글자가 같은가 | 고친 뒤 출력 첫 줄 |
 |---|---|---|---|
-| 지도(`--write`) | 0 → 0 | true | 인라인 지도: 묶음 52 · 옮길 대상 16 · IIFE 1895줄 · 함수 7 · window 3 · 출처 be466049ef41 → 기록함 |
-| 유형표(`--write`) | 0 → 0 | true | 어려움 3묶음 1527줄 · 출처 be466049ef41 |
+| 지도(`--write`) | 0 → 0 | true | 인라인 지도: 묶음 52 · 옮길 대상 11 · IIFE 1874줄 · 함수 6 · window 3 · 출처 64780aa650c6 → 기록함 |
+| 유형표(`--write`) | 0 → 0 | true | 어려움 2묶음 1344줄 · 출처 64780aa650c6 |
 | 대조 탐침 | 0 → 0 | 셈이 같음 true | scope 522 · window 3 · mismatches 0 |
 
 - 지도·유형표가 쓴 파일 넷(`INLINE-SCRIPT-MAP.md` · `inline-script-map.json` · `inline-hard-types.json` · `INLINE-HARD-SPLIT-DESIGN.md`)의 sha256 이 고치기 전·후 같음: true(쓴 뒤 되돌렸다 — 이 PR 은 지도 파일을 바꾸지 않는다).
@@ -123,13 +123,13 @@
 | 도구 | (가) 고치기 전 | (가) 고친 뒤 | (나) 고치기 전 | (나) 고친 뒤 |
 |---|---|---|---|---|
 | 지도 | 1 — Error: 큰 인라인 IIFE 를 못 찾음 | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 줄 0 으로 적는다) | 1 — Error: 큰 인라인 IIFE 를 못 찾음 | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 줄 0 으로 적는다) |
-| 유형표 | 1 — Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 e8c01d4986e3 · 지금 804da07bb977) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다) | 1 — Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 e8c01d4986e3 · 지금 103f031b53ad) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다) |
-| 실측기 | 1 — Error: 사본 index.html 이 지도와 다르다(지도 e8c01d4986e3 · 사본 804da07bb977) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다) | 1 — Error: 사본 index.html 이 지도와 다르다(지도 e8c01d4986e3 · 사본 103f031b53ad) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다) |
+| 유형표 | 1 — Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 64780aa650c6 · 지금 804da07bb977) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다) | 1 — Error: 지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 64780aa650c6 · 지금 103f031b53ad) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다) |
+| 실측기 | 1 — Error: 사본 index.html 이 지도와 다르다(지도 64780aa650c6 · 사본 804da07bb977) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다) | 1 — Error: 사본 index.html 이 지도와 다르다(지도 64780aa650c6 · 사본 103f031b53ad) | 0 — 큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(묶음 0 · 시험지 0 으로 적는다) |
 | 생성기(sweep 설정) | 1 — TypeError: Cannot read properties of undefined (reading 'startsWith') | 3 — gen-inline-hard: 옮길 덩어리가 없다 — <임시 폴더>/es666-n-toolA/index.html 에 큰 인라인 IIFE('<script>' 다음 줄 '(function(){', 그 다음 줄 "use  | 1 — TypeError: Cannot read properties of undefined (reading 'startsWith') | 3 — gen-inline-hard: 옮길 덩어리가 없다 — <임시 폴더>/es666-n-toolB/index.html 에 큰 인라인 IIFE('<script>' 다음 줄 '(function(){', 그 다음 줄 "use  |
 
 - 종료 코드 [지도, 유형표, 실측기, 생성기]: (가) [1,1,1,1] → [0,0,0,3] · (나) [1,1,1,1] → [0,0,0,3].
 - 생성기 실행 전·후 작업 트리 상태가 같음(아무 파일도 쓰지 않음): (가) true · (나) true.
-- 대조 탐침 · (가)(앱이 그대로 뜨는 모의본): 고치기 전 종료 1 → 고친 뒤 `--names-from`(기준에서 잰 이름 목록) 종료 0(scope 522 · window 3 · mismatches 0 · missing 163) · 이름 고정 없이 종료 0(window 0 · missing 160).
+- 대조 탐침 · (가)(앱이 그대로 뜨는 모의본): 고치기 전 종료 1 → 고친 뒤 `--names-from`(기준에서 잰 이름 목록) 종료 0(scope 522 · window 3 · mismatches 0 · missing 73) · 이름 고정 없이 종료 0(window 0 · missing 71).
 - (나)는 글자 반응만 보는 모의본이라 앱이 뜨는지 보지 않는다 — 탐침은 (가)에서만 돌렸다.
 
 ### 7.3 생성기 단위 시험 — 기준(고치기 전 생성기) · 작업(고친 생성기)
