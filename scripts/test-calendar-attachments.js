@@ -58,9 +58,9 @@ assert.ok(indexHtml.includes('js/calendar-attachment.js'), 'index.html에 calend
 assert.ok(indexHtml.includes('kind === \'custom\''), 'wireAttachmentChipClicks에 kind === custom 분기가 배선되어야 합니다.');
 assert.ok(indexHtml.includes('data-hubaddatt'), '일자 허브 모달에 참고자료 첨부 버튼(data-hubaddatt)이 존재해야 합니다.');
 assert.ok(indexHtml.includes('renderHubEventChipsHtml'), '일자 허브 모달에 첨부자료 칩 렌더링이 연동되어야 합니다.');
-assert.ok(indexHtml.includes('window.openAddAttachmentModal = openAddAttachmentModal;'), 'index.html에 window.openAddAttachmentModal 바인딩');
-assert.ok(indexHtml.includes('window.openAttachmentViewer = openAttachmentViewer;'), 'index.html에 window.openAttachmentViewer 바인딩');
-assert.ok(indexHtml.includes('window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'index.html에 window.renderAttachmentChipsHtml 바인딩');
+assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.openAddAttachmentModal = openAddAttachmentModal;'), 'index.html에 window.openAddAttachmentModal 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
+assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.openAttachmentViewer = openAttachmentViewer;'), 'index.html에 window.openAttachmentViewer 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
+assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'index.html에 window.renderAttachmentChipsHtml 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
 console.log('  ✓ [PASS] index.html 기술안전핀 TECH-RULE-01 및 [#TASK-ES-125] 전역 바인딩 검증');
 
 // 4. custom schedule 데이터 모델 및 삭제 시뮬레이션

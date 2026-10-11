@@ -27,7 +27,7 @@ const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFile
     '미선택 셀 클릭 시 안내 토스트 문구 일원화 확인'
   );
   assert.ok(
-    indexHtml.includes('window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'),
+    require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
     'window.renderStopwatchWidgetHtml 전역 바인딩 노출 확인'
   );
   assert.ok(

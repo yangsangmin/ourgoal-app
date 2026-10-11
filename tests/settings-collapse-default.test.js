@@ -22,7 +22,7 @@ function runTests() {
   assert(indexHtml.includes('data-ticket="50"'), 'index.html must have data-ticket="50"');
   assert(!indexHtml.includes('<details class="settings-group-accordion" open>'), 'settings-group-accordion must not have default open attribute');
   assert(indexHtml.includes('collapseAllSettingsSections();'), 'renderSettingsScreen must invoke collapseAllSettingsSections()');
-  assert(indexHtml.includes('window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html must expose collapseAllSettingsSections');
+  assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html must expose collapseAllSettingsSections'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
 
   // 2. js/components.js 직통 핸들러 및 4대 뷰 전파 검증
   assert(componentsJs.includes('async function handle전체공통_Item50Action'), 'components.js must define handle전체공통_Item50Action');
