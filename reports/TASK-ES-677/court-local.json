@@ -1,0 +1,33 @@
+{
+ "tool": "node court/judge.js --repo . --head HEAD --out <임시 폴더> --json",
+ "type": "작업자 PC 에서 실행한 예비 점검 — 판정이 아니다. 판정은 GitHub 법정만 낸다",
+ "head": "68a8f01abff8928bed24a6a69b390366b44b827e",
+ "base": "7b2ed68487305f2e3fd38f62b44e3d35170faceb",
+ "baseSource": "merge-base",
+ "verdict": null,
+ "verdictId": null,
+ "note": "로컬 법정 전체 실행을 두 번 돌렸고 두 번 다 판정을 내기 전에 실행이 끝났다(exit 127 — 법정이 시작할 때 미리 써 두는 「심사 못 함」 판정서만 남았다. 첫 번째는 화면 점검 단계, 두 번째는 주장 심사 55건 단계). 그래서 로컬 판정은 없다(null). 같은 PC 에서 다른 작업의 법정·시험이 함께 돌고 있었다 — 원인은 재지 못했다(측정불가).",
+ "runs": [
+  {
+   "exit": 127,
+   "lastStage": "화면 점검(앱 띄우기·표준 점검)",
+   "verdictWritten": "심사 못 함(미리 써 둔 판정서)"
+  },
+  {
+   "exit": 127,
+   "lastStage": "주장 심사(55건)",
+   "verdictWritten": "심사 못 함(미리 써 둔 판정서)"
+  }
+ ],
+ "insteadChecked": {
+  "npmTest": {
+   "exitCode": 0,
+   "okLines": 487,
+   "note": "main(7b2ed684) 을 합친 뒤 전경으로 한 번 끝까지 돌림"
+  },
+  "integrityGate": "ALL PASS",
+  "moduleGuard": "통과",
+  "measurement": "reports/TASK-ES-677/measurement.json (기준 da5116c4)"
+ },
+ "recomputeSplitNote": "해당 없음 — 이 PR 은 index.html 을 바꾸지 않고 철거 생성기를 돌리지 않는다(증명 파일 없음). 등록 2차(#940)에서는 같은 꼴의 화면 보존 주장 12건이 「확인 못 함(증명 파일 지정 누락)」으로 찍혔다"
+}
