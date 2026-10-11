@@ -1,0 +1,132 @@
+{
+  "id": "b6-records-search-segment",
+  "title": "게스트로 기록 탭에 들어가면 기록 목록 구획이 보이고, 검색칸에 글자를 넣어도(renderRecordsScreen 다시 그림) 빈 목록 안내가 그대로 보이며, 요약 띠를 누르면 통계 구획으로 바뀌고(setRecordsSegment) 다른 탭에 다녀와도 통계 구획이 유지되며 예외가 없다 (기록 키트 배선 철거 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recViewFeed"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recViewStats"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recSearchInput",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "visible",
+      "selector": "#recordsList .empty-state"
+    },
+    {
+      "do": "click",
+      "selector": "#recSearchInput"
+    },
+    {
+      "do": "type",
+      "selector": "#recSearchInput",
+      "text": "zzzqqq"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recordsList .empty-state"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recMiniPulseBar",
+      "timeoutMs": 4000
+    },
+    {
+      "do": "click",
+      "selector": "#recMiniPulseBar"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recViewStats"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recViewFeed"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recViewStats"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recViewFeed"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
