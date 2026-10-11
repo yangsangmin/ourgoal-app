@@ -1,0 +1,454 @@
+{
+ "task": "TASK-ES-674",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-674-UNWIRE-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 IIFE 에서 배선(_settingsKit 1차 · _goalsKit 1차 · _uiKit 1차 · _uiKit 2차(가져오기 줄은 남김) · _recordsKit 1차 · _recordsKit 2차(가져오기 줄은 남김) · _commKit 1차 · _commKit 2차(가져오기 줄은 남김) · _authSocialKit 1차 · _curatedMarketDataKit 1차 · _modalOpenKit 2차(가져오기 줄은 남김))을 생성기(gen-inline-hard.js mode:\"unwire\")로 지우고 앱 동작을 보존한다(손 편집 0 — 법정의 생성기 재실행 결과와 바이트 동일)."
+  },
+  {
+   "id": "R2",
+   "text": "지운 이름은 등록 기관(own)이 같은 값으로 내준다: 철거 전 이름 목록으로 대조해 불일치 0 · 통로에서 사라진 이름 0 · 이름별 값 지문 차이 0."
+  },
+  {
+   "id": "R3",
+   "text": "지우는 대상은 설정이 허용한 줄 종류뿐이고 names 밖 이름·함수 본문·그 밖의 글자는 바꾸지 않는다. 바뀐 제품 파일은 index.html 하나다."
+  },
+  {
+   "id": "R4",
+   "text": "증명 하한(설계 4절 「배선 철거」): 인라인 줄 수 감소와 기준선 기록 · 모듈 로드 새 회귀 0 · npm test 검사 수 동일·폐기 0 · tests/·금고·생성기·등록 기관 변경 0."
+  }
+ ],
+ "outOfScopeReports": [],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 진입해 아바타 인사 팝업을 닫고 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성이 되고 앞 탭은 비활성이 되며 예외가 없다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u01-guest-boot-six-tabs.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "목표 탭의 하위 탭(개인·루틴·통계)과 통계 기간(주·월)을 눌러 바꾸면 누른 것이 활성이 되며 예외가 없다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u02-goals-subtabs-periods.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 홈의 종 버튼으로 알림 센터 창을 두 번 열었다 닫고 설정 탭에 들어갔다가 홈으로 돌아오면 누른 탭이 활성이 되며 예외가 없다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u03-bell-modal-settings.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 홈에서 「새 목표」를 누르면 새 목표 창이 열리고 취소를 누르면 닫히며, 목표 탭의 팀목표 하위 탭으로 옮기면 그 탭이 활성이 되고 예외가 없다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u04-new-goal-modal.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 「AI 목표 어시스턴트」 제목 줄을 누르면 서랍이 열려 입력칸이 보이고, 다시 누르면 닫히며 예외가 없다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u05-goal-agent-drawer.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 설정 탭 맨 아래 「이용약관」·「개인정보처리방침」 링크를 누르면 각각 약관 창이 열린다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u06-settings-legal-links.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "시작 화면에서 로그인 화면으로 가 「비밀번호를 잊으셨나요?」를 누르면 「비밀번호 찾기」 창이 열린다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u07-auth-forgot-password.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 홈의 체크인 입력칸 옆 마이크 단추를 누르면 마이크 권한 안내 창이 뜬다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u08-checkin-mic-guide.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 소통 탭에서 모임 구획 단추를 누르고 Enter 를 눌러도 구획이 바뀌고 예외가 없다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u09-team-comment-passthrough.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭 통계에서 체험용 샘플(학습)을 적용한 뒤 「샘플 정리」 단추를 누르고 확인하면 샘플 안내 상자가 사라진다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u10-sample-purge.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 분류 칩 「학습/성장」을 고르고 빠른 추가 칸에 목표 이름을 적어 「추가」를 누르면 그 목표가 목록에 생긴다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u11-goal-fast-add.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭에서 「내보내기」 단추를 누르면 내보내기 창이 열려 테마 고르기 칸이 보인다 (재철거 2차 전후 보존 — 이 조작이 부르는 함수들의 가져오기·getter 줄을 index.html 에서 지운 뒤에도 같다) — 바뀐 index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u12-records-export-modal.json",
+   "proof": "proof.json"
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 탐침이 게스트 부팅을 끝내고 report() 를 받아 쓰였다(ok true) — 이름 목록은 철거 전 기준 트리 결과로 고정했다.",
+   "touches": [
+    "reports/TASK-ES-674/cell-registry-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/cell-registry-compare.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "철거 뒤 대조에서 불일치는 0 이다.",
+   "touches": [
+    "reports/TASK-ES-674/cell-registry-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/cell-registry-compare.json",
+    "path": "counts.mismatches",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "철거 뒤 통로에서 사라진 이름이 없다(지운 getter 의 이름은 등록 기관이 내준다).",
+   "touches": [
+    "reports/TASK-ES-674/cell-registry-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/cell-registry-compare.json",
+    "path": "namesFrom.scopeLost",
+    "equals": []
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "철거 전(기준 트리)과 뒤(작업 트리)에서 통로 이름마다 잰 값 지문의 차이가 없다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.fingerprints.differingScope",
+    "equals": []
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "철거 전과 뒤에서 window 이름마다 잰 값 지문의 차이가 없다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.fingerprints.differingWindow",
+    "equals": []
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지운 이름 가운데 철거 뒤 통로·window 에 없는 이름이 없다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.fingerprints.removedNamesAbsent",
+    "equals": []
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "바뀐 제품 파일은 index.html 하나뿐이다(js/** 변경 0).",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.changed.onlyIndexHtml",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기준 index.html 에서 실행을 차례로 되짚어(생성기가 적어 낸 줄을 지우고 쉼표를 뗌) 만든 결과가 작업 index.html 과 글자 그대로 같다(더한 줄 0 · 그 밖의 글자 변경 0).",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.onlyDeletions.rebuiltEqualsWork",
+    "equals": true
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기가 지운 줄 가운데 설정이 허용한 줄 종류(가져오기 줄 · expose getter/setter 속성 줄과 빈 껍데기 · window 대입 줄과 빈 블록 껍데기) 밖의 줄이 없다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json",
+    "reports/TASK-ES-674/unwire-meta.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.kindsOnly.deletedOutsideListedKinds",
+    "equals": []
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지운 줄의 이름 가운데 설정(proof.json) names 에 없는 이름이 없다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.kindsOnly.namesOutsideProof",
+    "equals": []
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "인라인 스크립트 줄 수(module-metrics inlineScriptLines)가 기준 트리보다 작다 — 전·후 값은 측정 기록에 있다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.inlineScriptLines.decreased",
+    "equals": true
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "docs/architecture/module-baseline.json 의 마지막 기록 inlineScriptLines 가 작업 트리 측정값과 같다(module-guard --update 로 기록).",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.baseline.recordedEqualsMeasured",
+    "equals": true
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 로드 탐침 결과에서 기준 대비 새 회귀 목록이 비어 있다.",
+   "touches": [
+    "reports/TASK-ES-674/module-load.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/module-load.json",
+    "path": "regressions",
+    "equals": []
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 를 기준 트리(origin/main)와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄·요약이 같다(폐기 0).",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.npmTest.same",
+    "equals": true
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests/ 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.changed.testsChanged",
+    "equals": []
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "금고(court/** 등) 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.changed.vaultChanged",
+    "equals": []
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기(gen-inline-hard.js · gen-cell-provide.js)와 등록 기관(js/core/cell-registry.js)을 바꾸지 않았다.",
+   "touches": [
+    "reports/TASK-ES-674/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-674/measurement.json",
+    "path": "summary.changed.generatorChanged",
+    "equals": []
+   }
+  }
+ ]
+}
