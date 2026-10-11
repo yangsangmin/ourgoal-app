@@ -35,7 +35,7 @@ const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFile
     '은은한 안내 톤을 위한 var(--ink-faint) 토큰 적용 확인'
   );
   assert.ok(
-    indexHtml.includes('window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'),
+    require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
     'window.renderTeamGoalsEmptyGuideHtml 전역 바인딩 노출 확인'
   );
   assert.ok(

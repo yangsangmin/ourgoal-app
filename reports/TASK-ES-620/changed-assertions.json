@@ -1,0 +1,1065 @@
+{
+ "tool": "reports/TASK-ES-620/changed-assertions.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T00:12:23.671Z",
+ "base": "4134955f882714bb7204559dd5b48a854cfad0dd",
+ "changed": [
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 1995,
+   "lineAfter": 1998,
+   "kind": "includes → windowExposed",
+   "name": "startFirstLoginGuide",
+   "from": "startFirstLoginGuide",
+   "legacyText": "window.startFirstLoginGuide = startFirstLoginGuide;",
+   "legacyTextKept": true,
+   "before": "assert.ok(html.includes('window.startFirstLoginGuide = startFirstLoginGuide;'), '전역 바인딩');",
+   "after": "assert.ok(WIRING.windowExposed(html, 'window.startFirstLoginGuide = startFirstLoginGuide;'), '전역 바인딩');",
+   "assertion": {
+    "line": 1998,
+    "text": "assert.ok(WIRING.windowExposed(html, 'window.startFirstLoginGuide = startFirstLoginGuide;'), '전역 바인딩');"
+   },
+   "check": "compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 4551,
+   "lineAfter": 4554,
+   "kind": "includes → windowExposed",
+   "name": "openAddAttachmentModal",
+   "from": "openAddAttachmentModal",
+   "legacyText": "window.openAddAttachmentModal = openAddAttachmentModal;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openAddAttachmentModal = openAddAttachmentModal;'), 'window.openAddAttachmentModal 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openAddAttachmentModal = openAddAttachmentModal;'), 'window.openAddAttachmentModal 전역 노출');",
+   "assertion": {
+    "line": 4554,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openAddAttachmentModal = openAddAttachmentModal;'), 'window.openAddAttachmentModal 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 4552,
+   "lineAfter": 4555,
+   "kind": "includes → windowExposed",
+   "name": "openAttachmentViewer",
+   "from": "openAttachmentViewer",
+   "legacyText": "window.openAttachmentViewer = openAttachmentViewer;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openAttachmentViewer = openAttachmentViewer;'), 'window.openAttachmentViewer 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openAttachmentViewer = openAttachmentViewer;'), 'window.openAttachmentViewer 전역 노출');",
+   "assertion": {
+    "line": 4555,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openAttachmentViewer = openAttachmentViewer;'), 'window.openAttachmentViewer 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 4553,
+   "lineAfter": 4556,
+   "kind": "includes → windowExposed",
+   "name": "renderAttachmentChipsHtml",
+   "from": "renderAttachmentChipsHtml",
+   "legacyText": "window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'window.renderAttachmentChipsHtml 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'window.renderAttachmentChipsHtml 전역 노출');",
+   "assertion": {
+    "line": 4556,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'window.renderAttachmentChipsHtml 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 5240,
+   "lineAfter": 5243,
+   "kind": "includes → windowExposed",
+   "name": "openCustomerInquiryModal",
+   "from": "openCustomerInquiryModal",
+   "legacyText": "window.openCustomerInquiryModal = openCustomerInquiryModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.openCustomerInquiryModal = openCustomerInquiryModal'), 'openCustomerInquiryModal 함수 window 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.openCustomerInquiryModal = openCustomerInquiryModal'), 'openCustomerInquiryModal 함수 window 전역 노출');",
+   "assertion": {
+    "line": 5243,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.openCustomerInquiryModal = openCustomerInquiryModal'), 'openCustomerInquiryModal 함수 window 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 5241,
+   "lineAfter": 5244,
+   "kind": "includes → windowExposed",
+   "name": "showLegalModal",
+   "from": "showLegalModal",
+   "legacyText": "window.showLegalModal = showLegalModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.showLegalModal = showLegalModal'), 'showLegalModal 함수 window 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.showLegalModal = showLegalModal'), 'showLegalModal 함수 window 전역 노출');",
+   "assertion": {
+    "line": 5244,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.showLegalModal = showLegalModal'), 'showLegalModal 함수 window 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 5734,
+   "lineAfter": 5737,
+   "kind": "includes → windowExposed",
+   "name": "getKSTDateKey",
+   "from": "getKSTDateKey",
+   "legacyText": "window.getKSTDateKey = getKSTDateKey",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');",
+   "assertion": {
+    "line": 5737,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');"
+   },
+   "check": "compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 5810,
+   "lineAfter": 5813,
+   "kind": "includes → windowExposed",
+   "name": "formatSchedulePillHtml",
+   "from": "formatSchedulePillHtml",
+   "legacyText": "window.formatSchedulePillHtml = formatSchedulePillHtml",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.formatSchedulePillHtml = formatSchedulePillHtml'), 'formatSchedulePillHtml window 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.formatSchedulePillHtml = formatSchedulePillHtml'), 'formatSchedulePillHtml window 노출');",
+   "assertion": {
+    "line": 5813,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.formatSchedulePillHtml = formatSchedulePillHtml'), 'formatSchedulePillHtml window 노출');"
+   },
+   "check": "compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 5811,
+   "lineAfter": 5814,
+   "kind": "includes → windowExposed",
+   "name": "openScheduleSetupModal",
+   "from": "openScheduleSetupModal",
+   "legacyText": "window.openScheduleSetupModal = openScheduleSetupModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.openScheduleSetupModal = openScheduleSetupModal'), 'openScheduleSetupModal window 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.openScheduleSetupModal = openScheduleSetupModal'), 'openScheduleSetupModal window 노출');",
+   "assertion": {
+    "line": 5814,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.openScheduleSetupModal = openScheduleSetupModal'), 'openScheduleSetupModal window 노출');"
+   },
+   "check": "compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 5812,
+   "lineAfter": 5815,
+   "kind": "includes → windowExposed",
+   "name": "applyScheduleUpdate",
+   "from": "applyScheduleUpdate",
+   "legacyText": "window.applyScheduleUpdate = applyScheduleUpdate",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.applyScheduleUpdate = applyScheduleUpdate'), 'applyScheduleUpdate window 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.applyScheduleUpdate = applyScheduleUpdate'), 'applyScheduleUpdate window 노출');",
+   "assertion": {
+    "line": 5815,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.applyScheduleUpdate = applyScheduleUpdate'), 'applyScheduleUpdate window 노출');"
+   },
+   "check": "compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 6239,
+   "lineAfter": 6242,
+   "kind": "includes → windowExposed",
+   "name": "showToast",
+   "from": "toast",
+   "legacyText": "window.showToast = toast;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.showToast = toast;'), 'window.showToast = toast 전역 별칭 선언');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.showToast = toast;'), 'window.showToast = toast 전역 별칭 선언');",
+   "assertion": {
+    "line": 6242,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.showToast = toast;'), 'window.showToast = toast 전역 별칭 선언');"
+   },
+   "check": "compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 6637,
+   "lineAfter": 6640,
+   "kind": "includes → windowExposed",
+   "name": "openAvatarGreetingPopup",
+   "from": "openAvatarGreetingPopup",
+   "legacyText": "window.openAvatarGreetingPopup = openAvatarGreetingPopup;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.openAvatarGreetingPopup = openAvatarGreetingPopup;'), 'openAvatarGreetingPopup 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.openAvatarGreetingPopup = openAvatarGreetingPopup;'), 'openAvatarGreetingPopup 전역 노출');",
+   "assertion": {
+    "line": 6640,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.openAvatarGreetingPopup = openAvatarGreetingPopup;'), 'openAvatarGreetingPopup 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 6638,
+   "lineAfter": 6641,
+   "kind": "includes → windowExposed",
+   "name": "closeAvatarGreetingPopup",
+   "from": "closeAvatarGreetingPopup",
+   "legacyText": "window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexSrc.includes('window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;'), 'closeAvatarGreetingPopup 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexSrc, 'window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;'), 'closeAvatarGreetingPopup 전역 노출');",
+   "assertion": {
+    "line": 6641,
+    "text": "assert.ok(WIRING.windowExposed(indexSrc, 'window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;'), 'closeAvatarGreetingPopup 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 6972,
+   "lineAfter": 6975,
+   "kind": "includes → windowExposed",
+   "name": "openItemReportModal",
+   "from": "openItemReportModal",
+   "legacyText": "window.openItemReportModal = openItemReportModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openItemReportModal = openItemReportModal'), 'openItemReportModal 함수가 전역에 노출되어야 함');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openItemReportModal = openItemReportModal'), 'openItemReportModal 함수가 전역에 노출되어야 함');",
+   "assertion": {
+    "line": 6975,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openItemReportModal = openItemReportModal'), 'openItemReportModal 함수가 전역에 노출되어야 함');"
+   },
+   "check": "compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7078,
+   "lineAfter": 7081,
+   "kind": "includes → windowExposed",
+   "name": "openLockScreenHubModal",
+   "from": "openLockScreenHubModal",
+   "legacyText": "window.openLockScreenHubModal = openLockScreenHubModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openLockScreenHubModal = openLockScreenHubModal'), 'openLockScreenHubModal 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openLockScreenHubModal = openLockScreenHubModal'), 'openLockScreenHubModal 전역 노출');",
+   "assertion": {
+    "line": 7081,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openLockScreenHubModal = openLockScreenHubModal'), 'openLockScreenHubModal 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7090,
+   "lineAfter": 7093,
+   "kind": "includes → windowExposed",
+   "name": "syncLockScreenLiveCard",
+   "from": "syncLockScreenLiveCard",
+   "legacyText": "window.syncLockScreenLiveCard = syncLockScreenLiveCard",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.syncLockScreenLiveCard = syncLockScreenLiveCard'), 'syncLockScreenLiveCard 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.syncLockScreenLiveCard = syncLockScreenLiveCard'), 'syncLockScreenLiveCard 전역 노출');",
+   "assertion": {
+    "line": 7093,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.syncLockScreenLiveCard = syncLockScreenLiveCard'), 'syncLockScreenLiveCard 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·0ms 즉각 미리보기) 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7091,
+   "lineAfter": 7094,
+   "kind": "includes → windowExposed",
+   "name": "buildLockScreenCardPayload",
+   "from": "buildLockScreenCardPayload",
+   "legacyText": "window.buildLockScreenCardPayload = buildLockScreenCardPayload",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.buildLockScreenCardPayload = buildLockScreenCardPayload'), 'buildLockScreenCardPayload 전역 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.buildLockScreenCardPayload = buildLockScreenCardPayload'), 'buildLockScreenCardPayload 전역 노출');",
+   "assertion": {
+    "line": 7094,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.buildLockScreenCardPayload = buildLockScreenCardPayload'), 'buildLockScreenCardPayload 전역 노출');"
+   },
+   "check": "compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·0ms 즉각 미리보기) 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7471,
+   "lineAfter": 7474,
+   "kind": "includes → windowExposed",
+   "name": "promptNewGoal",
+   "from": "promptNewGoal",
+   "legacyText": "window.promptNewGoal = promptNewGoal;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 완료');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 완료');",
+   "assertion": {
+    "line": 7474,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 완료');"
+   },
+   "check": "[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7771,
+   "lineAfter": 7774,
+   "kind": "includes → windowExposed",
+   "name": "instantShareCheckinToFeed",
+   "from": "instantShareCheckinToFeed",
+   "legacyText": "window.instantShareCheckinToFeed = instantShareCheckinToFeed",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.instantShareCheckinToFeed = instantShareCheckinToFeed'), 'window.instantShareCheckinToFeed 노출 누락');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.instantShareCheckinToFeed = instantShareCheckinToFeed'), 'window.instantShareCheckinToFeed 노출 누락');",
+   "assertion": {
+    "line": 7774,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.instantShareCheckinToFeed = instantShareCheckinToFeed'), 'window.instantShareCheckinToFeed 노출 누락');"
+   },
+   "check": "[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7779,
+   "lineAfter": 7782,
+   "kind": "includes → windowExposed",
+   "name": "openMicPermissionGuideModal",
+   "from": "openMicPermissionGuideModal",
+   "legacyText": "window.openMicPermissionGuideModal = openMicPermissionGuideModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openMicPermissionGuideModal = openMicPermissionGuideModal'), 'window.openMicPermissionGuideModal 노출 누락');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openMicPermissionGuideModal = openMicPermissionGuideModal'), 'window.openMicPermissionGuideModal 노출 누락');",
+   "assertion": {
+    "line": 7782,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openMicPermissionGuideModal = openMicPermissionGuideModal'), 'window.openMicPermissionGuideModal 노출 누락');"
+   },
+   "check": "[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7959,
+   "lineAfter": 7962,
+   "kind": "includes → windowExposed",
+   "name": "openIosPwaInstallGuideModal",
+   "from": "openIosPwaInstallGuideModal",
+   "legacyText": "window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 전역 노출 확인');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 전역 노출 확인');",
+   "assertion": {
+    "line": 7962,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 전역 노출 확인');"
+   },
+   "check": "[#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 7983,
+   "lineAfter": 7986,
+   "kind": "includes → windowExposed",
+   "name": "toggleAdvancedSettings",
+   "from": "toggleAdvancedSettings",
+   "legacyText": "window.toggleAdvancedSettings = toggleAdvancedSettings",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.toggleAdvancedSettings = toggleAdvancedSettings'), 'toggleAdvancedSettings 전역 노출 확인');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.toggleAdvancedSettings = toggleAdvancedSettings'), 'toggleAdvancedSettings 전역 노출 확인');",
+   "assertion": {
+    "line": 7986,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.toggleAdvancedSettings = toggleAdvancedSettings'), 'toggleAdvancedSettings 전역 노출 확인');"
+   },
+   "check": "[#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8432,
+   "lineAfter": 8435,
+   "kind": "includes → windowExposed",
+   "name": "computeGoalStatusHash",
+   "from": "computeGoalStatusHash",
+   "legacyText": "window.computeGoalStatusHash = computeGoalStatusHash;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.computeGoalStatusHash = computeGoalStatusHash;'), 'computeGoalStatusHash 노출 확인');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.computeGoalStatusHash = computeGoalStatusHash;'), 'computeGoalStatusHash 노출 확인');",
+   "assertion": {
+    "line": 8435,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.computeGoalStatusHash = computeGoalStatusHash;'), 'computeGoalStatusHash 노출 확인');"
+   },
+   "check": "compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8433,
+   "lineAfter": 8436,
+   "kind": "includes → windowExposed",
+   "name": "refreshGoalStatusSummary",
+   "from": "refreshGoalStatusSummary",
+   "legacyText": "window.refreshGoalStatusSummary = refreshGoalStatusSummary;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.refreshGoalStatusSummary = refreshGoalStatusSummary;'), 'refreshGoalStatusSummary 노출 확인');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.refreshGoalStatusSummary = refreshGoalStatusSummary;'), 'refreshGoalStatusSummary 노출 확인');",
+   "assertion": {
+    "line": 8436,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.refreshGoalStatusSummary = refreshGoalStatusSummary;'), 'refreshGoalStatusSummary 노출 확인');"
+   },
+   "check": "compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8450,
+   "lineAfter": 8453,
+   "kind": "includes → windowExposed",
+   "name": "renderTeamGoalsEmptyGuideHtml",
+   "from": "renderTeamGoalsEmptyGuideHtml",
+   "legacyText": "window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), 'renderTeamGoalsEmptyGuideHtml window 노출 검증');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), 'renderTeamGoalsEmptyGuideHtml window 노출 검증');",
+   "assertion": {
+    "line": 8453,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), 'renderTeamGoalsEmptyGuideHtml window 노출 검증');"
+   },
+   "check": "compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8468,
+   "lineAfter": 8471,
+   "kind": "includes → windowExposed",
+   "name": "renderStopwatchWidgetHtml",
+   "from": "renderStopwatchWidgetHtml",
+   "legacyText": "window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), 'renderStopwatchWidgetHtml window 노출 검증');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), 'renderStopwatchWidgetHtml window 노출 검증');",
+   "assertion": {
+    "line": 8471,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), 'renderStopwatchWidgetHtml window 노출 검증');"
+   },
+   "check": "compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8617,
+   "lineAfter": 8620,
+   "kind": "includes → windowExposed",
+   "name": "getEffectiveStandardDateKey",
+   "from": "getEffectiveStandardDateKey",
+   "legacyText": "window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 검증');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 검증');",
+   "assertion": {
+    "line": 8620,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 검증');"
+   },
+   "check": "compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8637,
+   "lineAfter": 8640,
+   "kind": "includes → windowExposed",
+   "name": "isGoogleCalendarConnected",
+   "from": "isGoogleCalendarConnected",
+   "legacyText": "window.isGoogleCalendarConnected = isGoogleCalendarConnected;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출 검증');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출 검증');",
+   "assertion": {
+    "line": 8640,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출 검증');"
+   },
+   "check": "compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8638,
+   "lineAfter": 8641,
+   "kind": "includes → windowExposed",
+   "name": "requestGoogleToken",
+   "from": "requestGoogleToken",
+   "legacyText": "window.requestGoogleToken = requestGoogleToken;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출 검증');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출 검증');",
+   "assertion": {
+    "line": 8641,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출 검증');"
+   },
+   "check": "compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8639,
+   "lineAfter": 8642,
+   "kind": "includes → windowExposed",
+   "name": "getGoogleAccessToken",
+   "from": "getGoogleAccessToken",
+   "legacyText": "window.getGoogleAccessToken = getGoogleAccessToken;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출 검증');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출 검증');",
+   "assertion": {
+    "line": 8642,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출 검증');"
+   },
+   "check": "compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 8930,
+   "lineAfter": 8933,
+   "kind": "includes → windowExposed",
+   "name": "renderInlineAttachmentChips",
+   "from": "renderInlineAttachmentChips",
+   "legacyText": "window.renderInlineAttachmentChips = renderInlineAttachmentChips;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), 'window.renderInlineAttachmentChips 바인딩');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), 'window.renderInlineAttachmentChips 바인딩');",
+   "assertion": {
+    "line": 8933,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), 'window.renderInlineAttachmentChips 바인딩');"
+   },
+   "check": "compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 9592,
+   "lineAfter": 9595,
+   "kind": "includes → windowExposed",
+   "name": "collapseAllSettingsSections",
+   "from": "collapseAllSettingsSections",
+   "legacyText": "window.collapseAllSettingsSections = collapseAllSettingsSections",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html window.collapseAllSettingsSections 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html window.collapseAllSettingsSections 노출');",
+   "assertion": {
+    "line": 9595,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html window.collapseAllSettingsSections 노출');"
+   },
+   "check": "TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 9621,
+   "lineAfter": 9624,
+   "kind": "includes → windowExposed",
+   "name": "toggleFeedPostPreview",
+   "from": "toggleFeedPostPreview",
+   "legacyText": "window.toggleFeedPostPreview = toggleFeedPostPreview",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html window.toggleFeedPostPreview 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html window.toggleFeedPostPreview 노출');",
+   "assertion": {
+    "line": 9624,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html window.toggleFeedPostPreview 노출');"
+   },
+   "check": "TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 9649,
+   "lineAfter": 9652,
+   "kind": "includes → windowExposed",
+   "name": "collapseAllTeamGoalAccordions",
+   "from": "collapseAllTeamGoalAccordions",
+   "legacyText": "window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html window.collapseAllTeamGoalAccordions 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html window.collapseAllTeamGoalAccordions 노출');",
+   "assertion": {
+    "line": 9652,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html window.collapseAllTeamGoalAccordions 노출');"
+   },
+   "check": "TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 9679,
+   "lineAfter": 9682,
+   "kind": "includes → windowExposed",
+   "name": "openGoalTemplateEncyclopediaModal",
+   "from": "openTemplateEncyclopediaModal",
+   "legacyText": "window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html window.openGoalTemplateEncyclopediaModal 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html window.openGoalTemplateEncyclopediaModal 노출');",
+   "assertion": {
+    "line": 9682,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html window.openGoalTemplateEncyclopediaModal 노출');"
+   },
+   "check": "TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증"
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "lineBefore": 9680,
+   "lineAfter": 9683,
+   "kind": "includes → windowExposed",
+   "name": "copyUserGoalTemplate",
+   "from": "copyRealUserTemplate",
+   "legacyText": "window.copyUserGoalTemplate = copyRealUserTemplate",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html window.copyUserGoalTemplate 노출');",
+   "after": "assert.ok(WIRING.windowExposed(indexHtml, 'window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html window.copyUserGoalTemplate 노출');",
+   "assertion": {
+    "line": 9683,
+    "text": "assert.ok(WIRING.windowExposed(indexHtml, 'window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html window.copyUserGoalTemplate 노출');"
+   },
+   "check": "TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증"
+  },
+  {
+   "file": "scripts/test-calendar-attachments.js",
+   "lineBefore": 61,
+   "lineAfter": 61,
+   "kind": "includes → windowExposed",
+   "name": "openAddAttachmentModal",
+   "from": "openAddAttachmentModal",
+   "legacyText": "window.openAddAttachmentModal = openAddAttachmentModal;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openAddAttachmentModal = openAddAttachmentModal;'), 'index.html에 window.openAddAttachmentModal 바인딩');",
+   "after": "assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.openAddAttachmentModal = openAddAttachmentModal;'), 'index.html에 window.openAddAttachmentModal 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 61,
+    "text": "assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.openAddAttachmentModal = openAddAttachmentModal;'), 'index.html에 window.openAddAttachmentModal 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "scripts/test-calendar-attachments.js",
+   "lineBefore": 62,
+   "lineAfter": 62,
+   "kind": "includes → windowExposed",
+   "name": "openAttachmentViewer",
+   "from": "openAttachmentViewer",
+   "legacyText": "window.openAttachmentViewer = openAttachmentViewer;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.openAttachmentViewer = openAttachmentViewer;'), 'index.html에 window.openAttachmentViewer 바인딩');",
+   "after": "assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.openAttachmentViewer = openAttachmentViewer;'), 'index.html에 window.openAttachmentViewer 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 62,
+    "text": "assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.openAttachmentViewer = openAttachmentViewer;'), 'index.html에 window.openAttachmentViewer 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "scripts/test-calendar-attachments.js",
+   "lineBefore": 63,
+   "lineAfter": 63,
+   "kind": "includes → windowExposed",
+   "name": "renderAttachmentChipsHtml",
+   "from": "renderAttachmentChipsHtml",
+   "legacyText": "window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'index.html에 window.renderAttachmentChipsHtml 바인딩');",
+   "after": "assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'index.html에 window.renderAttachmentChipsHtml 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 63,
+    "text": "assert.ok(require('../tests/helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'index.html에 window.renderAttachmentChipsHtml 바인딩'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/achievement-graph-multiset.test.js",
+   "lineBefore": 88,
+   "lineAfter": 88,
+   "kind": "indexOf → exposureEnd(끝 지점 계산 줄 — 단언 줄은 그대로)",
+   "name": "renderMultiMetricSvg",
+   "from": "renderMultiMetricSvg",
+   "legacyText": "window.renderMultiMetricSvg = renderMultiMetricSvg;",
+   "legacyTextKept": true,
+   "before": "const endSvgIdx = svgSrc.indexOf('window.renderMultiMetricSvg = renderMultiMetricSvg;', startSvgIdx);",
+   "after": "const endSvgIdx = require('./helpers/wiring-exposed').exposureEnd(svgSrc, 'window.renderMultiMetricSvg = renderMultiMetricSvg;', startSvgIdx); /* #TASK-ES-620 끝 지점: 옛 노출 줄 자리, 없으면 등록됐을 때만 글자 끝(tests/helpers/wiring-exposed.js) — 아래 단언 그대로 */",
+   "assertion": {
+    "line": 89,
+    "text": "assert.ok(endSvgIdx !== -1, 'renderMultiMetricSvg 종료점 발견');"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/ai-conditional-call-optimization.test.js",
+   "lineBefore": 22,
+   "lineAfter": 22,
+   "kind": "includes → windowExposed",
+   "name": "getEffectiveStandardDateKey",
+   "from": "getEffectiveStandardDateKey",
+   "legacyText": "window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 확인');",
+   "after": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 확인'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 22,
+    "text": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 확인'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/ai-conditional-call-optimization.test.js",
+   "lineBefore": 24,
+   "lineAfter": 24,
+   "kind": "includes → windowExposed",
+   "name": "computeTodayMissionHash",
+   "from": "computeTodayMissionHash",
+   "legacyText": "window.computeTodayMissionHash = computeTodayMissionHash;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.computeTodayMissionHash = computeTodayMissionHash;'), 'computeTodayMissionHash 전역 노출 확인');",
+   "after": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.computeTodayMissionHash = computeTodayMissionHash;'), 'computeTodayMissionHash 전역 노출 확인'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 24,
+    "text": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.computeTodayMissionHash = computeTodayMissionHash;'), 'computeTodayMissionHash 전역 노출 확인'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/feed-post-preview-modal.test.js",
+   "lineBefore": 26,
+   "lineAfter": 26,
+   "kind": "includes → windowExposed",
+   "name": "toggleFeedPostPreview",
+   "from": "toggleFeedPostPreview",
+   "legacyText": "window.toggleFeedPostPreview = toggleFeedPostPreview",
+   "legacyTextKept": true,
+   "before": "assert(indexHtml.includes('window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html must expose toggleFeedPostPreview');",
+   "after": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html must expose toggleFeedPostPreview'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 26,
+    "text": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html must expose toggleFeedPostPreview'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/gcal-login-reconnect-fix.test.js",
+   "lineBefore": 24,
+   "lineAfter": 24,
+   "kind": "includes → windowExposed",
+   "name": "isGoogleCalendarConnected",
+   "from": "isGoogleCalendarConnected",
+   "legacyText": "window.isGoogleCalendarConnected = isGoogleCalendarConnected;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출');",
+   "after": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 24,
+    "text": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/gcal-login-reconnect-fix.test.js",
+   "lineBefore": 26,
+   "lineAfter": 26,
+   "kind": "includes → windowExposed",
+   "name": "restoreGoogleToken",
+   "from": "restoreGoogleToken",
+   "legacyText": "window.restoreGoogleToken = restoreGoogleToken;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.restoreGoogleToken = restoreGoogleToken;'), 'restoreGoogleToken 전역 노출');",
+   "after": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.restoreGoogleToken = restoreGoogleToken;'), 'restoreGoogleToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 26,
+    "text": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.restoreGoogleToken = restoreGoogleToken;'), 'restoreGoogleToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/gcal-login-reconnect-fix.test.js",
+   "lineBefore": 27,
+   "lineAfter": 27,
+   "kind": "includes → windowExposed",
+   "name": "requestGoogleToken",
+   "from": "requestGoogleToken",
+   "legacyText": "window.requestGoogleToken = requestGoogleToken;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출');",
+   "after": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 27,
+    "text": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/gcal-login-reconnect-fix.test.js",
+   "lineBefore": 28,
+   "lineAfter": 28,
+   "kind": "includes → windowExposed",
+   "name": "getGoogleAccessToken",
+   "from": "getGoogleAccessToken",
+   "legacyText": "window.getGoogleAccessToken = getGoogleAccessToken;",
+   "legacyTextKept": true,
+   "before": "assert.ok(indexHtml.includes('window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출');",
+   "after": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 28,
+    "text": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/goal-templates-encyclopedia.test.js",
+   "lineBefore": 28,
+   "lineAfter": 28,
+   "kind": "includes → windowExposed",
+   "name": "openGoalTemplateEncyclopediaModal",
+   "from": "openTemplateEncyclopediaModal",
+   "legacyText": "window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal",
+   "legacyTextKept": true,
+   "before": "assert(indexHtml.includes('window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html must expose openGoalTemplateEncyclopediaModal');",
+   "after": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html must expose openGoalTemplateEncyclopediaModal'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 28,
+    "text": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html must expose openGoalTemplateEncyclopediaModal'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/goal-templates-encyclopedia.test.js",
+   "lineBefore": 29,
+   "lineAfter": 29,
+   "kind": "includes → windowExposed",
+   "name": "copyUserGoalTemplate",
+   "from": "copyRealUserTemplate",
+   "legacyText": "window.copyUserGoalTemplate = copyRealUserTemplate",
+   "legacyTextKept": true,
+   "before": "assert(indexHtml.includes('window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html must expose copyUserGoalTemplate');",
+   "after": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html must expose copyUserGoalTemplate'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 29,
+    "text": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html must expose copyUserGoalTemplate'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/goals-smart-attachments.test.js",
+   "lineBefore": 21,
+   "lineAfter": 21,
+   "kind": "includes → windowExposed",
+   "name": "renderInlineAttachmentChips",
+   "from": "renderInlineAttachmentChips",
+   "legacyText": "window.renderInlineAttachmentChips = renderInlineAttachmentChips;",
+   "legacyTextKept": true,
+   "before": "indexHtml.includes('window.renderInlineAttachmentChips = renderInlineAttachmentChips;'),",
+   "after": "require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 20,
+    "text": "assert.ok("
+   },
+   "check": null
+  },
+  {
+   "file": "tests/settings-collapse-default.test.js",
+   "lineBefore": 25,
+   "lineAfter": 25,
+   "kind": "includes → windowExposed",
+   "name": "collapseAllSettingsSections",
+   "from": "collapseAllSettingsSections",
+   "legacyText": "window.collapseAllSettingsSections = collapseAllSettingsSections",
+   "legacyTextKept": true,
+   "before": "assert(indexHtml.includes('window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html must expose collapseAllSettingsSections');",
+   "after": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html must expose collapseAllSettingsSections'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 25,
+    "text": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html must expose collapseAllSettingsSections'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/stopwatch-table-hint.test.js",
+   "lineBefore": 30,
+   "lineAfter": 30,
+   "kind": "includes → windowExposed",
+   "name": "renderStopwatchWidgetHtml",
+   "from": "renderStopwatchWidgetHtml",
+   "legacyText": "window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;",
+   "legacyTextKept": true,
+   "before": "indexHtml.includes('window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'),",
+   "after": "require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 29,
+    "text": "assert.ok("
+   },
+   "check": null
+  },
+  {
+   "file": "tests/team-fold-state-es409.test.js",
+   "lineBefore": 46,
+   "lineAfter": 46,
+   "kind": "indexOf → exposureEnd(끝 지점 계산 줄 — 단언 줄은 그대로)",
+   "name": "collapseAllTeamGoalAccordions",
+   "from": "collapseAllTeamGoalAccordions",
+   "legacyText": "  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;",
+   "legacyTextKept": true,
+   "before": "const end = fnSrc.indexOf('  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;');",
+   "after": "const end = require('./helpers/wiring-exposed').exposureEnd(fnSrc, '  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;', 0); /* #TASK-ES-620 끝 지점: 옛 노출 줄 자리, 없으면 등록됐을 때만 글자 끝(tests/helpers/wiring-exposed.js) — 아래 단언 그대로 */",
+   "assertion": {
+    "line": 47,
+    "text": "assert.ok(start > 0 && end > start, 'index.html 에 collapseAllTeamGoalAccordions 원문이 있다');"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/team-goal-guide-hint.test.js",
+   "lineBefore": 38,
+   "lineAfter": 38,
+   "kind": "includes → windowExposed",
+   "name": "renderTeamGoalsEmptyGuideHtml",
+   "from": "renderTeamGoalsEmptyGuideHtml",
+   "legacyText": "window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;",
+   "legacyTextKept": true,
+   "before": "indexHtml.includes('window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'),",
+   "after": "require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 37,
+    "text": "assert.ok("
+   },
+   "check": null
+  },
+  {
+   "file": "tests/team-goals-collapse-default.test.js",
+   "lineBefore": 24,
+   "lineAfter": 24,
+   "kind": "includes → windowExposed",
+   "name": "collapseAllTeamGoalAccordions",
+   "from": "collapseAllTeamGoalAccordions",
+   "legacyText": "window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions",
+   "legacyTextKept": true,
+   "before": "assert(indexHtml.includes('window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html must expose collapseAllTeamGoalAccordions');",
+   "after": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html must expose collapseAllTeamGoalAccordions'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */",
+   "assertion": {
+    "line": 24,
+    "text": "assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html must expose collapseAllTeamGoalAccordions'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */"
+   },
+   "check": null
+  },
+  {
+   "file": "tests/team-level-accordion-es406.test.js",
+   "lineBefore": 44,
+   "lineAfter": 44,
+   "kind": "indexOf → exposureEnd(끝 지점 계산 줄 — 단언 줄은 그대로)",
+   "name": "collapseAllTeamGoalAccordions",
+   "from": "collapseAllTeamGoalAccordions",
+   "legacyText": "  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;",
+   "legacyTextKept": true,
+   "before": "const end = fnSrc.indexOf('  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;');",
+   "after": "const end = require('./helpers/wiring-exposed').exposureEnd(fnSrc, '  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;', 0); /* #TASK-ES-620 끝 지점: 옛 노출 줄 자리, 없으면 등록됐을 때만 글자 끝(tests/helpers/wiring-exposed.js) — 아래 단언 그대로 */",
+   "assertion": {
+    "line": 45,
+    "text": "assert.ok(start > 0 && end > start, 'index.html 에 collapseAllTeamGoalAccordions 원문이 있다');"
+   },
+   "check": null
+  }
+ ],
+ "additions": [
+  {
+   "file": "scripts/smoke-test.js",
+   "line": 245,
+   "text": "// #TASK-ES-620: 「window.X = X;」 같은 옛 배선 글자를 찾던 단언은, 그 글자가 있거나(고치기 전과 같은 판정) 같은 이름·같은 값이 세포의 등록 블록(OurgoalCellRegistry.provide)으로 window 에 나갈 때 참이다."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "line": 246,
+   "text": "// 등록 블록은 tests/helpers/wiring-exposed.js 가 @babel/parser 로 읽는다. 배선도 등록도 없으면 거짓이다. 검사 수·기대값은 그대로다."
+  },
+  {
+   "file": "scripts/smoke-test.js",
+   "line": 247,
+   "text": "const WIRING = require('../tests/helpers/wiring-exposed');"
+  },
+  {
+   "file": "scripts/test-shipyard-modular.js",
+   "line": 196,
+   "text": "// #TASK-ES-620 배선 노출 도우미(tests/helpers/wiring-exposed.js): 옛 배선 글자 또는 등록 — 배선도 등록도 없는 이름·window 목록에 없는 이름·읽지 않는 세포 파일·정의 없는 등록은 거짓"
+  },
+  {
+   "file": "scripts/test-shipyard-modular.js",
+   "line": 197,
+   "text": "runNode('tests/wiring-exposed.test.js');"
+  }
+ ],
+ "removedOnly": [],
+ "newFiles": [
+  "tests/helpers/wiring-exposed.js",
+  "tests/wiring-exposed.test.js"
+ ],
+ "summary": {
+  "changedLines": 56,
+  "byFile": {
+   "scripts/smoke-test.js": 36,
+   "scripts/test-calendar-attachments.js": 3,
+   "tests/achievement-graph-multiset.test.js": 1,
+   "tests/ai-conditional-call-optimization.test.js": 2,
+   "tests/feed-post-preview-modal.test.js": 1,
+   "tests/gcal-login-reconnect-fix.test.js": 4,
+   "tests/goal-templates-encyclopedia.test.js": 2,
+   "tests/goals-smart-attachments.test.js": 1,
+   "tests/settings-collapse-default.test.js": 1,
+   "tests/stopwatch-table-hint.test.js": 1,
+   "tests/team-fold-state-es409.test.js": 1,
+   "tests/team-goal-guide-hint.test.js": 1,
+   "tests/team-goals-collapse-default.test.js": 1,
+   "tests/team-level-accordion-es406.test.js": 1
+  },
+  "names": [
+   "applyScheduleUpdate",
+   "buildLockScreenCardPayload",
+   "closeAvatarGreetingPopup",
+   "collapseAllSettingsSections",
+   "collapseAllTeamGoalAccordions",
+   "computeGoalStatusHash",
+   "computeTodayMissionHash",
+   "copyUserGoalTemplate",
+   "formatSchedulePillHtml",
+   "getEffectiveStandardDateKey",
+   "getGoogleAccessToken",
+   "getKSTDateKey",
+   "instantShareCheckinToFeed",
+   "isGoogleCalendarConnected",
+   "openAddAttachmentModal",
+   "openAttachmentViewer",
+   "openAvatarGreetingPopup",
+   "openCustomerInquiryModal",
+   "openGoalTemplateEncyclopediaModal",
+   "openIosPwaInstallGuideModal",
+   "openItemReportModal",
+   "openLockScreenHubModal",
+   "openMicPermissionGuideModal",
+   "openScheduleSetupModal",
+   "promptNewGoal",
+   "refreshGoalStatusSummary",
+   "renderAttachmentChipsHtml",
+   "renderInlineAttachmentChips",
+   "renderMultiMetricSvg",
+   "renderStopwatchWidgetHtml",
+   "renderTeamGoalsEmptyGuideHtml",
+   "requestGoogleToken",
+   "restoreGoogleToken",
+   "showLegalModal",
+   "showToast",
+   "startFirstLoginGuide",
+   "syncLockScreenLiveCard",
+   "toggleAdvancedSettings",
+   "toggleFeedPostPreview"
+  ],
+  "nameCount": 39,
+  "legacyTextKeptAll": true,
+  "kinds": {
+   "includes → windowExposed": 53,
+   "indexOf → exposureEnd(끝 지점 계산 줄 — 단언 줄은 그대로)": 3
+  },
+  "checks": 25,
+  "additions": 5,
+  "removedOnly": 0,
+  "newFiles": [
+   "tests/helpers/wiring-exposed.js",
+   "tests/wiring-exposed.test.js"
+  ]
+ }
+}

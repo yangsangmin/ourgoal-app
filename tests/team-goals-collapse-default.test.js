@@ -21,7 +21,7 @@ function runTests() {
   assert(indexHtml.includes('handle팀목표_Item52Action(event)'), 'index.html must bind handle팀목표_Item52Action(event)');
   assert(indexHtml.includes('data-ticket="52"'), 'index.html must have data-ticket="52"');
   assert(indexHtml.includes('collapseAllTeamGoalAccordions();'), 'renderTeamGoalsScreen must invoke collapseAllTeamGoalAccordions()');
-  assert(indexHtml.includes('window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html must expose collapseAllTeamGoalAccordions');
+  assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html must expose collapseAllTeamGoalAccordions'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
 
   // 2. js/components.js 직통 핸들러 및 4대 뷰 전파 검증
   assert(componentsJs.includes('async function handle팀목표_Item52Action'), 'components.js must define handle팀목표_Item52Action');
