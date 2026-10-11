@@ -43,12 +43,34 @@ const hunks = f => git(['diff', '-U0', BASE, '--', f]).split('\n').filter(l => l
 const baseKernelBlob = git(['rev-parse', BASE + ':' + KERNEL]);
 const archiveBlob = git(['hash-object', ARCHIVE]);
 const base = npmLog('base'), work = npmLog('work'), fin = npmLog('final');
+// appendix 는 종료코드 1(불일치)이어도 JSON 을 낸다 — 그 JSON 을 그대로 읽는다.
+function appendix(args) {
+  let outText;
+  try { outText = execFileSync('node', [path.join(ROOT, 'court', 'appendix.js')].concat(args), { encoding: 'utf8' }); }
+  catch (e) { outText = e.stdout || ''; }
+  try { return JSON.parse(outText); } catch (_) { return null; }
+}
+const versions = appendix(['--versions']);
+const check = appendix(['--check', path.join(ROOT, 'docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md')]);
+function selftest(name) {
+  const p = path.join(RAW, 'selftest-unit.' + name + '.log');
+  if (!fs.existsSync(p)) return null;
+  const m = fs.readFileSync(p, 'utf8').match(/자가시험: 기대대로 (\d+)\/(\d+)/);
+  return m ? { asExpected: Number(m[1]), total: Number(m[2]), scope: '--unit-only(일부만 실행)' } : null;
+}
+const prRun = n => { const p = path.join(ROOT, 'reports/TASK-ES-654/raw/apply-pr-run' + n + '.json'); if (!fs.existsSync(p)) return null; const r = JSON.parse(fs.readFileSync(p, 'utf8')); return { applied: r.steps.filter(s => s.status === 'applied').length, already: r.steps.filter(s => s.status === 'already').length, written: r.written.length }; };
 
 const out = {
   task: 'TASK-ES-654',
   note: '작업자 측정이며 판정이 아니다. 원시 로그는 저장소 밖(작업 PC 임시 폴더)에 두고 여기에는 스크립트가 센 값과 로그 해시만 싣는다.',
   base: { commit: git(['rev-parse', BASE]), kernelBlob: baseKernelBlob },
-  apply: { run1: run(1), run2: run(2) },
+  treeAtMeasure: { parentCommit: git(['rev-parse', 'HEAD']), uncommittedChanges: git(['status', '--porcelain', '--untracked-files=no']) !== '', note: 'uncommittedChanges 가 true 면 이 측정 파일과 PR 번호 기입을 커밋하기 직전의 작업 폴더에서 잰 것이다' },
+  apply: { run1: run(1), run2: run(2), prNumberRun1: prRun(1), prNumberRun2: prRun(2) },
+  appendix: {
+    versions: versions ? { ok: versions.ok, version: versions.version, statuteCurrent: versions.statuteCurrent, ledgerLast: versions.ledgerLast, problems: versions.problems.length } : null,
+    check: check ? { ok: check.ok, mismatches: check.mismatches.length } : null,
+  },
+  courtSelftestUnitOnly: selftest('final'),
   archive: { file: ARCHIVE, blob: archiveBlob, sameAsBaseKernelBlob: archiveBlob === baseKernelBlob },
   diffVsBase: numstat,
   kernelHunks: hunks(KERNEL),
@@ -56,6 +78,7 @@ const out = {
   pointersChanged: numstat.filter(x => ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'].includes(x.file)).length,
   npmTest: {
     command: 'npm test (NODE_PATH=C:/dev/ourgoal-app/node_modules, 전경)',
+    labels: 'base = 고치기 전 작업 폴더(' + (opt('--npm-base') || '미기재') + ') · work = 같은 커밋에 적용만 한 뒤 · final = origin/main 을 합치고 PR 번호를 기입한 뒤',
     base, work, final: fin,
     baseAndWorkLogsIdentical: !!(base && work) && base.logSha256 === work.logSha256,
   },
