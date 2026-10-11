@@ -161,6 +161,7 @@ F1(근사)은 "이름·글자 포함"만 본 넉넉한 근사라 거의 모든 �
 
 - H: 생성기가 멈춘다(덮어쓰기는 묶음마다 다르다 — 개별 설계). 지금 어려움 묶음에는 0건.
 - K: 헌법 CELL_SPLIT 5 에 따라 옮기지 않는다(take.names 에서 빼고 keepRest). 객체 경유 호출(`L.f()`)로 this 가 바뀌는 위험의 근본 차단이다.
+  - [#TASK-ES-657 · 헌법 v2026.10.11-ARGUMENTS(PR #925)] `arguments` 는 한 가지 꼴만 풀렸다: 함수 선언(`function 이름(…) { … }`)을 선언째로 옮길 때 그 함수 자신의 본문에서 쓰는 `arguments` 는 그 함수 자신의 호출 인자를 가리켜 옮겨도 뜻이 같으므로 옮긴다(생성기 메타·검사기 보고의 `ownArguments` 에 수가 실린다). 함수 선언 최상위 `this` · 그 안의 화살표 함수 안 `arguments`/`this` 는 예전처럼 멈추고, 감싸는 로드 중 문의 최상위 `this`/`arguments` 는 예전처럼 감싸지 않는다. 단위 시험 `docs/design/harness/module-split/fn-arguments-check-657.js`.
 
 ### 2-10. 통로에 없는 인라인 이름 참조(L) → 생성기가 getter 를 새로 단다
 

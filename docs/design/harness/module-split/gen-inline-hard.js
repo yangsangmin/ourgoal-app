@@ -9,6 +9,8 @@
 //   · 설정 take 의 keepRest: true → 이 묶음에서 이름을 고르지 않은 문은 원래 자리에 둔다(묶음을 나눠 옮길 때).
 //   · 로드 중 다른 문(B2·B3)         → 4줄 이상이고 감싸도 안전하면 본문을 세포 함수로 옮기고 원래 자리에 그 함수 부르는 한 줄을 남긴다(호출 순서 보존).
 //                                       3줄 이하이거나 감쌀 수 없으면(IIFE 로 끌어올려지는 var·최상위 this/arguments/return) 그대로 둔다.
+//   · this·arguments(유형 K, 헌법 CELL_SPLIT 5호) → 옮기는 함수 선언의 최상위 this 가 있으면 멈춘다. arguments 는 함수 선언을 선언째로 옮길 때 그 함수 자신의 본문에서 쓰는 것만 허용하고
+//                                       (#TASK-ES-657 · 헌법 v2026.10.11-ARGUMENTS), 그 안의 화살표 함수 안 arguments · 감싸는 로드 중 문의 this/arguments 는 예전처럼 멈추거나 그대로 둔다.
 // 이름 참조만 바꾼다: 인라인 IIFE 스코프 이름은 L.<이름>(js/core/app-scope.js 통로), 같은 세포 안 이름은 그대로.
 // 머리 이음매는 구역 자리 표지(`/* [어려움 이음매 자리 Hn] */`) 바로 아래에 넣는다 — 구역마다 자리가 달라 병렬 빌더의 병합 충돌이 나지 않는다.
 // 손으로 옮기지 않는다. 결과를 바꾸려면 설정을 바꿔 다시 돌린다(입력 = 이전 전 index.html).
@@ -921,6 +923,21 @@ const topThisArgs = p => {
   p.traverse({ Function(q) { if (!q.isArrowFunctionExpression()) q.skip(); }, ThisExpression() { bad++; }, Identifier(q) { if (q.node.name === 'arguments' && q.isReferencedIdentifier()) bad++; } });
   return bad;
 };
+// [#TASK-ES-657 · 헌법 v2026.10.11-ARGUMENTS CELL_SPLIT 5호(PR #925)] 함수 선언(`function 이름(…) { … }`)을 선언째로 옮길 때만 쓰는 검사.
+//   · thisN     — 그 함수 자신의 층(화살표 함수 안 포함)에 있는 `this` 수. 0 이어야 옮긴다(예전과 같다).
+//   · argsOwn   — 그 함수 자신의 본문에서 쓰는 `arguments`(가장 가까운 함수 부모가 그 선언 자신). 그 함수 자신의 호출 인자를 가리켜 옮겨도 뜻이 같다 → 허용.
+//   · argsArrow — 그 함수 안의 화살표 함수 안에 있는 `arguments`. 0 이어야 옮긴다(조문이 「그대로 0」으로 둔 꼴 — 좁게 읽어 예전처럼 멈춘다).
+//   안쪽의 보통 함수(식·선언)는 자기 this·arguments 를 가지므로 들어가지 않는다(예전과 같다).
+//   감싸기로 옮기는 로드 중 문(wrapSafe) · var 에 담긴 함수식(movable 판정)은 이 함수를 쓰지 않는다 — 위 topThisArgs 그대로다.
+const fnDeclThisArgs = st => {
+  const own = st.node, k = { thisN: 0, argsOwn: 0, argsArrow: 0 };
+  st.get('body').traverse({
+    Function(q) { if (!q.isArrowFunctionExpression()) q.skip(); },
+    ThisExpression() { k.thisN++; },
+    Identifier(q) { if (q.node.name !== 'arguments' || !q.isReferencedIdentifier()) return; const f = q.getFunctionParent(); if (f && f.node === own) k.argsOwn++; else k.argsArrow++; },
+  });
+  return k;
+};
 const wrapSafe = st => {
   const why = [];
   for (const [n, b] of Object.entries(iScope.bindings)) { const l = H(b.path.node); if (l >= H(st.node) && l <= HE(st.node)) why.push('IIFE 로 끌어올려지는 선언 ' + n); }
@@ -954,7 +971,7 @@ for (const c of CFG.cells) {
         const b = iScope.getBinding(n);
         if (smokeFn.has(n) && !smokeReadsCell(c.file)) fail('smoke-test FN_NAMES 함수 — 시험지 선행 PR 이 먼저(유형 F2): ' + n);
         if (b.constantViolations.length) fail('함수 이름 재대입(유형 H) — 개별 설계: ' + n);
-        if (topThisArgs(st.get('body'))) fail('최상위 this/arguments(유형 K) — 옮기지 않는다: ' + n);
+        { const k = fnDeclThisArgs(st); if (k.thisN || k.argsArrow) fail('최상위 this/arguments(유형 K) — 옮기지 않는다: ' + n); if (k.argsOwn) item.ownArguments = k.argsOwn; } // [#TASK-ES-657] 함수 선언 자신의 arguments 만 허용(헌법 CELL_SPLIT 5호)
         item.action = 'move';
       } else if (st.isVariableDeclaration()) {
         item.names = st.node.declarations.map(d => d.id.name);
@@ -1232,8 +1249,10 @@ const meta = {
   htmlLinesBefore: lines.length, htmlLinesAfter: nh.length,
   files: Object.fromEntries(Object.entries(outFiles).map(([f, a]) => [f, a.length - 1])),
 };
+{ const oa = moved.filter(i => i.ownArguments).map(i => ({ name: i.names[0], cell: i.cell, count: i.ownArguments })); if (oa.length) meta.ownArguments = oa; } // [#TASK-ES-657] 자기 arguments 를 쓰는 함수 선언을 옮겼을 때만 이 칸이 생긴다
 fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1));
 console.log('move', moved.length, 'wrap', wrapped.length, 'keep', kept.length, '· edits', uniq.length, '· bridged', bridged.size, '· exposed', exposeList.length, '· imports', IMPORTS.length);
+for (const i of moved.filter(x => x.ownArguments)) console.log('  arguments', i.names[0], '— 함수 선언째로 옮김: 그 함수 자신의 arguments ' + i.ownArguments + '곳(헌법 CELL_SPLIT 5호 허용)');
 for (const k of kept) console.log('  keep', k.start + '~' + k.end, k.names.join(',') || k.st.node.type, '—', k.why);
 console.log('index.html lines', lines.length, '->', nh.length);
 for (const [f, a] of Object.entries(outFiles)) console.log(f, a.length - 1);
