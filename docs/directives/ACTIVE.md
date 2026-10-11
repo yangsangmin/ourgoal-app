@@ -60,6 +60,12 @@ git -C C:/dev/ourgoal-app show origin/main:docs/directives/ACTIVE.md
 |---|---|---|
 | Google Play 개발자 계정 등록($25 결제·신분 확인) | 돈 | 시점 미정 — 앱 준비가 끝난 뒤 |
 | 법정 보강 2건(로그인 뒤 화면 시험 상태, 법정 서버 https) | 금고 변경 | 며칠 운영해 오탐 사례를 모은 뒤 묶어서 여쭘 |
+| 법정의 생성기 재실행 대조가 새 폴더를 「예상 밖 파일」로 본다(`court/lib/preserve-source.js` 의 status 읽기). 수정안은 한 줄(`--untracked-files=all`), 재현 기록 `reports/TASK-ES-686/court-newdir-repro.json`. 지금은 새 폴더마다 설명 한 장을 먼저 병합해 비켜 간다(PR #958) | 금고 변경 | 여쭘 대기 — 고치려면 「금고 변경 승인」이 필요하다 |
+| 채점 기준인 무결성 게이트(`scripts/verify-integrity-gate.js`)가 금고 목록에 없는 시험 도우미 셋(`tests/helpers/inline-bundle.js` · `wiring-exposed.js` · `moved-code.js`)을 불러 쓴다. 도우미를 금고 목록에 넣을지 | 금고 변경 | 여쭘 대기 |
+| `renderTeamGoalsScreen` 나누기(`js/tabs/goals/team-goals-screen.js` — 함수 771줄 · 파일 798줄). 파일이 800줄 상한에 닿아 등록 블록을 붙이지 못했고, 통로 연결 2줄을 부팅 파일이 중계한다 | 큰 함수 고치기(새 지시) | 여쭘 대기 — 세션 권장은 944줄 함수 때와 같은 순서(안전망 시험 → 제자리 나누기 → 옮기기) |
+| 옛 생성기 단위 시험 `docs/design/harness/module-split/unwire-check-b1.js` 의 T7 이 「측정불가」로 실패한다(고를 대상이 PR #953 뒤로 없어졌다). 시험을 고치거나 뺄지 | 시험 변경 | 여쭘 대기 |
+| 실계정으로만 확인할 수 있는 것 — 법정이 「확인 못 함」으로 남긴 9항목(PR 6건, `reports/TASK-ES-691/not-confirmed.md`: 로그인 뒤 서버 동기화 · 구글 캘린더 · Notion 전송 · 사진 · 음성 · 원격 로그아웃 · 구글 토큰 · 템플릿 복제)과 OAuth 복귀 · 마지막 정리 뒤 로그인 사용자의 재진입(`reports/TASK-ES-691/remaining.md` 5절) | 손 필요(실계정) | 여쭘 대기 — 클릭 단위 확인 절차를 만들어 드릴 수 있다 |
+| 옮기며 그대로 둔 기존 결함 후보 7건과 작은 것들(`reports/TASK-ES-691/remaining.md` 6절 — 예: 같은 템플릿 기록이 2건 이상이면 전문 템플릿 기록 창이 열리지 않는다) | 기존 기능 고치기 | 여쭘 대기 — 고칠 것과 순서 |
 
 ## 완료된 지시
 
