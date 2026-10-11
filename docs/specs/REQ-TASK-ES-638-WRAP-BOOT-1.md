@@ -5,7 +5,7 @@
 - 지시함(origin/main): **DIR-003**(줄을 지우는 PR 마다 기준선에 inlineScriptLines 기록 — 줄지 않으면 실패) · **DIR-004**(CELL-REGISTRY-DESIGN.md 6.2절 순서 3 「함수 이전·감싸기」 — 기존 CELL_SPLIT, 함수 본문의 글자는 고치지 않는다 · 돈 근처 3곳은 자리만 · index.html 을 바꾸는 PR 은 한 번에 하나).
 - 분류: INFRA · 작업 유형(SNOWBALL 분류): **(가) 표준 — 「어려운 인라인 묶음 감싸기」**(경험칙 L016 · `docs/architecture/INLINE-HARD-SPLIT-DESIGN.md` 2-3절 「로드 중 문은 본문만 세포 함수로, 원래 자리에 부르는 한 줄」) + 법정 「동작 보존 확인」 경로(선례 PR #864 TASK-ES-596: 주장에 proof 를 걸면 법정이 기준 커밋의 생성기를 다시 돌려 바이트 대조). 작업참고 **기준 PR #905**(eab4365b).
 - 이 작업 세션은 빌더(서브에이전트)다. 병합은 하지 않는다(오케스트레이터 몫).
-- 기준 main: 5e2fc92c(#908 생성 지도 갱신 병합 뒤). 착수 때는 b57a8a10 이었고 작업 중 main 이 움직여 합쳤다(index.html 은 두 커밋에서 같다).
+- 기준 main: 9022e383(#909 상태 기관 js/core/app-state.js 병합 뒤). 착수 b57a8a10 → 5e2fc92c(#908, index.html 그대로) → 9022e383(#909 가 index.html 의 태그 줄을 고쳐 충돌했다 — 손으로 풀지 않고 main 판 index.html 로 같은 설정의 생성기를 다시 돌렸고(L010), 신고서·세포 설명·기준선도 main 판에서 다시 만들었으며 측정을 전부 다시 했다).
 - 측정은 전부 「작업자 측정, 판정 아님」이다. 판정은 GitHub 법정만 낸다.
 
 ## 0. 요구 (지시 항목)
@@ -27,7 +27,7 @@
 - 감싼 함수 11개: `startDevDebugButtons` · `bindTermsLinks` · `bindPrivacyLinks` · `startKeyboardShield`(키트 `OurgoalSettingsKit`) / `bindGoalAgentToggle`(`OurgoalGoalsKit`) / `connectAuthSafety` · `connectReactions` · `connectHelpfulReason` · `connectTeamInviteComm` · `connectTeamLinkedGoals` · `bindServiceWorker`(`OurgoalUiHelpers`)
 - DOM id: `#viewTermsBtn` · `#authTermsLink` · `#setTermsLink` · `#viewPrivacyBtn` · `#authPrivacyLink` · `#setPrivacyLink` · `#landTesterBWrap` · `#authTesterBWrap` · `#btnToggleGoalAgent` · `#goalAgentDrawer` · `#goalAgentChevron` · `#goalAgentInput` · `#captureInput` · `#forgotPassBtn` · `#legalBody`
 - 생성기 `docs/design/harness/module-split/gen-inline-hard.js`(변경 0) · 검사기 `verify-inline-hard.js`(변경 0) · 설정 `reports/TASK-ES-638/proof.json`(자리 표지 `HO`)
-- 이전 전 index.html(5e2fc92c) 문 줄: 2852~2856 · 2924~2927 · 2928~2931 · 3348~3361 · 3478~3482 · 5121~5132 · 5136~5148 · 5155~5161 · 5164~5170 · 5172~5178 · 5186~5216 (출처 `reports/TASK-ES-638/measurement.json` `generator.wrapped`)
+- 이전 전 index.html(9022e383) 문 줄: 2852~2856 · 2924~2927 · 2928~2931 · 3348~3361 · 3478~3482 · 5121~5132 · 5136~5148 · 5155~5161 · 5164~5170 · 5172~5178 · 5186~5216 (출처 `reports/TASK-ES-638/measurement.json` `generator.wrapped`)
 
 ## 1. [원칙 ①] 문제를 정확히 파악한다
 
@@ -72,7 +72,7 @@
 - **반론 1 「getter 27개를 다시 다는 것은 철거를 되돌리는 일이다. 손으로 빼거나 생성기를 고쳐야 한다」** → 손으로 빼면 법정의 바이트 대조가 깨지고, 생성기를 고치면 이 PR 이 「생성기 변경 0」을 어긴다(법정은 기준 커밋의 생성기를 돌린다). 다시 단 getter 는 같은 값을 돌려주며(지문 차이 0), 줄 수는 그래도 68줄 줄었다. 다시 단 22개는 등록 기관이 같은 값을 내주는 이름이라 다음 철거(가져오기 줄은 남기는 2차 꼴)의 대상이 될 것으로 본다(추정 — 모의 철거로 재지 않았다). 이번 이전으로 그 이름들의 IIFE 안 맨이름 참조는 줄었다(옮긴 109줄 안의 참조가 통로 읽기로 바뀌었다). 이 사실을 숨기지 않고 보고한다.
 - **반론 2 「부품 연결·서비스 워커는 화면 시나리오로 직접 잴 수 없으니 옮기면 안 된다」** → 직접 잴 수 없는 부분이 있는 것은 사실이다. 게스트 피드에는 글이 없어 반응·도움돼요·프로필 창을 누를 수 없고, 서비스 워커 등록 여부는 시나리오 단계로 읽을 수 없다. 그래서 주장을 나눴다: 시나리오는 「연결된 계정 보안 부품이 비밀번호 찾기 창을 연다」와 「시동이 끝까지 돌아 탭이 바뀐다」까지만 말하고, 건네는 손잡이가 같다는 것은 생성기 재실행 바이트 대조(proof)·토큰 동일·이름 지문 차이 0 으로 말한다. 못 잰 것은 주장 파일 `outOfScopeReports` 와 8절에 적었다.
 - **재검증**: 첫 시나리오 후보 둘이 기준 트리에서 닿지 않았다 — 목표 탭의 `#btnToggleGoalAgent` 는 목표가 하나도 없으면 보이지 않고, 소통 탭 게스트 피드에는 `[data-feedprof]` 가 0개다. 앞의 것은 템플릿 목표를 하나 담는 단계를 넣어 풀었고(선례 `reports/TASK-ES-436/scenarios/goals-agent-send.json`), 뒤의 것은 버리고 로그인 화면의 비밀번호 찾기 경로로 바꿨다. 사라지는 토스트는 단언하지 않았다(L077).
-- **재검증**: 법정 모듈 로드 탐침의 기본 범위는 `js/*.js` 뿐이라 새 세포가 들어가지 않는다. `js/core` · `js/tabs/settings` · `js/tabs/goals` 를 더해 다시 돌렸다(기준 216 · 작업 220, 회귀 0).
+- **재검증**: 법정 모듈 로드 탐침의 기본 범위는 `js/*.js` 뿐이라 새 세포가 들어가지 않는다. `js/core` · `js/tabs/settings` · `js/tabs/goals` 를 더해 다시 돌렸다(기준 217 · 작업 221, 회귀 0).
 
 ## 7. [원칙 ⑦] 단계별 실행 (측정 산출물)
 

@@ -1,0 +1,606 @@
+{
+  "task": "TASK-ES-636",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-636-APP-STATE-ORGAN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "상태 기관 js/core/app-state.js(OurgoalAppState.define · defineVar)를 더하고 index.html 에 로드 태그 하나를 통로 뒤 · IIFE 와 등록 기관 commit 앞에 같은 줄로 덧붙인다. 앱 동작은 그대로다 — 모듈 로드 회귀 0, 새 전역은 OurgoalAppState 하나, index.html 순증가 0."
+    },
+    {
+      "id": "R2",
+      "text": "기관이 설계 3.3 계약대로 동작한다: 접근자를 첫 define 때 한 번 · 이미 있던 속성을 다시 정의해 덮음 · 같은 이름 두 번은 오류 · 값을 복사하지 않음 · window 에 달지 않음."
+    },
+    {
+      "id": "R3",
+      "text": "모의 이전으로 충분성을 잰다: 저장소 밖 사본에 기관 + 로드 줄 + 생성기 unstate 를 실제 적용해 시나리오 · 이름별 통로 값 요약 · 모듈 로드 · 시험이 기준과 같고, 기관 태그만 뺀 대조군은 부팅에 실패한다. 저장소의 실제 상태 이전은 0 이다."
+    },
+    {
+      "id": "R4",
+      "text": "상태 배선 글자를 붙잡는 시험이 깨지는지 실측해 그 이름을 계획에서 빼고(시험은 고치지 않는다), 지금 이전 가능한 이름 목록을 계획 파일로 남긴다."
+    },
+    {
+      "id": "R5",
+      "text": "증명 하한: tests/ · 금고 · 생성기 gen-inline-hard.js · 생성 지도 3종 변경 0 · 800줄 상한 초과 0 · inlineScriptLines 불변 · npm test 검사 수 동일·폐기 0."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "실제 상태 이전(index.html 의 getter/setter 삭제와 선언문 바꿔 쓰기)은 이 PR 에 없다. 계획 파일 reports/TASK-ES-636/unstate-plan.json 이 다음 PR 의 입력이다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "게스트 화면에서 숨겨져 누를 수 없는 진입로(템플릿 백과 · 앱 평가 · 체크인 글자 수 칸)와 로그인 뒤 화면의 동작은 화면 시나리오로 재지 못했다. 상태 이름 전수는 탐침의 값 요약 · 접근자 종류 · 쓰기 왕복(작업자 측정)으로 쟀고, 법정이 그것을 다시 재는 것은 아니다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 진입해 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성이 되고 앞 탭은 비활성이 되며 예외가 없다 — 상태 기관 로드 태그를 더하기 전과 같다.",
+      "touches": [
+        "index.html",
+        "js/core/app-state.js"
+      ],
+      "scenario": "scenarios/b9a-guest-boot-six-tabs.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "목표 탭에서 하위 탭(개인·루틴·통계)과 통계 기간(주·월)을 누르면 누른 것이 활성이 되고 앞의 것은 비활성이 되며 예외가 없다 — 상태 기관 로드 태그를 더하기 전과 같다.",
+      "touches": [
+        "index.html",
+        "js/core/app-state.js"
+      ],
+      "scenario": "scenarios/b9a-goals-subtabs-periods.json"
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침(기준 대 작업)의 새 회귀가 없다.",
+      "touches": [
+        "reports/TASK-ES-636/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/module-load.json",
+        "path": "work.regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 파일 js/core/app-state.js 를 단독으로 로드하면 오류가 없고 만드는 전역은 OurgoalAppState 하나다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json",
+        "js/core/app-state.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.newGlobals.onlyOrganGlobal",
+        "equals": true
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 순증가가 0 줄이다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.changed.indexHtml.netLineGrowth",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 의 바뀐 줄은 하나이고, 기존 줄 끝에 기관 태그 하나를 덧붙인 것뿐이다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json",
+        "index.html"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.loadTag.appendedOnly",
+        "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 태그는 통로(app-scope.js) 태그 뒤에 있다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.loadTag.afterScopeTag",
+        "equals": true
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 태그는 등록 기관 commit 태그보다 앞에 있다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.loadTag.beforeCommitTag",
+        "equals": true
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 태그는 인라인 IIFE 보다 앞에 있다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.loadTag.beforeIife",
+        "equals": true
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 태그에 defer·async 가 없다(동기 로드).",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.loadTag.deferOrAsync",
+        "equals": false
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 단위 시험(진짜 app-scope.js 위에서 계약 항목마다: getter 전용 · get/set · 첫 define 때 접근자 · 이미 있던 속성 덮기 · 같은 이름 두 번 오류 · 같은 객체 · window 에 달지 않음 · 통로 없으면 오류 · 생성기가 바꿔 쓴 꾸러미의 전·후 등가)이 전부 ok 다.",
+      "touches": [
+        "reports/TASK-ES-636/organ-unit.json",
+        "js/core/app-state.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/organ-unit.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 단위 시험의 건수.",
+      "touches": [
+        "reports/TASK-ES-636/organ-unit.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/organ-unit.json",
+        "path": "total",
+        "equals": 12
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 단위 시험의 통과 수(건수와 같다).",
+      "touches": [
+        "reports/TASK-ES-636/organ-unit.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/organ-unit.json",
+        "path": "passed",
+        "equals": 12
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "계획대로 옮긴 모의 이전 사본과 기준에서, 통로에 노출된 상태 이름의 값 요약 · 접근자 종류 · window 동일성 · 쓰기 왕복이 다른 이름이 0 개다(기준을 두 번 재도 달라지는 이름은 뺀다).",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.stateProbe.baseVsMockPlan.count",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 이전 사본에서 기관이 맡은 이름과 종류(읽기 전용·읽기쓰기)가 계획과 같다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.stateProbe.baseVsMockPlan.organMatchesPlan",
+        "equals": true
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "옮길 수 있는 이름을 전부 옮긴 사본에서도 같은 차이가 0 개다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.stateProbe.baseVsMockAll.count",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관과 로드 줄만 더한 작업 트리에서도 같은 차이가 0 개다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.stateProbe.baseVsWork.count",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시나리오 둘이 기준 · 작업 · 모의 이전 사본(계획 · 전부) 모두에서 통과하고 예외가 없다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.scenarios.allPassed",
+        "equals": true
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "계획대로 옮긴 모의 이전 사본에서 npm test 의 스크립트 결과와 tests/*.test.js 의 실패 집합·꼬리 글자가 기준과 같다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.mockUnstate.plan.testsSameAsBase",
+        "equals": true
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침(기준 대 모의 이전 사본)의 새 회귀가 없다.",
+      "touches": [
+        "reports/TASK-ES-636/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/module-load.json",
+        "path": "mock.regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "대조군: 같은 모의 이전 사본에서 기관 태그만 빼면 게스트 부팅이 실패한다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.mockUnstate.withoutOrganTag.guestBootOk",
+        "equals": false
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "계획 파일의 이전 대상 이름 수(시험에 걸리는 이름을 뺀 것 — 이 PR 이 소유한 기록).",
+      "touches": [
+        "reports/TASK-ES-636/unstate-plan.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/unstate-plan.json",
+        "path": "totals.names",
+        "equals": 49
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "계획 파일의 시험이 붙잡아 뺀 이름 수.",
+      "touches": [
+        "reports/TASK-ES-636/unstate-plan.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/unstate-plan.json",
+        "path": "totals.excludedBecauseTestsPinStateText",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "전부 옮긴 사본에서 새로 깨진 시험 가운데, 붙잡은 이름을 찾지 못한 시험 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.pinnedByTests.unexplainedFailingFiles",
+        "equals": []
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/ 변경이 없다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.changed.testsChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "금고 변경이 없다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.changed.vaultChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기 gen-inline-hard.js 변경이 없다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.changed.generatorInlineHardChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성 지도 3종 변경이 없다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.changed.generatedMapsChanged",
+        "equals": []
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "800줄을 넘는 바뀐 js 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.lines.over800",
+        "equals": []
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "inlineScriptLines 가 기준과 같다(실제 상태 이전 0).",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.ratchet.inlineScriptLinesSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 를 기준 트리와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄·요약이 같다(폐기 0).",
+      "touches": [
+        "reports/TASK-ES-636/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-636/measurement.json",
+        "path": "summary.npmTest.same",
+        "equals": true
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관이 통로의 expose 로 접근자를 단다(통로를 직접 고치지 않는다).",
+      "touches": [
+        "js/core/app-state.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/core/app-state.js",
+        "text": "scopeApi.expose(OWNER, source);"
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기관 태그가 통로 태그와 같은 줄 뒤에 있다.",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/core/app-scope.js\"></script><script src=\"js/core/cell-registry.js\"></script><script src=\"js/core/app-state.js\"></script>"
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설계 3.3 에 구현 기록이 있다.",
+      "touches": [
+        "docs/architecture/CELL-REGISTRY-DESIGN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/CELL-REGISTRY-DESIGN.md",
+        "text": "- **구현(#TASK-ES-636)**: `js/core/app-state.js`"
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 머리에 상민님 원문이 글자 그대로 있다.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-636-APP-STATE-ORGAN.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-636-APP-STATE-ORGAN.md",
+        "text": "「남은 미분화작업 모두 진행해 병합도 스스로 진행해. 모든 작업 마칠때까지 멈추지 마. 지침이나 결심이 필요한점?」"
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-636 한 줄이 있다.",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-636 | INFRA | 상태 기관 js/core/app-state.js"
+      }
+    }
+  ]
+}

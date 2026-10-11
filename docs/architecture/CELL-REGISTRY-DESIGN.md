@@ -133,6 +133,9 @@ window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 
 
 - 견본: 단위 시험 `docs/design/harness/module-split/unstate-check-634.js` 의 `SAMPLE_ORGAN` 이 이 계약대로 만든 견본이고, 시험 V1 이 진짜 `js/core/app-scope.js` 위에서 바꿔 쓰기 전·후 꾸러미의 관찰값이 같음을 본다. 견본은 진짜 기관을 대신하지 않는다.
 - 접근자를 첫 define 때 달기 때문에 이전 PR 은 `index.html` 만 바뀐다(3.1 의 법정 제약과 같은 이유).
+- **구현(#TASK-ES-636)**: `js/core/app-state.js`(61줄, 세포 `core/app-state` · kind organ). 위 계약 그대로이고, 계약 밖에 점검용 읽기 함수 `names()`(맡은 이름 목록) · `kindOf(name)`(`'const'` · `'var'` · `null`)가 있다. 오류 코드는 `NAME_REQUIRED` · `ALREADY_DEFINED` · `SCOPE_MISSING`(통로가 없을 때)이다.
+  - 로드 줄: `index.html` 의 `js/core/app-scope.js` · `js/core/cell-registry.js` 태그와 **같은 줄** 뒤(순증가 0). 통로 뒤 · 등록 기관 commit 태그 앞 · 인라인 IIFE 앞이다. 로드될 때는 전역 하나만 달고 통로·window 에는 쓰지 않는다.
+  - 기관 단위 시험: `reports/TASK-ES-636/organ-unit.cjs`(12건 — 진짜 `app-scope.js` 위에서 계약 항목마다, 그리고 생성기가 바꿔 쓴 꾸러미의 전·후 등가).
 
 **생성기 `"mode": "unstate"` — 지정한 이름에 대해 (줄 종류는 5절 X4·X5·X6 · 구현 #TASK-ES-634, 설정 꼴은 5.5)**
 
@@ -162,6 +165,14 @@ window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 
 - 모의 적용 시 지워지는 줄 68(getter/setter 속성 50줄 + 속성이 모두 지워진 expose 문 9개의 머리·꼬리), 바뀌는 줄 52(선언 머리·꼬리와 window 복사 1줄), 쉼표를 떼는 줄 3. index.html 5406줄 → 5338줄(줄 수는 끝의 빈 줄 포함).
 - 멈춘 13개: 맨이름 참조가 남음 7(`sb` · `state` · `pendingCapturePhoto` · `capturePhotoInput` · `capturePhotoPreview` · `USER_SESSION_CHANNEL` · `MOCK_GROUPS`) / 같은 이름의 선언이 둘 2(`_subtabTplCat` · `_subtabTplQuery`) / 선언문이 다른 글자와 한 줄을 나눠 씀 3(`_subtabTplDomain` · `_subtabTplType` · `FEED_POSTS_CACHE`) / window 복사 줄이 다른 글자와 한 줄을 나눠 씀 1(`shareContent`).
 - 재지 않은 것: 모의 적용 사본의 앱 부팅·화면 동작(기관 파일이 아직 없다 — 측정불가) · 시험이 이 이름들의 글자를 단언하는지(이전 PR 이 npm test 로 잰다).
+
+**모의 이전(#TASK-ES-636 — 기준 5e2fc92c, 저장소 밖 사본에 기관 + 로드 줄 + 생성기 unstate 를 실제 적용. 수치는 `reports/TASK-ES-636/measurement.json` · `unstate-plan.json`)**
+- 통로에 노출된 상태 이름 63개 중 옮길 수 있는 50개를 전부 옮긴 사본에서 시험 전부를 돌리면 새로 깨지는 검사는 1건이다: `scripts/verify-integrity-gate.js` 의 「[FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증」(사유: 프롬프트 백과사전 아코디언 접힘 구조 누락). 붙잡힌 자리: `scripts/verify-integrity-gate.js` 954행(법정의 기준 시험지 `court/vault.json` baseTests 이자 헌법 별표 3 금고 목록의 파일) — 이름 `_promptEncyclopediaOpen`.
+- 그 이름을 뺀 **계획 49개**(`define` 27 · `defineVar` 22)를 옮긴 사본에서는 `npm test` 의 네 스크립트와 `tests/*.test.js` 의 실패 집합이 기준과 같다. 지워지는 줄 71 · 바뀌는 줄 51 · index.html 5259줄 → 5188줄(끝의 빈 줄 포함).
+- 상태 탐침(노출된 63개 이름): 기준 대 사본에서 통로 값 요약 · 접근자 종류 · window 복사의 동일성 · 쓰기 왕복이 같다(기준을 두 번 재도 달라지는 이름은 뺀다 — 측정 파일 `stateProbe.intrinsicVariance`). 시나리오 둘(게스트 여섯 탭 · 목표 하위 탭과 기간)은 기준 · 작업 · 사본 모두 통과한다.
+- 대조군: 같은 사본에서 기관 태그만 빼면 부팅에 실패한다.
+- 생성기가 멈춘 13개: 맨이름 참조가 남음 7 · 같은 이름의 선언이 둘 2 · 선언문이 다른 글자와 한 줄을 나눠 씀 3 · window 복사 줄이 다른 글자와 한 줄을 나눠 씀 1.
+- 재지 못한 것: 로그인 뒤 화면 · 게스트 화면에서 숨겨져 누를 수 없는 진입로(템플릿 백과 · 앱 평가 · 체크인 글자 수 칸)의 화면 동작 · 실기기.
 
 **줄 효과와 PR(조사, 추정)**
 - getter/setter 66줄 + 상태 전용 expose 껍데기가 지워진다. 1차(55개)는 약 57줄.
