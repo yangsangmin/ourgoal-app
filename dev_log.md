@@ -6059,3 +6059,5 @@
 - 2026-10-11 TASK-ES-625: 생성 지도 일괄 갱신(main 357ccc93, PR #894 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3640줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-625-GENERATED-MAPS-SYNC-9.md
 
 - 2026-10-11 TASK-ES-627: 생성 지도 일괄 갱신(main 9d039044, PR #896 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3461줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-627-GENERATED-MAPS-SYNC-10.md
+
+- 2026-10-11 TASK-ES-629: 생성 지도 일괄 갱신(main bc8af5bc, PR #898 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3318줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-629-GENERATED-MAPS-SYNC-11.md
