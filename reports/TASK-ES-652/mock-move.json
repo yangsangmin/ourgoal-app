@@ -1,0 +1,53 @@
+{
+ "type": "작업자 측정, 판정 아님",
+ "what": "선행(이 PR) 뒤에 setupUserSessionRealtime 을 생성기로 옮기면 어떻게 되는지를 작업 트리에서 모의로 돌려 본 결과(모의 뒤 index.html 은 이 PR 의 판으로 되돌리고 세포 파일은 지웠다 — 실제 이전 0). 선행 전의 같은 모의는 beforePreceding 칸.",
+ "beforePreceding": {
+  "verifyOk": false,
+  "lastGetterNoSetter": [
+   "USER_SESSION_CHANNEL"
+  ],
+  "note": "기준 트리(c6798552)에서 같은 설정으로 돌린 결과 — 생성기가 머리에 단 get+set 줄을 뒤의 getter 전용 노출 줄이 덮는다(검사기 「마지막 노출 setter」 FAIL)"
+ },
+ "afterPreceding": {
+  "verifyOk": true,
+  "assignedL": [
+   "USER_SESSION_CHANNEL"
+  ],
+  "noSetter": [],
+  "lastGetterNoSetter": [],
+  "newExposeGetters": [
+   "USER_SESSION_CHANNEL",
+   "getDeviceId",
+   "performLogout"
+  ],
+  "bridged": [
+   "USER_SESSION_CHANNEL(대입)",
+   "getDeviceId",
+   "performLogout",
+   "sb",
+   "state"
+  ],
+  "cellLines": 42,
+  "assignmentsInCell": {
+   "viaScope": 2,
+   "bare": 0
+  },
+  "bareNameLeftInIndexHtml": [
+   "2582: get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; }, set USER_SESSION_CHANNEL(v){ USER_SESSION_CHANNEL = v; },",
+   "2638: get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; }, set USER_SESSION_CHANNEL(v){ USER_SESSION_CHANNEL = v; },",
+   "3278: var USER_SESSION_CHANNEL = null;"
+  ],
+  "scopeWrite": {
+   "descriptor": {
+    "get": true,
+    "set": true,
+    "value": false
+   },
+   "writeRoundTripOk": true,
+   "exposeLines": [
+    "2582:get+set",
+    "2638:get+set"
+   ]
+  }
+ }
+}
