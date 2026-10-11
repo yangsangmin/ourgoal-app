@@ -193,6 +193,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/lockscreen-card-streak-es431.test.js');
   // #TASK-ES-458 숨김 게이트 정적판(scripts/hidden-entry-guard.js): 지금 저장소 통과 · 일부러 숨긴 픽스처(4테마 !important·조상 인라인·클래스·id 없는 onclick) 실패 · 허용 목록 사유 20자
   runNode('tests/hidden-entry-guard.test.js');
+  // #TASK-ES-620 배선 노출 도우미(tests/helpers/wiring-exposed.js): 옛 배선 글자 또는 등록 — 배선도 등록도 없는 이름·window 목록에 없는 이름·읽지 않는 세포 파일·정의 없는 등록은 거짓
+  runNode('tests/wiring-exposed.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

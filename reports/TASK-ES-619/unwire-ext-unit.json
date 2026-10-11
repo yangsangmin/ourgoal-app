@@ -1,0 +1,592 @@
+{
+ "tool": "docs/design/harness/module-split/unwire-check-ext-619.js",
+ "type": "작업자 측정, 판정 아님",
+ "generator": "docs/design/harness/module-split/gen-inline-hard.js",
+ "baseGenerator": "a3bad12a60644591311c70c3049d2f3e32f024ad:docs/design/harness/module-split/gen-inline-hard.js",
+ "realIndexHtml": "a3bad12a60644591311c70c3049d2f3e32f024ad:index.html",
+ "app": "C:\\dev\\wt\\es619-gen-unwire",
+ "measuredAt": "2026-10-10T23:18:12.397Z",
+ "tmp": "C:\\Users\\HP\\AppData\\Local\\Temp\\unwire-619-lvNQRN",
+ "results": [
+  {
+   "id": "B",
+   "title": "B1 시험 8건(단일 객체 설정 · 기존 옮기기 경로 A1 재생성 바이트 대조 포함)이 고친 생성기에서 그대로 통과",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "passed": 8,
+    "total": 8,
+    "each": [
+     "T1:ok",
+     "T2:ok",
+     "T3:ok",
+     "T4:ok",
+     "T5:ok",
+     "T6:ok",
+     "T7:ok",
+     "T8:ok"
+    ],
+    "a1Files": {
+     "index.html": {
+      "same": true,
+      "genBytes": 468137,
+      "headBytes": 468137
+     },
+     "js/tabs/settings/a11y-announce.js": {
+      "same": true,
+      "genBytes": 2126,
+      "headBytes": 2126
+     },
+     "js/tabs/comm/user-profile-open.js": {
+      "same": true,
+      "genBytes": 2180,
+      "headBytes": 2180
+     }
+    }
+   }
+  },
+  {
+   "id": "S1",
+   "title": "단일 객체 설정: 고친 생성기 = 기준 생성기(index.html · 메타 · 출력 줄 모두 같음)",
+   "ok": true,
+   "detail": {
+    "newStatus": 0,
+    "baseStatus": 0,
+    "sameHtml": true,
+    "sameMeta": true,
+    "sameStdout": true,
+    "stderr": "",
+    "diffAt": null
+   }
+  },
+  {
+   "id": "M1",
+   "title": "여러 실행(배열) 한 번 = 단일 객체 설정을 차례로 돌린 결과(고친 생성기 · 기준 생성기 모두와 바이트 동일)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "stderr": "",
+    "seq": [
+     0,
+     0,
+     0
+    ],
+    "base": [
+     0,
+     0,
+     0
+    ],
+    "sameSeq": true,
+    "sameBase": true,
+    "diffAt": null,
+    "runs": [
+     "_aKit:5",
+     "_bKit:3",
+     "_bKit:1"
+    ]
+   }
+  },
+  {
+   "id": "M2",
+   "title": "뒤 실행이 멈추면 index.html 을 쓰지 않고 몇 번째 실행인지 알린다. 빈 배열은 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "stderr": "Error: [unwire 실행 2/2] 철거한 이름을 IIFE 안에서 아직 쓰는 곳이 남는다 — 지우지 않는다: delta(줄 20)\r",
+    "emptyStatus": 1
+   }
+  },
+  {
+   "id": "X1a",
+   "title": "`_ui` 처럼 `_xxxKit` 꼴이 아닌 손잡이의 가져오기 줄을 지운다(기준 생성기는 같은 설정에서 멈춘다)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "stderr": "",
+    "baseStatus": 1,
+    "diffAt": null
+   }
+  },
+  {
+   "id": "X1b",
+   "title": "손잡이가 아닌 kitVar 는 멈춘다(선언 없음 · window 가 아닌 초기값 · 상태 변수 · 선언자 둘 · 이름이 아닌 글자)",
+   "ok": true,
+   "detail": [
+    {
+     "kitVar": "_nopeKit",
+     "why": "선언 없음",
+     "stopped": true
+    },
+    {
+     "kitVar": "_fakeKit",
+     "why": "window 로 시작하지 않는 초기값",
+     "stopped": true
+    },
+    {
+     "kitVar": "state",
+     "why": "상태 변수",
+     "stopped": true
+    },
+    {
+     "kitVar": "_twoKit",
+     "why": "선언자가 둘",
+     "stopped": true
+    },
+    {
+     "kitVar": "window.x",
+     "why": "이름이 아닌 글자",
+     "stopped": true
+    }
+   ]
+  },
+  {
+   "id": "X3a",
+   "title": "주석과 한 줄을 나눠 쓰는 window 대입 — sharedLine 이면 대입 글자만 지우고 주석은 남긴다. 플래그가 없으면 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "offStatus": 1,
+    "onStatus": 0,
+    "stderr": "",
+    "inlineEdits": [
+     {
+      "line": 24,
+      "before": "  /* [옮김] alpha → 세포 */ window.alpha = alpha;",
+      "after": "  /* [옮김] alpha → 세포 */"
+     }
+    ],
+    "diffAt": null
+   }
+  },
+  {
+   "id": "X3b",
+   "title": "한 줄 if 블록의 두 window 대입 — 앞 것만 · 뒤 것만 지우면 나머지가 남고, 둘 다 대상이면 줄째 지운다. 플래그가 없으면 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "off": 1,
+    "first": [
+     0,
+     null
+    ],
+    "second": [
+     0,
+     null
+    ],
+    "both": [
+     0,
+     null
+    ],
+    "stderr": [
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "id": "X3c",
+   "title": "다른 문 뒤에 붙은 window 대입은 대입 글자만 지운다. 같은 줄의 다른 문이 그 이름을 쓰면 잔존 참조로 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "stderr": "",
+    "diffAt": null,
+    "refStatus": 1
+   }
+  },
+  {
+   "id": "X3d",
+   "title": "sharedLine 이어도 멈춘다: 쉼표 연쇄 · 오른쪽이 이름이 아닌 대입 · 여러 줄 if 블록 안의 나눠 쓴 줄",
+   "ok": true,
+   "detail": [
+    {
+     "why": "쉼표 연쇄",
+     "stopped": true,
+     "err": "Error: 한 줄에 여러 window 대입(쉼표 연쇄)이 있어 하나만 지울 수 없다: 24\r"
+    },
+    {
+     "why": "한 줄 if 블록 안 쉼표 연쇄",
+     "stopped": true,
+     "err": "Error: 한 줄 if 블록에 쉼표 연쇄 window 대입이 있어 지울 수 없다: 24\r"
+    },
+    {
+     "why": "오른쪽이 이름이 아님",
+     "stopped": true,
+     "err": "Error: window.alpha 대입의 오른쪽이 이름이 아니다(FunctionExpression) — 배선이 아니라 정의문이라 지우지 않는다: 줄 24\r"
+    },
+    {
+     "why": "여러 줄 if 블록 안의 나눠 쓴 줄",
+     "stopped": true,
+     "err": "Error: window 대입 줄에 다른 글자가 있다: 25\r"
+    }
+   ]
+  },
+  {
+   "id": "X2a",
+   "title": "dropKitVar: 가져오기가 모두 지워져 참조가 0 이면 손잡이 줄을 지운다. names 없이 손잡이 줄만 지우는 실행도 된다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "stderr": "",
+    "kitVarLine": {
+     "name": "_aKit",
+     "line": 10
+    },
+    "twoRuns": 0,
+    "diffAt": null
+   }
+  },
+  {
+   "id": "X2b",
+   "title": "dropKitVar: 손잡이 참조가 남으면 멈춘다. 플래그 없이 names 가 비면 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "Error: 손잡이 _aKit 을(를) IIFE 안에서 아직 쓰는 곳이 남는다 — 지우지 않는다: 줄 12\r",
+    "emptyStatus": 1
+   }
+  },
+  {
+   "id": "C1",
+   "title": "모르는 칸(deleteComments · 오타 sharedline)은 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": [
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "id": "R1",
+   "title": "실제 index.html: unwire-plan.json 16실행을 기준 생성기로 차례로 돌린 결과 = 고친 생성기에 배열 한 번(바이트 동일). 단계마다 두 생성기의 결과·메타·출력도 같다",
+   "ok": true,
+   "detail": {
+    "pin": "a3bad12a60644591311c70c3049d2f3e32f024ad",
+    "runs": 16,
+    "stepsSame": 16,
+    "multiStatus": 0,
+    "stderr": null,
+    "htmlLines": [
+     6273,
+     5428
+    ],
+    "planHtmlLines": [
+     6273,
+     5428
+    ],
+    "bytes": [
+     414353,
+     414353
+    ],
+    "deletedByRun": [
+     143,
+     10,
+     169,
+     19,
+     142,
+     34,
+     115,
+     28,
+     123,
+     3,
+     32,
+     10,
+     3,
+     2,
+     10,
+     2
+    ],
+    "expectedByRun": [
+     143,
+     10,
+     169,
+     19,
+     142,
+     34,
+     115,
+     28,
+     123,
+     3,
+     32,
+     10,
+     3,
+     2,
+     10,
+     2
+    ],
+    "steps": []
+   }
+  },
+  {
+   "id": "R2",
+   "title": "실제 index.html: X3(sharedLine) 4/4개 · X1(`_ui`·`_xp`) 9/9개 이름 철거 — 지운 줄은 가져오기·getter·window 대입(과 빈 껍데기)뿐, 줄 안에서 지운 글자는 window 대입뿐, 나머지 줄은 순서대로 같다",
+   "ok": true,
+   "detail": {
+    "runs": [
+     {
+      "label": "X3 sharedLine defaultProfile",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 2,
+      "inlineEdits": [
+       {
+        "line": 2888,
+        "before": "  /* [#TASK-ES-574] defaultProfile → js/core/default-profile.js 로 옮김(기본 프로필 생성 책임 분열 — 앞 주석 포함) */ window.defaultProfile = defaultProfile;",
+        "after": "  /* [#TASK-ES-574] defaultProfile → js/core/default-profile.js 로 옮김(기본 프로필 생성 책임 분열 — 앞 주석 포함) */"
+       }
+      ]
+     },
+     {
+      "label": "X3 sharedLine loadProfile",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 2,
+      "inlineEdits": [
+       {
+        "line": 2935,
+        "before": "  if(typeof window !== 'undefined'){ window.loadProfile = loadProfile; window.saveProfile = saveProfile; }",
+        "after": "  if(typeof window !== 'undefined'){ window.saveProfile = saveProfile; }"
+       }
+      ]
+     },
+     {
+      "label": "X3 sharedLine saveProfile",
+      "imports": false,
+      "status": 0,
+      "err": null,
+      "deleted": 3
+     },
+     {
+      "label": "X3 sharedLine setTab",
+      "imports": false,
+      "status": 0,
+      "err": null,
+      "deleted": 2,
+      "inlineEdits": [
+       {
+        "line": 3069,
+        "before": "  if(typeof window !== 'undefined'){ window.setTab = setTab; window.switchTab = setTab; }",
+        "after": "  if(typeof window !== 'undefined'){ window.switchTab = setTab; }"
+       }
+      ]
+     },
+     {
+      "label": "X1 _ui download",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 4
+     },
+     {
+      "label": "X1 _ui escapeHtml",
+      "imports": false,
+      "status": 0,
+      "err": null,
+      "deleted": 1
+     },
+     {
+      "label": "X1 _xp XP_RULES",
+      "imports": false,
+      "status": 0,
+      "err": null,
+      "deleted": 1
+     },
+     {
+      "label": "X1 _xp awardXP",
+      "imports": false,
+      "status": 0,
+      "err": null,
+      "deleted": 1
+     },
+     {
+      "label": "X1 _xp levelForXP",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 3
+     },
+     {
+      "label": "X1 _xp levelProgress",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 5
+     },
+     {
+      "label": "X1 _xp notifyXpGained",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 3
+     },
+     {
+      "label": "X1 _xp triggerAvatarCelebrationPopup",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 2
+     },
+     {
+      "label": "X1 _xp xpForLevel",
+      "imports": true,
+      "status": 0,
+      "err": null,
+      "deleted": 2
+     }
+    ],
+    "audit": [
+     {
+      "label": "X3 sharedLine defaultProfile",
+      "imports": true,
+      "kinds": {
+       "expose": 1,
+       "import": 1,
+       "inline": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X3 sharedLine loadProfile",
+      "imports": true,
+      "kinds": {
+       "expose": 1,
+       "import": 1,
+       "inline": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X3 sharedLine saveProfile",
+      "imports": false,
+      "kinds": {
+       "expose": 2,
+       "window": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X3 sharedLine setTab",
+      "imports": false,
+      "kinds": {
+       "expose": 1,
+       "inline": 1,
+       "window": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _ui download",
+      "imports": true,
+      "kinds": {
+       "import": 1,
+       "wrapper": 2,
+       "expose": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _ui escapeHtml",
+      "imports": false,
+      "kinds": {
+       "expose": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _xp XP_RULES",
+      "imports": false,
+      "kinds": {
+       "expose": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _xp awardXP",
+      "imports": false,
+      "kinds": {
+       "expose": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _xp levelForXP",
+      "imports": true,
+      "kinds": {
+       "import": 1,
+       "expose": 1,
+       "window": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _xp levelProgress",
+      "imports": true,
+      "kinds": {
+       "import": 1,
+       "wrapper": 2,
+       "expose": 1,
+       "window": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _xp notifyXpGained",
+      "imports": true,
+      "kinds": {
+       "import": 1,
+       "expose": 1,
+       "window": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _xp triggerAvatarCelebrationPopup",
+      "imports": true,
+      "kinds": {
+       "import": 1,
+       "window": 1
+      },
+      "ok": true,
+      "bad": null
+     },
+     {
+      "label": "X1 _xp xpForLevel",
+      "imports": true,
+      "kinds": {
+       "import": 1,
+       "window": 1
+      },
+      "ok": true,
+      "bad": null
+     }
+    ],
+    "htmlLinesAfter": 5397
+   }
+  },
+  {
+   "id": "R3",
+   "title": "실제 index.html: 가져오기가 남아 있는 손잡이(_settingsKit)에 dropKitVar 를 주면 멈추고 쓰지 않는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "Error: 손잡이 _settingsKit 을(를) IIFE 안에서 아직 쓰는 곳이 남는다 — 지우지 않는다: 줄 2275,2276,2277,2278,2372,2373,2390,2391,2392,2393,2394,2395,2420,2421,2422,2423,2424,2432,2433,2434,2435,2436,2437,2438,2439,2440,2466,2"
+   }
+  }
+ ],
+ "passed": 16,
+ "total": 16,
+ "ok": true
+}

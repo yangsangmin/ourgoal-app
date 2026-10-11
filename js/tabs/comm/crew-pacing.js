@@ -266,6 +266,8 @@
     renderCrewPacingWidget: K.renderCrewPacingWidget
   }, { window: [
     'applyCrewPacingUI', 'focusHomeCheckinInput', 'nudgeCrewMates', 'renderCrewPacingWidget'
+  ], windowOnly: [
+    'applyCrewPacingUI', 'focusHomeCheckinInput', 'nudgeCrewMates'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

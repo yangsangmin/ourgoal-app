@@ -19,9 +19,9 @@ const indexHtml = require('./helpers/inline-bundle').withInlineCells(fs.readFile
 // 1. 소스 정적 검증
 {
   assert.ok(indexHtml.includes('function getEffectiveStandardDateKey'), 'getEffectiveStandardDateKey 함수 정의 확인');
-  assert.ok(indexHtml.includes('window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 확인');
+  assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 확인'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
   assert.ok(indexHtml.includes('function computeTodayMissionHash'), 'computeTodayMissionHash 함수 정의 확인');
-  assert.ok(indexHtml.includes('window.computeTodayMissionHash = computeTodayMissionHash;'), 'computeTodayMissionHash 전역 노출 확인');
+  assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.computeTodayMissionHash = computeTodayMissionHash;'), 'computeTodayMissionHash 전역 노출 확인'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
   assert.ok(indexHtml.includes('checkAndHandleDateRollover'), 'checkAndHandleDateRollover 함수 정의 확인');
   assert.ok(indexHtml.includes('setupDateRolloverWatcher'), 'setupDateRolloverWatcher 함수 정의 확인');
   assert.ok(indexHtml.includes('existing && existing.text && existing.hash === hash'), 'refreshGoalStatusSummary 기존 멱등성 가드 보존 확인');

@@ -266,6 +266,8 @@
     openTwoFactorDisableModal: K.openTwoFactorDisableModal, openTwoFactorSetupModal: K.openTwoFactorSetupModal, verifyAppLockPin: K.verifyAppLockPin
   }, { window: [
     'challengeTwoFactorModal', 'isHashedAppLockPin', 'openTwoFactorDisableModal', 'openTwoFactorSetupModal', 'verifyAppLockPin'
+  ], windowOnly: [
+    'isHashedAppLockPin', 'verifyAppLockPin'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

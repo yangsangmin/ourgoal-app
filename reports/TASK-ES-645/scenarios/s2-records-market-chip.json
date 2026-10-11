@@ -1,0 +1,87 @@
+{
+  "id": "s2-records-market-chip",
+  "title": "게스트로 기록 탭에서 템플릿 카드를 펼치고 「템플릿 마켓」 칩을 누르면 템플릿 마켓 창이 열려 템플릿 목록과 복제하기 단추가 보인다 — 복제는 누르지 않는다 (세포가 통로로 부르는 openTemplateMarketModal 이전 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "button[onclick*=\"recProTemplateCard\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recOpenMarketQuickBtn"
+    },
+    {
+      "do": "click",
+      "selector": "button[onclick*=\"recProTemplateCard\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recOpenMarketQuickBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#mktGridContainer"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenMarketQuickBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#mktGridContainer"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet",
+      "text": "아워골 맞춤 템플릿 마켓플레이스"
+    },
+    {
+      "expect": "visible",
+      "selector": ".mkt-clone-btn[data-mktkey=\"mkt_crossfit_fran\"]"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

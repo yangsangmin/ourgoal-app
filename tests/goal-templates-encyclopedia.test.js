@@ -25,8 +25,8 @@ function runTests() {
   assert(indexHtml.includes('id="tabTplRealUser"'), 'index.html must contain #tabTplRealUser');
   assert(indexHtml.includes('id="tabTplOurgoalAi"'), 'index.html must contain #tabTplOurgoalAi');
   assert(indexHtml.includes('id="btnTplEncyclopediaClose"'), 'index.html must contain #btnTplEncyclopediaClose');
-  assert(indexHtml.includes('window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html must expose openGoalTemplateEncyclopediaModal');
-  assert(indexHtml.includes('window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html must expose copyUserGoalTemplate');
+  assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html must expose openGoalTemplateEncyclopediaModal'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
+  assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html must expose copyUserGoalTemplate'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
 
   // 2. js/components.js 직통 핸들러 및 4대 뷰 전파 검증
   assert(componentsJs.includes('async function handle목표탭_Item53Action'), 'components.js must define handle목표탭_Item53Action');

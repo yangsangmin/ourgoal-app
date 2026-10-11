@@ -1,0 +1,280 @@
+{
+  "task": "TASK-ES-640",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "체크인 입력칸 둘레의 시동 연결 세 문(퀵 루틴 칩 · 음성 체크인 · 사진 첨부)을 생성기(gen-inline-hard.js)로 세포 js/tabs/records/checkin-input-wiring.js 에 글자 그대로 옮기고 index.html 원래 자리에서 부른다. 앱 동작을 보존한다(손 편집 0)."
+    },
+    {
+      "id": "R2",
+      "text": "팀 목표 댓글 보내기(window.sendTeamGoalComment)와 문서 전체 누름·Enter 위임 두 문을 생성기로 세포 js/tabs/goals/team-comment-send.js 에 글자 그대로 옮기고 원래 자리에서 부른다. 앱 동작을 보존한다."
+    },
+    {
+      "id": "R3",
+      "text": "샘플 기록 정리(window.purgeSampleRecordsOneClick)를 생성기로 세포 js/tabs/records/sample-purge.js 에 글자 그대로 옮기고 원래 자리에서 부른다. 앱 동작을 보존한다."
+    },
+    {
+      "id": "R4",
+      "text": "빠른 목표 추가 함수 둘(selectSmartTag · handleGoalFastAddSubmit)을 생성기로 세포 js/tabs/goals/goal-fast-add.js 에 글자 그대로 옮긴다(window 노출 줄은 원래 자리). 앱 동작을 보존한다."
+    },
+    {
+      "id": "R5",
+      "text": "증명 하한(헌법 CELL_SPLIT_PROOF): 옮긴 구간의 토큰 동일·누수 0 · 모듈 단독 로드 새 회귀 0 · 통로 이름의 값 지문 차이 0 · npm test 검사 줄 수 동일 · tests·금고·생성기 변경 0."
+    },
+    {
+      "id": "R6",
+      "text": "기준선(docs/architecture/module-baseline.json)에 줄어든 인라인 스크립트 줄 수를 기록한다(지시함 DIR-003)."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "체크인 입력 연결 가운데 화면으로 잰 것은 마이크 단추를 눌렀을 때 권한 안내 창이 뜨는 데까지다. 음성 인식이 실제로 켜져 받아 적는 길은 법정 브라우저(헤드리스)에서 돌지 않고, 사진을 고른 뒤의 미리보기·첨부 대기(pendingCapturePhoto 대입)·지우기는 파일 고르기 창이 필요해 재지 않았다. 퀵 루틴 칩 줄(#quickRoutineRow)은 지금 마크업에 없어 그 문은 이전 전과 같이 아무 일도 하지 않는다. 이 부분의 동일성은 생성기 재실행 대조(proof) · 토큰 대조 · setter 검사로 본다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "팀 목표 댓글을 실제로 보내는 길은 게스트 화면에 보내기 단추가 없어(소통 탭 모임 구획 · 목표 탭에서 보이는 [data-cmtsend] 0개 실측) 화면으로 재지 않았다. 시나리오는 문서 전체 누름·Enter 위임이 댓글 칸이 아닌 누름과 Enter 를 그냥 지나가는 것만 잰다. 보내기 본문의 동일성은 생성기 재실행 대조(proof) · 토큰 대조로 본다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "window 이름 19개 중 이번에 본문이 세포로 옮겨진 함수 4개(selectSmartTag · handleGoalFastAddSubmit · sendTeamGoalComment · purgeSampleRecordsOneClick)는 값 지문의 함수 글자 해시가 달라졌다(본문의 인라인 이름에 L. 접두가 붙었다). 종류·이름·인자 수는 같고, 이 넷 밖에서 달라진 window 이름은 0 이다(reports/TASK-ES-640/name-fingerprints.json)."
+    },
+    {
+      "text": "생성기가 감싼 코드가 읽는 인라인 이름 10개의 통로 getter 를 index.html 머리에 새로 달았다. 8개는 등록 기관이 이미 같은 값으로 내주던 이름이고 2개(capturePhotoBtn · qRoutineRow)는 통로에 처음 생긴다. 다시 단 getter 의 재철거는 이 PR 의 범위가 아니다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 홈의 체크인 입력칸 옆 마이크 단추를 누르면 마이크 권한 안내 창이 뜨며 예외가 없다. 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/tabs/records/checkin-input-wiring.js"
+      ],
+      "scenario": "scenarios/s1-checkin-mic-guide.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 소통 탭에서 모임 구획 단추를 누르고 Enter 를 눌러도 구획이 바뀌고 예외가 없다(문서 전체 누름·Enter 위임을 지나간다). 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/tabs/goals/team-comment-send.js"
+      ],
+      "scenario": "scenarios/s2-team-comment-passthrough.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 기록 탭 통계에서 체험용 샘플을 적용한 뒤 샘플 정리 단추를 누르고 확인하면 샘플 안내 상자가 사라지며 예외가 없다. 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/tabs/records/sample-purge.js"
+      ],
+      "scenario": "scenarios/s3-sample-purge.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 분류 칩 「학습/성장」을 고르면 그 칩이 선택 표시가 되고, 빠른 추가 칸에 이름을 적어 「추가」를 누르면 그 목표가 목록에 생기며 예외가 없다. 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/tabs/goals/goal-fast-add.js"
+      ],
+      "scenario": "scenarios/s4-goal-fast-add.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검사기(verify-inline-hard.js) 결과가 ok 다 — 토큰 동일(접두 제외) · 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · this/arguments 0 · 이중 처리기 0 · 800줄 이하.",
+      "touches": [
+        "reports/TASK-ES-640/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/verify-inline-hard.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침 결과에서 기준 대비 새 회귀 목록이 비어 있다.",
+      "touches": [
+        "reports/TASK-ES-640/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/module-load.json",
+        "path": "regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 이름 목록으로 맞댄 통로 이름의 값 지문 차이가 0 이다.",
+      "touches": [
+        "reports/TASK-ES-640/name-fingerprints.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/name-fingerprints.json",
+        "path": "scope.diff",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "통로에서 사라진 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-640/name-fingerprints.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/name-fingerprints.json",
+        "path": "scopeLost",
+        "equals": []
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "window 이름 가운데 이번에 본문을 옮긴 함수 넷 말고 값 지문이 달라진 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-640/name-fingerprints.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/name-fingerprints.json",
+        "path": "window.unexpectedDiff",
+        "equals": []
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 의 검사 줄(✓) 수가 기준 트리와 작업 트리에서 같다.",
+      "touches": [
+        "reports/TASK-ES-640/npm-test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/npm-test-compare.json",
+        "path": "same.checkLines",
+        "equals": true
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시험 파일을 하나씩 돌렸을 때 종료 코드나 ok 줄 수가 기준과 다른 파일이 0개다.",
+      "touches": [
+        "reports/TASK-ES-640/tests-all-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/tests-all-compare.json",
+        "path": "differingCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업이 바꾼 파일 가운데 tests/ 아래 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-640/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/measurement.json",
+        "path": "changedFiles.tests",
+        "equals": []
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업의 측정 기록에서 인라인 스크립트 줄 수 변화가 -234 다.",
+      "touches": [
+        "reports/TASK-ES-640/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/measurement.json",
+        "path": "summary.inlineScriptLines.delta",
+        "equals": -234
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준선 마지막 기록의 인라인 스크립트 줄 수가 측정값과 같다.",
+      "touches": [
+        "reports/TASK-ES-640/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/measurement.json",
+        "path": "baseline.recordedEqualsMeasured",
+        "equals": true
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상태 기관 이름과 겹치는 새 getter 가 없고, 새 세포가 읽는 통로 이름이 모두 있으며, 새 세포가 대입하는 이름은 브라우저에서 써 보고 되읽은 값이 같았다.",
+      "touches": [
+        "reports/TASK-ES-640/accessor-probe.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-640/accessor-probe.json",
+        "path": "ok",
+        "equals": true
+      }
+    }
+  ]
+}

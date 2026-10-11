@@ -263,6 +263,8 @@
     applyScheduleUpdate: K.applyScheduleUpdate, formatSchedulePillHtml: K.formatSchedulePillHtml, openScheduleSetupModal: K.openScheduleSetupModal
   }, { window: [
     'applyScheduleUpdate', 'formatSchedulePillHtml', 'openScheduleSetupModal'
+  ], windowOnly: [
+    'applyScheduleUpdate'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

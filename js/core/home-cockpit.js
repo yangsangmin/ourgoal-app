@@ -277,6 +277,8 @@
     saveProfile: K.saveProfile, switchHomeDate: K.switchHomeDate
   }, { window: [
     'initDimensionSliders', 'initHomeCockpit', 'saveProfile', 'switchHomeDate'
+  ], windowOnly: [
+    'initDimensionSliders', 'switchHomeDate'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

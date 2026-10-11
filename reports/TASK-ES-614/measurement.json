@@ -1,0 +1,938 @@
+{
+ "schema": "ourgoal.task-es-614.measurement/1",
+ "taskId": "TASK-ES-614",
+ "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정(node court/chat.js <PR>)만 낸다",
+ "measuredAt": "2026-10-10T22:52:48.922Z",
+ "environment": {
+  "node": "v24.15.0",
+  "platform": "win32",
+  "arch": "x64",
+  "gitAutocrlf": "true"
+ },
+ "sourceCommit": {
+  "baseTreeHead": "f616a9db13c032eee9d73bcceba8f6e63c4b7972",
+  "worktreeHead": "d47f67443092cd10ce840b62fa9f9225030742e2",
+  "note": "기준 = origin/main 임시 git worktree(저장소 밖). 작업 = 이 트리. 모의 철거 사본 = 기준 worktree 를 하나 더 만들어 작업 트리의 바뀐 파일을 덮고 index.html 만 생성기 unwire 로 철거한 것(커밋하지 않는다)"
+ },
+ "summary": {
+  "changed": {
+   "files": 84,
+   "jsFiles": 45,
+   "newJsFiles": [
+    "js/core/cell-registry-commit.js"
+   ],
+   "indexHtml": {
+    "insertions": 1,
+    "deletions": 1,
+    "netLineGrowth": 0
+   },
+   "testsChanged": [],
+   "vaultChanged": [],
+   "generatorInlineHardChanged": [],
+   "generatedMapsChanged": []
+  },
+  "cellBlocksOnly": {
+   "checked": 43,
+   "same": 43,
+   "differ": [],
+   "other": [
+    "js/core/cell-registry-commit.js (새 파일)",
+    "js/core/cell-registry.js"
+   ],
+   "allSame": true,
+   "note": "바뀐 세포 파일마다 등록 블록 앞 글자가 기준과 같고 블록 뒤에 글자가 없다(블록 안에서만 바뀜 — windowOnly 칸 추가). js/core/cell-registry.js 와 새 파일은 따로 센다"
+  },
+  "provideGenerator": {
+   "exitCode": 0,
+   "planOnlyRun": {
+    "write": false,
+    "imports": 514,
+    "registeredNames": 438,
+    "scope": 354,
+    "window": 180,
+    "files": 167,
+    "skipped": 2,
+    "changed": 0,
+    "unchanged": 167,
+    "stale": 0
+   },
+   "idempotent": true,
+   "note": "--write 없이 다시 돌려 「바뀔 파일 0」인지(멱등)"
+  },
+  "lines": {
+   "maxAfter": {
+    "file": "js/tabs/goals/template-encyclopedia.js",
+    "lines": 782
+   },
+   "over800": []
+  },
+  "ratchet": {
+   "inlineScriptLines": [
+    4003,
+    4003
+   ],
+   "inlineScriptLinesSame": true,
+   "indexFunctionDecls": [
+    29,
+    29
+   ],
+   "windowAssignments": [
+    260,
+    260
+   ],
+   "oversizeJsFiles": [
+    0,
+    0
+   ],
+   "crossTabRefs": [
+    0,
+    0
+   ],
+   "source": "scripts/module-metrics.js measure().ratchet — [기준, 작업]"
+  },
+  "guard": {
+   "exitCode": 0,
+   "specsCheckExitCode": 0
+  },
+  "newGlobals": {
+   "changedFilesGlobalsDiffer": 0,
+   "newFiles": [
+    {
+     "file": "js/core/cell-registry-commit.js",
+     "ok": true,
+     "globals": [],
+     "error": null
+    }
+   ],
+   "note": "바뀐 js 파일 단독 로드의 전역 목록이 기준과 다른 파일 수(0 이면 새 전역 0) · 새 파일이 만드는 전역"
+  },
+  "moduleLoad": {
+   "work": {
+    "regressions": 0,
+    "insufficient": 1,
+    "changedFiles": 44,
+    "changedOkBase": 44,
+    "changedOkWork": 44
+   },
+   "mock": {
+    "regressions": 0,
+    "insufficient": 1
+   },
+   "insufficientNote": [
+    "js/goal-templates-registry.js: 양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined"
+   ]
+  },
+  "own": {
+   "counts": {
+    "scopeNames": 423,
+    "windowNames": 199,
+    "registered": 438,
+    "checked": 534,
+    "mismatches": 0,
+    "missing": 88,
+    "extra": 0,
+    "conflicts": 0,
+    "own": 438,
+    "ownScope": 354,
+    "ownWindow": 180,
+    "lateProvides": 0
+   },
+   "modes": {
+    "own": 438,
+    "compare": 0
+   },
+   "commit": {
+    "scope": 354,
+    "window": 180,
+    "kept": [],
+    "scopeBefore": 0,
+    "windowBefore": {
+     "undefined": 174,
+     "same": 0,
+     "different": [
+      "toast",
+      "collapseAllTeamGoalAccordions",
+      "copyUserGoalTemplate",
+      "openGoalTemplateEncyclopediaModal",
+      "toggleFeedPostPreview",
+      "collapseAllSettingsSections"
+     ]
+    }
+   },
+   "registeredEqualsPlan": true,
+   "exceptions": 0,
+   "consoleErrors": 0,
+   "baseCounts": {
+    "scopeNames": 423,
+    "windowNames": 199,
+    "registered": 438,
+    "checked": 534,
+    "mismatches": 0,
+    "missing": 88,
+    "extra": 0,
+    "conflicts": 0
+   },
+   "nonVacuous": true
+  },
+  "fingerprints": {
+   "names": {
+    "scope": 423,
+    "window": 199
+   },
+   "baseVsWork": {
+    "scope": 0,
+    "window": 0
+   },
+   "baseVsMock": {
+    "scope": 0,
+    "window": 0
+   },
+   "workVsMock": {
+    "scope": 0,
+    "window": 0
+   },
+   "differing": {
+    "baseVsWork": {
+     "scope": [],
+     "window": []
+    },
+    "baseVsMock": {
+     "scope": [],
+     "window": []
+    },
+    "workVsMock": {
+     "scope": [],
+     "window": []
+    }
+   },
+   "note": "이름마다 통로 값·window 값의 지문(함수 = 이름·인자 수·글자 해시, 문자열 = 길이·해시, 그 밖 = 종류)을 세 트리에서 재어 맞댄 차이 수"
+  },
+  "overlap": {
+   "windowNames": 199,
+   "overlapCount": 13,
+   "overlapRegistered": 7,
+   "differentValueAtCommit": [
+    "collapseAllSettingsSections",
+    "collapseAllTeamGoalAccordions",
+    "copyUserGoalTemplate",
+    "openGoalTemplateEncyclopediaModal",
+    "toast",
+    "toggleFeedPostPreview"
+   ],
+   "assignedAfterCommit": [],
+   "tagsBetweenCommitAndIife": 0,
+   "deferOrAsync": [
+    {
+     "src": "ui.js",
+     "line": 47
+    },
+    {
+     "src": "https://accounts.google.com/gsi/client",
+     "line": 2146
+    }
+   ],
+   "inlineAfterIife": [
+    6237
+   ],
+   "allFinalValuesSame": true
+  },
+  "mockUnwire": {
+   "all": {
+    "deletedLines": 985,
+    "names": 425,
+    "runs": 17,
+    "byKit": [
+     {
+      "kitVar": "_settingsKit",
+      "passes": 2,
+      "names": 79,
+      "deletedLines": 180
+     },
+     {
+      "kitVar": "_goalsKit",
+      "passes": 2,
+      "names": 102,
+      "deletedLines": 234
+     },
+     {
+      "kitVar": "_uiKit",
+      "passes": 2,
+      "names": 83,
+      "deletedLines": 198
+     },
+     {
+      "kitVar": "_recordsKit",
+      "passes": 2,
+      "names": 75,
+      "deletedLines": 159
+     },
+     {
+      "kitVar": "_commKit",
+      "passes": 2,
+      "names": 58,
+      "deletedLines": 130
+     },
+     {
+      "kitVar": "_calendarKit",
+      "passes": 2,
+      "names": 19,
+      "deletedLines": 57
+     },
+     {
+      "kitVar": "_authSocialKit",
+      "passes": 1,
+      "names": 1,
+      "deletedLines": 3
+     },
+     {
+      "kitVar": "_creatorTemplatesLegacyKit",
+      "passes": 1,
+      "names": 1,
+      "deletedLines": 2
+     },
+     {
+      "kitVar": "_curatedMarketDataKit",
+      "passes": 0,
+      "names": 0,
+      "deletedLines": 0
+     },
+     {
+      "kitVar": "_homeKit",
+      "passes": 1,
+      "names": 5,
+      "deletedLines": 14
+     },
+     {
+      "kitVar": "_levelBadgeKit",
+      "passes": 1,
+      "names": 1,
+      "deletedLines": 2
+     },
+     {
+      "kitVar": "_modalOpenKit",
+      "passes": 1,
+      "names": 1,
+      "deletedLines": 6
+     },
+     {
+      "kitVar": "_visionTableInputKit",
+      "passes": 0,
+      "names": 0,
+      "deletedLines": 0
+     }
+    ],
+    "npmTestPath": [
+     {
+      "script": "scripts/smoke-test.js",
+      "exit": 1,
+      "ok": 414,
+      "okDot": 0,
+      "fails": 25
+     },
+     {
+      "script": "scripts/verify-integrity-gate.js",
+      "exit": 1,
+      "ok": 37,
+      "okDot": 0,
+      "fails": 1
+     },
+     {
+      "script": "scripts/verify-all-clicks.js",
+      "exit": 0,
+      "ok": 3,
+      "okDot": 0,
+      "fails": 0
+     },
+     {
+      "script": "scripts/test-shipyard-modular.js",
+      "exit": 1,
+      "ok": 6,
+      "okDot": 88,
+      "fails": 0
+     }
+    ],
+    "testFilesFailedNotInBase": [
+     "tests/achievement-graph-multiset.test.js",
+     "tests/ai-conditional-call-optimization.test.js",
+     "tests/feed-post-preview-modal.test.js",
+     "tests/gcal-login-reconnect-fix.test.js",
+     "tests/goal-templates-encyclopedia.test.js",
+     "tests/stopwatch-table-hint.test.js",
+     "tests/team-fold-state-es409.test.js",
+     "tests/team-goal-guide-hint.test.js",
+     "tests/team-goals-collapse-default.test.js",
+     "tests/team-level-accordion-es406.test.js"
+    ]
+   },
+   "plan": {
+    "excluded": 42,
+    "deletedLines": 845,
+    "names": 383,
+    "runs": 16,
+    "byKit": [
+     {
+      "kitVar": "_settingsKit",
+      "passes": 2,
+      "names": 70,
+      "deletedLines": 153
+     },
+     {
+      "kitVar": "_goalsKit",
+      "passes": 2,
+      "names": 88,
+      "deletedLines": 188
+     },
+     {
+      "kitVar": "_uiKit",
+      "passes": 2,
+      "names": 75,
+      "deletedLines": 176
+     },
+     {
+      "kitVar": "_recordsKit",
+      "passes": 2,
+      "names": 70,
+      "deletedLines": 143
+     },
+     {
+      "kitVar": "_commKit",
+      "passes": 2,
+      "names": 57,
+      "deletedLines": 126
+     },
+     {
+      "kitVar": "_calendarKit",
+      "passes": 2,
+      "names": 16,
+      "deletedLines": 42
+     },
+     {
+      "kitVar": "_authSocialKit",
+      "passes": 1,
+      "names": 1,
+      "deletedLines": 3
+     },
+     {
+      "kitVar": "_creatorTemplatesLegacyKit",
+      "passes": 1,
+      "names": 1,
+      "deletedLines": 2
+     },
+     {
+      "kitVar": "_curatedMarketDataKit",
+      "passes": 0,
+      "names": 0,
+      "deletedLines": 0
+     },
+     {
+      "kitVar": "_homeKit",
+      "passes": 1,
+      "names": 4,
+      "deletedLines": 10
+     },
+     {
+      "kitVar": "_levelBadgeKit",
+      "passes": 1,
+      "names": 1,
+      "deletedLines": 2
+     },
+     {
+      "kitVar": "_modalOpenKit",
+      "passes": 0,
+      "names": 0,
+      "deletedLines": 0
+     },
+     {
+      "kitVar": "_visionTableInputKit",
+      "passes": 0,
+      "names": 0,
+      "deletedLines": 0
+     }
+    ],
+    "htmlLines": [
+     6273,
+     5428
+    ],
+    "inlineScriptLines": [
+     4003,
+     3158
+    ],
+    "windowNamesLeftInIife": 69,
+    "compare": {
+     "scopeNames": 423,
+     "windowNames": 199,
+     "registered": 438,
+     "checked": 534,
+     "mismatches": 0,
+     "missing": 88,
+     "extra": 0,
+     "conflicts": 0,
+     "own": 438,
+     "ownScope": 354,
+     "ownWindow": 180,
+     "lateProvides": 0,
+     "scopeLost": 0,
+     "scopeAdded": 0,
+     "exceptions": 0,
+     "consoleErrors": 0,
+     "namesFixedFrom": "cell-registry-compare.json"
+    },
+    "scenarios": [
+     {
+      "id": "b3a-guest-boot-six-tabs",
+      "basePassed": true,
+      "otherPassed": true,
+      "baseExceptions": 0,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 13
+     },
+     {
+      "id": "b3a-inline-handlers-goals",
+      "basePassed": true,
+      "otherPassed": true,
+      "baseExceptions": 0,
+      "otherExceptions": 0,
+      "nonVacuousExpects": 10
+     }
+    ],
+    "npmTestPath": {
+     "base": [
+      {
+       "script": "scripts/smoke-test.js",
+       "exit": 0,
+       "ok": 439,
+       "okDot": 0,
+       "fails": 0
+      },
+      {
+       "script": "scripts/verify-integrity-gate.js",
+       "exit": 0,
+       "ok": 38,
+       "okDot": 0,
+       "fails": 0
+      },
+      {
+       "script": "scripts/verify-all-clicks.js",
+       "exit": 0,
+       "ok": 3,
+       "okDot": 0,
+       "fails": 0
+      },
+      {
+       "script": "scripts/test-shipyard-modular.js",
+       "exit": 0,
+       "ok": 7,
+       "okDot": 156,
+       "fails": 0
+      }
+     ],
+     "mock": [
+      {
+       "script": "scripts/smoke-test.js",
+       "exit": 0,
+       "ok": 439,
+       "okDot": 0,
+       "fails": 0
+      },
+      {
+       "script": "scripts/verify-integrity-gate.js",
+       "exit": 0,
+       "ok": 38,
+       "okDot": 0,
+       "fails": 0
+      },
+      {
+       "script": "scripts/verify-all-clicks.js",
+       "exit": 0,
+       "ok": 3,
+       "okDot": 0,
+       "fails": 0
+      },
+      {
+       "script": "scripts/test-shipyard-modular.js",
+       "exit": 0,
+       "ok": 7,
+       "okDot": 156,
+       "fails": 0
+      }
+     ]
+    },
+    "testFiles": {
+     "total": 113,
+     "failedBase": 26,
+     "failedMock": 26,
+     "mockOnly": [],
+     "baseOnly": []
+    },
+    "stoppedByGenerator": 6,
+    "registeredStillWired": 55
+   },
+   "withoutCommit": {
+    "guestBootOk": false,
+    "error": "게스트 부팅 단계 실패: .navbtn[data-tab=\"home\"]",
+    "firstException": "TypeError: L.pad is not a function",
+    "note": "대조군 — 같은 모의 철거 사본에서 commit 태그만 빼면 앱이 부팅하지 못한다(own 적용이 실제로 이름을 내주고 있음을 보임)"
+   }
+  },
+  "scenarios": [
+   {
+    "id": "b3a-guest-boot-six-tabs",
+    "basePassed": true,
+    "otherPassed": true,
+    "baseExceptions": 0,
+    "otherExceptions": 0,
+    "nonVacuousExpects": 13
+   },
+   {
+    "id": "b3a-inline-handlers-goals",
+    "basePassed": true,
+    "otherPassed": true,
+    "baseExceptions": 0,
+    "otherExceptions": 0,
+    "nonVacuousExpects": 10
+   }
+  ],
+  "npmTest": {
+   "base": {
+    "exitCode": 0,
+    "okLines": 487,
+    "okDotLines": 156,
+    "failLines": 0
+   },
+   "work": {
+    "exitCode": 0,
+    "okLines": 487,
+    "okDotLines": 156,
+    "failLines": 0
+   },
+   "same": true,
+   "onlyBase": 0,
+   "onlyWork": 0,
+   "retired": 0
+  },
+  "pinnedByTests": {
+   "count": 42,
+   "byKind": {
+    "window": 41,
+    "getter": 0,
+    "import": 1,
+    "measured": 0
+   },
+   "byFile": [
+    {
+     "file": "scripts/smoke-test.js",
+     "hits": 37
+    },
+    {
+     "file": "tests/gcal-login-reconnect-fix.test.js",
+     "hits": 4
+    },
+    {
+     "file": "scripts/test-calendar-attachments.js",
+     "hits": 3
+    },
+    {
+     "file": "tests/ai-conditional-call-optimization.test.js",
+     "hits": 2
+    },
+    {
+     "file": "tests/goal-templates-encyclopedia.test.js",
+     "hits": 2
+    },
+    {
+     "file": "tests/settings-collapse-default.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/team-fold-state-es409.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/team-goals-collapse-default.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/team-level-accordion-es406.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/core-modal-es363.test.js",
+     "hits": 1
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/goals-smart-attachments.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/achievement-graph-multiset.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/stopwatch-table-hint.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/team-goal-guide-hint.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/feed-post-preview-modal.test.js",
+     "hits": 1
+    },
+    {
+     "file": "tests/fixtures/open-modal-before-es591.js",
+     "hits": 1
+    }
+   ],
+   "failingChecksWhenAllUnwired": [
+    {
+     "script": "scripts/smoke-test.js",
+     "exit": 1,
+     "fails": [
+      {
+       "check": "✗ compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다",
+       "detail": "전역 바인딩"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증",
+       "detail": "window.openAddAttachmentModal 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증",
+       "detail": "openCustomerInquiryModal 함수 window 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증",
+       "detail": "getKSTDateKey 전역 바인딩"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증",
+       "detail": "formatSchedulePillHtml window 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증",
+       "detail": "window.showToast = toast 전역 별칭 선언"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증",
+       "detail": "openAvatarGreetingPopup 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증",
+       "detail": "openItemReportModal 함수가 전역에 노출되어야 함"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증",
+       "detail": "openLockScreenHubModal 전역 노출"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·Nms 즉각 미리보기) 무결성 검증",
+       "detail": "syncLockScreenLiveCard 전역 노출"
+      },
+      {
+       "check": "✗ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증",
+       "detail": "window.promptNewGoal 전역 배선 완료"
+      },
+      {
+       "check": "✗ [#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성",
+       "detail": "window.instantShareCheckinToFeed 노출 누락"
+      },
+      {
+       "check": "✗ [#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성",
+       "detail": "window.openMicPermissionGuideModal 노출 누락"
+      },
+      {
+       "check": "✗ [#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성",
+       "detail": "openIosPwaInstallGuideModal 전역 노출 확인"
+      },
+      {
+       "check": "✗ [#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성",
+       "detail": "toggleAdvancedSettings 전역 노출 확인"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지",
+       "detail": "computeGoalStatusHash 노출 확인"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증",
+       "detail": "renderTeamGoalsEmptyGuideHtml window 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증",
+       "detail": "renderStopwatchWidgetHtml window 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증",
+       "detail": "getEffectiveStandardDateKey 전역 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증",
+       "detail": "isGoogleCalendarConnected 전역 노출 검증"
+      },
+      {
+       "check": "✗ compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증",
+       "detail": "window.renderInlineAttachmentChips 바인딩"
+      },
+      {
+       "check": "✗ TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증",
+       "detail": "index.html window.collapseAllSettingsSections 노출"
+      },
+      {
+       "check": "✗ TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증",
+       "detail": "index.html window.toggleFeedPostPreview 노출"
+      },
+      {
+       "check": "✗ TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증",
+       "detail": "index.html window.collapseAllTeamGoalAccordions 노출"
+      },
+      {
+       "check": "✗ TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증",
+       "detail": "index.html window.openGoalTemplateEncyclopediaModal 노출"
+      }
+     ]
+    },
+    {
+     "script": "scripts/verify-integrity-gate.js",
+     "exit": 1,
+     "fails": [
+      {
+       "check": "✗ [FAIL] [검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사",
+       "detail": "사유: window.promptNewGoal 전역 배선 누락"
+      }
+     ]
+    },
+    {
+     "script": "scripts/verify-all-clicks.js",
+     "exit": 0,
+     "fails": []
+    },
+    {
+     "script": "scripts/test-shipyard-modular.js",
+     "exit": 1,
+     "fails": []
+    }
+   ]
+  }
+ },
+ "commands": [
+  {
+   "id": "git rev-parse HEAD",
+   "argv": [
+    "git",
+    "rev-parse",
+    "HEAD"
+   ],
+   "cwd": "C:\\Users\\HP\\AppData\\Local\\Temp\\es614-base",
+   "startedAt": "2026-10-10T22:52:45.439Z",
+   "endedAt": "2026-10-10T22:52:45.488Z",
+   "exitCode": 0,
+   "stdoutHead": "f616a9db13c032eee9d73bcceba8f6e63c4b7972\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "git rev-parse HEAD",
+   "argv": [
+    "git",
+    "rev-parse",
+    "HEAD"
+   ],
+   "cwd": "C:\\dev\\wt\\es614-own",
+   "startedAt": "2026-10-10T22:52:45.488Z",
+   "endedAt": "2026-10-10T22:52:45.537Z",
+   "exitCode": 0,
+   "stdoutHead": "d47f67443092cd10ce840b62fa9f9225030742e2\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "git diff --numstat",
+   "argv": [
+    "git",
+    "diff",
+    "--numstat",
+    "f616a9db13c032eee9d73bcceba8f6e63c4b7972",
+    "--"
+   ],
+   "cwd": "C:\\dev\\wt\\es614-own",
+   "startedAt": "2026-10-10T22:52:45.537Z",
+   "endedAt": "2026-10-10T22:52:45.655Z",
+   "exitCode": 0,
+   "stdoutHead": "5\t0\tdocs/architecture/CELL-REGISTRY-DESIGN.md\n4\t2\tdocs/architecture/cell-descriptions.json\n26\t0\tdocs/architecture/modules.json\n6\t0\tdocs/design/harness/module-split/gen-cell-provide.js\n1\t0\tdocs/rules/T",
+   "stderrHead": ""
+  },
+  {
+   "id": "git ls-files --others",
+   "argv": [
+    "git",
+    "ls-files",
+    "--others",
+    "--exclude-standard"
+   ],
+   "cwd": "C:\\dev\\wt\\es614-own",
+   "startedAt": "2026-10-10T22:52:45.656Z",
+   "endedAt": "2026-10-10T22:52:45.758Z",
+   "exitCode": 0,
+   "stdoutHead": "",
+   "stderrHead": ""
+  },
+  {
+   "id": "module-guard",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "scripts/module-guard.js",
+    "--quiet"
+   ],
+   "cwd": "C:\\dev\\wt\\es614-own",
+   "startedAt": "2026-10-10T22:52:46.794Z",
+   "endedAt": "2026-10-10T22:52:47.295Z",
+   "exitCode": 0,
+   "stdoutHead": "✓ 모듈 가드 통과\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "module-specs --check",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "scripts/module-specs.js",
+    "--check"
+   ],
+   "cwd": "C:\\dev\\wt\\es614-own",
+   "startedAt": "2026-10-10T22:52:47.295Z",
+   "endedAt": "2026-10-10T22:52:47.452Z",
+   "exitCode": 0,
+   "stdoutHead": "⚠ core/trash-bin: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ calendar/day-bg-picker: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ calendar/day-edit-hub: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다\n⚠ ",
+   "stderrHead": ""
+  },
+  {
+   "id": "gen-cell-provide (계획만)",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "docs/design/harness/module-split/gen-cell-provide.js",
+    "."
+   ],
+   "cwd": "C:\\dev\\wt\\es614-own",
+   "startedAt": "2026-10-10T22:52:47.452Z",
+   "endedAt": "2026-10-10T22:52:48.507Z",
+   "exitCode": 0,
+   "stdoutHead": "{\"write\":false,\"imports\":514,\"registeredNames\":438,\"scope\":354,\"window\":180,\"files\":167,\"skipped\":2,\"changed\":0,\"unchanged\":167,\"stale\":0}\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "git config core.autocrlf",
+   "argv": [
+    "git",
+    "config",
+    "core.autocrlf"
+   ],
+   "cwd": "C:\\dev\\wt\\es614-own",
+   "startedAt": "2026-10-10T22:52:48.922Z",
+   "endedAt": "2026-10-10T22:52:48.976Z",
+   "exitCode": 0,
+   "stdoutHead": "true\n",
+   "stderrHead": ""
+  }
+ ]
+}

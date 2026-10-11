@@ -170,6 +170,8 @@
     requestTodayMission: K.requestTodayMission
   }, { window: [
     'computeGoalStatusHash', 'localGoalStatusSummary'
+  ], windowOnly: [
+    'localGoalStatusSummary'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

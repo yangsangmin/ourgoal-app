@@ -150,6 +150,8 @@
     closeAvatarGreetingPopup: K.closeAvatarGreetingPopup, openAvatarGreetingPopup: K.openAvatarGreetingPopup, showLevelUpBanner: K.showLevelUpBanner
   }, { window: [
     'closeAvatarGreetingPopup', 'openAvatarGreetingPopup'
+  ], windowOnly: [
+    'closeAvatarGreetingPopup'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

@@ -80,6 +80,9 @@ OurgoalCellRegistry.report()        // 대조 결과: { mismatches:[{name, owner
   - 등록 기관은 세포가 `provide` 를 부르는 순간에 통로·window 에 쓰지 않는다. IIFE 바로 앞에서 한 번 적용한다.
   - 이유(조사): window 이름 199개 중 13개를 IIFE 밖 파일도 대입한다. `js/components.js`(2252행 태그, 세포들보다 뒤)가 그중 6개를 대입하고, 지금은 IIFE 가 나중에 다시 덮는다. 기관이 세포 로드 때 바로 대입하면 철거 뒤 승자가 뒤집힌다.
   - 방식: 마지막 바깥 태그와 **같은 줄**에 동기 `<script src>` 태그 하나를 붙여 그 파일이 commit 을 부른다(index.html 순증가 0 · 인라인 스크립트 추가 0 · 새 전역 0). commit 과 IIFE 사이에 다른 태그를 두지 않는다. 구체 파일 이름과 13개 이름의 재측정 표는 own 전환 PR(#TASK-ES-614)이 정한다.
+  - 구현(#TASK-ES-614): commit 을 부르는 파일은 `js/core/cell-registry-commit.js`(세포 `core/cell-registry-commit`, 전역 0)이고 태그는 IIFE 바로 앞 줄 끝에 붙였다. `OurgoalCellRegistry.commit()` 은 한 번만 돌고, 통로에는 세포(owner)마다 `expose(owner, …)` 로 다시 쓸 수 없는 값 속성을, window 에는 `opts.window` 이름을 대입한다. `mode(name)` 은 commit 이 실제로 내준 이름에 `own` 을 돌려준다.
+  - 구현(#TASK-ES-614): window 에만 나가던 이름(통로 getter 가 없던 84개)은 세포의 등록 블록이 `opts.windowOnly` 에 따로 적는다 — 기관이 통로에는 내주지 않아 통로 이름 목록이 전과 같다(초과 0).
+  - 겹침 이름 재측정(작업자 측정 `reports/TASK-ES-614/overlap-names.json`): window 199개 중 IIFE 밖 파일도 대입하는 이름 13개(등록된 것 7), commit 시점에 이미 다른 값이 들어 있던 이름 6개(`js/components.js` 가 대입한 5개 + 요소 id 로 잡히는 `toast`), commit 뒤에 대입하는 파일 0, commit 과 IIFE 사이 태그 0.
 - **own 전환과 철거는 PR 을 나눈다 [개정]**
   - 법정의 생성기 재실행 대조는 설정 `cells` 에 없는 `js/**`·`index.html` 변경을 「Disallowed source file changed」로 거부하고, `cells` 의 파일은 생성기 산출과 바이트 단위로 같아야 한다(`court/lib/preserve-source.js` 52~60행). unwire 모드는 세포 파일을 쓰지 않으므로 철거 PR 에서 `js/core/cell-registry.js` 는 기준과 같아야 한다.
   - 그래서 own 전환(등록된 모든 이름을 기관이 내준다)은 철거보다 먼저 별도 PR 로 병합하고, 철거 PR 은 `index.html` 만 바꾼다. 그 사이에는 같은 값의 이중 노출이 된다.
@@ -94,6 +97,7 @@ OurgoalCellRegistry.report()        // 대조 결과: { mismatches:[{name, owner
 - **이름 목록은 철거 전 커밋에서 뽑아 고정 입력으로 준다 [개정]**
   - 탐침은 window 이름을 현재 `index.html` 에서 뽑는다(`windowNamesOf`). 철거 PR 에서는 지운 이름이 목록에서 사라져 검사 대상에서 빠진다.
   - 철거 PR 의 대조는 철거 전 커밋에서 뽑은 통로·window 이름 목록을 입력으로 받아, 지운 이름도 통로와 window 에 그대로 있는지 본다.
+  - 구현(#TASK-ES-614): `--names-from <이전 결과.json>`(이름 목록 고정, 결과의 `namesFrom.scopeLost`·`scopeAdded`)과 `--fingerprints`(이름마다 통로 값·window 값의 지문 — 서로 다른 트리의 값을 이름 단위로 맞댄다).
 
 ### 3.3 상태 기관 `js/core/app-state.js` (가칭, B9) [개정]
 
@@ -107,35 +111,68 @@ OurgoalCellRegistry.report()        // 대조 결과: { mismatches:[{name, owner
 - 그래서 IIFE 안의 맨이름 참조(선언·자기 expose 속성·자기 window 복사 줄 제외)가 0 이 된 이름만 옮긴다. unwire 의 안전 검사와 같은 기준이고, 저장소가 둘이 되는 순간이 없다.
 - 조사: 지금 조건을 만족하는 노출 이름은 63개 중 55개다. 기다려야 하는 8개는 `sb` · `state` · `MOCK_GROUPS` · `pendingCapturePhoto` · `capturePhotoInput` · `capturePhotoPreview` · `USER_SESSION_CHANNEL` · `shareContent` 이고, 함수 이전·감싸기가 끝나면 풀린다.
 
-**기관 API(손으로 쓰는 새 기관, B1 과 같은 PR 종류)**
+**기관 API — 확정(#TASK-ES-634)**
+
+생성기가 내는 글자가 이 API 를 부른다. 기관 구현(`js/core/app-state.js` · 로드 줄)은 다음 PR 이며, 아래 계약을 그대로 따른다(손으로 쓰는 새 기관, B1 과 같은 PR 종류).
 
 ```js
-OurgoalAppState.define(name, value)      // 통로에 getter 만 달고 값을 넣는다
-OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는다
+window.OurgoalAppState.define(name, value)      // 읽기 전용 — 통로에 getter 만 단다
+window.OurgoalAppState.defineVar(name, value)   // 읽기·쓰기 — 통로에 get/set 짝을 단다
 ```
 
-- 접근자는 그 이름의 첫 define 때 한 번만 단다. 그래서 이전 PR 은 `index.html` 만 바뀐다(3.1 의 법정 제약과 같은 이유).
+| 항목 | 계약 |
+|---|---|
+| 전역 | `window.OurgoalAppState` 하나(새 전역 1개). `js/core/app-scope.js` 뒤, 인라인 IIFE 앞에서 동기 태그로 로드한다 |
+| 인자 | `name` 은 글자열(생성기가 따옴표로 낸 이름 그대로). `value` 는 호출 시점에 평가된 초기값이다. 복사하지 않고 그대로 보관한다(같은 객체) |
+| 접근자를 다는 시점 | 그 이름의 **첫 define/defineVar 호출 때 한 번**. `OurgoalAppScope.expose('core/app-state', …)` 로 통로(`OurgoalAppScope.scope`)에 단다. getter 는 보관한 현재 값을 돌려주고, `defineVar` 의 setter 는 보관 값을 바꾼다 |
+| 이미 있던 속성 | 그 이름에 속성이 이미 있어도(선언 줄보다 먼저 누가 `L.X = v` 로 만든 데이터 속성 등) 다시 정의해 덮는다. 예전에 선언 줄의 초기값 대입이 앞선 쓰기를 덮던 것과 같다 |
+| 같은 이름을 두 번 | 오류를 던진다(이름 하나에 선언 하나 — 생성기는 선언이 하나인 이름만 바꿔 쓴다) |
+| 반환값 | 쓰지 않는다(생성기가 낸 줄은 식 문이다) |
+| window | 기관은 window 에 상태 이름을 달지 않는다. 일회 복사 줄이 원래 자리에서 통로 값을 읽어 단다(R2) |
+| 읽기 전용 이름에 쓰기 | `define` 으로 단 이름에 `L.X = v` 를 하면 지금의 getter 전용 노출과 똑같이 동작한다(엄격 모드에서 TypeError). 기관이 따로 막거나 풀지 않는다 |
 
-**생성기 `"mode": "unstate"` — 지정한 이름에 대해 (줄 종류는 5절 X4·X5·X6)**
+- 견본: 단위 시험 `docs/design/harness/module-split/unstate-check-634.js` 의 `SAMPLE_ORGAN` 이 이 계약대로 만든 견본이고, 시험 V1 이 진짜 `js/core/app-scope.js` 위에서 바꿔 쓰기 전·후 꾸러미의 관찰값이 같음을 본다. 견본은 진짜 기관을 대신하지 않는다.
+- 접근자를 첫 define 때 달기 때문에 이전 PR 은 `index.html` 만 바뀐다(3.1 의 법정 제약과 같은 이유).
+- **구현(#TASK-ES-636)**: `js/core/app-state.js`(61줄, 세포 `core/app-state` · kind organ). 위 계약 그대로이고, 계약 밖에 점검용 읽기 함수 `names()`(맡은 이름 목록) · `kindOf(name)`(`'const'` · `'var'` · `null`)가 있다. 오류 코드는 `NAME_REQUIRED` · `ALREADY_DEFINED` · `SCOPE_MISSING`(통로가 없을 때)이다.
+  - 로드 줄: `index.html` 의 `js/core/app-scope.js` · `js/core/cell-registry.js` 태그와 **같은 줄** 뒤(순증가 0). 통로 뒤 · 등록 기관 commit 태그 앞 · 인라인 IIFE 앞이다. 로드될 때는 전역 하나만 달고 통로·window 에는 쓰지 않는다.
+  - 기관 단위 시험: `reports/TASK-ES-636/organ-unit.cjs`(12건 — 진짜 `app-scope.js` 위에서 계약 항목마다, 그리고 생성기가 바꿔 쓴 꾸러미의 전·후 등가).
+
+**생성기 `"mode": "unstate"` — 지정한 이름에 대해 (줄 종류는 5절 X4·X5·X6 · 구현 #TASK-ES-634, 설정 꼴은 5.5)**
 
 | 기호 | 줄 종류 | 동작 |
 |---|---|---|
 | S1 | 그 이름의 expose getter/setter 속성 줄 | 삭제(unwire 의 getter 삭제와 같은 꼴, 대상이 상태 이름) |
-| R1 | 선언문 `var X = <초기값>;` | `window.OurgoalAppState.define('X', <초기값 원문>);` 로 1:1 바꿔 쓴다. 지우기 직전 **마지막 노출 줄**에 `set X` 가 있었으면 `defineVar` |
+| R1 | 선언문 `var X = <초기값>;` | `window.OurgoalAppState.define('X', <초기값 원문>);` 로 1:1 바꿔 쓴다. 지우기 직전 **마지막 노출 문**에 `set X` 가 있었으면 `defineVar` |
 | R2 | 자기 일회 window 복사 줄 `window.X = X;`(조사: 7줄) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓴다. 자리와 시점 유지 |
 
-- 안전 정지 조건: 그 이름의 맨이름 참조가 하나라도 남음 · 선언문이 다른 문과 한 줄을 나눠 씀 · 선언자가 여럿 · 초기값에 자기 이름이 나옴.
+- 안전 정지 조건(구현): 그 이름의 맨이름 참조(읽기·대입)가 지운 줄·바꿔 쓴 글자 밖에 남음 · 초기값에 자기 이름 · 선언이 없거나 같은 이름의 선언이 여럿 · 선언자가 여럿 · `var` 가 아님 · 초기값이 없음 · 선언문이 다른 글자와 한 줄을 나눠 씀 · `var X =` 사이에 주석 · 통로에 노출되지 않은 이름 · getter/setter 본문이 `return X;`·`X = v;` 꼴이 아님 · window 복사 줄이 다른 글자와 한 줄을 나눠 쓰거나 쉼표 연쇄 안 · 선언이 첫 노출 문보다 앞이고 그 사이에 실행되는 문이 있음(아래 「노출 시점」) · 모르는 칸.
+- R2 가 받는 window 복사 줄은 unwire 의 window 대입 줄과 같은 꼴이다: 줄을 통째로 차지하는 `window.X = X;` · 그런 대입 하나만 담은 한 줄 if 블록 · 여러 줄 if 블록 안에서 줄을 통째로 차지하는 대입. 다른 이름으로 다는 대입(`window.Y = X`)은 바꿔 쓰지 않으며, 맨이름 참조로 남아 생성기가 멈춘다.
+- 노출 시점: 예전에는 통로 속성이 **노출 문** 자리에서 생겼고, 바뀐 뒤에는 **선언 줄** 자리에서 생긴다. 노출 문이 선언보다 앞이면 그 사이의 읽기는 전·후 모두 `undefined` 다(지금 옮길 수 있는 이름은 전부 이 경우다 — 재측정). 선언이 노출 문보다 앞이면 그 사이에 예전에는 속성이 없었고 바뀐 뒤에는 값이 읽힌다. 그 사이에 실행되는 최상위 문(호출 등)이 있으면 생성기가 멈춘다. 선언·함수 선언·노출·window 복사만 있으면 돈다.
 - 세포 파일은 쓰지 않는다. 설정의 `cells` 에는 변하지 않는 `js/core/app-state.js` 만 적는다.
 - 초기값 대입이 **원래 자리에 그대로** 남는다. 그래서 `sb` 초기값 직후의 `bindSupabaseAuthStateListener()` 같은 순서가 보존된다. 초기값을 기관 파일 로드 시점으로 당기지 않는다.
 - 초기화 전 읽기는 지금도 `undefined`(끌어올려진 var), 바뀐 뒤에도 `undefined`(속성 없음)다. 다른 점은 `'X' in scope` 뿐이며, 이것이 무해하다는 것은 **추측**이다(이전 PR 에서 측정한다).
 
 **L047 해소**
 - 기관이 이름마다 한 곳에서 한 번 get(+set)을 단다. `index.html` 의 그 이름 속성은 같은 PR 에서 모두 지워지므로 뒤에서 덮을 노출이 없다.
-- 쓰기 가능 여부는 사람이 아니라 생성기가 「마지막 노출 줄」 기준으로 정한다.
+- 쓰기 가능 여부는 사람이 아니라 생성기가 「마지막 노출 문」(그 이름의 속성이 든 expose 문 가운데 맨 뒤의 것) 기준으로 정한다. 앞쪽 노출에 setter 가 있었어도 마지막 노출이 getter 뿐이면 `define` 이다 — 지금 실제로 살아 있는 접근자와 같다.
 
 **대조**
 - 사전(정적): 이전 대상 이름마다 통로 접근자의 get/set 유무와 생성기가 고를 `define`/`defineVar` 가 같은지 본다.
 - PR(동적, 기준 대 작업): 게스트 부팅 뒤 대상 이름의 통로 값 요약(typeof·길이·JSON 가능한 값), 일회 window 복사 줄의 동일성(`window[n] === scope[n]`), 기존 시나리오, module-load 탐침, npm test.
+
+**재측정(#TASK-ES-634 — 기준 ba02c840, `reports/TASK-ES-634/unstate-plan.json`, 저장소 밖 사본에 모의 적용)**
+- 상태 이름 80개 중 통로에 노출된 것은 63개, 그중 **지금 옮길 수 있는 것은 50개**다(`define` 27 · `defineVar` 23).
+- 모의 적용 시 지워지는 줄 68(getter/setter 속성 50줄 + 속성이 모두 지워진 expose 문 9개의 머리·꼬리), 바뀌는 줄 52(선언 머리·꼬리와 window 복사 1줄), 쉼표를 떼는 줄 3. index.html 5406줄 → 5338줄(줄 수는 끝의 빈 줄 포함).
+- 멈춘 13개: 맨이름 참조가 남음 7(`sb` · `state` · `pendingCapturePhoto` · `capturePhotoInput` · `capturePhotoPreview` · `USER_SESSION_CHANNEL` · `MOCK_GROUPS`) / 같은 이름의 선언이 둘 2(`_subtabTplCat` · `_subtabTplQuery`) / 선언문이 다른 글자와 한 줄을 나눠 씀 3(`_subtabTplDomain` · `_subtabTplType` · `FEED_POSTS_CACHE`) / window 복사 줄이 다른 글자와 한 줄을 나눠 씀 1(`shareContent`).
+- 재지 않은 것: 모의 적용 사본의 앱 부팅·화면 동작(기관 파일이 아직 없다 — 측정불가) · 시험이 이 이름들의 글자를 단언하는지(이전 PR 이 npm test 로 잰다).
+
+**모의 이전(#TASK-ES-636 — 기준 5e2fc92c, 저장소 밖 사본에 기관 + 로드 줄 + 생성기 unstate 를 실제 적용. 수치는 `reports/TASK-ES-636/measurement.json` · `unstate-plan.json`)**
+- 통로에 노출된 상태 이름 63개 중 옮길 수 있는 50개를 전부 옮긴 사본에서 시험 전부를 돌리면 새로 깨지는 검사는 1건이다: `scripts/verify-integrity-gate.js` 의 「[FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증」(사유: 프롬프트 백과사전 아코디언 접힘 구조 누락). 붙잡힌 자리: `scripts/verify-integrity-gate.js` 954행(법정의 기준 시험지 `court/vault.json` baseTests 이자 헌법 별표 3 금고 목록의 파일) — 이름 `_promptEncyclopediaOpen`.
+- 그 이름을 뺀 **계획 49개**(`define` 27 · `defineVar` 22)를 옮긴 사본에서는 `npm test` 의 네 스크립트와 `tests/*.test.js` 의 실패 집합이 기준과 같다. 지워지는 줄 71 · 바뀌는 줄 51 · index.html 5259줄 → 5188줄(끝의 빈 줄 포함).
+- 상태 탐침(노출된 63개 이름): 기준 대 사본에서 통로 값 요약 · 접근자 종류 · window 복사의 동일성 · 쓰기 왕복이 같다(기준을 두 번 재도 달라지는 이름은 뺀다 — 측정 파일 `stateProbe.intrinsicVariance`). 시나리오 둘(게스트 여섯 탭 · 목표 하위 탭과 기간)은 기준 · 작업 · 사본 모두 통과한다.
+- 대조군: 같은 사본에서 기관 태그만 빼면 부팅에 실패한다.
+- 생성기가 멈춘 13개: 맨이름 참조가 남음 7 · 같은 이름의 선언이 둘 2 · 선언문이 다른 글자와 한 줄을 나눠 씀 3 · window 복사 줄이 다른 글자와 한 줄을 나눠 씀 1.
+- 재지 못한 것: 로그인 뒤 화면 · 게스트 화면에서 숨겨져 누를 수 없는 진입로(템플릿 백과 · 앱 평가 · 체크인 글자 수 칸)의 화면 동작 · 실기기.
 
 **줄 효과와 PR(조사, 추정)**
 - getter/setter 66줄 + 상태 전용 expose 껍데기가 지워진다. 1차(55개)는 약 57줄.
@@ -162,6 +199,12 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 
 - 구역 안에 있으면 정지: 함수 선언 · 키트 가져오기·손잡이 · expose 문 · 노출된 이름의 var 선언(3.3 이 먼저) · 구역 밖에서 참조되는 var · 최상위 `this`/`arguments`/`return` · 줄 중간에서 시작하거나 끝나는 구역.
 - 예외 동작: 단계마다 try/catch 를 새로 넣지 않는다. 지금은 예외 하나가 IIFE 나머지를 중단시키고, 구역 함수도 똑같이 중단된다.
+- **구현 기록(#TASK-ES-643 — 설정 꼴과 세부 규칙은 5.6)**
+  - 경계: 구획 주석 제목(`group`, 여러 묶음이면 `groupTo`)으로 묶음을 고르고, 묶음 안에 구역에 넣을 수 없는 문이 끼어 있으면 문 글자 닻(`from`·`to` — 글자가 그 문자열로 시작하는 최상위 문 하나)으로 앞뒤를 가른다. 줄 번호는 받지 않는다.
+  - 구획 주석의 행방: 구역이 묶음의 첫 문에서 시작하고 그 묶음의 문이 모두 구역에 들면 구획 주석도 따라간다. 문이 남으면 구획 주석은 index.html 에 남는다. 구역 안쪽에 든 뒤 묶음의 구획 주석은 그 묶음의 문이 다 들 때만 받는다(아니면 멈춘다 — 그 묶음에서 구역을 나눈다).
+  - M1e 의 범위: 첫 문의 앞 주석·빈 줄과 문 사이의 주석·빈 줄이 따라간다. 마지막 문 뒤의 주석·빈 줄은 남는다(sweep 의 몫).
+  - 정지 목록에 구현이 더한 것: let/const/class · 호출문·식 문·if·try·var 밖의 문 종류(for·while·switch·블록) · 구조 분해 var · 경계에 걸친 주석 · 머리 이음매 자리보다 앞의 구역 · 겹치는 구역 · 이미 있는 이름·세포 파일 · 저장소에 없는 키트 · 800줄 초과 · 설정의 모르는 칸.
+  - 돈 근처(`OurgoalTemplateCredit`)와 결심 대기(`OURGOAL_CONFIG`)가 든 문은 생성기가 멈춘다. 구역 감싸기는 IIFE 이름에 `L.` 접두를 붙이므로 「한 글자도 바꾸지 않고 자리만」(5절 끝 · 8.1 묶음 3) 한도 밖이다.
 
 **`"mode": "sweep"` (5절 X8)** — 문이 하나도 없는 구획의 주석·빈 줄만 지운다. 함수 이전(A 트랙) 생성기가 기대는 자리 표지·구획 주석·「1차 이음매」 주석은 건드리지 않는다.
 
@@ -222,13 +265,13 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 
 | 기호 | 줄 꼴 | 동작 | 모드 | 정지 조건 | 조사 줄 수 |
 |---|---|---|---|---|--:|
-| X1 | `_ui`·`_xp` 처럼 이름이 `_xxxKit` 꼴이 아닌 손잡이의 가져오기 줄 `var X = _k.X;` | 삭제 | unwire 확장 | U1 과 같다. 손잡이는 IIFE 최상위에서 `var _k = window.…` 로 선언된 것만 | 10 |
-| X2 | 키트 손잡이 줄 `var _k = window.X;` | 삭제 | finalize | 그 손잡이의 참조가 하나라도 남음 | 15 |
-| X3 | 다른 글자와 한 줄을 나눠 쓰는 window 대입(한 줄 if 블록의 일부, 주석·다른 문과 같은 줄) | 그 줄 안에서 해당 대입 글자만 삭제 | unwire 확장 | 오른쪽이 이름이 아님 · 지운 뒤 남는 글자가 온전한 문이 아님 | 4 |
-| X4 | 상태 이름의 expose getter/setter 속성 줄(3.3 S1) | 삭제 | unstate | U2 와 같다 + 그 이름의 맨이름 참조가 남음 | 66 |
-| X5 | 상태 선언문 `var X = 초기값;`(3.3 R1) | `window.OurgoalAppState.define('X', 초기값 원문);` 또는 `defineVar` 로 1:1 바꿔 쓰기. 초기값 글자와 자리는 그대로 | unstate | 맨이름 참조가 남음 · 다른 문과 한 줄 · 선언자 여럿 · 초기값에 자기 이름 | 최대 63문 |
-| X6 | 상태의 일회 window 복사 줄 `window.X = X;`(3.3 R2) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓰기 | unstate | 같은 줄에 다른 글자 | 7 |
-| X7 | 연속 구역 감싸기(3.4 M1a~M1e): 로드 중 호출문·if·try·식 문, 바꿔 쓴 define 줄, 노출 안 된 var 의 지역화, 남은 `window.X = X` 줄, 구역 안 주석·빈 줄 | 세포 함수 본문으로 옮기고 원래 자리에 부르는 한 줄 + 머리 가져오기 한 줄 | region | 3.4 의 정지 목록 | 로드 중 문 360줄 중 남는 것 + var 230줄 |
+| X1 | `_ui`·`_xp` 처럼 이름이 `_xxxKit` 꼴이 아닌 손잡이의 가져오기 줄 `var X = _k.X;` | 삭제 | unwire 확장(구현 #TASK-ES-619 — `kitVar` 검사) | U1 과 같다. 손잡이는 IIFE 최상위에서 `var _k = window.…` 로 선언된 것만 | 10 |
+| X2 | 키트 손잡이 줄 `var _k = window.X;` | 삭제 | unwire 선택 플래그 `dropKitVar`(구현 #TASK-ES-619) · finalize | 그 손잡이의 참조가 하나라도 남음 | 15 |
+| X3 | 다른 글자와 한 줄을 나눠 쓰는 window 대입(한 줄 if 블록의 일부, 주석·다른 문과 같은 줄) | 그 줄 안에서 해당 대입 글자만 삭제 | unwire 선택 플래그 `sharedLine`(구현 #TASK-ES-619) | 오른쪽이 이름이 아님 · 지운 뒤 남는 글자가 온전한 문이 아님 | 4 |
+| X4 | 상태 이름의 expose getter/setter 속성 줄(3.3 S1) | 삭제 | unstate(구현 #TASK-ES-634) | U2 와 같다 + 그 이름의 맨이름 참조가 남음 | 66 |
+| X5 | 상태 선언문 `var X = 초기값;`(3.3 R1) | `window.OurgoalAppState.define('X', 초기값 원문);` 또는 `defineVar` 로 1:1 바꿔 쓰기. 초기값 글자와 자리는 그대로 | unstate(구현 #TASK-ES-634) | 맨이름 참조가 남음 · 다른 문과 한 줄 · 선언자 여럿 · 초기값에 자기 이름 | 최대 63문 |
+| X6 | 상태의 일회 window 복사 줄 `window.X = X;`(3.3 R2) | 오른쪽만 `window.OurgoalAppScope.scope.X` 로 바꿔 쓰기 | unstate(구현 #TASK-ES-634) | 같은 줄에 다른 글자 · 쉼표 연쇄 | 7 |
+| X7 | 연속 구역 감싸기(3.4 M1a~M1e): 로드 중 호출문·if·try·식 문, 바꿔 쓴 define 줄, 노출 안 된 var 의 지역화, 남은 `window.X = X` 줄, 구역 안 주석·빈 줄 | 세포 함수 본문으로 옮기고 원래 자리에 부르는 한 줄 + 머리 가져오기 한 줄 | region(구현 #TASK-ES-643 — 5.6) | 3.4 의 정지 목록 | 로드 중 문 360줄 중 남는 것 + var 230줄 |
 | X8 | 문이 없는 구획의 주석·빈 줄 | 삭제 | sweep | 구획에 문이 하나라도 있음 · 함수 이전 생성기가 기대는 자리 표지·구획 주석·「1차 이음매」 주석 | 최대 743(주석 514 + 빈 줄 229, 1.1) |
 | X9 | IIFE 껍데기 3줄 + `<script>`·`</script>` 2줄, 그때 남은 주석·빈 줄·구역 함수 가져오기·호출 줄. 부팅 태그 한 줄 붙임과 `js/app/boot.js` 생성 | 삭제 + 생성 | finalize | IIFE 최상위에 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 하나라도 있음 | 5 + 잔여 |
 
@@ -244,6 +287,116 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 | `saveGoogleToken` 의 `arguments[1]` | 헌법 CELL_SPLIT 5호(옮긴 함수의 최상위 `this`·`arguments` 0) | 8절 묶음 5 — 헌법 개정 절차 |
 | 배선 글자를 단언하는 시험(조사: `window.X = X;` 문자열 25종 중 22종이 IIFE 에만 있다. 정규식 단언은 못 세어 하한) | 시험의 기대값·단언을 바꾸는 일은 「금고 변경 승인」 문구가 필요하다(L008) | 8절 묶음 2 — 해당 이름은 남겨 두고 진행 |
 
+### 5.4 구현된 unwire 설정 꼴 — 여러 실행 · X1 · X2 · X3 (#TASK-ES-619)
+
+`gen-inline-hard.js` 의 `mode: "unwire"` 경로에만 더했다. 기존 옮기기 경로와 단일 객체 설정의 출력은 바이트 단위로 그대로다(단위 시험으로 확인 — 아래).
+
+```json
+{ "task": "TASK-ES-6xx", "slot": "HO", "mode": "unwire",
+  "cells": [{ "file": "js/core/cell-registry.js" }],
+  "unwire": [
+    { "kitVar": "_uiKit", "names": ["…"] },
+    { "kitVar": "_uiKit", "imports": false, "sharedLine": true, "names": ["…"] },
+    { "kitVar": "_ui", "names": ["…"], "dropKitVar": true }
+  ] }
+```
+
+- **여러 실행**: `unwire` 는 객체 하나(5.1 의 꼴) 또는 실행의 배열이다. 배열이면 실행을 차례로 적용하고, 앞 실행이 지운 결과를 다시 파싱해 다음 실행이 돈다. 하나라도 멈추면 `index.html` 을 쓰지 않는다. 안전 검사(잔존 참조 정지 등)는 실행마다 그대로다.
+  - 이것은 새 줄 종류가 아니다. 같은 줄 종류를 한 PR 에서 여러 키트·플래그로 돌릴 뿐이다(법정은 PR 하나에 생성기를 한 번만 돌린다).
+  - 법정은 **기준 커밋의** 생성기를 돌리므로, 배열 꼴과 아래 플래그는 이 구현이 병합된 뒤의 기준에서만 쓸 수 있다.
+- **실행의 칸**: `kitVar`(필수) · `names` · `imports` · `exposeGetters` · `windowAssign`(기본 켜짐, `false` 로 끈다) · `sharedLine` · `dropKitVar`(기본 꺼짐, `true` 로 켠다) · `label`(읽는 사람용, 동작 없음). **그 밖의 칸이 있으면 멈춘다** — 플래그 오타로 목록 밖 동작이 켜지지 않는다.
+- **X1 `kitVar`**: `_xxxKit` 꼴이 아니어도 된다(`_ui`·`_xp`). 대신 IIFE 최상위에서 `var <kitVar> = window.…;` 로 한 번(선언자 하나) 선언된 손잡이여야 한다. 선언이 없거나, 초기값이 `window` 로 시작하는 멤버식이 아니거나, 선언자가 여럿이면 멈춘다. 이 검사는 `_xxxKit` 꼴 이름에도 똑같이 건다.
+- **X3 `sharedLine: true`**: 다른 글자와 한 줄을 나눠 쓰는 window 대입을 그 줄 안에서 그 대입 글자만 지운다. 받는 꼴은 셋이다.
+  1. 주석이나 다른 문과 같은 줄에 있는 최상위 `window.X = X;`
+  2. 한 줄 if 블록 안의 여러 대입 가운데 `names` 에 있는 것(전부 대상이면 블록째 지운다)
+  3. 주석이나 다른 문과 같은 줄에 있는 한 줄 if 블록(대입 하나)
+  - 빈칸 규칙: 지운 글자 바로 뒤의 빈칸을 함께 지운다. 그 뒤에 아무것도 없으면(줄 끝이었으면) 앞쪽 빈칸을 지운다. 줄에 글자가 남지 않으면 줄을 지운다.
+  - 플래그가 있어도 멈추는 것: 쉼표 연쇄 대입 · 오른쪽이 이름이 아닌 대입(정의문) · 여러 줄 if 블록 안의 나눠 쓴 줄 · 여러 줄에 걸친 문.
+  - 플래그가 없으면 이 꼴들은 예전처럼 멈춘다.
+- **X2 `dropKitVar: true`**: 그 실행의 삭제를 반영한 뒤 손잡이의 맨이름 참조(읽기·대입)가 0 이면 손잡이 줄 `var <kitVar> = window.…;` 을 지운다. 참조가 하나라도 남거나 손잡이 선언이 다른 글자와 한 줄을 나눠 쓰면 멈춘다. 이 플래그가 있을 때만 `names` 가 비어도 된다(손잡이 줄만 지우는 실행).
+- **사후 대조(모든 실행)**: 결과를 다시 파싱해 토큰열이 「이전 토큰열 − 지우기로 한 줄의 토큰 − 줄 안에서 지운 글자의 토큰 − 뗀 쉼표」와 같은지, 남은 주석이 그대로인지 본다. 다르면 쓰지 않고 멈춘다. 닫힌 목록 밖의 글자가 바뀌지 않았음을 생성기가 스스로 검사하는 장치다.
+- **단위 시험**: `docs/design/harness/module-split/unwire-check-ext-619.js`(16건 — B1 시험 8건 재실행 · 단일 객체 설정의 기준 생성기 대비 바이트 동일 · 여러 실행 · X1 · X3 · X2 · 모르는 칸 · 실제 `index.html` 사본에서 `reports/TASK-ES-614/unwire-plan.json` 16실행을 기준 생성기로 차례로 돌린 결과와 배열 한 번의 결과가 바이트 동일). 결과는 `reports/TASK-ES-619/unwire-ext-unit.json`(작업자 측정).
+- **이 구현에 없는 것**: `region` · `sweep` · `finalize` 모드(X7~X9). 각각 별도 PR 로 사양을 공개하고 단위 시험을 붙인다. `unstate`(X4~X6)는 #TASK-ES-634 가 더했다(5.5).
+
+### 5.5 구현된 unstate 설정 꼴 — X4 · X5 · X6 (#TASK-ES-634)
+
+`gen-inline-hard.js` 에 `mode: "unstate"` 경로를 더했다. 옮기기 경로와 unwire 경로의 글자는 한 줄도 바뀌지 않았다(생성기 diff 는 한 자리에 끼워 넣은 줄뿐 — 측정 `reports/TASK-ES-634/measurement.json`).
+
+```json
+{ "task": "TASK-ES-6xx", "slot": "HO", "mode": "unstate",
+  "cells": [{ "file": "js/core/app-state.js" }],
+  "unstate": { "names": ["toastTimer", "…"] } }
+```
+
+여러 단계(법정은 PR 하나에 생성기를 한 번만 돌린다):
+
+```json
+  "unstate": [
+    { "names": ["…"] },
+    { "unwire": { "kitVar": "_uiKit", "names": ["…"] } },
+    { "names": ["…"] }
+  ]
+```
+
+- **실행의 칸**: `names`(필수) · `label`(읽는 사람용, 동작 없음). 그 밖의 칸이 있으면 멈춘다.
+- **여러 실행**: `unstate` 는 객체 하나 또는 단계의 배열이다. 배열이면 차례로 적용하고 앞 단계의 결과를 다시 파싱해 다음 단계가 돈다. 하나라도 멈추면 `index.html` 을 쓰지 않는다.
+  - 배열의 단계가 `{ "unwire": { … } }`(칸 하나)이면 그 단계는 5.4 의 unwire 실행 하나로 돈다. 생성기의 unwire 함수를 그대로 부르므로 결과는 `mode:"unwire"` 로 따로 돌린 것과 같다(단위 시험 M1).
+  - 단일 객체 꼴에서는 `unwire` 칸을 받지 않는다.
+- **무엇을 하는가**: `names` 의 이름마다 ① expose getter/setter 속성 줄을 지우고(X4) ② 선언문의 `var X =` 를 `window.OurgoalAppState.define('X',` 또는 `defineVar('X',` 로, 끝의 `;` 를 `);` 로 바꿔 쓰고(X5) ③ 자기 일회 window 복사 줄의 오른쪽 이름을 `window.OurgoalAppScope.scope.X` 로 바꿔 쓴다(X6). 초기값의 글자는 괄호·주석·빈칸까지 그대로 남는다.
+- **define / defineVar**: 그 이름의 마지막 노출 문에 `set X` 가 있었으면 `defineVar`, 없으면 `define`. 설정으로 고를 수 없다.
+- **정지 조건**: 3.3 의 「안전 정지 조건(구현)」 전부.
+- **사후 대조(모든 실행)**: 결과를 다시 파싱해 토큰열이 「이전 토큰열 − 지운 줄의 토큰 − 뗀 쉼표, 그리고 바꿔 쓴 자리는 정해진 토큰열」과 같은지, 남은 주석이 그대로인지 본다. 다르면 쓰지 않고 멈춘다.
+- **`cells`**: 법정 대조가 `cells` 의 파일을 요구하므로 변하지 않는 `js/core/app-state.js` 를 적는다(unwire 단계를 섞으면 `js/core/cell-registry.js` 도). 그래서 이 모드를 쓰는 PR 은 기관 파일이 병합된 뒤에만 낼 수 있다.
+- **단위 시험**: `docs/design/harness/module-split/unstate-check-634.js`(34건 — unwire 확장 시험 16건과 그 안의 B1 시험 8건 재실행 · unwire 설정의 기준 생성기 대비 바이트 동일 · S1·R1·R2 · define/defineVar 선택 · 정지 조건과 경계 22건 · 여러 실행 · 모의 기관 등가 · 실제 `index.html` 사본 모의 적용과 줄 단위 감사). 결과는 `reports/TASK-ES-634/unstate-unit.json`, 계획은 `reports/TASK-ES-634/unstate-plan.json`(작업자 측정).
+- **이 구현에 없는 것**: 상태 기관 파일과 로드 줄 · 실제 상태 이전 · `region` · `sweep` · `finalize`.
+
+### 5.6 구현된 region 설정 꼴 — X7 (#TASK-ES-643)
+
+`gen-inline-hard.js` 에 `mode: "region"` 경로를 더했다. 옮기기 · unwire · unstate 경로의 글자는 한 줄도 바뀌지 않았다(생성기 diff 는 한 자리에 끼워 넣은 350줄뿐 — 측정 `reports/TASK-ES-643/measurement.json`).
+
+```json
+{ "task": "TASK-ES-6xx", "slot": "HO", "mode": "region", "label": "…",
+  "cells": [
+    { "key": "bootLanding", "file": "js/tabs/settings/boot-landing.js",
+      "kit": "OurgoalSettingsKit", "kitVar": "_settingsKit",
+      "beforeTag": "(그 탭 index.js 의 script 태그 글자)",
+      "title": "…", "desc": ["…"],
+      "regions": [
+        { "name": "bootLandingLinks", "group": "(구획 주석 제목)" },
+        { "name": "bootAuthTabs", "group": "(구획 주석 제목)", "groupTo": "(뒤 묶음의 제목)",
+          "from": "(첫 문의 글자 앞머리)", "to": "(마지막 문의 글자 앞머리)" }
+      ] }
+  ] }
+```
+
+**옮기기 경로의 감싸기와의 관계 — 새 경로다(옮기기 경로의 코드를 부르지 않는다)**
+
+- 옮기기 경로는 파일 최상위에 펼쳐 쓴 코드라 그 일부를 부르려면 기존 줄을 함수로 묶어야 한다. 기존 줄을 건드리면 「기존 설정 재생성 바이트 무변화」를 줄 단위로 보일 수 없다. 그래서 region 은 unstate 와 같은 방식으로 한 자리에 끼워 넣은 독립 함수(`runRegion`)다.
+- 대신 **산출 꼴을 감싸기와 같게** 맞췄다. 같은 것: 세포 파일 틀(머리 주석 · `L` 통로 한 줄 · `var K = global.<키트> = global.<키트> || {};` · 생성기 표지 `/* ---- 이전 전 index.html a~b줄(#작업 생성기 표지) ---- */` · `K.<이름> = <이름>;` · `module.exports`), 원래 자리의 부르는 한 줄, 머리 이음매 자리(`slot`)의 가져오기 한 줄, 스코프 분석으로 뽑는 통로 getter/setter, script 태그를 `beforeTag`/`afterTag` 와 같은 줄에 넣는 것, 덮어쓰는 키트(유형 M)는 `afterTag` 만.
+
+| | 옮기기 경로의 감싸기 | region |
+|---|---|---|
+| 단위 | 4줄 이상 문 **하나** → 함수 하나 | 연달아 있는 문 **여럿**(3줄 이하 포함) → 함수 하나 |
+| 끌어올려지는 var | 있으면 감싸지 않는다(원래 자리) | 노출 안 됐고 모든 참조가 구역 안이면 그 함수의 지역 변수(M1c). 아니면 멈춘다 |
+| window 노출 줄 | 원래 자리에 둔다 | 구역에 들면 함께 간다. `window.X = X;` 는 `window.X = L.X;`(M1d) — 구역 함수가 원래 자리에서 불리므로 시점은 그대로 |
+| 못 옮기는 문 | 원래 자리에 두고 계속한다(keep) | 구역 안에 있으면 멈춘다. 구역을 그 문 앞뒤로 나눠 적는다 |
+| 세포 파일 | 새로 쓴다 | 새로 쓴다. **이미 있는 파일이면 멈춘다** · 800줄을 넘으면 멈춘다 |
+| 키트 | 없으면 만들어진다 | 저장소 `js/**` 어디에도 없는 키트면 멈춘다(새 전역 0) |
+| 부르는 줄의 글자 | `이름(); /* [#작업] 로드 중 문(앞 주석 포함) → 파일 의 이름 로 옮김 — 원래 자리에서 부른다 */` | `이름(); /* [#작업] 로드 중 구역(주석·빈 줄 포함 N줄) → 파일 의 이름 로 옮김 — 원래 자리에서 부른다 */` |
+
+- **칸**: 맨 위 `task` · `slot` · `mode` · `label` · `cells`. 세포 `key` · `file` · `kit` · `kitVar` · `beforeTag` 또는 `afterTag`(꼭 하나) · `title` · `desc` · `regions`. 구역 `name` · `group` · `groupTo` · `from` · `to` · `headerPick`(`"nonEmpty"` — 같은 제목의 구획 주석이 여럿일 때 문이 든 것 하나). **그 밖의 칸이 있으면 멈춘다**(옮기기 경로의 `take` 포함).
+- **한 세포에 구역 여럿**: 한 세포 파일에 구역 함수 여러 개를 줄 순서대로 놓을 수 있고, 한 설정에 세포 여러 개를 적을 수 있다. 하나라도 멈추면 아무것도 쓰지 않는다.
+- **바꾸는 글자**: IIFE 스코프 이름 앞의 `L.` 뿐이다(줄임 속성 `{a}` 는 `{a: L.a}`). 지역 변수가 된 이름 · 전역 이름 · 속성 이름은 그대로다. 문 순서와 그 밖의 글자는 그대로다.
+- **통로 getter 가 늘어난다**: 구역 본문이 읽는 IIFE 이름 가운데 통로에 아직 없는 것(주로 가져오기 이름 `bind…` 와 등록 기관이 이미 내주는 이름)은 머리에 getter 줄이 생긴다(대입하면 setter). 감싸기와 같은 동작이다. 등록된 이름의 것은 뒤에 unwire(U1·U2)로 지우고, 등록되지 않은 가져오기 이름의 것은 그 세포가 등록 기관에 등록한 뒤 지운다. region 실행에 unwire 단계를 묶어 한 번에 돌리는 꼴은 이 구현에 없다.
+- **등록 기관과의 관계**: 구역 함수는 등록 블록(`OurgoalCellRegistry.provide`)을 만들지 않는다. 기존 감싸기와 같이 IIFE 머리의 가져오기 한 줄 + 원래 자리의 호출 한 줄로 불린다(순서가 소스 순서로 고정된다). finalize 가 그 호출들을 `js/app/boot.js` 로 옮긴다.
+- **정지 조건(전부 — 멈추면 index.html 도 세포 파일도 쓰지 않는다)**: 구역 안의 함수 선언 · 키트 손잡이 · 키트 가져오기 · expose 문 · 통로에 노출된 이름의 var 선언 · 구역 밖에서 읽거나 쓰는 var(구역 밖 함수가 닫아 쓰는 것 포함) · let/const · 닫힌 목록 밖의 문 종류 · 구조 분해 var · 최상위 `this`/`arguments`/`return` · 줄 중간에서 시작하거나 끝나는 구역 · 경계에 걸친 주석 · 머리 이음매 자리보다 앞의 구역 · 겹치는 구역 · 묶음 중간에서 끝나는데 그 묶음의 구획 주석이 구역에 든 경우 · 제목·닻이 하나로 정해지지 않음 · 이미 있는 구역 함수 이름(IIFE 이름 · IIFE 가 쓰는 전역 이름) · 이미 있는 세포 파일 · 저장소에 없는 키트 · 다른 키트에 쓰인 키트 변수 · 자리 표지 없음 · 태그 없음 · 덮어쓰는 키트에 `beforeTag` · 800줄 초과 · `const` 대입 · 돈 근처·결심 대기 대상(3.4) · 모르는 칸.
+- **사후 대조**: 쓰기 전에 ① 구역 함수 본문을 다시 파싱해 토큰열에서 `L.` 접두(와 줄임 속성 확장)만 걷어 낸 것이 이전 전 구역의 토큰열과 같고 주석이 그대로인지 ② 세포 파일이 파싱되는지 ③ 새 index.html 의 IIFE 토큰열이 「이전 토큰열 − 구역 토큰 + 부르는 줄 토큰 + 머리 줄 토큰」과 같은지 본다. 다르면 쓰지 않고 멈춘다.
+- **생성기가 모르는 것 — 시험·가드가 붙잡는 글자**: 구역에 든 문이나 그 앞 주석의 글자를 시험이 붙잡고 있어도 생성기는 모른다. 구역 PR 은 모의 적용 사본에서 시험 전부를 돌려 깨지는 것을 찾고, 그 문을 계획에서 뺀다(`reports/TASK-ES-643/region-pins.json` — 지금 두 건: 자리 표지 주석의 `filterHarmfulWords` 글자, 모듈 가드가 인라인 소유로 세는 `window.SHARED_GROUPS_LOADED = false` 줄).
+- **단위 시험**: `docs/design/harness/module-split/region-check-643.js`(67건 — 상태 이전 시험 34건과 그 안의 unwire 확장 16건 · B1 8건 재실행 · 생성기 diff 가 끼워 넣기뿐 · #911 감싸기 재생성 바이트 동일 · unstate·unwire 설정의 기준 생성기 대비 동일 · M1a~M1e · 닻 · 여러 묶음 · 세포 둘 · 줄 끝 · 진짜 통로·상태 기관 위의 vm 실행 등가 · 정지 조건 46건 · 실제 `index.html` 사본 모의 적용과 줄 단위 감사). 결과는 `reports/TASK-ES-643/region-unit.json`(작업자 측정).
+- **구역 계획과 모의 적용(작업자 측정, e5f34779 기준 — #913 감싸기 이전 2차 뒤. 수치의 출처는 `reports/TASK-ES-643/region-plan.json` · `region-mock.json`)**: 구역 19개(문 174개 · 옮기는 줄 554 · 지역 변수가 되는 var 11 · 새로 생기는 통로 getter 99). 저장소 밖 사본에 적용하면 index.html 4885 → 4471줄, `inlineScriptLines` 2615 → 2201. 그 사본에서 게스트 시나리오 5개 통과 · 통로에서 사라진 이름 0 · 통로·window 값 지문 차이 0 · 상태 탐침 차이 0 · 모듈 로드 새 회귀 0 · npm test 와 시험 하나씩의 결과가 기준과 같다. 구역 함수 이름과 세포 파일은 계획기의 가칭이고, 실제 PR 은 구역마다 이름·세포·키트를 정해 설정을 다시 쓴다.
+  - 구역에 `window.X = function(){…}` 정의문이 들면 그 함수 글자에 `L.` 접두가 붙어 window 값 지문이 달라진다(옮긴 함수와 같은 종류의 차이). #913 앞의 main(453ba6b7)에서 재었을 때 두 이름이 그랬다. 지금 계획에는 그런 문이 없다.
+- **이 구현에 없는 것**: 실제 구역 이전(index.html 변경) · `sweep` · `finalize`(X8·X9) · 호출 순서의 동적 대조 탐침(3.4 의 설계안, 미검증).
+
 ## 6. 순서와 범위
 
 ### 6.1 지금까지 (병합된 것)
@@ -253,6 +406,7 @@ OurgoalAppState.defineVar(name, value)   // get/set 짝을 달고 값을 넣는�
 | **B0** | 이 문서 | #862 |
 | B1 | 등록 기관(compare 모드) + 대조 탐침 + 생성기 unwire 모드 | #883 |
 | B2 | 세포마다 `provide()` 등록 줄 추가. 등록 438 · 불일치 0(작업자 측정) | #885 |
+| B3a | 등록 기관 own 적용(IIFE 직전 commit) + 전 키트 모의 철거 측정. 철거 계획은 `reports/TASK-ES-614/unwire-plan.json`(작업자 측정) | (#TASK-ES-614 PR) |
 
 ### 6.2 앞으로 [개정] — 조사 권장 순서
 

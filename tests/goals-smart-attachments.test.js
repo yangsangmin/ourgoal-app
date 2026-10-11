@@ -18,7 +18,7 @@ assert.ok(
   'renderInlineAttachmentChips 함수가 정의되어 있어야 합니다.'
 );
 assert.ok(
-  indexHtml.includes('window.renderInlineAttachmentChips = renderInlineAttachmentChips;'),
+  require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
   'window.renderInlineAttachmentChips가 전역에 바인딩되어 있어야 합니다.'
 );
 

@@ -85,7 +85,7 @@ console.log('4. components.js 액션 핸들러 및 원자적 트랜잭션 연동
 const svgSrc = require('./helpers/inline-bundle').cutFunctionWithExposure(fs.readFileSync(htmlPath, 'utf8'), 'function renderMultiMetricSvg(', 'window.renderMultiMetricSvg = renderMultiMetricSvg;'); /* #TASK-ES-519 함수 잘라 읽기 — 원래 자리면 원문 그대로, 세포로 옮겨 가면 함수는 합본(세포)에서 괄호 짝으로 자르고 노출 줄은 index.html 원래 자리에서 찾아 잇는다. 단언·기대값 그대로 */
 const startSvgIdx = svgSrc.indexOf('function renderMultiMetricSvg(');
 assert.ok(startSvgIdx !== -1, 'renderMultiMetricSvg 시작점 발견');
-const endSvgIdx = svgSrc.indexOf('window.renderMultiMetricSvg = renderMultiMetricSvg;', startSvgIdx);
+const endSvgIdx = require('./helpers/wiring-exposed').exposureEnd(svgSrc, 'window.renderMultiMetricSvg = renderMultiMetricSvg;', startSvgIdx); /* #TASK-ES-620 끝 지점: 옛 노출 줄 자리, 없으면 등록됐을 때만 글자 끝(tests/helpers/wiring-exposed.js) — 아래 단언 그대로 */
 assert.ok(endSvgIdx !== -1, 'renderMultiMetricSvg 종료점 발견');
 const svgFnCode = svgSrc.substring(startSvgIdx, endSvgIdx);
 

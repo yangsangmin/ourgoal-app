@@ -1,0 +1,57 @@
+{
+  "id": "s1-checkin-mic-guide",
+  "title": "게스트로 홈의 체크인 입력칸 옆 마이크 단추를 누르면 마이크 권한 안내 창이 뜬다 (체크인 입력 연결 startVoiceCheckin 이전 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#micBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".mic-perm-backdrop"
+    },
+    {
+      "do": "click",
+      "selector": "#micBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": ".mic-perm-backdrop"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

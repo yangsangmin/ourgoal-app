@@ -118,6 +118,8 @@
     checkGuestBackupNudge: K.checkGuestBackupNudge, openGuestBackupNudgeModal: K.openGuestBackupNudgeModal
   }, { window: [
     'checkGuestBackupNudge', 'openGuestBackupNudgeModal'
+  ], windowOnly: [
+    'openGuestBackupNudgeModal'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

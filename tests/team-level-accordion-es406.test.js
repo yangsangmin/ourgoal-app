@@ -41,7 +41,7 @@ function fakeEl(attrs, display) {
 function loadCollapseAll(doc, win, state) {
   const fnSrc = require('./helpers/inline-bundle').cutFunctionWithExposure(indexHtml, '  function collapseAllTeamGoalAccordions() {', '  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;'); // #TASK-ES-519 원래 자리면 원문 그대로, 세포로 옮겨 가면 함수는 합본(세포)에서 괄호 짝으로 자르고 노출 줄은 index.html 원래 자리에서 찾아 잇는다(단언 그대로)
   const start = fnSrc.indexOf('  function collapseAllTeamGoalAccordions() {');
-  const end = fnSrc.indexOf('  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;');
+  const end = require('./helpers/wiring-exposed').exposureEnd(fnSrc, '  window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;', 0); /* #TASK-ES-620 끝 지점: 옛 노출 줄 자리, 없으면 등록됐을 때만 글자 끝(tests/helpers/wiring-exposed.js) — 아래 단언 그대로 */
   assert.ok(start > 0 && end > start, 'index.html 에 collapseAllTeamGoalAccordions 원문이 있다');
   const src = fnSrc.slice(start, end);
   return new Function('document', 'window', 'state', 'console', src + '\nreturn collapseAllTeamGoalAccordions;')(doc, win, state, console);

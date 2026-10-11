@@ -9,6 +9,10 @@
 // 법정 밖 도구다. 법정의 브라우저·정적 서버·호스트 이름 라이브러리(court/lib/*)는 읽기만 한다(court/** 변경 0).
 // 사용: NODE_PATH=C:/dev/ourgoal-app/node_modules node scripts/probes/cell-registry-compare.js <APP_DIR> <out.json> [--expect-zero] [--chrome <chrome.exe>]
 //   --expect-zero: 불일치·누락이 0 이 아니면 종료 코드 1(B2 이후용). 없으면 측정만 하고 0 으로 끝난다.
+//   --names-from <이전 결과.json>: [B3a #TASK-ES-614] 비교할 이름 목록(scopeNames·windowNames)을 이 탐침의 이전 결과 파일에서 읽어 고정한다.
+//     배선을 철거한 index.html 에서는 지운 window 이름이 IIFE 에 더는 없으므로, 철거 전 트리에서 잰 목록을 주지 않으면 그 이름이 검사에서 빠진다.
+//     이때 결과의 namesFrom 에 통로에서 사라진 이름(scopeLost)·새로 생긴 이름(scopeAdded)을 따로 적는다.
+//   --fingerprints: [B3a] 이름마다 통로 값·window 값의 지문(함수는 글자 해시, 그 밖은 종류)을 싣는다 — 서로 다른 트리(기준·작업·모의 철거)의 값을 이름 단위로 맞대는 데 쓴다.
 const fs = require('fs');
 const path = require('path');
 const parser = require('@babel/parser');
@@ -18,6 +22,8 @@ const APP = path.resolve(argv[0] || '.');
 const OUT = argv[1];
 const EXPECT_ZERO = argv.includes('--expect-zero');
 const chromeArg = argv.indexOf('--chrome') >= 0 ? argv[argv.indexOf('--chrome') + 1] : null;
+const namesFromArg = argv.indexOf('--names-from') >= 0 ? argv[argv.indexOf('--names-from') + 1] : null;
+const FINGERPRINTS = argv.includes('--fingerprints');
 if (!OUT) { console.error('사용: node scripts/probes/cell-registry-compare.js <APP_DIR> <out.json> [--expect-zero] [--chrome <path>]'); process.exit(2); }
 
 const ROOT = path.resolve(__dirname, '..', '..'); // 이 탐침이 든 저장소(법정 라이브러리는 여기서 읽는다)
@@ -81,7 +87,14 @@ async function realClick(page, pt) {
 
 (async () => {
   const startedAt = new Date().toISOString();
-  const win = windowNamesOf(path.join(APP, 'index.html'));
+  const winHere = windowNamesOf(path.join(APP, 'index.html'));
+  let fixed = null;
+  if (namesFromArg) {
+    const prev = JSON.parse(fs.readFileSync(path.resolve(namesFromArg), 'utf8'));
+    if (!Array.isArray(prev.windowNames) || !Array.isArray(prev.scopeNames)) throw new Error('--names-from 파일에 windowNames·scopeNames 배열이 없다: ' + namesFromArg);
+    fixed = { file: path.resolve(namesFromArg), windowNames: prev.windowNames.slice(), scopeNames: prev.scopeNames.slice() };
+  }
+  const win = fixed ? { names: fixed.windowNames, sites: winHere.sites, iifeLines: winHere.iifeLines } : winHere;
   const srv = await server.start(APP, courtCfg.denyServePrefixes || []);
   const host = siteHost.pickSiteHost(courtCfg);
   const siteUrl = siteHost.siteUrlFor(host, srv.port);
@@ -111,12 +124,20 @@ async function realClick(page, pt) {
     }
     await sleep(1500);
     result = await evalJson(page, '(function(){var R=window.OurgoalCellRegistry;var S=window.OurgoalAppScope;var W=' + JSON.stringify(win.names) + ';' +
-      'if(!R)return {error:"OurgoalCellRegistry 없음"};var scopeNames=(S&&typeof S.names==="function")?S.names():[];' +
+      'if(!R)return {error:"OurgoalCellRegistry 없음"};var pageScopeNames=(S&&typeof S.names==="function")?S.names():[];' +
+      'var FIXED=' + JSON.stringify(fixed ? fixed.scopeNames : null) + ';var scopeNames=FIXED||pageScopeNames;' +
       'var rep=R.report({scopeNames:scopeNames,windowNames:W});' +
+      'var FP=' + (FINGERPRINTS ? 'true' : 'false') + ';var fp=null;if(FP){' +
+        'var hash=function(str){var h=5381;for(var i=0;i<str.length;i++){h=((h<<5)+h+str.charCodeAt(i))|0;}return (h>>>0).toString(16);};' +
+        'var one=function(v){var t=typeof v;if(t==="function"){var src="";try{src=Function.prototype.toString.call(v);}catch(e){src="?";}return "function:"+(v.name||"")+":"+v.length+":"+hash(src);}' +
+        'if(v===null)return "null";if(t==="object")return Array.isArray(v)?"array":"object";if(t==="string")return "string:"+v.length+":"+hash(v);return t+":"+String(v);};' +
+        'fp={scope:{},window:{}};scopeNames.forEach(function(n){try{fp.scope[n]=Object.prototype.hasOwnProperty.call(S.scope,n)?one(S.scope[n]):"(absent)";}catch(e){fp.scope[n]="(error) "+String(e&&e.message||e);}});' +
+        'W.forEach(function(n){try{fp.window[n]=(n in window)?one(window[n]):"(absent)";}catch(e){fp.window[n]="(error) "+String(e&&e.message||e);}});}' +
+      'var modes={own:0,compare:0};R.names().forEach(function(n){modes[R.mode(n)]++;});' +
       // 옛 경로의 현재 상태(가공 없는 원시값): scope getter 가 읽히는가 · window 이름이 정의돼 있는가
       'var scopeErr=[],scopeType={};scopeNames.forEach(function(n){try{var v=S.scope[n];var t=typeof v;scopeType[t]=(scopeType[t]||0)+1;}catch(e){scopeErr.push({name:n,error:String(e&&e.message||e)});}});' +
       'var winUndef=[],winType={};W.forEach(function(n){var t=typeof window[n];winType[t]=(winType[t]||0)+1;if(t==="undefined")winUndef.push(n);});' +
-      'return {report:rep,registeredNames:R.names(),scopeNames:scopeNames,oldPath:{scopeGetterErrors:scopeErr,scopeValueTypes:scopeType,windowValueTypes:winType,windowUndefined:winUndef}};})()', 30000);
+      'return {report:rep,registeredNames:R.names(),scopeNames:scopeNames,pageScopeNames:pageScopeNames,modes:modes,fingerprints:fp,oldPath:{scopeGetterErrors:scopeErr,scopeValueTypes:scopeType,windowValueTypes:winType,windowUndefined:winUndef}};})()', 30000);
   } catch (e) { error = (e && e.message) || String(e); }
   finally { if (browser) { try { await browser.close(); } catch (_) { /* 종료 실패 무시 */ } } try { await srv.close(); } catch (_) { /* 무시 */ } }
   const rep = result && result.report;
@@ -129,6 +150,11 @@ async function realClick(page, pt) {
     registeredNames: result ? result.registeredNames : null,
     scopeNames: result ? result.scopeNames : null,
     windowNames: win.names,
+    modes: result ? result.modes : null,
+    namesFrom: fixed && result ? { file: path.basename(fixed.file), scopeNames: fixed.scopeNames.length, windowNames: fixed.windowNames.length,
+      scopeLost: fixed.scopeNames.filter(n => !result.pageScopeNames.includes(n)), scopeAdded: result.pageScopeNames.filter(n => !fixed.scopeNames.includes(n)),
+      windowNamesInThisIndexHtml: winHere.names.length } : null,
+    fingerprints: result ? result.fingerprints : null,
     oldPath: result ? result.oldPath : null,
     ok: !error && !!rep,
   };

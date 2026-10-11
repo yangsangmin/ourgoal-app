@@ -242,6 +242,9 @@ const FN_NAMES = [
 const AVATAR_XP_JS = path.join(AVATAR_CELL_DIR, 'xp.js');
 // #TASK-ES-441: 인라인 함수가 js/tabs/<탭>/*.js 세포(L. 통로)로 옮겨 가도 같은 함수를 뽑도록, 추출 원본 뒤에 세포 글자(L. 접두 제거)를 붙인다 — 인라인 스크립트가 맨 앞이라 아직 인라인에 있는 함수는 원래 자리에서 먼저 찾힌다.
 const INLINE_CELLS_SRC = require('../tests/helpers/inline-bundle').withInlineCells('');
+// #TASK-ES-620: 「window.X = X;」 같은 옛 배선 글자를 찾던 단언은, 그 글자가 있거나(고치기 전과 같은 판정) 같은 이름·같은 값이 세포의 등록 블록(OurgoalCellRegistry.provide)으로 window 에 나갈 때 참이다.
+// 등록 블록은 tests/helpers/wiring-exposed.js 가 @babel/parser 로 읽는다. 배선도 등록도 없으면 거짓이다. 검사 수·기대값은 그대로다.
+const WIRING = require('../tests/helpers/wiring-exposed');
 const fnSource = mainScript + (fs.existsSync(AVATAR_XP_JS) ? '\n' + readAvatarFile(AVATAR_XP_JS) : '') + INLINE_CELLS_SRC;
 const extracted = FN_NAMES.map(name => extractFunction(fnSource, name)).join('\n');
 
@@ -1992,7 +1995,7 @@ check('compliance: 최근 업데이트가 전면 반영된 6페이지 최초로�
 
   // 3. 설정 탭 가이드 다시보기 버튼 및 전역 바인딩
   assert.ok(html.includes('id="btnRestartGuide"'), '설정 탭 가이드 다시보기 버튼');
-  assert.ok(html.includes('window.startFirstLoginGuide = startFirstLoginGuide;'), '전역 바인딩');
+  assert.ok(WIRING.windowExposed(html, 'window.startFirstLoginGuide = startFirstLoginGuide;'), '전역 바인딩');
 });
 
 check('compliance: 팀 수준별 목표 관리(조별 목표·마일스톤·할일, 컴팩트 요약, 상세 관리 모달) 및 모임장 왕관 시스템이 구현되어 있다', () => {
@@ -4548,9 +4551,9 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   assert.ok(indexHtml.includes('data-hubaddatt'), '허브 모달 첨부 버튼');
   assert.ok(indexHtml.includes('renderHubEventChipsHtml'), '허브 모달 칩 렌더링');
   assert.ok(indexHtml.includes('attachments: curAttachments'), '일정 저장 시 attachments 영구 보존');
-  assert.ok(indexHtml.includes('window.openAddAttachmentModal = openAddAttachmentModal;'), 'window.openAddAttachmentModal 전역 노출');
-  assert.ok(indexHtml.includes('window.openAttachmentViewer = openAttachmentViewer;'), 'window.openAttachmentViewer 전역 노출');
-  assert.ok(indexHtml.includes('window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'window.renderAttachmentChipsHtml 전역 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.openAddAttachmentModal = openAddAttachmentModal;'), 'window.openAddAttachmentModal 전역 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.openAttachmentViewer = openAttachmentViewer;'), 'window.openAttachmentViewer 전역 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'window.renderAttachmentChipsHtml 전역 노출');
   assert.ok(fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8').includes('ourgoal-shell-v20260916-es125'), 'sw.js 캐시네임 v20260916-es125 갱신');
 });
 
@@ -5237,8 +5240,8 @@ check('compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquir
   assert.ok(indexSrc.includes("['feedbackInquiryBtn', 'footInquiryLink'].forEach("), 'feedbackInquiryBtn 및 footInquiryLink 통합 addEventListener 배선');
 
   // 3. window 전역 스코프 안전망 검증
-  assert.ok(indexSrc.includes('window.openCustomerInquiryModal = openCustomerInquiryModal'), 'openCustomerInquiryModal 함수 window 전역 노출');
-  assert.ok(indexSrc.includes('window.showLegalModal = showLegalModal'), 'showLegalModal 함수 window 전역 노출');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.openCustomerInquiryModal = openCustomerInquiryModal'), 'openCustomerInquiryModal 함수 window 전역 노출');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.showLegalModal = showLegalModal'), 'showLegalModal 함수 window 전역 노출');
 });
 
 check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 복원(Vercel 서버리스 + RPC 폴백) 및 가상 유저 3인 AI 동반자 투명 뱃지 표기 검증', () => {
@@ -5731,7 +5734,7 @@ check('compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재�
   // 1. getKSTDateKey 정의 및 dateKey 보존 검증
   assert.ok(indexSrc.includes('function getKSTDateKey(iso)'), 'getKSTDateKey 함수 정의');
   assert.ok(indexSrc.includes('function dateKey(iso)'), 'dateKey 로컬 기기 날짜 포맷 함수 보존');
-  assert.ok(indexSrc.includes('window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');
 
   // 2. KST 자정 산출 단위 검증
   function testKST(dStr) {
@@ -5807,9 +5810,9 @@ check('compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태�
   assert.ok(indexSrc.includes('function formatSchedulePillHtml'), 'formatSchedulePillHtml 함수 정의');
   assert.ok(indexSrc.includes('function openScheduleSetupModal'), 'openScheduleSetupModal 함수 정의');
   assert.ok(indexSrc.includes('function applyScheduleUpdate'), 'applyScheduleUpdate 함수 정의');
-  assert.ok(indexSrc.includes('window.formatSchedulePillHtml = formatSchedulePillHtml'), 'formatSchedulePillHtml window 노출');
-  assert.ok(indexSrc.includes('window.openScheduleSetupModal = openScheduleSetupModal'), 'openScheduleSetupModal window 노출');
-  assert.ok(indexSrc.includes('window.applyScheduleUpdate = applyScheduleUpdate'), 'applyScheduleUpdate window 노출');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.formatSchedulePillHtml = formatSchedulePillHtml'), 'formatSchedulePillHtml window 노출');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.openScheduleSetupModal = openScheduleSetupModal'), 'openScheduleSetupModal window 노출');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.applyScheduleUpdate = applyScheduleUpdate'), 'applyScheduleUpdate window 노출');
 
   // 2. 3계층(목표, 마일스톤, 태스크) 인라인 배선 확인
   assert.ok(indexSrc.includes("formatSchedulePillHtml(goal, 'goal', goal.id)"), 'Goal 계층 일정 배지 배치');
@@ -6236,7 +6239,7 @@ check('compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템�
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. showToast 런타임 오류 방어 및 전역 등록 검증
-  assert.ok(indexSrc.includes('window.showToast = toast;'), 'window.showToast = toast 전역 별칭 선언');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.showToast = toast;'), 'window.showToast = toast 전역 별칭 선언');
   assert.strictEqual(indexSrc.includes('showToast('), false, 'index.html 내 정의되지 않은 showToast() 호출 완전 박멸');
 
   // 2. 모달 전환 popstate 간섭 차단 검증
@@ -6634,8 +6637,8 @@ check('compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 
   // 2. 엔진 함수 및 앱 진입 배선 검증
   assert.ok(indexSrc.includes('function openAvatarGreetingPopup('), 'openAvatarGreetingPopup 함수 정의');
   assert.ok(indexSrc.includes('function closeAvatarGreetingPopup('), 'closeAvatarGreetingPopup 함수 정의');
-  assert.ok(indexSrc.includes('window.openAvatarGreetingPopup = openAvatarGreetingPopup;'), 'openAvatarGreetingPopup 전역 노출');
-  assert.ok(indexSrc.includes('window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;'), 'closeAvatarGreetingPopup 전역 노출');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.openAvatarGreetingPopup = openAvatarGreetingPopup;'), 'openAvatarGreetingPopup 전역 노출');
+  assert.ok(WIRING.windowExposed(indexSrc, 'window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;'), 'closeAvatarGreetingPopup 전역 노출');
   assert.ok(indexSrc.includes('openAvatarGreetingPopup(state.profile, false)'), 'enterApp 진입 시 openAvatarGreetingPopup 호출 배선');
 
   // 3. 시간대별 멘트 및 2.5초 자동 소멸 로직 검증
@@ -6969,7 +6972,7 @@ check('compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 �
   assert.ok(indexHtml.includes('name="repReason"'), '신고 사유 선택지가 존재해야 함');
   assert.ok(indexHtml.includes('id="repSubmitBtn"'), '신고 접수 제출 버튼이 존재해야 함');
   assert.ok(indexHtml.includes('허위 또는 악의적인 신고임이 확인될 경우, 서비스 이용 제한 등 계정에 불이익을 받으실 수 있습니다'), '신고 모달에 악의적/허위 신고 방지 경고문이 탑재되어야 함');
-  assert.ok(indexHtml.includes('window.openItemReportModal = openItemReportModal'), 'openItemReportModal 함수가 전역에 노출되어야 함');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.openItemReportModal = openItemReportModal'), 'openItemReportModal 함수가 전역에 노출되어야 함');
 
   // 4. api/track.js 3중 파이프라인 (item_report)
   assert.ok(trackSrc.includes("item_report: '잇템 불법/유해 신고'"), 'api/track.js에 item_report 유형 라벨이 정의되어야 함');
@@ -7075,7 +7078,7 @@ check('compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 �
   assert.ok(indexHtml.includes('ls-widget-device-btn') && indexHtml.includes('lsWGuideIos') && indexHtml.includes('lsWGuideAos'), '위젯 연동 기종별(iOS/AOS) 가이드 완비');
 
   // 5. 전역 노출 및 서비스워커 캐시 갱신 검증
-  assert.ok(indexHtml.includes('window.openLockScreenHubModal = openLockScreenHubModal'), 'openLockScreenHubModal 전역 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.openLockScreenHubModal = openLockScreenHubModal'), 'openLockScreenHubModal 전역 노출');
   assert.ok(swSrc.includes('es181-lockscreen-hub') || swSrc.includes('es182-lockscreen-live-sync'), 'sw.js 캐시 버전에 es181/es182 식별자 포함');
 });
 
@@ -7087,8 +7090,8 @@ check('compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스
   assert.ok(indexHtml.includes('function buildLockScreenCardPayload'), 'buildLockScreenCardPayload 함수 탑재');
   assert.ok(indexHtml.includes('function syncLockScreenLiveCard'), 'syncLockScreenLiveCard 함수 탑재');
   assert.ok(indexHtml.includes('function closeLockScreenLiveCard'), 'closeLockScreenLiveCard 함수 탑재');
-  assert.ok(indexHtml.includes('window.syncLockScreenLiveCard = syncLockScreenLiveCard'), 'syncLockScreenLiveCard 전역 노출');
-  assert.ok(indexHtml.includes('window.buildLockScreenCardPayload = buildLockScreenCardPayload'), 'buildLockScreenCardPayload 전역 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.syncLockScreenLiveCard = syncLockScreenLiveCard'), 'syncLockScreenLiveCard 전역 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.buildLockScreenCardPayload = buildLockScreenCardPayload'), 'buildLockScreenCardPayload 전역 노출');
 
   // 2. 잠금화면 허브 모달 1순위 실시간 라이브 탭 및 폰 화면비 시뮬레이터 검증
   assert.ok(indexHtml.includes('id="lsPaneLive"'), '1순위 실시간 라이브 패널(#lsPaneLive) 탑재');
@@ -7468,7 +7471,7 @@ check('[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도
   const sanctuaryJs = SANCTUARY_SRC;
 
   // 1. 전역 인터페이스 배선 확인
-  assert.ok(indexHtml.includes('window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 완료');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 완료');
   assert.ok(indexHtml.includes('window.showNewGoalManualForm = showNewGoalManualForm;'), 'window.showNewGoalManualForm 전역 배선 완료');
 
   // 2. 세부 마일스톤 헤더 새 목표 버튼 및 리스너 배선 확인
@@ -7768,7 +7771,7 @@ check('[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피
 
   // 4. instantShareCheckinToFeed 함수 및 전역 노출 확인
   assert.ok(indexHtml.includes('function instantShareCheckinToFeed'), 'instantShareCheckinToFeed 함수 선언 누락');
-  assert.ok(indexHtml.includes('window.instantShareCheckinToFeed = instantShareCheckinToFeed'), 'window.instantShareCheckinToFeed 노출 누락');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.instantShareCheckinToFeed = instantShareCheckinToFeed'), 'window.instantShareCheckinToFeed 노출 누락');
 });
 
 check('[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성', () => {
@@ -7776,7 +7779,7 @@ check('[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 
 
   // 1. openMicPermissionGuideModal 함수 및 전역 노출 확인
   assert.ok(indexHtml.includes('function openMicPermissionGuideModal'), 'openMicPermissionGuideModal 함수 선언 누락');
-  assert.ok(indexHtml.includes('window.openMicPermissionGuideModal = openMicPermissionGuideModal'), 'window.openMicPermissionGuideModal 노출 누락');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.openMicPermissionGuideModal = openMicPermissionGuideModal'), 'window.openMicPermissionGuideModal 노출 누락');
 
   // 2. iOS/Android 탭 스위처 및 3컷 가이드 마크업 확인
   assert.ok(indexHtml.includes('id="btnTabIosSafari"'), '#btnTabIosSafari 탭 버튼 누락');
@@ -7956,7 +7959,7 @@ check('[#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA)
 
   // 2. 상세 모달 및 전역 노출 확인
   assert.ok(indexHtml.includes('function openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 함수 선언 확인');
-  assert.ok(indexHtml.includes('window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 전역 노출 확인');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 전역 노출 확인');
   assert.ok(indexHtml.includes('btnOpenIosPwaGuideModal'), 'btnOpenIosPwaGuideModal 버튼 배선 확인');
 
   // 3. 푸시 알림 연계 및 권한 요청 배선 확인
@@ -7980,7 +7983,7 @@ check('[#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 
   assert.ok(indexHtml.includes('id="geminiKeyInput"'), 'geminiKeyInput 보존 확인');
 
   // 3. 햅틱 및 전역 토글 헬퍼 확인
-  assert.ok(indexHtml.includes('window.toggleAdvancedSettings = toggleAdvancedSettings'), 'toggleAdvancedSettings 전역 노출 확인');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.toggleAdvancedSettings = toggleAdvancedSettings'), 'toggleAdvancedSettings 전역 노출 확인');
   assert.ok(indexHtml.includes('advAccordion._hapticBound'), '아코디언 토글 햅틱 바인딩 확인');
 
   // 4. CSS 반응형 및 트랜지션 선언 확인
@@ -8429,8 +8432,8 @@ check('compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 �
 
   // 3. 멱등성 및 window 노출 확인
   assert.ok(indexHtml.includes('existing && existing.text && existing.hash === hash'), '동일 해시 캐시 존재 시 재분석 차단 가드 확인');
-  assert.ok(indexHtml.includes('window.computeGoalStatusHash = computeGoalStatusHash;'), 'computeGoalStatusHash 노출 확인');
-  assert.ok(indexHtml.includes('window.refreshGoalStatusSummary = refreshGoalStatusSummary;'), 'refreshGoalStatusSummary 노출 확인');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.computeGoalStatusHash = computeGoalStatusHash;'), 'computeGoalStatusHash 노출 확인');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.refreshGoalStatusSummary = refreshGoalStatusSummary;'), 'refreshGoalStatusSummary 노출 확인');
 });
 
 /* ============ [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 ('* 팀 목표를 생성하면 사라짐') 및 조건부 소멸 검증 ============ */
@@ -8447,7 +8450,7 @@ check('compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 �
   assert.ok(indexHtml.includes('color:var(--ink-faint)'), '은은한 안내 톤(var(--ink-faint)) 검증');
 
   // 3. window 전역 바인딩 검증
-  assert.ok(indexHtml.includes('window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), 'renderTeamGoalsEmptyGuideHtml window 노출 검증');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), 'renderTeamGoalsEmptyGuideHtml window 노출 검증');
   assert.ok(indexHtml.includes('window.renderTeamGoalsScreen = renderTeamGoalsScreen;'), 'renderTeamGoalsScreen window 노출 검증');
 });
 
@@ -8465,7 +8468,7 @@ check('compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입
   assert.ok(indexHtml.includes("colName + ' (분:초 또는 초)'"), '시간 열 placeholder 스마트 분기 검증');
 
   // 3. window 바인딩 검증
-  assert.ok(indexHtml.includes('window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), 'renderStopwatchWidgetHtml window 노출 검증');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), 'renderStopwatchWidgetHtml window 노출 검증');
 });
 
 /* ============ [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 통합/목표별 수준관리 분리 검증 ============ */
@@ -8614,7 +8617,7 @@ check('compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 �
 
   // 1. 표준 시간대 날짜 키 및 window 전역 노출 검증
   assert.ok(indexHtml.includes('function getEffectiveStandardDateKey'), 'getEffectiveStandardDateKey 함수 정의 검증');
-  assert.ok(indexHtml.includes('window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 검증');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 검증');
 
   // 2. 오늘의 미션 해시 기반 캐시 및 무변경 시 재호출 억제 검증
   assert.ok(indexHtml.includes('function computeTodayMissionHash'), 'computeTodayMissionHash 함수 정의 검증');
@@ -8634,9 +8637,9 @@ check('compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연�
   const trackJs = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
 
   // 1. Silent Refresh 및 window 전역 노출 검증
-  assert.ok(indexHtml.includes('window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출 검증');
-  assert.ok(indexHtml.includes('window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출 검증');
-  assert.ok(indexHtml.includes('window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출 검증');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출 검증');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출 검증');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출 검증');
   assert.ok(indexHtml.includes('ourgoal_gcal_email_last'), 'ourgoal_gcal_email_last 이메일 힌트 영속화 검증');
 
   // 2. [#TASK-ES-345 CAL-02 로 대체] loadLocalSettings 가 게스트·직전 사용자 설정에서 구글 캘린더 연동을 복사하던 자가 치유는
@@ -8927,7 +8930,7 @@ check('compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효�
 
   // 1. renderInlineAttachmentChips 함수 및 window 전역 노출 검증
   assert.ok(indexHtml.includes('function renderInlineAttachmentChips('), 'renderInlineAttachmentChips 함수 정의');
-  assert.ok(indexHtml.includes('window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), 'window.renderInlineAttachmentChips 바인딩');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), 'window.renderInlineAttachmentChips 바인딩');
 
   // 2. 세부 할 일 행에 참고자료 첨부 버튼 및 칩 렌더러 연동 검증
   assert.ok(indexHtml.includes('var tAttHtml = renderInlineAttachmentChips('), '세부 할 일 행에 renderInlineAttachmentChips 적용');
@@ -9589,7 +9592,7 @@ check('TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위
   assert.ok(indexHtml.includes('handle전체공통_Item50Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
   assert.ok(!indexHtml.includes('<details class="settings-group-accordion" open>'), 'index.html 설정창 아코디언 기본 open 제거');
   assert.ok(indexHtml.includes('collapseAllSettingsSections();'), 'index.html renderSettingsScreen 내 collapseAllSettingsSections 호출');
-  assert.ok(indexHtml.includes('window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html window.collapseAllSettingsSections 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.collapseAllSettingsSections = collapseAllSettingsSections'), 'index.html window.collapseAllSettingsSections 노출');
 
   // 3. ui.css 스타일 및 반응형 검증
   assert.ok(uiCss.includes('#og-task-50-container'), 'ui.css #og-task-50-container 스타일 정의');
@@ -9618,7 +9621,7 @@ check('TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌�
   assert.ok(indexHtml.includes('handle소통_Item51Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
   assert.ok(indexHtml.includes('id="sharePreviewBtn"'), 'index.html 피드 게시 모달 내 sharePreviewBtn 탑재');
   assert.ok(indexHtml.includes('id="sharePreviewSlot"'), 'index.html 피드 게시 모달 내 sharePreviewSlot 탑재');
-  assert.ok(indexHtml.includes('window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html window.toggleFeedPostPreview 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html window.toggleFeedPostPreview 노출');
 
   // 3. ui.css 스타일 및 반응형 검증
   assert.ok(uiCss.includes('#og-task-51-container'), 'ui.css #og-task-51-container 스타일 정의');
@@ -9646,7 +9649,7 @@ check('TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 �
   assert.ok(indexHtml.includes('id="og-task-52-action-btn"'), 'index.html #og-task-52-action-btn 버튼 마크업 탑재');
   assert.ok(indexHtml.includes('handle팀목표_Item52Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
   assert.ok(indexHtml.includes('collapseAllTeamGoalAccordions();'), 'index.html renderTeamGoalsScreen 내 collapseAllTeamGoalAccordions 호출');
-  assert.ok(indexHtml.includes('window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html window.collapseAllTeamGoalAccordions 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions'), 'index.html window.collapseAllTeamGoalAccordions 노출');
 
   // 3. ui.css 스타일 및 반응형 검증
   assert.ok(uiCss.includes('#og-task-52-container'), 'ui.css #og-task-52-container 스타일 정의');
@@ -9676,8 +9679,8 @@ check('TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상�
   assert.ok(indexHtml.includes('id="templateEncyclopediaModal"'), 'index.html #templateEncyclopediaModal 모달 탑재');
   assert.ok(indexHtml.includes('id="tabTplRealUser"'), 'index.html #tabTplRealUser 탭 탑재');
   assert.ok(indexHtml.includes('id="tabTplOurgoalAi"'), 'index.html #tabTplOurgoalAi 탭 탑재');
-  assert.ok(indexHtml.includes('window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html window.openGoalTemplateEncyclopediaModal 노출');
-  assert.ok(indexHtml.includes('window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html window.copyUserGoalTemplate 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal'), 'index.html window.openGoalTemplateEncyclopediaModal 노출');
+  assert.ok(WIRING.windowExposed(indexHtml, 'window.copyUserGoalTemplate = copyRealUserTemplate'), 'index.html window.copyUserGoalTemplate 노출');
 
   // 3. ui.css 스타일 및 반응형 검증
   assert.ok(uiCss.includes('#og-task-53-container'), 'ui.css #og-task-53-container 스타일 정의');

@@ -71,6 +71,8 @@
     _recordHesitation: K._recordHesitation, renderAdaptiveModeBar: K.renderAdaptiveModeBar, switchUxMode: K.switchUxMode
   }, { window: [
     '_recordHesitation', 'switchUxMode'
+  ], windowOnly: [
+    '_recordHesitation', 'switchUxMode'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

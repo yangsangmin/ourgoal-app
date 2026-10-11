@@ -99,6 +99,8 @@
     selectThemeSwatch: K.selectThemeSwatch
   }, { window: [
     'killDeviceSession', 'paintSecurityCard', 'refreshSecurityStatus', 'selectThemeSwatch'
+  ], windowOnly: [
+    'killDeviceSession', 'paintSecurityCard', 'refreshSecurityStatus', 'selectThemeSwatch'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

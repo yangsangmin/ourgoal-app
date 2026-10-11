@@ -604,6 +604,8 @@
     wireAttachmentChipClicks: K.wireAttachmentChipClicks
   }, { window: [
     'openAddAttachmentModal', 'openAttachmentViewer', 'renderAttachmentChipsHtml', 'renderInlineAttachmentChips'
+  ], windowOnly: [
+    'openAttachmentViewer'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

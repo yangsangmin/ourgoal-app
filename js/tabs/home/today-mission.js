@@ -107,6 +107,8 @@
     computeTodayMissionHash: K.computeTodayMissionHash, renderTodayMissionCard: K.renderTodayMissionCard
   }, { window: [
     'computeTodayMissionHash'
+  ], windowOnly: [
+    'computeTodayMissionHash'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

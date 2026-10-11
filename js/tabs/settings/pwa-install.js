@@ -250,6 +250,8 @@
     renderIosPwaBanner: K.renderIosPwaBanner, switchPwaOsTab: K.switchPwaOsTab
   }, { window: [
     'closePwaInstallGuideModal', 'confirmPwaInstall', 'openIosPwaInstallGuideModal', 'openPwaInstallGuideModal', 'switchPwaOsTab'
+  ], windowOnly: [
+    'closePwaInstallGuideModal', 'confirmPwaInstall', 'openIosPwaInstallGuideModal', 'openPwaInstallGuideModal', 'switchPwaOsTab'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

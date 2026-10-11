@@ -82,6 +82,8 @@
     closeGoalDetailDrawer: K.closeGoalDetailDrawer, openGoalDetailDrawer: K.openGoalDetailDrawer, toggleMilestoneInDrawer: K.toggleMilestoneInDrawer
   }, { window: [
     'closeGoalDetailDrawer', 'openGoalDetailDrawer', 'toggleMilestoneInDrawer'
+  ], windowOnly: [
+    'closeGoalDetailDrawer', 'openGoalDetailDrawer', 'toggleMilestoneInDrawer'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

@@ -1,0 +1,203 @@
+{
+ "tool": "reports/TASK-ES-636/organ-unit.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "app": "C:\\dev\\wt\\es636-app-state",
+ "measuredAt": "2026-10-11T01:53:02.342Z",
+ "results": [
+  {
+   "id": "O1",
+   "title": "define: getter 만 · 값 읽힘 · 엄격 모드 쓰기는 TypeError · 값 그대로",
+   "ok": true,
+   "detail": {
+    "accessor": "get",
+    "write": {
+     "threw": "TypeError",
+     "code": null,
+     "message": "Cannot set property a of #<Object> which has only a getter"
+    }
+   }
+  },
+  {
+   "id": "O2",
+   "title": "defineVar: get/set 짝 · 쓰면 보관 값이 바뀌고 다시 읽힌다",
+   "ok": true,
+   "detail": {
+    "accessor": "get+set",
+    "write": {
+     "value": 7
+    }
+   }
+  },
+  {
+   "id": "O3",
+   "title": "접근자는 첫 define 때 달린다(그 전에는 속성 없음) · 주인 core/app-state · 반환값 없음",
+   "ok": true,
+   "detail": {
+    "before": "(absent)",
+    "after": "get",
+    "owner": "core/app-state",
+    "returned": {}
+   }
+  },
+  {
+   "id": "O4",
+   "title": "이미 있던 데이터 속성을 다시 정의해 덮는다",
+   "ok": true,
+   "detail": {
+    "before": "data",
+    "after": "get+set",
+    "value": 1
+   }
+  },
+  {
+   "id": "O5",
+   "title": "이미 있던 접근자(index.html 노출)를 다시 정의해 덮는다",
+   "ok": true,
+   "detail": {
+    "before": "get+set:index.html",
+    "after": "get:core/app-state",
+    "value": 2
+   }
+  },
+  {
+   "id": "O6",
+   "title": "같은 이름을 두 번 정의하면 오류(ALREADY_DEFINED) · 값 그대로",
+   "ok": true,
+   "detail": {
+    "r1": {
+     "threw": "Error",
+     "code": "ALREADY_DEFINED",
+     "message": "[OurgoalAppState] 같은 이름을 두 번 정의할 수 없다: f"
+    },
+    "r2": {
+     "threw": "Error",
+     "code": "ALREADY_DEFINED",
+     "message": "[OurgoalAppState] 같은 이름을 두 번 정의할 수 없다: f"
+    },
+    "value": 1
+   }
+  },
+  {
+   "id": "O7",
+   "title": "값을 복사하지 않는다(같은 객체 — 바깥의 내용 변경이 그대로 보인다)",
+   "ok": true,
+   "detail": {}
+  },
+  {
+   "id": "O8",
+   "title": "window 에 상태 이름을 달지 않는다 · 파일이 만드는 전역은 OurgoalAppState 하나",
+   "ok": true,
+   "detail": {
+    "newGlobals": [
+     "OurgoalAppState"
+    ],
+    "hOnWindow": false
+   }
+  },
+  {
+   "id": "O9",
+   "title": "이름이 글자열이 아니거나 비면 오류(NAME_REQUIRED)",
+   "ok": true,
+   "detail": [
+    {
+     "threw": "Error",
+     "code": "NAME_REQUIRED",
+     "message": "[OurgoalAppState] define(name, value) — name(글자열)이 없다"
+    },
+    {
+     "threw": "Error",
+     "code": "NAME_REQUIRED",
+     "message": "[OurgoalAppState] define(name, value) — name(글자열)이 없다"
+    },
+    {
+     "threw": "Error",
+     "code": "NAME_REQUIRED",
+     "message": "[OurgoalAppState] define(name, value) — name(글자열)이 없다"
+    }
+   ]
+  },
+  {
+   "id": "O10",
+   "title": "통로 없이 파일만 로드해도 오류 없음 · 그 상태의 define 은 오류(SCOPE_MISSING)이고 이름을 맡지 않는다",
+   "ok": true,
+   "detail": {
+    "loadErr": null,
+    "r": {
+     "threw": "Error",
+     "code": "SCOPE_MISSING",
+     "message": "[OurgoalAppState] 통로(OurgoalAppScope)가 없다 — js/core/app-scope.js 가 먼저 로드돼야 한다: i"
+    }
+   }
+  },
+  {
+   "id": "O11",
+   "title": "names() · kindOf(name)",
+   "ok": true,
+   "detail": {
+    "names": [
+     "k1",
+     "k2"
+    ]
+   }
+  },
+  {
+   "id": "O12",
+   "title": "진짜 기관 등가: 생성기 unstate 로 바꿔 쓴 꾸러미를 진짜 app-state.js 위에서 실행한 관찰값이 바꿔 쓰기 전과 같다(통로 읽기·쓰기 · getter 전용 이름에 쓰기 · window 일회 복사 · 같은 객체)",
+   "ok": true,
+   "detail": {
+    "err": null,
+    "before": {
+     "read": {
+      "counter": 0,
+      "label": "a (label) b",
+      "themes": "[{\"id\":\"a\"},{\"id\":\"b\"}]",
+      "keep": "{\"n\":1}",
+      "alpha": "function"
+     },
+     "window": {
+      "label": "a (label) b",
+      "counter": 0,
+      "themesSame": true,
+      "bump": 2
+     },
+     "setCounter": 7,
+     "setLabelStrict": "throw:TypeError",
+     "mutate": 3,
+     "descriptor": [
+      "counter:get+set",
+      "label:get",
+      "themes:get"
+     ],
+     "windowCounterAfterSet": 0
+    },
+    "after": {
+     "read": {
+      "counter": 0,
+      "label": "a (label) b",
+      "themes": "[{\"id\":\"a\"},{\"id\":\"b\"}]",
+      "keep": "{\"n\":1}",
+      "alpha": "function"
+     },
+     "window": {
+      "label": "a (label) b",
+      "counter": 0,
+      "themesSame": true,
+      "bump": 2
+     },
+     "setCounter": 7,
+     "setLabelStrict": "throw:TypeError",
+     "mutate": 3,
+     "descriptor": [
+      "counter:get+set",
+      "label:get",
+      "themes:get"
+     ],
+     "windowCounterAfterSet": 0
+    }
+   }
+  }
+ ],
+ "passed": 12,
+ "total": 12,
+ "ok": true
+}

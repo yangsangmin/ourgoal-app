@@ -6051,3 +6051,35 @@
 - 2026-10-11 TASK-ES-612: 생성 지도 일괄 갱신(main f0af028f, PR #883 병합 뒤) — cell-map.json(세포 352, core/cell-registry 추가)·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-612-GENERATED-MAPS-SYNC-5.md
 
 - 2026-10-11 TASK-ES-613: 생성 지도 일괄 갱신(main c42a61ae, PR #885 병합 뒤) — cell-map.json(세포 352, 등록 블록 반영)·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-613-GENERATED-MAPS-SYNC-6.md
+
+- 2026-10-11 TASK-ES-617: 생성 지도 일괄 갱신(main a3bad12a, PR #889 병합 뒤) — cell-map.json(세포 353, core/cell-registry-commit 추가)·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-617-GENERATED-MAPS-SYNC-7.md
+
+- 2026-10-11 TASK-ES-621: 생성 지도 일괄 갱신(main 11ae1374, PR #891 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영)·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-621-GENERATED-MAPS-SYNC-8.md
+
+- 2026-10-11 TASK-ES-625: 생성 지도 일괄 갱신(main 357ccc93, PR #894 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3640줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-625-GENERATED-MAPS-SYNC-9.md
+
+- 2026-10-11 TASK-ES-627: 생성 지도 일괄 갱신(main 9d039044, PR #896 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3461줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-627-GENERATED-MAPS-SYNC-10.md
+
+- 2026-10-11 TASK-ES-629: 생성 지도 일괄 갱신(main bc8af5bc, PR #898 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3318줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-629-GENERATED-MAPS-SYNC-11.md
+
+- 2026-10-11 TASK-ES-631: 생성 지도 일괄 갱신(main a83a1d80, PR #902 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3190줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-631-GENERATED-MAPS-SYNC-12.md
+
+- 2026-10-11 TASK-ES-633: 생성 지도 일괄 갱신(main ba02c840, PR #904 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 3114줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-633-GENERATED-MAPS-SYNC-13.md
+
+- 2026-10-11 TASK-ES-635: 생성 지도 일괄 갱신(main b57a8a10, PR #907 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 2967줄))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-635-GENERATED-MAPS-SYNC-14.md
+
+- 2026-10-11 TASK-ES-639: 생성 지도 일괄 갱신(main 9022e383, PR #909 병합 뒤) — cell-map.json(세포 353, 인라인 줄 수 감소 반영(IIFE 2967줄(변화 없음)))·inline-script-map.json·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-639-GENERATED-MAPS-SYNC-15.md
+
+- 2026-10-11 TASK-ES-641: 생성 지도 일괄 갱신(main b76c29e9, PR #911 병합 뒤) — cell-map.json(세포 358, 새 세포 4개)·inline-script-map.json(IIFE 2899줄)·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-641-GENERATED-MAPS-SYNC-16.md
+
+- 2026-10-11 TASK-ES-642: 생성 지도 일괄 갱신(main 453ba6b7, PR #914 병합 뒤) — cell-map.json(세포 358, 새 세포 없음)·inline-script-map.json(IIFE 2827줄)·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-642-GENERATED-MAPS-SYNC-17.md
+
+- 2026-10-11 TASK-ES-644: 생성 지도 일괄 갱신(main 9014a386, PR #913 병합 뒤) — cell-map.json(세포 362, 새 세포 4개)·inline-script-map.json(IIFE 2593줄)·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-644-GENERATED-MAPS-SYNC-18.md
+
+- 2026-10-11 TASK-ES-647: 생성 지도 일괄 갱신(main c0658b2c, PR #917 병합 뒤) — cell-map.json(세포 363, 새 세포 1개)·inline-script-map.json(IIFE 2370줄)·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-647-GENERATED-MAPS-SYNC-19.md
+
+- 2026-10-11 TASK-ES-651: 생성 지도 일괄 갱신(main c6798552, PR #920 병합 뒤) — cell-map.json(세포 363, 새 세포 없음)·inline-script-map.json(IIFE 2328줄)·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-651-GENERATED-MAPS-SYNC-20.md
+
+- 2026-10-11 TASK-ES-655: 생성 지도 일괄 갱신(main 529e4370, PR #923 병합 뒤) — cell-map.json(세포 364, 새 세포 1개)·inline-script-map.json(IIFE 2318줄)·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-655-GENERATED-MAPS-SYNC-21.md
+
+- 2026-10-11 TASK-ES-658: 생성 지도 일괄 갱신(main 6eeacd58, PR #927 병합 뒤) — cell-map.json(세포 364, 새 세포 없음)·inline-script-map.json(IIFE 2309줄)·INLINE-SCRIPT-MAP.md. module-guard --update 는 기준선과 같아 변경 없음, 세포 설명은 이미 있음. 제품 코드·생성기 변경 0. REQ docs/specs/REQ-TASK-ES-658-GENERATED-MAPS-SYNC-22.md

@@ -187,6 +187,8 @@
     THEME_FEEDBACK_PROMPTS: K.THEME_FEEDBACK_PROMPTS
   }, { window: [
     'GeminiQuotaDispatcher', 'PREMIUM_FEEDBACK_CATALOG'
+  ], windowOnly: [
+    'PREMIUM_FEEDBACK_CATALOG'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

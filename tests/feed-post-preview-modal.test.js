@@ -23,7 +23,7 @@ function runTests() {
   assert(indexHtml.includes('data-ticket="51"'), 'index.html must have data-ticket="51"');
   assert(indexHtml.includes('id="sharePreviewBtn"'), 'index.html must contain #sharePreviewBtn');
   assert(indexHtml.includes('id="sharePreviewSlot"'), 'index.html must contain #sharePreviewSlot');
-  assert(indexHtml.includes('window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html must expose toggleFeedPostPreview');
+  assert(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html must expose toggleFeedPostPreview'); /* #TASK-ES-620 옛 배선 글자 또는 등록(tests/helpers/wiring-exposed.js) — 검사 수·기대값 그대로 */
 
   // 2. js/components.js 직통 핸들러 및 4대 뷰 전파 검증
   assert(componentsJs.includes('async function handle소통_Item51Action'), 'components.js must define handle소통_Item51Action');

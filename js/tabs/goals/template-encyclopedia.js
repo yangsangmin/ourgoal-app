@@ -775,6 +775,8 @@
   }, { window: [
     'PERSONAL_TEMPLATES_REAL', 'ROUTINE_TEMPLATES_AI', 'ROUTINE_TEMPLATES_REAL', 'TEAM_TEMPLATES_AI', 'TEAM_TEMPLATES_REAL',
     'renderTemplateEncyclopediaScreen'
+  ], windowOnly: [
+    'PERSONAL_TEMPLATES_REAL', 'ROUTINE_TEMPLATES_AI', 'ROUTINE_TEMPLATES_REAL', 'TEAM_TEMPLATES_AI', 'TEAM_TEMPLATES_REAL'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */
