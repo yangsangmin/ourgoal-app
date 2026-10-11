@@ -1,0 +1,294 @@
+{
+ "tool": "reports/TASK-ES-659/tools/save-token-probe.cjs (court/lib/chrome.js · static-server.js · site-host.js 읽기 전용)",
+ "type": "작업자 측정, 판정 아님",
+ "limits": "게스트로 부팅한 임시 브라우저에서 가짜 토큰 객체로 함수를 직접 부른 것이다. 진짜 구글 로그인으로 받은 토큰이 들어오는 길은 재지 못했다. D · E 는 state.profile 을 임시 객체로 바꿔 부른 뒤 되돌렸다.",
+ "base": {
+  "app": "C:\\dev\\wt\\es659-base",
+  "error": null,
+  "pageExceptions": [],
+  "result": {
+   "cases": {
+    "A_noToken": {
+     "returns": [
+      "undefined",
+      "undefined"
+     ],
+     "keysUnchanged": true,
+     "session": true
+    },
+    "B_twoArgsViaScope": {
+     "returns": "undefined",
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_B",
+      "email": "two-args@example.com",
+      "ownerUid": "guest",
+      "expiresAt": "given",
+      "updatedAtRecent": true
+     },
+     "legacyLeft": [],
+     "session": "TOK_B",
+     "state": {
+      "owner": "guest",
+      "cacheIsNull": true,
+      "lastExpiredIsNull": true
+     }
+    },
+    "C_oneArgNoEmail": {
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_C",
+      "email": "",
+      "ownerUid": "guest",
+      "expiresAt": "default(now+3300000)",
+      "updatedAtRecent": true
+     },
+     "session": "TOK_C",
+     "cacheKept": true,
+     "state": {
+      "owner": "guest",
+      "cacheIsNull": false,
+      "lastExpiredIsNull": true
+     }
+    },
+    "D_oneArgSettingsEmail": {
+     "uid": "u_probe_659",
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_D",
+      "email": "from-settings@example.com",
+      "ownerUid": "u_probe_659",
+      "expiresAt": "given",
+      "updatedAtRecent": true
+     },
+     "guestTokenStill": "TOK_C",
+     "session": "TOK_D",
+     "state": {
+      "owner": "u_probe_659",
+      "cacheIsNull": true,
+      "lastExpiredIsNull": true
+     }
+    },
+    "E_threeArgsViaWindow": {
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_E",
+      "email": "override@example.com",
+      "ownerUid": "u_probe_659",
+      "expiresAt": "given",
+      "updatedAtRecent": true
+     },
+     "session": "TOK_E",
+     "state": {
+      "owner": "u_probe_659",
+      "cacheIsNull": true,
+      "lastExpiredIsNull": true
+     }
+    }
+   },
+   "pre": {
+    "typeofWindow": "function",
+    "typeofScope": "function",
+    "windowIsScope": true,
+    "declaredParams": 1,
+    "name": "saveGoogleToken",
+    "uid": "guest",
+    "keysBefore": []
+   },
+   "where": {
+    "kitHas": false,
+    "kitIsWindow": false,
+    "bodyReadsScope": false,
+    "bodyHasArguments1": true
+   },
+   "restored": {
+    "keysSame": true,
+    "profileSame": true,
+    "sessionSame": true
+   }
+  }
+ },
+ "work": {
+  "app": "C:\\dev\\wt\\es659-gcal-save",
+  "error": null,
+  "pageExceptions": [],
+  "result": {
+   "cases": {
+    "A_noToken": {
+     "returns": [
+      "undefined",
+      "undefined"
+     ],
+     "keysUnchanged": true,
+     "session": true
+    },
+    "B_twoArgsViaScope": {
+     "returns": "undefined",
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_B",
+      "email": "two-args@example.com",
+      "ownerUid": "guest",
+      "expiresAt": "given",
+      "updatedAtRecent": true
+     },
+     "legacyLeft": [],
+     "session": "TOK_B",
+     "state": {
+      "owner": "guest",
+      "cacheIsNull": true,
+      "lastExpiredIsNull": true
+     }
+    },
+    "C_oneArgNoEmail": {
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_C",
+      "email": "",
+      "ownerUid": "guest",
+      "expiresAt": "default(now+3300000)",
+      "updatedAtRecent": true
+     },
+     "session": "TOK_C",
+     "cacheKept": true,
+     "state": {
+      "owner": "guest",
+      "cacheIsNull": false,
+      "lastExpiredIsNull": true
+     }
+    },
+    "D_oneArgSettingsEmail": {
+     "uid": "u_probe_659",
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_D",
+      "email": "from-settings@example.com",
+      "ownerUid": "u_probe_659",
+      "expiresAt": "given",
+      "updatedAtRecent": true
+     },
+     "guestTokenStill": "TOK_C",
+     "session": "TOK_D",
+     "state": {
+      "owner": "u_probe_659",
+      "cacheIsNull": true,
+      "lastExpiredIsNull": true
+     }
+    },
+    "E_threeArgsViaWindow": {
+     "token": {
+      "keys": [
+       "accessToken",
+       "expiresAt",
+       "email",
+       "ownerUid",
+       "updatedAt"
+      ],
+      "accessToken": "TOK_E",
+      "email": "override@example.com",
+      "ownerUid": "u_probe_659",
+      "expiresAt": "given",
+      "updatedAtRecent": true
+     },
+     "session": "TOK_E",
+     "state": {
+      "owner": "u_probe_659",
+      "cacheIsNull": true,
+      "lastExpiredIsNull": true
+     }
+    }
+   },
+   "pre": {
+    "typeofWindow": "function",
+    "typeofScope": "function",
+    "windowIsScope": true,
+    "declaredParams": 1,
+    "name": "saveGoogleToken",
+    "uid": "guest",
+    "keysBefore": []
+   },
+   "where": {
+    "kitHas": true,
+    "kitIsWindow": true,
+    "bodyReadsScope": true,
+    "bodyHasArguments1": true
+   },
+   "restored": {
+    "keysSame": true,
+    "profileSame": true,
+    "sessionSame": true
+   }
+  }
+ },
+ "compare": {
+  "casesCompared": 5,
+  "perCase": {
+   "A_noToken": true,
+   "B_twoArgsViaScope": true,
+   "C_oneArgNoEmail": true,
+   "D_oneArgSettingsEmail": true,
+   "E_threeArgsViaWindow": true
+  },
+  "allCasesSame": true,
+  "preSame": true
+ },
+ "expected": {
+  "noTokenWritesNothing": true,
+  "secondArgBecomesEmail": true,
+  "legacyKeysPurged": true,
+  "staleCacheDropped": true,
+  "oneArgEmailEmptyAndDefaultExpiry": true,
+  "oneArgUsesSettingsEmailAndOwnUidKey": true,
+  "secondArgOverridesSettingsEmail": true,
+  "sessionHoldsLastToken": true
+ },
+ "allExpected": true,
+ "restoredBoth": true,
+ "exceptionsBoth": [
+  0,
+  0
+ ],
+ "ok": true
+}
