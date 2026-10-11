@@ -1,7 +1,7 @@
 {
  "tool": "reports/TASK-ES-649/unstate-run.cjs apply",
  "type": "작업자 측정, 판정 아님",
- "measuredAt": "2026-10-11T04:26:34.552Z",
+ "measuredAt": "2026-10-11T04:43:17.704Z",
  "generator": "docs/design/harness/module-split/gen-inline-hard.js mode:\"unstate\"(이 PR 에서 변경 0)",
  "proof": "reports/TASK-ES-649/proof.json",
  "excludeFile": "reports/TASK-ES-636/pinned-state.exclude.json",
@@ -9,34 +9,36 @@
   "stateNames": 30,
   "exposed": 16,
   "notExposed": 14,
-  "movable": 6,
-  "stopped": 10,
+  "movable": 7,
+  "stopped": 9,
   "excluded": 1,
-  "applied": 5,
+  "applied": 6,
   "define": 4,
-  "defineVar": 1
+  "defineVar": 2
  },
  "htmlLines": [
-  4620,
-  4613
+  4610,
+  4601
  ],
  "generatorStdout": [
-  "unstate · names 5 · define 4 · defineVar 1 · expose props 5 (calls 1) · window copies 0 · comma 1",
-  "index.html lines 4620 -> 4613"
+  "unstate · names 6 · define 4 · defineVar 2 · expose props 7 (calls 1) · window copies 0 · comma 1",
+  "index.html lines 4610 -> 4601"
  ],
  "names": [
   "qRoutineRow",
   "pendingCapturePhoto",
   "capturePhotoBtn",
   "capturePhotoInput",
-  "capturePhotoPreview"
+  "capturePhotoPreview",
+  "USER_SESSION_CHANNEL"
  ],
  "api": {
   "qRoutineRow": "define",
   "pendingCapturePhoto": "defineVar",
   "capturePhotoBtn": "define",
   "capturePhotoInput": "define",
-  "capturePhotoPreview": "define"
+  "capturePhotoPreview": "define",
+  "USER_SESSION_CHANNEL": "defineVar"
  },
  "deletedLineNumbers": [
   2349,
@@ -45,17 +47,20 @@
   2352,
   2353,
   2570,
-  2572
+  2572,
+  2582,
+  2638
  ],
  "commaFixedLineNumbers": [
   2571
  ],
  "editedLineNumbers": [
-  3050,
-  3059,
-  3063,
-  3064,
-  3065
+  3057,
+  3066,
+  3070,
+  3071,
+  3072,
+  3278
  ],
  "removedDetail": {
   "exposeProps": [
@@ -94,6 +99,22 @@
     "kinds": [
      "get"
     ]
+   },
+   {
+    "name": "USER_SESSION_CHANNEL",
+    "line": 2582,
+    "kinds": [
+     "get",
+     "set"
+    ]
+   },
+   {
+    "name": "USER_SESSION_CHANNEL",
+    "line": 2638,
+    "kinds": [
+     "get",
+     "set"
+    ]
    }
   ],
   "exposeCalls": [
@@ -107,33 +128,39 @@
   "declarations": [
    {
     "name": "qRoutineRow",
-    "line": 3050,
-    "endLine": 3050,
+    "line": 3057,
+    "endLine": 3057,
     "api": "define"
    },
    {
     "name": "pendingCapturePhoto",
-    "line": 3059,
-    "endLine": 3059,
+    "line": 3066,
+    "endLine": 3066,
     "api": "defineVar"
    },
    {
     "name": "capturePhotoBtn",
-    "line": 3063,
-    "endLine": 3063,
+    "line": 3070,
+    "endLine": 3070,
     "api": "define"
    },
    {
     "name": "capturePhotoInput",
-    "line": 3064,
-    "endLine": 3064,
+    "line": 3071,
+    "endLine": 3071,
     "api": "define"
    },
    {
     "name": "capturePhotoPreview",
-    "line": 3065,
-    "endLine": 3065,
+    "line": 3072,
+    "endLine": 3072,
     "api": "define"
+   },
+   {
+    "name": "USER_SESSION_CHANNEL",
+    "line": 3278,
+    "endLine": 3278,
+    "api": "defineVar"
    }
   ],
   "windowCopies": []
@@ -144,7 +171,8 @@
   "pendingCapturePhoto",
   "capturePhotoBtn",
   "capturePhotoInput",
-  "capturePhotoPreview"
+  "capturePhotoPreview",
+  "USER_SESSION_CHANNEL"
  ],
  "excluded": [
   "_promptEncyclopediaOpen"
@@ -152,43 +180,39 @@
  "stopped": [
   {
    "name": "sb",
-   "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: sb(줄 3274,3276,3280,4562,4573)"
+   "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: sb(줄 4552,4563)"
   },
   {
    "name": "state",
-   "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: state(줄 2957,2959,2960,2961,2963,3110,3274,3279,3406,3565,3833,4159,4160,4161,4190,4191,4193,4199,4200,4201,4203,4205,4208,4209,4210,4214,4235,4255,4260,4263,4570,4573)"
+   "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: state(줄 2964,2966,2967,2968,2970,3117,3396,3555,3823,4149,4150,4151,4180,4181,4183,4189,4190,4191,4193,4195,4198,4199,4200,4204,4225,4245,4250,4253,4560,4563)"
   },
   {
    "name": "_subtabTplCat",
-   "reason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplCat(줄 3220,3225)"
+   "reason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplCat(줄 3227,3232)"
   },
   {
    "name": "_subtabTplQuery",
-   "reason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplQuery(줄 3221,3226)"
+   "reason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplQuery(줄 3228,3233)"
   },
   {
    "name": "_subtabTplDomain",
-   "reason": "선언문 _subtabTplDomain 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3223"
+   "reason": "선언문 _subtabTplDomain 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3230"
   },
   {
    "name": "_subtabTplType",
-   "reason": "선언문 _subtabTplType 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3224"
-  },
-  {
-   "name": "USER_SESSION_CHANNEL",
-   "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: USER_SESSION_CHANNEL(줄 3275,3276,3277,3280)"
+   "reason": "선언문 _subtabTplType 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3231"
   },
   {
    "name": "MOCK_GROUPS",
-   "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: MOCK_GROUPS(줄 4570)"
+   "reason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: MOCK_GROUPS(줄 4560)"
   },
   {
    "name": "shareContent",
-   "reason": "window 복사 줄이 다른 글자와 한 줄을 나눠 쓴다: 4485"
+   "reason": "window 복사 줄이 다른 글자와 한 줄을 나눠 쓴다: 4475"
   },
   {
    "name": "FEED_POSTS_CACHE",
-   "reason": "선언문 FEED_POSTS_CACHE 이(가) 다른 글자와 한 줄을 나눠 쓴다: 4494"
+   "reason": "선언문 FEED_POSTS_CACHE 이(가) 다른 글자와 한 줄을 나눠 쓴다: 4484"
   }
  ],
  "notExposed": [
@@ -231,11 +255,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:30.101Z",
-   "endedAt": "2026-10-11T04:26:30.492Z",
+   "startedAt": "2026-10-11T04:43:13.174Z",
+   "endedAt": "2026-10-11T04:43:13.523Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -245,11 +269,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:30.494Z",
-   "endedAt": "2026-10-11T04:26:30.723Z",
+   "startedAt": "2026-10-11T04:43:13.524Z",
+   "endedAt": "2026-10-11T04:43:13.725Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -259,13 +283,13 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:30.724Z",
-   "endedAt": "2026-10-11T04:26:31.001Z",
+   "startedAt": "2026-10-11T04:43:13.727Z",
+   "endedAt": "2026-10-11T04:43:13.978Z",
    "exitCode": 0,
-   "stdoutHead": "unstate · names 1 · define 0 · defineVar 1 · expose props 1 (calls 0) · window copies 0 · comma 1\nindex.html lines 4620 -> 4619\n",
+   "stdoutHead": "unstate · names 1 · define 0 · defineVar 1 · expose props 1 (calls 0) · window copies 0 · comma 1\nindex.html lines 4610 -> 4609\n",
    "stderrHead": ""
   },
   {
@@ -273,13 +297,13 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:31.003Z",
-   "endedAt": "2026-10-11T04:26:31.290Z",
+   "startedAt": "2026-10-11T04:43:13.980Z",
+   "endedAt": "2026-10-11T04:43:14.210Z",
    "exitCode": 0,
-   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 1\nindex.html lines 4620 -> 4619\n",
+   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 1\nindex.html lines 4610 -> 4609\n",
    "stderrHead": ""
   },
   {
@@ -287,13 +311,13 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:31.292Z",
-   "endedAt": "2026-10-11T04:26:31.582Z",
+   "startedAt": "2026-10-11T04:43:14.211Z",
+   "endedAt": "2026-10-11T04:43:14.453Z",
    "exitCode": 0,
-   "stdoutHead": "unstate · names 1 · define 0 · defineVar 1 · expose props 1 (calls 0) · window copies 0 · comma 1\nindex.html lines 4620 -> 4619\n",
+   "stdoutHead": "unstate · names 1 · define 0 · defineVar 1 · expose props 1 (calls 0) · window copies 0 · comma 1\nindex.html lines 4610 -> 4609\n",
    "stderrHead": ""
   },
   {
@@ -301,13 +325,13 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:31.584Z",
-   "endedAt": "2026-10-11T04:26:31.869Z",
+   "startedAt": "2026-10-11T04:43:14.455Z",
+   "endedAt": "2026-10-11T04:43:14.691Z",
    "exitCode": 0,
-   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 0\nindex.html lines 4620 -> 4619\n",
+   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 0\nindex.html lines 4610 -> 4609\n",
    "stderrHead": ""
   },
   {
@@ -315,13 +339,13 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:31.871Z",
-   "endedAt": "2026-10-11T04:26:32.153Z",
+   "startedAt": "2026-10-11T04:43:14.693Z",
+   "endedAt": "2026-10-11T04:43:14.941Z",
    "exitCode": 0,
-   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 0\nindex.html lines 4620 -> 4619\n",
+   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 0\nindex.html lines 4610 -> 4609\n",
    "stderrHead": ""
   },
   {
@@ -329,13 +353,13 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:32.154Z",
-   "endedAt": "2026-10-11T04:26:32.427Z",
+   "startedAt": "2026-10-11T04:43:14.942Z",
+   "endedAt": "2026-10-11T04:43:15.226Z",
    "exitCode": 0,
-   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 0\nindex.html lines 4620 -> 4619\n",
+   "stdoutHead": "unstate · names 1 · define 1 · defineVar 0 · expose props 1 (calls 0) · window copies 0 · comma 0\nindex.html lines 4610 -> 4609\n",
    "stderrHead": ""
   },
   {
@@ -343,11 +367,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:32.429Z",
-   "endedAt": "2026-10-11T04:26:32.668Z",
+   "startedAt": "2026-10-11T04:43:15.228Z",
+   "endedAt": "2026-10-11T04:43:15.472Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -357,11 +381,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:32.669Z",
-   "endedAt": "2026-10-11T04:26:32.886Z",
+   "startedAt": "2026-10-11T04:43:15.475Z",
+   "endedAt": "2026-10-11T04:43:15.752Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -371,11 +395,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:32.889Z",
-   "endedAt": "2026-10-11T04:26:33.100Z",
+   "startedAt": "2026-10-11T04:43:15.754Z",
+   "endedAt": "2026-10-11T04:43:15.995Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -385,11 +409,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:33.101Z",
-   "endedAt": "2026-10-11T04:26:33.319Z",
+   "startedAt": "2026-10-11T04:43:15.997Z",
+   "endedAt": "2026-10-11T04:43:16.280Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -399,11 +423,25 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:33.321Z",
-   "endedAt": "2026-10-11T04:26:33.551Z",
+   "startedAt": "2026-10-11T04:43:16.282Z",
+   "endedAt": "2026-10-11T04:43:16.604Z",
+   "exitCode": 0,
+   "stdoutHead": "unstate · names 1 · define 0 · defineVar 1 · expose props 2 (calls 0) · window copies 0 · comma 0\nindex.html lines 4610 -> 4608\n",
+   "stderrHead": ""
+  },
+  {
+   "id": "gen-inline-hard(unstate)",
+   "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
+   ],
+   "startedAt": "2026-10-11T04:43:16.607Z",
+   "endedAt": "2026-10-11T04:43:16.862Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -413,11 +451,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:33.552Z",
-   "endedAt": "2026-10-11T04:26:33.761Z",
+   "startedAt": "2026-10-11T04:43:16.866Z",
+   "endedAt": "2026-10-11T04:43:17.096Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -427,25 +465,11 @@
    "argv": [
     "C:\\Program Files\\nodejs\\node.exe",
     "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try",
+    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-BMYShv\\try.json"
    ],
-   "startedAt": "2026-10-11T04:26:33.763Z",
-   "endedAt": "2026-10-11T04:26:33.971Z",
-   "exitCode": 1,
-   "stdoutHead": "",
-   "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
-  },
-  {
-   "id": "gen-inline-hard(unstate)",
-   "argv": [
-    "C:\\Program Files\\nodejs\\node.exe",
-    "<작업 트리>\\docs\\design\\harness\\module-split\\gen-inline-hard.js",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try",
-    "C:\\Users\\HP\\AppData\\Local\\Temp\\unstate-run-0unHfv\\try.json"
-   ],
-   "startedAt": "2026-10-11T04:26:33.972Z",
-   "endedAt": "2026-10-11T04:26:34.176Z",
+   "startedAt": "2026-10-11T04:43:17.098Z",
+   "endedAt": "2026-10-11T04:43:17.333Z",
    "exitCode": 1,
    "stdoutHead": "",
    "stderrHead": "C:\\dev\\wt\\es649-unstate-2\\docs\\design\\harness\\module-split\\gen-inline-hard.js:332\r\n    } catch (err) { if (isList) err.message = '[unstate 실행 ' + (i + 1) + '/' + specs.length + '] ' + err.message; thr"
@@ -458,10 +482,10 @@
     "<작업 트리>",
     "<작업 트리>\\reports\\TASK-ES-649\\proof.json"
    ],
-   "startedAt": "2026-10-11T04:26:34.177Z",
-   "endedAt": "2026-10-11T04:26:34.434Z",
+   "startedAt": "2026-10-11T04:43:17.334Z",
+   "endedAt": "2026-10-11T04:43:17.586Z",
    "exitCode": 0,
-   "stdoutHead": "unstate · names 5 · define 4 · defineVar 1 · expose props 5 (calls 1) · window copies 0 · comma 1\nindex.html lines 4620 -> 4613\n",
+   "stdoutHead": "unstate · names 6 · define 4 · defineVar 2 · expose props 7 (calls 1) · window copies 0 · comma 1\nindex.html lines 4610 -> 4601\n",
    "stderrHead": ""
   }
  ]

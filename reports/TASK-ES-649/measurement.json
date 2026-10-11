@@ -2,7 +2,7 @@
  "schema": "ourgoal.unstate-run.measurement/1",
  "taskId": "TASK-ES-649",
  "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정(node court/chat.js <PR>)만 낸다",
- "measuredAt": "2026-10-11T04:36:23.509Z",
+ "measuredAt": "2026-10-11T04:50:34.246Z",
  "environment": {
   "node": "v24.15.0",
   "platform": "win32",
@@ -10,13 +10,13 @@
   "gitAutocrlf": "true"
  },
  "sourceCommit": {
-  "baseTreeHead": "94ada512c10a40e3cd15dc90a45ee2be455ea733",
-  "worktreeHead": "4f5b0a74ae470a1a790c1996c060e60994fde2b4",
+  "baseTreeHead": "529e43709ba65929e4b0e4f4049033d466e3dd2f",
+  "worktreeHead": "88a88e55bcb5e87db9dd28da1ba7429a10f3c002",
   "note": "기준 = origin/main 임시 git worktree(저장소 밖). 작업 = 이 트리(커밋 전 작업 상태 포함)"
  },
  "summary": {
   "changed": {
-   "files": 35,
+   "files": 36,
    "list": [
     "docs/architecture/module-baseline.json",
     "docs/rules/TICKETS.md",
@@ -25,6 +25,7 @@
     "reports/TASK-ES-649/cell-registry-compare.before.json",
     "reports/TASK-ES-649/cell-registry-compare.json",
     "reports/TASK-ES-649/claims.json",
+    "reports/TASK-ES-649/court-local.json",
     "reports/TASK-ES-649/measurement.json",
     "reports/TASK-ES-649/module-load.json",
     "reports/TASK-ES-649/npm-test-compare.json",
@@ -60,34 +61,34 @@
    "onlyIndexHtml": true,
    "indexHtml": {
     "file": "index.html",
-    "insertions": 6,
-    "deletions": 13
+    "insertions": 7,
+    "deletions": 16
    },
-   "netLineGrowth": -7,
+   "netLineGrowth": -9,
    "testsChanged": [],
    "vaultChanged": [],
    "generatorChanged": [],
    "organChanged": []
   },
   "moved": {
-   "names": 5,
+   "names": 6,
    "define": 4,
-   "defineVar": 1,
+   "defineVar": 2,
    "exposed": 16,
-   "movable": 6,
+   "movable": 7,
    "excluded": [
     "_promptEncyclopediaOpen"
    ],
-   "stopped": 10,
+   "stopped": 9,
    "notExposed": 14
   },
   "replay": {
    "rebuiltEqualsWork": true,
-   "baseLines": 4620,
-   "workLines": 4613,
-   "deletedLines": 7,
+   "baseLines": 4610,
+   "workLines": 4601,
+   "deletedLines": 9,
    "commaFixedLines": 1,
-   "editedLines": 5,
+   "editedLines": 6,
    "problems": [],
    "firstDiff": null,
    "note": "기준 index.html 에서 생성기가 적어 낸 줄(deletedLineNumbers)을 지우고, commaFixedLineNumbers 줄 끝 쉼표 한 글자를 떼고, 선언 머리·선언 끝·window 복사 오른쪽을 정해진 글자로 바꾼 결과 == 작업 index.html (줄바꿈만 LF 로 맞춤). 참이면 그 밖의 글자 변경 0 · 더한 줄 0"
@@ -98,26 +99,26 @@
    "exposeShellsNotShell": [],
    "namesOutsideProof": [],
    "editedLinesEqualExpected": true,
-   "declarations": 5,
+   "declarations": 6,
    "windowCopies": 0,
-   "exposeProps": 5,
+   "exposeProps": 7,
    "exposeCallsRemoved": 1,
    "everyNameHasOneDeclaration": true,
    "everyNameHadAccessor": true,
    "note": "지운 줄은 전부 대상 이름의 expose getter/setter 속성 줄(본문 return X; · X = v;)과 속성이 모두 지워진 expose 문의 머리·꼬리에 들고, 바뀐 줄은 선언 머리·선언 끝·window 복사 줄뿐이다(닫힌 목록 X4·X5·X6)"
   },
   "inlineScriptLines": {
-   "before": 2350,
-   "after": 2343,
+   "before": 2340,
+   "after": 2331,
    "decreased": true,
-   "delta": -7,
+   "delta": -9,
    "equalsDeletedLines": true,
    "source": "scripts/module-metrics.js measure().ratchet"
   },
   "ratchet": {
    "indexFunctionDecls": [
-    19,
-    19
+    18,
+    18
    ],
    "windowAssignments": [
     75,
@@ -133,8 +134,8 @@
    ]
   },
   "baseline": {
-   "recordedBefore": 2350,
-   "recorded": 2343,
+   "recordedBefore": 2340,
+   "recorded": 2331,
    "recordedEqualsMeasured": true,
    "historyGrewBy": 1
   },
@@ -162,13 +163,13 @@
    ],
    "differing": [],
    "differingCount": 0,
-   "organNames": 55,
+   "organNames": 56,
    "organMatchesProof": true,
    "transitions": {
     "get → get | 주인 index.html → index.html": 3,
-    "get+set → get+set | 주인 index.html → index.html": 8,
+    "get+set → get+set | 주인 index.html → index.html": 7,
     "get → get | 주인 index.html → core/app-state": 4,
-    "get+set → get+set | 주인 index.html → core/app-state": 1
+    "get+set → get+set | 주인 index.html → core/app-state": 2
    },
    "writable": {
     "base": {
@@ -316,7 +317,7 @@
      "scopeAssign": [],
      "scopeRead": 2,
      "define": [
-      "index.html(인라인):3043"
+      "index.html(인라인):3048"
      ],
      "bare": [],
      "other": [],
@@ -330,7 +331,7 @@
      ],
      "scopeRead": 4,
      "define": [
-      "index.html(인라인):3052"
+      "index.html(인라인):3057"
      ],
      "bare": [],
      "other": [],
@@ -340,7 +341,7 @@
      "scopeAssign": [],
      "scopeRead": 2,
      "define": [
-      "index.html(인라인):3056"
+      "index.html(인라인):3061"
      ],
      "bare": [],
      "other": [],
@@ -350,7 +351,7 @@
      "scopeAssign": [],
      "scopeRead": 5,
      "define": [
-      "index.html(인라인):3057"
+      "index.html(인라인):3062"
      ],
      "bare": [],
      "other": [],
@@ -360,11 +361,24 @@
      "scopeAssign": [],
      "scopeRead": 8,
      "define": [
-      "index.html(인라인):3058"
+      "index.html(인라인):3063"
      ],
      "bare": [],
      "other": [],
      "comment": 1
+    },
+    "USER_SESSION_CHANNEL": {
+     "scopeAssign": [
+      "js/tabs/settings/user-session-realtime.js:24",
+      "js/tabs/settings/user-session-realtime.js:27"
+     ],
+     "scopeRead": 4,
+     "define": [
+      "index.html(인라인):3269"
+     ],
+     "bare": [],
+     "other": [],
+     "comment": 2
     }
    },
    "bareLeft": 0,
@@ -564,9 +578,9 @@
   },
   "remaining": {
    "stateNamesBefore": 30,
-   "moved": 5,
-   "stateNamesLeftInIife": 25,
-   "stoppedByGenerator": 10,
+   "moved": 6,
+   "stateNamesLeftInIife": 24,
+   "stoppedByGenerator": 9,
    "excludedBecauseTestsPinStateText": 1,
    "notExposed": 14
   }
@@ -585,10 +599,10 @@
     "rev-parse",
     "HEAD"
    ],
-   "startedAt": "2026-10-11T04:34:48.956Z",
-   "endedAt": "2026-10-11T04:34:49.019Z",
+   "startedAt": "2026-10-11T04:49:00.530Z",
+   "endedAt": "2026-10-11T04:49:00.589Z",
    "exitCode": 0,
-   "stdoutHead": "94ada512c10a40e3cd15dc90a45ee2be455ea733\n",
+   "stdoutHead": "529e43709ba65929e4b0e4f4049033d466e3dd2f\n",
    "stderrHead": ""
   },
   {
@@ -598,10 +612,10 @@
     "rev-parse",
     "HEAD"
    ],
-   "startedAt": "2026-10-11T04:34:49.019Z",
-   "endedAt": "2026-10-11T04:34:49.082Z",
+   "startedAt": "2026-10-11T04:49:00.589Z",
+   "endedAt": "2026-10-11T04:49:00.649Z",
    "exitCode": 0,
-   "stdoutHead": "4f5b0a74ae470a1a790c1996c060e60994fde2b4\n",
+   "stdoutHead": "88a88e55bcb5e87db9dd28da1ba7429a10f3c002\n",
    "stderrHead": ""
   },
   {
@@ -610,13 +624,13 @@
     "git",
     "diff",
     "--numstat",
-    "94ada512c10a40e3cd15dc90a45ee2be455ea733",
+    "529e43709ba65929e4b0e4f4049033d466e3dd2f",
     "--"
    ],
-   "startedAt": "2026-10-11T04:34:49.082Z",
-   "endedAt": "2026-10-11T04:34:49.273Z",
+   "startedAt": "2026-10-11T04:49:00.649Z",
+   "endedAt": "2026-10-11T04:49:00.952Z",
    "exitCode": 0,
-   "stdoutHead": "14\t0\tdocs/architecture/module-baseline.json\n1\t0\tdocs/rules/TICKETS.md\n114\t0\tdocs/specs/REQ-TASK-ES-649-UNSTATE-2.md\n6\t13\tindex.html\n2194\t0\treports/TASK-ES-649/cell-registry-compare.before.json\n2201\t0\t",
+   "stdoutHead": "14\t0\tdocs/architecture/module-baseline.json\n1\t0\tdocs/rules/TICKETS.md\n117\t0\tdocs/specs/REQ-TASK-ES-649-UNSTATE-2.md\n7\t16\tindex.html\n2194\t0\treports/TASK-ES-649/cell-registry-compare.before.json\n2201\t0\t",
    "stderrHead": "warning: in the working copy of 'docs/architecture/module-baseline.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/specs/REQ-TASK-ES-649-UNSTATE-2"
   },
   {
@@ -627,8 +641,8 @@
     "--others",
     "--exclude-standard"
    ],
-   "startedAt": "2026-10-11T04:34:49.273Z",
-   "endedAt": "2026-10-11T04:34:49.403Z",
+   "startedAt": "2026-10-11T04:49:00.952Z",
+   "endedAt": "2026-10-11T04:49:01.081Z",
    "exitCode": 0,
    "stdoutHead": "",
    "stderrHead": ""
@@ -640,8 +654,8 @@
     "scripts/module-guard.js",
     "--quiet"
    ],
-   "startedAt": "2026-10-11T04:34:50.386Z",
-   "endedAt": "2026-10-11T04:34:50.891Z",
+   "startedAt": "2026-10-11T04:49:01.969Z",
+   "endedAt": "2026-10-11T04:49:02.477Z",
    "exitCode": 0,
    "stdoutHead": "✓ 모듈 가드 통과\n",
    "stderrHead": ""
@@ -652,8 +666,8 @@
     "C:\\Program Files\\nodejs\\node.exe",
     "scripts/verify-integrity-gate.js"
    ],
-   "startedAt": "2026-10-11T04:34:50.892Z",
-   "endedAt": "2026-10-11T04:34:51.458Z",
+   "startedAt": "2026-10-11T04:49:02.477Z",
+   "endedAt": "2026-10-11T04:49:03.055Z",
    "exitCode": 0,
    "stdoutHead": "================================================================\n🛡️  아워골 전면 무결성 헌법 5대 핵심 검증 게이트 (Integrity Gate)\n================================================================\n\n[검증 1/5] 껍데기 버튼 및 데드",
    "stderrHead": ""
@@ -668,8 +682,8 @@
     "--names",
     "<작업 트리>\\reports\\TASK-ES-649\\probe-names.json"
    ],
-   "startedAt": "2026-10-11T04:34:51.559Z",
-   "endedAt": "2026-10-11T04:34:56.194Z",
+   "startedAt": "2026-10-11T04:49:03.149Z",
+   "endedAt": "2026-10-11T04:49:07.889Z",
    "exitCode": 0,
    "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":50,\"names\":16,\"extra\":null}\n",
    "stderrHead": ""
@@ -684,8 +698,8 @@
     "--names",
     "<작업 트리>\\reports\\TASK-ES-649\\probe-names.json"
    ],
-   "startedAt": "2026-10-11T04:34:56.194Z",
-   "endedAt": "2026-10-11T04:35:00.832Z",
+   "startedAt": "2026-10-11T04:49:07.889Z",
+   "endedAt": "2026-10-11T04:49:12.413Z",
    "exitCode": 0,
    "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":50,\"names\":16,\"extra\":null}\n",
    "stderrHead": ""
@@ -700,10 +714,10 @@
     "--names",
     "<작업 트리>\\reports\\TASK-ES-649\\probe-names.json"
    ],
-   "startedAt": "2026-10-11T04:35:00.832Z",
-   "endedAt": "2026-10-11T04:35:05.489Z",
+   "startedAt": "2026-10-11T04:49:12.413Z",
+   "endedAt": "2026-10-11T04:49:17.020Z",
    "exitCode": 0,
-   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":55,\"names\":16,\"extra\":null}\n",
+   "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":56,\"names\":16,\"extra\":null}\n",
    "stderrHead": ""
   },
   {
@@ -714,8 +728,8 @@
     "C:\\Users\\HP\\AppData\\Local\\Temp\\es649-base",
     "<작업 트리>\\reports\\TASK-ES-649\\photo-probe.base.json"
    ],
-   "startedAt": "2026-10-11T04:35:05.493Z",
-   "endedAt": "2026-10-11T04:35:11.799Z",
+   "startedAt": "2026-10-11T04:49:17.022Z",
+   "endedAt": "2026-10-11T04:49:23.371Z",
    "exitCode": 0,
    "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"consoleErrors\":0,\"names\":{\"pendingCapturePhoto\":{\"accessor\":\"get+set\",\"owner\":\"index.html\",\"organKind\":null},\"capturePhotoBtn\":{\"accessor\":\"get\",\"owner\":\"index.",
    "stderrHead": ""
@@ -728,8 +742,8 @@
     "<작업 트리>",
     "<작업 트리>\\reports\\TASK-ES-649\\photo-probe.work.json"
    ],
-   "startedAt": "2026-10-11T04:35:11.799Z",
-   "endedAt": "2026-10-11T04:35:18.110Z",
+   "startedAt": "2026-10-11T04:49:23.372Z",
+   "endedAt": "2026-10-11T04:49:29.722Z",
    "exitCode": 0,
    "stdoutHead": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"consoleErrors\":0,\"names\":{\"pendingCapturePhoto\":{\"accessor\":\"get+set\",\"owner\":\"core/app-state\",\"organKind\":\"var\"},\"capturePhotoBtn\":{\"accessor\":\"get\",\"owner\":\"c",
    "stderrHead": ""
@@ -743,8 +757,8 @@
     "<작업 트리>\\reports\\TASK-ES-649\\cell-registry-compare.before.json",
     "--fingerprints"
    ],
-   "startedAt": "2026-10-11T04:35:18.484Z",
-   "endedAt": "2026-10-11T04:35:23.160Z",
+   "startedAt": "2026-10-11T04:49:30.172Z",
+   "endedAt": "2026-10-11T04:49:34.812Z",
    "exitCode": 0,
    "stdoutHead": "scope 431 · window 17 · registered 438 · mismatches 0 · missing 92 · extra 82 · conflicts 0 · exceptions 0\n",
    "stderrHead": ""
@@ -760,8 +774,8 @@
     "--names-from",
     "<작업 트리>\\reports\\TASK-ES-649\\cell-registry-compare.before.json"
    ],
-   "startedAt": "2026-10-11T04:35:23.160Z",
-   "endedAt": "2026-10-11T04:35:27.860Z",
+   "startedAt": "2026-10-11T04:49:34.812Z",
+   "endedAt": "2026-10-11T04:49:39.406Z",
    "exitCode": 0,
    "stdoutHead": "scope 431 · window 17 · registered 438 · mismatches 0 · missing 92 · extra 82 · conflicts 0 · exceptions 0\n",
    "stderrHead": ""
@@ -780,8 +794,8 @@
     "<작업 트리>\\reports\\TASK-ES-649\\scenarios\\g1-guest-boot-six-tabs.json",
     "<작업 트리>\\reports\\TASK-ES-649\\scenarios\\g1-new-goal-modal.json"
    ],
-   "startedAt": "2026-10-11T04:35:27.862Z",
-   "endedAt": "2026-10-11T04:36:23.304Z",
+   "startedAt": "2026-10-11T04:49:39.409Z",
+   "endedAt": "2026-10-11T04:50:34.039Z",
    "exitCode": 0,
    "stdoutHead": "g1-bell-modal-settings {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\ng1-goal-agent-drawer {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\ng1-goals-subtabs-periods {\"base\":true,\"w",
    "stderrHead": ""
@@ -793,8 +807,8 @@
     "config",
     "core.autocrlf"
    ],
-   "startedAt": "2026-10-11T04:36:23.509Z",
-   "endedAt": "2026-10-11T04:36:23.573Z",
+   "startedAt": "2026-10-11T04:50:34.246Z",
+   "endedAt": "2026-10-11T04:50:34.309Z",
    "exitCode": 0,
    "stdoutHead": "true\n",
    "stderrHead": ""
