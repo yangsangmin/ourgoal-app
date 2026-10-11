@@ -34,7 +34,8 @@ const RELAY = [{ name: 'renderTeamGoalsScreen', reason: '주인 세포 js/tabs/g
 const KEEP = { statements: ['var SUPABASE_URL', 'var SUPABASE_ANON_KEY', "window.OurgoalAppState.define('sb'"], reason: '커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다(2026-10-11 결심 ① 제자리 인라인에 남김)' };
 
 if (CMD === 'apply') {
-  const proof = { task: TASK, mode: 'finalize', label: '인라인 IIFE 마지막 정리 — 남은 시동 문을 부팅 파일로(서버 연결 세 문과 그 앞에서 도는 문은 인라인에 그대로)',
+  // slot: finalize 는 이음매 자리를 쓰지 않지만 법정의 재실행 대조(court/lib/preserve-source.js)가 증명 파일에 slot 칸을 요구한다 — 배선 철거 · 쓸기 증명 파일과 같은 값을 적는다(생성기 출력에 영향 없음)
+  const proof = { task: TASK, slot: 'HO', mode: 'finalize', label: '인라인 IIFE 마지막 정리 — 남은 시동 문을 부팅 파일로(서버 연결 세 문과 그 앞에서 도는 문은 인라인에 그대로)',
     cells: [{ file: BOOT, title: 'OurGoal App Boot (부팅 — 구역 함수를 순서대로 부른다)', desc: ['구역 함수를 index.html 에 있던 순서 그대로 부른다.'] }], relay: RELAY, keepInline: KEEP };
   wj('proof.json', proof);
   const metaDir = fs.mkdtempSync(path.join(os.tmpdir(), 'finalize-run-meta-'));
