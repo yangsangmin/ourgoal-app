@@ -1,0 +1,28 @@
+{
+ "task": "TASK-ES-681-MOCK",
+ "mode": "finalize",
+ "label": "모의 — 인라인 IIFE 마지막 정리(relay · keepInline)",
+ "cells": [
+  {
+   "file": "js/app/boot.js",
+   "title": "OurGoal App Boot (부팅 — 구역 함수를 순서대로 부른다)",
+   "desc": [
+    "구역 함수를 index.html 에 있던 순서 그대로 부른다."
+   ]
+  }
+ ],
+ "relay": [
+  {
+   "name": "renderTeamGoalsScreen",
+   "reason": "주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계"
+  }
+ ],
+ "keepInline": {
+  "statements": [
+   "var SUPABASE_URL",
+   "var SUPABASE_ANON_KEY",
+   "window.OurgoalAppState.define('sb'"
+  ],
+  "reason": "커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다"
+ }
+}

@@ -1,0 +1,1448 @@
+{
+ "tool": "docs/design/harness/module-split/finalize-check-681.js",
+ "type": "작업자 측정, 판정 아님",
+ "pin": "d7789c89423834a46b6b982c525d68303d3e9368",
+ "measuredAt": "2026-10-11T12:37:36.979Z",
+ "total": 89,
+ "passed": 89,
+ "failed": [],
+ "results": [
+  {
+   "id": "P",
+   "title": "앞선 단위 시험 전부(662 45건 → 661 47건 → 657 22건 → 643 67건 → 634 34건 → 619 16건 → B1 8건 · 병합된 PR 재생성 포함)가 고친 생성기에서 생성기 diff 모양 검사 말고 모두 통과한다(모양 검사: 662 D0 · 661 D0 · 657 D1 · 643 D0, 그 조건을 겉에서 다시 보는 662 B · 661 B). 생성기와 무관한 한 건(B1 의 T7 — 지금의 index.html 에 후보가 없어 「측정불가」)과 그것이 번진 겉의 B 는 따로 적는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "total": 45,
+    "failed": [
+     "B",
+     "D0"
+    ],
+    "finalize662": {
+     "total": 45,
+     "passed": 43,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "sweep661": {
+     "total": 47,
+     "passed": 45,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "fnArguments657": {
+     "total": 22,
+     "passed": 20,
+     "failed": [
+      "B",
+      "D1"
+     ]
+    },
+    "region643": {
+     "total": 67,
+     "passed": 65,
+     "failed": [
+      "B",
+      "D0"
+     ]
+    },
+    "unstate634": "33/34",
+    "unwireExt619": "15/16",
+    "unwireB1": "7/8",
+    "b1Direct": {
+     "total": 8,
+     "failed": [
+      "T7"
+     ],
+     "t7Unmeasurable": true,
+     "t7Note": "{\"note\":\"후보 이름 없음(모든 가져오기가 IIFE 안에서 쓰인다) — 측정불가\"}"
+    },
+    "stderrTail": [
+     ""
+    ]
+   }
+  },
+  {
+   "id": "D",
+   "title": "생성기 diff 는 두 구간(finalize 의 `runFinalize` · unwire 의 `unwireOnce`) 안에만 있다 — 그 밖의 세 토막(머리 · 두 구간 사이 · 꼬리)은 기준과 글자가 같다. 검사기는 기준과 같다",
+   "ok": true,
+   "detail": {
+    "pin": "d7789c89423834a46b6b982c525d68303d3e9368",
+    "baseLines": 1615,
+    "nowLines": 1851,
+    "added": 236,
+    "base": {
+     "f0": 246,
+     "f1": 369,
+     "u0": 422,
+     "u1": 628
+    },
+    "now": {
+     "f0": 246,
+     "f1": 541,
+     "u0": 594,
+     "u1": 864
+    },
+    "headSame": true,
+    "midSame": true,
+    "tailSame": true,
+    "finalizeLines": [
+     123,
+     295
+    ],
+    "unwireOnceLines": [
+     206,
+     270
+    ],
+    "verifySame": true
+   }
+  },
+  {
+   "id": "G1",
+   "title": "옵션 없이 돌리면 기준 생성기(PIN)와 같다 — 성공 둘 · 정지 셋의 index.html · 부팅 파일 · 표준 출력 · 메타 · 오류 글자가 전부 같다(expose 문 · 불리지 않는 가져오기 · 그 밖의 var · 상태 선언은 예전과 같은 글자로 멈춘다)",
+   "ok": true,
+   "detail": [
+    {
+     "name": "성공: 문만 있는 꼴",
+     "status": [
+      0,
+      0
+     ],
+     "same": true,
+     "err": null
+    },
+    {
+     "name": "성공: label 없음 · slot 있음",
+     "status": [
+      0,
+      0
+     ],
+     "same": true,
+     "err": null
+    },
+    {
+     "name": "정지: expose 문과 불리지 않는 가져오기(relay 를 적지 않음)",
+     "status": [
+      1,
+      1
+     ],
+     "same": true,
+     "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 2개 있다(expose 문 1 · 호출되지 않는 가져오기 1). 첫 문: 줄 15 「var renderTeam = _gKit.renderTeam;」"
+    },
+    {
+     "name": "정지: 그 밖의 var · 상태 선언(keepInline 을 적지 않음)",
+     "status": [
+      1,
+      1
+     ],
+     "same": true,
+     "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 3개 있다(그 밖의 var 2 · 상태 선언(define) 1). 첫 문: 줄 20 「var SERVER_URL = 'https://example.invalid';」"
+    },
+    {
+     "name": "정지: 모르는 칸",
+     "status": [
+      1,
+      1
+     ],
+     "same": true,
+     "err": "finalize 설정에 모르는 칸: defer"
+    }
+   ]
+  },
+  {
+   "id": "R1",
+   "title": "relay: 가져오기 1 + getter 1(expose 문 세 줄) → 부팅 파일로 글자 그대로, 같은 자리 · 머리 주석에 이름과 근거 · 표준 출력 한 줄 · 메타 relayed",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "sameHtml": true,
+     "statements": 8
+    },
+    "more": true,
+    "stdout": [
+     "finalize · handles 2 · imports 3 · calls 2 · removed lines 16 (껍데기 5 · 문 10 · 주석 1 · 빈 줄 0)",
+     "  relay renderTeam — 가져오기 줄 15 · getter 줄 17(expose 문 줄 16~18) → js/app/boot.js · 근거: 주인 세포가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다(시험 꾸러미)",
+     "index.html lines 31 -> 15",
+     "js/app/boot.js 21",
+     ""
+    ]
+   }
+  },
+  {
+   "id": "R2",
+   "title": "relay: 이름 둘이 한 expose 문(한 줄)에 있고 호출문 뒤에 와도 그대로 옮긴다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "sameHtml": true,
+     "statements": 6
+    },
+    "more": true,
+    "stdout": [
+     "finalize · handles 1 · imports 3 · calls 1 · removed lines 11 (껍데기 5 · 문 6 · 주석 0 · 빈 줄 0)",
+     "  relay renderTeam — 가져오기 줄 13 · getter 줄 17(expose 문 줄 17~17) → js/app/boot.js · 근거: 주인 세포가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다(시험 꾸러미)",
+     "  relay renderCrew — 가져오기 줄 14 · getter 줄 17(expose 문 줄 17~17) → js/app/boot.js · 근거: 주인 세포가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다(시험 꾸러미)",
+     "index.html lines 26 -> 15",
+     "js/app/boot.js 20",
+     ""
+    ]
+   }
+  },
+  {
+   "id": "K1",
+   "title": "keepInline: 남길 문 셋 + 그 앞의 호출문 하나(+ 그 가져오기 · 손잡이)를 인라인에 줄 그대로 남기고, 나머지는 부팅 파일로 · 손잡이는 부팅 파일에 한 번 더 · 태그는 남긴 `</script>` 줄 끝",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "statements": {
+      "orig": 10,
+      "inline": 6,
+      "boot": 5,
+      "overlap": 1
+     },
+     "cover": true,
+     "overlapOnlyHandles": true,
+     "linesOk": true,
+     "tagLine": true,
+     "outside": true,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ]
+    },
+    "more": true,
+    "stdout": [
+     "finalize · handles 1 · imports 3 · calls 3 · removed lines 8 (껍데기 0 · 문 4 · 주석 3 · 빈 줄 1)",
+     "  keepInline 「var SERVER_URL」 — 줄 20(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline 「var PUBLIC_KEY」 — 줄 21(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline 「window.OurgoalAppState.define('sb'」 — 줄 22(상태 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline(함께 남김) 줄 17 「bootTheme();」 — 지정한 문보다 앞에서 도는 호출문",
+     "  keepInline(함께 남김) 줄 13 「var _aKit = window.OurgoalAKit;」 — 인라인에 남는 문이 읽는 손잡이",
+     "  keepInline(함께 남김) 줄 14 「var bootTheme = _aKit.bootTheme;」 — 인라인에 남는 문이 읽는 가져오기",
+     "  keepInline(손잡이 한 번 더) _aKit — 줄 13 은 인라인에 남고 부팅 파일에도 같은 글자로 적는다"
+    ]
+   }
+  },
+  {
+   "id": "K2",
+   "title": "keepInline: 앞에 호출문이 없으면 지정한 문만 남는다(손잡이 한 번 더 없음) · 여러 줄에 걸친 상태 선언은 그 줄 전부가 남는다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "statements": {
+      "orig": 5,
+      "inline": 2,
+      "boot": 3,
+      "overlap": 0
+     },
+     "cover": true,
+     "overlapOnlyHandles": true,
+     "linesOk": true,
+     "tagLine": true,
+     "outside": true,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ]
+    },
+    "more": true,
+    "stdout": [
+     "finalize · handles 1 · imports 1 · calls 1 · removed lines 3 (껍데기 0 · 문 3 · 주석 0 · 빈 줄 0)",
+     "  keepInline 「var SERVER_URL」 — 줄 14(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline 「window.OurgoalAppState.define('sb'」 — 줄 15~16(상태 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "index.html lines 26 -> 23",
+     "js/app/boot.js 14",
+     ""
+    ]
+   }
+  },
+  {
+   "id": "K3",
+   "title": "keepInline: 줄 끝이 CRLF 인 index.html 은 CRLF 그대로, 남은 줄도 바이트가 같다(부팅 파일은 LF)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "statements": {
+      "orig": 10,
+      "inline": 6,
+      "boot": 5,
+      "overlap": 1
+     },
+     "cover": true,
+     "overlapOnlyHandles": true,
+     "linesOk": true,
+     "tagLine": true,
+     "outside": true,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ]
+    },
+    "more": true,
+    "stdout": [
+     "finalize · handles 1 · imports 3 · calls 3 · removed lines 8 (껍데기 0 · 문 4 · 주석 3 · 빈 줄 1)",
+     "  keepInline 「var SERVER_URL」 — 줄 20(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline 「var PUBLIC_KEY」 — 줄 21(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline 「window.OurgoalAppState.define('sb'」 — 줄 22(상태 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline(함께 남김) 줄 17 「bootTheme();」 — 지정한 문보다 앞에서 도는 호출문",
+     "  keepInline(함께 남김) 줄 13 「var _aKit = window.OurgoalAKit;」 — 인라인에 남는 문이 읽는 손잡이",
+     "  keepInline(함께 남김) 줄 14 「var bootTheme = _aKit.bootTheme;」 — 인라인에 남는 문이 읽는 가져오기",
+     "  keepInline(손잡이 한 번 더) _aKit — 줄 13 은 인라인에 남고 부팅 파일에도 같은 글자로 적는다"
+    ]
+   }
+  },
+  {
+   "id": "K4",
+   "title": "keepInline + relay: 남길 문보다 앞에 있는 relay expose 문은 인라인에 남는다(그 가져오기 · 손잡이도) — 메타가 「인라인에 남음」으로 적는다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "statements": {
+      "orig": 7,
+      "inline": 4,
+      "boot": 3,
+      "overlap": 0
+     },
+     "cover": true,
+     "overlapOnlyHandles": true,
+     "linesOk": true,
+     "tagLine": true,
+     "outside": true,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ]
+    },
+    "more": true,
+    "stdout": [
+     "finalize · handles 2 · imports 2 · calls 1 · removed lines 3 (껍데기 0 · 문 3 · 주석 0 · 빈 줄 0)",
+     "  relay renderTeam — 가져오기 줄 14 · getter 줄 16(expose 문 줄 15~17) → index.html(인라인에 남음) · 근거: 주인 세포가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다(시험 꾸러미)",
+     "  keepInline 「var SERVER_URL」 — 줄 19(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "  keepInline(함께 남김) 줄 15 「window.OurgoalAppScope.expose('index.html', {」 — 지정한 문보다 앞에서 도는 relay expose 문",
+     "  keepInline(함께 남김) 줄 13 「var _gKit = window.OurgoalGKit;」 — 인라인에 남는 문이 읽는 손잡이",
+     "  keepInline(함께 남김) 줄 14 「var renderTeam = _gKit.renderTeam;」 — 인라인에 남는 문이 읽는 가져오기",
+     "index.html lines 29 -> 26",
+     "js/app/boot.js 14"
+    ]
+   }
+  },
+  {
+   "id": "K5",
+   "title": "keepInline + relay: 남길 문보다 뒤에 있는 relay 중계는 부팅 파일로 간다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "htmlDiffAt": null,
+    "bootDiffAt": null,
+    "audit": {
+     "ok": true,
+     "statements": {
+      "orig": 7,
+      "inline": 1,
+      "boot": 6,
+      "overlap": 0
+     },
+     "cover": true,
+     "overlapOnlyHandles": true,
+     "linesOk": true,
+     "tagLine": true,
+     "outside": true,
+     "tags": [
+      "<script src=\"js/app/boot.js\">"
+     ]
+    },
+    "more": true,
+    "stdout": [
+     "finalize · handles 2 · imports 2 · calls 1 · removed lines 6 (껍데기 0 · 문 6 · 주석 0 · 빈 줄 0)",
+     "  relay renderTeam — 가져오기 줄 16 · getter 줄 17(expose 문 줄 17~17) → js/app/boot.js · 근거: 주인 세포가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다(시험 꾸러미)",
+     "  keepInline 「var SERVER_URL」 — 줄 15(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 금지 패턴 규칙이 이 줄을 새 파일로 옮기는 것을 막는다(시험 꾸러미)",
+     "index.html lines 27 -> 21",
+     "js/app/boot.js 19",
+     ""
+    ]
+   }
+  },
+  {
+   "id": "E1",
+   "title": "실행 등가(vm) — keepInline: 원래 IIFE 와 「남긴 인라인 → 부팅 파일」의 호출 순서 · this · 인자 수 · 상태 선언 값(남긴 var 를 읽은 값) · 다음 호출이 본 값이 같다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "before": {
+     "log": [
+      "call bootTheme|this=undefined|args=0",
+      "define sb={\"u\":\"https://example.invalid\",\"k\":\"public-key-0000\"}",
+      "call bootAuth|sb={\"u\":\"https://example.invalid\",\"k\":\"public-key-0000\"}",
+      "call bootRest|this=undefined|args=0"
+     ],
+     "threw": null,
+     "relayVal": null
+    },
+    "after": {
+     "log": [
+      "call bootTheme|this=undefined|args=0",
+      "define sb={\"u\":\"https://example.invalid\",\"k\":\"public-key-0000\"}",
+      "call bootAuth|sb={\"u\":\"https://example.invalid\",\"k\":\"public-key-0000\"}",
+      "call bootRest|this=undefined|args=0"
+     ],
+     "threw": null,
+     "relayVal": null
+    }
+   }
+  },
+  {
+   "id": "E2",
+   "title": "실행 등가(vm) — relay: 통로에 올라간 getter 가 같은 순간에 같은 값을 돌려준다(expose 호출 순서 포함)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "before": {
+     "log": [
+      "expose index.html renderTeam",
+      "call bootOne|this=undefined|args=0",
+      "call bootTwo|this=undefined|args=0"
+     ],
+     "threw": null,
+     "relayVal": true
+    },
+    "after": {
+     "log": [
+      "expose index.html renderTeam",
+      "call bootOne|this=undefined|args=0",
+      "call bootTwo|this=undefined|args=0"
+     ],
+     "threw": null,
+     "relayVal": true
+    }
+   }
+  },
+  {
+   "id": "E3",
+   "title": "실행 등가(vm) — keepInline + relay(expose 가 남길 문보다 앞): 인라인에 남은 중계와 부팅 파일의 호출이 원래 순서와 같다",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "before": {
+     "log": [
+      "expose index.html renderTeam",
+      "call bootAuth|sb=undefined"
+     ],
+     "threw": null,
+     "relayVal": true
+    },
+    "after": {
+     "log": [
+      "expose index.html renderTeam",
+      "call bootAuth|sb=undefined"
+     ],
+     "threw": null,
+     "relayVal": true
+    }
+   }
+  },
+  {
+   "id": "E4",
+   "title": "실행 등가(vm) — keepInline + relay(expose 가 뒤)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "before": {
+     "log": [
+      "expose index.html renderTeam",
+      "call bootAuth|sb=undefined"
+     ],
+     "threw": null,
+     "relayVal": true
+    },
+    "after": {
+     "log": [
+      "expose index.html renderTeam",
+      "call bootAuth|sb=undefined"
+     ],
+     "threw": null,
+     "relayVal": true
+    }
+   }
+  },
+  {
+   "id": "S01",
+   "title": "정지: relay 가 배열이 아니다(true 같은 스위치로 풀리지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 는 비지 않은 배열이어야 한다(스위치로 풀리지 않는다)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S02",
+   "title": "정지: relay 가 빈 배열",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 는 비지 않은 배열이어야 한다(스위치로 풀리지 않는다)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S03",
+   "title": "정지: relay 칸에 모르는 키",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 에 모르는 칸: force",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S04",
+   "title": "정지: relay name 이 이름 꼴이 아니다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 의 name 이 이름 꼴이 아니다: \"render Team\"",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S05",
+   "title": "정지: relay 근거 글자가 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 「renderTeam」 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S06",
+   "title": "정지: relay 근거 글자가 짧다(10자 미만)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 「renderTeam」 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S07",
+   "title": "정지: relay 근거 글자가 여러 줄",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 「renderTeam」 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S08",
+   "title": "정지: relay 에 같은 이름 둘",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 relay 에 같은 이름이 둘이다: renderTeam",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S09",
+   "title": "정지: relay 이름의 가져오기 줄이 없다(쓰이지 않는 허용은 적지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "relay 이름의 가져오기 줄(`var renderTeam = _키트.renderTeam;`)이 IIFE 최상위에 없다: renderTeam — 쓰이지 않는 허용은 적지 않는다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S10",
+   "title": "정지: relay 이름이 최상위에서 불린다(구역 함수다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "relay 이름이 최상위에서 불린다 — 구역 함수다(relay 대상이 아니다): bootOne",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S11",
+   "title": "정지: relay 이름의 getter 가 없다(가져오기만 있다) — 「가져오기 1 + getter 1」이 아니다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "relay 이름의 줄 꼴이 「가져오기 1 + getter 1」이 아니다: renderTeam — getter 0개",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S12",
+   "title": "정지: relay 이름의 getter 가 둘이다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "relay 이름의 줄 꼴이 「가져오기 1 + getter 1」이 아니다: renderTeam — getter 2개",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S13",
+   "title": "정지: getter 가 다른 이름을 돌려준다 — 설정에 없는 expose 로 보고 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(expose 문 1). 첫 문: 줄 16 「window.OurgoalAppScope.expose('index.html', {」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S14",
+   "title": "정지: expose 문에 relay 로 적지 않은 속성이 함께 있다 — 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(expose 문 1). 첫 문: 줄 16 「window.OurgoalAppScope.expose('index.html', {」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S15",
+   "title": "정지: expose 문에 setter 가 있다 — 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(expose 문 1). 첫 문: 줄 16 「window.OurgoalAppScope.expose('index.html', {」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S16",
+   "title": "정지: expose 의 주인 글자가 index.html 이 아니다 — 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(expose 문 1). 첫 문: 줄 16 「window.OurgoalAppScope.expose('other', {」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S17",
+   "title": "정지: relay 를 적어도 설정에 없는 불리지 않는 가져오기는 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(호출되지 않는 가져오기 1). 첫 문: 줄 23 「var orphan = _aKit.orphan;」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S18",
+   "title": "정지: relay 이름을 getter 말고 다른 문이 읽는다(인자로 넘김) — 전제 밖의 문으로 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(구역 함수가 아닌 호출문 1). 첫 문: 줄 23 「window.use(renderTeam);」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S19",
+   "title": "정지: relay 를 적었는데 그 이름 말고 다른 이름의 getter 만 있는 expose 문 — 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 2개 있다(expose 문 1 · 호출되지 않는 가져오기 1). 첫 문: 줄 14 「var renderCrew = _gKit.renderCrew;」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S31",
+   "title": "정지: keepInline 이 객체가 아니다(true 같은 스위치로 풀리지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 keepInline 은 { statements, reason } 이어야 한다(스위치로 풀리지 않는다)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S32",
+   "title": "정지: keepInline 에 모르는 칸",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 keepInline 에 모르는 칸: all",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S33",
+   "title": "정지: keepInline.statements 가 비었다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 keepInline.statements 는 문의 글자 앞머리(5자 이상 한 줄, 앞뒤 공백 없음)의 비지 않은 배열이어야 한다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S34",
+   "title": "정지: 앞머리가 너무 짧다(5자 미만)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 keepInline.statements 는 문의 글자 앞머리(5자 이상 한 줄, 앞뒤 공백 없음)의 비지 않은 배열이어야 한다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S35",
+   "title": "정지: 같은 앞머리 둘",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 keepInline.statements 에 같은 앞머리가 둘이다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S36",
+   "title": "정지: keepInline 근거 글자가 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 keepInline 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S37",
+   "title": "정지: keepInline 근거 글자가 짧다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정 keepInline 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S38",
+   "title": "정지: 앞머리에 맞는 문이 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 지정이 문 하나로 정해지지 않는다: 「var NOT_HERE」 — 맞는 최상위 문 0개",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S39",
+   "title": "정지: 앞머리에 맞는 문이 둘이다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 지정이 문 하나로 정해지지 않는다: 「var boot」 — 맞는 최상위 문 3개",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S40",
+   "title": "정지: 앞머리 둘이 같은 문을 가리킨다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 지정 둘이 같은 문을 가리킨다: 「var SERVER_URL = 'https」 (줄 20)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S41",
+   "title": "정지: 남길 종류 밖 — 호출문",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 으로 남길 수 있는 문은 var 선언(손잡이·가져오기 꼴 제외)과 상태 선언(define·defineVar)뿐이다: 「bootAuth()」 (줄 23)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S42",
+   "title": "정지: 남길 종류 밖 — 손잡이 줄",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 으로 남길 수 있는 문은 var 선언(손잡이·가져오기 꼴 제외)과 상태 선언(define·defineVar)뿐이다: 「var _aKit」 (줄 13)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S43",
+   "title": "정지: 남길 종류 밖 — 가져오기 줄",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 으로 남길 수 있는 문은 var 선언(손잡이·가져오기 꼴 제외)과 상태 선언(define·defineVar)뿐이다: 「var bootRest」 (줄 16)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S44",
+   "title": "정지: 남길 문이 연달아 있지 않다(사이에 다른 최상위 문)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 으로 남길 문이 연달아 있지 않다 — 줄 20 과 줄 22 사이에 다른 최상위 문이 있다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S45",
+   "title": "정지: 남길 문이 부팅 파일로 가는 문과 한 줄을 나눠 쓴다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "인라인에 남길 문이 부팅 파일로 가는 문과 한 줄을 나눠 쓴다(줄 22) — 줄 그대로 남길 수 없다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S46",
+   "title": "정지: 남긴 var 를 부팅 파일로 가는 문이 읽는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 1개 있다(상태 선언(define) 1). 첫 문: 줄 26 「window.OurgoalAppState.define('late', SERVER_URL);」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S47",
+   "title": "정지: 남긴 var 를 부팅 파일로 가는 relay getter 가 아닌 문이 읽는 꼴은 전제에서 걸리고, 가져오기를 인라인에 남는 호출과 부팅 파일로 가는 호출이 함께 쓰면 멈춘다(가져오기 줄은 한 곳에만)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "가져오기 bootTheme 를 인라인에 남는 문과 부팅 파일로 가는 문이 함께 쓴다 — 가져오기 줄은 한 곳에만 둘 수 있다(줄 14 · 줄 26)",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S48",
+   "title": "정지: keepInline 을 적용하면 부팅 파일에 호출문이 하나도 남지 않는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "keepInline 을 적용하면 부팅 파일에 구역 함수 호출문이 하나도 남지 않는다 — 부를 것이 없는 부팅 파일은 만들지 않는다",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S49",
+   "title": "정지: keepInline 을 적어도 지정하지 않은 그 밖의 var · 상태 선언은 예전처럼 멈춘다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 2개 있다(그 밖의 var 1 · 상태 선언(define) 1). 첫 문: 줄 21 「var PUBLIC_KEY = 'public-key-0000';」",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "S50",
+   "title": "정지: finalize 밖의 모드에서는 relay · keepInline 이 모르는 칸이다(sweep)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "sweep 설정에 모르는 칸: relay",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "U1",
+   "title": "dropDeadImport: 읽는 곳이 없는 가져오기 한 줄만 지운다(names 는 비어도 된다) — 다른 줄은 그대로 · 표준 출력 한 줄 · 메타 removed.deadImports(이름 · 줄 · 키트 · 근거 · 데이터 속성을 다는 파일과 줄)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "diffAt": null,
+    "more": true,
+    "stdout": [
+     "unwire _ui · names 0 · imports 0 · expose props 0 (calls 0) · window 0 (blocks 0) · comma 0 ",
+     "  dead-import a11ySwitch — 줄 15(`var a11ySwitch = _ui.a11ySwitch;`) 을 지운다 · 읽는 곳 0 · 데이터 속성: js/core/ui-helpers.js 줄 6 · 근거: 설정 탭 세포들은 키트에서 직접 부른다 — index.html 의 이 지역 변수를 읽는 곳이 없다(시험 꾸러미)",
+     "index.html lines 28 -> 27",
+     ""
+    ],
+    "removed": {
+     "imports": [],
+     "exposeProps": [],
+     "exposeCalls": [],
+     "windowAssigns": [],
+     "windowBlocks": [],
+     "deadImports": [
+      {
+       "name": "a11ySwitch",
+       "line": 15,
+       "kit": "OurgoalUiHelpers",
+       "reason": "설정 탭 세포들은 키트에서 직접 부른다 — index.html 의 이 지역 변수를 읽는 곳이 없다(시험 꾸러미)",
+       "definedIn": "js/core/ui-helpers.js",
+       "definedAtLine": 6
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "U2",
+   "title": "dropDeadImport + dropKitVar: 그 손잡이의 가져오기가 그것뿐이면 손잡이 줄도 함께 지운다(X2 — 지운 뒤 참조 0 을 생성기가 확인)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "diffAt": null,
+    "more": true,
+    "stdout": [
+     "unwire _ui · names 0 · imports 0 · expose props 0 (calls 0) · window 0 (blocks 0) · comma 0 · kitVar line 13 ",
+     "  dead-import a11ySwitch — 줄 14(`var a11ySwitch = _ui.a11ySwitch;`) 을 지운다 · 읽는 곳 0 · 데이터 속성: js/core/ui-helpers.js 줄 6 · 근거: 설정 탭 세포들은 키트에서 직접 부른다 — index.html 의 이 지역 변수를 읽는 곳이 없다(시험 꾸러미)",
+     "index.html lines 26 -> 24",
+     ""
+    ],
+    "removed": {
+     "imports": [],
+     "exposeProps": [],
+     "exposeCalls": [],
+     "windowAssigns": [],
+     "windowBlocks": [],
+     "deadImports": [
+      {
+       "name": "a11ySwitch",
+       "line": 14,
+       "kit": "OurgoalUiHelpers",
+       "reason": "설정 탭 세포들은 키트에서 직접 부른다 — index.html 의 이 지역 변수를 읽는 곳이 없다(시험 꾸러미)",
+       "definedIn": "js/core/ui-helpers.js",
+       "definedAtLine": 6
+      }
+     ],
+     "kitVarLine": {
+      "name": "_ui",
+      "line": 13
+     }
+    }
+   }
+  },
+  {
+   "id": "G2",
+   "title": "dropDeadImport 를 적지 않은 unwire 는 기준 생성기(PIN)와 같다 — 성공 하나 · 정지 하나(철거한 이름을 아직 쓰는 곳이 남는다)의 index.html · 표준 출력 · 메타 · 오류 글자가 같다",
+   "ok": true,
+   "detail": {
+    "status": [
+     0,
+     0,
+     1,
+     1
+    ],
+    "err": "철거한 이름을 IIFE 안에서 아직 쓰는 곳이 남는다 — 지우지 않는다: escapeHtml(줄 18)"
+   }
+  },
+  {
+   "id": "S61",
+   "title": "정지: dropDeadImport 가 배열이 아니다(true 같은 스위치로 풀리지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unwire.dropDeadImport 는 비지 않은 배열이어야 한다(스위치로 풀리지 않는다)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S62",
+   "title": "정지: dropDeadImport 칸에 모르는 키",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unwire.dropDeadImport 에 모르는 칸: force",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S63",
+   "title": "정지: 근거 글자가 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unwire.dropDeadImport 「a11ySwitch」 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S64",
+   "title": "정지: 근거 글자가 짧다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unwire.dropDeadImport 「a11ySwitch」 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S65",
+   "title": "정지: definedIn 이 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unwire.dropDeadImport 「a11ySwitch」 의 definedIn(그 키트 속성을 다는 js/ 아래 파일)이 없거나 꼴이 다르다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S66",
+   "title": "정지: definedIn 이 js/ 아래 파일 꼴이 아니다(경로 올라가기)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unwire.dropDeadImport 「a11ySwitch」 의 definedIn(그 키트 속성을 다는 js/ 아래 파일)이 없거나 꼴이 다르다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S67",
+   "title": "정지: 같은 이름 둘",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "unwire.dropDeadImport 에 같은 이름이 둘이다: a11ySwitch",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S68",
+   "title": "정지: 같은 이름이 unwire.names 에도 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름이 unwire.names 에도 있다 — 한 곳에만 적는다: a11ySwitch",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S69",
+   "title": "정지: 그 이름의 가져오기 줄이 없다(쓰이지 않는 허용은 적지 않는다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름의 가져오기 줄이 IIFE 최상위에 꼭 하나가 아니다: a11ySwitch — 0개(쓰이지 않는 허용은 적지 않는다)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S70",
+   "title": "정지: 오른쪽이 호출이다(부수효과 가능 식)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름의 선언 오른쪽이 「_ui.a11ySwitch」 단순 속성 읽기가 아니다 — 지우지 않는다: var a11ySwitch = _ui.makeSwitch();",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S71",
+   "title": "정지: 오른쪽이 계산된 속성 읽기다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름의 선언 오른쪽이 「_ui.a11ySwitch」 단순 속성 읽기가 아니다 — 지우지 않는다: var a11ySwitch = _ui['a11ySwitch'];",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S72",
+   "title": "정지: 오른쪽이 다른 손잡이의 속성이다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름의 선언 오른쪽이 「_ui.a11ySwitch」 단순 속성 읽기가 아니다 — 지우지 않는다: var a11ySwitch = _aKit.a11ySwitch;",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S73",
+   "title": "정지: 오른쪽 속성 이름이 다르다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름의 선언 오른쪽이 「_ui.a11ySwitch」 단순 속성 읽기가 아니다 — 지우지 않는다: var a11ySwitch = _ui.other;",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S74",
+   "title": "정지: 가져오기 줄이 다른 글자와 한 줄을 나눠 쓴다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "가져오기 a11ySwitch 이(가) 다른 글자와 한 줄을 나눠 쓴다: 15",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S75",
+   "title": "정지: IIFE 최상위 문이 그 이름을 읽는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름을 IIFE 안에서 읽거나 쓰는 곳이 있다 — 죽은 가져오기가 아니다: a11ySwitch(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S76",
+   "title": "정지: 안쪽 함수가 그 이름을 읽는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름을 IIFE 안에서 읽거나 쓰는 곳이 있다 — 죽은 가져오기가 아니다: a11ySwitch(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S77",
+   "title": "정지: 그 이름에 다시 대입하는 곳이 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름을 IIFE 안에서 읽거나 쓰는 곳이 있다 — 죽은 가져오기가 아니다: a11ySwitch(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S78",
+   "title": "정지: 그 이름이 낱말로 든 문자열이 있다(동적 접근일 수 있다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름이 낱말로 든 문자열이 IIFE 안에 있다(동적 접근일 수 있다) — 지우지 않는다: a11ySwitch(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S79",
+   "title": "정지: 그 이름이 든 템플릿 글자가 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름이 낱말로 든 문자열이 IIFE 안에 있다(동적 접근일 수 있다) — 지우지 않는다: a11ySwitch(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S80",
+   "title": "정지: 그 이름의 getter 가 expose 문에 있다(통로로 나가는 이름이다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름의 getter·setter 가 IIFE 안에 있다 — 통로로 나가는 이름이다(죽은 가져오기가 아니다): a11ySwitch(줄 21)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S81",
+   "title": "정지: 그 이름으로 대입하는 줄이 있다(window 노출일 수 있다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 이름으로 대입하는 줄이 IIFE 안에 있다(window 노출일 수 있다) — 지우지 않는다: a11ySwitch(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S82",
+   "title": "정지: IIFE 안에 eval 이 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "IIFE 안에 eval 이 있다 — 이름을 동적으로 읽을 수 있어 죽은 가져오기를 지우지 않는다(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S83",
+   "title": "정지: IIFE 안에 new Function 이 있다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "IIFE 안에 new Function 이 있다 — 이름을 동적으로 읽을 수 있어 죽은 가져오기를 지우지 않는다(줄 20)",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S84",
+   "title": "정지: definedIn 파일이 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 「a11ySwitch」 의 definedIn 파일이 없다: js/core/ui-helpers.js",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S85",
+   "title": "정지: definedIn 파일이 그 속성을 getter 로 정의한다(읽기만으로 부수효과가 날 수 있다)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 「a11ySwitch」 — js/core/ui-helpers.js 가 그 속성을 접근자(get/set · defineProperty)로 정의한다(줄 6). 읽기만으로 부수효과가 날 수 있어 지우지 않는다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S86",
+   "title": "정지: definedIn 파일이 그 속성을 Object.defineProperty 로 정의한다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 「a11ySwitch」 — js/core/ui-helpers.js 가 그 속성을 접근자(get/set · defineProperty)로 정의한다(줄 9). 읽기만으로 부수효과가 날 수 있어 지우지 않는다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S87",
+   "title": "정지: definedIn 파일에 그 속성을 다는 자리가 없다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "dropDeadImport 「a11ySwitch」 — js/core/ui-helpers.js 에서 그 속성을 데이터 속성으로 다는 자리(`a11ySwitch: …` 또는 `….a11ySwitch = …`)를 찾지 못했다 — 지우지 않는다",
+    "htmlSame": true
+   }
+  },
+  {
+   "id": "S88",
+   "title": "정지: unwire 밖의 모드에서는 dropDeadImport 가 모르는 칸이다(finalize)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 설정에 모르는 칸: dropDeadImport",
+    "htmlSame": true,
+    "bootMade": false
+   }
+  },
+  {
+   "id": "E5",
+   "title": "실행 등가(vm) — dropDeadImport: 그 속성이 데이터 속성이면 지우기 전후의 실행 흔적이 같다. 접근자였다면 지우기 전에만 읽기 흔적이 남는다(= 접근자면 생성기가 멈추는 까닭)",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "data": [
+     {
+      "log": [
+       "use",
+       "call bootOne"
+      ],
+      "threw": null
+     },
+     {
+      "log": [
+       "use",
+       "call bootOne"
+      ],
+      "threw": null
+     }
+    ],
+    "accessor": [
+     {
+      "log": [
+       "read a11ySwitch",
+       "use",
+       "call bootOne"
+      ],
+      "threw": null
+     },
+     {
+      "log": [
+       "use",
+       "call bootOne"
+      ],
+      "threw": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "AU",
+   "title": "감사(dropDeadImport 성공 꾸러미 — 생성기와 따로): 지운 뒤의 줄은 지우기 전 줄의 부분열(바이트 동일)이고 줄 수 차이 = 지운 줄 수다",
+   "ok": true,
+   "detail": [
+    {
+     "id": "U1",
+     "ok": true,
+     "removed": 1
+    },
+    {
+     "id": "U2",
+     "ok": true,
+     "removed": 2
+    }
+   ]
+  },
+  {
+   "id": "A",
+   "title": "감사(성공한 꾸러미 전부 — 생성기와 따로): keepInline 은 「원래 문 = 남긴 문 + 옮긴 문」(겹침은 손잡이뿐) · 남은 인라인 줄은 원래 줄의 부분열(바이트 동일) · 블록 밖 그대로 · 부팅 태그 한 번, 그 밖은 IIFE 블록이 사라지고 부팅 파일의 문 = 원래 문 전부",
+   "ok": true,
+   "detail": [
+    {
+     "id": "R1",
+     "ok": true,
+     "statements": 8
+    },
+    {
+     "id": "R2",
+     "ok": true,
+     "statements": 6
+    },
+    {
+     "id": "K1",
+     "ok": true,
+     "statements": {
+      "orig": 10,
+      "inline": 6,
+      "boot": 5,
+      "overlap": 1
+     }
+    },
+    {
+     "id": "K2",
+     "ok": true,
+     "statements": {
+      "orig": 5,
+      "inline": 2,
+      "boot": 3,
+      "overlap": 0
+     }
+    },
+    {
+     "id": "K3",
+     "ok": true,
+     "statements": {
+      "orig": 10,
+      "inline": 6,
+      "boot": 5,
+      "overlap": 1
+     }
+    },
+    {
+     "id": "K4",
+     "ok": true,
+     "statements": {
+      "orig": 7,
+      "inline": 4,
+      "boot": 3,
+      "overlap": 0
+     }
+    },
+    {
+     "id": "K5",
+     "ok": true,
+     "statements": {
+      "orig": 7,
+      "inline": 1,
+      "boot": 6,
+      "overlap": 0
+     }
+    }
+   ]
+  },
+  {
+   "id": "X1",
+   "title": "실제 index.html(PIN): relay · keepInline 을 실제 이름으로 줘도 전제 밖의 문이 남아 있어 멈춘다(오류 글자에 종류별 수 — 재철거 3차 · 구역 이전 3차가 먼저다). index.html 은 그대로이고 부팅 파일은 생기지 않는다",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 67개 있다(expose 문 5 · 상태 선언(define) 2 · 호출되지 않는 가져오기 60). 첫 문: 줄 2262 「var escapeHtml = _ui.escapeHtml;」",
+    "outside": 67,
+    "kinds": "expose 문 5 · 상태 선언(define"
+   }
+  },
+  {
+   "id": "X2",
+   "title": "keepInline 으로 한 번 돌린 결과에 다시 돌리면 멈추고(부팅 파일이 이미 있다) index.html · 부팅 파일이 그대로다",
+   "ok": true,
+   "detail": {
+    "status": [
+     0,
+     1
+    ],
+    "err": "부팅 파일이 이미 있다: js/app/boot.js"
+   }
+  }
+ ]
+}

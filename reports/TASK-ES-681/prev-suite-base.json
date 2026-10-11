@@ -1,0 +1,32 @@
+{
+ "type": "작업자 측정, 판정 아님",
+ "note": "고치지 않은 main(기준 커밋의 생성기 · 그 index.html)에서 앞선 단위 시험 셋을 그대로 돌린 결과 — 이 PR 의 생성기 변경과 무관하게 실패하는 검사가 무엇인지 보려고 쟀다. B1 의 T7 은 실제 index.html 에서 참조가 남지 않는 _settingsKit 가져오기를 골라 철거해 보는 검사인데, 재철거 3차(#953)가 그 손잡이를 지운 뒤로는 후보가 없어 「측정불가」로 실패 기록이 된다. 그 한 건이 619 · 634 의 B(안쪽 묶음 재실행)로 번진다",
+ "base": "ba5b46e2d9aa1aa6eb6fc9729f10a6387b1e4a23",
+ "unwireB1": {
+  "total": 8,
+  "failed": [
+   {
+    "id": "T7",
+    "note": "{\"note\":\"후보 이름 없음(모든 가져오기가 IIFE 안에서 쓰인다) — 측정불가\"}"
+   }
+  ]
+ },
+ "unwireExt619": {
+  "total": 16,
+  "failed": [
+   {
+    "id": "B",
+    "note": "{\"status\":1,\"passed\":7,\"total\":8,\"each\":[\"T1:ok\",\"T2:ok\",\"T3:ok\",\"T4:ok\",\"T5:ok\",\"T6:ok\",\"T7:FAIL\",\"T8:ok\"],\"a1Files\":{\"index.html\":{\"same\":true,\"genBytes\":468137,\"headBytes\":468137},\"js/tabs/settings"
+   }
+  ]
+ },
+ "unstate634": {
+  "total": 34,
+  "failed": [
+   {
+    "id": "B",
+    "note": "{\"status\":1,\"passed\":15,\"total\":16,\"b1\":\"7/8\",\"each\":[\"B:FAIL\",\"S1:ok\",\"M1:ok\",\"M2:ok\",\"X1a:ok\",\"X1b:ok\",\"X3a:ok\",\"X3b:ok\",\"X3c:ok\",\"X3d:ok\",\"X2a:ok\",\"X2b:ok\",\"C1:ok\",\"R1:ok\",\"R2:ok\",\"R3:ok\"],\"a1Files"
+   }
+  ]
+ }
+}

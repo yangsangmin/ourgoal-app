@@ -1,0 +1,38 @@
+{
+ "task": "TASK-ES-681-MOCK",
+ "label": "모의 — 재철거 4차(isoDate · 죽은 가져오기 a11ySwitch)",
+ "slot": "HO",
+ "mode": "unwire",
+ "cells": [
+  {
+   "file": "js/core/cell-registry.js"
+  }
+ ],
+ "unwire": [
+  {
+   "kitVar": "_calendarKit",
+   "imports": true,
+   "exposeGetters": true,
+   "windowAssign": true,
+   "names": [
+    "isoDate"
+   ],
+   "dropKitVar": true
+  },
+  {
+   "kitVar": "_ui",
+   "imports": true,
+   "exposeGetters": true,
+   "windowAssign": true,
+   "names": [],
+   "dropKitVar": true,
+   "dropDeadImport": [
+    {
+     "name": "a11ySwitch",
+     "reason": "설정 탭 세포들은 키트(window.OurgoalUiHelpers)에서 직접 부른다 — index.html 의 이 지역 변수를 읽는 곳이 없다(#TASK-ES-677 REQ 사실 보고)",
+     "definedIn": "js/core/ui-helpers.js"
+    }
+   ]
+  }
+ ]
+}

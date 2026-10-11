@@ -1,0 +1,202 @@
+{
+ "task": "TASK-ES-681-MOCK",
+ "mode": "finalize",
+ "scriptHtmlLines": [
+  2253,
+  2674
+ ],
+ "statements": {
+  "total": 61,
+  "handles": 2,
+  "imports": 28,
+  "calls": 27
+ },
+ "handles": [
+  {
+   "name": "_goalsKit",
+   "kit": "OurgoalGoalsKit",
+   "imports": 1
+  },
+  {
+   "name": "_uiKit",
+   "kit": "OurgoalUiHelpers",
+   "imports": 27
+  }
+ ],
+ "callOrder": [
+  "bootApplySavedTheme",
+  "bootAuthStateListener",
+  "bootAppConfig",
+  "bootThemeList",
+  "bootAvatarCloseButton",
+  "bootAvatarLevelUpWiring",
+  "bootAppStateSeed",
+  "bootExposeAppState",
+  "bootPromptTabState",
+  "bootPromptOpenSeed",
+  "bootEntryAndAccountWiring",
+  "bootGoogleTokenState",
+  "bootGoogleTokenSaveHandle",
+  "bootHomeAndGoalWiring",
+  "bootTemplateSubtabFilterState",
+  "bootTemplateSubtabKindState",
+  "bootGoalsAndTeamState",
+  "bootRecordsWiring",
+  "bootRecordsExportWiring",
+  "bootSampleGroups",
+  "bootShareHandle",
+  "bootFeedCacheState",
+  "bootSharedGroupsState",
+  "bootSharedGroupsFlag",
+  "bootCommSettingsAndStart",
+  "bootTemplatePartHandles",
+  "bootInstallAndServiceWorker"
+ ],
+ "removed": {
+  "lines": 406,
+  "shell": 0,
+  "statementLines": 52,
+  "commentLines": 270,
+  "blankLines": 84
+ },
+ "tag": {
+  "line": 2268,
+  "text": "<script src=\"js/app/boot.js\"></script>",
+  "sync": true
+ },
+ "htmlLinesBefore": 2712,
+ "htmlLinesAfter": 2306,
+ "files": {
+  "js/app/boot.js": 65
+ },
+ "relayed": [
+  {
+   "name": "renderTeamGoalsScreen",
+   "reason": "주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계",
+   "importLine": 2323,
+   "getterLine": 2276,
+   "exposeLines": [
+    2275,
+    2277
+   ],
+   "movedTo": "index.html(인라인에 남음)"
+  }
+ ],
+ "keptInline": {
+  "reason": "커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다",
+  "statements": [
+   {
+    "match": "var SUPABASE_URL",
+    "kind": "var",
+    "line": 2425,
+    "endLine": 2425,
+    "why": "지정한 문",
+    "text": "var SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co"
+   },
+   {
+    "match": "var SUPABASE_ANON_KEY",
+    "kind": "var",
+    "line": 2426,
+    "endLine": 2426,
+    "why": "지정한 문",
+    "text": "var SUPABASE_ANON_KEY = '(가림)"
+   },
+   {
+    "match": "window.OurgoalAppState.define('sb'",
+    "kind": "define",
+    "line": 2427,
+    "endLine": 2427,
+    "why": "지정한 문",
+    "text": "window.OurgoalAppState.define('sb', (window.supabase && type"
+   }
+  ],
+  "before": [
+   {
+    "line": 2275,
+    "endLine": 2277,
+    "why": "지정한 문보다 앞에서 도는 relay expose 문",
+    "text": "window.OurgoalAppScope.expose('index.html', {"
+   },
+   {
+    "line": 2414,
+    "endLine": 2414,
+    "why": "지정한 문보다 앞에서 도는 호출문",
+    "text": "bootApplySavedTheme();"
+   }
+  ],
+  "pulled": [
+   {
+    "line": 2274,
+    "endLine": 2274,
+    "why": "인라인에 남는 문이 읽는 손잡이",
+    "text": "var _goalsKit = window.OurgoalGoalsKit;"
+   },
+   {
+    "line": 2323,
+    "endLine": 2323,
+    "why": "인라인에 남는 문이 읽는 가져오기",
+    "text": "var renderTeamGoalsScreen = _goalsKit.renderTeamGoalsScreen;"
+   },
+   {
+    "line": 2343,
+    "endLine": 2343,
+    "why": "인라인에 남는 문이 읽는 손잡이",
+    "text": "var _uiKit = window.OurgoalUiHelpers;"
+   },
+   {
+    "line": 2371,
+    "endLine": 2371,
+    "why": "인라인에 남는 문이 읽는 가져오기",
+    "text": "var bootApplySavedTheme = _uiKit.bootApplySavedTheme;"
+   }
+  ],
+  "duplicatedHandles": [
+   {
+    "name": "_uiKit",
+    "line": 2343
+   }
+  ],
+  "inline": {
+   "statements": 9,
+   "bodyLines": 11,
+   "shellLines": 5
+  },
+  "boot": {
+   "statements": 53,
+   "handles": 1,
+   "imports": 26,
+   "calls": 26
+  },
+  "inlineCallOrder": [
+   "bootApplySavedTheme"
+  ],
+  "bootCallOrder": [
+   "bootAuthStateListener",
+   "bootAppConfig",
+   "bootThemeList",
+   "bootAvatarCloseButton",
+   "bootAvatarLevelUpWiring",
+   "bootAppStateSeed",
+   "bootExposeAppState",
+   "bootPromptTabState",
+   "bootPromptOpenSeed",
+   "bootEntryAndAccountWiring",
+   "bootGoogleTokenState",
+   "bootGoogleTokenSaveHandle",
+   "bootHomeAndGoalWiring",
+   "bootTemplateSubtabFilterState",
+   "bootTemplateSubtabKindState",
+   "bootGoalsAndTeamState",
+   "bootRecordsWiring",
+   "bootRecordsExportWiring",
+   "bootSampleGroups",
+   "bootShareHandle",
+   "bootFeedCacheState",
+   "bootSharedGroupsState",
+   "bootSharedGroupsFlag",
+   "bootCommSettingsAndStart",
+   "bootTemplatePartHandles",
+   "bootInstallAndServiceWorker"
+  ]
+ }
+}

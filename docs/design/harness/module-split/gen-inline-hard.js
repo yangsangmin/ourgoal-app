@@ -246,7 +246,7 @@ function sweepOnce(U, doc) {
 if (CFG.mode === 'finalize') { runFinalize(); return; }
 function runFinalize() {
   const BOOT = 'js/app/boot.js', BOOT_TAG = '<script src="' + BOOT + '"></script>';
-  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells'].includes(k)) fail('finalize 설정에 모르는 칸: ' + k);
+  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells', 'relay', 'keepInline'].includes(k)) fail('finalize 설정에 모르는 칸: ' + k);
   if (typeof TAG !== 'string' || !TAG) fail('finalize 설정 task 가 없다');
   if (!Array.isArray(CFG.cells) || CFG.cells.length !== 1 || !CFG.cells[0] || typeof CFG.cells[0] !== 'object') fail('finalize 설정 cells 는 부팅 파일 하나여야 한다');
   const C = CFG.cells[0];
@@ -256,6 +256,33 @@ function runFinalize() {
   if ([C.title].concat(C.desc).some(d => d.includes('*/') || /[\r\n]/.test(d))) fail('finalize 세포 title · desc 에 주석을 닫는 글자나 줄바꿈이 있다');
   if (fs.existsSync(path.join(APP, BOOT))) fail('부팅 파일이 이미 있다: ' + BOOT);
   if (html.includes(BOOT)) fail('index.html 에 이미 부팅 파일 글자가 있다: ' + BOOT);
+  // ── [#TASK-ES-681 · 설계 5.9절] 명시적 옵션 둘 — 둘 다 기본은 꺼져 있다(예전과 같은 글자로 멈춘다). 설정에 이름과 근거 글자를 적은 경우에만 동작하고, 쓴 것마다 표준 출력 한 줄과 메타 기록이 남는다.
+  //   relay      등록 기관에 등록할 수 없는 키트 이름의 통로 중계(가져오기 한 줄 + 그 이름의 getter 만 담은 expose 문)를 부팅 파일로 글자 그대로 옮긴다.
+  //   keepInline 지정한 문(var 선언 · 상태 선언)을 인라인 IIFE 에 줄 그대로 남긴다. 실행 순서를 지키려고 그 문보다 앞에서 도는 문(호출문 · relay expose 문)과 그 문들이 읽는 가져오기 · 손잡이 줄도 함께 남기고,
+  //              나머지만 부팅 파일로 옮긴다. 부팅 태그는 남긴 `</script>` 줄 끝에 붙인다(인라인 → 부팅 파일 순서). 양쪽이 함께 쓰는 손잡이 줄은 부팅 파일에 같은 글자로 한 번 더 적는다.
+  const okReason = r => typeof r === 'string' && r.trim().length >= 10 && !/[\r\n]/.test(r) && !r.includes('*/');
+  const RELAY = new Map();
+  if (CFG.relay !== undefined) {
+    if (!Array.isArray(CFG.relay) || !CFG.relay.length) fail('finalize 설정 relay 는 비지 않은 배열이어야 한다(스위치로 풀리지 않는다)');
+    for (const r of CFG.relay) {
+      if (!r || typeof r !== 'object' || Array.isArray(r)) fail('finalize 설정 relay 의 칸은 { name, reason } 이어야 한다');
+      for (const k of Object.keys(r)) if (!['name', 'reason'].includes(k)) fail('finalize 설정 relay 에 모르는 칸: ' + k);
+      if (typeof r.name !== 'string' || !/^[A-Za-z_$][\w$]*$/.test(r.name)) fail('finalize 설정 relay 의 name 이 이름 꼴이 아니다: ' + JSON.stringify(r.name));
+      if (!okReason(r.reason)) fail('finalize 설정 relay 「' + r.name + '」 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다');
+      if (RELAY.has(r.name)) fail('finalize 설정 relay 에 같은 이름이 둘이다: ' + r.name);
+      RELAY.set(r.name, { reason: r.reason, importLine: null, getterLine: null, exposeLines: null });
+    }
+  }
+  let KEEP = null;
+  if (CFG.keepInline !== undefined) {
+    const k = CFG.keepInline;
+    if (!k || typeof k !== 'object' || Array.isArray(k)) fail('finalize 설정 keepInline 은 { statements, reason } 이어야 한다(스위치로 풀리지 않는다)');
+    for (const x of Object.keys(k)) if (!['statements', 'reason'].includes(x)) fail('finalize 설정 keepInline 에 모르는 칸: ' + x);
+    if (!Array.isArray(k.statements) || !k.statements.length || !k.statements.every(p => typeof p === 'string' && p.trim() === p && p.length >= 5 && !/[\r\n]/.test(p))) fail('finalize 설정 keepInline.statements 는 문의 글자 앞머리(5자 이상 한 줄, 앞뒤 공백 없음)의 비지 않은 배열이어야 한다');
+    if (new Set(k.statements).size !== k.statements.length) fail('finalize 설정 keepInline.statements 에 같은 앞머리가 둘이다');
+    if (!okReason(k.reason)) fail('finalize 설정 keepInline 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다');
+    KEEP = { reason: k.reason, prefixes: k.statements.slice() };
+  }
   const doc = parseUnwireDoc(lines);
   const { top, iScope } = doc;
   const s = doc.off; // lines[s - 1] = `<script>` 줄, lines[s] = `(function(){` 줄
@@ -283,6 +310,30 @@ function runFinalize() {
   const winChain = n => { let x = n; if (!x || x.type !== 'MemberExpression') return false; while (x.type === 'MemberExpression') { if (x.computed || x.property.type !== 'Identifier') return false; x = x.object; } return x.type === 'Identifier' && x.name === 'window'; }; // window.A · window.A.b — unwire(X1)가 받는 손잡이 꼴과 같다
   const calleeText = x => (x.callee.type === 'MemberExpression' ? doc.code.slice(x.callee.start, x.callee.end) : '');
   const handles = new Map(), imports = new Map(), calls = [], bad = [];
+  const text = st => doc.code.slice(st.node.start, st.node.end);
+  // [#TASK-ES-681] keepInline: 앞머리마다 최상위 문이 꼭 하나여야 한다
+  const keptIdx = new Map(), kept = [], relayExposes = [];
+  if (KEEP) for (const p of KEEP.prefixes) {
+    const hit = []; top.forEach((st, i) => { if (text(st).startsWith(p)) hit.push(i); });
+    if (hit.length !== 1) fail('keepInline 지정이 문 하나로 정해지지 않는다: 「' + p + '」 — 맞는 최상위 문 ' + hit.length + '개');
+    if (keptIdx.has(hit[0])) fail('keepInline 지정 둘이 같은 문을 가리킨다: 「' + p + '」 (줄 ' + H(top[hit[0]].node) + ')');
+    keptIdx.set(hit[0], p);
+  }
+  // [#TASK-ES-681] relay: `window.OurgoalAppScope.expose('index.html', { get N(){ return N; } … })` 이고 속성이 전부 relay 이름의 그 꼴 getter 일 때 그 이름들, 아니면 null(예전처럼 전제 밖의 문이다)
+  const relayExpose = st => {
+    const x = st.isExpressionStatement() ? st.node.expression : null;
+    if (!x || x.type !== 'CallExpression' || calleeText(x) !== 'window.OurgoalAppScope.expose' || x.arguments.length !== 2) return null;
+    const a0 = x.arguments[0], a1 = x.arguments[1];
+    if (a0.type !== 'StringLiteral' || a0.value !== 'index.html' || a1.type !== 'ObjectExpression' || !a1.properties.length) return null;
+    const names = [];
+    for (const p of a1.properties) {
+      if (p.type !== 'ObjectMethod' || p.kind !== 'get' || p.computed || p.key.type !== 'Identifier' || !RELAY.has(p.key.name) || p.params.length) return null;
+      const b = p.body.body;
+      if ((p.body.directives || []).length || b.length !== 1 || b[0].type !== 'ReturnStatement' || !b[0].argument || b[0].argument.type !== 'Identifier' || b[0].argument.name !== p.key.name) return null;
+      names.push({ name: p.key.name, line: p.loc.start.line + s });
+    }
+    return names;
+  };
   const kindOfOther = st => {
     const n = st.node, d = oneVar(st);
     if (n.type === 'FunctionDeclaration') return '함수 선언';
@@ -302,8 +353,16 @@ function runFinalize() {
     if (n.type === 'TryStatement') return 'try 문';
     return n.type;
   };
-  for (const st of top) {
+  for (let ti = 0; ti < top.length; ti++) {
+    const st = top[ti];
     const d = oneVar(st), x = st.isExpressionStatement() ? st.node.expression : null;
+    if (keptIdx.has(ti)) { // [#TASK-ES-681] keepInline 으로 남길 문 — var 선언(손잡이·가져오기 꼴 제외)과 상태 선언뿐
+      const isDef = !!x && x.type === 'CallExpression' && /^window\.OurgoalAppState\.(define|defineVar)$/.test(calleeText(x));
+      const isVar = !!d && !winChain(d.init) && !(plainMember(d.init) && handles.has(d.init.object.name));
+      if (!isDef && !isVar) fail('keepInline 으로 남길 수 있는 문은 var 선언(손잡이·가져오기 꼴 제외)과 상태 선언(define·defineVar)뿐이다: 「' + keptIdx.get(ti) + '」 (줄 ' + H(st.node) + ')');
+      kept.push({ i: ti, kind: isDef ? 'define' : 'var', name: isVar ? d.id.name : null });
+      continue;
+    }
     if (d && winChain(d.init)) {
       if (handles.has(d.id.name) || imports.has(d.id.name)) fail('같은 이름의 손잡이·가져오기가 둘이다: ' + d.id.name + ' (줄 ' + H(st.node) + ')');
       handles.set(d.id.name, { kit: doc.code.slice(d.init.start, d.init.end).slice('window.'.length), line: H(st.node), used: 0 });
@@ -313,10 +372,14 @@ function runFinalize() {
       handles.get(d.init.object.name).used++;
     } else if (x && x.type === 'CallExpression' && !x.optional && x.callee.type === 'Identifier' && imports.has(x.callee.name) && x.arguments.length === 0) {
       imports.get(x.callee.name).called++;
-      calls.push({ name: x.callee.name, line: H(st.node) });
-    } else bad.push({ kind: kindOfOther(st), line: H(st.node), text: doc.code.slice(st.node.start, st.node.end).split('\n')[0].slice(0, 60) });
+      calls.push({ name: x.callee.name, line: H(st.node), i: ti });
+    } else {
+      const rx = RELAY.size ? relayExpose(st) : null;
+      if (rx) relayExposes.push({ i: ti, names: rx });
+      else bad.push({ kind: kindOfOther(st), line: H(st.node), text: doc.code.slice(st.node.start, st.node.end).split('\n')[0].slice(0, 60) });
+    }
   }
-  for (const [n, im] of imports) if (!im.called) bad.push({ kind: '호출되지 않는 가져오기', line: im.line, text: 'var ' + n + ' = ' + im.handle + '.' + n + ';' });
+  for (const [n, im] of imports) if (!im.called && !RELAY.has(n)) bad.push({ kind: '호출되지 않는 가져오기', line: im.line, text: 'var ' + n + ' = ' + im.handle + '.' + n + ';' });
   for (const [n, h] of handles) if (!h.used) bad.push({ kind: '쓰이지 않는 손잡이', line: h.line, text: 'var ' + n + ' = window.' + h.kit + ';' });
   if (bad.length) {
     bad.sort((a, b) => a.line - b.line);
@@ -324,20 +387,107 @@ function runFinalize() {
     fail('finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 ' + bad.length + '개 있다(' + Object.keys(by).sort().map(k => k + ' ' + by[k]).join(' · ') + '). 첫 문: 줄 ' + bad[0].line + ' 「' + bad[0].text + '」');
   }
   if (!calls.length) fail('finalize 전제 미충족 — 구역 함수 호출문이 없다(부를 것이 없는 부팅 파일은 만들지 않는다)');
+  // ── [#TASK-ES-681] relay 확인: 이름마다 「가져오기 1 + getter 1」이고 그 getter 말고는 아무도 읽지 않는다
+  for (const [n, r] of RELAY) {
+    const im = imports.get(n);
+    if (!im) fail('relay 이름의 가져오기 줄(`var ' + n + ' = _키트.' + n + ';`)이 IIFE 최상위에 없다: ' + n + ' — 쓰이지 않는 허용은 적지 않는다');
+    if (im.called) fail('relay 이름이 최상위에서 불린다 — 구역 함수다(relay 대상이 아니다): ' + n);
+    const gs = []; for (const ex of relayExposes) for (const g of ex.names) if (g.name === n) gs.push({ line: g.line, i: ex.i });
+    if (gs.length !== 1) fail('relay 이름의 줄 꼴이 「가져오기 1 + getter 1」이 아니다: ' + n + ' — getter ' + gs.length + '개');
+    const bnd = iScope.getBinding(n);
+    if (!bnd || bnd.referencePaths.length !== 1 || bnd.constantViolations.length) fail('relay 이름을 그 getter 말고 다른 곳이 읽거나 쓴다: ' + n);
+    r.importLine = im.line; r.getterLine = gs[0].line; r.exposeLines = [H(top[gs[0].i].node), HE(top[gs[0].i].node)]; r.exposeIdx = gs[0].i;
+  }
+  // ── [#TASK-ES-681] keepInline 갈림: 인라인에 남는 문 번호(inl) · 부팅 파일로 가는 문 번호(bootIdx — 양쪽이 함께 쓰는 손잡이는 여기에도 든다)
+  const isHandleAt = i => { const d = oneVar(top[i]); return !!d && handles.has(d.id.name) && handles.get(d.id.name).line === H(top[i].node); };
+  const isImportAt = i => { const d = oneVar(top[i]); return !!d && imports.has(d.id.name) && imports.get(d.id.name).line === H(top[i].node); };
+  const callIdx = new Set(calls.map(c => c.i));
+  let PART = null;
+  if (KEEP) {
+    const ks = kept.map(k => k.i).sort((a, b) => a - b);
+    for (let i = 1; i < ks.length; i++) if (ks[i] !== ks[i - 1] + 1) fail('keepInline 으로 남길 문이 연달아 있지 않다 — 줄 ' + H(top[ks[i - 1]].node) + ' 과 줄 ' + H(top[ks[i]].node) + ' 사이에 다른 최상위 문이 있다');
+    const P = ks[ks.length - 1];
+    const inl = new Set(ks), prefix = [];
+    for (let i = 0; i < P; i++) if (!inl.has(i) && !isHandleAt(i) && !isImportAt(i)) { inl.add(i); prefix.push(i); } // 남길 문보다 앞에서 도는 문(호출문 · relay expose 문) — 실행 순서를 지키려고 인라인에 둔다
+    const topIdxOf = p => { let q = p; while (q && q.parent !== body) q = q.parentPath; return q ? top.findIndex(t => t.node === q.node) : -1; };
+    const decl = new Map(); top.forEach((st, i) => { const d = oneVar(st); if (d) decl.set(i, d.id.name); });
+    const readers = new Map(); // 선언 문 번호 → 그 이름을 읽거나 쓰는 다른 최상위 문 번호
+    for (const [di, n] of decl) { const b = iScope.getBinding(n), set = new Set(); if (b) for (const p of b.referencePaths.concat(b.constantViolations)) { const r = topIdxOf(p); if (r >= 0 && r !== di) set.add(r); } readers.set(di, set); }
+    const pulled = [];
+    for (let changed = true; changed;) { // 닫기: 인라인에 남는 문이 읽는 가져오기 · 손잡이 줄도 인라인에 남긴다
+      changed = false;
+      for (const [di, set] of readers) if (!inl.has(di) && [...set].some(r => inl.has(r))) {
+        if (di > P) fail('인라인에 남는 문이 그 뒤에서 선언되는 이름을 읽는다: ' + decl.get(di) + ' (줄 ' + H(top[di].node) + ')');
+        inl.add(di); pulled.push(di); changed = true;
+      }
+    }
+    const dup = new Set();
+    for (const [di, set] of readers) {
+      if (!inl.has(di)) continue;
+      const outside = [...set].filter(r => !inl.has(r)).sort((a, b) => a - b);
+      if (!outside.length) continue;
+      if (isHandleAt(di)) { dup.add(di); continue; }
+      if (keptIdx.has(di)) fail('keepInline 으로 남긴 var 를 부팅 파일로 가는 문이 읽는다: ' + decl.get(di) + ' (선언 줄 ' + H(top[di].node) + ' · 읽는 줄 ' + H(top[outside[0]].node) + ')');
+      fail('가져오기 ' + decl.get(di) + ' 를 인라인에 남는 문과 부팅 파일로 가는 문이 함께 쓴다 — 가져오기 줄은 한 곳에만 둘 수 있다(줄 ' + H(top[di].node) + ' · 줄 ' + H(top[outside[0]].node) + ')');
+    }
+    const bootIdx = top.map((_, i) => i).filter(i => !inl.has(i) || dup.has(i));
+    if (!bootIdx.some(i => callIdx.has(i))) fail('keepInline 을 적용하면 부팅 파일에 구역 함수 호출문이 하나도 남지 않는다 — 부를 것이 없는 부팅 파일은 만들지 않는다');
+    const inlLines = new Set();
+    for (const i of inl) for (let l = H(top[i].node); l <= HE(top[i].node); l++) inlLines.add(l);
+    for (let i = 0; i < top.length; i++) if (!inl.has(i)) for (let l = H(top[i].node); l <= HE(top[i].node); l++) if (inlLines.has(l)) fail('인라인에 남길 문이 부팅 파일로 가는 문과 한 줄을 나눠 쓴다(줄 ' + l + ') — 줄 그대로 남길 수 없다');
+    PART = { ks, P, inl, prefix, pulled: pulled.sort((a, b) => a - b), dup, bootIdx, inlLines };
+  }
   // ── F1: 부팅 파일(문을 글자 그대로, 같은 순서로)
   const LABEL = CFG.label || '인라인 IIFE 마지막 정리';
-  const text = st => doc.code.slice(st.node.start, st.node.end);
+  const bootTop = PART ? PART.bootIdx.map(i => top[i]) : top;
+  const nBootHandles = PART ? PART.bootIdx.filter(isHandleAt).length : handles.size;
+  const nBootImports = (PART ? PART.bootIdx.filter(isImportAt).length : imports.size) - (PART ? [...RELAY.keys()].filter(n => PART.bootIdx.some(i => isImportAt(i) && oneVar(top[i]).id.name === n)).length : RELAY.size);
+  const nBootCalls = PART ? PART.bootIdx.filter(i => callIdx.has(i)).length : calls.length;
+  const relayInBoot = [...RELAY.keys()].filter(n => !PART || PART.bootIdx.includes(RELAY.get(n).exposeIdx));
+  const headExtra = []; // [#TASK-ES-681] 옵션을 썼을 때만 생기는 머리 주석 줄(옵션이 없으면 예전과 글자가 같다)
+  if (relayInBoot.length) {
+    headExtra.push(' * 통로 중계 ' + relayInBoot.length + '개(' + relayInBoot.join(' · ') + ')도 함께 옮겼다 — 등록 기관에 등록할 수 없는 이름의 가져오기 줄과 그 getter 를 담은 expose 문이다(생성기 설정 relay).');
+    for (const n of relayInBoot) headExtra.push(' *   - ' + n + ': ' + RELAY.get(n).reason);
+  }
+  if (PART && PART.dup.size) headExtra.push(' * 인라인에 남은 문과 이 파일이 함께 쓰는 키트 손잡이 ' + PART.dup.size + '개(' + [...PART.dup].sort((a, b) => a - b).map(i => oneVar(top[i]).id.name).join(' · ') + ')는 같은 글자로 한 번 더 적었다.');
   const boot = ['/**', ' * ' + C.title, ' *'].concat(C.desc.map(d => ' * ' + d), [
-    ' * #' + TAG + '(' + LABEL + '): index.html 인라인 IIFE 에 마지막까지 남아 있던 문(키트 손잡이 ' + handles.size + '개 · 구역 함수 가져오기 ' + imports.size + '개 · 구역 함수 호출 ' + calls.length + '개)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로, 같은 순서로 옮겼다.',
-    ' * 주석·빈 줄은 옮기지 않았다. index.html 에는 큰 인라인 IIFE 가 더 없고, 그 자리(앞 태그 줄 끝)의 동기 script 태그가 이 파일을 부른다 — defer·async 를 붙이지 않는다(로드 순서가 곧 실행 순서다).',
-    ' * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 X9',
+    ' * #' + TAG + '(' + LABEL + '): index.html 인라인 IIFE 에 마지막까지 남아 있던 문(키트 손잡이 ' + nBootHandles + '개 · 구역 함수 가져오기 ' + nBootImports + '개 · 구역 함수 호출 ' + nBootCalls + '개)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로, 같은 순서로 옮겼다.'],
+    headExtra, [
+    PART
+      ? ' * 주석·빈 줄은 옮기지 않았다. index.html 의 인라인 IIFE 에는 문 ' + PART.inl.size + '개가 줄 그대로 남아 있고(생성기 설정 keepInline — ' + KEEP.reason + '), 그 `</script>` 뒤의 동기 script 태그가 이 파일을 부른다 — 인라인이 먼저 돌고 이 파일이 이어서 돈다. defer·async 를 붙이지 않는다(로드 순서가 곧 실행 순서다).'
+      : ' * 주석·빈 줄은 옮기지 않았다. index.html 에는 큰 인라인 IIFE 가 더 없고, 그 자리(앞 태그 줄 끝)의 동기 script 태그가 이 파일을 부른다 — defer·async 를 붙이지 않는다(로드 순서가 곧 실행 순서다).',
+    ' * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 X9' + (RELAY.size || PART ? ' · 5.9절' : ''),
     ' */',
-    '(function(){', '  "use strict";'], top.map(st => '  ' + text(st)), ['})();', '']);
-  // ── F2 · F3: IIFE 블록을 지우고 앞 줄 끝에 부팅 태그를 붙인다
-  const nh = lines.slice(0, s - 2).concat([lines[s - 2] + BOOT_TAG], lines.slice(e + 1));
-  const removed = e - s + 2;
+    '(function(){', '  "use strict";'], bootTop.map(st => '  ' + text(st)), ['})();', '']);
+  // ── F2 · F3: IIFE 블록을 지우고 앞 줄 끝에 부팅 태그를 붙인다. [#TASK-ES-681] keepInline 이면 블록을 남기고(껍데기 5줄 + 남길 문의 줄) 그 `</script>` 줄 끝에 태그를 붙인다
+  const keptBody = []; if (PART) for (let l = s + 3; l <= e - 1; l++) if (PART.inlLines.has(l)) keptBody.push(lines[l - 1]);
+  const nh = PART
+    ? lines.slice(0, s + 2).concat(keptBody, [lines[e - 1], lines[e] + BOOT_TAG], lines.slice(e + 1))
+    : lines.slice(0, s - 2).concat([lines[s - 2] + BOOT_TAG], lines.slice(e + 1));
+  const removed = PART ? (e - s - 3) - keptBody.length : e - s + 2;
   // ── 사후 대조
-  {
+  if (PART) {
+    // [#TASK-ES-681] ① 부팅 파일의 문 토큰열 = 옮기기로 한 문의 토큰열(같은 순서) ② 새 인라인 IIFE 의 문 토큰열 = 남기기로 한 문의 토큰열(같은 순서) ③ 두 쪽이 원래 문 전부를 빠짐없이 가른다(겹치는 것은 함께 쓰는 손잡이뿐)
+    // ④ 남은 인라인 줄은 전부 원래 줄과 바이트가 같고 순서가 같다 ⑤ 블록 밖의 줄은 그대로다 ⑥ 부팅 태그는 꼭 한 번, 남긴 `</script>` 줄 끝이다
+    const sigOf = (ast, nodes) => nodes.map(n => JSON.stringify(ast.tokens.filter(t => !isComment(t) && t.type.label !== 'eof' && t.start >= n.start && t.end <= n.end).map(sig)));
+    const origSig = sigOf(doc.ast, top.map(t => t.node));
+    let bootAst; try { bootAst = parser.parse(boot.join('\n'), { sourceType: 'script', tokens: true }); } catch (err) { fail('만든 부팅 파일이 파싱되지 않는다 — 쓰지 않는다: ' + err.message); }
+    const bx = bootAst.program.body.length === 1 && bootAst.program.body[0].type === 'ExpressionStatement' ? bootAst.program.body[0].expression : null;
+    if (!bx || bx.type !== 'CallExpression' || bx.callee.type !== 'FunctionExpression') fail('만든 부팅 파일의 껍데기 꼴이 다르다 — 쓰지 않는다');
+    const bootSig = sigOf(bootAst, bx.callee.body.body);
+    if (JSON.stringify(bootSig) !== JSON.stringify(PART.bootIdx.map(i => origSig[i]))) fail('부팅 파일의 문 토큰열이 옮기기로 한 문과 다르다(실행 글자 변화) — 쓰지 않는다');
+    let nd; try { nd = parseUnwireDoc(nh); } catch (err) { fail('남긴 인라인 IIFE 가 파싱되지 않는다 — 쓰지 않는다: ' + err.message); }
+    const inlSorted = [...PART.inl].sort((a, b) => a - b);
+    if (nd.off !== s || JSON.stringify(sigOf(nd.ast, nd.top.map(t => t.node))) !== JSON.stringify(inlSorted.map(i => origSig[i]))) fail('남긴 인라인 IIFE 의 문 토큰열이 남기기로 한 문과 다르다 — 쓰지 않는다');
+    const all = new Set(inlSorted.concat(PART.bootIdx));
+    if (all.size !== top.length || inlSorted.some(i => PART.bootIdx.includes(i) && !PART.dup.has(i))) fail('남긴 문과 옮긴 문이 원래 문 전부를 가르지 않는다 — 쓰지 않는다');
+    const blockNew = nh.slice(s - 1, s + 2 + keptBody.length + 2), blockOld = lines.slice(s - 1, e + 1);
+    let at = 0; for (let i = 0; i < blockNew.length - 1; i++) { while (at < blockOld.length && blockOld[at] !== blockNew[i]) at++; if (at >= blockOld.length) fail('남은 인라인 줄이 원래 줄과 다르거나 순서가 다르다 — 쓰지 않는다(새 블록 ' + (i + 1) + '번째 줄)'); at++; }
+    if (blockNew[blockNew.length - 1] !== lines[e] + BOOT_TAG || nh[s - 1] !== '<script>' || nh[s] !== '(function(){') fail('남긴 인라인 블록의 껍데기·부팅 태그 줄이 예상과 다르다 — 쓰지 않는다');
+    if (nh.join('\n').split(BOOT).length !== 2) fail('부팅 태그가 꼭 한 번이 아니다 — 쓰지 않는다');
+    if (nh.length !== lines.length - removed) fail('지운 뒤 줄 수가 예상과 다르다 — 쓰지 않는다');
+    if (nh.slice(0, s - 1).join('\n') !== lines.slice(0, s - 1).join('\n') || nh.slice(s + 2 + keptBody.length + 2).join('\n') !== lines.slice(e + 1).join('\n')) fail('인라인 블록 밖의 글자가 달라졌다 — 쓰지 않는다');
+  } else {
     let bootAst; try { bootAst = parser.parse(boot.join('\n'), { sourceType: 'script', tokens: true }); } catch (err) { fail('만든 부팅 파일이 파싱되지 않는다 — 쓰지 않는다: ' + err.message); }
     const want = codeToks(doc.ast), got = codeToks(bootAst);
     let diffAt = want.length === got.length ? -1 : Math.min(want.length, got.length);
@@ -357,12 +507,34 @@ function runFinalize() {
     task: TAG, mode: 'finalize', scriptHtmlLines: [s, e + 1],
     statements: { total: top.length, handles: handles.size, imports: imports.size, calls: calls.length },
     handles: [...handles].map(([n, h]) => ({ name: n, kit: h.kit, imports: h.used })), callOrder: calls.map(c => c.name),
-    removed: { lines: removed, shell: 5, statementLines: stmtLine.size, commentLines: comment, blankLines: blank },
-    tag: { line: s - 1, text: BOOT_TAG, sync: true },
+    removed: { lines: removed, shell: PART ? 0 : 5, statementLines: PART ? stmtLine.size - PART.inlLines.size : stmtLine.size, commentLines: comment, blankLines: blank },
+    tag: { line: PART ? s + 2 + keptBody.length + 2 : s - 1, text: BOOT_TAG, sync: true },
     htmlLinesBefore: lines.length, htmlLinesAfter: nh.length, files: { [BOOT]: boot.length - 1 },
   };
+  // [#TASK-ES-681] 옵션을 썼을 때만 생기는 메타 칸과 표준 출력 줄(옵션이 없으면 메타·출력의 글자가 예전과 같다)
+  const optLog = [];
+  if (RELAY.size) {
+    meta.relayed = [...RELAY].map(([n, r]) => ({ name: n, reason: r.reason, importLine: r.importLine, getterLine: r.getterLine, exposeLines: r.exposeLines, movedTo: !PART || PART.bootIdx.includes(r.exposeIdx) ? BOOT : 'index.html(인라인에 남음)' }));
+    for (const x of meta.relayed) optLog.push('  relay ' + x.name + ' — 가져오기 줄 ' + x.importLine + ' · getter 줄 ' + x.getterLine + '(expose 문 줄 ' + x.exposeLines[0] + '~' + x.exposeLines[1] + ') → ' + x.movedTo + ' · 근거: ' + x.reason);
+  }
+  if (PART) {
+    const row = (i, why) => ({ line: H(top[i].node), endLine: HE(top[i].node), why, text: text(top[i]).split('\n')[0].slice(0, 60) });
+    meta.keptInline = {
+      reason: KEEP.reason,
+      statements: PART.ks.map(i => Object.assign({ match: keptIdx.get(i), kind: kept.find(k => k.i === i).kind }, row(i, '지정한 문'))),
+      before: PART.prefix.map(i => row(i, callIdx.has(i) ? '지정한 문보다 앞에서 도는 호출문' : '지정한 문보다 앞에서 도는 relay expose 문')),
+      pulled: PART.pulled.map(i => row(i, isHandleAt(i) ? '인라인에 남는 문이 읽는 손잡이' : '인라인에 남는 문이 읽는 가져오기')),
+      duplicatedHandles: [...PART.dup].sort((a, b) => a - b).map(i => ({ name: oneVar(top[i]).id.name, line: H(top[i].node) })),
+      inline: { statements: PART.inl.size, bodyLines: keptBody.length, shellLines: 5 }, boot: { statements: PART.bootIdx.length, handles: nBootHandles, imports: nBootImports, calls: nBootCalls },
+      inlineCallOrder: calls.filter(c => PART.inl.has(c.i)).map(c => c.name), bootCallOrder: calls.filter(c => !PART.inl.has(c.i)).map(c => c.name),
+    };
+    for (const x of meta.keptInline.statements) optLog.push('  keepInline 「' + x.match + '」 — 줄 ' + x.line + (x.endLine !== x.line ? '~' + x.endLine : '') + '(' + (x.kind === 'var' ? 'var 선언' : '상태 선언') + ') 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: ' + KEEP.reason);
+    for (const x of meta.keptInline.before.concat(meta.keptInline.pulled)) optLog.push('  keepInline(함께 남김) 줄 ' + x.line + ' 「' + x.text + '」 — ' + x.why);
+    for (const x of meta.keptInline.duplicatedHandles) optLog.push('  keepInline(손잡이 한 번 더) ' + x.name + ' — 줄 ' + x.line + ' 은 인라인에 남고 부팅 파일에도 같은 글자로 적는다');
+  }
   fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1), { encoding: 'utf8' });
-  console.log('finalize', '· handles', handles.size, '· imports', imports.size, '· calls', calls.length, '· removed lines', removed, '(껍데기 5 · 문 ' + stmtLine.size + ' · 주석 ' + comment + ' · 빈 줄 ' + blank + ')');
+  console.log('finalize', '· handles', handles.size, '· imports', imports.size, '· calls', calls.length, '· removed lines', removed, '(껍데기 ' + (PART ? 0 : 5) + ' · 문 ' + (PART ? stmtLine.size - PART.inlLines.size : stmtLine.size) + ' · 주석 ' + comment + ' · 빈 줄 ' + blank + ')');
+  for (const l of optLog) console.log(l);
   console.log('index.html lines', lines.length, '->', nh.length);
   console.log(BOOT, boot.length - 1);
 }
@@ -424,7 +596,21 @@ function unwireOnce(U, doc) {
   const { lines, code, top, iScope } = doc; // 이 실행이 보는 문서(앞 실행의 결과). 파일 머리의 같은 이름을 가린다.
   const H = n => n.loc.start.line + doc.off, HE = n => n.loc.end.line + doc.off;
   if (!U || typeof U !== 'object' || Array.isArray(U)) fail('unwire 실행 설정은 객체여야 한다');
-  for (const k of Object.keys(U)) if (!['kitVar', 'names', 'imports', 'exposeGetters', 'windowAssign', 'sharedLine', 'dropKitVar', 'label'].includes(k)) fail('unwire 설정에 모르는 칸: ' + k);
+  for (const k of Object.keys(U)) if (!['kitVar', 'names', 'imports', 'exposeGetters', 'windowAssign', 'sharedLine', 'dropKitVar', 'dropDeadImport', 'label'].includes(k)) fail('unwire 설정에 모르는 칸: ' + k);
+  // [#TASK-ES-681 · 설계 5.10절] dropDeadImport — 읽는 곳이 하나도 없는 키트 가져오기 줄을 지운다(등록 기관과 무관한 「죽은 줄」). 기본은 꺼져 있고, 이름 · 근거 글자 · 그 속성을 다는 파일을 적은 경우에만 동작한다.
+  const DEAD = new Map();
+  if (U.dropDeadImport !== undefined) {
+    if (!Array.isArray(U.dropDeadImport) || !U.dropDeadImport.length) fail('unwire.dropDeadImport 는 비지 않은 배열이어야 한다(스위치로 풀리지 않는다)');
+    for (const d of U.dropDeadImport) {
+      if (!d || typeof d !== 'object' || Array.isArray(d)) fail('unwire.dropDeadImport 의 칸은 { name, reason, definedIn } 이어야 한다');
+      for (const k of Object.keys(d)) if (!['name', 'reason', 'definedIn'].includes(k)) fail('unwire.dropDeadImport 에 모르는 칸: ' + k);
+      if (typeof d.name !== 'string' || !/^[A-Za-z_$][\w$]*$/.test(d.name)) fail('unwire.dropDeadImport 의 name 이 이름 꼴이 아니다: ' + JSON.stringify(d.name));
+      if (typeof d.reason !== 'string' || d.reason.trim().length < 10 || /[\r\n]/.test(d.reason)) fail('unwire.dropDeadImport 「' + d.name + '」 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다');
+      if (typeof d.definedIn !== 'string' || !/^js\/[\w./-]+\.js$/.test(d.definedIn) || d.definedIn.includes('..')) fail('unwire.dropDeadImport 「' + d.name + '」 의 definedIn(그 키트 속성을 다는 js/ 아래 파일)이 없거나 꼴이 다르다');
+      if (DEAD.has(d.name)) fail('unwire.dropDeadImport 에 같은 이름이 둘이다: ' + d.name);
+      DEAD.set(d.name, { reason: d.reason, definedIn: d.definedIn });
+    }
+  }
   if (typeof U.kitVar !== 'string' || !/^[A-Za-z_$][\w$]*$/.test(U.kitVar)) fail('unwire.kitVar 가 이름이 아니다: ' + U.kitVar);
   // X1: kitVar 는 IIFE 최상위에서 `var <kitVar> = window.…;` 로 한 번 선언된 손잡이여야 한다(아무 식별자나 받지 않는다)
   const rootWin = n => { let x = n; while (x && x.type === 'MemberExpression' && !x.computed) x = x.object; return !!x && x.type === 'Identifier' && x.name === 'window'; };
@@ -433,7 +619,7 @@ function unwireOnce(U, doc) {
     fail('unwire.kitVar 는 IIFE 최상위에서 `var ' + U.kitVar + ' = window.…;` 로 한 번 선언된 손잡이여야 한다: ' + U.kitVar);
   const names = new Set(Array.isArray(U.names) ? U.names : []);
   const shared = U.sharedLine === true, dropKit = U.dropKitVar === true;
-  if (!names.size && !dropKit) fail('unwire.names 가 비었다');
+  if (!names.size && !dropKit && !DEAD.size) fail('unwire.names 가 비었다');
   for (const n of names) if (!/^[A-Za-z_$][\w$]*$/.test(n)) fail('unwire.names 에 이름이 아닌 글자: ' + n);
   const doImports = U.imports !== false, doExpose = U.exposeGetters !== false, doWindow = U.windowAssign !== false;
   const del = new Set();        // 지울 줄(index.html 1-based)
@@ -562,6 +748,55 @@ function unwireOnce(U, doc) {
     }
   }
   for (const n of names) if (!hit[n]) fail('unwire.names 의 이름인데 지울 줄이 하나도 없다: ' + n);
+  // [#TASK-ES-681 · 설계 5.10절] dropDeadImport: 가져오기 줄 하나만 지운다. 아래 가운데 하나라도 어긋나면 멈춘다.
+  //   ① 선언이 `var N = <kitVar>.N;` 꼴(단순 속성 읽기 — 호출 · 계산된 속성 · 다른 손잡이면 멈춤)이고 한 줄을 통째로 차지한다 ② IIFE 안에 그 이름을 읽거나 쓰는 곳이 하나도 없다
+  //   ③ 그 이름의 getter·setter 속성이나 `….N = …` 대입이 IIFE 안에 없다 ④ 그 이름이 낱말로 든 문자열이 IIFE 안에 없고, eval · new Function · with 가 IIFE 안에 없다(동적 접근)
+  //   ⑤ definedIn 파일이 그 속성을 **데이터 속성**으로 단다(객체의 보통 속성 `N: …` 또는 `….N = …` 대입) — 접근자(get/set · defineProperty)면 읽기만으로 부수효과가 날 수 있어 멈춘다
+  for (const [n, dd] of DEAD) {
+    if (names.has(n)) fail('dropDeadImport 이름이 unwire.names 에도 있다 — 한 곳에만 적는다: ' + n);
+    const sts = top.filter(st => st.isVariableDeclaration() && st.node.declarations.some(d => d.id.type === 'Identifier' && d.id.name === n));
+    if (sts.length !== 1 || sts[0].node.declarations.length !== 1) fail('dropDeadImport 이름의 가져오기 줄이 IIFE 최상위에 꼭 하나가 아니다: ' + n + ' — ' + sts.length + '개(쓰이지 않는 허용은 적지 않는다)');
+    const st = sts[0], d = st.node.declarations[0];
+    if (!d.init || d.init.type !== 'MemberExpression' || d.init.computed || d.init.object.type !== 'Identifier' || d.init.object.name !== U.kitVar || d.init.property.type !== 'Identifier' || d.init.property.name !== n)
+      fail('dropDeadImport 이름의 선언 오른쪽이 「' + U.kitVar + '.' + n + '」 단순 속성 읽기가 아니다 — 지우지 않는다: ' + src(st.node));
+    ownLine(st, '가져오기 ' + n);
+    const bd = iScope.getBinding(n);
+    const used = bd ? [...new Set(bd.referencePaths.map(r => r.node).concat(bd.constantViolations.map(r => r.node)).map(H))].sort((x, y) => x - y) : null;
+    if (!bd || bd.path.node !== d) fail('dropDeadImport 이름의 선언을 찾지 못했다: ' + n);
+    if (used.length) fail('dropDeadImport 이름을 IIFE 안에서 읽거나 쓰는 곳이 있다 — 죽은 가져오기가 아니다: ' + n + '(줄 ' + used.join(',') + ')');
+    const word = new RegExp('(^|[^A-Za-z0-9_$])' + n.replace(/[$]/g, '\\$&') + '($|[^A-Za-z0-9_$])');
+    iScope.path.traverse({
+      StringLiteral(p) { if (word.test(p.node.value)) fail('dropDeadImport 이름이 낱말로 든 문자열이 IIFE 안에 있다(동적 접근일 수 있다) — 지우지 않는다: ' + n + '(줄 ' + H(p.node) + ')'); },
+      TemplateElement(p) { if (word.test(p.node.value.raw)) fail('dropDeadImport 이름이 낱말로 든 문자열이 IIFE 안에 있다(동적 접근일 수 있다) — 지우지 않는다: ' + n + '(줄 ' + H(p.node) + ')'); },
+      ObjectMethod(p) { if ((p.node.kind === 'get' || p.node.kind === 'set') && !p.node.computed && p.node.key.type === 'Identifier' && p.node.key.name === n) fail('dropDeadImport 이름의 getter·setter 가 IIFE 안에 있다 — 통로로 나가는 이름이다(죽은 가져오기가 아니다): ' + n + '(줄 ' + H(p.node) + ')'); },
+      AssignmentExpression(p) { const l = p.node.left; if (l.type === 'MemberExpression' && !l.computed && l.property.type === 'Identifier' && l.property.name === n) fail('dropDeadImport 이름으로 대입하는 줄이 IIFE 안에 있다(window 노출일 수 있다) — 지우지 않는다: ' + n + '(줄 ' + H(p.node) + ')'); },
+      CallExpression(p) { if (p.node.callee.type === 'Identifier' && p.node.callee.name === 'eval') fail('IIFE 안에 eval 이 있다 — 이름을 동적으로 읽을 수 있어 죽은 가져오기를 지우지 않는다(줄 ' + H(p.node) + ')'); },
+      NewExpression(p) { if (p.node.callee.type === 'Identifier' && p.node.callee.name === 'Function') fail('IIFE 안에 new Function 이 있다 — 이름을 동적으로 읽을 수 있어 죽은 가져오기를 지우지 않는다(줄 ' + H(p.node) + ')'); },
+      WithStatement(p) { fail('IIFE 안에 with 문이 있다 — 죽은 가져오기를 지우지 않는다(줄 ' + H(p.node) + ')'); },
+    });
+    // ⑤ 데이터 속성인지(정적): definedIn 파일을 읽어 그 이름의 정의 꼴을 본다
+    const defFile = path.join(APP, dd.definedIn);
+    if (!fs.existsSync(defFile)) fail('dropDeadImport 「' + n + '」 의 definedIn 파일이 없다: ' + dd.definedIn);
+    let defAst; try { defAst = parser.parse(fs.readFileSync(defFile, 'utf8'), { sourceType: 'script' }); } catch (err) { fail('dropDeadImport 「' + n + '」 의 definedIn 파일이 파싱되지 않는다: ' + dd.definedIn); }
+    const keyIs = k => (k.type === 'Identifier' && k.name === n) || (k.type === 'StringLiteral' && k.value === n);
+    let dataAt = null, accessorAt = null;
+    traverse(defAst, {
+      ObjectProperty(p) { if (!p.node.computed && keyIs(p.node.key) && dataAt === null) dataAt = p.node.loc.start.line; },
+      ObjectMethod(p) { if (!p.node.computed && keyIs(p.node.key)) { if (p.node.kind === 'get' || p.node.kind === 'set') accessorAt = p.node.loc.start.line; else if (dataAt === null) dataAt = p.node.loc.start.line; } },
+      ClassMethod(p) { if (!p.node.computed && keyIs(p.node.key) && (p.node.kind === 'get' || p.node.kind === 'set')) accessorAt = p.node.loc.start.line; },
+      AssignmentExpression(p) { const l = p.node.left; if (l.type === 'MemberExpression' && !l.computed && l.property.type === 'Identifier' && l.property.name === n && dataAt === null) dataAt = p.node.loc.start.line; },
+      CallExpression(p) {
+        const c = p.node.callee, a = p.node.arguments;
+        const nm = c.type === 'MemberExpression' && !c.computed && c.property.type === 'Identifier' ? c.property.name : '';
+        if (/^(defineProperty|__defineGetter__|__defineSetter__)$/.test(nm) && a.some(x => x.type === 'StringLiteral' && x.value === n)) accessorAt = p.node.loc.start.line;
+        if (nm === 'defineProperties') accessorAt = accessorAt || p.node.loc.start.line; // 어느 이름을 정의하는지 정적으로 가리지 않는다 — 있으면 멈춘다
+      },
+    });
+    if (accessorAt !== null) fail('dropDeadImport 「' + n + '」 — ' + dd.definedIn + ' 가 그 속성을 접근자(get/set · defineProperty)로 정의한다(줄 ' + accessorAt + '). 읽기만으로 부수효과가 날 수 있어 지우지 않는다');
+    if (dataAt === null) fail('dropDeadImport 「' + n + '」 — ' + dd.definedIn + ' 에서 그 속성을 데이터 속성으로 다는 자리(`' + n + ': …` 또는 `….' + n + ' = …`)를 찾지 못했다 — 지우지 않는다');
+    del.add(H(st.node));
+    (removed.deadImports = removed.deadImports || []).push({ name: n, line: H(st.node), kit: src(handleSts[0].node.declarations[0].init).replace(/^window\./, ''), reason: dd.reason, definedIn: dd.definedIn, definedAtLine: dataAt });
+  }
   // X3: 줄 안 삭제를 줄 글자로 바꾼다(오른쪽부터). 지운 문 뒤의 빈칸을 함께 지우고, 줄 끝이었으면 앞 빈칸을 지운다. 줄이 비면 줄을 지운다.
   const edits = new Map(), cutRanges = [], inlineEdits = [];
   for (const [l, cs] of cuts) {
@@ -623,6 +858,7 @@ function unwireOnce(U, doc) {
   const log = [U.kitVar, '· names', names.size, '· imports', removed.imports.length, '· expose props', removed.exposeProps.length, '(calls', removed.exposeCalls.length + ')', '· window', removed.windowAssigns.length, '(blocks', removed.windowBlocks.length + ')', '· comma', commaFix.size];
   if (inlineEdits.length) log.push('· inline', inlineEdits.length);
   if (removed.kitVarLine) log.push('· kitVar line', removed.kitVarLine.line);
+  if (removed.deadImports) for (const x of removed.deadImports) log.push('\n  dead-import ' + x.name + ' — 줄 ' + x.line + '(`var ' + x.name + ' = ' + U.kitVar + '.' + x.name + ';`) 을 지운다 · 읽는 곳 0 · 데이터 속성: ' + x.definedIn + ' 줄 ' + x.definedAtLine + ' · 근거: ' + x.reason); // [#TASK-ES-681] 쓴 것마다 한 줄
   return { next, meta, log };
 }
 
