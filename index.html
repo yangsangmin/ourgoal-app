@@ -2940,10 +2940,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _subtabTplCat = 'all';
   var _subtabTplQuery = '';
   /* ============ [#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템 ============ */
-  var _subtabTplDomain = 'personal'; // 'personal' | 'routine' | 'team'
-  var _subtabTplType = 'ai';         // 'ai' | 'real'
-  var _subtabTplCat = 'all';
-  var _subtabTplQuery = '';
+  // 'personal' | 'routine' | 'team'
+  var _subtabTplDomain = 'personal';
+  // 'ai' | 'real'
+  var _subtabTplType = 'ai';
   bootGoalsAndTeamState(); /* [#TASK-ES-650] 로드 중 구역(주석·빈 줄 포함 67줄) → js/core/boot-home-wiring.js 의 bootGoalsAndTeamState 로 옮김 — 원래 자리에서 부른다 */
   /* [#TASK-ES-448] promptNewTeamGoal → js/tabs/goals/team-goal-prompt.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
@@ -4100,9 +4100,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
 
 
-
-
-  var shareContent = function(opts){ return window.OurgoalViralSharing ? window.OurgoalViralSharing.shareContent(opts) : Promise.resolve(); }; window.shareContent = shareContent;
+  var shareContent = function(opts){ return window.OurgoalViralSharing ? window.OurgoalViralSharing.shareContent(opts) : Promise.resolve(); };
+  window.shareContent = shareContent;
   /* [#TASK-ES-448] drawShareWatermark · buildInviteLinkSuffix · scRoundRect · scWrapLines · scDrawLines · generateShareImage · buildShareText → js/tabs/comm/share-card.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
   /* [#TASK-ES-461] generateGoalCertificateImage · renderCommShare → js/tabs/comm/goal-certificate-share.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
@@ -4111,7 +4110,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-591] templatesHtml · cloneTemplate → js/creator-templates-legacy.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
   /* ============ 소통 피드 (Supabase feed_posts, 실시간 동기화) ============ */
-  var FEED_POSTS_CACHE = null; // null=아직 안 불러옴, 로드 후 배열
+  // null=아직 안 불러옴, 로드 후 배열
+  var FEED_POSTS_CACHE = null;
   /* [#TASK-ES-448] ensureFeedPostsLoaded · setupFeedPostsRealtime → js/tabs/comm/feed-posts-sync.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   /* [#TASK-ES-496] feedPostHtml · renderCommFeed → js/tabs/comm/feed-list.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
   /* [#TASK-ES-448] groupState · groupCheckedToday · groupStreak → js/tabs/goals/team-state.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
