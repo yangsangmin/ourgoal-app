@@ -346,6 +346,120 @@
     "path": "summary.allAsExpected",
     "equals": true
    }
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고친 게이트만(도우미 없음)의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.gateOnlyMainNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고친 게이트만의 게이트 ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.gateOnlyMainGateCheckLines",
+    "equals": 38
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 게이트 실패 검사 수.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.bothMockGateFails",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.bothMockNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 트리에서 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.remaining.main-both__mock-both",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 범위 기록: 이 변경이 바꾼 금고 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "changedScope.vaultCourtConstitutionDirectivesGenerator",
+    "equals": [
+     "scripts/verify-integrity-gate.js"
+    ]
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "changedScope.product",
+    "equals": []
+   }
   }
  ],
  "retire": [

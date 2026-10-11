@@ -42,6 +42,16 @@ rec('R4', '측정 기록: 두 PR 을 다 얹은 모의 철거 사본의 npm test
 rec('R4', '측정 기록: 두 PR 을 다 얹은 현재 main 의 npm test 종료 코드.', 'measurement.json', 'summary.compare.bothMainNpmTestExit');
 rec('R4', '측정 기록: 두 PR 을 다 얹은 트리에서 모의 철거 사본에서만 실패하는 단언 줄 수.', 'measurement.json', 'summary.remaining.main-both__mock-both');
 rec('R4', '대조군 기록: 등록을 깨뜨린 다섯 변형 모두 새로 실패한 줄이 기대한 줄과 같은지.', 'control-group.json', 'summary.allAsExpected');
+// origin/main 을 합친 뒤의 빠른 재확인 기록(있을 때만)
+if (fs.existsSync(path.join(DIR, 'post-merge.json'))) {
+  rec('R3', '합친 뒤 재확인 기록: 고친 게이트만(도우미 없음)의 npm test 종료 코드.', 'post-merge.json', 'summary.compare.gateOnlyMainNpmTestExit');
+  rec('R3', '합친 뒤 재확인 기록: 고친 게이트만의 게이트 ✓ 줄 수.', 'post-merge.json', 'summary.compare.gateOnlyMainGateCheckLines');
+  rec('R4', '합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 게이트 실패 검사 수.', 'post-merge.json', 'summary.compare.bothMockGateFails');
+  rec('R4', '합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 npm test 종료 코드.', 'post-merge.json', 'summary.compare.bothMockNpmTestExit');
+  rec('R4', '합친 뒤 재확인 기록: 두 PR 을 다 얹은 트리에서 모의 철거 사본에서만 실패하는 단언 줄 수.', 'post-merge.json', 'summary.remaining.main-both__mock-both');
+  rec('R2', '합친 뒤 범위 기록: 이 변경이 바꾼 금고 파일 목록.', 'post-merge.json', 'changedScope.vaultCourtConstitutionDirectivesGenerator');
+  rec('R2', '합친 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.', 'post-merge.json', 'changedScope.product');
+}
 
 const rows = CH.changed.filter(r => r.file === GATE);
 const retire = [...new Set(rows.map(r => r.check))].map(title => ({ file: GATE, check: title,
