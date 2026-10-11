@@ -21,7 +21,7 @@ const M = [
   ['M7 조각 안에 지역 사본을 만들어 읽음(값이 갈라지는 가장 흔한 사고)', s => once(s, 'var validRows = ctx.rows.filter(', 'var rows = ctx.rows; var validRows = rows.filter('), true],
   ['M8 주석 글자 바뀜', s => once(s, '// 저장 공통 함수', '// 저장 함수'), true],
   ['M9 조건이 바뀜', s => once(s, 'if(ctx.rows.length > 1){', 'if(ctx.rows.length >= 1){'), true],
-  ['M10 이 함수 밖 글자가 바뀜', s => once(s, 'window.addEventListener(\'hashchange\', checkRecordDeepLink);', 'window.addEventListener(\'hashchange\',  checkRecordDeepLink);'), true],
+  ['M10 이 함수 밖 글자가 바뀜(함수 바로 앞 주석 줄 — 덩어리의 다른 줄은 다른 PR 이 옮겨 가므로 이 줄을 쓴다)', s => once(s, '기록하기 메인 창 */', '기록하기 메인 창  */'), true],
   ['M11 주인 조각 안 호출에 필요 없는 접두가 붙음', s => once(s, 'bindRowEvents();\r\n        updateAnalyticsBanner();'.replace(/\r\n/g, s.includes('\r\n') ? '\r\n' : '\n'), 'ctx.bindRowEvents();' + (s.includes('\r\n') ? '\r\n' : '\n') + '        updateAnalyticsBanner();'), true],
   ['M12 타이머 간격 숫자가 바뀜', s => once(s, '}, 60);', '}, 61);'), true],
   ['M13 저장 경로에서 문 하나가 빠짐', s => once(s, 'saveLocalSettings(state.profile.id, state.profile.settings);', ''), true],

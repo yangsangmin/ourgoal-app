@@ -13,7 +13,7 @@
   - 그래서 스스로 설계한 검증: (a) 정리 전후 토큰열 대조(허용한 차이 넷 말고 0) (a') 접두 기대 대조(정리 전 스코프 분석으로 따로 계산) (b) 조각 경계를 넘는 맨이름 0 (c) 대조기가 가짜로 통과하지 않음을 보이는 대조군 (d) 게스트 화면 시나리오 12개를 기준 2회 · 작업 1회 돌려 단계별 화면 · 저장값까지 대조 (e) 저장 뒤 새로 고침 유지 (f) npm test · 시험 파일 전부 · 모듈 로드 · 이름 지문. 검증을 줄인 곳은 없다.
 - 작업참고 **기준 PR #915**(f4932332).
 - 이 작업 세션은 빌더(서브에이전트)다. 병합은 하지 않는다(오케스트레이터 · 상민님 몫).
-- 기준 main: ed20750c(#932 병합 뒤). 작업 중 main 이 계속 움직여 작업 폴더를 일곱 번 다시 맞췄다(9014a386 → e5f34779 → c0658b2c → 529e4370 → 7852fc16 → 6eeacd58 → 8c076e17 → ed20750c). 그때마다 main 판 index.html 에 변환기를 다시 돌리고 측정을 다시 했다.
+- 기준 main: d55d7595(#934 병합 뒤 — #933 구역 이전 1차 포함). 작업 중 main 이 계속 움직여 작업 폴더를 여덟 번 다시 맞췄다(9014a386 → e5f34779 → c0658b2c → 529e4370 → 7852fc16 → 6eeacd58 → 8c076e17 → ed20750c → d55d7595). 마지막 것은 커밋 뒤라 병합 커밋(10cc248e)으로 합쳤다 — git 의 자동 병합 결과가 「main 판 index.html 에 변환기를 다시 돌린 결과」와 바이트 동일함을 확인했고(`cmp`), 기준선은 main 판을 받아 사유와 함께 다시 기록했다. 그 뒤 #935(75c79720 — 생성기 파일만)도 합쳤다: 측정 기준 d55d7595 와 75c79720 사이에 index.html · js · tests · scripts · court · 기준선 차이가 없음을 확인했다(`git diff --quiet d55d7595 75c79720 -- index.html js tests scripts court package.json docs/architecture/module-baseline.json`). 그때마다 main 판 index.html 에 변환기를 다시 돌리고 측정을 다시 했다.
 - 측정은 전부 「작업자 측정, 판정 아님」이다. 판정은 GitHub 법정만 낸다.
 
 ## 0. 요구 (지시 항목)
@@ -37,7 +37,7 @@
 
 ### 구체 식별자
 
-- 파일: `index.html`(인라인 IIFE, 정리 전 3311~4254행 = 944줄 — 기준 ed20750c). 제품 변경은 이 구간뿐이다.
+- 파일: `index.html`(인라인 IIFE, 정리 전 2987~3930행 = 944줄 — 기준 d55d7595). 제품 변경은 이 구간뿐이다.
 - 진입점: `openProTemplateRecordModal(editRec, initialTplKey, initialDate)` — 이름 · 인자 · 통로 getter(`get openProTemplateRecordModal(){…}`) 그대로. 여는 곳: `js/tabs/records/render.js` · `record-card-wire.js` · `template-record-detail.js` · `weekly-recap.js` · `js/tabs/calendar/day-edit-hub.js` · 이 함수 안의 「마켓」 콜백(자기 자신을 다시 부름).
 - 새 IIFE 최상위 함수(조각): `bindProRecTable` · `bindProRecTools` · `bindProRecTrendChart` · `bindProRecStopwatch` · `bindProRecSave` — 모두 인자는 꾸러미 `ctx` 하나.
 - 안쪽 함수(이름 그대로, 15개): `renderModal` · `renderRowsHtml`(진입점 안) · `syncCurrentRowsFromDOM` · `updateAnalyticsBanner` · `refreshTableBody` · `bindRowEvents` · `addNewRow`(표) · `bindChartEvents` · `updateTrendChart`(차트) · `updateSwDisplay` · `stopSwTimer` · `resetSw` · `renderLapsUI` · `injectLapIntoTable`(스톱워치) · `executeSave`(저장).
@@ -189,6 +189,7 @@ function bindProRecSave(ctx){ <원래 줄 그대로> }
 - **재검증**: 그 다음 측정에서도 차이가 4칸 나왔다(저장 시나리오 둘의 화면). 갈무리로 보니 저장한 기록 옆에 찍히는 지금 시각이 기준 두 번은 14:37, 다음 실행은 14:38 이었다 — 실행이 분 경계를 넘은 것이다. 시:분만 든 글자 마디를 비교에서 빼고 전체를 다시 쟀다(7절 표가 그 결과다).
 - **재검증**: 그 다음 측정에서도 차이가 2칸 나왔다. 하나는 콘솔 오류 목록이었다 — 막힌 실시간 연결 주소의 같은 오류가 기준 3번 · 작업 4번(재시도 횟수, 그 실행이 0.2초 길었다). 다른 하나는 또 색종이였다(조각을 「없앤」 것이 아니라 표지 글자로 「바꿔」 놓아 있고 없음이 여전히 드러났다 — 도구의 실수). 콘솔 오류는 종류로 비교하게 하고 조각은 통째로 없애게 고친 뒤 다시 쟀다.
 - **재검증**: 첫 커밋을 커밋 훅이 막았다(`HARDCODED_SECRET` — 결과 파일에 실린 콘솔 오류 글자 속 실시간 연결 주소의 공개 키 토큰). 훅을 우회하지 않고 실행기가 토큰 꼴 글자를 「«토큰 가림»」으로 바꿔 적게 고친 뒤 결과 파일을 다시 만들었다.
+- **재검증**: #933(구역 이전)을 합친 뒤 대조군 하나(M10 「함수 밖 글자」)가 고칠 글자를 찾지 못해 실행되지 않았다 — 표적으로 삼았던 덩어리의 다른 줄이 그 PR 로 세포에 옮겨 갔기 때문이다. 표적을 이 함수 바로 앞 주석 줄로 바꿔 다시 돌렸고 14개 모두 잡았다.
 - **재검증**: 도구를 고치다 Git Bash heredoc 이 역슬래시를 반으로 접어 정규식이 깨진 적이 두 번 있었다(정규화가 듣지 않아 「기준끼리 다름」이 1,057칸으로 늘어 바로 드러났다). 그 줄은 Edit 도구로 다시 썼고 `node --check` 로 확인했다.
 
 ## 7. [원칙 ⑦] 단계별 실행 (측정 산출물)
@@ -196,27 +197,27 @@ function bindProRecSave(ctx){ <원래 줄 그대로> }
 모두 `reports/TASK-ES-646/` 아래, 작업자 측정이다. 숫자의 정본은 각 파일이다.
 
 <!-- measure:begin (reports/TASK-ES-646/tools/render-docs.cjs 가 쓴다 — 손으로 고치지 않는다) -->
-기준 ed20750c · 측정 2026-10-11T06:34:33.727Z
+기준 d55d7595 · 측정 2026-10-11T07:04:34.320Z
 
 | 산출물 | 무엇을 쟀나 | 결과 |
 |---|---|---|
-| `inplace-split-meta.json` | 변환기가 한 일 | 정리 전 3311~4254행 944줄 → 함수 여섯(`openProTemplateRecordModal` 153줄 · `bindProRecTable` 70줄 · `bindProRecTools` 238줄 · `bindProRecTrendChart` 47줄 · `bindProRecStopwatch` 264줄 · `bindProRecSave` 187줄) · 가장 긴 것 264줄 · 고친 자리 200(읽기) + 16(쓰기) + 30(다른 조각의 함수 호출) + 6(선언) · 없앤 빈 줄 5 |
+| `inplace-split-meta.json` | 변환기가 한 일 | 정리 전 2987~3930행 944줄 → 함수 여섯(`openProTemplateRecordModal` 153줄 · `bindProRecTable` 70줄 · `bindProRecTools` 238줄 · `bindProRecTrendChart` 47줄 · `bindProRecStopwatch` 264줄 · `bindProRecSave` 187줄) · 가장 긴 것 264줄 · 고친 자리 200(읽기) + 16(쓰기) + 30(다른 조각의 함수 호출) + 6(선언) · 없앤 빈 줄 5 |
 | `verify-inplace.json` | (a) 토큰열 (a′) 접두 기대 (b) 스코프 (c) 꾸러미 빠짐 (d) 저장 경로 · 함수 밖 글자 | `ok: true` · 토큰 6739개 대 7237개(편 것) — 허용 밖 차이 **0** · 접두 246곳 · 선언 바꿈 6 · 더한 코드 토큰 119 · 주석 25개 같음(더한 주석 6) · 접두 기대 469곳 중 어긋남 **0** · 경계를 넘는 맨이름 **0** · 새 바깥 의존은 조각 함수 이름 5개뿐 · 최상위 this/arguments 0 · 저장 경로 토큰 1252개 같음(접두 28곳) · 호출 67개 순서 같음 · 함수 밖 글자 같음 true |
 | `control-group.json` | 대조기가 가짜로 통과하지 않는가(일부러 망가뜨린 사본) | 망가뜨린 사본 14개 중 잡은 것 **14** · 놓친 것 0 · 망가뜨리지 않은 사본 통과 true |
-| `scenarios/*.json`(12개) · `scenario-local.json` | 게스트 화면 시나리오 기준 2회 · 작업 1회(s01 · s02 · s03 · s04 · s05 · s06 · s07 · s08 · s09 · s10 · s11 · s12) + 단계별 화면 · 저장값 · 토스트 · 단계 결과 대조 | 전부 통과 true · 행동 변화 단언 있음 true · 기준 2회 일치 true · 맞댄 칸 5482 중 같은 칸 5482 · 차이 **0** · 기준끼리 달라 뺀 칸 0 · 예외 0 |
-| `stage1-base-stability.json` | 1단계: 시나리오가 기준 트리 2회에서 흔들리지 않는가 | 시나리오 12개 · 전부 통과 true · 기준 2회 일치 true · 맞댄 칸 5481 중 같은 칸 5481 · 기준끼리 달라 뺀 칸 1 · 예외 0 |
+| `scenarios/*.json`(12개) · `scenario-local.json` | 게스트 화면 시나리오 기준 2회 · 작업 1회(s01 · s02 · s03 · s04 · s05 · s06 · s07 · s08 · s09 · s10 · s11 · s12) + 단계별 화면 · 저장값 · 토스트 · 단계 결과 대조 | 전부 통과 true · 행동 변화 단언 있음 true · 기준 2회 일치 true · 맞댄 칸 5450 중 같은 칸 5450 · 차이 **0** · 기준끼리 달라 뺀 칸 32 · 예외 0 |
+| `stage1-base-stability.json` | 1단계: 시나리오가 기준 트리 2회에서 흔들리지 않는가 | 시나리오 12개 · 전부 통과 true · 기준 2회 일치 true · 맞댄 칸 5482 중 같은 칸 5482 · 기준끼리 달라 뺀 칸 0 · 예외 0 |
 | `csv-download.json` | 「CSV 다운로드」 단추가 만든 파일(진짜 마우스 입력, 내려받은 파일을 읽음) | 파일 생김 기준 true · 작업 true · 이름·바이트 같음 **true**(273 바이트) |
-| `cell-registry-compare.base.json` · `cell-registry-compare.json` · `name-fingerprints.json` | 통로 · window 이름의 값 지문(기준 이름 목록 고정) | 통로 431개 중 달라진 것 1(`openProTemplateRecordModal` — 본문을 고친 그 함수, 종류·이름·인자 수 같음 true) · 그 밖 0 · 사라진 이름 0 · 생긴 이름 0 · window 17개 차이 0 |
+| `cell-registry-compare.base.json` · `cell-registry-compare.json` · `name-fingerprints.json` | 통로 · window 이름의 값 지문(기준 이름 목록 고정) | 통로 522개 중 달라진 것 1(`openProTemplateRecordModal` — 본문을 고친 그 함수, 종류·이름·인자 수 같음 true) · 그 밖 0 · 사라진 이름 0 · 생긴 이름 0 · window 4개 차이 0 |
 | `module-load.json` | 법정 모듈 로드 탐침 기준 대 작업 | 회귀 [](82/83 대 기준 82/83) |
 | `raw/npm-test.{base,work}.{log,exit}` · `npm-test-compare.json` | npm test 전경 실행 | 종료 코드 0 · 0 · ✓ 줄 487 · 487 · ok 줄 196 · 196 · 검사 줄 글자 같음 true |
 | `tests-all-compare.json` | 시험 파일 119개를 하나씩 실행 | 기준과 다른 파일 **0** (종료 코드가 0 이 아닌 파일은 기준 26 · 작업 26 — 같은 파일, 이 PR 과 무관한 기존 상태) |
-| `measurement.json` | 지표 · 바뀐 파일 | 인라인 스크립트 줄 수 2311 → 2326(**+15**) · index.html 함수 선언 수 17 → 22(**+5**) · window 대입 75 → 75 · index.html +204 −189 · 바뀐 제품 파일 ["index.html"] · js 0 · 시험 0 · 금고 0 · 생성기 0 · 생성 지도 0 · 모듈 가드 종료 코드 0 · 기준선 사유 기록 true |
-| `court-local.json` | 로컬 법정 전체 실행(작업자 PC 예비 점검 — 판정 아님) | 판정 줄 「확인 부족」 · 작업자가 적어 낸 지시 항목 12건 중 9건은 필요한 수준까지 확인하지 못했습니다 · 종료 코드 3 · 끝까지 돌았는가 true |
+| `measurement.json` | 지표 · 바뀐 파일 | 인라인 스크립트 줄 수 1904 → 1919(**+15**) · index.html 함수 선언 수 17 → 22(**+5**) · window 대입 75 → 75 · index.html +204 −189 · 바뀐 제품 파일 ["index.html"] · js 0 · 시험 0 · 금고 0 · 생성기 0 · 생성 지도 0 · 모듈 가드 종료 코드 0 · 기준선 사유 기록 true |
+| `court-local.json` | 로컬 법정 전체 실행(작업자 PC 예비 점검 — 판정 아님) | 커밋 뒤 기록 |
 <!-- measure:end -->
 
 ### 7.1 재현 방법 (독립 검토용 — 한 줄씩)
 
-준비: 기준 트리 = 이 PR 의 merge-base(측정 때 `ed20750c`)를 분리 HEAD 로 꺼낸 작업 폴더(예 `git worktree add --detach <기준> ed20750c`), 작업 트리 = 이 브랜치. 작업 트리에서 `npm ci --ignore-scripts` 뒤 `export NODE_PATH=<작업 트리>/node_modules`. 아래는 전부 작업 트리에서 돌린다. Chrome 과 Node 22 이상이 필요하다.
+준비: 기준 트리 = 이 PR 의 merge-base(측정 때 `d55d7595`)를 분리 HEAD 로 꺼낸 작업 폴더(예 `git worktree add --detach <기준> d55d7595`), 작업 트리 = 이 브랜치. 작업 트리에서 `npm ci --ignore-scripts` 뒤 `export NODE_PATH=<작업 트리>/node_modules`. 아래는 전부 작업 트리에서 돌린다. Chrome 과 Node 22 이상이 필요하다.
 
 | 무엇 | 명령 | 기대 출력 |
 |---|---|---|
