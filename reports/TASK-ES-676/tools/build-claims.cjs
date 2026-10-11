@@ -24,12 +24,14 @@ st('R2', '새 세포 파일 가운데 서버 주소·공개 키 이름이 나오
 st('R2', '되짚기: 기준 index.html 에서 구역 줄을 빼고 부르는 줄·머리 줄·script 태그 줄을 넣은 것이 작업 index.html 과 줄 단위로 같다.', P, 'replay.rebuiltEqualsWork', true);
 st('R2', '머리에 더한 가져오기 줄이 설정의 이름·키트 변수로 만든 글자와 같다.', P, 'replay.headImportsEqualExpected', true);
 st('R2', 'script 태그 줄에서 새 세포의 태그 글자를 빼면 기준 줄과 같다.', P, 'replay.tagLineIsBasePlusNewTags', true);
-st('R2', '생성기가 통로에 새로 단 getter·setter 가 없다.', M, 'generator.exposed', []);
+st('R2', '생성기가 index.html 머리에 단 통로 getter 의 이름 목록 — 구역 본문이 통로로 읽는 이름 가운데 index.html 에 getter 가 없던 것(등록 기관이 이미 통로에 내주는 이름이다. 재철거가 지웠던 getter 가 다시 생긴 것이고, 다음 재철거가 지운다).', M, 'generator.exposed', m.generator.exposed);
 // R3 시점
-st('R3', '부팅 동안의 사건 줄(상태 기관 정의 · 통로 노출 · window 대입)과 사건마다의 통로 이름 수가 기준과 작업에서 글자 그대로 같다.', M, 'order.sameAsBase', true);
+st('R3', '부팅 동안의 사건 줄(상태 기관 정의 · 통로 노출 · window 대입)과 사건마다의 통로 이름 수가, 생성기가 다시 단 getter 를 통로에 다는 사건 하나를 빼면 기준과 작업에서 글자 그대로 같다.', M, 'order.sameAsBaseExceptNewGetterExpose', true);
+st('R3', '작업 쪽에 더 있는 사건 수.', M, 'order.newGetterExpose.extraEvents', m.order.newGetterExpose.extraEvents);
+st('R3', '그 사건 앞뒤로 통로에 달린 이름 수가 같다(이미 통로에 있던 이름을 다시 단다).', M, 'order.newGetterExpose.scopeNamesUnchanged', true);
 st('R3', '기준에서 두 번 잰 사건 줄이 서로 같다(본질 변동 없음).', M, 'order.baseRepeatSame', true);
 st('R3', '사건 수(기준 · 작업).', M, 'order.total', m.order.total);
-st('R3', '가짜 연결 라이브러리 방식에서도 사건 줄이 기준과 같다(연결 만들기가 불리는 자리 포함).', M, 'order.fake.sameAsBase', true);
+st('R3', '가짜 연결 라이브러리 방식에서도 그 사건 하나를 빼면 사건 줄이 기준과 같다(연결 만들기가 불리는 자리 포함).', M, 'order.fake.sameAsBaseExceptNewGetterExpose', true);
 st('R3', '가짜 연결 라이브러리 방식: 연결 만들기 사건의 자리(기준 · 작업).', M, 'order.fake.createClientIndex', m.order.fake.createClientIndex);
 st('R3', '가짜 연결 라이브러리 방식: sb 정의 사건의 자리(기준 · 작업) — 연결 만들기 바로 다음이다(이 줄은 옮기지 않았다).', M, 'order.fake.defineSbIndex', m.order.fake.defineSbIndex);
 st('R3', 'window 에 대입되는 이름의 차례가 작업 트리에서 이 목록이다(기준과 같다 — 위 사건 줄 비교에 포함).', M, 'order.windowSets.work', m.order.windowSets.work);
@@ -40,7 +42,8 @@ st('R4', '가짜 연결 라이브러리 방식의 손잡이 탐침 기록이 기
 st('R4', '가짜 연결 라이브러리 방식(진짜 서버 아님): 작업 트리에서 연결 만들기가 한 번 불리고 그 객체가 통로 · window.sb · 템플릿 부품 초기화에 같은 것으로 닿는다.', M, 'handles.fakeClient.workOneCreateCallSameObjectEverywhere', true);
 st('R4', '서버 연결 객체의 통로 접근자 종류(기준 · 작업).', M, 'handles.sb.accessor', ['get', 'get']);
 st('R4', '법정·작업자 PC 의 브라우저에서 서버 연결 객체의 값(기준 · 작업).', M, 'handles.sb.valueKind', ['null', 'null']);
-st('R4', '상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름이 없다(기준을 두 번 재도 다른 이름은 뺐다).', M, 'stateProbe.differing', []);
+st('R4', '상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름은, 생성기가 getter 를 다시 단 이름 말고는 없다(기준을 두 번 재도 다른 이름은 뺐다).', M, 'stateProbe.differingBeyondRegrownGetter', []);
+st('R4', 'getter 가 다시 달려 접근자 종류·주인 표시가 달라진 이름 목록(값 지문은 같다 — 아래 통로 값 지문 주장).', M, 'stateProbe.differingRegrownGetter', m.stateProbe.differingRegrownGetter);
 st('R4', '상태 기관이 맡은 이름 목록이 기준과 같다.', M, 'stateProbe.organNamesSame', true);
 st('R4', '통로 이름의 값 지문이 기준과 다른 이름이 없다.', M, 'fingerprints.scopeDiff', []);
 st('R4', 'window 이름의 값 지문이 기준과 다른 이름이 없다.', M, 'fingerprints.windowDiff', []);

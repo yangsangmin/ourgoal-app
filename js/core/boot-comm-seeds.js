@@ -5,7 +5,7 @@
  * bootSampleGroups — 예시 모임 목록(배열)을 상태 기관에 MOCK_GROUPS 로 맡긴다.
  * bootShareHandle — 공유 엔진에 넘기는 공유 함수를 상태 기관에 shareContent 로 맡기고 window 에도 단다.
  * bootFeedCacheState — 소통 피드 캐시의 초깃값(아직 안 불러옴 = null)을 상태 기관에 맡긴다.
- * #TASK-ES-676(구역 이전 2차 — 남은 로드 시점 문(상태 기관 정의 줄 · window 복사 줄)을 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 3932~4077 · 4078~4098 · 4106~4108줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
+ * #TASK-ES-676(구역 이전 2차 — 남은 로드 시점 문(상태 기관 정의 줄 · window 복사 줄)을 구역 함수로): index.html 인라인 IIFE 의 연속 구역(이전 전 3681~3826 · 3827~3847 · 3855~3857줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js mode:"region")로 글자 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 구역 안에서만 쓰던 var 는 그 함수의 지역 변수가 됐다.
  * 로드 중 바로 돌던 문들은 순서 그대로 함수 하나로 감싸 index.html 원래 자리에서 부른다. index.html 은 IIFE 머리에서 그 함수를 같은 이름으로 가져온다.
  * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 · 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
@@ -17,7 +17,7 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
-  /* ---- 이전 전 index.html 3932~4077줄(#TASK-ES-676 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3681~3826줄(#TASK-ES-676 생성기 표지) ---- */
   function bootSampleGroups() { /* [#TASK-ES-676] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* [#TASK-ES-448] AI_DISCLOSURE_NOTICE · SIM_PERSONAS · MOCK_PEOPLE · daysFromNow → js/tabs/comm/sample-data.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
 
@@ -166,7 +166,7 @@
       teamGoals:[] }
   ]);
   } /* bootSampleGroups */
-  /* ---- 이전 전 index.html 4078~4098줄(#TASK-ES-676 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3827~3847줄(#TASK-ES-676 생성기 표지) ---- */
   function bootShareHandle() { /* [#TASK-ES-676] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* [#TASK-ES-448] EXTERNAL_DATA · CREATOR_TEMPLATES → js/tabs/comm/sample-data.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
   /* [#TASK-ES-448] VISIBILITY_LABELS → js/tabs/comm/sample-data.js 로 옮김(인라인 스크립트 세포화 P2 — 앞 주석 포함) */
@@ -191,7 +191,7 @@
   window.shareContent = window.OurgoalAppScope.scope.shareContent;
   } /* bootShareHandle */
 
-  /* ---- 이전 전 index.html 4106~4108줄(#TASK-ES-676 생성기 표지) ---- */
+  /* ---- 이전 전 index.html 3855~3857줄(#TASK-ES-676 생성기 표지) ---- */
   function bootFeedCacheState() { /* [#TASK-ES-676] 로드 중 구역 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   /* ============ 소통 피드 (Supabase feed_posts, 실시간 동기화) ============ */
   // null=아직 안 불러옴, 로드 후 배열

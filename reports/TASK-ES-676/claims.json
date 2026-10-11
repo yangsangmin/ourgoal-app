@@ -294,7 +294,7 @@
       "req": "R2",
       "kind": "static",
       "domain": "config",
-      "statement": "생성기가 통로에 새로 단 getter·setter 가 없다.",
+      "statement": "생성기가 index.html 머리에 단 통로 getter 의 이름 목록 — 구역 본문이 통로로 읽는 이름 가운데 index.html 에 getter 가 없던 것(등록 기관이 이미 통로에 내주는 이름이다. 재철거가 지웠던 getter 가 다시 생긴 것이고, 다음 재철거가 지운다).",
       "touches": [
         "reports/TASK-ES-676/measurement.json"
       ],
@@ -302,7 +302,9 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "generator.exposed",
-        "equals": []
+        "equals": [
+          "daysFromNow"
+        ]
       },
       "id": "C16"
     },
@@ -310,17 +312,49 @@
       "req": "R3",
       "kind": "static",
       "domain": "config",
-      "statement": "부팅 동안의 사건 줄(상태 기관 정의 · 통로 노출 · window 대입)과 사건마다의 통로 이름 수가 기준과 작업에서 글자 그대로 같다.",
+      "statement": "부팅 동안의 사건 줄(상태 기관 정의 · 통로 노출 · window 대입)과 사건마다의 통로 이름 수가, 생성기가 다시 단 getter 를 통로에 다는 사건 하나를 빼면 기준과 작업에서 글자 그대로 같다.",
       "touches": [
         "reports/TASK-ES-676/measurement.json"
       ],
       "check": {
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/measurement.json",
-        "path": "order.sameAsBase",
+        "path": "order.sameAsBaseExceptNewGetterExpose",
         "equals": true
       },
       "id": "C17"
+    },
+    {
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 쪽에 더 있는 사건 수.",
+      "touches": [
+        "reports/TASK-ES-676/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-676/measurement.json",
+        "path": "order.newGetterExpose.extraEvents",
+        "equals": 1
+      },
+      "id": "C18"
+    },
+    {
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "그 사건 앞뒤로 통로에 달린 이름 수가 같다(이미 통로에 있던 이름을 다시 단다).",
+      "touches": [
+        "reports/TASK-ES-676/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-676/measurement.json",
+        "path": "order.newGetterExpose.scopeNamesUnchanged",
+        "equals": true
+      },
+      "id": "C19"
     },
     {
       "req": "R3",
@@ -336,7 +370,7 @@
         "path": "order.baseRepeatSame",
         "equals": true
       },
-      "id": "C18"
+      "id": "C20"
     },
     {
       "req": "R3",
@@ -351,27 +385,27 @@
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "order.total",
         "equals": [
-          331,
-          331
+          325,
+          326
         ]
       },
-      "id": "C19"
+      "id": "C21"
     },
     {
       "req": "R3",
       "kind": "static",
       "domain": "config",
-      "statement": "가짜 연결 라이브러리 방식에서도 사건 줄이 기준과 같다(연결 만들기가 불리는 자리 포함).",
+      "statement": "가짜 연결 라이브러리 방식에서도 그 사건 하나를 빼면 사건 줄이 기준과 같다(연결 만들기가 불리는 자리 포함).",
       "touches": [
         "reports/TASK-ES-676/measurement.json"
       ],
       "check": {
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/measurement.json",
-        "path": "order.fake.sameAsBase",
+        "path": "order.fake.sameAsBaseExceptNewGetterExpose",
         "equals": true
       },
-      "id": "C20"
+      "id": "C22"
     },
     {
       "req": "R3",
@@ -386,11 +420,11 @@
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "order.fake.createClientIndex",
         "equals": [
-          196,
-          196
+          190,
+          191
         ]
       },
-      "id": "C21"
+      "id": "C23"
     },
     {
       "req": "R3",
@@ -405,11 +439,11 @@
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "order.fake.defineSbIndex",
         "equals": [
-          197,
-          197
+          191,
+          192
         ]
       },
-      "id": "C22"
+      "id": "C24"
     },
     {
       "req": "R3",
@@ -433,7 +467,7 @@
           "MOCK_GROUPS"
         ]
       },
-      "id": "C23"
+      "id": "C25"
     },
     {
       "req": "R4",
@@ -449,7 +483,7 @@
         "path": "handles.sameAsBase",
         "equals": true
       },
-      "id": "C24"
+      "id": "C26"
     },
     {
       "req": "R4",
@@ -465,7 +499,7 @@
         "path": "handles.baseRepeatSame",
         "equals": true
       },
-      "id": "C25"
+      "id": "C27"
     },
     {
       "req": "R4",
@@ -481,7 +515,7 @@
         "path": "handles.fakeClient.sameAsBase",
         "equals": true
       },
-      "id": "C26"
+      "id": "C28"
     },
     {
       "req": "R4",
@@ -497,7 +531,7 @@
         "path": "handles.fakeClient.workOneCreateCallSameObjectEverywhere",
         "equals": true
       },
-      "id": "C27"
+      "id": "C29"
     },
     {
       "req": "R4",
@@ -516,7 +550,7 @@
           "get"
         ]
       },
-      "id": "C28"
+      "id": "C30"
     },
     {
       "req": "R4",
@@ -535,23 +569,41 @@
           "null"
         ]
       },
-      "id": "C29"
+      "id": "C31"
     },
     {
       "req": "R4",
       "kind": "static",
       "domain": "config",
-      "statement": "상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름이 없다(기준을 두 번 재도 다른 이름은 뺐다).",
+      "statement": "상태 탐침에서 통로 값 요약 · 접근자 · 주인 · window 복사 동일성 · 쓰기 왕복이 기준과 다른 이름은, 생성기가 getter 를 다시 단 이름 말고는 없다(기준을 두 번 재도 다른 이름은 뺐다).",
       "touches": [
         "reports/TASK-ES-676/measurement.json"
       ],
       "check": {
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/measurement.json",
-        "path": "stateProbe.differing",
+        "path": "stateProbe.differingBeyondRegrownGetter",
         "equals": []
       },
-      "id": "C30"
+      "id": "C32"
+    },
+    {
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "getter 가 다시 달려 접근자 종류·주인 표시가 달라진 이름 목록(값 지문은 같다 — 아래 통로 값 지문 주장).",
+      "touches": [
+        "reports/TASK-ES-676/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-676/measurement.json",
+        "path": "stateProbe.differingRegrownGetter",
+        "equals": [
+          "daysFromNow"
+        ]
+      },
+      "id": "C33"
     },
     {
       "req": "R4",
@@ -567,7 +619,7 @@
         "path": "stateProbe.organNamesSame",
         "equals": true
       },
-      "id": "C31"
+      "id": "C34"
     },
     {
       "req": "R4",
@@ -583,7 +635,7 @@
         "path": "fingerprints.scopeDiff",
         "equals": []
       },
-      "id": "C32"
+      "id": "C35"
     },
     {
       "req": "R4",
@@ -599,7 +651,7 @@
         "path": "fingerprints.windowDiff",
         "equals": []
       },
-      "id": "C33"
+      "id": "C36"
     },
     {
       "req": "R4",
@@ -615,7 +667,7 @@
         "path": "fingerprints.scopeLost",
         "equals": []
       },
-      "id": "C34"
+      "id": "C37"
     },
     {
       "req": "R4",
@@ -631,7 +683,7 @@
         "path": "fingerprints.scopeAdded",
         "equals": []
       },
-      "id": "C35"
+      "id": "C38"
     },
     {
       "req": "R5",
@@ -647,7 +699,7 @@
         "path": "moduleLoad.regressions",
         "equals": 0
       },
-      "id": "C36"
+      "id": "C39"
     },
     {
       "req": "R5",
@@ -663,7 +715,7 @@
         "path": "moduleLoad.newFilesLoadOneOk",
         "equals": true
       },
-      "id": "C37"
+      "id": "C40"
     },
     {
       "req": "R5",
@@ -679,7 +731,7 @@
         "path": "npmTest.same",
         "equals": true
       },
-      "id": "C38"
+      "id": "C41"
     },
     {
       "req": "R5",
@@ -695,7 +747,7 @@
         "path": "testsEach.sameAsBase",
         "equals": true
       },
-      "id": "C39"
+      "id": "C42"
     },
     {
       "req": "R5",
@@ -711,7 +763,7 @@
         "path": "testsEach.onlyWork",
         "equals": []
       },
-      "id": "C40"
+      "id": "C43"
     },
     {
       "req": "R5",
@@ -727,7 +779,7 @@
         "path": "moduleGuard.exitCode",
         "equals": 0
       },
-      "id": "C41"
+      "id": "C44"
     },
     {
       "req": "R5",
@@ -743,7 +795,7 @@
         "path": "integrityGate.exitCode",
         "equals": 0
       },
-      "id": "C42"
+      "id": "C45"
     },
     {
       "req": "R5",
@@ -759,7 +811,7 @@
         "path": "changed.productFilesAreIndexAndNewCells",
         "equals": true
       },
-      "id": "C43"
+      "id": "C46"
     },
     {
       "req": "R5",
@@ -775,7 +827,7 @@
         "path": "changed.testsChanged",
         "equals": []
       },
-      "id": "C44"
+      "id": "C47"
     },
     {
       "req": "R5",
@@ -791,7 +843,7 @@
         "path": "changed.vaultChanged",
         "equals": []
       },
-      "id": "C45"
+      "id": "C48"
     },
     {
       "req": "R5",
@@ -807,7 +859,7 @@
         "path": "changed.generatorChanged",
         "equals": []
       },
-      "id": "C46"
+      "id": "C49"
     },
     {
       "req": "R5",
@@ -823,7 +875,7 @@
         "path": "changed.mapsChanged",
         "equals": []
       },
-      "id": "C47"
+      "id": "C50"
     },
     {
       "req": "R5",
@@ -839,7 +891,7 @@
         "path": "changed.organChanged",
         "equals": []
       },
-      "id": "C48"
+      "id": "C51"
     },
     {
       "req": "R5",
@@ -853,9 +905,9 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "metrics.delta",
-        "equals": -169
+        "equals": -166
       },
-      "id": "C49"
+      "id": "C52"
     },
     {
       "req": "R5",
@@ -874,7 +926,7 @@
           0
         ]
       },
-      "id": "C50"
+      "id": "C53"
     },
     {
       "req": "R5",
@@ -890,7 +942,7 @@
         "path": "baseline.recordedEqualsMeasured",
         "equals": true
       },
-      "id": "C51"
+      "id": "C54"
     },
     {
       "req": "R6",
@@ -904,9 +956,9 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/finalize-gap.json",
         "path": "totals.blockingStatements",
-        "equals": 194
+        "equals": 75
       },
-      "id": "C52"
+      "id": "C55"
     },
     {
       "req": "R6",
@@ -920,9 +972,9 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/finalize-gap.json",
         "path": "totals.blockingLines",
-        "equals": 1289
+        "equals": 1044
       },
-      "id": "C53"
+      "id": "C56"
     },
     {
       "req": "R6",
@@ -936,9 +988,9 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/finalize-gap.json",
         "path": "totals.allowedStatements",
-        "equals": 59
+        "equals": 56
       },
-      "id": "C54"
+      "id": "C57"
     },
     {
       "req": "R6",
@@ -954,7 +1006,7 @@
         "path": "generator.wroteBootFile",
         "equals": false
       },
-      "id": "C55"
+      "id": "C58"
     }
   ]
 }
