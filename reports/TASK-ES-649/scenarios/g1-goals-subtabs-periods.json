@@ -1,0 +1,130 @@
+{
+  "id": "g1-goals-subtabs-periods",
+  "title": "목표 탭의 하위 탭(개인·루틴·통계)과 통계 기간(주·월)을 눌러 바꾸면 누른 것이 활성이 되며 예외가 없다 (상태 이전 2차 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubPersonal",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalsSubRoutine",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubRoutine"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubRoutine",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalsSubPersonal",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubStats"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubStats",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalsSubRoutine",
+      "className": "active"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalPeriodWeek",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalPeriodMonth",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalPeriodMonth"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalPeriodMonth",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalPeriodWeek",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubPersonal"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubPersonal",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalsSubStats",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
