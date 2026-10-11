@@ -2,10 +2,10 @@
  "schema": "ourgoal.inline-script-map/1",
  "source": {
   "file": "index.html",
-  "sha256_12": "77eb0664d29f",
+  "sha256_12": "9650660e9336",
   "iifeHtmlLines": [
    2254,
-   5080
+   4846
   ],
   "otherInlineBlocks": [
    {
@@ -13,7 +13,7 @@
     "lines": 8
    },
    {
-    "startLine": 5083,
+    "startLine": 4849,
     "lines": 16
    }
   ]
@@ -31,59 +31,58 @@
   "smokeFn": 5
  },
  "totals": {
-  "iifeLines": 2827,
-  "groups": 117,
+  "iifeLines": 2593,
+  "groups": 114,
   "seamGroups": 8,
-  "movableGroups": 27,
-  "functions": 8,
-  "vars": 216,
-  "windowAssignments": 20,
-  "listeners": 35,
-  "onProps": 44,
-  "loadTime": 195,
+  "movableGroups": 26,
+  "functions": 6,
+  "vars": 225,
+  "windowAssignments": 17,
+  "listeners": 24,
+  "onProps": 42,
+  "loadTime": 196,
   "inlineHandlerNames": 12,
   "tiers": {
-   "빈 구획": 82,
+   "빈 구획": 80,
    "이음매(옮기지 않음)": 8,
    "쉬움": 13,
-   "어려움": 8,
+   "어려움": 7,
    "보통": 6
   },
   "tierLines": {
-   "빈 구획": 723,
+   "빈 구획": 557,
    "이음매(옮기지 않음)": 76,
-   "쉬움": 137,
-   "어려움": 1765,
-   "보통": 126
+   "쉬움": 130,
+   "어려움": 1732,
+   "보통": 98
   }
  },
  "recommendedOrder": [
-  "G103",
-  "G085",
+  "G100",
+  "G084",
   "G012",
-  "G070",
+  "G069",
   "G008",
   "G011",
   "G029",
   "G017",
   "G014",
   "G042",
-  "G091",
   "G065",
+  "G090",
   "G016",
+  "G067",
   "G015",
-  "G086",
-  "G068",
-  "G074",
+  "G085",
+  "G073",
   "G057",
   "G013",
-  "G075",
-  "G101",
+  "G074",
+  "G098",
   "G024",
-  "G076",
-  "G087",
+  "G075",
+  "G095",
   "G010",
-  "G097",
   "G026"
  ],
  "groups": [
@@ -299,7 +298,7 @@
    "fanIn": [],
    "fanOut": [
     {
-     "id": "G097",
+     "id": "G095",
      "refs": 2
     }
    ],
@@ -689,11 +688,11 @@
    "id": "G010",
    "title": "[#TASK-ES-432] 인라인 스크립트 세포화 2차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀)",
    "start": 2332,
-   "end": 2593,
-   "lines": 262,
+   "end": 2615,
+   "lines": 284,
    "seam": false,
    "tier": "어려움",
-   "score": 103,
+   "score": 110,
    "functions": [],
    "vars": [
     "CURATED_MARKET_TEMPLATES",
@@ -717,6 +716,7 @@
     "bindAvatarLevelUpSaveImage",
     "bindAvatarLevelUpShare",
     "bindCaptureLiveMeta",
+    "bindCapturePhoto",
     "bindCaptureSave",
     "bindFocusResync",
     "bindGoalAgentToggle",
@@ -740,6 +740,7 @@
     "bindOnlineSync",
     "bindPersonalGuideBtn",
     "bindPrivacyLinks",
+    "bindQuickRoutineChips",
     "bindRageTapTelemetry",
     "bindRecCarouselPills",
     "bindRecDocumentClick",
@@ -755,6 +756,8 @@
     "bindSupabaseAuthStateListener",
     "bindSupportEmailLink",
     "bindTabGuideHubButton",
+    "bindTeamCommentClick",
+    "bindTeamCommentKeydown",
     "bindTemplateEncyclopediaEscape",
     "bindTemplateEncyclopediaModalClick",
     "bindTermsLinks",
@@ -779,6 +782,8 @@
     "copyRealUserTemplate",
     "dDay",
     "dayIndexSinceSignup",
+    "definePurgeSampleRecords",
+    "defineSendTeamGoalComment",
     "dispatchFullViewPropagation",
     "downloadTableAsCsv",
     "enterApp",
@@ -792,6 +797,7 @@
     "getProTemplateByKey",
     "goalAchievement",
     "handleDeepLinkRouting",
+    "handleGoalFastAddSubmit",
     "initShipyardRegistry",
     "isGoogleCalendarConnected",
     "isoDate",
@@ -828,10 +834,12 @@
     "runAppBoot",
     "saveLocalSettings",
     "saveProfile",
+    "selectSmartTag",
     "setTab",
     "startDevDebugButtons",
     "startKeyboardShield",
     "startRemoteSessionPoll",
+    "startVoiceCheckin",
     "switchTab",
     "switchTemplateEncyclopediaTab",
     "syncAllToGoogleCalendar",
@@ -856,15 +864,20 @@
     "_subtabTplDomain",
     "_subtabTplQuery",
     "_subtabTplType",
+    "capturePhotoBtn",
     "capturePhotoInput",
     "capturePhotoPreview",
+    "compressImage",
     "escapeHtml",
     "groupState",
     "initDevDebugButtons",
     "initKeyboardShield",
+    "openPhotoViewerModal",
     "pendingCapturePhoto",
+    "qRoutineRow",
     "renderCommScreen",
     "renderGoalsScreen",
+    "renderRecordsScreen",
     "showLegalModal"
    ],
    "stateMutates": [],
@@ -875,9 +888,9 @@
     "_subtabTplType",
     "pendingCapturePhoto"
    ],
-   "loadTime": 6,
+   "loadTime": 7,
    "loadTimeKinds": {
-    "호출": 6
+    "호출": 7
    },
    "windowAssignments": 0,
    "windowNames": [],
@@ -891,11 +904,11 @@
      "refs": 1
     },
     {
-     "id": "G091",
+     "id": "G090",
      "refs": 1
     },
     {
-     "id": "G101",
+     "id": "G098",
      "refs": 1
     }
    ],
@@ -960,8 +973,8 @@
   {
    "id": "G011",
    "title": "[#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀)",
-   "start": 2594,
-   "end": 2600,
+   "start": 2616,
+   "end": 2622,
    "lines": 7,
    "seam": false,
    "tier": "쉬움",
@@ -997,8 +1010,8 @@
   {
    "id": "G012",
    "title": "[#TASK-ES-446] 인라인 스크립트 세포화 P2-1 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀)",
-   "start": 2601,
-   "end": 2609,
+   "start": 2623,
+   "end": 2631,
    "lines": 9,
    "seam": false,
    "tier": "쉬움",
@@ -1035,8 +1048,8 @@
   {
    "id": "G013",
    "title": "[#TASK-ES-448] 인라인 스크립트 세포화 P2-2 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀)",
-   "start": 2610,
-   "end": 2631,
+   "start": 2632,
+   "end": 2653,
    "lines": 22,
    "seam": false,
    "tier": "보통",
@@ -1093,8 +1106,8 @@
   {
    "id": "G014",
    "title": "[#TASK-ES-437] 인라인 스크립트 세포화 P0 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 과 같은 틀)",
-   "start": 2632,
-   "end": 2639,
+   "start": 2654,
+   "end": 2661,
    "lines": 8,
    "seam": false,
    "tier": "쉬움",
@@ -1130,8 +1143,8 @@
   {
    "id": "G015",
    "title": "[#TASK-ES-442] 인라인 스크립트 세포화 P0 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 과 같은 틀)",
-   "start": 2640,
-   "end": 2648,
+   "start": 2662,
+   "end": 2670,
    "lines": 9,
    "seam": false,
    "tier": "보통",
@@ -1171,8 +1184,8 @@
   {
    "id": "G016",
    "title": "Supabase",
-   "start": 2649,
-   "end": 2657,
+   "start": 2671,
+   "end": 2679,
    "lines": 9,
    "seam": false,
    "tier": "쉬움",
@@ -1213,8 +1226,8 @@
   {
    "id": "G017",
    "title": "아워골 앱 환경설정",
-   "start": 2658,
-   "end": 2679,
+   "start": 2680,
+   "end": 2701,
    "lines": 22,
    "seam": false,
    "tier": "쉬움",
@@ -1251,8 +1264,8 @@
   {
    "id": "G018",
    "title": "[#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가 표준시 00:00) 기준 날짜 키",
-   "start": 2680,
-   "end": 2683,
+   "start": 2702,
+   "end": 2705,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -1282,8 +1295,8 @@
   {
    "id": "G019",
    "title": "Confetti",
-   "start": 2684,
-   "end": 2691,
+   "start": 2706,
+   "end": 2713,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -1317,8 +1330,8 @@
   {
    "id": "G020",
    "title": "8대 화면 스타일 (테마) 정의",
-   "start": 2692,
-   "end": 2706,
+   "start": 2714,
+   "end": 2728,
    "lines": 15,
    "seam": false,
    "tier": "빈 구획",
@@ -1369,8 +1382,8 @@
   {
    "id": "G021",
    "title": "가상유저 개선 10대 핵심 헬퍼 함수",
-   "start": 2707,
-   "end": 2709,
+   "start": 2729,
+   "end": 2731,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -1391,7 +1404,8 @@
    "fanOut": [],
    "externalFiles": [],
    "testFiles": [
-    "scripts/smoke-test.js"
+    "scripts/smoke-test.js",
+    "tests/core-confirm-es376.test.js"
    ],
    "testIndexOnly": [],
    "smokeFnNames": []
@@ -1399,8 +1413,8 @@
   {
    "id": "G022",
    "title": "[#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정 격리",
-   "start": 2710,
-   "end": 2717,
+   "start": 2732,
+   "end": 2739,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -1432,8 +1446,8 @@
   {
    "id": "G023",
    "title": "XP/레벨 시스템",
-   "start": 2718,
-   "end": 2721,
+   "start": 2740,
+   "end": 2743,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -1465,8 +1479,8 @@
   {
    "id": "G024",
    "title": "[#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드",
-   "start": 2722,
-   "end": 2741,
+   "start": 2744,
+   "end": 2763,
    "lines": 20,
    "seam": false,
    "tier": "어려움",
@@ -1512,8 +1526,8 @@
   {
    "id": "G025",
    "title": "#TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트)",
-   "start": 2742,
-   "end": 2747,
+   "start": 2764,
+   "end": 2769,
    "lines": 6,
    "seam": false,
    "tier": "빈 구획",
@@ -1542,12 +1556,12 @@
   {
    "id": "G026",
    "title": "뱃지 컬렉션 (명예의 전당)",
-   "start": 2748,
-   "end": 2759,
+   "start": 2770,
+   "end": 2781,
    "lines": 12,
    "seam": false,
    "tier": "어려움",
-   "score": 266,
+   "score": 270,
    "functions": [],
    "vars": [
     "state"
@@ -1692,6 +1706,7 @@
     "js/tabs/goals/goal-detail-events.js",
     "js/tabs/goals/goal-detail.js",
     "js/tabs/goals/goal-export.js",
+    "js/tabs/goals/goal-fast-add.js",
     "js/tabs/goals/goal-math.js",
     "js/tabs/goals/goal-order.js",
     "js/tabs/goals/goal-update-suggest.js",
@@ -1711,6 +1726,7 @@
     "js/tabs/goals/sub-personal.js",
     "js/tabs/goals/sub-routine.js",
     "js/tabs/goals/sub-team.js",
+    "js/tabs/goals/team-comment-send.js",
     "js/tabs/goals/team-comments.js",
     "js/tabs/goals/team-goal-modals.js",
     "js/tabs/goals/team-goal-prompt.js",
@@ -1737,6 +1753,7 @@
     "js/tabs/records/checkin-capture.js",
     "js/tabs/records/checkin-feedback.js",
     "js/tabs/records/checkin-helpers.js",
+    "js/tabs/records/checkin-input-wiring.js",
     "js/tabs/records/csv-export.js",
     "js/tabs/records/export-theme.js",
     "js/tabs/records/external-import.js",
@@ -1755,6 +1772,7 @@
     "js/tabs/records/record-cards.js",
     "js/tabs/records/record-heatmap-report.js",
     "js/tabs/records/render.js",
+    "js/tabs/records/sample-purge.js",
     "js/tabs/records/share-to-feed.js",
     "js/tabs/records/sub-retrospect.js",
     "js/tabs/records/sub-timeline.js",
@@ -1844,8 +1862,8 @@
   {
    "id": "G027",
    "title": "[70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달",
-   "start": 2760,
-   "end": 2762,
+   "start": 2782,
+   "end": 2784,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -1874,8 +1892,8 @@
   {
    "id": "G028",
    "title": "[71] 앱 잠금 PIN (이 기기) — 설정·해제·앱 진입 확인",
-   "start": 2763,
-   "end": 2770,
+   "start": 2785,
+   "end": 2792,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -1902,8 +1920,8 @@
   {
    "id": "G029",
    "title": "[78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용)",
-   "start": 2771,
-   "end": 2777,
+   "start": 2793,
+   "end": 2799,
    "lines": 7,
    "seam": false,
    "tier": "쉬움",
@@ -1937,8 +1955,8 @@
   {
    "id": "G030",
    "title": "[80] 템플릿백과사전 1초 자동이식 선택 연동 및 로드맵-목표상태 동기화",
-   "start": 2778,
-   "end": 2781,
+   "start": 2800,
+   "end": 2803,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -1965,8 +1983,8 @@
   {
    "id": "G031",
    "title": "[82] 팀 목표 내 '팀 연계 개인목표' 생성 모달",
-   "start": 2782,
-   "end": 2784,
+   "start": 2804,
+   "end": 2806,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -1995,8 +2013,8 @@
   {
    "id": "G032",
    "title": "[83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능",
-   "start": 2785,
-   "end": 2788,
+   "start": 2807,
+   "end": 2810,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -2025,8 +2043,8 @@
   {
    "id": "G033",
    "title": "[88] 오늘의 3초 체크인 목표 버튼 선택 시 플레이스홀더(백그라운드 가이드) 예시 문구 렌더링",
-   "start": 2789,
-   "end": 2791,
+   "start": 2811,
+   "end": 2813,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -2053,8 +2071,8 @@
   {
    "id": "G034",
    "title": "[#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업",
-   "start": 2792,
-   "end": 2800,
+   "start": 2814,
+   "end": 2822,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -2087,8 +2105,8 @@
   {
    "id": "G035",
    "title": "Landing",
-   "start": 2801,
-   "end": 2801,
+   "start": 2823,
+   "end": 2823,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -2115,8 +2133,8 @@
   {
    "id": "G036",
    "title": "[#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저 감지 및 Android Chrome 자동 탈출 & iOS Safari 플로팅 가이드 배너",
-   "start": 2802,
-   "end": 2811,
+   "start": 2824,
+   "end": 2833,
    "lines": 10,
    "seam": false,
    "tier": "빈 구획",
@@ -2152,8 +2170,8 @@
   {
    "id": "G037",
    "title": "2계정 상호작용 테스트 (테스터 B 직통 입장: #TASK-ES-169)",
-   "start": 2812,
-   "end": 2820,
+   "start": 2834,
+   "end": 2842,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -2188,8 +2206,8 @@
   {
    "id": "G038",
    "title": "소셜 로그인 (카카오 / 실제 구글 OAuth 연동)",
-   "start": 2821,
-   "end": 2831,
+   "start": 2843,
+   "end": 2853,
    "lines": 11,
    "seam": false,
    "tier": "빈 구획",
@@ -2225,8 +2243,8 @@
   {
    "id": "G039",
    "title": "[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 계정 통합",
-   "start": 2832,
-   "end": 2834,
+   "start": 2854,
+   "end": 2856,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -2253,8 +2271,8 @@
   {
    "id": "G040",
    "title": "[#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시 게스트 데이터 100% 무손실 비파괴 합집합(Union Merge) 이관",
-   "start": 2835,
-   "end": 2837,
+   "start": 2857,
+   "end": 2859,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -2281,8 +2299,8 @@
   {
    "id": "G041",
    "title": "Goal category templates",
-   "start": 2838,
-   "end": 2848,
+   "start": 2860,
+   "end": 2870,
    "lines": 11,
    "seam": false,
    "tier": "빈 구획",
@@ -2317,8 +2335,8 @@
   {
    "id": "G042",
    "title": "P0: 비밀번호 찾기 (이메일 재설정 링크 발송)",
-   "start": 2849,
-   "end": 2858,
+   "start": 2871,
+   "end": 2880,
    "lines": 10,
    "seam": false,
    "tier": "쉬움",
@@ -2354,8 +2372,8 @@
   {
    "id": "G043",
    "title": "P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크",
-   "start": 2859,
-   "end": 2866,
+   "start": 2881,
+   "end": 2888,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -2391,8 +2409,8 @@
   {
    "id": "G044",
    "title": "회원 탈퇴 전용 안내 모달 및 법적책임·데이터분실 사전 안내 (#TASK-ES-158)",
-   "start": 2867,
-   "end": 2870,
+   "start": 2889,
+   "end": 2892,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -2428,8 +2446,8 @@
   {
    "id": "G045",
    "title": "[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 (최신 기능 전면 동기화)",
-   "start": 2871,
-   "end": 2876,
+   "start": 2893,
+   "end": 2898,
    "lines": 6,
    "seam": false,
    "tier": "빈 구획",
@@ -2462,8 +2480,8 @@
   {
    "id": "G046",
    "title": "앱 활용 가이드 다시보기",
-   "start": 2877,
-   "end": 2880,
+   "start": 2899,
+   "end": 2902,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -2499,8 +2517,8 @@
   {
    "id": "G047",
    "title": "1:1 고객 문의 / 버그 제보 (#TASK-ES-178)",
-   "start": 2881,
-   "end": 2885,
+   "start": 2903,
+   "end": 2907,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -2532,8 +2550,8 @@
   {
    "id": "G048",
    "title": "이용약관 / 개인정보처리방침 열람 리스너",
-   "start": 2886,
-   "end": 2899,
+   "start": 2908,
+   "end": 2921,
    "lines": 14,
    "seam": false,
    "tier": "빈 구획",
@@ -2573,8 +2591,8 @@
   {
    "id": "G049",
    "title": "Onboarding (first-time, after signup) — 16종 동물 아바타 & 직관적 안착 융합",
-   "start": 2900,
-   "end": 2902,
+   "start": 2922,
+   "end": 2924,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -2601,8 +2619,8 @@
   {
    "id": "G050",
    "title": "3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출",
-   "start": 2903,
-   "end": 2909,
+   "start": 2925,
+   "end": 2931,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -2629,8 +2647,8 @@
   {
    "id": "G051",
    "title": "최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합",
-   "start": 2910,
-   "end": 2916,
+   "start": 2932,
+   "end": 2938,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -2661,8 +2679,8 @@
   {
    "id": "G052",
    "title": "조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항)",
-   "start": 2917,
-   "end": 2924,
+   "start": 2939,
+   "end": 2946,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -2715,8 +2733,8 @@
   {
    "id": "G053",
    "title": "Modal helper & Android Hardware Back Handler",
-   "start": 2925,
-   "end": 2932,
+   "start": 2947,
+   "end": 2954,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -2752,8 +2770,8 @@
   {
    "id": "G054",
    "title": "이용약관 & 개인정보처리방침 모달",
-   "start": 2933,
-   "end": 2949,
+   "start": 2955,
+   "end": 2971,
    "lines": 17,
    "seam": false,
    "tier": "빈 구획",
@@ -2782,8 +2800,8 @@
   {
    "id": "G055",
    "title": "프로필",
-   "start": 2950,
-   "end": 2957,
+   "start": 2972,
+   "end": 2979,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -2817,8 +2835,8 @@
   {
    "id": "G056",
    "title": "구글 캘린더 연동",
-   "start": 2958,
-   "end": 2958,
+   "start": 2980,
+   "end": 2980,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -2845,8 +2863,8 @@
   {
    "id": "G057",
    "title": "[#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템",
-   "start": 2959,
-   "end": 2999,
+   "start": 2981,
+   "end": 3021,
    "lines": 41,
    "seam": false,
    "tier": "보통",
@@ -2901,8 +2919,8 @@
   {
    "id": "G058",
    "title": "[#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달",
-   "start": 3000,
-   "end": 3014,
+   "start": 3022,
+   "end": 3036,
    "lines": 15,
    "seam": false,
    "tier": "빈 구획",
@@ -2936,8 +2954,8 @@
   {
    "id": "G059",
    "title": "[#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달",
-   "start": 3015,
-   "end": 3023,
+   "start": 3037,
+   "end": 3045,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -2959,6 +2977,7 @@
    "externalFiles": [],
    "testFiles": [
     "scripts/smoke-test.js",
+    "scripts/verify-all-clicks.js",
     "scripts/verify-integrity-gate.js"
    ],
    "testIndexOnly": [],
@@ -2967,8 +2986,8 @@
   {
    "id": "G060",
    "title": "Adaptive UX Mode",
-   "start": 3024,
-   "end": 3028,
+   "start": 3046,
+   "end": 3050,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -2995,8 +3014,8 @@
   {
    "id": "G061",
    "title": "Social Crew Pacing (#TASK-ES-228)",
-   "start": 3029,
-   "end": 3031,
+   "start": 3051,
+   "end": 3053,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -3023,8 +3042,8 @@
   {
    "id": "G062",
    "title": "UX Telemetry (Hesitation & Rage Tap)",
-   "start": 3032,
-   "end": 3037,
+   "start": 3054,
+   "end": 3059,
    "lines": 6,
    "seam": false,
    "tier": "빈 구획",
@@ -3055,8 +3074,8 @@
   {
    "id": "G063",
    "title": "iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)",
-   "start": 3038,
-   "end": 3053,
+   "start": 3060,
+   "end": 3075,
    "lines": 16,
    "seam": false,
    "tier": "빈 구획",
@@ -3090,8 +3109,8 @@
   {
    "id": "G064",
    "title": "1순위 대표 목표 AI 초집중 모드 (Focus Auto-Pilot)",
-   "start": 3054,
-   "end": 3062,
+   "start": 3076,
+   "end": 3084,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -3123,57 +3142,60 @@
   {
    "id": "G065",
    "title": "원터치 퀵 루틴 칩",
-   "start": 3063,
-   "end": 3073,
-   "lines": 11,
+   "start": 3085,
+   "end": 3088,
+   "lines": 4,
    "seam": false,
    "tier": "쉬움",
-   "score": 7,
+   "score": 5,
    "functions": [],
    "vars": [
     "qRoutineRow"
    ],
-   "stateReads": [],
+   "stateReads": [
+    "bindQuickRoutineChips"
+   ],
    "stateMutates": [],
    "stateWrites": [],
    "loadTime": 2,
    "loadTimeKinds": {
     "var 초기값 실행": 1,
-    "IfStatement": 1
+    "호출": 1
    },
    "windowAssignments": 0,
    "windowNames": [],
-   "listeners": 1,
+   "listeners": 0,
    "onProps": 0,
    "inlineHandlers": [],
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [],
    "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/theme-system-v4.test.js"
+    "scripts/smoke-test.js"
    ],
-   "testIndexOnly": [
-    "tests/theme-system-v4.test.js"
-   ],
+   "testIndexOnly": [],
    "smokeFnNames": []
   },
   {
    "id": "G066",
    "title": "🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227)",
-   "start": 3074,
-   "end": 3076,
-   "lines": 3,
+   "start": 3089,
+   "end": 3093,
+   "lines": 5,
    "seam": false,
    "tier": "빈 구획",
-   "score": 0,
+   "score": 3,
    "functions": [],
    "vars": [],
-   "stateReads": [],
+   "stateReads": [
+    "startVoiceCheckin"
+   ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
+   "loadTime": 1,
+   "loadTimeKinds": {
+    "호출": 1
+   },
    "windowAssignments": 0,
    "windowNames": [],
    "listeners": 0,
@@ -3188,51 +3210,13 @@
   },
   {
    "id": "G067",
-   "title": "음성 체크인 (Web Speech API)",
-   "start": 3077,
-   "end": 3147,
-   "lines": 71,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 7,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "openMicPermissionGuideModal",
-    "toast"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "호출": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 6,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/theme-system-v4.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/theme-system-v4.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G068",
    "title": "사진 인증 & 뷰어 모달 (가상유저 요청 P1)",
-   "start": 3148,
-   "end": 3185,
-   "lines": 38,
+   "start": 3094,
+   "end": 3103,
+   "lines": 10,
    "seam": false,
    "tier": "보통",
-   "score": 16,
+   "score": 9,
    "functions": [],
    "vars": [
     "capturePhotoBtn",
@@ -3241,40 +3225,34 @@
     "pendingCapturePhoto"
    ],
    "stateReads": [
-    "compressImage",
-    "openPhotoViewerModal"
+    "bindCapturePhoto"
    ],
    "stateMutates": [],
    "stateWrites": [],
    "loadTime": 4,
    "loadTimeKinds": {
     "var 초기값 실행": 3,
-    "IfStatement": 1
+    "호출": 1
    },
    "windowAssignments": 0,
    "windowNames": [],
-   "listeners": 2,
-   "onProps": 2,
+   "listeners": 0,
+   "onProps": 0,
    "inlineHandlers": [],
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [],
    "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/goals-schedule-sync.test.js",
-    "tests/today-mission-card-guide.test.js"
+    "scripts/smoke-test.js"
    ],
-   "testIndexOnly": [
-    "tests/goals-schedule-sync.test.js",
-    "tests/today-mission-card-guide.test.js"
-   ],
+   "testIndexOnly": [],
    "smokeFnNames": []
   },
   {
-   "id": "G069",
+   "id": "G068",
    "title": "체크인 입력 글자수 힌트 (#TASK-ES-367: 열 수 없던 활동 테마 선택 창·배지 제거, 승인 2026-10-04)",
-   "start": 3186,
-   "end": 3198,
+   "start": 3104,
+   "end": 3116,
    "lines": 13,
    "seam": false,
    "tier": "빈 구획",
@@ -3310,10 +3288,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G070",
+   "id": "G069",
    "title": "[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
-   "start": 3199,
-   "end": 3207,
+   "start": 3117,
+   "end": 3125,
    "lines": 9,
    "seam": false,
    "tier": "쉬움",
@@ -3344,10 +3322,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G071",
+   "id": "G070",
    "title": "맞춤 피드백 봇 설정",
-   "start": 3208,
-   "end": 3217,
+   "start": 3126,
+   "end": 3135,
    "lines": 10,
    "seam": false,
    "tier": "빈 구획",
@@ -3382,10 +3360,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G072",
+   "id": "G071",
    "title": "목표 & 기록 선택 피드 공유 모달 (전면 고도화)",
-   "start": 3218,
-   "end": 3220,
+   "start": 3136,
+   "end": 3138,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -3412,10 +3390,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G073",
+   "id": "G072",
    "title": "[#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼",
-   "start": 3221,
-   "end": 3225,
+   "start": 3139,
+   "end": 3143,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -3436,16 +3414,18 @@
    "fanOut": [],
    "externalFiles": [],
    "testFiles": [
-    "scripts/smoke-test.js"
+    "scripts/smoke-test.js",
+    "scripts/verify-all-clicks.js",
+    "scripts/verify-integrity-gate.js"
    ],
    "testIndexOnly": [],
    "smokeFnNames": []
   },
   {
-   "id": "G074",
+   "id": "G073",
    "title": "외부 데이터 불러오기 (mock)",
-   "start": 3226,
-   "end": 3232,
+   "start": 3144,
+   "end": 3150,
    "lines": 7,
    "seam": false,
    "tier": "보통",
@@ -3485,10 +3465,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G075",
+   "id": "G074",
    "title": "[#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작용",
-   "start": 3233,
-   "end": 3261,
+   "start": 3151,
+   "end": 3179,
    "lines": 29,
    "seam": false,
    "tier": "어려움",
@@ -3531,10 +3511,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G076",
+   "id": "G075",
    "title": "[#TASK-ES-146] 아워골 평가해주기 90% 팝업",
-   "start": 3262,
-   "end": 3289,
+   "start": 3180,
+   "end": 3207,
    "lines": 28,
    "seam": false,
    "tier": "어려움",
@@ -3586,10 +3566,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G077",
+   "id": "G076",
    "title": "New goal modal",
-   "start": 3290,
-   "end": 3296,
+   "start": 3208,
+   "end": 3214,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -3618,10 +3598,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G078",
+   "id": "G077",
    "title": "참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크)",
-   "start": 3297,
-   "end": 3297,
+   "start": 3215,
+   "end": 3215,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -3646,10 +3626,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G079",
+   "id": "G078",
    "title": "참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크)",
-   "start": 3298,
-   "end": 3300,
+   "start": 3216,
+   "end": 3218,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -3676,10 +3656,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G080",
+   "id": "G079",
    "title": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
-   "start": 3301,
-   "end": 3319,
+   "start": 3219,
+   "end": 3237,
    "lines": 19,
    "seam": false,
    "tier": "빈 구획",
@@ -3713,10 +3693,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G081",
+   "id": "G080",
    "title": "[#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화",
-   "start": 3320,
-   "end": 3326,
+   "start": 3238,
+   "end": 3244,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -3747,10 +3727,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G082",
+   "id": "G081",
    "title": "목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #TASK-ES-135)",
-   "start": 3327,
-   "end": 3329,
+   "start": 3245,
+   "end": 3247,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -3779,10 +3759,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G083",
+   "id": "G082",
    "title": "[#TASK-ES-220] [생각 메모장 91번] 교대근무자 가변형 루틴 프리셋 & 자동 스케줄러",
-   "start": 3330,
-   "end": 3332,
+   "start": 3248,
+   "end": 3250,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -3809,10 +3789,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G084",
+   "id": "G083",
    "title": "[#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달",
-   "start": 3333,
-   "end": 3336,
+   "start": 3251,
+   "end": 3254,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -3839,10 +3819,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G085",
+   "id": "G084",
    "title": "RENDER: TEMPLATE ENCYCLOPEDIA SUBTAB (#TASK-ES-187)",
-   "start": 3337,
-   "end": 3339,
+   "start": 3255,
+   "end": 3257,
    "lines": 3,
    "seam": false,
    "tier": "쉬움",
@@ -3870,10 +3850,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G086",
+   "id": "G085",
    "title": "[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템",
-   "start": 3340,
-   "end": 3348,
+   "start": 3258,
+   "end": 3266,
    "lines": 9,
    "seam": false,
    "tier": "보통",
@@ -3917,36 +3897,27 @@
    "smokeFnNames": []
   },
   {
-   "id": "G087",
+   "id": "G086",
    "title": "[UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA (#TASK-UIUX-PHASE4-GOALS)",
-   "start": 3349,
-   "end": 3405,
-   "lines": 57,
+   "start": 3267,
+   "end": 3281,
+   "lines": 15,
    "seam": false,
-   "tier": "어려움",
-   "score": 58,
-   "functions": [
+   "tier": "빈 구획",
+   "score": 16,
+   "functions": [],
+   "vars": [],
+   "stateReads": [
     "handleGoalFastAddSubmit",
     "selectSmartTag"
    ],
-   "vars": [],
-   "stateReads": [
-    "dispatchFullViewPropagation",
-    "renderGoalsScreen",
-    "saveProfile",
-    "state",
-    "toast",
-    "triggerHapticFeedback"
-   ],
-   "stateMutates": [
-    "state"
-   ],
+   "stateMutates": [],
    "stateWrites": [],
    "loadTime": 4,
    "loadTimeKinds": {
     "window 노출": 4
    },
-   "windowAssignments": 5,
+   "windowAssignments": 4,
    "windowNames": [
     "currentGoalStatPeriod",
     "handleGoalFastAddSubmit",
@@ -3955,54 +3926,25 @@
    ],
    "listeners": 0,
    "onProps": 0,
-   "inlineHandlers": [
-    "handleGoalFastAddSubmit",
-    "selectSmartTag"
-   ],
+   "inlineHandlers": [],
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [
+    "js/tabs/goals/goal-fast-add.js",
     "js/tabs/goals/goals-ia-actions.js"
    ],
    "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/test-calendar-attachments.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/ai-conditional-call-optimization.test.js",
-    "tests/core-confirm-es376.test.js",
-    "tests/goal-ai-advice-status.test.js",
-    "tests/goals-only-view.test.js",
-    "tests/goals-schedule-sync.test.js",
-    "tests/goals-smart-attachments.test.js",
-    "tests/record-ledger-sync.test.js",
-    "tests/routine-tab-scheduler.test.js",
-    "tests/schedule-goal-sync.test.js",
-    "tests/sync-server-records-render-home.test.js",
-    "tests/team-fold-state-es409.test.js",
-    "tests/team-goal-comment-fix.test.js",
-    "tests/team-level-accordion-es406.test.js",
-    "tests/team-level-management.test.js"
+    "scripts/verify-all-clicks.js",
+    "scripts/verify-integrity-gate.js"
    ],
-   "testIndexOnly": [
-    "scripts/test-calendar-attachments.js",
-    "tests/goal-ai-advice-status.test.js",
-    "tests/goals-only-view.test.js",
-    "tests/goals-schedule-sync.test.js",
-    "tests/goals-smart-attachments.test.js",
-    "tests/record-ledger-sync.test.js",
-    "tests/routine-tab-scheduler.test.js",
-    "tests/sync-server-records-render-home.test.js",
-    "tests/team-fold-state-es409.test.js",
-    "tests/team-level-accordion-es406.test.js",
-    "tests/team-level-management.test.js"
-   ],
+   "testIndexOnly": [],
    "smokeFnNames": []
   },
   {
-   "id": "G088",
+   "id": "G087",
    "title": "[PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS",
-   "start": 3406,
-   "end": 3409,
+   "start": 3282,
+   "end": 3285,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -4027,10 +3969,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G089",
+   "id": "G088",
    "title": "[PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTIONS",
-   "start": 3410,
-   "end": 3424,
+   "start": 3286,
+   "end": 3300,
    "lines": 15,
    "seam": false,
    "tier": "빈 구획",
@@ -4059,10 +4001,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G090",
+   "id": "G089",
    "title": "RENDER: GOALS",
-   "start": 3425,
-   "end": 3427,
+   "start": 3301,
+   "end": 3303,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -4087,10 +4029,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G091",
+   "id": "G090",
    "title": "RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만)",
-   "start": 3428,
-   "end": 3456,
+   "start": 3304,
+   "end": 3332,
    "lines": 29,
    "seam": false,
    "tier": "쉬움",
@@ -4136,24 +4078,28 @@
    "smokeFnNames": []
   },
   {
-   "id": "G092",
+   "id": "G091",
    "title": "개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135)",
-   "start": 3457,
-   "end": 3467,
-   "lines": 11,
+   "start": 3333,
+   "end": 3351,
+   "lines": 19,
    "seam": false,
    "tier": "빈 구획",
-   "score": 23,
+   "score": 33,
    "functions": [],
    "vars": [],
    "stateReads": [
+    "bindTeamCommentClick",
+    "bindTeamCommentKeydown",
+    "defineSendTeamGoalComment",
     "renderTeamGoalsScreen"
    ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 1,
+   "loadTime": 4,
    "loadTimeKinds": {
-    "IfStatement": 1
+    "IfStatement": 1,
+    "호출": 3
    },
    "windowAssignments": 1,
    "windowNames": [
@@ -4171,6 +4117,7 @@
     "js/tabs/comm/user-blocks.js",
     "js/tabs/goals/render.js",
     "js/tabs/goals/sub-team.js",
+    "js/tabs/goals/team-comment-send.js",
     "js/tabs/goals/team-comments.js",
     "js/tabs/goals/team-goal-edit-modal.js",
     "js/tabs/goals/team-goal-prompt.js",
@@ -4192,72 +4139,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G093",
-   "title": "[#TASK-ES-299] 팀 목표 댓글 작성 및 전송 직통 헬퍼 & 전역 이벤트 위임 (먹통 방어 100%)",
-   "start": 3468,
-   "end": 3559,
-   "lines": 92,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 31,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "MOCK_GROUPS",
-    "TEAM_COMMENTS_CACHE",
-    "nowISO",
-    "renderTeamGoalsScreen",
-    "saveProfile",
-    "sb",
-    "state",
-    "toast",
-    "triggerHaptic",
-    "triggerHapticFeedback",
-    "uid"
-   ],
-   "stateMutates": [
-    "TEAM_COMMENTS_CACHE",
-    "state"
-   ],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "window 노출": 1,
-    "호출": 2
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "sendTeamGoalComment"
-   ],
-   "listeners": 2,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/components-team-actions.js",
-    "js/components.js",
-    "js/tabs/goals/team-goal-prompt.js"
-   ],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/google-session-guard.test.js",
-    "tests/guest-null-client-es377.test.js",
-    "tests/schedule-goal-sync.test.js",
-    "tests/team-goal-comment-fix.test.js",
-    "tests/theme-system-v4.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/google-session-guard.test.js",
-    "tests/theme-system-v4.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G094",
+   "id": "G092",
    "title": "TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진",
-   "start": 3560,
-   "end": 3566,
+   "start": 3352,
+   "end": 3358,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -4286,10 +4171,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G095",
+   "id": "G093",
    "title": "5대 테마 원형 라이프 밸런스 휠 (SVG Pie Chart)",
-   "start": 3567,
-   "end": 3580,
+   "start": 3359,
+   "end": 3372,
    "lines": 14,
    "seam": false,
    "tier": "빈 구획",
@@ -4316,10 +4201,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G096",
+   "id": "G094",
    "title": "⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯 (In-Table Stopwatch)",
-   "start": 3581,
-   "end": 3588,
+   "start": 3373,
+   "end": 3380,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -4347,14 +4232,14 @@
    "smokeFnNames": []
   },
   {
-   "id": "G097",
+   "id": "G095",
    "title": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)",
-   "start": 3589,
-   "end": 4769,
-   "lines": 1181,
+   "start": 3381,
+   "end": 4563,
+   "lines": 1183,
    "seam": false,
    "tier": "어려움",
-   "score": 106,
+   "score": 109,
    "functions": [
     "executeDirectTemplateClone",
     "openProTemplateRecordModal",
@@ -4369,6 +4254,7 @@
     "checkRecordDeepLink",
     "closeModal",
     "computeTrendChartData",
+    "definePurgeSampleRecords",
     "downloadTableAsCsv",
     "escapeHtml",
     "fmtYYMMDD",
@@ -4417,9 +4303,9 @@
     "state"
    ],
    "stateWrites": [],
-   "loadTime": 1,
+   "loadTime": 2,
    "loadTimeKinds": {
-    "호출": 1
+    "호출": 2
    },
    "windowAssignments": 0,
    "windowNames": [],
@@ -4434,7 +4320,7 @@
    ],
    "fanOut": [
     {
-     "id": "G101",
+     "id": "G098",
      "refs": 1
     }
    ],
@@ -4502,60 +4388,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G098",
-   "title": "[#TASK-ES-358] 기록 탭 렌더 → js/tabs/records/period-ai-card.js · render.js 로 옮김",
-   "start": 4770,
-   "end": 4797,
-   "lines": 28,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 12,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "dispatchFullViewPropagation",
-    "renderRecordsScreen",
-    "saveProfile",
-    "state",
-    "toast",
-    "triggerHapticFeedback"
-   ],
-   "stateMutates": [
-    "state"
-   ],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "window 노출": 1
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "purgeSampleRecordsOneClick"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/tabs/records/render.js"
-   ],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/test-shipyard-modular.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/core-confirm-es374.test.js",
-    "tests/core-confirm-es376.test.js",
-    "tests/schedule-goal-sync.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G099",
+   "id": "G096",
    "title": "위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용)",
-   "start": 4798,
-   "end": 4811,
+   "start": 4564,
+   "end": 4577,
    "lines": 14,
    "seam": false,
    "tier": "빈 구획",
@@ -4592,10 +4428,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G100",
+   "id": "G097",
    "title": "RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11)",
-   "start": 4812,
-   "end": 4812,
+   "start": 4578,
+   "end": 4578,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -4620,10 +4456,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G101",
+   "id": "G098",
    "title": "캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명)",
-   "start": 4813,
-   "end": 4988,
+   "start": 4579,
+   "end": 4754,
    "lines": 176,
    "seam": false,
    "tier": "어려움",
@@ -4658,7 +4494,7 @@
      "refs": 1
     },
     {
-     "id": "G097",
+     "id": "G095",
      "refs": 1
     }
    ],
@@ -4690,10 +4526,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G102",
+   "id": "G099",
    "title": "크리에이터 템플릿 (#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)",
-   "start": 4989,
-   "end": 4991,
+   "start": 4755,
+   "end": 4757,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -4721,10 +4557,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G103",
+   "id": "G100",
    "title": "소통 피드 (Supabase feed_posts, 실시간 동기화)",
-   "start": 4992,
-   "end": 4997,
+   "start": 4758,
+   "end": 4763,
    "lines": 6,
    "seam": false,
    "tier": "쉬움",
@@ -4755,10 +4591,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G104",
+   "id": "G101",
    "title": "전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)",
-   "start": 4998,
-   "end": 5006,
+   "start": 4764,
+   "end": 4772,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -4793,10 +4629,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G105",
+   "id": "G102",
    "title": "통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임)",
-   "start": 5007,
-   "end": 5015,
+   "start": 4773,
+   "end": 4781,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -4832,10 +4668,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G106",
+   "id": "G103",
    "title": "마니또 실 유저 익명 응원 연동 (#TASK-ES-133, #TASK-ES-145)",
-   "start": 5016,
-   "end": 5022,
+   "start": 4782,
+   "end": 4788,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -4864,10 +4700,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G107",
+   "id": "G104",
    "title": "DM & 동반자 소통 시스템 (TASK-ES-105)",
-   "start": 5023,
-   "end": 5029,
+   "start": 4789,
+   "end": 4795,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -4898,10 +4734,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G108",
+   "id": "G105",
    "title": "[#TASK-ES-354 CORE-07·SET-07] 설정 탭 렌더 → js/tabs/settings/render.js · sub-*.js 로 옮김",
-   "start": 5030,
-   "end": 5041,
+   "start": 4796,
+   "end": 4807,
    "lines": 12,
    "seam": true,
    "tier": "이음매(옮기지 않음)",
@@ -4938,10 +4774,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G109",
+   "id": "G106",
    "title": "4대 연계 뷰 원자적 동시 전파 디스패처 (헌법 제1조 제4항 제5호 & 제15조 제6항 제3호)",
-   "start": 5042,
-   "end": 5044,
+   "start": 4808,
+   "end": 4810,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -4961,15 +4797,17 @@
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [],
-   "testFiles": [],
+   "testFiles": [
+    "tests/core-confirm-es376.test.js"
+   ],
    "testIndexOnly": [],
    "smokeFnNames": []
   },
   {
-   "id": "G110",
+   "id": "G107",
    "title": "[#TASK-ES-264] 자정(00:00 KST / 현지 표준시) 날짜 변경 감지 및 자동 동기화 워처",
-   "start": 5045,
-   "end": 5049,
+   "start": 4811,
+   "end": 4815,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -4999,10 +4837,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G111",
+   "id": "G108",
    "title": "세션 복구 및 안전 앱 진입 유틸",
-   "start": 5050,
-   "end": 5053,
+   "start": 4816,
+   "end": 4819,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -5034,10 +4872,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G112",
+   "id": "G109",
    "title": "#TASK-AUTH-P0-SAFETY: 로그인/계정 보안 패키지 모듈 연결",
-   "start": 5054,
-   "end": 5058,
+   "start": 4820,
+   "end": 4824,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -5068,10 +4906,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G113",
+   "id": "G110",
    "title": "KF-4 #TASK-ES-018: 카테고리별 도움이 된 글 슬롯 모듈(js/top-helpful.js)",
-   "start": 5059,
-   "end": 5066,
+   "start": 4825,
+   "end": 4832,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -5105,10 +4943,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G114",
+   "id": "G111",
    "title": "#TASK-ES-105: 팀 연계 개인목표 및 상호 체크 모듈(js/team-linked-goals.js) 연결",
-   "start": 5067,
-   "end": 5069,
+   "start": 4833,
+   "end": 4835,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -5164,10 +5002,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G115",
+   "id": "G112",
    "title": "KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결",
-   "start": 5070,
-   "end": 5074,
+   "start": 4836,
+   "end": 4840,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -5200,14 +5038,14 @@
    "smokeFnNames": []
   },
   {
-   "id": "G116",
+   "id": "G113",
    "title": "PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118)",
-   "start": 5075,
-   "end": 5080,
+   "start": 4841,
+   "end": 4846,
    "lines": 6,
    "seam": false,
    "tier": "빈 구획",
-   "score": 38,
+   "score": 39,
    "functions": [],
    "vars": [],
    "stateReads": [
@@ -5243,6 +5081,7 @@
     "js/tabs/comm/sample-data.js",
     "js/tabs/comm/shared-groups.js",
     "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/team-comment-send.js",
     "js/tabs/goals/team-goal-edit-modal.js",
     "js/tabs/goals/team-goal-modals.js",
     "js/tabs/goals/team-goal-prompt.js",
