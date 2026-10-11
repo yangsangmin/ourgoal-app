@@ -2,7 +2,7 @@
 
 - Task ID: **TASK-ES-649** (L012: 오케스트레이터가 번호를 배정했고, `gh pr list --state all` · `git ls-remote origin` 에서 649 가 비어 있음을 다시 확인한 뒤 빈 브랜치 `feat/2026-10-11-task-es-649-unstate-2` 를 먼저 push 해 선점했다.)
 - 분류: INFRA · 작업 유형(SNOWBALL 분류): **(가) 표준 — 「상태 이전」 둘째 사례**. 선례 #914(#TASK-ES-637 상태 이전 1차 — 판정 「통과」, R1 동작 보존 확인)의 절차·실행기·증거 꼴을 그대로 따른다(적용 → 측정 → 주장을 실행기 하나로 · 기준선 기록 · 되짚기 · push 전 로컬 법정). 이번에 더한 것은 하나다 — 옮기는 이름 가운데 `pendingCapturePhoto` 가 세포가 통로로 **대입**하는 이름이라, 그 대입 자리 셋이 실제로 도는지 페이지 안에서 돌려 기준과 맞댔다(값 요약만으로 같다고 하지 않는다 — L092).
-- 작업참고 기준 PR #918(27d0d857, 경험칙 101개) · 착수 기준 main dcf80387(#919 생성기 region 모드 병합 뒤) · **합친 main faf40354**(#920 다시 생긴 배선 재철거 #TASK-ES-648 — index.html 이 바뀌었다 · #921 지도 갱신). 합칠 때 `index.html` 과 기준선은 main 판으로 두고 생성기를 그 위에서 다시 돌렸으며(L049), 기준 트리를 faf40354 로 옮겨 npm test(기준 · 작업) · 시험 하나씩 · 측정을 전부 다시 했다. 이 문서의 수치는 그 결과다.
+- 작업참고 기준 PR #918(27d0d857, 경험칙 101개) · 착수 기준 main dcf80387(#919 생성기 region 모드 병합 뒤) · **합친 main 94ada512**(#920 다시 생긴 배선 재철거 #TASK-ES-648 · #922 통로 노출 줄 선행 수정 #TASK-ES-652 — 둘 다 index.html 을 바꿨다 · #921 지도 갱신). 합칠 때마다 `index.html` 과 기준선은 main 판으로 두고 생성기를 그 위에서 다시 돌렸으며(L049), 마지막으로 기준 트리를 94ada512 로 옮겨 npm test(기준 · 작업) · 시험 하나씩 · 측정을 전부 다시 했다. 이 문서의 수치는 그 결과다.
 - 지시함(origin/main) 열린 지시: **DIR-003**(B 트랙 B9 — 상태 · 철거 PR 마다 기준선에 inlineScriptLines 기록) · **DIR-004**((가) 닫힌 목록 X4·X5).
 - **상민님 지시 원문(2026-10-11, 커맨드센터 세션 309dca5d — 글자 그대로)**
   1. 「남은 미분화작업 모두 진행해 병합도 스스로 진행해. 모든 작업 마칠때까지 멈추지 마. 지침이나 결심이 필요한점?」
@@ -55,7 +55,7 @@
 ## 4. [원칙 ④] 재검토 (반례·부작용)
 
 - **`pendingCapturePhoto` 가 defineVar 로 갔는가** → 생성기 기록 `api.pendingCapturePhoto = defineVar`. 작업 트리에서 통로 접근자 get+set · 주인 `core/app-state` · 기관 종류 `var`.
-- **쓰기 왕복** → 상태 탐침: 쓰기 가능한 이름 8개(옮긴 1 + 남은 7)에 통로로 값을 쓰고 읽어 되돌리는 왕복이 기준 8/8 · 작업 8/8.
+- **쓰기 왕복** → 상태 탐침: 쓰기 가능한 이름 9개(옮긴 1 + 남은 8)에 통로로 값을 쓰고 읽어 되돌리는 왕복이 기준 9/9 · 작업 9/9.
 - **대입 자리가 통로를 거치는가(정적)** → 저장소 `js/**` 와 index.html 인라인에서 다섯 이름이 나오는 줄을 갈랐다: `pendingCapturePhoto` 의 대입은 세 줄(`checkin-input-wiring.js` 116 · 128, `checkin-capture.js` 97)이고 전부 `L.pendingCapturePhoto = …` 꼴이다. 다섯 이름을 맨이름으로 읽거나 쓰는 줄 0 · 분류 밖 줄 0.
 - **대입 자리가 실제로 도는가(동적)** → 사진 첨부 경로를 페이지 안에서 돌렸다: ① 파일 입력칸에 작은 그림을 넣고 change → 대기값에 `data:image/…` 가 들어가고 미리보기 그림의 주소가 그 값 ② 미리보기의 지우기 단추 → 대기값 null · 미리보기 비움 ③ 다시 넣고 기록 단추 → 기록 1건 추가 · 그 기록의 사진이 대기값과 같음 · 대기값 null. 확인 칸이 작업에서 전부 참이고 기준의 기록과 같다. 예외 0 · 콘솔 오류 0.
 - **없는 요소를 가리키는 이름** → `qRoutineRow` 의 값은 지금 null 이다(`#quickRoutineRow` 요소가 화면에 없다 — 기준에서도 null). 기관은 null 을 그대로 보관하고 세포의 `if(L.qRoutineRow)` 가 기준과 같이 건너뛴다(값 요약 동일).
@@ -65,7 +65,7 @@
 
 1. origin/main 기준 worktree · 번호 선점 · `npm ci --ignore-scripts`.
 2. 사진 경로 탐침 작성(이전 전 트리에서 먼저 돌려 봄) → 실행기 → `apply` → `module-guard --update` → 시나리오 → 시험 → `measure`.
-3. main 이 움직였다(#920 이 index.html 을 바꿈) → 합치고 index.html · 기준선을 main 판으로 둔 뒤 `apply` 부터 다시 → 시험 기준/작업 · 시험 하나씩 → `measure`.
+3. main 이 두 번 움직였다(#920 · #922 가 index.html 을 바꿈) → 그때마다 합치고 index.html · 기준선을 main 판으로 둔 뒤 `apply` 부터 다시 → 시험 기준/작업 · 시험 하나씩 → `measure`.
 4. REQ · 작업표 → npm test 작업 트리 다시(L064) → `measure` · `claims`.
 5. `verify-integrity-gate` → 커밋 → `recomputeSplit` 직접 호출과 로컬 법정 전체 실행 → origin/main 확인 → push → PR.
 
@@ -75,7 +75,7 @@
 - **반론 2 「파일 고르기 창을 열지 않았으니 진짜 조작이 아니다」** → 맞다. 화면 시나리오가 아니라 페이지 안 평가다(입력칸에 파일을 넣고 change 사건을 보냄). 사진 첨부 단추의 누름(`L.capturePhotoBtn` 처리기가 `L.capturePhotoInput.click()` 을 부르는 한 줄)은 돌리지 않았다 — 두 이름이 같은 요소를 가리킨다는 것(통로 값 === `getElementById` 결과)까지만 쟀다. 8절에 측정불가로 적는다.
 - **재검증(되짚기)**: 기준 index.html 4,620줄에서 생성기가 적어 낸 7줄을 빼고, 쉼표 1글자를 떼고, 선언 머리 5 · 선언 끝 5 를 정해진 글자로 바꿔 쓴 결과가 작업 index.html 4,613줄과 글자 그대로 같다.
 - **재검증(시험 전부)**: 스크립트 넷과 `tests/*.test.js` 114개를 하나씩 돌린 결과가 기준과 같다(실패 집합 26 = 26, 작업에서만 깨진 것 0).
-- **재검증(main 이동)**: #920 병합 전(dcf80387)에 한 번, 병합 뒤(faf40354)에 한 번 전부 쟀다. 대상 5개 · 지운 7줄 · 바뀐 5줄은 같고 쉼표 뗀 줄만 0 → 1 로 달라졌다(#920 이 expose 문들의 속성 줄을 지워 줄 배치가 바뀌었다).
+- **재검증(main 이동)**: #920 병합 전(dcf80387) · 병합 뒤(faf40354) · #922 병합 뒤(94ada512) 세 번 전부 쟀다. 대상 5개 · 지운 7줄 · 바뀐 5줄은 같고 쉼표 뗀 줄만 0 → 1 로 달라졌다(#920 이 expose 문들의 속성 줄을 지워 줄 배치가 바뀌었다).
 
 ## 7. [원칙 ⑦] 단계별 실행 (측정 산출물)
 
@@ -86,7 +86,7 @@
 | `proof.json` | 생성기 설정: `mode:"unstate"` · `unstate.names` 5개 · cells `js/core/app-state.js` |
 | `unstate-meta.json` | 생성기 산출 — define 4 · defineVar 1 · 지운 줄 7 · 쉼표 1 · 바뀐 줄 5 · index.html 4620 → 4613줄 · 옮길 수 있음 6 · 멈춤 10 · 제외 1 · 노출 안 됨 14 |
 | `photo-probe.base.json` · `photo-probe.work.json` | 사진 첨부 경로 기록(고르기 · 지우기 · 다시 고르고 기록) — 기준과 작업이 같고 작업의 확인 칸 전부 참 · 예외 0 |
-| `state-probe.{base,base2,work}.json` · `probe-names.json` | 상태 탐침: 이름 16개 · 차이 0(본질 변동 `state` 제외) · 기관 이름 55 = 기준 50 + 설정 5 · 쓰기 왕복 8/8 · window 복사 동일 8/8 |
+| `state-probe.{base,base2,work}.json` · `probe-names.json` | 상태 탐침: 이름 16개 · 차이 0(본질 변동 `state` 제외) · 기관 이름 55 = 기준 50 + 설정 5 · 쓰기 왕복 9/9 · window 복사 동일 8/8 |
 | `cell-registry-compare.before.json` · `cell-registry-compare.json` | 등록 기관 대조: 불일치 0 · 통로에서 사라진 이름 0 · 지문 차이 0 |
 | `scenario-local.json` | 시나리오 5개 기준·작업 통과(비공허 단언 13 · 10 · 9 · 6 · 3), 예외 0/0 |
 | `module-load.json` · `npm-test-compare.json` · `tests-{base,work}.json` · `raw/` | 모듈 로드 새 회귀 0 · npm test 기준/작업 같음 · 시험 하나씩 실패 집합 같음 |
