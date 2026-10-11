@@ -2269,7 +2269,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ [#TASK-ES-360] 일정 탭 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 기록 탭 #TASK-ES-358 과 같은 틀) ============
      ① 가져오기: js/tabs/calendar/render.js 로 옮긴 함수를 이 스코프에서 같은 이름으로 부른다(전역에 새 이름을 만들지 않는다).
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프의 공용 상태·함수를 window.OurgoalAppScope.scope 한 곳에만 getter 로 노출한다(목록은 스코프 분석으로 뽑았다 — 옮긴 코드가 실제로 쓰는 이름 중 앞선 이음매(설정·기록)가 아직 노출하지 않은 것만 더한다). */
-  var _calendarKit = window.OurgoalCalendarKit;
 
   /* ============ [#TASK-ES-370] 목표 탭 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 일정 탭 #TASK-ES-360 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/render.js 로 옮긴 renderGoalsScreen 을 이 스코프에서 같은 이름으로 부른다(전역에 새 이름을 만들지 않는다).
@@ -2346,7 +2345,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _uiKit = window.OurgoalUiHelpers;
   /* [#TASK-ES-482] js/core/confetti.js · js/core/badges.js · js/core/trash-bin.js · js/core/gcal-sync.js — 가져오기 19개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-486] js/core/streak-badge.js · js/tabs/calendar/lockscreen-hub.js · js/tabs/calendar/calendar-core.js · js/core/view-dispatch.js — 가져오기 15개 · 통로 노출은 스코프 분석으로 뽑았다 */
-  var isoDate = _calendarKit.isoDate;
   /* [#TASK-ES-492] js/tabs/settings/feedback-bot-setup.js · js/tabs/records/checkin-feedback.js — 가져오기 12개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-499] js/core/profile-topbar.js — 가져오기 8개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-536] js/tabs/settings/notify-timer.js · js/tabs/settings/web-push.js · js/core/date-rollover.js · js/core/deep-link-gateway.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
@@ -2403,9 +2401,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-682] js/core/boot-app-state.js — 구역 함수 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var bootAppStateObject = _uiKit.bootAppStateObject;
   var bootPromptDrawerState = _uiKit.bootPromptDrawerState;
-  window.OurgoalAppScope.expose('index.html', {
-    get isoDate(){ return isoDate; }
-  });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
