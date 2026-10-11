@@ -1,0 +1,138 @@
+{
+ "tool": "reports/TASK-ES-649/unstate-run.cjs measure",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T04:25:33.979Z",
+ "basis": {
+  "worktreeHead": "faf40354d077731a9a7924e334e52ab4000c4a1d",
+  "base": "faf40354d077731a9a7924e334e52ab4000c4a1d"
+ },
+ "totals": {
+  "stateNamesBefore": 30,
+  "moved": 5,
+  "stateNamesLeftInIife": 25,
+  "stoppedByGenerator": 10,
+  "excludedBecauseTestsPinStateText": 1,
+  "notExposed": 14
+ },
+ "byCondition": [
+  {
+   "count": 4,
+   "condition": "맨이름 참조가 남음",
+   "unlock": "그 이름을 맨이름으로 읽고 쓰는 IIFE 안 코드(함수 본문·로드 중 문)가 세포로 옮겨져 L. 통로로 읽게 되면 — 함수 이전·감싸기(구역 이전) 뒤 unstate 로 다시",
+   "names": [
+    "sb",
+    "state",
+    "USER_SESSION_CHANNEL",
+    "MOCK_GROUPS"
+   ]
+  },
+  {
+   "count": 2,
+   "condition": "같은 이름의 선언이 둘",
+   "unlock": "겹친 선언을 하나로 줄이는 선행 PR(고치기 — 동작 주장) 뒤 unstate 로",
+   "names": [
+    "_subtabTplCat",
+    "_subtabTplQuery"
+   ]
+  },
+  {
+   "count": 3,
+   "condition": "선언문이 다른 글자와 한 줄을 나눠 씀",
+   "unlock": "줄을 나누는 선행 PR(글자 이동만) 뒤 unstate 로, 또는 닫힌 목록을 넓히는 결심",
+   "names": [
+    "_subtabTplDomain",
+    "_subtabTplType",
+    "FEED_POSTS_CACHE"
+   ]
+  },
+  {
+   "count": 1,
+   "condition": "window 복사 줄이 다른 글자와 한 줄을 나눠 씀",
+   "unlock": "줄을 나누는 선행 PR 뒤 unstate 로, 또는 X6 의 정지 조건을 넓히는 결심",
+   "names": [
+    "shareContent"
+   ]
+  },
+  {
+   "count": 1,
+   "condition": "시험이 상태 선언 글자를 붙잡음",
+   "unlock": "그 시험 단언을 고치는 결심(금고·기준 시험지 — 「금고 변경 승인」) 뒤 unstate 로. 시험은 고치지 않았다",
+   "names": [
+    "_promptEncyclopediaOpen"
+   ]
+  },
+  {
+   "count": 14,
+   "condition": "통로에 노출되지 않음(IIFE 안에서만 쓰는 값 — DOM 참조·상수 등)",
+   "unlock": "상태 기관 대상이 아니다. 그 값을 쓰는 로드 중 문과 함께 구역 감싸기(region, X7)로 세포 함수의 지역 변수가 된다",
+   "names": [
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+    "OURGOAL_CONFIG",
+    "btnAvLvClose",
+    "btnAvLvConfirm",
+    "fpBtn",
+    "requestClaudeFeedback",
+    "topBtnGuide",
+    "btnCloseTplEncycl",
+    "tabBtnReal",
+    "tabBtnAi",
+    "btnEvalBanner",
+    "btnEvalClose",
+    "challengeBtn"
+   ]
+  }
+ ],
+ "stoppedDetail": [
+  {
+   "name": "sb",
+   "condition": "맨이름 참조가 남음",
+   "generatorReason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: sb(줄 3274,3276,3280,4562,4573)"
+  },
+  {
+   "name": "state",
+   "condition": "맨이름 참조가 남음",
+   "generatorReason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: state(줄 2957,2959,2960,2961,2963,3110,3274,3279,3406,3565,3833,4159,4160,4161,4190,4191,4193,4199,4200,4201,4203,4205,4208,4209,4210,4214,4235,4255,4260,4263,4570,4573)"
+  },
+  {
+   "name": "_subtabTplCat",
+   "condition": "같은 이름의 선언이 둘",
+   "generatorReason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplCat(줄 3220,3225)"
+  },
+  {
+   "name": "_subtabTplQuery",
+   "condition": "같은 이름의 선언이 둘",
+   "generatorReason": "같은 이름의 선언이 여럿이다 — 옮기지 않는다: _subtabTplQuery(줄 3221,3226)"
+  },
+  {
+   "name": "_subtabTplDomain",
+   "condition": "선언문이 다른 글자와 한 줄을 나눠 씀",
+   "generatorReason": "선언문 _subtabTplDomain 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3223"
+  },
+  {
+   "name": "_subtabTplType",
+   "condition": "선언문이 다른 글자와 한 줄을 나눠 씀",
+   "generatorReason": "선언문 _subtabTplType 이(가) 다른 글자와 한 줄을 나눠 쓴다: 3224"
+  },
+  {
+   "name": "USER_SESSION_CHANNEL",
+   "condition": "맨이름 참조가 남음",
+   "generatorReason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: USER_SESSION_CHANNEL(줄 3275,3276,3277,3280)"
+  },
+  {
+   "name": "MOCK_GROUPS",
+   "condition": "맨이름 참조가 남음",
+   "generatorReason": "옮길 이름을 IIFE 안에서 아직 맨이름으로 쓰는 곳이 남는다 — 옮기지 않는다: MOCK_GROUPS(줄 4570)"
+  },
+  {
+   "name": "shareContent",
+   "condition": "window 복사 줄이 다른 글자와 한 줄을 나눠 씀",
+   "generatorReason": "window 복사 줄이 다른 글자와 한 줄을 나눠 쓴다: 4485"
+  },
+  {
+   "name": "FEED_POSTS_CACHE",
+   "condition": "선언문이 다른 글자와 한 줄을 나눠 씀",
+   "generatorReason": "선언문 FEED_POSTS_CACHE 이(가) 다른 글자와 한 줄을 나눠 쓴다: 4494"
+  }
+ ]
+}
