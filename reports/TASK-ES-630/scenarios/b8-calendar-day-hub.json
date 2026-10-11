@@ -1,0 +1,119 @@
+{
+  "id": "b8-calendar-day-hub",
+  "title": "게스트로 일정 탭에서 「일자 종합 허브」 버튼을 누르면(window.openCalendarDayEditHubModal) 날짜 편집 허브 창이 열리고 닫기를 누르면 닫히며 예외가 없다 — 두 번 되풀이해도 같고, 홈으로 돌아가면 홈 탭이 활성이 된다 (일정 키트 배선 철거 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "className": "active"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sanctuaryCalendarView button[onclick*=\"openDayHubModal\"]",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryCalendarView button[onclick*=\"openDayHubModal\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hubCloseBtn",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryCalendarView button[onclick*=\"openDayHubModal\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#hubCloseBtn",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "visible",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#hubCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
