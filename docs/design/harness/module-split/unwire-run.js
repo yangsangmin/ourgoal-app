@@ -54,13 +54,15 @@ if (CMD === 'apply') {
   // 이름의 출처: ① --names-for <손잡이:차수>=이름+이름,… (손으로 지정) ② 계획의 runs ③ 계획의 notRunnableKitVars.registeredNames(계획 당시 생성기가 못 돌리던 손잡이 — X1 `_ui`·`_xp`)
   const namesFor = {}; (opt('--names-for') || '').split(',').filter(Boolean).forEach(s => { const [k, v] = s.split('='); namesFor[k.trim()] = (v || '').split('+').filter(Boolean); });
   const runs = want.map(w => {
-    const key = w.kitVar + ':' + w.pass;
+    // --names-for 의 열쇠는 옵션까지 적은 꼴(_uiKit:2:shared)을 먼저 찾는다 — 같은 손잡이·차수의 실행을 옵션으로 나눌 때 이름이 섞이지 않게
+    const shortKey = w.kitVar + ':' + w.pass, key = shortKey + (w.opts.length ? ':' + w.opts.join('+') : '');
+    const given = namesFor[key] || (w.opts.length ? null : namesFor[shortKey]);
     const pr = plan.runs.find(r => r.kitVar === w.kitVar && r.flags.imports === (w.pass === 1));
     const nr = (plan.notRunnableKitVars || []).find(k => k.kitVar === w.kitVar);
-    const planned = namesFor[key] || (pr ? pr.names : (nr ? nr.registeredNames : null));
+    const planned = given || (pr ? pr.names : (nr ? nr.registeredNames : null));
     if (!planned) { console.error('계획에 그 실행이 없다: ' + key); process.exit(2); }
-    return { kitVar: w.kitVar, pass: w.pass, opts: w.opts, planned: planned.slice(), plannedDeletedLines: pr && !namesFor[key] ? pr.expectedDeletedLines : null, names: planned.slice(), dropped: [],
-      source: namesFor[key] ? '--names-for' : (pr ? '계획 runs' : '계획 notRunnableKitVars.registeredNames') };
+    return { kitVar: w.kitVar, pass: w.pass, opts: w.opts, planned: planned.slice(), plannedDeletedLines: pr && !given ? pr.expectedDeletedLines : null, names: planned.slice(), dropped: [],
+      source: given ? '--names-for' : (pr ? '계획 runs' : '계획 notRunnableKitVars.registeredNames') };
   });
   const textBefore = fs.readFileSync(INDEX, 'utf8'); // 철거 전 글자(매 시도는 여기서 시작한다)
   const restore = () => fs.writeFileSync(INDEX, textBefore, { encoding: 'utf8' });
