@@ -1,0 +1,116 @@
+{
+ "type": "작업자 측정, 판정 아님",
+ "what": "현재 main(1c40f599)의 git 작업 폴더 둘(기준 · 모의)에서 saveGoogleToken 모의 이전을 재고 시험 파일을 하나씩 돌려 비교했다. 실제 이전은 0 이다(모의 작업 폴더는 측정 뒤 지운다).",
+ "baseHead": "1c40f599db88089cf21d1c8f43dbe9ed684d4b9e",
+ "config": "reports/TASK-ES-657/mock-config.json",
+ "generator": {
+  "ok": true,
+  "htmlLines": [
+   4610,
+   4590
+  ],
+  "files": {
+   "js/core/gcal-token-save.js": 51
+  },
+  "ownArguments": [
+   {
+    "name": "saveGoogleToken",
+    "cell": "gcalTokenSave",
+    "count": 1
+   }
+  ],
+  "newExposeGetters": [
+   "gcalCurrentUid",
+   "purgeLegacySharedGcalKeys"
+  ],
+  "imports": [
+   "saveGoogleToken"
+  ]
+ },
+ "verify": {
+  "ok": true,
+  "ownArguments": [
+   {
+    "name": "saveGoogleToken",
+    "file": "js/core/gcal-token-save.js",
+    "count": 1
+   }
+  ],
+  "thisArgs": []
+ },
+ "text": {
+  "windowExposureLineStaysInIndexHtml": true,
+  "declarationInCell": true,
+  "argumentsLineUntouched": true
+ },
+ "moduleGuard": {
+  "exitCode": 0,
+  "tail": [
+   "  ↓ 기준선을 낮출 수 있다(node scripts/module-guard.js --update):",
+   "    - ① index.html 인라인 스크립트 줄 수: 2340 → 2320 (-20)",
+   "    - ② index.html 함수 선언 수: 18 → 17 (-1)",
+   "✓ 모듈 가드 통과"
+  ]
+ },
+ "testsAll": {
+  "files": 119,
+  "nonZeroExitBase": 26,
+  "firstRun": {
+   "differingCount": 1,
+   "differing": [
+    {
+     "file": "tests/offline-sync-queue-retain.test.js",
+     "base": [
+      0,
+      0
+     ],
+     "mock": [
+      1,
+      0
+     ]
+    }
+   ]
+  },
+  "secondRun": {
+   "differingCount": 0,
+   "differing": []
+  },
+  "flaky": {
+   "file": "tests/offline-sync-queue-retain.test.js",
+   "reads": [
+    "js/core/virtual-user-helpers.js"
+   ],
+   "readsChangedByMock": false,
+   "rerunsBase": [
+    0,
+    0,
+    0
+   ],
+   "rerunsMock": [
+    0,
+    0,
+    0
+   ],
+   "note": "모의 이전이 바꾸지 않는 한 파일만 읽는 시험이다. #917(TASK-ES-645) 때도 같은 흔들림을 봤다(reports/TASK-ES-645/tests-all-flake.json)."
+  },
+  "differingCount": 0
+ },
+ "gcalLoginReconnectFix": {
+  "file": "tests/gcal-login-reconnect-fix.test.js",
+  "base": [
+   0,
+   0
+  ],
+  "mockFirst": [
+   0,
+   0
+  ],
+  "mockSecond": [
+   0,
+   0
+  ],
+  "sameExit": true,
+  "note": "이 시험은 index.html 에서 `window.saveGoogleToken = saveGoogleToken;` 글자를 찾는다 — 그 노출 줄은 원래 자리에 남는다."
+ },
+ "ok": true
+}

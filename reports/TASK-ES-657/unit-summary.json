@@ -1,0 +1,183 @@
+{
+ "type": "작업자 측정, 판정 아님",
+ "source": "reports/TASK-ES-657/fn-arguments-unit.json",
+ "total": 22,
+ "passed": 22,
+ "ok": true,
+ "existingPaths": {
+  "regeneratedByteSame": [
+   {
+    "id": "G638",
+    "ok": true
+   },
+   {
+    "id": "G640",
+    "ok": true
+   },
+   {
+    "id": "G645",
+    "ok": true
+   },
+   {
+    "id": "G653",
+    "ok": true
+   }
+  ],
+  "allRegeneratedByteSame": true,
+  "verifierOutputSame": [
+   {
+    "id": "V638",
+    "ok": true
+   },
+   {
+    "id": "V640",
+    "ok": true
+   },
+   {
+    "id": "V645",
+    "ok": true
+   },
+   {
+    "id": "V653",
+    "ok": true
+   }
+  ],
+  "allVerifierOutputSame": true
+ },
+ "region643": {
+  "total": 67,
+  "passed": 66,
+  "failed": [
+   "D0"
+  ],
+  "onlyD0Failed": true,
+  "unstate634": "34/34",
+  "unwireB1": "8/8",
+  "d0Why": "D0 는 생성기 파일과 #643 이전 생성기(e5f34779)의 차이가 「한 자리에 끼워 넣은 줄뿐」인지 보는 모양 비교다. 이번 PR 이 일반 모드의 다른 자리를 고쳐 공통 머리+꼬리 줄 수가 기준 줄 수보다 작아졌다(출력 비교가 아니다). 그 시험 파일은 고치지 않았다."
+ },
+ "diff": {
+  "generator": {
+   "pin": "1c40f599db88089cf21d1c8f43dbe9ed684d4b9e",
+   "baseLines": 1240,
+   "nowLines": 1259,
+   "removed": [
+    {
+     "line": 957,
+     "text": "        if (topThisArgs(st.get('body'))) fail('최상위 this/arguments(유형 K) — 옮기지 않는다: ' + n);"
+    }
+   ],
+   "addedCount": 20,
+   "addedLines": [
+    12,
+    13,
+    926,
+    927,
+    928,
+    929,
+    930,
+    931,
+    932,
+    933,
+    934,
+    935,
+    936,
+    937,
+    938,
+    939,
+    940,
+    974,
+    1252,
+    1255
+   ],
+   "modesSectionSame": true
+  },
+  "generatorOk": true,
+  "verifierRemoved": [
+   {
+    "line": 132,
+    "text": "    let bad = 0;"
+   },
+   {
+    "line": 133,
+    "text": "    fp.get('body').traverse({ Function(q) { if (!q.isArrowFunctionExpression()) q.skip(); }, ThisExpression() { bad++; }, Identifier(q) { if"
+   },
+   {
+    "line": 224,
+    "text": "console.log(report.ok ? 'OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · 남은 정의 0 · 안 가져온 사용 0 · this/arguments 0 · 이중 "
+   }
+  ],
+  "verifierOk": true
+ },
+ "allowed": [
+  {
+   "id": "A1",
+   "ok": true
+  },
+  {
+   "id": "A2",
+   "ok": true
+  }
+ ],
+ "allAllowedOk": true,
+ "stops": [
+  {
+   "id": "S1",
+   "ok": true
+  },
+  {
+   "id": "S2",
+   "ok": true
+  },
+  {
+   "id": "S3",
+   "ok": true
+  },
+  {
+   "id": "S2b",
+   "ok": true
+  },
+  {
+   "id": "S4",
+   "ok": true
+  },
+  {
+   "id": "S5",
+   "ok": true
+  }
+ ],
+ "allStopsOk": true,
+ "verifierStops": [
+  {
+   "id": "VS1",
+   "ok": true
+  },
+  {
+   "id": "VS2",
+   "ok": true
+  }
+ ],
+ "allVerifierStopsOk": true,
+ "realIndexMock": {
+  "ok": true,
+  "baseGenerator": {
+   "status": 1,
+   "err": "최상위 this/arguments(유형 K) — 옮기지 않는다: saveGoogleToken"
+  },
+  "lines": {
+   "segment": [
+    2956,
+    2982
+   ],
+   "same": 20,
+   "prefixOnly": 7,
+   "other": 0
+  },
+  "ownArguments": [
+   {
+    "name": "saveGoogleToken",
+    "cell": "gcalTokenSave",
+    "count": 1
+   }
+  ]
+ }
+}

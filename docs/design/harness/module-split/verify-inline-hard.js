@@ -8,6 +8,8 @@
 //  ④ 누수·통로: 세포 파일에서 IIFE 이름이 접두 없이 남아 전역으로 새는 곳 0 · L.<이름> 은 모두 expose getter 가 있다 · L.<이름> 에 대입하면 setter 가 있다
 //                · 옮긴 이름이 index.html 에 선언으로 남지 않았다 · index.html 이 쓰는 옮긴 이름은 모두 키트에서 가져왔다 · 새 파일 800줄 이하.
 //  ⑤ 함수 최상위 this/arguments 0(헌법 CELL_SPLIT 5).
+//     [#TASK-ES-657 · 헌법 v2026.10.11-ARGUMENTS(PR #925)] 선언째로 옮긴 함수 선언은 그 함수 자신의 본문에서 쓰는 arguments 만 허용한다(자기 호출 인자를 가리켜 옮겨도 뜻이 같다) — 그 수는 ownArguments 에 싣는다.
+//     그 함수 층의 this · 그 안의 화살표 함수 안 arguments 는 예전처럼 thisArgs 에 올라 FAIL 이다. 감싼 함수(로드 중 문)는 생성기가 최상위 this/arguments 가 있으면 감싸지 않는다.
 //  ⑥ 이중 처리기 0: 이전 전 IIFE 의 addEventListener·on<이벤트> 대입 수 = 새 IIFE + 새 세포 파일의 수(옮긴 등록이 두 곳에 있지 않다).
 //  ⑦ 로드 중 순서: 감싼 함수를 부르는 줄이 index.html 에서 이전 전 그 문이 있던 자리(앞뒤 남은 문 사이)에 있다(③ 이 같은 순서를 보장, 여기서는 수만 센다).
 // 사용: NODE_PATH=C:/dev/ourgoal-app/node_modules node verify-inline-hard.js <이전 전 index.html> <APP_DIR> <설정.json>
@@ -47,6 +49,7 @@ const oLine = n => n.loc.start.line + O.s, oLineE = n => n.loc.end.line + O.s;
 const equiv = [], lineCheck = [], movedRanges = [], files = {};
 const usedL = new Set(), assignedL = new Set(), cellNames = new Set(), wrapNames = new Set();
 let cellListeners = 0, thisArgs = [];
+const ownArguments = []; // [#TASK-ES-657] 선언째로 옮긴 함수 선언이 자기 본문에서 쓰는 arguments(허용) — { name, file, count }
 for (const f of FILES) {
   const src = fs.readFileSync(path.join(APP, f), 'utf8').replace(/\r\n/g, '\n'); // #TASK-ES-471: 체크아웃 줄 끝(CRLF)과 무관하게(여러 줄 템플릿 글자 토큰)
   const fl = src.replace(/\r\n/g, '\n').split('\n');
@@ -129,9 +132,10 @@ for (const f of FILES) {
   });
   traverse(fast, { FunctionDeclaration(fp) {
     if (!cbody.includes(fp.node) || wrapNames.has(fp.node.id.name)) return;
-    let bad = 0;
-    fp.get('body').traverse({ Function(q) { if (!q.isArrowFunctionExpression()) q.skip(); }, ThisExpression() { bad++; }, Identifier(q) { if (q.node.name === 'arguments' && q.isReferencedIdentifier()) bad++; } });
+    let bad = 0, own = 0; // bad = 그 함수 층의 this + 화살표 함수 안의 arguments(여전히 0 이어야 한다) · own = 그 함수 자신의 arguments(#TASK-ES-657 허용)
+    fp.get('body').traverse({ Function(q) { if (!q.isArrowFunctionExpression()) q.skip(); }, ThisExpression() { bad++; }, Identifier(q) { if (q.node.name !== 'arguments' || !q.isReferencedIdentifier()) return; const fn = q.getFunctionParent(); if (fn && fn.node === fp.node) own++; else bad++; } });
     if (bad) thisArgs.push(fp.node.id.name);
+    if (own) ownArguments.push({ name: fp.node.id.name, file: f, count: own });
   } });
   files[f] = { lines: fl.length - 1, globals: [...globals].sort(), leaks };
 }
@@ -217,10 +221,11 @@ const report = {
   thisArgs, listeners, wrapCalls: callLines, callsOk, importBeforeKit, lastGetterNoSetter, files,
 };
 if (preservedTails.length) report.preservedTails = preservedTails;
+if (ownArguments.length) report.ownArguments = ownArguments; // [#TASK-ES-657] 있을 때만 싣는다(없으면 예전 출력과 글자가 같다)
 report.ok = report.equivalent && lineCheck.length > 0 && lineCheck.every(x => x.diffLines === 0 && x.closeOk && x.sourceEndOk !== false) && preservedTails.every(x => x.suffixSame && x.occurrencesSame && x.sameRestPosition) && restSame && leftDefs.length === 0 && usedInIndexNotImported.length === 0
   && notExposed.length === 0 && noSetter.length === 0 && thisArgs.length === 0 && listeners.same && callsOk && importBeforeKit.length === 0 && lastGetterNoSetter.length === 0
   && Object.values(files).every(x => x.leaksIIFEName.length === 0 && x.lines <= 800);
 console.log(JSON.stringify(report, null, 1));
-console.log(report.ok ? 'OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · 남은 정의 0 · 안 가져온 사용 0 · this/arguments 0 · 이중 처리기 0 · 키트 변수 뒤 가져오기 · 마지막 노출 setter · 800줄 이하' : 'FAIL');
+console.log(report.ok ? 'OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · 남은 정의 0 · 안 가져온 사용 0 · this/arguments 0 · 이중 처리기 0 · 키트 변수 뒤 가져오기 · 마지막 노출 setter · 800줄 이하' + (ownArguments.length ? ' · 함수 선언 자신의 arguments ' + ownArguments.reduce((a, x) => a + x.count, 0) + '곳 허용(CELL_SPLIT 5호)' : '') : 'FAIL');
 if (process.env.MODULE_SPLIT_OUT) fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT, 'verify-inline-hard.json'), JSON.stringify(report, null, 1));
 process.exitCode = report.ok ? 0 : 1;

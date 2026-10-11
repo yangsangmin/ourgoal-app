@@ -1,0 +1,497 @@
+{
+ "tool": "docs/design/harness/module-split/fn-arguments-check-657.js",
+ "type": "작업자 측정, 판정 아님",
+ "generator": "docs/design/harness/module-split/gen-inline-hard.js",
+ "verifier": "docs/design/harness/module-split/verify-inline-hard.js",
+ "baseCommit": "1c40f599db88089cf21d1c8f43dbe9ed684d4b9e",
+ "total": 22,
+ "passed": 22,
+ "failed": [],
+ "ok": true,
+ "results": [
+  {
+   "id": "B",
+   "title": "구역 감싸기 시험 67건(#TASK-ES-643 — 상태 이전 34건 · unwire 확장 16건 · B1 8건 재실행 포함)이 고친 생성기에서 D0 말고 모두 통과한다(D0 는 #643 이전 생성기와의 「한 자리 끼워 넣기」 모양 비교라 다른 자리를 고치면 구조적으로 거짓)",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "total": 67,
+    "passed": 66,
+    "failed": [
+     "D0"
+    ],
+    "innerB": {
+     "status": 0,
+     "passed": 34,
+     "total": 34,
+     "ext619": "16/16",
+     "b1": "8/8",
+     "failed": [],
+     "stderr": ""
+    },
+    "d0": {
+     "pin": "e5f34779424b6da7a8da1309986359295dde93d1",
+     "baseLines": 890,
+     "nowLines": 1259,
+     "inserted": 369,
+     "commonHead": 11,
+     "commonTail": 4,
+     "firstInserted": "//   · this·arguments(유형 K, 헌법 CELL_SPLIT 5호) → 옮기는 함수 선언의 최"
+    },
+    "stderr": ""
+   }
+  },
+  {
+   "id": "D1",
+   "title": "생성기 diff: 기준에서 사라진 줄은 함수 선언 검사 호출 한 줄뿐이고, unwire · unstate · region 구간은 글자가 같다",
+   "ok": true,
+   "detail": {
+    "pin": "1c40f599db88089cf21d1c8f43dbe9ed684d4b9e",
+    "baseLines": 1240,
+    "nowLines": 1259,
+    "removed": [
+     {
+      "line": 957,
+      "text": "        if (topThisArgs(st.get('body'))) fail('최상위 this/arguments(유형 K) — 옮기지 않는다: ' + n);"
+     }
+    ],
+    "addedCount": 20,
+    "addedLines": [
+     12,
+     13,
+     926,
+     927,
+     928,
+     929,
+     930,
+     931,
+     932,
+     933,
+     934,
+     935,
+     936,
+     937,
+     938,
+     939,
+     940,
+     974,
+     1252,
+     1255
+    ],
+    "modesSectionSame": true
+   }
+  },
+  {
+   "id": "D2",
+   "title": "검사기 diff: 기준에서 사라진 줄은 ⑤ 검사 두 줄과 OK 문구 한 줄뿐이다",
+   "ok": true,
+   "detail": {
+    "pin": "1c40f599db88089cf21d1c8f43dbe9ed684d4b9e",
+    "baseLines": 227,
+    "nowLines": 232,
+    "removed": [
+     {
+      "line": 132,
+      "text": "    let bad = 0;"
+     },
+     {
+      "line": 133,
+      "text": "    fp.get('body').traverse({ Function(q) { if (!q.isArrowFunctionExpression()) q.skip(); }, ThisExpression() { bad++; }, Identifier(q) { if"
+     },
+     {
+      "line": 224,
+      "text": "console.log(report.ok ? 'OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · 남은 정의 0 · 안 가져온 사용 0 · this/arguments 0 · 이중 "
+     }
+    ],
+    "addedCount": 8
+   }
+  },
+  {
+   "id": "G638",
+   "title": "고친 생성기가 #911(TASK-ES-638)의 기준 트리에서 같은 설정으로 index.html·세포 파일을 바이트 그대로 다시 만든다(옮기기·감싸기 경로 무변화)",
+   "ok": true,
+   "detail": {
+    "pr": 911,
+    "commit": "b76c29e95e6b74f97156dee4178bd737ef3ec2b9",
+    "genStatus": 0,
+    "stdout": "move 0 wrap 11 keep 15 · edits 73 · bridged 31 · exposed 27 · imports 11",
+    "err": null,
+    "files": {
+     "index.html": {
+      "same": true,
+      "bytes": 403958
+     },
+     "js/tabs/settings/boot-wiring.js": {
+      "same": true,
+      "bytes": 5040
+     },
+     "js/tabs/goals/goal-agent-toggle.js": {
+      "same": true,
+      "bytes": 2767
+     },
+     "js/core/module-connect.js": {
+      "same": true,
+      "bytes": 6577
+     },
+     "js/core/pwa-service-worker.js": {
+      "same": true,
+      "bytes": 3538
+     }
+    }
+   }
+  },
+  {
+   "id": "V638",
+   "title": "고친 검사기와 기준 검사기가 #911 결과에 내는 출력이 글자 그대로 같고 ok 다(ownArguments 칸 없음)",
+   "ok": true,
+   "detail": {
+    "pr": 911,
+    "status": [
+     0,
+     0
+    ],
+    "stdoutSame": true,
+    "ok": true,
+    "ownArguments": null,
+    "last": "OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · sett"
+   }
+  },
+  {
+   "id": "G640",
+   "title": "고친 생성기가 #913(TASK-ES-640)의 기준 트리에서 같은 설정으로 index.html·세포 파일을 바이트 그대로 다시 만든다(옮기기·감싸기 경로 무변화)",
+   "ok": true,
+   "detail": {
+    "pr": 913,
+    "commit": "9014a386051477b315ad0881d7992d1f0ea0c671",
+    "genStatus": 0,
+    "stdout": "move 2 wrap 7 keep 9 · edits 110 · bridged 22 · exposed 10 · imports 9",
+    "err": null,
+    "files": {
+     "index.html": {
+      "same": true,
+      "bytes": 391555
+     },
+     "js/tabs/records/checkin-input-wiring.js": {
+      "same": true,
+      "bytes": 8350
+     },
+     "js/tabs/goals/team-comment-send.js": {
+      "same": true,
+      "bytes": 6864
+     },
+     "js/tabs/records/sample-purge.js": {
+      "same": true,
+      "bytes": 4270
+     },
+     "js/tabs/goals/goal-fast-add.js": {
+      "same": true,
+      "bytes": 4565
+     }
+    }
+   }
+  },
+  {
+   "id": "V640",
+   "title": "고친 검사기와 기준 검사기가 #913 결과에 내는 출력이 글자 그대로 같고 ok 다(ownArguments 칸 없음)",
+   "ok": true,
+   "detail": {
+    "pr": 913,
+    "status": [
+     0,
+     0
+    ],
+    "stdoutSame": true,
+    "ok": true,
+    "ownArguments": null,
+    "last": "OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · sett"
+   }
+  },
+  {
+   "id": "G645",
+   "title": "고친 생성기가 #917(TASK-ES-645)의 기준 트리에서 같은 설정으로 index.html·세포 파일을 바이트 그대로 다시 만든다(옮기기·감싸기 경로 무변화)",
+   "ok": true,
+   "detail": {
+    "pr": 917,
+    "commit": "c0658b2caadb9585efce894db0fd2af69eed7eca",
+    "genStatus": 0,
+    "stdout": "move 2 wrap 0 keep 3 · edits 38 · bridged 8 · exposed 2 · imports 1",
+    "err": null,
+    "files": {
+     "index.html": {
+      "same": true,
+      "bytes": 378894
+     },
+     "js/tabs/records/template-market.js": {
+      "same": true,
+      "bytes": 15938
+     }
+    }
+   }
+  },
+  {
+   "id": "V645",
+   "title": "고친 검사기와 기준 검사기가 #917 결과에 내는 출력이 글자 그대로 같고 ok 다(ownArguments 칸 없음)",
+   "ok": true,
+   "detail": {
+    "pr": 917,
+    "status": [
+     0,
+     0
+    ],
+    "stdoutSame": true,
+    "ok": true,
+    "ownArguments": null,
+    "last": "OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · sett"
+   }
+  },
+  {
+   "id": "G653",
+   "title": "고친 생성기가 #923(TASK-ES-653)의 기준 트리에서 같은 설정으로 index.html·세포 파일을 바이트 그대로 다시 만든다(옮기기·감싸기 경로 무변화)",
+   "ok": true,
+   "detail": {
+    "pr": 923,
+    "commit": "529e43709ba65929e4b0e4f4049033d466e3dd2f",
+    "genStatus": 0,
+    "stdout": "move 1 wrap 0 keep 2 · edits 13 · bridged 5 · exposed 3 · imports 1",
+    "err": null,
+    "files": {
+     "index.html": {
+      "same": true,
+      "bytes": 376532
+     },
+     "js/tabs/settings/user-session-realtime.js": {
+      "same": true,
+      "bytes": 3076
+     }
+    }
+   }
+  },
+  {
+   "id": "V653",
+   "title": "고친 검사기와 기준 검사기가 #923 결과에 내는 출력이 글자 그대로 같고 ok 다(ownArguments 칸 없음)",
+   "ok": true,
+   "detail": {
+    "pr": 923,
+    "status": [
+     0,
+     0
+    ],
+    "stdoutSame": true,
+    "ok": true,
+    "ownArguments": null,
+    "last": "OK: 토큰 동일(접두 제외) · 덩어리 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · sett"
+   }
+  },
+  {
+   "id": "A1",
+   "title": "허용: 자기 본문에서 arguments 를 쓰는 함수 선언을 옮긴다 — arguments 줄은 글자 그대로, 메타·검사기 ownArguments 에 3곳, thisArgs 비어 있음, 검사기 ok",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "ownArguments": [
+     {
+      "name": "pick",
+      "cell": "movedA",
+      "count": 3
+     }
+    ],
+    "verify": {
+     "status": 0,
+     "ok": true,
+     "ownArguments": [
+      {
+       "name": "pick",
+       "file": "js/a/moved.js",
+       "count": 3
+      }
+     ],
+     "thisArgs": [],
+     "last": " setter · 800줄 이하 · 함수 선언 자신의 arguments 3곳 허용(CELL_SPLIT 5호)"
+    }
+   }
+  },
+  {
+   "id": "A2",
+   "title": "예전과 같음: 안쪽 보통 함수의 arguments·this 는 그 함수의 것 → 옮긴다. ownArguments 칸 없음, 기준 생성기와 결과가 바이트 동일",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "baseStatus": 0,
+    "verifyOk": true
+   }
+  },
+  {
+   "id": "VS1",
+   "title": "검사기 정지: 옮긴 함수 선언 안의 화살표 함수 안 arguments → thisArgs 에 올라 FAIL(토큰 대조는 그대로 같음)",
+   "ok": true,
+   "detail": {
+    "okTamper": true,
+    "status": 1,
+    "ok": false,
+    "equivalent": true,
+    "thisArgs": [
+     "nest"
+    ],
+    "last": "FAIL"
+   }
+  },
+  {
+   "id": "VS2",
+   "title": "검사기 정지: 옮긴 함수 선언 안의 화살표 함수 안 this → thisArgs 에 올라 FAIL(토큰 대조는 그대로 같음)",
+   "ok": true,
+   "detail": {
+    "okTamper": true,
+    "status": 1,
+    "ok": false,
+    "equivalent": true,
+    "thisArgs": [
+     "nest"
+    ],
+    "last": "FAIL"
+   }
+  },
+  {
+   "id": "S1",
+   "title": "정지: 함수 선언 최상위 this → 「유형 K」로 멈춘다. index.html 그대로 · 세포 파일 없음 · 기준 생성기와 같은 사유",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "최상위 this/arguments(유형 K) — 옮기지 않는다: usesThis",
+    "baseErr": "최상위 this/arguments(유형 K) — 옮기지 않는다: usesThis",
+    "htmlSame": true,
+    "cellExists": false
+   }
+  },
+  {
+   "id": "S2",
+   "title": "정지: 화살표 함수 안 arguments → 「유형 K」로 멈춘다. index.html 그대로 · 세포 파일 없음 · 기준 생성기와 같은 사유",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "최상위 this/arguments(유형 K) — 옮기지 않는다: arrowArgs",
+    "baseErr": "최상위 this/arguments(유형 K) — 옮기지 않는다: arrowArgs",
+    "htmlSame": true,
+    "cellExists": false
+   }
+  },
+  {
+   "id": "S3",
+   "title": "정지: 화살표 함수 안 this → 「유형 K」로 멈춘다. index.html 그대로 · 세포 파일 없음 · 기준 생성기와 같은 사유",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "최상위 this/arguments(유형 K) — 옮기지 않는다: arrowThis",
+    "baseErr": "최상위 this/arguments(유형 K) — 옮기지 않는다: arrowThis",
+    "htmlSame": true,
+    "cellExists": false
+   }
+  },
+  {
+   "id": "S2b",
+   "title": "정지: 자기 arguments 와 화살표 함수 안 arguments 가 함께 있음 → 「유형 K」로 멈춘다. index.html 그대로 · 세포 파일 없음 · 기준 생성기와 같은 사유",
+   "ok": true,
+   "detail": {
+    "status": 1,
+    "err": "최상위 this/arguments(유형 K) — 옮기지 않는다: both",
+    "baseErr": "최상위 this/arguments(유형 K) — 옮기지 않는다: both",
+    "htmlSame": true,
+    "cellExists": false
+   }
+  },
+  {
+   "id": "S4",
+   "title": "그대로: 로드 중 문(4줄 이상)의 최상위 arguments → 감싸지 않고 원래 자리(사유 「감쌀 수 없음: 최상위 this/arguments」). 기준 생성기와 결과가 바이트 동일",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "keepWhy": "감쌀 수 없음: 최상위 this/arguments",
+    "baseStatus": 0
+   }
+  },
+  {
+   "id": "S5",
+   "title": "예전과 같음: var 에 담긴 함수식(그 함수식 자신의 arguments)은 예전처럼 옮겨진다 — ownArguments 칸 없음(함수 선언이 아니다), 기준 생성기와 결과가 바이트 동일",
+   "ok": true,
+   "detail": {
+    "status": 0,
+    "err": null,
+    "action": "move",
+    "baseStatus": 0
+   }
+  },
+  {
+   "id": "P1",
+   "title": "실제 index.html(PIN): saveGoogleToken 모의 이전 — 기준 생성기는 「유형 K」로 멈추고, 고친 생성기는 옮긴다 · 검사기 ok · ownArguments 1곳 · 접두 말고 다른 줄 0 · window 노출 줄은 원래 자리",
+   "ok": true,
+   "detail": {
+    "pin": "1c40f599db88089cf21d1c8f43dbe9ed684d4b9e",
+    "baseGenerator": {
+     "status": 1,
+     "err": "최상위 this/arguments(유형 K) — 옮기지 않는다: saveGoogleToken"
+    },
+    "status": 0,
+    "err": null,
+    "stdout": [
+     "move 1 wrap 0 keep 2 · edits 9 · bridged 3 · exposed 2 · imports 1",
+     "  arguments saveGoogleToken — 함수 선언째로 옮김: 그 함수 자신의 arguments 1곳(헌법 CELL_SPLIT 5호 허용)"
+    ],
+    "verify": {
+     "status": 0,
+     "ok": true,
+     "ownArguments": [
+      {
+       "name": "saveGoogleToken",
+       "file": "js/core/gcal-token-save.js",
+       "count": 1
+      }
+     ],
+     "thisArgs": [],
+     "last": "기 · 마지막 노출 setter · 800줄 이하 · 함수 선언 자신의 arguments 1곳 허용(CELL_SPLIT 5호)"
+    },
+    "meta": {
+     "ownArguments": [
+      {
+       "name": "saveGoogleToken",
+       "cell": "gcalTokenSave",
+       "count": 1
+      }
+     ],
+     "exposed": [
+      "gcalCurrentUid",
+      "purgeLegacySharedGcalKeys"
+     ],
+     "bridged": [
+      "gcalCurrentUid",
+      "purgeLegacySharedGcalKeys",
+      "state"
+     ],
+     "imports": [
+      "saveGoogleToken"
+     ],
+     "htmlLines": [
+      4610,
+      4590
+     ],
+     "files": {
+      "js/core/gcal-token-save.js": 51
+     }
+    },
+    "lines": {
+     "segment": [
+      2956,
+      2982
+     ],
+     "same": 20,
+     "prefixOnly": 7,
+     "other": 0
+    },
+    "windowLineStays": true,
+    "declGoneFromIndex": true,
+    "declInCell": true
+   }
+  }
+ ]
+}
