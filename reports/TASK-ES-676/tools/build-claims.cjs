@@ -85,11 +85,12 @@ const out = { task: 'TASK-ES-676', requirementsSource: 'docs/specs/REQ-TASK-ES-6
   outOfScopeReports: [
     { text: '탐침(시점 · 손잡이 · 상태 · 대조)은 게스트로 띄운 임시 브라우저의 작업자 PC 측정이다. 법정이 그 탐침을 다시 돌린 것은 아니다. 로그인 뒤에만 도는 길(서버 피드가 피드 캐시를 채우는 것 · 구글 캘린더 연동 뒤 토큰 저장)은 재지 못했다 — 그 값을 맡기는 정의 줄과 window 대입 줄이 같은 때 같은 값으로 도는 것까지만 쟀다.', cannotBecause: 'out-of-scope-feature' },
     { text: '서버 주소 · 공개 키 선언과 서버 연결 객체(sb) 정의 줄은 옮기지 못했다. 공개 키 글자가 든 줄을 새 파일에 더하는 커밋을 금지 패턴 규칙(docs/rules/rules.json 의 HARDCODED_SECRET — 대상 파일 전부)이 막는다. 처음에는 셋을 한 구역(bootServerClient)으로 옮겨 측정까지 마쳤으나 커밋 훅이 막아 그 구역을 설정에서 빼고 전부 다시 쟀다. 규칙은 고치지 않았다(금고). 이 줄들을 index.html 밖으로 옮기려면 그 규칙의 예외나 키를 두는 자리에 대한 결심이 필요하다.', cannotBecause: 'out-of-scope-feature' },
-    { text: '후보 가운데 둘은 옮기지 않았다. ① 닫기 단추 정의 줄(btnAvLvClose): 앞 주석의 글자를 tests/avatar-10slots-growth.test.js 가 index.html 에서 찾는다 — 모의 적용에서 그 시험이 깨졌다. ② window.SHARED_GROUPS_LOADED 대입 줄: 세포로 가면 모듈 가드의 탭 간 직접 참조가 0 → 1 이 돼 모듈 가드와 시험 넷이 깨졌다. 시험·가드는 고치지 않았다. 풀리는 조건은 finalize-gap.json 에 적었다.', cannotBecause: 'out-of-scope-feature' },
-    { text: 'window.saveGoogleToken 대입 블록은 옮겼다. tests/gcal-login-reconnect-fix.test.js 25행은 index.html 과 세포를 합친 글(접두를 뗀 것)에서 그 글자를 찾으므로 깨지지 않았다(기준과 같은 결과). 이 대입은 등록 기관이 이미 window 에 다는 이름을 한 번 더 다는 줄이다 — 지우는 것은 이 PR 의 몫이 아니다.' },
+    { text: '처음(3c9b9335)의 모의 적용에서 시험·가드에 붙잡혔던 두 문(닫기 단추 btnAvLvClose 정의 줄 · window.SHARED_GROUPS_LOADED 대입 줄)은 #944(시험 단언 넓히기) · #945(모듈 가드의 주인 규칙) 병합 뒤 f227a756 의 모의 적용에서 다시 재니 깨지는 시험·가드가 없어 옮겼다. 이 PR 은 시험·가드를 고치지 않았다.' },
+    { text: 'window.saveGoogleToken 대입 블록은 옮겼다. tests/gcal-login-reconnect-fix.test.js 는 index.html 과 세포를 합친 글에서 그 배선을 찾으므로 깨지지 않았다(기준과 같은 결과). 이 대입은 등록 기관이 이미 window 에 다는 이름을 한 번 더 다는 줄이다 — 지우는 것은 이 PR 의 몫이 아니다.' },
     { text: '구역 본문의 앞 주석(다른 작업의 자리 표지 주석 · 구획 주석 둘 · 빈 줄)이 생성기 규칙(구역 안 주석은 따라간다)으로 세포 본문에 글자 그대로 함께 갔다.' },
     { text: '팀 개설 시나리오(r5)는 게스트가 이 브라우저 안에서만 팀을 만드는 조작이다(서버 연결 객체가 null 이라 서버로 가지 않는다).' },
-    { text: 'state · _promptEncyclopediaOpen 선언과 전문 템플릿 기록 창 조각 함수 여섯은 이 PR 의 대상이 아니다(다른 작업의 몫).', cannotBecause: 'out-of-scope-feature' } ],
+    { text: 'state · _promptEncyclopediaOpen 선언은 이 PR 의 대상이 아니다(아직 var 선언이라 상태 이전이 먼저다 — 임시 사본에서 생성기 unstate 가 둘 다 받는 것까지만 확인했다).', cannotBecause: 'out-of-scope-feature' },
+    { text: '알고 넘어가는 차이: 재철거 2차(#943)가 지운 통로 getter 하나(daysFromNow)를 생성기가 index.html 머리에 다시 달았다(expose 문 3줄 — 구역 본문이 통로로 읽는 이름인데 index.html 에 getter 가 없으면 단다). 값 지문은 같고 통로의 이름 수도 그대로지만, 그 이름의 접근자 종류(data → get)와 주인 표시(comm/sample-data → index.html)가 바뀐다. 다음 재철거가 지운다. 숨기지 않고 주장에 이름 목록으로 적었다.' } ],
   claims };
 fs.writeFileSync(path.join(WORK, R, 'claims.json'), JSON.stringify(out, null, 2) + '\n', { encoding: 'utf8' });
 let errs = null; try { errs = require(path.join(WORK, 'court', 'claims.js')).validateClaims(out, { claimsFile: R + 'claims.json' }); } catch (e) { errs = '검증기 호출 실패: ' + (e && e.message); }

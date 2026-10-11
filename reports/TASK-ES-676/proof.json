@@ -1,6 +1,6 @@
 {
   "task": "TASK-ES-676",
-  "label": "구역 이전 2차 — 남은 로드 시점 문(상태 기관 정의 줄 · window 복사 줄)을 구역 함수로",
+  "label": "구역 이전 2차 — 남은 로드 시점 문(상태 기관 정의 줄 · window 대입 줄)을 구역 함수로",
   "slot": "HO",
   "mode": "region",
   "cells": [
@@ -10,14 +10,21 @@
       "kit": "OurgoalUiHelpers",
       "kitVar": "_uiKit",
       "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
-      "title": "OurGoal Boot State Seeds (앱 시동 — 템플릿 하위 탭 초깃값 · 토큰 저장 함수의 window 손잡이)",
+      "title": "OurGoal Boot State Seeds (앱 시동 — 상태 기관에 맡기는 초깃값: 레벨업 창 닫기 단추 · 템플릿 하위 탭 · 토큰 저장 함수의 window 손잡이)",
       "desc": [
-        "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 복사 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+        "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 대입 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+        "bootAvatarCloseButton — 아바타 레벨업 창의 닫기 단추 요소를 상태 기관에 맡긴다.",
         "bootGoogleTokenSaveHandle — 구글 캘린더 토큰 저장 함수를 window 에 단다.",
         "bootTemplateSubtabFilterState — 템플릿 백과사전 하위 탭의 분류 · 검색어 초깃값을 상태 기관에 맡긴다.",
         "bootTemplateSubtabKindState — 템플릿 백과사전 하위 탭의 영역(개인·루틴·팀) · 종류(AI·실제) 초깃값을 상태 기관에 맡긴다."
       ],
       "regions": [
+        {
+          "name": "bootAvatarCloseButton",
+          "group": "[#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드",
+          "from": "window.OurgoalAppState.define('btnAvLvClose'",
+          "to": "window.OurgoalAppState.define('btnAvLvClose'"
+        },
         {
           "name": "bootGoogleTokenSaveHandle",
           "group": "[#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템",
@@ -42,12 +49,13 @@
       "kit": "OurgoalUiHelpers",
       "kitVar": "_uiKit",
       "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
-      "title": "OurGoal Boot Comm Seeds (앱 시동 — 상태 기관에 맡기는 초깃값: 예시 모임 · 공유 함수 · 피드 캐시)",
+      "title": "OurGoal Boot Comm Seeds (앱 시동 — 상태 기관에 맡기는 초깃값: 예시 모임 · 공유 함수 · 피드 캐시 · 공유 팀 불러옴 표시)",
       "desc": [
-        "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 복사 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+        "앱이 뜰 때 한 번 도는 상태 정의 줄과 window 대입 줄을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
         "bootSampleGroups — 예시 모임 목록(배열)을 상태 기관에 MOCK_GROUPS 로 맡긴다.",
         "bootShareHandle — 공유 엔진에 넘기는 공유 함수를 상태 기관에 shareContent 로 맡기고 window 에도 단다.",
-        "bootFeedCacheState — 소통 피드 캐시의 초깃값(아직 안 불러옴 = null)을 상태 기관에 맡긴다."
+        "bootFeedCacheState — 소통 피드 캐시의 초깃값(아직 안 불러옴 = null)을 상태 기관에 맡긴다.",
+        "bootSharedGroupsFlag — 공유 팀을 아직 불러오지 않았다는 표시(false)를 window 에 단다."
       ],
       "regions": [
         {
@@ -65,6 +73,12 @@
         {
           "name": "bootFeedCacheState",
           "group": "소통 피드 (Supabase feed_posts, 실시간 동기화)"
+        },
+        {
+          "name": "bootSharedGroupsFlag",
+          "group": "전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)",
+          "from": "if(typeof window !== 'undefined'){ window.SHARED_GROUPS_LOADED",
+          "to": "if(typeof window !== 'undefined'){ window.SHARED_GROUPS_LOADED"
         }
       ]
     }

@@ -64,13 +64,10 @@ for (const st of top) {
 const SERVER_KEY = '공개 키 글자가 든 선언 줄을 새 파일에 더하는 커밋을 금지 패턴 규칙(docs/rules/rules.json 의 HARDCODED_SECRET — 대상 파일 전부, 금고)이 막는다(이 작업에서 커밋 훅이 실제로 막았다). 서버 주소 · 공개 키 선언과 그 둘을 읽는 sb 정의 줄은 한 묶음이라 셋 다 제자리에 뒀다 — 그 규칙에 이 줄의 예외를 두거나 키를 두는 자리를 따로 정하는 결심(규범 변경)이 있어야 구역으로 옮길 수 있다';
 const PIN = {
   SUPABASE_URL: SERVER_KEY, SUPABASE_ANON_KEY: SERVER_KEY, sb: SERVER_KEY,
-  state: 'IIFE 에 남은 함수 넷이 맨이름으로 읽는다(#TASK-ES-673 의 state-bare-refs.json) — 그 함수들이 세포로 옮겨진 뒤 상태 이전(unstate), 그다음 정의 줄을 구역으로',
-  _promptEncyclopediaOpen: '무결성 게이트(scripts/verify-integrity-gate.js)가 index.html 에서 선언 글자를 찾는다 — 그 단언을 넓히는 PR 뒤 상태 이전(unstate), 그다음 정의 줄을 구역으로',
-  btnAvLvClose: '이 문의 앞 주석 글자(filterHarmfulWords)를 tests/avatar-10slots-growth.test.js 가 index.html 에서 찾는다. 구역으로 옮기면 앞 주석이 따라가 그 글자가 index.html 에서 사라진다(모의 적용에서 그 시험이 깨졌다) — 그 시험이 합본을 읽게 되면 구역으로',
-  SHARED_GROUPS_LOADED: '모듈 가드의 탭 간 직접 참조 규칙이 index.html 인라인이 window 에 다는 이름을 인라인 소유로 본다. 이 줄이 세포로 가면 탭 간 참조가 0 → 1 이 돼 모듈 가드와 시험 넷이 깨진다(모의 적용에서 확인) — 그 규칙이 부팅 세포를 인라인 소유로 보게 고쳐지면 구역으로' };
+  state: '상태 이전(unstate) 대상이다 — 이 이름을 맨이름으로 읽던 함수들이 세포로 갔다(#949). 상태 이전으로 정의 줄이 되면 그 줄을 구역으로 옮긴다',
+  _promptEncyclopediaOpen: '상태 이전(unstate) 대상이다 — 무결성 게이트가 인라인 안 상태 기관 호출도 보게 됐다(#948). 상태 이전으로 정의 줄이 되면 그 줄을 구역으로 옮긴다' };
 for (const r of rows) {
   if (r.kind === 'stateVar' || r.kind === 'define') r.why = PIN[r.name] || null;
-  if (r.kind === 'ifStmt') r.why = /SHARED_GROUPS_LOADED/.test(r.text) ? PIN.SHARED_GROUPS_LOADED : null;
 }
 const byKind = Object.keys(KINDS).map(k => { const rs = rows.filter(r => r.kind === k); return { kind: k, label: KINDS[k].label, allowedByFinalize: KINDS[k].allowed, statements: rs.length, lines: rs.reduce((a, r) => a + r.lines, 0), unlock: KINDS[k].unlock || (rs.some(r => r.why) ? '문마다 다르다 — items 의 why' : null),
   items: KINDS[k].allowed || k === 'otherImport' ? undefined : rs.map(r => ({ line: r.line, lines: r.lines, name: r.name, text: r.text, why: r.why || undefined })) }; }).filter(x => x.statements > 0);
@@ -85,12 +82,20 @@ try {
   const txt = ((r.stderr || '') + '\n' + (r.stdout || '')).split('\n').map(x => x.trim()).filter(Boolean);
   gen = { exitCode: r.status, message: (txt.find(x => /finalize|전제/.test(x)) || txt[0] || '').slice(0, 900), wroteBootFile: fs.existsSync(path.join(tmp, 'js', 'app', 'boot.js')) };
 } finally { try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* 임시 폴더 정리 실패는 결과에 영향 없음 */ } }
+const unstatePreview = {};
+{ const tmp2 = fs.mkdtempSync(path.join(os.tmpdir(), 'finalize-gap-676-u-'));
+  try { for (const r of rows.filter(x => x.kind === 'stateVar')) { fs.copyFileSync(path.join(TREE, 'index.html'), path.join(tmp2, 'index.html')); const c = path.join(tmp2, 'cfg.json');
+      fs.writeFileSync(c, JSON.stringify({ task: 'TASK-ES-676', slot: 'HO', mode: 'unstate', cells: [{ file: 'js/core/app-state.js' }], unstate: { names: [r.name] } }), { encoding: 'utf8' });
+      const q = cp.spawnSync(process.execPath, [path.join(TREE, 'docs', 'design', 'harness', 'module-split', 'gen-inline-hard.js'), tmp2, c], { cwd: TREE, encoding: 'utf8', env: Object.assign({}, process.env, { MODULE_SPLIT_OUT: tmp2 }) });
+      const lines2 = ((q.status === 0 ? q.stdout : q.stderr) || '').split('\n').map(x => x.trim()).filter(Boolean);
+      unstatePreview[r.name] = { movable: q.status === 0, generatorSays: (q.status === 0 ? lines2[0] : (lines2.find(x => /^Error:/.test(x)) || lines2[0] || '')).slice(0, 220) }; } }
+  finally { try { fs.rmSync(tmp2, { recursive: true, force: true }); } catch (_) { /* 임시 폴더 정리 실패는 결과에 영향 없음 */ } } }
 const blocking = byKind.filter(x => !x.allowedByFinalize), allowed = byKind.filter(x => x.allowedByFinalize);
 const unusedHandles = [...handles].filter(([, h]) => h.uses === 0).map(([n]) => n);
 const out = { tool: 'reports/TASK-ES-676/tools/finalize-gap-676.cjs', type: '작업자 측정, 판정 아님', measuredAt: new Date().toISOString(), iifeHtmlLines: [s + 1, e], topStatements: rows.length,
   generator: gen, totals: { allowedStatements: allowed.reduce((a, x) => a + x.statements, 0), allowedLines: allowed.reduce((a, x) => a + x.lines, 0), blockingStatements: blocking.reduce((a, x) => a + x.statements, 0), blockingLines: blocking.reduce((a, x) => a + x.lines, 0) },
-  byKind, otherImports: { count: rows.filter(r => r.kind === 'otherImport').length, withNoReferenceLeft: [...imports].filter(([, im]) => im.topCalls === 0 && im.otherRefs === 0).map(([n]) => n), note: 'withNoReferenceLeft = IIFE 안에서 더는 아무도 쓰지 않는 가져오기 이름(재철거가 바로 지울 수 있는 것 — 등록 여부는 재철거가 본다)' }, unusedHandles,
+  byKind, unstatePreview, otherImports: { count: rows.filter(r => r.kind === 'otherImport').length, withNoReferenceLeft: [...imports].filter(([, im]) => im.topCalls === 0 && im.otherRefs === 0).map(([n]) => n), note: 'withNoReferenceLeft = IIFE 안에서 더는 아무도 쓰지 않는 가져오기 이름(재철거가 바로 지울 수 있는 것 — 등록 여부는 재철거가 본다)' }, unusedHandles,
   note: '줄 번호는 이 트리의 index.html 기준이다(main 이 움직이면 바뀐다). 줄 수는 문이 차지하는 줄만 센 것이고 주석·빈 줄은 뺐다(sweep 이 지운다).' };
 fs.mkdirSync(path.dirname(path.resolve(OUT)), { recursive: true });
 fs.writeFileSync(path.resolve(OUT), JSON.stringify(out, null, 1) + '\n', { encoding: 'utf8' });
-console.log(JSON.stringify({ top: out.topStatements, totals: out.totals, byKind: byKind.map(x => [x.label, x.statements, x.lines]), gen, noRef: out.otherImports.withNoReferenceLeft.length, unusedHandles }));
+console.log(JSON.stringify({ unstatePreview, top: out.topStatements, totals: out.totals, byKind: byKind.map(x => [x.label, x.statements, x.lines]), gen, noRef: out.otherImports.withNoReferenceLeft.length, unusedHandles }));

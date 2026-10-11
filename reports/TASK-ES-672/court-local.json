@@ -1,0 +1,1011 @@
+{
+ "tool": "node court/judge.js --repo . --head HEAD --out <임시 폴더> (법정 코드를 읽기만 쓴 작업자 PC 실행 — --quick 없이 화면 시나리오 포함)",
+ "type": "작업자 PC 에서 실행한 예비 점검 — 판정이 아니다. 판정은 GitHub 법정만 낸다",
+ "judgeExitCode": 3,
+ "ranToEnd": true,
+ "head": {
+  "sha": "e8c77635900e5544fefbb45142262c341fd9eef6"
+ },
+ "base": {
+  "sha": "d86d836668bef13269fdf2f472d5142c6f2759a4"
+ },
+ "baseSource": "merge-base",
+ "verdictId": "302FDA7F",
+ "verdict": "확인 부족",
+ "headline": "작업자가 적어 낸 지시 항목 10건 중 2건은 필요한 수준까지 확인하지 못했습니다",
+ "todo": "배포를 결정하실 수 있습니다. 다만 확인 못 한 채 나가는 것이 있습니다: R9 로그인한 사용자의 저장 뒤 서버 동기화 · 구글 캘린더 자동 동기화 · Notion 자동 전송 경로가 이전 … — 확인 못 함(법정 도구 한계) · 필요한 확인: PC 화면에서 눌러 봄 / R10 사진 첨부(인증 사진 고르기)와 AI 사진 인식 결과를 표에 넣는 길이 이전 전과 같다. — 확인 못 함(법정 도구 한계) · 필요한 확인: PC 화면에서 눌러 봄 / 법정 도구 한계로 못 잰 것 2건(로그인 뒤 화면 1 · 파일 첨부 1) — 이 사유는 작업자가 적은 것이며 법정이 맞는지 확인한 것은 아닙니다",
+ "note": "같은 커밋으로 두 번 돌렸다. 첫 실행은 주장 심사 도중(C3 근처) 종료 코드 127 로 끝나 판정이 나오지 않았다(「실행 중 종료」 판정서만 남음 — 왜 끝났는지는 확인하지 못했다). 이 기록은 끝까지 돈 둘째 실행의 것이다.",
+ "recomputeSplitDirect": {
+  "tool": "court/lib/preserve-source.js recomputeSplit({repoDir, baseSha, headSha, config: proof.json, changedFiles}) — mockOverrides 없이 실제 커밋 대상",
+  "type": "작업자 PC 예비 점검 — 판정 아님",
+  "base": "d86d836668bef13269fdf2f472d5142c6f2759a4",
+  "head": "e8c77635900e5544fefbb45142262c341fd9eef6",
+  "changedFiles": 70,
+  "ok": true,
+  "result": {
+   "ok": true,
+   "details": {
+    "checkedFiles": [
+     {
+      "file": "index.html",
+      "genLength": 275454,
+      "headLength": 275454
+     },
+     {
+      "file": "js/tabs/records/pro-record-modal.js",
+      "genLength": 14528,
+      "headLength": 14528
+     },
+     {
+      "file": "js/tabs/records/pro-record-table.js",
+      "genLength": 5047,
+      "headLength": 5047
+     },
+     {
+      "file": "js/tabs/records/pro-record-tools.js",
+      "genLength": 12834,
+      "headLength": 12834
+     },
+     {
+      "file": "js/tabs/records/pro-record-trend-chart.js",
+      "genLength": 4262,
+      "headLength": 4262
+     },
+     {
+      "file": "js/tabs/records/pro-record-stopwatch.js",
+      "genLength": 11908,
+      "headLength": 11908
+     },
+     {
+      "file": "js/tabs/records/pro-record-save.js",
+      "genLength": 10545,
+      "headLength": 10545
+     }
+    ]
+   }
+  }
+ },
+ "coverage": {
+  "productFiles": 7,
+  "claimed": 7,
+  "unclaimed": []
+ },
+ "vaultViolations": [],
+ "vaultNeedsDecision": false,
+ "findings": [
+  {
+   "severity": "warn",
+   "title": "이 작업이 만든 검사 스크립트 18개",
+   "text": "그 출력은 증거로 인정하지 않는다: reports/TASK-ES-672/tools/accessor-probe.cjs, reports/TASK-ES-672/tools/build-claims.cjs, reports/TASK-ES-672/tools/cell-descriptions-add.cjs, reports/TASK-ES-672/tools/court-local.cjs, reports/TASK-ES-672/tools/csv-download-probe.cjs, reports/TASK-ES-672/tools/expose-window.cjs, reports/TASK-ES-672/tools/measure.cjs, reports/TASK-ES-672/tools/module-load.cjs, reports/TASK-ES-6"
+  }
+ ],
+ "notChecked": [],
+ "envSensitive": [],
+ "rollup": {
+  "total": 10,
+  "counts": {
+   "동작 보존 확인": 6,
+   "글자만 확인(이 종류는 그걸로 충분)": 2,
+   "확인 못 함": 2
+  },
+  "reqs": [
+   {
+    "id": "R1",
+    "bucket": "동작 보존 확인",
+    "note": null,
+    "floor": "L3",
+    "claims": [
+     "C1",
+     "C2"
+    ]
+   },
+   {
+    "id": "R2",
+    "bucket": "동작 보존 확인",
+    "note": null,
+    "floor": "L3",
+    "claims": [
+     "C3",
+     "C4"
+    ]
+   },
+   {
+    "id": "R3",
+    "bucket": "동작 보존 확인",
+    "note": null,
+    "floor": "L3",
+    "claims": [
+     "C5",
+     "C6",
+     "C7",
+     "C8",
+     "C9"
+    ]
+   },
+   {
+    "id": "R4",
+    "bucket": "동작 보존 확인",
+    "note": null,
+    "floor": "L3",
+    "claims": [
+     "C10"
+    ]
+   },
+   {
+    "id": "R5",
+    "bucket": "동작 보존 확인",
+    "note": null,
+    "floor": "L3",
+    "claims": [
+     "C11",
+     "C12",
+     "C13"
+    ]
+   },
+   {
+    "id": "R6",
+    "bucket": "동작 보존 확인",
+    "note": null,
+    "floor": "L3",
+    "claims": [
+     "C14",
+     "C15"
+    ]
+   },
+   {
+    "id": "R7",
+    "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+    "note": null,
+    "floor": "L1",
+    "claims": [
+     "C16",
+     "C17",
+     "C18",
+     "C19",
+     "C20",
+     "C21",
+     "C22",
+     "C23",
+     "C24",
+     "C25",
+     "C26",
+     "C27",
+     "C28",
+     "C29",
+     "C30",
+     "C31",
+     "C32"
+    ]
+   },
+   {
+    "id": "R8",
+    "bucket": "글자만 확인(이 종류는 그걸로 충분)",
+    "note": null,
+    "floor": "L1",
+    "claims": [
+     "C33",
+     "C34",
+     "C35"
+    ]
+   },
+   {
+    "id": "R9",
+    "bucket": "확인 못 함",
+    "note": "법정 도구 한계",
+    "floor": "L3",
+    "claims": [
+     "C36"
+    ]
+   },
+   {
+    "id": "R10",
+    "bucket": "확인 못 함",
+    "note": "법정 도구 한계",
+    "floor": "L3",
+    "claims": [
+     "C37"
+    ]
+   }
+  ]
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 14
+     }
+    }
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 15
+     }
+    }
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 21
+     }
+    }
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 26
+     }
+    }
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 15
+     }
+    }
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 23
+     }
+    }
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 26
+     }
+    }
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 15
+     }
+    }
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 18
+     }
+    }
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R4",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 15
+     }
+    }
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 30
+     }
+    }
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 25
+     }
+    }
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 24
+     }
+    }
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R6",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 22
+     }
+    }
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R6",
+   "kind": "behavior",
+   "change": "preserve",
+   "outcome": "보존됨",
+   "achieved": "L3",
+   "floor": "L3",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": [
+    "동작 보존 확인: 기준 커밋(2회) 및 작업 커밋(1회) 모두 시나리오를 통과하고 행동을 증명했으며, 분열 전후 토큰·DOM·스토리지 무결성이 입증됨"
+   ],
+   "scenario": {
+    "head": {
+     "passed": true,
+     "provesBehavior": true,
+     "exceptions": 0
+    },
+    "base": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true
+    },
+    "splitProof": {
+     "ok": true,
+     "details": {
+      "stepsEvaluated": 31
+     }
+    }
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C17",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C18",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C19",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C20",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C21",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C22",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C23",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C24",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C25",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C26",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C27",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C28",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C29",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C30",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C31",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C32",
+   "req": "R7",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C33",
+   "req": "R8",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C34",
+   "req": "R8",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C35",
+   "req": "R8",
+   "kind": "static",
+   "change": null,
+   "outcome": "글자만 확인",
+   "achieved": "L1",
+   "floor": "L1",
+   "meetsFloor": true,
+   "toolLimit": null,
+   "notes": []
+  },
+  {
+   "id": "C36",
+   "req": "R9",
+   "kind": "unverified",
+   "change": null,
+   "outcome": "확인 못 함",
+   "achieved": "L0",
+   "floor": "L3",
+   "meetsFloor": false,
+   "toolLimit": "needs-login",
+   "notes": [
+    "법정 도구 한계로 못 잰 것: 로그인한 뒤에만 보이는 화면이다(법정은 외부 통신을 막아 로그인할 수 없다)"
+   ]
+  },
+  {
+   "id": "C37",
+   "req": "R10",
+   "kind": "unverified",
+   "change": null,
+   "outcome": "확인 못 함",
+   "achieved": "L0",
+   "floor": "L3",
+   "meetsFloor": false,
+   "toolLimit": "file-attach",
+   "notes": [
+    "법정 도구 한계로 못 잰 것: 파일·사진을 골라 붙이는 동작이다"
+   ]
+  }
+ ],
+ "reheard": 0,
+ "claimBudget": {
+  "budgetMs": 1500000,
+  "timeShort": []
+ }
+}

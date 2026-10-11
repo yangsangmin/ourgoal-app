@@ -57,9 +57,12 @@ if (MAP.source && MAP.source.sha256_12 && MAP.source.sha256_12 !== sha) {
 const lines = html.split('\n');
 let sLine = -1, eLine = -1;
 for (let i = 0; i < lines.length; i++) if (lines[i].trim() === '<script>' && (lines[i + 1] || '').trim() === '(function(){' && (lines[i + 2] || '').includes('"use strict"')) { sLine = i + 1; break; }
-for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }
+// #TASK-ES-668: 큰 인라인 IIFE 가 없으면(덩어리를 다 비운 뒤) 오류로 죽지 않고 「어려움 0묶음 · 0줄」 을 낸다 — 문이 하나도 없는 빈 IIFE 를 읽은 것으로 본다.
+// 지도(inline-script-map.json)가 그 index.html 로 다시 쓰여 있어야 하는 것은 그대로다(위 sha 대조). IIFE 가 있으면 예전과 글자 하나 다르지 않게 돈다.
+const NO_IIFE = sLine < 0;
+if (!NO_IIFE) for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }
 const off = sLine;
-const ast = parser.parse(lines.slice(sLine, eLine).join('\n'), { sourceType: 'script', ranges: true });
+const ast = parser.parse(NO_IIFE ? '(function(){\n"use strict";\n})();' : lines.slice(sLine, eLine).join('\n'), { sourceType: 'script', ranges: true });
 let iife = null;
 traverse(ast, { FunctionExpression(p) { if (!iife) iife = p; } });
 const iScope = iife.scope;
@@ -261,6 +264,7 @@ if (WRITE) {
     fs.writeFileSync(DESIGN_MD, d.replace(re, '<!-- hard-types:begin -->\n' + mdText + '\n<!-- hard-types:end -->'), 'utf8');
   }
 }
+if (NO_IIFE) console.log('큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다)');
 console.log('어려움 ' + out.hard.groups + '묶음 ' + out.hard.lines + '줄 · 출처 ' + sha);
 for (const x of byType) console.log(x.type.padEnd(3), String(x.groups).padStart(3), '묶음', String(x.lines).padStart(6), '줄', x.label);
 console.log('단계', out.stages.map(s => s.stage + ':' + s.groups + '/' + s.lines).join(' '));

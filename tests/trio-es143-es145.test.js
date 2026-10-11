@@ -47,7 +47,7 @@ test('#TASK-ES-144 프로필 편집 4종 정상화 및 계정 게스트 오표�
 
   // [74] 관심 카테고리
   assert.ok(indexHtml.includes('id="pvInterests"'), '관심 카테고리 컨테이너(#pvInterests)가 존재해야 함');
-  assert.ok(indexHtml.includes('b.classList.add(\'active\')') || indexHtml.includes('b.classList.remove(\'active\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함');
+  assert.ok(require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('b.classList.add(\'active\')') || require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('b.classList.remove(\'active\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함'); /* #TASK-ES-666 index.html 에 있거나 옮겨 간 세포 파일에 있다(인라인 합본 — tests/helpers/inline-bundle.js) — 검사 수·기대값 그대로 */
 
   // [75] 지역공개 토글
   assert.ok(indexHtml.includes('id="pvRegionPublic"'), '지역공개 토글 스위치(#pvRegionPublic)가 존재해야 함');

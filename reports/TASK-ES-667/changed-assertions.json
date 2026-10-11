@@ -1,0 +1,734 @@
+{
+ "tool": "reports/TASK-ES-620/changed-assertions.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T09:43:48.215Z",
+ "base": "42b5511f",
+ "changed": [
+  {
+   "file": "scripts/module-metrics.js",
+   "lineBefore": 191,
+   "lineAfter": 230,
+   "kind": "그 밖",
+   "name": null,
+   "from": null,
+   "legacyText": null,
+   "legacyTextKept": false,
+   "before": "const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s));",
+   "after": "const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s) && !organOwned.has(s));",
+   "assertion": null,
+   "check": null
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "lineBefore": 423,
+   "lineAfter": 462,
+   "kind": "그 밖",
+   "name": null,
+   "from": null,
+   "legacyText": null,
+   "legacyTextKept": false,
+   "before": "module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, MAX_LINES };",
+   "after": "module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, organWindowSymbols, stripJsComments, MAX_LINES };",
+   "assertion": null,
+   "check": null
+  }
+ ],
+ "additions": [
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 176,
+   "text": "// #TASK-ES-667: 부팅 파일(js/app/boot.js)과 js/core 기관 파일이 window·global·globalThis 에 「무조건」 다는 이름도 인라인과 같은 지위(탭 밖의 주인)다."
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 177,
+   "text": "// 인라인 IIFE 의 시동 문이 js/core 구역 세포·부팅 파일로 옮겨 가도 같은 이름이 같은 주인으로 세어지게 한다(옮기기만 했는데 ⑤ 가 늘어나는 오탐을 막는다)."
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 178,
+   "text": "// 인라인과 달리 방어 초기화 두 꼴(isGuardedInit — 「없으면 채우는」 것)은 주인으로 세지 않는다: 기관이 남이 정의한 전역을 비어 있을 때 채우는 것은 정의가 아니다."
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 179,
+   "text": "// 범위는 js/core 바로 아래 파일과 js/app/boot.js 뿐이다(js/ 바로 아래 옛 파일·js/core 하위 폴더·탭 파일은 아니다)."
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 180,
+   "text": "// 주석을 걷어낸다(문자열 안의 글자는 그대로 둔다. 줄 수는 그대로다). organWindowSymbols 전용 — 코드와 같은 줄에 있는 주석 속의 `window.X =` 글자를 주인으로 세지 않기 위한 것이다."
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 181,
+   "text": "// 정규식 리터럴은 따로 가리지 않는다: 그 안의 `//` 를 주석으로 보면 그 줄의 뒷부분이 지워질 뿐이라, 주인으로 세는 이름이 줄어드는 쪽(가드가 더 엄한 쪽)으로만 틀린다."
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 182,
+   "text": "function stripJsComments(text) {"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 183,
+   "text": "let out = '';"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 184,
+   "text": "const n = text.length;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 185,
+   "text": "for (let i = 0; i < n;) {"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 186,
+   "text": "const c = text[i], d = text[i + 1];"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 187,
+   "text": "if (c === '/' && d === '/') { while (i < n && text[i] !== '\\n') i++; continue; }"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 188,
+   "text": "if (c === '/' && d === '*') { i += 2; while (i < n && !(text[i] === '*' && text[i + 1] === '/')) { if (text[i] === '\\n') out += '\\n'; i++; } i += 2; continue; }"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 189,
+   "text": "if (c === '\"' || c === \"'\" || c === '`') {"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 190,
+   "text": "out += c; i++;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 191,
+   "text": "while (i < n && text[i] !== c) { if (text[i] === '\\\\' && i + 1 < n) { out += text[i] + text[i + 1]; i += 2; continue; } if (c !== '`' && text[i] === '\\n') break; out += text[i]; i++; }"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 192,
+   "text": "if (i < n && text[i] === c) { out += c; i++; }"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 193,
+   "text": "continue;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 194,
+   "text": "}"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 195,
+   "text": "out += c; i++;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 196,
+   "text": "}"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 197,
+   "text": "return out;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 198,
+   "text": "}"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 199,
+   "text": ""
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 200,
+   "text": "function organWindowSymbols(root) {"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 201,
+   "text": "const names = new Set();"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 202,
+   "text": "const files = listJs(root, 'js/core').filter(f => f.split('/').length === 3);"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 203,
+   "text": "if (fs.existsSync(path.join(root, 'js', 'app', 'boot.js'))) files.push('js/app/boot.js');"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 204,
+   "text": "for (const f of files) {"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 205,
+   "text": "const t = stripJsComments(readText(path.join(root, f)));"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 206,
+   "text": "const re = /\\b(?:global|window|globalThis)\\s*\\.\\s*([A-Za-z_$][\\w$]*)\\s*=(?![=>])/g;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 207,
+   "text": "let m;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 208,
+   "text": "while ((m = re.exec(t))) { if (!isGuardedInit(t, m.index, m[0].length, m[1])) names.add(m[1]); }"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 209,
+   "text": "}"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 210,
+   "text": "return names;"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 211,
+   "text": "}"
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 212,
+   "text": ""
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 226,
+   "text": "// #TASK-ES-667: 부팅 파일·js/core 기관이 무조건 다는 이름도 같은 지위다(위 organWindowSymbols)."
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "line": 227,
+   "text": "const organOwned = organWindowSymbols(root);"
+  },
+  {
+   "file": "scripts/test-shipyard-modular.js",
+   "line": 156,
+   "text": "// #TASK-ES-667 모듈 가드 ⑤ 의 주인 규칙(인라인 · 부팅 파일 · js/core 기관) — 오탐 사례 0건과 진짜 사례 1건을 함께 고정한다(임시 폴더의 가짜 트리에 실제 crossTabRefs 를 돌린다)"
+  },
+  {
+   "file": "scripts/test-shipyard-modular.js",
+   "line": 157,
+   "text": "runNode('tests/cross-tab-inline-owned-es507.test.js');"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 70,
+   "text": "// ---- #TASK-ES-667: 부팅 파일(js/app/boot.js)·js/core 기관이 「무조건」 다는 이름도 인라인과 같은 지위다(인라인이 비워져도 같은 주인) ----"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 71,
+   "text": "//  · 오탐 사례: 인라인 IIFE 가 없는 index.html 에서, js/core 구역 세포(또는 부팅 파일)가 window.FLAG 를 만들고 comm 이 바꿔 쓰고 goals 가 읽어도 0건."
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 72,
+   "text": "//  · 진짜 사례(여전히 잡힌다): 기관이 그 이름을 읽기만 한다 · 기관이 방어 초기화(없으면 채우기)만 한다 · js/ 바로 아래 옛 파일이나 js/core 하위 폴더가 단다 ·"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 73,
+   "text": "//    기관에 없는 새 전역을 comm 이 정의한다."
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 74,
+   "text": "const INDEX_NO_IIFE = '<!doctype html><html><body>\\n<script src=\"js/core/boot-x.js\"></script><script src=\"js/tabs/comm/a.js\"></script><script src=\"js/app/boot.js\"></script>\\n</body></html>\\n';"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 75,
+   "text": "const COMM_WRITES = \"(function(){ var L = {}; L.FLAG = true; if(typeof window !== 'undefined'){ window.FLAG = true; } })();\\n\";"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 76,
+   "text": "const GOALS_READS = \"(function(){ if(!window.FLAG){ return 1; } })();\\n\";"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 77,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 78,
+   "text": "check('#667 기관이 무조건 다는 이름을 모은다(방어 초기화 두 꼴과 주석 줄은 뺀다)', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 79,
+   "text": "const root = fixture({"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 80,
+   "text": "'index.html': INDEX_NO_IIFE,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 81,
+   "text": "'js/core/boot-x.js': \"(function(global){\\n  function bootX(){ if(typeof window !== 'undefined'){ window.FLAG = false; } }\\n  if(!window.GUARDED) window.GUARDED = [];\\n  window.OR_FILLED = window.OR_FILLED || {};\\n  // window.IN_COMMENT = 1;\\n  global.ALIAS_SET = 1;\\n})(window);\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 82,
+   "text": "'js/app/boot.js': \"(function(){ window.BOOT_SET = 1; })();\\n\""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 83,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 84,
+   "text": "const names = metrics.organWindowSymbols(root);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 85,
+   "text": "assert.ok(names.has('FLAG') && names.has('ALIAS_SET') && names.has('BOOT_SET'));"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 86,
+   "text": "assert.ok(!names.has('GUARDED') && !names.has('OR_FILLED') && !names.has('IN_COMMENT'));"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 87,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 88,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 89,
+   "text": "check('#667 오탐: 인라인이 비워지고 js/core 구역 세포가 다는 이름을 comm 이 바꿔 쓰고 goals 가 읽어도 0건', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 90,
+   "text": "const root = fixture({"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 91,
+   "text": "'index.html': INDEX_NO_IIFE,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 92,
+   "text": "'js/core/boot-x.js': \"(function(){ function bootX(){ if(typeof window !== 'undefined'){ window.FLAG = false; } } })();\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 93,
+   "text": "'js/tabs/comm/a.js': COMM_WRITES,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 94,
+   "text": "'js/tabs/goals/b.js': GOALS_READS"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 95,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 96,
+   "text": "assert.strictEqual(metrics.inlineWindowSymbols(root).has('FLAG'), false, '시험 전제: 인라인에는 그 이름이 없다');"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 97,
+   "text": "assert.strictEqual(metrics.crossTabRefs(root).length, 0);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 98,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 99,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 100,
+   "text": "check('#667 오탐: 부팅 파일 js/app/boot.js 가 다는 이름도 같다(0건)', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 101,
+   "text": "const root = fixture({"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 102,
+   "text": "'index.html': INDEX_NO_IIFE,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 103,
+   "text": "'js/app/boot.js': \"(function(){ window.FLAG = false; })();\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 104,
+   "text": "'js/tabs/comm/a.js': COMM_WRITES,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 105,
+   "text": "'js/tabs/goals/b.js': GOALS_READS"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 106,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 107,
+   "text": "assert.strictEqual(metrics.crossTabRefs(root).length, 0);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 108,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 109,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 110,
+   "text": "check('#667 대조: 그 기관 줄을 지우면 같은 꼴이 1건으로 잡힌다(규칙이 그 줄을 보고 있다)', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 111,
+   "text": "const root = fixture({"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 112,
+   "text": "'index.html': INDEX_NO_IIFE,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 113,
+   "text": "'js/core/boot-x.js': \"(function(){ function bootX(){ return 1; } })();\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 114,
+   "text": "'js/tabs/comm/a.js': COMM_WRITES,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 115,
+   "text": "'js/tabs/goals/b.js': GOALS_READS"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 116,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 117,
+   "text": "const hits = metrics.crossTabRefs(root);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 118,
+   "text": "assert.strictEqual(hits.length, 1);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 119,
+   "text": "assert.strictEqual(hits[0].from, 'goals');"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 120,
+   "text": "assert.strictEqual(hits[0].to, 'comm');"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 121,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 122,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 123,
+   "text": "check('#667 진짜: 기관이 읽기만 하거나 방어 초기화만 하면 주인이 아니다 — 1건', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 124,
+   "text": "for (const core of [\"(function(){ if(window.FLAG === true){ return 1; } var x = window.FLAG; })();\\n\", \"(function(){ if(!window.FLAG) window.FLAG = false; })();\\n\", \"(function(){ window.FLAG = window.FLAG || false; })();\\n\", \"(function(){ /* window.FLAG = false; */\\n  // window.FLAG = false;\\n })();"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 125,
+   "text": "const root = fixture({ 'index.html': INDEX_NO_IIFE, 'js/core/boot-x.js': core, 'js/tabs/comm/a.js': COMM_WRITES, 'js/tabs/goals/b.js': GOALS_READS });"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 126,
+   "text": "assert.strictEqual(metrics.crossTabRefs(root).length, 1, core);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 127,
+   "text": "}"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 128,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 129,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 130,
+   "text": "check('#667 진짜: js/ 바로 아래 옛 파일·js/core 하위 폴더·js/app 의 다른 파일이 다는 이름은 기관의 것이 아니다 — 1건', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 131,
+   "text": "for (const rel of ['js/legacy-thing.js', 'js/core/sub/deep.js', 'js/app/other.js', 'js/tabs/home/c.js']) {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 132,
+   "text": "const root = fixture({ 'index.html': INDEX_NO_IIFE, [rel]: \"(function(){ window.FLAG = false; })();\\n\", 'js/tabs/comm/a.js': COMM_WRITES, 'js/tabs/goals/b.js': GOALS_READS });"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 133,
+   "text": "assert.ok(metrics.crossTabRefs(root).length >= 1, rel);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 134,
+   "text": "assert.strictEqual(metrics.organWindowSymbols(root).has('FLAG'), false, rel);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 135,
+   "text": "}"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 136,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 137,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 138,
+   "text": "check('#667 진짜: 기관 주인 이름이 있어도, 기관에 없는 새 전역을 comm 이 정의하고 goals 가 쓰면 1건', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 139,
+   "text": "const root = fixture({"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 140,
+   "text": "'index.html': INDEX_NO_IIFE,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 141,
+   "text": "'js/core/boot-x.js': \"(function(){ window.FLAG = false; })();\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 142,
+   "text": "'js/tabs/comm/a.js': \"(function(){ window.FLAG = true; window.openCommThing = function(){ return 1; }; })();\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 143,
+   "text": "'js/tabs/goals/b.js': \"(function(){ if(!window.FLAG){ openCommThing(); } })();\\n\""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 144,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 145,
+   "text": "const hits = metrics.crossTabRefs(root);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 146,
+   "text": "assert.strictEqual(hits.length, 1);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 147,
+   "text": "assert.ok(/openCommThing/.test(hits[0].text));"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 148,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 149,
+   "text": ""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 150,
+   "text": "check('#667 진짜: 탭 키트 이름(Ourgoal<탭>…)·탭 경로 참조는 기관이 같은 이름을 달아도 여전히 잡힌다', () => {"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 151,
+   "text": "const root = fixture({"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 152,
+   "text": "'index.html': INDEX_NO_IIFE,"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 153,
+   "text": "'js/core/boot-x.js': \"(function(){ window.OurgoalCommKit = {}; })();\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 154,
+   "text": "'js/tabs/comm/a.js': \"(function(global){ global.OurgoalCommKit = global.OurgoalCommKit || {}; })(window);\\n\","
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 155,
+   "text": "'js/tabs/goals/b.js': \"(function(){ var k = window.OurgoalCommKit; })();\\n\""
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 156,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 157,
+   "text": "assert.strictEqual(metrics.crossTabRefs(root).length, 1);"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 158,
+   "text": "});"
+  },
+  {
+   "file": "tests/cross-tab-inline-owned-es507.test.js",
+   "line": 159,
+   "text": ""
+  }
+ ],
+ "removedOnly": [],
+ "newFiles": [],
+ "summary": {
+  "changedLines": 2,
+  "byFile": {
+   "scripts/module-metrics.js": 2
+  },
+  "names": [
+   null
+  ],
+  "nameCount": 1,
+  "legacyTextKeptAll": false,
+  "kinds": {
+   "그 밖": 2
+  },
+  "checks": 0,
+  "additions": 131,
+  "removedOnly": 0,
+  "newFiles": [],
+  "legacyTextKeptAllByLiterals": true
+ },
+ "rows666": [
+  {
+   "file": "scripts/module-metrics.js",
+   "lineBefore": 191,
+   "lineAfter": 230,
+   "check": null,
+   "before": "const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s));",
+   "after": "const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s) && !organOwned.has(s));",
+   "legacyTextKept": true
+  },
+  {
+   "file": "scripts/module-metrics.js",
+   "lineBefore": 423,
+   "lineAfter": 462,
+   "check": null,
+   "before": "module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, MAX_LINES };",
+   "after": "module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, organWindowSymbols, stripJsComments, MAX_LINES };",
+   "legacyTextKept": true
+  }
+ ]
+}

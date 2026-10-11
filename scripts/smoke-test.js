@@ -245,6 +245,9 @@ const INLINE_CELLS_SRC = require('../tests/helpers/inline-bundle').withInlineCel
 // #TASK-ES-620: 「window.X = X;」 같은 옛 배선 글자를 찾던 단언은, 그 글자가 있거나(고치기 전과 같은 판정) 같은 이름·같은 값이 세포의 등록 블록(OurgoalCellRegistry.provide)으로 window 에 나갈 때 참이다.
 // 등록 블록은 tests/helpers/wiring-exposed.js 가 @babel/parser 로 읽는다. 배선도 등록도 없으면 거짓이다. 검사 수·기대값은 그대로다.
 const WIRING = require('../tests/helpers/wiring-exposed');
+// #TASK-ES-666: 덩어리(IIFE) 안의 글자를 찾던 단언은, 그 글자가 있거나(고치기 전과 같은 판정) 그 대상(함수 선언·함수의 첫 문·상태 기관 호출)이 index.html 이 읽는 세포 파일에 있을 때 참이다.
+// 세포 파일은 tests/helpers/moved-code.js 가 @babel/parser 로 읽는다. 둘 다 없으면 거짓이다. 검사 수·기대값은 그대로다.
+const MOVED = require('../tests/helpers/moved-code');
 const fnSource = mainScript + (fs.existsSync(AVATAR_XP_JS) ? '\n' + readAvatarFile(AVATAR_XP_JS) : '') + INLINE_CELLS_SRC;
 const extracted = FN_NAMES.map(name => extractFunction(fnSource, name)).join('\n');
 
@@ -9977,7 +9980,7 @@ check('compliance: [#TASK-ES-315] [64] 기존 \'AI 추천 목표템플릿 예시
   assert.ok(indexHtml.includes('id="goalsTemplateAccordionSlot" style="display:none;"'), 'goalsTemplateAccordionSlot 슬롯 비노출 보존 확인');
   assert.ok(indexHtml.includes('id="btnGoalTemplateEncyclopedia"'), '목표 탭 내 템플릿백과사전 버튼 탑재 확인');
   assert.ok(indexHtml.includes('id="templateEncyclopediaModal"'), '템플릿백과사전 전체화면 팝업 모달 마크업 탑재 확인');
-  assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');
+  assert.ok(MOVED.textOrFunctionStartsWith(indexHtml, '(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)', 'templatesHtml', "if(!window.__FORCE_LEGACY_TEMPLATES_CARD) return '';"), 'index.html 내 templatesHtml 무해화 확인');
   assert.ok(teamInviteJs.includes('// [#TASK-ES-315, 64] 목표탭 및 소통탭 구형 60선 창 영구 제거 (템플릿백과사전 일원화)'), 'team-invite-comm.js 내 60선 아코디언 무해화 확인');
 
   // 2. components.js 직통 액션 핸들러 및 캐시 검증

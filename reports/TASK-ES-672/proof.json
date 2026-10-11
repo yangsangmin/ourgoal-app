@@ -1,0 +1,98 @@
+{
+  "task": "TASK-ES-672",
+  "label": "전문 템플릿 기록 창 조각 여섯을 세포로 글자 그대로 이전 — 진입점 · 표 편집 · 도구 단추 · 성장 추이 차트 · 스톱워치·인터벌 타이머 · 저장·닫기 (지시함 DIR-004 (라) A안 ③)",
+  "slot": "HO",
+  "cells": [
+    {
+      "key": "proRecordModal",
+      "file": "js/tabs/records/pro-record-modal.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Pro Record Modal (기록 — 전문 템플릿 기록 창의 진입점과 창 틀)",
+      "desc": [
+        "openProTemplateRecordModal — 「전문(맞춤) 템플릿 기록」 창을 연다: 고른 템플릿·날짜·행을 꾸러미(ctx)에 담고 창의 마크업을 그린 뒤 조각 다섯을 정해진 순서로 부른다.",
+        "조각을 부르는 순서(표 편집 → 도구 단추 → 행 삭제 연결 → 성장 추이 차트 → 스톱워치 → 저장·닫기)는 바꾸지 않는다 — 도구 단추의 처리기가 차트 조각이 꾸러미에 등록하는 함수를 부른다.",
+        "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴)."
+      ],
+      "take": [
+        { "group": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)", "names": ["openProTemplateRecordModal"], "keepRest": true }
+      ]
+    },
+    {
+      "key": "proRecordTable",
+      "file": "js/tabs/records/pro-record-table.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Pro Record Table (기록 — 전문 템플릿 기록 창의 표 편집)",
+      "desc": [
+        "bindProRecTable — 표의 칸을 읽어 행에 담기 · 실시간 분석 띠 · 표 다시 그리기 · 행 삭제 · 행 추가를 연결하고, 다른 조각이 부르는 함수 넷을 꾸러미(ctx)에 등록한다.",
+        "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴)."
+      ],
+      "take": [
+        { "group": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)", "names": ["bindProRecTable"], "keepRest": true }
+      ]
+    },
+    {
+      "key": "proRecordTools",
+      "file": "js/tabs/records/pro-record-tools.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Pro Record Tools (기록 — 전문 템플릿 기록 창의 도구 단추)",
+      "desc": [
+        "bindProRecTools — 지난 루틴 불러오기 · AI 코치 · Notion 연동 · CSV 가져오기/내려받기 · 스마트워치 · 템플릿 마켓 · AI 사진 인식 · 음성 입력 · 표 속성 편집 · 템플릿 변경 · 템플릿 생성 · 사진 첨부 단추를 연결한다.",
+        "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴)."
+      ],
+      "take": [
+        { "group": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)", "names": ["bindProRecTools"], "keepRest": true }
+      ]
+    },
+    {
+      "key": "proRecordTrendChart",
+      "file": "js/tabs/records/pro-record-trend-chart.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Pro Record Trend Chart (기록 — 전문 템플릿 기록 창의 성장 추이 차트)",
+      "desc": [
+        "bindProRecTrendChart — 성장 추이 차트의 점 설명 · 기간 칩 · 다시 그리기를 연결하고, 차트를 다시 그리는 함수를 꾸러미(ctx)에 등록한다.",
+        "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴)."
+      ],
+      "take": [
+        { "group": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)", "names": ["bindProRecTrendChart"], "keepRest": true }
+      ]
+    },
+    {
+      "key": "proRecordStopwatch",
+      "file": "js/tabs/records/pro-record-stopwatch.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Pro Record Stopwatch (기록 — 전문 템플릿 기록 창의 스톱워치·인터벌 타이머)",
+      "desc": [
+        "bindProRecStopwatch — 시작/정지 · 리셋 · 모드 · 랩 · 랩과 지금 시간을 표 칸에 기입하기를 연결하고, 타이머를 멈추는 함수를 꾸러미(ctx)에 등록한다.",
+        "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴)."
+      ],
+      "take": [
+        { "group": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)", "names": ["bindProRecStopwatch"], "keepRest": true }
+      ]
+    },
+    {
+      "key": "proRecordSave",
+      "file": "js/tabs/records/pro-record-save.js",
+      "kit": "OurgoalRecordsKit",
+      "kitVar": "_recordsKit",
+      "beforeTag": "<script src=\"js/tabs/records/index.js\"></script>",
+      "title": "OurGoal Pro Record Save (기록 — 전문 템플릿 기록 창의 저장·닫기)",
+      "desc": [
+        "bindProRecSave — 일반저장 · 일정연동저장(기기 즉시 저장 → 목표·일정·기록 연동 → 화면 갱신 → 서버 동기화 → Notion 자동 전송)과 취소·돌아가기를 연결한다.",
+        "본문은 이전 전 글자 그대로다(#TASK-ES-646 에서 나눈 꼴)."
+      ],
+      "take": [
+        { "group": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)", "names": ["bindProRecSave"], "keepRest": true }
+      ]
+    }
+  ]
+}

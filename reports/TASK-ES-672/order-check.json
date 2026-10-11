@@ -1,0 +1,84 @@
+{
+ "tool": "reports/TASK-ES-672/tools/order-check.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "ok": true,
+ "problems": [],
+ "entryCallOrder": [
+  "ctx.sheet = sheet",
+  "bindProRecTable(ctx)",
+  "bindProRecTools(ctx)",
+  "ctx.bindRowEvents()",
+  "bindProRecTrendChart(ctx)",
+  "bindProRecStopwatch(ctx)",
+  "bindProRecSave(ctx)"
+ ],
+ "expectedOrder": [
+  "ctx.sheet = sheet",
+  "bindProRecTable(ctx)",
+  "bindProRecTools(ctx)",
+  "ctx.bindRowEvents()",
+  "bindProRecTrendChart(ctx)",
+  "bindProRecStopwatch(ctx)",
+  "bindProRecSave(ctx)"
+ ],
+ "orderSame": true,
+ "registrations": {
+  "bindProRecTable": {
+   "registers": [
+    "syncCurrentRowsFromDOM",
+    "updateAnalyticsBanner",
+    "refreshTableBody",
+    "bindRowEvents"
+   ],
+   "first": true
+  },
+  "bindProRecTrendChart": {
+   "registers": [
+    "updateTrendChart"
+   ],
+   "first": true
+  },
+  "bindProRecStopwatch": {
+   "registers": [
+    "stopSwTimer"
+   ],
+   "first": true
+  }
+ },
+ "ctxLiteralKeys": [
+  "editRec",
+  "initialDate",
+  "renderRowsHtml"
+ ],
+ "crossCalls": {
+  "openProTemplateRecordModal": {
+   "ctx.bindRowEvents (연결 중 바로)": 1
+  },
+  "bindProRecTable": {
+   "ctx.renderRowsHtml (처리기 안)": 1
+  },
+  "bindProRecTools": {
+   "ctx.refreshTableBody (처리기 안)": 8,
+   "ctx.syncCurrentRowsFromDOM (처리기 안)": 9,
+   "ctx.updateTrendChart (처리기 안)": 2
+  },
+  "bindProRecTrendChart": {},
+  "bindProRecStopwatch": {
+   "ctx.syncCurrentRowsFromDOM (처리기 안)": 2,
+   "ctx.updateAnalyticsBanner (처리기 안)": 2
+  },
+  "bindProRecSave": {
+   "ctx.stopSwTimer (처리기 안)": 4,
+   "ctx.syncCurrentRowsFromDOM (처리기 안)": 1
+  }
+ },
+ "immediateCalls": [
+  {
+   "in": "openProTemplateRecordModal",
+   "call": "ctx.bindRowEvents()",
+   "line": 170
+  }
+ ],
+ "onlyImmediateIsBindRowEvents": true,
+ "note": "도구 조각의 처리기 둘(템플릿 변경 · 템플릿 생성)이 ctx.updateTrendChart() 를 부르고, 그 등록은 차트 조각의 첫 문이다. 처리기는 창이 다 연결된 뒤 단추를 눌러야 돌므로 지금 순서에서는 등록이 먼저다. 진입점의 조각 호출 순서를 바꾸면 이 전제가 깨질 수 있다 — 순서를 바꾸지 않는다."
+}

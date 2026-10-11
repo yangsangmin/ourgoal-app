@@ -4,7 +4,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "index.html 인라인 IIFE 에 남은 로드 시점 문 9개(상태 기관 정의 줄 · window 대입 줄)를 생성기 region 으로 구역 함수 6개(새 세포 둘)로 옮기고 원래 자리에 부르는 한 줄씩 남긴다. 게스트 화면의 동작을 보존한다(손 편집 0)."
+      "text": "index.html 인라인 IIFE 에 남은 로드 시점 문 11개(상태 기관 정의 줄 · window 대입 줄)를 생성기 region 으로 구역 함수 8개(새 세포 둘)로 옮기고 원래 자리에 부르는 한 줄씩 남긴다. 게스트 화면의 동작을 보존한다(손 편집 0)."
     },
     {
       "id": "R2",
@@ -37,11 +37,10 @@
       "cannotBecause": "out-of-scope-feature"
     },
     {
-      "text": "후보 가운데 둘은 옮기지 않았다. ① 닫기 단추 정의 줄(btnAvLvClose): 앞 주석의 글자를 tests/avatar-10slots-growth.test.js 가 index.html 에서 찾는다 — 모의 적용에서 그 시험이 깨졌다. ② window.SHARED_GROUPS_LOADED 대입 줄: 세포로 가면 모듈 가드의 탭 간 직접 참조가 0 → 1 이 돼 모듈 가드와 시험 넷이 깨졌다. 시험·가드는 고치지 않았다. 풀리는 조건은 finalize-gap.json 에 적었다.",
-      "cannotBecause": "out-of-scope-feature"
+      "text": "처음(3c9b9335)의 모의 적용에서 시험·가드에 붙잡혔던 두 문(닫기 단추 btnAvLvClose 정의 줄 · window.SHARED_GROUPS_LOADED 대입 줄)은 #944(시험 단언 넓히기) · #945(모듈 가드의 주인 규칙) 병합 뒤 f227a756 의 모의 적용에서 다시 재니 깨지는 시험·가드가 없어 옮겼다. 이 PR 은 시험·가드를 고치지 않았다."
     },
     {
-      "text": "window.saveGoogleToken 대입 블록은 옮겼다. tests/gcal-login-reconnect-fix.test.js 25행은 index.html 과 세포를 합친 글(접두를 뗀 것)에서 그 글자를 찾으므로 깨지지 않았다(기준과 같은 결과). 이 대입은 등록 기관이 이미 window 에 다는 이름을 한 번 더 다는 줄이다 — 지우는 것은 이 PR 의 몫이 아니다."
+      "text": "window.saveGoogleToken 대입 블록은 옮겼다. tests/gcal-login-reconnect-fix.test.js 는 index.html 과 세포를 합친 글에서 그 배선을 찾으므로 깨지지 않았다(기준과 같은 결과). 이 대입은 등록 기관이 이미 window 에 다는 이름을 한 번 더 다는 줄이다 — 지우는 것은 이 PR 의 몫이 아니다."
     },
     {
       "text": "구역 본문의 앞 주석(다른 작업의 자리 표지 주석 · 구획 주석 둘 · 빈 줄)이 생성기 규칙(구역 안 주석은 따라간다)으로 세포 본문에 글자 그대로 함께 갔다."
@@ -50,8 +49,11 @@
       "text": "팀 개설 시나리오(r5)는 게스트가 이 브라우저 안에서만 팀을 만드는 조작이다(서버 연결 객체가 null 이라 서버로 가지 않는다)."
     },
     {
-      "text": "state · _promptEncyclopediaOpen 선언과 전문 템플릿 기록 창 조각 함수 여섯은 이 PR 의 대상이 아니다(다른 작업의 몫).",
+      "text": "state · _promptEncyclopediaOpen 선언은 이 PR 의 대상이 아니다(아직 var 선언이라 상태 이전이 먼저다 — 임시 사본에서 생성기 unstate 가 둘 다 받는 것까지만 확인했다).",
       "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "알고 넘어가는 차이: 재철거 2차(#943)가 지운 통로 getter 하나(daysFromNow)를 생성기가 index.html 머리에 다시 달았다(expose 문 3줄 — 구역 본문이 통로로 읽는 이름인데 index.html 에 getter 가 없으면 단다). 값 지문은 같고 통로의 이름 수도 그대로지만, 그 이름의 접근자 종류(data → get)와 주인 표시(comm/sample-data → index.html)가 바뀐다. 다음 재철거가 지운다. 숨기지 않고 주장에 이름 목록으로 적었다."
     }
   ],
   "claims": [
@@ -174,7 +176,7 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/prefix-only-check.json",
         "path": "totals.regions",
-        "equals": 6
+        "equals": 8
       },
       "id": "C8"
     },
@@ -190,7 +192,7 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/prefix-only-check.json",
         "path": "totals.statements",
-        "equals": 9
+        "equals": 11
       },
       "id": "C9"
     },
@@ -385,8 +387,8 @@
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "order.total",
         "equals": [
-          325,
-          326
+          326,
+          327
         ]
       },
       "id": "C21"
@@ -420,8 +422,8 @@
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "order.fake.createClientIndex",
         "equals": [
-          190,
-          191
+          191,
+          192
         ]
       },
       "id": "C23"
@@ -439,8 +441,8 @@
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "order.fake.defineSbIndex",
         "equals": [
-          191,
-          192
+          192,
+          193
         ]
       },
       "id": "C24"
@@ -905,7 +907,7 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/measurement.json",
         "path": "metrics.delta",
-        "equals": -166
+        "equals": -167
       },
       "id": "C52"
     },
@@ -956,7 +958,7 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/finalize-gap.json",
         "path": "totals.blockingStatements",
-        "equals": 75
+        "equals": 74
       },
       "id": "C55"
     },
@@ -972,7 +974,7 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/finalize-gap.json",
         "path": "totals.blockingLines",
-        "equals": 1044
+        "equals": 144
       },
       "id": "C56"
     },
@@ -988,7 +990,7 @@
         "type": "jsonPath",
         "file": "reports/TASK-ES-676/finalize-gap.json",
         "path": "totals.allowedStatements",
-        "equals": 56
+        "equals": 60
       },
       "id": "C57"
     },

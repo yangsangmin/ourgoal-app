@@ -23,6 +23,13 @@ const INLINE_CELLS_SRC = require('../tests/helpers/inline-bundle').withInlineCel
 const WIRING_HELPER = path.join(__dirname, '..', 'tests', 'helpers', 'wiring-exposed.js');
 const WIRING = fs.existsSync(WIRING_HELPER) ? require(WIRING_HELPER) : null;
 function windowExposed(source, legacyText) { return WIRING ? WIRING.windowExposed(source, legacyText) : source.includes(legacyText); }
+// #TASK-ES-669: 덩어리(index.html 인라인 IIFE) 안의 상태 선언 글자(「이름 = 초기값;」)를 찾던 단언은, 그 글자가 있거나(고치기 전과 같은 판정)
+// 같은 이름·같은 초기값이 상태 기관 호출(window.OurgoalAppState.define·defineVar)로 index.html 이 읽는 세포 파일에서 만들어질 때 참이다.
+// 세포 파일은 공용 도우미 tests/helpers/moved-code.js(#TASK-ES-666 PR 이 들여온다)가 @babel/parser 로 읽는다. 둘 다 없으면 거짓이다. 검사 수·기대값은 그대로다.
+// 도우미 파일이 아직 없으면(그 PR 보다 먼저 병합된 경우) 옛 선언 글자만 본다 — 고치기 전과 같은 판정이라, 병합 순서가 바뀌어도 게이트가 죽거나 느슨해지지 않는다.
+const MOVED_HELPER = path.join(__dirname, '..', 'tests', 'helpers', 'moved-code.js');
+const MOVED = fs.existsSync(MOVED_HELPER) ? require(MOVED_HELPER) : null;
+function textOrStateDefined(source, legacyDeclText) { return MOVED ? MOVED.textOrStateDefined(source, legacyDeclText) : source.includes(legacyDeclText); }
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const INDEX_HTML = path.join(ROOT_DIR, 'index.html');
@@ -951,7 +958,7 @@ check('[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어�
   assert.ok(agentCardIdx !== -1 && goalHeadRowIdx !== -1 && agentCardIdx < goalHeadRowIdx, 'AI 목표 어시스턴트가 세부 마일스톤 목록 상단에 전진 배치되어야 함');
 
   // 6. [상민님 지시 반영] 프롬프트 백과사전 아코디언 접기 확인
-  assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');
+  assert.ok(indexHtml.includes('btnTogglePromptAccordion') && textOrStateDefined(indexHtml, '_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');
 });
 
 console.log('\n================================================================');

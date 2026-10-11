@@ -173,6 +173,43 @@ function inlineWindowSymbols(root) {
   return names;
 }
 
+// #TASK-ES-667: 부팅 파일(js/app/boot.js)과 js/core 기관 파일이 window·global·globalThis 에 「무조건」 다는 이름도 인라인과 같은 지위(탭 밖의 주인)다.
+// 인라인 IIFE 의 시동 문이 js/core 구역 세포·부팅 파일로 옮겨 가도 같은 이름이 같은 주인으로 세어지게 한다(옮기기만 했는데 ⑤ 가 늘어나는 오탐을 막는다).
+// 인라인과 달리 방어 초기화 두 꼴(isGuardedInit — 「없으면 채우는」 것)은 주인으로 세지 않는다: 기관이 남이 정의한 전역을 비어 있을 때 채우는 것은 정의가 아니다.
+// 범위는 js/core 바로 아래 파일과 js/app/boot.js 뿐이다(js/ 바로 아래 옛 파일·js/core 하위 폴더·탭 파일은 아니다).
+// 주석을 걷어낸다(문자열 안의 글자는 그대로 둔다. 줄 수는 그대로다). organWindowSymbols 전용 — 코드와 같은 줄에 있는 주석 속의 `window.X =` 글자를 주인으로 세지 않기 위한 것이다.
+// 정규식 리터럴은 따로 가리지 않는다: 그 안의 `//` 를 주석으로 보면 그 줄의 뒷부분이 지워질 뿐이라, 주인으로 세는 이름이 줄어드는 쪽(가드가 더 엄한 쪽)으로만 틀린다.
+function stripJsComments(text) {
+  let out = '';
+  const n = text.length;
+  for (let i = 0; i < n;) {
+    const c = text[i], d = text[i + 1];
+    if (c === '/' && d === '/') { while (i < n && text[i] !== '\n') i++; continue; }
+    if (c === '/' && d === '*') { i += 2; while (i < n && !(text[i] === '*' && text[i + 1] === '/')) { if (text[i] === '\n') out += '\n'; i++; } i += 2; continue; }
+    if (c === '"' || c === "'" || c === '`') {
+      out += c; i++;
+      while (i < n && text[i] !== c) { if (text[i] === '\\' && i + 1 < n) { out += text[i] + text[i + 1]; i += 2; continue; } if (c !== '`' && text[i] === '\n') break; out += text[i]; i++; }
+      if (i < n && text[i] === c) { out += c; i++; }
+      continue;
+    }
+    out += c; i++;
+  }
+  return out;
+}
+
+function organWindowSymbols(root) {
+  const names = new Set();
+  const files = listJs(root, 'js/core').filter(f => f.split('/').length === 3);
+  if (fs.existsSync(path.join(root, 'js', 'app', 'boot.js'))) files.push('js/app/boot.js');
+  for (const f of files) {
+    const t = stripJsComments(readText(path.join(root, f)));
+    const re = /\b(?:global|window|globalThis)\s*\.\s*([A-Za-z_$][\w$]*)\s*=(?![=>])/g;
+    let m;
+    while ((m = re.exec(t))) { if (!isGuardedInit(t, m.index, m[0].length, m[1])) names.add(m[1]); }
+  }
+  return names;
+}
+
 function crossTabRefs(root) {
   const tabsDir = path.join(root, 'js', 'tabs');
   if (!fs.existsSync(tabsDir)) return [];
@@ -186,9 +223,11 @@ function crossTabRefs(root) {
   // #TASK-ES-507: index.html 인라인 스크립트가 window 에 다는 이름은 인라인(미분화 덩어리)이 주인이다 — 세포가 그 값을 바꿔 써도(예: 불러옴 표시)
   // 그 탭의 정의가 아니다. 그런 이름을 다른 탭이 읽는 것은 탭 간 참조가 아니라 인라인 공용 상태 읽기다(통로 L 과 같은 주인).
   const inlineOwned = inlineWindowSymbols(root);
+  // #TASK-ES-667: 부팅 파일·js/core 기관이 무조건 다는 이름도 같은 지위다(위 organWindowSymbols).
+  const organOwned = organWindowSymbols(root);
   const patternsByTab = {};
   for (const tab of tabs) {
-    const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s));
+    const syms = Array.from(tabDefinedSymbols(filesByTab[tab].map(f => textByFile[f]))).filter(s => !inlineOwned.has(s) && !organOwned.has(s));
     const parts = [
       '\\bOurgoal' + escapeRe(capital(tab)) + '[A-Z][\\w$]*',
       '\\btabs\\/' + escapeRe(tab) + '\\/',
@@ -420,4 +459,4 @@ if (require.main === module) {
   else process.stdout.write(args.pretty ? text : JSON.stringify(doc) + '\n');
 }
 
-module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, MAX_LINES };
+module.exports = { measure, summarize, countLines, blankCommentOnlyLines, inlineScripts, maskToInlineScripts, listJs, crossTabRefs, tabDefinedSymbols, inlineWindowSymbols, organWindowSymbols, stripJsComments, MAX_LINES };

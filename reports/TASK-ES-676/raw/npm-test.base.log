@@ -536,7 +536,7 @@
 
 🚢 Testing OurGoal Master Shipyard Modular Architecture (All 6 Tabs & Core)...
 [Test 1] All modular sub-blocks line count <= 800 lines (Cell Division Principle)
-  ✓ Checked 196 modular files: ALL under 800 lines (range: 68~118 lines)
+  ✓ Checked 202 modular files: ALL under 800 lines (range: 68~118 lines)
 [Test 2] Mega-block loading and registry docking for all 6 core tabs
   ✓ All 6 MegaBlocks registered successfully
 [Test 3] Sub-block docking validation (18 sub-blocks docked)
@@ -557,7 +557,7 @@
     at node:internal/main/run_main_module:33:47
   ✓ Watertight isolation verified: sub-block failure does not halt the ship
 [Test 6] Cell skeleton: module guard ratchet + capabilities/slots + guard/scaffold unit tests (TASK-ES-356)
-[모듈 가드] ① 1645 · ② 22 · ③ 75 · ④ 0 · ⑤ 0
+[모듈 가드] ① 751 · ② 1 · ③ 75 · ④ 0 · ⑤ 0
   ⚠ 신고서: core/trash-bin: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
   ⚠ 신고서: calendar/day-bg-picker: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
   ⚠ 신고서: calendar/day-edit-hub: 코드가 요청하는 능력 ui.confirm 이 신고서 requires 에 없다
@@ -597,6 +597,21 @@ ok · module-guard 시험 6건 통과(통과 1 · 실패 ①④⑤ 3 · 래칫 1
   ok · 신고서를 지우면 가드가 "신고서 없는 세포"로 실패
   ok · 중복·이름 규칙 위반·목록 밖 자리·없는 탭 거부
 ok · new-module 시험 통과(생성물 삭제·신고서 원문 복원 확인)
+[cross-tab-inline-owned-es507] 탭 간 직접 참조 — 인라인이 주인인 window 이름은 탭의 정의가 아니다
+  ok · 인라인이 window 에 다는 이름을 모은다
+  ok · 오탐: 인라인 주인 이름을 comm 이 바꿔 쓰고 goals 가 읽어도 0건
+  ok · 진짜: 인라인에 없는 새 전역을 comm 이 정의하고 goals 가 쓰면 1건 잡힌다
+  ok · index.html 이 없으면 예전처럼 센다(인라인 주인 없음)
+  ok · 지금 저장소: ⑤ 탭 간 직접 참조 0
+  ok · #667 기관이 무조건 다는 이름을 모은다(방어 초기화 두 꼴과 주석 줄은 뺀다)
+  ok · #667 오탐: 인라인이 비워지고 js/core 구역 세포가 다는 이름을 comm 이 바꿔 쓰고 goals 가 읽어도 0건
+  ok · #667 오탐: 부팅 파일 js/app/boot.js 가 다는 이름도 같다(0건)
+  ok · #667 대조: 그 기관 줄을 지우면 같은 꼴이 1건으로 잡힌다(규칙이 그 줄을 보고 있다)
+  ok · #667 진짜: 기관이 읽기만 하거나 방어 초기화만 하면 주인이 아니다 — 1건
+  ok · #667 진짜: js/ 바로 아래 옛 파일·js/core 하위 폴더·js/app 의 다른 파일이 다는 이름은 기관의 것이 아니다 — 1건
+  ok · #667 진짜: 기관 주인 이름이 있어도, 기관에 없는 새 전역을 comm 이 정의하고 goals 가 쓰면 1건
+  ok · #667 진짜: 탭 키트 이름(Ourgoal<탭>…)·탭 경로 참조는 기관이 같은 이름을 달아도 여전히 잡힌다
+[cross-tab-inline-owned-es507] 13 passed
 [core/toast] 공용 토스트 통로 시험
   ok · 능력 등록: ui.toast(화면) · ui.toast.bind 를 core/toast 세포가 준다
   ok · CORE-10: team-invite-comm 이 init() 전에 토스트를 부르면 정본 토스트가 정확히 1회 뜬다(재귀 없음)
@@ -896,5 +911,25 @@ cell-map-export 부품 시험: 17/17
      (이 저장소: 등록 블록 세포 188개 · 등록 이름 527개)
   ok · 이 저장소: 등록 기관이 읽히고, 등록된 window 이름은 참 · 지어낸 이름은 거짓
 wiring-exposed: 16개 검사 끝
+  ok · 옛 글자가 있으면 옮겨 간 대상이 없어도 참(고치기 전 단언과 같은 판정)
+  ok · 옛 글자도 옮겨 간 대상도 없으면 거짓
+  ok · 함수: 옛 글자가 없어도 세포 파일 맨 위에 선언돼 있으면 참
+  ok · 함수: index.html 이 읽지 않는 파일·defer·async·주석 안의 태그는 세포가 아니다
+  ok · 함수: 주석·문자열 안의 글자, 안쪽 깊은 선언, 함수 식은 선언이 아니다
+  ok · 함수 첫 문: 같으면 참(공백·이름 접두 L. 차이는 같은 것으로), 다르면 거짓
+  ok · 상태: 옛 선언 글자가 없어도 상태 기관 호출로 같은 이름·같은 초기값이 만들어지면 참
+  ok · 상태: 초기값·이름이 다르면 거짓
+  ok · 상태: 기관을 읽지 않거나, 세포가 기관보다 먼저 읽히거나, 세포를 읽지 않으면 거짓
+  ok · 상태: 주석·문자열 안의 호출 글자, 다른 객체의 define 은 상태 선언이 아니다
+  ok · #678 상태: 호출이 상태 기관 태그 뒤의 인라인 스크립트(덩어리) 안에 있으면 참 — 옛 선언 글자도 세포 파일의 호출도 없다
+  ok · #678 상태(인라인): 초기값·이름이 다르면 거짓
+  ok · #678 상태(인라인): 상태 기관 태그보다 앞의 스크립트 · 기관 태그 없음 · 미뤄 읽는 기관 태그는 거짓
+  ok · #678 상태(인라인): 주석·문자열 안의 호출 글자, 다른 객체의 define, HTML 주석 안의 스크립트, 자바스크립트가 아닌 type 은 거짓
+  ok · #678 상태(인라인): type 이 없거나 자바스크립트인 스크립트는 읽는다 · 코드로 읽히지 않는 스크립트는 거짓
+  ok · #678 함수 선언·첫 문 갈래는 인라인 스크립트를 보지 않는다(넓힌 것은 상태 기관 호출뿐이다)
+  ok · 정해진 꼴이 아닌 글자·이름은 오류(엉뚱한 글자로 조용히 통과하지 않는다)
+     (이 저장소: 세포 파일 368개 · 찾아본 상태 이름 SHARED_GROUPS_LOADED)
+  ok · 이 저장소: 세포 파일을 읽고, 실제 상태 기관 호출 하나는 찾고, 지어낸 이름은 못 찾는다
+moved-code: 18개 검사 끝
   ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry
 ✨ MASTER SHIPYARD MODULAR ARCHITECTURE VALIDATION 100% COMPLETE & PASS!

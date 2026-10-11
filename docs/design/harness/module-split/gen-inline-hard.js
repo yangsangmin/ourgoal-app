@@ -29,6 +29,9 @@ const EOL = html.includes('\r\n') ? '\r\n' : '\n';
 const lines = html.split('\n').map(l => l.replace(/\r$/, ''));
 let sLine = -1, eLine = -1;
 for (let i = 0; i < lines.length; i++) if (lines[i].trim() === '<script>' && (lines[i + 1] || '').trim() === '(function(){' && (lines[i + 2] || '').includes('"use strict"')) { sLine = i + 1; break; }
+// #TASK-ES-668: 옮길 덩어리(큰 인라인 IIFE)가 없으면 알 수 없는 TypeError 로 죽지 않고, 이유를 적고 0 이 아닌 종료 코드(3)로 끝낸다. 아무 파일도 쓰지 않는다.
+// 조용한 성공이 아니다 — 부르는 쪽(하네스·사람)이 「옮길 것이 없어서 멈췄다」를 종료 코드와 글자로 구분할 수 있다. IIFE 가 있으면 이 줄은 아무것도 하지 않는다.
+if (sLine < 0) { console.error('gen-inline-hard: 옮길 덩어리가 없다 — ' + SRC + ' 에 큰 인라인 IIFE(`<script>` 다음 줄 `(function(){`, 그 다음 줄 "use strict")가 없다. 아무 파일도 쓰지 않았다(종료 코드 3).'); process.exitCode = 3; return; }
 for (let i = sLine; i < lines.length; i++) if (lines[i].startsWith('</script>')) { eLine = i; break; }
 const off = sLine;
 const code = lines.slice(sLine, eLine).join('\n');

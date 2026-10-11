@@ -1,0 +1,189 @@
+{
+ "tool": "reports/TASK-ES-678/tools/unstate-gate-mock.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "name": "_promptEncyclopediaOpen",
+ "steps": {
+  "S0": {
+   "what": "사본 그대로(기준)",
+   "legacyTextInIndex": true,
+   "gate": {
+    "exit": 0,
+    "checkLines": 38,
+    "failedChecks": 0,
+    "fails": []
+   }
+  },
+  "S0b": {
+   "what": "상태 이전 전 + #TASK-ES-669 판 게이트 + 이 PR 판 도우미",
+   "gate": {
+    "exit": 0,
+    "checkLines": 38,
+    "failedChecks": 0,
+    "fails": []
+   }
+  },
+  "S1": {
+   "what": "생성기 unstate 적용(_promptEncyclopediaOpen)",
+   "generatorExit": 0,
+   "generatorTail": [
+    "unstate · names 1 · define 0 · defineVar 1 · expose props 1 (calls 1) · window copies 0 · comma 0",
+    "index.html lines 3915 -> 3912"
+   ],
+   "indexChanged": true,
+   "legacyTextInIndex": false,
+   "defineLineInIndex": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);",
+   "indexLines": [
+    3915,
+    3912
+   ],
+   "gate": {
+    "exit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "fails": [
+     "✗ [FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증 / 사유: 프롬프트 백과사전 아코디언 접힘 구조 누락"
+    ]
+   }
+  },
+  "S2": {
+   "what": "+ 금고 게이트를 #TASK-ES-669 판으로(도우미는 고치기 전 판)",
+   "gateCallsHelper": true,
+   "gate": {
+    "exit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "fails": [
+     "✗ [FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증 / 사유: 프롬프트 백과사전 아코디언 접힘 구조 누락"
+    ]
+   }
+  },
+  "S3": {
+   "what": "+ 도우미를 이 PR 판으로",
+   "gate": {
+    "exit": 0,
+    "checkLines": 38,
+    "failedChecks": 0,
+    "fails": []
+   },
+   "npmTest": {
+    "exit": 0,
+    "checkLines": 487,
+    "okLines": 197,
+    "failLines": []
+   }
+  },
+  "S3again": {
+   "what": "대조군 뒤 되돌린 상태에서 다시",
+   "gate": {
+    "exit": 0,
+    "checkLines": 38,
+    "failedChecks": 0,
+    "fails": []
+   }
+  }
+ },
+ "controls": [
+  {
+   "id": "C1",
+   "what": "호출의 초기값을 false → true 로 바꿈",
+   "gateExit": 1,
+   "checkLines": 37,
+   "failedChecks": 1,
+   "thatCheckFailed": true,
+   "onlyThatCheckFailed": true
+  },
+  {
+   "id": "C2",
+   "what": "호출의 이름을 다른 이름으로 바꿈",
+   "gateExit": 1,
+   "checkLines": 37,
+   "failedChecks": 1,
+   "thatCheckFailed": true,
+   "onlyThatCheckFailed": true
+  },
+  {
+   "id": "C3",
+   "what": "호출 줄을 주석으로 바꿈",
+   "gateExit": 1,
+   "checkLines": 37,
+   "failedChecks": 1,
+   "thatCheckFailed": true,
+   "onlyThatCheckFailed": true
+  },
+  {
+   "id": "C4",
+   "what": "호출 글자를 문자열 안에만 남김",
+   "gateExit": 1,
+   "checkLines": 37,
+   "failedChecks": 1,
+   "thatCheckFailed": true,
+   "onlyThatCheckFailed": true
+  },
+  {
+   "id": "C5",
+   "what": "호출 줄을 지움",
+   "gateExit": 1,
+   "checkLines": 37,
+   "failedChecks": 1,
+   "thatCheckFailed": true,
+   "onlyThatCheckFailed": true
+  },
+  {
+   "id": "C6",
+   "what": "index.html 에서 상태 기관(js/core/app-state.js) 태그를 뺌",
+   "gateExit": 1,
+   "checkLines": 37,
+   "failedChecks": 1,
+   "thatCheckFailed": true,
+   "onlyThatCheckFailed": true
+  },
+  {
+   "id": "C7",
+   "what": "상태 기관 태그를 덩어리 스크립트 뒤로 옮김(호출이 기관보다 앞에 있게 됨)",
+   "gateExit": 1,
+   "checkLines": 37,
+   "failedChecks": 1,
+   "thatCheckFailed": true,
+   "onlyThatCheckFailed": true
+  }
+ ],
+ "summary": {
+  "gateS0": [
+   38,
+   0
+  ],
+  "gateS0b": [
+   38,
+   0
+  ],
+  "gateS1": [
+   37,
+   1
+  ],
+  "gateS2": [
+   37,
+   1
+  ],
+  "gateS3": [
+   38,
+   0
+  ],
+  "s1FailsThatCheck": true,
+  "s2FailsThatCheck": true,
+  "s3Exit": 0,
+  "npmTestS3": [
+   0,
+   487,
+   197
+  ],
+  "controls": 7,
+  "controlsAllFailThatCheck": true,
+  "controlsOnlyThatCheck": true,
+  "defineLine": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);",
+  "legacyTextAfterUnstate": false,
+  "gateAfterControls": [
+   38,
+   0
+  ]
+ }
+}
