@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "8e3ed7f70c1ae9a46326e3ab076515055103894d",
-  "short": "8e3ed7f7",
-  "committedAt": "2026-10-11T23:20:34+09:00",
-  "subject": "Merge pull request #958 from yangsangmin/feat/2026-10-11-task-es-686-app-folder"
+  "commit": "c9bd38b9cf0ef6168de88af1b767653f0bea9cbd",
+  "short": "c9bd38b9",
+  "committedAt": "2026-10-12T02:12:43+09:00",
+  "subject": "Merge pull request #962 from yangsangmin/feat/2026-10-12-task-es-689-finalize-p"
  },
  "summary": {
-  "cells": 380,
-  "files": 379,
-  "jsLines": 94226,
+  "cells": 381,
+  "files": 380,
+  "jsLines": 94301,
   "kinds": {
-   "organ": 72,
+   "organ": 73,
    "tab": 202,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 380,
+  "descriptionsHand": 381,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 442,
+   "inlineScriptLines": 24,
    "functionDecls": 1
   },
   "health": {
-   "undifferentiatedLines": 442,
+   "undifferentiatedLines": 24,
    "globalLinks": 75,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,7 +74,7 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 72
+   "count": 73
   },
   {
    "key": "tab",
@@ -603,6 +603,7 @@
    "desc": "계정 보안·원장·알림·검열·공용 화면 부품",
    "cells": [
     "account-isolation",
+    "app/boot",
     "auth-safety",
     "auth-social",
     "components-auth-actions",
@@ -624,7 +625,7 @@
     "notify-engine",
     "record-ledger"
    ],
-   "lines": 6291,
+   "lines": 6366,
    "over800": 0
   },
   {
@@ -1622,6 +1623,143 @@
      "task": "TASK-ES-365",
      "title": "[FIX] #TASK-ES-365 fix: 계정 전환 시 이전 사용자 로컬 사본이 새 계정 화면·업로드에 섞이던 결함 차단(CORE-09)",
      "date": "2026-10-04"
+    }
+   ]
+  },
+  {
+   "id": "app/boot",
+   "file": "js/app/boot.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-body",
+   "tabs": [],
+   "name": "앱 부팅",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 서버 연결을 만들고 시동 함수들을 예전 index.html 에 있던 차례 그대로 부른다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal App Boot (부팅 — 구역 함수를 순서대로 부른다)",
+    "구역 함수를 index.html 에 있던 순서 그대로 부른다.",
+    "#TASK-ES-689(인라인 IIFE 마지막 정리 — 시동 문을 부팅 파일로(서버 주소·공개 키 상수 선언 두 줄만 index.html 에)): index.html 인라인 IIFE 에 마지막까지 남아 있던 문(키트 손잡이 2개 · 구역 함수 가져오기 27개 · 구역 함수 호출 27개)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로, 같은 순서로 옮겼다.",
+    "통로 중계 1개(renderTeamGoalsScreen)도 함께 옮겼다 — 등록 기관에 등록할 수 없는 이름의 가져오기 줄과 그 getter 를 담은 expose 문이다(생성기 설정 relay)."
+   ],
+   "lines": 75,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/all-view-render",
+    "core/app-boot",
+    "core/app-enter",
+    "core/app-scope",
+    "core/app-state",
+    "core/badges",
+    "core/boot-app-handles",
+    "core/boot-app-state",
+    "core/boot-comm-seeds",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
+    "core/boot-state-seeds",
+    "core/calendar-availability",
+    "core/confetti",
+    "core/date-rollover",
+    "core/deep-link-gateway",
+    "core/default-profile",
+    "core/gcal-sync",
+    "core/gcal-token",
+    "core/gcal-token-save",
+    "core/home-cockpit",
+    "core/modal-helper",
+    "core/module-connect",
+    "core/profile-load",
+    "core/profile-topbar",
+    "core/pwa-service-worker",
+    "core/registry-init",
+    "core/server-records-sync",
+    "core/streak-badge",
+    "core/supabase-auth",
+    "core/telemetry",
+    "core/time-keys",
+    "core/toast-renderer",
+    "core/trash-bin",
+    "core/ui-helpers",
+    "core/view-dispatch",
+    "core/virtual-user-helpers",
+    "goals/ai-agent",
+    "goals/ai-local-fallback",
+    "goals/ai-status",
+    "goals/ai-status-refresh",
+    "goals/attachments",
+    "goals/focus-autopilot",
+    "goals/goal-agent-toggle",
+    "goals/goal-archive",
+    "goals/goal-category-templates",
+    "goals/goal-detail",
+    "goals/goal-detail-drawer",
+    "goals/goal-detail-events",
+    "goals/goal-export",
+    "goals/goal-fast-add",
+    "goals/goal-math",
+    "goals/goal-order",
+    "goals/goal-rescale",
+    "goals/goal-update-suggest",
+    "goals/goals-ia-actions",
+    "goals/new-goal-modal",
+    "goals/notion-record-convert",
+    "goals/personal-goals-guide",
+    "goals/prompt-encyclopedia",
+    "goals/render",
+    "goals/result-input",
+    "goals/result-modal",
+    "goals/routine-detail-modal",
+    "goals/routine-screen",
+    "goals/schedule-setup",
+    "goals/shift-routines",
+    "goals/starter-goal",
+    "goals/starter-goal-templates",
+    "goals/team-comment-send",
+    "goals/team-comments",
+    "goals/team-goal-edit-modal",
+    "goals/team-goal-modals",
+    "goals/team-goal-prompt",
+    "goals/team-goals-guide",
+    "goals/team-goals-screen",
+    "goals/team-level-goals",
+    "goals/team-state",
+    "goals/template-encyclopedia",
+    "goals/template-encyclopedia-modal",
+    "goals/template-quick-import",
+    "goals/topic-region-picker",
+    "records/template-record-detail"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-689"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-689-FINALIZE-P.md"
+   ],
+   "prs": [
+    {
+     "number": 962,
+     "task": "TASK-ES-689",
+     "title": "[INFRA] #TASK-ES-689 미분화 덩어리 해체 마지막 정리(finalize · P안) — 시동 문을 js/app/boot.js 로, index.html 에는 상수 선언 두 줄만(inlineScriptLines 442→24 · 덩어리 0줄, 결심 「p안 승인」)",
+     "date": "2026-10-12"
     }
    ]
   },
@@ -3761,6 +3899,7 @@
     "sanctuary-v3-engine"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -3771,9 +3910,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -3834,6 +3971,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -3844,9 +3982,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -3907,6 +4043,7 @@
     "team-invite-comm"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -3917,9 +4054,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -3985,6 +4120,7 @@
    ],
    "calls": [],
    "calledBy": [
+    "app/boot",
     "auth-social",
     "avatar/level-badge",
     "avatar/xp",
@@ -4212,9 +4348,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAppScope"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4268,6 +4402,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "core/boot-app-state",
     "core/boot-comm-seeds",
     "core/boot-early-state",
@@ -4279,9 +4414,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAppState"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4335,6 +4468,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -4345,9 +4479,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4409,6 +4541,7 @@
     "template-credit"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -4420,9 +4553,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4475,6 +4606,7 @@
     "core/app-state"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -4485,9 +4617,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4543,6 +4673,7 @@
     "viral-sharing"
    ],
    "calledBy": [
+    "app/boot",
     "goals/team-goals-screen",
     "settings/render",
     "settings/sub-appearance",
@@ -4556,9 +4687,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4613,6 +4742,7 @@
     "core/app-state"
    ],
    "calledBy": [
+    "app/boot",
     "auth-safety",
     "calendar-attachment",
     "calendar/index",
@@ -4668,10 +4798,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers",
-    "state"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4726,6 +4853,7 @@
     "core/app-state"
    ],
    "calledBy": [
+    "app/boot",
     "notify-engine",
     "sanctuary-calendar-actions",
     "sanctuary-record-feed",
@@ -4741,9 +4869,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4800,6 +4926,7 @@
     "top-helpful"
    ],
    "calledBy": [
+    "app/boot",
     "comm/manito-basics",
     "settings/render",
     "settings/sub-appearance",
@@ -4817,9 +4944,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4880,6 +5005,7 @@
     "tab-guides"
    ],
    "calledBy": [
+    "app/boot",
     "goals/sub-team",
     "settings/render",
     "settings/sub-appearance",
@@ -4894,10 +5020,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers",
-    "renderTeamGoalsScreen"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4950,6 +5073,7 @@
     "core/app-state"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -4960,9 +5084,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5016,6 +5138,7 @@
     "core/app-state"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5026,9 +5149,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5080,6 +5201,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5090,9 +5212,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5328,6 +5448,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5338,9 +5459,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5474,6 +5593,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5484,9 +5604,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5549,6 +5667,7 @@
     "viral-sharing"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5559,9 +5678,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5621,6 +5738,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5631,9 +5749,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5782,6 +5898,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5792,9 +5909,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5862,6 +5977,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5872,9 +5988,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -5934,6 +6048,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -5944,9 +6059,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6011,6 +6124,7 @@
     "record-ledger"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6021,9 +6135,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6091,6 +6203,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6101,9 +6214,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6304,6 +6415,7 @@
     "team-linked-goals"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6314,9 +6426,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6392,6 +6502,7 @@
     "record-ledger"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6402,9 +6513,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6476,6 +6585,7 @@
     "notify-engine"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6486,9 +6596,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6572,6 +6680,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6582,9 +6691,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -6658,6 +6765,7 @@
     "settings/index"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6668,9 +6776,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "tab:changed"
    ],
@@ -6817,6 +6923,7 @@
     "record-ledger"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -6827,9 +6934,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7004,6 +7109,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7014,9 +7120,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7076,6 +7180,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7086,9 +7191,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7156,6 +7259,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7168,9 +7272,7 @@
     "posthog"
    ],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7230,6 +7332,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7240,9 +7343,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7304,6 +7405,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7314,9 +7416,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7446,6 +7546,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7456,9 +7557,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7518,6 +7617,7 @@
    ],
    "calls": [],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7528,9 +7628,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -7593,6 +7691,7 @@
     "sanctuary-v3-engine"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7603,9 +7702,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "view:sync"
    ],
@@ -7667,6 +7764,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -7677,9 +7775,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -10406,9 +10502,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "state"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -10514,9 +10608,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "state"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14908,12 +15000,12 @@
     "content-moderation",
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -14992,12 +15084,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15060,12 +15152,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15133,12 +15225,12 @@
     "avatar-system",
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15209,12 +15301,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15344,12 +15436,12 @@
     "core/store",
     "team-invite-comm"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [
     "checkin:created",
     "record:saved"
@@ -15429,12 +15521,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15499,6 +15591,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "auth-safety",
     "calendar-attachment",
     "calendar/index",
@@ -15547,10 +15640,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit",
-    "state"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15619,12 +15709,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15685,12 +15775,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15760,12 +15850,12 @@
     "core/app-scope",
     "goal-edit-ux"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15821,12 +15911,12 @@
     "core/app-scope",
     "goal-edit-ux"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15889,12 +15979,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -15956,12 +16046,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16022,12 +16112,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16088,12 +16178,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16154,12 +16244,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16212,12 +16302,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16279,12 +16369,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16434,12 +16524,12 @@
     "core/app-scope",
     "sanctuary-v3-engine"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16516,12 +16606,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16582,12 +16672,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16651,12 +16741,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16719,12 +16809,12 @@
     "goal-edit-ux",
     "team-linked-goals"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16805,12 +16895,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16871,12 +16961,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -16949,12 +17039,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17019,12 +17109,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17085,12 +17175,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17163,12 +17253,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17229,12 +17319,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17295,12 +17385,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17555,12 +17645,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17621,12 +17711,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17689,12 +17779,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17758,12 +17848,12 @@
     "core/app-scope",
     "team-invite-comm"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17824,12 +17914,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17894,12 +17984,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -17970,14 +18060,13 @@
     "template-credit"
    ],
    "calledBy": [
+    "app/boot",
     "team-share",
     "viral-sharing"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -18032,12 +18121,12 @@
     "team-linked-goals",
     "team-visibility-levels"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -18102,12 +18191,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -18174,12 +18263,12 @@
     "goal-templates-data",
     "team-invite-comm"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -18252,12 +18341,12 @@
     "goal-templates-data",
     "team-invite-comm"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -18326,12 +18415,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -18392,12 +18481,12 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "app/boot"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalGoalsKit"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -22177,6 +22266,7 @@
     "core/app-scope"
    ],
    "calledBy": [
+    "app/boot",
     "settings/render",
     "settings/sub-appearance",
     "settings/sub-data",
@@ -22187,9 +22277,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalUiHelpers"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -28064,9 +28152,7 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "sb"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],

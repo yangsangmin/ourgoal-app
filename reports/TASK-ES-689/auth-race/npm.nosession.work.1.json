@@ -1,0 +1,128 @@
+{
+ "tool": "whole-run/run2/tools/auth-race.cjs (court/lib/chrome.js · static-server.js · site-host.js 읽기 전용)",
+ "type": "작업자 측정, 판정 아님",
+ "mode": "저장된 세션 없음(대조군)",
+ "limits": "진짜 서버와는 통신하지 않는다(법정 브라우저가 외부 통신을 막는다). 연결 라이브러리는 저장소에 설치된 판(2.115.0 (node_modules))을 페이지가 뜨기 전에 심었다 — 운영 화면이 CDN 에서 받는 판과 같은지는 재지 않았다. 세션은 가짜라서 그 뒤의 서버 조회는 모두 실패한다(두 트리 같은 조건). 그래서 이 탐침이 재는 것은 「인증 사건이 누구에게 전달되는가 · 복원 진입 함수가 몇 번 불리는가」까지다.",
+ "app": "C:\\dev\\wt\\es689-finalize-p",
+ "libVersion": "2.115.0 (node_modules)",
+ "startedAt": "2026-10-11T16:15:12.982Z",
+ "endedAt": "2026-10-11T16:15:19.928Z",
+ "waitMs": 6000,
+ "boot": {
+  "ok": true,
+  "error": null,
+  "exceptions": [],
+  "consoleErrors": []
+ },
+ "summary": {
+  "line": [
+   "CREATE",
+   "REG:1",
+   "CALL:runAppBoot#1",
+   "REG:2",
+   "INITDONE",
+   "EV:INITIAL_SESSION:listener1:null",
+   "EV:INITIAL_SESSION:listener2:null"
+  ],
+  "scripts": [
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js",
+   "js/app/boot.js"
+  ],
+  "regs": [
+   {
+    "e": "REG:1",
+    "script": "js/app/boot.js",
+    "initQueueOpen": true
+   },
+   {
+    "e": "REG:2",
+    "script": "js/app/boot.js",
+    "initQueueOpen": true
+   }
+  ],
+  "index": {
+   "create": 0,
+   "reg1": 1,
+   "reg2": 3,
+   "initDone": 4,
+   "firstSignedInDelivery": -1
+  },
+  "signedInDeliveredWithSubs": null,
+  "received": [
+   "INITIAL_SESSION:listener1:null",
+   "INITIAL_SESSION:listener2:null"
+  ],
+  "receivedSignedIn": 0,
+  "restoreCalls": 0,
+  "restoreCallDetail": [],
+  "initDoneBeforeReg1": false,
+  "end": {
+   "pendingAuthSession": "null",
+   "profile": "null",
+   "landingVisible": true,
+   "authVisible": false,
+   "profileIsProbeUser": false,
+   "entering": false,
+   "navVisible": false,
+   "bodyClass": "",
+   "openModals": [
+    "homeDetailPanel"
+   ],
+   "toasts": [],
+   "storageHasSession": false
+  },
+  "seeded": false,
+  "lockMode": "lockless",
+  "spyErrors": []
+ },
+ "events": [
+  {
+   "e": "CREATE",
+   "script": "js/app/boot.js",
+   "ms": 175,
+   "args": 2
+  },
+  {
+   "e": "REG:1",
+   "script": "js/app/boot.js",
+   "ms": 176.9,
+   "subsBefore": 1,
+   "initQueueOpen": true
+  },
+  {
+   "e": "CALL:runAppBoot#1",
+   "script": "js/app/boot.js",
+   "ms": 179.4,
+   "hasSession": false,
+   "enteringBefore": false
+  },
+  {
+   "e": "REG:2",
+   "script": "js/app/boot.js",
+   "ms": 179.6,
+   "subsBefore": 2,
+   "initQueueOpen": true
+  },
+  {
+   "e": "INITDONE",
+   "script": "js/app/boot.js",
+   "ms": 180.4,
+   "subs": 3
+  },
+  {
+   "e": "EV:INITIAL_SESSION:listener1:null",
+   "script": "js/app/boot.js",
+   "ms": 180.4
+  },
+  {
+   "e": "EV:INITIAL_SESSION:listener2:null",
+   "script": "js/app/boot.js",
+   "ms": 180.4
+  }
+ ]
+}
