@@ -14,7 +14,7 @@
 - [x] 신고서(module-specs --write)·cell-descriptions·module-guard --update · 예상 10분 · 완료 기준: module-guard 종료 코드 0, inlineScriptLines 가 줄었다
 - [x] 증명: module-load 탐침 기준 대비 회귀 0 · 게스트 시나리오 기준·작업 양쪽 · npm test 기준·작업 수 동일 · tests 전부 종료 코드 동일 · 예상 60분 · 완료 기준: 각 결과 파일이 reports/TASK-ES-638/ 에 있다
 - [x] REQ(8원칙)·claims·proof·TICKETS · 예상 30분 · 완료 기준: verify-integrity-gate → npm test → 서류 뒤 npm test 종료 코드 0
-- [ ] 커밋 → 로컬 recomputeSplit ok:true · judge.js 전체 실행 · 예상 30분 · 완료 기준: 결과가 court-local.json 에 있다
+- [x] 커밋 → 로컬 recomputeSplit ok:true · judge.js 전체 실행 · 예상 30분 · 완료 기준: 결과가 court-local.json 에 있다
 - [ ] origin/main 합치기 → push → PR 열기(5대 고정 블록) → `gh pr view` 되읽기 · 예상 15분 · 완료 기준: PR 번호·head 가 되읽은 값과 같다
 - [ ] [4단계: 심사 청구] 오케스트레이터에 보고 · 완료 기준: 보고에 PR 번호·수치·미룬 묶음이 있다
 
