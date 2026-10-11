@@ -13,7 +13,7 @@
 - [x] 단위 시험 작성·실행 · 예상 60분 · 완료 기준: sweep-unit.json 의 통과 수 = 전체 수(앞선 묶음의 diff 모양 검사 둘은 사실대로)
 - [x] 현재 main 사본 모의 적용 + 시험 전부·부팅·지문·모듈 로드·지도 도구 · 예상 40분 · 완료 기준: mock-apply.json ok true
 - [x] 설계 5.7 · REQ(8원칙) · claims · TICKETS · 예상 30분 · 완료 기준: verify-integrity-gate → npm test 종료 코드 0
-- [ ] 커밋 → judge.js 전체 실행 · 예상 15분 · 완료 기준: 결과가 court-local.json 에 있다
+- [x] 커밋 → judge.js 전체 실행 · 예상 15분 · 완료 기준: 결과가 court-local.json 에 있다
 - [ ] origin/main 합치기 → push → PR 열기(사양 공개, 5대 고정 블록) → `gh pr view` 되읽기 · 예상 10분 · 완료 기준: PR 번호·head 가 되읽은 값과 같다
 - [ ] [4단계: 심사 청구] 오케스트레이터에 보고 · 완료 기준: 보고에 PR 번호·설정 꼴·단위 시험 수·모의 수치·붙잡힌 주석 목록이 있다
 
