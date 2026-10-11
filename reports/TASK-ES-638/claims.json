@@ -1,0 +1,249 @@
+{
+  "task": "TASK-ES-638",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "설정 시동 연결 네 줄(이용약관 링크 · 개인정보처리방침 링크 · 시험 계정 단추 정리 · 키보드 가림 방지)을 생성기(gen-inline-hard.js)로 세포 js/tabs/settings/boot-wiring.js 에 글자 그대로 옮기고 index.html 원래 자리에서 부른다. 앱 동작을 보존한다(손 편집 0)."
+    },
+    {
+      "id": "R2",
+      "text": "목표 탭 「AI 목표 어시스턴트」 서랍 여닫기 연결을 생성기로 세포 js/tabs/goals/goal-agent-toggle.js 에 글자 그대로 옮기고 원래 자리에서 부른다. 앱 동작을 보존한다."
+    },
+    {
+      "id": "R3",
+      "text": "바깥 부품 다섯 개(계정 보안 · 반응 · 도움돼요 이유 · 팀 초대·소통 · 팀 연계 개인목표)의 init 연결을 생성기로 세포 js/core/module-connect.js 에 글자 그대로 옮기고 원래 자리에서 부른다. 앱 동작을 보존한다."
+    },
+    {
+      "id": "R4",
+      "text": "서비스 워커 등록 문을 생성기로 세포 js/core/pwa-service-worker.js 에 글자 그대로 옮기고 원래 자리에서 부른다. 앱 동작을 보존한다."
+    },
+    {
+      "id": "R5",
+      "text": "증명 하한(헌법 CELL_SPLIT_PROOF): 옮긴 구간의 토큰 동일·누수 0 · 모듈 단독 로드 새 회귀 0 · 통로·window 이름의 값 지문 차이 0 · npm test 검사 줄 수 동일 · tests·금고·생성기 변경 0."
+    },
+    {
+      "id": "R6",
+      "text": "기준선(docs/architecture/module-baseline.json)에 줄어든 인라인 스크립트 줄 수를 기록한다(지시함 DIR-003)."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "설정 시동 연결 가운데 시험 계정 단추 정리(startDevDebugButtons)와 키보드 가림 방지(startKeyboardShield)는 시동 때 한 번 도는 문이라 「행동이 만든 변화」로 단언하지 않았다. 키보드 가림 방지의 실제 동작은 진짜 폰의 가상 키보드가 있어야 볼 수 있다. 두 문의 동일성은 생성기 재실행 대조(proof)와 토큰 대조로 본다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "바깥 부품 연결 가운데 반응 · 도움돼요 이유 · 팀 초대·소통 · 팀 연계 개인목표 부품은 게스트 화면에서 누를 곳이 없다(게스트 소통 피드에는 글이 0건이고 팀 기능은 로그인이 필요하다). 화면 시나리오는 계정 보안 부품의 「비밀번호 찾기」 창만 잰다. 건네는 손잡이가 같다는 것은 생성기 재실행 대조(proof) · 토큰 대조 · 통로 이름 값 지문 차이 0 으로 본다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "서비스 워커가 실제로 등록됐는지 · 새 버전 알림 글 · 잠금화면 알림 단추 신호 처리는 시나리오 단계로 읽을 수 없어 재지 않았다. 시나리오는 시동 끝의 등록 호출이 지난 뒤에도 탭 전환이 예외 없이 도는 것만 잰다.",
+      "cannotBecause": "out-of-scope-feature"
+    },
+    {
+      "text": "생성기가 감싼 코드가 읽는 인라인 이름 27개의 통로 getter 를 index.html 머리에 새로 달았다. 그중 22개는 등록 기관이 이미 같은 값으로 내주던 이름이고 5개는 통로에 처음 생긴다. 값 지문 차이는 0 이다(reports/TASK-ES-638/name-fingerprints.json). 다시 단 getter 의 재철거는 이 PR 의 범위가 아니다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 설정 탭 맨 아래 「이용약관」 링크를 누르면 서비스 이용약관 창이 열리고, 닫은 뒤 「개인정보처리방침」 링크를 누르면 개인정보처리방침 창이 열리며 예외가 없다. 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/tabs/settings/boot-wiring.js"
+      ],
+      "scenario": "scenarios/s1-settings-legal-links.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 「AI 목표 어시스턴트」 제목 줄을 누르면 서랍이 열려 입력칸이 보이고, 다시 누르면 닫히며 예외가 없다. 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/tabs/goals/goal-agent-toggle.js"
+      ],
+      "scenario": "scenarios/s2-goal-agent-drawer.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "시작 화면에서 로그인 화면으로 가 「비밀번호를 잊으셨나요?」를 누르면 계정 보안 부품이 「비밀번호 찾기」 창을 열며 예외가 없다. 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/core/module-connect.js"
+      ],
+      "scenario": "scenarios/s3-auth-forgot-password.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "ui-behavior",
+      "statement": "게스트로 들어와 기록 탭과 일정 탭을 차례로 누르면 누른 탭이 활성이 되고 예외가 없다(시동 끝의 서비스 워커 등록 호출이 지난 뒤에도 앱이 같게 돈다). 바뀐 파일은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+      "touches": [
+        "index.html",
+        "js/core/pwa-service-worker.js"
+      ],
+      "scenario": "scenarios/s4-boot-tabs.json",
+      "proof": "proof.json"
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검사기(verify-inline-hard.js) 결과가 ok 다 — 토큰 동일(접두 제외) · 줄 동일 · 남은 글자 동일 · 누수 0 · 미노출 0 · setter 빠짐 0 · this/arguments 0 · 이중 처리기 0 · 800줄 이하.",
+      "touches": [
+        "reports/TASK-ES-638/verify-inline-hard.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/verify-inline-hard.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 로드 탐침 결과에서 기준 대비 새 회귀 목록이 비어 있다.",
+      "touches": [
+        "reports/TASK-ES-638/module-load.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/module-load.json",
+        "path": "regressions",
+        "equals": []
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 이름 목록으로 맞댄 통로 이름의 값 지문 차이가 0 이다.",
+      "touches": [
+        "reports/TASK-ES-638/name-fingerprints.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/name-fingerprints.json",
+        "path": "scope.diff",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "통로에서 사라진 이름이 없다.",
+      "touches": [
+        "reports/TASK-ES-638/name-fingerprints.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/name-fingerprints.json",
+        "path": "scopeLost",
+        "equals": []
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test 의 검사 줄(✓) 수가 기준 트리와 작업 트리에서 같다.",
+      "touches": [
+        "reports/TASK-ES-638/npm-test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/npm-test-compare.json",
+        "path": "same.checkLines",
+        "equals": true
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시험 파일을 하나씩 돌렸을 때 종료 코드나 ok 줄 수가 기준과 다른 파일이 0개다.",
+      "touches": [
+        "reports/TASK-ES-638/tests-all-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/tests-all-compare.json",
+        "path": "differingCount",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업이 바꾼 파일 가운데 tests/ 아래 파일이 없다.",
+      "touches": [
+        "reports/TASK-ES-638/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/measurement.json",
+        "path": "changedFiles.tests",
+        "equals": []
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이 작업의 측정 기록에서 인라인 스크립트 줄 수 변화가 -68 이다.",
+      "touches": [
+        "reports/TASK-ES-638/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/measurement.json",
+        "path": "summary.inlineScriptLines.delta",
+        "equals": -68
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준선 마지막 기록의 인라인 스크립트 줄 수가 측정값과 같다.",
+      "touches": [
+        "reports/TASK-ES-638/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-638/measurement.json",
+        "path": "baseline.recordedEqualsMeasured",
+        "equals": true
+      }
+    }
+  ]
+}
