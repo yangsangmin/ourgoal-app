@@ -1,0 +1,6 @@
+{
+ "note": "시험이 배선 글자를 붙잡는 이름 — 새로 등록한 이름의 배선을 전부 지운 저장소 밖 사본(mock-unwire-all.json)에서 시험을 하나씩 돌려, 기준에서는 통과하고 그 사본에서만 깨지는 시험으로 찾았다(tests-mock-all.json). 시험은 고치지 않았다. 재철거는 이 이름의 그 줄을 지우지 않는다.",
+ "pinned": [
+  { "name": "saveGoogleToken", "line": "window.saveGoogleToken = saveGoogleToken;", "test": "tests/gcal-login-reconnect-fix.test.js", "testLine": 25, "assertion": "indexHtml.includes('window.saveGoogleToken = saveGoogleToken;') — 「saveGoogleToken 전역 노출」", "unlock": "그 단언을 「옛 배선 글자 또는 등록」으로 넓히는 시험 수정(같은 파일의 다른 단언은 #TASK-ES-620 에서 이미 넓혔다) — 시험 변경은 따로 결심" }
+ ]
+}

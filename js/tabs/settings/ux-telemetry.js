@@ -50,7 +50,7 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/ux-telemetry', {
-    _uxTelemetry: K._uxTelemetry
+    _uxTelemetry: K._uxTelemetry, bindRageTapTelemetry: K.bindRageTapTelemetry
   }, { window: [
     '_uxTelemetry'
   ] });

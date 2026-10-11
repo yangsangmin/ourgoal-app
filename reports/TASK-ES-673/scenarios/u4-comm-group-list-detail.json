@@ -1,0 +1,87 @@
+{
+  "id": "u4-comm-group-list-detail",
+  "title": "게스트로 소통 탭의 팀 하위 탭을 누르면 예시 모임 목록(「2026 하반기 전략 워크숍 TF」 포함)이 그려지고, 그 모임을 누르면 모임 상세에 그 모임의 소개 글과 공동 달성률이 보인다 (모임 목록 자료를 상태 기관으로 옮기기 전후 보존 — 읽기만 한다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#commBody [data-sub=\"group\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"group\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "[data-open-group=\"g-workshop\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "count",
+      "selector": "#screen-comm [data-open-group]",
+      "min": 5
+    },
+    {
+      "expect": "textContains",
+      "selector": "#screen-comm",
+      "text": "2026 하반기 전략 워크숍 TF"
+    },
+    {
+      "do": "click",
+      "selector": "[data-open-group=\"g-workshop\"] .group-info b"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#grpBack",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#screen-comm",
+      "text": "회사 워크숍 장소·예산 확정부터 부서별 세션 발표"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#screen-comm",
+      "text": "공동 달성률 65%"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

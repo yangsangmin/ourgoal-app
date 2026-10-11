@@ -172,7 +172,7 @@
   if (!R) return;
   var K = g.OurgoalUiHelpers;
   if (K) R.provide('records/template-record-detail', {
-    openTemplateRecordDetailModal: K.openTemplateRecordDetailModal
+    checkRecordDeepLink: K.checkRecordDeepLink, openTemplateRecordDetailModal: K.openTemplateRecordDetailModal
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

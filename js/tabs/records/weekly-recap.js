@@ -658,8 +658,10 @@
   if (!R) return;
   var K = g.OurgoalRecordsKit;
   if (K) R.provide('records/weekly-recap', {
-    findBestMoment: K.findBestMoment, generateWeeklyRecapImage: K.generateWeeklyRecapImage, openLegacyRecapCanvasModal: K.openLegacyRecapCanvasModal,
-    openRecordModal: K.openRecordModal, openWeeklyRecapModal: K.openWeeklyRecapModal, weeklyRecapStats: K.weeklyRecapStats
+    bindRecCarouselPills: K.bindRecCarouselPills, bindRecDocumentClick: K.bindRecDocumentClick, bindRecPulseBar: K.bindRecPulseBar,
+    bindRecTimeTrackerBtn: K.bindRecTimeTrackerBtn, findBestMoment: K.findBestMoment, generateWeeklyRecapImage: K.generateWeeklyRecapImage,
+    openLegacyRecapCanvasModal: K.openLegacyRecapCanvasModal, openRecordModal: K.openRecordModal, openWeeklyRecapModal: K.openWeeklyRecapModal,
+    weeklyRecapStats: K.weeklyRecapStats
   }, { window: [
     'findBestMoment', 'generateWeeklyRecapImage', 'openLegacyRecapCanvasModal', 'openWeeklyRecapModal', 'weeklyRecapStats'
   ], windowOnly: [

@@ -1,0 +1,1426 @@
+{
+ "task": "TASK-ES-664",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "키트 가져오기 이름 가운데 등록 기관에 없던 89개를 그 이름을 키트에 다는 세포 49개의 등록 블록에 더한다(window 전용이던 8개는 통로로도 내주게 올린다). 앱 동작은 그대로다 — index.html 의 옛 배선이 같은 값을 다시 내준다."
+  },
+  {
+   "id": "R2",
+   "text": "등록 줄은 생성기가 쓴다(손 편집 0). 기존 등록은 하나도 빠지지 않고, 세포의 기존 글자는 바뀌지 않으며, 800줄 상한을 지킨다."
+  },
+  {
+   "id": "R3",
+   "text": "대조 탐침: 등록 수 증가 · 불일치 0 · 이중 등록 0 · 초과는 기준과 같음 · 값 지문 차이 0."
+  },
+  {
+   "id": "R4",
+   "text": "index.html · tests · 금고 · 철거 생성기 변경 0. 모듈 로드 · npm test · 시험 하나씩이 기준과 같다."
+  },
+  {
+   "id": "R5",
+   "text": "모의 철거: 저장소 밖 사본에서 새로 등록한 이름의 배선을 지워도 대조 · 시나리오 · 시험이 기준과 같다. 시험이 글자로 붙잡는 이름은 목록으로 남긴다."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "실제 재철거(index.html 의 가져오기·getter·window 줄 삭제)는 이 PR 에 없다. 등록하지 않은 이름(통로와 window 값이 다른 2개 · 800줄 상한에 걸린 1개 · 통로·window 로 나가지 않는 가져오기)은 계획 파일에 사유와 함께 적었다.",
+   "cannotBecause": "out-of-scope-feature"
+  },
+  {
+   "text": "로그인 뒤에만 불리는 이름의 동작은 화면 시나리오로 재지 못했다 — 대조 탐침의 값 일치와 지문으로만 쟀다.",
+   "cannotBecause": "out-of-scope-feature"
+  }
+ ],
+ "claims": [
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 진입해 아바타 인사 팝업을 닫고 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성이 되고 앞 탭은 비활성이 되며 예외가 없다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p01-guest-boot-six-tabs.json",
+   "id": "C1"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "목표 탭의 하위 탭(개인·루틴·통계)과 통계 기간(주·월)을 눌러 바꾸면 누른 것이 활성이 되며 예외가 없다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p02-goals-subtabs-periods.json",
+   "id": "C2"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 홈의 종 버튼으로 알림 센터 창을 두 번 열었다 닫고 설정 탭에 들어갔다가 홈으로 돌아오면 누른 탭이 활성이 되며 예외가 없다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p03-bell-modal-settings.json",
+   "id": "C3"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 홈에서 「새 목표」를 누르면 새 목표 창이 열리고 취소를 누르면 닫히며, 목표 탭의 팀목표 하위 탭으로 옮기면 그 탭이 활성이 되고 예외가 없다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p04-new-goal-modal.json",
+   "id": "C4"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 「AI 목표 어시스턴트」 제목 줄을 누르면 서랍이 열려 입력칸이 보이고, 다시 누르면 닫히며 예외가 없다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p05-goal-agent-drawer.json",
+   "id": "C5"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 설정 탭 맨 아래 「이용약관」·「개인정보처리방침」 링크를 누르면 각각 약관 창이 열린다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p06-settings-legal-links.json",
+   "id": "C6"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "시작 화면에서 로그인 화면으로 가 「비밀번호를 잊으셨나요?」를 누르면 「비밀번호 찾기」 창이 열린다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p07-auth-forgot-password.json",
+   "id": "C7"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 홈의 체크인 입력칸 옆 마이크 단추를 누르면 마이크 권한 안내 창이 뜬다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p08-checkin-mic-guide.json",
+   "id": "C8"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 소통 탭에서 모임 구획 단추를 누르고 Enter 를 눌러도 구획이 바뀌고 예외가 없다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p09-team-comment-passthrough.json",
+   "id": "C9"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭 통계에서 체험용 샘플(학습)을 적용한 뒤 「샘플 정리」 단추를 누르고 확인하면 샘플 안내 상자가 사라진다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p10-sample-purge.json",
+   "id": "C10"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 분류 칩 「학습/성장」을 고르고 빠른 추가 칸에 목표 이름을 적어 「추가」를 누르면 그 목표가 목록에 생긴다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p11-goal-fast-add.json",
+   "id": "C11"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 기록 탭에서 「내보내기」 단추를 누르면 내보내기 창이 열려 테마 고르기 칸이 보인다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+   "touches": [
+    "js/auth-social.js",
+    "js/core/app-boot.js",
+    "js/core/app-enter.js",
+    "js/core/gcal-token-save.js",
+    "js/core/modal-helper.js",
+    "js/core/module-connect.js",
+    "js/core/profile-topbar.js",
+    "js/core/pwa-service-worker.js",
+    "js/core/registry-init.js",
+    "js/core/supabase-auth.js",
+    "js/tabs/comm/sample-data.js",
+    "js/tabs/goals/ai-agent.js",
+    "js/tabs/goals/curated-market-data.js",
+    "js/tabs/goals/focus-autopilot.js",
+    "js/tabs/goals/goal-agent-toggle.js",
+    "js/tabs/goals/goal-archive.js",
+    "js/tabs/goals/goal-fast-add.js",
+    "js/tabs/goals/new-goal-modal.js",
+    "js/tabs/goals/team-comment-send.js",
+    "js/tabs/goals/template-encyclopedia-modal.js",
+    "js/tabs/records/ai-feedback-providers.js",
+    "js/tabs/records/checkin-capture.js",
+    "js/tabs/records/checkin-input-wiring.js",
+    "js/tabs/records/export-theme.js",
+    "js/tabs/records/external-import.js",
+    "js/tabs/records/sample-purge.js",
+    "js/tabs/records/template-market.js",
+    "js/tabs/records/template-record-detail.js",
+    "js/tabs/records/weekly-recap.js",
+    "js/tabs/settings/account-actions.js",
+    "js/tabs/settings/account-entry.js",
+    "js/tabs/settings/app-evaluation.js",
+    "js/tabs/settings/auth-screen-actions.js",
+    "js/tabs/settings/avatar-levelup-modal.js",
+    "js/tabs/settings/boot-wiring.js",
+    "js/tabs/settings/dev-debug-gate.js",
+    "js/tabs/settings/device-session.js",
+    "js/tabs/settings/feedback-bot-setup.js",
+    "js/tabs/settings/guide-buttons.js",
+    "js/tabs/settings/inapp-landing.js",
+    "js/tabs/settings/pwa-install.js",
+    "js/tabs/settings/render.js",
+    "js/tabs/settings/session-entry.js",
+    "js/tabs/settings/support-inquiry-bind.js",
+    "js/tabs/settings/tester-entry.js",
+    "js/tabs/settings/user-session-realtime.js",
+    "js/tabs/settings/ux-telemetry.js",
+    "js/tabs/settings/widget-modal-opener.js",
+    "js/tabs/settings/withdraw-modal.js"
+   ],
+   "scenario": "scenarios/p12-records-export-modal.json",
+   "id": "C12"
+  },
+  {
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 로드 탐침 결과에서 기준 대비 작업 트리의 새 회귀 목록이 비어 있다.",
+   "touches": [
+    "reports/TASK-ES-664/module-load.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/module-load.json",
+    "path": "regressions",
+    "equals": []
+   },
+   "id": "C13"
+  },
+  {
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록의 index.html 변경이 없다(등록 줄은 세포 파일 끝에만 붙었다).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.changed.indexHtmlChanged",
+    "equals": false
+   },
+   "id": "C14"
+  },
+  {
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 부팅 뒤 작업 트리의 예외가 0 건이다(작업자 측정 기록).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.exceptions",
+    "equals": 0
+   },
+   "id": "C15"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기존 등록 이름이 하나도 빠지지 않았다(기준의 등록 블록에 있던 이름 가운데 작업 트리에 없는 것 0).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json",
+    "reports/TASK-ES-664/provide-plan.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.lost",
+    "equals": []
+   },
+   "id": "C16"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이번에 더한 이름이 계획 파일의 목록과 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.addedEqualsPlan",
+    "equals": true
+   },
+   "id": "C17"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기존 등록 가운데 바뀐 것은 window 전용에서 통로로 올린 이름뿐이고 그 목록이 계획과 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.upgradedEqualsPlan",
+    "equals": true
+   },
+   "id": "C18"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "그 밖에 바뀐 기존 등록 항목이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.otherChangedEntries",
+    "equals": []
+   },
+   "id": "C19"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "같은 이름을 두 세포가 등록한 것이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.duplicateNames",
+    "equals": []
+   },
+   "id": "C20"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "바뀐 세포 파일에서 등록 블록 밖의 글자는 기준과 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.outsideBlockChanged",
+    "equals": []
+   },
+   "id": "C21"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "바뀐 세포 파일이 계획의 파일 목록과 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.filesEqualPlan",
+    "equals": true
+   },
+   "id": "C22"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "등록 블록을 붙인 뒤 800줄을 넘는 세포 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.blocks.over800",
+    "equals": []
+   },
+   "id": "C23"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 탐침: 작업 트리의 불일치가 0 이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json",
+    "reports/TASK-ES-664/cell-registry-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.counts.mismatches",
+    "equals": 0
+   },
+   "id": "C24"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 탐침: 이중 등록(conflicts)이 0 이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.counts.conflicts",
+    "equals": 0
+   },
+   "id": "C25"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 탐침: 초과(등록됐는데 옛 배선에 없는 이름) 수가 기준과 같다 — 이번에 더한 이름은 전부 옛 배선에 있는 이름이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.extraSameAsBase",
+    "equals": true
+   },
+   "id": "C26"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 탐침: 등록 이름 수가 더한 이름 수만큼 늘었다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.registeredGrewBy",
+    "equals": 89
+   },
+   "id": "C27"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 탐침: 통로에서 사라진 이름이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.scopeLost",
+    "equals": []
+   },
+   "id": "C28"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이름별 통로 값 지문 차이가 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.differing.scope",
+    "equals": []
+   },
+   "id": "C29"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "이름별 window 값 지문 차이가 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.differing.window",
+    "equals": []
+   },
+   "id": "C30"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 부팅 뒤 작업 트리의 예외가 0 건이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.exceptions",
+    "equals": 0
+   },
+   "id": "C31"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "새로 등록한 이름의 통로 값 요약이 기준과 다른 이름이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.nameProbe.valueDifferingWork",
+    "equals": []
+   },
+   "id": "C32"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "index.html 을 바꾸지 않았다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.changed.indexHtmlChanged",
+    "equals": false
+   },
+   "id": "C33"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests/ 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.changed.testsChanged",
+    "equals": []
+   },
+   "id": "C34"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "금고 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.changed.vaultChanged",
+    "equals": []
+   },
+   "id": "C35"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "철거 생성기(gen-inline-hard.js) 변경이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.changed.unwireGeneratorChanged",
+    "equals": []
+   },
+   "id": "C36"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "scripts/ 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.changed.scriptsChanged",
+    "equals": []
+   },
+   "id": "C37"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 로드 탐침의 새 회귀가 없다.",
+   "touches": [
+    "reports/TASK-ES-664/module-load.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/module-load.json",
+    "path": "regressions",
+    "equals": []
+   },
+   "id": "C38"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 를 기준·작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄이 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.npmTest.same",
+    "equals": true
+   },
+   "id": "C39"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험을 하나씩 돌린 결과가 기준과 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.testsEach.sameAsBase",
+    "equals": true
+   },
+   "id": "C40"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "inlineScriptLines 가 기준과 같다(index.html 변경 0).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.inlineScriptLines.same",
+    "equals": true
+   },
+   "id": "C41"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 가드 종료 코드가 0 이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.guard.exitCode",
+    "equals": 0
+   },
+   "id": "C42"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "무결성 게이트 종료 코드가 0 이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.guard.integrityGateExitCode",
+    "equals": 0
+   },
+   "id": "C43"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거 사본: 통로에서 사라진 이름이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.registry.scopeLost",
+    "equals": []
+   },
+   "id": "C44"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거 사본: 이름별 통로 값 지문 차이가 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.registry.differing.scope",
+    "equals": []
+   },
+   "id": "C45"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거 사본: 게스트 부팅 예외가 0 건이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.registry.exceptions",
+    "equals": 0
+   },
+   "id": "C46"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거 사본: 새로 등록한 이름의 통로 값 요약이 기준과 다른 이름이 없다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.nameValueDiffering",
+    "equals": []
+   },
+   "id": "C47"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거 사본: 게스트 시나리오가 기준·모의 양쪽 통과한다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.scenarios.allPassedBoth",
+    "equals": true
+   },
+   "id": "C48"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거 사본(붙잡힌 이름을 뺀 것): npm test 의 종료 코드와 검사 줄이 기준과 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.npmTest.same",
+    "equals": true
+   },
+   "id": "C49"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거 사본(붙잡힌 이름을 뺀 것): 시험을 하나씩 돌린 결과가 기준과 같다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.testsEach.sameAsBase",
+    "equals": true
+   },
+   "id": "C50"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험이 배선 글자를 붙잡는 이름 목록(붙잡힌 이름을 빼지 않은 사본에서만 깨지는 시험으로 찾았다 — 재철거는 이 이름의 그 줄을 지우지 않는다).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json",
+    "reports/TASK-ES-664/pinned-names.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockAll.pinned",
+    "equals": [
+     {
+      "name": "saveGoogleToken",
+      "line": "window.saveGoogleToken = saveGoogleToken;",
+      "test": "tests/gcal-login-reconnect-fix.test.js",
+      "testLine": 25,
+      "assertion": "indexHtml.includes('window.saveGoogleToken = saveGoogleToken;') — 「saveGoogleToken 전역 노출」",
+      "unlock": "그 단언을 「옛 배선 글자 또는 등록」으로 넓히는 시험 수정(같은 파일의 다른 단언은 #TASK-ES-620 에서 이미 넓혔다) — 시험 변경은 따로 결심"
+     }
+    ]
+   },
+   "id": "C51"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 철거로 지워지는 줄 수(다음 재철거 PR 의 예상값 — 기준 커밋에 고정된 측정).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.mockUnwire.unwire.deletedLinesTotal",
+    "equals": 195
+   },
+   "id": "C52"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조군(등록 없이 같은 배선을 지움)은 게스트 부팅이 예외로 멈춘다 — 모의 철거가 통과하는 까닭이 이번 등록이다.",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.control.bootFailed",
+    "equals": true
+   },
+   "id": "C53"
+  }
+ ]
+}

@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "0b643c58e87b742db8502dac3ca638bb5244c800",
-  "short": "0b643c58",
-  "committedAt": "2026-10-11T15:38:52+09:00",
-  "subject": "Merge pull request #933 from yangsangmin/feat/2026-10-11-task-es-650-region-1"
+  "commit": "3c9b9335f5c76a41d7ac10b4b2f079526fce9bb7",
+  "short": "3c9b9335",
+  "committedAt": "2026-10-11T18:07:53+09:00",
+  "subject": "Merge pull request #941 from yangsangmin/feat/2026-10-11-task-es-673-unstate-3"
  },
  "summary": {
-  "cells": 370,
-  "files": 369,
-  "jsLines": 92430,
+  "cells": 371,
+  "files": 370,
+  "jsLines": 92691,
   "kinds": {
-   "organ": 68,
+   "organ": 69,
    "tab": 196,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 370,
+  "descriptionsHand": 371,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 1904,
-   "functionDecls": 17
+   "inlineScriptLines": 1896,
+   "functionDecls": 22
   },
   "health": {
-   "undifferentiatedLines": 1904,
+   "undifferentiatedLines": 1896,
    "globalLinks": 75,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,7 +74,7 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 68
+   "count": 69
   },
   {
    "key": "tab",
@@ -173,7 +173,7 @@
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 12525,
+   "lines": 12567,
    "over800": 0
   },
   {
@@ -231,7 +231,7 @@
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 10806,
+   "lines": 10868,
    "over800": 0
   },
   {
@@ -351,7 +351,7 @@
     "settings/widget-settings-modal",
     "settings/withdraw-modal"
    ],
-   "lines": 7584,
+   "lines": 7655,
    "over800": 0
   },
   {
@@ -541,6 +541,7 @@
     "core/app-scope",
     "core/app-state",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -583,7 +584,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 7123,
+   "lines": 7209,
    "over800": 0
   },
   {
@@ -1742,13 +1743,21 @@
    },
    "tasks": [
     "TASK-ES-591",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-591.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -3838,7 +3847,7 @@
     "#TASK-ES-581(전체 화면 렌더·앱 부팅 원문 분열 (renderAll 및 appBoot)): index.html 인라인 IIFE 의 구간(이전 전 7807~8033줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 253,
+   "lines": 263,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -3871,12 +3880,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-581"
+    "TASK-ES-581",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-581-APP-BOOT.md"
+    "docs/specs/REQ-TASK-ES-581-APP-BOOT.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 841,
      "task": "TASK-ES-581",
@@ -3903,7 +3920,7 @@
     "#TASK-ES-548(인라인 3단계 구역 Z5 표준 2): index.html 인라인 IIFE 의 구간(이전 전 4572~4644 · 4645~4657 · 4658~4670 · 4671~4679 · 4680~4685 · 4686~4693 · 4694~4698줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 185,
+   "lines": 187,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -3937,13 +3954,21 @@
    },
    "tasks": [
     "TASK-ES-548",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-548-STAGE3-Z56-B.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -4022,6 +4047,7 @@
     "core/app-enter",
     "core/app-state",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -4264,7 +4290,9 @@
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [],
+   "usedByIndexHtml": [
+    "OurgoalAppState"
+   ],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4360,6 +4388,73 @@
      "task": "TASK-ES-482",
      "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-app-handles",
+   "file": "js/core/boot-app-handles.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "앱 손잡이 준비",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 앱 환경설정 객체를 만들어 window 에 달고, 템플릿 부품에 서버 연결과 앱 상태 읽기·알림 글 함수를 건넨다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot App Handles (앱 시동 — 앱 환경설정 객체 · 템플릿 부품에 앱 손잡이 연결)",
+    "앱이 뜰 때 한 번 도는 두 곳을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+    "bootAppConfig — 앱 환경설정 객체(빈 객체)를 만들어 window 에 단다. 다른 부품이 부를 때 window 의 이 객체를 읽는다.",
+    "bootTemplatePartHandles — 템플릿 부품이 로드돼 있으면 서버 연결 · 앱 상태 읽기 함수 · 알림 글 함수를 건넨다."
+   ],
+   "lines": 40,
+   "over800": false,
+   "exposes": [
+    "OURGOAL_CONFIG",
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope",
+    "template-credit"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security",
+    "streaks"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-671"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-671-BOOT-APP-HANDLES.md"
+   ],
+   "prs": [
+    {
+     "number": 939,
+     "task": "TASK-ES-671",
+     "title": "[INFRA] #TASK-ES-671 refactor: 구역 이전 — 앱 환경설정 객체와 템플릿 부품 초기화 블록을 세포로(결심 2 승인분 · 접두 말고 글자 0 변경 · 인라인 −2줄)",
+     "date": "2026-10-11"
     }
    ]
   },
@@ -5565,7 +5660,7 @@
     "계정 격리 도우미(키 이름·주인 확인·공용 키 정리)는 js/core/gcal-token.js, 토큰 받기·복원·동기화는 js/core/gcal-sync.js 가 맡는다. 이 세포는 저장 한 가지만 한다.",
     "#TASK-ES-659(구글 캘린더 토큰 저장 함수 이전 — saveGoogleToken): index.html 인라인 IIFE 의 구간(이전 전 2947~2973줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 52,
+   "lines": 64,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -5597,12 +5692,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-659"
+    "TASK-ES-659",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-659-SAVE-GOOGLE-TOKEN-MOVE.md"
+    "docs/specs/REQ-TASK-ES-659-SAVE-GOOGLE-TOKEN-MOVE.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 930,
      "task": "TASK-ES-659",
@@ -5820,14 +5923,22 @@
    "tasks": [
     "TASK-ES-471",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -5988,7 +6099,7 @@
     "connectAuthSafety(계정 보안 OurgoalAuthSafety) · connectReactions(반응 OurgoalReactions) · connectHelpfulReason(도움돼요 이유 OurgoalHelpfulReason) · connectTeamInviteComm(팀 초대·소통 OurgoalTeamInviteComm) · connectTeamLinkedGoals(팀 연계 개인목표 OurgoalTeamLinkedGoals).",
     "#TASK-ES-638(시동 배선 감싸기 1차 — 설정 시동 연결 · AI 목표 어시스턴트 서랍 · 바깥 부품 연결 · 서비스 워커): index.html 인라인 IIFE 의 구간(이전 전 5121~5132 · 5135~5148 · 5154~5161 · 5163~5170 · 5172~5178줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 96,
+   "lines": 107,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -6025,12 +6136,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-638"
+    "TASK-ES-638",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md"
+    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 911,
      "task": "TASK-ES-638",
@@ -6192,15 +6311,23 @@
     "TASK-ES-499",
     "TASK-ES-516",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-499-INLINE-ORGAN-4.md",
     "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -6245,7 +6372,7 @@
     "#TASK-ES-638(시동 배선 감싸기 1차 — 설정 시동 연결 · AI 목표 어시스턴트 서랍 · 바깥 부품 연결 · 서비스 워커): index.html 인라인 IIFE 의 구간(이전 전 5186~5216줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 57,
+   "lines": 67,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -6277,12 +6404,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-638"
+    "TASK-ES-638",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md"
+    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 911,
      "task": "TASK-ES-638",
@@ -6358,13 +6493,21 @@
    },
    "tasks": [
     "TASK-ES-471",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-471-INLINE-ORGAN-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -6725,7 +6868,7 @@
     "Supabase 주소·공개 키(SUPABASE_URL·SUPABASE_ANON_KEY)·클라이언트(sb)·대기 세션(_pendingAuthSession)·window 노출 줄은 원래 자리에 그대로 있다 — 주소·키는 실계정 하네스(docs/design/harness/real-account-steps.js)가 index.html 에서 읽는다.",
     "#TASK-ES-521(인라인 3단계 Z1 로그인·계정 1차): index.html 인라인 IIFE 의 구간(이전 전 3253~3264 · 3265~3280 · 3282~3285줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 76,
+   "lines": 77,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -6758,13 +6901,21 @@
    },
    "tasks": [
     "TASK-ES-521",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -11652,11 +11803,11 @@
    "exposes": [
     "OurgoalStreaks"
    ],
-   "calls": [],
-   "calledBy": [],
-   "readsFromIndexHtml": [
-    "OURGOAL_CONFIG"
+   "calls": [
+    "core/boot-app-handles"
    ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -13947,15 +14098,23 @@
     "TASK-ES-379",
     "TASK-ES-423",
     "TASK-ES-448",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-448-INLINE-P2-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -14618,15 +14777,23 @@
     "TASK-ES-423",
     "TASK-ES-436",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -14958,7 +15125,7 @@
     "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 5185~5315줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 155,
+   "lines": 165,
    "over800": false,
    "exposes": [
     "OurgoalCuratedMarketDataKit"
@@ -14982,12 +15149,21 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-591"
+    "TASK-ES-591",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-591.md"
+    "docs/specs/REQ-TASK-ES-591.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
-   "prs": []
+   "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    }
+   ]
   },
   {
    "id": "goals/focus-autopilot",
@@ -15009,7 +15185,7 @@
     "초집중 타이머 상태 변수(focusTimerInterval·focusTimerSeconds·focusTimerRunning)와 FEED_POSTS_CACHE 는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다.",
     "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 9594~9726 · 9727~10083줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 531,
+   "lines": 529,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -15041,14 +15217,22 @@
    "tasks": [
     "TASK-ES-476",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -15089,7 +15273,7 @@
     "#TASK-ES-638(시동 배선 감싸기 1차 — 설정 시동 연결 · AI 목표 어시스턴트 서랍 · 바깥 부품 연결 · 서비스 워커): index.html 인라인 IIFE 의 구간(이전 전 3348~3361줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 40,
+   "lines": 50,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -15113,12 +15297,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-638"
+    "TASK-ES-638",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md"
+    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 911,
      "task": "TASK-ES-638",
@@ -15147,7 +15339,7 @@
     "goalAchievement 는 smoke-test FN_NAMES 다 — 시험지는 인라인 합본(tests/helpers/inline-bundle.js)에서 이 글자를 찾는다.",
     "#TASK-ES-520(인라인 3단계 Z4 — FN_NAMES 묶음(목표 보관·히트맵·표 집계·표 추이·여러 지표 SVG)): index.html 인라인 IIFE 의 구간(이전 전 7379~7387 · 7388~7400 · 7401~7406 · 7407~7414 · 7415~7547줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 216,
+   "lines": 217,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit",
@@ -15222,13 +15414,21 @@
    },
    "tasks": [
     "TASK-ES-520",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-520-STAGE3-Z4-B.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -15599,7 +15799,7 @@
     "handleGoalFastAddSubmit — 빠른 추가 입력칸(#goalFastAddInput)의 글로 새 목표를 만들어 목록 맨 앞에 넣고 저장한 뒤 화면을 다시 그린다.",
     "#TASK-ES-640(시동 배선 감싸기 2차 — 체크인 입력 연결 · 팀 목표 댓글 보내기 · 샘플 기록 정리 · 빠른 목표 추가): index.html 인라인 IIFE 의 구간(이전 전 3354~3364 · 3366~3398줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 72,
+   "lines": 82,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit",
@@ -15624,12 +15824,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-640"
+    "TASK-ES-640",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md"
+    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 913,
      "task": "TASK-ES-640",
@@ -16096,14 +16304,22 @@
    "tasks": [
     "TASK-ES-466",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -17182,7 +17398,7 @@
     "bindTeamCommentClick · bindTeamCommentKeydown — 문서 전체에서 댓글 보내기 단추([data-cmtsend]) 누름과 댓글 입력칸([data-cmtinput])의 Enter 를 받아 window.sendTeamGoalComment 를 부른다.",
     "#TASK-ES-640(시동 배선 감싸기 2차 — 체크인 입력 연결 · 팀 목표 댓글 보내기 · 샘플 기록 정리 · 빠른 목표 추가): index.html 인라인 IIFE 의 구간(이전 전 3468~3508 · 3509~3531 · 3532~3554줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 122,
+   "lines": 133,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit",
@@ -17207,12 +17423,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-640"
+    "TASK-ES-640",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md"
+    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 913,
      "task": "TASK-ES-640",
@@ -17793,7 +18017,7 @@
     "#TASK-ES-591(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 4709~4890 · 4895~4901 · 4902~4906 · 4909~4946 · 4947~4953 · 4954~4958 · 4959~4972 · 4974~5007 · 5009~5015 · 5016~5020 · 5021~5061 · 5063~5155 · 5156~5234 · 5245~5249 · 5250~5259 · 5263~5269줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 626,
+   "lines": 628,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -17821,14 +18045,22 @@
    "tasks": [
     "TASK-ES-591",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-591.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -18703,7 +18935,7 @@
     "requestServerAIFeedback(이전 전 15624~15671줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)",
     "requestGeminiFeedback(이전 전 15674~15716줄 · 구획 「[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429)」)"
    ],
-   "lines": 211,
+   "lines": 221,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -18732,14 +18964,22 @@
    "tasks": [
     "TASK-ES-225",
     "TASK-ES-423",
-    "TASK-ES-436"
+    "TASK-ES-436",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-225-GEMINI-QUOTA-BACKOFF.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
-    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md"
+    "docs/specs/REQ-TASK-ES-436-INLINE-P1-1.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 752,
      "task": "TASK-ES-436",
@@ -18924,7 +19164,7 @@
     "두 처리기는 index.html 로드 중 바로 걸리던 문이다. 본문을 bindCaptureLiveMeta · bindCaptureSave 로 감싸 옮기고, index.html 원래 자리에서 그 함수를 부른다(등록 순서 보존, 이중 처리기 0).",
     "입력칸 요소를 담은 상태 변수(liveMeta · liveCount · capInput)와 사진 대기값(pendingCapturePhoto)은 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다."
    ],
-   "lines": 231,
+   "lines": 241,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -18956,12 +19196,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-439"
+    "TASK-ES-439",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md"
+    "docs/specs/REQ-TASK-ES-439-INLINE-HARD-DESIGN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 762,
      "task": "TASK-ES-439",
@@ -19137,7 +19385,7 @@
     "bindQuickRoutineChips — 퀵 루틴 칩 줄(#quickRoutineRow 의 [data-quickroutine])을 누르면 그 글을 체크인 입력칸(#captureInput)에 넣고 기록 단추(#captureSave)를 누른다.",
     "startVoiceCheckin — 마이크 단추(#micBtn)로 음성 인식(Web Speech API)을 켜고 끄며 받아 적은 글을 입력칸에 넣는다. 지원하지 않는 브라우저·권한 거부 때는 안내 창(openMicPermissionGuideModal)을 연다."
    ],
-   "lines": 146,
+   "lines": 156,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -19164,12 +19412,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-640"
+    "TASK-ES-640",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md"
+    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 913,
      "task": "TASK-ES-640",
@@ -19304,14 +19560,22 @@
    "tasks": [
     "TASK-ES-465",
     "TASK-ES-474",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md",
     "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -19346,7 +19610,7 @@
     "#TASK-ES-515: 늘 숨어 있던 홈 머리 「나만의 홈 구성」·상단바 「⚙️ 홈구성」 단추만 부르던 홈 구성 열기 처리기를 두 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」). 홈 구성은 설정 「홈 구성 고르기」(#homeLayoutOpenBtn)가 연다.기.",
     "처리기 등록 문 두 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. 한 줄에 두 문인 가이드 단추 등록 줄은 원래 자리에 그대로 있다. 샘플(mock) 데이터는 고치지 않고 그대로 옮겼다."
    ],
-   "lines": 91,
+   "lines": 101,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -19374,13 +19638,21 @@
    },
    "tasks": [
     "TASK-ES-483",
-    "TASK-ES-515"
+    "TASK-ES-515",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-483-INLINE-H1-3.md",
-    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md"
+    "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 812,
      "task": "TASK-ES-515",
@@ -20616,7 +20888,7 @@
     "#TASK-ES-640(시동 배선 감싸기 2차 — 체크인 입력 연결 · 팀 목표 댓글 보내기 · 샘플 기록 정리 · 빠른 목표 추가): index.html 인라인 IIFE 의 구간(이전 전 4770~4796줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 53,
+   "lines": 63,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit",
@@ -20647,12 +20919,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-640"
+    "TASK-ES-640",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md"
+    "docs/specs/REQ-TASK-ES-640-WRAP-BOOT-2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 913,
      "task": "TASK-ES-640",
@@ -21288,7 +21568,7 @@
     "executeDirectTemplateClone — 고른 템플릿을 내 템플릿(customTemplates)에 복제해 저장한 뒤 창을 닫는 복제 본체(본문은 이전 전 글자 그대로).",
     "지시함 DIR-004 (나)에 따라 내용은 한 글자도 바꾸지 않고 자리만 옮겼다. 동작·문구·금액·조건 변경 0."
    ],
-   "lines": 258,
+   "lines": 268,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -21316,12 +21596,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-645"
+    "TASK-ES-645",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-645-TEMPLATE-MARKET-MOVE.md"
+    "docs/specs/REQ-TASK-ES-645-TEMPLATE-MARKET-MOVE.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 917,
      "task": "TASK-ES-645",
@@ -21383,13 +21671,21 @@
    },
    "tasks": [
     "TASK-ES-585",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-585.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -21887,7 +22183,7 @@
     "기록 탭 로드 중 처리기 등록 문 네 개(시간 기록 단추 · 미니 펄스 막대 · 캐러셀 알약 · 문서 위임 클릭)는 bindRecTimeTrackerBtn · bindRecPulseBar · bindRecCarouselPills · bindRecDocumentClick 으로 감싸 index.html 원래 자리에서 부른다(등록 순서 보존, 이중 처리기 0).",
     "#TASK-ES-515: 늘 숨어 있던 옛 세그먼트 막대의 등록 문(처리기)을 막대와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」)."
    ],
-   "lines": 669,
+   "lines": 671,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
@@ -21918,16 +22214,24 @@
     "TASK-ES-474",
     "TASK-ES-515",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-465-INLINE-ORGAN-TEST-BUNDLE.md",
     "docs/specs/REQ-TASK-ES-474-INLINE-H4-2.md",
     "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -22039,7 +22343,7 @@
     "이메일 로그인 제출(bindLoginSubmit — 로그인 뒤 기기 로그인 시각·아이디 기억·프로필 불러오기·게스트 기록 합치기·탈퇴 유예 복구 확인), 계정 데이터 다시 맞추기(bindResyncAccountDataButton), 로그아웃(bindLogoutButton), 계정 초기화(bindResetButton). 모두 index.html 원래 자리에서 부른다(등록 순서 보존).",
     "다시 맞추기 단추 변수(resyncBtn)와 탈퇴 단추 한 줄 등록은 원래 자리에 그대로 있다."
    ],
-   "lines": 156,
+   "lines": 157,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22067,13 +22371,21 @@
    },
    "tasks": [
     "TASK-ES-521",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -22108,7 +22420,7 @@
     "showLastAuthBadge · initRememberedAuthFields — 「P0: 최근 로그인 뱃지 & 아이디 저장 & 로그인 유지」(이전 전 6386~6397줄, 구획 주석 포함)",
     "openChangePasswordModal — 「P0: 설정 화면 내 비밀번호 변경 모달」(이전 전 6416~6421줄, 구획 주석 포함)"
    ],
-   "lines": 117,
+   "lines": 115,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22135,14 +22447,22 @@
    "tasks": [
     "TASK-ES-437",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-437-INLINE-P0-1.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -22334,7 +22654,7 @@
     "같은 묶음 끝의 홈 「새 목표」 단추 처리기(#homeAddGoal → promptNewGoal)도 로드 중 문이라 함께 감싸 옮겼다. 처리기 등록은 index.html 원래 자리에서 bind 함수를 불러 순서가 같다.",
     "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 14009~14013 · 14014~14018 · 14031~14035 · 14036~14042 · 14046~14128 · 14129~14133줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 168,
+   "lines": 169,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22360,14 +22680,22 @@
    "tasks": [
     "TASK-ES-466",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -22548,7 +22876,7 @@
     "#TASK-ES-562(인라인 3단계 구역 Z5 표준 1): index.html 인라인 IIFE 의 구간(이전 전 4340~4348 · 4356~4360줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 43,
+   "lines": 53,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22573,12 +22901,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-562"
+    "TASK-ES-562",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md"
+    "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 825,
      "task": "TASK-ES-562",
@@ -22712,14 +23048,22 @@
    "tasks": [
     "TASK-ES-476",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -22760,7 +23104,7 @@
     "bindTermsLinks · bindPrivacyLinks — 이용약관 링크 3곳(#viewTermsBtn · #authTermsLink · #setTermsLink)과 개인정보처리방침 링크 3곳(#viewPrivacyBtn · #authPrivacyLink · #setPrivacyLink)에 약관 창 열기(showLegalModal)를 연결한다.",
     "startDevDebugButtons — 시험 계정 단추 영역(#landTesterBWrap · #authTesterBWrap)을 개발 환경에서만 보이게 하고 그 밖에서는 지우는 initDevDebugButtons 를 문서 준비 뒤 실행한다."
    ],
-   "lines": 69,
+   "lines": 80,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22784,12 +23128,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-638"
+    "TASK-ES-638",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md"
+    "docs/specs/REQ-TASK-ES-638-WRAP-BOOT-1.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 911,
      "task": "TASK-ES-638",
@@ -22884,7 +23236,7 @@
     "initDevDebugButtons — 「[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼」(이전 전 5324~5338줄)",
     "로컬 개발 호스트에서 ?debug=true 일 때만 테스터 버튼을 보이고, 운영에서는 지운다."
    ],
-   "lines": 53,
+   "lines": 51,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -22912,15 +23264,23 @@
     "TASK-ES-223",
     "TASK-ES-442",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-223-PURGE-DEV-DEBUG-BUTTONS.md",
     "docs/specs/REQ-TASK-ES-442-INLINE-P0-2.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -22987,13 +23347,21 @@
    },
    "tasks": [
     "TASK-ES-513",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-513-INLINE-STAGE3.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -23054,14 +23422,22 @@
    "tasks": [
     "TASK-ES-492",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -23314,7 +23690,7 @@
     "#TASK-ES-562(인라인 3단계 구역 Z5 표준 1): index.html 인라인 IIFE 의 구간(이전 전 4559~4563 · 4567~4571줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 41,
+   "lines": 51,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -23338,12 +23714,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-562"
+    "TASK-ES-562",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md"
+    "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 825,
      "task": "TASK-ES-562",
@@ -23372,7 +23756,7 @@
     "#TASK-ES-515: 늘 숨어 있던(display:none) 첫 화면 「이메일로 가입하기」 단추의 처리기를 단추와 함께 지웠다(상민님 승인 2026-10-06 「숨김 정리 권장안 승인, 금고 변경 승인」).",
     "첫 화면 단추 처리기 등록 문 세 개는 bind 함수로 감싸 index.html 원래 자리에서 부른다. checkKakaoInAppBrowser() 호출·window 노출 줄은 원래 자리에 그대로 있다."
    ],
-   "lines": 201,
+   "lines": 202,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -23399,15 +23783,23 @@
     "TASK-ES-476",
     "TASK-ES-515",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
     "docs/specs/REQ-TASK-ES-515-HIDDEN-CLEANUP-6.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -24029,16 +24421,24 @@
     "TASK-ES-423",
     "TASK-ES-444",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-234-IOS-PWA-GUIDE.md",
     "docs/specs/REQ-TASK-ES-423-INLINE-SPLIT-1.md",
     "docs/specs/REQ-TASK-ES-444-INLINE-P1-2.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -24161,7 +24561,7 @@
     "renderSettingsHeroCard · collapseAllSettingsSections · toggleAdvancedSettings · formatStorageBytes · paintCacheUsage ·",
     "renderSettingsScreen(머리 + 소블록 6개를 원래 순서로 호출) · 설정 아코디언 햅틱 위임 · 설정 화면 정적 버튼 바인딩"
    ],
-   "lines": 272,
+   "lines": 273,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -24173,6 +24573,7 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -24233,16 +24634,24 @@
     "TASK-ES-516",
     "TASK-ES-588",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md",
     "docs/specs/REQ-TASK-ES-516-MONEY-CLEANUP.md",
     "docs/specs/REQ-TASK-ES-588.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -24322,13 +24731,21 @@
    },
    "tasks": [
     "TASK-ES-461",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-461-INLINE-H4-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -24375,6 +24792,7 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -24483,6 +24901,7 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -24584,6 +25003,7 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -24703,6 +25123,7 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -24804,6 +25225,7 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -24912,6 +25334,7 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-app-handles",
     "core/boot-early-state",
     "core/boot-entry-wiring",
     "core/boot-finish",
@@ -25008,7 +25431,7 @@
     "#TASK-ES-562(인라인 3단계 구역 Z5 표준 1): index.html 인라인 IIFE 의 구간(이전 전 4574~4580 · 4582~4591줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 48,
+   "lines": 58,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -25032,12 +25455,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-562"
+    "TASK-ES-562",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md"
+    "docs/specs/REQ-TASK-ES-562-STAGE3-Z56-A2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 825,
      "task": "TASK-ES-562",
@@ -25236,15 +25667,23 @@
     "TASK-ES-169",
     "TASK-ES-521",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-169.md",
     "docs/specs/REQ-TASK-ES-521-STAGE3-Z1-B.md",
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
-    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
+    "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -25356,7 +25795,7 @@
     "다른 기기에서 「모든 기기 원격 로그아웃」 방송(remote_logout)이 오면, 남기기로 한 기기가 이 기기가 아닐 때 로그아웃한다.",
     "#TASK-ES-653(세션 실시간 채널 구독 함수 이전 — setupUserSessionRealtime): index.html 인라인 IIFE 의 구간(이전 전 3272~3289줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 43,
+   "lines": 53,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -25380,12 +25819,20 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-653"
+    "TASK-ES-653",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-653-USER-SESSION-REALTIME-MOVE.md"
+    "docs/specs/REQ-TASK-ES-653-USER-SESSION-REALTIME-MOVE.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 923,
      "task": "TASK-ES-653",
@@ -25439,13 +25886,21 @@
    },
    "tasks": [
     "TASK-ES-548",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-548-STAGE3-Z56-B.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -25546,7 +26001,7 @@
     "같은 묶음의 openUserProfileModal(소통 사용자 프로필 창 예비 경로 — OurgoalTeamInviteComm 이 있으면 그쪽이 불려 게스트·로그인 모두 화면으로 닿지 않는다)은 잴 수 없어 원래 자리에 두었다.",
     "#TASK-ES-545(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서): index.html 인라인 IIFE 의 구간(이전 전 10839~10845줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 34,
+   "lines": 44,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -25571,12 +26026,20 @@
    },
    "tasks": [
     "TASK-ES-105",
-    "TASK-ES-545"
+    "TASK-ES-545",
+    "TASK-ES-664"
    ],
    "reqs": [
-    "docs/specs/REQ-TASK-ES-545-STAGE3-Z2-TEAM.md"
+    "docs/specs/REQ-TASK-ES-545-STAGE3-Z2-TEAM.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 822,
      "task": "TASK-ES-545",
@@ -25679,7 +26142,7 @@
     "설정 「회원 탈퇴」 단추 한 줄 등록 문은 원래 자리에 그대로 있다.",
     "#TASK-ES-522(인라인 3단계 Z1 로그인·계정 2차): index.html 인라인 IIFE 의 구간(이전 전 4411~4413 · 4414~4480 · 4481~4579 · 4580~4584줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 205,
+   "lines": 215,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -25704,13 +26167,21 @@
    },
    "tasks": [
     "TASK-ES-158",
-    "TASK-ES-522"
+    "TASK-ES-522",
+    "TASK-ES-664"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-158-withdraw-modal.md",
-    "docs/specs/REQ-TASK-ES-522-STAGE3-Z1-C.md"
+    "docs/specs/REQ-TASK-ES-522-STAGE3-Z1-C.md",
+    "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 940,
+     "task": "TASK-ES-664",
+     "title": "[INFRA] #TASK-ES-664 미분화 덩어리 해체 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포가 등록 기관에 등록(생성기 --keep, index.html 변경 0)",
+     "date": "2026-10-11"
+    },
     {
      "number": 823,
      "task": "TASK-ES-522",
@@ -27118,6 +27589,7 @@
     "auth-safety",
     "comm/dm-ledger",
     "comm/story-card-send",
+    "core/boot-app-handles",
     "creator-templates-legacy",
     "goal-edit-ux",
     "goals/team-goals-screen",
@@ -27139,7 +27611,6 @@
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "OurgoalTemplateCredit",
     "sb"
    ],
    "emits": [],
