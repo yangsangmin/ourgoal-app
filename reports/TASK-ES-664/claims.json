@@ -755,6 +755,54 @@
    "id": "C12"
   },
   {
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 로드 탐침 결과에서 기준 대비 작업 트리의 새 회귀 목록이 비어 있다.",
+   "touches": [
+    "reports/TASK-ES-664/module-load.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/module-load.json",
+    "path": "regressions",
+    "equals": []
+   },
+   "id": "C13"
+  },
+  {
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록의 index.html 변경이 없다(등록 줄은 세포 파일 끝에만 붙었다).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.changed.indexHtmlChanged",
+    "equals": false
+   },
+   "id": "C14"
+  },
+  {
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 부팅 뒤 작업 트리의 예외가 0 건이다(작업자 측정 기록).",
+   "touches": [
+    "reports/TASK-ES-664/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-664/measurement.json",
+    "path": "summary.registry.work.exceptions",
+    "equals": 0
+   },
+   "id": "C15"
+  },
+  {
    "req": "R2",
    "kind": "static",
    "domain": "config",
@@ -769,7 +817,7 @@
     "path": "summary.blocks.lost",
     "equals": []
    },
-   "id": "C13"
+   "id": "C16"
   },
   {
    "req": "R2",
@@ -785,7 +833,7 @@
     "path": "summary.blocks.addedEqualsPlan",
     "equals": true
    },
-   "id": "C14"
+   "id": "C17"
   },
   {
    "req": "R2",
@@ -801,7 +849,7 @@
     "path": "summary.blocks.upgradedEqualsPlan",
     "equals": true
    },
-   "id": "C15"
+   "id": "C18"
   },
   {
    "req": "R2",
@@ -817,7 +865,7 @@
     "path": "summary.blocks.otherChangedEntries",
     "equals": []
    },
-   "id": "C16"
+   "id": "C19"
   },
   {
    "req": "R2",
@@ -833,7 +881,7 @@
     "path": "summary.blocks.duplicateNames",
     "equals": []
    },
-   "id": "C17"
+   "id": "C20"
   },
   {
    "req": "R2",
@@ -849,7 +897,7 @@
     "path": "summary.blocks.outsideBlockChanged",
     "equals": []
    },
-   "id": "C18"
+   "id": "C21"
   },
   {
    "req": "R2",
@@ -865,7 +913,7 @@
     "path": "summary.blocks.filesEqualPlan",
     "equals": true
    },
-   "id": "C19"
+   "id": "C22"
   },
   {
    "req": "R2",
@@ -881,7 +929,7 @@
     "path": "summary.blocks.over800",
     "equals": []
    },
-   "id": "C20"
+   "id": "C23"
   },
   {
    "req": "R3",
@@ -898,7 +946,7 @@
     "path": "summary.registry.work.counts.mismatches",
     "equals": 0
    },
-   "id": "C21"
+   "id": "C24"
   },
   {
    "req": "R3",
@@ -914,7 +962,7 @@
     "path": "summary.registry.work.counts.conflicts",
     "equals": 0
    },
-   "id": "C22"
+   "id": "C25"
   },
   {
    "req": "R3",
@@ -930,7 +978,7 @@
     "path": "summary.registry.extraSameAsBase",
     "equals": true
    },
-   "id": "C23"
+   "id": "C26"
   },
   {
    "req": "R3",
@@ -946,7 +994,7 @@
     "path": "summary.registry.registeredGrewBy",
     "equals": 89
    },
-   "id": "C24"
+   "id": "C27"
   },
   {
    "req": "R3",
@@ -962,7 +1010,7 @@
     "path": "summary.registry.work.scopeLost",
     "equals": []
    },
-   "id": "C25"
+   "id": "C28"
   },
   {
    "req": "R3",
@@ -978,7 +1026,7 @@
     "path": "summary.registry.work.differing.scope",
     "equals": []
    },
-   "id": "C26"
+   "id": "C29"
   },
   {
    "req": "R3",
@@ -994,7 +1042,7 @@
     "path": "summary.registry.work.differing.window",
     "equals": []
    },
-   "id": "C27"
+   "id": "C30"
   },
   {
    "req": "R3",
@@ -1010,7 +1058,7 @@
     "path": "summary.registry.work.exceptions",
     "equals": 0
    },
-   "id": "C28"
+   "id": "C31"
   },
   {
    "req": "R3",
@@ -1026,7 +1074,7 @@
     "path": "summary.nameProbe.valueDifferingWork",
     "equals": []
    },
-   "id": "C29"
+   "id": "C32"
   },
   {
    "req": "R4",
@@ -1042,7 +1090,7 @@
     "path": "summary.changed.indexHtmlChanged",
     "equals": false
    },
-   "id": "C30"
+   "id": "C33"
   },
   {
    "req": "R4",
@@ -1058,7 +1106,7 @@
     "path": "summary.changed.testsChanged",
     "equals": []
    },
-   "id": "C31"
+   "id": "C34"
   },
   {
    "req": "R4",
@@ -1074,7 +1122,7 @@
     "path": "summary.changed.vaultChanged",
     "equals": []
    },
-   "id": "C32"
+   "id": "C35"
   },
   {
    "req": "R4",
@@ -1090,7 +1138,7 @@
     "path": "summary.changed.unwireGeneratorChanged",
     "equals": []
    },
-   "id": "C33"
+   "id": "C36"
   },
   {
    "req": "R4",
@@ -1106,7 +1154,7 @@
     "path": "summary.changed.scriptsChanged",
     "equals": []
    },
-   "id": "C34"
+   "id": "C37"
   },
   {
    "req": "R4",
@@ -1122,7 +1170,7 @@
     "path": "regressions",
     "equals": []
    },
-   "id": "C35"
+   "id": "C38"
   },
   {
    "req": "R4",
@@ -1138,7 +1186,7 @@
     "path": "summary.npmTest.same",
     "equals": true
    },
-   "id": "C36"
+   "id": "C39"
   },
   {
    "req": "R4",
@@ -1154,7 +1202,7 @@
     "path": "summary.testsEach.sameAsBase",
     "equals": true
    },
-   "id": "C37"
+   "id": "C40"
   },
   {
    "req": "R4",
@@ -1170,7 +1218,7 @@
     "path": "summary.inlineScriptLines.same",
     "equals": true
    },
-   "id": "C38"
+   "id": "C41"
   },
   {
    "req": "R4",
@@ -1186,7 +1234,7 @@
     "path": "summary.guard.exitCode",
     "equals": 0
    },
-   "id": "C39"
+   "id": "C42"
   },
   {
    "req": "R4",
@@ -1202,7 +1250,7 @@
     "path": "summary.guard.integrityGateExitCode",
     "equals": 0
    },
-   "id": "C40"
+   "id": "C43"
   },
   {
    "req": "R5",
@@ -1218,7 +1266,7 @@
     "path": "summary.mockUnwire.registry.scopeLost",
     "equals": []
    },
-   "id": "C41"
+   "id": "C44"
   },
   {
    "req": "R5",
@@ -1234,7 +1282,7 @@
     "path": "summary.mockUnwire.registry.differing.scope",
     "equals": []
    },
-   "id": "C42"
+   "id": "C45"
   },
   {
    "req": "R5",
@@ -1250,7 +1298,7 @@
     "path": "summary.mockUnwire.registry.exceptions",
     "equals": 0
    },
-   "id": "C43"
+   "id": "C46"
   },
   {
    "req": "R5",
@@ -1266,7 +1314,7 @@
     "path": "summary.mockUnwire.nameValueDiffering",
     "equals": []
    },
-   "id": "C44"
+   "id": "C47"
   },
   {
    "req": "R5",
@@ -1282,7 +1330,7 @@
     "path": "summary.mockUnwire.scenarios.allPassedBoth",
     "equals": true
    },
-   "id": "C45"
+   "id": "C48"
   },
   {
    "req": "R5",
@@ -1298,7 +1346,7 @@
     "path": "summary.mockUnwire.npmTest.same",
     "equals": true
    },
-   "id": "C46"
+   "id": "C49"
   },
   {
    "req": "R5",
@@ -1314,7 +1362,7 @@
     "path": "summary.mockUnwire.testsEach.sameAsBase",
     "equals": true
    },
-   "id": "C47"
+   "id": "C50"
   },
   {
    "req": "R5",
@@ -1340,7 +1388,7 @@
      }
     ]
    },
-   "id": "C48"
+   "id": "C51"
   },
   {
    "req": "R5",
@@ -1356,7 +1404,7 @@
     "path": "summary.mockUnwire.unwire.deletedLinesTotal",
     "equals": 195
    },
-   "id": "C49"
+   "id": "C52"
   },
   {
    "req": "R5",
@@ -1372,7 +1420,7 @@
     "path": "summary.control.bootFailed",
     "equals": true
    },
-   "id": "C50"
+   "id": "C53"
   }
  ]
 }

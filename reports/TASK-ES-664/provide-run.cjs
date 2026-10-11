@@ -167,6 +167,10 @@ if (CMD === 'claims') {
   const add = c => { c.id = 'C' + (++n); claims.push(c); };
   const jp = (req, statement, file, p, equals, more) => add({ req, kind: 'static', domain: 'config', statement, touches: [file].concat(more || []), check: { type: 'jsonPath', file, path: p, equals } });
   for (const f of fs.readdirSync(scDir).filter(x => /\.json$/.test(x)).sort()) { const sc = JSON.parse(fs.readFileSync(path.join(scDir, f), 'utf8')); add({ req: 'R1', kind: 'behavior', change: 'preserve', domain: 'ui-behavior', statement: sc.title, touches: touched, scenario: 'scenarios/' + f }); }
+  // B1·B2·B3a 와 같은 배치: 보존 주장(화면)은 생성기 재실행 증명 파일이 성립하지 않아 법정이 「확인 못 함」으로 찍는다 — R1 에 법정이 글자로 잴 수 있는 기록 주장을 함께 둔다
+  jp('R1', '모듈 로드 탐침 결과에서 기준 대비 작업 트리의 새 회귀 목록이 비어 있다.', REL + 'module-load.json', 'regressions', []);
+  jp('R1', '측정 기록의 index.html 변경이 없다(등록 줄은 세포 파일 끝에만 붙었다).', MF, 'summary.changed.indexHtmlChanged', false);
+  jp('R1', '게스트 부팅 뒤 작업 트리의 예외가 0 건이다(작업자 측정 기록).', MF, 'summary.registry.work.exceptions', 0);
   jp('R2', '기존 등록 이름이 하나도 빠지지 않았다(기준의 등록 블록에 있던 이름 가운데 작업 트리에 없는 것 0).', MF, 'summary.blocks.lost', [], [REL + 'provide-plan.json']);
   jp('R2', '이번에 더한 이름이 계획 파일의 목록과 같다.', MF, 'summary.blocks.addedEqualsPlan', true);
   jp('R2', '기존 등록 가운데 바뀐 것은 window 전용에서 통로로 올린 이름뿐이고 그 목록이 계획과 같다.', MF, 'summary.blocks.upgradedEqualsPlan', true);
