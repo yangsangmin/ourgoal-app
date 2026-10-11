@@ -1,0 +1,35 @@
+{
+ "tool": "reports/TASK-ES-679/unstate-run.cjs measure",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T11:22:38.506Z",
+ "basis": {
+  "worktreeHead": "67ca0e4ad24adef0d3424e297c20ec629867ce70",
+  "base": "67ca0e4ad24adef0d3424e297c20ec629867ce70"
+ },
+ "totals": {
+  "stateNamesBefore": 4,
+  "moved": 2,
+  "stateNamesLeftInIife": 2,
+  "stoppedByGenerator": 0,
+  "excludedBecauseGatePinsStateText": 0,
+  "notExposed": 2
+ },
+ "byCondition": [
+  {
+   "count": 0,
+   "condition": "무결성 게이트가 상태 선언 글자를 붙잡음",
+   "unlock": "scripts/verify-integrity-gate.js 가 선언 글자(`이름 = 값;`)를 index.html 에서 찾는다 — 그 단언을 넓히는 PR(금고 변경 승인분)이 병합된 뒤 unstate 로. 이 PR 은 게이트·시험을 고치지 않았다",
+   "names": []
+  },
+  {
+   "count": 2,
+   "condition": "통로에 노출되지 않음(IIFE 안에서만 쓰는 값)",
+   "unlock": "상태 기관 대상이 아니다(통로로 읽는 세포가 없다). 서버 주소·공개 키 선언이다 — 공개 키 글자가 든 줄을 새 파일에 더하는 커밋을 금지 패턴 규칙(docs/rules/rules.json HARDCODED_SECRET)이 막아 구역으로도 못 옮긴다(#951 에서 확인). 결심 필요",
+   "names": [
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY"
+   ]
+  }
+ ],
+ "stoppedDetail": []
+}

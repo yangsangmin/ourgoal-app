@@ -1,0 +1,195 @@
+{
+ "tool": "reports/TASK-ES-679/tools/finalize-gap-679.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T11:22:40.292Z",
+ "iifeHtmlLines": [
+  2254,
+  2815
+ ],
+ "topStatements": 134,
+ "generator": {
+  "exitCode": 1,
+  "message": "Error: finalize 전제 미충족 — IIFE 최상위에 키트 손잡이·구역 함수 가져오기·구역 함수 호출문 밖의 문이 74개 있다(expose 문 8 · 그 밖의 var 4 · 상태 선언(define) 1 · 호출되지 않는 가져오기 61). 첫 문: 줄 2262 「var escapeHtml = _ui.escapeHtml;」",
+  "wroteBootFile": false
+ },
+ "totals": {
+  "allowedStatements": 60,
+  "allowedLines": 60,
+  "blockingStatements": 74,
+  "blockingLines": 144
+ },
+ "byKind": [
+  {
+   "kind": "handle",
+   "label": "키트 손잡이",
+   "allowedByFinalize": true,
+   "statements": 10,
+   "lines": 10,
+   "unlock": null
+  },
+  {
+   "kind": "regionImport",
+   "label": "구역 함수 가져오기(최상위에서 불림)",
+   "allowedByFinalize": true,
+   "statements": 25,
+   "lines": 25,
+   "unlock": null
+  },
+  {
+   "kind": "regionCall",
+   "label": "구역 함수 호출문",
+   "allowedByFinalize": true,
+   "statements": 25,
+   "lines": 25,
+   "unlock": null
+  },
+  {
+   "kind": "otherImport",
+   "label": "그 밖의 가져오기(최상위에서 불리지 않음)",
+   "allowedByFinalize": false,
+   "statements": 61,
+   "lines": 61,
+   "unlock": "재철거(unwire U1) — 그 이름을 IIFE 안에서 맨이름으로 쓰는 곳(남은 함수 선언 · expose getter)이 없어지고 등록 기관이 그 이름을 내주면 지운다. 남은 함수 여섯이 세포로 옮겨지면 대부분 풀린다"
+  },
+  {
+   "kind": "expose",
+   "label": "expose 문(통로 getter·setter)",
+   "allowedByFinalize": false,
+   "statements": 8,
+   "lines": 78,
+   "unlock": "재철거(unwire U2) — 등록된 이름의 getter 를 지운다. 상태 이름(state · _promptEncyclopediaOpen)의 getter·setter 는 그 이름의 상태 이전 때 지워진다",
+   "items": [
+    {
+     "line": 2268,
+     "lines": 3,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2277,
+     "lines": 5,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2294,
+     "lines": 3,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2371,
+     "lines": 3,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2449,
+     "lines": 3,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2462,
+     "lines": 55,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2526,
+     "lines": 3,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2560,
+     "lines": 3,
+     "name": null,
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    }
+   ]
+  },
+  {
+   "kind": "stateVar",
+   "label": "상태 선언(var)",
+   "allowedByFinalize": false,
+   "statements": 4,
+   "lines": 4,
+   "unlock": "문마다 다르다 — items 의 why",
+   "items": [
+    {
+     "line": 2565,
+     "lines": 1,
+     "name": "SUPABASE_URL",
+     "text": "var SUPABASE_URL = '…(40자 가림)';",
+     "why": "공개 키 글자가 든 선언 줄을 새 파일에 더하는 커밋을 금지 패턴 규칙(docs/rules/rules.json 의 HARDCODED_SECRET — 대상 파일 전부, 금고)이 막는다(이 작업에서 커밋 훅이 실제로 막았다). 서버 주소 · 공개 키 선언과 그 둘을 읽는 sb 정의 줄은 한 묶음이라 셋 다 제자리에 뒀다 — 그 규칙에 이 줄의 예외를 두거나 키를 두는 자리를 따로 정하는 결심(규범 변경)이 있어야 구역으로 옮길 수 있다"
+    },
+    {
+     "line": 2566,
+     "lines": 1,
+     "name": "SUPABASE_ANON_KEY",
+     "text": "var SUPABASE_ANON_KEY = '…(208자 가림)';",
+     "why": "공개 키 글자가 든 선언 줄을 새 파일에 더하는 커밋을 금지 패턴 규칙(docs/rules/rules.json 의 HARDCODED_SECRET — 대상 파일 전부, 금고)이 막는다(이 작업에서 커밋 훅이 실제로 막았다). 서버 주소 · 공개 키 선언과 그 둘을 읽는 sb 정의 줄은 한 묶음이라 셋 다 제자리에 뒀다 — 그 규칙에 이 줄의 예외를 두거나 키를 두는 자리를 따로 정하는 결심(규범 변경)이 있어야 구역으로 옮길 수 있다"
+    },
+    {
+     "line": 2624,
+     "lines": 1,
+     "name": "state",
+     "text": "var state = { profile: null, activeTab: 'home'…(93자 가림)'feed', goalsSubTab: 'personal'…(54자 가림)'all'…(112자 가림)",
+     "why": "상태 이전 4차(#TASK-ES-679)로 var 선언이 상태 기관 정의 줄이 된다. 그 정의 줄은 구역 이전 3차(재철거 3차 병합 뒤)로 구역 함수에 넣는다"
+    },
+    {
+     "line": 2646,
+     "lines": 1,
+     "name": "_promptEncyclopediaOpen",
+     "text": "var _promptEncyclopediaOpen = false;",
+     "why": "상태 이전 4차(#TASK-ES-679)로 var 선언이 상태 기관 정의 줄이 된다. 그 정의 줄은 구역 이전 3차(재철거 3차 병합 뒤)로 구역 함수에 넣는다"
+    }
+   ]
+  },
+  {
+   "kind": "define",
+   "label": "상태 기관 정의 줄(define)",
+   "allowedByFinalize": false,
+   "statements": 1,
+   "lines": 1,
+   "unlock": "문마다 다르다 — items 의 why",
+   "items": [
+    {
+     "line": 2567,
+     "lines": 1,
+     "name": "sb",
+     "text": "window.OurgoalAppState.define('sb'…(62자 가림)'function'…(73자 가림)'",
+     "why": "공개 키 글자가 든 선언 줄을 새 파일에 더하는 커밋을 금지 패턴 규칙(docs/rules/rules.json 의 HARDCODED_SECRET — 대상 파일 전부, 금고)이 막는다(이 작업에서 커밋 훅이 실제로 막았다). 서버 주소 · 공개 키 선언과 그 둘을 읽는 sb 정의 줄은 한 묶음이라 셋 다 제자리에 뒀다 — 그 규칙에 이 줄의 예외를 두거나 키를 두는 자리를 따로 정하는 결심(규범 변경)이 있어야 구역으로 옮길 수 있다"
+    }
+   ]
+  }
+ ],
+ "unstatePreview": {
+  "SUPABASE_URL": {
+   "movable": false,
+   "generatorSays": "Error: 통로에 노출되지 않은 이름이다(상태 기관 대상이 아니다): SUPABASE_URL"
+  },
+  "SUPABASE_ANON_KEY": {
+   "movable": false,
+   "generatorSays": "Error: 통로에 노출되지 않은 이름이다(상태 기관 대상이 아니다): SUPABASE_ANON_KEY"
+  },
+  "state": {
+   "movable": true,
+   "generatorSays": "unstate · names 1 · define 0 · defineVar 1 · expose props 2 (calls 1) · window copies 0 · comma 0"
+  },
+  "_promptEncyclopediaOpen": {
+   "movable": true,
+   "generatorSays": "unstate · names 1 · define 0 · defineVar 1 · expose props 1 (calls 1) · window copies 0 · comma 0"
+  }
+ },
+ "otherImports": {
+  "count": 61,
+  "withNoReferenceLeft": [
+   "a11ySwitch"
+  ],
+  "note": "withNoReferenceLeft = IIFE 안에서 더는 아무도 쓰지 않는 가져오기 이름(재철거가 바로 지울 수 있는 것 — 등록 여부는 재철거가 본다)"
+ },
+ "unusedHandles": [],
+ "note": "줄 번호는 이 트리의 index.html 기준이다(main 이 움직이면 바뀐다). 줄 수는 문이 차지하는 줄만 센 것이고 주석·빈 줄은 뺐다(sweep 이 지운다)."
+}
