@@ -2,10 +2,10 @@
  "schema": "ourgoal.inline-script-map/1",
  "source": {
   "file": "index.html",
-  "sha256_12": "bfb535e0dbb0",
+  "sha256_12": "e8c01d4986e3",
   "iifeHtmlLines": [
    2254,
-   4542
+   4135
   ],
   "otherInlineBlocks": [
    {
@@ -13,7 +13,7 @@
     "lines": 8
    },
    {
-    "startLine": 4545,
+    "startLine": 4138,
     "lines": 16
    }
   ]
@@ -31,55 +31,50 @@
   "smokeFn": 5
  },
  "totals": {
-  "iifeLines": 2289,
-  "groups": 114,
-  "seamGroups": 8,
-  "movableGroups": 22,
+  "iifeLines": 1882,
+  "groups": 53,
+  "seamGroups": 7,
+  "movableGroups": 17,
   "functions": 2,
-  "vars": 207,
-  "windowAssignments": 17,
-  "listeners": 24,
-  "onProps": 33,
-  "loadTime": 200,
+  "vars": 212,
+  "windowAssignments": 4,
+  "listeners": 2,
+  "onProps": 32,
+  "loadTime": 38,
   "inlineHandlerNames": 11,
   "tiers": {
-   "빈 구획": 84,
-   "이음매(옮기지 않음)": 8,
-   "쉬움": 12,
-   "어려움": 7,
+   "빈 구획": 29,
+   "이음매(옮기지 않음)": 7,
+   "쉬움": 11,
+   "어려움": 3,
    "보통": 3
   },
   "tierLines": {
-   "빈 구획": 598,
-   "이음매(옮기지 않음)": 75,
-   "쉬움": 103,
-   "어려움": 1475,
-   "보통": 38
+   "빈 구획": 178,
+   "이음매(옮기지 않음)": 63,
+   "쉬움": 94,
+   "어려움": 1510,
+   "보통": 37
   }
  },
  "recommendedOrder": [
-  "G100",
-  "G084",
+  "G050",
+  "G041",
   "G012",
-  "G069",
   "G008",
   "G011",
-  "G029",
+  "G026",
   "G017",
   "G014",
   "G042",
   "G016",
   "G015",
-  "G085",
-  "G073",
+  "G023",
+  "G022",
   "G013",
-  "G074",
-  "G098",
-  "G024",
-  "G075",
-  "G010",
-  "G095",
-  "G026"
+  "G048",
+  "G046",
+  "G010"
  ],
  "groups": [
   {
@@ -295,7 +290,7 @@
    "fanIn": [],
    "fanOut": [
     {
-     "id": "G095",
+     "id": "G046",
      "refs": 1
     }
    ],
@@ -458,6 +453,7 @@
     "tests/comm-feed-cleanup.test.js",
     "tests/comm-post-feed-button-fix.test.js",
     "tests/component-modularization.test.js",
+    "tests/core-confirm-es376.test.js",
     "tests/desktop-widget-suite.test.js",
     "tests/device-session-control.test.js",
     "tests/dm-keyboard-autofocus-fix.test.js",
@@ -471,6 +467,7 @@
     "tests/goal-templates-encyclopedia.test.js",
     "tests/goals-only-view.test.js",
     "tests/goals-schedule-sync.test.js",
+    "tests/guest-null-client-es377.test.js",
     "tests/home-goal-board-cleanup.test.js",
     "tests/manito-ai-limit.test.js",
     "tests/records-stats-metrics.test.js",
@@ -672,11 +669,11 @@
    "id": "G010",
    "title": "[#TASK-ES-432] 인라인 스크립트 세포화 2차 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀)",
    "start": 2329,
-   "end": 2584,
-   "lines": 256,
+   "end": 2711,
+   "lines": 383,
    "seam": false,
    "tier": "어려움",
-   "score": 97,
+   "score": 110,
    "functions": [],
    "vars": [
     "CURATED_MARKET_TEMPLATES",
@@ -745,6 +742,21 @@
     "bindTermsLinks",
     "bindVisibilityResync",
     "bindWidgetModalOpener",
+    "bootApplySavedTheme",
+    "bootAuthStateListener",
+    "bootAvatarLevelUpWiring",
+    "bootCommSettingsAndStart",
+    "bootEntryAndAccountWiring",
+    "bootExposeAppState",
+    "bootGoalsAndTeamState",
+    "bootGoogleTokenState",
+    "bootHomeAndGoalWiring",
+    "bootInstallAndServiceWorker",
+    "bootPromptTabState",
+    "bootRecordsExportWiring",
+    "bootRecordsWiring",
+    "bootSharedGroupsState",
+    "bootThemeList",
     "burstConfetti",
     "canManageTeamGoals",
     "checkKakaoInAppBrowser",
@@ -838,8 +850,16 @@
     "_subtabTplDomain",
     "_subtabTplQuery",
     "_subtabTplType",
+    "bindSettingsHapticDelegate",
+    "bindSettingsStaticHandlers",
+    "btnAvLvClose",
+    "daysFromNow",
+    "groupState",
     "initDevDebugButtons",
     "initKeyboardShield",
+    "renderRecordsScreen",
+    "requestServerAIFeedback",
+    "sendGoalAgentMessage",
     "showLegalModal"
    ],
    "stateMutates": [],
@@ -849,9 +869,9 @@
     "_subtabTplQuery",
     "_subtabTplType"
    ],
-   "loadTime": 9,
+   "loadTime": 10,
    "loadTimeKinds": {
-    "호출": 9
+    "호출": 10
    },
    "windowAssignments": 0,
    "windowNames": [],
@@ -861,7 +881,7 @@
    "fanIn": [],
    "fanOut": [
     {
-     "id": "G098",
+     "id": "G048",
      "refs": 1
     }
    ],
@@ -885,6 +905,7 @@
     "tests/guest-null-client-es377.test.js",
     "tests/logout-scope-es399.test.js",
     "tests/record-ledger-sync.test.js",
+    "tests/sync-server-records-render-home.test.js",
     "tests/team-fold-state-es409.test.js",
     "tests/team-goal-comment-fix.test.js",
     "tests/team-goal-guide-hint.test.js",
@@ -907,6 +928,7 @@
     "tests/gcal-login-reconnect-fix.test.js",
     "tests/google-session-guard.test.js",
     "tests/record-ledger-sync.test.js",
+    "tests/sync-server-records-render-home.test.js",
     "tests/team-fold-state-es409.test.js",
     "tests/team-goal-guide-hint.test.js",
     "tests/team-level-accordion-es406.test.js",
@@ -921,8 +943,8 @@
   {
    "id": "G011",
    "title": "[#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀)",
-   "start": 2585,
-   "end": 2591,
+   "start": 2712,
+   "end": 2718,
    "lines": 7,
    "seam": false,
    "tier": "쉬움",
@@ -958,8 +980,8 @@
   {
    "id": "G012",
    "title": "[#TASK-ES-446] 인라인 스크립트 세포화 P2-1 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀)",
-   "start": 2592,
-   "end": 2600,
+   "start": 2719,
+   "end": 2727,
    "lines": 9,
    "seam": false,
    "tier": "쉬움",
@@ -996,12 +1018,12 @@
   {
    "id": "G013",
    "title": "[#TASK-ES-448] 인라인 스크립트 세포화 P2-2 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀)",
-   "start": 2601,
-   "end": 2622,
-   "lines": 22,
+   "start": 2728,
+   "end": 2742,
+   "lines": 15,
    "seam": false,
    "tier": "보통",
-   "score": 19,
+   "score": 17,
    "functions": [],
    "vars": [
     "MOCK_PEOPLE",
@@ -1016,7 +1038,8 @@
     "MOCK_GROUPS",
     "_commKit",
     "_goalsKit",
-    "_recordsKit"
+    "_recordsKit",
+    "bootApplySavedTheme"
    ],
    "stateMutates": [],
    "stateWrites": [
@@ -1024,8 +1047,7 @@
    ],
    "loadTime": 2,
    "loadTimeKinds": {
-    "호출": 1,
-    "TryStatement": 1
+    "호출": 2
    },
    "windowAssignments": 0,
    "windowNames": [],
@@ -1037,25 +1059,20 @@
    "externalFiles": [],
    "testFiles": [
     "scripts/smoke-test.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/core-confirm-es376.test.js",
-    "tests/hidden-entry-guard.test.js",
     "tests/stopwatch-lap-inputs.test.js",
     "tests/stopwatch-table-hint.test.js",
-    "tests/team-fold-state-es409.test.js",
-    "tests/theme-system-v4.test.js"
+    "tests/team-fold-state-es409.test.js"
    ],
    "testIndexOnly": [
-    "tests/team-fold-state-es409.test.js",
-    "tests/theme-system-v4.test.js"
+    "tests/team-fold-state-es409.test.js"
    ],
    "smokeFnNames": []
   },
   {
    "id": "G014",
    "title": "[#TASK-ES-437] 인라인 스크립트 세포화 P0 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 과 같은 틀)",
-   "start": 2623,
-   "end": 2630,
+   "start": 2743,
+   "end": 2750,
    "lines": 8,
    "seam": false,
    "tier": "쉬움",
@@ -1091,8 +1108,8 @@
   {
    "id": "G015",
    "title": "[#TASK-ES-442] 인라인 스크립트 세포화 P0 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 과 같은 틀)",
-   "start": 2631,
-   "end": 2638,
+   "start": 2751,
+   "end": 2758,
    "lines": 8,
    "seam": false,
    "tier": "쉬움",
@@ -1131,12 +1148,12 @@
   {
    "id": "G016",
    "title": "Supabase",
-   "start": 2639,
-   "end": 2647,
-   "lines": 9,
+   "start": 2759,
+   "end": 2766,
+   "lines": 8,
    "seam": false,
    "tier": "쉬움",
-   "score": 8,
+   "score": 6,
    "functions": [],
    "vars": [
     "SUPABASE_ANON_KEY",
@@ -1144,13 +1161,13 @@
     "sb"
    ],
    "stateReads": [
-    "bindSupabaseAuthStateListener"
+    "bootAuthStateListener"
    ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 2,
+   "loadTime": 1,
    "loadTimeKinds": {
-    "호출": 2
+    "호출": 1
    },
    "windowAssignments": 0,
    "windowNames": [],
@@ -1162,7 +1179,6 @@
    "externalFiles": [],
    "testFiles": [
     "scripts/smoke-test.js",
-    "tests/logout-scope-es399.test.js",
     "tests/security-audit.test.js"
    ],
    "testIndexOnly": [
@@ -1173,8 +1189,8 @@
   {
    "id": "G017",
    "title": "아워골 앱 환경설정",
-   "start": 2648,
-   "end": 2669,
+   "start": 2767,
+   "end": 2788,
    "lines": 22,
    "seam": false,
    "tier": "쉬움",
@@ -1211,19 +1227,23 @@
   {
    "id": "G018",
    "title": "[#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가 표준시 00:00) 기준 날짜 키",
-   "start": 2670,
-   "end": 2673,
-   "lines": 4,
+   "start": 2789,
+   "end": 2796,
+   "lines": 8,
    "seam": false,
    "tier": "빈 구획",
-   "score": 0,
+   "score": 3,
    "functions": [],
    "vars": [],
-   "stateReads": [],
+   "stateReads": [
+    "bootThemeList"
+   ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
+   "loadTime": 1,
+   "loadTimeKinds": {
+    "호출": 1
+   },
    "windowAssignments": 0,
    "windowNames": [],
    "listeners": 0,
@@ -1241,96 +1261,9 @@
   },
   {
    "id": "G019",
-   "title": "Confetti",
-   "start": 2674,
-   "end": 2681,
-   "lines": 8,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 5,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "호출": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/core-toast-es361.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/core-toast-es361.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G020",
-   "title": "8대 화면 스타일 (테마) 정의",
-   "start": 2682,
-   "end": 2696,
-   "lines": 15,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 19,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 1,
-    "IfStatement": 1
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "THEMES"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/tabs/settings/sub-appearance.js",
-    "js/tabs/settings/theme-apply.js"
-   ],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/account-switch-isolation.test.js",
-    "tests/comm-ai-identity-es348.test.js",
-    "tests/direct-login-guard.test.js",
-    "tests/dm-push-auth-es397.test.js",
-    "tests/feed-ai-bot-reduction.test.js",
-    "tests/google-session-guard.test.js",
-    "tests/hidden-entry-guard.test.js",
-    "tests/team-goal-guide-hint.test.js",
-    "tests/theme-system-v4.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/comm-ai-identity-es348.test.js",
-    "tests/google-session-guard.test.js",
-    "tests/team-goal-guide-hint.test.js",
-    "tests/theme-system-v4.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G021",
    "title": "가상유저 개선 10대 핵심 헬퍼 함수",
-   "start": 2697,
-   "end": 2699,
+   "start": 2797,
+   "end": 2799,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -1358,10 +1291,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G022",
+   "id": "G020",
    "title": "[#TASK-ES-345 CAL-02] 구글 캘린더 토큰·일정 캐시 계정 격리",
-   "start": 2700,
-   "end": 2707,
+   "start": 2800,
+   "end": 2807,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -1391,10 +1324,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G023",
+   "id": "G021",
    "title": "XP/레벨 시스템",
-   "start": 2708,
-   "end": 2711,
+   "start": 2808,
+   "end": 2811,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -1424,37 +1357,31 @@
    "smokeFnNames": []
   },
   {
-   "id": "G024",
+   "id": "G022",
    "title": "[#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드",
-   "start": 2712,
-   "end": 2731,
-   "lines": 20,
+   "start": 2812,
+   "end": 2821,
+   "lines": 10,
    "seam": false,
-   "tier": "어려움",
-   "score": 32,
+   "tier": "보통",
+   "score": 14,
    "functions": [],
    "vars": [
-    "btnAvLvClose",
-    "btnAvLvConfirm"
+    "btnAvLvClose"
    ],
    "stateReads": [
-    "bindAvatarGrowthPromptSave",
-    "bindAvatarLevelUpBackdrop",
-    "bindAvatarLevelUpSaveImage",
-    "bindAvatarLevelUpShare",
-    "closeAvatarLevelUpModal"
+    "bootAvatarLevelUpWiring"
    ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 12,
+   "loadTime": 2,
    "loadTimeKinds": {
-    "var 초기값 실행": 2,
-    "IfStatement": 2,
-    "호출": 8
+    "var 초기값 실행": 1,
+    "호출": 1
    },
    "windowAssignments": 0,
    "windowNames": [],
-   "listeners": 2,
+   "listeners": 0,
    "onProps": 0,
    "inlineHandlers": [],
    "fanIn": [],
@@ -1463,25 +1390,36 @@
    "testFiles": [
     "scripts/smoke-test.js",
     "scripts/verify-integrity-gate.js",
-    "tests/avatar-10slots-growth.test.js"
+    "tests/avatar-10slots-growth.test.js",
+    "tests/core-confirm-es376.test.js",
+    "tests/guest-null-client-es377.test.js",
+    "tests/team-fold-state-es409.test.js",
+    "tests/team-level-accordion-es406.test.js"
    ],
    "testIndexOnly": [
-    "tests/avatar-10slots-growth.test.js"
+    "tests/avatar-10slots-growth.test.js",
+    "tests/team-fold-state-es409.test.js",
+    "tests/team-level-accordion-es406.test.js"
    ],
    "smokeFnNames": []
   },
   {
-   "id": "G025",
-   "title": "#TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트)",
-   "start": 2732,
-   "end": 2737,
-   "lines": 6,
+   "id": "G023",
+   "title": "뱃지 컬렉션 (명예의 전당)",
+   "start": 2822,
+   "end": 2833,
+   "lines": 12,
    "seam": false,
-   "tier": "빈 구획",
-   "score": 2,
+   "tier": "보통",
+   "score": 10,
    "functions": [],
-   "vars": [],
-   "stateReads": [],
+   "vars": [
+    "state"
+   ],
+   "stateReads": [
+    "bootExposeAppState",
+    "isoDate"
+   ],
    "stateMutates": [],
    "stateWrites": [],
    "loadTime": 1,
@@ -1496,306 +1434,6 @@
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G026",
-   "title": "뱃지 컬렉션 (명예의 전당)",
-   "start": 2738,
-   "end": 2749,
-   "lines": 12,
-   "seam": false,
-   "tier": "어려움",
-   "score": 273,
-   "functions": [],
-   "vars": [
-    "state"
-   ],
-   "stateReads": [
-    "isoDate"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "IfStatement": 1
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "state"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/auth-safety.js",
-    "js/auth-social.js",
-    "js/avatar/dynamic-album.js",
-    "js/avatar/feature-cards.js",
-    "js/avatar/level-badge.js",
-    "js/avatar/modal/bind-craft.js",
-    "js/avatar/modal/bind-deck.js",
-    "js/avatar/modal/bind-save.js",
-    "js/avatar/modal/index.js",
-    "js/avatar/xp.js",
-    "js/calendar-attachment.js",
-    "js/components-auth-actions.js",
-    "js/components-avatar-actions.js",
-    "js/components-feed-actions.js",
-    "js/components-goal-actions.js",
-    "js/components-home-actions.js",
-    "js/components-record-actions.js",
-    "js/components-schedule-actions.js",
-    "js/components-settings-actions.js",
-    "js/components-stats-actions.js",
-    "js/components-team-actions.js",
-    "js/components-widget-actions.js",
-    "js/components.js",
-    "js/core/all-view-render.js",
-    "js/core/app-boot.js",
-    "js/core/app-enter.js",
-    "js/core/app-scope.js",
-    "js/core/app-state.js",
-    "js/core/badges.js",
-    "js/core/confetti.js",
-    "js/core/date-rollover.js",
-    "js/core/event-bus.js",
-    "js/core/gcal-sync.js",
-    "js/core/gcal-token-save.js",
-    "js/core/gcal-token.js",
-    "js/core/home-cockpit.js",
-    "js/core/module-connect.js",
-    "js/core/profile-load.js",
-    "js/core/profile-topbar.js",
-    "js/core/pwa-service-worker.js",
-    "js/core/registry-init.js",
-    "js/core/registry.js",
-    "js/core/server-records-sync.js",
-    "js/core/store.js",
-    "js/core/streak-badge.js",
-    "js/core/supabase-auth.js",
-    "js/core/telemetry.js",
-    "js/core/time-keys.js",
-    "js/core/trash-bin.js",
-    "js/core/view-dispatch.js",
-    "js/core/virtual-user-helpers.js",
-    "js/creator-templates-legacy.js",
-    "js/customize.js",
-    "js/goal-edit-ux.js",
-    "js/notify-engine.js",
-    "js/records-stats.js",
-    "js/sanctuary-calendar-actions.js",
-    "js/sanctuary-calendar-views.js",
-    "js/sanctuary-focus-timer.js",
-    "js/sanctuary-goal-trail.js",
-    "js/sanctuary-peer-radar.js",
-    "js/sanctuary-record-feed.js",
-    "js/sanctuary-v3-engine.js",
-    "js/sanctuary-weekly-recap.js",
-    "js/stats-dashboard-bind.js",
-    "js/stats-dashboard-view.js",
-    "js/stats-dashboard.js",
-    "js/stats-data-grid.js",
-    "js/stats-data-menu.js",
-    "js/stats-fullscreen.js",
-    "js/stats-import.js",
-    "js/stats-taxonomy.js",
-    "js/streaks.js",
-    "js/tab-guides.js",
-    "js/tabs/calendar/calendar-core.js",
-    "js/tabs/calendar/day-bg-picker.js",
-    "js/tabs/calendar/day-detail.js",
-    "js/tabs/calendar/day-edit-hub.js",
-    "js/tabs/calendar/index.js",
-    "js/tabs/calendar/lockscreen-hub.js",
-    "js/tabs/calendar/lockscreen-image.js",
-    "js/tabs/calendar/lockscreen-live.js",
-    "js/tabs/calendar/manual-edit-modal.js",
-    "js/tabs/calendar/natural-schedule.js",
-    "js/tabs/calendar/render.js",
-    "js/tabs/calendar/schedule-done-toggle.js",
-    "js/tabs/calendar/sub-day-detail.js",
-    "js/tabs/calendar/sub-month-view.js",
-    "js/tabs/calendar/sub-photo-diary.js",
-    "js/tabs/comm/cheer-notify.js",
-    "js/tabs/comm/crew-pacing.js",
-    "js/tabs/comm/feed-comments.js",
-    "js/tabs/comm/feed-list.js",
-    "js/tabs/comm/feed-post-preview.js",
-    "js/tabs/comm/feed-posts-sync.js",
-    "js/tabs/comm/first-cheer.js",
-    "js/tabs/comm/goal-certificate-share.js",
-    "js/tabs/comm/index.js",
-    "js/tabs/comm/manito-basics.js",
-    "js/tabs/comm/manito-real.js",
-    "js/tabs/comm/peer-invite.js",
-    "js/tabs/comm/render.js",
-    "js/tabs/comm/sample-data.js",
-    "js/tabs/comm/share-card.js",
-    "js/tabs/comm/shared-groups.js",
-    "js/tabs/comm/story-canvas.js",
-    "js/tabs/comm/story-card-send.js",
-    "js/tabs/comm/sub-companions.js",
-    "js/tabs/comm/sub-crew.js",
-    "js/tabs/comm/sub-feed.js",
-    "js/tabs/comm/user-blocks.js",
-    "js/tabs/goals/ai-agent.js",
-    "js/tabs/goals/ai-local-fallback.js",
-    "js/tabs/goals/ai-status-refresh.js",
-    "js/tabs/goals/ai-status.js",
-    "js/tabs/goals/attachments.js",
-    "js/tabs/goals/focus-autopilot.js",
-    "js/tabs/goals/goal-archive.js",
-    "js/tabs/goals/goal-detail-drawer.js",
-    "js/tabs/goals/goal-detail-events.js",
-    "js/tabs/goals/goal-detail.js",
-    "js/tabs/goals/goal-export.js",
-    "js/tabs/goals/goal-fast-add.js",
-    "js/tabs/goals/goal-math.js",
-    "js/tabs/goals/goal-order.js",
-    "js/tabs/goals/goal-update-suggest.js",
-    "js/tabs/goals/goals-ia-actions.js",
-    "js/tabs/goals/index.js",
-    "js/tabs/goals/new-goal-modal.js",
-    "js/tabs/goals/notion-record-convert.js",
-    "js/tabs/goals/prompt-encyclopedia.js",
-    "js/tabs/goals/render.js",
-    "js/tabs/goals/result-input.js",
-    "js/tabs/goals/result-modal.js",
-    "js/tabs/goals/routine-detail-modal.js",
-    "js/tabs/goals/routine-screen.js",
-    "js/tabs/goals/schedule-setup.js",
-    "js/tabs/goals/shift-routines.js",
-    "js/tabs/goals/starter-goal.js",
-    "js/tabs/goals/sub-personal.js",
-    "js/tabs/goals/sub-routine.js",
-    "js/tabs/goals/sub-team.js",
-    "js/tabs/goals/team-comment-send.js",
-    "js/tabs/goals/team-comments.js",
-    "js/tabs/goals/team-goal-modals.js",
-    "js/tabs/goals/team-goal-prompt.js",
-    "js/tabs/goals/team-goals-guide.js",
-    "js/tabs/goals/team-goals-screen.js",
-    "js/tabs/goals/team-level-goals.js",
-    "js/tabs/goals/team-state.js",
-    "js/tabs/goals/template-encyclopedia-modal.js",
-    "js/tabs/goals/template-encyclopedia.js",
-    "js/tabs/goals/template-quick-import.js",
-    "js/tabs/goals/topic-region-picker.js",
-    "js/tabs/home/home-render.js",
-    "js/tabs/home/index.js",
-    "js/tabs/home/quest-summary.js",
-    "js/tabs/home/sub-heatmap.js",
-    "js/tabs/home/sub-onescreen.js",
-    "js/tabs/home/sub-quest.js",
-    "js/tabs/home/sub-today.js",
-    "js/tabs/home/today-mission.js",
-    "js/tabs/records/ai-feedback-catalog.js",
-    "js/tabs/records/ai-feedback-providers.js",
-    "js/tabs/records/ai-feedback.js",
-    "js/tabs/records/archive-toggle.js",
-    "js/tabs/records/checkin-capture.js",
-    "js/tabs/records/checkin-feedback.js",
-    "js/tabs/records/checkin-helpers.js",
-    "js/tabs/records/checkin-input-wiring.js",
-    "js/tabs/records/csv-export.js",
-    "js/tabs/records/export-theme.js",
-    "js/tabs/records/external-import.js",
-    "js/tabs/records/first-checkin-tutorial.js",
-    "js/tabs/records/growth-chart.js",
-    "js/tabs/records/heatmap-summary.js",
-    "js/tabs/records/index.js",
-    "js/tabs/records/period-ai-card.js",
-    "js/tabs/records/photo-proof.js",
-    "js/tabs/records/pro-report-export.js",
-    "js/tabs/records/pro-template-modals.js",
-    "js/tabs/records/pro-templates.js",
-    "js/tabs/records/quick-checkin.js",
-    "js/tabs/records/record-assistant.js",
-    "js/tabs/records/record-card-wire.js",
-    "js/tabs/records/record-cards.js",
-    "js/tabs/records/record-heatmap-report.js",
-    "js/tabs/records/render.js",
-    "js/tabs/records/sample-purge.js",
-    "js/tabs/records/share-to-feed.js",
-    "js/tabs/records/sub-retrospect.js",
-    "js/tabs/records/sub-timeline.js",
-    "js/tabs/records/sub-timer.js",
-    "js/tabs/records/table-analytics-view.js",
-    "js/tabs/records/table-csv-sync.js",
-    "js/tabs/records/table-stopwatch.js",
-    "js/tabs/records/template-market.js",
-    "js/tabs/records/template-record-detail.js",
-    "js/tabs/records/theme-export-csv.js",
-    "js/tabs/records/theme-picker.js",
-    "js/tabs/records/trend-metrics-chart.js",
-    "js/tabs/records/vision-table-input.js",
-    "js/tabs/records/weekly-recap.js",
-    "js/tabs/settings/account-actions.js",
-    "js/tabs/settings/account-entry.js",
-    "js/tabs/settings/adaptive-ux.js",
-    "js/tabs/settings/app-defaults.js",
-    "js/tabs/settings/app-evaluation.js",
-    "js/tabs/settings/app-lock-pin.js",
-    "js/tabs/settings/avatar-greeting.js",
-    "js/tabs/settings/avatar-levelup-modal.js",
-    "js/tabs/settings/comm-tour.js",
-    "js/tabs/settings/dev-debug-gate.js",
-    "js/tabs/settings/device-session.js",
-    "js/tabs/settings/feedback-bot-setup.js",
-    "js/tabs/settings/first-login-guide.js",
-    "js/tabs/settings/guest-backup-nudge.js",
-    "js/tabs/settings/guest-migration.js",
-    "js/tabs/settings/inapp-landing.js",
-    "js/tabs/settings/index.js",
-    "js/tabs/settings/login-devices.js",
-    "js/tabs/settings/notify-soft-ask.js",
-    "js/tabs/settings/notify-timer.js",
-    "js/tabs/settings/notion-sync.js",
-    "js/tabs/settings/onboarding.js",
-    "js/tabs/settings/privacy-badges.js",
-    "js/tabs/settings/pwa-install.js",
-    "js/tabs/settings/quick-actions.js",
-    "js/tabs/settings/render.js",
-    "js/tabs/settings/session-entry.js",
-    "js/tabs/settings/sub-appearance.js",
-    "js/tabs/settings/sub-data.js",
-    "js/tabs/settings/sub-integrations.js",
-    "js/tabs/settings/sub-notify.js",
-    "js/tabs/settings/sub-profile.js",
-    "js/tabs/settings/sub-security.js",
-    "js/tabs/settings/support-modals.js",
-    "js/tabs/settings/tab-guide.js",
-    "js/tabs/settings/tester-entry.js",
-    "js/tabs/settings/theme-apply.js",
-    "js/tabs/settings/user-session-realtime.js",
-    "js/tabs/settings/web-push.js",
-    "js/tabs/settings/widget-settings-modal.js",
-    "js/tabs/settings/withdraw-modal.js",
-    "js/team-auto-actions.js",
-    "js/team-chat.js",
-    "js/team-companion-search.js",
-    "js/team-companions.js",
-    "js/team-dm-inbox.js",
-    "js/team-dm-room.js",
-    "js/team-invite-comm.js",
-    "js/team-linked-goals-screen.js",
-    "js/team-linked-goals.js",
-    "js/team-member-review.js",
-    "js/team-profile.js",
-    "js/team-recruit.js",
-    "js/team-share.js",
-    "js/team-templates.js",
-    "js/team-visibility-levels.js",
-    "js/time-tracker-review.js",
-    "js/time-tracker-screen.js",
-    "js/time-tracker.js",
-    "js/viral-sharing.js"
-   ],
    "testFiles": [
     "scripts/smoke-test.js",
     "scripts/test-shipyard-modular.js",
@@ -1810,10 +1448,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G027",
+   "id": "G024",
    "title": "[70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달",
-   "start": 2750,
-   "end": 2752,
+   "start": 2834,
+   "end": 2836,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -1840,10 +1478,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G028",
+   "id": "G025",
    "title": "[71] 앱 잠금 PIN (이 기기) — 설정·해제·앱 진입 확인",
-   "start": 2753,
-   "end": 2760,
+   "start": 2837,
+   "end": 2844,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -1868,19 +1506,21 @@
    "smokeFnNames": []
   },
   {
-   "id": "G029",
+   "id": "G026",
    "title": "[78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용)",
-   "start": 2761,
-   "end": 2767,
+   "start": 2845,
+   "end": 2851,
    "lines": 7,
    "seam": false,
    "tier": "쉬움",
-   "score": 2,
+   "score": 3,
    "functions": [],
    "vars": [
     "_promptEncyclopediaOpen"
    ],
-   "stateReads": [],
+   "stateReads": [
+    "bootPromptTabState"
+   ],
    "stateMutates": [],
    "stateWrites": [],
    "loadTime": 1,
@@ -1903,10 +1543,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G030",
+   "id": "G027",
    "title": "[80] 템플릿백과사전 1초 자동이식 선택 연동 및 로드맵-목표상태 동기화",
-   "start": 2768,
-   "end": 2771,
+   "start": 2852,
+   "end": 2855,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -1931,10 +1571,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G031",
+   "id": "G028",
    "title": "[82] 팀 목표 내 '팀 연계 개인목표' 생성 모달",
-   "start": 2772,
-   "end": 2774,
+   "start": 2856,
+   "end": 2858,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -1961,10 +1601,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G032",
+   "id": "G029",
    "title": "[83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능",
-   "start": 2775,
-   "end": 2778,
+   "start": 2859,
+   "end": 2862,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -1991,775 +1631,18 @@
    "smokeFnNames": []
   },
   {
-   "id": "G033",
+   "id": "G030",
    "title": "[88] 오늘의 3초 체크인 목표 버튼 선택 시 플레이스홀더(백그라운드 가이드) 예시 문구 렌더링",
-   "start": 2779,
-   "end": 2781,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G034",
-   "title": "[#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업",
-   "start": 2782,
-   "end": 2790,
-   "lines": 9,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 4,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "window 노출": 1
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "_homeDateOffset"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/core/home-cockpit.js"
-   ],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G035",
-   "title": "Landing",
-   "start": 2791,
-   "end": 2791,
-   "lines": 1,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G036",
-   "title": "[#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저 감지 및 Android Chrome 자동 탈출 & iOS Safari 플로팅 가이드 배너",
-   "start": 2792,
-   "end": 2801,
-   "lines": 10,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 16,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindLandGuestBtn",
-    "bindLandLoginLink",
-    "bindLandNickQuickLink",
-    "checkKakaoInAppBrowser"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 6,
-   "loadTimeKinds": {
-    "호출": 6
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G037",
-   "title": "2계정 상호작용 테스트 (테스터 B 직통 입장: #TASK-ES-169)",
-   "start": 2802,
-   "end": 2810,
-   "lines": 9,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 13,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindAuthTesterBButton",
-    "bindLandTesterBButton",
-    "startDevDebugButtons"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 5,
-   "loadTimeKinds": {
-    "호출": 5
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G038",
-   "title": "소셜 로그인 (카카오 / 실제 구글 OAuth 연동)",
-   "start": 2811,
-   "end": 2821,
-   "lines": 11,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 13,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindGoogleLoginClicks",
-    "bindKakaoLoginClicks"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 4,
-   "loadTimeKinds": {
-    "호출": 4
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "tests/google-session-guard.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/google-session-guard.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G039",
-   "title": "[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 계정 통합",
-   "start": 2822,
-   "end": 2824,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G040",
-   "title": "[#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시 게스트 데이터 100% 무손실 비파괴 합집합(Union Merge) 이관",
-   "start": 2825,
-   "end": 2827,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G041",
-   "title": "Goal category templates",
-   "start": 2828,
-   "end": 2838,
-   "lines": 11,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 8,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindAuthTabButtons",
-    "bindSignupSubmit"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/guest-null-client-es377.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G042",
-   "title": "P0: 비밀번호 찾기 (이메일 재설정 링크 발송)",
-   "start": 2839,
-   "end": 2848,
-   "lines": 10,
-   "seam": false,
-   "tier": "쉬움",
-   "score": 5,
-   "functions": [],
-   "vars": [
-    "fpBtn"
-   ],
-   "stateReads": [
-    "openForgotPasswordModal"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "var 초기값 실행": 1,
-    "IfStatement": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 1,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G043",
-   "title": "P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크",
-   "start": 2849,
-   "end": 2856,
-   "lines": 8,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 14,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindLoginSubmit",
-    "bindLogoutButton",
-    "bindResetButton",
-    "bindResyncAccountDataButton"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 5,
-   "loadTimeKinds": {
-    "호출": 5
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G044",
-   "title": "회원 탈퇴 전용 안내 모달 및 법적책임·데이터분실 사전 안내 (#TASK-ES-158)",
-   "start": 2857,
-   "end": 2860,
-   "lines": 4,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 6,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "openWithdrawModal"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "호출": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 1,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/account-withdrawal-modal.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/account-withdrawal-modal.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G045",
-   "title": "[#TASK-ES-160, #TASK-ES-166, #TASK-ES-180] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 (최신 기능 전면 동기화)",
-   "start": 2861,
-   "end": 2866,
+   "start": 2863,
+   "end": 2868,
    "lines": 6,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 5,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindTabGuideHubButton"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G046",
-   "title": "앱 활용 가이드 다시보기",
-   "start": 2867,
-   "end": 2870,
-   "lines": 4,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 8,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindRestartGuideButton"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/top-page-guide-reposition.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/top-page-guide-reposition.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G047",
-   "title": "1:1 고객 문의 / 버그 제보 (#TASK-ES-178)",
-   "start": 2871,
-   "end": 2875,
-   "lines": 5,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 8,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindInquiryButtons",
-    "bindSupportEmailLink"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G048",
-   "title": "이용약관 / 개인정보처리방침 열람 리스너",
-   "start": 2876,
-   "end": 2889,
-   "lines": 14,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 24,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindFocusResync",
-    "bindOfflineNotice",
-    "bindOnlineSync",
-    "bindPrivacyLinks",
-    "bindRemoteLogoutStorageListener",
-    "bindTermsLinks",
-    "bindVisibilityResync",
-    "startRemoteSessionPoll"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 8,
-   "loadTimeKinds": {
-    "호출": 8
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G049",
-   "title": "Onboarding (first-time, after signup) — 16종 동물 아바타 & 직관적 안착 융합",
-   "start": 2890,
-   "end": 2892,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G050",
-   "title": "3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출",
-   "start": 2893,
-   "end": 2899,
-   "lines": 7,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G051",
-   "title": "최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합",
-   "start": 2900,
-   "end": 2906,
-   "lines": 7,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 4,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G052",
-   "title": "조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항)",
-   "start": 2907,
-   "end": 2914,
-   "lines": 8,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 25,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindNavButtonsClick",
-    "initShipyardRegistry",
-    "setTab"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "TryStatement": 1,
-    "호출": 1,
-    "IfStatement": 1
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "switchTab"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/core/registry-init.js",
-    "js/notify-engine.js",
-    "js/sanctuary-calendar-actions.js",
-    "js/sanctuary-record-feed.js",
-    "js/sanctuary-v3-engine.js",
-    "js/stats-import.js",
-    "js/tabs/comm/crew-pacing.js",
-    "js/tabs/comm/peer-invite.js",
-    "js/tabs/home/quest-summary.js",
-    "js/tabs/records/checkin-feedback.js",
-    "js/tabs/records/growth-chart.js",
-    "js/tabs/records/render.js",
-    "js/tabs/records/weekly-recap.js",
-    "js/tabs/settings/tab-guide.js",
-    "js/viral-sharing.js"
-   ],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G053",
-   "title": "Modal helper & Android Hardware Back Handler",
-   "start": 2915,
-   "end": 2922,
-   "lines": 8,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 10,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindModalPopstateBack"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/core-modal-es363.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/core-modal-es363.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G054",
-   "title": "이용약관 & 개인정보처리방침 모달",
-   "start": 2923,
-   "end": 2939,
-   "lines": 17,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G055",
-   "title": "프로필",
-   "start": 2940,
-   "end": 2947,
-   "lines": 8,
    "seam": false,
    "tier": "빈 구획",
    "score": 3,
    "functions": [],
    "vars": [],
    "stateReads": [
-    "bindScheduleReminderStart"
+    "bootEntryAndAccountWiring"
    ],
    "stateMutates": [],
    "stateWrites": [],
@@ -2776,17 +1659,16 @@
    "fanOut": [],
    "externalFiles": [],
    "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/schedule-notification-setting.test.js"
+    "scripts/smoke-test.js"
    ],
    "testIndexOnly": [],
    "smokeFnNames": []
   },
   {
-   "id": "G056",
+   "id": "G031",
    "title": "구글 캘린더 연동",
-   "start": 2948,
-   "end": 2948,
+   "start": 2869,
+   "end": 2869,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -2811,17 +1693,18 @@
    "smokeFnNames": []
   },
   {
-   "id": "G057",
+   "id": "G032",
    "title": "[#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템",
-   "start": 2949,
-   "end": 2963,
-   "lines": 15,
+   "start": 2870,
+   "end": 2882,
+   "lines": 13,
    "seam": false,
    "tier": "빈 구획",
-   "score": 13,
+   "score": 14,
    "functions": [],
    "vars": [],
    "stateReads": [
+    "bootGoogleTokenState",
     "saveGoogleToken"
    ],
    "stateMutates": [],
@@ -2848,7 +1731,6 @@
    ],
    "testFiles": [
     "scripts/smoke-test.js",
-    "tests/core-confirm-es376.test.js",
     "tests/gcal-login-reconnect-fix.test.js"
    ],
    "testIndexOnly": [
@@ -2857,10 +1739,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G058",
+   "id": "G033",
    "title": "[#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달",
-   "start": 2964,
-   "end": 2978,
+   "start": 2883,
+   "end": 2897,
    "lines": 15,
    "seam": false,
    "tier": "빈 구획",
@@ -2892,10 +1774,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G059",
+   "id": "G034",
    "title": "[#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달",
-   "start": 2979,
-   "end": 2987,
+   "start": 2898,
+   "end": 2906,
    "lines": 9,
    "seam": false,
    "tier": "빈 구획",
@@ -2924,10 +1806,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G060",
+   "id": "G035",
    "title": "Adaptive UX Mode",
-   "start": 2988,
-   "end": 2992,
+   "start": 2907,
+   "end": 2911,
    "lines": 5,
    "seam": false,
    "tier": "빈 구획",
@@ -2952,563 +1834,18 @@
    "smokeFnNames": []
   },
   {
-   "id": "G061",
+   "id": "G036",
    "title": "Social Crew Pacing (#TASK-ES-228)",
-   "start": 2993,
-   "end": 2995,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G062",
-   "title": "UX Telemetry (Hesitation & Rage Tap)",
-   "start": 2996,
-   "end": 3001,
-   "lines": 6,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 3,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindRageTapTelemetry"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "호출": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G063",
-   "title": "iOS 사파리 홈 화면 추가 안내 배너 & 실시간 알림 가이드 (#TASK-ES-234)",
-   "start": 3002,
-   "end": 3017,
-   "lines": 16,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 3,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/sync-server-records-render-home.test.js",
-    "tests/team-goal-comment-fix.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/sync-server-records-render-home.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G064",
-   "title": "1순위 대표 목표 AI 초집중 모드 (Focus Auto-Pilot)",
-   "start": 3018,
-   "end": 3026,
-   "lines": 9,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 6,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/trio-es143-es145.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G065",
-   "title": "원터치 퀵 루틴 칩",
-   "start": 3027,
-   "end": 3030,
-   "lines": 4,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 5,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindQuickRoutineChips"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G066",
-   "title": "🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227)",
-   "start": 3031,
-   "end": 3035,
-   "lines": 5,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 3,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "startVoiceCheckin"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "호출": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G067",
-   "title": "사진 인증 & 뷰어 모달 (가상유저 요청 P1)",
-   "start": 3036,
-   "end": 3045,
+   "start": 2912,
+   "end": 2921,
    "lines": 10,
    "seam": false,
    "tier": "빈 구획",
-   "score": 11,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindCapturePhoto"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 5,
-   "loadTimeKinds": {
-    "호출": 5
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G068",
-   "title": "체크인 입력 글자수 힌트 (#TASK-ES-367: 열 수 없던 활동 테마 선택 창·배지 제거, 승인 2026-10-04)",
-   "start": 3046,
-   "end": 3058,
-   "lines": 13,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 15,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindCaptureLiveMeta",
-    "bindCaptureSave"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 5,
-   "loadTimeKinds": {
-    "호출": 5
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/module-guard.test.js",
-    "tests/theme-system-v4.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/theme-system-v4.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G069",
-   "title": "[#TASK-ES-225] [생각 메모장 95번] Gemini API 분당 쿼터(Rate Limit 429) 방어 및 지수 백오프 큐",
-   "start": 3059,
-   "end": 3067,
-   "lines": 9,
-   "seam": false,
-   "tier": "쉬움",
-   "score": 1,
-   "functions": [],
-   "vars": [
-    "requestClaudeFeedback"
-   ],
-   "stateReads": [
-    "requestServerAIFeedback"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G070",
-   "title": "맞춤 피드백 봇 설정",
-   "start": 3068,
-   "end": 3077,
-   "lines": 10,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 11,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "closeFeedbackSetup",
-    "openFeedbackSetupGated"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 3,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/home-customizer-auto-sync.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/home-customizer-auto-sync.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G071",
-   "title": "목표 & 기록 선택 피드 공유 모달 (전면 고도화)",
-   "start": 3078,
-   "end": 3080,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G072",
-   "title": "[#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼",
-   "start": 3081,
-   "end": 3085,
-   "lines": 5,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/verify-all-clicks.js",
-    "scripts/verify-integrity-gate.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G073",
-   "title": "외부 데이터 불러오기 (mock)",
-   "start": 3086,
-   "end": 3092,
-   "lines": 7,
-   "seam": false,
-   "tier": "보통",
-   "score": 16,
-   "functions": [],
-   "vars": [
-    "topBtnGuide"
-   ],
-   "stateReads": [
-    "bindImportExternalBtn",
-    "bindPersonalGuideBtn",
-    "state"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 5,
-   "loadTimeKinds": {
-    "호출": 3,
-    "var 초기값 실행": 1,
-    "IfStatement": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 1,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/top-page-guide-reposition.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/top-page-guide-reposition.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G074",
-   "title": "[#TASK-ES-174] 목표 템플릿 백과사전 전체화면 팝업 및 상호작용",
-   "start": 3093,
-   "end": 3121,
-   "lines": 29,
-   "seam": false,
-   "tier": "어려움",
-   "score": 31,
-   "functions": [],
-   "vars": [
-    "btnCloseTplEncycl",
-    "tabBtnAi",
-    "tabBtnReal"
-   ],
-   "stateReads": [
-    "bindHeaderTemplateEncyclopediaClick",
-    "bindTemplateEncyclopediaEscape",
-    "bindTemplateEncyclopediaModalClick",
-    "closeTemplateEncyclopediaModal",
-    "switchTemplateEncyclopediaTab"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 13,
-   "loadTimeKinds": {
-    "호출": 7,
-    "var 초기값 실행": 3,
-    "IfStatement": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 3,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/goal-template-legacy-cleanup.test.js",
-    "tests/goal-templates-encyclopedia.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G075",
-   "title": "[#TASK-ES-146] 아워골 평가해주기 90% 팝업",
-   "start": 3122,
-   "end": 3149,
-   "lines": 28,
-   "seam": false,
-   "tier": "어려움",
-   "score": 37,
-   "functions": [],
-   "vars": [
-    "btnEvalBanner",
-    "btnEvalClose",
-    "challengeBtn"
-   ],
-   "stateReads": [
-    "bindAppEvalBackdrop",
-    "bindAppEvalSubmit",
-    "bindHomeAddGoal",
-    "closeAppEvaluationModal",
-    "openAppEvaluationModal",
-    "openMzShareCardModal",
-    "setTab"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 12,
-   "loadTimeKinds": {
-    "var 초기값 실행": 3,
-    "IfStatement": 3,
-    "호출": 6
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 3,
-   "onProps": 1,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/app-evaluation-modal.test.js",
-    "tests/home-customizer-auto-sync.test.js",
-    "tests/sync-server-records-render-home.test.js",
-    "tests/team-goal-comment-fix.test.js",
-    "tests/trio-es143-es145.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/home-customizer-auto-sync.test.js",
-    "tests/sync-server-records-render-home.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G076",
-   "title": "New goal modal",
-   "start": 3150,
-   "end": 3156,
-   "lines": 7,
-   "seam": false,
-   "tier": "빈 구획",
    "score": 3,
    "functions": [],
    "vars": [],
    "stateReads": [
-    "bindNewGoalStepExports"
+    "bootHomeAndGoalWiring"
    ],
    "stateMutates": [],
    "stateWrites": [],
@@ -3524,62 +1861,6 @@
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G077",
-   "title": "참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크)",
-   "start": 3157,
-   "end": 3157,
-   "lines": 1,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G078",
-   "title": "참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크)",
-   "start": 3158,
-   "end": 3160,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
    "testFiles": [
     "scripts/smoke-test.js"
    ],
@@ -3587,47 +1868,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G079",
-   "title": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
-   "start": 3161,
-   "end": 3179,
-   "lines": 19,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 16,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindArchivedPageSetter",
-    "bindArchivedPeriodSetter",
-    "bindGoalAgentToggle",
-    "sendGoalAgentMessage"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 6,
-   "loadTimeKinds": {
-    "호출": 6
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 2,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G080",
+   "id": "G037",
    "title": "[#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화",
-   "start": 3180,
-   "end": 3186,
+   "start": 2922,
+   "end": 2928,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -3658,10 +1902,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G081",
+   "id": "G038",
    "title": "목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #TASK-ES-135)",
-   "start": 3187,
-   "end": 3189,
+   "start": 2929,
+   "end": 2931,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -3690,10 +1934,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G082",
+   "id": "G039",
    "title": "[#TASK-ES-220] [생각 메모장 91번] 교대근무자 가변형 루틴 프리셋 & 자동 스케줄러",
-   "start": 3190,
-   "end": 3192,
+   "start": 2932,
+   "end": 2934,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -3720,10 +1964,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G083",
+   "id": "G040",
    "title": "[#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달",
-   "start": 3193,
-   "end": 3196,
+   "start": 2935,
+   "end": 2938,
    "lines": 4,
    "seam": false,
    "tier": "빈 구획",
@@ -3750,10 +1994,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G084",
+   "id": "G041",
    "title": "RENDER: TEMPLATE ENCYCLOPEDIA SUBTAB (#TASK-ES-187)",
-   "start": 3197,
-   "end": 3199,
+   "start": 2939,
+   "end": 2941,
    "lines": 3,
    "seam": false,
    "tier": "쉬움",
@@ -3781,14 +2025,14 @@
    "smokeFnNames": []
   },
   {
-   "id": "G085",
+   "id": "G042",
    "title": "[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템",
-   "start": 3200,
-   "end": 3208,
-   "lines": 9,
+   "start": 2942,
+   "end": 2952,
+   "lines": 11,
    "seam": false,
-   "tier": "보통",
-   "score": 10,
+   "tier": "쉬움",
+   "score": 6,
    "functions": [],
    "vars": [
     "_subtabTplCat",
@@ -3796,122 +2040,8 @@
     "_subtabTplQuery",
     "_subtabTplType"
    ],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "window 노출": 2
-   },
-   "windowAssignments": 2,
-   "windowNames": [
-    "_subtabTplDomain",
-    "_subtabTplType"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/tabs/goals/template-encyclopedia.js"
-   ],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/test-shipyard-modular.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/routine-tab-scheduler.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/routine-tab-scheduler.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G086",
-   "title": "[UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA (#TASK-UIUX-PHASE4-GOALS)",
-   "start": 3209,
-   "end": 3223,
-   "lines": 15,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 16,
-   "functions": [],
-   "vars": [],
    "stateReads": [
-    "handleGoalFastAddSubmit",
-    "selectSmartTag"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 4,
-   "loadTimeKinds": {
-    "window 노출": 4
-   },
-   "windowAssignments": 4,
-   "windowNames": [
-    "currentGoalStatPeriod",
-    "handleGoalFastAddSubmit",
-    "selectSmartTag",
-    "selectedGoalSmartTag"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/tabs/goals/goal-fast-add.js",
-    "js/tabs/goals/goals-ia-actions.js"
-   ],
-   "testFiles": [
-    "scripts/verify-all-clicks.js",
-    "scripts/verify-integrity-gate.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G087",
-   "title": "[PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS",
-   "start": 3224,
-   "end": 3227,
-   "lines": 4,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G088",
-   "title": "[PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTIONS",
-   "start": 3228,
-   "end": 3242,
-   "lines": 15,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 3,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "startKeyboardShield"
+    "bootGoalsAndTeamState"
    ],
    "stateMutates": [],
    "stateWrites": [],
@@ -3927,140 +2057,22 @@
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G089",
-   "title": "RENDER: GOALS",
-   "start": 3243,
-   "end": 3245,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "tests/team-goal-comment-fix.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G090",
-   "title": "RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만)",
-   "start": 3246,
-   "end": 3257,
-   "lines": 12,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 4,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
    "testFiles": [
     "scripts/smoke-test.js",
-    "tests/core-confirm-es376.test.js",
-    "tests/guest-null-client-es377.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G091",
-   "title": "개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135)",
-   "start": 3258,
-   "end": 3276,
-   "lines": 19,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 33,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindTeamCommentClick",
-    "bindTeamCommentKeydown",
-    "defineSendTeamGoalComment",
-    "renderTeamGoalsScreen"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 4,
-   "loadTimeKinds": {
-    "IfStatement": 1,
-    "호출": 3
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "renderTeamGoalsScreen"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/components-team-actions.js",
-    "js/core/module-connect.js",
-    "js/goal-edit-ux.js",
-    "js/tabs/comm/user-blocks.js",
-    "js/tabs/goals/render.js",
-    "js/tabs/goals/sub-team.js",
-    "js/tabs/goals/team-comment-send.js",
-    "js/tabs/goals/team-comments.js",
-    "js/tabs/goals/team-goal-edit-modal.js",
-    "js/tabs/goals/team-goal-prompt.js",
-    "js/tabs/goals/team-goals-guide.js",
-    "js/tabs/goals/team-goals-screen.js",
-    "js/tabs/goals/team-level-goals.js",
-    "js/team-level-group-modal.js",
-    "js/team-linked-goals.js",
-    "js/team-recruit.js",
-    "js/team-visibility-levels.js"
-   ],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/team-goal-guide-hint.test.js"
+    "scripts/test-shipyard-modular.js",
+    "scripts/verify-integrity-gate.js",
+    "tests/routine-tab-scheduler.test.js"
    ],
    "testIndexOnly": [
-    "tests/team-goal-guide-hint.test.js"
+    "tests/routine-tab-scheduler.test.js"
    ],
    "smokeFnNames": []
   },
   {
-   "id": "G092",
+   "id": "G043",
    "title": "TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진",
-   "start": 3277,
-   "end": 3283,
+   "start": 2953,
+   "end": 2959,
    "lines": 7,
    "seam": false,
    "tier": "빈 구획",
@@ -4089,10 +2101,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G093",
+   "id": "G044",
    "title": "5대 테마 원형 라이프 밸런스 휠 (SVG Pie Chart)",
-   "start": 3284,
-   "end": 3297,
+   "start": 2960,
+   "end": 2973,
    "lines": 14,
    "seam": false,
    "tier": "빈 구획",
@@ -4119,10 +2131,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G094",
+   "id": "G045",
    "title": "⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯 (In-Table Stopwatch)",
-   "start": 3298,
-   "end": 3305,
+   "start": 2974,
+   "end": 2981,
    "lines": 8,
    "seam": false,
    "tier": "빈 구획",
@@ -4150,14 +2162,14 @@
    "smokeFnNames": []
   },
   {
-   "id": "G095",
+   "id": "G046",
    "title": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)",
-   "start": 3306,
-   "end": 4259,
-   "lines": 954,
+   "start": 2982,
+   "end": 3934,
+   "lines": 953,
    "seam": false,
    "tier": "어려움",
-   "score": 106,
+   "score": 103,
    "functions": [
     "openProTemplateRecordModal"
    ],
@@ -4165,11 +2177,10 @@
    "stateReads": [
     "XP_RULES",
     "awardXP",
+    "bootRecordsWiring",
     "burstConfetti",
-    "checkRecordDeepLink",
     "closeModal",
     "computeTrendChartData",
-    "definePurgeSampleRecords",
     "downloadTableAsCsv",
     "escapeHtml",
     "fmtYYMMDD",
@@ -4219,13 +2230,13 @@
     "state"
    ],
    "stateWrites": [],
-   "loadTime": 2,
+   "loadTime": 1,
    "loadTimeKinds": {
-    "호출": 2
+    "호출": 1
    },
    "windowAssignments": 0,
    "windowNames": [],
-   "listeners": 3,
+   "listeners": 2,
    "onProps": 32,
    "inlineHandlers": [],
    "fanIn": [
@@ -4256,6 +2267,7 @@
     "tests/goals-schedule-sync.test.js",
     "tests/goals-smart-attachments.test.js",
     "tests/google-session-guard.test.js",
+    "tests/guest-null-client-es377.test.js",
     "tests/push-subscribe-auth-es400.test.js",
     "tests/record-ledger-sync.test.js",
     "tests/routine-tab-scheduler.test.js",
@@ -4293,56 +2305,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G096",
-   "title": "위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용)",
-   "start": 4260,
-   "end": 4273,
-   "lines": 14,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 28,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindRecCarouselPills",
-    "bindRecDocumentClick",
-    "bindRecPulseBar",
-    "bindRecTimeTrackerBtn",
-    "openRecordModal",
-    "openWeeklyRecapModal",
-    "renderRecordsScreen"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 9,
-   "loadTimeKinds": {
-    "호출": 9
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 3,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/verify-integrity-gate.js",
-    "tests/core-confirm-es376.test.js",
-    "tests/sync-server-records-render-home.test.js",
-    "tests/team-goal-comment-fix.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/sync-server-records-render-home.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G097",
+   "id": "G047",
    "title": "RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11)",
-   "start": 4274,
-   "end": 4274,
+   "start": 3935,
+   "end": 3935,
    "lines": 1,
    "seam": false,
    "tier": "빈 구획",
@@ -4367,14 +2333,14 @@
    "smokeFnNames": []
   },
   {
-   "id": "G098",
+   "id": "G048",
    "title": "캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명)",
-   "start": 4275,
-   "end": 4450,
-   "lines": 176,
+   "start": 3936,
+   "end": 4109,
+   "lines": 174,
    "seam": false,
    "tier": "어려움",
-   "score": 32,
+   "score": 27,
    "functions": [
     "shareContent"
    ],
@@ -4382,21 +2348,21 @@
     "MOCK_GROUPS"
    ],
    "stateReads": [
-    "daysFromNow",
-    "openExportThemeModal"
+    "bootRecordsExportWiring",
+    "daysFromNow"
    ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 3,
+   "loadTime": 2,
    "loadTimeKinds": {
-    "호출": 2,
+    "호출": 1,
     "window 노출": 1
    },
    "windowAssignments": 1,
    "windowNames": [
     "shareContent"
    ],
-   "listeners": 1,
+   "listeners": 0,
    "onProps": 0,
    "inlineHandlers": [],
    "fanIn": [
@@ -4418,14 +2384,12 @@
    "testFiles": [
     "scripts/smoke-test.js",
     "scripts/verify-integrity-gate.js",
-    "tests/security-audit.test.js",
     "tests/team-fold-state-es409.test.js",
     "tests/team-level-accordion-es406.test.js",
     "tests/team-level-management.test.js",
     "tests/team-tasks-toggle-es410.test.js"
    ],
    "testIndexOnly": [
-    "tests/security-audit.test.js",
     "tests/team-fold-state-es409.test.js",
     "tests/team-level-accordion-es406.test.js",
     "tests/team-level-management.test.js",
@@ -4434,10 +2398,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G099",
+   "id": "G049",
    "title": "크리에이터 템플릿 (#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)",
-   "start": 4451,
-   "end": 4453,
+   "start": 4110,
+   "end": 4112,
    "lines": 3,
    "seam": false,
    "tier": "빈 구획",
@@ -4465,10 +2429,10 @@
    "smokeFnNames": []
   },
   {
-   "id": "G100",
+   "id": "G050",
    "title": "소통 피드 (Supabase feed_posts, 실시간 동기화)",
-   "start": 4454,
-   "end": 4459,
+   "start": 4113,
+   "end": 4118,
    "lines": 6,
    "seam": false,
    "tier": "쉬움",
@@ -4499,22 +2463,25 @@
    "smokeFnNames": []
   },
   {
-   "id": "G101",
+   "id": "G051",
    "title": "전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)",
-   "start": 4460,
-   "end": 4468,
-   "lines": 9,
+   "start": 4119,
+   "end": 4128,
+   "lines": 10,
    "seam": false,
    "tier": "빈 구획",
-   "score": 7,
+   "score": 12,
    "functions": [],
    "vars": [],
-   "stateReads": [],
+   "stateReads": [
+    "bootCommSettingsAndStart",
+    "bootSharedGroupsState"
+   ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 2,
+   "loadTime": 3,
    "loadTimeKinds": {
-    "호출": 1,
+    "호출": 2,
     "IfStatement": 1
    },
    "windowAssignments": 1,
@@ -4527,6 +2494,7 @@
    "fanIn": [],
    "fanOut": [],
    "externalFiles": [
+    "js/core/boot-finish.js",
     "js/tabs/comm/shared-groups.js",
     "js/tabs/goals/team-goals-screen.js"
    ],
@@ -4537,399 +2505,28 @@
    "smokeFnNames": []
   },
   {
-   "id": "G102",
-   "title": "통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임)",
-   "start": 4469,
-   "end": 4477,
-   "lines": 9,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 7,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "handleDeepLinkRouting"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 1,
-    "IfStatement": 1
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "MANITO_STAMP_COOLDOWN"
-   ],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/tabs/comm/manito-basics.js"
-   ],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G103",
-   "title": "마니또 실 유저 익명 응원 연동 (#TASK-ES-133, #TASK-ES-145)",
-   "start": 4478,
-   "end": 4484,
-   "lines": 7,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 6,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G104",
-   "title": "DM & 동반자 소통 시스템 (TASK-ES-105)",
-   "start": 4485,
-   "end": 4491,
-   "lines": 7,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 3,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindWidgetModalOpener"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "호출": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G105",
-   "title": "[#TASK-ES-354 CORE-07·SET-07] 설정 탭 렌더 → js/tabs/settings/render.js · sub-*.js 로 옮김",
-   "start": 4492,
-   "end": 4503,
-   "lines": 12,
-   "seam": true,
-   "tier": "이음매(옮기지 않음)",
-   "score": 9,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindSettingsHapticDelegate",
-    "bindSettingsStaticHandlers"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/dm-push-auth-es397.test.js",
-    "tests/push-subscribe-auth-es400.test.js",
-    "tests/sync-server-records-render-home.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/sync-server-records-render-home.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G106",
-   "title": "4대 연계 뷰 원자적 동시 전파 디스패처 (헌법 제1조 제4항 제5호 & 제15조 제6항 제3호)",
-   "start": 4504,
-   "end": 4506,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 0,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 0,
-   "loadTimeKinds": {},
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "tests/core-confirm-es376.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G107",
-   "title": "[#TASK-ES-264] 자정(00:00 KST / 현지 표준시) 날짜 변경 감지 및 자동 동기화 워처",
-   "start": 4507,
-   "end": 4511,
-   "lines": 5,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 2,
-   "functions": [],
-   "vars": [],
-   "stateReads": [],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 1,
-   "loadTimeKinds": {
-    "호출": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/ai-conditional-call-optimization.test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G108",
-   "title": "세션 복구 및 안전 앱 진입 유틸",
-   "start": 4512,
-   "end": 4515,
-   "lines": 4,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 5,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "bindLoginRescueButtons"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "scripts/verify-integrity-gate.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G109",
-   "title": "#TASK-AUTH-P0-SAFETY: 로그인/계정 보안 패키지 모듈 연결",
-   "start": 4516,
-   "end": 4520,
-   "lines": 5,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 9,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "connectAuthSafety",
-    "connectReactions",
-    "runAppBoot"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 3
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G110",
-   "title": "KF-4 #TASK-ES-018: 카테고리별 도움이 된 글 슬롯 모듈(js/top-helpful.js)",
-   "start": 4521,
-   "end": 4528,
-   "lines": 8,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 9,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "connectHelpfulReason",
-    "connectTeamInviteComm",
-    "sb"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "IfStatement": 1,
-    "호출": 2
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js"
-   ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G111",
-   "title": "#TASK-ES-105: 팀 연계 개인목표 및 상호 체크 모듈(js/team-linked-goals.js) 연결",
-   "start": 4529,
-   "end": 4531,
-   "lines": 3,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 30,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "MOCK_GROUPS",
-    "TEAM_COMMENTS_CACHE",
-    "canManageTeamGoals",
-    "closeModal",
-    "connectTeamLinkedGoals",
-    "dDay",
-    "daysFromNow",
-    "getGroupLevelGoals",
-    "groupState",
-    "openModal",
-    "renderTeamGoalsScreen",
-    "saveProfile",
-    "state",
-    "teamCommentsBlockHtml",
-    "toast",
-    "triggerHaptic",
-    "uid"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 2,
-   "loadTimeKinds": {
-    "호출": 1,
-    "IfStatement": 1
-   },
-   "windowAssignments": 0,
-   "windowNames": [],
-   "listeners": 0,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [],
-   "testFiles": [
-    "scripts/smoke-test.js",
-    "tests/core-confirm-es374.test.js",
-    "tests/core-modal-es363.test.js",
-    "tests/core-toast-es361.test.js",
-    "tests/team-fold-state-es409.test.js"
-   ],
-   "testIndexOnly": [
-    "tests/core-modal-es363.test.js",
-    "tests/core-toast-es361.test.js",
-    "tests/team-fold-state-es409.test.js"
-   ],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G112",
+   "id": "G052",
    "title": "KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결",
-   "start": 4532,
-   "end": 4536,
-   "lines": 5,
+   "start": 4129,
+   "end": 4135,
+   "lines": 7,
    "seam": false,
    "tier": "빈 구획",
-   "score": 5,
+   "score": 8,
    "functions": [],
    "vars": [],
    "stateReads": [
+    "bootInstallAndServiceWorker",
     "sb",
     "state",
     "toast"
    ],
    "stateMutates": [],
    "stateWrites": [],
-   "loadTime": 1,
+   "loadTime": 2,
    "loadTimeKinds": {
-    "IfStatement": 1
+    "IfStatement": 1,
+    "호출": 1
    },
    "windowAssignments": 0,
    "windowNames": [],
@@ -4942,73 +2539,6 @@
    "testFiles": [
     "scripts/smoke-test.js"
    ],
-   "testIndexOnly": [],
-   "smokeFnNames": []
-  },
-  {
-   "id": "G113",
-   "title": "PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118)",
-   "start": 4537,
-   "end": 4542,
-   "lines": 6,
-   "seam": false,
-   "tier": "빈 구획",
-   "score": 39,
-   "functions": [],
-   "vars": [],
-   "stateReads": [
-    "MOCK_GROUPS",
-    "bindServiceWorker",
-    "dayIndexSinceSignup",
-    "track"
-   ],
-   "stateMutates": [],
-   "stateWrites": [],
-   "loadTime": 3,
-   "loadTimeKinds": {
-    "호출": 2,
-    "window 노출": 1
-   },
-   "windowAssignments": 1,
-   "windowNames": [
-    "MOCK_GROUPS"
-   ],
-   "listeners": 1,
-   "onProps": 0,
-   "inlineHandlers": [],
-   "fanIn": [],
-   "fanOut": [],
-   "externalFiles": [
-    "js/avatar/level-badge.js",
-    "js/core/module-connect.js",
-    "js/core/profile-topbar.js",
-    "js/tabs/calendar/calendar-core.js",
-    "js/tabs/calendar/schedule-done-toggle.js",
-    "js/tabs/comm/feed-posts-sync.js",
-    "js/tabs/comm/peer-invite.js",
-    "js/tabs/comm/sample-data.js",
-    "js/tabs/comm/shared-groups.js",
-    "js/tabs/goals/focus-autopilot.js",
-    "js/tabs/goals/team-comment-send.js",
-    "js/tabs/goals/team-goal-edit-modal.js",
-    "js/tabs/goals/team-goal-modals.js",
-    "js/tabs/goals/team-goal-prompt.js",
-    "js/tabs/goals/team-goals-guide.js",
-    "js/tabs/goals/team-goals-screen.js",
-    "js/tabs/goals/team-level-goals.js",
-    "js/tabs/goals/template-encyclopedia.js",
-    "js/tabs/goals/topic-region-picker.js",
-    "js/tabs/records/export-theme.js",
-    "js/tabs/records/quick-checkin.js",
-    "js/tabs/settings/notification-helper.js",
-    "js/team-chat.js",
-    "js/team-linked-goals.js",
-    "js/team-recruit.js",
-    "js/team-share.js",
-    "js/team-templates.js",
-    "js/team-visibility-levels.js"
-   ],
-   "testFiles": [],
    "testIndexOnly": [],
    "smokeFnNames": []
   }

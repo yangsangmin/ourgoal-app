@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "bb0b2ea61dc900978a8d7da5a6e95b08cf204cea",
-  "short": "bb0b2ea6",
-  "committedAt": "2026-10-11T14:47:04+09:00",
-  "subject": "Merge pull request #930 from yangsangmin/feat/2026-10-11-task-es-659-save-google-token"
+  "commit": "0b643c58e87b742db8502dac3ca638bb5244c800",
+  "short": "0b643c58",
+  "committedAt": "2026-10-11T15:38:52+09:00",
+  "subject": "Merge pull request #933 from yangsangmin/feat/2026-10-11-task-es-650-region-1"
  },
  "summary": {
-  "cells": 365,
-  "files": 364,
-  "jsLines": 91687,
+  "cells": 370,
+  "files": 369,
+  "jsLines": 92430,
   "kinds": {
-   "organ": 63,
+   "organ": 68,
    "tab": 196,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 365,
+  "descriptionsHand": 370,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 2311,
+   "inlineScriptLines": 1904,
    "functionDecls": 17
   },
   "health": {
-   "undifferentiatedLines": 2311,
+   "undifferentiatedLines": 1904,
    "globalLinks": 75,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -74,7 +74,7 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 63
+   "count": 68
   },
   {
    "key": "tab",
@@ -541,6 +541,11 @@
     "core/app-scope",
     "core/app-state",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/capabilities",
     "core/cell-registry-commit",
@@ -578,7 +583,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 6380,
+   "lines": 7123,
    "over800": 0
   },
   {
@@ -1629,7 +1634,11 @@
     "OurgoalAuthSafety"
    ],
    "calls": [
+    "core/boot-early-state",
     "core/toast",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
@@ -1638,9 +1647,7 @@
     "settings/account-entry",
     "settings/auth-screen-actions"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -2904,14 +2911,17 @@
    "exposes": [
     "OurgoalCalendarAttachment"
    ],
-   "calls": [],
+   "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
+   ],
    "calledBy": [
     "calendar/day-edit-hub",
     "calendar/manual-edit-modal"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -4012,6 +4022,11 @@
     "core/app-enter",
     "core/app-state",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/cell-registry",
     "core/confetti",
@@ -4240,12 +4255,16 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalAppState"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -4341,6 +4360,416 @@
      "task": "TASK-ES-482",
      "title": "[INFRA] #TASK-ES-482 refactor: 인라인 어려움 기관 묶음 — Confetti·뱃지 컬렉션·전역 휴지통(구글 캘린더 연결 포함)을 기관 세포 4개로 이전(동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-early-state",
+   "file": "js/core/boot-early-state.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "시동 첫 준비",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 맨 먼저 저장해 둔 화면 테마를 입히고, 로그인 상태가 바뀌는 것을 듣기 시작하고, 화면 테마 목록을 준비하고, 아바타 레벨업 창의 닫기·공유·저장 단추를 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot Early State (앱 시동 — 맨 먼저 하는 준비: 저장된 화면 테마 · 로그인 상태 듣기 · 테마 목록 · 아바타 레벨업 창 연결)",
+    "앱이 뜰 때 가장 먼저 도는 문들을 원래 순서 그대로 구역 함수로 묶었다.",
+    "bootApplySavedTheme — 저장해 둔 화면 테마 이름을 읽어 문서에 먼저 입힌다(화면이 그려지기 전에 색이 바뀌지 않게).",
+    "bootAuthStateListener — 로그인 세션 대기값을 만들고 로그인 상태가 바뀌는 것을 듣기 시작한다."
+   ],
+   "lines": 105,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "THEMES",
+    "state"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state"
+   ],
+   "calledBy": [
+    "auth-safety",
+    "calendar-attachment",
+    "calendar/index",
+    "calendar/sub-day-detail",
+    "calendar/sub-month-view",
+    "calendar/sub-photo-diary",
+    "comm/index",
+    "comm/sub-companions",
+    "comm/sub-crew",
+    "comm/sub-feed",
+    "core/store",
+    "goals/index",
+    "goals/sub-personal",
+    "goals/sub-routine",
+    "goals/sub-team",
+    "home/index",
+    "home/sub-onescreen",
+    "notify-engine",
+    "records/index",
+    "records/sub-retrospect",
+    "records/sub-timeline",
+    "records/sub-timer",
+    "sanctuary-calendar-actions",
+    "sanctuary-calendar-views",
+    "sanctuary-peer-radar",
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine",
+    "sanctuary-weekly-recap",
+    "settings/index",
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security",
+    "settings/theme-apply",
+    "tab-guides",
+    "team-chat",
+    "team-companion-search",
+    "team-companions",
+    "team-dm-inbox",
+    "team-dm-room",
+    "team-invite-comm",
+    "team-linked-goals",
+    "team-member-review",
+    "team-profile",
+    "team-recruit",
+    "team-share",
+    "team-templates",
+    "team-visibility-levels",
+    "viral-sharing"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers",
+    "state"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-650"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-650-REGION-1.md"
+   ],
+   "prs": [
+    {
+     "number": 933,
+     "task": "TASK-ES-650",
+     "title": "[INFRA] #TASK-ES-650 refactor: 미분화 덩어리 구역 이전 — 앱이 뜰 때 한 번 도는 문 179개를 구역 15개로 묶어 새 세포 5개로(생성기 region, 손 편집 0)",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-entry-wiring",
+   "file": "js/core/boot-entry-wiring.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "첫 화면·계정 단추 연결",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 첫 화면의 둘러보기·로그인 단추, 가입·로그인·비밀번호 찾기, 로그아웃·탈퇴, 활용 가이드·문의·약관 링크, 아래 탭 단추와 뒤로가기를 차례로 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot Entry Wiring (앱 시동 — 첫 화면 · 로그인 · 계정 · 안내 단추 연결과 탭 이동 준비)",
+    "앱이 뜰 때 첫 화면과 계정 둘레의 단추를 원래 순서 그대로 연결하는 구역 함수다.",
+    "bootEntryAndAccountWiring — 인앱 브라우저 확인, 첫 화면의 둘러보기·로그인 단추, 소셜 로그인, 가입·로그인·비밀번호 찾기, 다시 동기화·로그아웃·초기화·탈퇴, 활용 가이드·문의·약관 링크, 다시 켜졌을 때 동기화와 오프라인 알림, 아래 탭 단추와 창 뒤로가기, 일정 알림 시작을 차례로 건다.",
+    "bootGoogleTokenState — 구글 캘린더 연결용 값 자리를 만든다."
+   ],
+   "lines": 200,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "_homeDateOffset",
+    "switchTab"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state"
+   ],
+   "calledBy": [
+    "notify-engine",
+    "sanctuary-calendar-actions",
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine",
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security",
+    "viral-sharing"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers",
+    "switchTab"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-650"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-650-REGION-1.md"
+   ],
+   "prs": [
+    {
+     "number": 933,
+     "task": "TASK-ES-650",
+     "title": "[INFRA] #TASK-ES-650 refactor: 미분화 덩어리 구역 이전 — 앱이 뜰 때 한 번 도는 문 179개를 구역 15개로 묶어 새 세포 5개로(생성기 region, 손 편집 0)",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-finish",
+   "file": "js/core/boot-finish.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "시동 마무리",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 마지막으로 소통·설정 화면의 연결을 걸고, 계정 보안 등 바깥 부품에 앱의 상태를 건넨 뒤 앱을 시작하고, 서비스 워커를 등록한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot Finish (앱 시동 — 소통 · 설정 연결과 앱 시작, 홈 화면 설치)",
+    "앱이 뜰 때 마지막에 도는 문들을 원래 순서 그대로 구역 함수로 묶었다.",
+    "bootSharedGroupsState — 모임 목록을 불러왔는지 표시하는 값 자리를 만든다.",
+    "bootCommSettingsAndStart — 초대 링크 처리 함수와 응원 관련 값 자리, 위젯 창 열기, 설정 화면의 정적 연결, 날짜 바뀜 감지 값, 로그인 구조 단추, 계정 보안 부품 연결, 앱 시작(runAppBoot), 반응·도움돼요·팀 초대·팀 연계 목표·팀 공개 범위 부품 연결을 차례로 한다."
+   ],
+   "lines": 108,
+   "over800": false,
+   "exposes": [
+    "MANITO_STAMP_COOLDOWN",
+    "MOCK_GROUPS",
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state",
+    "team-visibility-levels",
+    "top-helpful"
+   ],
+   "calledBy": [
+    "comm/manito-basics",
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security",
+    "team-chat",
+    "team-linked-goals",
+    "team-recruit",
+    "team-share",
+    "team-templates",
+    "team-visibility-levels"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "MOCK_GROUPS",
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-650"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-650-REGION-1.md"
+   ],
+   "prs": [
+    {
+     "number": 933,
+     "task": "TASK-ES-650",
+     "title": "[INFRA] #TASK-ES-650 refactor: 미분화 덩어리 구역 이전 — 앱이 뜰 때 한 번 도는 문 179개를 구역 15개로 묶어 새 세포 5개로(생성기 region, 손 편집 0)",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-home-wiring",
+   "file": "js/core/boot-home-wiring.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "홈·목표 단추 연결",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 홈의 체크인 입력칸 둘레 단추, 맞춤 피드백 봇 설정, 템플릿 백과 창, 앱 평가 창, 새 목표와 AI 목표 어시스턴트, 팀 목표 댓글 보내기를 차례로 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot Home Wiring (앱 시동 — 홈 체크인 · 피드백 · 템플릿 백과 · 목표 창 단추 연결)",
+    "앱이 뜰 때 홈과 목표 둘레의 단추를 원래 순서 그대로 연결하는 구역 함수다.",
+    "bootHomeAndGoalWiring — 집중 타이머 값, 퀵 루틴 칩·음성 체크인·사진 첨부·글자 수 힌트·기록 단추, 맞춤 피드백 봇 설정 열고 닫기, 가이드 단추, 템플릿 백과 창의 닫기·탭·바깥 누름, 앱 평가 창, 새 목표 단추, 성장 자랑하기 단추, AI 목표 어시스턴트 서랍과 보내기, 보관함 기간·쪽 설정을 차례로 건다.",
+    "bootGoalsAndTeamState — 템플릿 분류 값과 빠른 목표 추가 함수를 window 에 달고, 입력칸 가림 방지를 시작하고, 실시간 채널 값 자리를 만들고, 팀 목표 화면 함수와 팀 댓글 보내기를 연결한다."
+   ],
+   "lines": 278,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers",
+    "_subtabTplDomain",
+    "_subtabTplType",
+    "currentGoalStatPeriod",
+    "handleGoalFastAddSubmit",
+    "renderTeamGoalsScreen",
+    "selectSmartTag",
+    "selectedGoalSmartTag"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state",
+    "tab-guides"
+   ],
+   "calledBy": [
+    "goals/sub-team",
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security",
+    "team-linked-goals",
+    "team-recruit",
+    "team-visibility-levels"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers",
+    "_subtabTplDomain",
+    "_subtabTplType",
+    "handleGoalFastAddSubmit",
+    "renderTeamGoalsScreen",
+    "selectSmartTag"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-650"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-650-REGION-1.md"
+   ],
+   "prs": [
+    {
+     "number": 933,
+     "task": "TASK-ES-650",
+     "title": "[INFRA] #TASK-ES-650 refactor: 미분화 덩어리 구역 이전 — 앱이 뜰 때 한 번 도는 문 179개를 구역 15개로 묶어 새 세포 5개로(생성기 region, 손 편집 0)",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
+   "id": "core/boot-records-wiring",
+   "file": "js/core/boot-records-wiring.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "기록 탭 단추 연결",
+   "nameSource": "hand",
+   "does": "앱이 뜰 때 기록 탭의 기록 추가·타임 트래커·주간 요약 카드·검색칸·내보내기 단추를 연결한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Boot Records Wiring (앱 시동 — 기록 탭 단추 연결)",
+    "앱이 뜰 때 기록 탭의 단추를 원래 순서 그대로 연결하는 구역 함수다.",
+    "bootRecordsWiring — 주소의 기록 바로가기 듣기, 샘플 기록 정리 함수, 기록 추가·타임 트래커·주간 요약 카드 단추, 검색칸, 작은 흐름 막대와 알약 단추, 문서 누름 처리를 차례로 건다.",
+    "bootRecordsExportWiring — 캘린더 연동 주소용 값 자리를 만들고 기록 내보내기 단추에 내보내기 창 열기를 연결한다."
+   ],
+   "lines": 52,
+   "over800": false,
+   "exposes": [
+    "OurgoalUiHelpers"
+   ],
+   "calls": [
+    "core/app-scope",
+    "core/app-state"
+   ],
+   "calledBy": [
+    "settings/render",
+    "settings/sub-appearance",
+    "settings/sub-data",
+    "settings/sub-integrations",
+    "settings/sub-notify",
+    "settings/sub-profile",
+    "settings/sub-security"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalUiHelpers"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-650"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-650-REGION-1.md"
+   ],
+   "prs": [
+    {
+     "number": 933,
+     "task": "TASK-ES-650",
+     "title": "[INFRA] #TASK-ES-650 refactor: 미분화 덩어리 구역 이전 — 앱이 뜰 때 한 번 도는 문 179개를 구역 15개로 묶어 새 세포 5개로(생성기 region, 손 편집 0)",
+     "date": "2026-10-11"
     }
    ]
   },
@@ -5297,8 +5726,7 @@
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "OurgoalUiHelpers",
-    "_homeDateOffset"
+    "OurgoalUiHelpers"
    ],
    "emits": [],
    "listens": [],
@@ -6176,7 +6604,11 @@
     "OurgoalStore"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "core/registry",
@@ -6185,9 +6617,7 @@
     "records/checkin-capture",
     "records/quick-checkin"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [
@@ -9153,7 +9583,13 @@
    "exposes": [
     "OurgoalNotifyEngine"
    ],
-   "calls": [],
+   "calls": [
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
+   ],
    "calledBy": [
     "comm/first-cheer",
     "core/profile-topbar",
@@ -9161,10 +9597,7 @@
     "settings/sub-notify",
     "team-dm-inbox"
    ],
-   "readsFromIndexHtml": [
-    "state",
-    "switchTab"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -9440,14 +9873,17 @@
    "exposes": [
     "OurgoalSanctuaryV3Kit"
    ],
-   "calls": [],
+   "calls": [
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
+   ],
    "calledBy": [
     "sanctuary-v3-engine"
    ],
-   "readsFromIndexHtml": [
-    "state",
-    "switchTab"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -9503,14 +9939,16 @@
     "OurgoalSanctuaryV3Kit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "sanctuary-v3-engine"
    ],
    "calledBy": [
     "sanctuary-v3-engine"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -9570,7 +10008,51 @@
     "sanctuary-v3-engine"
    ],
    "calledBy": [
-    "sanctuary-v3-engine"
+    "auth-safety",
+    "calendar-attachment",
+    "calendar/index",
+    "calendar/sub-day-detail",
+    "calendar/sub-month-view",
+    "calendar/sub-photo-diary",
+    "comm/index",
+    "comm/sub-companions",
+    "comm/sub-crew",
+    "comm/sub-feed",
+    "core/store",
+    "goals/index",
+    "goals/sub-personal",
+    "goals/sub-routine",
+    "goals/sub-team",
+    "home/index",
+    "home/sub-onescreen",
+    "notify-engine",
+    "records/index",
+    "records/sub-retrospect",
+    "records/sub-timeline",
+    "records/sub-timer",
+    "sanctuary-calendar-actions",
+    "sanctuary-calendar-views",
+    "sanctuary-peer-radar",
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine",
+    "sanctuary-weekly-recap",
+    "settings/index",
+    "settings/theme-apply",
+    "tab-guides",
+    "team-chat",
+    "team-companion-search",
+    "team-companions",
+    "team-dm-inbox",
+    "team-dm-room",
+    "team-invite-comm",
+    "team-linked-goals",
+    "team-member-review",
+    "team-profile",
+    "team-recruit",
+    "team-share",
+    "team-templates",
+    "team-visibility-levels",
+    "viral-sharing"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
@@ -9634,7 +10116,51 @@
     "sanctuary-v3-engine"
    ],
    "calledBy": [
-    "sanctuary-v3-engine"
+    "auth-safety",
+    "calendar-attachment",
+    "calendar/index",
+    "calendar/sub-day-detail",
+    "calendar/sub-month-view",
+    "calendar/sub-photo-diary",
+    "comm/index",
+    "comm/sub-companions",
+    "comm/sub-crew",
+    "comm/sub-feed",
+    "core/store",
+    "goals/index",
+    "goals/sub-personal",
+    "goals/sub-routine",
+    "goals/sub-team",
+    "home/index",
+    "home/sub-onescreen",
+    "notify-engine",
+    "records/index",
+    "records/sub-retrospect",
+    "records/sub-timeline",
+    "records/sub-timer",
+    "sanctuary-calendar-actions",
+    "sanctuary-calendar-views",
+    "sanctuary-peer-radar",
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine",
+    "sanctuary-weekly-recap",
+    "settings/index",
+    "settings/theme-apply",
+    "tab-guides",
+    "team-chat",
+    "team-companion-search",
+    "team-companions",
+    "team-dm-inbox",
+    "team-dm-room",
+    "team-invite-comm",
+    "team-linked-goals",
+    "team-member-review",
+    "team-profile",
+    "team-recruit",
+    "team-share",
+    "team-templates",
+    "team-visibility-levels",
+    "viral-sharing"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
@@ -9702,15 +10228,17 @@
     "OurgoalSanctuaryV3Kit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "sanctuary-v3-engine",
     "team-invite-comm"
    ],
    "calledBy": [
     "sanctuary-v3-engine"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -9766,6 +10294,9 @@
     "OurgoalSanctuaryV3Kit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "goals/goal-archive",
     "records/ai-feedback",
     "records/ai-feedback-catalog",
     "records/ai-feedback-providers",
@@ -9808,15 +10339,14 @@
     "records/trend-multi-metric-svg",
     "records/voice-table-input",
     "records/weekly-recap",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "sanctuary-v3-engine"
    ],
    "calledBy": [
     "sanctuary-v3-engine"
    ],
-   "readsFromIndexHtml": [
-    "state",
-    "switchTab"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -9890,6 +10420,9 @@
     "calendar/natural-schedule",
     "calendar/render",
     "calendar/schedule-done-toggle",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "goals/goal-archive",
     "records/ai-feedback",
     "records/ai-feedback-catalog",
     "records/ai-feedback-providers",
@@ -9957,10 +10490,7 @@
     "sanctuary-weekly-recap",
     "settings/theme-apply"
    ],
-   "readsFromIndexHtml": [
-    "state",
-    "switchTab"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -10073,15 +10603,17 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "sanctuary-v3-engine",
     "viral-sharing"
    ],
    "calledBy": [
     "sanctuary-v3-engine"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -11172,15 +11704,18 @@
     "TAB_SHOWCASES",
     "showTabUsageGuide"
    ],
-   "calls": [],
-   "calledBy": [],
-   "readsFromIndexHtml": [
-    "state"
+   "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
+   "calledBy": [
+    "core/boot-home-wiring"
+   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "showTabUsageGuide"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -11537,15 +12072,17 @@
     "calendar/sub-day-detail",
     "calendar/sub-month-view",
     "calendar/sub-photo-diary",
+    "core/boot-early-state",
     "core/event-bus",
-    "core/registry"
+    "core/registry",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "core/registry-init"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [
@@ -12137,14 +12674,16 @@
     "calendar/natural-schedule",
     "calendar/render",
     "calendar/schedule-done-toggle",
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "calendar/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -12206,14 +12745,16 @@
     "OurgoalCalendarMonthView"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "calendar/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -12267,14 +12808,16 @@
     "OurgoalCalendarPhotoDiary"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "calendar/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -12975,15 +13518,17 @@
     "comm/sub-companions",
     "comm/sub-crew",
     "comm/sub-feed",
+    "core/boot-early-state",
     "core/event-bus",
-    "core/registry"
+    "core/registry",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "core/registry-init"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [
@@ -13039,12 +13584,11 @@
     "OurgoalCommKit"
    ],
    "calls": [
-    "core/app-scope"
+    "core/app-scope",
+    "core/boot-finish"
    ],
    "calledBy": [],
-   "readsFromIndexHtml": [
-    "MANITO_STAMP_COOLDOWN"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
     "OurgoalCommKit"
@@ -13726,14 +14270,16 @@
     "OurgoalCommSubCompanions"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "comm/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -13787,14 +14333,16 @@
     "OurgoalCommSubCrew"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "comm/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -13848,14 +14396,16 @@
     "OurgoalCommSubFeed"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "comm/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -14608,7 +15158,53 @@
    "calls": [
     "core/app-scope"
    ],
-   "calledBy": [],
+   "calledBy": [
+    "auth-safety",
+    "calendar-attachment",
+    "calendar/index",
+    "calendar/sub-day-detail",
+    "calendar/sub-month-view",
+    "calendar/sub-photo-diary",
+    "comm/index",
+    "comm/sub-companions",
+    "comm/sub-crew",
+    "comm/sub-feed",
+    "core/store",
+    "goals/index",
+    "goals/sub-personal",
+    "goals/sub-routine",
+    "goals/sub-team",
+    "home/index",
+    "home/sub-onescreen",
+    "notify-engine",
+    "records/index",
+    "records/sub-retrospect",
+    "records/sub-timeline",
+    "records/sub-timer",
+    "sanctuary-calendar-actions",
+    "sanctuary-calendar-views",
+    "sanctuary-peer-radar",
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine",
+    "sanctuary-weekly-recap",
+    "settings/index",
+    "settings/theme-apply",
+    "tab-guides",
+    "team-chat",
+    "team-companion-search",
+    "team-companions",
+    "team-dm-inbox",
+    "team-dm-room",
+    "team-invite-comm",
+    "team-linked-goals",
+    "team-member-review",
+    "team-profile",
+    "team-recruit",
+    "team-share",
+    "team-templates",
+    "team-visibility-levels",
+    "viral-sharing"
+   ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
@@ -15016,8 +15612,7 @@
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "OurgoalGoalsKit",
-    "selectedGoalSmartTag"
+    "OurgoalGoalsKit"
    ],
    "emits": [],
    "listens": [],
@@ -15332,8 +15927,7 @@
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
-    "OurgoalGoalsKit",
-    "currentGoalStatPeriod"
+    "OurgoalGoalsKit"
    ],
    "emits": [],
    "listens": [],
@@ -15409,18 +16003,20 @@
     "OurgoalGoalsMegaBlock"
    ],
    "calls": [
+    "core/boot-early-state",
     "core/event-bus",
     "core/registry",
+    "goals/goal-archive",
     "goals/sub-personal",
     "goals/sub-routine",
-    "goals/sub-team"
+    "goals/sub-team",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "core/registry-init"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [
@@ -16400,14 +16996,16 @@
     "OurgoalGoalsPersonal"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "goals/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -16461,14 +17059,16 @@
     "OurgoalGoalsRoutine"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "goals/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -16522,16 +17122,18 @@
     "OurgoalGoalsTeam"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-home-wiring",
     "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "team-linked-goals"
    ],
    "calledBy": [
     "goals/index"
    ],
-   "readsFromIndexHtml": [
-    "renderTeamGoalsScreen",
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -17547,19 +18149,21 @@
     "OurgoalHomeMegaBlock"
    ],
    "calls": [
+    "core/boot-early-state",
     "core/event-bus",
     "core/registry",
+    "goals/goal-archive",
     "home/sub-heatmap",
     "home/sub-onescreen",
     "home/sub-quest",
-    "home/sub-today"
+    "home/sub-today",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "core/registry-init"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [
@@ -17744,16 +18348,18 @@
     "OurgoalHomeOneScreen"
    ],
    "calls": [
-    "avatar-system"
+    "avatar-system",
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "avatar/xp",
     "home/home-render",
     "home/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -19032,18 +19638,20 @@
     "OurgoalRecordsMegaBlock"
    ],
    "calls": [
+    "core/boot-early-state",
     "core/event-bus",
     "core/registry",
+    "goals/goal-archive",
     "records/sub-retrospect",
     "records/sub-timeline",
-    "records/sub-timer"
+    "records/sub-timer",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "core/registry-init"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [
@@ -20210,14 +20818,16 @@
     "OurgoalRecordsRetrospect"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "records/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -20271,14 +20881,16 @@
     "OurgoalRecordsTimeline"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "records/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -20332,14 +20944,16 @@
     "OurgoalRecordsTimer"
    ],
    "calls": [
-    "core/event-bus"
+    "core/boot-early-state",
+    "core/event-bus",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
    ],
    "calledBy": [
     "records/index"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -22846,8 +23460,12 @@
     "OurgoalSettingsMegaBlock"
    ],
    "calls": [
+    "core/boot-early-state",
     "core/event-bus",
     "core/registry",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "settings/sub-appearance",
     "settings/sub-data",
     "settings/sub-integrations",
@@ -22858,9 +23476,7 @@
    "calledBy": [
     "core/registry-init"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [
@@ -23557,6 +24173,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -23754,6 +24375,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -23857,6 +24483,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -23953,6 +24584,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/confetti",
     "core/confirm",
@@ -24067,6 +24703,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -24163,6 +24804,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -24266,6 +24912,11 @@
     "core/app-enter",
     "core/app-scope",
     "core/badges",
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "core/boot-records-wiring",
     "core/calendar-availability",
     "core/confetti",
     "core/date-rollover",
@@ -24641,12 +25292,14 @@
    ],
    "calls": [
     "core/app-scope",
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "sanctuary-v3-engine"
    ],
    "calledBy": [],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
     "OurgoalSettingsKit"
@@ -25150,15 +25803,17 @@
     "OurgoalTeamCommKit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-finish",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "MOCK_GROUPS",
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -25219,14 +25874,16 @@
     "OurgoalTeamCommKit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -25279,14 +25936,16 @@
     "OurgoalTeamCommKit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -25340,15 +25999,17 @@
    ],
    "calls": [
     "comm/dm-ledger",
+    "core/boot-early-state",
+    "goals/goal-archive",
     "notify-engine",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -25402,15 +26063,17 @@
    ],
    "calls": [
     "comm/dm-ledger",
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "team-invite-comm",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -25483,8 +26146,12 @@
    ],
    "calls": [
     "comm/dm-ledger",
+    "core/boot-early-state",
     "core/confirm",
     "core/toast",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "team-auto-actions",
     "team-chat",
     "team-companion-search",
@@ -25516,9 +26183,7 @@
     "team-member-review",
     "viral-sharing"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -25842,9 +26507,15 @@
     "OurgoalTeamLinkedGoals"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-finish",
+    "core/boot-home-wiring",
     "core/confirm",
     "core/modal",
     "core/toast",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "team-level-group-modal",
     "team-linked-goals-screen",
     "team-member-review"
@@ -25858,11 +26529,7 @@
     "goals/team-level-goals",
     "team-visibility-levels"
    ],
-   "readsFromIndexHtml": [
-    "MOCK_GROUPS",
-    "renderTeamGoalsScreen",
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -25973,6 +26640,10 @@
     "OurgoalTeamGoalsKit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "team-invite-comm",
     "template-credit"
    ],
@@ -25981,9 +26652,7 @@
     "team-linked-goals",
     "team-visibility-levels"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -26035,13 +26704,16 @@
    "exposes": [
     "OurgoalTeamCommKit"
    ],
-   "calls": [],
+   "calls": [
+    "core/boot-early-state",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail"
+   ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -26095,16 +26767,18 @@
     "OurgoalTeamCommKit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-finish",
+    "core/boot-home-wiring",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
-   "readsFromIndexHtml": [
-    "MOCK_GROUPS",
-    "renderTeamGoalsScreen",
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
    "emits": [],
@@ -26158,16 +26832,19 @@
    ],
    "calls": [
     "comm/dm-ledger",
+    "core/boot-early-state",
+    "core/boot-finish",
+    "goals/goal-archive",
     "goals/team-goals-screen",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
    "readsFromIndexHtml": [
-    "MOCK_GROUPS",
-    "shareContent",
-    "state"
+    "shareContent"
    ],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
@@ -26238,16 +26915,19 @@
     "OurgoalTeamCommKit"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-finish",
     "goal-templates-data",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "template-credit"
    ],
    "calledBy": [
     "team-invite-comm"
    ],
    "readsFromIndexHtml": [
-    "MOCK_GROUPS",
-    "shareContent",
-    "state"
+    "shareContent"
    ],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [],
@@ -26302,9 +26982,15 @@
     "OurgoalTeamVisibilityLevels"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-finish",
+    "core/boot-home-wiring",
     "core/confirm",
     "core/modal",
     "core/toast",
+    "goals/goal-archive",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "team-leader-check",
     "team-level-group-modal",
     "team-linked-goals",
@@ -26312,18 +26998,13 @@
     "team-member-review"
    ],
    "calledBy": [
+    "core/boot-finish",
     "goals/team-goals-screen",
     "goals/team-level-goals"
    ],
-   "readsFromIndexHtml": [
-    "MOCK_GROUPS",
-    "renderTeamGoalsScreen",
-    "state"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalTeamVisibilityLevels"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -26864,13 +27545,12 @@
    ],
    "calls": [],
    "calledBy": [
-    "comm/feed-list"
+    "comm/feed-list",
+    "core/boot-finish"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
-   "usedByIndexHtml": [
-    "OurgoalTopHelpful"
-   ],
+   "usedByIndexHtml": [],
    "emits": [],
    "listens": [],
    "provides": [],
@@ -27047,22 +27727,23 @@
     "shareContent"
    ],
    "calls": [
+    "core/boot-early-state",
+    "core/boot-entry-wiring",
     "goal-templates-data",
+    "goals/goal-archive",
     "goals/team-goals-screen",
+    "sanctuary-focus-timer",
+    "sanctuary-goal-trail",
     "team-invite-comm"
    ],
    "calledBy": [
     "core/deep-link-gateway",
     "sanctuary-weekly-recap"
    ],
-   "readsFromIndexHtml": [
-    "state",
-    "switchTab"
-   ],
+   "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
    "usedByIndexHtml": [
     "OurgoalViralSharing",
-    "checkAndHandlePeerInviteUrl",
     "handleDeepLinkRouting",
     "shareContent"
    ],

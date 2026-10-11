@@ -1,0 +1,75 @@
+{
+  "id": "r12-records-export-modal",
+  "title": "게스트로 기록 탭에서 「내보내기」 단추를 누르면 내보내기 창이 열려 테마 고르기 칸이 보인다 (구역 이전 전후 보존 — 그 단추에 누름을 거는 문(document.getElementById('exportRecordsBtn').addEventListener)이 구역 bootRecordsExportWiring 으로 갔다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#exportRecordsBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#expThemeSel"
+    },
+    {
+      "do": "click",
+      "selector": "#exportRecordsBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#expThemeSel"
+    },
+    {
+      "expect": "visible",
+      "selector": "#expFmtSel"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
