@@ -512,8 +512,8 @@
   if (!R) return;
   var K = g.OurgoalRecordsKit;
   if (K) R.provide('records/pro-templates', {
-    fmtYYMMDD: K.fmtYYMMDD, getProTemplateByKey: K.getProTemplateByKey, parseNaturalLanguageTemplateSpec: K.parseNaturalLanguageTemplateSpec,
-    recommendTemplateFromAI: K.recommendTemplateFromAI
+    fmtYYMMDD: K.fmtYYMMDD, getAllProTemplates: K.getAllProTemplates, getProTemplateByKey: K.getProTemplateByKey,
+    parseNaturalLanguageTemplateSpec: K.parseNaturalLanguageTemplateSpec, recommendTemplateFromAI: K.recommendTemplateFromAI
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */
