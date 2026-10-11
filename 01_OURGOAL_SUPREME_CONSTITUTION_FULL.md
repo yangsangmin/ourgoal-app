@@ -1,15 +1,15 @@
-# [정본] 아워골 최고 헌법 v2026.10.11-ALIGNED (OurGoal Supreme Constitution v2026.10.11-ALIGNED)
+# [정본] 아워골 최고 헌법 v2026.10.11-ARGUMENTS (OurGoal Supreme Constitution v2026.10.11-ARGUMENTS)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.11-ALIGNED (법령 전문 통합 개정 — 법령 전문을 이 커널의 해설·상세·부록으로 재정의(조문 14.5 신설, 충돌 시 커널 우선), 커널↔전문 차이 M1·M2·M4·M6·M10·M12 정합, Tri-Sync 두 층 구분(11.1). 조문 내용 변경은 11.1 한 구절·14.5 신설). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
+> **버전**: v2026.10.11-ARGUMENTS (세포 분열 `arguments` 조항 개정 — CELL_SPLIT 5호 한 곳: 함수 선언을 선언째로 글자 그대로 옮길 때 그 함수 본문에서 쓰는, 그 함수 자신의 호출 인자를 가리키는 `arguments` 는 허용하고, 최상위 `this` 0 과 감싸기·화살표 함수의 `arguments` 0 은 그대로 둔다. 그 밖의 조문 내용 변경 0). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
 > **정본**: 이 파일 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다. `CLAUDE.md` 는 Claude Code 가 기동 때 본문처럼 읽어 들이는 가져오기 포인터(`@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 한 줄), `AGENTS.md` 는 코덱스 등 다른 도구용 포인터·핵심 요약이다. 포인터는 정본 경로와 읽기 지시만 담고 개정 때 바뀌지 않는다(`node court/appendix.js --versions` 가 대조). (`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
 > **법령 전문**: 조·항·호 단위 해설·상세·부록은 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`(이 커널과 다르면 커널이 우선한다 — 조문 14.5), 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
 
 ---
 
-<system_kernel id="ourgoal-supreme-constitution-v2026.10.11-aligned">
+<system_kernel id="ourgoal-supreme-constitution-v2026.10.11-arguments">
 
   <metadata>
     <sovereign>상민 (Supreme Decision Maker)</sovereign>
@@ -329,7 +329,7 @@
         2. 생성기로 글자 그대로 옮긴다: 스코프 분석 생성기(`docs/design/harness/module-split/gen-*.js`)가 옮기고, 손으로 옮긴 글자는 0 이어야 한다.
         3. 시험지 선행: 기준 시험지가 원본 한 파일만 읽어 이전 뒤 깨지면, 기대값·단언·검사 수를 바꾸지 않고 읽는 범위만 넓히는 시험지 선행 PR(제품 코드 0)을 먼저 병합한다. 검사 폐기(retire)로 풀지 않는다.
         4. `index.html` 순증가 0줄: 새 `script` 태그는 원본 태그 바로 앞 같은 줄에 넣는다. 원본 태그 글자(버전 꼬리 포함)는 시험이 고정하므로 그대로 둔다.
-        5. 전역 이름을 새로 늘리지 않는다. 옮긴 함수의 최상위 `this`·`arguments` 는 0 이어야 한다.
+        5. 전역 이름을 새로 늘리지 않는다. 옮긴 함수의 최상위 `this` 는 0 이어야 한다. 최상위 `arguments` 도 0 이어야 하되, 함수 선언(`function 이름(…) { … }` 꼴)을 선언째로 글자 그대로 옮길 때 그 함수 본문에서 쓰는 `arguments` 는 그 함수 자신의 호출 인자를 가리켜 옮겨도 뜻이 같으므로 허용한다. 이 허용은 거기까지다 — 감싸기로 옮기는 로드 중 문, 생성기가 새로 만든 감싸기 함수의 최상위, 화살표 함수 안의 `arguments`(바깥 함수의 것을 가리킨다)처럼 옮기면 뜻이 달라질 수 있는 꼴은 그대로 0 이어야 한다.
         6. 한 세포에 이벤트 처리기는 한 벌: 같은 요소·같은 이벤트에 원본과 새 세포가 둘 다 손잡이를 거는 이중 처리기를 남기지 않는다(한 번 눌러 두 번 뒤집히는 죽은 클릭의 원인).
         7. 새 파일은 각각 800줄 이하, 책임 단위.
       </cell_split_protocol>
