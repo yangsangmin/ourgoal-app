@@ -1,0 +1,128 @@
+{
+ "tool": "reports/TASK-ES-682/tools/sweep-mocks.cjs + 시험 하나씩(reports/TASK-ES-614/run-tests-each.cjs) · npm test · 모듈 가드 · 무결성 게이트(모의 폴더에서)",
+ "type": "작업자 측정, 판정 아님 — sweep 적용 조사(이 PR 은 sweep 을 하지 않는다)",
+ "measuredAt": "2026-10-11T11:50:32.484Z",
+ "basis": "origin/main d7789c89 에 구역 이전 3차(이 PR 의 설정)를 적용한 판",
+ "inlineIife": {
+  "htmlLines": 2851,
+  "gap": {
+   "iifeLines": 561,
+   "statementLines": 202,
+   "commentLines": 270,
+   "blankLines": 84,
+   "headerCommentLines": 49
+  }
+ },
+ "S": {
+  "what": "도는 앱에 생성기 sweep(groups:\"all\")을 적용",
+  "emptyGroups": {
+   "total": 24,
+   "skipped": 0
+  },
+  "deleted": {
+   "lines": 88,
+   "commentLines": 47,
+   "blankLines": 41,
+   "comments": 47,
+   "commentLinesByKind": {
+    "moved": 47
+   }
+  },
+  "keptComments": 0,
+  "htmlLines": [
+   2851,
+   2763
+  ],
+  "gapAfter": {
+   "iifeLines": 473,
+   "statementLines": 202,
+   "commentLines": 223,
+   "blankLines": 43,
+   "headerCommentLines": 49
+  },
+  "vanishedWords": 86,
+  "tests": {
+   "testFiles": 115,
+   "failed": 26,
+   "failedBase": 26,
+   "onlyMock": [],
+   "onlyBase": [],
+   "npmTestExit": 0,
+   "npmCheckLines": 487,
+   "moduleGuardExit": 0,
+   "integrityGateExit": 0
+  }
+ },
+ "C": {
+  "what": "도는 앱에서 IIFE 최상위의 주석 줄·빈 줄을 전부 지움(구획 주석 포함) — finalize 가 지우는 주석 범위의 위쪽 한계",
+  "removedLines": 354,
+  "htmlLines": [
+   2851,
+   2497
+  ],
+  "codeTokensSame": true,
+  "gapAfter": {
+   "iifeLines": 207,
+   "statementLines": 202,
+   "commentLines": 0,
+   "blankLines": 0,
+   "headerCommentLines": 0
+  },
+  "tests": {
+   "testFiles": 115,
+   "failed": 26,
+   "failedBase": 26,
+   "onlyMock": [],
+   "onlyBase": [],
+   "npmTestExit": 0,
+   "npmCheckLines": 487,
+   "moduleGuardExit": 0,
+   "integrityGateExit": 0
+  }
+ },
+ "E": {
+  "what": "글자만: 재철거 3차를 흉내(최상위에서 불리지 않는 가져오기 줄 · expose 문 · 그 뒤 쓰이지 않는 손잡이 줄을 전부 지움) → sweep. 실행하지 않았다(끝난 꼴에서 sweep 이 지우는 줄 수의 위쪽 한계)",
+  "simulatedUnwire": {
+   "droppedImportStatements": 61,
+   "droppedExposeStatements": 7,
+   "droppedHandleStatements": 9,
+   "droppedLines": 144
+  },
+  "gapBeforeSweep": {
+   "iifeLines": 417,
+   "statementLines": 58,
+   "commentLines": 270,
+   "blankLines": 84,
+   "headerCommentLines": 49
+  },
+  "topStatementsAfter": 58,
+  "emptyGroups": {
+   "total": 32,
+   "skipped": 1
+  },
+  "deleted": {
+   "lines": 96,
+   "commentLines": 48,
+   "blankLines": 48,
+   "comments": 48,
+   "commentLinesByKind": {
+    "other": 1,
+    "moved": 47
+   }
+  },
+  "keptComments": 0,
+  "htmlLines": [
+   2707,
+   2611
+  ],
+  "gapAfter": {
+   "iifeLines": 321,
+   "statementLines": 58,
+   "commentLines": 222,
+   "blankLines": 36,
+   "headerCommentLines": 49
+  },
+  "vanishedWords": 107
+ },
+ "note": "finalize(X9)는 IIFE 블록을 통째로 지우고 문만 부팅 파일로 옮긴다(주석·빈 줄은 옮기지 않는다 — 생성기 runFinalize · 설계 5.8). 전제 검사는 최상위 문의 종류만 본다 — 주석·빈 줄은 전제가 아니다."
+}

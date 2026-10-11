@@ -2149,7 +2149,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script><script src="js/core/cell-registry.js"></script><script src="js/core/app-state.js"></script>
-<script src="js/core/ui-helpers.js"></script><script src="js/core/boot-comm-seeds.js"></script><script src="js/core/boot-state-seeds.js"></script><script src="js/core/boot-app-handles.js"></script><script src="js/core/boot-finish.js"></script><script src="js/core/boot-records-wiring.js"></script><script src="js/core/boot-home-wiring.js"></script><script src="js/core/boot-entry-wiring.js"></script><script src="js/core/boot-early-state.js"></script><script src="js/core/gcal-token-save.js"></script><script src="js/core/pwa-service-worker.js"></script><script src="js/core/module-connect.js"></script><script src="js/tabs/records/template-record-detail.js"></script><script src="js/core/app-boot.js"></script><script src="js/core/all-view-render.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
+<script src="js/core/ui-helpers.js"></script><script src="js/core/boot-app-state.js"></script><script src="js/core/boot-comm-seeds.js"></script><script src="js/core/boot-state-seeds.js"></script><script src="js/core/boot-app-handles.js"></script><script src="js/core/boot-finish.js"></script><script src="js/core/boot-records-wiring.js"></script><script src="js/core/boot-home-wiring.js"></script><script src="js/core/boot-entry-wiring.js"></script><script src="js/core/boot-early-state.js"></script><script src="js/core/gcal-token-save.js"></script><script src="js/core/pwa-service-worker.js"></script><script src="js/core/module-connect.js"></script><script src="js/tabs/records/template-record-detail.js"></script><script src="js/core/app-boot.js"></script><script src="js/core/all-view-render.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
 <script src="js/core/modal.js"></script><script src="js/core/modal-open.js"></script>
@@ -2522,6 +2522,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.OurgoalAppScope.expose('index.html', {
     get daysFromNow(){ return daysFromNow; }
   });
+  /* [#TASK-ES-682] js/core/boot-app-state.js — 구역 함수 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var bootAppStateObject = _uiKit.bootAppStateObject;
+  var bootPromptDrawerState = _uiKit.bootPromptDrawerState;
+  window.OurgoalAppScope.expose('index.html', {
+    get isoDate(){ return isoDate; }
+  });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -2612,9 +2618,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-437] showLevelUpBanner → js/tabs/settings/avatar-greeting.js 로 옮김(인라인 스크립트 세포화 P0) */
 
   /* ============ 뱃지 컬렉션 (명예의 전당) ============ */
-  /* [#TASK-ES-574] defaultProfile → js/core/default-profile.js 로 옮김(기본 프로필 생성 책임 분열 — 앞 주석 포함) */
-
-  window.OurgoalAppState.defineVar('state', { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 });
+  bootAppStateObject(); /* [#TASK-ES-682] 로드 중 구역(주석·빈 줄 포함 3줄) → js/core/boot-app-state.js 의 bootAppStateObject 로 옮김 — 원래 자리에서 부른다 */
   bootExposeAppState(); /* [#TASK-ES-650] 로드 중 구역(주석·빈 줄 포함 1줄) → js/core/boot-early-state.js 의 bootExposeAppState 로 옮김 — 원래 자리에서 부른다 */
   /* [#TASK-ES-522] resolveUniqueDisplayName → js/core/profile-load.js 로 옮김(인라인 3단계 Z1 로그인·계정 2차 — 앞 주석 포함) */
   /* [#TASK-ES-522] formatDisplayNameWithTag → js/core/profile-load.js 로 옮김(인라인 3단계 Z1 로그인·계정 2차 — 앞 주석 포함) */
@@ -2636,7 +2640,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   
   /* ============ [78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용) ============ */
   bootPromptTabState(); /* [#TASK-ES-650] 로드 중 구역(주석·빈 줄 포함 1줄) → js/core/boot-early-state.js 의 bootPromptTabState 로 옮김 — 원래 자리에서 부른다 */
-  window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);
+  bootPromptDrawerState(); /* [#TASK-ES-682] 로드 중 구역(주석·빈 줄 포함 1줄) → js/core/boot-app-state.js 의 bootPromptDrawerState 로 옮김 — 원래 자리에서 부른다 */
 
   /* [#TASK-ES-442] getUserPrompts · getLikedPromptIds · getPromptLikesMap · openAddUserPromptModal · renderPromptEncyclopediaHtml · wirePromptEncyclopediaEvents → js/tabs/goals/prompt-encyclopedia.js 로 옮김(인라인 스크립트 세포화 P0) */
 

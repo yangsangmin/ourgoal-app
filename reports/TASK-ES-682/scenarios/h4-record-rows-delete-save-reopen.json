@@ -1,0 +1,274 @@
+{
+  "id": "h4-record-rows-delete-save-reopen",
+  "title": "검토자 추가 1 — 행을 둘 추가해 값을 넣고 가운데 행을 지운 뒤 저장 → 수정으로 다시 열어 행 순서 확인 → 첫 행을 지우고 수정 저장 → 새로 고침 뒤 다시 열어 순서 확인 — 앱 상태 객체 정의 줄을 구역 함수로 옮기기 전후 보존",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"1\"]",
+      "text": "검토가"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn2"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"5\"][data-col=\"1\"]",
+      "text": "검토나"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 6
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"2\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 5
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"3\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토가"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토나"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"3\"][data-col=\"0\"]",
+      "name": "value",
+      "equals": "4"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"0\"]",
+      "name": "value",
+      "equals": "5"
+    },
+    {
+      "do": "type",
+      "selector": "#proRecMemo",
+      "text": "검토 메모"
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": ".rec-card [data-recedit]",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-recedit]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 5
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"3\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토가"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토나"
+    },
+    {
+      "expect": "attr",
+      "selector": "#proRecMemo",
+      "name": "value",
+      "equals": "검토 메모"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"0\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"2\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토가"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"3\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토나"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"3\"][data-col=\"0\"]",
+      "name": "value",
+      "equals": "4"
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": ".rec-card [data-recedit]",
+      "equals": 1
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".rec-card [data-recedit]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-recedit]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"2\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토가"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"3\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "검토나"
+    },
+    {
+      "expect": "attr",
+      "selector": "#proRecMemo",
+      "name": "value",
+      "equals": "검토 메모"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

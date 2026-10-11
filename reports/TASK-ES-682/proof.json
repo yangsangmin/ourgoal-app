@@ -1,0 +1,35 @@
+{
+  "task": "TASK-ES-682",
+  "label": "구역 이전 3차 — 상태 이전 4차가 남긴 상태 기관 정의 줄 둘(state · _promptEncyclopediaOpen)을 구역 함수로",
+  "slot": "HO",
+  "mode": "region",
+  "cells": [
+    {
+      "key": "bootAppState",
+      "file": "js/core/boot-app-state.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Boot App State (앱 시동 — 상태 기관에 맡기는 초깃값: 앱 상태 객체 · 프롬프트 서랍 접힘 값)",
+      "desc": [
+        "앱이 뜰 때 한 번 도는 상태 정의 줄 둘을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 그대로다.",
+        "bootAppStateObject — 앱의 중심 상태 객체(프로필 · 열린 탭 · 고른 목표 등)의 초깃값을 상태 기관에 state 로 맡긴다.",
+        "bootPromptDrawerState — 프롬프트 백과사전 서랍의 접힘 값(처음에는 접힘 = false)을 상태 기관에 맡긴다."
+      ],
+      "regions": [
+        {
+          "name": "bootAppStateObject",
+          "group": "뱃지 컬렉션 (명예의 전당)",
+          "from": "window.OurgoalAppState.defineVar('state'",
+          "to": "window.OurgoalAppState.defineVar('state'"
+        },
+        {
+          "name": "bootPromptDrawerState",
+          "group": "[78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용)",
+          "from": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen'",
+          "to": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen'"
+        }
+      ]
+    }
+  ]
+}
