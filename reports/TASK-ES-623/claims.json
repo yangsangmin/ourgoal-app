@@ -1,0 +1,472 @@
+{
+ "task": "TASK-ES-623",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-623-GATE-WIRING-TEXT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "금고 파일 scripts/verify-integrity-gate.js 의 옛 배선 글자 단언 한 줄(window.promptNewGoal = promptNewGoal;)을 「그 글자가 있거나, 같은 이름·같은 값이 등록으로 window 에 나간다」로 넓힌다. 검사 수 그대로, 폐기 0(상민님 「금고 변경 승인」)."
+  },
+  {
+   "id": "R2",
+   "text": "금고 변경은 금고만 담은 별도 PR 로 올린다 — 이 PR 의 변경 파일은 금고 파일 하나와 서류뿐이다."
+  },
+  {
+   "id": "R3",
+   "text": "짝 PR(TASK-ES-620)과 병합 순서가 바뀌어도 main 의 게이트가 죽거나 느슨해지지 않는다(공용 도우미가 없으면 고치기 전 식 그대로)."
+  },
+  {
+   "id": "R4",
+   "text": "고치기 전·후 측정을 싣는다(작업자 측정, 판정 아님)."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "같은 검사 안의 다음 줄 window.showNewGoalManualForm = showNewGoalManualForm; 은 등록 기관에 등록되지 않은 이름의 배선 글자라 고치지 않았다(배선 철거가 지우는 줄이 아니다)."
+  },
+  {
+   "text": "그 밖의 시험지(scripts/smoke-test.js 등)와 공용 도우미는 짝 PR(TASK-ES-620)에 있다. 이 PR 만으로는 모의 철거 사본의 게이트가 통과하지 않는다(도우미가 없다 — summary.compare.gateOnlyMockGateFails)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트의 그 단언이 옛 배선 글자를 그대로 둔 채 넓힌 판정 함수를 거친다.",
+   "touches": [
+    "scripts/verify-integrity-gate.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/verify-integrity-gate.js",
+    "text": "assert.ok(windowExposed(html, 'window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 누락');"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게이트의 판정 함수는 공용 도우미가 있으면 그것을, 없으면 고치기 전 식(글자가 있는가)을 쓴다.",
+   "touches": [
+    "scripts/verify-integrity-gate.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/verify-integrity-gate.js",
+    "text": "function windowExposed(source, legacyText) { return WIRING ? WIRING.windowExposed(source, legacyText) : source.includes(legacyText); }"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도우미는 파일이 있을 때만 읽는다(없으면 죽지 않고, 있는데 고장 났으면 오류로 드러난다).",
+   "touches": [
+    "scripts/verify-integrity-gate.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/verify-integrity-gate.js",
+    "text": "const WIRING = fs.existsSync(WIRING_HELPER) ? require(WIRING_HELPER) : null;"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 바꾼 시험 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/changed-assertions.json",
+    "path": "summary.changedLines",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 지우기만 한 시험 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/changed-assertions.json",
+    "path": "summary.removedOnly",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 옛 배선 글자가 바꾼 줄에 그대로 남아 있는지.",
+   "touches": [
+    "reports/TASK-ES-623/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/changed-assertions.json",
+    "path": "summary.legacyTextKeptAll",
+    "equals": true
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 금고 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "changedScope.vaultCourtConstitutionDirectivesGenerator",
+    "equals": [
+     "scripts/verify-integrity-gate.js"
+    ]
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 제품 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "changedScope.product",
+    "equals": []
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 그 밖의 시험 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "changedScope.tests",
+    "equals": []
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main · 고친 게이트만(도우미 없음)의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.gateOnlyMainNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main · 고친 게이트만의 게이트 ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.gateOnlyMainGateCheckLines",
+    "equals": 38
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main · 고친 게이트만의 게이트 실패 검사 수.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.gateOnlyMainGateFails",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의 철거 사본 · 고친 게이트만(도우미 없음)의 게이트 실패 검사 수 — 고치기 전과 같은 판정.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.gateOnlyMockGateFails",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의 철거 사본 · 고치기 전의 게이트 실패 검사 수.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.mockGateFailsBefore",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 두 PR 을 다 얹은 모의 철거 사본의 게이트 ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.bothMockGateCheckLines",
+    "equals": 38
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 두 PR 을 다 얹은 모의 철거 사본의 게이트 실패 검사 수.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.bothMockGateFails",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 두 PR 을 다 얹은 모의 철거 사본의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.bothMockNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 두 PR 을 다 얹은 현재 main 의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.compare.bothMainNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 두 PR 을 다 얹은 트리에서 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/measurement.json",
+    "path": "summary.remaining.main-both__mock-both",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조군 기록: 등록을 깨뜨린 다섯 변형 모두 새로 실패한 줄이 기대한 줄과 같은지.",
+   "touches": [
+    "reports/TASK-ES-623/control-group.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/control-group.json",
+    "path": "summary.allAsExpected",
+    "equals": true
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고친 게이트만(도우미 없음)의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.gateOnlyMainNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 고친 게이트만의 게이트 ✓ 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.gateOnlyMainGateCheckLines",
+    "equals": 38
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 게이트 실패 검사 수.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.bothMockGateFails",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 모의 철거 사본의 npm test 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.compare.bothMockNpmTestExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 재확인 기록: 두 PR 을 다 얹은 트리에서 모의 철거 사본에서만 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "summary.remaining.main-both__mock-both",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 범위 기록: 이 변경이 바꾼 금고 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "changedScope.vaultCourtConstitutionDirectivesGenerator",
+    "equals": [
+     "scripts/verify-integrity-gate.js"
+    ]
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "합친 뒤 범위 기록: 이 변경이 바꾼 제품 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-623/post-merge.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-623/post-merge.json",
+    "path": "changedScope.product",
+    "equals": []
+   }
+  }
+ ],
+ "retire": [
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "check": "[검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사",
+   "reason": "폐기가 아니라 넓힘이다(검사 수 38 그대로 · 단언 수 그대로). 이 검사 안의 「index.html 에 window.promptNewGoal = promptNewGoal; 글자가 있다」 단언 1줄을 「그 글자가 있거나, 같은 이름·같은 값이 세포의 등록 블록(OurgoalCellRegistry.provide)으로 window 에 나간다」로 넓혔다(공용 도우미 tests/helpers/wiring-exposed.js — 없으면 고치기 전 식 그대로). 승인: 상민님 2026-10-11 「2. 철거 2차 사전 승인, 금고 변경 승인」(원문은 docs/specs/REQ-TASK-ES-623-GATE-WIRING-TEXT.md 0절)"
+  }
+ ]
+}
