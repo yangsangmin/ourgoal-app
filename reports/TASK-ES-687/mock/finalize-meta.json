@@ -1,0 +1,162 @@
+{
+ "stdout": [
+  "finalize · handles 2 · imports 28 · calls 27 · removed lines 418 (껍데기 3 · 문 61 · 주석 270 · 빈 줄 84)",
+  "  relay renderTeamGoalsScreen — 가져오기 줄 2323 · getter 줄 2276(expose 문 줄 2275~2277) → js/app/boot.js · 근거: 주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계",
+  "  keepGlobalConst 「var SUPABASE_URL」 — 줄 2425 의 문자열 상수 선언(SUPABASE_URL · 값 40자)을 껍데기 없는 최상위 스크립트에 줄 그대로 남긴다(전역 이름이 된다) · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 선언 두 줄만 제자리에 남긴다(규칙은 건드리지 않는다)",
+  "  keepGlobalConst 「var SUPABASE_ANON_KEY」 — 줄 2426 의 문자열 상수 선언(SUPABASE_ANON_KEY · 값 208자)을 껍데기 없는 최상위 스크립트에 줄 그대로 남긴다(전역 이름이 된다) · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 선언 두 줄만 제자리에 남긴다(규칙은 건드리지 않는다)",
+  "  keepGlobalConst(읽는 문) 줄 2427 「window.OurgoalAppState.define('sb'」 — 남긴 전역 이름(SUPABASE_URL · SUPABASE_ANON_KEY)을 읽는 상태 선언, 부팅 파일로 간다",
+  "  keepGlobalConst(전역 이름 검사) 같은 전역 범위의 스크립트 372개(읽은 것 372 · 없는 파일 0)와 index.html 의 블록 밖 글자에 그 이름 0",
+  "index.html lines 2712 -> 2294",
+  "js/app/boot.js 73"
+ ],
+ "meta": {
+  "task": "TASK-ES-687-MOCK",
+  "mode": "finalize",
+  "scriptHtmlLines": [
+   2253,
+   2674
+  ],
+  "statements": {
+   "total": 61,
+   "handles": 2,
+   "imports": 28,
+   "calls": 27
+  },
+  "handles": [
+   {
+    "name": "_goalsKit",
+    "kit": "OurgoalGoalsKit",
+    "imports": 1
+   },
+   {
+    "name": "_uiKit",
+    "kit": "OurgoalUiHelpers",
+    "imports": 27
+   }
+  ],
+  "callOrder": [
+   "bootApplySavedTheme",
+   "bootAuthStateListener",
+   "bootAppConfig",
+   "bootThemeList",
+   "bootAvatarCloseButton",
+   "bootAvatarLevelUpWiring",
+   "bootAppStateObject",
+   "bootExposeAppState",
+   "bootPromptTabState",
+   "bootPromptDrawerState",
+   "bootEntryAndAccountWiring",
+   "bootGoogleTokenState",
+   "bootGoogleTokenSaveHandle",
+   "bootHomeAndGoalWiring",
+   "bootTemplateSubtabFilterState",
+   "bootTemplateSubtabKindState",
+   "bootGoalsAndTeamState",
+   "bootRecordsWiring",
+   "bootRecordsExportWiring",
+   "bootSampleGroups",
+   "bootShareHandle",
+   "bootFeedCacheState",
+   "bootSharedGroupsState",
+   "bootSharedGroupsFlag",
+   "bootCommSettingsAndStart",
+   "bootTemplatePartHandles",
+   "bootInstallAndServiceWorker"
+  ],
+  "removed": {
+   "lines": 418,
+   "shell": 3,
+   "statementLines": 61,
+   "commentLines": 270,
+   "blankLines": 84
+  },
+  "tag": {
+   "line": 2256,
+   "text": "<script src=\"js/app/boot.js\"></script>",
+   "sync": true
+  },
+  "htmlLinesBefore": 2712,
+  "htmlLinesAfter": 2294,
+  "files": {
+   "js/app/boot.js": 73
+  },
+  "relayed": [
+   {
+    "name": "renderTeamGoalsScreen",
+    "reason": "주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계",
+    "importLine": 2323,
+    "getterLine": 2276,
+    "exposeLines": [
+     2275,
+     2277
+    ],
+    "movedTo": "js/app/boot.js"
+   }
+  ],
+  "keptGlobalConst": {
+   "reason": "커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 선언 두 줄만 제자리에 남긴다(규칙은 건드리지 않는다)",
+   "statements": [
+    {
+     "match": "var SUPABASE_URL",
+     "name": "SUPABASE_URL",
+     "line": 2425,
+     "valueLength": 40,
+     "readBy": [
+      2427
+     ]
+    },
+    {
+     "match": "var SUPABASE_ANON_KEY",
+     "name": "SUPABASE_ANON_KEY",
+     "line": 2426,
+     "valueLength": 208,
+     "readBy": [
+      2427
+     ]
+    }
+   ],
+   "readers": [
+    {
+     "match": "window.OurgoalAppState.define('sb'",
+     "line": 2427,
+     "endLine": 2427,
+     "reads": [
+      "SUPABASE_URL",
+      "SUPABASE_ANON_KEY"
+     ],
+     "movedTo": "js/app/boot.js"
+    }
+   ],
+   "globalNames": [
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY"
+   ],
+   "globalNameScan": {
+    "hits": 0,
+    "scripts": 372,
+    "scanned": 372,
+    "missing": 0
+   },
+   "movedEarlierOver": {
+    "statements": 32,
+    "calls": [
+     "bootApplySavedTheme"
+    ],
+    "note": "남긴 선언은 원래 이 문들 뒤에 있었다 — 이제 그 앞(인라인)에서 돈다. 문자열 상수 선언이라 차례에 무관하고, 앞의 문 가운데 그 이름을 읽는 것은 없다(있으면 멈춘다)"
+   },
+   "inline": {
+    "statements": 2,
+    "bodyLines": 2,
+    "shellLines": 2,
+    "iifeShell": false
+   },
+   "boot": {
+    "statements": 59,
+    "handles": 2,
+    "imports": 27,
+    "calls": 27,
+    "readers": 1
+   }
+  }
+ }
+}

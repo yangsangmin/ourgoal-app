@@ -246,7 +246,7 @@ function sweepOnce(U, doc) {
 if (CFG.mode === 'finalize') { runFinalize(); return; }
 function runFinalize() {
   const BOOT = 'js/app/boot.js', BOOT_TAG = '<script src="' + BOOT + '"></script>';
-  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells', 'relay', 'keepInline'].includes(k)) fail('finalize 설정에 모르는 칸: ' + k);
+  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells', 'relay', 'keepInline', 'keepGlobalConst'].includes(k)) fail('finalize 설정에 모르는 칸: ' + k);
   if (typeof TAG !== 'string' || !TAG) fail('finalize 설정 task 가 없다');
   if (!Array.isArray(CFG.cells) || CFG.cells.length !== 1 || !CFG.cells[0] || typeof CFG.cells[0] !== 'object') fail('finalize 설정 cells 는 부팅 파일 하나여야 한다');
   const C = CFG.cells[0];
@@ -282,6 +282,25 @@ function runFinalize() {
     if (new Set(k.statements).size !== k.statements.length) fail('finalize 설정 keepInline.statements 에 같은 앞머리가 둘이다');
     if (!okReason(k.reason)) fail('finalize 설정 keepInline 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다');
     KEEP = { reason: k.reason, prefixes: k.statements.slice() };
+  }
+  // ── [#TASK-ES-687 · 설계 5.9절] 명시적 옵션 keepGlobalConst — 기본은 꺼져 있다. keepInline 과 함께 쓸 수 없다(인라인에 문을 남기는 길은 하나만 고른다).
+  //   지정한 「문자열 리터럴로 초기화하는 한 줄 var 선언」만 index.html 에 줄 그대로 남긴다 — IIFE 껍데기 없이 최상위 스크립트로(그 이름은 전역 이름이 된다). 나머지 문은 전부 부팅 파일로 간다.
+  //   그 이름을 읽는 문(readers 에 적은 상태 선언)도 부팅 파일로 간다 — 「연결 만들기」와 그 뒤의 문이 한 스크립트 안에서 이어서 돈다.
+  //   왜 keepInline 이 아닌가: 문 차례가 같아도 스크립트를 가르면 그 경계에서 브라우저가 밀린 약속(마이크로태스크)을 먼저 돌린다. 연결 만들기를 인라인에, 수신기 걸기를 부팅 파일에 두면 그 사이에 라이브러리 초기화가 끝나 버린다(#TASK-ES-685 독립 확인의 측정 — 설계 5.9절 경고).
+  //   그래서 이 옵션이 인라인에 남기는 것은 「차례에 무관한 문」뿐이다: 부수효과도 다른 이름 읽기도 없는 문자열 상수 선언.
+  let GKC = null;
+  if (CFG.keepGlobalConst !== undefined) {
+    const g = CFG.keepGlobalConst;
+    if (KEEP) fail('finalize 설정 keepGlobalConst 는 keepInline 과 함께 쓸 수 없다 — 인라인에 문을 남기는 길은 하나만 고른다');
+    if (!g || typeof g !== 'object' || Array.isArray(g)) fail('finalize 설정 keepGlobalConst 는 { statements, readers, reason } 이어야 한다(스위치로 풀리지 않는다)');
+    for (const x of Object.keys(g)) if (!['statements', 'readers', 'reason'].includes(x)) fail('finalize 설정 keepGlobalConst 에 모르는 칸: ' + x);
+    const okList = a => Array.isArray(a) && a.length > 0 && a.every(p => typeof p === 'string' && p.trim() === p && p.length >= 5 && !/[\r\n]/.test(p));
+    if (!okList(g.statements)) fail('finalize 설정 keepGlobalConst.statements 는 문의 글자 앞머리(5자 이상 한 줄, 앞뒤 공백 없음)의 비지 않은 배열이어야 한다');
+    if (g.readers !== undefined && !okList(g.readers)) fail('finalize 설정 keepGlobalConst.readers 는 문의 글자 앞머리(5자 이상 한 줄, 앞뒤 공백 없음)의 비지 않은 배열이어야 한다(없으면 칸을 적지 않는다)');
+    const allP = g.statements.concat(g.readers || []);
+    if (new Set(allP).size !== allP.length) fail('finalize 설정 keepGlobalConst 의 statements · readers 에 같은 앞머리가 둘이다');
+    if (!okReason(g.reason)) fail('finalize 설정 keepGlobalConst 의 근거(reason)가 없거나 짧거나(10자 미만) 여러 줄이다');
+    GKC = { reason: g.reason, prefixes: g.statements.slice(), readerPrefixes: (g.readers || []).slice() };
   }
   const doc = parseUnwireDoc(lines);
   const { top, iScope } = doc;
@@ -319,7 +338,15 @@ function runFinalize() {
     if (keptIdx.has(hit[0])) fail('keepInline 지정 둘이 같은 문을 가리킨다: 「' + p + '」 (줄 ' + H(top[hit[0]].node) + ')');
     keptIdx.set(hit[0], p);
   }
-  // [#TASK-ES-681] relay: `window.OurgoalAppScope.expose('index.html', { get N(){ return N; } … })` 이고 속성이 전부 relay 이름의 그 꼴 getter 일 때 그 이름들, 아니면 null(예전처럼 전제 밖의 문이다)
+  // [#TASK-ES-687] keepGlobalConst: 남길 선언(gIdx) · 그 이름을 읽어 부팅 파일로 가는 문(grIdx) — 앞머리마다 최상위 문이 꼭 하나여야 한다
+  const gIdx = new Map(), grIdx = new Map(), gkept = [], greaders = [];
+  if (GKC) for (const [list, map, what] of [[GKC.prefixes, gIdx, 'statements'], [GKC.readerPrefixes, grIdx, 'readers']]) for (const p of list) {
+    const hit = []; top.forEach((st, i) => { if (text(st).startsWith(p)) hit.push(i); });
+    if (hit.length !== 1) fail('keepGlobalConst.' + what + ' 지정이 문 하나로 정해지지 않는다: 「' + p + '」 — 맞는 최상위 문 ' + hit.length + '개');
+    if (gIdx.has(hit[0]) || grIdx.has(hit[0])) fail('keepGlobalConst 지정 둘이 같은 문을 가리킨다: 「' + p + '」 (줄 ' + H(top[hit[0]].node) + ')');
+    map.set(hit[0], p);
+  }
+  // [#TASK-ES-681] relay:`window.OurgoalAppScope.expose('index.html', { get N(){ return N; } … })` 이고 속성이 전부 relay 이름의 그 꼴 getter 일 때 그 이름들, 아니면 null(예전처럼 전제 밖의 문이다)
   const relayExpose = st => {
     const x = st.isExpressionStatement() ? st.node.expression : null;
     if (!x || x.type !== 'CallExpression' || calleeText(x) !== 'window.OurgoalAppScope.expose' || x.arguments.length !== 2) return null;
@@ -361,6 +388,18 @@ function runFinalize() {
       const isVar = !!d && !winChain(d.init) && !(plainMember(d.init) && handles.has(d.init.object.name));
       if (!isDef && !isVar) fail('keepInline 으로 남길 수 있는 문은 var 선언(손잡이·가져오기 꼴 제외)과 상태 선언(define·defineVar)뿐이다: 「' + keptIdx.get(ti) + '」 (줄 ' + H(st.node) + ')');
       kept.push({ i: ti, kind: isDef ? 'define' : 'var', name: isVar ? d.id.name : null });
+      continue;
+    }
+    if (gIdx.has(ti)) { // [#TASK-ES-687] keepGlobalConst 로 남길 문 — 문자열 리터럴로 초기화하는 한 줄 var 선언뿐(부수효과 · 다른 이름 읽기 0 이라 차례에 무관하다)
+      if (!d || !d.init || d.init.type !== 'StringLiteral') fail('keepGlobalConst 로 남길 수 있는 문은 문자열 리터럴로 초기화하는 var 선언(이름 하나)뿐이다: 「' + gIdx.get(ti) + '」 (줄 ' + H(st.node) + ')');
+      if (!/^[A-Z][A-Z0-9_]{5,}$/.test(d.id.name)) fail('keepGlobalConst 로 남길 이름은 대문자 상수 꼴(6자 이상)이어야 한다 — 전역 이름이 된다: ' + d.id.name + ' (줄 ' + H(st.node) + ')');
+      if (H(st.node) !== HE(st.node) || lines[H(st.node) - 1].trim() !== text(st)) fail('keepGlobalConst 로 남길 선언은 한 줄을 혼자 써야 한다(여러 줄 · 뒤따르는 주석 · 다른 문과 한 줄이면 줄 그대로 남길 수 없다): 「' + gIdx.get(ti) + '」 (줄 ' + H(st.node) + ')');
+      gkept.push({ i: ti, name: d.id.name });
+      continue;
+    }
+    if (grIdx.has(ti)) { // [#TASK-ES-687] 남긴 전역 이름을 읽는 문 — 상태 선언(define·defineVar)뿐. 부팅 파일로 간다
+      if (!x || x.type !== 'CallExpression' || !/^window\.OurgoalAppState\.(define|defineVar)$/.test(calleeText(x))) fail('keepGlobalConst.readers 로 적을 수 있는 문은 상태 선언(define·defineVar)뿐이다: 「' + grIdx.get(ti) + '」 (줄 ' + H(st.node) + ')');
+      greaders.push({ i: ti });
       continue;
     }
     if (d && winChain(d.init)) {
@@ -437,9 +476,50 @@ function runFinalize() {
     for (let i = 0; i < top.length; i++) if (!inl.has(i)) for (let l = H(top[i].node); l <= HE(top[i].node); l++) if (inlLines.has(l)) fail('인라인에 남길 문이 부팅 파일로 가는 문과 한 줄을 나눠 쓴다(줄 ' + l + ') — 줄 그대로 남길 수 없다');
     PART = { ks, P, inl, prefix, pulled: pulled.sort((a, b) => a - b), dup, bootIdx, inlLines };
   }
+  // ── [#TASK-ES-687] keepGlobalConst 갈림: 남길 선언(ks) · 부팅 파일로 가는 문(그 밖의 전부) · 이름별 읽는 문 · 전역 이름 충돌 검사
+  let GPART = null;
+  if (GKC) {
+    const ks = gkept.map(k => k.i).sort((a, b) => a - b);
+    for (let i = 1; i < ks.length; i++) if (ks[i] !== ks[i - 1] + 1) fail('keepGlobalConst 로 남길 선언이 연달아 있지 않다 — 줄 ' + H(top[ks[i - 1]].node) + ' 과 줄 ' + H(top[ks[i]].node) + ' 사이에 다른 최상위 문이 있다');
+    const names = gkept.slice().sort((a, b) => a.i - b.i).map(k => k.name);
+    if (new Set(names).size !== names.length) fail('keepGlobalConst 로 남길 선언 둘이 같은 이름이다: ' + names.join(' · '));
+    const gTopIdxOf = p => { let q = p; while (q && q.parent !== body) q = q.parentPath; return q ? top.findIndex(t => t.node === q.node) : -1; };
+    const readBy = {};
+    for (const k of gkept) {
+      const b = iScope.getBinding(k.name);
+      if (!b) fail('keepGlobalConst 로 남길 이름의 선언을 IIFE 범위에서 찾지 못했다: ' + k.name);
+      if (b.constantViolations.length) fail('keepGlobalConst 로 남길 이름에 IIFE 안에서 다시 대입하거나 다시 선언한다 — 상수가 아니다: ' + k.name + ' (줄 ' + (b.constantViolations[0].node.loc.start.line + s) + ')');
+      const set = new Set();
+      for (const p of b.referencePaths) { const r = gTopIdxOf(p); if (r < 0) fail('keepGlobalConst 로 남길 이름을 읽는 자리의 최상위 문을 찾지 못했다: ' + k.name); set.add(r); }
+      for (const r of [...set].sort((a, c) => a - c)) {
+        if (r < k.i) fail('남길 선언보다 앞의 문이 그 이름을 읽는다 — 선언을 앞당기면 읽는 값이 달라진다: ' + k.name + ' (읽는 줄 ' + H(top[r].node) + ' · 선언 줄 ' + H(top[k.i].node) + ')');
+        if (!grIdx.has(r)) fail('keepGlobalConst 로 남긴 이름을 readers 에 적지 않은 문이 읽는다: ' + k.name + ' (읽는 줄 ' + H(top[r].node) + ') — 그 문을 readers 에 근거와 함께 적어야 부팅 파일로 간다');
+      }
+      readBy[k.name] = [...set].sort((a, c) => a - c);
+    }
+    for (const g of greaders) if (!names.some(n => readBy[n].includes(g.i))) fail('keepGlobalConst.readers 의 문이 남긴 이름을 하나도 읽지 않는다 — 쓰이지 않는 허용은 적지 않는다: 「' + grIdx.get(g.i) + '」 (줄 ' + H(top[g.i].node) + ')');
+    // 전역 이름 충돌: 같은 전역 범위를 쓰는 글자 = index.html 의 이 블록 밖 + index.html 이 부르는 로컬 스크립트 파일. 그 이름이 하나라도 있으면 멈춘다(주석 속 글자는 세지 않는다).
+    const word = n => new RegExp('(^|[^A-Za-z0-9_$])' + n + '([^A-Za-z0-9_$]|$)');
+    const outside = lines.slice(0, s - 1).concat(lines.slice(e + 1)).join('\n');
+    const srcs = []; { const re = /<script\b[^>]*\bsrc="([^"]+)"/g; let m; while ((m = re.exec(outside))) { if (/^([a-z]+:)?\/\//i.test(m[1])) continue; const rel = m[1].replace(/[?#].*$/, '').replace(/^\//, ''); if (!srcs.includes(rel)) srcs.push(rel); } }
+    const hits = []; let scanned = 0, missing = 0;
+    for (const rel of srcs) {
+      const f = path.join(APP, rel);
+      if (!fs.existsSync(f)) { missing++; continue; }
+      scanned++;
+      const src = fs.readFileSync(f, 'utf8');
+      const cand = names.filter(n => word(n).test(src));
+      if (!cand.length) continue;
+      let toks; try { toks = parser.parse(src, { sourceType: 'script', tokens: true, errorRecovery: true }).tokens; } catch (err) { for (const n of cand) hits.push(n + ' @ ' + rel + '(파싱하지 못했다 — 글자가 있어 멈춘다)'); continue; }
+      for (const n of cand) if (toks.some(t => typeof t.type !== 'string' && ((t.type.label === 'name' && t.value === n) || (t.type.label === 'string' && typeof t.value === 'string' && word(n).test(t.value))))) hits.push(n + ' @ ' + rel);
+    }
+    for (const n of names) if (word(n).test(outside)) hits.push(n + ' @ index.html(인라인 IIFE 블록 밖)');
+    if (hits.length) fail('keepGlobalConst 로 남길 이름이 같은 전역 범위의 다른 글자에 이미 있다 — 전역 이름으로 만들 수 없다: ' + hits.join(' · '));
+    GPART = { ks, names, readBy, bootIdx: top.map((_, i) => i).filter(i => !gIdx.has(i)), scan: { scripts: srcs.length, scanned, missing } };
+  }
   // ── F1: 부팅 파일(문을 글자 그대로, 같은 순서로)
   const LABEL = CFG.label || '인라인 IIFE 마지막 정리';
-  const bootTop = PART ? PART.bootIdx.map(i => top[i]) : top;
+  const bootTop = PART ? PART.bootIdx.map(i => top[i]) : GPART ? GPART.bootIdx.map(i => top[i]) : top;
   const nBootHandles = PART ? PART.bootIdx.filter(isHandleAt).length : handles.size;
   const nBootImports = (PART ? PART.bootIdx.filter(isImportAt).length : imports.size) - (PART ? [...RELAY.keys()].filter(n => PART.bootIdx.some(i => isImportAt(i) && oneVar(top[i]).id.name === n)).length : RELAY.size);
   const nBootCalls = PART ? PART.bootIdx.filter(i => callIdx.has(i)).length : calls.length;
@@ -450,23 +530,53 @@ function runFinalize() {
     for (const n of relayInBoot) headExtra.push(' *   - ' + n + ': ' + RELAY.get(n).reason);
   }
   if (PART && PART.dup.size) headExtra.push(' * 인라인에 남은 문과 이 파일이 함께 쓰는 키트 손잡이 ' + PART.dup.size + '개(' + [...PART.dup].sort((a, b) => a - b).map(i => oneVar(top[i]).id.name).join(' · ') + ')는 같은 글자로 한 번 더 적었다.');
+  if (GPART && greaders.length) headExtra.push(' * 상태 선언 ' + greaders.length + '개도 함께 옮겼다 — index.html 에 남긴 전역 상수(' + GPART.names.join(' · ') + ')를 읽는 문이다(생성기 설정 keepGlobalConst.readers).');
   const boot = ['/**', ' * ' + C.title, ' *'].concat(C.desc.map(d => ' * ' + d), [
     ' * #' + TAG + '(' + LABEL + '): index.html 인라인 IIFE 에 마지막까지 남아 있던 문(키트 손잡이 ' + nBootHandles + '개 · 구역 함수 가져오기 ' + nBootImports + '개 · 구역 함수 호출 ' + nBootCalls + '개)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로, 같은 순서로 옮겼다.'],
     headExtra, [
     PART
       ? ' * 주석·빈 줄은 옮기지 않았다. index.html 의 인라인 IIFE 에는 문 ' + PART.inl.size + '개가 줄 그대로 남아 있고(생성기 설정 keepInline — ' + KEEP.reason + '), 그 `</script>` 뒤의 동기 script 태그가 이 파일을 부른다 — 인라인이 먼저 돌고 이 파일이 이어서 돈다. defer·async 를 붙이지 않는다(로드 순서가 곧 실행 순서다).'
+      : GPART
+      ? ' * 주석·빈 줄은 옮기지 않았다. index.html 에는 큰 인라인 IIFE 가 더 없고, 문자열 상수 선언 ' + GPART.ks.length + '줄(' + GPART.names.join(' · ') + ')만 껍데기 없는 최상위 스크립트에 줄 그대로 남아 있다(생성기 설정 keepGlobalConst — ' + GKC.reason + '). 그 `</script>` 뒤의 동기 script 태그가 이 파일을 부르고 이 파일의 문이 그 전역 이름을 읽는다 — 나머지 문은 전부 이 파일 한 스크립트 안에서 이어서 돈다. defer·async 를 붙이지 않는다(로드 순서가 곧 실행 순서다).'
       : ' * 주석·빈 줄은 옮기지 않았다. index.html 에는 큰 인라인 IIFE 가 더 없고, 그 자리(앞 태그 줄 끝)의 동기 script 태그가 이 파일을 부른다 — defer·async 를 붙이지 않는다(로드 순서가 곧 실행 순서다).',
-    ' * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 X9' + (RELAY.size || PART ? ' · 5.9절' : ''),
+    ' * 설계: docs/architecture/CELL-REGISTRY-DESIGN.md 3.4절 · 5절 X9' + (RELAY.size || PART || GPART ? ' · 5.9절' : ''),
     ' */',
     '(function(){', '  "use strict";'], bootTop.map(st => '  ' + text(st)), ['})();', '']);
   // ── F2 · F3: IIFE 블록을 지우고 앞 줄 끝에 부팅 태그를 붙인다. [#TASK-ES-681] keepInline 이면 블록을 남기고(껍데기 5줄 + 남길 문의 줄) 그 `</script>` 줄 끝에 태그를 붙인다
   const keptBody = []; if (PART) for (let l = s + 3; l <= e - 1; l++) if (PART.inlLines.has(l)) keptBody.push(lines[l - 1]);
+  // [#TASK-ES-687] keepGlobalConst 이면 `<script>` 줄 + 남길 선언 줄(줄 그대로, 원래 차례) + `</script>` 줄만 남기고(IIFE 껍데기 3줄은 지운다) 그 `</script>` 줄 끝에 태그를 붙인다
+  const gLines = GPART ? GPART.ks.map(i => lines[H(top[i].node) - 1]) : [];
   const nh = PART
     ? lines.slice(0, s + 2).concat(keptBody, [lines[e - 1], lines[e] + BOOT_TAG], lines.slice(e + 1))
+    : GPART
+    ? lines.slice(0, s).concat(gLines, [lines[e] + BOOT_TAG], lines.slice(e + 1))
     : lines.slice(0, s - 2).concat([lines[s - 2] + BOOT_TAG], lines.slice(e + 1));
-  const removed = PART ? (e - s - 3) - keptBody.length : e - s + 2;
+  const removed = PART ? (e - s - 3) - keptBody.length : GPART ? (e - s) - gLines.length : e - s + 2;
   // ── 사후 대조
-  if (PART) {
+  if (GPART) {
+    // [#TASK-ES-687] ① 부팅 파일의 문 토큰열 = 옮기기로 한 문의 토큰열(같은 순서) ② 남긴 최상위 스크립트에는 문자열 상수 선언만 있다 — 호출 · 대입 · 약속 · 수신기 등록 같은 순서 민감한 문이 인라인에 남지 않는다
+    // ③ 두 쪽이 원래 문 전부를 겹침 없이 가른다 ④ 남긴 줄은 원래 줄과 바이트가 같고 순서가 같다 ⑤ 블록 밖의 줄은 그대로다 ⑥ 큰 인라인 IIFE 가 남지 않고 부팅 태그는 꼭 한 번, 남긴 `</script>` 줄 끝이다
+    const sigOfG = (ast, nodes) => nodes.map(n => JSON.stringify(ast.tokens.filter(t => !isComment(t) && t.type.label !== 'eof' && t.start >= n.start && t.end <= n.end).map(sig)));
+    const origSig = sigOfG(doc.ast, top.map(t => t.node));
+    let bootAst; try { bootAst = parser.parse(boot.join('\n'), { sourceType: 'script', tokens: true }); } catch (err) { fail('만든 부팅 파일이 파싱되지 않는다 — 쓰지 않는다: ' + err.message); }
+    const bx = bootAst.program.body.length === 1 && bootAst.program.body[0].type === 'ExpressionStatement' ? bootAst.program.body[0].expression : null;
+    if (!bx || bx.type !== 'CallExpression' || bx.callee.type !== 'FunctionExpression') fail('만든 부팅 파일의 껍데기 꼴이 다르다 — 쓰지 않는다');
+    if (JSON.stringify(sigOfG(bootAst, bx.callee.body.body)) !== JSON.stringify(GPART.bootIdx.map(i => origSig[i]))) fail('부팅 파일의 문 토큰열이 옮기기로 한 문과 다르다(실행 글자 변화) — 쓰지 않는다');
+    let ia; try { ia = parser.parse(nh.slice(s, s + gLines.length).join('\n'), { sourceType: 'script', tokens: true }); } catch (err) { fail('남긴 최상위 스크립트가 파싱되지 않는다 — 쓰지 않는다: ' + err.message); }
+    const ib = ia.program.body;
+    if ((ia.program.directives || []).length || ib.length !== gLines.length || !ib.every(n => n.type === 'VariableDeclaration' && n.kind === 'var' && n.declarations.length === 1 && n.declarations[0].id.type === 'Identifier' && !!n.declarations[0].init && n.declarations[0].init.type === 'StringLiteral'))
+      fail('남긴 최상위 스크립트에 문자열 상수 선언 말고 다른 문이 있다(호출 · 대입 · 약속 · 수신기 등록 같은 순서 민감한 문이 인라인에 남으면 안 된다) — 쓰지 않는다');
+    const okTok = new Set(['var', 'name', '=', 'string', ';']);
+    if (ia.tokens.some(t => !isComment(t) && t.type.label !== 'eof' && !okTok.has(t.type.label))) fail('남긴 최상위 스크립트에 선언 말고 다른 실행 글자가 있다 — 쓰지 않는다');
+    if (JSON.stringify(sigOfG(ia, ib)) !== JSON.stringify(GPART.ks.map(i => origSig[i]))) fail('남긴 선언의 토큰열이 원래 선언과 다르다 — 쓰지 않는다');
+    if (new Set(GPART.ks.concat(GPART.bootIdx)).size !== top.length || GPART.ks.length + GPART.bootIdx.length !== top.length) fail('남긴 선언과 옮긴 문이 원래 문 전부를 겹침 없이 가르지 않는다 — 쓰지 않는다');
+    for (const n of GPART.names) for (const r of GPART.readBy[n]) if (!GPART.bootIdx.includes(r)) fail('남긴 이름을 읽는 문이 부팅 파일에 없다 — 쓰지 않는다: ' + n);
+    if (nh[s - 1] !== '<script>' || gLines.some((l, j) => nh[s + j] !== l) || nh[s + gLines.length] !== lines[e] + BOOT_TAG) fail('남긴 최상위 스크립트 블록의 줄이 예상과 다르다 — 쓰지 않는다');
+    if (nh.some((l, i) => l.trim() === '<script>' && (nh[i + 1] || '').trim() === '(function(){' && (nh[i + 2] || '').includes('"use strict"'))) fail('지운 뒤에도 큰 인라인 IIFE 가 남아 있다 — 쓰지 않는다');
+    if (nh.join('\n').split(BOOT).length !== 2) fail('부팅 태그가 꼭 한 번이 아니다 — 쓰지 않는다');
+    if (nh.length !== lines.length - removed) fail('지운 뒤 줄 수가 예상과 다르다 — 쓰지 않는다');
+    if (nh.slice(0, s - 1).join('\n') !== lines.slice(0, s - 1).join('\n') || nh.slice(s + gLines.length + 1).join('\n') !== lines.slice(e + 1).join('\n')) fail('남긴 블록 밖의 글자가 달라졌다 — 쓰지 않는다');
+  } else if (PART) {
     // [#TASK-ES-681] ① 부팅 파일의 문 토큰열 = 옮기기로 한 문의 토큰열(같은 순서) ② 새 인라인 IIFE 의 문 토큰열 = 남기기로 한 문의 토큰열(같은 순서) ③ 두 쪽이 원래 문 전부를 빠짐없이 가른다(겹치는 것은 함께 쓰는 손잡이뿐)
     // ④ 남은 인라인 줄은 전부 원래 줄과 바이트가 같고 순서가 같다 ⑤ 블록 밖의 줄은 그대로다 ⑥ 부팅 태그는 꼭 한 번, 남긴 `</script>` 줄 끝이다
     const sigOf = (ast, nodes) => nodes.map(n => JSON.stringify(ast.tokens.filter(t => !isComment(t) && t.type.label !== 'eof' && t.start >= n.start && t.end <= n.end).map(sig)));
@@ -507,8 +617,8 @@ function runFinalize() {
     task: TAG, mode: 'finalize', scriptHtmlLines: [s, e + 1],
     statements: { total: top.length, handles: handles.size, imports: imports.size, calls: calls.length },
     handles: [...handles].map(([n, h]) => ({ name: n, kit: h.kit, imports: h.used })), callOrder: calls.map(c => c.name),
-    removed: { lines: removed, shell: PART ? 0 : 5, statementLines: PART ? stmtLine.size - PART.inlLines.size : stmtLine.size, commentLines: comment, blankLines: blank },
-    tag: { line: PART ? s + 2 + keptBody.length + 2 : s - 1, text: BOOT_TAG, sync: true },
+    removed: { lines: removed, shell: PART ? 0 : GPART ? 3 : 5, statementLines: PART ? stmtLine.size - PART.inlLines.size : GPART ? stmtLine.size - gLines.length : stmtLine.size, commentLines: comment, blankLines: blank },
+    tag: { line: PART ? s + 2 + keptBody.length + 2 : GPART ? s + gLines.length + 1 : s - 1, text: BOOT_TAG, sync: true },
     htmlLinesBefore: lines.length, htmlLinesAfter: nh.length, files: { [BOOT]: boot.length - 1 },
   };
   // [#TASK-ES-681] 옵션을 썼을 때만 생기는 메타 칸과 표준 출력 줄(옵션이 없으면 메타·출력의 글자가 예전과 같다)
@@ -532,8 +642,23 @@ function runFinalize() {
     for (const x of meta.keptInline.before.concat(meta.keptInline.pulled)) optLog.push('  keepInline(함께 남김) 줄 ' + x.line + ' 「' + x.text + '」 — ' + x.why);
     for (const x of meta.keptInline.duplicatedHandles) optLog.push('  keepInline(손잡이 한 번 더) ' + x.name + ' — 줄 ' + x.line + ' 은 인라인에 남고 부팅 파일에도 같은 글자로 적는다');
   }
+  if (GPART) { // [#TASK-ES-687] 값 글자(문자열 리터럴의 내용)는 메타·표준 출력에 적지 않는다 — 이름과 줄 번호, 길이만
+    const lit = i => oneVar(top[i]).init.value.length;
+    const firstKept = GPART.ks[0];
+    meta.keptGlobalConst = {
+      reason: GKC.reason,
+      statements: GPART.ks.map(i => ({ match: gIdx.get(i), name: oneVar(top[i]).id.name, line: H(top[i].node), valueLength: lit(i), readBy: GPART.readBy[oneVar(top[i]).id.name].map(r => H(top[r].node)) })),
+      readers: greaders.map(g => ({ match: grIdx.get(g.i), line: H(top[g.i].node), endLine: HE(top[g.i].node), reads: GPART.names.filter(n => GPART.readBy[n].includes(g.i)), movedTo: BOOT })),
+      globalNames: GPART.names, globalNameScan: Object.assign({ hits: 0 }, GPART.scan),
+      movedEarlierOver: { statements: firstKept, calls: calls.filter(c => c.i < firstKept).map(c => c.name), note: '남긴 선언은 원래 이 문들 뒤에 있었다 — 이제 그 앞(인라인)에서 돈다. 문자열 상수 선언이라 차례에 무관하고, 앞의 문 가운데 그 이름을 읽는 것은 없다(있으면 멈춘다)' },
+      inline: { statements: GPART.ks.length, bodyLines: gLines.length, shellLines: 2, iifeShell: false }, boot: { statements: GPART.bootIdx.length, handles: handles.size, imports: imports.size - RELAY.size, calls: calls.length, readers: greaders.length },
+    };
+    for (const x of meta.keptGlobalConst.statements) optLog.push('  keepGlobalConst 「' + x.match + '」 — 줄 ' + x.line + ' 의 문자열 상수 선언(' + x.name + ' · 값 ' + x.valueLength + '자)을 껍데기 없는 최상위 스크립트에 줄 그대로 남긴다(전역 이름이 된다) · 근거: ' + GKC.reason);
+    for (const x of meta.keptGlobalConst.readers) optLog.push('  keepGlobalConst(읽는 문) 줄 ' + x.line + (x.endLine !== x.line ? '~' + x.endLine : '') + ' 「' + x.match + '」 — 남긴 전역 이름(' + x.reads.join(' · ') + ')을 읽는 상태 선언, 부팅 파일로 간다');
+    optLog.push('  keepGlobalConst(전역 이름 검사) 같은 전역 범위의 스크립트 ' + GPART.scan.scripts + '개(읽은 것 ' + GPART.scan.scanned + ' · 없는 파일 ' + GPART.scan.missing + ')와 index.html 의 블록 밖 글자에 그 이름 0');
+  }
   fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1), { encoding: 'utf8' });
-  console.log('finalize', '· handles', handles.size, '· imports', imports.size, '· calls', calls.length, '· removed lines', removed, '(껍데기 ' + (PART ? 0 : 5) + ' · 문 ' + (PART ? stmtLine.size - PART.inlLines.size : stmtLine.size) + ' · 주석 ' + comment + ' · 빈 줄 ' + blank + ')');
+  console.log('finalize', '· handles', handles.size, '· imports', imports.size, '· calls', calls.length, '· removed lines', removed, '(껍데기 ' + (PART ? 0 : GPART ? 3 : 5) + ' · 문 ' + (PART ? stmtLine.size - PART.inlLines.size : GPART ? stmtLine.size - gLines.length : stmtLine.size) + ' · 주석 ' + comment + ' · 빈 줄 ' + blank + ')');
   for (const l of optLog) console.log(l);
   console.log('index.html lines', lines.length, '->', nh.length);
   console.log(BOOT, boot.length - 1);
