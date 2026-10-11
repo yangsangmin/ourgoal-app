@@ -2200,7 +2200,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/settings/sub-integrations.js"></script>
 <script src="js/tabs/settings/sub-data.js"></script>
 <script src="js/tabs/settings/theme-apply.js"></script><script src="js/tabs/settings/avatar-greeting.js"></script><script src="js/tabs/settings/account-entry.js"></script><script src="js/tabs/settings/guest-backup-nudge.js"></script><script src="js/tabs/settings/notion-sync.js"></script><script src="js/tabs/settings/comm-tour.js"></script><script src="js/tabs/settings/login-devices.js"></script><script src="js/tabs/settings/app-lock-pin.js"></script><script src="js/tabs/settings/dev-debug-gate.js"></script><script src="js/tabs/settings/guest-migration.js"></script><script src="js/tabs/settings/tab-guide.js"></script><script src="js/tabs/settings/onboarding.js"></script><script src="js/tabs/settings/app-defaults.js"></script><script src="js/tabs/settings/render.js"></script>
-<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/quick-actions.js"></script><script src="js/tabs/settings/app-evaluation.js"></script><script src="js/tabs/settings/session-entry.js"></script><script src="js/tabs/settings/avatar-levelup-modal.js"></script><script src="js/tabs/settings/inapp-landing.js"></script><script src="js/tabs/settings/feedback-bot-setup.js"></script><script src="js/tabs/settings/device-session.js"></script><script src="js/tabs/settings/notify-timer.js"></script><script src="js/tabs/settings/web-push.js"></script><script src="js/tabs/settings/tester-entry.js"></script><script src="js/tabs/settings/account-actions.js"></script><script src="js/tabs/settings/first-login-guide.js"></script><script src="js/tabs/settings/privacy-badges.js"></script><script src="js/tabs/settings/app-lock-pin-format.js"></script><script src="js/tabs/settings/auth-screen-actions.js"></script><script src="js/tabs/settings/guide-buttons.js"></script><script src="js/tabs/settings/support-inquiry-bind.js"></script><script src="js/tabs/settings/ux-telemetry.js"></script><script src="js/tabs/settings/widget-modal-opener.js"></script><script src="js/tabs/settings/withdraw-modal.js"></script><script src="js/tabs/settings/notification-helper.js"></script><script src="js/tabs/settings/a11y-announce.js"></script><script src="js/tabs/settings/boot-wiring.js"></script><script src="js/tabs/settings/index.js"></script>
+<script src="js/tabs/settings/adaptive-ux.js"></script><script src="js/tabs/settings/pwa-install.js"></script><script src="js/tabs/settings/notify-soft-ask.js"></script><script src="js/tabs/settings/support-modals.js"></script><script src="js/tabs/settings/widget-settings-modal.js"></script><script src="js/tabs/settings/quick-actions.js"></script><script src="js/tabs/settings/app-evaluation.js"></script><script src="js/tabs/settings/session-entry.js"></script><script src="js/tabs/settings/avatar-levelup-modal.js"></script><script src="js/tabs/settings/inapp-landing.js"></script><script src="js/tabs/settings/feedback-bot-setup.js"></script><script src="js/tabs/settings/device-session.js"></script><script src="js/tabs/settings/notify-timer.js"></script><script src="js/tabs/settings/web-push.js"></script><script src="js/tabs/settings/tester-entry.js"></script><script src="js/tabs/settings/account-actions.js"></script><script src="js/tabs/settings/first-login-guide.js"></script><script src="js/tabs/settings/privacy-badges.js"></script><script src="js/tabs/settings/app-lock-pin-format.js"></script><script src="js/tabs/settings/auth-screen-actions.js"></script><script src="js/tabs/settings/guide-buttons.js"></script><script src="js/tabs/settings/support-inquiry-bind.js"></script><script src="js/tabs/settings/ux-telemetry.js"></script><script src="js/tabs/settings/widget-modal-opener.js"></script><script src="js/tabs/settings/withdraw-modal.js"></script><script src="js/tabs/settings/notification-helper.js"></script><script src="js/tabs/settings/a11y-announce.js"></script><script src="js/tabs/settings/boot-wiring.js"></script><script src="js/tabs/settings/user-session-realtime.js"></script><script src="js/tabs/settings/index.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
 <script src="js/top-helpful.js"></script>
@@ -2346,6 +2346,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-439] js/tabs/settings/quick-actions.js · js/tabs/records/checkin-capture.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var bindCaptureLiveMeta = _recordsKit.bindCaptureLiveMeta;
   var bindCaptureSave = _recordsKit.bindCaptureSave;
+  window.OurgoalAppScope.expose('index.html', {
+    get capturePhotoInput(){ return capturePhotoInput; },
+    get capturePhotoPreview(){ return capturePhotoPreview; },
+    get pendingCapturePhoto(){ return pendingCapturePhoto; }, set pendingCapturePhoto(v){ pendingCapturePhoto = v; }
+  });
   /* [#TASK-ES-600] js/tabs/records/quick-checkin.js — 가져오기 0개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-601] js/tabs/goals/goal-rescale.js — 가져오기 0개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [어려움 이음매 자리 H1] */
@@ -2562,12 +2567,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var selectSmartTag = _goalsKit.selectSmartTag;
   var handleGoalFastAddSubmit = _goalsKit.handleGoalFastAddSubmit;
   window.OurgoalAppScope.expose('index.html', {
-    get openMicPermissionGuideModal(){ return openMicPermissionGuideModal; }
+    get capturePhotoBtn(){ return capturePhotoBtn; },
+    get openMicPermissionGuideModal(){ return openMicPermissionGuideModal; },
+    get qRoutineRow(){ return qRoutineRow; }
   });
   /* [#TASK-ES-645] js/tabs/records/template-market.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var openTemplateMarketModal = _recordsKit.openTemplateMarketModal;
   window.OurgoalAppScope.expose('index.html', {
     get CURATED_MARKET_TEMPLATES(){ return CURATED_MARKET_TEMPLATES; }
+  });
+  /* [#TASK-ES-653] js/tabs/settings/user-session-realtime.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var setupUserSessionRealtime = _settingsKit.setupUserSessionRealtime;
+  window.OurgoalAppScope.expose('index.html', {
+    get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; }, set USER_SESSION_CHANNEL(v){ USER_SESSION_CHANNEL = v; },
+    get getDeviceId(){ return getDeviceId; },
+    get performLogout(){ return performLogout; }
   });
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
@@ -3040,7 +3054,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
 
   /* ============ 원터치 퀵 루틴 칩 ============ */
-  window.OurgoalAppState.define('qRoutineRow', document.getElementById('quickRoutineRow'));
+  var qRoutineRow = document.getElementById('quickRoutineRow');
   bindQuickRoutineChips(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 bindQuickRoutineChips 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227) ============ */
@@ -3049,13 +3063,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   startVoiceCheckin(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 startVoiceCheckin 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 사진 인증 & 뷰어 모달 (가상유저 요청 P1) ============ */
-  window.OurgoalAppState.defineVar('pendingCapturePhoto', null);
+  var pendingCapturePhoto = null;
 
   /* [#TASK-ES-444] openPhotoViewerModal · compressImage → js/tabs/records/photo-proof.js 로 옮김(인라인 스크립트 세포화 P1) */
 
-  window.OurgoalAppState.define('capturePhotoBtn', document.getElementById('capturePhotoBtn'));
-  window.OurgoalAppState.define('capturePhotoInput', document.getElementById('capturePhotoInput'));
-  window.OurgoalAppState.define('capturePhotoPreview', document.getElementById('capturePhotoPreview'));
+  var capturePhotoBtn = document.getElementById('capturePhotoBtn');
+  var capturePhotoInput = document.getElementById('capturePhotoInput');
+  var capturePhotoPreview = document.getElementById('capturePhotoPreview');
   bindCapturePhoto(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 bindCapturePhoto 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 체크인 입력 글자수 힌트 (#TASK-ES-367: 열 수 없던 활동 테마 선택 창·배지 제거, 승인 2026-10-04) ============ */
@@ -3262,24 +3276,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-545] canManageTeamGoals · TEAM_COMMENTS_CACHE → js/tabs/goals/team-comments.js 로 옮김(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서 — 앞 주석 포함) */
   window.OurgoalAppState.defineVar('REALTIME_CHANNELS_SETUP', false);
   var USER_SESSION_CHANNEL = null;
-  /* [#TASK-ES-545] setupRealtimeChannelsOnce → js/tabs/goals/team-comments.js 로 옮김(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서 — 앞 주석 포함) */
-  function setupUserSessionRealtime(){
-    if(!sb || typeof sb.channel !== 'function' || !state.profile || !state.profile.id) return;
-    if(USER_SESSION_CHANNEL){
-      try{ sb.removeChannel(USER_SESSION_CHANNEL); }catch(e){}
-      USER_SESSION_CHANNEL = null;
-    }
-    var chName = 'user_session_' + state.profile.id;
-    USER_SESSION_CHANNEL = sb.channel(chName, { config: { broadcast: { self: false } } })
-      .on('broadcast', { event: 'remote_logout' }, async function(msg){
-        var payload = (msg && msg.payload) || {};
-        var myDev = getDeviceId();
-        if(payload.keptDeviceId && payload.keptDeviceId !== myDev){
-          await performLogout('다른 기기에서 모든 기기 원격 로그아웃이 실행되어 로그아웃되었습니다.');
-        }
-      })
-      .subscribe();
-  }
+  /* [#TASK-ES-653] setupUserSessionRealtime → js/tabs/settings/user-session-realtime.js 로 옮김(세션 실시간 채널 구독 함수 이전 — setupUserSessionRealtime — 앞 주석 포함) */
   /* [#TASK-ES-545] ensureTeamCommentsLoaded · setupTeamCommentsRealtime → js/tabs/goals/team-comments.js 로 옮김(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서 — 앞 주석 포함) */
   /* [#TASK-ES-545] filterHidden → js/tabs/comm/user-blocks.js 로 옮김(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서 — 앞 주석 포함) */
   /* [#TASK-ES-545] sortGoalsByOrder · shiftGoalOrder · reorderGoal → js/tabs/goals/goal-order.js 로 옮김(인라인 3단계 Z2 팀·소통 — 팀 목표 댓글·차단·목표 순서 — 앞 주석 포함) */
