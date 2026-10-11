@@ -355,7 +355,7 @@
   if (!R) return;
   var K = g.OurgoalGoalsKit;
   if (K) R.provide('goals/new-goal-modal', {
-    localGoalTemplate: K.localGoalTemplate, promptNewGoal: K.promptNewGoal
+    bindNewGoalStepExports: K.bindNewGoalStepExports, localGoalTemplate: K.localGoalTemplate, promptNewGoal: K.promptNewGoal
   }, { window: [
     'localGoalTemplate', 'promptNewGoal'
   ], windowOnly: [

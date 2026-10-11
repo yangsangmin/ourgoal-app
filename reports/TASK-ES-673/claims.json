@@ -1,0 +1,1079 @@
+{
+ "task": "TASK-ES-673",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-673-UNSTATE-3.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 IIFE 에서 통로에 노출된 상태 이름 9개의 소유를 상태 기관(js/core/app-state.js)으로 옮긴다(생성기 unstate — getter/setter 줄 삭제 · 선언문을 define/defineVar 로 바꿔 쓰기 · window 복사 줄 오른쪽 바꿔 쓰기). 앱 동작은 그대로다."
+  },
+  {
+   "id": "R2",
+   "text": "옮긴 이름은 상태 기관이 같은 값·같은 종류의 접근자로 통로에 내준다: 이름별 통로 값 요약 · 접근자 종류 · 쓰기 왕복 · window 복사의 동일성이 기준과 같고, 통로에서 사라진 이름이 없다."
+  },
+  {
+   "id": "R3",
+   "text": "지우고 바꿔 쓰는 대상은 닫힌 목록 X4·X5·X6 의 줄뿐이고 names 밖 이름·함수 본문·그 밖의 글자는 바꾸지 않는다. 바뀐 제품 파일은 index.html 하나다."
+  },
+  {
+   "id": "R4",
+   "text": "증명 하한(설계 4절): 인라인 줄 수 감소와 기준선 기록 · 모듈 로드 새 회귀 0 · npm test 검사 수 동일·폐기 0 · 무결성 게이트 통과 · tests/·금고·생성기·상태 기관 변경 0."
+  },
+  {
+   "id": "R5",
+   "text": "이 PR 을 반영한 index.html 에 남은 상태 이름을 풀리는 조건별로 다시 재서 보고 파일로 남긴다."
+  },
+  {
+   "id": "R6",
+   "text": "서버 연결 객체(sb)는 원래 노출 줄과 같은 종류의 접근자(읽기 전용)로 통로에 있고, 통로로 읽는 쪽이 같은 값을 받는다 — 법정·작업자 PC 에서는 null(기준 · 작업 동일)이고, null 이 아닐 때 같은 객체가 닿는지는 가짜 연결 라이브러리로 쟀다."
+  },
+  {
+   "id": "R7",
+   "text": "공유 함수(shareContent)는 선언문이 define(…) 의 인자가 되면서 함수의 name 이 빈 글자가 된다. 그 name 을 읽는 코드가 없어 동작에 영향이 없음을 정적 검사와 덫으로 잰다."
+  },
+  {
+   "id": "R8",
+   "text": "진짜 서버에 붙은 상태에서 서버 연결 객체로 하는 일이 이전 전과 같다."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "게스트 화면에서 숨겨져 누를 수 없는 진입로와 로그인 뒤 화면의 동작은 화면 시나리오로 재지 못했다. 상태 이름 전수는 탐침의 값 요약 · 접근자 종류 · 쓰기 왕복(작업자 측정)으로 쟀고, 법정이 그것을 다시 재는 것은 아니다.",
+   "cannotBecause": "out-of-scope-feature"
+  },
+  {
+   "text": "공유 함수의 name 이 'shareContent' 에서 '' 로 바뀐다(인자 수·본문 글자는 같다). 상태 탐침과 등록 기관 대조 탐침의 함수 지문은 name 을 포함하므로 이 이름 하나에서 지문이 달라진다 — 숨기지 않고 주장에 그 목록을 그대로 적었다. 브라우저 개발자 도구의 호출 스택에 보이는 이름도 달라진다(재지 않았다)."
+  },
+  {
+   "text": "가짜 연결 라이브러리 방식은 페이지가 뜨기 전에 window.supabase 를 기록용 대역으로 심은 작업자 측정이다. 「null 이 아닌 값이 같은 길로 닿는가」만 보여 주고 서버 동작은 재지 못한다. 법정이 그 탐침을 다시 돌린 것은 아니다."
+  },
+  {
+   "text": "팀 개설 시나리오(u5)는 게스트가 이 브라우저 안에서만 팀을 만드는 조작이다(서버 연결 객체가 null 이라 서버로 가지 않는다)."
+  },
+  {
+   "text": "남은 상태 이름(생성기가 멈춘 것 · 무결성 게이트가 선언 글자를 붙잡는 것 · 통로에 노출되지 않은 것)의 이전은 이 PR 에 없다. reports/TASK-ES-673/remaining-state.json 에 풀리는 조건별로 적었다.",
+   "cannotBecause": "out-of-scope-feature"
+  }
+ ],
+ "claims": [
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 진입해 아바타 인사 팝업을 닫고 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성이 되고 예외가 없다 (상태 이전 3차 전후 보존) — 상태 이전 전과 같다. index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u1-guest-boot-six-tabs.json",
+   "proof": "proof.json",
+   "id": "C1"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 목표 탭의 템플릿 백과사전에 들어가면 처음에 개인·AI·전체가 골라져 있고, 분류 칩·검색어·종류 (템플릿 하위 탭 상태 넷을 상태 기관으로 옮기기 전후 보존) — 상태 이전 전과 같다. index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u2-template-subtab-filters.json",
+   "proof": "proof.json",
+   "id": "C2"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 소통 탭의 피드 하위 탭을 누르면 피드 머리 문구가 보이고 예외가 없다 (피드 캐시를 상태 기관으로 옮기기 전후 보존 — 게스트는 서버 피드를 불러오지 않는다) — 상태 이전 전과 같다. index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u3-comm-feed-opens.json",
+   "proof": "proof.json",
+   "id": "C3"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 소통 탭의 팀 하위 탭을 누르면 예시 모임 목록(「2026 하반기 전략 워크숍 TF」 포함)이 그려지고, 그 모임을 누르면 모임 상세에 그 모임의 소개 글과 공동 달성률이 보인다 (모임 목록 자료를 상태 기관으로 옮기기 전후 보존 — 읽기만 한다) — 상태 이전 전과 같다. index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u4-comm-group-list-detail.json",
+   "proof": "proof.json",
+   "id": "C4"
+  },
+  {
+   "req": "R1",
+   "kind": "behavior",
+   "change": "preserve",
+   "domain": "ui-behavior",
+   "statement": "게스트로 소통 탭 「👥 팀」에서 「+ 새 팀 개설하기」를 누르고 추천 「🔥 목표 완주 크루」와 카테고리를 골라 「팀 만들기」를 누르면 새 팀이 팀 목록에 그려진다 (모임 목록 배열에 끼워 넣은 것이 화면에 닿는 길 — 상태 기관으로 옮기기 전후 보존. 게스트는 서버 연결이 없어 이 브라우저 안에서만 만들어진다) — 상태 이전 전과 같다. index.html 은 생성기 설정(proof.json)을 기준 커밋에서 다시 돌린 결과와 바이트 단위로 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "scenario": "scenarios/u5-comm-team-create-local.json",
+   "proof": "proof.json",
+   "id": "C5"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "옮긴 이름을 포함해 통로에 노출된 상태 이름 전부의 통로 값 요약 · 접근자 종류 · window 복사의 동일성 · 쓰기 왕복을 기준과 맞대면, 함수 이름 칸 말고 다른 것이 있는 이름이 0 개다(기준을 두 번 재도 달라지는 이름은 뺀다).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/state-probe.work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.stateProbe.differingBeyondFunctionName",
+    "equals": []
+   },
+   "id": "C6"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "그 맞댐에서 달라진 이름은 함수 이름 칸만 다른 것뿐이고 그 목록은 이것이다(공유 함수 하나 — 인자 수·본문 글자 해시는 같고 함수의 name 만 빈 글자가 됐다).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.stateProbe.differingFunctionNameOnly",
+    "equals": [
+     "shareContent"
+    ]
+   },
+   "id": "C7"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "달라진 이름의 수.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.stateProbe.differingCount",
+    "equals": 1
+   },
+   "id": "C8"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리에서 상태 기관이 맡은 이름과 종류(읽기 전용·읽기쓰기)·주인 표시가 설정(proof.json)의 이름과 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.stateProbe.organMatchesProof",
+    "equals": true
+   },
+   "id": "C9"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "쓰기 가능한 이름의 쓰기 왕복이 작업 트리에서 전부 된다(기준과 같은 수).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.stateProbe.writable.work.roundtripOk",
+    "equals": 7
+   },
+   "id": "C10"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "게스트 부팅 뒤 작업 트리의 예외가 0 건이다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.stateProbe.exceptions.work",
+    "equals": 0
+   },
+   "id": "C11"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "등록 기관 대조 탐침(기준 트리 이름 목록 고정): 통로에서 사라진 이름이 없다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.registryCompare.scopeLost",
+    "equals": []
+   },
+   "id": "C12"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "등록 기관 대조 탐침: 이름별 통로 값 지문에서 함수 이름 칸 말고 다른 것이 있는 이름이 없다(본질 변동 이름 제외).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.registryCompare.differingScopeBeyondFunctionName",
+    "equals": []
+   },
+   "id": "C13"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "등록 기관 대조 탐침: 이름별 window 값 지문에서 함수 이름 칸 말고 다른 것이 있는 이름이 없다(본질 변동 이름 제외).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.registryCompare.differingWindowBeyondFunctionName",
+    "equals": []
+   },
+   "id": "C14"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "등록 기관 대조 탐침: 통로 값 지문이 달라진 이름 목록(함수 이름 칸만 다른 것).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.registryCompare.differingScope",
+    "equals": [
+     "shareContent"
+    ]
+   },
+   "id": "C15"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "등록 기관 대조 탐침: window 값 지문이 달라진 이름 목록(함수 이름 칸만 다른 것).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.registryCompare.differingWindow",
+    "equals": [
+     "shareContent"
+    ]
+   },
+   "id": "C16"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "손잡이 탐침(서버 연결 객체 · 공유 함수 · 모임 목록 · 닫기 단추 · 템플릿 하위 탭 넷 · 피드 캐시): 주인 표시·기관 종류·함수 이름 칸을 가리면 기준과 작업의 기록이 통째로 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/handle-probe.base.json",
+    "reports/TASK-ES-673/handle-probe.work.json",
+    "reports/TASK-ES-673/tools/handle-probe.cjs"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.sameAsBaseExceptOwnerAndFunctionName",
+    "equals": true
+   },
+   "id": "C17"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "손잡이 탐침을 기준에서 두 번 돌린 기록이 서로 같다(본질 변동 없음).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/handle-probe.base2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.baseRepeatSame",
+    "equals": true
+   },
+   "id": "C18"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모임 목록(MOCK_GROUPS): 길이 · 내용 해시 · 다시 읽어도 같은 배열 · 제자리 변경이 통로로 보임 · 엄격 모드 대입 시도의 결과가 기준과 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.MOCK_GROUPS.same",
+    "equals": true
+   },
+   "id": "C19"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "레벨업 창 닫기 단추(btnAvLvClose): 문서의 그 요소와 같은 것이고 엄격 모드 대입 시도의 결과가 기준과 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.btnAvLvClose.same",
+    "equals": true
+   },
+   "id": "C20"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 트리에서 레벨업 창을 열고 통로의 그 단추를 누르면 창이 닫힌다(닫기 배선이 돈다).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.btnAvLvClose.closeWiringWorks",
+    "equals": true
+   },
+   "id": "C21"
+  },
+  {
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "작업 index.html 인라인 IIFE 에 옮긴 이름이 선언 없이 식별자 참조로 남은 자리가 0 곳이다(문법 분석 — 읽고 쓰는 곳은 전부 통로 L. 을 거친다).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.usage.bareInlineUnbound",
+    "equals": 0
+   },
+   "id": "C22"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "서버 연결 객체(sb)의 통로 접근자는 기준과 작업 모두 읽기 전용(get 만)이다 — 생성기가 원래 노출 줄(get 만)을 보고 define 으로 옮겼다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/handle-probe.work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.sb.accessorIsGetOnlyBoth",
+    "equals": true
+   },
+   "id": "C23"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기가 sb 에 고른 기관 함수.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/unstate-meta.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.sb.apiByGenerator",
+    "equals": "define"
+   },
+   "id": "C24"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "통로의 sb 에 엄격 모드로 대입을 시도한 결과가 기준과 작업에서 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.sb.strictWriteSame",
+    "equals": true
+   },
+   "id": "C25"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "법정·작업자 PC 의 브라우저에서 sb 의 값은 기준과 작업 모두 null 이다(외부 통신 차단).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.sb.valueKind",
+    "equals": [
+     "null",
+     "null"
+    ]
+   },
+   "id": "C26"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "템플릿 부품 초기화가 건네받은 연결 객체가 통로의 sb 와 같은 것이다(기준 · 작업).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.sb.partInitGotScopeSb",
+    "equals": [
+     true,
+     true
+    ]
+   },
+   "id": "C27"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "저장소에서 sb 를 통로로 대입하는 자리가 없다(L.sb = … 0 곳).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.sb.scopeAssignSites",
+    "equals": []
+   },
+   "id": "C28"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "가짜 연결 라이브러리 방식(진짜 서버 아님): 작업 트리에서 연결 만들기가 한 번 불리고 그 객체가 통로 · window.sb · 템플릿 부품 초기화에 같은 것으로 닿는다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/handle-probe-fake.work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.fakeClient.workOneCreateCallSameObjectEverywhere",
+    "equals": true
+   },
+   "id": "C29"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "가짜 연결 라이브러리 방식: 주인 표시·기관 종류·함수 이름 칸을 가리면 기준과 작업의 기록이 통째로 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/handle-probe-fake.base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.fakeClient.sameAsBaseExceptOwnerAndFunctionName",
+    "equals": true
+   },
+   "id": "C30"
+  },
+  {
+   "req": "R6",
+   "kind": "static",
+   "domain": "config",
+   "statement": "가짜 연결 라이브러리 방식: 부팅 동안 그 객체의 맨 위 속성을 읽은 이름과 횟수가 기준과 작업에서 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.fakeClient.topLevelReadsSame",
+    "equals": true
+   },
+   "id": "C31"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "공유 함수(shareContent)의 name 은 기준에서 shareContent, 작업에서 빈 글자다(대입 순간에 잰 값).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.nameAtAssign",
+    "equals": [
+     "shareContent",
+     ""
+    ]
+   },
+   "id": "C32"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "그 함수의 인자 수와 본문 글자 해시는 기준과 작업에서 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.sourceHashSame",
+    "equals": true
+   },
+   "id": "C33"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "그 함수의 name 을 읽는 순간을 잡는 덫에 걸린 읽기가 기준 · 작업 · 가짜 연결 방식 기준 · 작업 모두 0 번이다(부팅 · 여섯 탭 · 대역 엔진 호출 · 장터 미리보기 공유 단추).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.nameReadsTotal",
+    "equals": 0
+   },
+   "id": "C34"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "통로 · window 로 부른 호출이 공유 엔진에 같은 인자 객체를 넘기고 엔진의 반환값을 그대로 돌려주며, 장터 미리보기 공유 단추가 엔진을 한 번 부르고, 엔진이 없으면 Promise 를 돌려준다 — 작업 트리에서 전부 참.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.forwardWorkOk",
+    "equals": true
+   },
+   "id": "C35"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "그 호출 기록이 기준과 작업에서 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.forwardSame",
+    "equals": true
+   },
+   "id": "C36"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "정적 검사: 저장소 제품 코드에서 그 함수 객체의 속성(name · length · toString 등)을 읽는 자리 수(기준 · 작업).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/name-readers.work.json",
+    "reports/TASK-ES-673/tools/name-readers-scan.cjs"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.staticScan.propertyReads",
+    "equals": [
+     0,
+     0
+    ]
+   },
+   "id": "C37"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "정적 검사: 작업 트리에서 그 함수 객체가 엔진 파일 밖에서 인자·반환값·객체 속성 값으로 흘러가는 자리 수(기준의 1 은 지워진 expose getter 의 return 줄이다).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.staticScan.valueEscapesOutsideEngineFile",
+    "equals": [
+     1,
+     0
+    ]
+   },
+   "id": "C38"
+  },
+  {
+   "req": "R7",
+   "kind": "static",
+   "domain": "config",
+   "statement": "정적 검사: window · 통로를 통째로 훑는 줄(for…in · Object.keys 류) 수(기준 · 작업).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.handles.shareContent.staticScan.wholeObjectEnumerations",
+    "equals": [
+     0,
+     0
+    ]
+   },
+   "id": "C39"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "바뀐 제품 파일은 index.html 하나다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.changed.onlyIndexHtml",
+    "equals": true
+   },
+   "id": "C40"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "되짚기: 기준 index.html 에 생성기 기록(지운 줄 · 쉼표 · 선언 머리와 끝 · window 복사 오른쪽)을 적용한 결과가 작업 index.html 과 글자 그대로 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "reports/TASK-ES-673/unstate-meta.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.replay.rebuiltEqualsWork",
+    "equals": true
+   },
+   "id": "C41"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지운 줄 가운데 대상 이름의 expose 속성 줄·빈 expose 문 껍데기 밖의 줄이 없다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.kindsOnly.deletedOutsideListedKinds",
+    "equals": []
+   },
+   "id": "C42"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지운 expose 속성 줄은 전부 설정에 있는 이름의 `return X;`·`X = v;` 꼴이다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.kindsOnly.exposePropsNotTrivialAccessorOfProofName",
+    "equals": []
+   },
+   "id": "C43"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "설정(names) 밖의 이름을 건드린 기록이 없다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.kindsOnly.namesOutsideProof",
+    "equals": []
+   },
+   "id": "C44"
+  },
+  {
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "바뀐 줄은 선언 머리 · 선언 끝 · window 복사 줄뿐이다(생성기 기록의 바뀐 줄 번호와 같다).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.kindsOnly.editedLinesEqualExpected",
+    "equals": true
+   },
+   "id": "C45"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "인라인 스크립트 줄 수가 줄었다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.inlineScriptLines.decreased",
+    "equals": true
+   },
+   "id": "C46"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "줄어든 인라인 줄 수가 생성기가 지운 줄 수와 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.inlineScriptLines.equalsDeletedLines",
+    "equals": true
+   },
+   "id": "C47"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "docs/architecture/module-baseline.json 의 마지막 기록 inlineScriptLines 가 작업 트리 측정값과 같다(module-guard --update 로 기록).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json",
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.baseline.recordedEqualsMeasured",
+    "equals": true
+   },
+   "id": "C48"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모듈 로드 탐침의 새 회귀가 없다.",
+   "touches": [
+    "reports/TASK-ES-673/module-load.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/module-load.json",
+    "path": "regressions",
+    "equals": []
+   },
+   "id": "C49"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 를 기준 트리와 작업 트리에서 전경으로 끝까지 돌려 종료 코드 0 이고 검사 줄·요약이 같다(폐기 0).",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.npmTest.same",
+    "equals": true
+   },
+   "id": "C50"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "npm test 의 스크립트와 tests/*.test.js 를 하나씩 따로 돌린 결과(실패 집합·꼬리 글자)가 기준과 같다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.testsEach.sameAsBase",
+    "equals": true
+   },
+   "id": "C51"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "무결성 게이트 종료 코드가 0 이다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.guard.integrityGateExitCode",
+    "equals": 0
+   },
+   "id": "C52"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "tests/ 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.changed.testsChanged",
+    "equals": []
+   },
+   "id": "C53"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "금고(court/** 등) 아래 바뀐 파일이 없다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.changed.vaultChanged",
+    "equals": []
+   },
+   "id": "C54"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기 변경이 없다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.changed.generatorChanged",
+    "equals": []
+   },
+   "id": "C55"
+  },
+  {
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "상태 기관 · 통로 파일 변경이 없다.",
+   "touches": [
+    "reports/TASK-ES-673/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/measurement.json",
+    "path": "summary.changed.organChanged",
+    "equals": []
+   },
+   "id": "C56"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "남은 상태 이름 보고 파일: 옮긴 이름 수.",
+   "touches": [
+    "reports/TASK-ES-673/remaining-state.json",
+    "reports/TASK-ES-673/unstate-run.cjs"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/remaining-state.json",
+    "path": "totals.moved",
+    "equals": 9
+   },
+   "id": "C57"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "남은 상태 이름 보고 파일: 생성기가 멈춘 이름 수.",
+   "touches": [
+    "reports/TASK-ES-673/remaining-state.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/remaining-state.json",
+    "path": "totals.stoppedByGenerator",
+    "equals": 1
+   },
+   "id": "C58"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "남은 상태 이름 보고 파일: 통로에 노출되지 않은 이름 수.",
+   "touches": [
+    "reports/TASK-ES-673/remaining-state.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/remaining-state.json",
+    "path": "totals.notExposed",
+    "equals": 2
+   },
+   "id": "C59"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "남은 상태 이름 보고 파일: 무결성 게이트가 선언 글자를 붙잡아 뺀 이름 수.",
+   "touches": [
+    "reports/TASK-ES-673/remaining-state.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/remaining-state.json",
+    "path": "totals.excludedBecauseGatePinsStateText",
+    "equals": 1
+   },
+   "id": "C60"
+  },
+  {
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "남은 상태 이름 보고 파일: IIFE 에 남은 상태 이름 수.",
+   "touches": [
+    "reports/TASK-ES-673/remaining-state.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-673/remaining-state.json",
+    "path": "totals.stateNamesLeftInIife",
+    "equals": 4
+   },
+   "id": "C61"
+  },
+  {
+   "req": "R8",
+   "kind": "unverified",
+   "domain": "server-api",
+   "statement": "실계정으로 로그인해 진짜 서버에 붙은 상태에서, 서버 연결 객체(sb)를 통로로 읽는 세포들이 하는 일(로그인 유지 · 서버 피드 불러오기 · 기록 저장과 다시 불러오기)이 상태 이전 전과 같다.",
+   "touches": [
+    "index.html"
+   ],
+   "unverified": {
+    "reason": "needs-live-server",
+    "who": "실서버에 실계정으로 로그인할 수 있는 사람 — 법정과 작업자 PC 의 브라우저는 외부 통신을 막아 연결 라이브러리가 뜨지 않고 서버 연결 객체가 null 이다(기준 · 작업 동일)",
+    "how": [
+     "기준 커밋과 작업 커밋을 각각 띄워 실계정으로 로그인한다",
+     "새로 고침 뒤에도 로그인이 유지되는지 본다",
+     "소통 탭 피드에 서버의 글이 불러와지는지 본다",
+     "기록을 하나 남기고 새로 고침 뒤 그 기록이 다시 보이는지 본다",
+     "두 커밋에서 같은 순서로 해 보고 결과를 맞댄다"
+    ]
+   },
+   "id": "C62"
+  }
+ ]
+}

@@ -68,7 +68,8 @@
   if (!R) return;
   var K = g.OurgoalUiHelpers;
   if (K) R.provide('core/supabase-auth', {
-    GOOGLE_OAUTH_CLIENT_ID: K.GOOGLE_OAUTH_CLIENT_ID, getSupabaseAuthToken: K.getSupabaseAuthToken
+    GOOGLE_OAUTH_CLIENT_ID: K.GOOGLE_OAUTH_CLIENT_ID, bindSupabaseAuthStateListener: K.bindSupabaseAuthStateListener,
+    getSupabaseAuthToken: K.getSupabaseAuthToken
   }, { window: [
     'getSupabaseAuthToken'
   ] });

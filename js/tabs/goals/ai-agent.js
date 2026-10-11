@@ -530,7 +530,7 @@
   if (!R) return;
   var K = g.OurgoalGoalsKit;
   if (K) R.provide('goals/ai-agent', {
-    sanitizeAttachments: K.sanitizeAttachments, showGoalAgentReviewStep: K.showGoalAgentReviewStep
+    sanitizeAttachments: K.sanitizeAttachments, sendGoalAgentMessage: K.sendGoalAgentMessage, showGoalAgentReviewStep: K.showGoalAgentReviewStep
   }, { window: [
     'showGoalAgentReviewStep'
   ], windowOnly: [

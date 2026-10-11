@@ -610,11 +610,13 @@
   if (!R) return;
   var K = g.OurgoalGoalsKit;
   if (K) R.provide('goals/template-encyclopedia-modal', {
-    REAL_USER_TEMPLATES: K.REAL_USER_TEMPLATES, cheerRealUserTemplate: K.cheerRealUserTemplate,
-    closeGoalTemplateEncyclopediaModal: K.closeTemplateEncyclopediaModal, closeTemplateEncyclopediaModal: K.closeTemplateEncyclopediaModal,
-    copyRealUserTemplate: K.copyRealUserTemplate, copyUserGoalTemplate: K.copyRealUserTemplate,
-    openGoalTemplateEncyclopediaModal: K.openTemplateEncyclopediaModal, openTemplateEncyclopediaModal: K.openTemplateEncyclopediaModal,
-    shareMyActiveGoalAsTemplate: K.shareMyActiveGoalAsTemplate
+    REAL_USER_TEMPLATES: K.REAL_USER_TEMPLATES, bindHeaderTemplateEncyclopediaClick: K.bindHeaderTemplateEncyclopediaClick,
+    bindTemplateEncyclopediaEscape: K.bindTemplateEncyclopediaEscape, bindTemplateEncyclopediaModalClick: K.bindTemplateEncyclopediaModalClick,
+    cheerRealUserTemplate: K.cheerRealUserTemplate, closeGoalTemplateEncyclopediaModal: K.closeTemplateEncyclopediaModal,
+    closeTemplateEncyclopediaModal: K.closeTemplateEncyclopediaModal, copyRealUserTemplate: K.copyRealUserTemplate,
+    copyUserGoalTemplate: K.copyRealUserTemplate, openGoalTemplateEncyclopediaModal: K.openTemplateEncyclopediaModal,
+    openTemplateEncyclopediaModal: K.openTemplateEncyclopediaModal, shareMyActiveGoalAsTemplate: K.shareMyActiveGoalAsTemplate,
+    switchTemplateEncyclopediaTab: K.switchTemplateEncyclopediaTab
   }, { window: [
     'REAL_USER_TEMPLATES', 'cheerRealUserTemplate', 'closeGoalTemplateEncyclopediaModal', 'closeTemplateEncyclopediaModal', 'copyRealUserTemplate',
     'copyUserGoalTemplate', 'openGoalTemplateEncyclopediaModal', 'openTemplateEncyclopediaModal', 'shareMyActiveGoalAsTemplate'

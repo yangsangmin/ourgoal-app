@@ -195,11 +195,11 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/avatar-levelup-modal', {
+    bindAvatarGrowthPromptSave: K.bindAvatarGrowthPromptSave, bindAvatarLevelUpBackdrop: K.bindAvatarLevelUpBackdrop,
+    bindAvatarLevelUpSaveImage: K.bindAvatarLevelUpSaveImage, bindAvatarLevelUpShare: K.bindAvatarLevelUpShare,
     closeAvatarLevelUpModal: K.closeAvatarLevelUpModal, openAvatarLevelUpModal: K.openAvatarLevelUpModal
   }, { window: [
     'closeAvatarLevelUpModal', 'openAvatarLevelUpModal'
-  ], windowOnly: [
-    'closeAvatarLevelUpModal'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

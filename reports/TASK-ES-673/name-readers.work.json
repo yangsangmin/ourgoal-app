@@ -1,0 +1,118 @@
+{
+ "tool": "reports/TASK-ES-673/tools/name-readers-scan.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T08:53:46.990Z",
+ "name": "shareContent",
+ "filesScanned": 375,
+ "filesMentioning": [
+  "index.html(인라인 2)",
+  "js/tabs/comm/feed-list.js",
+  "js/tabs/records/template-market.js",
+  "js/team-share.js",
+  "js/team-templates.js",
+  "js/viral-sharing.js"
+ ],
+ "parseErrors": [],
+ "byKind": {
+  "부른다": 5,
+  "있는지만 본다": 2,
+  "딴 이름에 담는다": 2,
+  "선언한다": 1,
+  "객체 속성 값으로 싣는다": 1,
+  "값을 단다": 2,
+  "같은 이름으로 단다": 2
+ },
+ "total": 15,
+ "wholeObjectEnumerations": [],
+ "propertyReads": [],
+ "sensitivePropertyReads": 0,
+ "valueEscapes": [
+  {
+   "at": "js/viral-sharing.js:330",
+   "kind": "객체 속성 값으로 싣는다",
+   "detail": "shareContent",
+   "viaAlias": null
+  }
+ ],
+ "valueEscapesOutsideEngineFile": 0,
+ "rows": [
+  {
+   "at": "js/tabs/comm/feed-list.js:544",
+   "kind": "부른다",
+   "detail": "직접 호출"
+  },
+  {
+   "at": "js/tabs/records/template-market.js:198",
+   "kind": "부른다",
+   "detail": "직접 호출"
+  },
+  {
+   "at": "js/team-share.js:209",
+   "kind": "있는지만 본다",
+   "detail": "typeof"
+  },
+  {
+   "at": "js/team-share.js:210",
+   "kind": "부른다",
+   "detail": "직접 호출"
+  },
+  {
+   "at": "js/team-templates.js:80",
+   "kind": "딴 이름에 담는다",
+   "detail": "fn"
+  },
+  {
+   "at": "js/team-templates.js:80",
+   "kind": "딴 이름에 담는다",
+   "detail": "fn"
+  },
+  {
+   "at": "js/team-templates.js:81",
+   "kind": "있는지만 본다",
+   "detail": "조건",
+   "viaAlias": "fn"
+  },
+  {
+   "at": "js/team-templates.js:82",
+   "kind": "부른다",
+   "detail": "직접 호출",
+   "viaAlias": "fn"
+  },
+  {
+   "at": "js/viral-sharing.js:23",
+   "kind": "선언한다",
+   "detail": "function shareContent(1) async"
+  },
+  {
+   "at": "js/viral-sharing.js:330",
+   "kind": "객체 속성 값으로 싣는다",
+   "detail": "shareContent"
+  },
+  {
+   "at": "js/viral-sharing.js:336",
+   "kind": "값을 단다",
+   "detail": "global.shareContent = Identifier(shareContent)"
+  },
+  {
+   "at": "js/viral-sharing.js:336",
+   "kind": "같은 이름으로 단다",
+   "detail": "global.shareContent"
+  },
+  {
+   "at": "index.html(인라인 2):4097",
+   "kind": "부른다",
+   "detail": "직접 호출"
+  },
+  {
+   "at": "index.html(인라인 2):4098",
+   "kind": "값을 단다",
+   "detail": "window.shareContent = MemberExpression(shareContent)"
+  },
+  {
+   "at": "index.html(인라인 2):4098",
+   "kind": "같은 이름으로 단다",
+   "detail": "window.shareContent"
+  }
+ ],
+ "note": "「속성을 읽는다」가 0 이면 저장소 제품 코드에 이 함수 객체의 name · length · toString 등을 읽는 자리가 글자로는 없다. 「인자로 넘긴다 · 돌려준다 · 객체 속성 값으로 싣는다」가 엔진 파일 밖에 0 이면 함수 객체가 이 검사가 따라가지 못하는 곳으로 흘러가지 않는다. window·통로를 통째로 훑는 코드는 이 검사가 보지 않는다(따로 검색)."
+}
