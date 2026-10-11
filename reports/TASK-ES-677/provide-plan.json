@@ -7,10 +7,9 @@
   "existingNames": 527,
   "plannedNow": 4,
   "alreadyRegistered": 1,
-  "added": 3,
+  "added": 2,
   "addedNames": [
    "handleDeepLinkRouting",
-   "renderTeamGoalsScreen",
    "switchTab"
   ],
   "upgradedFromWindowOnly": [],
@@ -18,12 +17,10 @@
   "excluded": [],
   "filesToChange": [
    "js/core/deep-link-gateway.js",
-   "js/core/registry-init.js",
-   "js/tabs/goals/team-goals-screen.js"
+   "js/core/registry-init.js"
   ],
   "newBlockFiles": [
-   "js/core/deep-link-gateway.js",
-   "js/tabs/goals/team-goals-screen.js"
+   "js/core/deep-link-gateway.js"
   ],
   "differs": []
  },
@@ -85,14 +82,14 @@
   "windowSites": 3
  },
  "counts": {
-  "registeredNames": 3,
-  "registeredScope": 3,
+  "registeredNames": 2,
+  "registeredScope": 2,
   "registeredWindow": 0,
-  "files": 3,
-  "skipped": 0,
+  "files": 2,
+  "skipped": 1,
   "iifeOwnedScope": 3,
   "iifeOwnedWindow": 2,
-  "changedThisRun": 3,
+  "changedThisRun": 2,
   "unchangedThisRun": 0,
   "staleBlocksRemoved": 0
  },
@@ -136,8 +133,8 @@
   "_goalsKit": {
    "kitPath": "OurgoalGoalsKit",
    "imports": 3,
-   "registeredImports": 1,
-   "unwireReady": 1,
+   "registeredImports": 0,
+   "unwireReady": 0,
    "blockedByIifeRefs": 0,
    "notExposed": 2,
    "notExposedNoRefs": 0
@@ -205,25 +202,8 @@
    "kits": [
     "OurgoalUiHelpers"
    ]
-  },
-  {
-   "file": "js/tabs/goals/team-goals-screen.js",
-   "owner": "goals/team-goals-screen",
-   "names": 1,
-   "kits": [
-    "OurgoalGoalsKit"
-   ]
   }
  ],
- "oneLineBlocks": [
-  {
-   "file": "js/tabs/goals/team-goals-screen.js",
-   "linesBefore": 798,
-   "linesWithNormalBlock": 808,
-   "linesWithOneLineBlock": 799
-  }
- ],
- "oneLineBlocksNote": "--compact-over-limit: 보통 꼴 블록을 붙이면 800줄을 넘는 세포에만 한 줄 꼴 블록을 붙였다(상한은 그대로)",
  "registered": [
   {
    "name": "handleDeepLinkRouting",
@@ -236,19 +216,6 @@
    "owner": "core/deep-link-gateway",
    "assigners": [
     "js/core/deep-link-gateway.js"
-   ]
-  },
-  {
-   "name": "renderTeamGoalsScreen",
-   "kinds": "scope",
-   "import": "renderTeamGoalsScreen",
-   "kit": "OurgoalGoalsKit",
-   "kitVar": "_goalsKit",
-   "member": "renderTeamGoalsScreen",
-   "file": "js/tabs/goals/team-goals-screen.js",
-   "owner": "goals/team-goals-screen",
-   "assigners": [
-    "js/tabs/goals/team-goals-screen.js"
    ]
   },
   {
@@ -265,7 +232,16 @@
    ]
   }
  ],
- "skipped": [],
+ "skipped": [
+  {
+   "name": "renderTeamGoalsScreen",
+   "kind": "scope",
+   "import": "renderTeamGoalsScreen",
+   "kit": "OurgoalGoalsKit",
+   "file": "js/tabs/goals/team-goals-screen.js",
+   "reason": "등록 블록을 붙이면 800줄 상한을 넘는다(798 → 808줄) — 세포를 책임 단위로 나눈 뒤 등록한다"
+  }
+ ],
  "iifeOwned": [
   {
    "name": "state",

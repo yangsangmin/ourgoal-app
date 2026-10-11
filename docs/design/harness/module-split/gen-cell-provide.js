@@ -15,7 +15,7 @@
 //   · setter 가 달린 통로 이름(다시 대입되는 상태 — 값 스냅샷이 어긋난다, B9 몫)
 //   · 키트에 다는 파일을 글자로 찾지 못한 이름 · defer/async 로 IIFE 뒤에 도는 파일 · 등록 기관 태그보다 앞에서 도는 파일(계획 파일에 사유와 함께 적는다)
 //
-// 사용: NODE_PATH=C:/dev/ourgoal-app/node_modules node docs/design/harness/module-split/gen-cell-provide.js <저장소 루트> [--write] [--plan <out.json>] [--keep] [--compact-over-limit]
+// 사용: NODE_PATH=C:/dev/ourgoal-app/node_modules node docs/design/harness/module-split/gen-cell-provide.js <저장소 루트> [--write] [--plan <out.json>] [--keep]
 //   --write 없이 돌리면 계획만 낸다(파일 0 변경). --write 는 멱등이다 — 기존 등록 블록(표지 사이)을 걷어 내고 다시 붙이므로 두 번 돌려도 결과가 같다.
 //   [#TASK-ES-664] --keep(기존 등록 보존): 철거가 진행된 뒤에 쓴다. index.html 의 배선은 이미 지운 이름을 더는 알려 주지 않으므로, --keep 없이 --write 하면 그 이름들의 등록이 사라진다.
 //     --keep 은 세포 파일에 이미 있는 등록 블록을 읽어 그 이름을 전부 그대로 두고, 지금 index.html 이 내주는 이름 가운데 **아직 어느 세포도 등록하지 않은 이름만** 그 주인 세포의 블록에 더한다.
@@ -30,9 +30,6 @@ const argv = process.argv.slice(2);
 const ROOT = path.resolve(argv[0] || '.');
 const WRITE = argv.includes('--write');
 const KEEP = argv.includes('--keep');
-// [#TASK-ES-677] --compact-over-limit: 보통 꼴(여러 줄)의 등록 블록을 붙이면 800줄 상한을 넘는 세포에 한해, 같은 문장을 한 줄로 이어 쓴 블록을 붙인다(그래도 넘으면 예전처럼 건너뛴다).
-//   상한·가드 값은 그대로다. 한 줄 꼴은 보통 꼴의 각 줄을 앞뒤 공백만 떼고 빈칸 하나로 이은 것이라 문장·이름·순서가 같다. 그 세포가 가벼워져 보통 꼴이 들어가게 되면 다음 실행은 보통 꼴로 쓴다.
-const COMPACT = argv.includes('--compact-over-limit');
 const PLAN_OUT = argv.indexOf('--plan') >= 0 ? argv[argv.indexOf('--plan') + 1] : null;
 const REGISTRY_FILE = 'js/core/cell-registry.js';
 const MARK_BEGIN = '/* ==== [세포 등록 시작 · gen-cell-provide.js] 이 세포가 키트에 단 이름을 등록 기관(js/core/cell-registry.js)에 스스로 등록한다 — 대조(compare) 전용, 동작 변화 0. 생성기 산출이므로 손으로 고치지 않는다. ==== */';
@@ -294,7 +291,7 @@ function packed(items, indent, sep) {
   if (cur.trim()) out.push(cur);
   return out;
 }
-function blockFor(entry, oneLine) {
+function blockFor(entry) {
   const kitPaths = Object.keys(entry.kits).sort();
   const L = [MARK_BEGIN, '(function (g) {', '  var R = g.OurgoalCellRegistry;', '  if (!R) return;'];
   kitPaths.forEach((kp, i) => {
@@ -319,7 +316,7 @@ function blockFor(entry, oneLine) {
     } else L.push('  }, { window: [] });');
   });
   L.push("})(typeof window !== 'undefined' ? window : globalThis);", MARK_END);
-  return oneLine ? L.map(s => s.trim()).join(' ') : L.join('\n'); // [#TASK-ES-677] 한 줄 꼴(--compact-over-limit)
+  return L.join('\n');
 }
 function stripBlock(code) {
   const b = code.indexOf(MARK_BEGIN);
@@ -389,7 +386,6 @@ function parseBlock(code, file) {
 // ───────────────────────── 5. 실행 ─────────────────────────
 const P = plan();
 const MAX_LINES = 800; // 헌법 제3조 제3항 · scripts/module-metrics.js · court/lib/new-debt.js 와 같은 셈
-const ONE_LINE = {}; // [#TASK-ES-677] 한 줄 꼴 블록을 붙이는 세포(--compact-over-limit)
 const countLines = text => { const t = String(text).replace(/\r\n/g, '\n'); if (!t.length) return 0; const n = t.split('\n').length; return t.endsWith('\n') ? n - 1 : n; };
 // [#TASK-ES-664] --keep: 기존 등록은 그대로 두고, 아직 어느 세포도 등록하지 않은 이름만 더한다
 let KEEPINFO = null;
@@ -402,8 +398,7 @@ if (KEEP) {
     if (!pb) continue;
     // 읽은 것으로 다시 만든 블록이 원래 글자와 같아야 한다 — 아니면 더하는 과정에서 기존 글자가 달라진다
     const b0 = cur.indexOf(MARK_BEGIN), e0 = cur.indexOf(MARK_END, b0) + MARK_END.length;
-    const cur0 = cur.slice(b0, e0).replace(/\r\n/g, '\n'), wasOneLine = !cur0.includes('\n'); // [#TASK-ES-677] 한 줄 꼴로 붙어 있던 블록은 한 줄 꼴로 다시 만들어 맞댄다
-    if (blockFor(pb, wasOneLine) !== cur0) throw new Error(sc.file + ': 기존 등록 블록을 읽어 다시 만든 글자가 원래 글자와 다르다 — --keep 을 멈춘다');
+    if (blockFor(pb) !== cur.slice(b0, e0).replace(/\r\n/g, '\n')) throw new Error(sc.file + ': 기존 등록 블록을 읽어 다시 만든 글자가 원래 글자와 다르다 — --keep 을 멈춘다');
     existing[sc.file] = pb;
     Object.keys(pb.kits).forEach(kit => pb.kits[kit].forEach(x => {
       if (nameAt[x.name]) throw new Error('같은 이름을 두 세포가 등록하고 있다: ' + x.name + ' (' + nameAt[x.name].file + ' · ' + sc.file + ')');
@@ -443,10 +438,6 @@ for (const f of Object.keys(P.byFile).sort()) {
   const after = countLines(applyBlock(orig, blockFor(P.byFile[f]), eol0));
   if (after <= MAX_LINES) continue;
   const before = countLines(orig);
-  if (COMPACT) { // [#TASK-ES-677] 보통 꼴이 넘칠 때만 한 줄 꼴을 본다
-    const afterOne = countLines(applyBlock(orig, blockFor(P.byFile[f], true), eol0));
-    if (afterOne <= MAX_LINES) { ONE_LINE[f] = { file: f, linesBefore: before, linesWithNormalBlock: after, linesWithOneLineBlock: afterOne }; continue; }
-  }
   const reason = '등록 블록을 붙이면 800줄 상한을 넘는다(' + before + ' → ' + after + '줄) — 세포를 책임 단위로 나눈 뒤 등록한다';
   P.registered = P.registered.filter(r => {
     if (r.file !== f) return true;
@@ -470,7 +461,7 @@ for (const f of allJs) {
   let cur; try { cur = read(f); } catch (e) { continue; }
   const eol = /\r\n/.test(cur) ? '\r\n' : '\n';
   const orig = stripBlock(cur);
-  const next = P.byFile[f] ? applyBlock(orig, blockFor(P.byFile[f], !!ONE_LINE[f]), eol) : orig;
+  const next = P.byFile[f] ? applyBlock(orig, blockFor(P.byFile[f]), eol) : orig;
   if (P.byFile[f]) {
     // 덧붙인 뒤에도 원본 문장 수 + 1(등록 IIFE)인지 — 앞 식에 붙어 읽히지 않았는지 파서로 확인한다
     const a = parser.parse(orig, { sourceType: 'script', errorRecovery: true, allowReturnOutsideFunction: true }).program.body.filter(x => x.type !== 'EmptyStatement').length;
@@ -504,7 +495,6 @@ const out = {
   byKit,
   byKitNote: 'imports=IIFE 가 그 키트에서 가져오는 이름 수 · registeredImports=그중 통로/window 로 나가 등록된 것 · unwireReady=등록됐고 IIFE 안에 getter·window 대입 말고는 참조가 없는 것(철거 후보) · blockedByIifeRefs=등록됐지만 IIFE 안 다른 코드가 아직 그 이름을 쓰는 것 · notExposed=통로·window 로 나가지 않아 등록 대상이 아닌 가져오기(그중 notExposedNoRefs 는 IIFE 안 참조도 0)',
   files: files.map(f => ({ file: f, owner: P.byFile[f].owner, names: Object.values(P.byFile[f].kits).reduce((a, b) => a + b.length, 0), kits: Object.keys(P.byFile[f].kits) })),
-  ...(COMPACT ? { oneLineBlocks: Object.values(ONE_LINE), oneLineBlocksNote: '--compact-over-limit: 보통 꼴 블록을 붙이면 800줄을 넘는 세포에만 한 줄 꼴 블록을 붙였다(상한은 그대로)' } : {}),
   registered: P.registered,
   skipped: P.skipped,
   iifeOwned: P.iifeOwned,
