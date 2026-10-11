@@ -1,0 +1,435 @@
+{
+ "task": "TASK-ES-668",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-668-TOOLS-NO-IIFE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "도구 넷(지도 scripts/inline-script-map.js · 유형표 scripts/inline-hard-types.js · 시험지 선행 실측기 scripts/inline-hard-test-probe.js · 대조 탐침 scripts/probes/cell-registry-compare.js)이 index.html 에 큰 인라인 IIFE 가 없으면 오류로 죽지 않고 「묶음 0 · 줄 0 · 이름 0」으로 정상 종료한다(상민님 「결심 1 : 승인, 금고 변경 승인」)."
+  },
+  {
+   "id": "R2",
+   "text": "생성기(docs/design/harness/module-split/gen-inline-hard.js)는 IIFE 가 없으면 「옮길 덩어리가 없다」를 분명한 문구로 알리고 0 이 아닌 종료 코드로 끝낸다(조용한 성공 금지). 아무 파일도 쓰지 않는다."
+  },
+  {
+   "id": "R3",
+   "text": "IIFE 가 있는 현재 main 에서는 도구의 출력이 고치기 전과 같다. 생성기의 기존 경로는 바이트 그대로다(단위 시험 재실행 — 출력을 재는 검사가 기준과 같다)."
+  },
+  {
+   "id": "R4",
+   "text": "고치기 전·후 측정을 싣는다(작업자 측정, 판정 아님)."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "시험지 선행 실측기(scripts/inline-hard-test-probe.js)는 현재 main 에서 고치기 전·후를 따로 돌려 맞대지 않았다(측정불가로 둔다). 모의본에서는 돌렸다."
+  },
+  {
+   "text": "생성기 단위 시험 guarded-check-670.js 의 D(생성기 diff 모양 — region 구간 밖이 기준과 글자가 같은가)는 이 변경이 파일 머리에 세 줄을 더해서 구조적으로 거짓이 된다(L110 — summary.tools.harnessNewlyFailedChecks). 출력을 재는 검사와 안쪽 일곱 묶음은 기준과 같다. 그 시험 파일은 고치지 않았다."
+  },
+  {
+   "text": "현재 main 의 지도 파일은 낡아 있다(이 변경과 무관). 이 변경은 지도 파일을 갱신하지 않는다."
+  },
+  {
+   "text": "설계 문서 CELL-REGISTRY-DESIGN.md 9.1 의 「죽는다」 다섯 줄은 이 변경이 병합되면 낡는다. 다른 작업이 고치는 문서라 건드리지 않고 보고한다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지도 도구는 인라인 IIFE 를 못 찾은 것을 따로 표시해 두고 계속 돈다.",
+   "touches": [
+    "scripts/inline-script-map.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-script-map.js",
+    "text": "const NO_IIFE = sLine < 0;"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지도 도구는 IIFE 가 없을 때 머리 묶음을 만들지 않는다.",
+   "touches": [
+    "scripts/inline-script-map.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-script-map.js",
+    "text": "if (!NO_IIFE) groups.push({ title: '(IIFE 머리 — \"use strict\" 와 첫 구획 앞)', start: firstLine, stmts: [] });"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "지도 도구는 IIFE 가 없었음을 지도 파일에 남긴다.",
+   "touches": [
+    "scripts/inline-script-map.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-script-map.js",
+    "text": "iifeHtmlLines: null, noIife: true,"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "유형표 도구는 IIFE 가 없을 때 문이 없는 빈 IIFE 를 읽은 것으로 본다.",
+   "touches": [
+    "scripts/inline-hard-types.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-hard-types.js",
+    "text": "const NO_IIFE = sLine < 0;"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "유형표 도구는 IIFE 가 없었음을 출력에 적는다.",
+   "touches": [
+    "scripts/inline-hard-types.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-hard-types.js",
+    "text": "if (NO_IIFE) console.log('큰 인라인 IIFE 없음 — 옮길 덩어리가 없다(어려움 0묶음 · 0줄 로 적는다)');"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "실측기는 IIFE 가 없을 때 문이 없는 빈 IIFE 를 읽은 것으로 본다.",
+   "touches": [
+    "scripts/inline-hard-test-probe.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/inline-hard-test-probe.js",
+    "text": "const NO_IIFE = sLine < 0;"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 탐침은 IIFE 가 없으면 window 이름 0 개를 돌려준다.",
+   "touches": [
+    "scripts/probes/cell-registry-compare.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/probes/cell-registry-compare.js",
+    "text": "if (s < 0) return { names: [], sites: [], iifeLines: null, noIife: true };"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "생성기는 IIFE 가 없으면 이유를 적고 종료 코드 3 으로 끝낸다.",
+   "touches": [
+    "docs/design/harness/module-split/gen-inline-hard.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/module-split/gen-inline-hard.js",
+    "text": "process.exitCode = 3; return; }"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 에서 지도 출력이 고치기 전과 같은지.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.mainMapOutputSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 에서 유형표 출력이 고치기 전과 같은지.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.mainTypesOutputSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 에서 두 도구가 쓴 파일이 고치기 전과 같은지.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.mainWrittenFilesSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 에서 대조 탐침의 셈이 고치기 전과 같은지.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.mainProbeCountsSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 생성기 단위 시험의 안쪽 일곱 묶음 통과·실패 수가 기준과 같은지.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.harnessInnerSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 생성기 단위 시험(기준)의 통과 수·전체 수·실패한 검사.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.harnessBase",
+    "equals": {
+     "total": 27,
+     "passed": 27,
+     "failed": []
+    }
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 생성기 단위 시험(작업)의 통과 수·전체 수·실패한 검사.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.harnessWork",
+    "equals": {
+     "total": 27,
+     "passed": 26,
+     "failed": [
+      "D"
+     ]
+    }
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 이 변경으로 새로 실패한 단위 시험 검사(생성기 diff 모양 검사).",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.harnessNewlyFailedChecks",
+    "equals": [
+     "D"
+    ]
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본에서 고치기 전 도구의 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.mockExitBefore",
+    "equals": {
+     "A": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "B": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본에서 고친 도구의 종료 코드(생성기는 3).",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.mockExitAfter",
+    "equals": {
+     "A": [
+      0,
+      0,
+      0,
+      3
+     ],
+     "B": [
+      0,
+      0,
+      0,
+      3
+     ]
+    }
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본에서 생성기 실행 전·후 작업 트리 상태가 같은지.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.generatorTreeUnchangedAfter",
+    "equals": [
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본 (가)에서 대조 탐침의 종료 코드(고치기 전 · 이름 고정 · 이름 고정 없음).",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.tools.probeMockAExit",
+    "equals": [
+     1,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 의 npm test 종료 코드(기준·PR 별).",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "summary.main.npmTestExit",
+    "equals": {
+     "base": 0,
+     "main666": 0,
+     "main667": 0,
+     "main668": 0,
+     "main669": 0,
+     "mainAll": 0
+    }
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 앱 코드 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-668/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-668/measurement.json",
+    "path": "changedScope.appCode",
+    "equals": []
+   }
+  }
+ ],
+ "retire": []
+}

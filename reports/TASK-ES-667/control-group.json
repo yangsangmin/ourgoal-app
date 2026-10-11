@@ -1,0 +1,87 @@
+{
+ "tool": "reports/TASK-ES-666/tools/control-group.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "baseCommit": "42b5511f",
+ "tree": "네 PR 을 얹고 흉내의 한계(새 파일에 신고서 없음)를 걷어 낸 모의본 (나)+등록(저장소 밖)",
+ "treeRestored": true,
+ "variants": [
+  {
+   "id": "M1",
+   "pr": 667,
+   "what": "구역 세포(모의)에서 기관이 window 에 다는 줄 window.SHARED_GROUPS_LOADED = false 를 지움(기관이 주인이 아니게 됨 → ⑤ 가 다시 1)",
+   "newlyFailing": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62",
+    "tests/new-module.test.js:65"
+   ],
+   "expected": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/new-module.test.js:65",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62"
+   ],
+   "extraNewlyFailing": [],
+   "asExpected": true,
+   "textOccurrencesInBundleFiles": null
+  },
+  {
+   "id": "M2",
+   "pr": 667,
+   "what": "그 줄을 방어 초기화 꼴(if(!window.X) window.X = false)로 바꿈 — 없으면 채우기는 주인이 아니다(⑤ 가 다시 1)",
+   "newlyFailing": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62",
+    "tests/new-module.test.js:65"
+   ],
+   "expected": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/new-module.test.js:65",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62"
+   ],
+   "extraNewlyFailing": [],
+   "asExpected": true,
+   "textOccurrencesInBundleFiles": null
+  },
+  {
+   "id": "M3",
+   "pr": 667,
+   "what": "그 줄을 js/core 밖의 옛 파일(js/zz-control-legacy.js)로 옮김 — 기관이 아닌 파일이 다는 이름은 주인이 아니다(⑤ 가 다시 1)",
+   "newlyFailing": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62",
+    "tests/new-module.test.js:65"
+   ],
+   "expected": [
+    "scripts/test-shipyard-modular.js:150",
+    "tests/cross-tab-inline-owned-es507.test.js:67",
+    "tests/cross-tab-guarded-init-es502.test.js:67",
+    "tests/new-module.test.js:65",
+    "tests/module-guard.test.js:61",
+    "tests/module-guard.test.js:62"
+   ],
+   "extraNewlyFailing": [],
+   "asExpected": true,
+   "textOccurrencesInBundleFiles": null
+  }
+ ],
+ "summary": {
+  "variants": 3,
+  "allAsExpected": true,
+  "expectedLines": 18,
+  "extraLines": 0
+ }
+}

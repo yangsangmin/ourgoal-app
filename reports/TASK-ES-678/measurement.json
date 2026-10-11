@@ -1,0 +1,502 @@
+{
+ "task": "TASK-ES-678",
+ "tool": "일회용 요약(저장소 밖) — 원시 결과는 reports/TASK-ES-620/run-asserts.cjs · run-plain.cjs · reports/TASK-ES-678/tools/unstate-gate-mock.cjs · reports/TASK-ES-666/tools/*.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "baseCommit": "da5116c4",
+ "measuredAt": "2026-10-11T10:20:23.986Z",
+ "main": {
+  "entries": [
+   132,
+   132
+  ],
+  "newlyFailing": [],
+  "newlyFailingLines": 0,
+  "goneLines": 0,
+  "plain": {
+   "base": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 197,
+    "smoke": [
+     0,
+     439,
+     0
+    ],
+    "gate": [
+     0,
+     38,
+     0
+    ],
+    "testFiles": 115,
+    "testFilesExit0": 89
+   },
+   "work": {
+    "npmTestExit": 0,
+    "checkLines": 487,
+    "okLines": 203,
+    "smoke": [
+     0,
+     439,
+     0
+    ],
+    "gate": [
+     0,
+     38,
+     0
+    ],
+    "testFiles": 115,
+    "testFilesExit0": 89
+   }
+  }
+ },
+ "selfTests": {
+  "before": 12,
+  "after": 18,
+  "added": 6
+ },
+ "unstateMock": {
+  "summary": {
+   "gateS0": [
+    38,
+    0
+   ],
+   "gateS0b": [
+    38,
+    0
+   ],
+   "gateS1": [
+    37,
+    1
+   ],
+   "gateS2": [
+    37,
+    1
+   ],
+   "gateS3": [
+    38,
+    0
+   ],
+   "s1FailsThatCheck": true,
+   "s2FailsThatCheck": true,
+   "s3Exit": 0,
+   "npmTestS3": [
+    0,
+    487,
+    197
+   ],
+   "controls": 7,
+   "controlsAllFailThatCheck": true,
+   "controlsOnlyThatCheck": true,
+   "defineLine": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);",
+   "legacyTextAfterUnstate": false,
+   "gateAfterControls": [
+    38,
+    0
+   ]
+  },
+  "steps": {
+   "S0": {
+    "what": "사본 그대로(기준)",
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "failedChecks": 0,
+     "fails": []
+    },
+    "legacyTextInIndex": true
+   },
+   "S0b": {
+    "what": "상태 이전 전 + #TASK-ES-669 판 게이트 + 이 PR 판 도우미",
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "failedChecks": 0,
+     "fails": []
+    }
+   },
+   "S1": {
+    "what": "생성기 unstate 적용(_promptEncyclopediaOpen)",
+    "gate": {
+     "exit": 1,
+     "checkLines": 37,
+     "failedChecks": 1,
+     "fails": [
+      "✗ [FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증 / 사유: 프롬프트 백과사전 아코디언 접힘 구조 누락"
+     ]
+    },
+    "generatorExit": 0,
+    "defineLineInIndex": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);",
+    "legacyTextInIndex": false
+   },
+   "S2": {
+    "what": "+ 금고 게이트를 #TASK-ES-669 판으로(도우미는 고치기 전 판)",
+    "gate": {
+     "exit": 1,
+     "checkLines": 37,
+     "failedChecks": 1,
+     "fails": [
+      "✗ [FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증 / 사유: 프롬프트 백과사전 아코디언 접힘 구조 누락"
+     ]
+    }
+   },
+   "S3": {
+    "what": "+ 도우미를 이 PR 판으로",
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "failedChecks": 0,
+     "fails": []
+    },
+    "npmTest": {
+     "exit": 0,
+     "checkLines": 487,
+     "okLines": 197,
+     "failLines": []
+    }
+   },
+   "S3again": {
+    "what": "대조군 뒤 되돌린 상태에서 다시",
+    "gate": {
+     "exit": 0,
+     "checkLines": 38,
+     "failedChecks": 0,
+     "fails": []
+    }
+   }
+  },
+  "controls": [
+   {
+    "id": "C1",
+    "what": "호출의 초기값을 false → true 로 바꿈",
+    "gateExit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "thatCheckFailed": true,
+    "onlyThatCheckFailed": true
+   },
+   {
+    "id": "C2",
+    "what": "호출의 이름을 다른 이름으로 바꿈",
+    "gateExit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "thatCheckFailed": true,
+    "onlyThatCheckFailed": true
+   },
+   {
+    "id": "C3",
+    "what": "호출 줄을 주석으로 바꿈",
+    "gateExit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "thatCheckFailed": true,
+    "onlyThatCheckFailed": true
+   },
+   {
+    "id": "C4",
+    "what": "호출 글자를 문자열 안에만 남김",
+    "gateExit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "thatCheckFailed": true,
+    "onlyThatCheckFailed": true
+   },
+   {
+    "id": "C5",
+    "what": "호출 줄을 지움",
+    "gateExit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "thatCheckFailed": true,
+    "onlyThatCheckFailed": true
+   },
+   {
+    "id": "C6",
+    "what": "index.html 에서 상태 기관(js/core/app-state.js) 태그를 뺌",
+    "gateExit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "thatCheckFailed": true,
+    "onlyThatCheckFailed": true
+   },
+   {
+    "id": "C7",
+    "what": "상태 기관 태그를 덩어리 스크립트 뒤로 옮김(호출이 기관보다 앞에 있게 됨)",
+    "gateExit": 1,
+    "checkLines": 37,
+    "failedChecks": 1,
+    "thatCheckFailed": true,
+    "onlyThatCheckFailed": true
+   }
+  ]
+ },
+ "finalMock": {
+  "note": "이 PR 의 도우미를 얹은 트리끼리 맞댐(#944~#947 은 기준 커밋에 이미 들어 있다) — 모의본에서만 실패하는 단언 줄",
+  "B": {
+   "relaxedLimits": true,
+   "lines": 0,
+   "byFile": {},
+   "list": []
+  },
+  "A": {
+   "lines": 31,
+   "byFile": {
+    "scripts/smoke-test.js": 22,
+    "scripts/test-shipyard-modular.js": 1,
+    "scripts/verify-integrity-gate.js": 1,
+    "tests/module-guard.test.js": 2,
+    "tests/new-module.test.js": 1,
+    "tests/stopwatch-lap-inputs.test.js": 1,
+    "tests/stopwatch-table-hint.test.js": 3
+   },
+   "list": [
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1134,
+     "message": "일정연동 안내멘트 포함"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1206,
+     "message": "1초 루틴 불러오기 버튼 존재"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1278,
+     "message": "CSV 가져오기 버튼 마크업 존재"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1279,
+     "message": "CSV 내보내기 버튼 마크업 존재"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1280,
+     "message": "스마트워치 연동 버튼 마크업 존재"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1352,
+     "message": "모달 내 AI 사진인식 버튼 마크업 존재"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1356,
+     "message": "모달 내 음성 입력 버튼 마크업 존재"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1362,
+     "message": "기록 모달 내 마켓 버튼 마크업 존재"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1592,
+     "message": "기록 모달 내 차트 컨테이너"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 1598,
+     "message": "표 셀 기입 하이라이트 애니메이션"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2737,
+     "message": "워크숍 프리셋 모임 ID"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2738,
+     "message": "단체여행 프리셋 모임 ID"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2739,
+     "message": "워크숍 팀 목표 ID"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2740,
+     "message": "단체여행 팀 목표 ID"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2793,
+     "message": "워크숍 1단계 태스크 ID"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 2794,
+     "message": "단체여행 1단계 태스크 ID"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 6077,
+     "message": "셀 미선택 시 친절한 가이드 토스트 출력"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 7840,
+     "message": "MOCK_GROUPS 항목에 isMock:true 플래그 설정"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 8467,
+     "message": "미선택 셀 클릭 시 안내 토스트 멘트 일원화 검증"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 8470,
+     "message": "시간 열 판별 정규식 탑재 검증"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 8471,
+     "message": "시간 열 placeholder 스마트 분기 검증"
+    },
+    {
+     "file": "scripts/smoke-test.js",
+     "line": 9769,
+     "message": "injectLapIntoTable 함수 탑재"
+    },
+    {
+     "file": "scripts/test-shipyard-modular.js",
+     "line": 150,
+     "message": "scripts/module-guard.js must pass (exit 1)"
+    },
+    {
+     "file": "scripts/verify-integrity-gate.js",
+     "line": 961,
+     "message": "프롬프트 백과사전 아코디언 접힘 구조 누락"
+    },
+    {
+     "file": "tests/module-guard.test.js",
+     "line": 61,
+     "message": "가드가 통과해야 한다:"
+    },
+    {
+     "file": "tests/module-guard.test.js",
+     "line": 62,
+     "message": "The expression evaluated to a falsy value:"
+    },
+    {
+     "file": "tests/new-module.test.js",
+     "line": 65,
+     "message": "새 세포를 더해도 모듈 가드 통과:"
+    },
+    {
+     "file": "tests/stopwatch-lap-inputs.test.js",
+     "line": 27,
+     "message": "스톱워치 랩 표 기입 함수 확인"
+    },
+    {
+     "file": "tests/stopwatch-table-hint.test.js",
+     "line": 25,
+     "message": "미선택 셀 클릭 시 안내 토스트 문구 일원화 확인"
+    },
+    {
+     "file": "tests/stopwatch-table-hint.test.js",
+     "line": 33,
+     "message": "시간 관련 열 판별 정규식 탑재 확인"
+    },
+    {
+     "file": "tests/stopwatch-table-hint.test.js",
+     "line": 37,
+     "message": "시간 관련 열 placeholder 분기 처리 확인"
+    }
+   ]
+  }
+ },
+ "changedScope": {
+  "appCode": [],
+  "baseTests": [],
+  "vaultByConstitution": [],
+  "courtProduct": [
+   "tests/helpers/moved-code.js",
+   "tests/moved-code.test.js"
+  ],
+  "frozen": []
+ },
+ "changedFiles": [
+  "docs/rules/TICKETS.md",
+  "docs/specs/REQ-TASK-ES-678-MOVED-CODE-INLINE-STATE.md",
+  "tests/helpers/moved-code.js",
+  "tests/moved-code.test.js"
+ ],
+ "summary": {
+  "mainNewlyFailingLines": 0,
+  "mainGoneLines": 0,
+  "npmTestExit": [
+   0,
+   0
+  ],
+  "checkLines": [
+   487,
+   487
+  ],
+  "okLines": [
+   197,
+   203
+  ],
+  "gateCheckLines": [
+   38,
+   38
+  ],
+  "smokeCheckLines": [
+   439,
+   439
+  ],
+  "testFilesExit0": [
+   89,
+   89
+  ],
+  "testFiles": [
+   115,
+   115
+  ],
+  "selfTestsAdded": 6,
+  "unstate": {
+   "gateS0": [
+    38,
+    0
+   ],
+   "gateS0b": [
+    38,
+    0
+   ],
+   "gateS1": [
+    37,
+    1
+   ],
+   "gateS2": [
+    37,
+    1
+   ],
+   "gateS3": [
+    38,
+    0
+   ],
+   "s1FailsThatCheck": true,
+   "s2FailsThatCheck": true,
+   "s3Exit": 0,
+   "npmTestS3": [
+    0,
+    487,
+    197
+   ],
+   "controls": 7,
+   "controlsAllFailThatCheck": true,
+   "controlsOnlyThatCheck": true,
+   "defineLine": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);",
+   "legacyTextAfterUnstate": false,
+   "gateAfterControls": [
+    38,
+    0
+   ]
+  },
+  "finalMockBLines": 0,
+  "finalMockALines": 31,
+  "finalMockBList": []
+ }
+}

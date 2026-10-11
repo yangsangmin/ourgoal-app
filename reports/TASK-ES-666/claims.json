@@ -1,0 +1,488 @@
+{
+ "task": "TASK-ES-666",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-666-IIFE-TEXT-TESTS.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 IIFE(덩어리) 안의 글자를 정답으로 붙잡는 시험 단언을 「그 글자가 있거나, 그 대상이 옮겨 간 자리(세포 파일의 함수 선언·함수의 첫 문·인라인 합본·등록)에 있다」로 넓힌다. 검사 수·단언 수 그대로, 폐기 0(상민님 「결심 1 : 승인, 금고 변경 승인」)."
+  },
+  {
+   "id": "R2",
+   "text": "옮겨 간 자리를 보는 일은 공용 도우미에 모으고 파서로 읽는다(느슨한 글자 긁기 금지). 도우미 자체 시험을 둔다."
+  },
+  {
+   "id": "R3",
+   "text": "넓힌 단언이 가짜로 통과하지 않음을 대조군으로 보인다(옮겨 간 대상을 깨뜨리면 그 단언이 실패한다)."
+  },
+  {
+   "id": "R4",
+   "text": "고치기 전·후 측정을 싣는다 — 현재 main 은 고치기 전과 같고, 모의본 (가)(나)에서 깨지던 단언 줄이 줄어든다(작업자 측정, 판정 아님)."
+  },
+  {
+   "id": "R5",
+   "text": "넓히기로 풀지 못한 것과 범위 밖의 것을 목록으로 보고한다."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "tests/gcal-login-reconnect-fix.test.js 의 window.saveGoogleToken = saveGoogleToken; 단언은 등록 갈래로 넓혔다. 측정 기준 커밋에는 등록 2차(#940)로 그 이름이 등록돼 있어 모의본 (나)에서 풀린다(등록 흉내는 아무것도 바꾸지 않는다 — mock.B.registerAttempt)."
+  },
+  {
+   "text": "모의본 (가)에 남는 줄은 글자가 js/app/boot.js 한 파일에 통째로 있어서다(실제 finalize 의 꼴이 아니다). 합본이 그 파일을 읽게 넓히지 않았다 — 줄 목록은 measurement.json mock.A.afterAll.list."
+  },
+  {
+   "text": "덩어리에 남은 줄의 실제 이전, finalize 적용, court/** 는 범위 밖이라 건드리지 않았다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 단언 한 줄이 옛 글자를 그대로 둔 채 넓힌 판정을 거친다(scripts/smoke-test.js).",
+   "touches": [
+    "scripts/smoke-test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/smoke-test.js",
+    "text": "assert.ok(MOVED.textOrFunctionStartsWith(indexHtml, '(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)', 'templatesHtml', \"if(!window.__FORCE_LEGACY_TEMPLATES_CARD) return '';\"), 'index.html 내 templatesHtml 무해화 확인');"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 단언 한 줄이 옛 글자를 그대로 둔 채 넓힌 판정을 거친다(tests/avatar-10slots-growth.test.js).",
+   "touches": [
+    "tests/avatar-10slots-growth.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/avatar-10slots-growth.test.js",
+    "text": "assert.ok(require('./helpers/moved-code').textOrFunctionDefined(indexHtml, 'filterHarmfulWords', 'filterHarmfulWords'), 'filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.');"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 단언 한 줄이 옛 글자를 그대로 둔 채 넓힌 판정을 거친다(tests/gcal-login-reconnect-fix.test.js).",
+   "touches": [
+    "tests/gcal-login-reconnect-fix.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/gcal-login-reconnect-fix.test.js",
+    "text": "assert.ok(require('./helpers/wiring-exposed').windowExposed(indexHtml, 'window.saveGoogleToken = saveGoogleToken;'), 'saveGoogleToken 전역 노출');"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 단언 한 줄이 옛 글자를 그대로 둔 채 넓힌 판정을 거친다(tests/goal-template-legacy-cleanup.test.js).",
+   "touches": [
+    "tests/goal-template-legacy-cleanup.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/goal-template-legacy-cleanup.test.js",
+    "text": "assert.ok(require('./helpers/moved-code').textOrFunctionStartsWith(indexHtml, '(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)', 'templatesHtml', \"if(!window.__FORCE_LEGACY_TEMPLATES_CARD) return '';\"), 'index.html 내 templatesHtml 무해화 확인');"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 단언 한 줄이 옛 글자를 그대로 둔 채 넓힌 판정을 거친다(tests/goals-only-view.test.js).",
+   "touches": [
+    "tests/goals-only-view.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/goals-only-view.test.js",
+    "text": "assert(require('./helpers/inline-bundle').withInlineCells(indexHtml).includes(\"renderGoalsScreen();\"), '뷰 전환 시 renderGoalsScreen이 정상 호출되어야 합니다.');"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 단언 한 줄이 옛 글자를 그대로 둔 채 넓힌 판정을 거친다(tests/goals-schedule-sync.test.js).",
+   "touches": [
+    "tests/goals-schedule-sync.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/goals-schedule-sync.test.js",
+    "text": "assert.ok(require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('renderGoalsScreen();') && require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신');"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "시험 단언 한 줄이 옛 글자를 그대로 둔 채 넓힌 판정을 거친다(tests/trio-es143-es145.test.js).",
+   "touches": [
+    "tests/trio-es143-es145.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/trio-es143-es145.test.js",
+    "text": "assert.ok(require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('b.classList.add(\\'active\\')') || require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('b.classList.remove(\\'active\\')'), '관심 카테고리 칩 선택 토글이 안정적으로 배선되어야 함');"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "공용 도우미의 함수 선언 판정은 「옛 글자가 있다 또는 세포 파일에 그 함수 선언이 있다」 한 식이다.",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "return String(source).includes(legacyText) || cellFunctions(fnName, root).length > 0;"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도우미는 세포 파일을 파서로 읽는다(글자 긁기 아님).",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "parserMod = require('@babel/parser');"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도우미는 index.html 이 미루지 않고 읽는 js 파일만 세포로 본다.",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "if (t.lazy || !/^js\\/.+\\.js$/.test(t.src) || seen.has(t.src)) continue;"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "태그 읽기는 #TASK-ES-620 도우미의 것을 같이 쓴다.",
+   "touches": [
+    "tests/helpers/wiring-exposed.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/wiring-exposed.js",
+    "text": "parseWindowWiring, parseGetterWiring, scriptTags"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도우미 자체 시험 파일이 있고 읽지 않는 파일·주석·문자열을 거짓으로 본다.",
+   "touches": [
+    "tests/moved-code.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/moved-code.test.js",
+    "text": "t('함수: 주석·문자열 안의 글자, 안쪽 깊은 선언, 함수 식은 선언이 아니다', () => {"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "도우미 자체 시험이 npm test 경로에서 돈다.",
+   "touches": [
+    "scripts/test-shipyard-modular.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "runNode('tests/moved-code.test.js');"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 바꾼 시험 줄 수.",
+   "touches": [
+    "reports/TASK-ES-666/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/changed-assertions.json",
+    "path": "summary.changedLines",
+    "equals": 8
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 지우기만 한 시험 줄 수.",
+   "touches": [
+    "reports/TASK-ES-666/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/changed-assertions.json",
+    "path": "summary.removedOnly",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 옛 글자가 바꾼 줄에 그대로 남아 있는지.",
+   "touches": [
+    "reports/TASK-ES-666/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/changed-assertions.json",
+    "path": "summary.legacyTextKeptAllByLiterals",
+    "equals": true
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조군 기록: 변형 수.",
+   "touches": [
+    "reports/TASK-ES-666/control-group.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/control-group.json",
+    "path": "summary.variants",
+    "equals": 17
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조군 기록: 전부 기대대로인지.",
+   "touches": [
+    "reports/TASK-ES-666/control-group.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/control-group.json",
+    "path": "summary.allAsExpected",
+    "equals": true
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조군 기록: 끝난 뒤 트리가 처음과 같은지.",
+   "touches": [
+    "reports/TASK-ES-666/control-group.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/control-group.json",
+    "path": "treeRestored",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본 (가)에서만 깨지는 단언 줄 수(고치기 전).",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.mockA.before",
+    "equals": 40
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본 (가)에서만 깨지는 단언 줄 수(네 PR).",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.mockA.afterAll",
+    "equals": 31
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본 (나)에서만 깨지는 단언 줄 수(고치기 전).",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.mockB.before",
+    "equals": 14
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본 (나)에서만 깨지는 단언 줄 수(네 PR).",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.mockB.afterAll",
+    "equals": 4
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 모의본 (나) + 등록 흉내 + 한계 걷어 냄에서 남은 줄 수(네 PR).",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.mockB.limitsRemovedAfterAllRegistered",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 에서 이 변경으로 새로 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.main.newlyFailing666",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 의 npm test 종료 코드(기준·PR 별).",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.main.npmTestExit",
+    "equals": {
+     "base": 0,
+     "main666": 0,
+     "main667": 0,
+     "main668": 0,
+     "main669": 0,
+     "mainAll": 0
+    }
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 앱 코드 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "changedScope.appCode",
+    "equals": []
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 등록 흉내 없이 (나)에 남는 줄 수(한계 걷어 냄 · 네 PR).",
+   "touches": [
+    "reports/TASK-ES-666/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-666/measurement.json",
+    "path": "summary.mockB.limitsRemovedAfterAll",
+    "equals": 0
+   }
+  }
+ ],
+ "retire": [
+  {
+   "file": "scripts/smoke-test.js",
+   "check": "compliance: [#TASK-ES-315] [64] 기존 \\'AI 추천 목표템플릿 예시 60선\\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증",
+   "reason": "폐기가 아니라 넓힘이다(검사 수·단언 수 그대로). 이 검사 안의 「index.html 에 구획 주석 글자 (#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화) 가 있다」 단언 1줄을 「그 글자가 있거나, templatesHtml 함수 선언의 첫 문이 무해화 반환문이다」로 넓혔다(tests/helpers/moved-code.js — 세포 파일을 파서로 읽는다). 옛 글자 갈래는 고치기 전과 같은 식이다. 승인: 상민님 2026-10-11 「결심 1 : 승인, 금고 변경 승인」(원문과 오케스트레이터가 올린 결심 항목의 글자는 docs/specs/REQ-TASK-ES-666-IIFE-TEXT-TESTS.md 0절)"
+  }
+ ]
+}

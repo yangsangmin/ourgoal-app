@@ -1,0 +1,393 @@
+{
+ "task": "TASK-ES-678",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-678-MOVED-CODE-INLINE-STATE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "공용 도우미 tests/helpers/moved-code.js 의 상태 선언 판정(textOrStateDefined)이 「같은 이름·같은 초기값의 상태 기관 호출」을 세포 파일뿐 아니라 index.html 의 인라인 스크립트 가운데 상태 기관 태그(js/core/app-state.js)보다 뒤에 있는 것에서도 찾는다(@babel/parser)."
+  },
+  {
+   "id": "R2",
+   "text": "주석·문자열 안의 글자, 상태 기관 태그보다 앞의 스크립트, 다른 이름·다른 초기값은 여전히 거짓이다 — 대조군을 tests/moved-code.test.js 에 더한다. 단언 삭제 0, 검사 수 불변."
+  },
+  {
+   "id": "R3",
+   "text": "금고 파일(scripts/verify-integrity-gate.js)은 건드리지 않는다 — 도우미만 고친다."
+  },
+  {
+   "id": "R4",
+   "text": "저장소 밖 사본에서 _promptEncyclopediaOpen 을 생성기로 상태 이전한 뒤 무결성 게이트가 전부 통과하는지, 초기값을 true 로 바꾼 대조군에서 그 검사가 깨지는지 잰다(작업자 측정, 판정 아님)."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "이 변경이 상민님 「결심 1 : 승인, 금고 변경 승인」의 범위 안이라는 것은 오케스트레이터의 해석이다(REQ 0절 원문 3). 상민님이 이 변경을 따로 승인하신 적은 없다."
+  },
+  {
+   "text": "금고 파일(scripts/verify-integrity-gate.js)의 글자는 바꾸지 않았지만, 금고가 부르는 도우미의 판정이 넓어진다(#947 은 병합됐으므로 이 변경이 병합되는 때부터). 도우미를 금고 목록에 넣을지는 상민님 결정 사안이다."
+  },
+  {
+   "text": "_promptEncyclopediaOpen 의 실제 상태 이전은 범위 밖이다. 모의 사본은 게이트·시험의 반응만 봤고 화면 동작은 보지 않았다."
+  },
+  {
+   "text": "모의본 (가)에 남는 단언 줄은 글자가 js/app/boot.js 한 파일에 통째로 있는 꼴이라서다(실제 finalize 의 꼴이 아니다) — measurement.json finalMock.A."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "상태 기관 호출을 찾는 고리가 세포 파일 뒤에 인라인 스크립트를 이어 돈다.",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "for (const cell of all.concat(inlineScripts(root))) {"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "상태 기관 태그보다 뒤에 있는 것만 본다(세포 파일과 같은 조건).",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "if (cell.at <= organ.at || cell.text.indexOf('OurgoalAppState') < 0 || cell.text.indexOf(name) < 0) continue;"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "HTML 주석 안의 스크립트는 읽지 않는다(주석을 빈칸으로 바꾼 글자에서 찾는다).",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "const live = html.replace(/<!--[\\s\\S]*?-->/g, m => ' '.repeat(m.length));"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "자바스크립트가 아닌 type 의 스크립트는 읽지 않는다.",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "if (type && !JS_TYPE_RE.test(type[2].trim())) continue;"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "src 가 있는 태그 안의 글자는 읽지 않는다.",
+   "touches": [
+    "tests/helpers/moved-code.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/helpers/moved-code.js",
+    "text": "if (/\\bsrc\\s*=/i.test(m[1])) continue;"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "자체 시험: 호출이 상태 기관 태그 뒤의 인라인 스크립트에 있으면 참.",
+   "touches": [
+    "tests/moved-code.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/moved-code.test.js",
+    "text": "t('#678 상태: 호출이 상태 기관 태그 뒤의 인라인 스크립트(덩어리) 안에 있으면 참 — 옛 선언 글자도 세포 파일의 호출도 없다', () => {"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "자체 시험: 인라인에서도 초기값·이름이 다르면 거짓.",
+   "touches": [
+    "tests/moved-code.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/moved-code.test.js",
+    "text": "t('#678 상태(인라인): 초기값·이름이 다르면 거짓', () => {"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "자체 시험: 상태 기관 태그보다 앞·기관 태그 없음은 거짓.",
+   "touches": [
+    "tests/moved-code.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/moved-code.test.js",
+    "text": "t('#678 상태(인라인): 상태 기관 태그보다 앞의 스크립트 · 기관 태그 없음 · 미뤄 읽는 기관 태그는 거짓', () => {"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "자체 시험: 주석·문자열 안의 호출 글자와 실행되지 않는 스크립트는 거짓.",
+   "touches": [
+    "tests/moved-code.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/moved-code.test.js",
+    "text": "t('#678 상태(인라인): 주석·문자열 안의 호출 글자, 다른 객체의 define, HTML 주석 안의 스크립트, 자바스크립트가 아닌 type 은 거짓', () => {"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "자체 시험: 함수 선언·첫 문 갈래는 인라인 스크립트를 보지 않는다.",
+   "touches": [
+    "tests/moved-code.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/moved-code.test.js",
+    "text": "t('#678 함수 선언·첫 문 갈래는 인라인 스크립트를 보지 않는다(넓힌 것은 상태 기관 호출뿐이다)', () => {"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 자체 시험에 더한 검사 수.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.selfTestsAdded",
+    "equals": 6
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 에서 이 변경으로 새로 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.mainNewlyFailingLines",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 의 npm test 종료 코드(고치기 전·이 변경).",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.npmTestExit",
+    "equals": [
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 의 게이트 ✓ 줄 수(고치기 전·이 변경).",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.gateCheckLines",
+    "equals": [
+     38,
+     38
+    ]
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 금고 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "changedScope.vaultByConstitution",
+    "equals": []
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 기준 시험지 목록.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "changedScope.baseTests",
+    "equals": []
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 앱 코드 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "changedScope.appCode",
+    "equals": []
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 기록: 상태 이전 뒤 고치기 전 도우미로 잰 게이트의 ✓·✗ 수.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.unstate.gateS2",
+    "equals": [
+     37,
+     1
+    ]
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 기록: 상태 이전 뒤 이 변경의 도우미로 잰 게이트의 ✓·✗ 수.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.unstate.gateS3",
+    "equals": [
+     38,
+     0
+    ]
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 기록: 대조군 수.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.unstate.controls",
+    "equals": 7
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 기록: 대조군 전부에서 그 검사가 실패했는지.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.unstate.controlsAllFailThatCheck",
+    "equals": true
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "모의 기록: 생성기가 만든 상태 기관 호출 줄.",
+   "touches": [
+    "reports/TASK-ES-678/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-678/measurement.json",
+    "path": "summary.unstate.defineLine",
+    "equals": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);"
+   }
+  }
+ ],
+ "retire": []
+}

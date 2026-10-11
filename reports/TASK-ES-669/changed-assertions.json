@@ -1,0 +1,94 @@
+{
+ "tool": "reports/TASK-ES-620/changed-assertions.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T09:46:43.583Z",
+ "base": "42b5511f",
+ "changed": [
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "lineBefore": 954,
+   "lineAfter": 961,
+   "kind": "그 밖",
+   "name": null,
+   "from": null,
+   "legacyText": null,
+   "legacyTextKept": false,
+   "before": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');",
+   "after": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && textOrStateDefined(indexHtml, '_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');",
+   "assertion": {
+    "line": 961,
+    "text": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && textOrStateDefined(indexHtml, '_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');"
+   },
+   "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증"
+  }
+ ],
+ "additions": [
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "line": 26,
+   "text": "// #TASK-ES-669: 덩어리(index.html 인라인 IIFE) 안의 상태 선언 글자(「이름 = 초기값;」)를 찾던 단언은, 그 글자가 있거나(고치기 전과 같은 판정)"
+  },
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "line": 27,
+   "text": "// 같은 이름·같은 초기값이 상태 기관 호출(window.OurgoalAppState.define·defineVar)로 index.html 이 읽는 세포 파일에서 만들어질 때 참이다."
+  },
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "line": 28,
+   "text": "// 세포 파일은 공용 도우미 tests/helpers/moved-code.js(#TASK-ES-666 PR 이 들여온다)가 @babel/parser 로 읽는다. 둘 다 없으면 거짓이다. 검사 수·기대값은 그대로다."
+  },
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "line": 29,
+   "text": "// 도우미 파일이 아직 없으면(그 PR 보다 먼저 병합된 경우) 옛 선언 글자만 본다 — 고치기 전과 같은 판정이라, 병합 순서가 바뀌어도 게이트가 죽거나 느슨해지지 않는다."
+  },
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "line": 30,
+   "text": "const MOVED_HELPER = path.join(__dirname, '..', 'tests', 'helpers', 'moved-code.js');"
+  },
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "line": 31,
+   "text": "const MOVED = fs.existsSync(MOVED_HELPER) ? require(MOVED_HELPER) : null;"
+  },
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "line": 32,
+   "text": "function textOrStateDefined(source, legacyDeclText) { return MOVED ? MOVED.textOrStateDefined(source, legacyDeclText) : source.includes(legacyDeclText); }"
+  }
+ ],
+ "removedOnly": [],
+ "newFiles": [],
+ "summary": {
+  "changedLines": 1,
+  "byFile": {
+   "scripts/verify-integrity-gate.js": 1
+  },
+  "names": [
+   null
+  ],
+  "nameCount": 1,
+  "legacyTextKeptAll": false,
+  "kinds": {
+   "그 밖": 1
+  },
+  "checks": 1,
+  "additions": 7,
+  "removedOnly": 0,
+  "newFiles": [],
+  "legacyTextKeptAllByLiterals": true
+ },
+ "rows666": [
+  {
+   "file": "scripts/verify-integrity-gate.js",
+   "lineBefore": 954,
+   "lineAfter": 961,
+   "check": "[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+   "before": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');",
+   "after": "assert.ok(indexHtml.includes('btnTogglePromptAccordion') && textOrStateDefined(indexHtml, '_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');",
+   "legacyTextKept": true
+  }
+ ]
+}

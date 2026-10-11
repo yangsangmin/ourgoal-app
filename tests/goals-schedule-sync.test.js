@@ -95,7 +95,7 @@ const uiCss = fs.readFileSync(uiCssPath, 'utf8');
 
   // 3-2. applyScheduleUpdate 4대 뷰 동시 전파
   assert.ok(indexHtml.includes('async function applyScheduleUpdate(level, gid, msId, tid, startISO, endISO)'), 'applyScheduleUpdate 함수 정의');
-  assert.ok(indexHtml.includes('renderGoalsScreen();') && indexHtml.includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신');
+  assert.ok(require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('renderGoalsScreen();') && require('./helpers/inline-bundle').withInlineCells(indexHtml).includes('renderCalendarScreen();'), '목표 및 캘린더 뷰 갱신'); /* #TASK-ES-666 index.html 에 있거나 옮겨 간 세포 파일에 있다(인라인 합본 — tests/helpers/inline-bundle.js) — 검사 수·기대값 그대로 */
   assert.ok(indexHtml.includes("if(typeof renderHome === 'function') renderHome();"), '홈 화면 갱신');
   assert.ok(indexHtml.includes("if(typeof renderRecordsScreen === 'function') renderRecordsScreen();"), '기록 탭 갱신');
 }
