@@ -1,0 +1,356 @@
+{
+ "task": "TASK-ES-667",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-667-INLINE-OWNED-BOOT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "모듈 측정기(scripts/module-metrics.js)의 ⑤ 탭 간 직접 참조에서 「index.html 인라인이 window 에 다는 이름은 인라인이 주인」이던 규칙을 「부팅 파일(js/app/boot.js)과 js/core 기관 파일이 무조건 다는 이름도 같은 지위」로 넓힌다(상민님 「결심 1 : 승인, 금고 변경 승인」)."
+  },
+  {
+   "id": "R2",
+   "text": "지표가 거짓으로 좋아지지 않게 한다 — 진짜 탭 간 참조는 여전히 잡힌다. 오탐 사례와 진짜 사례를 함께 고정하는 시험을 더한다(경험칙 L023). 기존 단언은 바꾸지 않는다."
+  },
+  {
+   "id": "R3",
+   "text": "현재 main 의 지표(①~⑤)는 고치기 전과 같다."
+  },
+  {
+   "id": "R4",
+   "text": "고치기 전·후 측정과 대조군을 싣는다(작업자 측정, 판정 아님)."
+  }
+ ],
+ "outOfScopeReports": [
+  {
+   "text": "window.SHARED_GROUPS_LOADED = false 줄을 실제로 구역 세포로 옮기는 일은 범위 밖이다. 이 변경은 옮겨도 ⑤ 가 늘지 않게 했을 뿐이다."
+  },
+  {
+   "text": "설계 문서 CELL-REGISTRY-DESIGN.md 6.4 · 9절 표 · 9.1 의 ⑤ 서술은 이 변경이 병합되면 낡는다. 다른 작업이 고치는 문서라 건드리지 않고 보고한다."
+  },
+  {
+   "text": "모의본에서 가드가 남기는 실패(새 파일에 신고서 없음)는 모의본의 한계다 — measurement.json guard.afterB667.failures."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "탭의 정의에서 빼는 이름이 「인라인이 주인이거나 기관이 주인」인 이름이다.",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/module-metrics.js",
+    "text": ".filter(s => !inlineOwned.has(s) && !organOwned.has(s));"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기관이 주인인 이름은 js/core 바로 아래 파일과 부팅 파일에서만 모은다.",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/module-metrics.js",
+    "text": "const files = listJs(root, 'js/core').filter(f => f.split('/').length === 3);"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "부팅 파일은 js/app/boot.js 한 파일이다.",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/module-metrics.js",
+    "text": "if (fs.existsSync(path.join(root, 'js', 'app', 'boot.js'))) files.push('js/app/boot.js');"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기관의 방어 초기화(없으면 채우기)는 주인으로 세지 않는다.",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/module-metrics.js",
+    "text": "while ((m = re.exec(t))) { if (!isGuardedInit(t, m.index, m[0].length, m[1])) names.add(m[1]); }"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "기관 파일은 주석을 걷어 낸 글자에서만 본다.",
+   "touches": [
+    "scripts/module-metrics.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/module-metrics.js",
+    "text": "const t = stripJsComments(readText(path.join(root, f)));"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "오탐 사례 시험: 구역 세포가 다는 이름을 탭이 바꿔 쓰고 다른 탭이 읽어도 0건.",
+   "touches": [
+    "tests/cross-tab-inline-owned-es507.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/cross-tab-inline-owned-es507.test.js",
+    "text": "check('#667 오탐: 인라인이 비워지고 js/core 구역 세포가 다는 이름을 comm 이 바꿔 쓰고 goals 가 읽어도 0건', () => {"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "진짜 사례 시험: 기관이 읽기만 하거나 방어 초기화만 하면 1건.",
+   "touches": [
+    "tests/cross-tab-inline-owned-es507.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/cross-tab-inline-owned-es507.test.js",
+    "text": "check('#667 진짜: 기관이 읽기만 하거나 방어 초기화만 하면 주인이 아니다 — 1건', () => {"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "진짜 사례 시험: 기관이 아닌 파일이 다는 이름은 1건.",
+   "touches": [
+    "tests/cross-tab-inline-owned-es507.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/cross-tab-inline-owned-es507.test.js",
+    "text": "check('#667 진짜: js/ 바로 아래 옛 파일·js/core 하위 폴더·js/app 의 다른 파일이 다는 이름은 기관의 것이 아니다 — 1건', () => {"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "주인 규칙 시험이 npm test 경로에서 돈다.",
+   "touches": [
+    "scripts/test-shipyard-modular.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "runNode('tests/cross-tab-inline-owned-es507.test.js');"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조 시험: 기관 줄을 지우면 같은 꼴이 1건으로 잡힌다.",
+   "touches": [
+    "tests/cross-tab-inline-owned-es507.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/cross-tab-inline-owned-es507.test.js",
+    "text": "check('#667 대조: 그 기관 줄을 지우면 같은 꼴이 1건으로 잡힌다(규칙이 그 줄을 보고 있다)', () => {"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 바꾼 줄 수(측정기의 걸러 내기 한 줄과 내보내기 한 줄).",
+   "touches": [
+    "reports/TASK-ES-667/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/changed-assertions.json",
+    "path": "summary.changedLines",
+    "equals": 2
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "변경 기록: 지우기만 한 줄 수.",
+   "touches": [
+    "reports/TASK-ES-667/changed-assertions.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/changed-assertions.json",
+    "path": "summary.removedOnly",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 의 래칫 다섯 칸이 고치기 전과 같은지.",
+   "touches": [
+    "reports/TASK-ES-667/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/measurement.json",
+    "path": "summary.metrics.mainSame",
+    "equals": true
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 의 가드 종료 코드(고치기 전·이 변경).",
+   "touches": [
+    "reports/TASK-ES-667/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/measurement.json",
+    "path": "summary.metrics.guardExit",
+    "equals": {
+     "base": 0,
+     "main667": 0
+    }
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 트리별 ⑤ 값.",
+   "touches": [
+    "reports/TASK-ES-667/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/measurement.json",
+    "path": "summary.metrics.crossTabRefs",
+    "equals": {
+     "base": 0,
+     "main667": 0,
+     "mockA": 1,
+     "mockB": 1,
+     "afterA": 0,
+     "afterB667": 0
+    }
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 한계를 걷어 낸 모의본 (나)·고치기 전의 가드 실패 사유 수.",
+   "touches": [
+    "reports/TASK-ES-667/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/measurement.json",
+    "path": "summary.metrics.limBGuardFailures",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 한계를 걷어 낸 모의본 (나)·네 PR 의 가드 종료 코드.",
+   "touches": [
+    "reports/TASK-ES-667/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/measurement.json",
+    "path": "summary.metrics.limAfterBGuardExit",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "측정 기록: 현재 main 에서 이 변경으로 새로 실패하는 단언 줄 수.",
+   "touches": [
+    "reports/TASK-ES-667/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/measurement.json",
+    "path": "summary.main.newlyFailing667",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "대조군 기록: 전부 기대대로인지.",
+   "touches": [
+    "reports/TASK-ES-667/control-group.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/control-group.json",
+    "path": "summary.allAsExpected",
+    "equals": true
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "config",
+   "statement": "범위 기록: 이 변경이 바꾼 앱 코드 파일 목록.",
+   "touches": [
+    "reports/TASK-ES-667/measurement.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-667/measurement.json",
+    "path": "changedScope.appCode",
+    "equals": []
+   }
+  }
+ ],
+ "retire": []
+}
