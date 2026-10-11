@@ -2,7 +2,7 @@
 
 - Task ID: **TASK-ES-664** (L012: `gh pr list --state all` · `git ls-remote origin` 에서 664 가 비어 있음을 확인한 뒤 빈 브랜치 `feat/2026-10-11-task-es-664-provide-2` 를 먼저 push 해 선점했다. 646 · 662 · 663 은 다른 작업.)
 - 분류: INFRA · 작업 유형(SNOWBALL 분류): **(가) 표준 — 「세포 등록」 둘째 사례**. 선례 B2(#TASK-ES-611, PR #884 — 세포가 스스로 등록) · B3a(#TASK-ES-614, PR #889 — own 적용 · window 전용 · 모의 철거). 그 방식을 따른다: 등록 줄은 생성기가 쓴다(손 편집 0) · 대조 탐침으로 옛 배선 값과 등록 값이 같은지 본다 · 충분성은 저장소 밖 **모의 철거 사본**과 **대조군**으로 잰다(L066·L091) · 시험이 붙잡는 이름은 시험을 고치지 않고 목록으로 남긴다(L067). 새로운 점은 하나 — 철거가 진행된 뒤라 생성기를 그대로 다시 돌리면 이미 지운 이름의 등록이 사라진다. 그래서 생성기에 **기존 등록 보존 모드**를 더해 그것으로 썼다.
-- 작업참고 기준 PR #931(cc325e0a, 경험칙 111개) · 착수 기준 main 0b643c58(#933 구역 이전 병합 뒤) · 합친 main 4b447225(#934 생성 지도 갱신 · #935 철거 생성기 finalize 모드 · #937 상태 선언 아홉 문 다듬기 · #938 철거 생성기 region 모드 보강 — #937 만 index.html 을 16줄 바꿨고 `js/**` · `tests/**` · `scripts/**` · `court/**` · 등록 생성기 차이는 0). 측정의 기준 트리는 4b447225 다. main 을 합칠 때마다 등록 생성기를 다시 돌려 0 변경(멱등 — #937 의 index.html 변경은 가져오기·getter 줄을 건드리지 않아 등록 계획이 같다)임을 확인했고, 마지막으로 기준 트리를 4b447225 로 옮겨 npm test(기준 · 작업) · 시험 하나씩 · 탐침 · 시나리오를 다시 쟀다. **모의 철거 사본과 대조군은 d55d7595 의 index.html 로 만든 것을 그대로 썼다**(#937 뒤의 index.html 로 다시 만들지 않았다 — 재철거 PR 이 그때의 main 에서 실제로 잰다).
+- 작업참고 기준 PR #931(cc325e0a, 경험칙 111개) · 착수 기준 main 0b643c58(#933 구역 이전 병합 뒤) · 합친 main 2a1507eb(#934 생성 지도 갱신 · #935 철거 생성기 finalize 모드 · #937 상태 선언 아홉 문 다듬기 · #938 철거 생성기 region 모드 보강 · #936 944줄 함수 제자리 정리 · #939 부팅 손잡이 세포 — #937 · #936 · #939 가 index.html 을 바꿨고 #939 는 새 세포 `js/core/boot-app-handles.js` 를 더했다. 이 PR 이 고친 세포 49개 · `tests/**` · `scripts/**` · `court/**` · 등록 생성기 차이는 0). 측정의 기준 트리는 2a1507eb 다. main 을 합칠 때마다 등록 생성기를 다시 돌려 0 변경(멱등 — 그 사이 index.html 변경은 이미 등록된 이름과 통로로 나가는 이름의 목록을 바꾸지 않았다: 더할 이름 0. #939 가 더한 가져오기 2개는 통로로 나가지 않는 구역 함수 `boot…` 다)임을 확인했고, 마지막으로 기준 · 모의 철거 사본 · 대조군 트리를 전부 2a1507eb 에서 다시 만들어(모의 철거도 새 index.html 에 다시 적용 — 삭제 줄 수는 같다) npm test(기준 · 작업 · 모의) · 시험 하나씩 · 탐침 · 시나리오를 다시 쟀다. 붙잡힌 이름을 찾은 「전부 지운 사본」의 기록(`mock-unwire-all.json` · `tests-mock-all.json`)만 d55d7595 때의 것이다.
 - 지시함(origin/main) 열린 지시: **DIR-003**(B 트랙 — 세포가 등록 기관에 스스로 등록) · **DIR-004**.
 - **상민님 지시 원문(2026-10-11, 커맨드센터 세션 309dca5d — 글자 그대로)**
   1. 「남은 미분화작업 모두 진행해 병합도 스스로 진행해. 모든 작업 마칠때까지 멈추지 마. 지침이나 결심이 필요한점?」
@@ -89,12 +89,12 @@
 |---|---|
 | `provide-plan.json` | 생성기 계획(`--keep`): 기존 등록 438개(세포 167개) · 지금 계획 126 · 이미 등록됨 34 · **더함 89** · 통로로 올림 8 · 제외 2 · 건너뜀 1(800줄) · 바뀌는 파일 49(새 블록 21) |
 | `provide-exclude.json` · `pre-probe.json` | 더하지 않는 이름 2개와 근거(통로 값 ≠ window 값 — 브라우저 측정) |
-| `cell-registry-compare.{base,base2}.json` · `cell-registry-compare.json` | 대조 탐침: 등록 438 → 527 · 불일치 0 · 이중 등록 0 · 초과 76 = 76 · 누락 164 → 74 · 통로에서 사라진 이름 0 · 지문 차이 0 · 예외 0 |
+| `cell-registry-compare.{base,base2}.json` · `cell-registry-compare.json` | 대조 탐침: 등록 438 → 527 · 불일치 0 · 이중 등록 0 · 초과 76 = 76 · 누락 90 감소(값은 측정 파일) · 통로에서 사라진 이름 0 · 지문 차이 0 · 예외 0 |
 | `name-probe.{base,work,mock}.json` · `probe-names.json` | 새 이름 97개(더한 89 + 올린 8)의 통로 값 요약 — 기준·작업·모의 동일 |
 | `scenario-local.json` · `scenarios/` | 시나리오 12개 기준·작업 통과 |
 | `module-load.json` · `raw/` · `tests-{base,work}.json` | 모듈 로드 새 회귀 0 · npm test 기준/작업 같음 · 시험 하나씩 같음 |
 | `mock-plan.json` · `mock-unwire-all.json` · `tests-mock-all.json` · `pinned-names.json` | 모의 철거(전부): 202줄 삭제 → 시험 1개 깨짐 → 붙잡힌 이름 `saveGoogleToken` |
-| `mock-unwire.json` · `cell-registry-compare.mock.json` · `scenario-mock.json` · `tests-mock.json` | 모의 철거(붙잡힌 이름 제외): 195줄 삭제 · 가져오기 184 → 89 · 대조 불일치 0 · 사라진 이름 0 · 지문 차이 0 · 시나리오 12개 통과 · npm test · 시험 하나씩 기준과 같음 |
+| `mock-unwire.json` · `cell-registry-compare.mock.json` · `scenario-mock.json` · `tests-mock.json` | 모의 철거(붙잡힌 이름 제외): 195줄 삭제 · 가져오기 95줄이 줄어든다(`mock-unwire.json` `before` · `after`) · 대조 불일치 0 · 사라진 이름 0 · 지문 차이 0 · 시나리오 12개 통과 · npm test · 시험 하나씩 기준과 같음 |
 | `ctrl-unwire.json` · `cell-registry-compare.ctrl.json` | 대조군(등록 없이 같은 배선 삭제): 게스트 부팅이 예외로 멈춤 |
 | `measurement.json` | 위 전부 + 블록 전후 대조 · 바뀐 파일 범위 · 모듈 가드 · 무결성 게이트 · inlineScriptLines 기준 = 작업 |
 | `claims.json` | 주장(보존 12 + 기록) |
@@ -115,4 +115,4 @@
 - **예상**: 다른 PR 이 세포 파일을 고쳐 충돌할 수 있다(등록 블록은 파일 끝) → main 을 합친 뒤 세포 파일을 main 판으로 두고 생성기를 다시 돌린다(멱등).
 - **예상**: 등록 블록을 붙인 세포가 법정의 800줄 · 모듈 로드 탐침에 걸릴 수 있다 → 생성기가 800줄을 넘는 세포를 건너뛰고, 모듈 로드 탐침 새 회귀 0 을 쟀다.
 - **측정불가**: 로그인 뒤에만 불리는 연결 함수(로그인 · 로그아웃 · 세션 채널 등)의 동작 — 대조 탐침의 값 일치와 지문으로만 쟀다. 운영 환경.
-- **성과 측정**: 이 PR 자체의 `inlineScriptLines` 변화는 0 이다(index.html 변경 0). 등록 이름 438 → 527. 이 등록으로 다음 재철거가 지울 수 있는 줄은 모의 철거 기준 195줄이다(`inlineScriptLines` 1904 → 1709 예상, 가져오기 184 → 89).
+- **성과 측정**: 이 PR 자체의 `inlineScriptLines` 변화는 0 이다(index.html 변경 0). 등록 이름 438 → 527. 이 등록으로 다음 재철거가 지울 수 있는 줄은 모의 철거 기준 195줄이다(`inlineScriptLines` 와 가져오기 줄 수의 전후는 `measurement.json` `summary.mockUnwire` — 그 사이 다른 PR 이 index.html 을 바꾸면 달라지는 값이라 여기에 옮겨 적지 않는다).
