@@ -1,0 +1,195 @@
+{
+  "id": "p2x3-close-x-running-reopen",
+  "title": "검토자 추가 3 — 스톱워치를 돌리는 중에 ✕ 로 창을 닫고 바로 다시 열면 새 창의 표시는 00:00.0 이고 1.2초 뒤에도 그대로다(이전 타이머가 새 창을 건드리지 않는다) → 새 창에서 시작·정지·리셋 → 취소 (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "일시정지"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet .modal-sheet-close"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "시작"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "일시정지"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "▶ 시작"
+    },
+    {
+      "do": "click",
+      "selector": "#swResetBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "text": "검토닫기",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#proCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "벤치프레스"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#proCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

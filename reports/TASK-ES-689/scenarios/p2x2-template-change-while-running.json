@@ -1,0 +1,244 @@
+{
+  "id": "p2x2-template-change-while-running",
+  "title": "검토자 추가 2 — 스톱워치를 돌리는 중에 템플릿을 공부로 바꾸면 표는 공부 기본 행이 되고 타이머는 계속 돈다 → 정지·리셋·랩 → 바뀐 표의 칸에 랩 기입 → 저장 → 다시 열면 공부 템플릿과 기입한 값이 남아 있다 (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "일시정지"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "select",
+      "selector": "#proTplSelect",
+      "value": "study"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".pro-tpl-badge",
+      "text": "공부"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 2
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTable thead",
+      "text": "공부시간(분)"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "일시정지"
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "▶ 시작"
+    },
+    {
+      "do": "click",
+      "selector": "#swResetBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#swLapBtn"
+    },
+    {
+      "expect": "count",
+      "selector": ".sw-lap-row",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 3
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-cell-input[data-row=\"2\"][data-col=\"2\"]"
+    },
+    {
+      "do": "type",
+      "selector": ".sw-lap-memo-input",
+      "text": "검토랩"
+    },
+    {
+      "do": "click",
+      "selector": ".sw-lap-inject-btn"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn2"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"2\"][data-col=\"2\"]",
+      "name": "value",
+      "equals": "00:00"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"2\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": ""
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "count",
+      "selector": ".rec-card [data-recedit]",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": ".rec-card [data-recedit]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".pro-tpl-badge",
+      "text": "공부"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 3
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"2\"][data-col=\"2\"]",
+      "name": "value",
+      "equals": "00:00"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"2\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": ""
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#proCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

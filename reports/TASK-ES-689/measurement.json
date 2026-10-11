@@ -1,0 +1,1004 @@
+{
+ "schema": "ourgoal.finalize-run.measurement/2",
+ "taskId": "TASK-ES-689",
+ "type": "작업자 측정, 판정 아님 — 판정은 GitHub 법정만 낸다",
+ "measuredAt": "2026-10-11T16:22:00.740Z",
+ "sourceCommit": {
+  "baseTreeHead": "132505830d82a019e1539fff9d77daed56e63749",
+  "worktreeHead": "132505830d82a019e1539fff9d77daed56e63749"
+ },
+ "summary": {
+  "finalize": {
+   "statements": {
+    "total": 61,
+    "handles": 2,
+    "imports": 28,
+    "calls": 27
+   },
+   "removed": {
+    "lines": 418,
+    "shell": 3,
+    "statementLines": 61,
+    "commentLines": 270,
+    "blankLines": 84
+   },
+   "htmlLines": [
+    2712,
+    2294
+   ],
+   "files": {
+    "js/app/boot.js": 73
+   },
+   "relayed": [
+    {
+     "name": "renderTeamGoalsScreen",
+     "movedTo": "js/app/boot.js"
+    }
+   ],
+   "relayNames": [
+    "renderTeamGoalsScreen"
+   ],
+   "relayAllMovedToBoot": true,
+   "keptGlobalConst": {
+    "globalNames": [
+     "SUPABASE_URL",
+     "SUPABASE_ANON_KEY"
+    ],
+    "statements": [
+     {
+      "match": "var SUPABASE_URL",
+      "name": "SUPABASE_URL",
+      "line": 2425,
+      "valueLength": 40,
+      "readBy": [
+       2427
+      ]
+     },
+     {
+      "match": "var SUPABASE_ANON_KEY",
+      "name": "SUPABASE_ANON_KEY",
+      "line": 2426,
+      "valueLength": 208,
+      "readBy": [
+       2427
+      ]
+     }
+    ],
+    "readers": [
+     {
+      "match": "window.OurgoalAppState.define('sb'",
+      "line": 2427,
+      "reads": [
+       "SUPABASE_URL",
+       "SUPABASE_ANON_KEY"
+      ],
+      "movedTo": "js/app/boot.js"
+     }
+    ],
+    "globalNameScan": {
+     "hits": 0,
+     "scripts": 372,
+     "scanned": 372,
+     "missing": 0
+    },
+    "movedEarlierOver": {
+     "statements": 32,
+     "calls": [
+      "bootApplySavedTheme"
+     ],
+     "note": "남긴 선언은 원래 이 문들 뒤에 있었다 — 이제 그 앞(인라인)에서 돈다. 문자열 상수 선언이라 차례에 무관하고, 앞의 문 가운데 그 이름을 읽는 것은 없다(있으면 멈춘다)"
+    },
+    "inline": {
+     "statements": 2,
+     "bodyLines": 2,
+     "shellLines": 2,
+     "iifeShell": false
+    },
+    "boot": {
+     "statements": 59,
+     "handles": 2,
+     "imports": 27,
+     "calls": 27,
+     "readers": 1
+    }
+   },
+   "usedKeepInline": false,
+   "configured": {
+    "relayNames": [
+     "renderTeamGoalsScreen"
+    ],
+    "keepGlobalConstStatements": [
+     "var SUPABASE_URL",
+     "var SUPABASE_ANON_KEY"
+    ],
+    "keepGlobalConstReaders": [
+     "window.OurgoalAppState.define('sb'"
+    ],
+    "hasKeepInline": false
+   }
+  },
+  "changed": {
+   "files": 77,
+   "productFiles": [
+    "index.html",
+    "js/app/boot.js"
+   ],
+   "onlyIndexAndBoot": true,
+   "indexHtml": {
+    "file": "index.html",
+    "insertions": 1,
+    "deletions": 419
+   },
+   "testsChanged": [],
+   "scriptsChanged": [],
+   "vaultChanged": [],
+   "generatorChanged": [],
+   "otherGeneratedMapsChanged": []
+  },
+  "words": {
+   "type": "작업자 측정, 판정 아님",
+   "note": "생성기와 따로 기준·작업 index.html 과 부팅 파일을 다시 파싱해 문 단위로 맞댔다(문 글자 = 문의 시작~끝 글자, 뒤따르는 주석 제외. 바이트 비교는 줄 전체 — 줄 끝 글자 포함)",
+   "base": {
+    "iifeLines": 420,
+    "statements": 61,
+    "byKind": {
+     "손잡이": 2,
+     "expose 문": 1,
+     "가져오기": 28,
+     "구역 함수 호출문": 27,
+     "문자열 상수 선언": 2,
+     "상태 선언(define)": 1
+    },
+    "commentLines": 270,
+    "blankLines": 84,
+    "duplicatedStatementTexts": 0
+   },
+   "inline": {
+    "scriptTagLine": 2253,
+    "closeTagLine": 2256,
+    "blockLines": 4,
+    "innerLines": 2,
+    "statements": 2,
+    "byKind": {
+     "문자열 상수 선언": 2
+    },
+    "names": [
+     "SUPABASE_URL",
+     "SUPABASE_ANON_KEY"
+    ],
+    "list": [
+     {
+      "line": 2254,
+      "kind": "문자열 상수 선언",
+      "name": "SUPABASE_URL",
+      "baseLine": 2425
+     },
+     {
+      "line": 2255,
+      "kind": "문자열 상수 선언",
+      "name": "SUPABASE_ANON_KEY",
+      "baseLine": 2426
+     }
+    ],
+    "onlyStringConstDeclarations": true,
+    "hasParenthesis": false,
+    "noIifeShell": true,
+    "everyStatementIsABaseStatement": true,
+    "orderSameAsBase": true,
+    "linesByteIdenticalToBase": true
+   },
+   "boot": {
+    "file": "js/app/boot.js",
+    "fileLines": 75,
+    "statements": 59,
+    "byKind": {
+     "손잡이": 2,
+     "expose 문": 1,
+     "가져오기": 28,
+     "구역 함수 호출문": 27,
+     "상태 선언(define)": 1
+    },
+    "everyStatementIsABaseStatement": true,
+    "statementOrderSameAsBase": true,
+    "duplicatedFromInline": 0,
+    "bodyIsStatementsOnly": true,
+    "calls": [
+     "bootApplySavedTheme",
+     "bootAuthStateListener",
+     "bootAppConfig",
+     "bootThemeList",
+     "bootAvatarCloseButton",
+     "bootAvatarLevelUpWiring",
+     "bootAppStateObject",
+     "bootExposeAppState",
+     "bootPromptTabState",
+     "bootPromptDrawerState",
+     "bootEntryAndAccountWiring",
+     "bootGoogleTokenState",
+     "bootGoogleTokenSaveHandle",
+     "bootHomeAndGoalWiring",
+     "bootTemplateSubtabFilterState",
+     "bootTemplateSubtabKindState",
+     "bootGoalsAndTeamState",
+     "bootRecordsWiring",
+     "bootRecordsExportWiring",
+     "bootSampleGroups",
+     "bootShareHandle",
+     "bootFeedCacheState",
+     "bootSharedGroupsState",
+     "bootSharedGroupsFlag",
+     "bootCommSettingsAndStart",
+     "bootTemplatePartHandles",
+     "bootInstallAndServiceWorker"
+    ],
+    "readersOfKeptNames": [
+     {
+      "kind": "상태 선언(define)",
+      "name": "sb",
+      "reads": [
+       "SUPABASE_URL",
+       "SUPABASE_ANON_KEY"
+      ]
+     }
+    ],
+    "createClientAndListenersInOneScript": true,
+    "sameScript": {
+     "defineSb": 32,
+     "firstListenerCall": 33,
+     "secondListenerCall": 56,
+     "note": "연결 만들기(define sb) · 첫 수신기를 거는 구역 함수 호출(bootAuthStateListener) · 둘째 수신기를 거는 runAppBoot 를 부르는 구역 함수 호출(bootCommSettingsAndStart)이 모두 부팅 파일 안에 이 차례로 있다(문 번호)"
+    }
+   },
+   "partition": {
+    "baseStatements": 61,
+    "inline": 2,
+    "boot": 59,
+    "everyBaseStatementExactlyOnce": true,
+    "missingFromWork": []
+   },
+   "effectOrder": {
+    "base": 29,
+    "boot": 29,
+    "inline": 0,
+    "sameAsBase": true,
+    "note": "값을 읽기만 하는 문(손잡이 · 가져오기)과 문자열 상수 선언을 뺀 문의 차례: 기준 IIFE == 부팅 파일. 인라인에는 그런 문이 하나도 없다"
+   },
+   "movedEarlier": {
+    "keptWasAtBaseStatement": 32,
+    "statementsNowAfter": 32,
+    "callsNowAfter": [
+     "bootApplySavedTheme"
+    ],
+    "anyOfThemReadsKeptNames": false,
+    "note": "남긴 선언은 기준에서 이 문들 뒤에 있었고 이제 그 앞(인라인)에서 돈다. 문자열 상수라 차례에 무관하다 — 앞의 문 가운데 그 이름을 읽는 것은 없다"
+   },
+   "serverKey": {
+    "keyLinesInBaseIndex": 2,
+    "keyLinesInWorkIndex": 2,
+    "workLinesByteIdenticalToBase": true,
+    "bootHasNoValueText": true,
+    "bootReadsNamesTimes": 1,
+    "note": "서버 주소 · 공개 키 선언 두 줄(값 글자는 이 파일에 적지 않는다): 작업 index.html 의 그 줄이 기준 줄과 바이트로 같고, 부팅 파일에는 주소도 키 꼴 글자도 없다(이름만 읽는다)"
+   },
+   "replay": {
+    "rebuiltEqualsWork": true,
+    "firstDiff": null,
+    "baseLines": 2712,
+    "workLines": 2294,
+    "removedLines": 418,
+    "generatorRemovedLines": 418,
+    "tagLineIsBasePlusBootTag": true,
+    "tagLine": 2256,
+    "tagInBase": false,
+    "tagCountInWork": 1,
+    "tagHasDeferOrAsync": false,
+    "note": "기준 index.html 의 `<script>` 줄 뒤에 남긴 선언 줄만 기준 차례로 두고, `</script>` 줄에 부팅 파일 태그만 붙이면 작업 index.html 과 줄 단위로 같다 — IIFE 밖의 글자 변경 0"
+   },
+   "ok": true
+  },
+  "order": {
+   "tool": "reports/TASK-ES-689/tools/order-probe-689.cjs",
+   "limits": "이 탐침은 게스트 부팅(연결 null)과 「동기」 가짜 연결만 잰다 — 스크립트 경계에서 밀린 약속이 도는 차이는 보지 못한다. 그것은 auth-race(진짜 라이브러리 · 저장된 세션)가 잰다",
+   "plain": {
+    "bootOk": [
+     true,
+     true
+    ],
+    "exceptions": [
+     0,
+     0
+    ],
+    "events": [
+     364,
+     364
+    ],
+    "eventsSame": true,
+    "scopeNamesAtSame": true,
+    "bootCalls": [
+     27,
+     27
+    ],
+    "bootCallsSame": true,
+    "serverLink": {
+     "base": {
+      "themeCallIndex": 197,
+      "defineSbIndex": 198,
+      "windowSbIndex": -1,
+      "createClientIndex": -1,
+      "nextBootCallIndex": 200,
+      "nextBootCall": "bootAuthStateListener",
+      "bootCallsBeforeDefineSb": [
+       "bootApplySavedTheme"
+      ],
+      "themeThenSbThenRest": true
+     },
+     "work": {
+      "themeCallIndex": 197,
+      "defineSbIndex": 198,
+      "windowSbIndex": -1,
+      "createClientIndex": -1,
+      "nextBootCallIndex": 200,
+      "nextBootCall": "bootAuthStateListener",
+      "bootCallsBeforeDefineSb": [
+       "bootApplySavedTheme"
+      ],
+      "themeThenSbThenRest": true
+     }
+    }
+   },
+   "fakeClient": {
+    "bootOk": [
+     true,
+     true
+    ],
+    "exceptions": [
+     1,
+     1
+    ],
+    "events": [
+     366,
+     366
+    ],
+    "eventsSame": true,
+    "fake": {
+     "base": {
+      "scopeSbIsFake": true,
+      "createClientBeforeDefineSb": true,
+      "eventsBetween": 0
+     },
+     "work": {
+      "scopeSbIsFake": true,
+      "createClientBeforeDefineSb": true,
+      "eventsBetween": 0
+     }
+    }
+   },
+   "themeThenServerLinkThenRest": true,
+   "ok": true
+  },
+  "authRace": {
+   "source": "reports/TASK-ES-689/auth-race.json",
+   "runs": 24,
+   "libs": [
+    "cdn",
+    "npm"
+   ],
+   "modes": [
+    "expired",
+    "nosession",
+    "session"
+   ],
+   "cdnLib": {
+    "file": "supabase-at2.default.js",
+    "sha256": "36d1ad9948fdbba9c3d696e27050f70aafce88981938b6a814a6ad8abdf171ba",
+    "note": "운영 화면이 CDN 에서 받는 판을 내려받아 둔 파일(독립 확인 담당이 받은 것) — 저장소에는 넣지 않았다"
+   },
+   "allBootOk": true,
+   "allWorkSameAsPrev": true,
+   "sessionAppListenersReceiveSignedIn": true,
+   "groups": [
+    {
+     "group": "cdn.expired",
+     "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+     "prevRuns": 2,
+     "workRuns": 2,
+     "prevRunsSame": true,
+     "workSameAsPrev": true,
+     "workReceivedSameAsPrev": true,
+     "prev": {
+      "appListenersReceivedSignedIn": 0,
+      "signedInDeliveredWithSubs": null,
+      "initDoneBeforeFirstListener": false,
+      "pendingAuthSessionAtEnd": "null",
+      "events": 14
+     }
+    },
+    {
+     "group": "cdn.nosession",
+     "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+     "prevRuns": 1,
+     "workRuns": 2,
+     "prevRunsSame": true,
+     "workSameAsPrev": true,
+     "workReceivedSameAsPrev": true,
+     "prev": {
+      "appListenersReceivedSignedIn": 0,
+      "signedInDeliveredWithSubs": null,
+      "initDoneBeforeFirstListener": false,
+      "pendingAuthSessionAtEnd": "null",
+      "events": 7
+     }
+    },
+    {
+     "group": "cdn.session",
+     "lib": "2.117.3 (CDN 에서 내려받은 파일)",
+     "prevRuns": 2,
+     "workRuns": 3,
+     "prevRunsSame": true,
+     "workSameAsPrev": true,
+     "workReceivedSameAsPrev": true,
+     "prev": {
+      "appListenersReceivedSignedIn": 2,
+      "signedInDeliveredWithSubs": 3,
+      "initDoneBeforeFirstListener": false,
+      "pendingAuthSessionAtEnd": "session",
+      "events": 16
+     }
+    },
+    {
+     "group": "npm.expired",
+     "lib": "2.115.0 (node_modules)",
+     "prevRuns": 2,
+     "workRuns": 2,
+     "prevRunsSame": true,
+     "workSameAsPrev": true,
+     "workReceivedSameAsPrev": true,
+     "prev": {
+      "appListenersReceivedSignedIn": 0,
+      "signedInDeliveredWithSubs": null,
+      "initDoneBeforeFirstListener": false,
+      "pendingAuthSessionAtEnd": "null",
+      "events": 14
+     }
+    },
+    {
+     "group": "npm.nosession",
+     "lib": "2.115.0 (node_modules)",
+     "prevRuns": 1,
+     "workRuns": 2,
+     "prevRunsSame": true,
+     "workSameAsPrev": true,
+     "workReceivedSameAsPrev": true,
+     "prev": {
+      "appListenersReceivedSignedIn": 0,
+      "signedInDeliveredWithSubs": null,
+      "initDoneBeforeFirstListener": false,
+      "pendingAuthSessionAtEnd": "null",
+      "events": 7
+     }
+    },
+    {
+     "group": "npm.session",
+     "lib": "2.115.0 (node_modules)",
+     "prevRuns": 2,
+     "workRuns": 3,
+     "prevRunsSame": true,
+     "workSameAsPrev": true,
+     "workReceivedSameAsPrev": true,
+     "prev": {
+      "appListenersReceivedSignedIn": 2,
+      "signedInDeliveredWithSubs": 3,
+      "initDoneBeforeFirstListener": false,
+      "pendingAuthSessionAtEnd": "session",
+      "events": 16
+     }
+    }
+   ],
+   "hasBothLibs": true,
+   "hasAllModes": true
+  },
+  "spec": {
+   "cell": "app/boot",
+   "kind": "organ",
+   "kindIsOrgan": true,
+   "dependsOn": [
+    "OurgoalAppScope",
+    "OurgoalAppState",
+    "OurgoalGoalsKit",
+    "OurgoalUiHelpers",
+    "supabase"
+   ],
+   "hasName": true,
+   "hasDescription": true,
+   "apply": {
+    "cell": "app/boot",
+    "kindWrittenByTool": "unclassified",
+    "guardExitBeforeKind": 1,
+    "kindSetByHand": "organ",
+    "kindKeptAfterRewrite": "organ",
+    "guardExitAfter": 0,
+    "note": "신고서 도구(module-specs --write)는 폴더 js/app 의 종류를 정하지 못해 unclassified 로 적고 모듈 가드가 멈춘다. modules.json 의 그 한 칸을 organ 으로 손으로 정했다(이 도구가 적었다) — 다시 써도 그 값은 보존된다. 도구·가드 규칙은 바꾸지 않았다"
+   }
+  },
+  "inlineScriptLines": {
+   "before": 442,
+   "after": 24,
+   "decreasedBy": 418,
+   "decreased": true,
+   "keptDeclarationLines": 2,
+   "otherInlineLines": 22,
+   "note": "after = 남긴 상수 선언 줄 수 + 다른 인라인 조각(접속 통계 · ESC 키 처리기) 줄 수. 큰 인라인 IIFE(덩어리)는 0줄이다"
+  },
+  "officialMetrics": {
+   "base": {
+    "inlineScriptLines": 442,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "work": {
+    "inlineScriptLines": 24,
+    "indexFunctionDecls": 1,
+    "windowAssignments": 75,
+    "oversizeJsFiles": {
+     "count": 0,
+     "files": {}
+    },
+    "crossTabRefs": 0
+   },
+   "note": "공식 지표는 최상위 var 로 생기는 전역 이름을 세지 않는다 — 새 전역 둘(SUPABASE_URL · SUPABASE_ANON_KEY)은 windowAssignments 에 보이지 않는다"
+  },
+  "baseline": {
+   "lastInlineScriptLines": [
+    442,
+    24
+   ],
+   "recordedEqualsMeasured": true
+  },
+  "guard": {
+   "exitCode": 0,
+   "integrityGateExitCode": 0
+  },
+  "compare": {
+   "scopeNames": 539,
+   "windowNames": 0,
+   "registered": 545,
+   "checked": 471,
+   "mismatches": 0,
+   "missing": 68,
+   "extra": 74,
+   "conflicts": 0,
+   "own": 545,
+   "ownScope": 471,
+   "ownWindow": 181,
+   "lateProvides": 0,
+   "ok": true,
+   "scopeLost": [],
+   "exceptions": 0,
+   "before": {
+    "scopeNames": 539,
+    "windowNames": 0,
+    "registered": 545,
+    "checked": 471,
+    "mismatches": 0,
+    "missing": 68,
+    "extra": 74,
+    "conflicts": 0,
+    "own": 545,
+    "ownScope": 471,
+    "ownWindow": 181,
+    "lateProvides": 0
+   }
+  },
+  "fingerprints": {
+   "names": {
+    "scope": 539,
+    "window": 0
+   },
+   "differingScope": [],
+   "differingWindow": []
+  },
+  "scenarios": [
+   {
+    "id": "p101-guest-boot-six-tabs",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 13,
+    "steps": 29
+   },
+   {
+    "id": "p102-goals-subtabs-periods",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 10,
+    "steps": 27
+   },
+   {
+    "id": "p103-bell-modal-settings",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 9,
+    "steps": 26
+   },
+   {
+    "id": "p104-new-goal-modal",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 6,
+    "steps": 22
+   },
+   {
+    "id": "p105-goal-agent-drawer",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 3,
+    "steps": 18
+   },
+   {
+    "id": "p106-settings-legal-links",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 4,
+    "steps": 18
+   },
+   {
+    "id": "p107-auth-forgot-password",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 1,
+    "steps": 9
+   },
+   {
+    "id": "p108-checkin-mic-guide",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 2,
+    "steps": 12
+   },
+   {
+    "id": "p109-team-comment-passthrough",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 2,
+    "steps": 16
+   },
+   {
+    "id": "p110-sample-purge",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 3,
+    "steps": 20
+   },
+   {
+    "id": "p111-goal-fast-add",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 4,
+    "steps": 20
+   },
+   {
+    "id": "p112-records-export-modal",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 4,
+    "steps": 16
+   },
+   {
+    "id": "p2s01-open-close",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 11,
+    "steps": 28
+   },
+   {
+    "id": "p2s02-hub-entry-back",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 12,
+    "steps": 29
+   },
+   {
+    "id": "p2s03-table-edit",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 16,
+    "steps": 43
+   },
+   {
+    "id": "p2s04-template-change",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 15,
+    "steps": 33
+   },
+   {
+    "id": "p2s05-tool-windows-a",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 13,
+    "steps": 39
+   },
+   {
+    "id": "p2s06-tool-windows-b",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 18,
+    "steps": 47
+   },
+   {
+    "id": "p2s07-quick-load",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 5,
+    "steps": 25
+   },
+   {
+    "id": "p2s08-trend-chart",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 10,
+    "steps": 29
+   },
+   {
+    "id": "p2s09-stopwatch",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 23,
+    "steps": 56
+   },
+   {
+    "id": "p2s10-save-reopen-reload",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 15,
+    "steps": 41
+   },
+   {
+    "id": "p2s11-calendar-save",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 14,
+    "steps": 48
+   },
+   {
+    "id": "p2x1-mid-row-delete-save-reopen",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 20,
+    "steps": 56
+   },
+   {
+    "id": "p2x2-template-change-while-running",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 19,
+    "steps": 52
+   },
+   {
+    "id": "p2x3-close-x-running-reopen",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 15,
+    "steps": 43
+   },
+   {
+    "id": "p2x4-voice-sim-chip-insert",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 10,
+    "steps": 31
+   },
+   {
+    "id": "p3h2-record-save-reopen-reload",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 15,
+    "steps": 41
+   },
+   {
+    "id": "p3h3-record-calendar-save",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 14,
+    "steps": 48
+   },
+   {
+    "id": "p3h4-record-rows-delete-save-reopen",
+    "base": true,
+    "base2": true,
+    "work": true,
+    "workExceptions": 0,
+    "nonVacuousExpects": 20,
+    "steps": 56
+   }
+  ],
+  "scenarioCount": 30,
+  "scenariosExpected": 30,
+  "scenariosAllPassedBoth": true,
+  "moduleLoad": {
+   "regressions": 0,
+   "insufficient": [
+    "js/goal-templates-registry.js: 양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined"
+   ],
+   "counts": {
+    "head": 83,
+    "headOk": 82,
+    "base": 83,
+    "baseOk": 82
+   }
+  },
+  "npmTest": {
+   "base": {
+    "ok": 487,
+    "okDot": 203,
+    "fail": 0,
+    "failLines": [],
+    "exit": 0
+   },
+   "work": {
+    "ok": 487,
+    "okDot": 203,
+    "fail": 0,
+    "failLines": [],
+    "exit": 0
+   },
+   "onlyBase": [],
+   "onlyWork": [],
+   "same": true
+  },
+  "testsEach": {
+   "scripts": 4,
+   "testFiles": 115,
+   "differing": [],
+   "sameAsBase": true
+  }
+ },
+ "commands": [
+  {
+   "id": "git rev-parse",
+   "startedAt": "2026-10-11T16:21:30.005Z",
+   "endedAt": "2026-10-11T16:21:30.061Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "git rev-parse",
+   "startedAt": "2026-10-11T16:21:30.061Z",
+   "endedAt": "2026-10-11T16:21:30.131Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "git diff",
+   "startedAt": "2026-10-11T16:21:30.131Z",
+   "endedAt": "2026-10-11T16:21:30.261Z",
+   "exitCode": 0,
+   "stderrHead": "warning: in the working copy of 'docs/architecture/cell-descriptions.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/architecture/module-baseline."
+  },
+  {
+   "id": "git ls-files",
+   "startedAt": "2026-10-11T16:21:30.261Z",
+   "endedAt": "2026-10-11T16:21:30.391Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "order-probe base",
+   "startedAt": "2026-10-11T16:21:30.406Z",
+   "endedAt": "2026-10-11T16:21:35.054Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "order-probe fake base",
+   "startedAt": "2026-10-11T16:21:35.054Z",
+   "endedAt": "2026-10-11T16:21:39.716Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "order-probe work",
+   "startedAt": "2026-10-11T16:21:39.716Z",
+   "endedAt": "2026-10-11T16:21:44.374Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "order-probe fake work",
+   "startedAt": "2026-10-11T16:21:44.374Z",
+   "endedAt": "2026-10-11T16:21:49.157Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "module-guard",
+   "startedAt": "2026-10-11T16:21:49.985Z",
+   "endedAt": "2026-10-11T16:21:50.563Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "integrity-gate",
+   "startedAt": "2026-10-11T16:21:50.563Z",
+   "endedAt": "2026-10-11T16:21:51.238Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "probe base",
+   "startedAt": "2026-10-11T16:21:51.239Z",
+   "endedAt": "2026-10-11T16:21:55.979Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  },
+  {
+   "id": "probe work",
+   "startedAt": "2026-10-11T16:21:55.979Z",
+   "endedAt": "2026-10-11T16:22:00.586Z",
+   "exitCode": 0,
+   "stderrHead": ""
+  }
+ ]
+}
