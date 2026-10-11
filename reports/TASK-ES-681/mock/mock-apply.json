@@ -1,0 +1,655 @@
+{
+ "tool": "reports/TASK-ES-681/tools/mock-apply.cjs",
+ "type": "작업자 측정, 판정 아님 — 저장소 밖 사본에서의 모의 적용(실제 적용 0)",
+ "measuredAt": "2026-10-11T12:22:01.291Z",
+ "base": "ba5b46e2d9aa1aa6eb6fc9729f10a6387b1e4a23",
+ "note": "준비 단계(1 region)는 구역 이전 3차를 흉내 낸 것이다 — 실제 그 PR 은 다른 작업이고 구역 함수의 이름·세포가 다를 수 있다. 2 는 재철거 4차, 3 은 finalize 의 미리보기다.",
+ "htmlLines": {
+  "base": 2715,
+  "afterRegion": 2719,
+  "afterUnwire": 2712,
+  "afterFinalize": 2306
+ },
+ "step1Region": {
+  "stdout": [
+   "region · regions 2 · statements 2 · lines 4 · locals 0 · edits 2 · bridged 1 · exposed 1 · imports 2",
+   "  region bootAppStateSeed 2483~2485 → js/core/boot-mock-seeds.js",
+   "  region bootPromptOpenSeed 2507~2507 → js/core/boot-mock-seeds.js",
+   "index.html lines 2715 -> 2719",
+   "js/core/boot-mock-seeds.js 35"
+  ]
+ },
+ "step2Unwire": {
+  "totals": {
+   "runs": 2,
+   "names": 1,
+   "plannedNames": 1,
+   "droppedFromPlan": 0,
+   "removed": {
+    "imports": 1,
+    "exposeProps": 1,
+    "exposeCalls": 1,
+    "windowAssigns": 0,
+    "windowBlocks": 0,
+    "commaFixedLines": 0,
+    "inlineEdits": 0,
+    "kitVarLine": 2,
+    "deadImports": 1,
+    "deletedLines": 7
+   },
+   "htmlLines": [
+    2719,
+    2712
+   ]
+  },
+  "runs": [
+   {
+    "kitVar": "_calendarKit",
+    "pass": 1,
+    "options": [
+     "dropkit"
+    ],
+    "names": 1,
+    "removed": {
+     "imports": 1,
+     "exposeProps": 1,
+     "exposeCalls": 1,
+     "windowAssigns": 0,
+     "windowBlocks": 0,
+     "commaFixedLines": 0,
+     "inlineEdits": 0,
+     "kitVarLine": 1,
+     "deadImports": 0,
+     "deletedLines": 5
+    },
+    "deadImports": []
+   },
+   {
+    "kitVar": "_ui",
+    "pass": 1,
+    "options": [
+     "dropkit"
+    ],
+    "names": 0,
+    "removed": {
+     "imports": 0,
+     "exposeProps": 0,
+     "exposeCalls": 0,
+     "windowAssigns": 0,
+     "windowBlocks": 0,
+     "commaFixedLines": 0,
+     "inlineEdits": 0,
+     "kitVarLine": 1,
+     "deadImports": 1,
+     "deletedLines": 2
+    },
+    "deadImports": [
+     {
+      "name": "a11ySwitch",
+      "line": 2262,
+      "kit": "OurgoalUiHelpers",
+      "reason": "설정 탭 세포들은 키트(window.OurgoalUiHelpers)에서 직접 부른다 — index.html 의 이 지역 변수를 읽는 곳이 없다(#TASK-ES-677 REQ 사실 보고)",
+      "definedIn": "js/core/ui-helpers.js",
+      "definedAtLine": 37
+     }
+    ]
+   }
+  ]
+ },
+ "step3Finalize": {
+  "stdout": [
+   "finalize · handles 2 · imports 28 · calls 27 · removed lines 406 (껍데기 0 · 문 52 · 주석 270 · 빈 줄 84)",
+   "  relay renderTeamGoalsScreen — 가져오기 줄 2323 · getter 줄 2276(expose 문 줄 2275~2277) → index.html(인라인에 남음) · 근거: 주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계",
+   "  keepInline 「var SUPABASE_URL」 — 줄 2425(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다",
+   "  keepInline 「var SUPABASE_ANON_KEY」 — 줄 2426(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다",
+   "  keepInline 「window.OurgoalAppState.define('sb'」 — 줄 2427(상태 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다",
+   "  keepInline(함께 남김) 줄 2275 「window.OurgoalAppScope.expose('index.html', {」 — 지정한 문보다 앞에서 도는 relay expose 문",
+   "  keepInline(함께 남김) 줄 2414 「bootApplySavedTheme();」 — 지정한 문보다 앞에서 도는 호출문",
+   "  keepInline(함께 남김) 줄 2274 「var _goalsKit = window.OurgoalGoalsKit;」 — 인라인에 남는 문이 읽는 손잡이",
+   "  keepInline(함께 남김) 줄 2323 「var renderTeamGoalsScreen = _goalsKit.renderTeamGoalsScreen;」 — 인라인에 남는 문이 읽는 가져오기",
+   "  keepInline(함께 남김) 줄 2343 「var _uiKit = window.OurgoalUiHelpers;」 — 인라인에 남는 문이 읽는 손잡이",
+   "  keepInline(함께 남김) 줄 2371 「var bootApplySavedTheme = _uiKit.bootApplySavedTheme;」 — 인라인에 남는 문이 읽는 가져오기",
+   "  keepInline(손잡이 한 번 더) _uiKit — 줄 2343 은 인라인에 남고 부팅 파일에도 같은 글자로 적는다",
+   "index.html lines 2712 -> 2306",
+   "js/app/boot.js 65"
+  ],
+  "statements": {
+   "total": 61,
+   "handles": 2,
+   "imports": 28,
+   "calls": 27
+  },
+  "removed": {
+   "lines": 406,
+   "shell": 0,
+   "statementLines": 52,
+   "commentLines": 270,
+   "blankLines": 84
+  },
+  "tag": {
+   "line": 2268,
+   "text": "<script src=\"js/app/boot.js\"></script>",
+   "sync": true
+  },
+  "relayed": [
+   {
+    "name": "renderTeamGoalsScreen",
+    "reason": "주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계",
+    "importLine": 2323,
+    "getterLine": 2276,
+    "exposeLines": [
+     2275,
+     2277
+    ],
+    "movedTo": "index.html(인라인에 남음)"
+   }
+  ],
+  "keptInline": {
+   "reason": "커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다",
+   "statements": [
+    {
+     "match": "var SUPABASE_URL",
+     "kind": "var",
+     "line": 2425,
+     "endLine": 2425,
+     "why": "지정한 문",
+     "text": "var SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co"
+    },
+    {
+     "match": "var SUPABASE_ANON_KEY",
+     "kind": "var",
+     "line": 2426,
+     "endLine": 2426,
+     "why": "지정한 문",
+     "text": "var SUPABASE_ANON_KEY = '(가림)"
+    },
+    {
+     "match": "window.OurgoalAppState.define('sb'",
+     "kind": "define",
+     "line": 2427,
+     "endLine": 2427,
+     "why": "지정한 문",
+     "text": "window.OurgoalAppState.define('sb', (window.supabase && type"
+    }
+   ],
+   "before": [
+    {
+     "line": 2275,
+     "endLine": 2277,
+     "why": "지정한 문보다 앞에서 도는 relay expose 문",
+     "text": "window.OurgoalAppScope.expose('index.html', {"
+    },
+    {
+     "line": 2414,
+     "endLine": 2414,
+     "why": "지정한 문보다 앞에서 도는 호출문",
+     "text": "bootApplySavedTheme();"
+    }
+   ],
+   "pulled": [
+    {
+     "line": 2274,
+     "endLine": 2274,
+     "why": "인라인에 남는 문이 읽는 손잡이",
+     "text": "var _goalsKit = window.OurgoalGoalsKit;"
+    },
+    {
+     "line": 2323,
+     "endLine": 2323,
+     "why": "인라인에 남는 문이 읽는 가져오기",
+     "text": "var renderTeamGoalsScreen = _goalsKit.renderTeamGoalsScreen;"
+    },
+    {
+     "line": 2343,
+     "endLine": 2343,
+     "why": "인라인에 남는 문이 읽는 손잡이",
+     "text": "var _uiKit = window.OurgoalUiHelpers;"
+    },
+    {
+     "line": 2371,
+     "endLine": 2371,
+     "why": "인라인에 남는 문이 읽는 가져오기",
+     "text": "var bootApplySavedTheme = _uiKit.bootApplySavedTheme;"
+    }
+   ],
+   "duplicatedHandles": [
+    {
+     "name": "_uiKit",
+     "line": 2343
+    }
+   ],
+   "inline": {
+    "statements": 9,
+    "bodyLines": 11,
+    "shellLines": 5
+   },
+   "boot": {
+    "statements": 53,
+    "handles": 1,
+    "imports": 26,
+    "calls": 26
+   },
+   "inlineCallOrder": [
+    "bootApplySavedTheme"
+   ],
+   "bootCallOrder": [
+    "bootAuthStateListener",
+    "bootAppConfig",
+    "bootThemeList",
+    "bootAvatarCloseButton",
+    "bootAvatarLevelUpWiring",
+    "bootAppStateSeed",
+    "bootExposeAppState",
+    "bootPromptTabState",
+    "bootPromptOpenSeed",
+    "bootEntryAndAccountWiring",
+    "bootGoogleTokenState",
+    "bootGoogleTokenSaveHandle",
+    "bootHomeAndGoalWiring",
+    "bootTemplateSubtabFilterState",
+    "bootTemplateSubtabKindState",
+    "bootGoalsAndTeamState",
+    "bootRecordsWiring",
+    "bootRecordsExportWiring",
+    "bootSampleGroups",
+    "bootShareHandle",
+    "bootFeedCacheState",
+    "bootSharedGroupsState",
+    "bootSharedGroupsFlag",
+    "bootCommSettingsAndStart",
+    "bootTemplatePartHandles",
+    "bootInstallAndServiceWorker"
+   ]
+  }
+ },
+ "inlineKept": {
+  "blockLines": 16,
+  "linesAreSubsequenceOfBefore": true,
+  "lastLineIsScriptCloseWithBootTag": true,
+  "keyLineInIndexByteSame": true,
+  "keyTextInBoot": false,
+  "bootLines": 65
+ },
+ "moduleSpecs": {
+  "kindWrittenByTool": "unclassified",
+  "guardBeforeSettingKind": {
+   "exitCode": 1,
+   "message": [
+    "- 신고서: 세포 app/boot: 종류(kind)가 \"unclassified\" — organ·tab·hybrid·future 중 하나로 정한다"
+   ]
+  },
+  "kindSetByHand": "organ",
+  "kindAfterRewrite": "organ",
+  "guardAfterSettingKind": 0,
+  "specsWriteTail": [
+   "modules.json 갱신: 세포 381 — future 1 · hybrid 105 · organ 72 · tab 202 · unclassified 1"
+  ]
+ },
+ "compare": {
+  "base": {
+   "scopeNames": 539,
+   "windowNames": 0,
+   "registered": 545,
+   "checked": 471,
+   "mismatches": 0,
+   "missing": 68,
+   "extra": 74,
+   "conflicts": 0,
+   "own": 545,
+   "ownScope": 471,
+   "ownWindow": 181,
+   "lateProvides": 0
+  },
+  "mock": {
+   "scopeNames": 539,
+   "windowNames": 0,
+   "registered": 545,
+   "checked": 471,
+   "mismatches": 0,
+   "missing": 68,
+   "extra": 74,
+   "conflicts": 0,
+   "own": 545,
+   "ownScope": 471,
+   "ownWindow": 181,
+   "lateProvides": 0
+  },
+  "scopeLost": [],
+  "fingerprintsDiffering": {
+   "scope": [],
+   "window": []
+  },
+  "exceptions": {
+   "base": 0,
+   "mock": 0
+  },
+  "guestBootError": {
+   "base": null,
+   "mock": null
+  }
+ },
+ "deadImportRuntime": {
+  "base": {
+   "own": true,
+   "data": true,
+   "accessor": false,
+   "type": "function",
+   "onScope": false
+  },
+  "mock": {
+   "own": true,
+   "data": true,
+   "accessor": false,
+   "type": "function",
+   "onScope": false
+  },
+  "note": "기준 트리(지우기 전)와 모의 트리(지운 뒤)의 브라우저에서 window.OurgoalUiHelpers 의 a11ySwitch 속성 기술자 — data:true · accessor:false 면 읽기만으로 부수효과가 없다. onScope:false 면 통로에 없는 이름이다"
+ },
+ "nameValues": {
+  "a11ySwitch": {
+   "base": "undefined",
+   "mock": "undefined",
+   "same": true
+  },
+  "isoDate": {
+   "base": "function:isoDate:1:242e918b",
+   "mock": "function:isoDate:1:242e918b",
+   "same": true
+  },
+  "renderTeamGoalsScreen": {
+   "base": "function:renderTeamGoalsScreen:0:73d3a75d",
+   "mock": "function:renderTeamGoalsScreen:0:73d3a75d",
+   "same": true
+  },
+  "sb": {
+   "base": "null",
+   "mock": "null",
+   "same": true
+  }
+ },
+ "scenarios": {
+  "count": 12,
+  "allPassedBoth": true,
+  "rows": [
+   {
+    "id": "x01-guest-boot-six-tabs",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x02-goals-subtabs-periods",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x03-bell-modal-settings",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x04-new-goal-modal",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x05-goal-agent-drawer",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x06-settings-legal-links",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x07-auth-forgot-password",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x08-checkin-mic-guide",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x09-team-comment-passthrough",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x10-sample-purge",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x11-goal-fast-add",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   },
+   {
+    "id": "x12-records-export-modal",
+    "base": true,
+    "mock": true,
+    "exceptions": 0
+   }
+  ]
+ },
+ "npmTest": {
+  "base": {
+   "exitCode": 0,
+   "okLines": 487
+  },
+  "mock": {
+   "exitCode": 0,
+   "okLines": 487
+  },
+  "same": true
+ },
+ "testsEach": {
+  "scripts": 4,
+  "testFiles": 115,
+  "differing": []
+ },
+ "commitHook": {
+  "commitExitCode": 0,
+  "forbiddenPatternStepPassed": true,
+  "hardcodedSecretBlocked": false,
+  "outputTail": [
+   "[tmp/es681-mock-hook-check 82de9231] [INFRA] #TASK-ES-681 test: finalize 모의 커밋(커밋 훅 확인용 — push 하지 않는다)",
+   " 8 files changed, 468 insertions(+), 443 deletions(-)",
+   " create mode 100644 js/app/boot.js",
+   " create mode 100644 js/core/boot-mock-seeds.js",
+   "",
+   "✔ 금지 패턴 없음 · index.html 순증가 -409줄 · 변경 911줄",
+   "⚠ 티켓 #TASK-ES-681 이(가) docs/rules/TICKETS.md 에 없음 — 노션 통합 작업대기목록에 있으면 워처가 확인한다. 둘 다 없으면 G0 위반으로 기록된다.",
+   "✔ 본질 태그 [INFRA] 티켓 #TASK-ES-681"
+  ]
+ },
+ "steps": [
+  {
+   "id": "되돌리기(checkout)",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "되돌리기(reset)",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "되돌리기(clean)",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "1 region",
+   "exitCode": 0,
+   "stdoutTail": "region · regions 2 · statements 2 · lines 4 · locals 0 · edits 2 · bridged 1 · exposed 1 · imports 2\n  region bootAppStateSeed 2483~2485 → js/core/boot-mock-seeds.js\n  region bootPromptOpenSeed 2507~2507 → js/core/boot-mock-seeds.js\nindex.html lines 2715 -> 2719\njs/core/boot-mock-seeds.js 35",
+   "stderrTail": ""
+  },
+  {
+   "id": "2 unwire(실행기 apply)",
+   "exitCode": 0,
+   "stdoutTail": "apply [1/2] _calendarKit 1차 · names 1 (계획 1, 뺀 0) · 삭제 5 줄 · 쉼표 0 · 2719 -> 2714\napply [2/2] _ui 1차 · names 0 (계획 0, 뺀 0) · 삭제 2 줄 · 쉼표 0 · 2714 -> 2712\nindex.html 2719 -> 2712 · 시도 1",
+   "stderrTail": ""
+  },
+  {
+   "id": "3 finalize",
+   "exitCode": 0,
+   "stdoutTail": "finalize · handles 2 · imports 28 · calls 27 · removed lines 406 (껍데기 0 · 문 52 · 주석 270 · 빈 줄 84)\n  relay renderTeamGoalsScreen — 가져오기 줄 2323 · getter 줄 2276(expose 문 줄 2275~2277) → index.html(인라인에 남음) · 근거: 주인 세포 js/tabs/goals/team-goals-screen.js 가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다 — 등록 기관에 등록하지 못한 이름의 통로 중계\n  keepInline 「var SUPABASE_URL」 — 줄 2425(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다\n  keepInline 「var SUPABASE_ANON_KEY」 — 줄 2426(var 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다\n  keepInline 「window.OurgoalAppState.define('sb'」 — 줄 2427(상태 선언) 을 인라인 IIFE 에 줄 그대로 남긴다 · 근거: 커밋 훅의 HARDCODED_SECRET 규칙(금고)이 공개 키 선언 줄을 새 파일로 옮기는 것을 막는다 — 규칙은 건드리지 않는다\n  keepInline(함께 남김) 줄 2275 「window.OurgoalAppScope.expose('index.html', {」 — 지정한 문보다 앞에서 도는 relay expose 문\n  keepInline(함께 남김) 줄 2414 「bootApplySavedTheme();」 — 지정한 문보다 앞에서 도는 호출문\n  keepInline(함께 남김) 줄 2274 「var _goalsKit = window.OurgoalGoalsKit;」 — 인라인에 남는 문이 읽는 손잡이\n  keepInline(함께 남김) 줄 2323 「var renderTeamGoalsScreen = _goalsKit.renderTeamGoalsScreen;」 — 인라인에 남는 문이 읽는 가져오기\n  keepInline(함께 남김) 줄 2343 「var _uiKit = window.OurgoalUiHelpers;」 — 인라인에 남는 문이 읽는 손잡이\n  keepInline(함께 남김) 줄 2371 「var bootApplySavedTheme = _uiKit.bootApplySavedTheme;」 — 인라인에 남는 문이 읽는 가져오기\n  keepInline(손잡이 한 번 더) _uiKit — 줄 2343 은 인라인에 남고 부팅 파일에도 같은 글자로 적는다\nindex.html lines 2712 -> 2306\njs/app/boot.js 65",
+   "stderrTail": ""
+  },
+  {
+   "id": "4 module-specs --write",
+   "exitCode": 0,
+   "stdoutTail": "modules.json 갱신: 세포 381 — future 1 · hybrid 105 · organ 72 · tab 202 · unclassified 1",
+   "stderrTail": ""
+  },
+  {
+   "id": "4 module-guard(종류를 정하기 전)",
+   "exitCode": 1,
+   "stdoutTail": "",
+   "stderrTail": "✖ 모듈 가드 실패 — 모듈화 부채가 기준선(docs/architecture/module-baseline.json)보다 늘었다:\n  - 신고서: 세포 app/boot: 종류(kind)가 \"unclassified\" — organ·tab·hybrid·future 중 하나로 정한다\n  규칙: docs/architecture/MODULE-BLUEPRINT.md 「래칫」. 꼭 늘려야 하면 --update --reason \"<20자 이상 사유>\""
+  },
+  {
+   "id": "4 module-specs --write(다시 — 손으로 정한 종류가 보존되는가)",
+   "exitCode": 0,
+   "stdoutTail": "modules.json 갱신: 세포 381 — future 1 · hybrid 105 · organ 73 · tab 202",
+   "stderrTail": ""
+  },
+  {
+   "id": "4 세포 설명",
+   "exitCode": 0,
+   "stdoutTail": "added 2",
+   "stderrTail": ""
+  },
+  {
+   "id": "4 module-guard --update",
+   "exitCode": 0,
+   "stdoutTail": "✓ 기준선 갱신(74번째): C:\\Users\\HP\\AppData\\Local\\Temp\\es681-mock\\docs\\architecture\\module-baseline.json",
+   "stderrTail": ""
+  },
+  {
+   "id": "4 module-guard(종류를 정한 뒤)",
+   "exitCode": 0,
+   "stdoutTail": "✓ 모듈 가드 통과",
+   "stderrTail": ""
+  },
+  {
+   "id": "4 새 파일을 추적 대상으로(git add -N — 지도 시험이 추적 파일만 읽는다)",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "5 대조 탐침(기준)",
+   "exitCode": 0,
+   "stdoutTail": "scope 539 · window 0 · registered 545 · mismatches 0 · missing 68 · extra 74 · conflicts 0 · exceptions 0",
+   "stderrTail": ""
+  },
+  {
+   "id": "5 대조 탐침(모의)",
+   "exitCode": 0,
+   "stdoutTail": "scope 539 · window 0 · registered 545 · mismatches 0 · missing 68 · extra 74 · conflicts 0 · exceptions 0",
+   "stderrTail": ""
+  },
+  {
+   "id": "5 이름 탐침(기준)",
+   "exitCode": 0,
+   "stdoutTail": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":67,\"names\":4,\"extra\":{\"a11ySwitch\":{\"own\":true,\"data\":true,\"accessor\":false,\"type\":\"function\",\"onScope\":false}}}",
+   "stderrTail": ""
+  },
+  {
+   "id": "5 이름 탐침(모의)",
+   "exitCode": 0,
+   "stdoutTail": "{\"ok\":true,\"error\":null,\"exceptions\":0,\"firstException\":\"\",\"consoleErrors\":0,\"hasOrgan\":true,\"organNames\":67,\"names\":4,\"extra\":{\"a11ySwitch\":{\"own\":true,\"data\":true,\"accessor\":false,\"type\":\"function\",\"onScope\":false}}}",
+   "stderrTail": ""
+  },
+  {
+   "id": "5 시나리오",
+   "exitCode": 0,
+   "stdoutTail": "x01-guest-boot-six-tabs {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx02-goals-subtabs-periods {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx03-bell-modal-settings {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx04-new-goal-modal {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx05-goal-agent-drawer {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx06-settings-legal-links {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx07-auth-forgot-password {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx08-checkin-mic-guide {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx09-team-comment-passthrough {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx10-sample-purge {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx11-goal-fast-add {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}\nx12-records-export-modal {\"base\":true,\"work\":true,\"baseFail\":null,\"workFail\":null}",
+   "stderrTail": ""
+  },
+  {
+   "id": "5 npm test(모의)",
+   "exitCode": 0,
+   "stdoutTail": "  ok · 상태: 기관을 읽지 않거나, 세포가 기관보다 먼저 읽히거나, 세포를 읽지 않으면 거짓\n  ok · 상태: 주석·문자열 안의 호출 글자, 다른 객체의 define 은 상태 선언이 아니다\n  ok · #678 상태: 호출이 상태 기관 태그 뒤의 인라인 스크립트(덩어리) 안에 있으면 참 — 옛 선언 글자도 세포 파일의 호출도 없다\n  ok · #678 상태(인라인): 초기값·이름이 다르면 거짓\n  ok · #678 상태(인라인): 상태 기관 태그보다 앞의 스크립트 · 기관 태그 없음 · 미뤄 읽는 기관 태그는 거짓\n  ok · #678 상태(인라인): 주석·문자열 안의 호출 글자, 다른 객체의 define, HTML 주석 안의 스크립트, 자바스크립트가 아닌 type 은 거짓\n  ok · #678 상태(인라인): type 이 없거나 자바스크립트인 스크립트는 읽는다 · 코드로 읽히지 않는 스크립트는 거짓\n  ok · #678 함수 선언·첫 문 갈래는 인라인 스크립트를 보지 않는다(넓힌 것은 상태 기관 호출뿐이다)\n  ok · 정해진 꼴이 아닌 글자·이름은 오류(엉뚱한 글자로 조용히 통과하지 않는다)\n     (이 저장소: 세포 파일 372개 · 찾아본 상태 이름 state)\n  ok · 이 저장소: 세포 파일을 읽고, 실제 상태 기관 호출 하나는 찾고, 지어낸 이름은 못 찾는다\nmoved-code: 18개 검사 끝\n  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry\n✨ MASTER SHIPYARD MODULAR ARCHITECTURE VALIDATION 100% COMPLETE & PASS!",
+   "stderrTail": "    at Object..js (node:internal/modules/cjs/loader:1961:10)\n    at Module.load (node:internal/modules/cjs/loader:1553:32)\n    at Module._load (node:internal/modules/cjs/loader:1355:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+  },
+  {
+   "id": "5 npm test(기준)",
+   "exitCode": 0,
+   "stdoutTail": "  ok · 상태: 기관을 읽지 않거나, 세포가 기관보다 먼저 읽히거나, 세포를 읽지 않으면 거짓\n  ok · 상태: 주석·문자열 안의 호출 글자, 다른 객체의 define 은 상태 선언이 아니다\n  ok · #678 상태: 호출이 상태 기관 태그 뒤의 인라인 스크립트(덩어리) 안에 있으면 참 — 옛 선언 글자도 세포 파일의 호출도 없다\n  ok · #678 상태(인라인): 초기값·이름이 다르면 거짓\n  ok · #678 상태(인라인): 상태 기관 태그보다 앞의 스크립트 · 기관 태그 없음 · 미뤄 읽는 기관 태그는 거짓\n  ok · #678 상태(인라인): 주석·문자열 안의 호출 글자, 다른 객체의 define, HTML 주석 안의 스크립트, 자바스크립트가 아닌 type 은 거짓\n  ok · #678 상태(인라인): type 이 없거나 자바스크립트인 스크립트는 읽는다 · 코드로 읽히지 않는 스크립트는 거짓\n  ok · #678 함수 선언·첫 문 갈래는 인라인 스크립트를 보지 않는다(넓힌 것은 상태 기관 호출뿐이다)\n  ok · 정해진 꼴이 아닌 글자·이름은 오류(엉뚱한 글자로 조용히 통과하지 않는다)\n     (이 저장소: 세포 파일 370개 · 찾아본 상태 이름 MOCK_GROUPS)\n  ok · 이 저장소: 세포 파일을 읽고, 실제 상태 기관 호출 하나는 찾고, 지어낸 이름은 못 찾는다\nmoved-code: 18개 검사 끝\n  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry\n✨ MASTER SHIPYARD MODULAR ARCHITECTURE VALIDATION 100% COMPLETE & PASS!",
+   "stderrTail": "    at Object..js (node:internal/modules/cjs/loader:1961:10)\n    at Module.load (node:internal/modules/cjs/loader:1553:32)\n    at Module._load (node:internal/modules/cjs/loader:1355:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+  },
+  {
+   "id": "5 시험 하나씩(기준)",
+   "exitCode": 0,
+   "stdoutTail": "{\"scripts\":[{\"script\":\"scripts/smoke-test.js\",\"exit\":0,\"ok\":439,\"okDot\":0,\"fails\":0},{\"script\":\"scripts/verify-integrity-gate.js\",\"exit\":0,\"ok\":38,\"okDot\":0,\"fails\":0},{\"script\":\"scripts/verify-all-clicks.js\",\"exit\":0,\"ok\":3,\"okDot\":0,\"fails\":0},{\"script\":\"scripts/test-shipyard-modular.js\",\"exit\":0,\"ok\":7,\"okDot\":203,\"fails\":0}],\"testFiles\":115,\"testFilesFailed\":[\"tests/achievement-stats-shell-button-removal.test.js\",\"tests/app-evaluation-notice.test.js\",\"tests/avatar-icon-enlarge-all.test.js\",\"tests/avatar-welcome-modal.test.js\",\"tests/calendar-photo-diary-dismiss-guide.test.js\",\"tests/comm-feed-cleanup.test.js\",\"tests/comm-post-feed-button-fix.test.js\",\"tests/component-modularization.test.js\",\"tests/dm-delivery-read-receipt.test.js\",\"tests/dm-keyboard-autofocus-fix.test.js\",\"tests/enlarge-avatar-icons.test.js\",\"tests/feed-ai-bot-reduction.test.js\",\"tests/feed-post-category-diversity.test.js\",\"tests/feed-post-photo-upload.test.js\",\"tests/feed-post-selectable-targets.test.js\",\"tests/feed-share-latest-record.test.js\",\"tests/goal-ai-advice-status.test.js\",\"tests/goal-template-legacy-cleanup.test.js\",\"tests/goals-only-view.test.js\",\"tests/goals-schedule-sync.test.js\",\"tests/goals-smart-attachments.test.js\",\"tests/records-stats-metrics.test.js\",\"tests/remove-duplicate-home-layout-button.test.js\",\"tests/routine-tab-scheduler.test.js\",\"tests/settings-collapse-default.test.js\",\"tests/trio-es143-es145.test.js\"]}",
+   "stderrTail": ""
+  },
+  {
+   "id": "5 시험 하나씩(모의)",
+   "exitCode": 0,
+   "stdoutTail": "{\"scripts\":[{\"script\":\"scripts/smoke-test.js\",\"exit\":0,\"ok\":439,\"okDot\":0,\"fails\":0},{\"script\":\"scripts/verify-integrity-gate.js\",\"exit\":0,\"ok\":38,\"okDot\":0,\"fails\":0},{\"script\":\"scripts/verify-all-clicks.js\",\"exit\":0,\"ok\":3,\"okDot\":0,\"fails\":0},{\"script\":\"scripts/test-shipyard-modular.js\",\"exit\":0,\"ok\":7,\"okDot\":203,\"fails\":0}],\"testFiles\":115,\"testFilesFailed\":[\"tests/achievement-stats-shell-button-removal.test.js\",\"tests/app-evaluation-notice.test.js\",\"tests/avatar-icon-enlarge-all.test.js\",\"tests/avatar-welcome-modal.test.js\",\"tests/calendar-photo-diary-dismiss-guide.test.js\",\"tests/comm-feed-cleanup.test.js\",\"tests/comm-post-feed-button-fix.test.js\",\"tests/component-modularization.test.js\",\"tests/dm-delivery-read-receipt.test.js\",\"tests/dm-keyboard-autofocus-fix.test.js\",\"tests/enlarge-avatar-icons.test.js\",\"tests/feed-ai-bot-reduction.test.js\",\"tests/feed-post-category-diversity.test.js\",\"tests/feed-post-photo-upload.test.js\",\"tests/feed-post-selectable-targets.test.js\",\"tests/feed-share-latest-record.test.js\",\"tests/goal-ai-advice-status.test.js\",\"tests/goal-template-legacy-cleanup.test.js\",\"tests/goals-only-view.test.js\",\"tests/goals-schedule-sync.test.js\",\"tests/goals-smart-attachments.test.js\",\"tests/records-stats-metrics.test.js\",\"tests/remove-duplicate-home-layout-button.test.js\",\"tests/routine-tab-scheduler.test.js\",\"tests/settings-collapse-default.test.js\",\"tests/trio-es143-es145.test.js\"]}",
+   "stderrTail": ""
+  },
+  {
+   "id": "6 임시 가지",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "6 git add",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "6 git commit(훅 실행)",
+   "exitCode": 0,
+   "stdoutTail": "[tmp/es681-mock-hook-check 82de9231] [INFRA] #TASK-ES-681 test: finalize 모의 커밋(커밋 훅 확인용 — push 하지 않는다)\n 8 files changed, 468 insertions(+), 443 deletions(-)\n create mode 100644 js/app/boot.js\n create mode 100644 js/core/boot-mock-seeds.js",
+   "stderrTail": "✔ 금지 패턴 없음 · index.html 순증가 -409줄 · 변경 911줄\n⚠ 티켓 #TASK-ES-681 이(가) docs/rules/TICKETS.md 에 없음 — 노션 통합 작업대기목록에 있으면 워처가 확인한다. 둘 다 없으면 G0 위반으로 기록된다.\n✔ 본질 태그 [INFRA] 티켓 #TASK-ES-681"
+  },
+  {
+   "id": "6 되돌리기",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "6 되돌리기(reset)",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  },
+  {
+   "id": "6 임시 가지 지움",
+   "exitCode": 0,
+   "stdoutTail": "Deleted branch tmp/es681-mock-hook-check (was 82de9231).",
+   "stderrTail": ""
+  },
+  {
+   "id": "6 되돌리기(clean)",
+   "exitCode": 0,
+   "stdoutTail": "",
+   "stderrTail": ""
+  }
+ ]
+}

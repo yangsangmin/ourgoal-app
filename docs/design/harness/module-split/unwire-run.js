@@ -53,25 +53,29 @@ if (CMD === 'apply') {
   const want = runsArg.split(',').map(s => { const [kitVar, pass, opts] = s.trim().split(':'); return { kitVar, pass: Number(pass || 1), opts: (opts || '').split('+').filter(Boolean) }; });
   // 이름의 출처: ① --names-for <손잡이:차수>=이름+이름,… (손으로 지정) ② 계획의 runs ③ 계획의 notRunnableKitVars.registeredNames(계획 당시 생성기가 못 돌리던 손잡이 — X1 `_ui`·`_xp`)
   const namesFor = {}; (opt('--names-for') || '').split(',').filter(Boolean).forEach(s => { const [k, v] = s.split('='); namesFor[k.trim()] = (v || '').split('+').filter(Boolean); });
+  // [#TASK-ES-681] --dead-imports <파일.json>: 읽는 곳이 없는 키트 가져오기 줄(생성기 unwire 의 dropDeadImport — 설계 5.10절). { "<손잡이:차수[:옵션]>": [{ name, reason, definedIn }] }
+  const deadFor = opt('--dead-imports') ? JSON.parse(fs.readFileSync(path.resolve(opt('--dead-imports')), 'utf8')) : {};
   const runs = want.map(w => {
     // --names-for 의 열쇠는 옵션까지 적은 꼴(_uiKit:2:shared)을 먼저 찾는다 — 같은 손잡이·차수의 실행을 옵션으로 나눌 때 이름이 섞이지 않게
     const shortKey = w.kitVar + ':' + w.pass, key = shortKey + (w.opts.length ? ':' + w.opts.join('+') : '');
     const given = namesFor[key] || (w.opts.length ? null : namesFor[shortKey]);
     const pr = plan.runs.find(r => r.kitVar === w.kitVar && r.flags.imports === (w.pass === 1));
     const nr = (plan.notRunnableKitVars || []).find(k => k.kitVar === w.kitVar);
-    const planned = given || (pr ? pr.names : (nr ? nr.registeredNames : null));
+    const dead = deadFor[key] || (w.opts.length ? null : deadFor[shortKey]) || [];
+    const planned = given || (pr ? pr.names : (nr ? nr.registeredNames : (dead.length ? [] : null)));
     if (!planned) { console.error('계획에 그 실행이 없다: ' + key); process.exit(2); }
-    return { kitVar: w.kitVar, pass: w.pass, opts: w.opts, planned: planned.slice(), plannedDeletedLines: pr && !given ? pr.expectedDeletedLines : null, names: planned.slice(), dropped: [],
+    return { kitVar: w.kitVar, pass: w.pass, opts: w.opts, dead, planned: planned.slice(), plannedDeletedLines: pr && !given ? pr.expectedDeletedLines : null, names: planned.slice(), dropped: [],
       source: given ? '--names-for' : (pr ? '계획 runs' : '계획 notRunnableKitVars.registeredNames') };
   });
   const textBefore = fs.readFileSync(INDEX, 'utf8'); // 철거 전 글자(매 시도는 여기서 시작한다)
   const restore = () => fs.writeFileSync(INDEX, textBefore, { encoding: 'utf8' });
   const before = lf(textBefore).split('\n');
   const label = opt('--label', '배선 철거 — ' + runs.map(r => r.kitVar + ' ' + r.pass + '차').join(' · '));
-  const specOf = r => { const u = { kitVar: r.kitVar, imports: r.pass === 1, exposeGetters: true, windowAssign: true, names: r.names }; if (r.opts.includes('shared')) u.sharedLine = true; if (r.opts.includes('dropkit')) u.dropKitVar = true; return u; };
-  const proofOf = () => { const live = runs.filter(r => r.names.length || r.opts.includes('dropkit')); return { task: TASK, label, slot: 'HO', mode: 'unwire', cells: [{ file: REGISTRY }], unwire: live.length === 1 && runs.length === 1 ? specOf(live[0]) : live.map(specOf) }; };
+  const specOf = r => { const u = { kitVar: r.kitVar, imports: r.pass === 1, exposeGetters: true, windowAssign: true, names: r.names }; if (r.opts.includes('shared')) u.sharedLine = true; if (r.opts.includes('dropkit')) u.dropKitVar = true; if (r.dead.length) u.dropDeadImport = r.dead; return u; };
+  const isLive = r => r.names.length || r.opts.includes('dropkit') || r.dead.length;
+  const proofOf = () => { const live = runs.filter(isLive); return { task: TASK, label, slot: 'HO', mode: 'unwire', cells: [{ file: REGISTRY }], unwire: live.length === 1 && runs.length === 1 ? specOf(live[0]) : live.map(specOf) }; };
   let meta = null, tries = 0;
-  while (runs.some(r => r.names.length) && tries < 60) {
+  while (runs.some(r => r.names.length || r.dead.length) && tries < 60) {
     tries++;
     restore();
     wj('proof.json', proofOf());
@@ -80,7 +84,7 @@ if (CMD === 'apply') {
     if (r.status === 0) { meta = JSON.parse(fs.readFileSync(path.join(metaDir, 'gen-inline-hard-meta.json'), 'utf8')); fs.rmSync(metaDir, { recursive: true, force: true }); break; }
     fs.rmSync(metaDir, { recursive: true, force: true });
     const text = (((r.stderr || '') + (r.stdout || '')).split('\n').find(l => /Error: /.test(l)) || '(메시지 없음)').replace(/^.*Error: /, '');
-    const live = runs.filter(x => x.names.length || x.opts.includes('dropkit'));
+    const live = runs.filter(isLive);
     const at = /\[unwire 실행 (\d+)\/\d+\]/.exec(text), target = at ? live[Number(at[1]) - 1] : live[0];
     const words = new Set(text.split(/[^A-Za-z0-9_$]+/));
     const drop = target ? target.names.filter(n => words.has(n)) : [];
@@ -90,15 +94,15 @@ if (CMD === 'apply') {
   }
   if (!meta) { restore(); console.error('지울 이름이 남지 않았다'); process.exit(1); }
   const after = lf(fs.readFileSync(INDEX, 'utf8')).split('\n');
-  const metas = meta.runs || [meta], live = runs.filter(r => r.names.length || r.opts.includes('dropkit'));
-  const cnt = m => ({ imports: m.removed.imports.length, exposeProps: m.removed.exposeProps.length, exposeCalls: m.removed.exposeCalls.length, windowAssigns: m.removed.windowAssigns.length, windowBlocks: m.removed.windowBlocks.length, commaFixedLines: m.commaFixedLines.length, inlineEdits: (m.inlineEdits || []).length, kitVarLine: m.removed.kitVarLine ? 1 : 0, deletedLines: m.deletedLines.length });
+  const metas = meta.runs || [meta], live = runs.filter(isLive);
+  const cnt = m => ({ imports: m.removed.imports.length, exposeProps: m.removed.exposeProps.length, exposeCalls: m.removed.exposeCalls.length, windowAssigns: m.removed.windowAssigns.length, windowBlocks: m.removed.windowBlocks.length, commaFixedLines: m.commaFixedLines.length, inlineEdits: (m.inlineEdits || []).length, kitVarLine: m.removed.kitVarLine ? 1 : 0, deadImports: (m.removed.deadImports || []).length, deletedLines: m.deletedLines.length });
   const outRuns = live.map((r, i) => ({ order: i + 1, kitVar: r.kitVar, pass: r.pass, options: r.opts, namesSource: r.source, plannedNames: r.planned.length, plannedDeletedLines: r.plannedDeletedLines, names: r.names.length, droppedFromPlan: r.dropped,
     removed: cnt(metas[i]), htmlLines: [metas[i].htmlLinesBefore, metas[i].htmlLinesAfter], deletedLineNumbers: metas[i].deletedLines, commaFixedLineNumbers: metas[i].commaFixedLines, inlineEdits: metas[i].inlineEdits || [], removedDetail: metas[i].removed }));
   const skipped = runs.filter(r => !live.includes(r)).map(r => ({ kitVar: r.kitVar, pass: r.pass, plannedNames: r.planned.length, droppedFromPlan: r.dropped, why: '지울 이름이 남지 않아 실행에서 뺌' }));
   const tot = k => outRuns.reduce((a, r) => a + r.removed[k], 0);
   wj('unwire-meta.json', { tool: 'docs/design/harness/module-split/unwire-run.js apply', type: '생성기 산출 기록(작업자 측정, 판정 아님)', task: TASK, plan: { file: PLAN_REL }, generatorTries: tries,
     totals: { runs: outRuns.length, names: outRuns.reduce((a, r) => a + r.names, 0), plannedNames: runs.reduce((a, r) => a + r.planned.length, 0), droppedFromPlan: runs.reduce((a, r) => a + r.dropped.length, 0),
-      removed: { imports: tot('imports'), exposeProps: tot('exposeProps'), exposeCalls: tot('exposeCalls'), windowAssigns: tot('windowAssigns'), windowBlocks: tot('windowBlocks'), commaFixedLines: tot('commaFixedLines'), inlineEdits: tot('inlineEdits'), kitVarLine: tot('kitVarLine'), deletedLines: tot('deletedLines') }, htmlLines: [before.length, after.length] },
+      removed: { imports: tot('imports'), exposeProps: tot('exposeProps'), exposeCalls: tot('exposeCalls'), windowAssigns: tot('windowAssigns'), windowBlocks: tot('windowBlocks'), commaFixedLines: tot('commaFixedLines'), inlineEdits: tot('inlineEdits'), kitVarLine: tot('kitVarLine'), ...(tot('deadImports') ? { deadImports: tot('deadImports') } : {}), deletedLines: tot('deletedLines') }, htmlLines: [before.length, after.length] },
     runs: outRuns, skippedRuns: skipped });
   outRuns.forEach(r => console.log('apply [' + r.order + '/' + outRuns.length + ']', r.kitVar, r.pass + '차 · names', r.names, '(계획 ' + r.plannedNames + ', 뺀 ' + r.droppedFromPlan.length + ') · 삭제', r.removed.deletedLines, '줄 · 쉼표', r.removed.commaFixedLines, '·', r.htmlLines[0], '->', r.htmlLines[1]));
   console.log('index.html', before.length, '->', after.length, '· 시도', tries);
@@ -118,13 +122,14 @@ if (CMD === 'measure') {
   const bl = lf(fs.readFileSync(path.join(BASE, 'index.html'), 'utf8')).split('\n'), wl = lf(fs.readFileSync(INDEX, 'utf8')).split('\n');
   const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   let cur = bl.slice(); const perRun = [];
-  const removedScope = new Set(), removedWindow = new Set(), removedAny = new Set();
+  const removedScope = new Set(), removedWindow = new Set(), removedAny = new Set(), deadAll = [];
   meta.runs.forEach((r, i) => {
     const del = new Set(r.deletedLineNumbers), comma = new Set(r.commaFixedLineNumbers), edits = new Map((r.inlineEdits || []).map(e => [e.line, e]));
     const R = r.removedDetail, kinds = new Set(), spec = specs[i];
     R.imports.forEach(x => kinds.add(x.line)); R.exposeProps.forEach(x => kinds.add(x.line)); R.exposeCalls.forEach(x => { for (let l = x.line; l <= x.endLine; l++) kinds.add(l); });
     R.windowAssigns.forEach(x => kinds.add(x.line)); R.windowBlocks.forEach(x => { for (let l = x.line; l <= x.endLine; l++) kinds.add(l); });
     if (R.kitVarLine) kinds.add(R.kitVarLine.line);
+    (R.deadImports || []).forEach(x => { kinds.add(x.line); deadAll.push(Object.assign({ run: r.order, kitVar: r.kitVar, lineText: cur[x.line - 1] }, x)); }); // [#TASK-ES-681] dropDeadImport
     edits.forEach((e, l) => kinds.add(l));
     const names = R.imports.concat(R.exposeProps, R.windowAssigns).map(x => x.name);
     R.exposeProps.forEach(x => removedScope.add(x.name)); R.windowAssigns.forEach(x => removedWindow.add(x.name)); names.forEach(n => removedAny.add(n));
@@ -137,6 +142,22 @@ if (CMD === 'measure') {
   });
   const onlyDeletions = { rebuiltEqualsWork: cur.length === wl.length && cur.every((t, i) => t === wl[i]), baseLines: bl.length, workLines: wl.length, runs: perRun.length,
     note: '기준 index.html 에서 실행마다 생성기가 적어 낸 줄(deletedLineNumbers)을 지우고 commaFixedLineNumbers 줄 끝 쉼표 한 글자를 떼고 inlineEdits 를 반영한 결과 == 작업 index.html (줄바꿈만 LF 로 맞춤). 참이면 그 밖의 글자 변경 0 · 더한 줄 0' };
+  // [#TASK-ES-681 · 설계 5.10절] dropDeadImport 로 지운 줄마다: 줄 글자가 `var 이름 = 손잡이.이름;` 꼴인지 보고, 기준·작업 트리의 브라우저에서 그 키트 속성이 데이터 속성인지(읽기만으로 부수효과가 없는지) · 통로에 없는 이름인지를 잰다
+  let deadImports = null;
+  if (deadAll.length) {
+    const exprOf = x => "(function(){try{var o=window." + x.kit + ";var d=Object.getOwnPropertyDescriptor(o,'" + x.name + "');return{own:!!d,data:!!d&&('value' in d),accessor:!!d&&(!!d.get||!!d.set),type:d?typeof d.value:null,onScope:Object.prototype.hasOwnProperty.call(window.OurgoalAppScope.scope,'" + x.name + "')};}catch(e){return{error:String(e&&e.message||e)};}})()";
+    const expr = '({' + deadAll.map(x => JSON.stringify(x.name) + ':' + exprOf(x)).join(',') + '})';
+    wj('dead-import-names.json', { note: 'dropDeadImport 로 지운 이름 — 탐침의 고정 입력', names: deadAll.map(x => x.name) });
+    const probe = path.join(ROOT, 'reports', 'TASK-ES-636', 'state-probe.cjs');
+    for (const [tree, out] of [[BASE, 'dead-import-probe.base.json'], [ROOT, 'dead-import-probe.work.json']]) run('dead-import probe ' + out, [process.execPath, probe, tree, path.join(DIR, out), '--names', path.join(DIR, 'dead-import-names.json'), '--eval', expr]);
+    const pb = rj('dead-import-probe.base.json'), pw = rj('dead-import-probe.work.json');
+    const rows = deadAll.map(x => ({ name: x.name, run: x.run, kitVar: x.kitVar, kit: x.kit, line: x.line, lineIsPlainKitImport: new RegExp('^\\s*var\\s+' + escRe(x.name) + '\\s*=\\s*' + escRe(x.kitVar) + '\\.' + escRe(x.name) + '\\s*;\\s*$').test(x.lineText || ''), reason: x.reason, definedIn: x.definedIn, definedAtLine: x.definedAtLine, runtimeBase: (pb.extra || {})[x.name] || null, runtimeWork: (pw.extra || {})[x.name] || null }));
+    deadImports = { names: rows.map(r => r.name), rows, allPlainKitImports: rows.every(r => r.lineIsPlainKitImport),
+      allDataPropertiesAtRuntime: rows.every(r => !!r.runtimeBase && r.runtimeBase.data === true && r.runtimeBase.accessor === false && !!r.runtimeWork && r.runtimeWork.data === true),
+      noneOnScope: rows.every(r => !!r.runtimeBase && r.runtimeBase.onScope === false && !!r.runtimeWork && r.runtimeWork.onScope === false),
+      bootExceptions: { base: ((pb.guestBoot || {}).exceptions || []).length, work: ((pw.guestBoot || {}).exceptions || []).length },
+      note: '죽은 가져오기 = IIFE 안에서 읽는 곳이 하나도 없는 지역 변수 선언. 지워도 통로·window 의 값은 달라질 것이 없다(처음부터 통로에 없는 이름이다) — 키트 속성 읽기 한 번이 사라질 뿐이고, 그 속성은 데이터 속성이라 읽기에 부수효과가 없다' };
+  }
   const kindsOnly = { deletedOutsideListedKinds: perRun.flatMap(p => p.deletedOutsideListedKinds.map(n => ({ run: p.order, line: n }))), namesOutsideProof: perRun.flatMap(p => p.namesOutsideProof.map(n => ({ run: p.order, name: n }))),
     allImportLinesAreKitImports: perRun.every(p => p.importLinesAreKitImports), allRunsReplayed: perRun.every(p => p.linesBeforeMatch && p.inlineEditBeforeMatches && p.commaFixedAreOneCharEach), perRun,
     extendedKindsUsed: { sharedLine: specs.filter(u => u.sharedLine === true).length, dropKitVar: specs.filter(u => u.dropKitVar === true).length, nonKitHandle: specs.filter(u => !/^_\w+Kit$/.test(u.kitVar)).length },
@@ -187,7 +208,7 @@ if (CMD === 'measure') {
       changed: { files: all.length, productFiles: all.filter(f => productRe.test(f)), onlyIndexHtml: JSON.stringify(all.filter(f => productRe.test(f))) === '["index.html"]', indexHtml: numstat.find(x => x.file === 'index.html') || null,
         testsChanged: all.filter(f => /^tests\//.test(f)), vaultChanged: all.filter(f => vaultRe.test(f)), generatorChanged: all.filter(f => /gen-inline-hard\.js$|gen-cell-provide\.js$/.test(f) || f === REGISTRY),
         otherGeneratedMapsChanged: all.filter(f => /^docs\/architecture\/(cell-map\.json|inline-script-map\.json|INLINE-SCRIPT-MAP\.md)$/.test(f)) },
-      onlyDeletions, kindsOnly,
+      onlyDeletions, kindsOnly, ...(deadImports ? { deadImports } : {}),
       inlineScriptLines: { before: mB.inlineScriptLines, after: mW.inlineScriptLines, decreasedBy: mB.inlineScriptLines - mW.inlineScriptLines, decreased: mW.inlineScriptLines < mB.inlineScriptLines, source: 'scripts/module-metrics.js measure().ratchet.inlineScriptLines — 기준 트리, 작업 트리' },
       ratchet: { indexFunctionDecls: [mB.indexFunctionDecls, mW.indexFunctionDecls], windowAssignments: [mB.windowAssignments, mW.windowAssignments], oversizeJsFiles: [mB.oversizeJsFiles.count, mW.oversizeJsFiles.count], crossTabRefs: [mB.crossTabRefs, mW.crossTabRefs] },
       baseline: { file: 'docs/architecture/module-baseline.json', lastInlineScriptLines: [lastOf(baselineB), lastOf(baselineJ)], recordedEqualsMeasured: lastOf(baselineJ) === mW.inlineScriptLines, historyEntries: [baselineB.history.length, baselineJ.history.length] },
@@ -230,6 +251,12 @@ if (CMD === 'claims') {
   add('R3', '기준 index.html 에서 실행을 차례로 되짚어(생성기가 적어 낸 줄을 지우고 쉼표를 뗌) 만든 결과가 작업 index.html 과 글자 그대로 같다(더한 줄 0 · 그 밖의 글자 변경 0).', M, 'summary.onlyDeletions.rebuiltEqualsWork', true);
   add('R3', '생성기가 지운 줄 가운데 설정이 허용한 줄 종류(가져오기 줄 · expose getter/setter 속성 줄과 빈 껍데기 · window 대입 줄과 빈 블록 껍데기) 밖의 줄이 없다.', M, 'summary.kindsOnly.deletedOutsideListedKinds', [], [REL + 'unwire-meta.json']);
   add('R3', '지운 줄의 이름 가운데 설정(proof.json) names 에 없는 이름이 없다.', M, 'summary.kindsOnly.namesOutsideProof', []);
+  if (s.deadImports) { // [#TASK-ES-681] dropDeadImport
+    add('R3', '읽는 곳이 없는 가져오기 줄(dropDeadImport)로 지운 이름이 설정에 적은 것과 같다.', M, 'summary.deadImports.names', specs.flatMap(u => (u.dropDeadImport || []).map(d => d.name)));
+    add('R3', '그 줄들은 전부 `var 이름 = 손잡이.이름;` 꼴(단순 속성 읽기)이다.', M, 'summary.deadImports.allPlainKitImports', true);
+    add('R2', '그 이름의 키트 속성은 기준·작업 트리의 브라우저에서 데이터 속성이다(읽기만으로 부수효과가 없다).', M, 'summary.deadImports.allDataPropertiesAtRuntime', true);
+    add('R2', '그 이름은 지우기 전에도 통로에 없던 이름이다(지워서 통로에서 사라지는 것이 없다).', M, 'summary.deadImports.noneOnScope', true);
+  }
   add('R4', '인라인 스크립트 줄 수(module-metrics inlineScriptLines)가 기준 트리보다 작다 — 전·후 값은 측정 기록에 있다.', M, 'summary.inlineScriptLines.decreased', true);
   add('R4', 'docs/architecture/module-baseline.json 의 마지막 기록 inlineScriptLines 가 작업 트리 측정값과 같다(module-guard --update 로 기록).', M, 'summary.baseline.recordedEqualsMeasured', true);
   add('R4', '모듈 로드 탐침 결과에서 기준 대비 새 회귀 목록이 비어 있다.', REL + 'module-load.json', 'regressions', []);

@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+'use strict';
+// 주장 파일(reports/TASK-ES-681/claims.json)을 만든다. 값은 측정 파일의 경로로만 건다(값이 측정 파일과 다르면 멈춘다). 사용: node reports/TASK-ES-681/tools/build-claims.cjs <작업 트리>
+const fs = require('fs'), path = require('path');
+const WORK = path.resolve(process.argv[2]);
+const R = 'reports/TASK-ES-681/';
+const rj = f => JSON.parse(fs.readFileSync(path.join(WORK, R, f), 'utf8'));
+const us = rj('unit-summary.json'), mm = rj('measurement.json');
+const out = {
+  task: 'TASK-ES-681',
+  requirementsSource: 'docs/specs/REQ-TASK-ES-681-GEN-FINALIZE-OPTIONS.md',
+  requirements: [
+    { id: 'R1', text: '생성기에 명시적 옵션 셋을 더한다 — finalize 의 relay(등록할 수 없는 키트 이름의 통로 중계를 부팅 파일로 글자 그대로) · keepInline(지정한 문을 인라인 IIFE 에 줄 그대로 남김), unwire 의 dropDeadImport(읽는 곳이 없는 키트 가져오기 줄 삭제). 셋 다 기본은 꺼져 있고 설정에 이름과 근거 글자를 적은 경우에만 동작한다.' },
+    { id: 'R2', text: '옵션은 조용히 풀리지 않는다(쓴 것마다 표준 출력 한 줄 + 메타 기록). 설정 꼴이 틀리거나, 지정이 하나로 정해지지 않거나, 줄 꼴·참조·실행 순서·읽기의 부수효과 조건이 어긋나면 멈추고 아무것도 쓰지 않는다.' },
+    { id: 'R3', text: '기존 경로의 출력은 달라지지 않는다: 옵션 없이 돌린 finalize · unwire 가 기준 생성기와 같고, 앞선 단위 시험의 출력 검사가 전부 통과한다. 제품 코드(index.html · js/**) · tests/ · scripts/ · 금고 변경 0 · 실제 적용 0.' },
+    { id: 'R4', text: '현재 main 사본에서 준비 단계를 생성기로 밟은 모의 적용에서 세 옵션이 끝까지 돌고, 남긴 인라인 줄이 바이트 동일하며, 앱 부팅 · 지문 · 시나리오 · 시험이 기준과 같고, 그 모의 커밋이 실제 커밋 훅의 금지 패턴 단계를 지난다.' },
+  ],
+  outOfScopeReports: [
+    { text: '이 PR 은 옵션 추가까지다. 실제 finalize · 재철거 4차는 다음 PR 이고, keepInline 을 실제로 쓸지는 상민님 결심 대기다(쓰면 작은 인라인 IIFE 가 남아 완료 기준 「인라인 IIFE 0」과 어긋난다 — 오케스트레이터가 여쭈어 둔 상태).' },
+    { text: 'relay · dropDeadImport 는 오케스트레이터의 지시·기본값 판단으로 준비했다. 닫힌 목록(설계 5.2)에 없던 줄 종류라 그 표에는 더하지 않고 5.3 에 사안으로 적었다. 상민님의 허용 기록은 이 작업자가 보지 못했다.' },
+    { text: '생성기는 근거 글자가 진짜 근거인지 알지 못한다 — 10자 이상 한 줄인지만 본다. 글자의 진위는 그 설정을 내는 PR 의 REQ·본문과 법정·사람이 본다.' },
+    { text: '생성기 diff 는 한 자리 끼워 넣기가 아니다(finalize 구간과 unwire 한 실행 구간의 줄을 바꾸고 더했다). 앞선 단위 시험의 생성기 diff 모양 검사들은 구조적으로 거짓이 된다(L110). 그 시험 파일은 고치지 않았다.' },
+    { text: '모의 적용의 준비 단계(남은 상태 선언 둘을 구역 함수로)는 구역 이전 3차를 흉내 낸 것이다. 실제 그 PR 의 구역 함수 이름·세포는 다를 수 있다. 법정 브라우저가 외부 통신을 막아 탐침에서 서버 연결 객체는 null 이다 — 로그인 뒤 동작은 재지 못했다.' },
+    { text: 'dropDeadImport 의 「읽기만으로 부수효과가 없다」는 생성기가 정의 파일의 글자로만 본다. 실제 키트 객체의 속성 기술자는 그 옵션을 쓰는 PR 의 실행기 측정(브라우저)이 잰다 — 이 PR 에서는 모의 적용에서 한 번 쟀다.' },
+  ],
+  claims: [],
+};
+const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
+const st = (req, statement, file, p, eq) => {
+  const v = getPath(rj(file), p);
+  if (JSON.stringify(v) !== JSON.stringify(eq)) { console.error('값 불일치: ' + file + ' ' + p + ' = ' + JSON.stringify(v).slice(0, 200)); process.exit(1); }
+  out.claims.push({ id: 'C' + (out.claims.length + 1), req, kind: 'static', domain: 'config', statement, touches: [R + file], check: { type: 'jsonPath', file: R + file, path: p, equals: eq } });
+};
+const U = 'unit-summary.json', M = 'measurement.json', A = 'mock/mock-apply.json';
+st('R1', 'relay 를 채운 꾸러미 둘(가져오기 1 + getter 1 · 이름 둘이 한 expose 문에)이 부팅 파일로 글자 그대로 옮겨지고 머리 주석 · 표준 출력 · 메타에 이름과 근거가 적힌다.', U, 'allRelayOk', true);
+st('R1', 'keepInline 을 채운 꾸러미 다섯(남길 문 셋 + 앞의 호출문 · 앞에 호출문 없음 · CRLF · relay 와 함께 둘)이 기대 글자와 같다 — 남은 인라인 줄은 원래 줄과 바이트 동일, 부팅 태그는 남긴 `</script>` 줄 끝.', U, 'allKeepInlineOk', true);
+st('R1', 'dropDeadImport 를 채운 꾸러미 둘(가져오기 한 줄만 · 손잡이 줄 함께)이 기대 글자와 같다.', U, 'allDeadImportOk', true);
+st('R1', '실행 등가(vm) 다섯: 원래 인라인 IIFE 와 「남긴 인라인 → 부팅 파일」의 호출 순서 · this · 인자 수 · 상태 선언 값 · 통로 중계 값이 같고, 죽은 가져오기는 데이터 속성일 때 전후 흔적이 같다.', U, 'allExecEquivalentOk', true);
+st('R2', 'relay 정지 꾸러미 ' + us.stops.relay + '건이 모두 멈추고 index.html 을 바이트 그대로 둔다(설정 꼴 · 근거 없음/짧음 · 가져오기 없음 · 줄 꼴이 「가져오기 1 + getter 1」이 아님 · 설정에 없는 expose · 불리지 않는 가져오기).', U, 'allStopsRelayOk', true);
+st('R2', 'keepInline 정지 꾸러미 ' + us.stops.keepInline + '건이 모두 멈춘다(지정이 하나로 안 정해짐 · 남길 종류 밖 · 연달아 있지 않음 · 한 줄 나눠 쓰기 · 남긴 var 를 부팅 파일로 가는 문이 읽음 · 가져오기를 양쪽이 함께 씀 · 부팅 파일에 호출문 0).', U, 'allStopsKeepInlineOk', true);
+st('R2', 'dropDeadImport 정지 꾸러미 ' + us.stops.deadImport + '건이 모두 멈춘다(단순 속성 읽기가 아님 · IIFE 안 참조 · 이름이 든 문자열 · getter · 대입 · eval · new Function · 정의 파일이 접근자로 정의 · 정의 자리를 못 찾음).', U, 'allStopsDeadImportOk', true);
+st('R2', '감사(생성기와 따로 한 대조) 둘이 통과한다 — 원래 문 = 남긴 문 + 옮긴 문 · 남은 줄은 원래 줄의 부분열 · 블록 밖 그대로.', U, 'auditsOk', true);
+st('R3', '옵션 없이 돌린 finalize(성공 둘 · 정지 셋)와 unwire(성공 하나 · 정지 하나)의 index.html · 부팅 파일 · 표준 출력 · 메타 · 오류 글자가 기준 생성기와 같다.', U, 'allDefaultSameOk', true);
+st('R3', '앞선 단위 시험 전부(662 45건과 그 안의 661 · 657 · 643 · 634 · 619 · B1, 병합된 PR 재생성)가 고친 생성기에서 생성기 diff 모양 검사 말고 통과한다 — 생성기와 무관하게 실패하는 한 건(B1 의 T7: 지금의 index.html 에 후보가 없어 측정불가)과 그것이 번진 B 는 따로 적었다.', U, 'prevSuite.ok', true);
+st('R3', '그 한 건(B1 의 T7)은 고치지 않은 main 에서도 같은 까닭으로 실패한다(생성기 변경과 무관).', 'prev-suite-base.json', 'unwireB1.failed.0.id', 'T7');
+st('R3', '생성기 diff 는 두 구간(finalize 의 runFinalize · unwire 의 unwireOnce) 안에만 있고 검사기는 기준과 바이트 동일하다.', U, 'diffConfinedOk', true);
+st('R3', '실제 index.html(기준 커밋)은 옵션을 실제 이름으로 줘도 전제 밖의 문이 남아 있어 멈춘다(index.html 그대로).', U, 'realIndexStopsOk', true);
+st('R3', '단위 시험 ' + us.total + '건이 전부 통과한다.', U, 'allButPrevSuiteShapeChecksOk', true);
+st('R3', '제품 코드(index.html · js/** · ui.js · sw.js · css) 변경이 없다.', M, 'changed.productFiles', []);
+st('R3', 'tests/ 아래 바뀐 파일이 없다.', M, 'changed.testsChanged', []);
+st('R3', 'scripts/ 아래 바뀐 파일이 없다.', M, 'changed.scriptsChanged', []);
+st('R3', '금고 아래 바뀐 파일이 없다.', M, 'changed.vaultChanged', []);
+st('R3', '생성 지도 · 신고서 · 기준선 변경이 없다.', M, 'changed.generatedMapsChanged', []);
+st('R3', 'npm test 가 종료 코드 0 으로 끝난다.', M, 'npmTest.exitCode', 0);
+st('R4', '모의 적용에서 finalize 가 끝까지 돌았다(준비 단계 region · unwire 를 지나).', M, 'mock.finalizeRan', true);
+st('R4', '모의 적용의 재철거 단계에서 dropDeadImport 로 지운 이름은 a11ySwitch 하나다.', M, 'mock.deadImportsRemoved', ['a11ySwitch']);
+st('R4', '그 속성은 기준 트리의 브라우저에서 데이터 속성이다(접근자가 아니다).', A, 'deadImportRuntime.base.data', true);
+st('R4', '그 이름은 지우기 전에도 통로에 없던 이름이다.', A, 'deadImportRuntime.base.onScope', false);
+st('R4', '모의 finalize 뒤 남은 인라인 줄은 finalize 직전 줄의 부분열(바이트 동일)이다.', A, 'inlineKept.linesAreSubsequenceOfBefore', true);
+st('R4', '공개 키 선언 줄은 index.html 에 글자 그대로 남아 있다.', A, 'inlineKept.keyLineInIndexByteSame', true);
+st('R4', '부팅 파일에는 서버 주소 · 공개 키 이름이 없다.', A, 'inlineKept.keyTextInBoot', false);
+st('R4', '모의본의 대조 탐침 불일치가 0 이다.', A, 'compare.mock.mismatches', 0);
+st('R4', '모의본에서 통로에서 사라진 이름이 없다.', A, 'compare.scopeLost', []);
+st('R4', '모의본의 통로 값 지문 차이가 없다.', A, 'compare.fingerprintsDiffering.scope', []);
+st('R4', '모의본의 게스트 부팅 예외가 0 건이다.', A, 'compare.exceptions.mock', 0);
+st('R4', '게스트 시나리오가 기준·모의 양쪽 통과한다.', A, 'scenarios.allPassedBoth', true);
+st('R4', '모의본의 npm test 종료 코드와 ✓ 줄 수가 기준과 같다.', A, 'npmTest.same', true);
+st('R4', '모의본에서 시험을 하나씩 돌린 결과가 기준과 같다(다른 것 없음).', A, 'testsEach.differing', []);
+st('R4', '모의 커밋이 실제 커밋 훅의 금지 패턴 단계를 지났다(훅을 건너뛰지 않았다).', A, 'commitHook.forbiddenPatternStepPassed', true);
+st('R4', '모의 커밋에서 HARDCODED_SECRET 규칙이 막지 않았다.', A, 'commitHook.hardcodedSecretBlocked', false);
+st('R4', '부팅 파일의 신고서 종류: 신고서 도구는 unclassified 로 쓴다(가드가 막는다).', A, 'moduleSpecs.kindWrittenByTool', 'unclassified');
+st('R4', '종류를 organ 으로 정하면 다음 재생성이 보존하고 모듈 가드가 통과한다.', A, 'moduleSpecs.guardAfterSettingKind', 0);
+fs.writeFileSync(path.join(WORK, R, 'claims.json'), JSON.stringify(out, null, 1) + '\n', { encoding: 'utf8' });
+console.log('claims', out.claims.length);

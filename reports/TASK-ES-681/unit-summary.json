@@ -1,0 +1,70 @@
+{
+ "tool": "reports/TASK-ES-681/tools/measure.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "source": "reports/TASK-ES-681/finalize-options-unit.json",
+ "pin": "d7789c89423834a46b6b982c525d68303d3e9368",
+ "total": 89,
+ "passed": 89,
+ "failed": [],
+ "prevSuite": {
+  "ok": true,
+  "total": 45,
+  "failed": [
+   "B",
+   "D0"
+  ],
+  "note": "앞선 finalize 단위 시험 45건(그 안에서 661 · 657 · 643 · 634 · 619 · B1 과 병합된 PR 재생성이 다시 돈다). 실패는 생성기 diff 모양 검사(D0)뿐이어야 한다 — 생성기에 줄을 더하면 구조적으로 거짓이 되는 검사다(L110). 그 시험 파일은 고치지 않았다"
+ },
+ "diffConfinedOk": true,
+ "diffDetail": {
+  "pin": "d7789c89423834a46b6b982c525d68303d3e9368",
+  "baseLines": 1615,
+  "nowLines": 1851,
+  "added": 236,
+  "base": {
+   "f0": 246,
+   "f1": 369,
+   "u0": 422,
+   "u1": 628
+  },
+  "now": {
+   "f0": 246,
+   "f1": 541,
+   "u0": 594,
+   "u1": 864
+  },
+  "headSame": true,
+  "midSame": true,
+  "tailSame": true,
+  "finalizeLines": [
+   123,
+   295
+  ],
+  "unwireOnceLines": [
+   206,
+   270
+  ],
+  "verifySame": true
+ },
+ "allDefaultSameOk": true,
+ "allRelayOk": true,
+ "allKeepInlineOk": true,
+ "allDeadImportOk": true,
+ "allExecEquivalentOk": true,
+ "stops": {
+  "relay": 19,
+  "keepInline": 20,
+  "deadImport": 28
+ },
+ "allStopsRelayOk": true,
+ "allStopsKeepInlineOk": true,
+ "allStopsDeadImportOk": true,
+ "auditsOk": true,
+ "realIndexStopsOk": true,
+ "realIndexStop": {
+  "outside": 67,
+  "kinds": "expose 문 5 · 상태 선언(define"
+ },
+ "rerunStopsOk": true,
+ "allButPrevSuiteShapeChecksOk": true
+}

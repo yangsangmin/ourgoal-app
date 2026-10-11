@@ -1,0 +1,33 @@
+{
+ "task": "TASK-ES-681-MOCK",
+ "label": "모의 — 남은 상태 선언 둘을 구역 함수로(구역 이전 3차를 흉내 낸 준비 단계)",
+ "slot": "HO",
+ "mode": "region",
+ "cells": [
+  {
+   "key": "bootMockSeeds",
+   "file": "js/core/boot-mock-seeds.js",
+   "kit": "OurgoalUiHelpers",
+   "kitVar": "_uiKit",
+   "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+   "title": "OurGoal Boot Mock Seeds (모의 — 앱 상태와 프롬프트 백과 열림 표시의 초깃값)",
+   "desc": [
+    "finalize 모의 적용의 준비 단계로 만든 구역 함수 둘이다(실제 구역 이전 3차는 다른 PR 이다)."
+   ],
+   "regions": [
+    {
+     "name": "bootAppStateSeed",
+     "group": "뱃지 컬렉션 (명예의 전당)",
+     "from": "window.OurgoalAppState.defineVar('state'",
+     "to": "window.OurgoalAppState.defineVar('state'"
+    },
+    {
+     "name": "bootPromptOpenSeed",
+     "group": "[78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용)",
+     "from": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen'",
+     "to": "window.OurgoalAppState.defineVar('_promptEncyclopediaOpen'"
+    }
+   ]
+  }
+ ]
+}
