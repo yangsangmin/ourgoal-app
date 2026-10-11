@@ -1293,7 +1293,21 @@
       "date": "2026-10-11",
       "commit": "d7789c89",
       "metrics": {
-        "inlineScriptLines": 581,
+        "inlineScriptLines": 445,
+        "indexFunctionDecls": 1,
+        "windowAssignments": 75,
+        "oversizeJsFiles": {
+          "count": 0,
+          "files": {}
+        },
+        "crossTabRefs": 0
+      }
+    },
+    {
+      "date": "2026-10-11",
+      "commit": "afb9eb69",
+      "metrics": {
+        "inlineScriptLines": 449,
         "indexFunctionDecls": 1,
         "windowAssignments": 75,
         "oversizeJsFiles": {
@@ -1302,7 +1316,7 @@
         },
         "crossTabRefs": 0
       },
-      "reason": "TASK-ES-682 구역 이전 3차: 상태 기관 정의 줄 둘(state · _promptEncyclopediaOpen)을 구역 함수로 옮기면 한 줄짜리 문이 부르는 줄 + 가져오기 줄로 바뀌고, 구역 본문이 읽는 isoDate 의 통로 getter(3줄)가 다시 생겨 인라인 줄 수가 일시로 는다 — finalize 가 받지 않는 문(상태 정의 줄)을 받는 문(구역 함수 호출)으로 바꾸는 단계이고, 는 줄은 다음 재철거(getter)와 finalize 가 지운다"
+      "reason": "한 줄짜리 정의 문 둘이 부르는 줄 + 가져오기 줄 + 머리 주석이 되고 isoDate getter 3줄이 다시 생김, 다음 재철거·finalize 에서 내려감(TASK-ES-682 구역 이전 3차 — 문의 종류를 바꿔 마지막 단계를 여는 일시 증가, 선례 TASK-ES-646)"
     }
   ]
 }

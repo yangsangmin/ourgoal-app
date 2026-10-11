@@ -6,7 +6,7 @@
 - 작업 유형(SNOWBALL 분류): **(가) 표준 — 「구역 감싸기(region) 이전」 넷째 사례**. 선례 #933 · #939 · #951(#TASK-ES-676 구역 이전 2차 — 줄 단위 접두-만 비교 · 시점 탐침)의 절차·증거 꼴을 따른다. 작업참고 **기준 PR #941**(3c9b9335, 경험칙 119개 — L002 · L010 · L012 · L064 · L110).
 - 선행 PR: **#952**(#TASK-ES-679 상태 이전 4차 — 이번에 옮기는 정의 줄 둘은 그 PR 이 `var …` 선언을 `window.OurgoalAppState.defineVar…` 로 바꿔 쓴 줄이다) · **#947**(무결성 게이트가 세포의 상태 기관 호출도 본다).
 - 이 작업 세션은 빌더(서브에이전트)다. 병합은 하지 않는다(오케스트레이터 몫). push 는 번호 선점 1회 + 마무리 1회다.
-- 기준 main: **d7789c89**(#952 병합 뒤)에서 재었다. **재철거 3차가 병합되면 그 main 판 index.html 에 같은 설정으로 생성기를 다시 돌려 전부 다시 잰다**(오케스트레이터 지시 — push·PR 은 그 뒤). 아래 수치는 d7789c89 기준이다.
+- 기준 main: **ba5b46e2**(#953 재철거 3차 병합 뒤). 처음 d7789c89 에서 준비 판을 재고(push 하지 않음 — 오케스트레이터 지시), #953 병합 통보 뒤 그 main 판 index.html · 기준선에 같은 설정으로 생성기를 다시 돌려 시험·측정을 전부 다시 했다(L010 — 손으로 충돌을 풀지 않았다). 아래 줄 번호와 수치는 ba5b46e2 에서 다시 잰 값이다(부록의 sweep 조사만 d7789c89 기준).
 - 설계 정본: `docs/architecture/CELL-REGISTRY-DESIGN.md` 3.4 · 5.6(region) · 5.7(sweep) · 5.8(finalize 전제).
 - 측정은 전부 「작업자 측정, 판정 아님」이다. 판정은 GitHub 법정만 낸다.
 
@@ -26,12 +26,12 @@
 ### 구체 식별자
 
 - 고친 제품 파일: `index.html`(+9 −5) · 새 세포 `js/core/boot-app-state.js`(37줄).
-- 구역 함수 2개(이전 전 index.html 줄 — 기준 d7789c89)
-  - `bootAppStateObject` 2615~2617 — `window.OurgoalAppState.defineVar('state', { … })`(한 줄. 접두 2곳 — `isoDate(new Date())` 두 번 → `L.isoDate(…)`) + 앞의 자리 표지 주석 · 빈 줄.
-  - `bootPromptDrawerState` 2639 — `window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);`(접두 0).
+- 구역 함수 2개(이전 전 index.html 줄 — 기준 ba5b46e2)
+  - `bootAppStateObject` 2483~2485 — `window.OurgoalAppState.defineVar('state', { … })`(한 줄. 접두 2곳 — `isoDate(new Date())` 두 번 → `L.isoDate(…)`) + 앞의 자리 표지 주석 · 빈 줄.
+  - `bootPromptDrawerState` 2507 — `window.OurgoalAppState.defineVar('_promptEncyclopediaOpen', false);`(접두 0).
 - index.html 에 더한 줄: 머리 이음매 자리의 주석 1줄 + 가져오기 2줄(`var <이름> = _uiKit.<이름>;`) + **통로 getter 한 개의 expose 문 3줄**(`get isoDate(){ return isoDate; }` — 4절) · 원래 자리의 부르는 줄 2줄 · script 태그 줄 1줄 수정.
 - 새 도구(제품 코드 아님): `reports/TASK-ES-682/tools/` — `order-probe.cjs`(#951 의 시점 탐침 + window.state 대입 사건) · `state-object-probe.cjs`(#952 의 것) · `measure-682.cjs` · `finalize-gap-682.cjs` · `build-claims.cjs` · `sweep-mocks.cjs`(sweep 조사)
-- 기록: `docs/architecture/module-baseline.json`(73번째 항목 — 사유를 적어 올림) · `modules.json` · `cell-descriptions.json`(세포 하나 추가) · `docs/rules/TICKETS.md` · `reports/TASK-ES-682/`
+- 기록: `docs/architecture/module-baseline.json`(74번째 항목 — 사유를 적어 올림) · `modules.json` · `cell-descriptions.json`(세포 하나 추가) · `docs/rules/TICKETS.md` · `reports/TASK-ES-682/`
 - 손대지 않은 것: 그 밖의 `js/**` · 생성기 · tests/ · 금고 · 생성 지도 3종
 - 화면 식별자(시나리오 — #952 의 넷을 그대로): `#btnLandingPreviewDirect` · `#btnAvatarGreetClose` · `.navbtn[data-tab=…]` 와 #949 의 기록 창 시나리오 셋이 쓰는 식별자. 탐침이 만지는 요소: `.navbtn[data-tab="goals"]` · `#btnTogglePromptAccordion` · `#promptEncyclopediaDrawer`(문서 밖 요소에 그린 것)
 
@@ -58,9 +58,9 @@
 
 ## 4. [원칙 ④] 재검토 (반례·부작용)
 
-- **순서** → 구역 함수 `bootAppStateObject()` 는 정의 줄이 있던 자리에서 불리고 바로 다음 줄이 `bootExposeAppState()` 다. 시점 탐침: 작업 트리에서 `state` 정의 사건이 224번 자리, `window.state` 대입 사건이 226번 자리다(사이의 하나는 그 정의가 통로에 접근자를 다는 사건). 사건 줄 전체(기준 342 · 작업 343)는 다시 달린 getter 의 노출 사건 하나를 빼면 기준과 글자 그대로 같다.
-- **알고 넘어가는 차이 ① — 인라인 줄 수가 는다(577 → 581)** → 문 하나짜리 구역은 「부르는 줄 + 가져오기 줄」이 된다. 구역 둘이 4줄(정의 2 · 주석 1 · 빈 줄 1)을 빼고 8줄(머리 주석 1 · 가져오기 2 · getter expose 문 3 · 부르는 줄 2)을 더한다. 모듈 가드의 기준선은 늘어난 값을 사유 없이 받지 않는다 — `module-guard --update --reason "…"` 으로 사유를 적어 올렸다(선례 #936). **이 PR 의 값은 줄 수가 아니라 문의 종류다**: finalize 를 막는 문이 72 → 71, 정의 줄 3 → 1(남는 하나는 결심 대기인 `sb`). 는 줄 가운데 3줄(getter)은 다음 재철거가, 나머지는 finalize 가 지운다. 오케스트레이터가 이 일시 증가를 알고 받아들였다(준비 보고에 대한 답 — 「문의 종류를 바꿔 마지막 단계를 여는 일시 증가이고 #936 선례와 같다. 앱 상태 객체를 만드는 자리가 이름 있는 세포가 되는 쪽이 부팅 파일에 묻히는 것보다 낫다」). 기준선에 적은 사유: 「한 줄짜리 정의 문 둘이 부르는 줄 + 가져오기 줄 + 머리 주석이 되고 isoDate getter 3줄이 다시 생김, 다음 재철거·finalize 에서 내려감」.
-- **알고 넘어가는 차이 ② — 통로 getter 하나가 다시 생겼다(`isoDate`)** → `state` 의 초깃값이 `isoDate(new Date())` 를 두 번 부르고, 구역 본문은 그것을 `L.isoDate(…)` 로 읽는다. 재철거가 index.html 의 `get isoDate` 를 지운 뒤라(등록 기관이 통로에 내준다) 생성기가 getter 를 다시 달았다(#951 의 `daysFromNow` 와 같은 일). 그 노출 사건 앞뒤로 통로의 이름 수가 같고, 통로에 새로 생긴 이름 0 · 값 지문 동일이다. 오케스트레이터가 알고 받아들였다(다음 재철거의 몫).
+- **순서** → 구역 함수 `bootAppStateObject()` 는 정의 줄이 있던 자리에서 불리고 바로 다음 줄이 `bootExposeAppState()` 다. 시점 탐침: 작업 트리에서 `state` 정의 사건이 219번 자리, `window.state` 대입 사건이 221번 자리다(사이의 하나는 그 정의가 통로에 접근자를 다는 사건). 사건 줄 전체(기준 337 · 작업 338)는 다시 달린 getter 의 노출 사건 하나를 빼면 기준과 글자 그대로 같다.
+- **알고 넘어가는 차이 ① — 인라인 줄 수가 는다(445 → 449)** → 문 하나짜리 구역은 「부르는 줄 + 가져오기 줄」이 된다. 구역 둘이 4줄(정의 2 · 주석 1 · 빈 줄 1)을 빼고 8줄(머리 주석 1 · 가져오기 2 · getter expose 문 3 · 부르는 줄 2)을 더한다. 모듈 가드의 기준선은 늘어난 값을 사유 없이 받지 않는다 — `module-guard --update --reason "…"` 으로 사유를 적어 올렸다(선례 #936). **이 PR 의 값은 줄 수가 아니라 문의 종류다**: finalize 를 막는 문이 9 → 8, 정의 줄 3 → 1(남는 하나는 결심 대기인 `sb`). 는 줄 가운데 3줄(getter)은 다음 재철거가, 나머지는 finalize 가 지운다. 오케스트레이터가 이 일시 증가를 알고 받아들였다(준비 보고에 대한 답 — 「문의 종류를 바꿔 마지막 단계를 여는 일시 증가이고 #936 선례와 같다. 앱 상태 객체를 만드는 자리가 이름 있는 세포가 되는 쪽이 부팅 파일에 묻히는 것보다 낫다」). 기준선에 적은 사유: 「한 줄짜리 정의 문 둘이 부르는 줄 + 가져오기 줄 + 머리 주석이 되고 isoDate getter 3줄이 다시 생김, 다음 재철거·finalize 에서 내려감」.
+- **알고 넘어가는 차이 ② — 통로 getter 하나가 다시 생겼다(`isoDate`)** → `state` 의 초깃값이 `isoDate(new Date())` 를 두 번 부르고, 구역 본문은 그것을 `L.isoDate(…)` 로 읽는다. 재철거가 index.html 의 `get isoDate` 를 지운 뒤라(등록 기관이 통로에 내준다) 생성기가 getter 를 다시 달았다(#951 의 `daysFromNow` 와 같은 일 — 그 getter 는 재철거 3차 #953 이 지웠다). 그 노출 사건 앞뒤로 통로의 이름 수가 같고, 통로에 새로 생긴 이름 0 · 값 지문 동일이다. 오케스트레이터가 알고 받아들였다(다음 재철거의 몫).
 - **무결성 게이트** → `_promptEncyclopediaOpen` 의 정의 줄이 세포(`js/core/boot-app-state.js`)로 간 뒤 게이트 38/38(종료 코드 0). 처음 값 false, 읽는 그리기 함수와 쓰는 단추 처리기가 기준과 같이 돈다(상태 객체 탐침).
 - **같은 객체인가** → 통로의 `state` · `window.state` · 템플릿 부품의 `getState()` 가 같은 객체이고 통째 대입 왕복이 기준과 같다. 상태 객체 탐침의 기록이 기준(2회)과 작업에서 통째로 같다(이번에는 주인 표시·기관 종류도 그대로).
 - **주석의 행방** → `bootAppStateObject` 의 앞 주석(다른 작업의 자리 표지 주석 한 줄 · 빈 줄)이 생성기 규칙으로 세포에 함께 갔다. 구획 주석은 그 묶음에 다른 문이 남아 index.html 에 남는다.
@@ -71,15 +71,17 @@
 2. 설정 → 생성기 → 세포 설명 · 신고서 · 게이트 → 기준선(사유) → 시험(기준 · 작업) → 측정.
 3. sweep 조사: 모의 폴더 둘(sweep 적용 · 주석 전부 삭제)에서 시험 · 글자 모의본(재철거 흉내)에서 sweep.
 4. REQ · 작업표 → 주장.
-5. (재철거 3차 병합 통보 뒤) origin/main 을 합치고 index.html · 기준선 · 신고서 · 세포 설명을 main 판으로 둔 뒤 같은 설정으로 생성기를 다시 → 시험 · 측정 · 주장을 다시 → `recomputeSplit` · 로컬 법정 → push 1회 → PR.
+5. 준비 보고 → 오케스트레이터의 판단(일시 증가 · getter 재등장을 받아들임 · sweep 은 따로 하지 않음).
+6. 재철거 3차(#953) 병합 통보 → origin/main 을 합치고 index.html · 기준선 · 신고서 · 세포 설명을 main 판으로 둔 뒤 같은 설정으로 생성기를 다시 → 기준선(사유) → 시험(기준 · 작업) · 측정 · 주장을 ba5b46e2 에서 전부 다시 → `recomputeSplit` · 로컬 법정 → push 1회 → PR.
 
 ## 6. [원칙 ⑥] 절차 재검증 및 반론 격파
 
 - **반론 1 「줄이 느는 PR 은 해체가 아니다」** → 줄 수 지표로는 뒷걸음이다(+4). 숨기지 않고 기준선에 사유를 적었다. finalize 의 전제는 줄 수가 아니라 최상위 문의 종류이고, 이 PR 은 그 전제를 막는 문을 줄인다. 다른 길(finalize 가 정의 줄을 직접 다루게 하는 생성기 변경)이 낫다고 보시면 이 PR 은 필요 없다 — 결정은 작업자가 하지 않는다.
-- **반론 2 「재철거가 지운 getter 를 또 달았다」** → 사실이다. 생성기 규칙(등록 기관이 내주는지는 보지 않는다)의 결과이고, 재철거가 다시 지울 수 있다. 재철거 3차가 먼저 병합되면 그 뒤에 이 PR 이 다시 단 것은 그다음 재철거의 몫이 된다 — 순서상 이 PR 을 재철거 3차보다 **앞에** 두면 같은 재철거가 한 번에 지울 수 있다(오케스트레이터가 정할 일).
+- **반론 2 「재철거가 지운 getter 를 또 달았다」** → 사실이다. 생성기 규칙(등록 기관이 내주는지는 보지 않는다)의 결과이고, 재철거가 다시 지울 수 있다. 재철거 3차(#953)가 먼저 병합됐으므로 이 PR 이 다시 단 `isoDate` getter 와 그 가져오기 줄은 그다음 재철거의 몫이다.
 - **반론 3 「구역 함수 호출문까지 한 구역으로 묶으면 줄이 준다」** → `bootExposeAppState()` 같은 호출문을 구역 본문에 넣으면 그 이름을 `L.` 로 읽어야 해 통로 getter 가 더 생긴다(줄이 더 는다). 구역은 정의 줄 하나씩으로 뒀다.
-- **재검증(되짚기)**: 기준 index.html 2,847줄에서 구역 4줄을 빼고 그 자리에 부르는 줄 2, 머리에 6줄(주석 1 + 가져오기 2 + getter expose 문 3)을 넣고 script 태그 줄 하나를 바꾼 것이 작업 index.html 2,851줄과 줄 단위로 같다.
-- **재검증(시험 전부)**: 스크립트 넷과 `tests/*.test.js` 115개를 하나씩 돌린 결과가 기준과 같다(실패 집합 26 = 26). 처음 돌렸을 때 `tests/offline-sync-queue-retain.test.js` 가 작업에서만 깨졌는데, 이 시험은 index.html 을 읽지 않고(읽는 파일은 `js/core/virtual-user-helpers.js`) 혼자 세 번씩 다시 돌리니 작업 0·0·0 · 기준 0·1·0 이었다(흔들리는 시험). 시험 하나씩을 혼자 다시 돌린 결과가 위의 값이다.
+- **재검증(되짚기)**: 기준 index.html 2,715줄에서 구역 4줄을 빼고 그 자리에 부르는 줄 2, 머리에 6줄(주석 1 + 가져오기 2 + getter expose 문 3)을 넣고 script 태그 줄 하나를 바꾼 것이 작업 index.html 2,719줄과 줄 단위로 같다.
+- **재검증(main 이동)**: d7789c89 와 ba5b46e2 두 번 쟀다. 옮긴 줄 · 접두 · 다시 달린 getter(`isoDate`) · 줄 수 변화(+4)가 같다.
+- **재검증(시험 전부)**: 스크립트 넷과 `tests/*.test.js` 115개를 하나씩 돌린 결과가 기준과 같다(실패 집합 26 = 26 — ba5b46e2 에서는 처음부터 같았다). d7789c89 의 준비 판에서 처음 돌렸을 때 `tests/offline-sync-queue-retain.test.js` 가 작업에서만 깨졌는데, 이 시험은 index.html 을 읽지 않고(읽는 파일은 `js/core/virtual-user-helpers.js`) 혼자 세 번씩 다시 돌리니 작업 0·0·0 · 기준 0·1·0 이었다(흔들리는 시험).
 
 ## 7. [원칙 ⑦] 단계별 실행 (측정 산출물)
 
@@ -87,31 +89,33 @@
 
 | 파일 | 무엇 |
 |---|---|
-| `proof.json` · `region-meta.json` | 생성기 설정(세포 1 · 구역 2)과 생성기 산출 — 문 2 · 옮긴 줄 4 · 접두 2 · 다시 단 getter 1(`isoDate`) · 가져오기 2 · index.html 2847 → 2851줄 |
+| `proof.json` · `region-meta.json` | 생성기 설정(세포 1 · 구역 2)과 생성기 산출 — 문 2 · 옮긴 줄 4 · 접두 2 · 다시 단 getter 1(`isoDate`) · 가져오기 2 · index.html 2715 → 2719줄 |
 | `prefix-only-check.json` | 옮긴 4줄: 바이트 동일 3 · 접두만 다른 줄 1(접두 2 = 생성기 바꿔 쓰기 2) · 그 밖 0 · 되짚기 |
-| `order-probe.{base,base2,work}.json` · `order-probe-fake.{base,work}.json` | 시점 탐침: 사건 줄(기준 342 · 작업 343)이 다시 달린 getter 의 노출 사건 하나를 빼면 기준과 글자 그대로 같음 |
+| `order-probe.{base,base2,work}.json` · `order-probe-fake.{base,work}.json` | 시점 탐침: 사건 줄(기준 337 · 작업 338)이 다시 달린 getter 의 노출 사건 하나를 빼면 기준과 글자 그대로 같음 |
 | `state-object-probe.{base,base2,work}.json` | 상태 객체 탐침: 기준과 통째로 같음(주인 · 기관 종류 포함) |
-| `state-probe.{base,base2,work}.json` · `probe-names.json` | 상태 탐침: 이름 67개(상태 기관이 맡은 것 전부) · 차이 0(본질 변동 `state` 제외) · 기관 이름 67 = 67 |
+| `state-probe.{base,base2,work}.json` · `probe-names.json` | 상태 탐침: 이름 67개(상태 기관이 맡은 것 전부) · 차이 0 · 기관 이름 67 = 67 |
 | `cell-registry-compare.base.json` · `cell-registry-compare.json` | 대조 탐침: 통로 539 이름의 값 지문 차이 0 · 사라진 이름 0 · 새로 생긴 이름 0 |
 | `scenario-local.json` | 시나리오 4개 기준 2회·작업 1회 통과, 예외 0 |
 | `module-load.json` · `npm-test-compare.json` · `tests-{base,work}.json` · `raw/` | 모듈 로드 새 회귀 0 · 새 세포 단독 로드 · npm test 기준/작업 같음(✓ 487 = 487 · ok 203 = 203) · 시험 하나씩 실패 집합 같음 |
 | `finalize-gap.json` · `finalize-gap.base.json` | finalize 전제까지 남은 것(작업 · 기준) |
 | `sweep-survey.json` | sweep 적용 조사(모의본 — 이 PR 은 sweep 을 하지 않는다) |
-| `measurement.json` | 위 전부 + inlineScriptLines 577 → 581(+4) · 기준선 마지막 기록 = 측정값 · 모듈 가드 0 · 무결성 게이트 38/38 |
+| `measurement.json` | 위 전부 + inlineScriptLines 445 → 449(+4) · 기준선 마지막 기록 = 측정값 · 모듈 가드 0 · 무결성 게이트 38/38 |
 | `claims.json` | 주장(보존 4 + 기록) |
 
-### finalize 전제까지 남은 것 — 문 종류별(이 PR 을 반영한 index.html, 기준 d7789c89)
+### finalize 전제까지 남은 것 — 문 종류별(이 PR 을 반영한 index.html, 기준 ba5b46e2)
 
-생성기 finalize 를 임시 사본에 돌린 오류 글자: 「전제 미충족 — … 밖의 문이 71개 있다(expose 문 7 · 그 밖의 var 2 · 상태 선언(define) 1 · 호출되지 않는 가져오기 61)」.
+생성기 finalize 를 임시 사본에 돌린 오류 글자: 「전제 미충족 — … 밖의 문이 8개 있다(expose 문 2 · 그 밖의 var 2 · 상태 선언(define) 1 · 호출되지 않는 가져오기 3)」. 아래 수는 `finalize-gap.json` 의 것이고 그 글자와 같다.
 
 | 종류 | 문 수(기준 → 작업) | 줄 수(작업) | 풀리는 조건 |
 |---|---|---|---|
-| 그 밖의 가져오기(최상위에서 불리지 않음) | 61 → 61 | 61 | 재철거(unwire U1) |
-| expose 문(통로 getter·setter) | 6 → 7 | 74 | 재철거(unwire U2). 늘어난 하나는 이 PR 이 다시 단 `isoDate` getter(3줄) |
+| 그 밖의 가져오기(최상위에서 불리지 않음) | 3 → 3 | 3 | 재철거(unwire U1) — `renderTeamGoalsScreen` · `isoDate` · `a11ySwitch`. `isoDate` 는 이 PR 뒤 getter 만 쓴다 |
+| expose 문(통로 getter·setter) | 1 → 2 | 6 | 재철거(unwire U2). 늘어난 하나는 이 PR 이 다시 단 `isoDate` getter(3줄) |
 | 상태 선언(var) | 2 → 2 | 2 | `SUPABASE_URL` · `SUPABASE_ANON_KEY`: 결심 대기(금지 패턴 규칙) |
 | 상태 기관 정의 줄(define) | 3 → 1 | 1 | `sb`: 위의 두 선언과 한 묶음(같은 결심) |
-| **막는 문 합계** | **72 → 71** | **138**(기준 137) | |
-| 키트 손잡이 · 구역 함수 가져오기 · 구역 함수 호출문(finalize 가 받는 것) | 60 → 64 | 64 | 손잡이 10 · 가져오기 27 · 호출문 27 |
+| **막는 문 합계** | **9 → 8** | **12**(기준 11) | |
+| 키트 손잡이 · 구역 함수 가져오기 · 구역 함수 호출문(finalize 가 받는 것) | 54 → 58 | 58 | 손잡이 4 · 가져오기 27 · 호출문 27 |
+
+- 이 PR 뒤 finalize 를 막는 것은 둘로 줄어든다: ① 재철거가 지울 가져오기 3 · expose 2 ② 서버 연결 세 문(`SUPABASE_URL` · `SUPABASE_ANON_KEY` · `sb` 정의 — 결심 대기).
 
 ### 부록 — sweep 적용 조사: 결과와 권고(`sweep-survey.json`, 구역 3차를 적용한 d7789c89 판의 모의본)
 
@@ -126,7 +130,7 @@
 
 ## 8. [원칙 ⑧] 막힐 지점 예상 · 성과 측정
 
-- **예상**: 재철거 3차가 먼저 병합된다 → 그 main 판에 같은 설정으로 생성기를 다시 돌리고 전부 다시 잰다(L010). 다시 달리는 getter 의 이름·수와 인라인 줄 수 변화는 그때 다시 적는다.
-- **예상**: 모듈 가드가 늘어난 인라인 줄 수를 막는다 → 사유를 적어 기준선에 올렸다(선례 #936). 이것을 받아들일지는 오케스트레이터가 정한다.
+- **예상**: 재철거 3차가 먼저 병합된다 → 실제로 #953 이 먼저 병합됐고, 그 main 판에 같은 설정으로 생성기를 다시 돌려 전부 다시 쟀다(L010).
+- **예상**: 모듈 가드가 늘어난 인라인 줄 수를 막는다 → 사유를 적어 기준선에 올렸다(선례 #936). 오케스트레이터가 받아들였다.
 - **측정불가**: 로그인 뒤 화면 · 상태를 통째로 다시 대입하는 세포 자리 · 프롬프트 서랍의 화면 조작(#952 와 같은 한계) · 운영 환경.
-- **성과 측정**: finalize 를 막는 문 72 → 71, IIFE 최상위의 상태 기관 정의 줄 3 → 1. inlineScriptLines 577 → 581(+4 — 출처 `measurement.json` `metrics`).
+- **성과 측정**: finalize 를 막는 문 9 → 8, IIFE 최상위의 상태 기관 정의 줄 3 → 1. inlineScriptLines 445 → 449(+4 — 출처 `measurement.json` `metrics`).
