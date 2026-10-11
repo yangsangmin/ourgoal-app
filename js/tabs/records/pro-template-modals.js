@@ -407,7 +407,7 @@
   if (!R) return;
   var K = g.OurgoalRecordsKit;
   if (K) R.provide('records/pro-template-modals', {
-    openCreateCustomTemplateModal: K.openCreateCustomTemplateModal
+    openCreateCustomTemplateModal: K.openCreateCustomTemplateModal, openTemplateColumnEditModal: K.openTemplateColumnEditModal
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

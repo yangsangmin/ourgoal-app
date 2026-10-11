@@ -4,11 +4,11 @@
  "requirements": [
   {
    "id": "R1",
-   "text": "등록 2차에서 막혔던 이름 3개(switchTab · handleDeepLinkRouting · renderTeamGoalsScreen)를 그 이름을 키트에 다는 세포 3개의 등록 블록에 통로 전용으로 더한다(window 목록에는 넣지 않는다 — 등록 기관은 window 를 건드리지 않는다). 앱 동작은 그대로다 — index.html 의 옛 배선이 같은 값을 다시 내준다."
+   "text": "통로로 나가는 키트 가져오기 이름 가운데 등록 기관에 없던 18개(등록 2차에서 막혔던 switchTab · handleDeepLinkRouting 과, #949 뒤 새로 통로로 나간 이름)를 그 이름을 키트에 다는 세포의 등록 블록에 통로 전용으로 더하고(window 목록에는 넣지 않는다 — 등록 기관은 window 를 건드리지 않는다), window 전용이던 2개는 통로로도 내주게 올린다. 바뀌는 세포는 15개다. 앱 동작은 그대로다 — index.html 의 옛 배선이 같은 값을 다시 내준다."
   },
   {
    "id": "R2",
-   "text": "등록 줄은 생성기가 쓴다(손 편집 0). 기존 등록은 하나도 빠지지 않고, 세포의 기존 글자는 바뀌지 않으며, 800줄 상한을 지킨다(상한·가드 값 변경 0 — 보통 꼴 블록이 넘치는 세포에만 한 줄 꼴 블록)."
+   "text": "등록 줄은 생성기가 쓴다(손 편집 0 · 생성기 변경 0). 기존 등록은 하나도 빠지지 않고, 세포의 기존 글자는 바뀌지 않으며, 800줄 상한을 지킨다(상한을 넘게 되는 renderTeamGoalsScreen 은 등록하지 않는다)."
   },
   {
    "id": "R3",
@@ -24,6 +24,10 @@
   }
  ],
  "outOfScopeReports": [
+  {
+   "text": "renderTeamGoalsScreen 은 등록하지 않았다 — 주인 세포가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다. 그 가져오기·getter 중계는 마지막 단계(finalize)가 부팅 파일로 옮긴다(오케스트레이터 판단).",
+   "cannotBecause": "out-of-scope-feature"
+  },
   {
    "text": "실제 재철거(index.html 의 가져오기·getter 줄 삭제)는 이 PR 에 없다. window.switchTab · window.handleDeepLinkRouting 에 달린 값(통로 값과 다른 함수)은 바꾸지 않았다 — 값을 하나로 맞추는 일은 동작 변경이라 하지 않고 사실만 REQ 에 적었다.",
    "cannotBecause": "out-of-scope-feature"
@@ -43,7 +47,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v01-guest-boot-six-tabs.json",
    "id": "C1"
@@ -57,7 +73,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v02-goals-subtabs-periods.json",
    "id": "C2"
@@ -71,7 +99,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v03-bell-modal-settings.json",
    "id": "C3"
@@ -85,7 +125,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v04-new-goal-modal.json",
    "id": "C4"
@@ -99,7 +151,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v05-goal-agent-drawer.json",
    "id": "C5"
@@ -113,7 +177,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v06-settings-legal-links.json",
    "id": "C6"
@@ -127,7 +203,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v07-auth-forgot-password.json",
    "id": "C7"
@@ -141,7 +229,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v08-checkin-mic-guide.json",
    "id": "C8"
@@ -155,7 +255,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v09-team-comment-passthrough.json",
    "id": "C9"
@@ -169,7 +281,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v10-sample-purge.json",
    "id": "C10"
@@ -183,7 +307,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v11-goal-fast-add.json",
    "id": "C11"
@@ -197,7 +333,19 @@
    "touches": [
     "js/core/deep-link-gateway.js",
     "js/core/registry-init.js",
-    "js/tabs/goals/team-goals-screen.js"
+    "js/tabs/records/pro-record-modal.js",
+    "js/tabs/records/pro-record-save.js",
+    "js/tabs/records/pro-record-stopwatch.js",
+    "js/tabs/records/pro-record-table.js",
+    "js/tabs/records/pro-record-tools.js",
+    "js/tabs/records/pro-record-trend-chart.js",
+    "js/tabs/records/pro-template-modals.js",
+    "js/tabs/records/pro-templates.js",
+    "js/tabs/records/stopwatch-format.js",
+    "js/tabs/records/table-csv-sync.js",
+    "js/tabs/records/table-stopwatch.js",
+    "js/tabs/records/vision-table-input.js",
+    "js/tabs/records/voice-table-input.js"
    ],
    "scenario": "scenarios/v12-records-export-modal.json",
    "id": "C12"
@@ -440,7 +588,7 @@
     "type": "jsonPath",
     "file": "reports/TASK-ES-677/measurement.json",
     "path": "summary.registry.registeredGrewBy",
-    "equals": 3
+    "equals": 18
    },
    "id": "C27"
   },
@@ -832,16 +980,15 @@
    "req": "R2",
    "kind": "static",
    "domain": "config",
-   "statement": "한 줄 꼴 블록을 붙인 세포는 보통 꼴 블록을 붙이면 800줄을 넘는 세포뿐이다(계획 파일의 목록과 같다).",
+   "statement": "등록 블록을 한 줄로 이어 쓴 세포가 없다(줄 수 상한을 글자 배치로 맞추지 않았다).",
    "touches": [
-    "reports/TASK-ES-677/measurement.json",
-    "reports/TASK-ES-677/provide-plan.json"
+    "reports/TASK-ES-677/measurement.json"
    ],
    "check": {
     "type": "jsonPath",
     "file": "reports/TASK-ES-677/measurement.json",
-    "path": "summary.oneLine.equalsPlan",
-    "equals": true
+    "path": "summary.oneLineBlockFiles",
+    "equals": []
    },
    "id": "C52"
   },
@@ -849,15 +996,18 @@
    "req": "R2",
    "kind": "static",
    "domain": "config",
-   "statement": "한 줄 꼴 블록을 붙인 세포의 줄 수가 800 이하다.",
+   "statement": "800줄 상한 때문에 건너뛴 이름은 renderTeamGoalsScreen 하나다(등록하지 않았다).",
    "touches": [
-    "reports/TASK-ES-677/measurement.json"
+    "reports/TASK-ES-677/measurement.json",
+    "reports/TASK-ES-677/provide-plan.json"
    ],
    "check": {
     "type": "jsonPath",
     "file": "reports/TASK-ES-677/measurement.json",
-    "path": "summary.oneLine.allWithinLimit",
-    "equals": true
+    "path": "summary.plan.skippedOver800",
+    "equals": [
+     "renderTeamGoalsScreen"
+    ]
    },
    "id": "C53"
   },
@@ -873,7 +1023,7 @@
     "type": "jsonPath",
     "file": "reports/TASK-ES-677/measurement.json",
     "path": "summary.mockUnwire.unwire.deletedLinesTotal",
-    "equals": 10
+    "equals": 42
    },
    "id": "C54"
   },

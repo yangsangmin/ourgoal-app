@@ -5,22 +5,91 @@
  "keep": {
   "existingFiles": 188,
   "existingNames": 527,
-  "plannedNow": 4,
-  "alreadyRegistered": 1,
-  "added": 2,
+  "plannedNow": 58,
+  "alreadyRegistered": 39,
+  "added": 18,
   "addedNames": [
+   "bindProRecSave",
+   "bindProRecStopwatch",
+   "bindProRecTable",
+   "bindProRecTools",
+   "bindProRecTrendChart",
+   "downloadTableAsCsv",
+   "formatStopwatchTime",
+   "getAllProTemplates",
    "handleDeepLinkRouting",
-   "switchTab"
+   "openCsvImportModal",
+   "openProTemplateRecordModal",
+   "openTemplateColumnEditModal",
+   "openVisionTableModal",
+   "openVoiceTableModal",
+   "openWearableSyncModal",
+   "playTimerBeep",
+   "switchTab",
+   "syncRecordToMatchingGoals"
   ],
-  "upgradedFromWindowOnly": [],
-  "upgradedEntries": [],
+  "upgradedFromWindowOnly": [
+   "renderLapRowsHtml",
+   "renderStopwatchWidgetHtml"
+  ],
+  "upgradedEntries": [
+   {
+    "name": "renderLapRowsHtml",
+    "kinds": "scope",
+    "import": "renderLapRowsHtml",
+    "kit": "OurgoalRecordsKit",
+    "kitVar": "_recordsKit",
+    "member": "renderLapRowsHtml",
+    "file": "js/tabs/records/table-stopwatch.js",
+    "owner": "records/table-stopwatch",
+    "assigners": [
+     "js/tabs/records/table-stopwatch.js"
+    ]
+   },
+   {
+    "name": "renderStopwatchWidgetHtml",
+    "kinds": "scope",
+    "import": "renderStopwatchWidgetHtml",
+    "kit": "OurgoalRecordsKit",
+    "kitVar": "_recordsKit",
+    "member": "renderStopwatchWidgetHtml",
+    "file": "js/tabs/records/table-stopwatch.js",
+    "owner": "records/table-stopwatch",
+    "assigners": [
+     "js/tabs/records/table-stopwatch.js"
+    ]
+   }
+  ],
   "excluded": [],
   "filesToChange": [
    "js/core/deep-link-gateway.js",
-   "js/core/registry-init.js"
+   "js/core/registry-init.js",
+   "js/tabs/records/pro-record-modal.js",
+   "js/tabs/records/pro-record-save.js",
+   "js/tabs/records/pro-record-stopwatch.js",
+   "js/tabs/records/pro-record-table.js",
+   "js/tabs/records/pro-record-tools.js",
+   "js/tabs/records/pro-record-trend-chart.js",
+   "js/tabs/records/pro-template-modals.js",
+   "js/tabs/records/pro-templates.js",
+   "js/tabs/records/stopwatch-format.js",
+   "js/tabs/records/table-csv-sync.js",
+   "js/tabs/records/table-stopwatch.js",
+   "js/tabs/records/vision-table-input.js",
+   "js/tabs/records/voice-table-input.js"
   ],
   "newBlockFiles": [
-   "js/core/deep-link-gateway.js"
+   "js/core/deep-link-gateway.js",
+   "js/tabs/records/pro-record-modal.js",
+   "js/tabs/records/pro-record-save.js",
+   "js/tabs/records/pro-record-stopwatch.js",
+   "js/tabs/records/pro-record-table.js",
+   "js/tabs/records/pro-record-tools.js",
+   "js/tabs/records/pro-record-trend-chart.js",
+   "js/tabs/records/stopwatch-format.js",
+   "js/tabs/records/table-csv-sync.js",
+   "js/tabs/records/vision-table-input.js",
+   "js/tabs/records/voice-table-input.js"
   ],
   "differs": []
  },
@@ -28,9 +97,9 @@
  "index": {
   "iifeLines": [
    2254,
-   3876
+   2982
   ],
-  "scriptTags": 366,
+  "scriptTags": 372,
   "registryTagOrder": 7,
   "registryTagLine": 2151,
   "kitVars": {
@@ -75,21 +144,21 @@
     "line": 2386
    }
   },
-  "imports": 72,
-  "scopeGetterNames": 7,
+  "imports": 78,
+  "scopeGetterNames": 60,
   "scopeSetterNames": 2,
   "windowNames": 3,
   "windowSites": 3
  },
  "counts": {
-  "registeredNames": 2,
-  "registeredScope": 2,
+  "registeredNames": 18,
+  "registeredScope": 18,
   "registeredWindow": 0,
-  "files": 2,
+  "files": 15,
   "skipped": 1,
-  "iifeOwnedScope": 3,
+  "iifeOwnedScope": 2,
   "iifeOwnedWindow": 2,
-  "changedThisRun": 2,
+  "changedThisRun": 15,
   "unchangedThisRun": 0,
   "staleBlocksRemoved": 0
  },
@@ -100,7 +169,7 @@
    "registeredImports": 0,
    "unwireReady": 0,
    "blockedByIifeRefs": 0,
-   "notExposed": 2,
+   "notExposed": 1,
    "notExposedNoRefs": 1
   },
   "_xp": {
@@ -109,16 +178,16 @@
    "registeredImports": 0,
    "unwireReady": 0,
    "blockedByIifeRefs": 0,
-   "notExposed": 2,
+   "notExposed": 0,
    "notExposedNoRefs": 0
   },
   "_recordsKit": {
    "kitPath": "OurgoalRecordsKit",
-   "imports": 25,
-   "registeredImports": 0,
-   "unwireReady": 0,
+   "imports": 31,
+   "registeredImports": 15,
+   "unwireReady": 15,
    "blockedByIifeRefs": 0,
-   "notExposed": 25,
+   "notExposed": 0,
    "notExposedNoRefs": 0
   },
   "_calendarKit": {
@@ -127,7 +196,7 @@
    "registeredImports": 0,
    "unwireReady": 0,
    "blockedByIifeRefs": 0,
-   "notExposed": 4,
+   "notExposed": 1,
    "notExposedNoRefs": 0
   },
   "_goalsKit": {
@@ -136,7 +205,7 @@
    "registeredImports": 0,
    "unwireReady": 0,
    "blockedByIifeRefs": 0,
-   "notExposed": 2,
+   "notExposed": 0,
    "notExposedNoRefs": 0
   },
   "_modalOpenKit": {
@@ -145,16 +214,16 @@
    "registeredImports": 0,
    "unwireReady": 0,
    "blockedByIifeRefs": 0,
-   "notExposed": 1,
+   "notExposed": 0,
    "notExposedNoRefs": 0
   },
   "_visionTableInputKit": {
    "kitPath": "OurgoalVisionTableInputKit",
    "imports": 1,
-   "registeredImports": 0,
-   "unwireReady": 0,
+   "registeredImports": 1,
+   "unwireReady": 1,
    "blockedByIifeRefs": 0,
-   "notExposed": 1,
+   "notExposed": 0,
    "notExposedNoRefs": 0
   },
   "_levelBadgeKit": {
@@ -163,7 +232,7 @@
    "registeredImports": 0,
    "unwireReady": 0,
    "blockedByIifeRefs": 0,
-   "notExposed": 1,
+   "notExposed": 0,
    "notExposedNoRefs": 0
   },
   "_uiKit": {
@@ -172,7 +241,7 @@
    "registeredImports": 2,
    "unwireReady": 2,
    "blockedByIifeRefs": 0,
-   "notExposed": 29,
+   "notExposed": 17,
    "notExposedNoRefs": 0
   },
   "_commKit": {
@@ -202,9 +271,217 @@
    "kits": [
     "OurgoalUiHelpers"
    ]
+  },
+  {
+   "file": "js/tabs/records/pro-record-modal.js",
+   "owner": "records/pro-record-modal",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/pro-record-save.js",
+   "owner": "records/pro-record-save",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/pro-record-stopwatch.js",
+   "owner": "records/pro-record-stopwatch",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/pro-record-table.js",
+   "owner": "records/pro-record-table",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/pro-record-tools.js",
+   "owner": "records/pro-record-tools",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/pro-record-trend-chart.js",
+   "owner": "records/pro-record-trend-chart",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/pro-template-modals.js",
+   "owner": "records/pro-template-modals",
+   "names": 2,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/pro-templates.js",
+   "owner": "records/pro-templates",
+   "names": 5,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/stopwatch-format.js",
+   "owner": "records/stopwatch-format",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/table-csv-sync.js",
+   "owner": "records/table-csv-sync",
+   "names": 4,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/table-stopwatch.js",
+   "owner": "records/table-stopwatch",
+   "names": 3,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/vision-table-input.js",
+   "owner": "records/vision-table-input",
+   "names": 1,
+   "kits": [
+    "OurgoalVisionTableInputKit"
+   ]
+  },
+  {
+   "file": "js/tabs/records/voice-table-input.js",
+   "owner": "records/voice-table-input",
+   "names": 1,
+   "kits": [
+    "OurgoalRecordsKit"
+   ]
   }
  ],
  "registered": [
+  {
+   "name": "bindProRecSave",
+   "kinds": "scope",
+   "import": "bindProRecSave",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "bindProRecSave",
+   "file": "js/tabs/records/pro-record-save.js",
+   "owner": "records/pro-record-save",
+   "assigners": [
+    "js/tabs/records/pro-record-save.js"
+   ]
+  },
+  {
+   "name": "bindProRecStopwatch",
+   "kinds": "scope",
+   "import": "bindProRecStopwatch",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "bindProRecStopwatch",
+   "file": "js/tabs/records/pro-record-stopwatch.js",
+   "owner": "records/pro-record-stopwatch",
+   "assigners": [
+    "js/tabs/records/pro-record-stopwatch.js"
+   ]
+  },
+  {
+   "name": "bindProRecTable",
+   "kinds": "scope",
+   "import": "bindProRecTable",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "bindProRecTable",
+   "file": "js/tabs/records/pro-record-table.js",
+   "owner": "records/pro-record-table",
+   "assigners": [
+    "js/tabs/records/pro-record-table.js"
+   ]
+  },
+  {
+   "name": "bindProRecTools",
+   "kinds": "scope",
+   "import": "bindProRecTools",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "bindProRecTools",
+   "file": "js/tabs/records/pro-record-tools.js",
+   "owner": "records/pro-record-tools",
+   "assigners": [
+    "js/tabs/records/pro-record-tools.js"
+   ]
+  },
+  {
+   "name": "bindProRecTrendChart",
+   "kinds": "scope",
+   "import": "bindProRecTrendChart",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "bindProRecTrendChart",
+   "file": "js/tabs/records/pro-record-trend-chart.js",
+   "owner": "records/pro-record-trend-chart",
+   "assigners": [
+    "js/tabs/records/pro-record-trend-chart.js"
+   ]
+  },
+  {
+   "name": "downloadTableAsCsv",
+   "kinds": "scope",
+   "import": "downloadTableAsCsv",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "downloadTableAsCsv",
+   "file": "js/tabs/records/table-csv-sync.js",
+   "owner": "records/table-csv-sync",
+   "assigners": [
+    "js/tabs/records/table-csv-sync.js"
+   ]
+  },
+  {
+   "name": "formatStopwatchTime",
+   "kinds": "scope",
+   "import": "formatStopwatchTime",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "formatStopwatchTime",
+   "file": "js/tabs/records/stopwatch-format.js",
+   "owner": "records/stopwatch-format",
+   "assigners": [
+    "js/tabs/records/stopwatch-format.js"
+   ]
+  },
+  {
+   "name": "getAllProTemplates",
+   "kinds": "scope",
+   "import": "getAllProTemplates",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "getAllProTemplates",
+   "file": "js/tabs/records/pro-templates.js",
+   "owner": "records/pro-templates",
+   "assigners": [
+    "js/tabs/records/pro-templates.js"
+   ]
+  },
   {
    "name": "handleDeepLinkRouting",
    "kinds": "scope",
@@ -219,6 +496,97 @@
    ]
   },
   {
+   "name": "openCsvImportModal",
+   "kinds": "scope",
+   "import": "openCsvImportModal",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "openCsvImportModal",
+   "file": "js/tabs/records/table-csv-sync.js",
+   "owner": "records/table-csv-sync",
+   "assigners": [
+    "js/tabs/records/table-csv-sync.js"
+   ]
+  },
+  {
+   "name": "openProTemplateRecordModal",
+   "kinds": "scope",
+   "import": "openProTemplateRecordModal",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "openProTemplateRecordModal",
+   "file": "js/tabs/records/pro-record-modal.js",
+   "owner": "records/pro-record-modal",
+   "assigners": [
+    "js/tabs/records/pro-record-modal.js"
+   ]
+  },
+  {
+   "name": "openTemplateColumnEditModal",
+   "kinds": "scope",
+   "import": "openTemplateColumnEditModal",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "openTemplateColumnEditModal",
+   "file": "js/tabs/records/pro-template-modals.js",
+   "owner": "records/pro-template-modals",
+   "assigners": [
+    "js/tabs/records/pro-template-modals.js"
+   ]
+  },
+  {
+   "name": "openVisionTableModal",
+   "kinds": "scope",
+   "import": "openVisionTableModal",
+   "kit": "OurgoalVisionTableInputKit",
+   "kitVar": "_visionTableInputKit",
+   "member": "openVisionTableModal",
+   "file": "js/tabs/records/vision-table-input.js",
+   "owner": "records/vision-table-input",
+   "assigners": [
+    "js/tabs/records/vision-table-input.js"
+   ]
+  },
+  {
+   "name": "openVoiceTableModal",
+   "kinds": "scope",
+   "import": "openVoiceTableModal",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "openVoiceTableModal",
+   "file": "js/tabs/records/voice-table-input.js",
+   "owner": "records/voice-table-input",
+   "assigners": [
+    "js/tabs/records/voice-table-input.js"
+   ]
+  },
+  {
+   "name": "openWearableSyncModal",
+   "kinds": "scope",
+   "import": "openWearableSyncModal",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "openWearableSyncModal",
+   "file": "js/tabs/records/table-csv-sync.js",
+   "owner": "records/table-csv-sync",
+   "assigners": [
+    "js/tabs/records/table-csv-sync.js"
+   ]
+  },
+  {
+   "name": "playTimerBeep",
+   "kinds": "scope",
+   "import": "playTimerBeep",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "playTimerBeep",
+   "file": "js/tabs/records/table-stopwatch.js",
+   "owner": "records/table-stopwatch",
+   "assigners": [
+    "js/tabs/records/table-stopwatch.js"
+   ]
+  },
+  {
    "name": "switchTab",
    "kinds": "scope",
    "import": "switchTab",
@@ -229,6 +597,19 @@
    "owner": "core/registry-init",
    "assigners": [
     "js/core/registry-init.js"
+   ]
+  },
+  {
+   "name": "syncRecordToMatchingGoals",
+   "kinds": "scope",
+   "import": "syncRecordToMatchingGoals",
+   "kit": "OurgoalRecordsKit",
+   "kitVar": "_recordsKit",
+   "member": "syncRecordToMatchingGoals",
+   "file": "js/tabs/records/table-csv-sync.js",
+   "owner": "records/table-csv-sync",
+   "assigners": [
+    "js/tabs/records/table-csv-sync.js"
    ]
   }
  ],
@@ -251,47 +632,34 @@
    "line": 2279
   },
   {
-   "name": "openProTemplateRecordModal",
-   "kind": "scope",
-   "returns": "openProTemplateRecordModal",
-   "setter": false,
-   "line": 2278
-  },
-  {
    "name": "_promptEncyclopediaOpen",
    "kind": "scope",
    "returns": "_promptEncyclopediaOpen",
    "setter": true,
-   "line": 2487
+   "line": 2549
   },
   {
    "name": "shareContent",
    "kind": "window",
    "rhs": null,
    "rhsType": "MemberExpression",
-   "line": 3847
+   "line": 2953
   },
   {
    "name": "SHARED_GROUPS_LOADED",
    "kind": "window",
    "rhs": null,
    "rhsType": "BooleanLiteral",
-   "line": 3864
+   "line": 2970
   }
  ],
  "iifeOwnedNote": "IIFE 안에 정의가 남아 있어 세포가 없는 이름(함수 이전·B9 상태 기관·B10 부팅 기관 몫). scope: 통로 getter 가 가져오기 이름을 돌려주지 않는다 · window: 대입 오른쪽이 가져오기 이름이 아니다",
  "importRefs": {
   "escapeHtml": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 10,
-   "otherLines": [
-    2782,
-    2797,
-    2812,
-    2846,
-    2846
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "a11ySwitch": {
    "getter": 0,
@@ -300,71 +668,52 @@
    "otherLines": []
   },
   "XP_RULES": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3587
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "awardXP": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3587
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderRecordsScreen": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    3601,
-    3644
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderCalendarScreen": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3603
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderGoalsScreen": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3602
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openCalendarDayEditHubModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 3,
-   "otherLines": [
-    3607,
-    3659,
-    3666
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "maybeShowGoalUpdateModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3646
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    2858
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderTeamGoalsScreen": {
    "getter": 1,
@@ -373,174 +722,124 @@
    "otherLines": []
   },
   "downloadTableAsCsv": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3004
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openCsvImportModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    2984
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openWearableSyncModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3013
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "syncRecordToMatchingGoals": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3598
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openVoiceTableModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3074
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "getAllProTemplates": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    2718,
-    3140
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "getProTemplateByKey": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3116
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "fmtYYMMDD": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 3,
-   "otherLines": [
-    2826,
-    2956,
-    3507
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openCreateCustomTemplateModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3136
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openTemplateColumnEditModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3090
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "computeTrendChartData": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    2772,
-    3211
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "formatStopwatchTime": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 4,
-   "otherLines": [
-    3246,
-    3390,
-    3421,
-    3476
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openVisionTableModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3054
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderLevelBadge": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3604
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "uid": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3555
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "newId": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3506
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "pad": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    2733,
-    2733
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "nowISO": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    3533,
-    3564
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "saveLocalSettings": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3595
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "saveProfile": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    3613,
-    3640
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "switchTab": {
    "getter": 1,
@@ -549,83 +848,61 @@
    "otherLines": []
   },
   "closeModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 4,
-   "otherLines": [
-    3043,
-    3490,
-    3609,
-    3667
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "burstConfetti": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3631
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "isGoogleCalendarConnected": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3574
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "syncAllToGoogleCalendar": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3575
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "isoDate": {
    "getter": 0,
    "window": 0,
    "other": 2,
    "otherLines": [
-    2553,
-    2553
+    2615,
+    2615
    ]
   },
   "toLocalInputValue": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 3,
-   "otherLines": [
-    2733,
-    2734,
-    3498
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderFeedbackSlot": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3643
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderRecordFeedbackSlot": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    3634,
-    3642
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "resizeImageToDataUrl": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3167
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "handleDeepLinkRouting": {
    "getter": 1,
@@ -634,24 +911,16 @@
    "otherLines": []
   },
   "toast": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 15,
-   "otherLines": [
-    2947,
-    2956,
-    2994,
-    3033,
-    3064
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openTemplateMarketModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3042
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "saveGoogleToken": {
    "getter": 1,
@@ -664,7 +933,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2477
+    2539
    ]
   },
   "bootAuthStateListener": {
@@ -672,7 +941,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2494
+    2556
    ]
   },
   "bootThemeList": {
@@ -680,7 +949,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2521
+    2583
    ]
   },
   "bootAvatarLevelUpWiring": {
@@ -688,7 +957,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2545
+    2607
    ]
   },
   "bootExposeAppState": {
@@ -696,7 +965,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2554
+    2616
    ]
   },
   "bootPromptTabState": {
@@ -704,7 +973,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2574
+    2636
    ]
   },
   "bootEntryAndAccountWiring": {
@@ -712,7 +981,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2594
+    2656
    ]
   },
   "bootGoogleTokenState": {
@@ -720,7 +989,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2599
+    2661
    ]
   },
   "bootHomeAndGoalWiring": {
@@ -728,7 +997,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2643
+    2705
    ]
   },
   "bootGoalsAndTeamState": {
@@ -736,7 +1005,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2675
+    2737
    ]
   },
   "bootRecordsWiring": {
@@ -744,7 +1013,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    3674
+    2780
    ]
   },
   "bootRecordsExportWiring": {
@@ -752,7 +1021,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    3680
+    2786
    ]
   },
   "bootSharedGroupsState": {
@@ -760,7 +1029,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    3863
+    2969
    ]
   },
   "bootCommSettingsAndStart": {
@@ -768,7 +1037,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    3871
+    2977
    ]
   },
   "bootInstallAndServiceWorker": {
@@ -776,7 +1045,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    3875
+    2981
    ]
   },
   "bootAppConfig": {
@@ -784,7 +1053,7 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    2498
+    2560
    ]
   },
   "bootTemplatePartHandles": {
@@ -792,94 +1061,110 @@
    "window": 0,
    "other": 1,
    "otherLines": [
-    3873
+    2979
    ]
+  },
+  "openProTemplateRecordModal": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "bindProRecTable": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "bindProRecTools": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "bindProRecTrendChart": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "bindProRecStopwatch": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
+  },
+  "bindProRecSave": {
+   "getter": 1,
+   "window": 0,
+   "other": 0,
+   "otherLines": []
   },
   "requestAIFeedback": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3637
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderAnalyticsHtml": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    2778,
-    2888
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderTrendSvgChart": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 2,
-   "otherLines": [
-    2772,
-    3212
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "pushRecordToNotion": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3617
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openProCoachReportModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    2966
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "openProNotionExportModal": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    2975
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "daysFromNow": {
    "getter": 0,
    "window": 0,
    "other": 17,
    "otherLines": [
-    3684,
-    3693,
-    3708,
-    3717,
-    3732
+    2790,
+    2799,
+    2814,
+    2823,
+    2838
    ]
   },
   "playTimerBeep": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3312
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderStopwatchWidgetHtml": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    2775
-   ]
+   "other": 0,
+   "otherLines": []
   },
   "renderLapRowsHtml": {
-   "getter": 0,
+   "getter": 1,
    "window": 0,
-   "other": 1,
-   "otherLines": [
-    3337
-   ]
+   "other": 0,
+   "otherLines": []
   }
  },
  "fileNotes": []

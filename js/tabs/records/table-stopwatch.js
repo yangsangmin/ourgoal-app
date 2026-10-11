@@ -110,10 +110,8 @@
   if (!R) return;
   var K = g.OurgoalRecordsKit;
   if (K) R.provide('records/table-stopwatch', {
-    renderLapRowsHtml: K.renderLapRowsHtml, renderStopwatchWidgetHtml: K.renderStopwatchWidgetHtml
+    playTimerBeep: K.playTimerBeep, renderLapRowsHtml: K.renderLapRowsHtml, renderStopwatchWidgetHtml: K.renderStopwatchWidgetHtml
   }, { window: [
-    'renderLapRowsHtml', 'renderStopwatchWidgetHtml'
-  ], windowOnly: [
     'renderLapRowsHtml', 'renderStopwatchWidgetHtml'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);

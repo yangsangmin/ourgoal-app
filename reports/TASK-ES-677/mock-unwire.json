@@ -1,53 +1,26 @@
 {
  "tool": "reports/TASK-ES-614/mock-unwire.cjs",
  "type": "작업자 측정, 판정 아님 — 저장소 밖 사본에서의 모의 철거(실제 철거 0)",
- "measuredAt": "2026-10-11T10:24:02.249Z",
+ "measuredAt": "2026-10-11T11:02:53.613Z",
  "generator": "docs/design/harness/module-split/gen-inline-hard.js mode:\"unwire\" (이 PR 에서 변경 0)",
  "task": "TASK-ES-677-MOCK",
  "excluded": {},
  "before": {
-  "htmlLines": 3915,
-  "iifeLines": 1623,
-  "imports": 72,
-  "getterNames": 7,
+  "htmlLines": 3021,
+  "iifeLines": 729,
+  "imports": 78,
+  "getterNames": 60,
   "windowNames": 3
  },
  "after": {
-  "htmlLines": 3905,
-  "iifeLines": 1613,
-  "imports": 69,
-  "getterNames": 4,
+  "htmlLines": 2979,
+  "iifeLines": 687,
+  "imports": 58,
+  "getterNames": 40,
   "windowNames": 3
  },
- "deletedLinesTotal": 10,
+ "deletedLinesTotal": 42,
  "passes": [
-  {
-   "label": "_goalsKit 1차",
-   "kitVar": "_goalsKit",
-   "flags": {
-    "imports": true,
-    "exposeGetters": true,
-    "windowAssign": true
-   },
-   "names": [
-    "renderTeamGoalsScreen"
-   ],
-   "dropped": [],
-   "tries": 1,
-   "removed": {
-    "imports": 1,
-    "exposeProps": 1,
-    "exposeCalls": 1,
-    "windowAssigns": 0,
-    "windowBlocks": 0,
-    "commaFixedLines": 0,
-    "deletedLines": 4
-   },
-   "htmlLines": [
-    3915,
-    3911
-   ]
-  },
   {
    "label": "_uiKit 1차",
    "kitVar": "_uiKit",
@@ -72,17 +45,87 @@
     "deletedLines": 6
    },
    "htmlLines": [
-    3911,
-    3905
+    3021,
+    3015
+   ]
+  },
+  {
+   "label": "_recordsKit 1차",
+   "kitVar": "_recordsKit",
+   "flags": {
+    "imports": true,
+    "exposeGetters": true,
+    "windowAssign": true
+   },
+   "names": [
+    "bindProRecSave",
+    "bindProRecStopwatch",
+    "bindProRecTable",
+    "bindProRecTools",
+    "bindProRecTrendChart",
+    "downloadTableAsCsv",
+    "formatStopwatchTime",
+    "getAllProTemplates",
+    "openCsvImportModal",
+    "openProTemplateRecordModal",
+    "openTemplateColumnEditModal",
+    "openVoiceTableModal",
+    "openWearableSyncModal",
+    "playTimerBeep",
+    "renderLapRowsHtml",
+    "renderStopwatchWidgetHtml",
+    "syncRecordToMatchingGoals"
+   ],
+   "dropped": [],
+   "tries": 1,
+   "removed": {
+    "imports": 17,
+    "exposeProps": 17,
+    "exposeCalls": 0,
+    "windowAssigns": 0,
+    "windowBlocks": 0,
+    "commaFixedLines": 0,
+    "deletedLines": 34
+   },
+   "htmlLines": [
+    3015,
+    2981
+   ]
+  },
+  {
+   "label": "_visionTableInputKit 1차",
+   "kitVar": "_visionTableInputKit",
+   "flags": {
+    "imports": true,
+    "exposeGetters": true,
+    "windowAssign": true
+   },
+   "names": [
+    "openVisionTableModal"
+   ],
+   "dropped": [],
+   "tries": 1,
+   "removed": {
+    "imports": 1,
+    "exposeProps": 1,
+    "exposeCalls": 0,
+    "windowAssigns": 0,
+    "windowBlocks": 0,
+    "commaFixedLines": 0,
+    "deletedLines": 2
+   },
+   "htmlLines": [
+    2981,
+    2979
    ]
   }
  ],
  "byKit": [
   {
    "kitVar": "_goalsKit",
-   "passes": 1,
-   "names": 1,
-   "deletedLines": 4
+   "passes": 0,
+   "names": 0,
+   "deletedLines": 0
   },
   {
    "kitVar": "_uiKit",
@@ -92,9 +135,9 @@
   },
   {
    "kitVar": "_recordsKit",
-   "passes": 0,
-   "names": 0,
-   "deletedLines": 0
+   "passes": 1,
+   "names": 17,
+   "deletedLines": 34
   },
   {
    "kitVar": "_commKit",
@@ -122,9 +165,9 @@
   },
   {
    "kitVar": "_visionTableInputKit",
-   "passes": 0,
-   "names": 0,
-   "deletedLines": 0
+   "passes": 1,
+   "names": 1,
+   "deletedLines": 2
   }
  ],
  "notRunnableKitVars": [

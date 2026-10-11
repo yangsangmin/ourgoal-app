@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// 등록 3차 측정·주장 도구 (#TASK-ES-677 — reports/TASK-ES-664/provide-run.cjs 를 가져와 등록 블록 읽기를 한 줄 꼴까지 넓힘) — 작업자 도구, 판정 아님. 등록 줄을 쓰는 것은 이 파일이 아니라 생성기(gen-cell-provide.js --keep)다.
+// 등록 3차 측정·주장 도구 (#TASK-ES-677 — reports/TASK-ES-664/provide-run.cjs 를 가져와 등록 블록 읽기가 줄 머리에 기대지 않게 함) — 작업자 도구, 판정 아님. 등록 줄을 쓰는 것은 이 파일이 아니라 생성기(gen-cell-provide.js --keep)다.
 //
 //   mockplan 모의 철거용 계획 파일을 만든다: 이번에 더한 이름(provide-plan.json registered) + window 전용에서 통로로 올린 이름(keep.upgradedEntries)
 //   measure  기준 트리(origin/main 임시 worktree)와 맞대어 잰다:
@@ -39,7 +39,7 @@ function readBlock(code) {
   if (b < 0) return null;
   const e = t.indexOf(END, b), body = t.slice(b, e), out = { owner: null, entries: {}, outside: t.slice(0, b) + t.slice(e + END.length) };
   const kitOf = {};
-  // [#TASK-ES-677] 보통 꼴(여러 줄)과 한 줄 꼴(--compact-over-limit)을 같은 식으로 읽는다 — 줄 머리에 기대지 않는다
+  // [#TASK-ES-677] 줄 머리에 기대지 않는 식으로 읽는다(블록이 한 줄로 이어 쓰였어도 읽힌다 — 그런 블록이 없음을 세기 위해)
   for (const m of body.matchAll(/\bvar (K\d*) = ([^;]+);/g)) { const last = m[2].split('&&').pop().trim(); kitOf[m[1]] = last.replace(/^g\./, ''); }
   for (const m of body.matchAll(/\bif \((K\d*)\) R\.provide\('([^']+)', \{([\s\S]*?)\}, \{ window: \[([\s\S]*?)\] \}\);/g)) {
     const kv = m[1]; out.owner = m[2];
@@ -137,15 +137,10 @@ if (CMD === 'measure') {
     sourceCommit: { baseTreeHead: baseHead, worktreeHead: workHead, note: '기준 = origin/main 임시 worktree. 모의 = 기준 + 이 PR 의 세포 파일 + 새로 등록한 이름의 배선을 지운 index.html(저장소 밖). 대조군 = 기준에서 같은 배선만 지운 것(등록 없음)' },
     summary: {
       changed: { files: all.length, jsChanged: jsChanged.length, indexHtmlChanged: all.includes('index.html'), testsChanged: all.filter(f => /^tests\//.test(f)), vaultChanged: all.filter(f => vaultRe.test(f)), unwireGeneratorChanged: all.filter(f => /gen-inline-hard\.js$/.test(f)), scriptsChanged: all.filter(f => /^scripts\//.test(f)), harnessChanged: all.filter(f => /^docs\/design\/harness\//.test(f)) },
-      plan: { existingNames: K.existingNames, plannedNow: K.plannedNow, alreadyRegistered: K.alreadyRegistered, added: K.added, upgradedFromWindowOnly: K.upgradedFromWindowOnly, excluded: K.excluded, newBlockFiles: K.newBlockFiles.length, filesToChange: K.filesToChange.length, skipped: plan.skipped.map(s => ({ name: s.name, reason: s.reason })), iifeOwnedScope: plan.counts.iifeOwnedScope, iifeOwnedWindow: plan.counts.iifeOwnedWindow, byKit: plan.byKit },
+      plan: { existingNames: K.existingNames, plannedNow: K.plannedNow, alreadyRegistered: K.alreadyRegistered, added: K.added, upgradedFromWindowOnly: K.upgradedFromWindowOnly, excluded: K.excluded, newBlockFiles: K.newBlockFiles.length, filesToChange: K.filesToChange.length, skipped: plan.skipped.map(s => ({ name: s.name, reason: s.reason })), skippedOver800: plan.skipped.filter(s => /800줄 상한/.test(s.reason)).map(s => s.name).sort(), iifeOwnedScope: plan.counts.iifeOwnedScope, iifeOwnedWindow: plan.counts.iifeOwnedWindow, byKit: plan.byKit },
       blocks,
-      // [#TASK-ES-677] 한 줄 꼴 블록(--compact-over-limit): 실제로 한 줄 꼴인 세포 = 계획이 「보통 꼴이면 800줄을 넘는다」고 적은 세포
-      oneLine: (() => {
-        const planned = (plan.oneLineBlocks || []).map(x => x.file).sort();
-        const actual = jsFiles(ROOT).filter(f => { const t = lf(fs.readFileSync(path.join(ROOT, f), 'utf8')), b = t.indexOf(BEGIN); return b >= 0 && !t.slice(b, t.indexOf(END, b)).includes('\n'); }).sort();
-        const files = actual.map(f => ({ file: f, lines: countLines(fs.readFileSync(path.join(ROOT, f), 'utf8')), baseLines: fs.existsSync(path.join(BASE, f)) ? countLines(fs.readFileSync(path.join(BASE, f), 'utf8')) : null }));
-        return { files, planned: plan.oneLineBlocks || [], equalsPlan: JSON.stringify(actual) === JSON.stringify(planned), allWithinLimit: files.every(x => x.lines <= 800), limit: 800, note: '상한(800줄)과 가드 값은 바꾸지 않았다 — 보통 꼴 블록을 붙이면 넘치는 세포에만 같은 문장을 한 줄로 이어 쓴 블록을 붙였다' };
-      })(),
+      // [#TASK-ES-677] 등록 블록이 한 줄로 이어 쓴 꼴인 세포는 없어야 한다(줄 수 상한을 글자 배치로 맞추지 않는다 — 오케스트레이터 판단으로 그 옵션을 되돌렸다)
+      oneLineBlockFiles: jsFiles(ROOT).filter(f => { const t = lf(fs.readFileSync(path.join(ROOT, f), 'utf8')), b = t.indexOf(BEGIN); return b >= 0 && !t.slice(b, t.indexOf(END, b)).includes('\n'); }).sort(),
       registry: { base: reg(cB), work: reg(cW), intrinsicVariance: intr, registeredGrewBy: cW.counts.registered - cB.counts.registered, extraSameAsBase: cW.counts.extra === cB.counts.extra, missingFellBy: cB.counts.missing - cW.counts.missing },
       nameProbe: { names: Object.keys(nB.names || {}).length, valueDifferingWork: valDiff(nB, nW), accessor: { base: ownerCount(nB), work: ownerCount(nW), mock: ownerCount(nM) }, bootExceptions: { base: nB.guestBoot.exceptions.length, work: nW.guestBoot.exceptions.length, mock: nM.guestBoot.exceptions.length } },
       scenarios: { work: sW, count: sW.length, allPassedBoth: sW.length > 0 && sW.every(r => r.basePassed && r.otherPassed && !r.otherExceptions) },
@@ -215,20 +210,21 @@ if (CMD === 'claims') {
   jp('R5', '모의 철거 사본(붙잡힌 이름을 뺀 것): npm test 의 종료 코드와 검사 줄이 기준과 같다.', MF, 'summary.mockUnwire.npmTest.same', true);
   jp('R5', '모의 철거 사본(붙잡힌 이름을 뺀 것): 시험을 하나씩 돌린 결과가 기준과 같다.', MF, 'summary.mockUnwire.testsEach.sameAsBase', true);
   jp('R5', '모의 철거 사본에서 생성기가 멈춰 뺀 이름이 없다.', MF, 'summary.mockUnwire.unwire.excluded', 0);
-  jp('R2', '한 줄 꼴 블록을 붙인 세포는 보통 꼴 블록을 붙이면 800줄을 넘는 세포뿐이다(계획 파일의 목록과 같다).', MF, 'summary.oneLine.equalsPlan', true, [REL + 'provide-plan.json']);
-  jp('R2', '한 줄 꼴 블록을 붙인 세포의 줄 수가 800 이하다.', MF, 'summary.oneLine.allWithinLimit', true);
+  jp('R2', '등록 블록을 한 줄로 이어 쓴 세포가 없다(줄 수 상한을 글자 배치로 맞추지 않았다).', MF, 'summary.oneLineBlockFiles', []);
+  jp('R2', '800줄 상한 때문에 건너뛴 이름은 renderTeamGoalsScreen 하나다(등록하지 않았다).', MF, 'summary.plan.skippedOver800', ['renderTeamGoalsScreen'], [REL + 'provide-plan.json']);
   jp('R5', '모의 철거로 지워지는 줄 수(다음 재철거 PR 의 예상값 — 기준 커밋에 고정된 측정).', MF, 'summary.mockUnwire.unwire.deletedLinesTotal', m.mockUnwire.unwire.deletedLinesTotal);
   jp('R5', '대조군(등록 없이 같은 배선을 지움)은 부팅 중 예외가 난다(기준 · 작업 · 모의 철거 사본은 0 건) — 모의 철거가 통과하는 까닭이 이번 등록이다.', MF, 'summary.control.exceptions', m.control.exceptions);
   if (!(m.control.exceptions > 0)) { console.error('대조군에 예외가 없다 — 대조군이 대조 구실을 못 한다'); process.exit(1); }
   const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
   for (const c of claims) { if (c.kind !== 'static') continue; const v = getPath(JSON.parse(fs.readFileSync(path.join(ROOT, c.check.file), 'utf8')), c.check.path); if (JSON.stringify(v) !== JSON.stringify(c.check.equals)) { console.error(c.id + ' 값 불일치: ' + c.check.path + ' = ' + JSON.stringify(v).slice(0, 200)); process.exit(1); } }
   wj('claims.json', { task: TASK, requirementsSource: REQ, requirements: [
-    { id: 'R1', text: '등록 2차에서 막혔던 이름 ' + m.plan.added + '개(switchTab · handleDeepLinkRouting · renderTeamGoalsScreen)를 그 이름을 키트에 다는 세포 ' + m.plan.filesToChange + '개의 등록 블록에 통로 전용으로 더한다(window 목록에는 넣지 않는다 — 등록 기관은 window 를 건드리지 않는다). 앱 동작은 그대로다 — index.html 의 옛 배선이 같은 값을 다시 내준다.' },
-    { id: 'R2', text: '등록 줄은 생성기가 쓴다(손 편집 0). 기존 등록은 하나도 빠지지 않고, 세포의 기존 글자는 바뀌지 않으며, 800줄 상한을 지킨다(상한·가드 값 변경 0 — 보통 꼴 블록이 넘치는 세포에만 한 줄 꼴 블록).' },
+    { id: 'R1', text: '통로로 나가는 키트 가져오기 이름 가운데 등록 기관에 없던 ' + m.plan.added + '개(등록 2차에서 막혔던 switchTab · handleDeepLinkRouting 과, #949 뒤 새로 통로로 나간 이름)를 그 이름을 키트에 다는 세포의 등록 블록에 통로 전용으로 더하고(window 목록에는 넣지 않는다 — 등록 기관은 window 를 건드리지 않는다), window 전용이던 ' + m.plan.upgradedFromWindowOnly.length + '개는 통로로도 내주게 올린다. 바뀌는 세포는 ' + m.plan.filesToChange + '개다. 앱 동작은 그대로다 — index.html 의 옛 배선이 같은 값을 다시 내준다.' },
+    { id: 'R2', text: '등록 줄은 생성기가 쓴다(손 편집 0 · 생성기 변경 0). 기존 등록은 하나도 빠지지 않고, 세포의 기존 글자는 바뀌지 않으며, 800줄 상한을 지킨다(상한을 넘게 되는 renderTeamGoalsScreen 은 등록하지 않는다).' },
     { id: 'R3', text: '대조 탐침: 등록 수 증가 · 불일치 0 · 이중 등록 0 · 초과는 기준과 같음 · 값 지문 차이 0.' },
     { id: 'R4', text: 'index.html · tests · 금고 · 철거 생성기 변경 0. 모듈 로드 · npm test · 시험 하나씩이 기준과 같다.' },
     { id: 'R5', text: '모의 철거: 저장소 밖 사본에서 새로 등록한 이름의 배선을 지워도 대조 · 시나리오 · 시험이 기준과 같다. 시험이 글자로 붙잡는 이름은 목록으로 남긴다.' } ],
     outOfScopeReports: [
+      { text: 'renderTeamGoalsScreen 은 등록하지 않았다 — 주인 세포가 798줄이라 등록 블록을 붙이면 800줄 상한을 넘는다. 그 가져오기·getter 중계는 마지막 단계(finalize)가 부팅 파일로 옮긴다(오케스트레이터 판단).', cannotBecause: 'out-of-scope-feature' },
       { text: '실제 재철거(index.html 의 가져오기·getter 줄 삭제)는 이 PR 에 없다. window.switchTab · window.handleDeepLinkRouting 에 달린 값(통로 값과 다른 함수)은 바꾸지 않았다 — 값을 하나로 맞추는 일은 동작 변경이라 하지 않고 사실만 REQ 에 적었다.', cannotBecause: 'out-of-scope-feature' },
       { text: '로그인 뒤에만 불리는 이름의 동작은 화면 시나리오로 재지 못했다 — 대조 탐침의 값 일치와 지문으로만 쟀다.', cannotBecause: 'out-of-scope-feature' } ],
     claims });
