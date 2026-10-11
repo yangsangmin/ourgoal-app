@@ -881,7 +881,23 @@ function runRegion() {
   const LABEL = CFG.label || '연속 구역 감싸기';
 
   // ── 설정 검사(모르는 칸은 멈춘다 — 오타로 목록 밖 동작이 켜지지 않게)
-  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells'].includes(k)) fail('region 설정에 모르는 칸: ' + k);
+  for (const k of Object.keys(CFG)) if (!['task', 'label', 'slot', 'mode', 'cells', 'allowGuarded'].includes(k)) fail('region 설정에 모르는 칸: ' + k);
+  // [#TASK-ES-670 · 상민님 2026-10-11 「결심 2 : 승인」] 잠긴 이름(HOLD)의 명시적 허용. 기본은 예전과 같다 — 구역에 잠긴 이름이 있으면 멈춘다.
+  //   설정 맨 위에 "allowGuarded": [{ "name": "<HOLD 의 이름>", "approval": "<승인 근거 글자>" }] 를 적은 이름만 구역에 들 수 있다(조용히 풀리지 않는다 — 실행 출력과 메타에 이름·근거·구역·줄을 적는다).
+  //   적지 않은 잠긴 이름은 지금처럼 멈춘다. HOLD 에 없는 이름 · 근거 글자가 없는 칸 · 겹친 이름 · 어느 구역에도 없는 이름(쓰이지 않는 허용) · 모르는 칸은 멈춘다.
+  //   허용돼도 바뀌는 글자는 이름 접두 `L.` 뿐이다 — 그 문에 줄임 속성 확장(`{a}` → `{a: L.a}`)이 필요하면 멈춘다(「접두 말고는 한 글자도 바꾸지 않는다」).
+  const GUARD_ALLOW = new Map();
+  if (CFG.allowGuarded !== undefined) {
+    if (!Array.isArray(CFG.allowGuarded) || !CFG.allowGuarded.length) fail('region 설정 allowGuarded 는 비지 않은 배열이어야 한다');
+    for (const a of CFG.allowGuarded) {
+      if (!a || typeof a !== 'object' || Array.isArray(a)) fail('region allowGuarded 의 칸은 객체여야 한다');
+      for (const k of Object.keys(a)) if (!['name', 'approval'].includes(k)) fail('region allowGuarded 에 모르는 칸: ' + k);
+      if (!HOLD.includes(a.name)) fail('region allowGuarded 의 name 은 잠긴 이름(' + HOLD.join(' · ') + ') 가운데 하나여야 한다: ' + a.name);
+      if (GUARD_ALLOW.has(a.name)) fail('region allowGuarded 에 같은 이름이 두 번 있다: ' + a.name);
+      if (typeof a.approval !== 'string' || a.approval.trim().length < 10 || /[\r\n]/.test(a.approval)) fail('region allowGuarded 의 approval(승인 근거 글자 — 10자 이상, 한 줄)이 없다: ' + a.name);
+      GUARD_ALLOW.set(a.name, { approval: a.approval, hits: [] });
+    }
+  }
   if (typeof TAG !== 'string' || !/^TASK-[A-Z0-9-]+$/.test(TAG)) fail('region 설정 task 가 작업 번호가 아니다: ' + TAG);
   if (typeof CFG.slot !== 'string' || !CFG.slot) fail('region 설정 slot 이 없다');
   if (!Array.isArray(CFG.cells) || !CFG.cells.length) fail('region 설정 cells 가 비었다');
@@ -997,9 +1013,16 @@ function runRegion() {
     }
     const s0 = code.split('\n').slice(0, it.segStart - 1 - off).join('\n').length + (it.segStart - 1 - off > 0 ? 1 : 0), e0 = code.split('\n').slice(0, it.end - off).join('\n').length;
     it.c0 = s0; it.c1 = e0;
-    const held = toks.find(t => t.start >= s0 && t.end <= e0 && HOLD.some(w => new RegExp('(^|[^\\w$])' + w.replace(/\$/g, '\\$') + '($|[^\\w$])').test(code.slice(t.start, t.end))));
-    if (held) fail('구역 ' + it.name + ' 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: ' + code.slice(held.start, held.end) + '(줄 ' + (held.loc.start.line + off) + ')');
+    const holdOf = t => HOLD.find(w => new RegExp('(^|[^\\w$])' + w.replace(/\$/g, '\\$') + '($|[^\\w$])').test(code.slice(t.start, t.end)));
+    for (const held of toks.filter(t => t.start >= s0 && t.end <= e0 && holdOf(t))) { // [#TASK-ES-670] allowGuarded 에 적은 이름만 지나간다 — 적지 않은 이름은 예전과 같은 글자로 멈춘다
+      const g = GUARD_ALLOW.get(holdOf(held));
+      if (!g) fail('구역 ' + it.name + ' 에 돈 근처·결심 대기 대상이 있다 — 구역에서 뺀다: ' + code.slice(held.start, held.end) + '(줄 ' + (held.loc.start.line + off) + ')');
+      const st = it.sts.find(x => x.node.start <= held.start && held.end <= x.node.end);
+      const span = st ? [st.node.start, st.node.end] : [held.start, held.end], seen = g.hits.find(h => h.region === it.name && h.stmt[0] === span[0]);
+      if (seen) seen.tokens++; else g.hits.push({ region: it.name, line: st ? H(st.node) : held.loc.start.line + off, stmt: span, tokens: 1 }); // 문 하나에 한 줄(그 문 안의 잠긴 낱말 수를 센다)
+    }
   }
+  for (const [n, g] of GUARD_ALLOW) if (!g.hits.length) fail('region allowGuarded 에 적은 이름이 어느 구역에도 없다(쓰이지 않는 허용은 적지 않는다): ' + n);
   // 구역 안에서 선언되는 IIFE 이름: 노출 안 됐고 모든 참조가 그 구역 안이면 지역 변수(M1c), 아니면 멈춘다
   const inItem = l => items.find(it => l >= it.segStart && l <= it.end) || null;
   for (const n of Object.keys(iScope.bindings).sort()) {
@@ -1044,6 +1067,10 @@ function runRegion() {
   if (newLines.length !== code.split('\n').length) fail('줄 수가 바뀜');
   const range = (a, b) => { const o = []; for (let l = a; l <= b; l++) o.push(newLines[l - 1 - off]); return o; };
   for (const it of items) it.edits = uniq.filter(e => e.start >= it.c0 && e.end <= it.c1).length;
+  for (const [n, g] of GUARD_ALLOW) for (const h of g.hits) { // [#TASK-ES-670] 허용된 잠긴 이름의 문에서 바뀌는 글자는 접두 L. 뿐이어야 한다
+    if ([...shortEdits].some(p => p >= h.stmt[0] && p < h.stmt[1])) fail('허용한 잠긴 이름 ' + n + ' 의 문(줄 ' + h.line + ')에 줄임 속성 확장이 필요하다 — 허용 한도는 이름 접두 L. 뿐이다. 옮기지 않는다');
+    h.prefixEdits = uniq.filter(e => e.start >= h.stmt[0] && e.end <= h.stmt[1]).length;
+  }
 
   // ── 세포 파일(옮기기 경로의 감싸기와 같은 틀: 키트에 단다 · L 통로 · 생성기 표지)
   const outFiles = {};
@@ -1190,9 +1217,11 @@ function runRegion() {
     htmlLinesBefore: lines.length, htmlLinesAfter: nh.length,
     files: Object.fromEntries(Object.entries(outFiles).map(([f, a]) => [f, a.length - 1])),
   };
+  if (GUARD_ALLOW.size) meta.guardedAllowed = [...GUARD_ALLOW].map(([n, g]) => ({ name: n, approval: g.approval, hits: g.hits.map(h => ({ region: h.region, line: h.line, guardedWords: h.tokens, prefixEdits: h.prefixEdits })) })); // [#TASK-ES-670] 허용한 잠긴 이름 — 해당이 있을 때만 생기는 칸
   fs.writeFileSync(path.join(process.env.MODULE_SPLIT_OUT || require('os').tmpdir(), 'gen-inline-hard-meta.json'), JSON.stringify(meta, null, 1), 'utf8');
   console.log('region', '· regions', items.length, '· statements', items.reduce((a, it) => a + it.sts.length, 0), '· lines', items.reduce((a, it) => a + it.end - it.segStart + 1, 0), '· locals', items.reduce((a, it) => a + it.locals.length, 0), '· edits', uniq.length, '· bridged', bridged.size, '· exposed', exposeList.length, '· imports', items.length);
   for (const it of items) console.log('  region', it.name, it.segStart + '~' + it.end, '→', it.file);
+  for (const [n, g] of GUARD_ALLOW) for (const h of g.hits) console.log('  guarded', n, '— 구역 ' + h.region + '(문 줄 ' + h.line + ' · 잠긴 낱말 ' + h.tokens + '개) · 접두 ' + h.prefixEdits + '곳 · 승인 근거: ' + g.approval); // [#TASK-ES-670]
   console.log('index.html lines', lines.length, '->', nh.length);
   for (const [f, a] of Object.entries(outFiles)) console.log(f, a.length - 1);
 }
