@@ -1,0 +1,8 @@
+{
+ "note": "구역 계획에서 빼는 문. 문 자체나 그 문의 앞 주석에 text 가 들어 있으면 그 문은 구역에 넣지 않는다. 앞의 둘은 #TASK-ES-643 이 모의 사본에서 시험·가드가 깨지는 것을 보고 찾은 것이다(시험·가드는 고치지 않았다). 셋째는 이 PR 이 더했다.",
+ "pins": [
+  { "text": "filterHarmfulWords", "kind": "시험이 주석 글자를 붙잡음", "why": "tests/avatar-10slots-growth.test.js 76행이 index.html 에 'filterHarmfulWords' 글자가 있는지 본다. 지금 그 글자는 자리 표지 주석 한 줄에만 있고, 그 주석 바로 아래 문(var btnAvLvClose)을 구역에 넣으면 앞 주석이 따라가 글자가 index.html 에서 사라진다." },
+  { "text": "window.SHARED_GROUPS_LOADED = false", "kind": "모듈 가드가 인라인 소유 이름으로 셈", "why": "scripts/module-metrics.js 의 탭 간 직접 참조(⑤) 규칙(#TASK-ES-507)은 index.html 인라인이 window 에 다는 이름을 인라인 소유로 보고 셈에서 뺀다. 이 대입 줄이 세포로 가면 js/tabs/goals/team-goals-screen.js 의 window.SHARED_GROUPS_LOADED 읽기가 탭 간 참조 1건으로 잡혀 모듈 가드가 실패한다." },
+  { "text": "window.saveGoogleToken = saveGoogleToken", "kind": "다른 작업이 옮길 함수의 노출 줄", "why": "saveGoogleToken 함수 이전(옮기기 경로)이 따로 준비 중이다. 옮기기 경로는 함수의 window 노출 줄을 원래 자리에 두고 다룬다. 그 줄을 지금 구역으로 데려가면 그 작업의 생성기 입력이 달라지므로 제자리에 둔다." }
+ ]
+}

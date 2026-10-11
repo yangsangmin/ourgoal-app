@@ -1,0 +1,3020 @@
+{
+ "tool": "reports/TASK-ES-650/region-run.cjs apply",
+ "type": "작업자 측정, 판정 아님",
+ "measuredAt": "2026-10-11T05:22:45.950Z",
+ "generator": "docs/design/harness/module-split/gen-inline-hard.js mode:\"region\"(이 PR 에서 변경 0)",
+ "proof": "reports/TASK-ES-650/proof.json",
+ "planner": {
+  "tool": "reports/TASK-ES-643/region-plan.cjs",
+  "pins": [
+   {
+    "text": "filterHarmfulWords",
+    "kind": "시험이 주석 글자를 붙잡음",
+    "why": "tests/avatar-10slots-growth.test.js 76행이 index.html 에 'filterHarmfulWords' 글자가 있는지 본다. 지금 그 글자는 자리 표지 주석 한 줄에만 있고, 그 주석 바로 아래 문(var btnAvLvClose)을 구역에 넣으면 앞 주석이 따라가 글자가 index.html 에서 사라진다."
+   },
+   {
+    "text": "window.SHARED_GROUPS_LOADED = false",
+    "kind": "모듈 가드가 인라인 소유 이름으로 셈",
+    "why": "scripts/module-metrics.js 의 탭 간 직접 참조(⑤) 규칙(#TASK-ES-507)은 index.html 인라인이 window 에 다는 이름을 인라인 소유로 보고 셈에서 뺀다. 이 대입 줄이 세포로 가면 js/tabs/goals/team-goals-screen.js 의 window.SHARED_GROUPS_LOADED 읽기가 탭 간 참조 1건으로 잡혀 모듈 가드가 실패한다."
+   },
+   {
+    "text": "window.saveGoogleToken = saveGoogleToken",
+    "kind": "다른 작업이 옮길 함수의 노출 줄",
+    "why": "saveGoogleToken 함수 이전(옮기기 경로)이 따로 준비 중이다. 옮기기 경로는 함수의 window 노출 줄을 원래 자리에 두고 다룬다. 그 줄을 지금 구역으로 데려가면 그 작업의 생성기 입력이 달라지므로 제자리에 둔다."
+   }
+  ],
+  "totals": {
+   "topLevelStatements": 398,
+   "regionable": 179,
+   "runs": 15,
+   "regions": 15,
+   "droppedBelowMinLines": 0,
+   "skipped": 0,
+   "statementsInRegions": 179,
+   "statementLinesInRegions": 204
+  },
+  "notRegionable": {
+   "kitHandle": {
+    "statements": 13,
+    "lines": 13
+   },
+   "kitImport": {
+    "statements": 168,
+    "lines": 168
+   },
+   "exposeCall": {
+    "statements": 15,
+    "lines": 60
+   },
+   "구역 밖에서 쓰는 var": {
+    "statements": 2,
+    "lines": 2
+   },
+   "통로에 노출된 이름의 var(상태 이전이 먼저)": {
+    "statements": 12,
+    "lines": 155
+   },
+   "돈 근처·결심 대기 대상": {
+    "statements": 3,
+    "lines": 5
+   },
+   "시험·가드가 붙잡는 글자(시험이 주석 글자를 붙잡음)": {
+    "statements": 1,
+    "lines": 1
+   },
+   "functionDecl": {
+    "statements": 2,
+    "lines": 969
+   },
+   "시험·가드가 붙잡는 글자(다른 작업이 옮길 함수의 노출 줄)": {
+    "statements": 1,
+    "lines": 3
+   },
+   "못 넣는 문과 한 줄을 나눠 씀": {
+    "statements": 1,
+    "lines": 1
+   },
+   "시험·가드가 붙잡는 글자(모듈 가드가 인라인 소유 이름으로 셈)": {
+    "statements": 1,
+    "lines": 1
+   }
+  },
+  "notRegionableStatements": [
+   {
+    "line": 2634,
+    "endLine": 2634,
+    "kind": "varNotExposed",
+    "why": "구역 밖에서 쓰는 var: SUPABASE_URL(줄 2636)",
+    "text": "var SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';"
+   },
+   {
+    "line": 2635,
+    "endLine": 2635,
+    "kind": "varNotExposed",
+    "why": "구역 밖에서 쓰는 var: SUPABASE_ANON_KEY(줄 2636)",
+    "text": "var SUPABASE_ANON_KEY = '(가림)"
+   },
+   {
+    "line": 2636,
+    "endLine": 2636,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): sb",
+    "text": "var sb = (window.supabase && typeof window.supabase.createClient === 'function') ? window.supabase.c"
+   },
+   {
+    "line": 2644,
+    "endLine": 2644,
+    "kind": "varNotExposed",
+    "why": "돈 근처·결심 대기 대상",
+    "text": "var OURGOAL_CONFIG = {};"
+   },
+   {
+    "line": 2645,
+    "endLine": 2645,
+    "kind": "windowCopyBlock",
+    "why": "돈 근처·결심 대기 대상",
+    "text": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }"
+   },
+   {
+    "line": 2710,
+    "endLine": 2710,
+    "kind": "varNotExposed",
+    "why": "시험·가드가 붙잡는 글자(시험이 주석 글자를 붙잡음): filterHarmfulWords",
+    "text": "var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');"
+   },
+   {
+    "line": 2735,
+    "endLine": 2735,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): state",
+    "text": "var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer"
+   },
+   {
+    "line": 2757,
+    "endLine": 2757,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): _promptEncyclopediaOpen",
+    "text": "var _promptEncyclopediaOpen = false;"
+   },
+   {
+    "line": 2975,
+    "endLine": 2977,
+    "kind": "windowCopyBlock",
+    "why": "시험·가드가 붙잡는 글자(다른 작업이 옮길 함수의 노출 줄): window.saveGoogleToken = saveGoogleToken",
+    "text": "if(typeof window !== 'undefined'){"
+   },
+   {
+    "line": 3218,
+    "endLine": 3218,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): _subtabTplCat",
+    "text": "var _subtabTplCat = 'all';"
+   },
+   {
+    "line": 3219,
+    "endLine": 3219,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): _subtabTplQuery",
+    "text": "var _subtabTplQuery = '';"
+   },
+   {
+    "line": 3221,
+    "endLine": 3221,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): _subtabTplDomain",
+    "text": "var _subtabTplDomain = 'personal'; // 'personal' | 'routine' | 'team'"
+   },
+   {
+    "line": 3222,
+    "endLine": 3222,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): _subtabTplType",
+    "text": "var _subtabTplType = 'ai';         // 'ai' | 'real'"
+   },
+   {
+    "line": 3223,
+    "endLine": 3223,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): _subtabTplCat",
+    "text": "var _subtabTplCat = 'all';"
+   },
+   {
+    "line": 3224,
+    "endLine": 3224,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): _subtabTplQuery",
+    "text": "var _subtabTplQuery = '';"
+   },
+   {
+    "line": 4301,
+    "endLine": 4444,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): MOCK_GROUPS",
+    "text": "var MOCK_GROUPS = ["
+   },
+   {
+    "line": 4466,
+    "endLine": 4466,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): shareContent",
+    "text": "var shareContent = function(opts){ return window.OurgoalViralSharing ? window.OurgoalViralSharing.sh"
+   },
+   {
+    "line": 4466,
+    "endLine": 4466,
+    "kind": "windowCopy",
+    "why": "못 넣는 문과 한 줄을 나눠 씀",
+    "text": "var shareContent = function(opts){ return window.OurgoalViralSharing ? window.OurgoalViralSharing.sh"
+   },
+   {
+    "line": 4475,
+    "endLine": 4475,
+    "kind": "varExposed",
+    "why": "통로에 노출된 이름의 var(상태 이전이 먼저): FEED_POSTS_CACHE",
+    "text": "var FEED_POSTS_CACHE = null; // null=아직 안 불러옴, 로드 후 배열"
+   },
+   {
+    "line": 4482,
+    "endLine": 4482,
+    "kind": "windowDefBlock",
+    "why": "시험·가드가 붙잡는 글자(모듈 가드가 인라인 소유 이름으로 셈): window.SHARED_GROUPS_LOADED = false",
+    "text": "if(typeof window !== 'undefined'){ window.SHARED_GROUPS_LOADED = false; }"
+   },
+   {
+    "line": 4553,
+    "endLine": 4555,
+    "kind": "if",
+    "why": "돈 근처·결심 대기 대상",
+    "text": "if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){"
+   }
+  ]
+ },
+ "counts": {
+  "regions": 15,
+  "cells": 5,
+  "statements": 179,
+  "linesMoved": 549,
+  "locals": 11,
+  "edits": 130,
+  "bridged": 117,
+  "gettersAdded": 109,
+  "settersAdded": 0,
+  "headLines": 127,
+  "kitVarsAdded": 0
+ },
+ "htmlLines": [
+  4601,
+  4194
+ ],
+ "generatorStdout": [
+  "region · regions 15 · statements 179 · lines 549 · locals 11 · edits 130 · bridged 117 · exposed 109 · imports 15",
+  "  region bootApplySavedTheme 2608~2615 → js/core/boot-early-state.js",
+  "  region bootAuthStateListener 2637~2638 → js/core/boot-early-state.js",
+  "  region bootThemeList 2668~2687 → js/core/boot-early-state.js",
+  "  region bootAvatarLevelUpWiring 2711~2727 → js/core/boot-early-state.js",
+  "  region bootExposeAppState 2736~2736 → js/core/boot-early-state.js",
+  "  region bootPromptTabState 2756~2756 → js/core/boot-early-state.js",
+  "  region bootEntryAndAccountWiring 2776~2939 → js/core/boot-entry-wiring.js",
+  "  region bootGoogleTokenState 2944~2946 → js/core/boot-entry-wiring.js",
+  "  region bootHomeAndGoalWiring 3016~3193 → js/core/boot-home-wiring.js",
+  "  region bootGoalsAndTeamState 3225~3291 → js/core/boot-home-wiring.js",
+  "  region bootRecordsWiring 4275~4290 → js/core/boot-records-wiring.js",
+  "  region bootRecordsExportWiring 4296~4298 → js/core/boot-records-wiring.js",
+  "  region bootSharedGroupsState 4481~4481 → js/core/boot-finish.js",
+  "  region bootCommSettingsAndStart 4489~4551 → js/core/boot-finish.js",
+  "  region bootInstallAndServiceWorker 4557~4561 → js/core/boot-finish.js",
+  "index.html lines 4601 -> 4194",
+  "js/core/boot-early-state.js 105",
+  "js/core/boot-entry-wiring.js 200",
+  "js/core/boot-home-wiring.js 278",
+  "js/core/boot-records-wiring.js 52",
+  "js/core/boot-finish.js 108"
+ ],
+ "regionsNamed": [
+  {
+   "name": "bootApplySavedTheme",
+   "cell": "bootEarlyState",
+   "plannedLines": [
+    2609,
+    2615
+   ],
+   "statements": 1,
+   "kinds": {
+    "try": 1
+   }
+  },
+  {
+   "name": "bootAuthStateListener",
+   "cell": "bootEarlyState",
+   "plannedLines": [
+    2637,
+    2638
+   ],
+   "statements": 2,
+   "kinds": {
+    "stateDefine": 1,
+    "wrapCall": 1
+   }
+  },
+  {
+   "name": "bootThemeList",
+   "cell": "bootEarlyState",
+   "plannedLines": [
+    2671,
+    2687
+   ],
+   "statements": 3,
+   "kinds": {
+    "stateDefine": 2,
+    "windowDefBlock": 1
+   }
+  },
+  {
+   "name": "bootAvatarLevelUpWiring",
+   "cell": "bootEarlyState",
+   "plannedLines": [
+    2711,
+    2727
+   ],
+   "statements": 12,
+   "kinds": {
+    "if": 2,
+    "varNotExposed": 1,
+    "stateDefine": 5,
+    "wrapCall": 4
+   }
+  },
+  {
+   "name": "bootExposeAppState",
+   "cell": "bootEarlyState",
+   "plannedLines": [
+    2736,
+    2736
+   ],
+   "statements": 1,
+   "kinds": {
+    "windowCopyBlock": 1
+   }
+  },
+  {
+   "name": "bootPromptTabState",
+   "cell": "bootEarlyState",
+   "plannedLines": [
+    2756,
+    2756
+   ],
+   "statements": 1,
+   "kinds": {
+    "stateDefine": 1
+   }
+  },
+  {
+   "name": "bootEntryAndAccountWiring",
+   "cell": "bootEntryWiring",
+   "plannedLines": [
+    2777,
+    2939
+   ],
+   "statements": 51,
+   "kinds": {
+    "windowLiteral": 1,
+    "call": 2,
+    "stateDefine": 15,
+    "wrapCall": 29,
+    "varNotExposed": 1,
+    "if": 1,
+    "try": 1,
+    "windowCopyBlock": 1
+   }
+  },
+  {
+   "name": "bootGoogleTokenState",
+   "cell": "bootEntryWiring",
+   "plannedLines": [
+    2946,
+    2946
+   ],
+   "statements": 1,
+   "kinds": {
+    "stateDefine": 1
+   }
+  },
+  {
+   "name": "bootHomeAndGoalWiring",
+   "cell": "bootHomeWiring",
+   "plannedLines": [
+    3020,
+    3193
+   ],
+   "statements": 58,
+   "kinds": {
+    "wrapCall": 18,
+    "stateDefine": 19,
+    "varNotExposed": 8,
+    "call": 6,
+    "if": 7
+   }
+  },
+  {
+   "name": "bootGoalsAndTeamState",
+   "cell": "bootHomeWiring",
+   "plannedLines": [
+    3226,
+    3291
+   ],
+   "statements": 13,
+   "kinds": {
+    "windowCopy": 4,
+    "windowLiteral": 2,
+    "wrapCall": 4,
+    "stateDefine": 2,
+    "windowCopyBlock": 1
+   }
+  },
+  {
+   "name": "bootRecordsWiring",
+   "cell": "bootRecordsWiring",
+   "plannedLines": [
+    4276,
+    4290
+   ],
+   "statements": 11,
+   "kinds": {
+    "call": 4,
+    "wrapCall": 5,
+    "stateDefine": 2
+   }
+  },
+  {
+   "name": "bootRecordsExportWiring",
+   "cell": "bootRecordsWiring",
+   "plannedLines": [
+    4296,
+    4298
+   ],
+   "statements": 2,
+   "kinds": {
+    "stateDefine": 1,
+    "call": 1
+   }
+  },
+  {
+   "name": "bootSharedGroupsState",
+   "cell": "bootFinish",
+   "plannedLines": [
+    4481,
+    4481
+   ],
+   "statements": 1,
+   "kinds": {
+    "stateDefine": 1
+   }
+  },
+  {
+   "name": "bootCommSettingsAndStart",
+   "cell": "bootFinish",
+   "plannedLines": [
+    4491,
+    4551
+   ],
+   "statements": 19,
+   "kinds": {
+    "stateDefine": 6,
+    "windowDefBlock": 1,
+    "wrapCall": 8,
+    "call": 2,
+    "if": 2
+   }
+  },
+  {
+   "name": "bootInstallAndServiceWorker",
+   "cell": "bootFinish",
+   "plannedLines": [
+    4558,
+    4561
+   ],
+   "statements": 3,
+   "kinds": {
+    "wrapCall": 1,
+    "windowCopy": 1,
+    "call": 1
+   }
+  }
+ ],
+ "meta": {
+  "task": "TASK-ES-650",
+  "mode": "region",
+  "slot": "HO",
+  "scriptHtmlLines": [
+   2254,
+   4562
+  ],
+  "regions": [
+   {
+    "cell": "bootEarlyState",
+    "file": "js/core/boot-early-state.js",
+    "name": "bootApplySavedTheme",
+    "group": "[#TASK-ES-448] 인라인 스크립트 세포화 P2-2 이음매 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-423 와 같은 틀)",
+    "groupTo": null,
+    "from": "try{",
+    "to": null,
+    "segment": [
+     2608,
+     2615
+    ],
+    "lines": 8,
+    "stmt": [
+     2609,
+     2615
+    ],
+    "statements": [
+     {
+      "line": 2609,
+      "endLine": 2615,
+      "kind": "try"
+     }
+    ],
+    "headersMoved": [],
+    "locals": [
+     "_initTh"
+    ],
+    "bridged": [],
+    "edits": 0
+   },
+   {
+    "cell": "bootEarlyState",
+    "file": "js/core/boot-early-state.js",
+    "name": "bootAuthStateListener",
+    "group": "============ Supabase ============",
+    "groupTo": null,
+    "from": "window.OurgoalAppState.d",
+    "to": null,
+    "segment": [
+     2637,
+     2638
+    ],
+    "lines": 2,
+    "stmt": [
+     2637,
+     2638
+    ],
+    "statements": [
+     {
+      "line": 2637,
+      "endLine": 2637,
+      "kind": "call"
+     },
+     {
+      "line": 2638,
+      "endLine": 2638,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [],
+    "locals": [],
+    "bridged": [
+     "bindSupabaseAuthStateListener"
+    ],
+    "edits": 1
+   },
+   {
+    "cell": "bootEarlyState",
+    "file": "js/core/boot-early-state.js",
+    "name": "bootThemeList",
+    "group": "Confetti",
+    "groupTo": "8대 화면 스타일 (테마) 정의",
+    "from": null,
+    "to": null,
+    "segment": [
+     2668,
+     2687
+    ],
+    "lines": 20,
+    "stmt": [
+     2671,
+     2687
+    ],
+    "statements": [
+     {
+      "line": 2671,
+      "endLine": 2671,
+      "kind": "call"
+     },
+     {
+      "line": 2677,
+      "endLine": 2682,
+      "kind": "call"
+     },
+     {
+      "line": 2685,
+      "endLine": 2687,
+      "kind": "if"
+     }
+    ],
+    "headersMoved": [
+     2668,
+     2676
+    ],
+    "locals": [],
+    "bridged": [],
+    "edits": 0
+   },
+   {
+    "cell": "bootEarlyState",
+    "file": "js/core/boot-early-state.js",
+    "name": "bootAvatarLevelUpWiring",
+    "group": "[#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드",
+    "groupTo": "#TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트)",
+    "from": "if(btnAvLvClose) btnAvLv",
+    "to": null,
+    "segment": [
+     2711,
+     2727
+    ],
+    "lines": 17,
+    "stmt": [
+     2711,
+     2727
+    ],
+    "statements": [
+     {
+      "line": 2711,
+      "endLine": 2711,
+      "kind": "if"
+     },
+     {
+      "line": 2712,
+      "endLine": 2712,
+      "kind": "var"
+     },
+     {
+      "line": 2713,
+      "endLine": 2713,
+      "kind": "if"
+     },
+     {
+      "line": 2714,
+      "endLine": 2714,
+      "kind": "call"
+     },
+     {
+      "line": 2715,
+      "endLine": 2715,
+      "kind": "call"
+     },
+     {
+      "line": 2717,
+      "endLine": 2717,
+      "kind": "call"
+     },
+     {
+      "line": 2718,
+      "endLine": 2718,
+      "kind": "call"
+     },
+     {
+      "line": 2720,
+      "endLine": 2720,
+      "kind": "call"
+     },
+     {
+      "line": 2721,
+      "endLine": 2721,
+      "kind": "call"
+     },
+     {
+      "line": 2723,
+      "endLine": 2723,
+      "kind": "call"
+     },
+     {
+      "line": 2724,
+      "endLine": 2724,
+      "kind": "call"
+     },
+     {
+      "line": 2727,
+      "endLine": 2727,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [
+     2726
+    ],
+    "locals": [
+     "btnAvLvConfirm"
+    ],
+    "bridged": [
+     "bindAvatarGrowthPromptSave",
+     "bindAvatarLevelUpBackdrop",
+     "bindAvatarLevelUpSaveImage",
+     "bindAvatarLevelUpShare",
+     "btnAvLvClose",
+     "closeAvatarLevelUpModal"
+    ],
+    "edits": 8
+   },
+   {
+    "cell": "bootEarlyState",
+    "file": "js/core/boot-early-state.js",
+    "name": "bootExposeAppState",
+    "group": "뱃지 컬렉션 (명예의 전당)",
+    "groupTo": null,
+    "from": "if(typeof window !== 'un",
+    "to": null,
+    "segment": [
+     2736,
+     2736
+    ],
+    "lines": 1,
+    "stmt": [
+     2736,
+     2736
+    ],
+    "statements": [
+     {
+      "line": 2736,
+      "endLine": 2736,
+      "kind": "if"
+     }
+    ],
+    "headersMoved": [],
+    "locals": [],
+    "bridged": [
+     "state"
+    ],
+    "edits": 1
+   },
+   {
+    "cell": "bootEarlyState",
+    "file": "js/core/boot-early-state.js",
+    "name": "bootPromptTabState",
+    "group": "[78 / 89] 데이터분석 프롬프트 백과사전 (실사용 유저 등록·피드 게시 및 도움돼요 상호작용)",
+    "groupTo": null,
+    "from": null,
+    "to": "window.OurgoalAppState.d",
+    "segment": [
+     2756,
+     2756
+    ],
+    "lines": 1,
+    "stmt": [
+     2756,
+     2756
+    ],
+    "statements": [
+     {
+      "line": 2756,
+      "endLine": 2756,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [],
+    "locals": [],
+    "bridged": [],
+    "edits": 0
+   },
+   {
+    "cell": "bootEntryWiring",
+    "file": "js/core/boot-entry-wiring.js",
+    "name": "bootEntryAndAccountWiring",
+    "group": "[#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업",
+    "groupTo": "프로필",
+    "from": null,
+    "to": null,
+    "segment": [
+     2776,
+     2939
+    ],
+    "lines": 164,
+    "stmt": [
+     2777,
+     2939
+    ],
+    "statements": [
+     {
+      "line": 2777,
+      "endLine": 2777,
+      "kind": "expr"
+     },
+     {
+      "line": 2788,
+      "endLine": 2788,
+      "kind": "call"
+     },
+     {
+      "line": 2790,
+      "endLine": 2790,
+      "kind": "call"
+     },
+     {
+      "line": 2791,
+      "endLine": 2791,
+      "kind": "call"
+     },
+     {
+      "line": 2792,
+      "endLine": 2792,
+      "kind": "call"
+     },
+     {
+      "line": 2793,
+      "endLine": 2793,
+      "kind": "call"
+     },
+     {
+      "line": 2794,
+      "endLine": 2794,
+      "kind": "call"
+     },
+     {
+      "line": 2798,
+      "endLine": 2798,
+      "kind": "call"
+     },
+     {
+      "line": 2799,
+      "endLine": 2799,
+      "kind": "call"
+     },
+     {
+      "line": 2800,
+      "endLine": 2800,
+      "kind": "call"
+     },
+     {
+      "line": 2801,
+      "endLine": 2801,
+      "kind": "call"
+     },
+     {
+      "line": 2803,
+      "endLine": 2803,
+      "kind": "call"
+     },
+     {
+      "line": 2808,
+      "endLine": 2808,
+      "kind": "call"
+     },
+     {
+      "line": 2811,
+      "endLine": 2811,
+      "kind": "call"
+     },
+     {
+      "line": 2813,
+      "endLine": 2813,
+      "kind": "call"
+     },
+     {
+      "line": 2814,
+      "endLine": 2814,
+      "kind": "call"
+     },
+     {
+      "line": 2825,
+      "endLine": 2825,
+      "kind": "call"
+     },
+     {
+      "line": 2826,
+      "endLine": 2826,
+      "kind": "call"
+     },
+     {
+      "line": 2829,
+      "endLine": 2829,
+      "kind": "call"
+     },
+     {
+      "line": 2836,
+      "endLine": 2836,
+      "kind": "var"
+     },
+     {
+      "line": 2837,
+      "endLine": 2837,
+      "kind": "if"
+     },
+     {
+      "line": 2844,
+      "endLine": 2844,
+      "kind": "call"
+     },
+     {
+      "line": 2846,
+      "endLine": 2846,
+      "kind": "call"
+     },
+     {
+      "line": 2847,
+      "endLine": 2847,
+      "kind": "call"
+     },
+     {
+      "line": 2848,
+      "endLine": 2848,
+      "kind": "call"
+     },
+     {
+      "line": 2849,
+      "endLine": 2849,
+      "kind": "call"
+     },
+     {
+      "line": 2853,
+      "endLine": 2853,
+      "kind": "call"
+     },
+     {
+      "line": 2858,
+      "endLine": 2858,
+      "kind": "call"
+     },
+     {
+      "line": 2859,
+      "endLine": 2859,
+      "kind": "call"
+     },
+     {
+      "line": 2862,
+      "endLine": 2862,
+      "kind": "call"
+     },
+     {
+      "line": 2863,
+      "endLine": 2863,
+      "kind": "call"
+     },
+     {
+      "line": 2866,
+      "endLine": 2866,
+      "kind": "call"
+     },
+     {
+      "line": 2867,
+      "endLine": 2867,
+      "kind": "call"
+     },
+     {
+      "line": 2868,
+      "endLine": 2868,
+      "kind": "call"
+     },
+     {
+      "line": 2871,
+      "endLine": 2871,
+      "kind": "call"
+     },
+     {
+      "line": 2872,
+      "endLine": 2872,
+      "kind": "call"
+     },
+     {
+      "line": 2875,
+      "endLine": 2875,
+      "kind": "call"
+     },
+     {
+      "line": 2876,
+      "endLine": 2876,
+      "kind": "call"
+     },
+     {
+      "line": 2877,
+      "endLine": 2877,
+      "kind": "call"
+     },
+     {
+      "line": 2878,
+      "endLine": 2878,
+      "kind": "call"
+     },
+     {
+      "line": 2879,
+      "endLine": 2879,
+      "kind": "call"
+     },
+     {
+      "line": 2880,
+      "endLine": 2880,
+      "kind": "call"
+     },
+     {
+      "line": 2897,
+      "endLine": 2897,
+      "kind": "call"
+     },
+     {
+      "line": 2898,
+      "endLine": 2898,
+      "kind": "call"
+     },
+     {
+      "line": 2903,
+      "endLine": 2903,
+      "kind": "try"
+     },
+     {
+      "line": 2905,
+      "endLine": 2905,
+      "kind": "call"
+     },
+     {
+      "line": 2907,
+      "endLine": 2907,
+      "kind": "if"
+     },
+     {
+      "line": 2910,
+      "endLine": 2910,
+      "kind": "call"
+     },
+     {
+      "line": 2911,
+      "endLine": 2911,
+      "kind": "call"
+     },
+     {
+      "line": 2915,
+      "endLine": 2915,
+      "kind": "call"
+     },
+     {
+      "line": 2939,
+      "endLine": 2939,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [
+     2776,
+     2785,
+     2786,
+     2796,
+     2805,
+     2816,
+     2819,
+     2822,
+     2833,
+     2843,
+     2851,
+     2855,
+     2861,
+     2865,
+     2870,
+     2884,
+     2887,
+     2894,
+     2901,
+     2909,
+     2917,
+     2934
+    ],
+    "locals": [
+     "fpBtn"
+    ],
+    "bridged": [
+     "bindAuthTabButtons",
+     "bindAuthTesterBButton",
+     "bindFocusResync",
+     "bindGoogleLoginClicks",
+     "bindInquiryButtons",
+     "bindKakaoLoginClicks",
+     "bindLandGuestBtn",
+     "bindLandLoginLink",
+     "bindLandNickQuickLink",
+     "bindLandTesterBButton",
+     "bindLoginSubmit",
+     "bindLogoutButton",
+     "bindModalPopstateBack",
+     "bindNavButtonsClick",
+     "bindOfflineNotice",
+     "bindOnlineSync",
+     "bindPrivacyLinks",
+     "bindRemoteLogoutStorageListener",
+     "bindResetButton",
+     "bindRestartGuideButton",
+     "bindResyncAccountDataButton",
+     "bindScheduleReminderStart",
+     "bindSignupSubmit",
+     "bindSupportEmailLink",
+     "bindTabGuideHubButton",
+     "bindTermsLinks",
+     "bindVisibilityResync",
+     "checkKakaoInAppBrowser",
+     "initShipyardRegistry",
+     "openForgotPasswordModal",
+     "openWithdrawModal",
+     "setTab",
+     "startDevDebugButtons",
+     "startRemoteSessionPoll"
+    ],
+    "edits": 34
+   },
+   {
+    "cell": "bootEntryWiring",
+    "file": "js/core/boot-entry-wiring.js",
+    "name": "bootGoogleTokenState",
+    "group": "[#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템",
+    "groupTo": null,
+    "from": null,
+    "to": "window.OurgoalAppState.d",
+    "segment": [
+     2944,
+     2946
+    ],
+    "lines": 3,
+    "stmt": [
+     2946,
+     2946
+    ],
+    "statements": [
+     {
+      "line": 2946,
+      "endLine": 2946,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [],
+    "locals": [],
+    "bridged": [],
+    "edits": 0
+   },
+   {
+    "cell": "bootHomeWiring",
+    "file": "js/core/boot-home-wiring.js",
+    "name": "bootHomeAndGoalWiring",
+    "group": "UX Telemetry (Hesitation & Rage Tap)",
+    "groupTo": "목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5)",
+    "from": null,
+    "to": null,
+    "segment": [
+     3016,
+     3193
+    ],
+    "lines": 178,
+    "stmt": [
+     3020,
+     3193
+    ],
+    "statements": [
+     {
+      "line": 3020,
+      "endLine": 3020,
+      "kind": "call"
+     },
+     {
+      "line": 3039,
+      "endLine": 3039,
+      "kind": "call"
+     },
+     {
+      "line": 3040,
+      "endLine": 3040,
+      "kind": "call"
+     },
+     {
+      "line": 3041,
+      "endLine": 3041,
+      "kind": "call"
+     },
+     {
+      "line": 3048,
+      "endLine": 3048,
+      "kind": "call"
+     },
+     {
+      "line": 3049,
+      "endLine": 3049,
+      "kind": "call"
+     },
+     {
+      "line": 3054,
+      "endLine": 3054,
+      "kind": "call"
+     },
+     {
+      "line": 3057,
+      "endLine": 3057,
+      "kind": "call"
+     },
+     {
+      "line": 3061,
+      "endLine": 3061,
+      "kind": "call"
+     },
+     {
+      "line": 3062,
+      "endLine": 3062,
+      "kind": "call"
+     },
+     {
+      "line": 3063,
+      "endLine": 3063,
+      "kind": "call"
+     },
+     {
+      "line": 3064,
+      "endLine": 3064,
+      "kind": "call"
+     },
+     {
+      "line": 3067,
+      "endLine": 3067,
+      "kind": "call"
+     },
+     {
+      "line": 3068,
+      "endLine": 3068,
+      "kind": "call"
+     },
+     {
+      "line": 3069,
+      "endLine": 3069,
+      "kind": "call"
+     },
+     {
+      "line": 3070,
+      "endLine": 3070,
+      "kind": "call"
+     },
+     {
+      "line": 3071,
+      "endLine": 3071,
+      "kind": "call"
+     },
+     {
+      "line": 3083,
+      "endLine": 3083,
+      "kind": "var"
+     },
+     {
+      "line": 3092,
+      "endLine": 3092,
+      "kind": "call"
+     },
+     {
+      "line": 3093,
+      "endLine": 3093,
+      "kind": "call"
+     },
+     {
+      "line": 3094,
+      "endLine": 3094,
+      "kind": "call"
+     },
+     {
+      "line": 3107,
+      "endLine": 3107,
+      "kind": "call"
+     },
+     {
+      "line": 3108,
+      "endLine": 3108,
+      "kind": "var"
+     },
+     {
+      "line": 3108,
+      "endLine": 3108,
+      "kind": "if"
+     },
+     {
+      "line": 3110,
+      "endLine": 3110,
+      "kind": "call"
+     },
+     {
+      "line": 3111,
+      "endLine": 3111,
+      "kind": "call"
+     },
+     {
+      "line": 3116,
+      "endLine": 3116,
+      "kind": "call"
+     },
+     {
+      "line": 3117,
+      "endLine": 3117,
+      "kind": "call"
+     },
+     {
+      "line": 3125,
+      "endLine": 3125,
+      "kind": "var"
+     },
+     {
+      "line": 3126,
+      "endLine": 3126,
+      "kind": "if"
+     },
+     {
+      "line": 3127,
+      "endLine": 3127,
+      "kind": "var"
+     },
+     {
+      "line": 3128,
+      "endLine": 3128,
+      "kind": "if"
+     },
+     {
+      "line": 3129,
+      "endLine": 3129,
+      "kind": "var"
+     },
+     {
+      "line": 3130,
+      "endLine": 3130,
+      "kind": "if"
+     },
+     {
+      "line": 3132,
+      "endLine": 3132,
+      "kind": "call"
+     },
+     {
+      "line": 3133,
+      "endLine": 3133,
+      "kind": "call"
+     },
+     {
+      "line": 3134,
+      "endLine": 3134,
+      "kind": "call"
+     },
+     {
+      "line": 3137,
+      "endLine": 3137,
+      "kind": "call"
+     },
+     {
+      "line": 3138,
+      "endLine": 3138,
+      "kind": "call"
+     },
+     {
+      "line": 3145,
+      "endLine": 3145,
+      "kind": "var"
+     },
+     {
+      "line": 3146,
+      "endLine": 3148,
+      "kind": "if"
+     },
+     {
+      "line": 3149,
+      "endLine": 3149,
+      "kind": "var"
+     },
+     {
+      "line": 3150,
+      "endLine": 3152,
+      "kind": "if"
+     },
+     {
+      "line": 3153,
+      "endLine": 3153,
+      "kind": "call"
+     },
+     {
+      "line": 3154,
+      "endLine": 3154,
+      "kind": "call"
+     },
+     {
+      "line": 3157,
+      "endLine": 3157,
+      "kind": "call"
+     },
+     {
+      "line": 3158,
+      "endLine": 3158,
+      "kind": "call"
+     },
+     {
+      "line": 3159,
+      "endLine": 3159,
+      "kind": "call"
+     },
+     {
+      "line": 3162,
+      "endLine": 3162,
+      "kind": "var"
+     },
+     {
+      "line": 3163,
+      "endLine": 3165,
+      "kind": "if"
+     },
+     {
+      "line": 3166,
+      "endLine": 3168,
+      "kind": "call"
+     },
+     {
+      "line": 3173,
+      "endLine": 3173,
+      "kind": "call"
+     },
+     {
+      "line": 3184,
+      "endLine": 3184,
+      "kind": "call"
+     },
+     {
+      "line": 3185,
+      "endLine": 3185,
+      "kind": "call"
+     },
+     {
+      "line": 3186,
+      "endLine": 3186,
+      "kind": "call"
+     },
+     {
+      "line": 3187,
+      "endLine": 3187,
+      "kind": "call"
+     },
+     {
+      "line": 3192,
+      "endLine": 3192,
+      "kind": "call"
+     },
+     {
+      "line": 3193,
+      "endLine": 3193,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [
+     3016,
+     3022,
+     3038,
+     3047,
+     3051,
+     3056,
+     3066,
+     3079,
+     3088,
+     3098,
+     3101,
+     3106,
+     3113,
+     3142,
+     3170,
+     3177,
+     3178,
+     3181
+    ],
+    "locals": [
+     "btnCloseTplEncycl",
+     "btnEvalBanner",
+     "btnEvalClose",
+     "challengeBtn",
+     "requestClaudeFeedback",
+     "tabBtnAi",
+     "tabBtnReal",
+     "topBtnGuide"
+    ],
+    "bridged": [
+     "bindAppEvalBackdrop",
+     "bindAppEvalSubmit",
+     "bindArchivedPageSetter",
+     "bindArchivedPeriodSetter",
+     "bindCaptureLiveMeta",
+     "bindCapturePhoto",
+     "bindCaptureSave",
+     "bindGoalAgentToggle",
+     "bindHeaderTemplateEncyclopediaClick",
+     "bindHomeAddGoal",
+     "bindImportExternalBtn",
+     "bindNewGoalStepExports",
+     "bindPersonalGuideBtn",
+     "bindQuickRoutineChips",
+     "bindRageTapTelemetry",
+     "bindTemplateEncyclopediaEscape",
+     "bindTemplateEncyclopediaModalClick",
+     "closeAppEvaluationModal",
+     "closeFeedbackSetup",
+     "closeTemplateEncyclopediaModal",
+     "openAppEvaluationModal",
+     "openFeedbackSetupGated",
+     "openMzShareCardModal",
+     "requestServerAIFeedback",
+     "sendGoalAgentMessage",
+     "setTab",
+     "startVoiceCheckin",
+     "state",
+     "switchTemplateEncyclopediaTab"
+    ],
+    "edits": 33
+   },
+   {
+    "cell": "bootHomeWiring",
+    "file": "js/core/boot-home-wiring.js",
+    "name": "bootGoalsAndTeamState",
+    "group": "[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템",
+    "groupTo": "개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135)",
+    "from": "window._subtabTplDomain ",
+    "to": null,
+    "segment": [
+     3225,
+     3291
+    ],
+    "lines": 67,
+    "stmt": [
+     3226,
+     3291
+    ],
+    "statements": [
+     {
+      "line": 3226,
+      "endLine": 3226,
+      "kind": "expr"
+     },
+     {
+      "line": 3227,
+      "endLine": 3227,
+      "kind": "expr"
+     },
+     {
+      "line": 3233,
+      "endLine": 3233,
+      "kind": "expr"
+     },
+     {
+      "line": 3235,
+      "endLine": 3235,
+      "kind": "expr"
+     },
+     {
+      "line": 3237,
+      "endLine": 3237,
+      "kind": "expr"
+     },
+     {
+      "line": 3240,
+      "endLine": 3240,
+      "kind": "expr"
+     },
+     {
+      "line": 3254,
+      "endLine": 3254,
+      "kind": "call"
+     },
+     {
+      "line": 3268,
+      "endLine": 3268,
+      "kind": "call"
+     },
+     {
+      "line": 3269,
+      "endLine": 3269,
+      "kind": "call"
+     },
+     {
+      "line": 3284,
+      "endLine": 3286,
+      "kind": "if"
+     },
+     {
+      "line": 3289,
+      "endLine": 3289,
+      "kind": "call"
+     },
+     {
+      "line": 3290,
+      "endLine": 3290,
+      "kind": "call"
+     },
+     {
+      "line": 3291,
+      "endLine": 3291,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [
+     3229,
+     3244,
+     3248,
+     3263,
+     3266,
+     3278
+    ],
+    "locals": [],
+    "bridged": [
+     "_subtabTplDomain",
+     "_subtabTplType",
+     "bindTeamCommentClick",
+     "bindTeamCommentKeydown",
+     "defineSendTeamGoalComment",
+     "handleGoalFastAddSubmit",
+     "renderTeamGoalsScreen",
+     "selectSmartTag",
+     "startKeyboardShield"
+    ],
+    "edits": 9
+   },
+   {
+    "cell": "bootRecordsWiring",
+    "file": "js/core/boot-records-wiring.js",
+    "name": "bootRecordsWiring",
+    "group": "템플릿 마켓 · 복제 · 전문 템플릿 기록 (TASK-ES-013)",
+    "groupTo": "위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용)",
+    "from": "window.addEventListener(",
+    "to": null,
+    "segment": [
+     4275,
+     4290
+    ],
+    "lines": 16,
+    "stmt": [
+     4276,
+     4290
+    ],
+    "statements": [
+     {
+      "line": 4276,
+      "endLine": 4276,
+      "kind": "call"
+     },
+     {
+      "line": 4278,
+      "endLine": 4278,
+      "kind": "call"
+     },
+     {
+      "line": 4282,
+      "endLine": 4282,
+      "kind": "call"
+     },
+     {
+      "line": 4283,
+      "endLine": 4283,
+      "kind": "call"
+     },
+     {
+      "line": 4284,
+      "endLine": 4284,
+      "kind": "call"
+     },
+     {
+      "line": 4285,
+      "endLine": 4285,
+      "kind": "call"
+     },
+     {
+      "line": 4286,
+      "endLine": 4286,
+      "kind": "call"
+     },
+     {
+      "line": 4287,
+      "endLine": 4287,
+      "kind": "call"
+     },
+     {
+      "line": 4288,
+      "endLine": 4288,
+      "kind": "call"
+     },
+     {
+      "line": 4289,
+      "endLine": 4289,
+      "kind": "call"
+     },
+     {
+      "line": 4290,
+      "endLine": 4290,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [
+     4280
+    ],
+    "locals": [],
+    "bridged": [
+     "bindRecCarouselPills",
+     "bindRecDocumentClick",
+     "bindRecPulseBar",
+     "bindRecTimeTrackerBtn",
+     "checkRecordDeepLink",
+     "definePurgeSampleRecords",
+     "openRecordModal",
+     "openWeeklyRecapModal",
+     "renderRecordsScreen"
+    ],
+    "edits": 9
+   },
+   {
+    "cell": "bootRecordsWiring",
+    "file": "js/core/boot-records-wiring.js",
+    "name": "bootRecordsExportWiring",
+    "group": "캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명)",
+    "groupTo": null,
+    "from": null,
+    "to": "document.getElementById(",
+    "segment": [
+     4296,
+     4298
+    ],
+    "lines": 3,
+    "stmt": [
+     4296,
+     4298
+    ],
+    "statements": [
+     {
+      "line": 4296,
+      "endLine": 4296,
+      "kind": "call"
+     },
+     {
+      "line": 4298,
+      "endLine": 4298,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [],
+    "locals": [],
+    "bridged": [
+     "openExportThemeModal"
+    ],
+    "edits": 1
+   },
+   {
+    "cell": "bootFinish",
+    "file": "js/core/boot-finish.js",
+    "name": "bootSharedGroupsState",
+    "group": "전역 공유 팀 로더 & 렌더링 (#TASK-ES-133)",
+    "groupTo": null,
+    "from": null,
+    "to": "window.OurgoalAppState.d",
+    "segment": [
+     4481,
+     4481
+    ],
+    "lines": 1,
+    "stmt": [
+     4481,
+     4481
+    ],
+    "statements": [
+     {
+      "line": 4481,
+      "endLine": 4481,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [],
+    "locals": [],
+    "bridged": [],
+    "edits": 0
+   },
+   {
+    "cell": "bootFinish",
+    "file": "js/core/boot-finish.js",
+    "name": "bootCommSettingsAndStart",
+    "group": "통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임)",
+    "groupTo": "#TASK-ES-105: 팀 연계 개인목표 및 상호 체크 모듈(js/team-linked-goals.js) 연결",
+    "from": null,
+    "to": null,
+    "segment": [
+     4489,
+     4551
+    ],
+    "lines": 63,
+    "stmt": [
+     4491,
+     4551
+    ],
+    "statements": [
+     {
+      "line": 4491,
+      "endLine": 4491,
+      "kind": "call"
+     },
+     {
+      "line": 4496,
+      "endLine": 4496,
+      "kind": "if"
+     },
+     {
+      "line": 4499,
+      "endLine": 4499,
+      "kind": "call"
+     },
+     {
+      "line": 4500,
+      "endLine": 4500,
+      "kind": "call"
+     },
+     {
+      "line": 4501,
+      "endLine": 4501,
+      "kind": "call"
+     },
+     {
+      "line": 4510,
+      "endLine": 4510,
+      "kind": "call"
+     },
+     {
+      "line": 4516,
+      "endLine": 4516,
+      "kind": "call"
+     },
+     {
+      "line": 4518,
+      "endLine": 4518,
+      "kind": "call"
+     },
+     {
+      "line": 4528,
+      "endLine": 4528,
+      "kind": "call"
+     },
+     {
+      "line": 4533,
+      "endLine": 4533,
+      "kind": "call"
+     },
+     {
+      "line": 4535,
+      "endLine": 4535,
+      "kind": "call"
+     },
+     {
+      "line": 4537,
+      "endLine": 4537,
+      "kind": "call"
+     },
+     {
+      "line": 4538,
+      "endLine": 4538,
+      "kind": "call"
+     },
+     {
+      "line": 4540,
+      "endLine": 4540,
+      "kind": "call"
+     },
+     {
+      "line": 4542,
+      "endLine": 4544,
+      "kind": "if"
+     },
+     {
+      "line": 4546,
+      "endLine": 4546,
+      "kind": "call"
+     },
+     {
+      "line": 4548,
+      "endLine": 4548,
+      "kind": "call"
+     },
+     {
+      "line": 4550,
+      "endLine": 4550,
+      "kind": "call"
+     },
+     {
+      "line": 4551,
+      "endLine": 4551,
+      "kind": "if"
+     }
+    ],
+    "headersMoved": [
+     4489,
+     4498,
+     4505,
+     4512,
+     4524,
+     4527,
+     4532,
+     4536,
+     4541,
+     4549
+    ],
+    "locals": [],
+    "bridged": [
+     "MOCK_GROUPS",
+     "TEAM_COMMENTS_CACHE",
+     "bindLoginRescueButtons",
+     "bindSettingsHapticDelegate",
+     "bindSettingsStaticHandlers",
+     "bindWidgetModalOpener",
+     "canManageTeamGoals",
+     "closeModal",
+     "connectAuthSafety",
+     "connectHelpfulReason",
+     "connectReactions",
+     "connectTeamInviteComm",
+     "connectTeamLinkedGoals",
+     "dDay",
+     "daysFromNow",
+     "getGroupLevelGoals",
+     "groupState",
+     "handleDeepLinkRouting",
+     "openModal",
+     "renderTeamGoalsScreen",
+     "runAppBoot",
+     "saveProfile",
+     "sb",
+     "state",
+     "teamCommentsBlockHtml",
+     "toast",
+     "triggerHaptic",
+     "uid"
+    ],
+    "edits": 30
+   },
+   {
+    "cell": "bootFinish",
+    "file": "js/core/boot-finish.js",
+    "name": "bootInstallAndServiceWorker",
+    "group": "PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118)",
+    "groupTo": null,
+    "from": null,
+    "to": null,
+    "segment": [
+     4557,
+     4561
+    ],
+    "lines": 5,
+    "stmt": [
+     4558,
+     4561
+    ],
+    "statements": [
+     {
+      "line": 4558,
+      "endLine": 4558,
+      "kind": "call"
+     },
+     {
+      "line": 4559,
+      "endLine": 4559,
+      "kind": "expr"
+     },
+     {
+      "line": 4561,
+      "endLine": 4561,
+      "kind": "call"
+     }
+    ],
+    "headersMoved": [
+     4557
+    ],
+    "locals": [],
+    "bridged": [
+     "MOCK_GROUPS",
+     "bindServiceWorker",
+     "dayIndexSinceSignup",
+     "track"
+    ],
+    "edits": 4
+   }
+  ],
+  "imports": [
+   {
+    "n": "bootApplySavedTheme",
+    "cell": "bootEarlyState"
+   },
+   {
+    "n": "bootAuthStateListener",
+    "cell": "bootEarlyState"
+   },
+   {
+    "n": "bootThemeList",
+    "cell": "bootEarlyState"
+   },
+   {
+    "n": "bootAvatarLevelUpWiring",
+    "cell": "bootEarlyState"
+   },
+   {
+    "n": "bootExposeAppState",
+    "cell": "bootEarlyState"
+   },
+   {
+    "n": "bootPromptTabState",
+    "cell": "bootEarlyState"
+   },
+   {
+    "n": "bootEntryAndAccountWiring",
+    "cell": "bootEntryWiring"
+   },
+   {
+    "n": "bootGoogleTokenState",
+    "cell": "bootEntryWiring"
+   },
+   {
+    "n": "bootHomeAndGoalWiring",
+    "cell": "bootHomeWiring"
+   },
+   {
+    "n": "bootGoalsAndTeamState",
+    "cell": "bootHomeWiring"
+   },
+   {
+    "n": "bootRecordsWiring",
+    "cell": "bootRecordsWiring"
+   },
+   {
+    "n": "bootRecordsExportWiring",
+    "cell": "bootRecordsWiring"
+   },
+   {
+    "n": "bootSharedGroupsState",
+    "cell": "bootFinish"
+   },
+   {
+    "n": "bootCommSettingsAndStart",
+    "cell": "bootFinish"
+   },
+   {
+    "n": "bootInstallAndServiceWorker",
+    "cell": "bootFinish"
+   }
+  ],
+  "kitVarsAdded": [],
+  "bridged": [
+   {
+    "n": "MOCK_GROUPS",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": false
+   },
+   {
+    "n": "TEAM_COMMENTS_CACHE",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "_subtabTplDomain",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": true
+   },
+   {
+    "n": "_subtabTplType",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": true
+   },
+   {
+    "n": "bindAppEvalBackdrop",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindAppEvalSubmit",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindArchivedPageSetter",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindArchivedPeriodSetter",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindAuthTabButtons",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindAuthTesterBButton",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindAvatarGrowthPromptSave",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindAvatarLevelUpBackdrop",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindAvatarLevelUpSaveImage",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindAvatarLevelUpShare",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindCaptureLiveMeta",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindCapturePhoto",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindCaptureSave",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindFocusResync",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindGoalAgentToggle",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindGoogleLoginClicks",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindHeaderTemplateEncyclopediaClick",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindHomeAddGoal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindImportExternalBtn",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindInquiryButtons",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindKakaoLoginClicks",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindLandGuestBtn",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindLandLoginLink",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindLandNickQuickLink",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindLandTesterBButton",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindLoginRescueButtons",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindLoginSubmit",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindLogoutButton",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindModalPopstateBack",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindNavButtonsClick",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindNewGoalStepExports",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindOfflineNotice",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindOnlineSync",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindPersonalGuideBtn",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindPrivacyLinks",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindQuickRoutineChips",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindRageTapTelemetry",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindRecCarouselPills",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindRecDocumentClick",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindRecPulseBar",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindRecTimeTrackerBtn",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindRemoteLogoutStorageListener",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindResetButton",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindRestartGuideButton",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindResyncAccountDataButton",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindScheduleReminderStart",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindServiceWorker",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindSettingsHapticDelegate",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindSettingsStaticHandlers",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindSignupSubmit",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindSupabaseAuthStateListener",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindSupportEmailLink",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindTabGuideHubButton",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindTeamCommentClick",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindTeamCommentKeydown",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindTemplateEncyclopediaEscape",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindTemplateEncyclopediaModalClick",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindTermsLinks",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindVisibilityResync",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "bindWidgetModalOpener",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "btnAvLvClose",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "canManageTeamGoals",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "checkKakaoInAppBrowser",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "checkRecordDeepLink",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "closeAppEvaluationModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "closeAvatarLevelUpModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "closeFeedbackSetup",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "closeModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "closeTemplateEncyclopediaModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "connectAuthSafety",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "connectHelpfulReason",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "connectReactions",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "connectTeamInviteComm",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "connectTeamLinkedGoals",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "dDay",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "dayIndexSinceSignup",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "daysFromNow",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "definePurgeSampleRecords",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "defineSendTeamGoalComment",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "getGroupLevelGoals",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "groupState",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "handleDeepLinkRouting",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "handleGoalFastAddSubmit",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "initShipyardRegistry",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openAppEvaluationModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openExportThemeModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openFeedbackSetupGated",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openForgotPasswordModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": false
+   },
+   {
+    "n": "openMzShareCardModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openRecordModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openWeeklyRecapModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "openWithdrawModal",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "renderRecordsScreen",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "renderTeamGoalsScreen",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": false
+   },
+   {
+    "n": "requestServerAIFeedback",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "runAppBoot",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "saveProfile",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "sb",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": false
+   },
+   {
+    "n": "selectSmartTag",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "sendGoalAgentMessage",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "setTab",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "startDevDebugButtons",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "startKeyboardShield",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "startRemoteSessionPoll",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "startVoiceCheckin",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "state",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": true
+   },
+   {
+    "n": "switchTemplateEncyclopediaTab",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "teamCommentsBlockHtml",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "toast",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "track",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   },
+   {
+    "n": "triggerHaptic",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": true,
+    "setterBefore": false
+   },
+   {
+    "n": "uid",
+    "assigned": false,
+    "kind": "var",
+    "exposedBefore": false,
+    "setterBefore": false
+   }
+  ],
+  "exposed": [
+   "TEAM_COMMENTS_CACHE",
+   "bindAppEvalBackdrop",
+   "bindAppEvalSubmit",
+   "bindArchivedPageSetter",
+   "bindArchivedPeriodSetter",
+   "bindAuthTabButtons",
+   "bindAuthTesterBButton",
+   "bindAvatarGrowthPromptSave",
+   "bindAvatarLevelUpBackdrop",
+   "bindAvatarLevelUpSaveImage",
+   "bindAvatarLevelUpShare",
+   "bindCaptureLiveMeta",
+   "bindCapturePhoto",
+   "bindCaptureSave",
+   "bindFocusResync",
+   "bindGoalAgentToggle",
+   "bindGoogleLoginClicks",
+   "bindHeaderTemplateEncyclopediaClick",
+   "bindHomeAddGoal",
+   "bindImportExternalBtn",
+   "bindInquiryButtons",
+   "bindKakaoLoginClicks",
+   "bindLandGuestBtn",
+   "bindLandLoginLink",
+   "bindLandNickQuickLink",
+   "bindLandTesterBButton",
+   "bindLoginRescueButtons",
+   "bindLoginSubmit",
+   "bindLogoutButton",
+   "bindModalPopstateBack",
+   "bindNavButtonsClick",
+   "bindNewGoalStepExports",
+   "bindOfflineNotice",
+   "bindOnlineSync",
+   "bindPersonalGuideBtn",
+   "bindPrivacyLinks",
+   "bindQuickRoutineChips",
+   "bindRageTapTelemetry",
+   "bindRecCarouselPills",
+   "bindRecDocumentClick",
+   "bindRecPulseBar",
+   "bindRecTimeTrackerBtn",
+   "bindRemoteLogoutStorageListener",
+   "bindResetButton",
+   "bindRestartGuideButton",
+   "bindResyncAccountDataButton",
+   "bindScheduleReminderStart",
+   "bindServiceWorker",
+   "bindSettingsHapticDelegate",
+   "bindSettingsStaticHandlers",
+   "bindSignupSubmit",
+   "bindSupabaseAuthStateListener",
+   "bindSupportEmailLink",
+   "bindTabGuideHubButton",
+   "bindTeamCommentClick",
+   "bindTeamCommentKeydown",
+   "bindTemplateEncyclopediaEscape",
+   "bindTemplateEncyclopediaModalClick",
+   "bindTermsLinks",
+   "bindVisibilityResync",
+   "bindWidgetModalOpener",
+   "btnAvLvClose",
+   "canManageTeamGoals",
+   "checkKakaoInAppBrowser",
+   "checkRecordDeepLink",
+   "closeAppEvaluationModal",
+   "closeAvatarLevelUpModal",
+   "closeFeedbackSetup",
+   "closeModal",
+   "closeTemplateEncyclopediaModal",
+   "connectAuthSafety",
+   "connectHelpfulReason",
+   "connectReactions",
+   "connectTeamInviteComm",
+   "connectTeamLinkedGoals",
+   "dDay",
+   "dayIndexSinceSignup",
+   "daysFromNow",
+   "definePurgeSampleRecords",
+   "defineSendTeamGoalComment",
+   "getGroupLevelGoals",
+   "groupState",
+   "handleDeepLinkRouting",
+   "handleGoalFastAddSubmit",
+   "initShipyardRegistry",
+   "openAppEvaluationModal",
+   "openExportThemeModal",
+   "openFeedbackSetupGated",
+   "openForgotPasswordModal",
+   "openMzShareCardModal",
+   "openRecordModal",
+   "openWeeklyRecapModal",
+   "openWithdrawModal",
+   "renderRecordsScreen",
+   "requestServerAIFeedback",
+   "runAppBoot",
+   "saveProfile",
+   "selectSmartTag",
+   "sendGoalAgentMessage",
+   "setTab",
+   "startDevDebugButtons",
+   "startKeyboardShield",
+   "startRemoteSessionPoll",
+   "startVoiceCheckin",
+   "switchTemplateEncyclopediaTab",
+   "teamCommentsBlockHtml",
+   "toast",
+   "track",
+   "uid"
+  ],
+  "head": {
+   "insertAfterLine": 2577,
+   "lines": 127
+  },
+  "tags": [
+   {
+    "file": "js/core/boot-early-state.js",
+    "line": 2152,
+    "where": "after"
+   },
+   {
+    "file": "js/core/boot-entry-wiring.js",
+    "line": 2152,
+    "where": "after"
+   },
+   {
+    "file": "js/core/boot-home-wiring.js",
+    "line": 2152,
+    "where": "after"
+   },
+   {
+    "file": "js/core/boot-records-wiring.js",
+    "line": 2152,
+    "where": "after"
+   },
+   {
+    "file": "js/core/boot-finish.js",
+    "line": 2152,
+    "where": "after"
+   }
+  ],
+  "edits": 130,
+  "htmlLinesBefore": 4601,
+  "htmlLinesAfter": 4194,
+  "files": {
+   "js/core/boot-early-state.js": 105,
+   "js/core/boot-entry-wiring.js": 200,
+   "js/core/boot-home-wiring.js": 278,
+   "js/core/boot-records-wiring.js": 52,
+   "js/core/boot-finish.js": 108
+  }
+ },
+ "commands": [
+  {
+   "id": "region-plan",
+   "startedAt": "2026-10-11T05:22:42.625Z",
+   "endedAt": "2026-10-11T05:22:45.477Z",
+   "exitCode": 0,
+   "stdoutHead": "{\"totals\":{\"topLevelStatements\":398,\"regionable\":179,\"runs\":15,\"regions\":15,\"droppedBelowMinLines\":0,\"skipped\":0,\"statementsInRegions\":179,\"statementLinesInRegions\":204},\"generator\":{\"ok\":true,\"error\"",
+   "stderrHead": ""
+  },
+  {
+   "id": "gen-inline-hard(region)",
+   "startedAt": "2026-10-11T05:22:45.483Z",
+   "endedAt": "2026-10-11T05:22:45.842Z",
+   "exitCode": 0,
+   "stdoutHead": "region · regions 15 · statements 179 · lines 549 · locals 11 · edits 130 · bridged 117 · exposed 109 · imports 15\n  region bootApplySavedTheme 2608~2615 → js/core/boot-early-state.js\n  region bootAuth",
+   "stderrHead": ""
+  }
+ ]
+}
