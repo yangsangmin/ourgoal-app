@@ -1,0 +1,64 @@
+{
+  "id": "s3-comm-feed-opens",
+  "title": "게스트로 소통 탭의 피드 하위 탭을 누르면 피드 머리 문구가 보이고 예외가 없다 (앱 환경설정 객체와 템플릿 부품 손잡이 연결을 구역 함수로 옮기기 전후 보존)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".comm-subtab[data-sub=\"feed\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"feed\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "같은 목표를 향해 가는 사람들",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

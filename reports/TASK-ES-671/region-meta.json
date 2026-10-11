@@ -1,0 +1,166 @@
+{
+ "task": "TASK-ES-671",
+ "mode": "region",
+ "slot": "HO",
+ "scriptHtmlLines": [
+  2254,
+  4150
+ ],
+ "regions": [
+  {
+   "cell": "bootAppHandles",
+   "file": "js/core/boot-app-handles.js",
+   "name": "bootAppConfig",
+   "group": "아워골 앱 환경설정",
+   "groupTo": null,
+   "from": "var OURGOAL_CONFIG = {};",
+   "to": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }",
+   "segment": [
+    2767,
+    2770
+   ],
+   "lines": 4,
+   "stmt": [
+    2769,
+    2770
+   ],
+   "statements": [
+    {
+     "line": 2769,
+     "endLine": 2769,
+     "kind": "var"
+    },
+    {
+     "line": 2770,
+     "endLine": 2770,
+     "kind": "if"
+    }
+   ],
+   "headersMoved": [
+    2767
+   ],
+   "locals": [
+    "OURGOAL_CONFIG"
+   ],
+   "bridged": [],
+   "edits": 0
+  },
+  {
+   "cell": "bootAppHandles",
+   "file": "js/core/boot-app-handles.js",
+   "name": "bootTemplatePartHandles",
+   "group": "KF-2 #TASK-ES-017",
+   "groupTo": null,
+   "from": "if(window.OurgoalTemplateCredit",
+   "to": "if(window.OurgoalTemplateCredit",
+   "segment": [
+    4145,
+    4147
+   ],
+   "lines": 3,
+   "stmt": [
+    4145,
+    4147
+   ],
+   "statements": [
+    {
+     "line": 4145,
+     "endLine": 4147,
+     "kind": "if"
+    }
+   ],
+   "headersMoved": [],
+   "locals": [],
+   "bridged": [
+    "sb",
+    "state",
+    "toast"
+   ],
+   "edits": 3
+  }
+ ],
+ "imports": [
+  {
+   "n": "bootAppConfig",
+   "cell": "bootAppHandles"
+  },
+  {
+   "n": "bootTemplatePartHandles",
+   "cell": "bootAppHandles"
+  }
+ ],
+ "kitVarsAdded": [],
+ "bridged": [
+  {
+   "n": "sb",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  },
+  {
+   "n": "state",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": true
+  },
+  {
+   "n": "toast",
+   "assigned": false,
+   "kind": "var",
+   "exposedBefore": true,
+   "setterBefore": false
+  }
+ ],
+ "exposed": [],
+ "head": {
+  "insertAfterLine": 2710,
+  "lines": 3
+ },
+ "tags": [
+  {
+   "file": "js/core/boot-app-handles.js",
+   "line": 2152,
+   "where": "after"
+  }
+ ],
+ "edits": 3,
+ "htmlLinesBefore": 4189,
+ "htmlLinesAfter": 4187,
+ "files": {
+  "js/core/boot-app-handles.js": 40
+ },
+ "guardedAllowed": [
+  {
+   "name": "OURGOAL_CONFIG",
+   "approval": "상민님 2026-10-11 「결심 1 : 승인, 금고 변경 승인, 결심 2 : 승인」 가운데 결심 2 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(오케스트레이터가 전한 글자)",
+   "hits": [
+    {
+     "region": "bootAppConfig",
+     "line": 2769,
+     "guardedWords": 1,
+     "prefixEdits": 0
+    },
+    {
+     "region": "bootAppConfig",
+     "line": 2770,
+     "guardedWords": 2,
+     "prefixEdits": 0
+    }
+   ]
+  },
+  {
+   "name": "OurgoalTemplateCredit",
+   "approval": "상민님 2026-10-11 「결심 1 : 승인, 금고 변경 승인, 결심 2 : 승인」 가운데 결심 2 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(오케스트레이터가 전한 글자)",
+   "hits": [
+    {
+     "region": "bootTemplatePartHandles",
+     "line": 4145,
+     "guardedWords": 3,
+     "prefixEdits": 3
+    }
+   ]
+  }
+ ]
+}
