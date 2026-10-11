@@ -1,0 +1,99 @@
+{
+ "tool": "reports/TASK-ES-686/court-newdir-repro.cjs",
+ "type": "작업자 측정, 판정 아님 — 법정 코드는 읽기만 했다(금고 변경 0)",
+ "measuredAt": "2026-10-11T14:09:14.376Z",
+ "gitVersion": "git version 2.52.0.windows.1",
+ "courtCode": {
+  "file": "court/lib/preserve-source.js",
+  "what": "`git status --short` 의 줄마다 마지막 낱말을 허용 목록(index.html + cells[].file)과 글자로 맞댄다 — 맞지 않으면 「Unexpected file modified by generator: <낱말>」"
+ },
+ "allowed": [
+  "index.html",
+  "js/core/new.js",
+  "js/app/boot.js"
+ ],
+ "withoutFolderInBase": {
+  "baseHasAppFolder": false,
+  "statusShort": [
+   {
+    "line": "?? js/app/",
+    "lastWord": "js/app/",
+    "allowed": false
+   },
+   {
+    "line": "?? js/core/new.js",
+    "lastWord": "js/core/new.js",
+    "allowed": true
+   }
+  ],
+  "unexpected": [
+   "js/app/"
+  ],
+  "courtWouldFail": true,
+  "statusShortUntrackedAll": [
+   {
+    "line": "?? js/app/boot.js",
+    "lastWord": "js/app/boot.js",
+    "allowed": true
+   },
+   {
+    "line": "?? js/core/new.js",
+    "lastWord": "js/core/new.js",
+    "allowed": true
+   }
+  ],
+  "unexpectedWithUntrackedAll": []
+ },
+ "withFolderInBase": {
+  "baseHasAppFolder": true,
+  "statusShort": [
+   {
+    "line": "?? js/app/boot.js",
+    "lastWord": "js/app/boot.js",
+    "allowed": true
+   },
+   {
+    "line": "?? js/core/new.js",
+    "lastWord": "js/core/new.js",
+    "allowed": true
+   }
+  ],
+  "unexpected": [],
+  "courtWouldFail": false,
+  "statusShortUntrackedAll": [
+   {
+    "line": "?? js/app/boot.js",
+    "lastWord": "js/app/boot.js",
+    "allowed": true
+   },
+   {
+    "line": "?? js/core/new.js",
+    "lastWord": "js/core/new.js",
+    "allowed": true
+   }
+  ],
+  "unexpectedWithUntrackedAll": []
+ },
+ "summary": {
+  "failsWhenFolderIsNew": true,
+  "passesWithUntrackedAll": true,
+  "passesWhenFolderExistsInBase": true
+ },
+ "observedOnRealCommits": {
+  "note": "아래 둘은 #TASK-ES-685(마지막 정리) 준비 때 법정의 recomputeSplit 을 실제 커밋에 직접 불러 받은 결과다(작업자 PC, 2026-10-11). 이 도구가 다시 만들지는 않는다 — 글자를 옮겨 적은 기록이다",
+  "baseWithoutAppFolder": {
+   "base": "4ea2bd73",
+   "result": "{\"ok\":false,\"reason\":\"Unexpected file modified by generator: js/app/\",\"details\":{\"checkedFiles\":[{\"file\":\"index.html\",\"genLength\":196660,\"headLength\":196660},{\"file\":\"js/app/boot.js\",\"genLength\":3686,\"headLength\":3686}]}}",
+   "meaning": "두 파일은 기준 생성기 재실행 결과와 바이트 길이까지 맞춰 본 뒤(대조 통과), 그다음 status 검사에서 폴더 줄에 걸렸다"
+  },
+  "baseWithAppFolderReadme": {
+   "base": "4ea2bd73 에 js/app/README.md 한 장을 얹은 임시 커밋(저장소 밖 실험 — push 없음, 가지 삭제)",
+   "result": "{\"ok\":true,\"details\":{\"checkedFiles\":[{\"file\":\"index.html\",\"genLength\":196660,\"headLength\":196660},{\"file\":\"js/app/boot.js\",\"genLength\":3686,\"headLength\":3686}]}}"
+  }
+ },
+ "fixCandidate": {
+  "where": "court/lib/preserve-source.js 의 status 호출",
+  "change": "`git status --short` → `git status --short --untracked-files=all`(새 폴더 안의 파일도 파일 단위로 나온다)",
+  "status": "금고라 이 PR 은 하지 않는다 — 작업 끝 보고에서 법정 결함으로 올린다(상민님 결심 사안)"
+ }
+}
