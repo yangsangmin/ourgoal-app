@@ -1,0 +1,203 @@
+{
+  "id": "s06-tool-windows-b",
+  "title": "창의 도구 단추 「마켓」·「AI 사진 인식」은 각자의 창을 열고 닫기로 닫히고, 「표 속성 편집」은 열을 하나 더해 「표에 적용」하면 닫히며, 「+ 새 템플릿」으로 저장한 템플릿은 다시 연 창의 템플릿 목록에 보이고, 「음성 입력」은 음성 창을 연다 (도구 — 창이 뜨는 단추 2: 복제·AI 분석·음성 인식 실행 없음)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proTplMarketBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#mktModalCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#mktModalCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#mktModalCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proVisionOcrBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#visionModalCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#visionModalCloseBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#visionModalCloseBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proEditColsBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#colEditConfirm"
+    },
+    {
+      "expect": "count",
+      "selector": ".col-edit-input",
+      "equals": 7
+    },
+    {
+      "do": "click",
+      "selector": "#addColActionBtn"
+    },
+    {
+      "expect": "count",
+      "selector": ".col-edit-input",
+      "equals": 8
+    },
+    {
+      "do": "click",
+      "selector": "#colEditConfirm"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#colEditConfirm"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#proCreateTplBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#customTplSave"
+    },
+    {
+      "do": "type",
+      "selector": "#customTplTitle",
+      "text": "안전망 템플릿"
+    },
+    {
+      "do": "click",
+      "selector": "#customTplSave"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#customTplSave"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTplSelect",
+      "text": "안전망 템플릿"
+    },
+    {
+      "do": "click",
+      "selector": "#proVoiceInputBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#voiceCloseBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

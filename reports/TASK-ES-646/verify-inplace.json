@@ -1,0 +1,1108 @@
+{
+ "tool": "reports/TASK-ES-646/tools/verify-inplace.cjs",
+ "type": "작업자 PC 예비 점검 — 판정 아님",
+ "ok": true,
+ "problems": [],
+ "before": {
+  "firstLine": 2987,
+  "lastLine": 3930,
+  "lines": 944
+ },
+ "after": {
+  "functions": {
+   "openProTemplateRecordModal": {
+    "firstLine": 2987,
+    "lastLine": 3139,
+    "lines": 153
+   },
+   "bindProRecTable": {
+    "firstLine": 3140,
+    "lastLine": 3209,
+    "lines": 70,
+    "registers": [
+     "syncCurrentRowsFromDOM",
+     "updateAnalyticsBanner",
+     "refreshTableBody",
+     "bindRowEvents"
+    ]
+   },
+   "bindProRecTools": {
+    "firstLine": 3210,
+    "lastLine": 3447,
+    "lines": 238,
+    "registers": []
+   },
+   "bindProRecTrendChart": {
+    "firstLine": 3448,
+    "lastLine": 3494,
+    "lines": 47,
+    "registers": [
+     "updateTrendChart"
+    ]
+   },
+   "bindProRecStopwatch": {
+    "firstLine": 3495,
+    "lastLine": 3758,
+    "lines": 264,
+    "registers": [
+     "stopSwTimer"
+    ]
+   },
+   "bindProRecSave": {
+    "firstLine": 3759,
+    "lastLine": 3945,
+    "lines": 187,
+    "registers": []
+   }
+  },
+  "maxLines": 264,
+  "callOrder": [
+   "ctx.sheet = sheet;",
+   "bindProRecTable(ctx)",
+   "bindProRecTools(ctx)",
+   "ctx.bindRowEvents();",
+   "bindProRecTrendChart(ctx)",
+   "bindProRecStopwatch(ctx)",
+   "bindProRecSave(ctx)"
+  ]
+ },
+ "tokens": {
+  "old": 6739,
+  "newLinearized": 7237,
+  "mismatch": null,
+  "allowed": {
+   "ctxPrefixOnReference": 246,
+   "varDeclToCtx": [
+    "isNew",
+    "allTpls",
+    "curTpl",
+    "columns",
+    "rows",
+    "attachedPhoto"
+   ],
+   "addedCodeTokens": 119,
+   "addedCode": "var ctx = { editRec : editRec , initialDate : initialDate , renderRowsHtml : renderRowsHtml } ; ctx . sheet = sheet ; bindProRecTable ( ctx ) ; bindProRecTools ( ctx ) ; bindProRecTrendChart ( ctx ) ; bindProRecStopwatch ( ctx ) ; bindProRecSave ( ctx ) ; function bindProRecTable ( ctx ) { ctx . syncCurrentRowsFromDOM = syncCurrentRowsFromDOM ; ctx . updateAnalyticsBanner = updateAnalyticsBanner ; ctx . refreshTableBody = refreshTableBody ; ctx . bindRowEvents = bindRowEvents ; } function bindProRecTools ( ctx ) { } function bindProRecTrendChart ( ctx ) { ctx . updateTrendChart = updateTrendChart ; } function bindProRecStopwatch ( ctx ) { ctx . stopSwTimer = stopSwTimer ; } function bindProRecSave ( ctx ) { }"
+  },
+  "outsideAllowed": 0
+ },
+ "comments": {
+  "old": 25,
+  "newWithoutAdded": 25,
+  "same": true,
+  "added": 6
+ },
+ "prefixExpectation": {
+  "sitesChecked": 469,
+  "mismatches": 0,
+  "byName": {
+   "isNew": 4,
+   "editRec": 28,
+   "allTpls": 8,
+   "curTpl": 42,
+   "columns": 41,
+   "rows": 35,
+   "initialDate": 10,
+   "attachedPhoto": 5,
+   "sheet": 49,
+   "renderRowsHtml": 1,
+   "refreshTableBody": 8,
+   "syncCurrentRowsFromDOM": 12,
+   "updateTrendChart": 2,
+   "bindRowEvents": 1,
+   "updateAnalyticsBanner": 2,
+   "stopSwTimer": 4
+  }
+ },
+ "ctx": {
+  "data": [
+   "editRec",
+   "initialDate",
+   "isNew",
+   "allTpls",
+   "curTpl",
+   "columns",
+   "rows",
+   "attachedPhoto",
+   "sheet"
+  ],
+  "functions": [
+   "renderRowsHtml",
+   "syncCurrentRowsFromDOM",
+   "updateAnalyticsBanner",
+   "refreshTableBody",
+   "bindRowEvents",
+   "updateTrendChart",
+   "stopSwTimer"
+  ],
+  "members": 16,
+  "providedBy": {
+   "editRec": "꾸러미 만드는 문",
+   "initialDate": "꾸러미 만드는 문",
+   "renderRowsHtml": "꾸러미 만드는 문",
+   "sheet": "콜백 첫 문",
+   "isNew": "바뀐 선언",
+   "allTpls": "바뀐 선언",
+   "curTpl": "바뀐 선언",
+   "columns": "바뀐 선언",
+   "rows": "바뀐 선언",
+   "attachedPhoto": "바뀐 선언",
+   "syncCurrentRowsFromDOM": "등록(bindProRecTable)",
+   "updateAnalyticsBanner": "등록(bindProRecTable)",
+   "refreshTableBody": "등록(bindProRecTable)",
+   "bindRowEvents": "등록(bindProRecTable)",
+   "updateTrendChart": "등록(bindProRecTrendChart)",
+   "stopSwTimer": "등록(bindProRecStopwatch)"
+  },
+  "membersRead": {
+   "isNew": 4,
+   "editRec": 28,
+   "allTpls": 8,
+   "curTpl": 42,
+   "columns": 41,
+   "rows": 35,
+   "initialDate": 10,
+   "attachedPhoto": 5,
+   "sheet": 50,
+   "bindRowEvents": 2,
+   "syncCurrentRowsFromDOM": 13,
+   "updateAnalyticsBanner": 3,
+   "refreshTableBody": 9,
+   "renderRowsHtml": 1,
+   "updateTrendChart": 3,
+   "stopSwTimer": 5
+  },
+  "missing": [],
+  "surplus": []
+ },
+ "closureVariables": [
+  {
+   "name": "editRec",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 22,
+    "bindProRecSave": 6
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 28
+  },
+  {
+   "name": "initialTplKey",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 3
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "initialDate",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 4,
+    "bindProRecTools": 1,
+    "bindProRecSave": 5
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 10
+  },
+  {
+   "name": "isNew",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1,
+    "bindProRecSave": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 4
+  },
+  {
+   "name": "allTpls",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 5,
+    "bindProRecTools": 1
+   },
+   "writtenIn": {
+    "bindProRecTools": 1
+   },
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 8
+  },
+  {
+   "name": "curTpl",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 11,
+    "bindProRecTable": 1,
+    "bindProRecTools": 18,
+    "bindProRecTrendChart": 1,
+    "bindProRecSave": 8
+   },
+   "writtenIn": {
+    "bindProRecTools": 2
+   },
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 42
+  },
+  {
+   "name": "columns",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 4,
+    "bindProRecTable": 4,
+    "bindProRecTools": 19,
+    "bindProRecStopwatch": 7,
+    "bindProRecSave": 3
+   },
+   "writtenIn": {
+    "bindProRecTools": 3
+   },
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 41
+  },
+  {
+   "name": "rows",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 2,
+    "bindProRecTable": 9,
+    "bindProRecTools": 12,
+    "bindProRecSave": 2
+   },
+   "writtenIn": {
+    "entry": 3,
+    "bindProRecTable": 1,
+    "bindProRecTools": 5
+   },
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 35
+  },
+  {
+   "name": "defaultDateVal",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "recordDateVal",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "memoVal",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "attachedPhoto",
+   "kind": "var",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 2,
+    "bindProRecSave": 1
+   },
+   "writtenIn": {
+    "bindProRecTools": 1
+   },
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 5
+  },
+  {
+   "name": "renderModal",
+   "kind": "function",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "renderRowsHtml",
+   "kind": "function",
+   "declaredIn": "entry",
+   "readIn": {
+    "entry": 1,
+    "bindProRecTable": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 1
+  },
+  {
+   "name": "sheet",
+   "kind": "param",
+   "declaredIn": "entry",
+   "readIn": {
+    "bindProRecTable": 8,
+    "bindProRecTools": 21,
+    "bindProRecTrendChart": 2,
+    "bindProRecStopwatch": 11,
+    "bindProRecSave": 7
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 49
+  },
+  {
+   "name": "syncCurrentRowsFromDOM",
+   "kind": "function",
+   "declaredIn": "bindProRecTable",
+   "readIn": {
+    "bindProRecTable": 3,
+    "bindProRecTools": 9,
+    "bindProRecStopwatch": 2,
+    "bindProRecSave": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 12
+  },
+  {
+   "name": "updateAnalyticsBanner",
+   "kind": "function",
+   "declaredIn": "bindProRecTable",
+   "readIn": {
+    "bindProRecTable": 2,
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 2
+  },
+  {
+   "name": "refreshTableBody",
+   "kind": "function",
+   "declaredIn": "bindProRecTable",
+   "readIn": {
+    "bindProRecTable": 2,
+    "bindProRecTools": 8
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 8
+  },
+  {
+   "name": "bindRowEvents",
+   "kind": "function",
+   "declaredIn": "bindProRecTable",
+   "readIn": {
+    "bindProRecTable": 1,
+    "entry": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 1
+  },
+  {
+   "name": "addNewRow",
+   "kind": "function",
+   "declaredIn": "bindProRecTable",
+   "readIn": {
+    "bindProRecTable": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "tableBody",
+   "kind": "var",
+   "declaredIn": "bindProRecTable",
+   "readIn": {
+    "bindProRecTable": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "addBtn2",
+   "kind": "var",
+   "declaredIn": "bindProRecTable",
+   "readIn": {
+    "bindProRecTable": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "quickLoadBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "coachBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "notionBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "csvImportBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "csvExportBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "wearableBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "marketBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "visionBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "voiceBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "tplSelect",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 4
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "createBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "fileInp",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 3
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "photoBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "photoPrev",
+   "kind": "var",
+   "declaredIn": "bindProRecTools",
+   "readIn": {
+    "bindProRecTools": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "curChartPeriod",
+   "kind": "var",
+   "declaredIn": "bindProRecTrendChart",
+   "readIn": {
+    "bindProRecTrendChart": 2
+   },
+   "writtenIn": {
+    "bindProRecTrendChart": 1
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "bindChartEvents",
+   "kind": "function",
+   "declaredIn": "bindProRecTrendChart",
+   "readIn": {
+    "bindProRecTrendChart": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "updateTrendChart",
+   "kind": "function",
+   "declaredIn": "bindProRecTrendChart",
+   "readIn": {
+    "bindProRecTools": 2,
+    "bindProRecTrendChart": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 2
+  },
+  {
+   "name": "swTimerId",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 2
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swRunning",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 2
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swMode",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 11
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 1
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swTargetMs",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 5
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 5
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swElapsedMs",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 7
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 3
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swLastTick",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 1
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 2
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swLaps",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 8
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 1
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "lastFocusedCell",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 6
+   },
+   "writtenIn": {
+    "bindProRecStopwatch": 1
+   },
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swDisplay",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 4
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swStartPauseBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 5
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swResetBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swLapBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swInjectBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swLapsList",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 10
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "swModeChips",
+   "kind": "var",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "updateSwDisplay",
+   "kind": "function",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 3
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "stopSwTimer",
+   "kind": "function",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 3,
+    "bindProRecSave": 4
+   },
+   "writtenIn": {},
+   "acrossPieces": true,
+   "viaCtx": true,
+   "ctxSites": 4
+  },
+  {
+   "name": "resetSw",
+   "kind": "function",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "renderLapsUI",
+   "kind": "function",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "injectLapIntoTable",
+   "kind": "function",
+   "declaredIn": "bindProRecStopwatch",
+   "readIn": {
+    "bindProRecStopwatch": 1
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "executeSave",
+   "kind": "function",
+   "declaredIn": "bindProRecSave",
+   "readIn": {
+    "bindProRecSave": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "backBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecSave",
+   "readIn": {
+    "bindProRecSave": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  },
+  {
+   "name": "cancelBtn",
+   "kind": "var",
+   "declaredIn": "bindProRecSave",
+   "readIn": {
+    "bindProRecSave": 2
+   },
+   "writtenIn": {},
+   "acrossPieces": false,
+   "viaCtx": false,
+   "ctxSites": 0
+  }
+ ],
+ "scope": {
+  "closureNames": 62,
+  "leaks": [],
+  "freeNamesOld": 62,
+  "freeNamesNew": 67,
+  "newOuter": [
+   "bindProRecTable",
+   "bindProRecTools",
+   "bindProRecTrendChart",
+   "bindProRecStopwatch",
+   "bindProRecSave"
+  ],
+  "lostOuter": [],
+  "unexpectedOuter": [],
+  "outerCountDiff": [],
+  "freeNamesPerFunction": {
+   "openProTemplateRecordModal": 19,
+   "bindProRecTable": 4,
+   "bindProRecTools": 21,
+   "bindProRecTrendChart": 3,
+   "bindProRecStopwatch": 12,
+   "bindProRecSave": 31
+  },
+  "topLevelThisArguments": 0
+ },
+ "save": {
+  "found": true,
+  "piece": "bindProRecSave",
+  "async": [
+   true,
+   true
+  ],
+  "tokens": {
+   "old": 1252,
+   "newWithoutPrefix": 1252,
+   "prefixInsertions": 28,
+   "same": true
+  },
+  "calls": {
+   "old": 67,
+   "new": 67,
+   "sameOrder": true,
+   "sequence": [
+    "stopSwTimer",
+    "syncCurrentRowsFromDOM",
+    "(sheet.querySelector('#proRecDate').value || '').trim",
+    "sheet.querySelector",
+    "dateInpVal.indexOf",
+    "toLocalInputValue",
+    "new Date(schedDateVal).toISOString",
+    "(sheet.querySelector('#proRecMemo').value || '').trim",
+    "sheet.querySelector",
+    "rows.filter",
+    "r.some",
+    "String(cell).trim",
+    "String",
+    "rows.slice",
+    "newId",
+    "fmtYYMMDD",
+    "validRows.map(function(r){\n          return r.filter(Boolean).join(' | ');\n        }).join",
+    "validRows.map",
+    "r.filter(Boolean).join",
+    "r.filter",
+    "nowISO",
+    "schedList.find",
+    "uid",
+    "nowISO",
+    "schedList.push",
+    "schedDateVal.slice",
+    "isGoogleCalendarConnected",
+    "syncAllToGoogleCalendar().catch",
+    "syncAllToGoogleCalendar",
+    "state.profile.records.unshift",
+    "awardXP",
+    "state.profile.records.findIndex",
+    "state.profile.records.unshift",
+    "saveLocalSettings",
+    "syncRecordToMatchingGoals",
+    "renderRecordsScreen",
+    "renderGoalsScreen",
+    "renderCalendarScreen",
+    "renderLevelBadge",
+    "openCalendarDayEditHubModal",
+    "closeModal",
+    "«await»",
+    "saveProfile",
+    "pushRecordToNotion(recObj, curTpl, columns, validRows).then(function(res){\n            if(res && res.ok){\n              console.log('[Notion AutoPush Success]', res.summary);\n            }\n          }).catch",
+    "pushRecordToNotion(recObj, curTpl, columns, validRows).then",
+    "pushRecordToNotion",
+    "console.log",
+    "console.warn",
+    "toast",
+    "toast",
+    "burstConfetti",
+    "renderRecordFeedbackSlot",
+    "validRows.map(function(r){ return r.filter(Boolean).join(' '); }).join",
+    "validRows.map",
+    "r.filter(Boolean).join",
+    "r.filter",
+    "(state.profile.goals || []).find",
+    "requestAIFeedback(recGoal, summaryText || recObj.text, recObj.theme).then(async function(fb){\n            if(fb){\n              recObj.feedback = fb;\n              await saveProfile();\n              state.lastCapture = { record: recObj, goal: recGoal, feedback: fb };\n              renderRecordFeedbackSlot(fb);\n              renderFeedbackSlot(fb);\n              if(state.activeTab === 'records') renderRecordsScreen();\n              if(recGoal && recGoal.milestones && recGoal.milestones.length > 0){\n                maybeShowGoalUpdateModal(recGoal, fb);\n              }\n            }\n          }).catch",
+    "requestAIFeedback(recGoal, summaryText || recObj.text, recObj.theme).then",
+    "requestAIFeedback",
+    "«await»",
+    "saveProfile",
+    "renderRecordFeedbackSlot",
+    "renderFeedbackSlot",
+    "renderRecordsScreen",
+    "maybeShowGoalUpdateModal",
+    "console.warn"
+   ]
+  }
+ },
+ "restOfFileSame": true,
+ "topLevelFunctionDecls": {
+  "before": 1,
+  "after": 6,
+  "added": [
+   "bindProRecTable",
+   "bindProRecTools",
+   "bindProRecTrendChart",
+   "bindProRecStopwatch",
+   "bindProRecSave"
+  ]
+ }
+}

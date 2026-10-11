@@ -2985,36 +2985,37 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* 📋 전문적(내 전용 템플릿) 기록하기 메인 창 */
   function openProTemplateRecordModal(editRec, initialTplKey, initialDate){
-    var isNew = !editRec;
-    var allTpls = getAllProTemplates();
-    var curTpl = editRec ?
-      (allTpls.find(function(t){ return t.id===editRec.templateId || t.key===editRec.templateKey; }) || { id: editRec.templateId, key: editRec.templateKey, icon:'📋', title: editRec.templateTitle || '맞춤기록', columns: editRec.columns||['번호','항목'] }) :
-      (initialTplKey ? (allTpls.find(function(t){ return t.key===initialTplKey || t.id===initialTplKey; }) || allTpls[0]) : allTpls[0]);
+    var ctx = { editRec: editRec, initialDate: initialDate, renderRowsHtml: renderRowsHtml }; /* [#TASK-ES-646] 조각 함수들이 함께 보는 꾸러미 — 읽기·쓰기 모두 여기를 거친다 */
+    ctx.isNew = !ctx.editRec;
+    ctx.allTpls = getAllProTemplates();
+    ctx.curTpl = ctx.editRec ?
+      (ctx.allTpls.find(function(t){ return t.id===ctx.editRec.templateId || t.key===ctx.editRec.templateKey; }) || { id: ctx.editRec.templateId, key: ctx.editRec.templateKey, icon:'📋', title: ctx.editRec.templateTitle || '맞춤기록', columns: ctx.editRec.columns||['번호','항목'] }) :
+      (initialTplKey ? (ctx.allTpls.find(function(t){ return t.key===initialTplKey || t.id===initialTplKey; }) || ctx.allTpls[0]) : ctx.allTpls[0]);
 
-    var columns = editRec && editRec.columns ? editRec.columns.slice() : (curTpl.columns ? curTpl.columns.slice() : ['번호','운동종목','세트','횟수','시간','거리','강도(100점)']);
-    var rows = [];
-    if(editRec && editRec.rows && editRec.rows.length){
-      rows = editRec.rows.map(function(r){ return r.slice(); });
-    } else if(curTpl.defaultRows && curTpl.defaultRows.length){
-      rows = curTpl.defaultRows.map(function(r){ return r.slice(); });
+    ctx.columns = ctx.editRec && ctx.editRec.columns ? ctx.editRec.columns.slice() : (ctx.curTpl.columns ? ctx.curTpl.columns.slice() : ['번호','운동종목','세트','횟수','시간','거리','강도(100점)']);
+    ctx.rows = [];
+    if(ctx.editRec && ctx.editRec.rows && ctx.editRec.rows.length){
+      ctx.rows = ctx.editRec.rows.map(function(r){ return r.slice(); });
+    } else if(ctx.curTpl.defaultRows && ctx.curTpl.defaultRows.length){
+      ctx.rows = ctx.curTpl.defaultRows.map(function(r){ return r.slice(); });
     } else {
-      rows = [columns.map(function(c, i){ return i===0 ? '1' : ''; })];
+      ctx.rows = [ctx.columns.map(function(c, i){ return i===0 ? '1' : ''; })];
     }
 
-    var defaultDateVal = initialDate ? (initialDate + 'T' + pad(new Date().getHours()) + ':' + pad(new Date().getMinutes())) : toLocalInputValue(new Date());
-    var recordDateVal = editRec && editRec.startAt ? toLocalInputValue(editRec.startAt) : defaultDateVal;
-    var memoVal = editRec ? (editRec.memo || '') : '';
-    var attachedPhoto = editRec ? editRec.photo : null;
+    var defaultDateVal = ctx.initialDate ? (ctx.initialDate + 'T' + pad(new Date().getHours()) + ':' + pad(new Date().getMinutes())) : toLocalInputValue(new Date());
+    var recordDateVal = ctx.editRec && ctx.editRec.startAt ? toLocalInputValue(ctx.editRec.startAt) : defaultDateVal;
+    var memoVal = ctx.editRec ? (ctx.editRec.memo || '') : '';
+    ctx.attachedPhoto = ctx.editRec ? ctx.editRec.photo : null;
 
     function renderModal(){
-      var tplOptions = allTpls.map(function(t){
-        return '<option value="'+t.key+'"'+(t.key===curTpl.key?' selected':'')+'>'+t.icon+' '+t.title+' ('+t.columns.length+'개 속성)</option>';
+      var tplOptions = ctx.allTpls.map(function(t){
+        return '<option value="'+t.key+'"'+(t.key===ctx.curTpl.key?' selected':'')+'>'+t.icon+' '+t.title+' ('+t.columns.length+'개 속성)</option>';
       }).join('');
 
-      var backHtml = initialDate ? ('<div style="width:100%;margin-bottom:6px;"><span class="dm-back" id="proRecBackToHubBtn" style="cursor:pointer;margin:0;font-size:.875rem;color:var(--ink);font-weight:700;">‹ ' + initialDate + ' 일정 목록으로 돌아가기</span></div>') : '';
+      var backHtml = ctx.initialDate ? ('<div style="width:100%;margin-bottom:6px;"><span class="dm-back" id="proRecBackToHubBtn" style="cursor:pointer;margin:0;font-size:.875rem;color:var(--ink);font-weight:700;">‹ ' + ctx.initialDate + ' 일정 목록으로 돌아가기</span></div>') : '';
 
       return backHtml + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
-        '<h3 style="margin:0;">' + (isNew ? '전문(맞춤) 템플릿 기록' : '전문 템플릿 기록 수정') + '</h3>' +
+        '<h3 style="margin:0;">' + (ctx.isNew ? '전문(맞춤) 템플릿 기록' : '전문 템플릿 기록 수정') + '</h3>' +
         '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">' +
           '<button class="btn btn-ghost btn-sm" id="proQuickLoadBtn" type="button" style="font-size:.8125rem;padding:3px 7px;color:var(--ink);border-color:var(--rule);" title="이전 세션 루틴 1초 불러오기">루틴 불러오기</button>' +
           '<button class="btn btn-ghost btn-sm" id="proCoachBtn" type="button" style="font-size:.8125rem;padding:3px 7px;color:var(--ink);border-color:var(--rule);" title="AI 프로 코치 분석 리포트">AI 코치</button>' +
@@ -3040,17 +3041,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>' +
       '</div>' +
       '<div id="proTrendChartWrap" style="margin-bottom:10px;">' +
-        renderTrendSvgChart(computeTrendChartData(curTpl.key, (state.profile && state.profile.records) || [], '7')) +
+        renderTrendSvgChart(computeTrendChartData(ctx.curTpl.key, (state.profile && state.profile.records) || [], '7')) +
       '</div>' +
       '<div id="proStopwatchWrap" style="margin-bottom:10px;">' +
         renderStopwatchWidgetHtml() +
       '</div>' +
       '<div id="proAnalyticsWrap">' +
-        renderAnalyticsHtml(curTpl, columns, rows) +
+        renderAnalyticsHtml(ctx.curTpl, ctx.columns, ctx.rows) +
       '</div>' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px;flex-wrap:wrap;gap:6px;">' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span class="pro-tpl-badge">' + curTpl.icon + ' ' + escapeHtml(curTpl.title) + '</span>' +
+          '<span class="pro-tpl-badge">' + ctx.curTpl.icon + ' ' + escapeHtml(ctx.curTpl.title) + '</span>' +
           '<span class="faint" style="font-size:.8125rem;">노션 표 속성 기록</span>' +
         '</div>' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
@@ -3064,14 +3065,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<table class="pro-notion-table" id="proTable">' +
           '<thead>' +
             '<tr>' +
-              columns.map(function(c, cIdx){
+              ctx.columns.map(function(c, cIdx){
                 return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
               }).join('') +
               '<th style="width:36px;text-align:center;">삭제</th>' +
             '</tr>' +
           '</thead>' +
           '<tbody id="proTableBody">' +
-            renderRowsHtml(rows, columns) +
+            renderRowsHtml(ctx.rows, ctx.columns) +
           '</tbody>' +
         '</table>' +
       '</div>' +
@@ -3088,13 +3089,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<button class="btn btn-ghost btn-sm" id="proPhotoPickBtn" type="button">사진 첨부</button>' +
           '<input type="file" id="proFileInput" accept="image/*" style="display:none;">' +
           '<div id="proPhotoPreview" style="width:40px;height:40px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;border:1px solid var(--rule);">' +
-            (attachedPhoto ? '<img src="'+attachedPhoto+'" style="width:100%;height:100%;object-fit:cover;">' : '🖼️') +
+            (ctx.attachedPhoto ? '<img src="'+ctx.attachedPhoto+'" style="width:100%;height:100%;object-fit:cover;">' : '🖼️') +
           '</div>' +
         '</div>' +
       '</div>' +
       '<div style="padding:10px 14px;background:var(--card2);border-radius:12px;margin-bottom:14px;border:1px solid var(--rule);">' +
         '<div style="font-size:.8125rem;color:var(--ink);font-weight:700;margin-bottom:2px;">*일정연동 저장은 오늘 기록이 링크화되어 일정에 기록됩니다.</div>' +
-        '<div class="faint" style="font-size:.8125rem;">일정에 ' + fmtYYMMDD(recordDateVal) + curTpl.title + '(link주소) 형식으로 등록되며, 일정 탭에서 바로 열람할 수 있습니다.</div>' +
+        '<div class="faint" style="font-size:.8125rem;">일정에 ' + fmtYYMMDD(recordDateVal) + ctx.curTpl.title + '(link주소) 형식으로 등록되며, 일정 탭에서 바로 열람할 수 있습니다.</div>' +
       '</div>' +
       '<div class="modal-actions" style="gap:8px;flex-wrap:wrap;">' +
         '<button class="btn btn-ghost btn-sm" id="proCancelBtn" type="button" style="flex:0 0 auto;">취소</button>' +
@@ -3127,8 +3128,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     openModal(renderModal(), function(sheet){
+      ctx.sheet = sheet;
+      bindProRecTable(ctx);
+      bindProRecTools(ctx);
+      ctx.bindRowEvents();
+      bindProRecTrendChart(ctx);
+      bindProRecStopwatch(ctx);
+      bindProRecSave(ctx);
+    });
+  }
+  function bindProRecTable(ctx){ /* [#TASK-ES-646] 전문 템플릿 기록 창 조각 — 표 편집: 표의 칸을 읽어 행에 담기 · 실시간 분석 띠 · 표 다시 그리기 · 행 삭제 · 행 추가. 꾸러미(ctx)는 openProTemplateRecordModal 가 만든다 */
+      ctx.syncCurrentRowsFromDOM = syncCurrentRowsFromDOM; ctx.updateAnalyticsBanner = updateAnalyticsBanner; ctx.refreshTableBody = refreshTableBody; ctx.bindRowEvents = bindRowEvents;
       function syncCurrentRowsFromDOM(){
-        var tbody = sheet.querySelector('#proTableBody');
+        var tbody = ctx.sheet.querySelector('#proTableBody');
         if(!tbody) return;
         var newRows = [];
         tbody.querySelectorAll('tr').forEach(function(tr){
@@ -3139,34 +3151,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           });
           if(rowData.length) newRows.push(rowData);
         });
-        rows = newRows;
+        ctx.rows = newRows;
       }
 
       function updateAnalyticsBanner(){
-        var bannerWrap = sheet.querySelector('#proAnalyticsWrap');
+        var bannerWrap = ctx.sheet.querySelector('#proAnalyticsWrap');
         if(bannerWrap){
-          bannerWrap.innerHTML = renderAnalyticsHtml(curTpl, columns, rows);
+          bannerWrap.innerHTML = renderAnalyticsHtml(ctx.curTpl, ctx.columns, ctx.rows);
         }
       }
 
       function refreshTableBody(){
-        var tbody = sheet.querySelector('#proTableBody');
+        var tbody = ctx.sheet.querySelector('#proTableBody');
         if(!tbody) return;
-        tbody.innerHTML = renderRowsHtml(rows, columns);
+        tbody.innerHTML = ctx.renderRowsHtml(ctx.rows, ctx.columns);
         bindRowEvents();
         updateAnalyticsBanner();
       }
 
       function bindRowEvents(){
-        sheet.querySelectorAll('.pro-tpl-row-del').forEach(function(b){
+        ctx.sheet.querySelectorAll('.pro-tpl-row-del').forEach(function(b){
           b.onclick = function(){
             syncCurrentRowsFromDOM();
             var dIdx = parseInt(b.dataset.delrow, 10);
-            if(rows.length > 1){
-              rows.splice(dIdx, 1);
-              rows.forEach(function(r, i){ if(r[0] !== undefined) r[0] = String(i+1); });
+            if(ctx.rows.length > 1){
+              ctx.rows.splice(dIdx, 1);
+              ctx.rows.forEach(function(r, i){ if(r[0] !== undefined) r[0] = String(i+1); });
             } else {
-              rows[0] = columns.map(function(c, i){ return i===0 ? '1' : ''; });
+              ctx.rows[0] = ctx.columns.map(function(c, i){ return i===0 ? '1' : ''; });
             }
             refreshTableBody();
           };
@@ -3175,15 +3187,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       function addNewRow(){
         syncCurrentRowsFromDOM();
-        var nextNum = String(rows.length + 1);
-        var newRow = columns.map(function(c, i){ return i===0 ? nextNum : ''; });
-        rows.push(newRow);
+        var nextNum = String(ctx.rows.length + 1);
+        var newRow = ctx.columns.map(function(c, i){ return i===0 ? nextNum : ''; });
+        ctx.rows.push(newRow);
         refreshTableBody();
-        var inputs = sheet.querySelectorAll('.pro-tpl-cell-input[data-row="'+(rows.length-1)+'"]');
+        var inputs = ctx.sheet.querySelectorAll('.pro-tpl-cell-input[data-row="'+(ctx.rows.length-1)+'"]');
         if(inputs && inputs[1]) inputs[1].focus();
       }
 
-      var tableBody = sheet.querySelector('#proTableBody');
+      var tableBody = ctx.sheet.querySelector('#proTableBody');
       if(tableBody){
         tableBody.addEventListener('input', function(){
           syncCurrentRowsFromDOM();
@@ -3191,88 +3203,89 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
       }
 
-      sheet.querySelector('#proAddRowBtn').onclick = addNewRow;
-      var addBtn2 = sheet.querySelector('#proAddRowBtn2');
+      ctx.sheet.querySelector('#proAddRowBtn').onclick = addNewRow;
+      var addBtn2 = ctx.sheet.querySelector('#proAddRowBtn2');
       if(addBtn2) addBtn2.onclick = addNewRow;
-
+  }
+  function bindProRecTools(ctx){ /* [#TASK-ES-646] 전문 템플릿 기록 창 조각 — 도구 단추: 지난 루틴 불러오기 · AI 코치 · Notion 연동 · CSV 가져오기/내려받기 · 스마트워치 · 템플릿 마켓 · AI 사진 인식 · 음성 입력 · 표 속성 편집 · 템플릿 변경 · 템플릿 생성 · 사진 첨부. 꾸러미(ctx)는 openProTemplateRecordModal 가 만든다 */
       // ⚡ 지난 루틴 불러오기 (혁신 2)
-      var quickLoadBtn = sheet.querySelector('#proQuickLoadBtn');
+      var quickLoadBtn = ctx.sheet.querySelector('#proQuickLoadBtn');
       if(quickLoadBtn){
         quickLoadBtn.onclick = function(){
           var prev = (state.profile.records || []).find(function(r){
-            return r.type === 'template' && (r.templateKey === curTpl.key || r.templateId === curTpl.id) && r.rows && r.rows.length;
+            return r.type === 'template' && (r.templateKey === ctx.curTpl.key || r.templateId === ctx.curTpl.id) && r.rows && r.rows.length;
           });
           if(!prev){
             toast('이 템플릿으로 작성된 이전 기록이 없습니다. 첫 루틴을 완성해보세요!');
             return;
           }
-          rows = prev.rows.map(function(r, idx){
+          ctx.rows = prev.rows.map(function(r, idx){
             var copy = r.slice();
             if(copy[0] !== undefined) copy[0] = String(idx + 1);
             return copy;
           });
-          refreshTableBody();
+          ctx.refreshTableBody();
           toast('' + fmtYYMMDD(prev.startAt) + ' 이전 루틴을 성공적으로 불러왔어요!');
         };
       }
 
       // 🧠 AI 코치 리포트 버튼 (혁신 3)
-      var coachBtn = sheet.querySelector('#proCoachBtn');
+      var coachBtn = ctx.sheet.querySelector('#proCoachBtn');
       if(coachBtn){
         coachBtn.onclick = function(){
-          syncCurrentRowsFromDOM();
-          var memo = (sheet.querySelector('#proRecMemo').value || '').trim();
-          openProCoachReportModal(curTpl, columns, rows, memo);
+          ctx.syncCurrentRowsFromDOM();
+          var memo = (ctx.sheet.querySelector('#proRecMemo').value || '').trim();
+          openProCoachReportModal(ctx.curTpl, ctx.columns, ctx.rows, memo);
         };
       }
 
       // 🔄 Notion 연동 버튼 (혁신 4)
-      var notionBtn = sheet.querySelector('#proNotionExportBtn');
+      var notionBtn = ctx.sheet.querySelector('#proNotionExportBtn');
       if(notionBtn){
         notionBtn.onclick = function(){
-          syncCurrentRowsFromDOM();
-          openProNotionExportModal(curTpl, columns, rows);
+          ctx.syncCurrentRowsFromDOM();
+          openProNotionExportModal(ctx.curTpl, ctx.columns, ctx.rows);
         };
       }
 
       // 📥 CSV 가져오기
-      var csvImportBtn = sheet.querySelector('#proCsvImportBtn');
+      var csvImportBtn = ctx.sheet.querySelector('#proCsvImportBtn');
       if(csvImportBtn){
         csvImportBtn.onclick = function(){
-          syncCurrentRowsFromDOM();
-          openCsvImportModal(curTpl, columns, function(parsedRows){
+          ctx.syncCurrentRowsFromDOM();
+          openCsvImportModal(ctx.curTpl, ctx.columns, function(parsedRows){
             if(!parsedRows || !parsedRows.length) return;
-            rows = parsedRows.map(function(r, idx){
+            ctx.rows = parsedRows.map(function(r, idx){
               var newR = [];
-              for(var i=0; i<columns.length; i++){
+              for(var i=0; i<ctx.columns.length; i++){
                 newR[i] = (r[i] !== undefined) ? r[i] : (i===0 ? String(idx+1) : '');
               }
               return newR;
             });
-            refreshTableBody();
-            toast('CSV 표 데이터 ' + rows.length + '개 행을 성공적으로 가져왔어요!');
+            ctx.refreshTableBody();
+            toast('CSV 표 데이터 ' + ctx.rows.length + '개 행을 성공적으로 가져왔어요!');
           });
         };
       }
 
       // 📤 CSV 다운로드
-      var csvExportBtn = sheet.querySelector('#proCsvExportBtn');
+      var csvExportBtn = ctx.sheet.querySelector('#proCsvExportBtn');
       if(csvExportBtn){
         csvExportBtn.onclick = function(){
-          syncCurrentRowsFromDOM();
-          downloadTableAsCsv(curTpl, columns, rows);
+          ctx.syncCurrentRowsFromDOM();
+          downloadTableAsCsv(ctx.curTpl, ctx.columns, ctx.rows);
         };
       }
 
       // ⌚ 스마트워치 연동
-      var wearableBtn = sheet.querySelector('#proWearableSyncBtn');
+      var wearableBtn = ctx.sheet.querySelector('#proWearableSyncBtn');
       if(wearableBtn){
         wearableBtn.onclick = function(){
-          syncCurrentRowsFromDOM();
-          openWearableSyncModal(curTpl, columns, function(act){
+          ctx.syncCurrentRowsFromDOM();
+          openWearableSyncModal(ctx.curTpl, ctx.columns, function(act){
             if(!act) return;
-            var targetRow = rows[0] || columns.map(function(c, i){ return i===0 ? '1' : ''; });
-            columns.forEach(function(colName, cIdx){
+            var targetRow = ctx.rows[0] || ctx.columns.map(function(c, i){ return i===0 ? '1' : ''; });
+            ctx.columns.forEach(function(colName, cIdx){
               if(cIdx === 0) return;
               var c = colName.toLowerCase();
               if(/(?:심박수|bpm|맥박)/.test(c)){
@@ -3287,137 +3300,137 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 targetRow[cIdx] = act.pace;
               }
             });
-            if(!rows.length) rows.push(targetRow);
-            refreshTableBody();
+            if(!ctx.rows.length) ctx.rows.push(targetRow);
+            ctx.refreshTableBody();
             toast('[' + act.source + '] 운동 데이터가 표에 자동 매핑되었습니다!');
           });
         };
       }
 
       // 🏪 템플릿 마켓
-      var marketBtn = sheet.querySelector('#proTplMarketBtn');
+      var marketBtn = ctx.sheet.querySelector('#proTplMarketBtn');
       if(marketBtn){
         marketBtn.onclick = function(){
           openTemplateMarketModal(function(clonedTpl){
             closeModal();
-            openProTemplateRecordModal(null, clonedTpl.key, initialDate);
+            openProTemplateRecordModal(null, clonedTpl.key, ctx.initialDate);
           });
         };
       }
 
       // 📷 AI 사진 인식 (Vision-to-Table)
-      var visionBtn = sheet.querySelector('#proVisionOcrBtn');
+      var visionBtn = ctx.sheet.querySelector('#proVisionOcrBtn');
       if(visionBtn){
         visionBtn.onclick = function(){
-          syncCurrentRowsFromDOM();
-          openVisionTableModal(curTpl, columns, function(newRows){
+          ctx.syncCurrentRowsFromDOM();
+          openVisionTableModal(ctx.curTpl, ctx.columns, function(newRows){
             if(!newRows || !newRows.length) return;
             newRows.forEach(function(r){
               var rowArr = [];
-              for(var i=0; i<columns.length; i++){
-                rowArr[i] = (r[i] !== undefined) ? r[i] : (i===0 ? String(rows.length + 1) : '');
+              for(var i=0; i<ctx.columns.length; i++){
+                rowArr[i] = (r[i] !== undefined) ? r[i] : (i===0 ? String(ctx.rows.length + 1) : '');
               }
-              rows.push(rowArr);
+              ctx.rows.push(rowArr);
             });
-            refreshTableBody();
+            ctx.refreshTableBody();
             toast('사진에서 ' + newRows.length + '개 행을 추출하여 표에 추가했습니다!');
           });
         };
       }
 
       // 🎙️ 음성 입력 (Voice-to-Table)
-      var voiceBtn = sheet.querySelector('#proVoiceInputBtn');
+      var voiceBtn = ctx.sheet.querySelector('#proVoiceInputBtn');
       if(voiceBtn){
         voiceBtn.onclick = function(){
-          syncCurrentRowsFromDOM();
-          openVoiceTableModal(curTpl, columns, function(newRow){
+          ctx.syncCurrentRowsFromDOM();
+          openVoiceTableModal(ctx.curTpl, ctx.columns, function(newRow){
             if(!newRow) return;
             var rowArr = [];
-            for(var i=0; i<columns.length; i++){
-              rowArr[i] = (newRow[i] !== undefined) ? newRow[i] : (i===0 ? String(rows.length + 1) : '');
+            for(var i=0; i<ctx.columns.length; i++){
+              rowArr[i] = (newRow[i] !== undefined) ? newRow[i] : (i===0 ? String(ctx.rows.length + 1) : '');
             }
-            rows.push(rowArr);
-            refreshTableBody();
+            ctx.rows.push(rowArr);
+            ctx.refreshTableBody();
             toast('음성으로 새 행이 표에 추가되었습니다!');
           });
         };
       }
 
       // 표 속성 편집
-      sheet.querySelector('#proEditColsBtn').onclick = function(){
-        syncCurrentRowsFromDOM();
-        openTemplateColumnEditModal(columns, function(updatedCols){
-          columns = updatedCols;
-          rows = rows.map(function(r){
+      ctx.sheet.querySelector('#proEditColsBtn').onclick = function(){
+        ctx.syncCurrentRowsFromDOM();
+        openTemplateColumnEditModal(ctx.columns, function(updatedCols){
+          ctx.columns = updatedCols;
+          ctx.rows = ctx.rows.map(function(r){
             var newR = [];
-            for(var i=0; i<columns.length; i++){
+            for(var i=0; i<ctx.columns.length; i++){
               newR[i] = (r[i] !== undefined) ? r[i] : (i===0 ? r[0] : '');
             }
             return newR;
           });
-          var thead = sheet.querySelector('#proTable thead tr');
+          var thead = ctx.sheet.querySelector('#proTable thead tr');
           if(thead){
-            thead.innerHTML = columns.map(function(c, cIdx){
+            thead.innerHTML = ctx.columns.map(function(c, cIdx){
               return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
             }).join('') + '<th style="width:36px;text-align:center;">삭제</th>';
           }
-          refreshTableBody();
+          ctx.refreshTableBody();
           toast('표 속성을 변경했어요');
         });
       };
 
       // 템플릿 변경
-      var tplSelect = sheet.querySelector('#proTplSelect');
+      var tplSelect = ctx.sheet.querySelector('#proTplSelect');
       if(tplSelect){
         tplSelect.onchange = function(){
-          syncCurrentRowsFromDOM();
+          ctx.syncCurrentRowsFromDOM();
           var selKey = tplSelect.value;
-          curTpl = getProTemplateByKey(selKey);
-          columns = curTpl.columns ? curTpl.columns.slice() : ['번호','항목'];
-          rows = curTpl.defaultRows ? curTpl.defaultRows.map(function(r){ return r.slice(); }) : [columns.map(function(c, i){ return i===0 ? '1' : ''; })];
-          var thead = sheet.querySelector('#proTable thead tr');
+          ctx.curTpl = getProTemplateByKey(selKey);
+          ctx.columns = ctx.curTpl.columns ? ctx.curTpl.columns.slice() : ['번호','항목'];
+          ctx.rows = ctx.curTpl.defaultRows ? ctx.curTpl.defaultRows.map(function(r){ return r.slice(); }) : [ctx.columns.map(function(c, i){ return i===0 ? '1' : ''; })];
+          var thead = ctx.sheet.querySelector('#proTable thead tr');
           if(thead){
-            thead.innerHTML = columns.map(function(c, cIdx){
+            thead.innerHTML = ctx.columns.map(function(c, cIdx){
               return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
             }).join('') + '<th style="width:36px;text-align:center;">삭제</th>';
           }
-          var badge = sheet.querySelector('.pro-tpl-badge');
-          if(badge) badge.innerHTML = curTpl.icon + ' ' + escapeHtml(curTpl.title);
-          refreshTableBody();
-          updateTrendChart();
+          var badge = ctx.sheet.querySelector('.pro-tpl-badge');
+          if(badge) badge.innerHTML = ctx.curTpl.icon + ' ' + escapeHtml(ctx.curTpl.title);
+          ctx.refreshTableBody();
+          ctx.updateTrendChart();
         };
       }
 
       // 템플릿 생성 버튼
-      var createBtn = sheet.querySelector('#proCreateTplBtn');
+      var createBtn = ctx.sheet.querySelector('#proCreateTplBtn');
       if(createBtn){
         createBtn.onclick = function(){
           openCreateCustomTemplateModal(function(newTpl){
-            curTpl = newTpl;
-            columns = newTpl.columns.slice();
-            rows = newTpl.defaultRows ? newTpl.defaultRows.map(function(r){ return r.slice(); }) : [columns.map(function(c, i){ return i===0 ? '1' : ''; })];
-            allTpls = getAllProTemplates();
-            tplSelect.innerHTML = allTpls.map(function(t){
-              return '<option value="'+t.key+'"'+(t.key===curTpl.key?' selected':'')+'>'+t.icon+' '+t.title+' ('+t.columns.length+'개 속성)</option>';
+            ctx.curTpl = newTpl;
+            ctx.columns = newTpl.columns.slice();
+            ctx.rows = newTpl.defaultRows ? newTpl.defaultRows.map(function(r){ return r.slice(); }) : [ctx.columns.map(function(c, i){ return i===0 ? '1' : ''; })];
+            ctx.allTpls = getAllProTemplates();
+            tplSelect.innerHTML = ctx.allTpls.map(function(t){
+              return '<option value="'+t.key+'"'+(t.key===ctx.curTpl.key?' selected':'')+'>'+t.icon+' '+t.title+' ('+t.columns.length+'개 속성)</option>';
             }).join('');
-            var thead = sheet.querySelector('#proTable thead tr');
+            var thead = ctx.sheet.querySelector('#proTable thead tr');
             if(thead){
-              thead.innerHTML = columns.map(function(c, cIdx){
+              thead.innerHTML = ctx.columns.map(function(c, cIdx){
                 return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
               }).join('') + '<th style="width:36px;text-align:center;">삭제</th>';
             }
-            var badge = sheet.querySelector('.pro-tpl-badge');
-            if(badge) badge.innerHTML = curTpl.icon + ' ' + escapeHtml(curTpl.title);
-            refreshTableBody();
-            updateTrendChart();
+            var badge = ctx.sheet.querySelector('.pro-tpl-badge');
+            if(badge) badge.innerHTML = ctx.curTpl.icon + ' ' + escapeHtml(ctx.curTpl.title);
+            ctx.refreshTableBody();
+            ctx.updateTrendChart();
           });
         };
       }
 
       // 사진 첨부
-      var fileInp = sheet.querySelector('#proFileInput');
-      var photoBtn = sheet.querySelector('#proPhotoPickBtn');
-      var photoPrev = sheet.querySelector('#proPhotoPreview');
+      var fileInp = ctx.sheet.querySelector('#proFileInput');
+      var photoBtn = ctx.sheet.querySelector('#proPhotoPickBtn');
+      var photoPrev = ctx.sheet.querySelector('#proPhotoPreview');
       if(photoBtn && fileInp){
         photoBtn.onclick = function(){ fileInp.click(); };
         fileInp.onchange = function(e){
@@ -3425,19 +3438,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           if(!f) return;
           resizeImageToDataUrl(f, 600, function(dUrl){
             if(dUrl){
-              attachedPhoto = dUrl;
+              ctx.attachedPhoto = dUrl;
               photoPrev.innerHTML = '<img src="'+dUrl+'" style="width:100%;height:100%;object-fit:cover;">';
             }
           });
         };
       }
-
-      bindRowEvents();
-
+  }
+  function bindProRecTrendChart(ctx){ /* [#TASK-ES-646] 전문 템플릿 기록 창 조각 — 성장 추이 차트: 점 설명 · 기간 칩 · 다시 그리기. 꾸러미(ctx)는 openProTemplateRecordModal 가 만든다 */
+      ctx.updateTrendChart = updateTrendChart;
       // 📈 표 기록 기반 일자별 자동 성장 추이 차트 제어
       var curChartPeriod = '7';
       function bindChartEvents(){
-        var chartWrap = sheet.querySelector('#proTrendChartWrap');
+        var chartWrap = ctx.sheet.querySelector('#proTrendChartWrap');
         if(!chartWrap) return;
 
         var tip = chartWrap.querySelector('#trendTooltip');
@@ -3465,9 +3478,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       function updateTrendChart(){
-        var chartWrap = sheet.querySelector('#proTrendChartWrap');
+        var chartWrap = ctx.sheet.querySelector('#proTrendChartWrap');
         if(!chartWrap) return;
-        var cData = computeTrendChartData(curTpl.key, (state.profile && state.profile.records) || [], curChartPeriod);
+        var cData = computeTrendChartData(ctx.curTpl.key, (state.profile && state.profile.records) || [], curChartPeriod);
         chartWrap.innerHTML = renderTrendSvgChart(cData);
         var activeBtn = chartWrap.querySelector('.pro-trend-filter-chip[data-period="'+curChartPeriod+'"]');
         if(activeBtn){
@@ -3478,7 +3491,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       bindChartEvents();
-
+  }
+  function bindProRecStopwatch(ctx){ /* [#TASK-ES-646] 전문 템플릿 기록 창 조각 — 스톱워치·인터벌 타이머: 시작/정지 · 리셋 · 모드 · 랩 · 랩과 지금 시간을 표 칸에 기입. 꾸러미(ctx)는 openProTemplateRecordModal 가 만든다 */
+      ctx.stopSwTimer = stopSwTimer;
       // ⏱️ 인앱 스톱워치 & 인터벌 타이머 위젯 제어
       var swTimerId = null;
       var swRunning = false;
@@ -3489,13 +3504,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var swLaps = [];
       var lastFocusedCell = null;
 
-      var swDisplay = sheet.querySelector('#swDisplay');
-      var swStartPauseBtn = sheet.querySelector('#swStartPauseBtn');
-      var swResetBtn = sheet.querySelector('#swResetBtn');
-      var swLapBtn = sheet.querySelector('#swLapBtn');
-      var swInjectBtn = sheet.querySelector('#swInjectBtn');
-      var swLapsList = sheet.querySelector('#swLapsList');
-      var swModeChips = sheet.querySelectorAll('.pro-sw-mode-chip');
+      var swDisplay = ctx.sheet.querySelector('#swDisplay');
+      var swStartPauseBtn = ctx.sheet.querySelector('#swStartPauseBtn');
+      var swResetBtn = ctx.sheet.querySelector('#swResetBtn');
+      var swLapBtn = ctx.sheet.querySelector('#swLapBtn');
+      var swInjectBtn = ctx.sheet.querySelector('#swInjectBtn');
+      var swLapsList = ctx.sheet.querySelector('#swLapsList');
+      var swModeChips = ctx.sheet.querySelectorAll('.pro-sw-mode-chip');
 
       function updateSwDisplay(){
         if(!swDisplay) return;
@@ -3620,15 +3635,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           targetInp = lastFocusedCell;
         } else {
           var timeColIdx = -1;
-          columns.forEach(function(c, i){
+          ctx.columns.forEach(function(c, i){
             if(timeColIdx === -1 && /(?:시간|페이스|time|타임|소요)/i.test(c)){
               timeColIdx = i;
             }
           });
-          if(timeColIdx === -1 && columns.length > 1) timeColIdx = columns.length - 1;
+          if(timeColIdx === -1 && ctx.columns.length > 1) timeColIdx = ctx.columns.length - 1;
 
           if(timeColIdx !== -1){
-            var inps = sheet.querySelectorAll('.pro-tpl-cell-input[data-col="'+timeColIdx+'"]');
+            var inps = ctx.sheet.querySelectorAll('.pro-tpl-cell-input[data-col="'+timeColIdx+'"]');
             for(var j=0; j<inps.length; j++){
               if(!inps[j].value.trim()){
                 targetInp = inps[j];
@@ -3652,13 +3667,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var rowIdx = targetInp.getAttribute('data-row');
         if(rowIdx !== null && lap.memo && lap.memo.trim()){
           var itemColIdx = -1;
-          columns.forEach(function(c, i){
+          ctx.columns.forEach(function(c, i){
             if(itemColIdx === -1 && /(?:항목|종목|메모|내용|활동|운동)/i.test(c)){
               itemColIdx = i;
             }
           });
           if(itemColIdx !== -1){
-            var memoInp = sheet.querySelector('.pro-tpl-cell-input[data-row="'+rowIdx+'"][data-col="'+itemColIdx+'"]');
+            var memoInp = ctx.sheet.querySelector('.pro-tpl-cell-input[data-row="'+rowIdx+'"][data-col="'+itemColIdx+'"]');
             if(memoInp && !memoInp.value.trim()){
               memoInp.value = lap.memo.trim();
               memoInp.classList.add('cell-highlight-flash');
@@ -3667,8 +3682,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }
         }
 
-        syncCurrentRowsFromDOM();
-        updateAnalyticsBanner();
+        ctx.syncCurrentRowsFromDOM();
+        ctx.updateAnalyticsBanner();
         toast('랩 ' + lap.num + ' (' + timeVal + ')을 표에 기입했습니다!');
       }
 
@@ -3691,7 +3706,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       // Track cell focus for stopwatch injection
-      sheet.addEventListener('focusin', function(e){
+      ctx.sheet.addEventListener('focusin', function(e){
         if(e.target && e.target.classList && e.target.classList.contains('pro-tpl-cell-input')){
           lastFocusedCell = e.target;
         }
@@ -3705,15 +3720,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           } else {
             // Find column matching 시간|페이스|time|소요시간|타임
             var timeColIdx = -1;
-            columns.forEach(function(c, i){
+            ctx.columns.forEach(function(c, i){
               if(timeColIdx === -1 && /(?:시간|페이스|time|타임|소요)/i.test(c)){
                 timeColIdx = i;
               }
             });
-            if(timeColIdx === -1 && columns.length > 1) timeColIdx = columns.length - 1;
+            if(timeColIdx === -1 && ctx.columns.length > 1) timeColIdx = ctx.columns.length - 1;
 
             if(timeColIdx !== -1){
-              var inps = sheet.querySelectorAll('.pro-tpl-cell-input[data-col="'+timeColIdx+'"]');
+              var inps = ctx.sheet.querySelectorAll('.pro-tpl-cell-input[data-col="'+timeColIdx+'"]');
               for(var j=0; j<inps.length; j++){
                 if(!inps[j].value.trim()){
                   targetInp = inps[j];
@@ -3735,33 +3750,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           targetInp.classList.add('cell-highlight-flash');
           setTimeout(function(){ targetInp.classList.remove('cell-highlight-flash'); }, 1400);
 
-          syncCurrentRowsFromDOM();
-          updateAnalyticsBanner();
+          ctx.syncCurrentRowsFromDOM();
+          ctx.updateAnalyticsBanner();
           toast('표에 측정 시간(' + timeVal + ')을 자동 기입했습니다!');
         };
       }
-
-      sheet.querySelector('#proCancelBtn').onclick = function(){
-        stopSwTimer();
+  }
+  function bindProRecSave(ctx){ /* [#TASK-ES-646] 전문 템플릿 기록 창 조각 — 저장·닫기: 기기 즉시 저장 → 목표·일정·기록 연동 → 화면 갱신 → 서버 동기화 → Notion 자동 전송, 취소·돌아가기. 꾸러미(ctx)는 openProTemplateRecordModal 가 만든다 */
+      ctx.sheet.querySelector('#proCancelBtn').onclick = function(){
+        ctx.stopSwTimer();
         closeModal();
       };
 
       // 저장 공통 함수
       async function executeSave(syncCalendar){
-        stopSwTimer();
-        syncCurrentRowsFromDOM();
-        var dateInpVal = (sheet.querySelector('#proRecDate').value || '').trim();
+        ctx.stopSwTimer();
+        ctx.syncCurrentRowsFromDOM();
+        var dateInpVal = (ctx.sheet.querySelector('#proRecDate').value || '').trim();
         var schedDateVal = dateInpVal ? (dateInpVal.indexOf('T') !== -1 ? dateInpVal : dateInpVal + 'T09:00') : toLocalInputValue(new Date());
         var recordDateISO = new Date(schedDateVal).toISOString();
-        var memo = (sheet.querySelector('#proRecMemo').value || '').trim();
-        var validRows = rows.filter(function(r){
+        var memo = (ctx.sheet.querySelector('#proRecMemo').value || '').trim();
+        var validRows = ctx.rows.filter(function(r){
           return r && r.some(function(cell, idx){ return idx > 0 && cell && String(cell).trim().length > 0; });
         });
-        if(!validRows.length) validRows = rows.slice(0, 1);
+        if(!validRows.length) validRows = ctx.rows.slice(0, 1);
 
-        var recId = editRec ? editRec.id : newId();
+        var recId = ctx.editRec ? ctx.editRec.id : newId();
         var yymmdd = fmtYYMMDD(schedDateVal);
-        var tplTitle = curTpl.title || '기록';
+        var tplTitle = ctx.curTpl.title || '기록';
         var linkUrl = '#record=' + recId;
         var schedTitle = yymmdd + tplTitle + '(' + linkUrl + ')';
 
@@ -3773,22 +3789,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var recObj = {
           id: recId,
           type: 'template',
-          theme: curTpl.theme || 'daily',
+          theme: ctx.curTpl.theme || 'daily',
           category: null,
           visibility: 'private',
-          templateId: curTpl.id,
-          templateKey: curTpl.key,
+          templateId: ctx.curTpl.id,
+          templateKey: ctx.curTpl.key,
           templateTitle: tplTitle,
-          columns: columns,
+          columns: ctx.columns,
           rows: validRows,
           text: fullText,
           summaryText: summaryText,
           memo: memo,
           startAt: recordDateISO,
           endAt: null,
-          createdAt: editRec ? editRec.createdAt : nowISO(),
-          linkedScheduleId: editRec ? editRec.linkedScheduleId : null,
-          photo: attachedPhoto
+          createdAt: ctx.editRec ? ctx.editRec.createdAt : nowISO(),
+          linkedScheduleId: ctx.editRec ? ctx.editRec.linkedScheduleId : null,
+          photo: ctx.attachedPhoto
         };
 
         // 일정 연동 저장 시
@@ -3838,7 +3854,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         state.profile.settings.proTemplateRecords[recId] = recObj;
 
         state.profile.records = state.profile.records || [];
-        if(isNew){
+        if(ctx.isNew){
           state.profile.records.unshift(recObj);
           awardXP(XP_RULES.checkin, '전문 템플릿 기록');
         } else {
@@ -3851,7 +3867,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         saveLocalSettings(state.profile.id, state.profile.settings);
 
         // 🎯 3각 자동 추적 엔진: 목표-일정-맞춤기록 실시간 연동
-        syncRecordToMatchingGoals(recObj, curTpl, columns, validRows);
+        syncRecordToMatchingGoals(recObj, ctx.curTpl, ctx.columns, validRows);
 
         // 2. Refresh screens
         renderRecordsScreen();
@@ -3859,8 +3875,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         renderCalendarScreen();
         renderLevelBadge();
 
-        if(initialDate){
-          openCalendarDayEditHubModal(initialDate);
+        if(ctx.initialDate){
+          openCalendarDayEditHubModal(ctx.initialDate);
         } else {
           closeModal();
         }
@@ -3870,7 +3886,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
         // 4. Background Notion Auto-Push if enabled
         if(state.profile.settings && state.profile.settings.notionAutoPush && (state.profile.settings.notionApiKey || state.profile.settings.notionWebhookUrl)){
-          pushRecordToNotion(recObj, curTpl, columns, validRows).then(function(res){
+          pushRecordToNotion(recObj, ctx.curTpl, ctx.columns, validRows).then(function(res){
             if(res && res.ok){
               console.log('[Notion AutoPush Success]', res.summary);
             }
@@ -3886,9 +3902,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
         burstConfetti(window.innerWidth/2, window.innerHeight/2);
 
-        if(isNew){
+        if(ctx.isNew){
           renderRecordFeedbackSlot('loading');
-          var summaryText = (curTpl ? curTpl.title + ': ' : '') + validRows.map(function(r){ return r.filter(Boolean).join(' '); }).join(', ');
+          var summaryText = (ctx.curTpl ? ctx.curTpl.title + ': ' : '') + validRows.map(function(r){ return r.filter(Boolean).join(' '); }).join(', ');
           var recGoal = (state.profile.goals || []).find(function(g){ return g.category === recObj.category; }) || (state.profile.goals && state.profile.goals[0]) || { title: '나의 맞춤 템플릿 성장', milestones: [] };
           requestAIFeedback(recGoal, summaryText || recObj.text, recObj.theme).then(async function(fb){
             if(fb){
@@ -3908,25 +3924,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       }
 
-      var backBtn = sheet.querySelector('#proRecBackToHubBtn');
+      var backBtn = ctx.sheet.querySelector('#proRecBackToHubBtn');
       if(backBtn){
         backBtn.onclick = function(){
-          stopSwTimer();
-          openCalendarDayEditHubModal(initialDate);
+          ctx.stopSwTimer();
+          openCalendarDayEditHubModal(ctx.initialDate);
         };
       }
-      var cancelBtn = sheet.querySelector('#proCancelBtn');
+      var cancelBtn = ctx.sheet.querySelector('#proCancelBtn');
       if(cancelBtn){
         cancelBtn.onclick = function(){
-          stopSwTimer();
-          if(initialDate) openCalendarDayEditHubModal(initialDate);
+          ctx.stopSwTimer();
+          if(ctx.initialDate) openCalendarDayEditHubModal(ctx.initialDate);
           else closeModal();
         };
       }
 
-      sheet.querySelector('#proGeneralSaveBtn').onclick = function(){ executeSave(false); };
-      sheet.querySelector('#proCalendarSaveBtn').onclick = function(){ executeSave(true); };
-    });
+      ctx.sheet.querySelector('#proGeneralSaveBtn').onclick = function(){ executeSave(false); };
+      ctx.sheet.querySelector('#proCalendarSaveBtn').onclick = function(){ executeSave(true); };
   }
   bootRecordsWiring(); /* [#TASK-ES-650] 로드 중 구역(주석·빈 줄 포함 16줄) → js/core/boot-records-wiring.js 의 bootRecordsWiring 로 옮김 — 원래 자리에서 부른다 */
 
