@@ -1,0 +1,413 @@
+{
+ "tool": "reports/TASK-ES-662/tools/iife-gone-reactions.cjs",
+ "type": "작업자 측정, 판정 아님",
+ "mock": "기준 커밋의 index.html 에서 큰 인라인 IIFE 블록을 통째로 js/app/boot.js 로 빼고 같은 자리에 동기 태그를 단 모의본(reports/TASK-ES-662/tools/make-empty-mock.cjs). finalize 의 산출이 아니다.",
+ "limits": "시험 목록은 상한이다 — 글자 의존 시험은 그 글자가 합본이 읽는 세포로 옮겨지면 풀릴 수 있다. 구조 의존/글자 의존 가름은 첫 오류 글자로 한 어림이다. 고치지 않았다.",
+ "tools": [
+  {
+   "id": "inline-script-map",
+   "what": "scripts/inline-script-map.js(지도 — 쓰지 않고 요약만)",
+   "base": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "lastLine": "권장 순서 상위 10: G050(6줄·0) G041(3줄·0) G012(9줄·1) G008(5줄·1) G011(7줄·2) G026(7줄·3) G017(22줄·4) G014(8줄·4) G042(11줄·6) G016(8줄·6)"
+   },
+   "mock": {
+    "status": 1,
+    "signal": null,
+    "firstError": "if (sLine < 0) throw new Error('큰 인라인 IIFE 를 못 찾음');",
+    "lastLine": ""
+   },
+   "verdict": "죽는다(기준은 돈다)"
+  },
+  {
+   "id": "inline-hard-types",
+   "what": "scripts/inline-hard-types.js(유형표 — 쓰지 않음)",
+   "base": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "lastLine": "구역 H1 2329~2711 383줄 1묶음 | H2 2982~3934 953줄 1묶음 | H3 3936~4109 174줄 1묶음 · 기관"
+   },
+   "mock": {
+    "status": 1,
+    "signal": null,
+    "firstError": "throw new Error('지도가 지금 index.html 과 다르다 — 먼저 node scripts/inline-script-map.js --write (지도 ' + MAP.source.sha256_12 + ' · 지금 ' + sha + ')');",
+    "lastLine": ""
+   },
+   "verdict": "죽는다(기준은 돈다)"
+  },
+  {
+   "id": "inline-hard-test-probe",
+   "what": "scripts/inline-hard-test-probe.js(시험지 선행 실측기 — 묶음 하나만, 쓰지 않음)",
+   "base": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "lastLine": "시험지 0개(기준 실패 0 · 흔들림 0) · 묶음 0 중 시험지 선행 필요 0 · 깨지는 시험지 0개"
+   },
+   "mock": {
+    "status": 1,
+    "signal": null,
+    "firstError": "if (MAP.source.sha256_12 !== sha) throw new Error('사본 index.html 이 지도와 다르다(지도 ' + MAP.source.sha256_12 + ' · 사본 ' + sha + ')');",
+    "lastLine": ""
+   },
+   "verdict": "죽는다(기준은 돈다)"
+  },
+  {
+   "id": "cell-registry-compare",
+   "what": "scripts/probes/cell-registry-compare.js(대조 탐침 — 브라우저)",
+   "base": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "lastLine": "scope 522 · window 4 · registered 438 · mismatches 0 · missing 164 · extra 76 · conflicts 0 · exceptions 0",
+    "counts": {
+     "scopeNames": 522,
+     "windowNames": 4,
+     "registered": 438,
+     "checked": 362,
+     "mismatches": 0,
+     "missing": 164,
+     "extra": 76,
+     "conflicts": 0,
+     "own": 438,
+     "ownScope": 354,
+     "ownWindow": 180,
+     "lateProvides": 0
+    },
+    "windowNamesSource": {
+     "method": "index.html 인라인 IIFE 최상위 window 대입문 + 대입만 담은 if 블록(@babel/parser)",
+     "iifeLines": [
+      2254,
+      4135
+     ],
+     "count": 4,
+     "sites": 4
+    }
+   },
+   "mock": {
+    "status": 1,
+    "signal": null,
+    "firstError": "Error: index.html 인라인 IIFE 를 찾지 못했다",
+    "lastLine": ""
+   },
+   "verdict": "죽는다(기준은 돈다)"
+  },
+  {
+   "id": "gen-inline-hard",
+   "what": "생성기 gen-inline-hard.js(없는 구획 제목을 준 sweep 설정 — 정상이면 「구획 주석이 0개」로 깨끗이 멈춘다)",
+   "base": {
+    "status": 1,
+    "signal": null,
+    "firstError": "Error: 구획 주석이 0개: (없는 제목 — 쓰지 않고 멈추게 하는 탐침)",
+    "lastLine": ""
+   },
+   "mock": {
+    "status": 1,
+    "signal": null,
+    "firstError": "TypeError: Cannot read properties of undefined (reading 'startsWith')",
+    "lastLine": ""
+   },
+   "verdict": "기준도 모의도 멈추지만 사유가 다르다"
+  },
+  {
+   "id": "module-metrics",
+   "what": "scripts/module-metrics.js(공식 지표)",
+   "base": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "ratchet": {
+     "inlineScriptLines": 1904,
+     "indexFunctionDecls": 17,
+     "windowAssignments": 75,
+     "crossTabRefs": 0
+    }
+   },
+   "mock": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "ratchet": {
+     "inlineScriptLines": 22,
+     "indexFunctionDecls": 1,
+     "windowAssignments": 75,
+     "crossTabRefs": 1
+    }
+   },
+   "verdict": "돈다"
+  },
+  {
+   "id": "module-guard",
+   "what": "scripts/module-guard.js(모듈 가드)",
+   "base": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "lastLine": "✓ 모듈 가드 통과"
+   },
+   "mock": {
+    "status": 1,
+    "signal": null,
+    "firstError": "",
+    "lastLine": "    - ② index.html 함수 선언 수: 17 → 1 (-16)"
+   },
+   "verdict": "죽는다(기준은 돈다)"
+  },
+  {
+   "id": "module-specs",
+   "what": "scripts/module-specs.js(신고서 검사 — 쓰지 않음)",
+   "base": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "lastLine": "}"
+   },
+   "mock": {
+    "status": 0,
+    "signal": null,
+    "firstError": null,
+    "lastLine": "}"
+   },
+   "verdict": "돈다"
+  }
+ ],
+ "toolsDead": [
+  "inline-script-map",
+  "inline-hard-types",
+  "inline-hard-test-probe",
+  "cell-registry-compare",
+  "gen-inline-hard",
+  "module-guard"
+ ],
+ "toolsFine": [
+  "module-metrics",
+  "module-specs"
+ ],
+ "tests": {
+  "files": 119,
+  "nonZeroExit": [
+   26,
+   40
+  ],
+  "changedCount": 14,
+  "newlyFailing": 14,
+  "byKind": {
+   "단언 실패(글자 의존)": 14
+  },
+  "list": [
+   {
+    "file": "tests/avatar-10slots-growth.test.js",
+    "base": [
+     0,
+     0
+    ],
+    "mock": [
+     1,
+     0
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": true,
+    "firstError": "AssertionError [ERR_ASSERTION]: filterHarmfulWords 함수가 index.html에 정의되어 있어야 합니다.",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/cell-map-export-es414.test.js",
+    "base": [
+     0,
+     0
+    ],
+    "mock": [
+     1,
+     0
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": false,
+    "firstError": "",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/cross-tab-guarded-init-es502.test.js",
+    "base": [
+     0,
+     6
+    ],
+    "mock": [
+     1,
+     5
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": false,
+    "firstError": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/cross-tab-inline-owned-es507.test.js",
+    "base": [
+     0,
+     5
+    ],
+    "mock": [
+     1,
+     4
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": true,
+    "firstError": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/gcal-login-reconnect-fix.test.js",
+    "base": [
+     0,
+     0
+    ],
+    "mock": [
+     1,
+     0
+    ],
+    "readsBundle": true,
+    "readsIndexHtml": true,
+    "firstError": "AssertionError [ERR_ASSERTION]: saveGoogleToken 전역 노출",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/module-guard.test.js",
+    "base": [
+     0,
+     7
+    ],
+    "mock": [
+     1,
+     0
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": true,
+    "firstError": "AssertionError [ERR_ASSERTION]: 가드가 통과해야 한다:",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/new-module.test.js",
+    "base": [
+     0,
+     6
+    ],
+    "mock": [
+     1,
+     2
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": true,
+    "firstError": "AssertionError [ERR_ASSERTION]: 새 세포를 더해도 모듈 가드 통과:",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/stopwatch-lap-inputs.test.js",
+    "base": [
+     0,
+     0
+    ],
+    "mock": [
+     1,
+     0
+    ],
+    "readsBundle": true,
+    "readsIndexHtml": true,
+    "firstError": "AssertionError [ERR_ASSERTION]: 스톱워치 랩 표 기입 함수 확인",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "tests/stopwatch-table-hint.test.js",
+    "base": [
+     0,
+     0
+    ],
+    "mock": [
+     1,
+     0
+    ],
+    "readsBundle": true,
+    "readsIndexHtml": true,
+    "firstError": "AssertionError [ERR_ASSERTION]: 미선택 셀 클릭 시 안내 토스트 문구 일원화 확인",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "scripts/smoke-test.js",
+    "base": [
+     0,
+     439
+    ],
+    "mock": [
+     1,
+     425
+    ],
+    "readsBundle": true,
+    "readsIndexHtml": true,
+    "firstError": "✗ compliance: 전문적(내 전용 템플릿) 기록하기 UI 요소 및 안내멘트가 존재한다",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "scripts/verify-integrity-gate.js",
+    "base": [
+     0,
+     38
+    ],
+    "mock": [
+     1,
+     37
+    ],
+    "readsBundle": true,
+    "readsIndexHtml": true,
+    "firstError": "✗ [FAIL] [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "scripts/verify-all-clicks.js",
+    "base": [
+     0,
+     3
+    ],
+    "mock": [
+     1,
+     3
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": true,
+    "firstError": "❌ [FAIL] 엄밀 분석 상 핸들러가 결여된 껍데기/데드클릭 버튼 (5개) 발견:",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "scripts/test-shipyard-modular.js",
+    "base": [
+     0,
+     203
+    ],
+    "mock": [
+     1,
+     5
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": true,
+    "firstError": "✖ 모듈 가드 실패 — 모듈화 부채가 기준선(docs/architecture/module-baseline.json)보다 늘었다:",
+    "kind": "단언 실패(글자 의존)"
+   },
+   {
+    "file": "scripts/module-guard.js",
+    "base": [
+     0,
+     1
+    ],
+    "mock": [
+     1,
+     0
+    ],
+    "readsBundle": false,
+    "readsIndexHtml": true,
+    "firstError": "✖ 모듈 가드 실패 — 모듈화 부채가 기준선(docs/architecture/module-baseline.json)보다 늘었다:",
+    "kind": "단언 실패(글자 의존)"
+   }
+  ]
+ }
+}
