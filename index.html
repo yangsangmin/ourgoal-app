@@ -2346,6 +2346,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-439] js/tabs/settings/quick-actions.js · js/tabs/records/checkin-capture.js — 가져오기 6개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var bindCaptureLiveMeta = _recordsKit.bindCaptureLiveMeta;
   var bindCaptureSave = _recordsKit.bindCaptureSave;
+  window.OurgoalAppScope.expose('index.html', {
+    get capturePhotoInput(){ return capturePhotoInput; },
+    get capturePhotoPreview(){ return capturePhotoPreview; },
+    get pendingCapturePhoto(){ return pendingCapturePhoto; }, set pendingCapturePhoto(v){ pendingCapturePhoto = v; }
+  });
   /* [#TASK-ES-600] js/tabs/records/quick-checkin.js — 가져오기 0개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [#TASK-ES-601] js/tabs/goals/goal-rescale.js — 가져오기 0개 · 통로 노출은 스코프 분석으로 뽑았다 */
   /* [어려움 이음매 자리 H1] */
@@ -2562,7 +2567,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var selectSmartTag = _goalsKit.selectSmartTag;
   var handleGoalFastAddSubmit = _goalsKit.handleGoalFastAddSubmit;
   window.OurgoalAppScope.expose('index.html', {
-    get openMicPermissionGuideModal(){ return openMicPermissionGuideModal; }
+    get capturePhotoBtn(){ return capturePhotoBtn; },
+    get openMicPermissionGuideModal(){ return openMicPermissionGuideModal; },
+    get qRoutineRow(){ return qRoutineRow; }
   });
   /* [#TASK-ES-645] js/tabs/records/template-market.js — 가져오기 1개 · 통로 노출은 스코프 분석으로 뽑았다 */
   var openTemplateMarketModal = _recordsKit.openTemplateMarketModal;
@@ -2621,7 +2628,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
      ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
   var initDevDebugButtons = _settingsKit.initDevDebugButtons;
   window.OurgoalAppScope.expose('index.html', {
-    get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; },
+    get USER_SESSION_CHANNEL(){ return USER_SESSION_CHANNEL; }, set USER_SESSION_CHANNEL(v){ USER_SESSION_CHANNEL = v; },
     get _promptEncyclopediaOpen(){ return _promptEncyclopediaOpen; }, set _promptEncyclopediaOpen(v){ _promptEncyclopediaOpen = v; }
   });
 
@@ -3040,7 +3047,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
 
   /* ============ 원터치 퀵 루틴 칩 ============ */
-  window.OurgoalAppState.define('qRoutineRow', document.getElementById('quickRoutineRow'));
+  var qRoutineRow = document.getElementById('quickRoutineRow');
   bindQuickRoutineChips(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 bindQuickRoutineChips 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227) ============ */
@@ -3049,13 +3056,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   startVoiceCheckin(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 startVoiceCheckin 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 사진 인증 & 뷰어 모달 (가상유저 요청 P1) ============ */
-  window.OurgoalAppState.defineVar('pendingCapturePhoto', null);
+  var pendingCapturePhoto = null;
 
   /* [#TASK-ES-444] openPhotoViewerModal · compressImage → js/tabs/records/photo-proof.js 로 옮김(인라인 스크립트 세포화 P1) */
 
-  window.OurgoalAppState.define('capturePhotoBtn', document.getElementById('capturePhotoBtn'));
-  window.OurgoalAppState.define('capturePhotoInput', document.getElementById('capturePhotoInput'));
-  window.OurgoalAppState.define('capturePhotoPreview', document.getElementById('capturePhotoPreview'));
+  var capturePhotoBtn = document.getElementById('capturePhotoBtn');
+  var capturePhotoInput = document.getElementById('capturePhotoInput');
+  var capturePhotoPreview = document.getElementById('capturePhotoPreview');
   bindCapturePhoto(); /* [#TASK-ES-640] 로드 중 문(앞 주석 포함) → js/tabs/records/checkin-input-wiring.js 의 bindCapturePhoto 로 옮김 — 원래 자리에서 부른다 */
 
   /* ============ 체크인 입력 글자수 힌트 (#TASK-ES-367: 열 수 없던 활동 테마 선택 창·배지 제거, 승인 2026-10-04) ============ */
