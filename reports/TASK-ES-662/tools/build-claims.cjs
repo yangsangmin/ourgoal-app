@@ -17,8 +17,8 @@ const out = {
     { id: 'R5', text: 'IIFE 가 사라지면 깨지는 도구·시험을 현재 index.html 사본의 모의본에서 재서 목록으로 남기고(고치지 않는다), 서비스워커에 부팅 파일이 들어가야 하는지 코드를 읽어 적는다.' },
   ],
   outOfScopeReports: [
-    { text: '지금 main 은 finalize 의 전제에 못 미친다 — 생성기 finalize 를 지금 index.html 에 돌리면 전제 밖의 문 ' + rj('unit-summary.json').realIndexStops.count + '개를 세고 멈춘다. 이 PR 은 모드와 실측 표만 낸다.' },
-    { text: '「구역 이전 예정」은 구역 계획기(#TASK-ES-643)를 지금 main 에 돌린 결과다. 실제 구역 이전 PR(#TASK-ES-650, 병합 전)이 구역을 다르게 잡으면 「남는 것」의 수가 달라진다.' },
+    { text: '지금 main 은 finalize 의 전제에 못 미친다 — 최상위 문 ' + g.now.topStatements + '개 가운데 전제 밖이 ' + g.now.outsidePrecondition + '개다(단위 시험의 고정 입력인 구역 이전 병합 전 커밋에서는 ' + rj('unit-summary.json').realIndexStops.count + '개). 이 PR 은 모드와 실측 표만 낸다.' },
+    { text: '구역 이전(#TASK-ES-650, PR #933)이 이 작업 도중 병합됐다. 「남은 것」과 「깨지는 것」은 병합 뒤 main 으로 다시 쟀고, 병합 전에 구역 계획기로 잰 값은 참고로만 남겼다(region-plan-now.json · mock-checks.json beforeRegionMerge).' },
     { text: '앞선 단위 시험 재실행에서 세 건이 실패한다: 661 묶음의 D0 · 657 묶음의 D1 · 643 묶음의 D0. 셋 다 출력이 아니라 생성기 파일의 diff 모양을 옛 기준과 맞대는 검사라 생성기에 줄을 더하면 구조적으로 거짓이 된다. 그 시험 파일은 고치지 않았다.' },
     { text: 'IIFE 가 사라진 모의본은 finalize 의 산출이 아니라 IIFE 글자를 통째로 바깥 파일로 뺀 것이다. 깨지는 시험 ' + g.iifeGone.testsNewlyFailing + '개는 상한이다(글자가 합본이 읽는 세포로 가면 풀릴 수 있다). 모듈 가드 실패 사유 가운데 800줄 초과와 신고서 없음은 모의본의 한계다.' },
     { text: '서비스워커 소견은 sw.js 코드를 읽은 것이다. 오프라인에서의 실제 동작은 재지 않았다.' },
@@ -43,7 +43,7 @@ st('C13', 'R3', 'npm test 의 종료 코드·검사 줄 수·요약 줄이 기�
 st('C14', 'R4', '「남은 것」 표의 합이 맞는다: 구역 이전을 흉내 낸 사본의 최상위 문 수 = 손잡이 + 가져오기 + expose 문 + 함수 선언 + 구역 호출 + 그 밖.', 'gap-summary.json', 'afterRegion.sumOk', true);
 st('C15', 'R4', '남는 가져오기의 갈래별 수의 합이 가져오기 전체 수와 같다.', 'gap-summary.json', 'afterRegion.importsSumOk', true);
 st('C16', 'R4', '지금 main 의 최상위 문 수가 ' + g.now.topStatements + ' 이다.', 'gap-summary.json', 'now.topStatements', g.now.topStatements);
-st('C17', 'R4', '그 가운데 구역 이전 예정(계획기 기준)이 ' + g.now.regionPlanned + ' 문이다.', 'gap-summary.json', 'now.regionPlanned', g.now.regionPlanned);
+st('C17', 'R4', '그 가운데 finalize 의 전제 밖에 있는 문이 ' + g.now.outsidePrecondition + ' 개다(전제에 맞는 손잡이 · 구역 함수 가져오기 · 호출문을 뺀 수).', 'gap-summary.json', 'now.outsidePrecondition', g.now.outsidePrecondition);
 st('C18', 'R4', '구역 이전 뒤 남는 그 밖의 문 가운데 결심이 필요한 것이 ' + g.afterRegion.others.decisionNeeded + ' 문이다.', 'gap-summary.json', 'afterRegion.others.decisionNeeded', g.afterRegion.others.decisionNeeded);
 st('C19', 'R4', '방법이 정해지지 않은 것이 ' + g.afterRegion.others.methodUndetermined + ' 문이다.', 'gap-summary.json', 'afterRegion.others.methodUndetermined', g.afterRegion.others.methodUndetermined);
 st('C20', 'R5', 'IIFE 가 사라진 모의본에서 죽는 도구 목록이 측정 파일에 있는 그대로다.', 'gap-summary.json', 'iifeGone.toolsDead', g.iifeGone.toolsDead);

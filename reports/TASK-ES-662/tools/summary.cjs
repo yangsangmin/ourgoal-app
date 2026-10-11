@@ -27,12 +27,12 @@ wj('unit-summary.json', { type: '작업자 측정, 판정 아님', source: 'repo
   bootFileLoadOne: by('L').detail && by('L').detail.loadOne });
 // 「남은 것」 · 「깨지는 것」 요약(표의 수를 주장에 걸 수 있게 한 곳에 모은다)
 wj('gap-summary.json', { type: '작업자 측정, 판정 아님', source: ['reports/TASK-ES-662/finalize-gap.json', 'reports/TASK-ES-662/iife-gone-reactions.json', 'reports/TASK-ES-662/mock-checks.json'], baseHead: mock.baseHead,
-  now: { topStatements: gap.now.topStatements, regionPlanned: gap.now.regionPlan.statements, left: gap.now.topStatements - gap.now.regionPlan.statements, byKind: gap.now.byKind.map(k => ({ kind: k.kind, statements: k.statements, lines: k.lines, regionPlanned: k.regionPlanned, left: k.left })) },
+  now: { topStatements: gap.now.topStatements, iifeLines: gap.now.iifeLines, insidePrecondition: A.finalizeOk.kitHandles + A.finalizeOk.regionFunctionImports + A.finalizeOk.regionFunctionCalls, outsidePrecondition: gap.now.topStatements - (A.finalizeOk.kitHandles + A.finalizeOk.regionFunctionImports + A.finalizeOk.regionFunctionCalls), regionPlanned: gap.now.regionPlan.statements, byKind: gap.now.byKind.map(k => ({ kind: k.kind, statements: k.statements, lines: k.lines, regionPlanned: k.regionPlanned, left: k.left })) },
   afterRegion: { topStatements: A.topStatements, sumOk: A.sumCheck.ok, importsSumOk: A.imports.sumOk, finalizeOk: A.finalizeOk,
     imports: { total: A.imports.total, regionFunction: A.imports.regionFunction, unwireReady: A.imports.unwireReady.count, deadImport: A.imports.deadImport.count, needRegister: A.imports.needRegister.count, usedByFunction: A.imports.usedByFunction.count, usedByFunctionNotRegistered: A.imports.usedByFunction.notRegistered.length, usedByOther: A.imports.usedByOther.count },
     expose: { statements: A.expose.statements, getters: A.expose.getters }, functionDecls: A.functionDecls.map(f => ({ name: f.name, lines: f.lines, iifeNamesUsed: f.iifeNamesUsed })),
     others: { statements: A.others.statements, decisionNeeded: (st['결심 필요'] || {}).statements || 0, methodUndetermined: (st['방법 미정'] || {}).statements || 0, stateMove: (st['상태 이전(막는 코드가 옮겨진 뒤)'] || {}).statements || 0, stateThenRegion: (st['상태 이전 뒤 구역 이전'] || {}).statements || 0 } },
-  regionMockTests: mock.regionMock.testsAll, emptyMockBoots: mock.emptyMock.bootScenario.allPassedBoth,
+  beforeRegionMerge: mock.beforeRegionMerge, emptyMockBoots: mock.emptyMock.bootScenario.allPassedBoth,
   iifeGone: { toolsDead: rx.toolsDead, toolsFine: rx.toolsFine, testsChanged: rx.tests.changedCount, testsNewlyFailing: rx.tests.newlyFailing, testFiles: rx.tests.list.map(t => t.file) } });
 const npm = {};
 for (const label of ['base', 'work']) {

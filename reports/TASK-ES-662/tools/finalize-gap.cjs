@@ -95,6 +95,9 @@ for (const st of r.top) {
     const k = !bnd ? 'missing' : bnd.path.isFunctionDeclaration() ? 'functionDecl' : (decl && kinds.get(decl.node) === 'kitImport') ? 'import' : (decl && kinds.get(decl.node) === 'varExposed') ? 'stateVar' : 'otherVar';
     getters[k]++; if (getters.names[k]) getters.names[k].push(n); }
 }
+// 시험·기준 시험지가 글자로 붙잡는 window 노출 줄(8.1 묶음 2): 기준 트리의 tests/*.js · 기준 시험지에서 `window.X = X` 글자를 찾는다
+const pinSrc = fs.readdirSync(path.join(BASE, 'tests')).filter(f => f.endsWith('.js')).map(f => 'tests/' + f).concat(fs.readdirSync(path.join(BASE, 'scripts')).filter(f => /^(smoke-test|verify-integrity-gate|verify-all-clicks|test-.*)[.]js$/.test(f)).map(f => 'scripts/' + f)).map(f => [f, fs.readFileSync(path.join(BASE, f), 'utf8')]);
+const pinnedBy = n => pinSrc.filter(([, t]) => t.includes('window.' + n + ' = ' + n)).map(([f]) => f);
 // 남는 var · if · window 대입 — 하나씩
 const items = [];
 for (const st of r.top) {
@@ -102,12 +105,17 @@ for (const st of r.top) {
   if (k === 'callBare' && st.node.expression.arguments.length === 0 && r.iScope.getBinding(st.node.expression.callee.name) && kinds.get((r.iScope.getBinding(st.node.expression.callee.name).path.parentPath || {}).node) === 'kitImport') continue; // 구역 함수 호출문
   const t = r.text(st), names = st.node.type === 'VariableDeclaration' ? st.node.declarations.map(d => d.id.name) : [];
   let stage, how, sw = names.map(n => stateWhy.get(n)).find(Boolean);
+  const copyNames = []; const rest = t.replace(/window[.]([A-Za-z_$][A-Za-z0-9_$]*)\s*=\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*;/g, (m, a, b2) => { if (a === b2) { copyNames.push(a); return ''; } return m; });
+  const pure = /^if\s*[(]typeof window !== 'undefined'[)]\s*[{]\s*[}]$/.test(rest.trim());
   if (CONFIG.test(t)) { stage = '결심 필요'; how = '`OURGOAL_CONFIG`(빈 설정 객체 선언 · window 복사 줄)는 지시함 「결심 대기」 항목이다(설계 8.1 — 묶음 3 표에 없던 돈 근처 후보). 결심 전에는 구역에 넣지 않는다'; }
   else if (MONEY.test(t)) { stage = '결심 필요'; how = '돈 근처 `OurgoalTemplateCredit.init` 블록. 허용 한도는 「글자를 한 글자도 바꾸지 않고 자리만」인데, 구역 감싸기는 IIFE 이름에 `L.` 접두를 붙여 한도 밖이다(설계 3.4). 후보: ① 한도에 「`L.` 접두」를 넣는 결심(#917 은 함수 이전에서 접두를 한도 안으로 봤다) ② 접두가 붙지 않게 블록이 읽는 이름을 먼저 window/키트 경유로 바꾸는 고치기 PR'; }
   else if (/SHARED_GROUPS_LOADED/.test(t)) { stage = '결심 필요'; how = '모듈 가드 ⑤(`scripts/module-metrics.js` #TASK-ES-507)가 「index.html 인라인이 window 에 다는 이름」을 인라인 소유로 세어 탭 간 참조에서 뺀다. 이 줄이 세포로 가면 가드가 실패한다 — 가드 규칙(부팅 파일도 인라인 소유로 본다)을 고치는 선행 PR 이 필요하고, 가드·그 시험을 바꾸는 일이라 승인 사안이다'; }
   else if (names.includes('btnAvLvClose')) { stage = '결심 필요'; how = '이 문 바로 앞 표지 주석의 `filterHarmfulWords` 글자를 `tests/avatar-10slots-growth.test.js` 가 index.html 에서 찾는다. 구역에 넣으면 앞 주석이 따라가 글자가 사라진다 — 시험이 읽는 범위를 합본으로 넓히는 시험지 선행 PR(tests/ 변경, 단언·기대값 0 변경 — L021)이 먼저다'; }
   else if (names.some(n => /^SUPABASE_(URL|ANON_KEY)$/.test(n))) { stage = '상태 이전 뒤 구역 이전'; how = '`sb` 선언의 초기값이 이 두 상수를 읽는다(구역 밖에서 쓰는 var). `sb` 가 상태 기관으로 가면(`define(\'sb\', 초기값)` 줄이 되어 구역에 들 수 있다) 세 줄이 한 구역에 들어 두 상수는 그 구역 함수의 지역 변수가 된다. 키 글자는 그대로 옮겨질 뿐이지만 접속 키라 그 PR 에서 따로 확인한다'; }
   else if (sw) { const cond = sw.condition; stage = /시험이/.test(cond) ? '결심 필요' : /맨이름 참조/.test(cond) ? '상태 이전(막는 코드가 옮겨진 뒤)' : '방법 미정'; how = cond + ' → ' + sw.unlock; }
+  else if (k === 'if' && copyNames.length && pure) { const pins = [...new Set(copyNames.flatMap(pinnedBy))], unreg = copyNames.filter(n => !registered.has(n));
+    if (pins.length) { stage = '결심 필요'; how = '가져온 함수의 window 노출 블록(' + copyNames.join(' · ') + '). 재철거(U3)가 지울 줄이지만 ' + pins.join(' · ') + ' 가 index.html 에서 이 글자를 찾는다(설계 8.1 묶음 2 — 시험이 붙잡는 배선 글자). 그 단언을 바꾸는 승인이 먼저다' + (unreg.length ? '. 등록 기관에도 아직 없다: ' + unreg.join(' · ') : ''); }
+    else { stage = '재철거'; how = '가져온 함수의 window 노출 블록 — ' + (unreg.length ? '등록 뒤 ' : '') + '재철거(U3)'; } }
   else if (k === 'windowAssign') { stage = '방법 미정'; how = '상태 선언과 한 줄을 나눠 쓰는 window 복사 줄(`shareContent`). 후보: ① 줄을 나누는 선행 PR(글자 이동만 — 순증가 1줄이라 index.html 순증가 0 규칙과 부딪친다. 같은 PR 에서 다른 줄을 줄여야 한다) ② X5·X6 의 「다른 글자와 한 줄」 정지를 이 꼴(선언 + 자기 window 복사)에 한해 푸는 결심'; }
   else { stage = '방법 미정'; how = '분류되지 않은 문 — 해당 PR 이 다시 잰다'; }
   const blockedBy = [...new Set(names.flatMap(n => refsOf(n).filter(x => x.stmt !== st.node && x.kind !== 'exposeCall').map(x => x.fn ? '함수 ' + x.fn : x.kind + '@' + x.line)))];
@@ -123,7 +131,7 @@ const handleRows = handles.map(st => { const name = r.oneVar(st).id.name; const 
 const sumLines = arr => arr.reduce((a, x) => a + x.lines, 0);
 const byStage = {}; for (const it of items) { byStage[it.stage] = byStage[it.stage] || { statements: 0, lines: 0 }; byStage[it.stage].statements++; byStage[it.stage].lines += it.lines; }
 const out = { tool: 'reports/TASK-ES-662/tools/finalize-gap.cjs', type: '작업자 측정, 판정 아님',
-  note: '구역 이전 예정은 구역 계획기(reports/TASK-ES-643/region-plan.cjs)를 지금 main 에 돌린 결과다 — 실제 구역 이전 PR(#TASK-ES-650, 병합 전)이 구역을 다르게 잡으면 달라진다. 「남는 것」은 그 계획을 저장소 밖 작업 폴더에 흉내 낸 사본에서 쟀다.',
+  note: plan.regions.length === 0 ? '구역 이전(#TASK-ES-650, PR #933)이 병합된 뒤의 main 을 그대로 쟀다(계획기 흉내 없음 — 「구역 이전 예정」 칸은 0 이다).' : '구역 이전 예정은 구역 계획기(reports/TASK-ES-643/region-plan.cjs)를 지금 main 에 돌린 결과다 — 실제 구역 이전 PR(#TASK-ES-650, 병합 전)이 구역을 다르게 잡으면 달라진다. 「남는 것」은 그 계획을 저장소 밖 작업 폴더에 흉내 낸 사본에서 쟀다.',
   now: { scriptHtmlLines: [b.s, b.e + 1], iifeLines: b.e - b.s, topStatements: b.top.length, byKind: nowRows, regionPlan: { regions: plan.regions.length, statements: plan.totals.statementsInRegions, statementLines: plan.totals.statementLinesInRegions, generatorOk: plan.generator.ok } },
   afterRegion: { topStatements: r.top.length, htmlLines: r.lines.length,
     finalizeOk: { kitHandles: handles.length, regionFunctionImports: imp.regionFn.length, regionFunctionCalls: r.top.filter(st => kinds.get(st.node) === 'callBare' && called.has(st.node.expression.callee.name)).length },

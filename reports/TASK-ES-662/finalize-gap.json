@@ -1,38 +1,30 @@
 {
  "tool": "reports/TASK-ES-662/tools/finalize-gap.cjs",
  "type": "작업자 측정, 판정 아님",
- "note": "구역 이전 예정은 구역 계획기(reports/TASK-ES-643/region-plan.cjs)를 지금 main 에 돌린 결과다 — 실제 구역 이전 PR(#TASK-ES-650, 병합 전)이 구역을 다르게 잡으면 달라진다. 「남는 것」은 그 계획을 저장소 밖 작업 폴더에 흉내 낸 사본에서 쟀다.",
+ "note": "구역 이전(#TASK-ES-650, PR #933)이 병합된 뒤의 main 을 그대로 쟀다(계획기 흉내 없음 — 「구역 이전 예정」 칸은 0 이다).",
  "now": {
   "scriptHtmlLines": [
    2253,
-   4543
+   4136
   ],
-  "iifeLines": 2289,
-  "topStatements": 399,
+  "iifeLines": 1882,
+  "topStatements": 251,
   "byKind": [
    {
     "kind": "callBare",
-    "statements": 73,
-    "lines": 73,
-    "regionPlanned": 73,
-    "regionPlannedLines": 73,
-    "left": 0
-   },
-   {
-    "kind": "callOther",
-    "statements": 13,
+    "statements": 15,
     "lines": 15,
-    "regionPlanned": 13,
-    "regionPlannedLines": 15,
-    "left": 0
+    "regionPlanned": 0,
+    "regionPlannedLines": 0,
+    "left": 15
    },
    {
     "kind": "exposeCall",
-    "statements": 16,
-    "lines": 64,
+    "statements": 17,
+    "lines": 175,
     "regionPlanned": 0,
     "regionPlannedLines": 0,
-    "left": 16
+    "left": 17
    },
    {
     "kind": "functionDecl",
@@ -44,11 +36,11 @@
    },
    {
     "kind": "if",
-    "statements": 21,
-    "lines": 37,
-    "regionPlanned": 18,
-    "regionPlannedLines": 32,
-    "left": 3
+    "statements": 4,
+    "lines": 8,
+    "regionPlanned": 0,
+    "regionPlannedLines": 0,
+    "left": 4
    },
    {
     "kind": "kitHandle",
@@ -60,67 +52,51 @@
    },
    {
     "kind": "kitImport",
-    "statements": 169,
-    "lines": 169,
+    "statements": 184,
+    "lines": 184,
     "regionPlanned": 0,
     "regionPlannedLines": 0,
-    "left": 169
-   },
-   {
-    "kind": "stateDefine",
-    "statements": 56,
-    "lines": 61,
-    "regionPlanned": 56,
-    "regionPlannedLines": 61,
-    "left": 0
-   },
-   {
-    "kind": "try",
-    "statements": 2,
-    "lines": 8,
-    "regionPlanned": 2,
-    "regionPlannedLines": 8,
-    "left": 0
+    "left": 184
    },
    {
     "kind": "varExposed",
-    "statements": 12,
-    "lines": 155,
+    "statements": 13,
+    "lines": 156,
     "regionPlanned": 0,
     "regionPlannedLines": 0,
-    "left": 12
+    "left": 13
    },
    {
     "kind": "varNotExposed",
-    "statements": 14,
-    "lines": 14,
-    "regionPlanned": 10,
-    "regionPlannedLines": 10,
-    "left": 4
+    "statements": 3,
+    "lines": 3,
+    "regionPlanned": 0,
+    "regionPlannedLines": 0,
+    "left": 3
    },
    {
     "kind": "windowAssign",
-    "statements": 9,
-    "lines": 9,
-    "regionPlanned": 8,
-    "regionPlannedLines": 8,
+    "statements": 1,
+    "lines": 1,
+    "regionPlanned": 0,
+    "regionPlannedLines": 0,
     "left": 1
    }
   ],
   "regionPlan": {
-   "regions": 13,
-   "statements": 180,
-   "statementLines": 207,
+   "regions": 0,
+   "statements": 0,
+   "statementLines": 0,
    "generatorOk": true
   }
  },
  "afterRegion": {
-  "topStatements": 246,
-  "htmlLines": 4123,
+  "topStatements": 251,
+  "htmlLines": 4174,
   "finalizeOk": {
    "kitHandles": 13,
-   "regionFunctionImports": 13,
-   "regionFunctionCalls": 13
+   "regionFunctionImports": 15,
+   "regionFunctionCalls": 15
   },
   "handles": [
    {
@@ -197,14 +173,14 @@
    },
    {
     "name": "_uiKit",
-    "imports": 54,
-    "regionFnImports": 13,
+    "imports": 56,
+    "regionFnImports": 15,
     "otherImports": 41
    }
   ],
   "imports": {
-   "total": 182,
-   "regionFunction": 13,
+   "total": 184,
+   "regionFunction": 15,
    "unwireReady": {
     "count": 27,
     "stage": "재철거(unwire U1·U2 — 구역 이전 뒤)",
@@ -247,7 +223,7 @@
     ]
    },
    "needRegister": {
-    "count": 91,
+    "count": 90,
     "stage": "등록 → 재철거",
     "how": "참조는 통로 getter 뿐인데 등록 기관이 이 이름을 내주지 않는다. 그 세포에 등록 블록을 달아(생성기 gen-cell-provide.js — 세포 파일 변경 PR) 대조 0 을 본 뒤 재철거",
     "names": [
@@ -338,7 +314,6 @@
      "selectSmartTag",
      "handleGoalFastAddSubmit",
      "setupUserSessionRealtime",
-     "saveGoogleToken",
      "sendGoalAgentMessage",
      "requestServerAIFeedback",
      "MOCK_PEOPLE"
@@ -413,29 +388,36 @@
     ]
    },
    "usedByOther": {
-    "count": 3,
+    "count": 4,
     "stage": "막는 문이 풀린 뒤 재철거",
     "items": [
      {
       "name": "isoDate",
       "registered": true,
       "users": [
-       "varExposed@2823"
+       "varExposed@2825"
       ]
      },
      {
       "name": "toast",
       "registered": true,
       "users": [
-       "functionDecl@2936",
-       "if@4079"
+       "functionDecl@2987",
+       "if@4130"
+      ]
+     },
+     {
+      "name": "saveGoogleToken",
+      "registered": false,
+      "users": [
+       "if@2874"
       ]
      },
      {
       "name": "daysFromNow",
       "registered": true,
       "users": [
-       "varExposed@3889"
+       "varExposed@3940"
       ]
      }
     ]
@@ -478,8 +460,8 @@
    }
   ],
   "others": {
-   "statements": 20,
-   "lines": 165,
+   "statements": 21,
+   "lines": 168,
    "byStage": {
     "상태 이전 뒤 구역 이전": {
      "statements": 2,
@@ -490,8 +472,8 @@
      "lines": 146
     },
     "결심 필요": {
-     "statements": 6,
-     "lines": 8
+     "statements": 7,
+     "lines": 11
     },
     "방법 미정": {
      "statements": 9,
@@ -500,8 +482,8 @@
    },
    "items": [
     {
-     "line": 2758,
-     "endLine": 2758,
+     "line": 2760,
+     "endLine": 2760,
      "lines": 1,
      "kind": "varNotExposed",
      "names": [
@@ -510,13 +492,13 @@
      "stage": "상태 이전 뒤 구역 이전",
      "how": "`sb` 선언의 초기값이 이 두 상수를 읽는다(구역 밖에서 쓰는 var). `sb` 가 상태 기관으로 가면(`define('sb', 초기값)` 줄이 되어 구역에 들 수 있다) 세 줄이 한 구역에 들어 두 상수는 그 구역 함수의 지역 변수가 된다. 키 글자는 그대로 옮겨질 뿐이지만 접속 키라 그 PR 에서 따로 확인한다",
      "bareUsers": [
-      "varExposed@2760"
+      "varExposed@2762"
      ],
      "text": "var SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';"
     },
     {
-     "line": 2759,
-     "endLine": 2759,
+     "line": 2761,
+     "endLine": 2761,
      "lines": 1,
      "kind": "varNotExposed",
      "names": [
@@ -525,13 +507,13 @@
      "stage": "상태 이전 뒤 구역 이전",
      "how": "`sb` 선언의 초기값이 이 두 상수를 읽는다(구역 밖에서 쓰는 var). `sb` 가 상태 기관으로 가면(`define('sb', 초기값)` 줄이 되어 구역에 들 수 있다) 세 줄이 한 구역에 들어 두 상수는 그 구역 함수의 지역 변수가 된다. 키 글자는 그대로 옮겨질 뿐이지만 접속 키라 그 PR 에서 따로 확인한다",
      "bareUsers": [
-      "varExposed@2760"
+      "varExposed@2762"
      ],
      "text": "var SUPABASE_ANON_KEY = '(가림)';"
     },
     {
-     "line": 2760,
-     "endLine": 2760,
+     "line": 2762,
+     "endLine": 2762,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -540,13 +522,13 @@
      "stage": "상태 이전(막는 코드가 옮겨진 뒤)",
      "how": "맨이름 참조가 남음 → 그 이름을 맨이름으로 읽고 쓰는 IIFE 안 코드(함수 본문·로드 중 문)가 세포로 옮겨져 L. 통로로 읽게 되면 — 함수 이전·감싸기(구역 이전) 뒤 unstate 로 다시",
      "bareUsers": [
-      "if@4079"
+      "if@4130"
      ],
      "text": "var sb = (window.supabase && typeof window.supabase.createClient === 'function') ? window."
     },
     {
-     "line": 2767,
-     "endLine": 2767,
+     "line": 2769,
+     "endLine": 2769,
      "lines": 1,
      "kind": "varNotExposed",
      "names": [
@@ -555,13 +537,13 @@
      "stage": "결심 필요",
      "how": "`OURGOAL_CONFIG`(빈 설정 객체 선언 · window 복사 줄)는 지시함 「결심 대기」 항목이다(설계 8.1 — 묶음 3 표에 없던 돈 근처 후보). 결심 전에는 구역에 넣지 않는다",
      "bareUsers": [
-      "if@2768"
+      "if@2770"
      ],
      "text": "var OURGOAL_CONFIG = {};"
     },
     {
-     "line": 2768,
-     "endLine": 2768,
+     "line": 2770,
+     "endLine": 2770,
      "lines": 1,
      "kind": "if",
      "names": [],
@@ -571,8 +553,8 @@
      "text": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }"
     },
     {
-     "line": 2814,
-     "endLine": 2814,
+     "line": 2816,
+     "endLine": 2816,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -584,8 +566,8 @@
      "text": "var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');"
     },
     {
-     "line": 2823,
-     "endLine": 2823,
+     "line": 2825,
+     "endLine": 2825,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -595,13 +577,13 @@
      "how": "맨이름 참조가 남음 → 그 이름을 맨이름으로 읽고 쓰는 IIFE 안 코드(함수 본문·로드 중 문)가 세포로 옮겨져 L. 통로로 읽게 되면 — 함수 이전·감싸기(구역 이전) 뒤 unstate 로 다시",
      "bareUsers": [
       "함수 openProTemplateRecordModal",
-      "if@4079"
+      "if@4130"
      ],
      "text": "var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, n"
     },
     {
-     "line": 2845,
-     "endLine": 2845,
+     "line": 2847,
+     "endLine": 2847,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -613,8 +595,19 @@
      "text": "var _promptEncyclopediaOpen = false;"
     },
     {
-     "line": 2889,
-     "endLine": 2889,
+     "line": 2874,
+     "endLine": 2876,
+     "lines": 3,
+     "kind": "if",
+     "names": [],
+     "stage": "결심 필요",
+     "how": "가져온 함수의 window 노출 블록(saveGoogleToken). 재철거(U3)가 지울 줄이지만 tests/gcal-login-reconnect-fix.test.js 가 index.html 에서 이 글자를 찾는다(설계 8.1 묶음 2 — 시험이 붙잡는 배선 글자). 그 단언을 바꾸는 승인이 먼저다. 등록 기관에도 아직 없다: saveGoogleToken",
+     "bareUsers": [],
+     "text": "if(typeof window !== 'undefined'){"
+    },
+    {
+     "line": 2940,
+     "endLine": 2940,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -623,13 +616,13 @@
      "stage": "방법 미정",
      "how": "같은 이름의 선언이 둘 → 겹친 선언을 하나로 줄이는 선행 PR(고치기 — 동작 주장) 뒤 unstate 로",
      "bareUsers": [
-      "varExposed@2894"
+      "varExposed@2945"
      ],
      "text": "var _subtabTplCat = 'all';"
     },
     {
-     "line": 2890,
-     "endLine": 2890,
+     "line": 2941,
+     "endLine": 2941,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -638,13 +631,13 @@
      "stage": "방법 미정",
      "how": "같은 이름의 선언이 둘 → 겹친 선언을 하나로 줄이는 선행 PR(고치기 — 동작 주장) 뒤 unstate 로",
      "bareUsers": [
-      "varExposed@2895"
+      "varExposed@2946"
      ],
      "text": "var _subtabTplQuery = '';"
     },
     {
-     "line": 2892,
-     "endLine": 2892,
+     "line": 2943,
+     "endLine": 2943,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -656,8 +649,8 @@
      "text": "var _subtabTplDomain = 'personal';"
     },
     {
-     "line": 2893,
-     "endLine": 2893,
+     "line": 2944,
+     "endLine": 2944,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -669,8 +662,8 @@
      "text": "var _subtabTplType = 'ai';"
     },
     {
-     "line": 2894,
-     "endLine": 2894,
+     "line": 2945,
+     "endLine": 2945,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -682,8 +675,8 @@
      "text": "var _subtabTplCat = 'all';"
     },
     {
-     "line": 2895,
-     "endLine": 2895,
+     "line": 2946,
+     "endLine": 2946,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -695,8 +688,8 @@
      "text": "var _subtabTplQuery = '';"
     },
     {
-     "line": 3889,
-     "endLine": 4032,
+     "line": 3940,
+     "endLine": 4083,
      "lines": 144,
      "kind": "varExposed",
      "names": [
@@ -708,8 +701,8 @@
      "text": "var MOCK_GROUPS = ["
     },
     {
-     "line": 4054,
-     "endLine": 4054,
+     "line": 4105,
+     "endLine": 4105,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -718,13 +711,13 @@
      "stage": "방법 미정",
      "how": "window 복사 줄이 다른 글자와 한 줄을 나눠 씀 → 줄을 나누는 선행 PR 뒤 unstate 로, 또는 X6 의 정지 조건을 넓히는 결심",
      "bareUsers": [
-      "windowAssign@4054"
+      "windowAssign@4105"
      ],
      "text": "var shareContent = function(opts){ return window.OurgoalViralSharing ? window.OurgoalViral"
     },
     {
-     "line": 4054,
-     "endLine": 4054,
+     "line": 4105,
+     "endLine": 4105,
      "lines": 1,
      "kind": "windowAssign",
      "names": [],
@@ -734,8 +727,8 @@
      "text": "window.shareContent = shareContent;"
     },
     {
-     "line": 4063,
-     "endLine": 4063,
+     "line": 4114,
+     "endLine": 4114,
      "lines": 1,
      "kind": "varExposed",
      "names": [
@@ -747,8 +740,8 @@
      "text": "var FEED_POSTS_CACHE = null;"
     },
     {
-     "line": 4070,
-     "endLine": 4070,
+     "line": 4121,
+     "endLine": 4121,
      "lines": 1,
      "kind": "if",
      "names": [],
@@ -758,8 +751,8 @@
      "text": "if(typeof window !== 'undefined'){ window.SHARED_GROUPS_LOADED = false; }"
     },
     {
-     "line": 4079,
-     "endLine": 4081,
+     "line": 4130,
+     "endLine": 4132,
      "lines": 3,
      "kind": "if",
      "names": [],
@@ -772,13 +765,13 @@
   },
   "sumCheck": {
    "handles": 13,
-   "imports": 182,
+   "imports": 184,
    "expose": 17,
    "functionDecls": 1,
-   "regionCalls": 13,
-   "others": 20,
-   "sum": 246,
-   "topStatements": 246,
+   "regionCalls": 15,
+   "others": 21,
+   "sum": 251,
+   "topStatements": 251,
    "ok": true
   }
  },

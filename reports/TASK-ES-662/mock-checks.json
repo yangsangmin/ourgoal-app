@@ -1,16 +1,16 @@
 {
  "type": "작업자 측정, 판정 아님",
- "baseHead": "ed20750cc1d0079c4c185cca2afb8a6d1e3192a4",
+ "baseHead": "d55d7595889ee185df5222ccda5b3cd37d3c2573",
  "emptyMock": {
   "what": "IIFE 블록을 글자 그대로 js/app/boot.js 로 빼고 같은 자리에 동기 태그를 단 모의본(make-empty-mock.cjs)",
   "type": "작업자 측정, 판정 아님",
   "scriptHtmlLines": [
    2253,
-   4543
+   4136
   ],
-  "movedLines": 2289,
+  "movedLines": 1882,
   "htmlLines": [
-   4581,
+   4174,
    2290
   ],
   "bootFile": "js/app/boot.js(IIFE 글자 그대로 — 모의용)",
@@ -30,36 +30,41 @@
    ]
   }
  },
- "regionMock": {
-  "what": "구역 계획기 --apply 로 구역 이전을 흉내 낸 사본(가칭 세포 파일 둘) + module-specs --write",
-  "testsAll": {
-   "files": 119,
-   "differingCount": 2,
-   "differing": [
-    {
-     "file": "tests/cell-map-export-es414.test.js",
-     "base": [
-      0,
-      0
-     ],
-     "mock": [
-      1,
-      0
-     ]
-    },
-    {
-     "file": "scripts/test-shipyard-modular.js",
-     "base": [
-      0,
-      203
-     ],
-     "mock": [
-      1,
-      173
-     ]
-    }
-   ],
-   "note": "다른 둘은 tests/cell-map-export-es414.test.js(가칭 세포 core/boot-region-a 의 세포지도 칸 「줄 수」 단언)와 그것을 부르는 scripts/test-shipyard-modular.js 다 — 계획기 가칭 세포의 한계이고 구역에 든 문의 글자를 붙잡는 시험이 아니다."
+ "beforeRegionMerge": {
+  "baseHead": "ed20750cc1d0079c4c185cca2afb8a6d1e3192a4",
+  "note": "구역 이전(#933) 병합 전에 잰 참고값이다. 지금 main 의 값이 아니다.",
+  "emptyMockBootedToo": true,
+  "regionPlannerMock": {
+   "what": "구역 계획기 --apply 로 구역 이전을 흉내 낸 사본(가칭 세포 파일 둘) + module-specs --write",
+   "testsAll": {
+    "files": 119,
+    "differingCount": 2,
+    "differing": [
+     {
+      "file": "tests/cell-map-export-es414.test.js",
+      "base": [
+       0,
+       0
+      ],
+      "mock": [
+       1,
+       0
+      ]
+     },
+     {
+      "file": "scripts/test-shipyard-modular.js",
+      "base": [
+       0,
+       203
+      ],
+      "mock": [
+       1,
+       173
+      ]
+     }
+    ],
+    "note": "다른 둘은 tests/cell-map-export-es414.test.js(가칭 세포 core/boot-region-a 의 세포지도 칸 「줄 수」 단언)와 그것을 부르는 scripts/test-shipyard-modular.js 다 — 계획기 가칭 세포의 한계이고 구역에 든 문의 글자를 붙잡는 시험이 아니다."
+   }
   }
  }
 }
