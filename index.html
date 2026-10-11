@@ -2149,7 +2149,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script><script src="js/core/cell-registry.js"></script><script src="js/core/app-state.js"></script>
-<script src="js/core/ui-helpers.js"></script><script src="js/core/boot-finish.js"></script><script src="js/core/boot-records-wiring.js"></script><script src="js/core/boot-home-wiring.js"></script><script src="js/core/boot-entry-wiring.js"></script><script src="js/core/boot-early-state.js"></script><script src="js/core/gcal-token-save.js"></script><script src="js/core/pwa-service-worker.js"></script><script src="js/core/module-connect.js"></script><script src="js/tabs/records/template-record-detail.js"></script><script src="js/core/app-boot.js"></script><script src="js/core/all-view-render.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
+<script src="js/core/ui-helpers.js"></script><script src="js/core/boot-app-handles.js"></script><script src="js/core/boot-finish.js"></script><script src="js/core/boot-records-wiring.js"></script><script src="js/core/boot-home-wiring.js"></script><script src="js/core/boot-entry-wiring.js"></script><script src="js/core/boot-early-state.js"></script><script src="js/core/gcal-token-save.js"></script><script src="js/core/pwa-service-worker.js"></script><script src="js/core/module-connect.js"></script><script src="js/tabs/records/template-record-detail.js"></script><script src="js/core/app-boot.js"></script><script src="js/core/all-view-render.js"></script><script src="js/core/calendar-availability.js"></script><script src="js/core/default-profile.js"></script><script src="js/core/toast-renderer.js"></script><script src="js/core/server-records-sync.js"></script><script src="js/core/profile-load.js"></script><script src="js/core/app-enter.js"></script><script src="js/core/supabase-auth.js"></script><script src="js/core/deep-link-gateway.js"></script><script src="js/core/date-rollover.js"></script><script src="js/core/profile-topbar.js"></script><script src="js/core/view-dispatch.js"></script><script src="js/core/streak-badge.js"></script><script src="js/core/gcal-sync.js"></script><script src="js/core/trash-bin.js"></script><script src="js/core/badges.js"></script><script src="js/core/confetti.js"></script><script src="js/core/modal-helper.js"></script><script src="js/core/registry-init.js"></script><script src="js/core/home-cockpit.js"></script><script src="js/core/gcal-token.js"></script><script src="js/core/virtual-user-helpers.js"></script><script src="js/core/telemetry.js"></script><script src="js/core/time-keys.js"></script>
 <script src="js/core/capabilities.js"></script>
 <script src="js/core/toast.js"></script>
 <script src="js/core/modal.js"></script><script src="js/core/modal-open.js"></script>
@@ -2708,6 +2708,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get track(){ return track; },
     get uid(){ return uid; }
   });
+  /* [#TASK-ES-671] js/core/boot-app-handles.js — 구역 함수 가져오기 2개 · 통로 노출은 스코프 분석으로 뽑았다 */
+  var bootAppConfig = _uiKit.bootAppConfig;
+  var bootTemplatePartHandles = _uiKit.bootTemplatePartHandles;
 
   /* ============ [#TASK-ES-436] 인라인 스크립트 세포화 P1 이음매 1 — 목표 AI·일정 설정, 기록 AI 피드백 (docs/architecture/INLINE-SCRIPT-MAP.md 지도 · docs/specs/MODULE-SPLIT-PROTOCOL.md, #TASK-ES-423 과 같은 틀) ============
      ① 가져오기: js/tabs/goals/ai-agent.js · js/tabs/goals/ai-status.js · js/tabs/goals/schedule-setup.js · js/tabs/records/ai-feedback.js · js/tabs/records/ai-feedback-providers.js 로 옮긴 함수 중 이 스코프(또는 다른 키트 세포)에서 부르는 것을 같은 이름으로 가져온다(키트는 앞선 이음매의 탭 키트 변수를 그대로 쓴다 — 전역에 새 이름을 만들지 않는다).
@@ -2764,10 +2767,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-521] getSupabaseAuthToken → js/core/supabase-auth.js 로 옮김(인라인 3단계 Z1 로그인·계정 1차 — 앞 주석 포함) */
   /* [#TASK-ES-521] GOOGLE_OAUTH_CLIENT_ID → js/core/supabase-auth.js 로 옮김(인라인 3단계 Z1 로그인·계정 1차 — 앞 주석 포함) */
 
-  /* ============ 아워골 앱 환경설정 ============
-     [#TASK-ES-516] 템플릿 복제 광고 설정 4개는 상민님 결정(2026-10-06)으로 지웠다. 크레딧 원장 플래그만 남는다. */
-  var OURGOAL_CONFIG = {};
-  if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }
+  bootAppConfig(); /* [#TASK-ES-671] 로드 중 구역(주석·빈 줄 포함 4줄) → js/core/boot-app-handles.js 의 bootAppConfig 로 옮김 — 원래 자리에서 부른다 */
 
   /*
    * TASK-04: 아래 두 테이블 + RPC가 Supabase에 있어야 팀 댓글/피드 응원이 실제로 동작한다.
@@ -4127,9 +4127,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   bootCommSettingsAndStart(); /* [#TASK-ES-650] 로드 중 구역(주석·빈 줄 포함 63줄) → js/core/boot-finish.js 의 bootCommSettingsAndStart 로 옮김 — 원래 자리에서 부른다 */
   /* ============ KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결 ============ */
-  if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){
-    window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast });
-  }
+  bootTemplatePartHandles(); /* [#TASK-ES-671] 로드 중 구역(주석·빈 줄 포함 3줄) → js/core/boot-app-handles.js 의 bootTemplatePartHandles 로 옮김 — 원래 자리에서 부른다 */
 
   bootInstallAndServiceWorker(); /* [#TASK-ES-650] 로드 중 구역(주석·빈 줄 포함 5줄) → js/core/boot-finish.js 의 bootInstallAndServiceWorker 로 옮김 — 원래 자리에서 부른다 */
 })();

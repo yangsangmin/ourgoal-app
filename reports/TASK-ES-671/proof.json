@@ -1,0 +1,29 @@
+{
+  "task": "TASK-ES-671",
+  "label": "구역 이전 — 앱 환경설정 객체와 템플릿 부품의 앱 손잡이 연결",
+  "slot": "HO",
+  "mode": "region",
+  "allowGuarded": [
+    { "name": "OURGOAL_CONFIG", "approval": "상민님 2026-10-11 「결심 1 : 승인, 금고 변경 승인, 결심 2 : 승인」 가운데 결심 2 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(오케스트레이터가 전한 글자)" },
+    { "name": "OurgoalTemplateCredit", "approval": "상민님 2026-10-11 「결심 1 : 승인, 금고 변경 승인, 결심 2 : 승인」 가운데 결심 2 — 접두 말고는 한 글자도 바꾸지 않고 옮긴다(오케스트레이터가 전한 글자)" }
+  ],
+  "cells": [
+    {
+      "key": "bootAppHandles",
+      "file": "js/core/boot-app-handles.js",
+      "kit": "OurgoalUiHelpers",
+      "kitVar": "_uiKit",
+      "afterTag": "<script src=\"js/core/ui-helpers.js\"></script>",
+      "title": "OurGoal Boot App Handles (앱 시동 — 앱 환경설정 객체 · 템플릿 부품에 앱 손잡이 연결)",
+      "desc": [
+        "앱이 뜰 때 한 번 도는 두 곳을 원래 순서·원래 자리 그대로 구역 함수로 묶었다. 글자는 통로 접두 말고 그대로다.",
+        "bootAppConfig — 앱 환경설정 객체(빈 객체)를 만들어 window 에 단다. 다른 부품이 부를 때 window 의 이 객체를 읽는다.",
+        "bootTemplatePartHandles — 템플릿 부품이 로드돼 있으면 서버 연결 · 앱 상태 읽기 함수 · 알림 글 함수를 건넨다."
+      ],
+      "regions": [
+        { "name": "bootAppConfig", "group": "아워골 앱 환경설정", "from": "var OURGOAL_CONFIG = {};", "to": "if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }" },
+        { "name": "bootTemplatePartHandles", "group": "KF-2 #TASK-ES-017", "from": "if(window.OurgoalTemplateCredit", "to": "if(window.OurgoalTemplateCredit" }
+      ]
+    }
+  ]
+}
