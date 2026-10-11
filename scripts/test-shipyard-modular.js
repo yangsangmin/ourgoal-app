@@ -153,6 +153,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/core-capabilities-slots.test.js');
   runNode('tests/module-guard.test.js');
   runNode('tests/new-module.test.js');
+  // #TASK-ES-667 모듈 가드 ⑤ 의 주인 규칙(인라인 · 부팅 파일 · js/core 기관) — 오탐 사례 0건과 진짜 사례 1건을 함께 고정한다(임시 폴더의 가짜 트리에 실제 crossTabRefs 를 돌린다)
+  runNode('tests/cross-tab-inline-owned-es507.test.js');
   runNode('tests/core-toast-es361.test.js'); // #TASK-ES-361 공용 토스트 통로(ui.toast)·CORE-10
   // #TASK-ES-362: 세포 이전 중 발견된 기존 버그 수정의 부품 시험(SET-08 · CAL-03)
   runNode('tests/settings-gcal-autosync-switch.test.js');
