@@ -12,7 +12,7 @@
 - [x] module-guard --update · npm test 기준·작업 · unwire-run measure · 예상 30분 · 완료 기준: 대조 불일치 0 · 사라진 이름 0 · 지문 차이 0 · 되짚기 같음
 - [x] 남은 배선·덩어리 구성 다시 재기 · 예상 10분 · 완료 기준: remaining-wiring.json · iife-composition.json 이 있다(줄 합 일치)
 - [x] REQ(8원칙)·claims·TICKETS · 예상 20분 · 완료 기준: verify-integrity-gate → npm test 종료 코드 0
-- [ ] 커밋 → 로컬 recomputeSplit ok:true · judge.js 전체 실행(X2 첫 실사용) · 예상 20분 · 완료 기준: 결과가 court-local.json 에 있다
+- [x] 커밋 → 로컬 recomputeSplit ok:true · judge.js 전체 실행(X2 첫 실사용) · 예상 20분 · 완료 기준: 결과가 court-local.json 에 있다
 - [ ] origin/main 합치기 → push → PR 열기(5대 고정 블록) → `gh pr view` 되읽기 · 예상 10분 · 완료 기준: PR 번호·head 가 되읽은 값과 같다
 - [ ] [4단계: 심사 청구] 오케스트레이터에 보고 · 완료 기준: 보고에 PR 번호·수치·남은 구성 표가 있다
 
