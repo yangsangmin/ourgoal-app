@@ -2,8 +2,8 @@
 
 - 작업번호: TASK-ES-666 · 종류: **FIX**(시험지 · 기준 시험지 · 시험 도우미 — 앱 코드 `index.html` · `js/**` 변경 0)
 - 묶음: 같은 승인으로 나눈 PR 네 개 — TASK-ES-666(시험지·기준 시험지·공용 도우미) · TASK-ES-667(모듈 측정기 ⑤ 규칙) · TASK-ES-668(도구 다섯 개) · TASK-ES-669(금고: 무결성 게이트 한 줄). 책임 단위로 나눴고 어느 순서로 병합돼도 main 의 `npm test` 가 깨지지 않게 했다(아래 4절·6절).
-- 작업참고: `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #934**(끝까지 읽음 — 이 작업에 쓴 경험칙: L021 · L023 · L048 · L067 · L085 · L110).
-- 측정 기준: `origin/main` 2a1507eb. main 과 함께 움직이는 수는 이 PR 이 가진 `reports/TASK-ES-666/measurement.json` 을 가리킨다(`baseCommit` 칸이 잰 커밋이다).
+- 작업참고: `C:/dev/agent-knowledge/WORK-REFERENCE.md` **기준 PR #941**(끝까지 읽음 — 이 작업에 쓴 경험칙: L021 · L023 · L048 · L067 · L085 · L110).
+- 측정 기준: `origin/main` 42b5511f — 이 가지에 그 커밋을 합친 뒤 측정 한 벌을 전부 다시 돌린 값이다(앞선 기준 커밋에서 잰 값은 싣지 않았다). main 과 함께 움직이는 수는 이 PR 이 가진 `reports/TASK-ES-666/measurement.json` 을 가리킨다(`baseCommit` 칸이 잰 커밋이다).
 - 이 문서는 작업 세션의 서류다. 효력·근거가 아니며, 아래 수치는 전부 **작업자 측정(판정 아님)** 이다. 판정은 GitHub 법정만 낸다.
 
 ## 0. 요구 (상민님 원문 · 지시 항목)
@@ -57,11 +57,11 @@
 
 ## 1. [원칙 ①] 문제를 정확히 파악한다
 
-- 증상: 덩어리(index.html 인라인 IIFE)는 인라인 스크립트 1917줄(모듈 측정기 ①)까지 줄었지만, 그 안의 글자를 「index.html 에 이 글자가 있어야 한다」고 붙잡는 단언이 남아 있어 마지막 단계(finalize — IIFE 를 비우고 시동 목록을 `js/app/boot.js` 로)를 하면 시험이 깨진다.
+- 증상: 덩어리(index.html 인라인 IIFE)는 인라인 스크립트 1896줄(모듈 측정기 ①)까지 줄었지만, 그 안의 글자를 「index.html 에 이 글자가 있어야 한다」고 붙잡는 단언이 남아 있어 마지막 단계(finalize — IIFE 를 비우고 시동 목록을 `js/app/boot.js` 로)를 하면 시험이 깨진다.
 - 측정(시험·기준 시험지 131개를 던지지 않는 단언으로 끝까지 돌림 — `reports/TASK-ES-620/run-asserts.cjs`): 기준에서는 실패하지 않고 모의본에서만 실패하는 단언 줄이 (가) **40줄**, (나) **14줄**이다.
   - (가) 파일별: `scripts/smoke-test.js` 23 · `scripts/test-shipyard-modular.js` 1 · `scripts/verify-integrity-gate.js` 1 · `tests/avatar-10slots-growth.test.js` 1 · `tests/cross-tab-guarded-init-es502.test.js` 1 · `tests/cross-tab-inline-owned-es507.test.js` 1 · `tests/gcal-login-reconnect-fix.test.js` 1 · `tests/goal-template-legacy-cleanup.test.js` 1 · `tests/goals-only-view.test.js` 1 · `tests/goals-schedule-sync.test.js` 1 · `tests/module-guard.test.js` 2 · `tests/new-module.test.js` 1 · `tests/stopwatch-lap-inputs.test.js` 1 · `tests/stopwatch-table-hint.test.js` 3 · `tests/trio-es143-es145.test.js` 1.
   - (나) 파일별: `scripts/smoke-test.js` 1 · `scripts/test-shipyard-modular.js` 1 · `scripts/verify-integrity-gate.js` 1 · `tests/avatar-10slots-growth.test.js` 1 · `tests/cross-tab-guarded-init-es502.test.js` 1 · `tests/cross-tab-inline-owned-es507.test.js` 1 · `tests/gcal-login-reconnect-fix.test.js` 1 · `tests/goal-template-legacy-cleanup.test.js` 1 · `tests/goals-only-view.test.js` 1 · `tests/goals-schedule-sync.test.js` 1 · `tests/module-guard.test.js` 2 · `tests/new-module.test.js` 1 · `tests/trio-es143-es145.test.js` 1.
-- 붙잡는 대상으로 나누면(`reports/TASK-ES-666/tools/attribute-pins.cjs` — 단언의 글자가 기준 index.html 의 IIFE 안 어디에 있었는가. 한 줄이 여러 자리의 글자를 붙잡으면 자리마다 센다): (가) 글자를 붙잡는 줄 34(글자가 있던 자리: 함수 선언 24 · 상태·그 밖의 var 8 · 주석 3 · if 문 1) · 글자 없이 깨지는 줄 6(모듈 가드의 종료 코드·⑤ 값을 보는 줄 등) / (나) 글자를 붙잡는 줄 8(글자가 있던 자리: 주석 3 · 상태·그 밖의 var 1 · if 문 1 · 함수 선언 4) · 글자 없이 깨지는 줄 6(모듈 가드의 종료 코드·⑤ 값을 보는 줄 등).
+- 붙잡는 대상으로 나누면(`reports/TASK-ES-666/tools/attribute-pins.cjs` — 단언의 글자가 기준 index.html 의 IIFE 안 어디에 있었는가. 한 줄이 여러 자리의 글자를 붙잡으면 자리마다 센다): (가) 글자를 붙잡는 줄 34(글자가 있던 자리: 함수 선언 24 · 호출문 7 · 주석 3 · 상태·그 밖의 var 1 · if 문 1) · 글자 없이 깨지는 줄 6(모듈 가드의 종료 코드·⑤ 값을 보는 줄 등) / (나) 글자를 붙잡는 줄 8(글자가 있던 자리: 주석 3 · 상태·그 밖의 var 1 · if 문 1 · 함수 선언 4) · 글자 없이 깨지는 줄 6(모듈 가드의 종료 코드·⑤ 값을 보는 줄 등).
 - (나)의 14줄을 고칠 몫으로 나누면: 주석 글자를 붙잡는 줄(`scripts/smoke-test.js` · `tests/goal-template-legacy-cleanup.test.js` 의 구획 주석 「(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)」, `tests/avatar-10slots-growth.test.js` 의 주석 속 `filterHarmfulWords`) · index.html 만 읽는 글자 단언(`tests/goals-only-view.test.js` · `tests/goals-schedule-sync.test.js` · `tests/trio-es143-es145.test.js` — 글자가 덩어리에 남은 함수 안에 있다) · 배선 글자(`tests/gcal-login-reconnect-fix.test.js`) · 상태 선언 글자(금고 게이트 — TASK-ES-669) · 모듈 가드 ⑤ 로 깨지는 줄(TASK-ES-667).
 
 ## 2. [원칙 ②] 본질·원인·중심·핵심
@@ -101,7 +101,7 @@
 - 반례 — 「주석 글자를 찾던 단언을 함수 선언으로 바꾸면 다른 것을 재는 것 아닌가」: 그 단언의 메시지는 「filterHarmfulWords 함수가 … 정의되어 있어야 합니다」 · 「templatesHtml 무해화 확인」이다. 고치기 전에는 그 함수가 이미 세포로 옮겨 가 index.html 에는 **주석**만 남아 있었고, 단언은 그 주석 글자로 통과하고 있었다. 새 갈래는 메시지가 말하는 것(선언·첫 문)을 직접 본다. 옛 갈래는 한 글자도 바꾸지 않았다.
 - 반례 — 「인라인 합본으로 넓힌 세 줄은 느슨해지는가」: `renderGoalsScreen();` 같은 글자는 합본의 여러 세포에 있다(대조군 B3 — 옮겨 간 함수 한 곳에서만 지우면 단언은 참으로 남는다). 고치기 전에도 index.html 에 남은 한 곳(기록 모달 함수 안)이 우연히 붙잡고 있었을 뿐이다. 이 저장소가 세포 이전 때마다 해 온 「시험지 선행 — 읽는 범위만 넓힘, 기대값 0 변경」과 같은 조치다. 합본 전체에서 지우면 실패한다(대조군 B1 · B2).
 - 반례 — 도우미가 엉뚱한 글자로 조용히 통과: 옛 글자가 비었거나 이름이 식별자가 아니면 오류를 던진다. 주석·문자열 안의 글자, 함수 식, 안쪽 깊은 선언, 읽지 않는 파일, `defer` 태그는 거짓이다(자체 시험 12줄이 `npm test` 의 ok 줄로 늘었다).
-- 부작용 — `tests/gcal-login-reconnect-fix.test.js` 의 한 줄은 지금 넓혀도 (나)에서 풀리지 않는다: `saveGoogleToken` 이 아직 등록되지 않았다. 등록되면 풀리는지는 등록 흉내로 쟀다(7절).
+- 알림 — `tests/gcal-login-reconnect-fix.test.js` 의 한 줄은 #TASK-ES-620 도우미의 등록 갈래로 넓혔다. 이 작업을 시작할 때는 `saveGoogleToken` 이 등록되지 않아 넓혀도 풀리지 않았는데, 측정 기준 커밋에는 등록 2차(#940)가 들어와 있어 (나)에서 이 줄이 풀린다. 등록을 되돌리면 다시 실패한다(대조군 R1).
 - 알림 — 바꾼 시험 파일 가운데 `tests/goal-template-legacy-cleanup.test.js` · `tests/goals-only-view.test.js` · `tests/goals-schedule-sync.test.js` · `tests/trio-es143-es145.test.js` 는 현재 main 에서도 다른 단언 때문에 종료 코드가 0 이 아니다(`npm test` 경로 밖의 옛 시험 파일 — `measurement.json` `main.plain.base.testFilesFailed`). 이 PR 은 그 줄들을 고치지 않았다.
 
 ## 5. [원칙 ⑤] 절차
@@ -115,7 +115,7 @@
 
 ## 6. [원칙 ⑥] 절차 재검증 및 반론 격파
 
-- 반론 1 — 「(가)에서 32줄이 남는데 다 고친 것이 아니지 않은가.」
+- 반론 1 — 「(가)에서 31줄이 남는데 다 고친 것이 아니지 않은가.」
   - 격파: (가)는 IIFE 를 **통째로** `js/app/boot.js` 한 파일에 담은 모의본이라 덩어리의 글자가 전부 그 파일에 있다. 실제 finalize 는 손잡이·구역 함수 가져오기·호출문만 남았을 때 돈다(설계 5.8) — 그때 함수 본문·상태 초기값 글자는 이미 세포에 있다. 그 꼴이 (나)이고 (나)에서는 한계를 빼면 0줄이다. 합본이 `js/app/boot.js` 까지 읽게 넓히면 (가)의 수는 줄지만, 실제로 오지 않을 꼴을 위해 공용 합본과 기준 시험지를 넓히는 일이라 하지 않았다(지표를 거짓으로 좋게 만들지 않는다). (가)에 남는 줄은 7.2 에 그대로 적었다.
 - 반론 2 — 「넓힌 단언은 무엇이든 통과시키는 것 아닌가.」
   - 격파: 대조군 9개(이 PR 몫) — 옮겨 간 대상을 깨뜨리면 그 단언 줄이 새로 실패한다(전부 기대대로 true). 현재 main 에서는 옛 글자 갈래가 그대로 참이라 결과가 같다(새로 실패 0줄).
@@ -129,20 +129,21 @@
 
 | 모의본 | 고치기 전(모의본에서만 깨지는 단언 줄) | 네 PR 을 얹은 뒤 | 남은 것 |
 |---|--:|--:|---|
-| (가) IIFE 를 통째로 `js/app/boot.js` 로 뺀 것(662 도구) | 40 | 32 | 글자가 `js/app/boot.js` 한 파일에 통째로 있어 합본이 읽지 않는다(실제 finalize 의 꼴이 아니다 — 줄 목록 `measurement.json` `mock.A.afterAll.list`) |
-| (나) 남은 줄이 각자 갈 곳으로 간 꼴(`reports/TASK-ES-666/tools/make-final-mock.cjs`) | 14 | 5 | `scripts/test-shipyard-modular.js:150` scripts/module-guard.js must pass (exit 1) · `tests/gcal-login-reconnect-fix.test.js:25` saveGoogleToken 전역 노출 · `tests/module-guard.test.js:61` 가드가 통과해야 한다 · `tests/module-guard.test.js:62` The expression evaluated to a falsy value · `tests/new-module.test.js:65` 새 세포를 더해도 모듈 가드 통과 |
+| (가) IIFE 를 통째로 `js/app/boot.js` 로 뺀 것(662 도구) | 40 | 31 | 글자가 `js/app/boot.js` 한 파일에 통째로 있어 합본이 읽지 않는다(실제 finalize 의 꼴이 아니다 — 줄 목록 `measurement.json` `mock.A.afterAll.list`) |
+| (나) 남은 줄이 각자 갈 곳으로 간 꼴(`reports/TASK-ES-666/tools/make-final-mock.cjs`) | 14 | 4 | `scripts/test-shipyard-modular.js:150` scripts/module-guard.js must pass (exit 1) · `tests/module-guard.test.js:61` 가드가 통과해야 한다 · `tests/module-guard.test.js:62` The expression evaluated to a falsy value · `tests/new-module.test.js:65` 새 세포를 더해도 모듈 가드 통과 |
 | (나) + `saveGoogleToken` 등록 흉내 | – | 4 | `scripts/test-shipyard-modular.js:150` scripts/module-guard.js must pass (exit 1) · `tests/module-guard.test.js:61` 가드가 통과해야 한다 · `tests/module-guard.test.js:62` The expression evaluated to a falsy value · `tests/new-module.test.js:65` 새 세포를 더해도 모듈 가드 통과 |
-| (나)에서 흉내의 한계(새 세포 파일에 신고서 없음)를 걷어 낸 것 | 14 | 1 | `tests/gcal-login-reconnect-fix.test.js:25` saveGoogleToken 전역 노출 |
+| (나)에서 흉내의 한계(새 세포 파일에 신고서 없음)를 걷어 낸 것 | 14 | 0 | 없음 |
 | (나) + 등록 흉내 + 한계 걷어 냄 | – | 0 | 없음 |
 
-- PR 하나만 얹었을 때 (나)에서만 깨지는 줄(「기준 + 그 PR」 과 「(나) + 그 PR」 을 맞댐): 666 만 8줄 · 667 만 12줄 · 669 만 14줄(고치기 전 14줄). 넷을 다 얹어야 위 표의 수가 된다.
+- 「등록 흉내」(`--register saveGoogleToken`)는 이 기준 커밋에서는 아무것도 바꾸지 않는다 — 그 이름은 등록 2차(#940)로 이미 등록 기관에 등록돼 있다(모의본 도구 기록: 「이미 등록 블록이 있다(이 도구는 새 블록만 단다)」). 그래서 「등록 흉내」가 붙은 줄은 붙지 않은 줄과 같다.
+- PR 하나만 얹었을 때 (나)에서만 깨지는 줄(「기준 + 그 PR」 과 「(나) + 그 PR」 을 맞댐): 666 만 7줄 · 667 만 12줄 · 669 만 14줄(고치기 전 14줄). 넷을 다 얹어야 위 표의 수가 된다.
 - 덩어리에 남은 함수 6개(`openProTemplateRecordModal` · `bindProRecTable` · `bindProRecTools` · `bindProRecTrendChart` · `bindProRecStopwatch` · `bindProRecSave`)는 모의본에서 탭 세포 파일 2개에 나눠 담았다(가장 큰 파일 534줄 — 800줄 단언과 모듈 가드 ④ 에 걸리지 않는다).
 - (나)에 남는 모듈 가드 줄들(`scripts/test-shipyard-modular.js` 의 가드 실행 줄 · `tests/module-guard.test.js` · `tests/new-module.test.js`)은 가드가 모의본의 새 파일에 신고서가 없다고 실패해서다(**흉내의 한계**). 그것을 모의본 안에서 걷어 내면 사라진다(표의 넷째·다섯째 줄 — `reports/TASK-ES-666/tools/relax-mock-limits.cjs`).
 
-### 7.2 (가)에 남는 줄 (32줄 — 모의본 (가)의 한계와 범위 밖)
+### 7.2 (가)에 남는 줄 (31줄 — 모의본 (가)의 한계와 범위 밖)
 
-- 파일별: `scripts/smoke-test.js` 22 · `scripts/test-shipyard-modular.js` 1 · `scripts/verify-integrity-gate.js` 1 · `tests/gcal-login-reconnect-fix.test.js` 1 · `tests/module-guard.test.js` 2 · `tests/new-module.test.js` 1 · `tests/stopwatch-lap-inputs.test.js` 1 · `tests/stopwatch-table-hint.test.js` 3.
-- 붙잡는 대상(고치기 전 (가)의 분류 — 글자를 붙잡는 줄 34(글자가 있던 자리: 함수 선언 24 · 상태·그 밖의 var 8 · 주석 3 · if 문 1) · 글자 없이 깨지는 줄 6(모듈 가드의 종료 코드·⑤ 값을 보는 줄 등)). 글자가 있던 문: 함수 선언(openProTemplateRecordModal) · 함수 선언(bindProRecTrendChart) · 함수 선언(bindProRecStopwatch) · 상태·그 밖의 var(MOCK_GROUPS) · 주석(문 밖) · 상태·그 밖의 var(_promptEncyclopediaOpen) · if 문 · 함수 선언(bindProRecSave). 전부 (가)에서는 `js/app/boot.js` 에 있어 합본이 읽지 않는다. (나)에서는 그 글자가 세포·구역 세포·상태 기관 호출로 가 있어 풀린다.
+- 파일별: `scripts/smoke-test.js` 22 · `scripts/test-shipyard-modular.js` 1 · `scripts/verify-integrity-gate.js` 1 · `tests/module-guard.test.js` 2 · `tests/new-module.test.js` 1 · `tests/stopwatch-lap-inputs.test.js` 1 · `tests/stopwatch-table-hint.test.js` 3.
+- 붙잡는 대상(고치기 전 (가)의 분류 — 글자를 붙잡는 줄 34(글자가 있던 자리: 함수 선언 24 · 호출문 7 · 주석 3 · 상태·그 밖의 var 1 · if 문 1) · 글자 없이 깨지는 줄 6(모듈 가드의 종료 코드·⑤ 값을 보는 줄 등)). 글자가 있던 문: 함수 선언(openProTemplateRecordModal) · 함수 선언(bindProRecTrendChart) · 함수 선언(bindProRecStopwatch) · 호출문 · 주석(문 밖) · 상태·그 밖의 var(_promptEncyclopediaOpen) · if 문 · 함수 선언(bindProRecSave). 전부 (가)에서는 `js/app/boot.js` 에 있어 합본이 읽지 않는다. (나)에서는 그 글자가 세포·구역 세포·상태 기관 호출로 가 있어 풀린다.
 - `scripts/verify-all-clicks.js` 도 (가)에서만 종료 코드가 바뀐다(처리기를 `js/app/` 에서 읽지 않는다). (나)에서는 그대로다.
 - 줄 목록 전체: `reports/TASK-ES-666/measurement.json` `mock.A.afterAll.list`.
 
@@ -162,9 +163,9 @@
 | 트리 | `npm test` 종료 코드 | ✓ 줄 | ok 줄 | smoke-test(종료 · ✓ · ✗) | 무결성 게이트(종료 · ✓ · ✗) | 조선소 시험(종료 · ok 줄) | 시험 파일(종료 0 / 전체) |
 |---|--:|--:|--:|---|---|---|---|
 | (가) · 고치기 전 | 1 | 427 | 0 | 1 · ✓ 427 · ✗ 12 | 1 · ✓ 37 · ✗ 1 | 1 · ok 0 | 80 / 114 |
-| (가) · 네 PR | 1 | 428 | 0 | 1 · ✓ 428 · ✗ 11 | 1 · ✓ 37 · ✗ 1 | 1 · ok 0 | 84 / 115 |
+| (가) · 네 PR | 1 | 428 | 0 | 1 · ✓ 428 · ✗ 11 | 1 · ✓ 37 · ✗ 1 | 1 · ok 0 | 85 / 115 |
 | (나) · 고치기 전 | 1 | 438 | 0 | 1 · ✓ 438 · ✗ 1 | 1 · ✓ 37 · ✗ 1 | 1 · ok 0 | 82 / 114 |
-| (나) · 네 PR | 1 | 485 | 0 | 0 · ✓ 439 · ✗ 0 | 0 · ✓ 38 · ✗ 0 | 1 · ok 0 | 86 / 115 |
+| (나) · 네 PR | 1 | 485 | 0 | 0 · ✓ 439 · ✗ 0 | 0 · ✓ 38 · ✗ 0 | 1 · ok 0 | 87 / 115 |
 | (나) + 등록 흉내 + 한계 걷어 냄 · 네 PR | 0 | 487 | 185 | 0 · ✓ 439 · ✗ 0 | 0 · ✓ 38 · ✗ 0 | 0 · ok 185 | 89 / 115 |
 
 ### 7.5 대조군 (`reports/TASK-ES-666/tools/control-group.cjs` → `reports/TASK-ES-666/control-group.json`)
@@ -183,7 +184,7 @@
 | G3 | 669 | 상태 기관 호출의 이름을 다른 이름으로 바꿈 | 1 | 1 | true |
 | G4 | 669 | 호출을 주석으로 바꿈(주석 안의 호출 글자는 상태 선언이 아니다) | 1 | 1 | true |
 | G5 | 669 | index.html 에서 상태 기관(js/core/app-state.js)의 <script src> 태그를 뺌(기관을 읽지 않으면 호출은 값을 만들지 못한다) | 1 | 1 | true |
-| R1 | 666 | 세포 js/core/gcal-token-save.js 의 등록 블록 window 목록에서 saveGoogleToken 을 뺌(모의 등록을 되돌림) | 1 | 1 | true |
+| R1 | 666 | 세포 js/core/gcal-token-save.js 의 등록 블록 window 목록에서 saveGoogleToken 을 뺌(등록을 되돌림) | 1 | 1 | true |
 | B1 | 666 | 합본이 읽는 파일 전부(index.html + 인라인에서 옮겨 간 세포)에서 글자 renderGoalsScreen(); 을 지움 | 2 | 2 | true |
 | B2 | 666 | 합본이 읽는 파일 전부에서 글자 b.classList.add('active') · b.classList.remove('active') 를 지움 | 1 | 1 | true |
 | B3 | 666 | 옮겨 간 함수의 세포(모의 탭 세포)에서만 글자 renderGoalsScreen(); 을 지움 — 다른 세포에도 그 글자가 있으면 단언은 참으로 남는다(기대: 새로 실패 0) | 0 | 0 | true |
@@ -210,7 +211,7 @@
 
 ### 넓히기로 풀지 못한 것 · 범위 밖 (보고)
 
-- `window.saveGoogleToken = saveGoogleToken;`(`tests/gcal-login-reconnect-fix.test.js`): 단언은 넓혔지만 `saveGoogleToken` 이 등록 기관에 등록되지 않아 지금은 풀리지 않는다. 등록 흉내(등록 블록을 세포에 단 모의본)에서는 풀린다 — (나) 남은 줄 1 → 0. 등록 2차 작업의 몫이다.
+- (풀림) `window.saveGoogleToken = saveGoogleToken;`(`tests/gcal-login-reconnect-fix.test.js`): 등록 2차(#940)가 main 에 들어와 그 이름이 등록됐다. 넓힌 단언은 (나)에서 등록 갈래로 참이다 — 한계를 걷어 낸 (나)에 남는 줄 0.
 - (가)에 남는 글자들의 실제 갈 곳: (나)에서는 함수는 탭 세포로, 상태 초기값은 상태 기관 호출로, 그 밖의 문은 구역 세포(생성기 표지가 있는 `js/core` 파일)로 간 것으로 흉내 냈고 그 꼴에서는 풀린다. 실제로 어디로 갈지는 이 작업이 정하지 않는다(범위 밖). 실제 이전 PR 이 모의 적용 사본에서 다시 재야 한다.
 - `js/app/boot.js` 의 신고서: `node scripts/module-specs.js --write` 가 `app` 층 세포의 종류를 `unclassified` 로 쓰고 가드가 그것을 막는다(`relax-mock-limits.cjs` 가 모의본에서 `organ` 으로 적어 넘겼다). finalize PR 이 종류를 정해야 한다.
 - 「정의 글자로 함수를 잘라 실행하는 시험」 가운데 (나)에서 깨지는 것은 0건이었다((가)에 남는 줄 목록은 7.2).

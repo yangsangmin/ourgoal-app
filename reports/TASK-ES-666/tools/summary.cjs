@@ -51,6 +51,7 @@ out.mock = {
   A: { made: has('mock-mockA.json') ? rj('mock-mockA.json') : null, before: onlyIn('base', 'mockA'), afterAll: onlyIn('mainAll', 'afterA') },
   B: { made: has('mock-mockB.json') ? (m => ({ topStatements: m.topStatements, byKind: m.byKind || null, byDestination: m.byDestination || null, movedFunctions: m.movedFunctions || null, movedFunctionFiles: m.movedFunctionFiles || null, movedFunctionFileMaxLines: m.movedFunctionFileMaxLines === undefined ? null : m.movedFunctionFileMaxLines, stateDefines: m.stateDefines || null, localVars: m.localVars || null, rewiredDropped: m.rewiredDropped || null, comments: m.comments || null, limits: m.limits || null, files: m.files || null }))(rj('mock-mockB.json')) : null,
     before: onlyIn('base', 'mockB'), afterAll: onlyIn('mainAll', 'afterB'), afterAllRegistered: onlyIn('mainAll', 'afterBreg'),
+    registerAttempt: has('mock-afterBreg.json') ? (rj('mock-afterBreg.json').registered || []).map(x => ({ name: x.name, file: x.file || null, why: x.why || null, added: !x.why })) : null,
     limitsRemoved: { before: onlyIn('base', 'limB'), afterAll: onlyIn('mainAll', 'limAfterB'), afterAllRegistered: onlyIn('mainAll', 'limAfterBreg') },
     perPr: { '666': onlyIn('main666', 'afterB666'), '667': onlyIn('main667', 'afterB667'), '669': onlyIn('main669', 'afterB669') } },
 };

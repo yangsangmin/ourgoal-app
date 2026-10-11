@@ -25,7 +25,7 @@
  ],
  "outOfScopeReports": [
   {
-   "text": "tests/gcal-login-reconnect-fix.test.js 의 window.saveGoogleToken = saveGoogleToken; 단언은 넓혔지만 saveGoogleToken 이 등록 기관에 등록되지 않아 모의본 (나)에서 아직 풀리지 않는다(등록 흉내에서는 풀린다 — summary.mockB.limitsRemovedAfterAllRegistered). 등록 2차의 몫이다."
+   "text": "tests/gcal-login-reconnect-fix.test.js 의 window.saveGoogleToken = saveGoogleToken; 단언은 등록 갈래로 넓혔다. 측정 기준 커밋에는 등록 2차(#940)로 그 이름이 등록돼 있어 모의본 (나)에서 풀린다(등록 흉내는 아무것도 바꾸지 않는다 — mock.B.registerAttempt)."
   },
   {
    "text": "모의본 (가)에 남는 줄은 글자가 js/app/boot.js 한 파일에 통째로 있어서다(실제 finalize 의 꼴이 아니다). 합본이 그 파일을 읽게 넓히지 않았다 — 줄 목록은 measurement.json mock.A.afterAll.list."
@@ -355,7 +355,7 @@
     "type": "jsonPath",
     "file": "reports/TASK-ES-666/measurement.json",
     "path": "summary.mockA.afterAll",
-    "equals": 32
+    "equals": 31
    }
   },
   {
@@ -387,7 +387,7 @@
     "type": "jsonPath",
     "file": "reports/TASK-ES-666/measurement.json",
     "path": "summary.mockB.afterAll",
-    "equals": 5
+    "equals": 4
    }
   },
   {
@@ -474,7 +474,7 @@
     "type": "jsonPath",
     "file": "reports/TASK-ES-666/measurement.json",
     "path": "summary.mockB.limitsRemovedAfterAll",
-    "equals": 1
+    "equals": 0
    }
   }
  ],

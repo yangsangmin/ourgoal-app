@@ -81,7 +81,7 @@ const variants = [
     edits: () => ({ [MOCK_CORE]: replaceOnce(MOCK_CORE, DEF, '/* ' + DEF + ' */') }) },
   { id: 'G5', pr: 669, what: 'index.html 에서 상태 기관(js/core/app-state.js)의 <script src> 태그를 뺌(기관을 읽지 않으면 호출은 값을 만들지 못한다)', entries: ['scripts/verify-integrity-gate.js'], expect: [A_GATE],
     edits: () => ({ 'index.html': dropTag('js/core/app-state.js') }) },
-  { id: 'R1', pr: 666, what: '세포 js/core/gcal-token-save.js 의 등록 블록 window 목록에서 saveGoogleToken 을 뺌(모의 등록을 되돌림)', entries: ['tests/gcal-login-reconnect-fix.test.js'], expect: [A_GCAL],
+  { id: 'R1', pr: 666, what: '세포 js/core/gcal-token-save.js 의 등록 블록 window 목록에서 saveGoogleToken 을 뺌(등록을 되돌림)', entries: ['tests/gcal-login-reconnect-fix.test.js'], expect: [A_GCAL],
     edits: () => { const rel = 'js/core/gcal-token-save.js', s = read(rel), k = "'saveGoogleToken'"; const i = s.lastIndexOf(k); if (i < 0) throw new Error('등록 목록의 이름을 찾지 못했다'); return { [rel]: s.slice(0, i) + "'saveGoogleTokenGone'" + s.slice(i + k.length) }; } },
   { id: 'B1', pr: 666, what: '합본이 읽는 파일 전부(index.html + 인라인에서 옮겨 간 세포)에서 글자 renderGoalsScreen(); 을 지움', entries: ['tests/goals-only-view.test.js', 'tests/goals-schedule-sync.test.js'], expect: [A_GOALS_ONLY, A_GOALS_SYNC], texts: ['renderGoalsScreen();'],
     edits: () => eraseEverywhere(['renderGoalsScreen();']) },
