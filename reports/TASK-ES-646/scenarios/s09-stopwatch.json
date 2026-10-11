@@ -1,0 +1,262 @@
+{
+  "id": "s09-stopwatch",
+  "title": "스톱워치를 시작·랩·정지·리셋하고 모드 칩으로 60초 휴식을 고르면 표시가 그에 맞게 바뀌며, 칸을 누른 뒤 랩의 「기입」을 누르면 그 칸과 종목 칸에 랩 시간·메모가 들어가고, 누른 칸이 없으면 비어 있는 첫 시간 칸에 들어가며, 「표에 시간 기입」은 누른 칸에 지금 시간을 넣는다 (스톱워치·인터벌 타이머 — 시작·랩·정지·리셋·모드·표 기입)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "일시정지"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "click",
+      "selector": "#swLapBtn"
+    },
+    {
+      "expect": "count",
+      "selector": ".sw-lap-row",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": "#swStartPauseBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swStartPauseBtn",
+      "text": "▶ 시작"
+    },
+    {
+      "do": "click",
+      "selector": "#swResetBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".sw-lap-row"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-sw-mode-chip[data-swmode=\"rest60\"]"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "01:00.0"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".pro-sw-mode-chip[data-swmode=\"rest60\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-sw-mode-chip[data-swmode=\"stopwatch\"]"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#swDisplay",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#swLapBtn"
+    },
+    {
+      "expect": "textEquals",
+      "selector": ".sw-lap-time",
+      "text": "00:00.0"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 5
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"4\"]"
+    },
+    {
+      "do": "type",
+      "selector": ".sw-lap-memo-input",
+      "text": "랩메모"
+    },
+    {
+      "do": "click",
+      "selector": ".sw-lap-inject-btn"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn2"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 6
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"4\"]",
+      "name": "value",
+      "equals": "00:00"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "랩메모"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-row-del[data-delrow=\"0\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 5
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"4\"]",
+      "name": "value",
+      "equals": ""
+    },
+    {
+      "do": "click",
+      "selector": ".sw-lap-inject-btn"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 6
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"4\"]",
+      "name": "value",
+      "equals": "00:00"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"4\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "랩메모"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-tpl-cell-input[data-row=\"5\"][data-col=\"3\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#swInjectBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#proAddRowBtn2"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 7
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"5\"][data-col=\"3\"]",
+      "name": "value",
+      "equals": "00:00"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

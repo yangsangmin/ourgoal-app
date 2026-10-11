@@ -1,0 +1,4299 @@
+{
+ "tool": "court/lib/scenario.js runScenario(preserveOnly — 단계마다 화면·저장값 갈무리) · 기준 2회 · 작업 1회 (법정 실행기를 읽기 전용으로 사용)",
+ "type": "작업자 PC 예비 점검 — 판정 아님",
+ "measuredAt": "2026-10-11T06:25:56.756Z",
+ "baseHead": "ed20750cc1d0079c4c185cca2afb8a6d1e3192a4",
+ "normalize": [
+  "ISO /\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,3})?)?(?:Z|[+-]\\d{2}:\\d{2})?/g (값·동일성 제외)",
+  "UUID /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g (번호 매김)",
+  "GUEST /guest-[a-z0-9]{6,}/g (번호 매김)",
+  "DEV /dev_\\d{10,}_[a-z0-9]+/g (번호 매김)",
+  "SCHED /sched_[a-z0-9]{8,}/g (번호 매김)",
+  "LAP /lap_\\d{10,}_[a-z0-9]+/g (번호 매김)",
+  "CUST /cust_\\d{10,}/g (번호 매김)",
+  "SEED /\"seed\":\\d+/g (값·동일성 제외)",
+  "EPOCH /(?<![0-9])1[6-9]\\d{11}(?![0-9])/g (값·동일성 제외)",
+  "CONFETTI /<div class=\"confetti-piece\"[^>]*><\\/div>/g (값·동일성 제외)",
+  "CACHESIZE /약 [0-9.,]+ ?(?:B|KB|MB|GB) 사용 중 \\(브라우저 추정치\\)/g (값·동일성 제외)",
+  "SWCLOCK /(id=\"swDisplay\"[^>]*>)\\d{2}:\\d{2}\\.\\d/g (값·동일성 제외)",
+  "LAPTIME /(class=\"sw-lap-time\">)\\d{2}:\\d{2}\\.\\d/g (값·동일성 제외)",
+  "LAPTOAST /랩 \\d+ \\(\\d{2}:\\d{2}\\.\\d\\) 기록!/g (값·동일성 제외)",
+  "HHMM />\\d{1,2}:\\d{2}</g (값·동일성 제외)",
+  "토스트 보임 표시(class show) 제외",
+  "화면 HTML 의 <script> 요소 안쪽 글자 제외(태그·src 는 비교)",
+  "콘솔 오류는 종류(중복을 뺀 목록)로 비교 — 법정 실행기는 외부 통신을 막고 돌리는데, 막힌 요청의 도착 순서와 실시간 연결 재시도 횟수가 실행 시간에 따라 달라진다(같은 오류가 3번 대 4번으로 갈린 것을 실측). 원래 목록은 runs.*.consoleErrors 에 그대로 둔다"
+ ],
+ "scenarios": {
+  "s01-open-close": {
+   "file": "s01-open-close.json",
+   "stepCount": 28,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 11,
+     "vacuousExpects": 1,
+     "steps": 28,
+     "states": 14,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6916,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 16
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 14
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 100
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 36
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 12
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 4
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 11,
+     "vacuousExpects": 1,
+     "steps": 28,
+     "states": 14,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6103,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 16
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 14
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 100
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 36
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 12
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 4
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 11,
+     "vacuousExpects": 1,
+     "steps": 28,
+     "states": 14,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6628,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 16
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 14
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 100
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 36
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 12
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 4
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 304,
+    "fieldsSame": 304,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 304,
+    "fieldsSame": 304,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s02-hub-entry-back": {
+   "file": "s02-hub-entry-back.json",
+   "stepCount": 29,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 12,
+     "vacuousExpects": 0,
+     "steps": 29,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 7271,
+     "volatile": {
+      "ISO": {
+       "distinct": 4,
+       "replaced": 26
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 23
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 109
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 18,
+       "replaced": 18
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 3
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 2
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 12,
+     "vacuousExpects": 0,
+     "steps": 29,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 7246,
+     "volatile": {
+      "ISO": {
+       "distinct": 4,
+       "replaced": 26
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 23
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 109
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 18,
+       "replaced": 18
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 3
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 2
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 12,
+     "vacuousExpects": 0,
+     "steps": 29,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 7220,
+     "volatile": {
+      "ISO": {
+       "distinct": 4,
+       "replaced": 26
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 23
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 109
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 18,
+       "replaced": 18
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 3
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 2
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 323,
+    "fieldsSame": 323,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 323,
+    "fieldsSame": 323,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s03-table-edit": {
+   "file": "s03-table-edit.json",
+   "stepCount": 43,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 16,
+     "vacuousExpects": 4,
+     "steps": 43,
+     "states": 21,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 9003,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 30
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 21
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 156
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 57
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 38
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 38
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 19
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 11
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 16,
+     "vacuousExpects": 4,
+     "steps": 43,
+     "states": 21,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 9265,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 30
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 21
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 156
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 57
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 38
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 38
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 19
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 11
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 16,
+     "vacuousExpects": 4,
+     "steps": 43,
+     "states": 21,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 9142,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 30
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 21
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 156
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 57
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 38
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 38
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 19
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 11
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 462,
+    "fieldsSame": 462,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 462,
+    "fieldsSame": 462,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s04-template-change": {
+   "file": "s04-template-change.json",
+   "stepCount": 33,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 15,
+     "vacuousExpects": 1,
+     "steps": 33,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6235,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 15
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 108
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 15,
+     "vacuousExpects": 1,
+     "steps": 33,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6313,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 15
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 108
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 2,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 15,
+     "vacuousExpects": 1,
+     "steps": 33,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6615,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 15
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 108
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 338,
+    "fieldsSame": 338,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 338,
+    "fieldsSame": 338,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s05-tool-windows-a": {
+   "file": "s05-tool-windows-a.json",
+   "stepCount": 39,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 13,
+     "vacuousExpects": 1,
+     "steps": 39,
+     "states": 23,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 9919,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 25
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 23
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 172
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 63
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 42
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 42
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 21
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 4
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 13,
+     "vacuousExpects": 1,
+     "steps": 39,
+     "states": 23,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 9598,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 25
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 23
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 172
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 63
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 42
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 42
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 21
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 4
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 13,
+     "vacuousExpects": 1,
+     "steps": 39,
+     "states": 23,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 9779,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 25
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 23
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 172
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 63
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 42
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 42
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 21
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 4
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 474,
+    "fieldsSame": 474,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 474,
+    "fieldsSame": 474,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s06-tool-windows-b": {
+   "file": "s06-tool-windows-b.json",
+   "stepCount": 47,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 18,
+     "vacuousExpects": 1,
+     "steps": 47,
+     "states": 26,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/rpc/template_copy_counts",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 11309,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 29
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 32
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 196
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 72
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 1,
+       "replaced": 7
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 48
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 48
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 6,
+       "replaced": 18
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/rpc/template_copy_counts",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 18,
+     "vacuousExpects": 1,
+     "steps": 47,
+     "states": 26,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/rpc/template_copy_counts",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 10883,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 29
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 32
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 196
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 72
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 1,
+       "replaced": 7
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 48
+      },
+      "EPOCH": {
+       "distinct": 2,
+       "replaced": 48
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 6,
+       "replaced": 18
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/rpc/template_copy_counts",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 18,
+     "vacuousExpects": 1,
+     "steps": 47,
+     "states": 26,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/rpc/template_copy_counts",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 11110,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 29
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 32
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 196
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 72
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 1,
+       "replaced": 7
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 48
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 48
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 24
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 6,
+       "replaced": 18
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/rpc/template_copy_counts",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 548,
+    "fieldsSame": 548,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 548,
+    "fieldsSame": 548,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s07-quick-load": {
+   "file": "s07-quick-load.json",
+   "stepCount": 25,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 5,
+     "vacuousExpects": 3,
+     "steps": 25,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 7161,
+     "volatile": {
+      "ISO": {
+       "distinct": 4,
+       "replaced": 48
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 39
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 111
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 18,
+       "replaced": 54
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 6
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 5,
+     "vacuousExpects": 3,
+     "steps": 25,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6829,
+     "volatile": {
+      "ISO": {
+       "distinct": 4,
+       "replaced": 48
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 39
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 111
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 2,
+       "replaced": 29
+      },
+      "CONFETTI": {
+       "distinct": 18,
+       "replaced": 54
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 6
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 5,
+     "vacuousExpects": 3,
+     "steps": 25,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 8571,
+     "volatile": {
+      "ISO": {
+       "distinct": 5,
+       "replaced": 48
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 39
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 111
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 18,
+       "replaced": 54
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 6
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 309,
+    "fieldsSame": 309,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 309,
+    "fieldsSame": 309,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s08-trend-chart": {
+   "file": "s08-trend-chart.json",
+   "stepCount": 29,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 10,
+     "vacuousExpects": 2,
+     "steps": 29,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6414,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 15
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 108
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 10,
+     "vacuousExpects": 2,
+     "steps": 29,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6298,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 15
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 108
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 10,
+     "vacuousExpects": 2,
+     "steps": 29,
+     "states": 15,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 6313,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 15
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 108
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 39
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 26
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 13
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 5
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 322,
+    "fieldsSame": 322,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 322,
+    "fieldsSame": 322,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s09-stopwatch": {
+   "file": "s09-stopwatch.json",
+   "stepCount": 56,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 23,
+     "vacuousExpects": 1,
+     "steps": 56,
+     "states": 30,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 12563,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 48
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 30
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 228
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 84
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 56
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 56
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 28
+      },
+      "SWCLOCK": {
+       "distinct": 6,
+       "replaced": 20
+      },
+      "LAPTIME": {
+       "distinct": 2,
+       "replaced": 14
+      },
+      "LAPTOAST": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 23,
+     "vacuousExpects": 1,
+     "steps": 56,
+     "states": 30,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 13067,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 48
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 30
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 228
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 84
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 56
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 56
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 28
+      },
+      "SWCLOCK": {
+       "distinct": 6,
+       "replaced": 20
+      },
+      "LAPTIME": {
+       "distinct": 2,
+       "replaced": 14
+      },
+      "LAPTOAST": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 23,
+     "vacuousExpects": 1,
+     "steps": 56,
+     "states": 30,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 12849,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 48
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 30
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 228
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 84
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 56
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 56
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 28
+      },
+      "SWCLOCK": {
+       "distinct": 6,
+       "replaced": 20
+      },
+      "LAPTIME": {
+       "distinct": 2,
+       "replaced": 14
+      },
+      "LAPTOAST": {
+       "distinct": 2,
+       "replaced": 18
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 640,
+    "fieldsSame": 640,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 640,
+    "fieldsSame": 640,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s10-save-reopen-reload": {
+   "file": "s10-save-reopen-reload.json",
+   "stepCount": 41,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 15,
+     "vacuousExpects": 2,
+     "steps": 41,
+     "states": 22,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 10398,
+     "volatile": {
+      "ISO": {
+       "distinct": 6,
+       "replaced": 138
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 94
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 175
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 60
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 40
+      },
+      "EPOCH": {
+       "distinct": 2,
+       "replaced": 40
+      },
+      "CONFETTI": {
+       "distinct": 36,
+       "replaced": 54
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 20
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 8
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 18
+      }
+     },
+     "consoleErrorKinds": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 15,
+     "vacuousExpects": 2,
+     "steps": 41,
+     "states": 22,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 10536,
+     "volatile": {
+      "ISO": {
+       "distinct": 6,
+       "replaced": 138
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 94
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 175
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 60
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 40
+      },
+      "EPOCH": {
+       "distinct": 2,
+       "replaced": 40
+      },
+      "CONFETTI": {
+       "distinct": 36,
+       "replaced": 54
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 20
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 8
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 18
+      }
+     },
+     "consoleErrorKinds": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 15,
+     "vacuousExpects": 2,
+     "steps": 41,
+     "states": 22,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 10936,
+     "volatile": {
+      "ISO": {
+       "distinct": 6,
+       "replaced": 138
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 94
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 175
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 60
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 40
+      },
+      "EPOCH": {
+       "distinct": 3,
+       "replaced": 41
+      },
+      "CONFETTI": {
+       "distinct": 36,
+       "replaced": 54
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 20
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 8
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 18
+      }
+     },
+     "consoleErrorKinds": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 477,
+    "fieldsSame": 477,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 477,
+    "fieldsSame": 477,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s11-calendar-save": {
+   "file": "s11-calendar-save.json",
+   "stepCount": 48,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 14,
+     "vacuousExpects": 1,
+     "steps": 48,
+     "states": 31,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 12493,
+     "volatile": {
+      "ISO": {
+       "distinct": 5,
+       "replaced": 326
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 432
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 257
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 87
+      },
+      "SCHED": {
+       "distinct": 1,
+       "replaced": 227
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 58
+      },
+      "EPOCH": {
+       "distinct": 3,
+       "replaced": 63
+      },
+      "CONFETTI": {
+       "distinct": 36,
+       "replaced": 137
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 29
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 11
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 82
+      }
+     },
+     "consoleErrorKinds": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 14,
+     "vacuousExpects": 1,
+     "steps": 48,
+     "states": 31,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 12474,
+     "volatile": {
+      "ISO": {
+       "distinct": 7,
+       "replaced": 326
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 432
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 257
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 87
+      },
+      "SCHED": {
+       "distinct": 1,
+       "replaced": 227
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 58
+      },
+      "EPOCH": {
+       "distinct": 2,
+       "replaced": 58
+      },
+      "CONFETTI": {
+       "distinct": 36,
+       "replaced": 144
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 29
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 11
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 82
+      }
+     },
+     "consoleErrorKinds": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 14,
+     "vacuousExpects": 1,
+     "steps": 48,
+     "states": 31,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 12556,
+     "volatile": {
+      "ISO": {
+       "distinct": 6,
+       "replaced": 326
+      },
+      "UUID": {
+       "distinct": 2,
+       "replaced": 432
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 257
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 87
+      },
+      "SCHED": {
+       "distinct": 1,
+       "replaced": 227
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 58
+      },
+      "EPOCH": {
+       "distinct": 3,
+       "replaced": 62
+      },
+      "CONFETTI": {
+       "distinct": 36,
+       "replaced": 144
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 29
+      },
+      "SWCLOCK": {
+       "distinct": 1,
+       "replaced": 11
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 1,
+       "replaced": 82
+      }
+     },
+     "consoleErrorKinds": [
+      "Blocked call to navigator.vibrate because user hasn't tapped on the frame or any embedded frame yet: https://www.chromestatus.com/feature/5644273861001216. @/js/core/virtual-user-helpers.js",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/checkins?columns=%22id%22%2C%22user_id%22%2C%22type%22%2C%22text%22%2C%",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users?select=*&id=eq.«GUEST#3»",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "Failed to load resource: the server responded with a status of 404 (Not Found) @/api/feedback",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 641,
+    "fieldsSame": 641,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 641,
+    "fieldsSame": 641,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  },
+  "s12-interval-finish": {
+   "file": "s12-interval-finish.json",
+   "stepCount": 43,
+   "valid": {
+    "errors": [],
+    "weaknesses": []
+   },
+   "runs": {
+    "base": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 5,
+     "vacuousExpects": 2,
+     "steps": 43,
+     "states": 34,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 69884,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 56
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 34
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 260
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 96
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 64
+      },
+      "EPOCH": {
+       "distinct": 2,
+       "replaced": 64
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 32
+      },
+      "SWCLOCK": {
+       "distinct": 22,
+       "replaced": 24
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "base2": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 5,
+     "vacuousExpects": 2,
+     "steps": 43,
+     "states": 34,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 69777,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 56
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 34
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 260
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 96
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 64
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 64
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 32
+      },
+      "SWCLOCK": {
+       "distinct": 22,
+       "replaced": 24
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    },
+    "work": {
+     "passed": true,
+     "provesBehavior": true,
+     "failedStep": null,
+     "failKind": null,
+     "failReason": null,
+     "toolError": null,
+     "nonVacuousExpects": 5,
+     "vacuousExpects": 2,
+     "steps": 43,
+     "states": 34,
+     "exceptions": [],
+     "bootExceptions": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ],
+     "dialogs": [],
+     "ms": 69559,
+     "volatile": {
+      "ISO": {
+       "distinct": 2,
+       "replaced": 56
+      },
+      "UUID": {
+       "distinct": 1,
+       "replaced": 34
+      },
+      "GUEST": {
+       "distinct": 3,
+       "replaced": 260
+      },
+      "DEV": {
+       "distinct": 1,
+       "replaced": 96
+      },
+      "SCHED": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAP": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CUST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "SEED": {
+       "distinct": 1,
+       "replaced": 64
+      },
+      "EPOCH": {
+       "distinct": 1,
+       "replaced": 64
+      },
+      "CONFETTI": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "CACHESIZE": {
+       "distinct": 1,
+       "replaced": 32
+      },
+      "SWCLOCK": {
+       "distinct": 22,
+       "replaced": 24
+      },
+      "LAPTIME": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "LAPTOAST": {
+       "distinct": 0,
+       "replaced": 0
+      },
+      "HHMM": {
+       "distinct": 0,
+       "replaced": 0
+      }
+     },
+     "consoleErrorKinds": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-s",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/gsi/client",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/events",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/rest/v1/users",
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED @/static/array.js",
+      "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=«토큰 가림» @/npm/@supabase/supabase-js@2"
+     ]
+    }
+   },
+   "compare": {
+    "fieldsCompared": 644,
+    "fieldsSame": 644,
+    "diffs": [],
+    "ignoredBecauseBaseDiffers": []
+   },
+   "compareSummary": {
+    "fieldsCompared": 644,
+    "fieldsSame": 644,
+    "diffs": 0,
+    "ignoredBecauseBaseDiffers": 0
+   }
+  }
+ },
+ "scenarioCount": 12,
+ "allPassed": true,
+ "allProveBehavior": true,
+ "baseRunsAgree": true,
+ "totalFieldsCompared": 5482,
+ "totalFieldsSame": 5482,
+ "totalDiffs": 0,
+ "totalIgnoredBecauseBaseDiffers": 0,
+ "totalExceptions": 0
+}
