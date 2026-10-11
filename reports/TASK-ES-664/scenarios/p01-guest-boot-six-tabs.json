@@ -1,0 +1,139 @@
+{
+  "id": "p01-guest-boot-six-tabs",
+  "title": "게스트로 진입해 아바타 인사 팝업을 닫고 홈→목표→기록→일정→소통→설정→홈 순서로 탭을 누르면 누른 탭이 활성이 되고 앞 탭은 비활성이 되며 예외가 없다 (등록 2차 전후 보존 — 이 조작이 부르는 연결 함수들을 세포가 등록 기관에 등록한 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"calendar\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"calendar\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".navbtn[data-tab=\"settings\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

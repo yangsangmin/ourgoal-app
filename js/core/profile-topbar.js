@@ -610,9 +610,9 @@
   if (!R) return;
   var K = g.OurgoalUiHelpers;
   if (K) R.provide('core/profile-topbar', {
-    avatarHtml: K.avatarHtml, openNotificationCenterModal: K.openNotificationCenterModal, openProfileEditor: K.openProfileEditor,
-    renderProfileCard: K.renderProfileCard, resizeImageToDataUrl: K.resizeImageToDataUrl, updateTopBar: K.updateTopBar,
-    updateTopNotifBadge: K.updateTopNotifBadge
+    avatarHtml: K.avatarHtml, bindScheduleReminderStart: K.bindScheduleReminderStart, openNotificationCenterModal: K.openNotificationCenterModal,
+    openProfileEditor: K.openProfileEditor, renderProfileCard: K.renderProfileCard, resizeImageToDataUrl: K.resizeImageToDataUrl,
+    updateTopBar: K.updateTopBar, updateTopNotifBadge: K.updateTopNotifBadge
   }, { window: [
     'openNotificationCenterModal', 'openProfileEditor', 'updateTopBar', 'updateTopNotifBadge'
   ], windowOnly: [

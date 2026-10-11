@@ -15,8 +15,12 @@
 //   · setter 가 달린 통로 이름(다시 대입되는 상태 — 값 스냅샷이 어긋난다, B9 몫)
 //   · 키트에 다는 파일을 글자로 찾지 못한 이름 · defer/async 로 IIFE 뒤에 도는 파일 · 등록 기관 태그보다 앞에서 도는 파일(계획 파일에 사유와 함께 적는다)
 //
-// 사용: NODE_PATH=C:/dev/ourgoal-app/node_modules node docs/design/harness/module-split/gen-cell-provide.js <저장소 루트> [--write] [--plan <out.json>]
+// 사용: NODE_PATH=C:/dev/ourgoal-app/node_modules node docs/design/harness/module-split/gen-cell-provide.js <저장소 루트> [--write] [--plan <out.json>] [--keep]
 //   --write 없이 돌리면 계획만 낸다(파일 0 변경). --write 는 멱등이다 — 기존 등록 블록(표지 사이)을 걷어 내고 다시 붙이므로 두 번 돌려도 결과가 같다.
+//   [#TASK-ES-664] --keep(기존 등록 보존): 철거가 진행된 뒤에 쓴다. index.html 의 배선은 이미 지운 이름을 더는 알려 주지 않으므로, --keep 없이 --write 하면 그 이름들의 등록이 사라진다.
+//     --keep 은 세포 파일에 이미 있는 등록 블록을 읽어 그 이름을 전부 그대로 두고, 지금 index.html 이 내주는 이름 가운데 **아직 어느 세포도 등록하지 않은 이름만** 그 주인 세포의 블록에 더한다.
+//     더할 이름이 없는 세포 파일은 건드리지 않는다(블록을 걷어 내지도 않는다). 블록 글자는 같은 함수(blockFor)가 만든다 — 기존 블록을 읽어 다시 만든 글자가 원래 글자와 다르면 멈춘다.
+//     이미 등록된 이름인데 지금의 배선과 종류·파일이 다르면(예: window 전용으로 등록됐는데 지금은 통로 getter 가 있다) 바꾸지 않고 계획 파일 keep.differs 에 적는다.
 const fs = require('fs');
 const path = require('path');
 const parser = require('@babel/parser');
@@ -25,6 +29,7 @@ const traverse = require('@babel/traverse').default;
 const argv = process.argv.slice(2);
 const ROOT = path.resolve(argv[0] || '.');
 const WRITE = argv.includes('--write');
+const KEEP = argv.includes('--keep');
 const PLAN_OUT = argv.indexOf('--plan') >= 0 ? argv[argv.indexOf('--plan') + 1] : null;
 const REGISTRY_FILE = 'js/core/cell-registry.js';
 const MARK_BEGIN = '/* ==== [세포 등록 시작 · gen-cell-provide.js] 이 세포가 키트에 단 이름을 등록 기관(js/core/cell-registry.js)에 스스로 등록한다 — 대조(compare) 전용, 동작 변화 0. 생성기 산출이므로 손으로 고치지 않는다. ==== */';
@@ -333,10 +338,99 @@ function applyBlock(orig, block, eol) {
   return base + (needSemi ? ';' + eol : '') + block.split('\n').join(eol) + eol;
 }
 
+// [#TASK-ES-664] 이미 붙어 있는 등록 블록을 읽는다(--keep): { owner, kits: { 키트 경로: [{ name, member, window, scope }] } } · 블록이 없으면 null.
+// 블록은 이 생성기가 만든 꼴만 받는다 — 다른 꼴이면 멈춘다(손으로 고친 블록을 조용히 받아들이지 않는다).
+function parseBlock(code, file) {
+  const b = code.indexOf(MARK_BEGIN);
+  if (b < 0) return null;
+  const e = code.indexOf(MARK_END, b);
+  if (e < 0) throw new Error(file + ': 등록 블록 시작 표지는 있는데 끝 표지가 없다');
+  const text = code.slice(b + MARK_BEGIN.length, e).replace(/\r\n/g, '\n');
+  const bad = why => { throw new Error(file + ': 등록 블록이 생성기 꼴이 아니다 — ' + why); };
+  let ast;
+  try { ast = parser.parse(text, { sourceType: 'script' }); } catch (err) { bad('파싱 실패: ' + err.message.slice(0, 80)); }
+  const st0 = ast.program.body;
+  if (st0.length !== 1 || st0[0].type !== 'ExpressionStatement' || st0[0].expression.type !== 'CallExpression' || st0[0].expression.callee.type !== 'FunctionExpression') bad('즉시 실행 함수 하나가 아니다');
+  const body = st0[0].expression.callee.body.body;
+  const chain = n => { const p = []; while (n && n.type === 'MemberExpression') { const k = propName(n); if (k === null) return null; p.unshift(k); n = n.object; } return isId(n, 'g') ? p : null; };
+  const out = { owner: null, kits: {} };
+  const kitOf = {};
+  for (const st of body.slice(2)) {
+    if (st.type === 'VariableDeclaration' && st.declarations.length === 1 && isId(st.declarations[0].id)) {
+      let init = st.declarations[0].init; while (init && init.type === 'LogicalExpression' && init.operator === '&&') init = init.right;
+      const c = chain(init); if (!c || !c.length) bad('키트 줄을 읽지 못했다');
+      kitOf[st.declarations[0].id.name] = c.join('.');
+      continue;
+    }
+    const call = st.type === 'IfStatement' && !st.alternate && isId(st.test) && st.consequent.type === 'ExpressionStatement' ? st.consequent.expression : null;
+    if (!call || call.type !== 'CallExpression' || call.callee.type !== 'MemberExpression' || !isId(call.callee.object, 'R') || propName(call.callee) !== 'provide' || call.arguments.length !== 3) bad('provide 문이 아닌 문이 있다');
+    const kv = st.test.name, kit = kitOf[kv]; if (!kit) bad('키트 변수 ' + kv + ' 의 줄이 없다');
+    const [ow, vals, opts] = call.arguments;
+    if (ow.type !== 'StringLiteral' || vals.type !== 'ObjectExpression' || opts.type !== 'ObjectExpression') bad('provide 인자 꼴이 다르다');
+    if (out.owner !== null && out.owner !== ow.value) bad('한 블록에 주인이 둘이다');
+    out.owner = ow.value;
+    const strs = key => { const pr = opts.properties.find(x => x.type === 'ObjectProperty' && isId(x.key, key)); if (!pr) return []; if (pr.value.type !== 'ArrayExpression' || pr.value.elements.some(x => !x || x.type !== 'StringLiteral')) bad(key + ' 목록 꼴이 다르다'); return pr.value.elements.map(x => x.value); };
+    const win = strs('window'), winOnly = strs('windowOnly');
+    if (out.kits[kit]) bad('같은 키트의 provide 문이 둘이다');
+    out.kits[kit] = vals.properties.map(pr => {
+      if (pr.type !== 'ObjectProperty' || pr.computed || !isId(pr.key) || pr.value.type !== 'MemberExpression' || !isId(pr.value.object, kv) || propName(pr.value) === null) bad('등록 항목 꼴이 다르다');
+      return { name: pr.key.name, member: propName(pr.value), window: win.includes(pr.key.name), scope: !winOnly.includes(pr.key.name) };
+    });
+    const known = out.kits[kit].map(x => x.name);
+    if (win.concat(winOnly).some(n => !known.includes(n))) bad('window 목록에 등록 항목에 없는 이름이 있다');
+  }
+  if (out.owner === null) bad('provide 문이 없다');
+  return out;
+}
+
 // ───────────────────────── 5. 실행 ─────────────────────────
 const P = plan();
 const MAX_LINES = 800; // 헌법 제3조 제3항 · scripts/module-metrics.js · court/lib/new-debt.js 와 같은 셈
 const countLines = text => { const t = String(text).replace(/\r\n/g, '\n'); if (!t.length) return 0; const n = t.split('\n').length; return t.endsWith('\n') ? n - 1 : n; };
+// [#TASK-ES-664] --keep: 기존 등록은 그대로 두고, 아직 어느 세포도 등록하지 않은 이름만 더한다
+let KEEPINFO = null;
+if (KEEP) {
+  const existing = {}, nameAt = {};
+  for (const sc of P.ix.scripts) {
+    if (!sc.file || !/\.js$/.test(sc.file) || existing[sc.file]) continue;
+    let cur; try { cur = read(sc.file); } catch (e) { continue; }
+    const pb = parseBlock(cur, sc.file);
+    if (!pb) continue;
+    // 읽은 것으로 다시 만든 블록이 원래 글자와 같아야 한다 — 아니면 더하는 과정에서 기존 글자가 달라진다
+    const b0 = cur.indexOf(MARK_BEGIN), e0 = cur.indexOf(MARK_END, b0) + MARK_END.length;
+    if (blockFor(pb) !== cur.slice(b0, e0).replace(/\r\n/g, '\n')) throw new Error(sc.file + ': 기존 등록 블록을 읽어 다시 만든 글자가 원래 글자와 다르다 — --keep 을 멈춘다');
+    existing[sc.file] = pb;
+    Object.keys(pb.kits).forEach(kit => pb.kits[kit].forEach(x => {
+      if (nameAt[x.name]) throw new Error('같은 이름을 두 세포가 등록하고 있다: ' + x.name + ' (' + nameAt[x.name].file + ' · ' + sc.file + ')');
+      nameAt[x.name] = { file: sc.file, kit, member: x.member, window: x.window, scope: x.scope };
+    }));
+  }
+  // --exclude <names.json>: 더하지 않을 이름과 사유({ "names": { "이름": "사유" } }) — 예: 통로 값과 window 값이 서로 다른 이름
+  const EXCL = argv.indexOf('--exclude') >= 0 ? (JSON.parse(fs.readFileSync(path.resolve(argv[argv.indexOf('--exclude') + 1]), 'utf8')).names || {}) : {};
+  const added = [], already = [], differs = [], upgraded = [], excluded = [], merged = {};
+  const blockOf = (file, owner) => (merged[file] = merged[file] || (existing[file] ? { owner: existing[file].owner, kits: Object.fromEntries(Object.keys(existing[file].kits).map(k => [k, existing[file].kits[k].map(x => Object.assign({}, x))])) } : { owner, kits: {} }));
+  for (const r of P.registered) {
+    const ex = nameAt[r.name], wantScope = /scope/.test(r.kinds), wantWin = /window/.test(r.kinds);
+    if (ex) {
+      already.push(r.name);
+      const sameSpot = ex.file === r.file && ex.kit === r.kit && ex.member === r.member;
+      // window 전용으로 등록됐던 이름에 지금은 통로 getter 가 있다(세포가 L.이름 으로 읽게 됐다) → B3a 규칙대로 windowOnly 에서 뺀다(값·주인·window 목록은 그대로). 그 밖의 어긋남은 바꾸지 않고 적기만 한다.
+      if (sameSpot && wantScope && !ex.scope && ex.window && !(wantWin && !ex.window) && !Object.prototype.hasOwnProperty.call(EXCL, r.name)) {
+        const it = blockOf(r.file, r.owner).kits[r.kit].find(x => x.name === r.name);
+        it.scope = true; upgraded.push(r);
+      } else if (!sameSpot || (wantScope && !ex.scope) || (wantWin && !ex.window)) differs.push({ name: r.name, existing: ex, now: { file: r.file, kit: r.kit, member: r.member, kinds: r.kinds } });
+      continue;
+    }
+    if (Object.prototype.hasOwnProperty.call(EXCL, r.name)) { excluded.push(r.name); P.skipped.push({ name: r.name, kind: r.kinds, import: r.import, kit: r.kit, file: r.file, reason: '--exclude: ' + EXCL[r.name] }); continue; }
+    added.push(r);
+    const f = blockOf(r.file, r.owner);
+    if (f.owner !== r.owner) throw new Error(r.file + ': 기존 등록 블록의 주인(' + f.owner + ')이 신고서의 세포 id(' + r.owner + ')와 다르다');
+    (f.kits[r.kit] = f.kits[r.kit] || []).push({ name: r.name, member: r.member, window: wantWin, scope: wantScope });
+  }
+  KEEPINFO = { existingFiles: Object.keys(existing).length, existingNames: Object.keys(nameAt).length, plannedNow: P.registered.length, alreadyRegistered: already.length, added: added.length, addedNames: added.map(r => r.name).sort(), upgradedFromWindowOnly: upgraded.map(r => r.name).sort(), upgradedEntries: upgraded, excluded: excluded.sort(), filesToChange: Object.keys(merged).sort(), newBlockFiles: Object.keys(merged).filter(f => !existing[f]).sort(), differs };
+  P.byFile = merged;
+  P.registered = added;
+}
 // 등록 블록을 붙이면 800줄을 새로 넘는 세포는 붙이지 않는다(상한이 먼저다 — 그 세포는 책임 단위로 나눈 뒤 등록한다). 그 이름은 누락으로 남기고 사유를 적는다.
 for (const f of Object.keys(P.byFile).sort()) {
   const orig = stripBlock(read(f));
@@ -352,11 +446,18 @@ for (const f of Object.keys(P.byFile).sort()) {
   });
   delete P.byFile[f];
 }
+if (KEEPINFO) { // 800줄 상한으로 건너뛴 세포를 뺀 뒤의 실제 값으로 맞춘다
+  const left = f => Object.prototype.hasOwnProperty.call(P.byFile, f);
+  KEEPINFO.added = P.registered.length; KEEPINFO.addedNames = P.registered.map(r => r.name).sort();
+  KEEPINFO.upgradedEntries = KEEPINFO.upgradedEntries.filter(r => left(r.file)); KEEPINFO.upgradedFromWindowOnly = KEEPINFO.upgradedEntries.map(r => r.name).sort();
+  KEEPINFO.filesToChange = KEEPINFO.filesToChange.filter(left); KEEPINFO.newBlockFiles = KEEPINFO.newBlockFiles.filter(left);
+}
 const files = Object.keys(P.byFile).sort();
 const changed = [], unchanged = [], stale = [];
 // 예전에 블록을 붙였으나 이번 계획에는 없는 파일(등록할 이름이 사라진 세포)도 걷어 낸다
 const allJs = P.ix.scripts.filter(sc => sc.file && /\.js$/.test(sc.file)).map(sc => sc.file);
 for (const f of allJs) {
+  if (KEEP && !P.byFile[f]) continue; // --keep: 더할 이름이 없는 세포는 건드리지 않는다(기존 블록을 걷어 내지 않는다)
   let cur; try { cur = read(f); } catch (e) { continue; }
   const eol = /\r\n/.test(cur) ? '\r\n' : '\n';
   const orig = stripBlock(cur);
@@ -386,6 +487,7 @@ Object.values(P.ix.imports).forEach(i => {
 });
 const out = {
   tool: 'docs/design/harness/module-split/gen-cell-provide.js', type: '생성기 계획(작업자 산출, 판정 아님)', write: WRITE,
+  ...(KEEP ? { keep: KEEPINFO, keepNote: '--keep: registered · files · counts.registered* 는 이번에 **더하는** 이름만이다. 기존 등록(keep.existingNames 개)은 그대로 둔다' } : {}),
   index: { iifeLines: P.ix.iifeLines, scriptTags: P.ix.scripts.length, registryTagOrder: P.regTag.order, registryTagLine: P.regTag.line, kitVars: P.ix.kitVars, imports: Object.keys(P.ix.imports).length,
     scopeGetterNames: Object.keys(P.ix.getters).length, scopeSetterNames: Object.keys(P.ix.setters).length, windowNames: Array.from(new Set(P.ix.windowSites.map(w => w.name))).length, windowSites: P.ix.windowSites.length },
   counts: { registeredNames: P.registered.length, registeredScope: P.registered.filter(r => /scope/.test(r.kinds)).length, registeredWindow: P.registered.filter(r => /window/.test(r.kinds)).length,

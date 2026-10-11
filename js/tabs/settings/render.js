@@ -261,6 +261,7 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/render', {
+    bindSettingsHapticDelegate: K.bindSettingsHapticDelegate, bindSettingsStaticHandlers: K.bindSettingsStaticHandlers,
     collapseAllSettingsSections: K.collapseAllSettingsSections, paintCacheUsage: K.paintCacheUsage, renderSettingsScreen: K.renderSettingsScreen,
     toggleAdvancedSettings: K.toggleAdvancedSettings
   }, { window: [

@@ -110,8 +110,6 @@
     openChangePasswordModal: K.openChangePasswordModal, showLegalModal: K.showLegalModal
   }, { window: [
     'showLegalModal'
-  ], windowOnly: [
-    'showLegalModal'
   ] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

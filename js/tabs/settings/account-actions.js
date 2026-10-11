@@ -150,7 +150,8 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/account-actions', {
-    openNewPasswordModal: K.openNewPasswordModal
+    bindLoginSubmit: K.bindLoginSubmit, bindLogoutButton: K.bindLogoutButton, bindResetButton: K.bindResetButton,
+    bindResyncAccountDataButton: K.bindResyncAccountDataButton, openNewPasswordModal: K.openNewPasswordModal
   }, { window: [] });
 })(typeof window !== 'undefined' ? window : globalThis);
 /* ==== [세포 등록 끝] ==== */

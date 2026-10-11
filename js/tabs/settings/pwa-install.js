@@ -245,7 +245,7 @@
   if (!R) return;
   var K = g.OurgoalSettingsKit;
   if (K) R.provide('settings/pwa-install', {
-    closePwaInstallGuideModal: K.closePwaInstallGuideModal, confirmPwaInstall: K.confirmPwaInstall,
+    closePwaInstallGuideModal: K.closePwaInstallGuideModal, confirmPwaInstall: K.confirmPwaInstall, initKeyboardShield: K.initKeyboardShield,
     openIosPwaInstallGuideModal: K.openIosPwaInstallGuideModal, openPwaInstallGuideModal: K.openPwaInstallGuideModal,
     renderIosPwaBanner: K.renderIosPwaBanner, switchPwaOsTab: K.switchPwaOsTab
   }, { window: [
