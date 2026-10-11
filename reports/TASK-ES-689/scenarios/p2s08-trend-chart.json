@@ -1,0 +1,137 @@
+{
+  "id": "p2s08-trend-chart",
+  "title": "성장 추이 차트의 기간 칩 「30일」·「전체」를 누르면 그 칩이 선택 표시가 되고, 템플릿을 바꿔 차트가 다시 그려져도 고른 기간이 유지되며 칩이 계속 눌린다 (성장 추이 차트 — 기간 칩) (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"7\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-trend-filter-chip[data-period=\"30\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"30\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"7\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-trend-filter-chip[data-period=\"all\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"all\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"30\"]",
+      "className": "active"
+    },
+    {
+      "do": "select",
+      "selector": "#proTplSelect",
+      "value": "study"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTrendChartWrap",
+      "text": "순공 시간"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"all\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".pro-trend-filter-chip[data-period=\"7\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"7\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": ".pro-trend-filter-chip[data-period=\"all\"]",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

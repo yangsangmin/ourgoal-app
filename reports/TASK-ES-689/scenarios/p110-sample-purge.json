@@ -1,0 +1,93 @@
+{
+  "id": "p110-sample-purge",
+  "title": "게스트로 기록 탭 통계에서 체험용 샘플(학습)을 적용한 뒤 「샘플 정리」 단추를 누르고 확인하면 샘플 안내 상자가 사라진다 (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recMiniPulseBar",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recMiniPulseBar"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".u-empty-load-btn[data-type=\"study\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".u-empty-load-btn[data-type=\"study\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recSamplePurgeBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "visible",
+      "selector": "#recSamplePurgeBox"
+    },
+    {
+      "do": "click",
+      "selector": "#recSamplePurgeBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnSheetConfirmOk",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmOk"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recSamplePurgeBox"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

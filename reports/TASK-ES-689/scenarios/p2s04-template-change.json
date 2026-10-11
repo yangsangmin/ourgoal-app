@@ -1,0 +1,164 @@
+{
+  "id": "p2s04-template-change",
+  "title": "창에서 템플릿을 「공부」로 바꾸면 이름표·표 머리·기본 행·추이 차트 제목이 공부용으로 바뀌고, 「영업」·「헬스」로 다시 바꿔도 그 템플릿의 기본 행으로 바뀐다 (도구 — 템플릿 변경) (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recQuickDockBar > button:nth-child(4)",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar > button:nth-child(4)"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recOpenProTemplateBtn",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#proTable"
+    },
+    {
+      "do": "click",
+      "selector": "#recOpenProTemplateBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#proTable"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".pro-tpl-badge",
+      "text": "헬스"
+    },
+    {
+      "do": "select",
+      "selector": "#proTplSelect",
+      "value": "study"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".pro-tpl-badge",
+      "text": "공부"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 2
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTable thead",
+      "text": "공부시간(분)"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTrendChartWrap",
+      "text": "순공 시간"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "영어 토익"
+    },
+    {
+      "do": "type",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "text": "바꾼과목",
+      "clear": true
+    },
+    {
+      "do": "select",
+      "selector": "#proTplSelect",
+      "value": "business"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".pro-tpl-badge",
+      "text": "영업"
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "(주)에이비씨"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTable thead",
+      "text": "계약가능성(%)"
+    },
+    {
+      "do": "select",
+      "selector": "#proTplSelect",
+      "value": "health"
+    },
+    {
+      "expect": "textContains",
+      "selector": ".pro-tpl-badge",
+      "text": "헬스"
+    },
+    {
+      "expect": "count",
+      "selector": "#proTableBody tr",
+      "equals": 4
+    },
+    {
+      "expect": "attr",
+      "selector": ".pro-tpl-cell-input[data-row=\"0\"][data-col=\"1\"]",
+      "name": "value",
+      "equals": "벤치프레스"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#proTrendChartWrap",
+      "text": "총 볼륨"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

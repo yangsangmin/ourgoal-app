@@ -1,0 +1,103 @@
+{
+  "id": "p104-new-goal-modal",
+  "title": "게스트로 홈에서 「새 목표」를 누르면 새 목표 창이 열리고 취소를 누르면 닫히며, 목표 탭의 팀목표 하위 탭으로 옮기면 그 탭이 활성이 되고 예외가 없다 (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "notExists",
+      "selector": "#ngCancelBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngCancelBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "visible",
+      "selector": "#ngDescInput"
+    },
+    {
+      "do": "click",
+      "selector": "#ngCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#ngCancelBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalsSubTeam",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTeam"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubTeam",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalsSubPersonal",
+      "className": "active"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

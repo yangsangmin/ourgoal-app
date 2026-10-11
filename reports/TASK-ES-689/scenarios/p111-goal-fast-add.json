@@ -1,0 +1,96 @@
+{
+  "id": "p111-goal-fast-add",
+  "title": "게스트로 목표 탭에서 템플릿 목표를 하나 담은 뒤 분류 칩 「학습/성장」을 고르고 빠른 추가 칸에 목표 이름을 적어 「추가」를 누르면 그 목표가 목록에 생긴다 (인라인 IIFE 마지막 정리 전후 보존 — 시동 문을 부팅 파일로 옮기고 상수 선언 두 줄만 index.html 에 남긴 뒤에도 같다)",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"goals\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sanctuaryGoalsView .template-quick-card:first-child .btn-quick-adopt-goal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#goalFastAddInput",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#chipTagStudy",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "#chipTagStudy"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#chipTagStudy",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#chipTagHealth",
+      "className": "active"
+    },
+    {
+      "do": "type",
+      "selector": "#goalFastAddInput",
+      "text": "하루 물 2리터 마시기"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalFastAddSubmit"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#sanctuaryGoalsView",
+      "text": "하루 물 2리터 마시기"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
