@@ -9,22 +9,22 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "9014a386051477b315ad0881d7992d1f0ea0c671",
-  "short": "9014a386",
-  "committedAt": "2026-10-11T12:21:55+09:00",
-  "subject": "Merge pull request #913 from yangsangmin/feat/2026-10-11-task-es-640-wrap-boot-2"
+  "commit": "c0658b2caadb9585efce894db0fd2af69eed7eca",
+  "short": "c0658b2c",
+  "committedAt": "2026-10-11T12:46:30+09:00",
+  "subject": "Merge pull request #917 from yangsangmin/feat/2026-10-11-task-es-645-template-market-move"
  },
  "summary": {
-  "cells": 362,
-  "files": 361,
-  "jsLines": 91334,
+  "cells": 363,
+  "files": 362,
+  "jsLines": 91592,
   "kinds": {
    "organ": 62,
-   "tab": 194,
+   "tab": 195,
    "hybrid": 105,
    "future": 1
   },
-  "descriptionsHand": 362,
+  "descriptionsHand": 363,
   "descriptionsPending": [],
   "oversize": {
    "limit": 800,
@@ -37,11 +37,11 @@
   "undifferentiated": {
    "file": "index.html",
    "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
-   "inlineScriptLines": 2615,
-   "functionDecls": 26
+   "inlineScriptLines": 2392,
+   "functionDecls": 19
   },
   "health": {
-   "undifferentiatedLines": 2615,
+   "undifferentiatedLines": 2392,
    "globalLinks": 75,
    "oversizeCells": 0,
    "drawingSmallCells": {
@@ -80,9 +80,9 @@
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 194,
+   "count": 195,
    "large": 6,
-   "small": 188
+   "small": 189
   },
   {
    "key": "hybrid",
@@ -220,6 +220,7 @@
     "records/table-analytics-view",
     "records/table-csv-sync",
     "records/table-stopwatch",
+    "records/template-market",
     "records/template-record-detail",
     "records/theme-classifier",
     "records/theme-export-csv",
@@ -230,7 +231,7 @@
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 10548,
+   "lines": 10806,
    "over800": 0
   },
   {
@@ -4118,6 +4119,7 @@
     "records/table-analytics-view",
     "records/table-csv-sync",
     "records/table-stopwatch",
+    "records/template-market",
     "records/template-record-detail",
     "records/theme-classifier",
     "records/theme-export-csv",
@@ -9732,6 +9734,7 @@
     "records/table-analytics-view",
     "records/table-csv-sync",
     "records/table-stopwatch",
+    "records/template-market",
     "records/theme-classifier",
     "records/theme-export-csv",
     "records/theme-picker",
@@ -9855,6 +9858,7 @@
     "records/table-analytics-view",
     "records/table-csv-sync",
     "records/table-stopwatch",
+    "records/template-market",
     "records/theme-classifier",
     "records/theme-export-csv",
     "records/theme-picker",
@@ -20593,6 +20597,68 @@
    ]
   },
   {
+   "id": "records/template-market",
+   "file": "js/tabs/records/template-market.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "템플릿 마켓 창",
+   "nameSource": "hand",
+   "does": "표 템플릿 마켓 창을 열어 분류·검색으로 템플릿을 고르고 미리 본 뒤 내 템플릿으로 복제한다",
+   "doesSource": "hand",
+   "header": [
+    "OurGoal Template Market (기록 — 템플릿 마켓 창과 템플릿 복제 본체)",
+    "openTemplateMarketModal — 「아워골 맞춤 템플릿 마켓플레이스」 창: 분류 알약·검색으로 추린 표 템플릿 목록, 미리보기, 복제하기 단추.",
+    "executeDirectTemplateClone — 고른 템플릿을 내 템플릿(customTemplates)에 복제해 저장한 뒤 창을 닫는 복제 본체(본문은 이전 전 글자 그대로).",
+    "지시함 DIR-004 (나)에 따라 내용은 한 글자도 바꾸지 않고 자리만 옮겼다. 동작·문구·금액·조건 변경 0."
+   ],
+   "lines": 258,
+   "over800": false,
+   "exposes": [
+    "OurgoalRecordsKit"
+   ],
+   "calls": [
+    "core/app-scope",
+    "template-credit"
+   ],
+   "calledBy": [
+    "sanctuary-record-feed",
+    "sanctuary-v3-engine"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [
+    "OurgoalRecordsKit"
+   ],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-645"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-645-TEMPLATE-MARKET-MOVE.md"
+   ],
+   "prs": [
+    {
+     "number": 917,
+     "task": "TASK-ES-645",
+     "title": "[INFRA] #TASK-ES-645 refactor: 돈 근처 함수 2개 글자 그대로 이전 — 템플릿 마켓 창·템플릿 복제 본체를 세포 js/tabs/records/template-market.js 로(지시함 DIR-004 (나): 내용은 한 글자도 바꾸지 않고 자리만) · 인라인 −223줄",
+     "date": "2026-10-11"
+    }
+   ]
+  },
+  {
    "id": "records/template-record-detail",
    "file": "js/tabs/records/template-record-detail.js",
    "kind": "tab",
@@ -26252,6 +26318,7 @@
     "goal-edit-ux",
     "goals/team-goals-screen",
     "records/quick-checkin",
+    "records/template-market",
     "settings/guest-migration",
     "team-chat",
     "team-companion-search",
