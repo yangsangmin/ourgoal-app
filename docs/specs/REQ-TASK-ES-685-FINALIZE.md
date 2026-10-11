@@ -2,7 +2,7 @@
 
 - Task ID: **TASK-ES-685** (L012: `gh pr list --state all` · `git ls-remote origin` · origin/main 의 작업표에서 685 가 비어 있음을 확인한 뒤 빈 브랜치 `feat/2026-10-11-task-es-685-finalize` 를 먼저 push 해 선점했다.)
 - 분류: INFRA · 작업 유형(SNOWBALL 분류): **(가) 표준 — 「생성기로 옮기기」의 마지막 단계**(설계 `docs/architecture/CELL-REGISTRY-DESIGN.md` 5.8절 X9 finalize · 5.9절 `relay` · `keepInline`). 생성기 모드는 #935(`REQ-TASK-ES-662`), 두 옵션은 #955(`REQ-TASK-ES-681`)가 만들었고 단위 시험과 모의 적용까지 있었다. **이번이 index.html 에 실제로 돌리는 첫 PR 이다.** 측정 꼴은 구역 이전 선례(#951 · #954)를 따랐다.
-- 작업참고 기준 PR #934(d55d7595, 경험칙 115개) · 기준 main 4ea2bd73(#957 재철거 5차 병합 뒤). **생성기는 그 main 의 것 그대로다**(이 PR 에서 생성기 · 하네스 변경 0).
+- 작업참고 기준 PR #934(d55d7595, 경험칙 115개) · 기준 main 8e3ed7f7(#958 선행 PR 병합 뒤). **생성기는 그 main 의 것 그대로다**(이 PR 에서 생성기 · 하네스 변경 0). 적용과 측정 한 벌(`measurement.json` 의 `baseTreeHead`)은 4ea2bd73(#957 병합 뒤)에서 했다 — 그 뒤 합친 #958 은 `js/app/README.md` 한 장뿐이라 index.html · `js/**` 의 코드 · 생성기가 그대로다. 그래서 합친 뒤에는 **`recomputeSplit` 직접 호출(`ok:true` — 기준 8e3ed7f7)과 npm test 한 번(exit 0 · ✓ 487), 모듈 가드 · 무결성 게이트**만 다시 확인했고 나머지는 다시 재지 않았다(`court-local.json`).
 - 지시함(origin/main) 열린 지시: **DIR-003**(기준선에 inlineScriptLines 기록) · **DIR-004**((가) 「닫힌 목록(U1~U3 + X1~X9)까지다. **목록 밖의 줄 종류는 다시 결심이다.**」 — finalize 는 X9(목록 안), `relay` · `keepInline` 은 **목록 밖**이다. 아래 결심 기록으로 승인됐다).
 - **결심 기록(2026-10-11, 커맨드센터 세션 309dca5d — 오케스트레이터가 전한 글자. 이 작업자는 그 채팅을 직접 보지 못했다)**
   - 오케스트레이터가 [결심 필요] 로 여쭌 세 가지:
