@@ -1,0 +1,994 @@
+{
+  "tool": "probe.js (읽기만)",
+  "startedAt": "2026-10-12T11:32:50.015Z",
+  "accounts": {
+    "A": {
+      "login": true,
+      "emailHead": "ogt***",
+      "hasOgtest": true,
+      "accountCreatedAt": "2026-10-04T14:17:23.46805Z",
+      "lastSignInAt": "2026-10-12T11:32:50.998484395Z",
+      "tokenLifetimeSec": 3600,
+      "role": "authenticated",
+      "sideEffects": [
+        "인증 쪽에 세션 1개 · 갱신 토큰 1개 생성",
+        "마지막 로그인 시각 갱신",
+        "인증 감사 기록(있다면) 1줄"
+      ]
+    },
+    "B": {
+      "login": true,
+      "emailHead": "ogt***",
+      "hasOgtest": true,
+      "accountCreatedAt": "2026-10-04T14:17:54.639853Z",
+      "lastSignInAt": "2026-10-12T11:32:51.26608032Z",
+      "tokenLifetimeSec": 3600,
+      "role": "authenticated",
+      "sideEffects": [
+        "인증 쪽에 세션 1개 · 갱신 토큰 1개 생성",
+        "마지막 로그인 시각 갱신",
+        "인증 감사 기록(있다면) 1줄"
+      ]
+    }
+  },
+  "openapi": {
+    "anon": {
+      "status": 401,
+      "errorCode": null,
+      "hasDefinitions": false,
+      "definitionCount": 0,
+      "tables": {}
+    },
+    "A": {
+      "status": 401,
+      "errorCode": null,
+      "hasDefinitions": false,
+      "definitionCount": 0,
+      "tables": {}
+    }
+  },
+  "tables": {
+    "A": {
+      "checkins": {
+        "columnOrder": [
+          "id",
+          "user_id",
+          "type",
+          "text",
+          "start_at",
+          "end_at",
+          "created_at",
+          "category",
+          "meta"
+        ],
+        "columns": {
+          "id": {
+            "n": 5,
+            "kinds": {
+              "string/uuid": 5
+            },
+            "stringLength": [
+              36,
+              36
+            ]
+          },
+          "user_id": {
+            "n": 5,
+            "kinds": {
+              "string/uuid": 5
+            },
+            "stringLength": [
+              36,
+              36
+            ]
+          },
+          "type": {
+            "n": 5,
+            "kinds": {
+              "string/text": 5
+            },
+            "stringLength": [
+              4,
+              4
+            ],
+            "distinct": [
+              "note"
+            ]
+          },
+          "text": {
+            "n": 5,
+            "kinds": {
+              "string/text": 5
+            },
+            "stringLength": [
+              22,
+              31
+            ]
+          },
+          "start_at": {
+            "n": 5,
+            "kinds": {
+              "string/time:dddd-dd-ddTdd:dd:dd.ddd+dd:dd": 5
+            },
+            "stringLength": [
+              29,
+              29
+            ]
+          },
+          "end_at": {
+            "n": 5,
+            "kinds": {
+              "string/time:dddd-dd-ddTdd:dd:dd.ddd+dd:dd": 5
+            },
+            "stringLength": [
+              29,
+              29
+            ]
+          },
+          "created_at": {
+            "n": 5,
+            "kinds": {
+              "string/time:dddd-dd-ddTdd:dd:dd.dddddd+dd:dd": 5
+            },
+            "stringLength": [
+              32,
+              32
+            ]
+          },
+          "category": {
+            "n": 5,
+            "kinds": {
+              "null": 5
+            }
+          },
+          "meta": {
+            "n": 5,
+            "kinds": {
+              "object": 5
+            },
+            "objectKeys": {
+              "visibility": {
+                "string/text": 5
+              }
+            }
+          }
+        },
+        "rowCount": 5,
+        "duplicateIds": 0,
+        "idShapes": {
+          "uuid": 5
+        },
+        "deletedRows": null,
+        "harnessTaggedRows": 3,
+        "harnessTaggedAnywhere": 3,
+        "status": 200,
+        "errorCode": null,
+        "contentRange": "0-4/5",
+        "total": 5,
+        "returnedEqualsTotal": true,
+        "foreignOwnerRows": 0
+      },
+      "goals": {
+        "columnOrder": [],
+        "columns": {},
+        "rowCount": 0,
+        "duplicateIds": 0,
+        "idShapes": {},
+        "deletedRows": null,
+        "harnessTaggedRows": 0,
+        "harnessTaggedAnywhere": 0,
+        "status": 200,
+        "errorCode": null,
+        "contentRange": "*/0",
+        "total": 0,
+        "returnedEqualsTotal": true,
+        "foreignOwnerRows": 0
+      },
+      "users": {
+        "columnOrder": [
+          "id",
+          "username",
+          "display_name",
+          "created_at",
+          "bio",
+          "avatar_url",
+          "interests",
+          "region",
+          "region_public",
+          "saved_avatars"
+        ],
+        "columns": {
+          "id": {
+            "n": 1,
+            "kinds": {
+              "string/uuid": 1
+            },
+            "stringLength": [
+              36,
+              36
+            ]
+          },
+          "username": {
+            "n": 1,
+            "kinds": {
+              "string/text": 1
+            },
+            "stringLength": [
+              25,
+              25
+            ]
+          },
+          "display_name": {
+            "n": 1,
+            "kinds": {
+              "string/text": 1
+            },
+            "stringLength": [
+              13,
+              13
+            ]
+          },
+          "created_at": {
+            "n": 1,
+            "kinds": {
+              "string/time:dddd-dd-ddTdd:dd:dd.ddddd+dd:dd": 1
+            },
+            "stringLength": [
+              31,
+              31
+            ]
+          },
+          "bio": {
+            "n": 1,
+            "kinds": {
+              "null": 1
+            }
+          },
+          "avatar_url": {
+            "n": 1,
+            "kinds": {
+              "null": 1
+            }
+          },
+          "interests": {
+            "n": 1,
+            "kinds": {
+              "array": 1
+            },
+            "arrayLength": [
+              0,
+              0
+            ]
+          },
+          "region": {
+            "n": 1,
+            "kinds": {
+              "null": 1
+            }
+          },
+          "region_public": {
+            "n": 1,
+            "kinds": {
+              "boolean": 1
+            }
+          },
+          "saved_avatars": {
+            "n": 1,
+            "kinds": {
+              "array": 1
+            },
+            "arrayLength": [
+              0,
+              0
+            ]
+          }
+        },
+        "rowCount": 1,
+        "duplicateIds": 0,
+        "idShapes": {
+          "uuid": 1
+        },
+        "deletedRows": null,
+        "harnessTaggedRows": 0,
+        "harnessTaggedAnywhere": 0,
+        "status": 200,
+        "errorCode": null,
+        "contentRange": "0-0/1",
+        "total": 1,
+        "returnedEqualsTotal": true,
+        "foreignOwnerRows": 0
+      }
+    },
+    "B": {
+      "checkins": {
+        "columnOrder": [],
+        "columns": {},
+        "rowCount": 0,
+        "duplicateIds": 0,
+        "idShapes": {},
+        "deletedRows": null,
+        "harnessTaggedRows": 0,
+        "harnessTaggedAnywhere": 0,
+        "status": 200,
+        "errorCode": null,
+        "contentRange": "*/0",
+        "total": 0,
+        "returnedEqualsTotal": true,
+        "foreignOwnerRows": 0
+      },
+      "goals": {
+        "columnOrder": [],
+        "columns": {},
+        "rowCount": 0,
+        "duplicateIds": 0,
+        "idShapes": {},
+        "deletedRows": null,
+        "harnessTaggedRows": 0,
+        "harnessTaggedAnywhere": 0,
+        "status": 200,
+        "errorCode": null,
+        "contentRange": "*/0",
+        "total": 0,
+        "returnedEqualsTotal": true,
+        "foreignOwnerRows": 0
+      },
+      "users": {
+        "columnOrder": [
+          "id",
+          "username",
+          "display_name",
+          "created_at",
+          "bio",
+          "avatar_url",
+          "interests",
+          "region",
+          "region_public",
+          "saved_avatars"
+        ],
+        "columns": {
+          "id": {
+            "n": 1,
+            "kinds": {
+              "string/uuid": 1
+            },
+            "stringLength": [
+              36,
+              36
+            ]
+          },
+          "username": {
+            "n": 1,
+            "kinds": {
+              "string/text": 1
+            },
+            "stringLength": [
+              25,
+              25
+            ]
+          },
+          "display_name": {
+            "n": 1,
+            "kinds": {
+              "string/text": 1
+            },
+            "stringLength": [
+              13,
+              13
+            ]
+          },
+          "created_at": {
+            "n": 1,
+            "kinds": {
+              "string/time:dddd-dd-ddTdd:dd:dd.dddddd+dd:dd": 1
+            },
+            "stringLength": [
+              32,
+              32
+            ]
+          },
+          "bio": {
+            "n": 1,
+            "kinds": {
+              "null": 1
+            }
+          },
+          "avatar_url": {
+            "n": 1,
+            "kinds": {
+              "null": 1
+            }
+          },
+          "interests": {
+            "n": 1,
+            "kinds": {
+              "array": 1
+            },
+            "arrayLength": [
+              0,
+              0
+            ]
+          },
+          "region": {
+            "n": 1,
+            "kinds": {
+              "null": 1
+            }
+          },
+          "region_public": {
+            "n": 1,
+            "kinds": {
+              "boolean": 1
+            }
+          },
+          "saved_avatars": {
+            "n": 1,
+            "kinds": {
+              "array": 1
+            },
+            "arrayLength": [
+              0,
+              0
+            ]
+          }
+        },
+        "rowCount": 1,
+        "duplicateIds": 0,
+        "idShapes": {
+          "uuid": 1
+        },
+        "deletedRows": null,
+        "harnessTaggedRows": 0,
+        "harnessTaggedAnywhere": 0,
+        "status": 200,
+        "errorCode": null,
+        "contentRange": "0-0/1",
+        "total": 1,
+        "returnedEqualsTotal": true,
+        "foreignOwnerRows": 0
+      }
+    }
+  },
+  "probes": {
+    "checkins": {
+      "updated_at": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "version": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "deleted_at": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "meta": {
+        "verdict": "있음",
+        "status": 200,
+        "rows": 1,
+        "valueKind": {
+          "object": 1
+        }
+      },
+      "photo": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "feedback": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "theme_metadata": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "is_bot": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "created_at": {
+        "verdict": "있음",
+        "status": 200,
+        "rows": 1,
+        "valueKind": {
+          "string/time:dddd-dd-ddTdd:dd:dd.dddddd+dd:dd": 1
+        }
+      },
+      "start_at": {
+        "verdict": "있음",
+        "status": 200,
+        "rows": 1,
+        "valueKind": {
+          "string/time:dddd-dd-ddTdd:dd:dd.ddd+dd:dd": 1
+        }
+      },
+      "trash": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "saved_avatars": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "companions": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      }
+    },
+    "goals": {
+      "updated_at": {
+        "verdict": "있음",
+        "status": 200,
+        "rows": 0,
+        "valueKind": null
+      },
+      "version": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "deleted_at": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "meta": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "photo": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "feedback": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "theme_metadata": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "is_bot": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "created_at": {
+        "verdict": "있음",
+        "status": 200,
+        "rows": 0,
+        "valueKind": null
+      },
+      "start_at": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "trash": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "saved_avatars": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "companions": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      }
+    },
+    "users": {
+      "updated_at": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "version": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "deleted_at": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "meta": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "photo": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "feedback": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "theme_metadata": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "is_bot": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "created_at": {
+        "verdict": "있음",
+        "status": 200,
+        "rows": 1,
+        "valueKind": {
+          "string/time:dddd-dd-ddTdd:dd:dd.ddddd+dd:dd": 1
+        }
+      },
+      "start_at": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "trash": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      },
+      "saved_avatars": {
+        "verdict": "있음",
+        "status": 200,
+        "rows": 1,
+        "valueKind": {
+          "array": 1
+        }
+      },
+      "companions": {
+        "verdict": "없음(42703)",
+        "status": 400,
+        "rows": null,
+        "valueKind": null
+      }
+    }
+  },
+  "visibility": {
+    "A": {
+      "checkins": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 5,
+        "visibleTotal": 5,
+        "notMineInSample": 0,
+        "notMineTotal": 0,
+        "notMineStatus": 200,
+        "notMineErrorCode": null
+      },
+      "goals": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 0,
+        "visibleTotal": 0,
+        "notMineInSample": 0,
+        "notMineTotal": 0,
+        "notMineStatus": 200,
+        "notMineErrorCode": null
+      },
+      "users": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 1,
+        "visibleTotal": 1,
+        "notMineInSample": 0,
+        "notMineTotal": 0,
+        "notMineStatus": 200,
+        "notMineErrorCode": null
+      }
+    },
+    "B": {
+      "checkins": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 0,
+        "visibleTotal": 0,
+        "notMineInSample": 0,
+        "notMineTotal": 0,
+        "notMineStatus": 200,
+        "notMineErrorCode": null
+      },
+      "goals": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 0,
+        "visibleTotal": 0,
+        "notMineInSample": 0,
+        "notMineTotal": 0,
+        "notMineStatus": 200,
+        "notMineErrorCode": null
+      },
+      "users": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 1,
+        "visibleTotal": 1,
+        "notMineInSample": 0,
+        "notMineTotal": 0,
+        "notMineStatus": 200,
+        "notMineErrorCode": null
+      }
+    },
+    "anon": {
+      "checkins": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 0,
+        "visibleTotal": 0,
+        "notMineInSample": 0
+      },
+      "goals": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 0,
+        "visibleTotal": 0,
+        "notMineInSample": 0
+      },
+      "users": {
+        "status": 200,
+        "errorCode": null,
+        "returned": 0,
+        "visibleTotal": 0,
+        "notMineInSample": 0
+      }
+    },
+    "cross": {
+      "A->B": {
+        "checkins": {
+          "status": 200,
+          "rows": 0,
+          "total": 0,
+          "errorCode": null,
+          "targetOwnTotal": 0
+        },
+        "goals": {
+          "status": 200,
+          "rows": 0,
+          "total": 0,
+          "errorCode": null,
+          "targetOwnTotal": 0
+        },
+        "users": {
+          "status": 200,
+          "rows": 0,
+          "errorCode": null,
+          "visibleColumns": null,
+          "nonNullColumns": null
+        }
+      },
+      "B->A": {
+        "checkins": {
+          "status": 200,
+          "rows": 0,
+          "total": 0,
+          "errorCode": null,
+          "targetOwnTotal": 5
+        },
+        "goals": {
+          "status": 200,
+          "rows": 0,
+          "total": 0,
+          "errorCode": null,
+          "targetOwnTotal": 0
+        },
+        "users": {
+          "status": 200,
+          "rows": 0,
+          "errorCode": null,
+          "visibleColumns": null,
+          "nonNullColumns": null
+        }
+      }
+    }
+  },
+  "paging": {
+    "limitTests": [
+      {
+        "table": "checkins",
+        "q": "&limit=1",
+        "status": 206,
+        "rows": 1,
+        "contentRange": "0-0/5"
+      },
+      {
+        "table": "checkins",
+        "q": "&limit=1&offset=1",
+        "status": 206,
+        "rows": 1,
+        "contentRange": "1-1/5"
+      },
+      {
+        "table": "goals",
+        "q": "&limit=1",
+        "status": 200,
+        "rows": 0,
+        "contentRange": "*/0"
+      },
+      {
+        "table": "goals",
+        "q": "&limit=1&offset=1",
+        "status": 416,
+        "rows": null,
+        "contentRange": "*/0"
+      }
+    ],
+    "capTest": [],
+    "maxVisibleTotals": {
+      "A": {
+        "checkins": 5,
+        "goals": 0,
+        "users": 1
+      },
+      "B": {
+        "checkins": 0,
+        "goals": 0,
+        "users": 1
+      },
+      "anon": {
+        "checkins": 0,
+        "goals": 0,
+        "users": 0
+      }
+    }
+  },
+  "markers": {
+    "A": {
+      "checkins_text": 3,
+      "goals_title": 0,
+      "users_row_anywhere": 0,
+      "checkins_serverCount": {
+        "status": 206,
+        "total": 3,
+        "errorCode": null
+      },
+      "goals_serverCount": {
+        "status": 200,
+        "total": 0,
+        "errorCode": null
+      },
+      "team_pings_serverCount": {
+        "status": 200,
+        "total": 1,
+        "errorCode": null
+      },
+      "team_ping_replies_serverCount": {
+        "status": 206,
+        "total": 90,
+        "errorCode": null
+      }
+    },
+    "B": {
+      "checkins_text": 0,
+      "goals_title": 0,
+      "users_row_anywhere": 0,
+      "checkins_serverCount": {
+        "status": 200,
+        "total": 0,
+        "errorCode": null
+      },
+      "goals_serverCount": {
+        "status": 200,
+        "total": 0,
+        "errorCode": null
+      },
+      "team_pings_serverCount": {
+        "status": 200,
+        "total": 0,
+        "errorCode": null
+      },
+      "team_ping_replies_serverCount": {
+        "status": 200,
+        "total": 0,
+        "errorCode": null
+      }
+    }
+  },
+  "stoppedBecause": null,
+  "server": {
+    "host": "dvqosviqbciohcywkzbq.supabase.co",
+    "declaredAt": "origin/main:index.html (SUPABASE_URL · SUPABASE_ANON_KEY)",
+    "commit": "9f019754184e01d9cc11ae89dffc2b70a5f0a280"
+  },
+  "deleted": {
+    "A": {
+      "checkins": {
+        "skipped": "deleted_at 칸 없음/판정불가"
+      },
+      "goals": {
+        "skipped": "deleted_at 칸 없음/판정불가"
+      }
+    },
+    "B": {
+      "checkins": {
+        "skipped": "deleted_at 칸 없음/판정불가"
+      },
+      "goals": {
+        "skipped": "deleted_at 칸 없음/판정불가"
+      }
+    }
+  },
+  "logout": {
+    "A": 204,
+    "B": 204
+  },
+  "finishedAt": "2026-10-12T11:33:45.197Z",
+  "requests": {
+    "total": 84,
+    "byKind": {
+      "auth-login": 2,
+      "rest-GET": 80,
+      "auth-logout": 2
+    },
+    "byMethodKind": {
+      "POST auth-login": 2,
+      "GET rest-GET": 80,
+      "POST auth-logout": 2
+    },
+    "restNonGet": 0,
+    "restWriteOrRpc": 0,
+    "statusCounts": {
+      "200": 43,
+      "204": 2,
+      "206": 4,
+      "400": 32,
+      "401": 2,
+      "416": 1
+    }
+  }
+}
