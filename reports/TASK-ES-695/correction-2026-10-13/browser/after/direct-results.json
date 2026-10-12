@@ -1,0 +1,476 @@
+{
+  "label": "after",
+  "appTree": "C:/dev/wt/dir006-p0-codex-01a1310c",
+  "scope": "actual app in Chrome; direct product calls; fake sessions and responses; operating server requests 0",
+  "scenarios": [
+    {
+      "which": "syncServerRecords",
+      "failing": false,
+      "result": true,
+      "commitResult": null,
+      "apiCalls": [
+        {
+          "action": "sync_records",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "backupIds": [
+            "00000000-0000-4000-8000-000000000001"
+          ],
+          "fields": [
+            "action",
+            "backupIds",
+            "displayName",
+            "nickname",
+            "settingsToSave",
+            "userId",
+            "username"
+          ]
+        }
+      ],
+      "backupBefore": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "direct-record",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "direct-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          }
+        }
+      ],
+      "backupAfter": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "direct-record",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "direct-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          },
+          "category": "exercise"
+        }
+      ],
+      "original": {
+        "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "type": "note",
+        "text": "direct-record",
+        "photo": "data:image/png;base64,direct-photo",
+        "feedback": {
+          "verdict": "direct-feedback"
+        },
+        "energy": 61,
+        "focus": 43,
+        "notionDb": {
+          "name": "direct-structure"
+        },
+        "category": "exercise"
+      },
+      "originalFieldsPreserved": true,
+      "beforeRawEqualsAfter": false,
+      "uniqueEditedFeedbackRetained": false,
+      "goalsBackup": [
+        {
+          "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          "title": "direct-server-goal",
+          "milestones": []
+        }
+      ],
+      "guestCopyRemaining": true,
+      "stateIds": [
+        "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      ],
+      "requests": []
+    },
+    {
+      "which": "syncServerRecords",
+      "failing": true,
+      "result": true,
+      "commitResult": {
+        "kind": "records",
+        "ok": false,
+        "stage": "kept-failed",
+        "reattached": 0,
+        "keptAdded": 0,
+        "prevWritten": false,
+        "backupWritten": false,
+        "held": 0
+      },
+      "apiCalls": [
+        {
+          "action": "sync_records",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "backupIds": [
+            "00000000-0000-4000-8000-000000000001"
+          ],
+          "fields": [
+            "action",
+            "backupIds",
+            "displayName",
+            "nickname",
+            "settingsToSave",
+            "userId",
+            "username"
+          ]
+        }
+      ],
+      "backupBefore": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "edited-device-text",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "unique-device-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          }
+        }
+      ],
+      "backupAfter": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "edited-device-text",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "unique-device-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          }
+        }
+      ],
+      "original": {
+        "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "type": "note",
+        "text": "edited-device-text",
+        "photo": "data:image/png;base64,direct-photo",
+        "feedback": {
+          "verdict": "unique-device-feedback"
+        },
+        "energy": 61,
+        "focus": 43,
+        "notionDb": {
+          "name": "direct-structure"
+        }
+      },
+      "originalFieldsPreserved": true,
+      "beforeRawEqualsAfter": true,
+      "uniqueEditedFeedbackRetained": true,
+      "goalsBackup": [
+        {
+          "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          "title": "direct-server-goal",
+          "milestones": []
+        }
+      ],
+      "guestCopyRemaining": true,
+      "stateIds": [
+        "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "users",
+          "rows": 1,
+          "keys": "trash,id,username,display_name,bio,avatar_url,interests,region,region_public,saved_avatars"
+        }
+      ]
+    },
+    {
+      "which": "migrateGuestDataToUser",
+      "failing": false,
+      "result": true,
+      "commitResult": null,
+      "apiCalls": [],
+      "backupBefore": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "direct-record",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "direct-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          }
+        }
+      ],
+      "backupAfter": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "direct-record",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "direct-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          }
+        }
+      ],
+      "original": {
+        "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "type": "note",
+        "text": "direct-record",
+        "photo": "data:image/png;base64,direct-photo",
+        "feedback": {
+          "verdict": "direct-feedback"
+        },
+        "energy": 61,
+        "focus": 43,
+        "notionDb": {
+          "name": "direct-structure"
+        }
+      },
+      "originalFieldsPreserved": true,
+      "beforeRawEqualsAfter": true,
+      "uniqueEditedFeedbackRetained": false,
+      "goalsBackup": [
+        {
+          "id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+          "title": "direct-guest-goal",
+          "milestones": [],
+          "startDate": "2026-10-13",
+          "user_id": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "guestCopyRemaining": false,
+      "stateIds": [
+        "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "goals",
+          "rows": 1,
+          "keys": "id,user_id,title,category,due_date,visibility,topic,archived_at,result,milestones"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "goals",
+          "rows": 1,
+          "keys": "id,user_id,title,category,due_date,visibility,topic,archived_at,result,milestones"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "checkins",
+          "rows": 2,
+          "keys": "id,user_id,type,text,end_at,category,theme,sub_theme,theme_confidence,meta"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "checkins",
+          "rows": 1,
+          "keys": "id,user_id,type,text,start_at,end_at,category,theme,sub_theme"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "users",
+          "rows": 1,
+          "keys": "trash,id,username,display_name,bio,avatar_url,interests,region,region_public,saved_avatars"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "users",
+          "rows": 1,
+          "keys": "trash,id,username,display_name,bio,avatar_url,interests,region,region_public,saved_avatars"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "goals",
+          "rows": 1,
+          "keys": "id,user_id,title,category,due_date,visibility,topic,archived_at,result,milestones"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "goals",
+          "rows": 1,
+          "keys": "id,user_id,title,category,due_date,visibility,topic,archived_at,result,milestones"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "checkins",
+          "rows": 2,
+          "keys": "id,user_id,type,text,end_at,category,theme,sub_theme,theme_confidence,meta"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "checkins",
+          "rows": 2,
+          "keys": "id,user_id,type,text,end_at,category,theme,sub_theme,theme_confidence,meta"
+        }
+      ]
+    },
+    {
+      "which": "migrateGuestDataToUser",
+      "failing": true,
+      "result": true,
+      "commitResult": {
+        "kind": "records",
+        "ok": false,
+        "stage": "kept-failed",
+        "reattached": 0,
+        "keptAdded": 0,
+        "prevWritten": false,
+        "backupWritten": false,
+        "held": 0
+      },
+      "apiCalls": [],
+      "backupBefore": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "edited-device-text",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "unique-device-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          }
+        }
+      ],
+      "backupAfter": [
+        {
+          "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "type": "note",
+          "text": "edited-device-text",
+          "photo": "data:image/png;base64,direct-photo",
+          "feedback": {
+            "verdict": "unique-device-feedback"
+          },
+          "energy": 61,
+          "focus": 43,
+          "notionDb": {
+            "name": "direct-structure"
+          }
+        }
+      ],
+      "original": {
+        "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "type": "note",
+        "text": "edited-device-text",
+        "photo": "data:image/png;base64,direct-photo",
+        "feedback": {
+          "verdict": "unique-device-feedback"
+        },
+        "energy": 61,
+        "focus": 43,
+        "notionDb": {
+          "name": "direct-structure"
+        }
+      },
+      "originalFieldsPreserved": true,
+      "beforeRawEqualsAfter": true,
+      "uniqueEditedFeedbackRetained": true,
+      "goalsBackup": [
+        {
+          "id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+          "title": "direct-guest-goal",
+          "milestones": [],
+          "startDate": "2026-10-13",
+          "user_id": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "guestCopyRemaining": false,
+      "stateIds": [
+        "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "goals",
+          "rows": 1,
+          "keys": "id,user_id,title,category,due_date,visibility,topic,archived_at,result,milestones"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "checkins",
+          "rows": 1,
+          "keys": "id,user_id,type,text,start_at,end_at,category,theme,sub_theme"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "users",
+          "rows": 1,
+          "keys": "trash,id,username,display_name,bio,avatar_url,interests,region,region_public,saved_avatars"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "goals",
+          "rows": 1,
+          "keys": "id,user_id,title,category,due_date,visibility,topic,archived_at,result,milestones"
+        },
+        {
+          "method": "POST",
+          "kind": "rest",
+          "table": "checkins",
+          "rows": 2,
+          "keys": "id,user_id,type,text,end_at,category,theme,sub_theme,theme_confidence,meta"
+        }
+      ]
+    }
+  ],
+  "chrome": "Chrome/154.0.8037.98",
+  "lib": {
+    "file": "supabase-js-2.115.0.umd.js",
+    "bytes": 214101,
+    "sha256": "f387e5935730a6d9599a281986a176eafce5ebbe7514446222d21aa029e31dd5",
+    "versionInFile": "2.115.0"
+  },
+  "entered": true,
+  "exceptions": [],
+  "console": [
+    {
+      "ms": 3622,
+      "type": "warning",
+      "text": "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — kept-failed"
+    },
+    {
+      "ms": 3642,
+      "type": "warning",
+      "text": "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — kept-failed"
+    }
+  ],
+  "shot": "shots/direct-paths.png"
+}

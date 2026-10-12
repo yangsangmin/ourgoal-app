@@ -1,0 +1,380 @@
+{
+  "total": 15,
+  "assertionsNotHeld": 0,
+  "rows": [
+    {
+      "name": "same id and body: enrich only serialized device copy; input identity/content unchanged",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "type": "note",
+          "text": "device-text",
+          "photo": "unique-old-photo",
+          "feedback": "unique-old-feedback",
+          "notionDb": {
+            "name": "old-structure"
+          },
+          "energy": 60,
+          "focus": 40
+        },
+        "input": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "device-text"
+          }
+        ],
+        "kept": []
+      }
+    },
+    {
+      "name": "different body: never attach old feedback/structure; retain them with old body",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "type": "note",
+          "text": "new-body",
+          "photo": "unique-old-photo",
+          "energy": 60,
+          "focus": 40
+        },
+        "kept": [
+          {
+            "id": "same",
+            "why": "text-differs",
+            "keptAt": "2026-10-12T18:21:38.866Z",
+            "fp": "e02c9ee5:116",
+            "item": {
+              "id": "same",
+              "text": "device-text",
+              "feedback": "unique-old-feedback",
+              "notionDb": {
+                "name": "old-structure"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "different photo and feedback: incoming meaning wins; old values are hidden preserved",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "text": "device-text",
+          "photo": "new-photo",
+          "feedback": "new-feedback",
+          "notionDb": {
+            "name": "old-structure"
+          },
+          "energy": 60,
+          "focus": 40
+        },
+        "kept": [
+          {
+            "id": "same",
+            "why": "missing-in-backup",
+            "keptAt": "2026-10-12T18:21:38.867Z",
+            "fp": "f387e86c:112",
+            "item": {
+              "id": "same",
+              "text": "device-text",
+              "photo": "unique-old-photo",
+              "feedback": "unique-old-feedback"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "explicit clear null: do not resurrect old photo/feedback in backup",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "text": "device-text",
+          "photo": null,
+          "feedback": null,
+          "notionDb": {
+            "name": "old-structure"
+          },
+          "energy": 60,
+          "focus": 40
+        },
+        "kept": [
+          {
+            "id": "same",
+            "why": "missing-in-backup",
+            "keptAt": "2026-10-12T18:21:38.867Z",
+            "fp": "f387e86c:112",
+            "item": {
+              "id": "same",
+              "text": "device-text",
+              "photo": "unique-old-photo",
+              "feedback": "unique-old-feedback"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "explicit clear undefined: do not resurrect old photo/feedback in backup",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "text": "device-text",
+          "notionDb": {
+            "name": "old-structure"
+          },
+          "energy": 60,
+          "focus": 40
+        },
+        "kept": [
+          {
+            "id": "same",
+            "why": "missing-in-backup",
+            "keptAt": "2026-10-12T18:21:38.868Z",
+            "fp": "f387e86c:112",
+            "item": {
+              "id": "same",
+              "text": "device-text",
+              "photo": "unique-old-photo",
+              "feedback": "unique-old-feedback"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "explicit clear : do not resurrect old photo/feedback in backup",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "text": "device-text",
+          "photo": "",
+          "feedback": "",
+          "notionDb": {
+            "name": "old-structure"
+          },
+          "energy": 60,
+          "focus": 40
+        },
+        "kept": [
+          {
+            "id": "same",
+            "why": "missing-in-backup",
+            "keptAt": "2026-10-12T18:21:38.868Z",
+            "fp": "f387e86c:112",
+            "item": {
+              "id": "same",
+              "text": "device-text",
+              "photo": "unique-old-photo",
+              "feedback": "unique-old-feedback"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "foreign marked backup: do not attach into current account",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "text": "device-text"
+        },
+        "kept": [
+          {
+            "id": "same",
+            "why": "missing-in-backup",
+            "keptAt": "2026-10-12T18:21:38.868Z",
+            "fp": "66caeaa0:220",
+            "item": {
+              "id": "same",
+              "text": "device-text",
+              "photo": "unique-old-photo",
+              "feedback": "unique-old-feedback",
+              "notionDb": {
+                "name": "old-structure"
+              },
+              "energy": 60,
+              "focus": 40,
+              "user_id": "22222222-2222-4222-8222-222222222222"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "other account key: never read or write it",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "text": "device-text"
+        },
+        "readKeys": [
+          "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+          "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+          "ourgoal_records_kept_11111111-1111-4111-8111-111111111111",
+          "ourgoal_trash_backup_11111111-1111-4111-8111-111111111111",
+          "ourgoal_trash_backup_11111111-1111-4111-8111-111111111111",
+          "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+          "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+          "ourgoal_records_backup_11111111-1111-4111-8111-111111111111"
+        ],
+        "writtenKeys": [
+          "ourgoal_records_backup_11111111-1111-4111-8111-111111111111"
+        ]
+      }
+    },
+    {
+      "name": "trash deletion: no record id or metadata reintroduced",
+      "assertionsHeld": true,
+      "result": {
+        "backup": [
+          {
+            "id": "same",
+            "text": "device-text"
+          }
+        ],
+        "kept": []
+      }
+    },
+    {
+      "name": "trash read exception: do not treat deletion state as empty and reattach",
+      "assertionsHeld": true,
+      "result": {
+        "backupUnchanged": true
+      }
+    },
+    {
+      "name": "kept-only deleted copy: saving does not silently restore it",
+      "assertionsHeld": true,
+      "result": {
+        "backup": {
+          "id": "same",
+          "text": "device-text"
+        },
+        "kept": [
+          {
+            "why": "not-in-server-response",
+            "item": {
+              "id": "same",
+              "type": "note",
+              "text": "device-text",
+              "photo": "unique-old-photo",
+              "feedback": "unique-old-feedback",
+              "notionDb": {
+                "name": "old-structure"
+              },
+              "energy": 60,
+              "focus": 40
+            },
+            "fp": "source"
+          }
+        ]
+      }
+    },
+    {
+      "name": "preservation failure on new-body save: keep original, including next save",
+      "assertionsHeld": true,
+      "result": {
+        "originalUnchanged": true,
+        "input": [
+          {
+            "id": "same",
+            "text": "new-body"
+          }
+        ],
+        "writes": []
+      }
+    },
+    {
+      "name": "unreadable backup: preserve raw before normal save replaces it",
+      "assertionsHeld": true,
+      "result": {
+        "backup": "[{\"id\":\"same\",\"text\":\"new\"}]",
+        "kept": [
+          {
+            "id": null,
+            "why": "unreadable-backup",
+            "keptAt": "2026-10-12T18:21:38.871Z",
+            "fp": "5f9f2b17:61",
+            "item": {
+              "id": null,
+              "raw": "UNREADABLE-UNIQUE-PHOTO"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "missing record id: archive; do not insert it into page or outgoing backup",
+      "assertionsHeld": true,
+      "result": {
+        "backup": [
+          {
+            "id": "new-id",
+            "text": "new"
+          }
+        ],
+        "kept": [
+          {
+            "id": "same",
+            "why": "not-in-server-response",
+            "keptAt": "2026-10-12T18:21:38.871Z",
+            "fp": "141bbeb3:190",
+            "item": {
+              "id": "same",
+              "type": "note",
+              "text": "device-text",
+              "photo": "unique-old-photo",
+              "feedback": "unique-old-feedback",
+              "notionDb": {
+                "name": "old-structure"
+              },
+              "energy": 60,
+              "focus": 40
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "goal extra field: preserve raw hidden; do not reattach into visible object",
+      "assertionsHeld": true,
+      "result": {
+        "backup": [
+          {
+            "id": "g",
+            "title": "goal"
+          }
+        ],
+        "kept": {
+          "v": 1,
+          "items": [
+            {
+              "id": "g",
+              "why": "missing-in-backup",
+              "keptAt": "2026-10-12T18:21:38.872Z",
+              "fp": "c852ea9d:70",
+              "item": {
+                "id": "g",
+                "title": "goal",
+                "startDate": "unique-start"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "scope": "product module; simulated store; not actual deletion UX, operating requests 0",
+  "notFullConditionFour": true
+}

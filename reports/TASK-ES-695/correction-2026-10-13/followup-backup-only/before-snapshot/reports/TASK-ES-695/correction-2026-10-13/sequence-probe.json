@@ -1,0 +1,368 @@
+{
+  "source": "C:\\dev\\wt\\dir006-p0-codex-01a1310c\\js\\core\\local-keep.js",
+  "cases": [
+    {
+      "name": "records restore interrupted after 0 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "kept-failed"
+        },
+        "operations": [],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "records restore interrupted after 1 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed"
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_kept_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "records restore interrupted after 2 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "prev-failed",
+          "swapped": false
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_kept_11111111-1111-4111-8111-111111111111"
+          },
+          {
+            "op": "set",
+            "key": "ourgoal_records_backup_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "records transient backup read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "records transient prev read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "records transient kept read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 1,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 2
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "records unreadable current preservation fails then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 0
+        },
+        "wrote": false,
+        "raw": "BROKEN-UNIQUE-RAW"
+      }
+    },
+    {
+      "name": "records unique previous preservation fails then quota release",
+      "assertionsHeld": true,
+      "details": {
+        "previousRemains": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "goals restore interrupted after 0 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "kept-failed"
+        },
+        "operations": [],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "goals restore interrupted after 1 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "backup-failed"
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_goals_kept_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "goals restore interrupted after 2 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "prev-failed",
+          "swapped": false
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_goals_kept_11111111-1111-4111-8111-111111111111"
+          },
+          {
+            "op": "set",
+            "key": "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "goals transient backup read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "goals transient prev read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "goals transient kept read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 2
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "goals unreadable current preservation fails then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 0
+        },
+        "wrote": false,
+        "raw": "BROKEN-UNIQUE-RAW"
+      }
+    },
+    {
+      "name": "goals unique previous preservation fails then quota release",
+      "assertionsHeld": true,
+      "details": {
+        "previousRemains": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "concurrent change before-backup-write-check",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": true,
+          "backupWritten": false,
+          "held": 0
+        },
+        "concurrentRetained": true,
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_prev_11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      }
+    },
+    {
+      "name": "concurrent change atomic-backup-write-throws",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": true,
+          "backupWritten": false,
+          "held": 0
+        },
+        "concurrentRetained": true,
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_prev_11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      }
+    },
+    {
+      "name": "concurrent change after-backup-write",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": true,
+          "backupWritten": false,
+          "held": 0
+        },
+        "concurrentRetained": true,
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_prev_11111111-1111-4111-8111-111111111111"
+          },
+          {
+            "op": "set",
+            "key": "ourgoal_records_backup_11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      }
+    },
+    {
+      "name": "server non-null values and null device values",
+      "assertionsHeld": true,
+      "details": {
+        "id": "r",
+        "text": "same",
+        "energy": 99,
+        "photo": "server-photo",
+        "arbitraryField": {
+          "y": 2
+        },
+        "focus": 70
+      }
+    }
+  ],
+  "total": 20,
+  "assertionsNotHeld": 0,
+  "boundary": {
+    "position": "another writer inside the final setItem after the last read",
+    "result": {
+      "kind": "records",
+      "ok": true,
+      "stage": "written",
+      "reattached": 0,
+      "keptAdded": 0,
+      "prevWritten": true,
+      "backupWritten": true,
+      "held": 0
+    },
+    "concurrentRemains": false,
+    "scope": "synchronous injection; CAS absent; not actual browser interleaving"
+  },
+  "note": "worker measurement; no court verdict; no operating server requests"
+}

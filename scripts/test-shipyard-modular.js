@@ -163,6 +163,7 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/core-confirm-es374.test.js'); // #TASK-ES-374 공용 확인창 통로(ui.confirm)·확인 1회/취소 0회/정본 없음 기본 확인창
   runNode('tests/core-confirm-es376.test.js'); // #TASK-ES-376 index.html 확인창 19곳 → ui.confirm(확인 1회/취소 0회·문구 그대로)
   runNode('tests/account-switch-isolation.test.js'); // #TASK-ES-365 CORE-09 계정 전환 격리(A 로그아웃 -> B 로그인 시 B 화면·업로드에 A 데이터 0건)
+  runNode('tests/local-keep-p0.test.js'); // #TASK-ES-695 DIR-006 묶음 P0: 다시 열 때 되붙이기·보관·직전 사본(되읽어 확인한 뒤에만 백업을 바꾼다)
   // #TASK-ES-364 목표 템플릿 데이터 6파일 분리 전후 deepStrictEqual
   runNode('tests/goal-templates-data-split.test.js');
   runNode('tests/comm-dm-ledger-es366.test.js'); // #TASK-ES-366 DM·동반자 서버 원장 통로(COMM-03·04)·동반자 자기 키만

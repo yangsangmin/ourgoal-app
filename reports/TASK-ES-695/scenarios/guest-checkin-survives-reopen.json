@@ -1,0 +1,79 @@
+{
+  "id": "guest-checkin-survives-reopen",
+  "title": "게스트가 홈에서 한 줄 기록을 저장하고 앱을 다시 열어도 그 기록이 기록 탭에 남아 있다 — 저장 함수의 기기 백업 쓰기를 기기 보관(js/core/local-keep.js)을 거치게 바꿨어도 게스트의 저장 · 다시 열기는 고치기 전과 같다(보존)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "보관 묶음 뒤에도 남는 스쿼트 30개"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "기록되었습니다",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#firstCheckinDoneBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#firstCheckinDoneBtn",
+      "timeoutMs": 5000
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "expect": "visible",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#recordsList",
+      "text": "보관 묶음 뒤에도 남는 스쿼트 30개",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
