@@ -15,7 +15,7 @@ const M = JSON.parse(fs.readFileSync(path.join(DIR, 'measure.json'), 'utf8'));
 const sp = M.saveProfile, pl = M.profileLoad, row = M.serverRow, o = M.other, h = o.homeHandler, rr = M.rerun, ev = M.evidence, dom = M.dom, rs = M.realServer;
 const n = x => String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const V = {
-  'base': M.mainBase, 'runs': ev.browserRepro.runs, 'conds': ev.browserRepro.conditions, 'ev.tools': ev.reproTools, 'ev.shots': ev.reproShots,
+  'base': M.sinceSurvey.mainHead, 'survey.base': M.sinceSurvey.surveyBase, 'survey.changed': M.sinceSurvey.productFilesChangedOnMain, 'runs': ev.browserRepro.runs, 'conds': ev.browserRepro.conditions, 'ev.tools': ev.reproTools, 'ev.shots': ev.reproShots,
   'sp.a': sp.lines[0], 'sp.b': sp.lines[1], 'w.users': sp.serverWaitLines.users, 'd.goals': sp.deviceWriteLines.goalsBackup, 'd.full': sp.deviceWriteLines.fullCopy, 'd.rec': sp.deviceWriteLines.recordsBackup,
   'pl.rec': pl.recordsBackupOverwriteLine, 'pl.goal': pl.goalsBackupWriteLines[0], 'pl.reA': pl.reuploadWhenServerEmptyLines[0], 'pl.reB': pl.reuploadWhenServerEmptyLines[1],
   'row.n': row.keys.length, 'row.a': row.toCheckinRowLines[0], 'row.b': row.toCheckinRowLines[1], 'row.storage': row.storageUploadCalls,
@@ -55,6 +55,8 @@ const must = [
   [rs.outsideAgreedScope.total === 11 && rs.outsideAgreedScope.anonTableCounts.length === 3 && rs.outsideAgreedScope.otherTables.length === 6 && rs.outsideAgreedScope.embeds.length === 2, '요청 기록: 「자기 행만」을 넘긴 조회가 11건(3 · 6 · 2)이다'],
   [rs.code.softDeleteLines.length === 2 && rs.code.themeRetryInUpsert === true && rs.code.minimalUserKeys.join(',') === 'id,username,display_name,bio,avatar_url' && rs.code.deletedAtFilterLines.length === 2 && rs.sqlFilesInRepo.every(x => x.exists), '코드: 지움은 deleted_at 수정 둘 · 기록 올리기에 테마 재시도가 있다 · 사용자 재전송은 5칸 · 불러오기는 deleted_at 으로만 거른다 · 견준 SQL 파일이 저장소에 있다'],
   [fs.existsSync(path.join(DIR, 'evidence', 'after-contract-facts.md')) && fs.existsSync(path.join(DIR, 'evidence', 'real-server-read-survey.md')), '운영 서버 읽기 조사의 사본과 「확정본 뒤에 나온 사실」 글이 근거 폴더에 있다'],
+  [M.sinceSurvey.productFilesChangedOnMain === 0 && M.sinceSurvey.productFilesChangedInThisBranch === 0, '조사 문서들의 기준 커밋 뒤로 주 가지에서도 이 가지에서도 제품 코드가 바뀌지 않았다'],
+  [M.pointers.photoRow && M.pointers.syncStatusMockRow && M.pointers.dir005Open && !M.pointers.saysNoOpenDirective, '주 가지의 지시함에 DIR-005 가 열려 있고, 결심 대기 줄이 가리키는 두 줄(사진 등의 서버 보존 · 저장 상태 시안)이 있으며, 「(열린 지시 없음)」 줄이 없다'],
 ];
 const broken = must.filter(m => !m[0]).map(m => m[1]);
 if (broken.length) { console.error('지금 코드 · 근거가 지시의 전제와 다르다: ' + broken.join(' / ')); process.exit(1); }
@@ -105,7 +107,7 @@ const claims = [
   has('C13', 'R3', 'P0 의 보관이 지우지 않고 올리지 않는 것이라고 적혀 있다', F, '**지우지 않고 보관 열쇠로 옮긴다** — 올리지 않는다.'),
   has('C14', 'R3', 'P0 의 되읽어 확인 조건이 적혀 있다', F, '보관과 사본 쓰기를 **되읽어 확인한 뒤에만** 원래 백업을 바꾼다.'),
   has('C15', 'R3', '실서버 조사가 묶음 B 보다 먼저라고 적혀 있다', F, '**실서버 조사 — 묶음 B 보다 먼저**(계약 8절)'),
-  has('C16', 'R3', '실서버 쓰기 시험이 묶음 B 보다 먼저이고 승인 뒤에만 한다고 적혀 있다', F, '**실서버 쓰기 시험은 묶음 B 보다 먼저이고, 상민님 승인 뒤에만 한다**'),
+  has('C16', 'R3', '실서버 쓰기 시험이 묶음 B 보다 먼저이고 승인된 범위 안에서만 한다고 적혀 있다', F, '**실서버 쓰기 시험은 묶음 B 보다 먼저이고, 상민님이 승인하신 범위 안에서만 한다.**'),
   has('C17', 'R3', '묶음 A 의 내용이 적혀 있다', F, '**묶음 A — 저장 함수가 결과를 돌려주고, 기기에 먼저 쓴다**(계약 2절)'),
   has('C18', 'R3', 'A 만으로는 출시 가능 표시가 없다고 적혀 있다', F, '**A 만으로는 「출시 가능」이라고 표시하지 않는다.**'),
   has('C19', 'R3', '묶음 B 가 적혀 있다', F, '**묶음 B — 미확정 변경 목록**'),
@@ -135,7 +137,7 @@ const claims = [
   has('C43', 'R8', '결심 대기에 보관함을 지우는 규칙 줄이 있다', F, cell(4).slice(0, 40)),
   has('C44', 'R8', '결심 대기에 홈 기록의 목표 연결 줄이 줄 번호와 함께 있다', F, '(`js/tabs/records/checkin-capture.js` ' + h.categoryFromGoalLines[0] + '행 · ' + h.recordPushLines[0] + '~' + h.recordPushLines[1] + '행)'),
   has('C45', 'R8', '결심 대기에 새 화면 글 줄이 있다', F, cell(6).slice(0, 40)),
-  has('C46', 'R8', '쓰기 시험은 결심 전에는 하지 않는다고 적혀 있다', F, '쓰기 시험은 이 줄의 결심 전에는 하지 않는다'),
+  has('C46', 'R11', '결심 대기의 쓰기 시험 줄의 상태가 승인됨이다', F, '| 운영 서버에 쓰기 | 승인됨(2026-10-12) — 시험 계정으로 자기 행만, 아홉 가지. 결과는 따로 올린다 |'),
   has('C47', 'R8', '결심 대기 칸의 머리말과 앞선 줄은 그대로다', F, '## 결심 대기 (상민님만 결정한다 — AI 는 이 칸을 스스로 진행하지 않는다)'),
   has('C48', 'R8', '앞서 있던 줄이 그대로 있다', F, '| Google Play 개발자 계정 등록($25 결제·신분 확인) | 돈 |'),
   has('C49', 'R9', '상민님 원문이 글자 그대로 있다', F, '「작업을 시작하기 전에 3 세션의 의견을 조율해서 최상안을 만들고 각 작업을 시작해. 각 세션마다 발언권은 기본 5회 조율이 제대로 이뤄지지 않을시 최대 10회까지 진행해. 그래야 작업한 뒤에 허점이 생겨서 다시 작업하는 일이 줄어서 좋을 것 같아. 대화내용과, 협의결과, 작업결과는 쌓아서 계속 활용되도록 하고」'),
@@ -155,7 +157,7 @@ const claims = [
   has('C63', 'R10', '읽기 조사를 병합 전에 했고 따로 여쭙지 않았다고 적혀 있다', F, '**이 조사는 이 지시가 병합되기 전에 했다** — 세 세션의 합의(계약 8절)가 「이미 허락된 시험 계정으로 자기 행만 읽는 부수지 않는 조사라 새 승인을 따로 구하지 않는다」고 본 데 따른 것이고, 상민님께 따로 여쭙지 않았다.'),
   has('C64', 'R10', '범위를 넘긴 조회의 건수가 요청 기록대로 적혀 있다', F, '「자기 행만」을 넘긴 조회가 ' + rs.outsideAgreedScope.total + '건 있었다(로그인 없이 공개 키만으로 세 표의 개수 조회 ' + rs.outsideAgreedScope.anonTableCounts.length + '건 · 다른 표 `team_pings` · `team_ping_replies` 의 자기 행 개수 ' + rs.outsideAgreedScope.otherTables.length + '건 · `users` 에 기록과 목표를 끼워 넣는 조회 ' + rs.outsideAgreedScope.embeds.length + '건'),
   has('C65', 'R10', '쓰기 시험으로만 알 수 있는 아홉 가지가 보고서의 글 그대로 있다', F, '9. 지운 뒤 다시 열면 되살아나는가(화면 · 운영): 사실 2번의 확정.」'),
-  has('C66', 'R10', '병합이 쓰기 시험의 승인이 아니라고 적혀 있다', F, '이 지시의 병합은 쓰기 시험의 승인이 아니다.'),
+  has('C66', 'R11', '쓰기 시험의 승인이 이 지시의 병합이 아니라 상민님 말씀이라고 적혀 있다', F, '승인은 2026-10-12 의 말씀이다(결심 기록의 원문 2 — 이 지시의 병합이 아니다).'),
   has('C67', 'R10', '묶음 B 의 지움 처리는 운영 표의 사실이 확인된 뒤에 설계한다고 적혀 있다', F, '**다만 지움의 처리는 운영 표의 사실이 확인된 뒤에 설계한다**'),
   has('C68', 'R10', 'P0 에는 운영 표의 사실이 닿지 않는다고 적혀 있다', F, '운영 표의 사실(「왜」 ⑦)은 이 묶음에 닿지 않는다 — 서버에 더 묻지 않는 묶음이기 때문이다.'),
   has('C69', 'R8', '결심 대기에 운영에 실행되지 않은 것으로 보이는 SQL 줄이 있다', F, cell(2).slice(0, 50)),
@@ -166,12 +168,22 @@ const claims = [
   has('C74', 'R10', '「확정본 뒤에 나온 사실」 글에 범위를 넘긴 조회가 적혀 있다', E + 'after-contract-facts.md', '## 2. 조사가 그 범위를 넘긴 조회'),
   has('C75', 'R4', '운영 서버 읽기 조사의 요청 기록이 있다', 'reports/TASK-ES-694/real-server-read/requests.jsonl', '"kind":"auth-login"'),
   not('C76', 'R10', '계약 사본에는 뒤에 나온 사실을 적어 넣지 않았다', C, '운영 서버 읽기 조사'),
+  has('C77', 'R11', '상민님 원문 2 가 글자 그대로 있다', F, '**상민님 원문 2**(2026-10-12 저녁): 「2. 운영서버 쓰기 시험 승인」'),
+  has('C78', 'R11', '물은 글이 그대로 있다', F, '지휘 세션이 물은 글: 「전용 시험 계정으로 자기 행만 쓰고 지우는 시험 아홉 가지」'),
+  has('C79', 'R11', '결심 기록의 범위 밖이 글자 그대로 있다', F, '「2 는 시험 계정 밖의 행 · 다른 사용자 자료 · 운영 표의 구조를 바꾸는 SQL · 함수 호출과 발송을 허락하지 않는다. 운영에 SQL 을 실행하는 일은 여기 없다.」'),
+  has('C80', 'R11', '운영에 SQL 을 실행하는 일은 승인에 없다고 적혀 있다', F, '**운영에 SQL 을 실행하는 일은 승인에 없다**'),
+  has('C81', 'R12', '합친 지시함에 DIR-005 가 그대로 있다', F, '### DIR-005 — 디자인 개편 1단계: 공용 꾸밈(유전자) 최소 조정과 홈 「오늘 기록하기」 창 시범'),
+  not('C82', 'R12', '합친 지시함에 「(열린 지시 없음)」 줄이 없다', F, '(열린 지시 없음)'),
+  has('C83', 'R12', '결심 대기 줄이 가리키는 사진 등의 서버 보존 줄이 있다', F, '| 사진 · AI 피드백 · 에너지 · 집중 값을 서버에도 보존할지'),
+  has('C84', 'R12', '결심 대기 줄이 가리키는 저장 상태 시안 줄이 있다', F, '| 저장 상태를 화면이 말하는 시안의 방향 확인'),
+  has('C85', 'R12', 'DIR-005 와 함께 올라온 추천 칩 줄은 그대로다', F, '| 고정 추천 칩 줄의 동작 — 뼈대의 `#smartRecommendChips`'),
+  has('C86', 'R12', '티켓 대장에 ES-693 줄이 그대로 있다', 'docs/rules/TICKETS.md', '- #TASK-ES-693 | INFRA | 지시함 DIR-005 등록 — 디자인 개편 1단계'),
 ];
 const out = { task: 'TASK-ES-694', requirementsSource: 'docs/specs/REQ-TASK-ES-694-DIR-006-SAVE-STABILIZATION.md',
   requirements: [
     { id: 'R1', text: '지시함 「열린 지시」에 DIR-006(저장 안정화)을 올린다. 줄을 더하기만 하고, 줄 번호와 숫자는 지금 코드에서 다시 읽는다.' },
     { id: 'R2', text: '왜 — 조사에서 확인된 사실을 확인 방식(화면 확인 · 함수 재현 · 코드 읽기)과 누가 보았는지를 갈라 적고, 한계(실서버 · 실기기 미측정)를 적는다.' },
-    { id: 'R3', text: '묶음과 순서를 계약 1절대로 적는다 — P0(부수지 않는 것만) → 실서버 조사(B 보다 먼저 — 읽기는 한 번 했고, 쓰기 시험은 상민님 승인 뒤에만) → A → B → C → 종단간 회귀. 묶음마다 PR 을 따로.' },
+    { id: 'R3', text: '묶음과 순서를 계약 1절대로 적는다 — P0(부수지 않는 것만) → 실서버 조사(B 보다 먼저 — 읽기는 한 번 했고, 쓰기 시험은 상민님이 승인하신 범위 안에서만) → A → B → C → 종단간 회귀. 묶음마다 PR 을 따로.' },
     { id: 'R4', text: '계약 확정본과 조사 문서 넷을 저장소에 사본으로 넣고(머리에 사본 · 정본의 자리), 재현 도구와 결과 요약, 운영 서버 읽기 조사의 스크립트와 요청 기록을 넣는다.' },
     { id: 'R5', text: '완료 기준에 계약 8절의 출시를 막는 기준 여덟과 검증표를 그대로 적고, 묶음마다 확인한 범위와 못 잰 것을 따로 적게 한다.' },
     { id: 'R6', text: '확인 담당을 이름으로 적는다(구현 · 저장 쪽 독립 확인 · 화면 · 판정 정본).' },
@@ -179,9 +191,11 @@ const out = { task: 'TASK-ES-694', requirementsSource: 'docs/specs/REQ-TASK-ES-6
     { id: 'R8', text: '「결심 대기」 표에 일곱 줄을 올린다(계약 9절의 여섯 + 운영에 실행되지 않은 것으로 보이는 SQL). 줄을 더하기만 하고 칸 머리말과 앞선 줄은 그대로 둔다.' },
     { id: 'R9', text: '결심 기록에 상민님 원문을 글자 그대로 적고, 회의 02 · 03 을 세션 간 합의(승인 아님)로 가른다. 이 지시의 병합이 착수의 승인이라고 적는다.' },
     { id: 'R10', text: '계약이 굳은 뒤에 나온 운영 서버 읽기 조사의 사실을 확인 · 추론 · 모름으로 갈라 지시와 근거 글에 적는다. 계약 사본은 고치지 않는다. 조사를 병합 전에 한 것과 범위를 넘긴 조회를 사실대로 적는다.' },
+    { id: 'R11', text: '상민님이 운영 서버 쓰기 시험을 승인하신 말씀(2026-10-12)을 결심 기록에 원문 · 물은 글 · 범위 밖과 함께 적고, 결심 대기의 쓰기 시험 줄을 「승인됨」으로 고친다. 운영에 SQL 을 실행하는 일은 승인에 없다고 적는다.' },
+    { id: 'R12', text: 'PR #966 이 병합된 주 가지를 이 가지에 합친다(합침 커밋 — 다시 쓰기 · 강제 올리기 없음). 합친 지시함은 DIR-005 다음에 DIR-006 이고 「(열린 지시 없음)」 줄이 없으며, DIR-005 와 함께 올라온 줄은 건드리지 않는다.' },
   ],
   outOfScopeReports: [ { text: '이 PR 은 지시를 올리기만 한다. 저장 함수 · 불러오기 · 화면을 고치는 일은 이 지시가 병합된 뒤 묶음마다 새 작업번호로 한다.', cannotBecause: 'out-of-scope-feature' } ],
   claims };
 fs.writeFileSync(path.join(DIR, 'claims.json'), JSON.stringify(out, null, 2) + '\n', { encoding: 'utf8' });
 const bad = claims.filter(c => { const p = path.join(ROOT, c.check.file); const s = fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : ''; return (c.check.type === 'codeContains') !== s.includes(c.check.text); }).map(c => c.id);
-console.log(JSON.stringify({ dir006: true, stillSaysNoOpenDirective: doc.indexOf('(열린 지시 없음)') >= 0, rowsInserted: rows.length, rowsReplaced: replaced, must: must.length, claims: claims.length, shortTexts: claims.filter(c => c.check.text.length < 4).map(c => c.id), notTrueNow: bad }));
+console.log(JSON.stringify({ dir006: true, dir005Before006: doc.indexOf('### DIR-005') >= 0 && doc.indexOf('### DIR-005') < doc.indexOf('### DIR-006'), stillSaysNoOpenDirective: doc.indexOf('(열린 지시 없음)') >= 0, rowsInserted: rows.length, rowsReplaced: replaced, must: must.length, claims: claims.length, shortTexts: claims.filter(c => c.check.text.length < 4).map(c => c.id), notTrueNow: bad }));

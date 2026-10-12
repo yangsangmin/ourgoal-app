@@ -12,7 +12,7 @@
     },
     {
       "id": "R3",
-      "text": "묶음과 순서를 계약 1절대로 적는다 — P0(부수지 않는 것만) → 실서버 조사(B 보다 먼저 — 읽기는 한 번 했고, 쓰기 시험은 상민님 승인 뒤에만) → A → B → C → 종단간 회귀. 묶음마다 PR 을 따로."
+      "text": "묶음과 순서를 계약 1절대로 적는다 — P0(부수지 않는 것만) → 실서버 조사(B 보다 먼저 — 읽기는 한 번 했고, 쓰기 시험은 상민님이 승인하신 범위 안에서만) → A → B → C → 종단간 회귀. 묶음마다 PR 을 따로."
     },
     {
       "id": "R4",
@@ -41,6 +41,14 @@
     {
       "id": "R10",
       "text": "계약이 굳은 뒤에 나온 운영 서버 읽기 조사의 사실을 확인 · 추론 · 모름으로 갈라 지시와 근거 글에 적는다. 계약 사본은 고치지 않는다. 조사를 병합 전에 한 것과 범위를 넘긴 조회를 사실대로 적는다."
+    },
+    {
+      "id": "R11",
+      "text": "상민님이 운영 서버 쓰기 시험을 승인하신 말씀(2026-10-12)을 결심 기록에 원문 · 물은 글 · 범위 밖과 함께 적고, 결심 대기의 쓰기 시험 줄을 「승인됨」으로 고친다. 운영에 SQL 을 실행하는 일은 승인에 없다고 적는다."
+    },
+    {
+      "id": "R12",
+      "text": "PR #966 이 병합된 주 가지를 이 가지에 합친다(합침 커밋 — 다시 쓰기 · 강제 올리기 없음). 합친 지시함은 DIR-005 다음에 DIR-006 이고 「(열린 지시 없음)」 줄이 없으며, DIR-005 와 함께 올라온 줄은 건드리지 않는다."
     }
   ],
   "outOfScopeReports": [
@@ -280,14 +288,14 @@
       "req": "R3",
       "kind": "static",
       "domain": "config",
-      "statement": "실서버 쓰기 시험이 묶음 B 보다 먼저이고 승인 뒤에만 한다고 적혀 있다",
+      "statement": "실서버 쓰기 시험이 묶음 B 보다 먼저이고 승인된 범위 안에서만 한다고 적혀 있다",
       "touches": [
         "docs/directives/ACTIVE.md"
       ],
       "check": {
         "type": "codeContains",
         "file": "docs/directives/ACTIVE.md",
-        "text": "**실서버 쓰기 시험은 묶음 B 보다 먼저이고, 상민님 승인 뒤에만 한다**"
+        "text": "**실서버 쓰기 시험은 묶음 B 보다 먼저이고, 상민님이 승인하신 범위 안에서만 한다.**"
       }
     },
     {
@@ -662,7 +670,7 @@
       "check": {
         "type": "codeContains",
         "file": "docs/directives/ACTIVE.md",
-        "text": "저장 안전 — 운영 서버 안의 시험 계정(A · B)으로 쓰기 시험을 할지. 시험용 서버는"
+        "text": "저장 안전 — 운영 서버 안의 시험 계정(A · B)으로 하는 쓰기 시험. 시험용 서버는 "
       }
     },
     {
@@ -727,17 +735,17 @@
     },
     {
       "id": "C46",
-      "req": "R8",
+      "req": "R11",
       "kind": "static",
       "domain": "config",
-      "statement": "쓰기 시험은 결심 전에는 하지 않는다고 적혀 있다",
+      "statement": "결심 대기의 쓰기 시험 줄의 상태가 승인됨이다",
       "touches": [
         "docs/directives/ACTIVE.md"
       ],
       "check": {
         "type": "codeContains",
         "file": "docs/directives/ACTIVE.md",
-        "text": "쓰기 시험은 이 줄의 결심 전에는 하지 않는다"
+        "text": "| 운영 서버에 쓰기 | 승인됨(2026-10-12) — 시험 계정으로 자기 행만, 아홉 가지. 결과는 따로 올린다 |"
       }
     },
     {
@@ -1027,17 +1035,17 @@
     },
     {
       "id": "C66",
-      "req": "R10",
+      "req": "R11",
       "kind": "static",
       "domain": "config",
-      "statement": "병합이 쓰기 시험의 승인이 아니라고 적혀 있다",
+      "statement": "쓰기 시험의 승인이 이 지시의 병합이 아니라 상민님 말씀이라고 적혀 있다",
       "touches": [
         "docs/directives/ACTIVE.md"
       ],
       "check": {
         "type": "codeContains",
         "file": "docs/directives/ACTIVE.md",
-        "text": "이 지시의 병합은 쓰기 시험의 승인이 아니다."
+        "text": "승인은 2026-10-12 의 말씀이다(결심 기록의 원문 2 — 이 지시의 병합이 아니다)."
       }
     },
     {
@@ -1188,6 +1196,156 @@
         "type": "codeNotContains",
         "file": "docs/specs/SAVE-SYNC-CONTRACT-2026-10-12.md",
         "text": "운영 서버 읽기 조사"
+      }
+    },
+    {
+      "id": "C77",
+      "req": "R11",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상민님 원문 2 가 글자 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**상민님 원문 2**(2026-10-12 저녁): 「2. 운영서버 쓰기 시험 승인」"
+      }
+    },
+    {
+      "id": "C78",
+      "req": "R11",
+      "kind": "static",
+      "domain": "config",
+      "statement": "물은 글이 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "지휘 세션이 물은 글: 「전용 시험 계정으로 자기 행만 쓰고 지우는 시험 아홉 가지」"
+      }
+    },
+    {
+      "id": "C79",
+      "req": "R11",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 기록의 범위 밖이 글자 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "「2 는 시험 계정 밖의 행 · 다른 사용자 자료 · 운영 표의 구조를 바꾸는 SQL · 함수 호출과 발송을 허락하지 않는다. 운영에 SQL 을 실행하는 일은 여기 없다.」"
+      }
+    },
+    {
+      "id": "C80",
+      "req": "R11",
+      "kind": "static",
+      "domain": "config",
+      "statement": "운영에 SQL 을 실행하는 일은 승인에 없다고 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**운영에 SQL 을 실행하는 일은 승인에 없다**"
+      }
+    },
+    {
+      "id": "C81",
+      "req": "R12",
+      "kind": "static",
+      "domain": "config",
+      "statement": "합친 지시함에 DIR-005 가 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "### DIR-005 — 디자인 개편 1단계: 공용 꾸밈(유전자) 최소 조정과 홈 「오늘 기록하기」 창 시범"
+      }
+    },
+    {
+      "id": "C82",
+      "req": "R12",
+      "kind": "static",
+      "domain": "config",
+      "statement": "합친 지시함에 「(열린 지시 없음)」 줄이 없다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "(열린 지시 없음)"
+      }
+    },
+    {
+      "id": "C83",
+      "req": "R12",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 줄이 가리키는 사진 등의 서버 보존 줄이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| 사진 · AI 피드백 · 에너지 · 집중 값을 서버에도 보존할지"
+      }
+    },
+    {
+      "id": "C84",
+      "req": "R12",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 줄이 가리키는 저장 상태 시안 줄이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| 저장 상태를 화면이 말하는 시안의 방향 확인"
+      }
+    },
+    {
+      "id": "C85",
+      "req": "R12",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-005 와 함께 올라온 추천 칩 줄은 그대로다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| 고정 추천 칩 줄의 동작 — 뼈대의 `#smartRecommendChips`"
+      }
+    },
+    {
+      "id": "C86",
+      "req": "R12",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-693 줄이 그대로 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-693 | INFRA | 지시함 DIR-005 등록 — 디자인 개편 1단계"
       }
     }
   ]

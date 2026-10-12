@@ -136,6 +136,15 @@ const realServer = { note: '조사 담당의 요청 기록(본문 없음)을 센
 realServer.outsideAgreedScope.total = realServer.outsideAgreedScope.anonTableCounts.length + realServer.outsideAgreedScope.otherTables.length + realServer.outsideAgreedScope.embeds.length;
 
 const head = git(['rev-parse', 'HEAD']).trim(), base =(() => { try { return git(['merge-base', 'HEAD', 'origin/main']).trim(); } catch (e) { return null; } })();
-const out = { tool: 'reports/TASK-ES-694/tools/measure.cjs', type: '작업자 측정, 판정 아님', measuredAt: new Date().toISOString(), head: head.slice(0, 8), mainBase: base && base.slice(0, 8), saveProfile, profileLoad, serverRow, other, savePaths, callSites, dom, privacy, rerun, realServer, evidence };
+// 지금의 주 가지와, 조사 문서들의 기준 커밋 뒤로 제품 코드가 바뀌었는가
+const SURVEY = '9f019754';
+const mainHead = git(['rev-parse', 'origin/main']).trim().slice(0, 8);
+const productChanged = git(['diff', '--name-only', SURVEY, 'origin/main', '--', 'js', 'api', 'index.html', 'ui.css', 'ui.js', 'sw.js', 'launch.html', 'manifest.json']).split('\n').filter(Boolean);
+const workingTreeProductChanged = git(['diff', '--name-only', 'origin/main', '--', 'js', 'api', 'index.html', 'ui.css', 'ui.js', 'sw.js', 'launch.html', 'manifest.json']).split('\n').filter(Boolean);
+const sinceSurvey = { surveyBase: SURVEY, mainHead, productFilesChangedOnMain: productChanged.length, productFilesChangedInThisBranch: workingTreeProductChanged.length };
+// 결심 대기 줄이 가리키는, DIR-005 와 함께 올라온 줄이 주 가지의 지시함에 있는가
+const mainActive = git(['show', 'origin/main:docs/directives/ACTIVE.md']);
+const pointers = { photoRow: mainActive.indexOf('| 사진 · AI 피드백 · 에너지 · 집중 값을 서버에도 보존할지') >= 0, syncStatusMockRow: mainActive.indexOf('| 저장 상태를 화면이 말하는 시안의 방향 확인') >= 0, dir005Open: mainActive.indexOf('### DIR-005 — ') >= 0, saysNoOpenDirective: mainActive.indexOf('(열린 지시 없음)') >= 0 };
+const out = { tool: 'reports/TASK-ES-694/tools/measure.cjs', type: '작업자 측정, 판정 아님', measuredAt: new Date().toISOString(), head: head.slice(0, 8), mainBase: base && base.slice(0, 8), sinceSurvey, pointers, saveProfile, profileLoad, serverRow, other, savePaths, callSites, dom, privacy, rerun, realServer, evidence };
 fs.writeFileSync(path.join(DIR, 'measure.json'), JSON.stringify(out, null, 1) + '\n', { encoding: 'utf8' });
 console.log(JSON.stringify({ sp: sp, waits: saveProfile.serverWaitLines, dev: saveProfile.deviceWriteLines, pl: [profileLoad.recordsBackupOverwriteLine, profileLoad.reuploadWhenServerEmptyLines, profileLoad.goalsBackupWriteLines], keys: rowKeys.length, storage: serverRow.storageUploadCalls, trash: other.trash, client: other.serverClient, handler: other.homeHandler, queue: other.offlineQueue, render: other.recordsRender, resync: other.manualResync, paths: savePaths.map(p => p.exists + ':' + p.saveProfileCalls).join(' '), calls: callSites, dom, privacy, rerun, evidence }, null, 1));
