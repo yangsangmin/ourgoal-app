@@ -1,0 +1,414 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>오늘 기록하기 창 — 새 모습(네 테마)</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"><style>body{margin:0;background:#20262b;font-family:sans-serif;color:#dfe7e4}.wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,390px));gap:16px;padding:16px;justify-content:center}.cap{font:13px monospace;margin:0 0 6px}
+/* ───────── 폰 안쪽: 아워골의 변수 이름 그대로. 아래 값이 "새 유전자 값"이다 ───────── */
+.og{
+  --bg:#0B0F17;--card:#121A26;--card2:#18212F;--surface-2:#18212F;--surface-3:#243044;
+  --ink:#F8FAFC;--ink-soft:#CBD5E1;--ink-faint:#A3B1C4;
+  --rule:rgba(255,255,255,.16);--line:rgba(255,255,255,.16);--card-border:1px solid rgba(255,255,255,.16);
+  --brand:#10B981;--brand-strong:#059669;--brand-soft:rgba(16,185,129,.14);--brand-line:rgba(16,185,129,.38);
+  --chip-ink:#04261C;--gold:#F59E0B;--gold-soft:rgba(245,158,11,.14);
+  --radius:16px;--radius-sm:10px;--radius-lg:20px;--bottomnav-bg:rgba(11,15,23,.90);
+  --font:'Pretendard Variable',Pretendard,'Noto Sans KR',-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo',sans-serif;
+  background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+.og[data-theme="white"]{
+  --bg:#F3F5F8;--card:#FFFFFF;--card2:#F1F5F9;--surface-2:#F1F5F9;--surface-3:#E2E8F0;
+  --ink:#0F172A;--ink-soft:#334155;--ink-faint:#55657A;
+  --rule:#CBD5E1;--line:#CBD5E1;--card-border:1px solid #CBD5E1;
+  --brand:#047857;--brand-strong:#065F46;--brand-soft:rgba(4,120,87,.10);--brand-line:rgba(4,120,87,.35);
+  --chip-ink:#FFFFFF;--gold:#B45309;--gold-soft:rgba(180,83,9,.10);--bottomnav-bg:rgba(255,255,255,.96);
+}
+.og[data-theme="black"]{
+  --bg:#000000;--card:#0F0F12;--card2:#18181D;--surface-2:#18181D;--surface-3:#24242B;
+  --ink:#FFFFFF;--ink-soft:#D4D4D8;--ink-faint:#A1A1AA;
+  --rule:rgba(255,255,255,.20);--line:rgba(255,255,255,.20);--card-border:1px solid rgba(255,255,255,.20);
+  --brand:#10B981;--brand-strong:#059669;--brand-soft:rgba(16,185,129,.18);--brand-line:rgba(16,185,129,.42);
+  --chip-ink:#04261C;--bottomnav-bg:rgba(14,14,18,.96);
+}
+.og[data-theme="urban-city"]{
+  --bg:#0B0F19;--card:#131B2E;--card2:#1B2640;--surface-2:#1B2640;--surface-3:#233152;
+  --ink:#F8FAFC;--ink-soft:#CBD5E1;--ink-faint:#A3B1C4;
+  --rule:rgba(255,255,255,.16);--line:rgba(255,255,255,.16);--card-border:1px solid rgba(255,255,255,.16);
+  --brand:#0EA5E9;--brand-strong:#0284C7;--brand-soft:rgba(14,165,233,.15);--brand-line:rgba(14,165,233,.40);
+  --chip-ink:#0B0F19;--bottomnav-bg:rgba(19,27,46,.94);
+}
+.og *{box-sizing:border-box}
+.og h1,.og h2,.og h3,.og p{margin:0;padding:0;border:0;max-width:none;font-family:var(--font);letter-spacing:normal;font-weight:inherit;font-size:inherit;line-height:inherit;text-wrap:wrap}
+.og svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.og button{font:inherit;color:inherit;cursor:pointer}
+.og .pad{padding:0 16px 20px;display:grid;gap:12px}
+.og-top{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 16px}
+.og .og-top h1{font-family:var(--font);font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1}
+.og-top .r{display:flex;gap:8px;align-items:center}
+.og-icbtn{position:relative;width:44px;height:44px;border-radius:50%;border:var(--card-border);background:var(--card);display:flex;align-items:center;justify-content:center}
+.og-icbtn .dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 2px var(--card)}
+.og-avs{width:48px;height:48px;border-radius:50%;border:2px solid var(--brand-line);background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px}
+.og-card{background:var(--card);border:var(--card-border);border-radius:var(--radius-lg);padding:16px}
+.og .og-h{font-size:18px;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.3}
+.og .og-hint{font-size:13px;color:var(--ink-faint);margin:2px 0 0}
+.og-ex{font-size:12px;color:var(--ink-faint);border:1px dashed var(--rule);border-radius:6px;padding:0 6px;margin-left:6px;font-weight:500;white-space:nowrap}
+/* 아바타(경험치) 창 */
+.og-me{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.og-avatar{position:relative;width:88px;height:88px;border-radius:50%;background:var(--card2);border:2px solid var(--brand-line);display:flex;align-items:center;justify-content:center;font-size:48px;line-height:1}
+.og-rank{display:none;position:absolute;right:-4px;bottom:-4px;min-width:34px;height:34px;padding:0 6px;border-radius:17px;background:var(--bg);border:2px solid var(--gold);align-items:center;justify-content:center;font-size:18px}
+.og.v-rank .og-rank{display:flex}
+.og .og-greet{font-size:18px;font-weight:700;margin:0;line-height:1.3}
+.og .og-headline{font-size:14px;color:var(--ink-soft);margin:2px 0 8px}
+.og .og-headline b{color:var(--brand);font-weight:700}
+.og-gauge{height:10px;border-radius:999px;background:var(--surface-3);overflow:hidden}
+.og-gauge i{display:block;height:100%;border-radius:999px;background:var(--brand)}
+.og-gaugelab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-faint);margin-top:5px}
+.og-gaugelab b{color:var(--ink-soft);font-weight:600}
+/* 오늘 기록하기 창 */
+.og-cap .hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.og-reward{font-size:13px;font-weight:700;color:var(--brand);background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.og.v-nohint .og-hint.opt{display:none}
+.og-ta{position:relative;margin-top:10px}
+.og-ta textarea{display:block;width:100%;min-height:84px;resize:none;border-radius:14px;border:1.5px solid var(--rule);background:var(--bg);color:var(--ink);font:inherit;font-size:16px;padding:12px 52px 12px 14px;line-height:1.5}
+.og-ta textarea::placeholder{color:var(--ink-faint)}
+.og-ta textarea:focus{border-color:var(--brand)}
+.og-mic{position:absolute;right:6px;bottom:6px;width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--ink-soft);display:flex;align-items:center;justify-content:center}
+.og-meta{display:flex;justify-content:flex-end;font-size:12.5px;color:var(--ink-faint);min-height:20px;margin-top:2px}
+.og-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.og-chips .lab{font-size:13px;color:var(--ink-faint);font-weight:600}
+.og-chip{min-height:40px;padding:0 13px;border-radius:999px;border:1px solid var(--rule);background:var(--card2);font-size:14px;font-weight:600;color:var(--ink-soft)}
+.og.v-nochips .og-chips{display:none}
+.og-fold{margin-top:10px;border-top:1px solid var(--rule)}
+.og-fold>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;cursor:pointer;font-size:14.5px;font-weight:600}
+.og-fold>summary::-webkit-details-marker{display:none}
+.og-fold>summary .v{font-size:13px;color:var(--ink-faint);font-weight:500;display:flex;align-items:center;gap:4px}
+.og-fold>summary svg.i{width:16px;height:16px;transition:transform .15s}
+.og-fold[open]>summary svg.i{transform:rotate(180deg)}
+.og-sliders{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 0 10px}
+.og.v-condfull .og-sliders{grid-template-columns:1fr}
+.og-sl label{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-bottom:4px}
+.og-sl label b{color:var(--brand)}
+.og-sl input[type=range]{width:100%;accent-color:var(--brand);height:28px;margin:0}
+.og-actions{display:flex;gap:8px;align-items:center;margin-top:10px}
+.og-btn{min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--rule);background:var(--card2);font-size:14.5px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.og-btn.pri{flex:1;border-color:transparent;background:var(--brand);color:var(--chip-ink);font-size:16px;font-weight:800}
+.og-btn.pri[disabled]{opacity:.6;cursor:default}
+.og-btn.sm{min-height:40px;font-size:14px;border-radius:12px}
+.og-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--card2);border-radius:12px}
+.og-tier{min-height:40px;border:0;border-radius:9px;background:transparent;font-size:13.5px;font-weight:600;color:var(--ink-soft)}
+.og-tier.active{background:var(--card);color:var(--ink);box-shadow:0 0 0 1px var(--rule)}
+.og-aidesc{font-size:13px;color:var(--ink-soft);margin:8px 0;line-height:1.5}
+.og-aidesc b{display:block;color:var(--ink);font-size:13.5px}
+.og-rowlink{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--rule);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px}
+/* 상태 보기 전용 조각 */
+.og-toast,.og-sheet,.og-fail,.og-pulse{display:none}
+.og-toast{margin-top:12px;padding:10px 14px;border-radius:12px;background:var(--surface-3);font-size:14.5px;font-weight:600;text-align:center}
+.og-sheet{margin-top:10px;padding:14px;border-radius:16px;border:var(--card-border);background:var(--card2)}
+.og-sheet .t{font-size:14.5px;font-weight:700;margin-bottom:8px}
+.og-skel{height:12px;border-radius:6px;background:var(--surface-3);margin:7px 0}
+.og-fail{margin-top:10px;padding:12px 14px;border-radius:12px;border:1.5px dashed var(--gold);background:var(--gold-soft);font-size:14px}
+.og-fail .og-btn{margin-top:8px}
+.og-pulse{margin-bottom:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--brand-line);background:var(--brand-soft)}
+.og-pulse .og-gauge i{box-shadow:0 0 0 3px var(--brand-soft)}
+[data-state="saved"] .og-toast,[data-state="saved"] .og-sheet{display:block}
+[data-state="saved"].rw-pulse .og-pulse{display:block}
+[data-state="fail"] .og-fail{display:block}
+.og .og-linked{display:none;font-size:13px;color:var(--ink-soft);margin-top:4px}
+.og.v-linked .og-linked{display:block}
+.og .og-linked b{color:var(--brand);font-weight:700}
+.og .og-linked .none{display:none}
+.og.v-nogoal .og-linked .has{display:none}.og.v-nogoal .og-linked .none{display:inline}
+.og-scope{display:none;font-size:12.5px;font-weight:700;color:#1b1200;background:var(--gold);border-radius:6px;padding:1px 8px;margin-bottom:8px}
+.og.v-scope .pad>*{opacity:.36}
+.og.v-scope .pad>#captureCardBox{opacity:1;outline:2px solid var(--gold);outline-offset:3px}
+.og.v-scope #captureCardBox .og-scope{display:inline-block}
+.og-fb{display:none;margin-top:10px;padding:14px;border-radius:16px;border:var(--card-border);background:var(--card2)}
+[data-state="feedback"] .og-fb{display:block}
+.og-fb .who{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
+.og-fb .tag{font-size:12.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap}
+.og-fb .say{margin:10px 0;padding:12px;border-radius:12px;background:var(--card);border:1px solid var(--rule);font-size:14.5px;line-height:1.55}
+.og-fb .next{padding:12px;border-radius:12px;border:1px solid var(--brand-line);background:var(--brand-soft);font-size:14px}
+.og-fb .next b{display:block;font-size:13px;color:var(--brand);margin-bottom:2px}
+.og-fb .og-btn{width:100%;margin-top:8px}
+.og-fb .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.og-fb label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-soft);margin-top:10px;min-height:40px}
+.og-empty{display:none}
+.og.v-nogoal .og-empty{display:grid;gap:8px}
+.og.v-nogoal .og-hasgoal{display:none !important}
+.og-empty .og-h{text-align:left}
+.og-start{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px;width:100%;padding:8px 12px;border-radius:14px;border:1px solid var(--rule);background:var(--card2);text-align:left}
+.og-start b{display:block;font-size:14.5px;font-weight:700}
+.og-start span{font-size:13px;color:var(--ink-faint)}
+.og-start em{font-style:normal;font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap}
+/* 그 밖의 칸 */
+.og .og-mission p{margin:8px 0 0;font-size:15px;color:var(--ink-soft)}
+.og-q{display:grid;gap:8px;margin-top:10px}
+.og-q>div{display:flex;align-items:center;gap:10px;font-size:14.5px}
+.og-q .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--rule);flex:none;display:flex;align-items:center;justify-content:center}
+.og-q .done .ck{background:var(--brand);border-color:var(--brand);color:var(--chip-ink)}
+.og-q .done .ck svg{width:14px;height:14px;stroke-width:3}
+.og-q .xp{margin-left:auto;font-size:13px;color:var(--ink-faint);font-weight:600}
+.og-sech{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.og .og-sech h3{font-size:17px;font-weight:700;margin:0}
+.og-streak{font-size:13px;font-weight:700;color:var(--gold);background:var(--gold-soft);border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap}
+.og .og-pos{font-size:13px;color:var(--ink-faint);margin:-4px 0 0}
+.og-goal{display:grid;gap:8px}
+.og-goal .nm{display:flex;justify-content:space-between;gap:8px;font-size:15px;font-weight:700}
+.og-goal .nm span{color:var(--brand);font-variant-numeric:tabular-nums}
+.og-goal .nx{font-size:13.5px;color:var(--ink-soft)}
+.og-live{font-size:12.5px;font-weight:700;color:var(--brand);border:1px solid var(--brand-line);background:var(--brand-soft);border-radius:8px;padding:2px 8px;white-space:nowrap}
+.og-crew .hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.og-crew .hd div{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.og-crew .sc{font-size:13.5px;font-weight:700;color:var(--brand)}
+.og-crew .hl{font-size:14.5px;font-weight:600;margin:8px 0 6px}
+.og-crew .ft{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--ink-soft);margin-top:8px}
+.og-crew .ft div{display:flex;gap:6px}
+.og-cold{display:none;margin-top:10px;padding:10px 12px;border:1px dashed var(--brand-line);border-radius:12px;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--ink-soft)}
+.og-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.og-two .og-btn{padding:0 8px}
+.og-eval .hd{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;font-size:15px}
+.og .og-eval p{margin:8px 0;font-size:13.5px;color:var(--ink-soft)}
+.og-eval .al{border-top:1px solid var(--rule);padding-top:8px;font-size:13px;color:var(--ink-faint)}
+.og-banner{display:none;padding:10px 12px;border-radius:12px;border:1px solid var(--brand-line);background:var(--brand-soft);font-size:13.5px;align-items:flex-start;justify-content:space-between;gap:8px}
+.og-glance{display:none;padding:8px 12px;border-radius:999px;border:var(--card-border);background:var(--card);font-size:13.5px;font-weight:600;cursor:pointer}
+.og.v-cond .og-banner{display:flex}.og.v-cond .og-glance{display:block}.og.v-cond .og-cold{display:flex}
+.og-x{width:44px;height:44px;margin:-8px -8px -8px 0;border:0;background:transparent;color:var(--ink-faint);display:flex;align-items:center;justify-content:center;flex:none}
+.og-nav{display:grid;grid-template-columns:repeat(6,1fr);height:60px;background:var(--bottomnav-bg);border-top:1px solid var(--rule)}
+.og-nav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:600;color:var(--ink-faint)}
+.og-nav button.active{color:var(--brand)}
+.og .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion: reduce){.og-fold>summary svg.i{transition:none}}
+</style></head><body><svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h5v-6h4v6h5V9.5"/></symbol>
+  <symbol id="i-goal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3M16 3.2v3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v10H8l-4 4V5z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
+</svg><div class="wrap"><div><p class="cap">성소 · focus-sanctuary</p><div class="og" data-theme="focus-sanctuary" style="padding:14px;border-radius:18px"><section class="og-card og-cap" data-id="captureCardBox" data-state="empty" aria-label="오늘 기록하기">
+              <div class="og-pulse"><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:6px"><span>경험치 +10</span><span>다음 성장까지 20 EXP</span></div><div class="og-gauge"><i style="width:80%"></i></div></div>
+              <span class="og-scope">출시 전에 바뀌는 구획</span>
+              <div class="hd"><h2 class="og-h">오늘 기록하기</h2><span class="og-reward">+10 EXP</span></div>
+              <p class="og-hint opt">한 줄 적고 저장하면 피드백이 이어져요.</p>
+              <p class="og-linked"><span class="has">이 기록은 <b>영어 회화 30일</b> 목표에 연결돼요 <span class="og-ex">예시</span></span><span class="none">목표가 없어도 기록할 수 있어요. 목표를 만들면 그 목표에 연결돼요</span></p>
+              <div class="og-ta">
+                <label class="sr">오늘 한 일</label>
+                <textarea data-id="captureInput" placeholder="예: 아침에 30분 걸었다"></textarea>
+                <button type="button" class="og-mic" data-id="micBtn" aria-label="음성으로 입력하기"><svg class="i"><use href="#i-mic"/></svg></button>
+              </div>
+              <div class="og-meta" data-id="captureLiveMeta"><span data-id="captureCharCount"></span></div>
+              <div class="og-chips" data-id="smartRecommendChips">
+                <span class="lab">추천</span>
+                <button type="button" class="og-chip" data-id="smartChipExercise" data-tag="운동" data-ph="예: 퇴근하고 20분 달렸다">운동</button>
+                <button type="button" class="og-chip" data-id="smartChipReading" data-tag="독서" data-ph="예: 자기 전에 책 10쪽 읽었다">독서</button>
+                <button type="button" class="og-chip" data-id="smartChipMental" data-tag="멘탈" data-ph="예: 5분 동안 숨 고르기를 했다">멘탈</button>
+                <span data-id="quickCheckinChips"></span>
+              </div>
+              <div data-id="capturePhotoPreview" hidden></div>
+              <details class="og-fold" data-id="dimensionAccordion">
+                <summary><span>컨디션 기록 <span style="font-weight:500;color:var(--ink-faint)">(선택)</span></span><span class="v"><span data-role="condsum">에너지 80 · 몰입 80</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div class="og-sliders" data-id="checkinDimensionSliders">
+                  <div class="og-sl"><label>에너지 <b data-id="valEnergy">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderEnergy" aria-label="신체 컨디션 에너지 슬라이더"></div>
+                  <div class="og-sl"><label>몰입 <b data-id="valFocus">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderFocus" aria-label="정신 몰입도 집중도 슬라이더"></div>
+                </div>
+              </details>
+              <div class="og-actions" data-id="captureRowAnchor">
+                <input type="file" data-id="capturePhotoInput" accept="image/*" hidden>
+                <button type="button" class="og-btn" data-id="capturePhotoBtn" aria-label="사진 첨부"><svg class="i"><use href="#i-cam"/></svg>사진</button>
+                <button type="button" class="og-btn" data-id="importExternalBtn" aria-label="외부 기록 불러오기"><svg class="i"><use href="#i-link"/></svg>불러오기</button>
+                <button type="button" class="og-btn pri" data-id="captureSave">기록 완료</button>
+              </div>
+              <div class="og-toast" role="status">오늘의 실천이 안전하게 기록되었어요 ✨ (+10 EXP)</div>
+              <div class="og-sheet"><div class="t" style="display:flex;justify-content:space-between;align-items:center">방금 남긴 실천에 맞는 맞춤 조언을 준비 중입니다<button type="button" class="og-x" data-ctl="fbClose" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div><div class="og-skel" style="width:92%"></div><div class="og-skel" style="width:78%"></div><div class="og-skel" style="width:56%"></div></div>
+              <div class="og-fb">
+                <div class="who"><span><b>상민</b> 님의 페이스메이커<span class="tag">실천 완료</span></span><button type="button" class="og-x" data-ctl="fbClose2" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div>
+                <div class="say">오늘의 멋진 실천을 성공적으로 기록하셨습니다! 꾸준한 실천이 큰 성장을 만듭니다.</div>
+                <div class="next"><b>내일의 1가지 행동 제안</b>내일도 같은 시간에 목표를 이어가보세요!<button type="button" class="og-btn sm pri" data-ctl="fbNext">내일 퀘스트로 등록</button></div>
+                <label><input type="checkbox" checked> 목표명 공개</label>
+                <button type="button" class="og-btn sm" data-ctl="fbBrag">피드에도 자랑하고 +5 EXP 받기</button>
+                <div class="two"><button type="button" class="og-btn sm" data-ctl="fbRec">기록 탭에서 확인</button><button type="button" class="og-btn sm" data-ctl="fbShare">피드에 공유하기</button></div>
+              </div>
+              <div class="og-fail"><b>지금 앱에는 없는 상태입니다.</b> 저장이 안 됐을 때 알려 주는 문구와 "다시 시도"가 없습니다. 넣는다면 이런 모습입니다.<br><button type="button" class="og-btn sm">다시 시도</button></div>
+              <details class="og-fold checkin-more-options">
+                <summary><span>AI 피드백 설정</span><span class="v"><span data-id="activeAiModeTag">기본 모드</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div style="padding-bottom:6px">
+                  <div class="og-tiers" data-id="checkinFeedbackTierBar">
+                    <button type="button" class="og-tier active" data-fbtier="default">기본</button>
+                    <button type="button" class="og-tier" data-fbtier="medium">중간</button>
+                    <button type="button" class="og-tier" data-fbtier="macro">정밀</button>
+                  </div>
+                  <div class="og-aidesc" data-id="checkinAiModeDesc"><b data-id="aiModeDescTitle">기본 피드백</b><span data-id="aiModeDescBody">오늘 실천 팩트 + 최근 연계 + 내일 1가지 행동을 간결한 3문장으로 코칭합니다.</span></div>
+                  <div class="og-rowlink" data-ctl="aiTone" role="button" tabindex="0"><span>나만의 AI 말투와 피드백 <span data-id="customFeedbackStatus" style="color:var(--brand)"></span></span><button type="button" class="og-btn sm" data-id="customFeedbackBtn">설정하기<svg class="i" style="width:16px;height:16px"><use href="#i-right"/></svg></button></div>
+                </div>
+              </details>
+            </section></div></div><div><p class="cap">화이트 · white</p><div class="og" data-theme="white" style="padding:14px;border-radius:18px"><section class="og-card og-cap" data-id="captureCardBox" data-state="empty" aria-label="오늘 기록하기">
+              <div class="og-pulse"><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:6px"><span>경험치 +10</span><span>다음 성장까지 20 EXP</span></div><div class="og-gauge"><i style="width:80%"></i></div></div>
+              <span class="og-scope">출시 전에 바뀌는 구획</span>
+              <div class="hd"><h2 class="og-h">오늘 기록하기</h2><span class="og-reward">+10 EXP</span></div>
+              <p class="og-hint opt">한 줄 적고 저장하면 피드백이 이어져요.</p>
+              <p class="og-linked"><span class="has">이 기록은 <b>영어 회화 30일</b> 목표에 연결돼요 <span class="og-ex">예시</span></span><span class="none">목표가 없어도 기록할 수 있어요. 목표를 만들면 그 목표에 연결돼요</span></p>
+              <div class="og-ta">
+                <label class="sr">오늘 한 일</label>
+                <textarea data-id="captureInput" placeholder="예: 아침에 30분 걸었다"></textarea>
+                <button type="button" class="og-mic" data-id="micBtn" aria-label="음성으로 입력하기"><svg class="i"><use href="#i-mic"/></svg></button>
+              </div>
+              <div class="og-meta" data-id="captureLiveMeta"><span data-id="captureCharCount"></span></div>
+              <div class="og-chips" data-id="smartRecommendChips">
+                <span class="lab">추천</span>
+                <button type="button" class="og-chip" data-id="smartChipExercise" data-tag="운동" data-ph="예: 퇴근하고 20분 달렸다">운동</button>
+                <button type="button" class="og-chip" data-id="smartChipReading" data-tag="독서" data-ph="예: 자기 전에 책 10쪽 읽었다">독서</button>
+                <button type="button" class="og-chip" data-id="smartChipMental" data-tag="멘탈" data-ph="예: 5분 동안 숨 고르기를 했다">멘탈</button>
+                <span data-id="quickCheckinChips"></span>
+              </div>
+              <div data-id="capturePhotoPreview" hidden></div>
+              <details class="og-fold" data-id="dimensionAccordion">
+                <summary><span>컨디션 기록 <span style="font-weight:500;color:var(--ink-faint)">(선택)</span></span><span class="v"><span data-role="condsum">에너지 80 · 몰입 80</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div class="og-sliders" data-id="checkinDimensionSliders">
+                  <div class="og-sl"><label>에너지 <b data-id="valEnergy">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderEnergy" aria-label="신체 컨디션 에너지 슬라이더"></div>
+                  <div class="og-sl"><label>몰입 <b data-id="valFocus">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderFocus" aria-label="정신 몰입도 집중도 슬라이더"></div>
+                </div>
+              </details>
+              <div class="og-actions" data-id="captureRowAnchor">
+                <input type="file" data-id="capturePhotoInput" accept="image/*" hidden>
+                <button type="button" class="og-btn" data-id="capturePhotoBtn" aria-label="사진 첨부"><svg class="i"><use href="#i-cam"/></svg>사진</button>
+                <button type="button" class="og-btn" data-id="importExternalBtn" aria-label="외부 기록 불러오기"><svg class="i"><use href="#i-link"/></svg>불러오기</button>
+                <button type="button" class="og-btn pri" data-id="captureSave">기록 완료</button>
+              </div>
+              <div class="og-toast" role="status">오늘의 실천이 안전하게 기록되었어요 ✨ (+10 EXP)</div>
+              <div class="og-sheet"><div class="t" style="display:flex;justify-content:space-between;align-items:center">방금 남긴 실천에 맞는 맞춤 조언을 준비 중입니다<button type="button" class="og-x" data-ctl="fbClose" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div><div class="og-skel" style="width:92%"></div><div class="og-skel" style="width:78%"></div><div class="og-skel" style="width:56%"></div></div>
+              <div class="og-fb">
+                <div class="who"><span><b>상민</b> 님의 페이스메이커<span class="tag">실천 완료</span></span><button type="button" class="og-x" data-ctl="fbClose2" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div>
+                <div class="say">오늘의 멋진 실천을 성공적으로 기록하셨습니다! 꾸준한 실천이 큰 성장을 만듭니다.</div>
+                <div class="next"><b>내일의 1가지 행동 제안</b>내일도 같은 시간에 목표를 이어가보세요!<button type="button" class="og-btn sm pri" data-ctl="fbNext">내일 퀘스트로 등록</button></div>
+                <label><input type="checkbox" checked> 목표명 공개</label>
+                <button type="button" class="og-btn sm" data-ctl="fbBrag">피드에도 자랑하고 +5 EXP 받기</button>
+                <div class="two"><button type="button" class="og-btn sm" data-ctl="fbRec">기록 탭에서 확인</button><button type="button" class="og-btn sm" data-ctl="fbShare">피드에 공유하기</button></div>
+              </div>
+              <div class="og-fail"><b>지금 앱에는 없는 상태입니다.</b> 저장이 안 됐을 때 알려 주는 문구와 "다시 시도"가 없습니다. 넣는다면 이런 모습입니다.<br><button type="button" class="og-btn sm">다시 시도</button></div>
+              <details class="og-fold checkin-more-options">
+                <summary><span>AI 피드백 설정</span><span class="v"><span data-id="activeAiModeTag">기본 모드</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div style="padding-bottom:6px">
+                  <div class="og-tiers" data-id="checkinFeedbackTierBar">
+                    <button type="button" class="og-tier active" data-fbtier="default">기본</button>
+                    <button type="button" class="og-tier" data-fbtier="medium">중간</button>
+                    <button type="button" class="og-tier" data-fbtier="macro">정밀</button>
+                  </div>
+                  <div class="og-aidesc" data-id="checkinAiModeDesc"><b data-id="aiModeDescTitle">기본 피드백</b><span data-id="aiModeDescBody">오늘 실천 팩트 + 최근 연계 + 내일 1가지 행동을 간결한 3문장으로 코칭합니다.</span></div>
+                  <div class="og-rowlink" data-ctl="aiTone" role="button" tabindex="0"><span>나만의 AI 말투와 피드백 <span data-id="customFeedbackStatus" style="color:var(--brand)"></span></span><button type="button" class="og-btn sm" data-id="customFeedbackBtn">설정하기<svg class="i" style="width:16px;height:16px"><use href="#i-right"/></svg></button></div>
+                </div>
+              </details>
+            </section></div></div><div><p class="cap">블랙 · black</p><div class="og" data-theme="black" style="padding:14px;border-radius:18px"><section class="og-card og-cap" data-id="captureCardBox" data-state="empty" aria-label="오늘 기록하기">
+              <div class="og-pulse"><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:6px"><span>경험치 +10</span><span>다음 성장까지 20 EXP</span></div><div class="og-gauge"><i style="width:80%"></i></div></div>
+              <span class="og-scope">출시 전에 바뀌는 구획</span>
+              <div class="hd"><h2 class="og-h">오늘 기록하기</h2><span class="og-reward">+10 EXP</span></div>
+              <p class="og-hint opt">한 줄 적고 저장하면 피드백이 이어져요.</p>
+              <p class="og-linked"><span class="has">이 기록은 <b>영어 회화 30일</b> 목표에 연결돼요 <span class="og-ex">예시</span></span><span class="none">목표가 없어도 기록할 수 있어요. 목표를 만들면 그 목표에 연결돼요</span></p>
+              <div class="og-ta">
+                <label class="sr">오늘 한 일</label>
+                <textarea data-id="captureInput" placeholder="예: 아침에 30분 걸었다"></textarea>
+                <button type="button" class="og-mic" data-id="micBtn" aria-label="음성으로 입력하기"><svg class="i"><use href="#i-mic"/></svg></button>
+              </div>
+              <div class="og-meta" data-id="captureLiveMeta"><span data-id="captureCharCount"></span></div>
+              <div class="og-chips" data-id="smartRecommendChips">
+                <span class="lab">추천</span>
+                <button type="button" class="og-chip" data-id="smartChipExercise" data-tag="운동" data-ph="예: 퇴근하고 20분 달렸다">운동</button>
+                <button type="button" class="og-chip" data-id="smartChipReading" data-tag="독서" data-ph="예: 자기 전에 책 10쪽 읽었다">독서</button>
+                <button type="button" class="og-chip" data-id="smartChipMental" data-tag="멘탈" data-ph="예: 5분 동안 숨 고르기를 했다">멘탈</button>
+                <span data-id="quickCheckinChips"></span>
+              </div>
+              <div data-id="capturePhotoPreview" hidden></div>
+              <details class="og-fold" data-id="dimensionAccordion">
+                <summary><span>컨디션 기록 <span style="font-weight:500;color:var(--ink-faint)">(선택)</span></span><span class="v"><span data-role="condsum">에너지 80 · 몰입 80</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div class="og-sliders" data-id="checkinDimensionSliders">
+                  <div class="og-sl"><label>에너지 <b data-id="valEnergy">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderEnergy" aria-label="신체 컨디션 에너지 슬라이더"></div>
+                  <div class="og-sl"><label>몰입 <b data-id="valFocus">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderFocus" aria-label="정신 몰입도 집중도 슬라이더"></div>
+                </div>
+              </details>
+              <div class="og-actions" data-id="captureRowAnchor">
+                <input type="file" data-id="capturePhotoInput" accept="image/*" hidden>
+                <button type="button" class="og-btn" data-id="capturePhotoBtn" aria-label="사진 첨부"><svg class="i"><use href="#i-cam"/></svg>사진</button>
+                <button type="button" class="og-btn" data-id="importExternalBtn" aria-label="외부 기록 불러오기"><svg class="i"><use href="#i-link"/></svg>불러오기</button>
+                <button type="button" class="og-btn pri" data-id="captureSave">기록 완료</button>
+              </div>
+              <div class="og-toast" role="status">오늘의 실천이 안전하게 기록되었어요 ✨ (+10 EXP)</div>
+              <div class="og-sheet"><div class="t" style="display:flex;justify-content:space-between;align-items:center">방금 남긴 실천에 맞는 맞춤 조언을 준비 중입니다<button type="button" class="og-x" data-ctl="fbClose" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div><div class="og-skel" style="width:92%"></div><div class="og-skel" style="width:78%"></div><div class="og-skel" style="width:56%"></div></div>
+              <div class="og-fb">
+                <div class="who"><span><b>상민</b> 님의 페이스메이커<span class="tag">실천 완료</span></span><button type="button" class="og-x" data-ctl="fbClose2" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div>
+                <div class="say">오늘의 멋진 실천을 성공적으로 기록하셨습니다! 꾸준한 실천이 큰 성장을 만듭니다.</div>
+                <div class="next"><b>내일의 1가지 행동 제안</b>내일도 같은 시간에 목표를 이어가보세요!<button type="button" class="og-btn sm pri" data-ctl="fbNext">내일 퀘스트로 등록</button></div>
+                <label><input type="checkbox" checked> 목표명 공개</label>
+                <button type="button" class="og-btn sm" data-ctl="fbBrag">피드에도 자랑하고 +5 EXP 받기</button>
+                <div class="two"><button type="button" class="og-btn sm" data-ctl="fbRec">기록 탭에서 확인</button><button type="button" class="og-btn sm" data-ctl="fbShare">피드에 공유하기</button></div>
+              </div>
+              <div class="og-fail"><b>지금 앱에는 없는 상태입니다.</b> 저장이 안 됐을 때 알려 주는 문구와 "다시 시도"가 없습니다. 넣는다면 이런 모습입니다.<br><button type="button" class="og-btn sm">다시 시도</button></div>
+              <details class="og-fold checkin-more-options">
+                <summary><span>AI 피드백 설정</span><span class="v"><span data-id="activeAiModeTag">기본 모드</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div style="padding-bottom:6px">
+                  <div class="og-tiers" data-id="checkinFeedbackTierBar">
+                    <button type="button" class="og-tier active" data-fbtier="default">기본</button>
+                    <button type="button" class="og-tier" data-fbtier="medium">중간</button>
+                    <button type="button" class="og-tier" data-fbtier="macro">정밀</button>
+                  </div>
+                  <div class="og-aidesc" data-id="checkinAiModeDesc"><b data-id="aiModeDescTitle">기본 피드백</b><span data-id="aiModeDescBody">오늘 실천 팩트 + 최근 연계 + 내일 1가지 행동을 간결한 3문장으로 코칭합니다.</span></div>
+                  <div class="og-rowlink" data-ctl="aiTone" role="button" tabindex="0"><span>나만의 AI 말투와 피드백 <span data-id="customFeedbackStatus" style="color:var(--brand)"></span></span><button type="button" class="og-btn sm" data-id="customFeedbackBtn">설정하기<svg class="i" style="width:16px;height:16px"><use href="#i-right"/></svg></button></div>
+                </div>
+              </details>
+            </section></div></div><div><p class="cap">깔끔한 도심 · urban-city</p><div class="og" data-theme="urban-city" style="padding:14px;border-radius:18px"><section class="og-card og-cap" data-id="captureCardBox" data-state="empty" aria-label="오늘 기록하기">
+              <div class="og-pulse"><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:6px"><span>경험치 +10</span><span>다음 성장까지 20 EXP</span></div><div class="og-gauge"><i style="width:80%"></i></div></div>
+              <span class="og-scope">출시 전에 바뀌는 구획</span>
+              <div class="hd"><h2 class="og-h">오늘 기록하기</h2><span class="og-reward">+10 EXP</span></div>
+              <p class="og-hint opt">한 줄 적고 저장하면 피드백이 이어져요.</p>
+              <p class="og-linked"><span class="has">이 기록은 <b>영어 회화 30일</b> 목표에 연결돼요 <span class="og-ex">예시</span></span><span class="none">목표가 없어도 기록할 수 있어요. 목표를 만들면 그 목표에 연결돼요</span></p>
+              <div class="og-ta">
+                <label class="sr">오늘 한 일</label>
+                <textarea data-id="captureInput" placeholder="예: 아침에 30분 걸었다"></textarea>
+                <button type="button" class="og-mic" data-id="micBtn" aria-label="음성으로 입력하기"><svg class="i"><use href="#i-mic"/></svg></button>
+              </div>
+              <div class="og-meta" data-id="captureLiveMeta"><span data-id="captureCharCount"></span></div>
+              <div class="og-chips" data-id="smartRecommendChips">
+                <span class="lab">추천</span>
+                <button type="button" class="og-chip" data-id="smartChipExercise" data-tag="운동" data-ph="예: 퇴근하고 20분 달렸다">운동</button>
+                <button type="button" class="og-chip" data-id="smartChipReading" data-tag="독서" data-ph="예: 자기 전에 책 10쪽 읽었다">독서</button>
+                <button type="button" class="og-chip" data-id="smartChipMental" data-tag="멘탈" data-ph="예: 5분 동안 숨 고르기를 했다">멘탈</button>
+                <span data-id="quickCheckinChips"></span>
+              </div>
+              <div data-id="capturePhotoPreview" hidden></div>
+              <details class="og-fold" data-id="dimensionAccordion">
+                <summary><span>컨디션 기록 <span style="font-weight:500;color:var(--ink-faint)">(선택)</span></span><span class="v"><span data-role="condsum">에너지 80 · 몰입 80</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div class="og-sliders" data-id="checkinDimensionSliders">
+                  <div class="og-sl"><label>에너지 <b data-id="valEnergy">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderEnergy" aria-label="신체 컨디션 에너지 슬라이더"></div>
+                  <div class="og-sl"><label>몰입 <b data-id="valFocus">80%</b></label><input type="range" min="10" max="100" value="80" step="5" data-id="sliderFocus" aria-label="정신 몰입도 집중도 슬라이더"></div>
+                </div>
+              </details>
+              <div class="og-actions" data-id="captureRowAnchor">
+                <input type="file" data-id="capturePhotoInput" accept="image/*" hidden>
+                <button type="button" class="og-btn" data-id="capturePhotoBtn" aria-label="사진 첨부"><svg class="i"><use href="#i-cam"/></svg>사진</button>
+                <button type="button" class="og-btn" data-id="importExternalBtn" aria-label="외부 기록 불러오기"><svg class="i"><use href="#i-link"/></svg>불러오기</button>
+                <button type="button" class="og-btn pri" data-id="captureSave">기록 완료</button>
+              </div>
+              <div class="og-toast" role="status">오늘의 실천이 안전하게 기록되었어요 ✨ (+10 EXP)</div>
+              <div class="og-sheet"><div class="t" style="display:flex;justify-content:space-between;align-items:center">방금 남긴 실천에 맞는 맞춤 조언을 준비 중입니다<button type="button" class="og-x" data-ctl="fbClose" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div><div class="og-skel" style="width:92%"></div><div class="og-skel" style="width:78%"></div><div class="og-skel" style="width:56%"></div></div>
+              <div class="og-fb">
+                <div class="who"><span><b>상민</b> 님의 페이스메이커<span class="tag">실천 완료</span></span><button type="button" class="og-x" data-ctl="fbClose2" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button></div>
+                <div class="say">오늘의 멋진 실천을 성공적으로 기록하셨습니다! 꾸준한 실천이 큰 성장을 만듭니다.</div>
+                <div class="next"><b>내일의 1가지 행동 제안</b>내일도 같은 시간에 목표를 이어가보세요!<button type="button" class="og-btn sm pri" data-ctl="fbNext">내일 퀘스트로 등록</button></div>
+                <label><input type="checkbox" checked> 목표명 공개</label>
+                <button type="button" class="og-btn sm" data-ctl="fbBrag">피드에도 자랑하고 +5 EXP 받기</button>
+                <div class="two"><button type="button" class="og-btn sm" data-ctl="fbRec">기록 탭에서 확인</button><button type="button" class="og-btn sm" data-ctl="fbShare">피드에 공유하기</button></div>
+              </div>
+              <div class="og-fail"><b>지금 앱에는 없는 상태입니다.</b> 저장이 안 됐을 때 알려 주는 문구와 "다시 시도"가 없습니다. 넣는다면 이런 모습입니다.<br><button type="button" class="og-btn sm">다시 시도</button></div>
+              <details class="og-fold checkin-more-options">
+                <summary><span>AI 피드백 설정</span><span class="v"><span data-id="activeAiModeTag">기본 모드</span><svg class="i"><use href="#i-down"/></svg></span></summary>
+                <div style="padding-bottom:6px">
+                  <div class="og-tiers" data-id="checkinFeedbackTierBar">
+                    <button type="button" class="og-tier active" data-fbtier="default">기본</button>
+                    <button type="button" class="og-tier" data-fbtier="medium">중간</button>
+                    <button type="button" class="og-tier" data-fbtier="macro">정밀</button>
+                  </div>
+                  <div class="og-aidesc" data-id="checkinAiModeDesc"><b data-id="aiModeDescTitle">기본 피드백</b><span data-id="aiModeDescBody">오늘 실천 팩트 + 최근 연계 + 내일 1가지 행동을 간결한 3문장으로 코칭합니다.</span></div>
+                  <div class="og-rowlink" data-ctl="aiTone" role="button" tabindex="0"><span>나만의 AI 말투와 피드백 <span data-id="customFeedbackStatus" style="color:var(--brand)"></span></span><button type="button" class="og-btn sm" data-id="customFeedbackBtn">설정하기<svg class="i" style="width:16px;height:16px"><use href="#i-right"/></svg></button></div>
+                </div>
+              </details>
+            </section></div></div></div></body></html>
