@@ -314,5 +314,5 @@ checkAsync('[맞물림] 서버에 더 묻지 않는다 — 다시 열 때 나가
   var failed = results.filter(function (r) { return !r.ok; });
   if (process.argv.indexOf('--json') !== -1) console.log(JSON.stringify({ total: results.length, passed: results.length - failed.length, failed: failed.length, results: results }));
   else { results.forEach(function (r) { console.log((r.ok ? 'ok   ' : 'FAIL ') + r.name + (r.ok ? '' : '\n       ' + r.error)); }); console.log('local-keep-p0: ' + (results.length - failed.length) + '/' + results.length); }
-  process.exit(failed.length ? 1 : 0);
+  process.exitCode = failed.length ? 1 : 0; /* 프로세스를 직접 끝내지 않는다 — 종료 코드만 정한다 */
 })();
