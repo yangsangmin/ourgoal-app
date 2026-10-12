@@ -1,0 +1,672 @@
+{
+  "task": "TASK-ES-693",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-693-DIR-005-DESIGN-PILOT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "지시함 「열린 지시」에 DIR-005(디자인 개편 1단계)를 올린다 — 범위 · 건드리지 않는 것 · 붙이는 방식 · 판정 기준 · 검사 · 기록 · 일정 · 완료 기준. 줄 번호와 숫자는 지금 코드에서 잰다."
+    },
+    {
+      "id": "R2",
+      "text": "결심 기록에 상민님 원문 셋을 글자 그대로 적고, 지휘 세션의 해석 · 세션끼리의 합의와 섞지 않는다. 작성자가 채팅을 보지 못했다는 점을 적는다."
+    },
+    {
+      "id": "R3",
+      "text": "「결심 대기」 표에 여섯 줄을 올린다(「9월 자료」의 읽기 · 불확실 원문에 기댄 기본값 · 기록 저장 실패 — 조사 결과와 한계 · 추천 칩의 동작 · 새 글꼴 · 출시 뒤 방향)."
+    },
+    {
+      "id": "R4",
+      "text": "근거 자료를 저장소에 둔다(시안의 확정 기준 판 · 구현용 명세 · 지금 모습의 측정값 · 저장 실패 조사의 사본). 상민님 말씀 원문 모음은 볼트 경로로 가리킨다."
+    },
+    {
+      "id": "R5",
+      "text": "지시를 공용 값 묶음과 기록 창 묶음으로 갈라 적는다 — 묶음마다 범위 · 닿는 파일 · 완료 기준이 따로 서게."
+    },
+    {
+      "id": "R6",
+      "text": "로드맵 세션의 검토 의견을 반영한다 — 범위의 기준은 요소 · 「예상 변화 목록」과 그 밖의 회귀를 가름 · 「명세대로 구현됨」과 「저장이 안전함」을 따로 기록 · 저장 처리 파일은 담당 하나가 순서대로 · 못 잰 것을 남길 체크리스트의 자리."
+    },
+    {
+      "id": "R7",
+      "text": "기록 창 묶음이 js 파일에 닿는지 판단할 측정값을 적는다 — 저장 단추의 글 · 「기록 중…」 · 저장 뒤 알림 글의 자리와, 제품 코드가 구획의 요소에 꾸밈을 직접 적는 자리."
+    }
+  ],
+  "outOfScopeReports": [
+    {
+      "text": "이 PR 은 지시를 올리기만 한다. 유전자·세포막 파일을 만드는 일, 화면을 바꾸는 일은 이 지시가 병합된 뒤 새 작업번호로 한다.",
+      "cannotBecause": "out-of-scope-feature"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "DIR-005 가 열린 지시에 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "### DIR-005 — 디자인 개편 1단계: 공용 꾸밈(유전자) 최소 조정과 홈 「오늘 기록하기」 창 시범"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시범 구획의 줄 범위가 측정값대로 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "`#captureCardBox`(index.html 681~769행, 89줄)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "건드리지 않는 것에 숨은 연결용 카드가 줄 범위와 함께 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "`#ogTaskWireSlot` — index.html 173~656행, 484줄"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "평가 배너가 출시 전 범위 밖이라고 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "구획 밖이고 출시 전 범위 밖이다"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "새 규칙이 이기는 방법의 판정 기준 넷이 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "새 규칙이 이기지 못한 자리 수 · 의도하지 않은 변화 수(묶음 ① 은 「예상 변화 목록」 밖의 변화, 묶음 ② 는 시범 구획 밖에 번진 변화) · 네 테마에서 깨진 수 · 그 구획의 기능 시험과 여정 시나리오가 기준과 같은가"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "병합 전 독립 확인을 붙이라고 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "PR 마다 병합 전 독립 확인을 붙인다"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "출시 필수 일이 먼저이고 동결 주가 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "출시 후보 동결(W4, 11/2~11/8)"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상민님 원문 1 이 글자 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "「9월 자료는 쓰지 마. 디자인을 어떻게 바꾸고 싶은지 내 의도는 지식기반에서 디자인 개편관련 모든 내 명령, 질문 등의 원문을 확인해서 파악해서 진행하도록 해. 나머지는 권장대로 진행하고 회의 필요한 부분들이 있으면 소통하면서 진행해」"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상민님 원문 2 가 글자 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**상민님 원문 2**(2026-10-12): 「권장대로 진행해.」"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "해석을 상민님 말씀과 갈라 적었다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**지휘 세션의 해석(상민님 말씀이 아니다)**"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세션끼리의 합의가 승인이 아니라고 적었다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**세션끼리의 합의(상민님 승인이 아니다)**"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작성자가 채팅을 보지 못했다고 적었다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "이 지시를 쓴 작업자는 상민님과의 채팅을 직접 보지 못했다."
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기에 「9월 자료」 범위의 읽기 확인 줄이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "「9월 자료는 쓰지 마」의 범위 — 지금은 「9월에 AI 가 만든 디자인 문서·계획은 쓰지 않고, 상민님이 "
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기에 불확실 원문에 기댄 기본값 줄이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "대표 홈 시안의 기본값 가운데 불확실한 말씀(원문 목록 B-012 · B-016 · B-018 — AI 가 "
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기의 저장 실패 줄이 조사 결과대로 줄 번호와 함께 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "(`js/core/profile-load.js` 177행이 기기 백업을 서버 것으로 덮는다)"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기에 새 글꼴 줄이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "새 글꼴을 들일지(지금은 Pretendard 를 바깥 주소에서 불러온다."
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기에 출시 뒤 방향 줄이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "출시 뒤 디자인 방향의 확정 — 아바타(경험치) 창의 새 꼴 · 홈 카드"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기 칸의 머리말과 앞선 줄은 그대로다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "| Google Play 개발자 계정 등록($25 결제·신분 확인) | 돈 |"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "완료된 지시 DIR-004 는 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "### DIR-004 — 미분화 덩어리 해체 범위 확대 (종결)"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "채우지 않은 자리표가 지시함에 남아 있지 않다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "【시안 명세 대기"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "측정값 파일이 있다",
+      "touches": [
+        "reports/TASK-ES-693/measure.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-693/measure.json",
+        "text": "\"captureCardBox\""
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "티켓 대장에 ES-693 한 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-693 | INFRA | 지시함 DIR-005 등록 — 디자인 개편 1단계"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "상민님 원문 3 이 글자 그대로 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "「작업을 시작하기 전에 3 세션의 의견을 조율해서 최상안을 만들고 각 작업을 시작해. 각 세션마다 발언권은 기본 5회 조율이 제대로 이뤄지지 않을시 최대 10회까지 진행해. 그래야 작업한 뒤에 허점이 생겨서 다시 작업하는 일이 줄어서 좋을 것 같아. 대화내용과, 협의결과, 작업결과는 쌓아서 계속 활용되도록 하고」"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기의 저장 실패 줄에 화면 재현이 0건이라는 한계가 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**한계: 브라우저 화면에서 재현한 것은 0건이다**"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "결심 대기에 추천 칩 동작 줄이 줄 번호와 함께 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "(`js/tabs/home/sub-onescreen.js` 340~376행)"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고쳐 쓰기 전의 저장 실패 줄이 남아 있지 않다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "서버 동기화 실패를 255행에서 콘솔 경고로만 남긴다"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "공용 값 묶음이 값 표의 줄 수와 함께 따로 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**묶음 ① — 공용 꾸밈(유전자) 값**: 변수 이름과 쓰는 자리는 그대로 두고 값만 바꾼다 — `02-유전자-값.md` 의 「바뀌는 값」 표 28줄"
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기록 창 묶음이 따로 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**묶음 ② — 홈 「오늘 기록하기」 창 한 구획**"
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "완료 기준에 공용 값 묶음의 칸이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**[묶음 ①]** (1)"
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "완료 기준에 기록 창 묶음의 칸이 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**[묶음 ②]** (3)"
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "공용 값이 닿는 넓이가 측정값대로 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "꾸밈 파일 994곳 · 뼈대 97곳 · 제품 코드 1,606곳에서 쓰인다"
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "목록 안의 변화와 목록 밖의 회귀를 갈라 적었다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "목록에 든 색 · 대비 변화는 의도한 변화이고, 목록 밖의 배치 · 가독성 · 동작 변화는 회귀다."
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "범위의 기준이 줄 번호가 아니라 요소라고 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**범위의 기준은 줄 번호가 아니라 요소(이름표)다**"
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "「명세대로 구현됨」과 「기록 저장이 안전함」을 따로 적으라고 되어 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**「명세대로 구현됨」과 「기록 저장이 안전함」은 PR 에 따로 적는다**"
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "저장 처리 파일은 담당 하나가 순서대로 고친다고 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "**저장 처리 파일은 담당 하나가 순서대로 고친다.**"
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "못 잰 것을 남길 체크리스트의 자리가 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "「03 · 측정·출시·운영 체크리스트」 3절의 QA02 · QA03 · QA12 · QA19"
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "저장 단추의 글이 있는 자리가 측정값대로 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "저장 단추의 글은 index.html 733행 1곳(js 0곳)"
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "제품 코드가 직접 적는 꾸밈의 자리 수가 측정값대로 적혀 있다",
+      "touches": [
+        "docs/directives/ACTIVE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/directives/ACTIVE.md",
+        "text": "세 파일 18곳 있고"
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "꾸러미의 창 명세가 저장소에 있다",
+      "touches": [
+        "docs/design/home-pilot-2026-10/03-오늘-기록하기-창-명세.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/home-pilot-2026-10/03-오늘-기록하기-창-명세.md",
+        "text": "# 오늘 기록하기 창(#captureCardBox) — 출시 전 시범 구획의 구현용 명세"
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "꾸러미의 유전자 값 표가 저장소에 있다",
+      "touches": [
+        "docs/design/home-pilot-2026-10/02-유전자-값.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/home-pilot-2026-10/02-유전자-값.md",
+        "text": "## 바뀌는 값"
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "꾸러미의 확정 기준 기본값이 저장소에 있다",
+      "touches": [
+        "docs/design/home-pilot-2026-10/01-확정-기준-기본값.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/home-pilot-2026-10/01-확정-기준-기본값.md",
+        "text": "# 대표 홈 시안 — 확정 기준 판의 기본값"
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "저장 실패 조사의 사본이 근거 폴더에 있다",
+      "touches": [
+        "reports/TASK-ES-693/save-failure-investigation.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "reports/TASK-ES-693/save-failure-investigation.md",
+        "text": "**한계: 브라우저 화면 재현은 0건이다.**"
+      }
+    }
+  ]
+}
