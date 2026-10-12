@@ -1,8 +1,8 @@
 {
  "tool": "reports/TASK-ES-693/tools/measure.cjs",
  "type": "작업자 측정, 판정 아님",
- "measuredAt": "2026-10-12T10:36:24.276Z",
- "head": "9f019754",
+ "measuredAt": "2026-10-12T11:13:51.849Z",
+ "head": "306cd02c",
  "mainBase": "9f019754",
  "indexHtml": {
   "lines": 2293,
@@ -369,9 +369,44 @@
    "js/tabs/records/checkin-capture.js"
   ]
  },
+ "chipRows": {
+  "cunning": {
+   "drawnBy": "js/core/home-cockpit.js",
+   "fn": "renderQuickCheckinGuideChips",
+   "fnLines": [
+    92,
+    151
+   ],
+   "headingLines": [
+    122,
+    125
+   ],
+   "headingInIndexHtml": 0,
+   "clickFile": "js/tabs/records/checkin-helpers.js",
+   "clickFn": "applyQuickCunningText",
+   "clickFnLines": [
+    19,
+    32
+   ],
+   "setsPlaceholder": [
+    24
+   ],
+   "writesValueWithText": 0
+  },
+  "fixed": {
+   "inIndexHtmlLine": 696,
+   "chips": 3,
+   "clickFile": "js/tabs/home/sub-onescreen.js",
+   "clickFnLines": [
+    340,
+    376
+   ],
+   "insertLine": 366
+  }
+ },
  "pkg": {
   "dir": "docs/design/home-pilot-2026-10",
-  "files": 16,
+  "files": 23,
   "gene": {
    "cells": 72,
    "themes": 4,
@@ -379,8 +414,12 @@
    "changed": 28,
    "same": 44
   },
+  "defaults": {
+   "switchRows": 13
+  },
   "spec": {
-   "changedTextPlaces": 13,
+   "changedTextPlaces": 14,
+   "changedTextInScript": 1,
    "notInPilot": 5,
    "stateScenes": 8,
    "unknowns": 4
@@ -819,7 +858,519 @@
    "js/core/home-cockpit.js",
    "js/tabs/records/checkin-capture.js"
   ],
-  "places": 18
+  "places": 18,
+  "placesInSaveFiles": 10
+ },
+ "expected": {
+  "recPillActive": {
+   "line": 1285,
+   "text": ".rec-pill-btn.active{background:var(--ink);color:var(--chip-ink);font-weight:700;}",
+   "usesInkAndChipInk": true
+  },
+  "tierActiveImportantLine": 1236
+ },
+ "expectedList": {
+  "note": "시안 담당 세션의 측정을 그 원본에서 옮겨 읽은 값이다(이 도구가 다시 잰 것은 definitions 의 줄 대조뿐)",
+  "dir": "docs/design/home-pilot-2026-10/expected",
+  "files": 7,
+  "commit": "9f019754",
+  "ref": "origin/main",
+  "width": 390,
+  "screens": 6,
+  "summary": {
+   "elements": 2488,
+   "changedPlaces": 553,
+   "fellBelow45": 0,
+   "roseAbove45": 20,
+   "roseAbove45ByTheme": {
+    "focus-sanctuary": 0,
+    "white": 20,
+    "black": 0,
+    "urban-city": 0
+   },
+   "valuesDifferentFromSpec": 0,
+   "fiveVariablesChanged": 0,
+   "overflowScreens": 0,
+   "heightChangedScreens": 0,
+   "nestedCardsInSkeleton": 0,
+   "emptySlots": {
+    "홈": 23,
+    "목표": 15,
+    "일정": 10,
+    "기록": 18,
+    "소통": 6,
+    "설정": 31
+   }
+  },
+  "captureCardSelf": [
+   {
+    "theme": "focus-sanctuary",
+    "same": true
+   },
+   {
+    "theme": "white",
+    "same": true
+   },
+   {
+    "theme": "black",
+    "same": true
+   },
+   {
+    "theme": "urban-city",
+    "same": true
+   }
+  ],
+  "recPillActive": [
+   {
+    "theme": "focus-sanctuary",
+    "before": {
+     "ratio": 5,
+     "color": "rgb(16, 185, 129)",
+     "bg": "rgba(16, 185, 129, 0.2)"
+    },
+    "after": {
+     "ratio": 5,
+     "color": "rgb(16, 185, 129)",
+     "bg": "rgba(16, 185, 129, 0.2)"
+    }
+   },
+   {
+    "theme": "white",
+    "before": {
+     "ratio": 17.85,
+     "color": "rgb(255, 255, 255)",
+     "bg": "rgb(15, 23, 42)"
+    },
+    "after": {
+     "ratio": 17.85,
+     "color": "rgb(255, 255, 255)",
+     "bg": "rgb(15, 23, 42)"
+    }
+   },
+   {
+    "theme": "black",
+    "before": {
+     "ratio": 21,
+     "color": "rgb(0, 0, 0)",
+     "bg": "rgb(255, 255, 255)"
+    },
+    "after": {
+     "ratio": 16.16,
+     "color": "rgb(4, 38, 28)",
+     "bg": "rgb(255, 255, 255)"
+    }
+   },
+   {
+    "theme": "urban-city",
+    "before": {
+     "ratio": 18.3,
+     "color": "rgb(11, 15, 25)",
+     "bg": "rgb(248, 250, 252)"
+    },
+    "after": {
+     "ratio": 18.3,
+     "color": "rgb(11, 15, 25)",
+     "bg": "rgb(248, 250, 252)"
+    }
+   }
+  ],
+  "definitions": {
+   "total": 28,
+   "lineMatchesNameAndNow": 28,
+   "newSameAsSpec": 28,
+   "tokenBlockHeadLine": 4830,
+   "inTokenBlock": 26,
+   "tokenBlockLines": [
+    4837,
+    4945
+   ],
+   "outsideTokenBlock": [
+    {
+     "name": "--chip-ink",
+     "theme": "focus-sanctuary",
+     "line": 25,
+     "block": {
+      "line": 8,
+      "selector": ":root"
+     }
+    },
+    {
+     "name": "--chip-ink",
+     "theme": "black",
+     "line": 59,
+     "block": {
+      "line": 52,
+      "selector": "[data-theme=\"black\"],[data-theme=\"dark\"]"
+     }
+    }
+   ],
+   "list": [
+    {
+     "name": "--card",
+     "theme": "focus-sanctuary",
+     "line": 4837,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.04)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--card",
+     "theme": "black",
+     "line": 4869,
+     "block": {
+      "line": 4866,
+      "selector": "html[data-theme=\"black\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#0A0A0C",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--card2",
+     "theme": "focus-sanctuary",
+     "line": 4839,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.07)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--card2",
+     "theme": "black",
+     "line": 4871,
+     "block": {
+      "line": 4866,
+      "selector": "html[data-theme=\"black\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#121216",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--surface-2",
+     "theme": "focus-sanctuary",
+     "line": 4840,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.07)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--surface-2",
+     "theme": "black",
+     "line": 4872,
+     "block": {
+      "line": 4866,
+      "selector": "html[data-theme=\"black\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#121216",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--surface-3",
+     "theme": "focus-sanctuary",
+     "line": 4841,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.12)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--surface-3",
+     "theme": "black",
+     "line": 4873,
+     "block": {
+      "line": 4866,
+      "selector": "html[data-theme=\"black\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#18181E",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--ink-faint",
+     "theme": "focus-sanctuary",
+     "line": 4844,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#94A3B8",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--ink-faint",
+     "theme": "white",
+     "line": 4908,
+     "block": {
+      "line": 4898,
+      "selector": "html[data-theme=\"white\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#64748B",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--ink-faint",
+     "theme": "urban-city",
+     "line": 4940,
+     "block": {
+      "line": 4930,
+      "selector": "html[data-theme=\"urban-city\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#94A3B8",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--rule",
+     "theme": "focus-sanctuary",
+     "line": 4846,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.08)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--rule",
+     "theme": "white",
+     "line": 4910,
+     "block": {
+      "line": 4898,
+      "selector": "html[data-theme=\"white\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#E2E8F0",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--rule",
+     "theme": "black",
+     "line": 4878,
+     "block": {
+      "line": 4866,
+      "selector": "html[data-theme=\"black\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.14)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--rule",
+     "theme": "urban-city",
+     "line": 4942,
+     "block": {
+      "line": 4930,
+      "selector": "html[data-theme=\"urban-city\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.10)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--line",
+     "theme": "focus-sanctuary",
+     "line": 4847,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.08)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--line",
+     "theme": "white",
+     "line": 4911,
+     "block": {
+      "line": 4898,
+      "selector": "html[data-theme=\"white\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#E2E8F0",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--line",
+     "theme": "black",
+     "line": 4879,
+     "block": {
+      "line": 4866,
+      "selector": "html[data-theme=\"black\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.14)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--line",
+     "theme": "urban-city",
+     "line": 4943,
+     "block": {
+      "line": 4930,
+      "selector": "html[data-theme=\"urban-city\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(255, 255, 255, 0.10)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--card-border",
+     "theme": "focus-sanctuary",
+     "line": 4849,
+     "block": {
+      "line": 4834,
+      "selector": "html[data-theme=\"focus-sanctuary\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "1px solid rgba(255, 255, 255, 0.08)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--card-border",
+     "theme": "black",
+     "line": 4881,
+     "block": {
+      "line": 4866,
+      "selector": "html[data-theme=\"black\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "1px solid rgba(255, 255, 255, 0.14)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--card-border",
+     "theme": "urban-city",
+     "line": 4945,
+     "block": {
+      "line": 4930,
+      "selector": "html[data-theme=\"urban-city\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "1px solid rgba(255, 255, 255, 0.12)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--chip-ink",
+     "theme": "focus-sanctuary",
+     "line": 25,
+     "block": {
+      "line": 8,
+      "selector": ":root"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#FFFFFF",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--chip-ink",
+     "theme": "black",
+     "line": 59,
+     "block": {
+      "line": 52,
+      "selector": "[data-theme=\"black\"],[data-theme=\"dark\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#000000",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--bg",
+     "theme": "white",
+     "line": 4899,
+     "block": {
+      "line": 4898,
+      "selector": "html[data-theme=\"white\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#F8FAFC",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--brand",
+     "theme": "white",
+     "line": 4915,
+     "block": {
+      "line": 4898,
+      "selector": "html[data-theme=\"white\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#059669",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--brand-strong",
+     "theme": "white",
+     "line": 4916,
+     "block": {
+      "line": 4898,
+      "selector": "html[data-theme=\"white\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "#047857",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    },
+    {
+     "name": "--brand-soft",
+     "theme": "white",
+     "line": 4917,
+     "block": {
+      "line": 4898,
+      "selector": "html[data-theme=\"white\"]"
+     },
+     "nameOnLine": true,
+     "valueOnLine": "rgba(5, 150, 105, 0.12)",
+     "sameAsNowInList": true,
+     "newSameAsSpec": true
+    }
+   ]
+  }
  },
  "pilotTests": {
   "note": "이름표 29개와 클래스 15개 가운데 하나라도 글자로 든 시험 파일",

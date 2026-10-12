@@ -104,7 +104,8 @@ const section = (title, next) => { const a = spec.indexOf(title); const b = next
 const tableRows = t => t.split('\n').filter(l => l.indexOf('|') === 0 && !/^\|\s*-/.test(l)).length - 1; // 머리 줄 하나를 뺀다
 const pkg = { dir: PK, files: cp.execFileSync('git', ['-C', ROOT, 'ls-files', '--others', '--cached', '--exclude-standard', '--', PK], { encoding: 'utf8' }).split('\n').filter(Boolean).length,
   gene: { cells: gene.length, themes: [...new Set(gene.map(g => g.theme))].length, variables: [...new Set(gene.map(g => g.name))].length, changed: gene.filter(g => g.changed).length, same: gene.filter(g => !g.changed).length },
-  spec: { changedTextPlaces: tableRows(section('**바뀌는 문구(뼈대에 적힌 것만)**', '**그대로 두는 것**')), notInPilot: tableRows(section('## 4. 시안에는 있지만', '## 5. 상태별로')), stateScenes: (section('## 5. 상태별로', '## 6. 이 명세가').match(/^\d+\. /gm) || []).length, unknowns: (section('## 6. 이 명세가 모르는 것', null).match(/^- /gm) || []).length } };
+  defaults: { switchRows: tableRows(rd(PK + '/01-확정-기준-기본값.md').replace(/\r\n/g, '\n').split('\n## ')[0]) },
+  spec: { changedTextPlaces: tableRows(section('**바뀌는 문구(뼈대에 적힌 것만)**', '**그대로 두는 것**')), changedTextInScript: section('**바뀌는 문구(뼈대에 적힌 것만)**', '**그대로 두는 것**').split('\n').filter(l => l.indexOf('|') === 0 && l.indexOf('js 에 적힌 글') >= 0).length, notInPilot: tableRows(section('## 4. 시안에는 있지만', '## 5. 상태별로')), stateScenes: (section('## 5. 상태별로', '## 6. 이 명세가').match(/^\d+\. /gm) || []).length, unknowns: (section('## 6. 이 명세가 모르는 것', null).match(/^- /gm) || []).length } };
 
 // 시범 구획의 글이 어디에 적혀 있는가 — 뼈대(index.html) · 제품 코드(js) · 시험(scripts · tests · court). 글자 찾기다(조립해서 만드는 글은 조각으로만 잡힌다).
 const ls = a => cp.execFileSync('git', ['-C', ROOT, 'ls-files', '--'].concat(a), { encoding: 'utf8' }).split('\n').filter(Boolean);
@@ -143,6 +144,41 @@ const scriptStyle = { note: '보이기/숨기기(display)는 세지 않았다',
   saveHandler: { file: capJs, lines: linesWith(CL, LOOK) } };
 scriptStyle.files = [scriptStyle.tierButtons, scriptStyle.quickChips, scriptStyle.saveHandler].filter(x => (x.lines || x.inlineStyleInMarkupLines || []).length).map(x => x.file);
 scriptStyle.places = scriptStyle.tierButtons.lines.length + scriptStyle.quickChips.inlineStyleInMarkupLines.length + scriptStyle.quickChips.lines.length + scriptStyle.saveHandler.lines.length;
+scriptStyle.placesInSaveFiles = scriptStyle.quickChips.inlineStyleInMarkupLines.length + scriptStyle.quickChips.lines.length + scriptStyle.saveHandler.lines.length; // home-cockpit.js(saveProfile 이 있는 파일) + checkin-capture.js(저장 처리기)
+// 칩 줄은 둘이다 — ⓐ 커닝페이퍼 줄(코드가 #quickCheckinChips 에 그린다. 누르면 입력 칸의 배경 예시만 바뀐다) ⓑ 고정 추천 칩 줄(뼈대의 #smartRecommendChips. 누르면 입력 칸 맨 앞에 「#이름 」을 넣는다 — 위 chip)
+const helpJs = 'js/tabs/records/checkin-helpers.js', HPL = rd(helpJs).split('\n');
+const cunHead = KL.findIndex(l => l.indexOf('내 목표 맞춤 커닝페이퍼') >= 0), cunHint = KL.findIndex(l => l.indexOf('(탭하면 가이드 예시 힌트 설정') >= 0);
+const applyFn = fnRange(HPL, /function\s+applyQuickCunningText\s*\(/);
+const chipRows = {
+  cunning: { drawnBy: cockpit, fn: 'renderQuickCheckinGuideChips', fnLines: chipFn, headingLines: (cunHead > 0 && cunHint > cunHead && /<span/.test(KL[cunHead - 1])) ? [cunHead, cunHint + 1] : null, headingInIndexHtml: HL.filter(l => l.indexOf('내 목표 맞춤 커닝페이퍼') >= 0).length,
+    clickFile: helpJs, clickFn: 'applyQuickCunningText', clickFnLines: applyFn, setsPlaceholder: inRange(HPL, applyFn, /inp\.placeholder\s*=/), writesValueWithText: inRange(HPL, applyFn, /inp\.value\s*=\s*[^'\s]/).length },
+  fixed: { inIndexHtmlLine: HL.findIndex(l => l.indexOf('id="smartRecommendChips"') >= 0) + 1, chips: (capSeg.match(/class="btn-smart-chip"/g) || []).length, clickFile: chipJs, clickFnLines: [chip.startLine, chip.endLine], insertLine: chip.insertLine } };
+// 묶음 ① 의 「예상 변화 목록」에 미리 적을 자리 가운데 꾸밈 파일에서 줄로 짚을 수 있는 것
+const recPill = CSSL.findIndex(l => l.indexOf('.rec-pill-btn.active{') === 0);
+const expected = { recPillActive: { line: recPill + 1, text: recPill >= 0 ? CSSL[recPill].trim().slice(0, 110) : null, usesInkAndChipInk: recPill >= 0 && /var\(--ink\)/.test(CSSL[recPill]) && /var\(--chip-ink\)/.test(CSSL[recPill]) },
+  tierActiveImportantLine: CSSL.findIndex(l => l.indexOf('.tier-btn.active{') === 0 && /!important/.test(l)) + 1 };
+// 시안 담당이 만든 「예상 변화 목록」(지시 병합 전 · 근거 자료)의 숫자를 그 원본(data.json)에서 읽는다. 다시 재지 않는다(화면을 띄우지 않는다).
+// 목록이 가리킨 「바꿀 정의」의 줄만 꾸밈 파일에서 다시 읽어 변수 이름과 지금 값이 맞는지 본다.
+const EX = PK + '/expected', exData = JSON.parse(rd(EX + '/data.json'));
+const norm = s => String(s).replace(/\s+/g, '').toLowerCase();
+const blockHead = i0 => { for (let i = i0; i >= 0; i--) { if (/\{\s*$/.test(CSSL[i]) && !/^\s*--/.test(CSSL[i])) return { line: i + 1, selector: CSSL[i].replace(/\{\s*$/, '').trim().slice(0, 90) }; } return null; };
+const tokenHead = CSSL.findIndex(l => l.indexOf('4대 공식 테마 1급 디자인 토큰') >= 0) + 1;
+const defs28 = [];
+exData.vars.forEach(v => Object.keys(v.perTheme).forEach(th => { const p = v.perTheme[th]; if (!p.changes) return;
+  const ln = p.winner && p.winner.line, text = ln ? (CSSL[ln - 1] || '') : ''; const m = new RegExp('(^|[;{\\s])' + v.name + '\\s*:\\s*([^;]+);').exec(text); const g = gene.find(x => x.name === v.name && x.theme === th);
+  defs28.push({ name: v.name, theme: th, line: ln || null, block: ln ? blockHead(ln - 1) : null, nameOnLine: !!m, valueOnLine: m ? m[2].trim() : null, sameAsNowInList: !!m && norm(m[2]) === norm(p.now), newSameAsSpec: !!g && norm(p.new) === norm(g.new) }); }));
+const exSum = { elements: 0, changedPlaces: 0, fellBelow45: 0, roseAbove45: 0, roseAbove45ByTheme: {}, valuesDifferentFromSpec: 0, fiveVariablesChanged: 0, overflowScreens: 0, heightChangedScreens: 0, nestedCardsInSkeleton: 0, emptySlots: {} };
+Object.values(exData.screens).forEach(s => Object.keys(s.themes).forEach(th => { const x = s.themes[th];
+  exSum.elements += x.elements; exSum.changedPlaces += x.changed.color + x.changed.bg + x.changed.border; exSum.fellBelow45 += x.fellBelow; exSum.roseAbove45 += x.roseAbove; exSum.roseAbove45ByTheme[th] = (exSum.roseAbove45ByTheme[th] || 0) + x.roseAbove;
+  exSum.valuesDifferentFromSpec += (x.wrongVars || []).length; exSum.fiveVariablesChanged += (x.fiveChanged || []).length; if (x.overflow && x.overflow.after) exSum.overflowScreens++; if (x.height && x.height.before !== x.height.after) exSum.heightChangedScreens++;
+  exSum.nestedCardsInSkeleton += Number(x.nested) || 0; exSum.emptySlots[s.name] = (x.slots || []).length; }));
+const exHome = exData.screens['screen-home'].themes, exRec = exData.screens['screen-records'].themes;
+const inToken = d => d.block && tokenHead > 0 && d.block.line > tokenHead && /^html\[data-theme="/.test(d.block.selector);
+const expectedList = { note: '시안 담당 세션의 측정을 그 원본에서 옮겨 읽은 값이다(이 도구가 다시 잰 것은 definitions 의 줄 대조뿐)', dir: EX, files: ls([EX]).length || cp.execFileSync('git', ['-C', ROOT, 'ls-files', '--others', '--cached', '--exclude-standard', '--', EX], { encoding: 'utf8' }).split('\n').filter(Boolean).length,
+  commit: exData.commit, ref: exData.ref, width: exData.width, screens: Object.keys(exData.screens).length, summary: exSum,
+  captureCardSelf: Object.keys(exHome).map(th => ({ theme: th, same: JSON.stringify(exHome[th].cap.before) === JSON.stringify(exHome[th].cap.after) })),
+  recPillActive: Object.keys(exRec).map(th => ({ theme: th, before: exRec[th].pill && exRec[th].pill.before, after: exRec[th].pill && exRec[th].pill.after })),
+  definitions: { total: defs28.length, lineMatchesNameAndNow: defs28.filter(d => d.nameOnLine && d.sameAsNowInList).length, newSameAsSpec: defs28.filter(d => d.newSameAsSpec).length, tokenBlockHeadLine: tokenHead, inTokenBlock: defs28.filter(inToken).length, tokenBlockLines: (a => a.length ? [Math.min.apply(null, a), Math.max.apply(null, a)] : null)(defs28.filter(inToken).map(d => d.line)), outsideTokenBlock: defs28.filter(d => !inToken(d)).map(d => ({ name: d.name, theme: d.theme, line: d.line, block: d.block })), list: defs28 } };
 // 시범 구획의 이름표·클래스를 글자로 가리키는 시험 파일(뼈대를 고치면 같이 봐야 하는 시험)
 const capClasses = ['toss-checkin-clean-box', 'capture-title', 'capture-sub', 'capture-ta-wrap', 'smart-recommend-chips', 'btn-smart-chip', 'dimension-accordion', 'checkin-dimension-sliders', 'capture-row', 'toss-checkin-save-btn', 'checkin-more-options', 'ai-mode-setting-card', 'feedback-tier-bar', 'tier-btn', 'ai-mode-desc-card'];
 const capIdsAll = (indexHtml.captureCardBox && indexHtml.captureCardBox.ids) || [];
@@ -158,6 +194,6 @@ geneReach.usesOfChanged = geneReach.variables.filter(v => v.changedThemes > 0).r
 
 const head = cp.execFileSync('git', ['-C', ROOT, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const base = (() => { try { return cp.execFileSync('git', ['-C', ROOT, 'merge-base', 'HEAD', 'origin/main'], { encoding: 'utf8' }).trim(); } catch (e) { return null; } })();
-const out = { tool: 'reports/TASK-ES-693/tools/measure.cjs', type: '작업자 측정, 판정 아님', measuredAt: new Date().toISOString(), head: head.slice(0, 8), mainBase: base && base.slice(0, 8), indexHtml, save, saveFailure, uiCss, acceptedThemes, chip, pkg, pilotText, scriptStyle, pilotTests, geneReach };
+const out = { tool: 'reports/TASK-ES-693/tools/measure.cjs', type: '작업자 측정, 판정 아님', measuredAt: new Date().toISOString(), head: head.slice(0, 8), mainBase: base && base.slice(0, 8), indexHtml, save, saveFailure, uiCss, acceptedThemes, chip, chipRows, pkg, pilotText, scriptStyle, expected, expectedList, pilotTests, geneReach };
 fs.writeFileSync(path.join(ROOT, 'reports', 'TASK-ES-693', 'measure.json'), JSON.stringify(out, null, 1) + '\n', { encoding: 'utf8' });
 console.log(JSON.stringify({ cap: cap && [cap.startLine, cap.endLine, cap.lines], capIds: indexHtml.captureCardBox && indexHtml.captureCardBox.ids.length, buttons: indexHtml.captureCardBox && indexHtml.captureCardBox.buttons, inputs: indexHtml.captureCardBox && indexHtml.captureCardBox.inputs, wire: wire && [wire.startLine, wire.endLine, wire.lines], home: home && [home.startLine, home.endLine, home.lines], texts: indexHtml.texts, save: { clear: save.inputClearedLines, call: save.saveProfileCallLines, sp: [save.saveProfile.startLine, save.saveProfile.endLine], warn: save.saveProfile.warnLines, warnText: save.saveProfile.warnText, throws: save.saveProfile.throwLines, confetti: save.confettiLines, flash: save.flashLines }, css: { lines: uiCss.lines, important: uiCss.important, names: uiCss.variableNamesDefined, defs: uiCss.variableDefinitions, uses: uiCss.variableUses, five: uiCss.fiveVariables, themes: uiCss.themeSelectors, files: uiCss.cssFiles, links: uiCss.linkTags }, acceptedThemes }, null, 1));
