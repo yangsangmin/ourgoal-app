@@ -207,8 +207,12 @@
       }
 
       var goals = L.state.profile.goals || [];
+      /* [#TASK-ES-695] DIR-006 묶음 P0(다음 저장): 다시 열 때 보관을 확인하지 못해 백업에 남겨 둔 「기기에만 있는 것」을 이 쓰기가 지우지 않게 하고,
+         자리가 모자라 백업 쓰기가 실패하면 직전 사본을 내려놓고 한 번 더 쓴다(js/core/local-keep.js). 남겨 둔 것이 없으면 쓰는 글자는 전과 같다 */
+      var localKeep = (window.OurgoalLocalKeep && typeof window.OurgoalLocalKeep.setBackupFromSave === 'function') ? window.OurgoalLocalKeep : null;
       try {
-        localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals));
+        if(localKeep) localKeep.setBackupFromSave('goals', uidVal, goals);
+        else localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals));
         localStorage.setItem('ourgoal_guest_profile', JSON.stringify(L.state.profile));
         if(L.state.profile.calendarDayBackgrounds){
           localStorage.setItem('ourgoal_cal_day_bg_' + uidVal, JSON.stringify(L.state.profile.calendarDayBackgrounds));
@@ -227,7 +231,8 @@
       var recs = L.state.profile.records || [];
       if(recs.length){
         try {
-          localStorage.setItem('ourgoal_records_backup_' + uidVal, JSON.stringify(recs));
+          if(localKeep) localKeep.setBackupFromSave('records', uidVal, recs);
+          else localStorage.setItem('ourgoal_records_backup_' + uidVal, JSON.stringify(recs));
         } catch(e){}
         /* [#TASK-ES-344] REC-01: goalId·laps·durationMs·durationMinutes·visibility·isSample·title 을 meta(jsonb)에 담아 보낸다.
            checkins.meta/theme/category 컬럼이 아직 없는 DB에서는 그 칸을 빼고 재시도해 기록 저장이 끊기지 않게 한다(upsertCheckinRows) */

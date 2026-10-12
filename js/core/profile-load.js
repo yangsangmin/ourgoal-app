@@ -139,7 +139,13 @@
         }));
       } catch(e){}
     } else if(goals && goals.length > 0){
-      try { localStorage.setItem('ourgoal_goals_backup_' + userId, JSON.stringify(goals)); } catch(e){}
+      /* [#TASK-ES-695] DIR-006 묶음 P0: 기기 백업을 서버 것으로 바꾸기 전에 기기에만 있는 목표를 보관 열쇠로 옮기고 직전 사본을 남긴다(js/core/local-keep.js).
+         보관 · 직전 사본을 되읽어 확인하지 못하면 원래 백업을 그대로 둔다. 서버에는 아무것도 더 묻거나 올리지 않는다 */
+      if(window.OurgoalLocalKeep && typeof window.OurgoalLocalKeep.commitServerGoals === 'function'){
+        goals = window.OurgoalLocalKeep.commitServerGoals(userId, goals).goals;
+      } else {
+        try { localStorage.setItem('ourgoal_goals_backup_' + userId, JSON.stringify(goals)); } catch(e){}
+      }
     }
 
     var records = (recsRes.data||[]).filter(function(r){ return !r.deleted_at; }).map(function(r){
@@ -174,7 +180,14 @@
         }));
       } catch(e){}
     } else if(records && records.length > 0){
-      try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
+      /* [#TASK-ES-695] DIR-006 묶음 P0: 기기 백업을 서버 것으로 바꾸기 전에 (i) 서버가 주지 않는 칸(사진 · 피드백 · 에너지 · 집중 등)을 같은 계정 · 같은 id 의 기기 값에서 되붙이고
+         (ii) 기기에만 있는 기록은 보관 열쇠로 옮기고 (iii) 직전 사본을 남긴다(js/core/local-keep.js). 되붙인 기록이 화면과 백업에 함께 쓰인다.
+         보관 · 직전 사본을 되읽어 확인하지 못하면 원래 백업을 그대로 둔다. 서버에는 아무것도 더 묻거나 올리지 않는다 */
+      if(window.OurgoalLocalKeep && typeof window.OurgoalLocalKeep.commitServerRecords === 'function'){
+        records = window.OurgoalLocalKeep.commitServerRecords(userId, records).records;
+      } else {
+        try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
+      }
     }
 
     // 프로필 편집 내역(소개, 관심사, 지역, 잇템) 로컬 백업 복원 및 무결성 보장 (#TASK-ES-035)
@@ -271,7 +284,12 @@
             var sData = await sRes.json();
             if(sData && sData.records && sData.records.length > 0 && window.OurgoalAccountIsolation.isResponseForUid(sData.targetUserId, userId)){
               records = sData.records;
-              try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
+              /* [#TASK-ES-695] 이 자리도 기기 백업을 받은 것으로 바꾼다 — 같은 순서(보관 → 직전 사본 → 백업)를 지킨다 */
+              if(window.OurgoalLocalKeep && typeof window.OurgoalLocalKeep.commitServerRecords === 'function'){
+                records = window.OurgoalLocalKeep.commitServerRecords(userId, records).records;
+              } else {
+                try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
+              }
               if(sData.user){
                 if(!finalBio && sData.user.bio) finalBio = sData.user.bio;
                 if((!finalInterests || finalInterests.length === 0) && sData.user.interests) finalInterests = sData.user.interests;

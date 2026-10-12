@@ -1,0 +1,621 @@
+{
+ "task": "TASK-ES-695",
+ "kind": "작업자 측정(판정 아님)",
+ "measuredAt": "2026-10-12T16:01:07.170Z",
+ "tool": "reports/TASK-ES-695/tools/measure.cjs",
+ "baseCommit": "db828116",
+ "headWhenMeasured": "db828116",
+ "limits": "브라우저 재현의 서버 답은 브라우저 안 가짜 서버가 흉내 낸 것이고 로그인은 가짜 세션이다. 실서버 · 실계정 · 실기기가 아니다. 부품 시험은 가짜 저장소 · 가짜 서버로 제품 파일을 그대로 돌린 것이다.",
+ "unit": {
+  "file": "tests/local-keep-p0.test.js",
+  "exitCode": 0,
+  "total": 26,
+  "passed": 26,
+  "failed": 0,
+  "names": [
+   "ok (i) 서버가 주지 않는 칸을 같은 id 의 기기 값에서 되붙인다 — 사진 · 피드백 · 에너지 · 집중 · 노션 구조 · 테마 부가정보 · 그 밖의 기기 칸",
+   "ok (i) 서버가 준 칸은 기기의 옛 값으로 덮지 않는다 — 비어 있어도",
+   "ok 조건 ③ 본문이 달라진 기록에는 옛 피드백 · 구조를 되붙이지 않는다(사진 · 에너지 · 집중은 되붙인다). 기기 판의 본문 · 피드백은 보관한다",
+   "ok (ii) 기기에만 있고 서버 응답에 없는 기록은 지우지 않고 보관 열쇠로 옮긴다 — 화면에 쓸 기록에는 없다",
+   "ok (ii) 휴지통에 든 기록은 보관으로 옮기지 않는다(지운 것을 따로 쌓지 않는다)",
+   "ok (iii) 덮어쓰기 직전의 백업 글자를 그대로 한 세대 남기고, 되돌리기가 그 글자를 백업 자리에 돌려놓는다(다시 부르면 원래대로)",
+   "ok 쓰는 순서는 보관 → 직전 사본 → 백업이다",
+   "ok 조건 ① 용량 초과(보관 쓰기 실패) — 원래 백업을 그대로 둔다. 직전 사본도 쓰지 않는다",
+   "ok 조건 ① 용량 초과(직전 사본 쓰기 실패) — 원래 백업을 그대로 둔다(보관은 이미 확인됨)",
+   "ok 조건 ① 일부만 쓰임(보관이 잘려 쓰임) — 되읽어 다르면 보관을 쓰기 전으로 돌려놓고 원래 백업을 그대로 둔다",
+   "ok 조건 ① 일부만 쓰임(직전 사본 · 백업이 잘려 쓰임) — 원래 백업 글자가 남는다",
+   "ok 조건 ① 쓰는 사이 앱 종료 — 쓰기가 0 · 1 · 2번 된 뒤 멈추면 원래 백업 글자가 그대로다",
+   "ok 조건 ④ (다음 저장) 보관을 확인하지 못한 「기기에만 있는 것」은 다음 저장의 백업 쓰기에서도 지워지지 않는다",
+   "ok 조건 ④ (다음 저장) 남겨 둔 것이 없으면 저장이 쓰는 글자는 전과 같다",
+   "ok 조건 ② 이미 빠진 것이 있는 백업으로 직전 사본을 덮기 전에, 직전 사본에만 남은 칸(사진)을 보관한다",
+   "ok 조건 ② 보관 항목은 덮지 않는다 — 더하기만 하고, 같은 것을 두 번 보관하지 않는다",
+   "ok 바뀐 것이 없으면 아무것도 쓰지 않는다(직전 사본을 같은 글자로 덮지 않는다)",
+   "ok 같은 계정만 — 다른 계정의 열쇠를 읽거나 쓰지 않고, 다른 사람 표시가 붙은 기기 기록에서는 되붙이지 않는다",
+   "ok 보관으로 옮겨 둔 기록이 나중에 서버 응답에 나타나면, 보관의 기기 값에서 되붙인다",
+   "ok 읽을 수 없는 백업 글자는 버리지 않고 글자째 보관한다",
+   "ok 목표: 기기에만 있는 목표를 보관 열쇠로 옮기고 직전 사본을 남긴다. 휴지통에 든 목표는 옮기지 않는다",
+   "ok 용량 초과(다음 저장): 자리가 모자라 백업 쓰기가 실패하면 직전 사본을 내려놓고 한 번 더 쓴다",
+   "ok [맞물림] 사진 기록을 저장(서버 성공)하고 다시 열면 사진 · 피드백 · 에너지 · 집중이 화면에 쓸 기록과 기기 백업에 남는다 — 다음 저장 · 수동 동기화 · 또 다시 열기 뒤에도",
+   "ok [맞물림] 올리지 못한 기록(서버 500)은 다시 열 때 화면에는 없고 보관 열쇠에 남으며, 다시 올리지 않는다. 직전 사본으로 되돌릴 수 있다",
+   "ok [맞물림] 올리지 못한 목표(서버 500)는 다시 열 때 화면에는 없고 목표 보관 열쇠에 남으며, 다시 올리지 않는다",
+   "ok [맞물림] 서버에 더 묻지 않는다 — 다시 열 때 나가는 서버 호출이 고치기 전과 같다(사용자 1 · 목표 조회 1 · 기록 조회 1)"
+  ]
+ },
+ "browser": {
+  "before": {
+   "dir": "before",
+   "photoAndUnsentRecord": {
+    "error": null,
+    "moduleLoaded": false,
+    "beforeReopen": {
+     "photoCardHasImage": true,
+     "photoCardHasFeedback": true,
+     "unsentCardOnScreen": true
+    },
+    "afterReopen": {
+     "photoCardHasImage": false,
+     "photoCardHasFeedback": false,
+     "screenRecord": {
+      "photo": false,
+      "feedback": false,
+      "energy": null,
+      "focus": null,
+      "notionDb": false,
+      "structured": false
+     },
+     "deviceBackupRecord": {
+      "photo": false,
+      "feedback": false,
+      "energy": null,
+      "focus": null,
+      "notionDb": false,
+      "structured": false,
+      "themeMetadata": false
+     },
+     "unsentCardOnScreen": false,
+     "unsentInScreenData": false,
+     "unsentInBackupKey": false,
+     "unsentInKeptKey": null,
+     "keptKeyExists": false,
+     "prevKeyExists": false,
+     "prevEqualsBackupBeforeReopen": null,
+     "unsentOnServer": false,
+     "checkinUploadRows": [
+      3,
+      3
+     ],
+     "requestKinds": [
+      "GET users",
+      "GET goals",
+      "GET checkins",
+      "GET user_ledger_docs",
+      "GET feed_posts",
+      "POST users",
+      "GET team_pings",
+      "GET team_ping_replies",
+      "POST checkins",
+      "PATCH user_ledger_docs"
+     ],
+     "commit": null
+    },
+    "rollback": {
+     "available": false,
+     "ok": null,
+     "backupEqualsBeforeReopen": null,
+     "swappedBack": null
+    },
+    "afterNextSave": {
+     "savesIssued": 1,
+     "photoCardHasImage": false,
+     "screenRecord": {
+      "photo": false,
+      "feedback": false,
+      "energy": null,
+      "focus": null,
+      "notionDb": false,
+      "structured": false
+     },
+     "deviceBackupPhoto": false,
+     "unsentInKeptKey": null,
+     "unsentOnServer": false
+    },
+    "afterManualSync": {
+     "clicked": true,
+     "photoCardHasImage": false,
+     "photoCardHasFeedback": false,
+     "screenRecord": {
+      "photo": false,
+      "feedback": false,
+      "energy": null,
+      "focus": null,
+      "notionDb": false,
+      "structured": false
+     },
+     "deviceBackupPhoto": false,
+     "unsentCardOnScreen": false,
+     "unsentInKeptKey": null,
+     "unsentOnServer": false,
+     "requestKinds": [
+      "GET users",
+      "GET goals",
+      "GET checkins",
+      "POST users",
+      "GET user_ledger_docs",
+      "POST checkins"
+     ]
+    },
+    "afterSecondReopen": {
+     "photoCardHasImage": false,
+     "photoCardHasFeedback": false,
+     "screenRecord": {
+      "photo": false,
+      "feedback": false,
+      "energy": null,
+      "focus": null,
+      "notionDb": false,
+      "structured": false
+     },
+     "unsentInKeptKey": null
+    }
+   },
+   "unsentGoal": {
+    "error": null,
+    "beforeReopen": {
+     "onScreen": true,
+     "onServer": false,
+     "inBackup": true
+    },
+    "afterReopen": {
+     "onScreen": false,
+     "inScreenData": false,
+     "inBackup": false,
+     "inKeptKey": null,
+     "prevEqualsBackupBeforeReopen": null,
+     "onServer": false,
+     "goalUploadRows": [
+      1
+     ]
+    },
+    "afterNextSave": {
+     "inKeptKey": null,
+     "onServer": false
+    }
+   },
+   "storageNearlyFull": {
+    "error": null,
+    "fill": {
+     "fillChars": 5228496,
+     "probe64AtBrim": "QuotaExceededError",
+     "reservedChars": 1200,
+     "probe2000AfterReserve": "QuotaExceededError"
+    },
+    "firstRequestsOnReopen": [
+     "GET users",
+     "GET goals",
+     "GET checkins",
+     "GET user_ledger_docs",
+     "GET feed_posts",
+     "POST users:1",
+     "GET team_pings",
+     "GET team_ping_replies"
+    ],
+    "reopenWhileFull": {
+     "commit": null,
+     "storageErrors": null,
+     "consoleWarnings": [],
+     "unsentStillInBackup": false,
+     "backupBytesIdentical": false,
+     "unsentInScreenData": false,
+     "unsentInKeptKey": null,
+     "unsentOnServer": false
+    },
+    "nextSaveWhileFull": {
+     "savesIssued": 1,
+     "unsentStillInBackup": false,
+     "unsentOnServer": false
+    },
+    "reopenAfterFreed": {
+     "unsentInKeptKey": null,
+     "backupTexts": [
+      "옛기록2",
+      "옛기록1"
+     ],
+     "unsentInScreenData": false,
+     "unsentOnServer": false
+    }
+   },
+   "storageBrim": null,
+   "surveyTool03k": {
+    "error": null,
+    "afterSave": {
+     "cardHasImage": true,
+     "screenRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40
+     },
+     "deviceBackupRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40
+     }
+    },
+    "afterRefresh": {
+     "cardHasImage": false,
+     "cardText": "재현K사진기록 × duration 30 01:00 메모 🌱 일상/기타 · 일상 ▾",
+     "screenRecord": {
+      "photo": false,
+      "feedback": false,
+      "energy": null,
+      "focus": null
+     },
+     "deviceBackupRecord": {
+      "photo": false,
+      "feedback": false,
+      "energy": null,
+      "focus": null
+     }
+    },
+    "serverRowHasPhoto": false,
+    "requestKindsOnRefresh": [
+     "GET rest/users",
+     "GET rest/goals",
+     "GET rest/checkins",
+     "GET rest/user_ledger_docs",
+     "GET rest/feed_posts",
+     "POST rest/users",
+     "GET rest/team_pings",
+     "GET rest/team_ping_replies",
+     "POST rest/checkins"
+    ]
+   },
+   "surveyTool02home500": {
+    "error": null,
+    "toastAfterSave": "오늘의 실천이 안전하게 기록되었어요 (완료 · 100% 달성) ✨ (+10 EXP)",
+    "afterRefresh": {
+     "inScreenData": 0,
+     "cardsVisible": 0,
+     "deviceKeysHoldingIt": [],
+     "onServer": false,
+     "uploadRows": [
+      2,
+      2
+     ]
+    }
+   }
+  },
+  "after": {
+   "dir": "after",
+   "photoAndUnsentRecord": {
+    "error": null,
+    "moduleLoaded": true,
+    "beforeReopen": {
+     "photoCardHasImage": true,
+     "photoCardHasFeedback": true,
+     "unsentCardOnScreen": true
+    },
+    "afterReopen": {
+     "photoCardHasImage": true,
+     "photoCardHasFeedback": true,
+     "screenRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40,
+      "notionDb": true,
+      "structured": true
+     },
+     "deviceBackupRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40,
+      "notionDb": true,
+      "structured": true,
+      "themeMetadata": true
+     },
+     "unsentCardOnScreen": false,
+     "unsentInScreenData": false,
+     "unsentInBackupKey": false,
+     "unsentInKeptKey": 1,
+     "keptKeyExists": true,
+     "prevKeyExists": true,
+     "prevEqualsBackupBeforeReopen": true,
+     "unsentOnServer": false,
+     "checkinUploadRows": [
+      3,
+      3
+     ],
+     "requestKinds": [
+      "GET users",
+      "GET goals",
+      "GET checkins",
+      "GET user_ledger_docs",
+      "GET feed_posts",
+      "POST users",
+      "GET team_pings",
+      "GET team_ping_replies",
+      "POST checkins",
+      "PATCH user_ledger_docs"
+     ],
+     "commit": {
+      "kind": "records",
+      "ok": true,
+      "stage": "written",
+      "reattached": 16,
+      "keptAdded": 1,
+      "prevWritten": true,
+      "backupWritten": true,
+      "held": 0
+     }
+    },
+    "rollback": {
+     "available": true,
+     "ok": true,
+     "backupEqualsBeforeReopen": true,
+     "swappedBack": true
+    },
+    "afterNextSave": {
+     "savesIssued": 1,
+     "photoCardHasImage": true,
+     "screenRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40,
+      "notionDb": true,
+      "structured": true
+     },
+     "deviceBackupPhoto": true,
+     "unsentInKeptKey": 1,
+     "unsentOnServer": false
+    },
+    "afterManualSync": {
+     "clicked": true,
+     "photoCardHasImage": true,
+     "photoCardHasFeedback": true,
+     "screenRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40,
+      "notionDb": true,
+      "structured": true
+     },
+     "deviceBackupPhoto": true,
+     "unsentCardOnScreen": false,
+     "unsentInKeptKey": 1,
+     "unsentOnServer": false,
+     "requestKinds": [
+      "GET users",
+      "GET goals",
+      "GET checkins",
+      "POST users",
+      "GET user_ledger_docs",
+      "POST checkins"
+     ]
+    },
+    "afterSecondReopen": {
+     "photoCardHasImage": true,
+     "photoCardHasFeedback": true,
+     "screenRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40,
+      "notionDb": true,
+      "structured": true
+     },
+     "unsentInKeptKey": 1
+    }
+   },
+   "unsentGoal": {
+    "error": null,
+    "beforeReopen": {
+     "onScreen": true,
+     "onServer": false,
+     "inBackup": true
+    },
+    "afterReopen": {
+     "onScreen": false,
+     "inScreenData": false,
+     "inBackup": false,
+     "inKeptKey": 1,
+     "prevEqualsBackupBeforeReopen": true,
+     "onServer": false,
+     "goalUploadRows": [
+      1
+     ]
+    },
+    "afterNextSave": {
+     "inKeptKey": 1,
+     "onServer": false
+    }
+   },
+   "storageNearlyFull": {
+    "error": null,
+    "fill": {
+     "fillChars": 5228496,
+     "probe64AtBrim": "QuotaExceededError",
+     "reservedChars": 1200,
+     "probe2000AfterReserve": "QuotaExceededError"
+    },
+    "firstRequestsOnReopen": [
+     "GET users",
+     "GET goals",
+     "GET checkins",
+     "GET user_ledger_docs",
+     "GET feed_posts",
+     "POST users:1",
+     "GET team_pings",
+     "GET team_ping_replies"
+    ],
+    "reopenWhileFull": {
+     "commit": {
+      "kind": "records",
+      "ok": false,
+      "stage": "kept-failed",
+      "reattached": 6,
+      "keptAdded": 0,
+      "prevWritten": false,
+      "backupWritten": false,
+      "held": 1
+     },
+     "storageErrors": [
+      {
+       "where": "write:ourgoal_records_kept",
+       "error": "QuotaExceededError"
+      }
+     ],
+     "consoleWarnings": [
+      "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — kept-failed"
+     ],
+     "unsentStillInBackup": true,
+     "backupBytesIdentical": false,
+     "unsentInScreenData": false,
+     "unsentInKeptKey": null,
+     "unsentOnServer": false
+    },
+    "nextSaveWhileFull": {
+     "savesIssued": 1,
+     "unsentStillInBackup": true,
+     "unsentOnServer": false
+    },
+    "reopenAfterFreed": {
+     "unsentInKeptKey": 1,
+     "backupTexts": [
+      "옛기록2",
+      "옛기록1"
+     ],
+     "unsentInScreenData": false,
+     "unsentOnServer": false
+    }
+   },
+   "storageBrim": {
+    "error": null,
+    "fill": {
+     "fillChars": 5229696,
+     "probe64AtBrim": "QuotaExceededError",
+     "reservedChars": 0,
+     "probe2000AfterReserve": "QuotaExceededError"
+    },
+    "firstRequestsOnReopen": [
+     "GET feed_posts",
+     "POST users:1",
+     "GET team_pings",
+     "GET team_ping_replies",
+     "POST checkins:3",
+     "GET users",
+     "GET goals",
+     "GET checkins"
+    ],
+    "reopenWhileFull": {
+     "commit": {
+      "kind": "records",
+      "ok": false,
+      "stage": "prev-failed",
+      "reattached": 15,
+      "keptAdded": 0,
+      "prevWritten": false,
+      "backupWritten": false,
+      "held": 0
+     },
+     "storageErrors": [
+      {
+       "where": "write:ourgoal_records_prev",
+       "error": "QuotaExceededError"
+      }
+     ],
+     "consoleWarnings": [
+      "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — prev-failed"
+     ],
+     "unsentStillInBackup": true,
+     "backupBytesIdentical": true,
+     "unsentInScreenData": true,
+     "unsentInKeptKey": null,
+     "unsentOnServer": true
+    },
+    "nextSaveWhileFull": {
+     "savesIssued": 1,
+     "unsentStillInBackup": true,
+     "unsentOnServer": true
+    },
+    "reopenAfterFreed": {
+     "unsentInKeptKey": null,
+     "backupTexts": [
+      "재현P0못올린기록",
+      "옛기록2",
+      "옛기록1"
+     ],
+     "unsentInScreenData": true,
+     "unsentOnServer": true
+    }
+   },
+   "surveyTool03k": {
+    "error": null,
+    "afterSave": {
+     "cardHasImage": true,
+     "screenRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40
+     },
+     "deviceBackupRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40
+     }
+    },
+    "afterRefresh": {
+     "cardHasImage": true,
+     "cardText": "재현K사진기록 × duration 30 🤖 데일리 클리어 [기본] 미루지 않고 끝맺음을 지어 산뜻한 성취감을 확보했습니다. 정리된 책상을 둘러보며 가벼운 마음으로 하루를 닫으세요. 🎯 추천 액션: 정리된 책상을 둘러보며 가벼운 마음으로 하루를 닫으세요. 00:57 메모 🌱 일상/기타 · 일상 ▾",
+     "screenRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40
+     },
+     "deviceBackupRecord": {
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40
+     }
+    },
+    "serverRowHasPhoto": false,
+    "requestKindsOnRefresh": [
+     "GET rest/users",
+     "GET rest/goals",
+     "GET rest/checkins",
+     "GET rest/user_ledger_docs",
+     "GET rest/feed_posts",
+     "POST rest/users",
+     "GET rest/team_pings",
+     "GET rest/team_ping_replies",
+     "POST rest/checkins"
+    ]
+   },
+   "surveyTool02home500": {
+    "error": null,
+    "toastAfterSave": "오늘의 실천이 안전하게 기록되었어요 (완료 · 100% 달성) ✨ (+10 EXP)",
+    "afterRefresh": {
+     "inScreenData": 0,
+     "cardsVisible": 0,
+     "deviceKeysHoldingIt": [
+      "ourgoal_records_prev_<uid>",
+      "ourgoal_records_kept_<uid>"
+     ],
+     "onServer": false,
+     "uploadRows": [
+      2,
+      2
+     ]
+    }
+   }
+  }
+ }
+}

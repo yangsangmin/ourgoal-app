@@ -1,0 +1,453 @@
+{
+  "task": "TASK-ES-695",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-695-DIR-006-P0-LOCAL-KEEP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "다시 열 때 기기 백업을 덮어쓰기 전에, 서버가 주지 않는 칸(사진 · 피드백 · 에너지 · 집중 · 노션 구조 · 테마 부가정보)을 같은 계정 · 같은 id 의 기기 값에서 되붙인다. 본문이 달라진 기록에는 옛 피드백 · 구조를 되붙이지 않는다"
+    },
+    {
+      "id": "R2",
+      "text": "기기에만 있고 서버 응답에 없는 기록 · 목표는 지우지 않고 보관 열쇠로 옮긴다. 올리지 않는다. 화면은 지금과 같다"
+    },
+    {
+      "id": "R3",
+      "text": "덮어쓰기 직전의 기기 백업 사본을 한 세대 남긴다(되돌리기용). 보관과 사본 쓰기를 되읽어 확인한 뒤에만 원래 백업을 바꾼다. 아직 되찾지 못한 것이 든 사본과 보관 항목은 덮지 않는다"
+    },
+    {
+      "id": "R4",
+      "text": "되붙이기가 다시 열 때뿐 아니라 수동 동기화와 다음 저장에서도 지켜진다"
+    },
+    {
+      "id": "R5",
+      "text": "서버에 무엇을 더 묻거나 더 올리지 않는다. 서버 표 · 화면 · 저장 순서는 그대로다"
+    },
+    {
+      "id": "R6",
+      "text": "고치기 전후를 브라우저 재현 도구로 견준 결과와 부품 시험 결과가 측정 파일에 실려 있다(작업자 측정 기록)"
+    },
+    {
+      "id": "R7",
+      "text": "부품 시험이 묶음 시험 경로에서 돈다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "unverified",
+      "domain": "persistence",
+      "statement": "로그인 사용자가 사진을 붙인 기록을 저장하고(서버 성공) 앱을 다시 열어도 기록 카드에 사진과 AI 피드백이 보이고, 이 기기의 백업에 사진 · 피드백 · 에너지 · 집중이 남아 있다",
+      "touches": [
+        "js/core/profile-load.js",
+        "js/core/local-keep.js",
+        "index.html",
+        "tests/local-keep-p0.test.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "가짜 서버가 아니라 실제 로그인 계정으로 앱을 열 수 있는 사람 또는 세션(운영 실계정 하네스 docs/design/harness/real-account-check.js, 테스트 계정)",
+        "how": [
+          "테스트 계정으로 로그인한다",
+          "홈에서 사진을 붙이고 에너지 · 집중 값을 바꾼 뒤 한 줄 기록을 저장한다",
+          "AI 피드백이 붙을 때까지 기다린 뒤 기록 탭에서 그 카드에 사진과 피드백이 보이는지 본다",
+          "새로 고침한다",
+          "기록 탭의 같은 카드에 사진과 피드백이 그대로 보이는지 본다",
+          "개발자 도구에서 ourgoal_records_backup_<내 uid> 의 그 기록에 photo · feedback · energy · focus 가 있는지 본다"
+        ],
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현에서 고치기 전에는 새로 고침 뒤 카드에 사진 · 피드백이 없고 백업의 네 칸이 비었으며, 고친 뒤에는 넷 다 남았다(reports/TASK-ES-695/measurement.json 의 browser.before · browser.after, 표는 reports/TASK-ES-695/evidence/before-after.md 1절). 부품 시험 tests/local-keep-p0.test.js 의 「(i)」 2건 · 「조건 ③」 1건 · 맞물림 1건. 본문이 달라진 기록(조건 ③)은 부품 시험으로만 보았다."
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "persistence",
+      "statement": "로그인 사용자가 올리지 못한 기록 · 목표(서버가 실패로 답함)는 앱을 다시 열 때 화면에는 없고(고치기 전과 같다), 이 기기의 보관 열쇠(ourgoal_records_kept_<uid> · ourgoal_goals_kept_<uid>)에 남으며, 다시 올라가지 않는다",
+      "touches": [
+        "js/core/profile-load.js",
+        "js/core/local-keep.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "로그인 계정과, 그 계정의 저장 요청만 실패하게 만들 수 있는 환경(개발자 도구의 요청 차단 등)을 가진 사람",
+        "how": [
+          "서버에 기록이 1건 이상 있는 테스트 계정으로 로그인한다",
+          "개발자 도구에서 기록 올리기 요청(checkins)을 막는다",
+          "홈에서 한 줄 기록을 저장한다(성공 알림이 뜬다 — 이 PR 은 알림을 고치지 않았다)",
+          "앱 탭을 닫는다. 요청 차단을 풀고 앱을 다시 연다",
+          "기록 탭에 그 기록이 없는지 본다(고치기 전과 같다)",
+          "개발자 도구에서 ourgoal_records_kept_<내 uid> 에 그 기록이 있는지, 서버에 올라가지 않았는지 본다",
+          "목표도 같은 순서로 본다(목표 올리기 요청 goals 를 막고 새 목표를 만든다)"
+        ],
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 고치기 전에는 다시 연 뒤 기기 어느 열쇠에도 없었고, 고친 뒤에는 보관 열쇠에 기록 1건 · 목표 1건이 있었으며 다시 연 뒤 · 다음 저장 뒤 · 수동 동기화 뒤 모두 서버에 없었다(measurement.json browser.after.photoAndUnsentRecord · unsentGoal). 부품 시험 「(ii)」 2건 · 목표 1건 · 맞물림 2건."
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "persistence",
+      "statement": "로그인 사용자의 기기 백업을 다시 열 때 바꾸기 전에 직전 사본(ourgoal_records_prev_<uid> · ourgoal_goals_prev_<uid>)이 덮어쓰기 전 글자 그대로 남고, 되돌리면 백업이 그 글자로 돌아온다. 기기 저장소가 가득 차 보관이나 직전 사본을 쓰지 못하면 원래 백업을 바꾸지 않는다",
+      "touches": [
+        "js/core/local-keep.js",
+        "js/core/profile-load.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "가짜 서버가 아니라 실제 로그인 계정으로 앱을 열 수 있는 사람 또는 세션(운영 실계정 하네스 docs/design/harness/real-account-check.js, 테스트 계정)",
+        "how": [
+          "서버에 기록이 1건 이상 있는 테스트 계정으로 로그인하고, 올리지 못한 기록을 하나 만든다(C2 의 순서)",
+          "개발자 도구에서 ourgoal_records_backup_<내 uid> 의 글자를 복사해 둔다",
+          "앱을 다시 연다",
+          "ourgoal_records_prev_<내 uid> 의 글자가 복사해 둔 것과 같은지 본다",
+          "콘솔에서 OurgoalLocalKeep.restorePrevious(\"records\", \"<내 uid>\") 를 부르고 백업의 글자가 복사해 둔 것과 같아졌는지 본다(한 번 더 부르면 원래대로 돌아간다)",
+          "용량 초과: 개발자 도구에서 localStorage 를 거의 가득 채운 뒤 앱을 다시 열고, 백업에 올리지 못한 기록이 그대로 남아 있는지 본다"
+        ],
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 직전 사본 = 덮어쓰기 전 글자, 되돌리기 뒤 백업 = 덮어쓰기 전 글자(measurement.json browser.after.photoAndUnsentRecord.rollback). 용량 초과는 진짜 QuotaExceededError 로 쟀다(browser.after.storageNearlyFull). 「일부만 쓰임」 「쓰는 사이 종료」와 조건 ②(직전 사본에만 남은 칸을 먼저 보관)는 부품 시험으로만 보았다(tests/local-keep-p0.test.js 「조건 ①」 5건 · 「조건 ②」 2건)."
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "unverified",
+      "domain": "persistence",
+      "statement": "로그인 사용자가 다시 연 뒤 저장이 한 번 더 돌거나 설정의 동기화 단추를 눌러도 사진 · 피드백이 기록 카드와 기기 백업에 남고, 보관을 확인하지 못해 백업에 남겨 둔 기록은 그 저장이 백업을 다시 쓸 때에도 지워지지 않는다",
+      "touches": [
+        "js/core/home-cockpit.js",
+        "js/core/server-records-sync.js",
+        "js/tabs/settings/guest-migration.js",
+        "js/core/local-keep.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "가짜 서버가 아니라 실제 로그인 계정으로 앱을 열 수 있는 사람 또는 세션(운영 실계정 하네스 docs/design/harness/real-account-check.js, 테스트 계정)",
+        "how": [
+          "C1 의 순서로 사진 기록을 저장하고 새로 고침한다",
+          "다른 탭으로 갔다가 기록 탭으로 돌아온다(저장이 돈다). 카드에 사진과 피드백이 그대로인지 본다",
+          "설정에서 「내 데이터 전체 복원 및 동기화」 단추를 누른다. 끝난 뒤 기록 탭의 카드에 사진과 피드백이 그대로인지 본다",
+          "게스트로 기록을 만든 뒤 가입 · 로그인해(게스트 이관) 기록이 넘어오는지 본다"
+        ],
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 다음 저장 뒤 · 수동 동기화 뒤 · 두 번째 다시 열기 뒤에도 카드에 사진과 피드백이 있었다(measurement.json browser.after.photoAndUnsentRecord.afterNextSave · afterManualSync · afterSecondReopen). 저장소가 거의 찬 상태에서는 올리지 못한 기록이 다음 저장 뒤에도 백업에 남았다(storageNearlyFull.nextSaveWhileFull). syncServerRecords 와 migrateGuestDataToUser 의 고친 줄은 직접 돌려 보지 못했다(글자로만 확인) — reports/TASK-ES-695/evidence/before-after.md 3절."
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "behavior",
+      "change": "preserve",
+      "domain": "persistence",
+      "statement": "게스트가 홈에서 한 줄 기록을 저장하고 앱을 다시 열어도 그 기록이 기록 탭에 남아 있다 — 저장 함수의 기기 백업 쓰기가 새 기관을 거치게 바뀌었어도 게스트의 저장과 다시 열기는 고치기 전과 같다(기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "index.html",
+        "js/core/home-cockpit.js",
+        "js/core/local-keep.js"
+      ],
+      "scenario": "scenarios/guest-checkin-survives-reopen.json"
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험에서 실패한 것이 0개다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "unit.failed",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험의 수는 26개다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "unit.total",
+        "equals": 26
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고치기 전: 사진 기록을 저장하고 새로 고침하면 기록 카드에 사진이 없다(조사 도구 03-k, 작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.before.surveyTool03k.afterRefresh.cardHasImage",
+        "equals": false
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 같은 순서에서 기록 카드에 사진이 있다(조사 도구 03-k, 작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.surveyTool03k.afterRefresh.cardHasImage",
+        "equals": true
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 새로 고침 뒤 기기 백업의 그 기록에 피드백이 있다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.surveyTool03k.afterRefresh.deviceBackupRecord.feedback",
+        "equals": true
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 새로 고침 뒤 기기 백업의 그 기록에 에너지 60 이 남아 있다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.surveyTool03k.afterRefresh.deviceBackupRecord.energy",
+        "equals": 60
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 새로 고침 뒤 기기 백업의 그 기록에 집중 40 이 남아 있다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.surveyTool03k.afterRefresh.deviceBackupRecord.focus",
+        "equals": 40
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 올리지 못한 기록이 다시 연 뒤 보관 열쇠에 1건 있다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.photoAndUnsentRecord.afterReopen.unsentInKeptKey",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 그 기록은 다시 연 뒤 화면 데이터에 없다 — 화면은 고치기 전과 같다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.photoAndUnsentRecord.afterReopen.unsentInScreenData",
+        "equals": false
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 그 기록은 수동 동기화 뒤에도 서버에 없다 — 보관한 것을 올리지 않는다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.photoAndUnsentRecord.afterManualSync.unsentOnServer",
+        "equals": false
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 올리지 못한 목표가 다시 연 뒤 목표 보관 열쇠에 1건 있다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.unsentGoal.afterReopen.inKeptKey",
+        "equals": 1
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 직전 사본이 덮어쓰기 전 백업 글자와 같다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.photoAndUnsentRecord.afterReopen.prevEqualsBackupBeforeReopen",
+        "equals": true
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 되돌리면 백업이 덮어쓰기 전 글자와 같다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.photoAndUnsentRecord.rollback.backupEqualsBeforeReopen",
+        "equals": true
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 기기 저장소가 거의 찬 채로 다시 열면 보관 쓰기 단계에서 멈춘다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.storageNearlyFull.reopenWhileFull.commit.stage",
+        "equals": "kept-failed"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 그때 올리지 못한 기록은 다음 저장 뒤에도 기기 백업에 남아 있다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.storageNearlyFull.nextSaveWhileFull.unsentStillInBackup",
+        "equals": true
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "고친 뒤: 수동 동기화 뒤에도 기록 카드에 사진이 있다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/measurement.json",
+        "path": "browser.after.photoAndUnsentRecord.afterManualSync.photoCardHasImage",
+        "equals": true
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 묶음 시험 경로(test-shipyard-modular)에서 돈다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/local-keep-p0.test.js');"
+      }
+    }
+  ],
+  "outOfScopeReports": {
+    "note": "보고만 — 이 PR 에서 고치지 않았다(지시의 범위 밖이거나 결심 대기)",
+    "items": [
+      {
+        "id": "X1",
+        "text": "목표에도 서버로 가지 않는 칸이 있다(startDate · rescaledCount · teamLinkId 등 — 글자 찾기). 계약 (i) 의 칸은 기록의 칸이라 목표의 칸은 되붙이지 않았다. 이 PR 뒤에도 다시 열 때 백업에서 빠지고 직전 사본 한 세대에만 남는다"
+      },
+      {
+        "id": "X2",
+        "text": "본문 말고 다른 서버 칸(시각 · 분류 · 테마)만 기기에서 고치고 올리지 못한 경우는 다시 열 때 서버 값으로 바뀐다(직전 사본 한 세대에만 남는다) — 미확정 변경 목록은 묶음 B"
+      },
+      {
+        "id": "X3",
+        "text": "기기 저장소에 한 자도 안 남으면 로그인 사용자의 다시 열기가 전체 사본(ourgoal_guest_profile) 길로 들어가 서버 읽기보다 먼저 기기 기록을 통째로 올린다(reports/TASK-ES-695/evidence/raw-after/07-p0-quota-남김0-after.json 의 첫 요청 순서 — 고친 뒤에만 쟀다). 원래 동작이다"
+      },
+      {
+        "id": "X4",
+        "text": "보관 항목을 사용자가 보거나 되찾는 화면, 보관함을 지우는 규칙은 없다(지시함 결심 대기). 조건 ② 의 구현 때문에 사용자가 스스로 뗀 사진이 한 번 보관에 남을 수 있다"
+      },
+      {
+        "id": "X5",
+        "text": "서버 기록이 0건이거나 읽기가 실패한 다시 열기는 지금처럼 기기 것을 통째로 다시 올린다(계약 3절이 묶음 B 에서 그친다고 적은 자리)"
+      },
+      {
+        "id": "X6",
+        "text": "법령 전문의 「용량 초과를 삼키지 말고 관제센터 저널로 보낸다」는 하지 않았다 — 이 묶음은 서버 · 바깥으로 더 보내지 않는다. 콘솔 경고 한 줄과 OurgoalLocalKeep.status() 의 notes 에만 남긴다"
+      }
+    ]
+  }
+}
