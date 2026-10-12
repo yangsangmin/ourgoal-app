@@ -1,0 +1,84 @@
+{
+  "module": "C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\after\\head\\js\\core\\local-keep.js",
+  "cases": [
+    {
+      "name": "unique previous records",
+      "stage": "written",
+      "uniquePreviousStillAnywhere": true,
+      "data": {
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"text\":\"current\"}]",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"text\":\"current\",\"category\":\"x\"}]",
+        "ourgoal_records_kept_11111111-1111-4111-8111-111111111111": "{\"v\":1,\"items\":[{\"id\":\"only-prev\",\"why\":\"not-in-server-response\",\"keptAt\":\"2026-10-12T17:40:10.086Z\",\"fp\":\"6c7b7133:86\",\"item\":{\"id\":\"only-prev\",\"text\":\"not restored\",\"photo\":\"unique-photo\"}}]}"
+      }
+    },
+    {
+      "name": "unique previous goals",
+      "stage": "written",
+      "uniquePreviousStillAnywhere": true,
+      "data": {
+        "ourgoal_goals_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"title\":\"current\"}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"title\":\"changed\"}]",
+        "ourgoal_goals_kept_11111111-1111-4111-8111-111111111111": "{\"v\":1,\"items\":[{\"id\":\"only-prev\",\"why\":\"not-in-server-response\",\"keptAt\":\"2026-10-12T17:40:10.087Z\",\"fp\":\"b2f8dc6a:87\",\"item\":{\"id\":\"only-prev\",\"title\":\"not restored\",\"photo\":\"unique-photo\"}}]}"
+      }
+    },
+    {
+      "name": "broken previous overwritten",
+      "brokenRawRetained": true,
+      "data": {
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"a\"}]",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"a\",\"category\":\"x\"}]",
+        "ourgoal_records_kept_11111111-1111-4111-8111-111111111111": "{\"v\":1,\"items\":[{\"id\":null,\"why\":\"unreadable-backup\",\"keptAt\":\"2026-10-12T17:40:10.088Z\",\"fp\":\"b5477a8f:61\",\"item\":{\"id\":null,\"raw\":\"[BROKEN-UNIQUE-RECOVERY\"}}]}"
+      }
+    },
+    {
+      "name": "kept transient read errors lose old kept",
+      "stage": "kept-failed",
+      "oldKeptRetained": true,
+      "data": {
+        "ourgoal_records_kept_11111111-1111-4111-8111-111111111111": "{\"v\":1,\"items\":[{\"id\":\"lost\",\"why\":\"not-in-server-response\",\"fp\":\"old\",\"item\":{\"id\":\"lost\",\"text\":\"unique-old-kept\"}}]}",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"new\",\"text\":\"new local\"},{\"id\":\"r\",\"text\":\"a\"}]"
+      }
+    },
+    {
+      "name": "failed kept text-diff followed by save",
+      "stage": "kept-failed",
+      "preservedImmediately": true,
+      "feedbackAfterNextSave": true,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"local-edited\",\"feedback\":\"unique-feedback\"}]"
+      }
+    },
+    {
+      "name": "rollback drops sole current after interrupted swap",
+      "result": {
+        "kind": "records",
+        "ok": false,
+        "stage": "prev-failed",
+        "swapped": false
+      },
+      "uniqueCurrentRetained": true,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"old\",\"text\":\"old\"}]",
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"old\",\"text\":\"old\"}]",
+        "ourgoal_records_kept_11111111-1111-4111-8111-111111111111": "{\"v\":1,\"items\":[{\"id\":null,\"why\":\"restore-current\",\"keptAt\":\"2026-10-12T17:40:10.091Z\",\"fp\":\"6922315c:82\",\"item\":{\"id\":null,\"raw\":\"[{\\\"id\\\":\\\"new\\\",\\\"text\\\":\\\"unique-current\\\"}]\"}}]}"
+      }
+    },
+    {
+      "name": "quota release destroys sole previous record",
+      "attempts": 2,
+      "uniquePreviousRetained": true,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"current\"},{\"id\":\"new\",\"text\":\"new\"}]",
+        "ourgoal_records_kept_11111111-1111-4111-8111-111111111111": "{\"v\":1,\"items\":[{\"id\":\"only-prev\",\"why\":\"not-in-server-response\",\"keptAt\":\"2026-10-12T17:40:10.091Z\",\"fp\":\"e3c17e49:87\",\"item\":{\"id\":\"only-prev\",\"text\":\"only recovery\",\"photo\":\"unique-photo\"}}]}"
+      }
+    },
+    {
+      "name": "stale two-tab plan overwrites concurrent append",
+      "stage": "source-changed",
+      "concurrentNewRetained": true,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"current\"},{\"id\":\"new\",\"text\":\"unique-other-tab\"}]"
+      }
+    }
+  ]
+}

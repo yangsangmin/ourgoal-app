@@ -85,7 +85,8 @@
           L.state.profile.records = mergedRes.records;
           try {
             /* [#TASK-ES-695] DIR-006 묶음 P0: 다시 열 때 보관을 확인하지 못해 백업에 남겨 둔 것을 이 쓰기가 지우지 않게 한다(없으면 쓰는 글자는 전과 같다) */
-            localStorage.setItem('ourgoal_records_backup_' + uid, JSON.stringify(window.OurgoalLocalKeep ? window.OurgoalLocalKeep.withHeld('records', uid, mergedRes.records) : mergedRes.records));
+            if(window.OurgoalLocalKeep) window.OurgoalLocalKeep.setBackupFromSave('records', uid, mergedRes.records);
+            else localStorage.setItem('ourgoal_records_backup_' + uid, JSON.stringify(mergedRes.records));
           } catch(e){}
           updated = true;
         }
@@ -108,7 +109,8 @@
       if((!L.state.profile.goals || L.state.profile.goals.length === 0) && data.goals && data.goals.length > 0){
         L.state.profile.goals = data.goals;
         try {
-          localStorage.setItem('ourgoal_goals_backup_' + uid, JSON.stringify(window.OurgoalLocalKeep ? window.OurgoalLocalKeep.withHeld('goals', uid, data.goals) : data.goals));
+          if(window.OurgoalLocalKeep) window.OurgoalLocalKeep.setBackupFromSave('goals', uid, data.goals);
+          else localStorage.setItem('ourgoal_goals_backup_' + uid, JSON.stringify(data.goals));
         } catch(e){}
         updated = true;
       }

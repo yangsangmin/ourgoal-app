@@ -217,8 +217,14 @@
     try {
       /* [#TASK-ES-695] DIR-006 묶음 P0: 다시 열 때 보관을 확인하지 못해 백업에 남겨 둔 것을 이 쓰기가 지우지 않게 한다(없으면 쓰는 글자는 전과 같다) */
       var keepOnDevice = window.OurgoalLocalKeep || null;
-      if(targetProfile.goals) localStorage.setItem('ourgoal_goals_backup_' + targetUserId, JSON.stringify(keepOnDevice ? keepOnDevice.withHeld('goals', targetUserId, targetProfile.goals) : targetProfile.goals));
-      if(targetProfile.records) localStorage.setItem('ourgoal_records_backup_' + targetUserId, JSON.stringify(keepOnDevice ? keepOnDevice.withHeld('records', targetUserId, targetProfile.records) : targetProfile.records));
+      if(targetProfile.goals) {
+        if(keepOnDevice) keepOnDevice.setBackupFromSave('goals', targetUserId, targetProfile.goals);
+        else localStorage.setItem('ourgoal_goals_backup_' + targetUserId, JSON.stringify(targetProfile.goals));
+      }
+      if(targetProfile.records) {
+        if(keepOnDevice) keepOnDevice.setBackupFromSave('records', targetUserId, targetProfile.records);
+        else localStorage.setItem('ourgoal_records_backup_' + targetUserId, JSON.stringify(targetProfile.records));
+      }
       if(targetProfile.settings) localStorage.setItem('ourgoal_settings_' + targetUserId, JSON.stringify(targetProfile.settings));
     } catch(bkErr){}
 

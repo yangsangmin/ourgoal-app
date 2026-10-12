@@ -28,6 +28,8 @@
 
   /* 보관을 확인하지 못해(용량 초과 등) 백업에 그대로 둬야 하는 「기기에만 있는 것」. 이 실행 동안만 기억한다(다음 실행의 loadProfile 이 백업에서 다시 찾는다). */
   var held = { records: {}, goals: {} };
+  /* 본문 차이·해석 불가 원문을 보관하지 못한 백업은 다음 저장에서도 교체하지 않는다. 자료는 원래 열쇠에 남긴다. */
+  var blocked = { records: {}, goals: {} };
   var last = { records: null, goals: null, notes: [] };
   /* 삼키지 않는다: 기기 저장소가 낸 오류는 자리와 글을 적어 둔다(status 로 본다). 화면에는 내놓지 않는다(P0 는 화면을 바꾸지 않는다) */
   function note(where, e) { if (last.notes.length < 20) last.notes.push({ where: where, error: String((e && (e.name || e.message)) || e) }); }
@@ -39,22 +41,30 @@
   }
   function has(v) { return v !== undefined && v !== null; }
   function inList(list, k) { return list.indexOf(k) !== -1; }
-  function readRaw(st, key) { try { var v = st.getItem(key); return has(v) ? String(v) : null; } catch (e) { note('read:' + key.split('_').slice(0, 3).join('_'), e); return null; } }
+  function readRaw(st, key) { try { var v = st.getItem(key); return has(v) ? String(v) : null; } catch (e) { note('read:' + key.split('_').slice(0, 3).join('_'), e); throw e; } }
   /* 글자 → 배열. 없으면 [], 배열이 아니거나 깨졌으면 null */
   function parseList(raw) {
     if (raw === null) return [];
     try { var v = JSON.parse(raw); return Array.isArray(v) ? v : null; } catch (e) { return null; }
   }
-  /* 쓴 뒤 되읽어 글자가 같을 때만 true. 다르면 before(쓰기 전 글자, 없었으면 null)로 되돌려 놓는다 */
+  /* 쓰기 직전 값이 예상과 같은지 확인한다. 원자적 쓰기 예외에는 복구 쓰기를 하지 않는다:
+     용량 오류 뒤 남은 값은 다른 탭의 것일 수 있다. 예외 없이 잘려 쓰인 경우에만 그 글자가 그대로인지 다시 보고 복구한다.
+     localStorage에는 CAS가 없으므로 비교와 쓰기 사이의 모든 탭 경쟁을 해결한 것은 아니다. */
   function writeVerified(st, key, raw, before) {
-    var ok = false;
-    try { st.setItem(key, raw); ok = (readRaw(st, key) === raw); } catch (e) { ok = false; note('write:' + key.split('_').slice(0, 3).join('_'), e); }
-    if (!ok) {
+    try {
+      if (readRaw(st, key) !== before) return false;
+      st.setItem(key, raw);
+    } catch (e) { note('write:' + key.split('_').slice(0, 3).join('_'), e); return false; }
+    var after;
+    try { after = readRaw(st, key); } catch (e2) { return false; }
+    if (after === raw) return true;
+    /* 다른 작성자의 값·읽지 못한 값을 오래된 값으로 덮지 않는다. 잘린 쓰기의 재현만 복구한다. */
+    if (after !== null && after.length < raw.length && raw.slice(0, after.length) === after) {
       try {
-        if (readRaw(st, key) !== before) { if (before === null) st.removeItem(key); else st.setItem(key, before); }
-      } catch (e2) { note('putBack:' + key.split('_').slice(0, 3).join('_'), e2); }
+        if (readRaw(st, key) === after) { if (before === null) st.removeItem(key); else st.setItem(key, before); }
+      } catch (e3) { note('putBack:' + key.split('_').slice(0, 3).join('_'), e3); }
     }
-    return ok;
+    return false;
   }
   /* 같은 내용을 두 번 보관하지 않기 위한 지문(FNV-1a 32비트 + 길이). 보안용이 아니다 */
   function fingerprint(s) {
@@ -85,21 +95,28 @@
     var st = getStore(store);
     var empty = { v: KEPT_VERSION, items: [] };
     if (!st || !has(uid) || uid === '') return empty;
-    var raw = readRaw(st, KEPT_PREFIX[kind] + uid);
-    if (raw === null) return empty;
-    try { var d = JSON.parse(raw); return (d && Array.isArray(d.items)) ? d : null; } catch (e) { note('kept-parse', e); return null; }
+    try {
+      var raw = readRaw(st, KEPT_PREFIX[kind] + uid);
+      if (raw === null) return empty;
+      var d = JSON.parse(raw); return (d && Array.isArray(d.items)) ? d : null;
+    } catch (e) { note('kept-read', e); return null; }
   }
   /* 보관 항목을 더한다(같은 지문은 한 번만). 쓴 뒤 되읽어 확인한다. 이미 있는 항목은 지우거나 바꾸지 않는다 */
   function addKept(st, kind, uid, adds) {
     if (!adds.length) return { ok: true, added: 0 };
     var key = KEPT_PREFIX[kind] + uid;
-    var before = readRaw(st, key);
-    var doc = readKept(kind, uid, st);
+    var before, doc;
+    try {
+      before = readRaw(st, key);
+      doc = before === null ? { v: KEPT_VERSION, items: [] } : JSON.parse(before);
+      if (!doc || !Array.isArray(doc.items)) doc = null;
+    } catch (e) { note('kept-read', e); return { ok: false, added: 0, why: 'kept-unreadable' }; }
     if (!doc) return { ok: false, added: 0, why: 'kept-unreadable' }; /* 읽을 수 없는 보관 글자는 덮어쓰지 않는다 */
+    /* 지문만으로 중복 판별하지 않는다(충돌이 고유 원문을 없애지 않게). */
     var seen = {};
-    doc.items.forEach(function (it) { if (it && it.fp) seen[it.fp] = true; });
+    doc.items.forEach(function (it) { if (it) seen[it.why + '|' + JSON.stringify(it.item)] = true; });
     var added = 0;
-    adds.forEach(function (a) { if (!seen[a.fp]) { seen[a.fp] = true; doc.items.push(a); added++; } });
+    adds.forEach(function (a) { var k = a.why + '|' + JSON.stringify(a.item); if (!seen[k]) { seen[k] = true; doc.items.push(a); added++; } });
     if (!added) return { ok: true, added: 0 };
     doc.v = KEPT_VERSION;
     return writeVerified(st, key, JSON.stringify(doc), before) ? { ok: true, added: added } : { ok: false, added: 0, why: 'kept-write' };
@@ -176,25 +193,30 @@
     return out;
   }
 
-  /* 직전 사본을 새 것으로 바꾸기 전에: 직전 사본에는 있는데 지금 백업의 같은 id 기록에서 빠진 「서버가 주지 않는 칸」을 보관할 항목으로 고른다.
-     (이미 빠진 것이 있는 백업으로 직전 사본을 덮어 하나뿐인 사진을 잃지 않게 한다. 지금 백업에 없는 id 는 고르지 않는다 — 사용자가 지운 기록일 수 있다) */
-  function missingFromPrev(st, uid, currentRaw) {
+  /* 직전 사본의 고유 id·목표·기기 칸·해석 불가 원문은 교체/삭제 전에 보관한다.
+     현재 백업에 없다는 것만으로 사용자가 지운 자료라고 단정하지 않는다. */
+  function missingFromPrev(st, kind, uid, currentRaw) {
     var adds = [];
-    var oldPrevRaw = readRaw(st, PREV_PREFIX.records + uid);
+    var oldPrevRaw = readRaw(st, PREV_PREFIX[kind] + uid);
     if (oldPrevRaw === null || oldPrevRaw === currentRaw) return adds;
     var oldList = parseList(oldPrevRaw), cur = parseList(currentRaw);
-    if (!oldList || !cur) return adds;
+    if (!oldList) return [entry(WHY.UNREADABLE, { id: null, raw: oldPrevRaw })];
     var curById = {};
-    cur.forEach(function (c) { if (c && has(c.id) && !curById[String(c.id)]) curById[String(c.id)] = c; });
+    (cur || []).forEach(function (c) { if (c && has(c.id) && !curById[String(c.id)]) curById[String(c.id)] = c; });
     oldList.forEach(function (x) {
-      if (!x || !has(x.id)) return;
-      var y = curById[String(x.id)];
-      if (!y) return;
+      var y = x && has(x.id) ? curById[String(x.id)] : null;
+      if (!y) { adds.push(entry(WHY.NOT_IN_RESPONSE, x)); return; }
+      if (kind === 'goals') {
+        if (JSON.stringify(x) !== JSON.stringify(y)) adds.push(entry(WHY.MISSING_IN_BACKUP, x));
+        return;
+      }
       var miss = { id: x.id, text: textOf(x) }, n = 0;
       Object.keys(x).forEach(function (k) {
-        if (inList(SERVER_RECORD_KEYS, k) || !has(x[k]) || has(y[k])) return;
+        if (inList(SERVER_RECORD_KEYS, k) || !has(x[k])) return;
+        if (JSON.stringify(x[k]) === JSON.stringify(y[k]) && !(textOf(x) !== textOf(y) && inList(TEXT_BOUND_KEYS, k))) return;
         miss[k] = x[k]; n++;
       });
+      if (textOf(x) !== textOf(y)) n++;
       if (n) adds.push(entry(WHY.MISSING_IN_BACKUP, miss));
     });
     return adds;
@@ -209,25 +231,35 @@
     var prevRaw = plan.prevRaw;
     var nextRaw = JSON.stringify(plan.next);
     var adds = plan.adds;
-    if (prevRaw === nextRaw && !adds.length) { delete held[kind][uid]; res.ok = true; res.stage = 'same'; return res; }
-    if (kind === 'records' && prevRaw !== null && prevRaw !== nextRaw) adds = adds.concat(missingFromPrev(st, uid, prevRaw));
+    if (readRaw(st, backupKey) !== prevRaw) { blocked[kind][uid] = true; res.stage = 'source-changed'; return res; }
+    if (prevRaw === nextRaw && !adds.length) { delete held[kind][uid]; delete blocked[kind][uid]; res.ok = true; res.stage = 'same'; return res; }
+    var oldPrevRaw = readRaw(st, prevKey);
+    if (prevRaw !== null && prevRaw !== nextRaw) adds = adds.concat(missingFromPrev(st, kind, uid, prevRaw));
     /* 1) 보관 */
     var k = addKept(st, kind, uid, adds);
     if (!k.ok) {
       var keep = adds.filter(function (a) { return a.why === WHY.NOT_IN_RESPONSE && a.item && has(a.item.id); }).map(function (a) { return a.item; });
       if (keep.length) held[kind][uid] = keep; else delete held[kind][uid];
+      if (adds.some(function (a) { return a.why !== WHY.NOT_IN_RESPONSE || !a.item || !has(a.item.id); })) blocked[kind][uid] = true;
+      /* 목표에는 되붙이기 규칙이 없다. 같은 id의 기기 칸까지 달라졌으면 누락 id만 붙여도 원문을 못 지킨다. */
+      if (kind === 'goals') {
+        var nextById = {};
+        plan.next.forEach(function (x) { if (x && has(x.id)) nextById[String(x.id)] = x; });
+        if ((parseList(prevRaw) || []).some(function (x) { return x && has(x.id) && nextById[String(x.id)] && JSON.stringify(x) !== JSON.stringify(nextById[String(x.id)]); })) blocked[kind][uid] = true;
+      }
       res.held = keep.length; res.stage = 'kept-failed'; return res; /* 원래 백업은 그대로 */
     }
-    delete held[kind][uid];
     res.keptAdded = k.added;
+    if (readRaw(st, backupKey) !== prevRaw || readRaw(st, prevKey) !== oldPrevRaw) { blocked[kind][uid] = true; res.stage = 'source-changed'; return res; }
+    delete held[kind][uid]; delete blocked[kind][uid];
     if (prevRaw === nextRaw) { res.ok = true; res.stage = 'same'; return res; }
     /* 2) 직전 사본 — 덮어쓰기 직전의 백업 글자 그대로 */
     if (prevRaw !== null) {
-      if (!writeVerified(st, prevKey, prevRaw, readRaw(st, prevKey))) { res.stage = 'prev-failed'; return res; } /* 원래 백업은 그대로 */
+      if (!writeVerified(st, prevKey, prevRaw, oldPrevRaw)) { blocked[kind][uid] = true; res.stage = 'prev-failed'; return res; } /* 원래 백업은 그대로 */
       res.prevWritten = true;
     }
     /* 3) 백업 */
-    if (!writeVerified(st, backupKey, nextRaw, prevRaw)) { res.stage = 'backup-failed'; return res; }
+    if (!writeVerified(st, backupKey, nextRaw, prevRaw)) { blocked[kind][uid] = true; res.stage = 'backup-failed'; return res; }
     res.backupWritten = true; res.ok = true; res.stage = 'written';
     return res;
   }
@@ -245,7 +277,7 @@
       var plan = planRecords(uid, records, store);
       out.records = plan.next;
       out.result = warnIfLeft(commit('records', uid, plan, store));
-    } catch (e) { out.result = { kind: 'records', ok: false, stage: 'error', error: String(e && e.message || e) }; }
+    } catch (e) { blocked.records[uid] = true; out.result = { kind: 'records', ok: false, stage: 'error', error: String(e && e.message || e) }; }
     last.records = out.result;
     return out;
   }
@@ -255,7 +287,7 @@
       var plan = planGoals(uid, goals, store);
       out.goals = plan.next;
       out.result = warnIfLeft(commit('goals', uid, plan, store));
-    } catch (e) { out.result = { kind: 'goals', ok: false, stage: 'error', error: String(e && e.message || e) }; }
+    } catch (e) { blocked.goals[uid] = true; out.result = { kind: 'goals', ok: false, stage: 'error', error: String(e && e.message || e) }; }
     last.goals = out.result;
     return out;
   }
@@ -263,6 +295,7 @@
   /* ---------- 다음 저장 · 수동 동기화 · 게스트 이관이 백업을 쓰는 자리 ---------- */
   /* 보관을 확인하지 못해 백업에 남겨 둬야 하는 것(held)을 쓸 배열 뒤에 붙인다. 없으면 받은 배열 그대로(같은 객체) */
   function withHeld(kind, uid, list) {
+    if (blocked[kind] && blocked[kind][uid]) throw new Error('local backup retained: unresolved preservation');
     var h = held[kind] && held[kind][uid];
     if (!h || !h.length || !Array.isArray(list)) return list;
     var ids = {};
@@ -275,25 +308,34 @@
     var st = getStore(store);
     if (!st) return false;
     var prevKey = PREV_PREFIX[kind] + uid;
-    if (readRaw(st, prevKey) === null) return false;
-    if (kind === 'records') {
-      var cur = readRaw(st, BACKUP_PREFIX.records + uid);
-      var adds = cur === null ? [] : missingFromPrev(st, uid, cur);
-      if (adds.length && !addKept(st, 'records', uid, adds).ok) return false;
-    }
-    try { st.removeItem(prevKey); return readRaw(st, prevKey) === null; } catch (e) { note('releasePrev', e); return false; }
+    try {
+      var before = readRaw(st, prevKey);
+      if (before === null) return false;
+      var cur = readRaw(st, BACKUP_PREFIX[kind] + uid);
+      var adds = missingFromPrev(st, kind, uid, cur);
+      if (adds.length && !addKept(st, kind, uid, adds).ok) return false;
+      if (readRaw(st, prevKey) !== before || readRaw(st, BACKUP_PREFIX[kind] + uid) !== cur) return false;
+      st.removeItem(prevKey); return readRaw(st, prevKey) === null;
+    } catch (e) { note('releasePrev', e); return false; }
   }
   /* saveProfile 이 부른다: 백업 쓰기. 실패하면(용량 초과) 직전 사본을 내려놓고 한 번 더 쓴다. 그래도 실패하면 원래처럼 던진다 */
   function setBackupFromSave(kind, uid, list, store) {
     var st = getStore(store);
     if (!st) throw new Error('no storage');
     var key = BACKUP_PREFIX[kind] + uid;
+    var before = readRaw(st, key);
+    /* 미해결 본문·원문은 다음 저장에서도 원래 백업에 남긴다. 호출자의 화면 배열은 바꾸지 않는다. */
+    if (blocked[kind] && blocked[kind][uid]) { note('save-blocked', 'unresolved preservation'); return false; }
     var raw = JSON.stringify(withHeld(kind, uid, list));
-    try { st.setItem(key, raw); }
-    catch (e) {
-      if (!releasePrev(kind, uid, st)) throw e;
-      st.setItem(key, raw);
+    try {
+      if (!writeVerified(st, key, raw, before)) throw new Error('backup write unverified');
     }
+    catch (e) {
+      if (readRaw(st, key) !== before) throw e;
+      if (!releasePrev(kind, uid, st)) throw e;
+      if (!writeVerified(st, key, raw, before)) throw e;
+    }
+    return true;
   }
 
   /* ---------- (iii) 되돌리기: 직전 사본을 백업 자리로, 지금 백업을 직전 사본 자리로(맞바꿈 — 다시 부르면 원래대로) ---------- */
@@ -302,11 +344,20 @@
     var res = { kind: kind, ok: false, stage: 'no-store' };
     if (!st) return res;
     var backupKey = BACKUP_PREFIX[kind] + uid, prevKey = PREV_PREFIX[kind] + uid;
-    var prevRaw = readRaw(st, prevKey), curRaw = readRaw(st, backupKey);
-    if (prevRaw === null) { res.stage = 'no-previous'; return res; }
-    if (!writeVerified(st, backupKey, prevRaw, curRaw)) { res.stage = 'backup-failed'; return res; }
-    res.ok = true; res.stage = 'restored';
-    if (curRaw !== null) res.swapped = writeVerified(st, prevKey, curRaw, prevRaw);
+    try {
+      var prevRaw = readRaw(st, prevKey), curRaw = readRaw(st, backupKey);
+      if (prevRaw === null) { res.stage = 'no-previous'; return res; }
+      /* 교환의 두 번째 쓰기 실패·종료에도 현재 자료를 되찾게 먼저 온전한 글자째 보관한다. */
+      if (curRaw !== null && curRaw !== prevRaw && !addKept(st, kind, uid, [entry('restore-current', { id: null, raw: curRaw })]).ok) { res.stage = 'kept-failed'; return res; }
+      if (readRaw(st, prevKey) !== prevRaw || readRaw(st, backupKey) !== curRaw) { res.stage = 'source-changed'; return res; }
+      if (!writeVerified(st, backupKey, prevRaw, curRaw)) { res.stage = 'backup-failed'; return res; }
+      if (curRaw !== null) {
+        res.swapped = writeVerified(st, prevKey, curRaw, prevRaw);
+        if (!res.swapped) { res.stage = 'prev-failed'; return res; }
+      }
+      res.ok = true; res.stage = 'restored';
+      delete blocked[kind][uid]; delete held[kind][uid];
+    } catch (e) { res.stage = 'error'; note('restorePrevious', e); }
     return res;
   }
 
@@ -315,11 +366,13 @@
     var st = getStore(store), o = { uid: has(uid) ? String(uid) : null, records: null, goals: null };
     if (!st) return o;
     ['records', 'goals'].forEach(function (kind) {
-      var b = readRaw(st, BACKUP_PREFIX[kind] + uid), p = readRaw(st, PREV_PREFIX[kind] + uid), kd = readKept(kind, uid, st);
-      var bl = parseList(b), pl = parseList(p);
-      o[kind] = { backup: b === null ? null : { chars: b.length, count: bl ? bl.length : null }, prev: p === null ? null : { chars: p.length, count: pl ? pl.length : null },
-        kept: kd ? { count: kd.items.length, why: kd.items.reduce(function (a, it) { a[it.why] = (a[it.why] || 0) + 1; return a; }, {}) } : { unreadable: true },
-        held: (held[kind][uid] || []).length, last: last[kind] };
+      try {
+        var b = readRaw(st, BACKUP_PREFIX[kind] + uid), p = readRaw(st, PREV_PREFIX[kind] + uid), kd = readKept(kind, uid, st);
+        var bl = parseList(b), pl = parseList(p);
+        o[kind] = { backup: b === null ? null : { chars: b.length, count: bl ? bl.length : null }, prev: p === null ? null : { chars: p.length, count: pl ? pl.length : null },
+          kept: kd ? { count: kd.items.length, why: kd.items.reduce(function (a, it) { if (it) a[it.why] = (a[it.why] || 0) + 1; return a; }, {}) } : { unreadable: true },
+          held: (held[kind][uid] || []).length, blocked: !!blocked[kind][uid], last: last[kind] };
+      } catch (e) { o[kind] = { unreadable: true, last: last[kind] }; }
     });
     o.notes = last.notes.slice();
     return o;

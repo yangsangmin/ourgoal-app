@@ -1,0 +1,81 @@
+{
+  "module": "C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\before\\head\\js\\core\\local-keep.js",
+  "cases": [
+    {
+      "name": "unique previous records",
+      "stage": "written",
+      "uniquePreviousStillAnywhere": false,
+      "data": {
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"text\":\"current\"}]",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"text\":\"current\",\"category\":\"x\"}]"
+      }
+    },
+    {
+      "name": "unique previous goals",
+      "stage": "written",
+      "uniquePreviousStillAnywhere": false,
+      "data": {
+        "ourgoal_goals_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"title\":\"current\"}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"current\",\"title\":\"changed\"}]"
+      }
+    },
+    {
+      "name": "broken previous overwritten",
+      "brokenRawRetained": false,
+      "data": {
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"a\"}]",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"a\",\"category\":\"x\"}]"
+      }
+    },
+    {
+      "name": "kept transient read errors lose old kept",
+      "stage": "written",
+      "oldKeptRetained": false,
+      "data": {
+        "ourgoal_records_kept_11111111-1111-4111-8111-111111111111": "{\"v\":1,\"items\":[{\"id\":\"new\",\"why\":\"not-in-server-response\",\"keptAt\":\"2026-10-12T17:40:09.941Z\",\"fp\":\"d3b4471f:54\",\"item\":{\"id\":\"new\",\"text\":\"new local\"}}]}",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"a\"}]",
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"new\",\"text\":\"new local\"},{\"id\":\"r\",\"text\":\"a\"}]"
+      }
+    },
+    {
+      "name": "failed kept text-diff followed by save",
+      "stage": "kept-failed",
+      "preservedImmediately": true,
+      "feedbackAfterNextSave": false,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"server-text\"}]"
+      }
+    },
+    {
+      "name": "rollback drops sole current after interrupted swap",
+      "result": {
+        "kind": "records",
+        "ok": true,
+        "stage": "restored",
+        "swapped": false
+      },
+      "uniqueCurrentRetained": false,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"old\",\"text\":\"old\"}]",
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"old\",\"text\":\"old\"}]"
+      }
+    },
+    {
+      "name": "quota release destroys sole previous record",
+      "attempts": 2,
+      "uniquePreviousRetained": false,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"current\"},{\"id\":\"new\",\"text\":\"new\"}]"
+      }
+    },
+    {
+      "name": "stale two-tab plan overwrites concurrent append",
+      "stage": "written",
+      "concurrentNewRetained": false,
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"current\",\"category\":\"x\"}]",
+        "ourgoal_records_prev_11111111-1111-4111-8111-111111111111": "[{\"id\":\"r\",\"text\":\"current\"}]"
+      }
+    }
+  ]
+}

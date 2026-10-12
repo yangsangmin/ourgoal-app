@@ -1,0 +1,47 @@
+[
+  {
+    "name": "unique previous records",
+    "stage": "written",
+    "uniquePreviousStillAnywhere": true
+  },
+  {
+    "name": "unique previous goals",
+    "stage": "written",
+    "uniquePreviousStillAnywhere": true
+  },
+  {
+    "name": "broken previous overwritten",
+    "brokenRawRetained": true
+  },
+  {
+    "name": "kept transient read errors lose old kept",
+    "stage": "kept-failed",
+    "oldKeptRetained": true
+  },
+  {
+    "name": "failed kept text-diff followed by save",
+    "stage": "kept-failed",
+    "preservedImmediately": true,
+    "feedbackAfterNextSave": true
+  },
+  {
+    "name": "rollback drops sole current after interrupted swap",
+    "result": {
+      "kind": "records",
+      "ok": false,
+      "stage": "prev-failed",
+      "swapped": false
+    },
+    "uniqueCurrentRetained": true
+  },
+  {
+    "name": "quota release destroys sole previous record",
+    "attempts": 2,
+    "uniquePreviousRetained": true
+  },
+  {
+    "name": "stale two-tab plan overwrites concurrent append",
+    "stage": "source-changed",
+    "concurrentNewRetained": true
+  }
+]

@@ -1,0 +1,368 @@
+{
+  "schema": "ourgoal.p0-correction/1",
+  "measuredAt": "2026-10-12T17:40:11.438Z",
+  "sourceState": "worktree source SHA256, before fixed correction commit",
+  "sourceFiles": [
+    {
+      "file": "js/core/local-keep.js",
+      "sha256": "1777ef7926fb23ab5d184eb73dae15e2b652f8eb1e75f79d7a87d067829d7a38",
+      "lines": 391
+    },
+    {
+      "file": "js/core/server-records-sync.js",
+      "sha256": "aea262f09794e9b804f7dec6726f28d61da5c9070a5ea8609c9c9765b14eb27a",
+      "lines": 150
+    },
+    {
+      "file": "js/tabs/settings/guest-migration.js",
+      "sha256": "9a5a773afac28db2df97c94291510d969f0b6f5abef69e68314d57d2de0a4de4",
+      "lines": 258
+    }
+  ],
+  "unit": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "guards": {
+    "module-guard": {
+      "exitCode": 0,
+      "error": null
+    },
+    "verify-integrity-gate": {
+      "exitCode": 0,
+      "error": null
+    }
+  },
+  "independent": {
+    "cases": [
+      {
+        "name": "unique previous records",
+        "before": {
+          "uniquePreviousStillAnywhere": false
+        },
+        "after": {
+          "uniquePreviousStillAnywhere": true
+        },
+        "error": null,
+        "result": null
+      },
+      {
+        "name": "unique previous goals",
+        "before": {
+          "uniquePreviousStillAnywhere": false
+        },
+        "after": {
+          "uniquePreviousStillAnywhere": true
+        },
+        "error": null,
+        "result": null
+      },
+      {
+        "name": "broken previous overwritten",
+        "before": {
+          "brokenRawRetained": false
+        },
+        "after": {
+          "brokenRawRetained": true
+        },
+        "error": null,
+        "result": null
+      },
+      {
+        "name": "kept transient read errors lose old kept",
+        "before": {
+          "oldKeptRetained": false
+        },
+        "after": {
+          "oldKeptRetained": true
+        },
+        "error": null,
+        "result": null
+      },
+      {
+        "name": "failed kept text-diff followed by save",
+        "before": {
+          "feedbackAfterNextSave": false
+        },
+        "after": {
+          "feedbackAfterNextSave": true
+        },
+        "error": null,
+        "result": null
+      },
+      {
+        "name": "rollback drops sole current after interrupted swap",
+        "before": {
+          "uniqueCurrentRetained": false
+        },
+        "after": {
+          "uniqueCurrentRetained": true
+        },
+        "error": null,
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "prev-failed",
+          "swapped": false
+        }
+      },
+      {
+        "name": "quota release destroys sole previous record",
+        "before": {
+          "uniquePreviousRetained": false
+        },
+        "after": {
+          "uniquePreviousRetained": true
+        },
+        "error": null,
+        "result": null
+      },
+      {
+        "name": "stale two-tab plan overwrites concurrent append",
+        "before": {
+          "concurrentNewRetained": false
+        },
+        "after": {
+          "concurrentNewRetained": true
+        },
+        "error": null,
+        "result": null
+      }
+    ],
+    "count": 8,
+    "allRetained": true,
+    "quotaComparison": {
+      "case": "concurrent append then atomic quota failure",
+      "capacity": 283,
+      "headResult": {
+        "kind": "records",
+        "ok": false,
+        "stage": "source-changed",
+        "reattached": 0,
+        "keptAdded": 0,
+        "prevWritten": false,
+        "backupWritten": false,
+        "held": 0
+      },
+      "baseRetainsConcurrent": true,
+      "headRetainsConcurrent": true,
+      "headBackup": "[{\"id\":\"r\",\"text\":\"old\"},{\"id\":\"other-tab\",\"text\":\"saved-during-load-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}]",
+      "scope": "product module + size-based atomic localStorage simulation; interleaving before commit; browser tabs not executed"
+    }
+  },
+  "sequences": {
+    "count": 20,
+    "assertionsNotHeld": 0,
+    "source": "sequence-probe.json",
+    "initialFailureSource": "sequence-probe.initial-failed.json"
+  },
+  "directCalls": {
+    "comparisons": [
+      {
+        "which": "syncServerRecords",
+        "failing": false,
+        "serverSame": true,
+        "stateSame": true,
+        "renderSame": true,
+        "beforeEditedFeedbackRetained": false,
+        "afterEditedFeedbackRetained": false
+      },
+      {
+        "which": "syncServerRecords",
+        "failing": true,
+        "serverSame": true,
+        "stateSame": true,
+        "renderSame": true,
+        "beforeEditedFeedbackRetained": false,
+        "afterEditedFeedbackRetained": true
+      },
+      {
+        "which": "migrateGuestDataToUser",
+        "failing": false,
+        "serverSame": true,
+        "stateSame": true,
+        "renderSame": true,
+        "beforeEditedFeedbackRetained": false,
+        "afterEditedFeedbackRetained": false
+      },
+      {
+        "which": "migrateGuestDataToUser",
+        "failing": true,
+        "serverSame": true,
+        "stateSame": true,
+        "renderSame": true,
+        "beforeEditedFeedbackRetained": false,
+        "afterEditedFeedbackRetained": true
+      }
+    ],
+    "source": "direct-calls.json",
+    "requestStateRenderUnchanged": true
+  },
+  "browserDirect": {
+    "before": {
+      "entered": true,
+      "error": null,
+      "exceptions": [],
+      "scenarios": [
+        {
+          "which": "syncServerRecords",
+          "failing": false,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": false
+        },
+        {
+          "which": "syncServerRecords",
+          "failing": true,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": false
+        },
+        {
+          "which": "migrateGuestDataToUser",
+          "failing": false,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": false
+        },
+        {
+          "which": "migrateGuestDataToUser",
+          "failing": true,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": false
+        }
+      ]
+    },
+    "after": {
+      "entered": true,
+      "error": null,
+      "exceptions": [],
+      "scenarios": [
+        {
+          "which": "syncServerRecords",
+          "failing": false,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": false
+        },
+        {
+          "which": "syncServerRecords",
+          "failing": true,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": true
+        },
+        {
+          "which": "migrateGuestDataToUser",
+          "failing": false,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": false
+        },
+        {
+          "which": "migrateGuestDataToUser",
+          "failing": true,
+          "result": true,
+          "originalFieldsPreserved": true,
+          "uniqueEditedFeedbackRetained": true
+        }
+      ]
+    }
+  },
+  "browserReopen": {
+    "source": "browser/after/raw/07-p0-records-correction.json",
+    "error": null,
+    "cardPhoto": true,
+    "cardFeedback": true,
+    "deviceRecord": {
+      "id": "7492b1cd",
+      "text": "재현P0사진기록",
+      "photo": true,
+      "feedback": true,
+      "energy": 60,
+      "focus": 40,
+      "notionDb": true,
+      "structured": true,
+      "themeMetadata": true
+    },
+    "nextSavePhoto": true,
+    "manualSyncPhoto": true,
+    "manualSyncFeedback": true,
+    "secondReopenPhoto": true,
+    "rollbackRawEqual": true,
+    "rollbackOk": true,
+    "swapBackOk": true,
+    "unsentOnServer": false
+  },
+  "browserGoals": {
+    "source": "browser/after/raw/07-p0-goal-correction.json",
+    "error": null,
+    "kept": [
+      {
+        "why": "not-in-server-response",
+        "title": "재현P0못올린목표"
+      }
+    ],
+    "unsentOnServer": false,
+    "previousRawEqual": true
+  },
+  "browserQuota": {
+    "source": "browser/after/raw/07-p0-quota-correction.json",
+    "error": null,
+    "originalUnchanged": false,
+    "unsentStillInBackup": true,
+    "freedKept": [
+      {
+        "why": "not-in-server-response",
+        "text": "재현P0못올린기록",
+        "photo": false
+      }
+    ],
+    "stage": "kept-failed",
+    "storageErrors": [
+      {
+        "where": "write:ourgoal_records_kept",
+        "error": "QuotaExceededError"
+      }
+    ]
+  },
+  "boundary": {
+    "baseCommit": "db82811639c703f95c2349f2045dd443b7cec01f",
+    "path": "actual syncServerRecords at original main with concurrent setItem hook",
+    "baseRetainsConcurrent": false,
+    "correctedRetainsConcurrent": false,
+    "note": "same missing CAS boundary; not a new safety guarantee; B single-writer design is separate",
+    "correctionInjection": {
+      "position": "another writer inside the final setItem after the last read",
+      "result": {
+        "kind": "records",
+        "ok": true,
+        "stage": "written",
+        "reattached": 0,
+        "keptAdded": 0,
+        "prevWritten": true,
+        "backupWritten": true,
+        "held": 0
+      },
+      "concurrentRemains": false,
+      "scope": "synchronous injection; CAS absent; not actual browser interleaving"
+    }
+  },
+  "unmeasured": [
+    "operating server",
+    "real accounts",
+    "native device",
+    "actual abrupt browser termination",
+    "physical partial storage write",
+    "all browser tabs race interleavings",
+    "service worker and installation"
+  ],
+  "planCompleted": false,
+  "originalUserUseAvailable": null,
+  "longTermEffectConfirmed": null,
+  "operatingServerRequests": 0,
+  "note": "worker measurement only; independent review report preserved separately; Court verdict from new fixed head is pending"
+}
