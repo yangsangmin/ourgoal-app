@@ -1,0 +1,1065 @@
+{
+  "previous": "d6b15c1969748b2d622e14d9b2ded26ccac00162",
+  "base": "db82811639c703f95c2349f2045dd443b7cec01f",
+  "rows": [
+    {
+      "label": "before",
+      "which": "syncServerRecords",
+      "failing": false,
+      "result": true,
+      "initial": null,
+      "server": [
+        {
+          "op": "fetch",
+          "url": "/api/track",
+          "body": {
+            "action": "sync_records",
+            "userId": "11111111-1111-4111-8111-111111111111",
+            "username": "probe@example.invalid",
+            "displayName": "직접 재현",
+            "nickname": "직접 재현",
+            "backupIds": [
+              "11111111-1111-4111-8111-111111111111"
+            ],
+            "settingsToSave": null
+          }
+        }
+      ],
+      "render": [
+        "renderHome"
+      ],
+      "storage": [
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text",
+            "category": "exercise"
+          }
+        ],
+        "goals": [
+          {
+            "id": "server-goal",
+            "title": "서버 목표",
+            "milestones": []
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"category\":\"exercise\"}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]",
+        "ourgoal_guest_profile": "{\"id\":\"11111111-1111-4111-8111-111111111111\",\"username\":\"probe@example.invalid\",\"displayName\":\"직접 재현\",\"settings\":{},\"records\":[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"category\":\"exercise\"}],\"goals\":[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]}"
+      },
+      "editedFeedbackRetained": false,
+      "warns": []
+    },
+    {
+      "label": "before",
+      "which": "syncServerRecords",
+      "failing": true,
+      "result": true,
+      "initial": {
+        "kind": "records",
+        "ok": false,
+        "stage": "kept-failed",
+        "reattached": 3,
+        "keptAdded": 0,
+        "prevWritten": false,
+        "backupWritten": false,
+        "held": 0
+      },
+      "server": [
+        {
+          "op": "fetch",
+          "url": "/api/track",
+          "body": {
+            "action": "sync_records",
+            "userId": "11111111-1111-4111-8111-111111111111",
+            "username": "probe@example.invalid",
+            "displayName": "직접 재현",
+            "nickname": "직접 재현",
+            "backupIds": [
+              "11111111-1111-4111-8111-111111111111"
+            ],
+            "settingsToSave": null
+          }
+        }
+      ],
+      "render": [
+        "renderHome"
+      ],
+      "storage": [
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text",
+            "photo": "unique-photo",
+            "energy": 60,
+            "focus": 40,
+            "category": "exercise"
+          }
+        ],
+        "goals": [
+          {
+            "id": "server-goal",
+            "title": "서버 목표",
+            "milestones": []
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"photo\":\"unique-photo\",\"energy\":60,\"focus\":40,\"category\":\"exercise\"}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]",
+        "ourgoal_guest_profile": "{\"id\":\"11111111-1111-4111-8111-111111111111\",\"username\":\"probe@example.invalid\",\"displayName\":\"직접 재현\",\"settings\":{},\"records\":[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"photo\":\"unique-photo\",\"energy\":60,\"focus\":40,\"category\":\"exercise\"}],\"goals\":[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]}"
+      },
+      "editedFeedbackRetained": false,
+      "warns": [
+        "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — kept-failed"
+      ]
+    },
+    {
+      "label": "before",
+      "which": "migrateGuestDataToUser",
+      "failing": false,
+      "result": true,
+      "initial": null,
+      "server": [
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "type",
+              "user_id"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "users",
+          "ids": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "keys": [
+            [
+              "avatar_url",
+              "bio",
+              "display_name",
+              "id",
+              "interests",
+              "region",
+              "region_public",
+              "saved_avatars",
+              "trash",
+              "username"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "same",
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ],
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ]
+          ]
+        }
+      ],
+      "render": [
+        "게스트 모드에서 작성한 목표와 실천 기록이 안전하게 연동되었어요! 🎉"
+      ],
+      "storage": [
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text"
+          },
+          {
+            "id": "guest-record",
+            "type": "note",
+            "text": "게스트 기록",
+            "photo": "guest-photo",
+            "energy": 20,
+            "focus": 80,
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "goals": [
+          {
+            "id": "guest-goal",
+            "title": "게스트 목표",
+            "milestones": [],
+            "startDate": "2026-10-13",
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\"},{\"id\":\"guest-record\",\"type\":\"note\",\"text\":\"게스트 기록\",\"photo\":\"guest-photo\",\"energy\":20,\"focus\":80,\"user_id\":\"11111111-1111-4111-8111-111111111111\"}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"guest-goal\",\"title\":\"게스트 목표\",\"milestones\":[],\"startDate\":\"2026-10-13\",\"user_id\":\"11111111-1111-4111-8111-111111111111\"}]",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111": "{}",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111": "{\"displayName\":\"직접 재현\",\"bio\":\"\",\"avatarUrl\":\"\",\"interests\":[],\"region\":\"\",\"regionPublic\":false,\"itItems\":[]}"
+      },
+      "editedFeedbackRetained": false,
+      "warns": []
+    },
+    {
+      "label": "before",
+      "which": "migrateGuestDataToUser",
+      "failing": true,
+      "result": true,
+      "initial": {
+        "kind": "records",
+        "ok": false,
+        "stage": "kept-failed",
+        "reattached": 3,
+        "keptAdded": 0,
+        "prevWritten": false,
+        "backupWritten": false,
+        "held": 0
+      },
+      "server": [
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "type",
+              "user_id"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "users",
+          "ids": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "keys": [
+            [
+              "avatar_url",
+              "bio",
+              "display_name",
+              "id",
+              "interests",
+              "region",
+              "region_public",
+              "saved_avatars",
+              "trash",
+              "username"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "same",
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ],
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ]
+          ]
+        }
+      ],
+      "render": [
+        "게스트 모드에서 작성한 목표와 실천 기록이 안전하게 연동되었어요! 🎉"
+      ],
+      "storage": [
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text",
+            "photo": "unique-photo",
+            "energy": 60,
+            "focus": 40
+          },
+          {
+            "id": "guest-record",
+            "type": "note",
+            "text": "게스트 기록",
+            "photo": "guest-photo",
+            "energy": 20,
+            "focus": 80,
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "goals": [
+          {
+            "id": "guest-goal",
+            "title": "게스트 목표",
+            "milestones": [],
+            "startDate": "2026-10-13",
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"photo\":\"unique-photo\",\"energy\":60,\"focus\":40},{\"id\":\"guest-record\",\"type\":\"note\",\"text\":\"게스트 기록\",\"photo\":\"guest-photo\",\"energy\":20,\"focus\":80,\"user_id\":\"11111111-1111-4111-8111-111111111111\"}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"guest-goal\",\"title\":\"게스트 목표\",\"milestones\":[],\"startDate\":\"2026-10-13\",\"user_id\":\"11111111-1111-4111-8111-111111111111\"}]",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111": "{}",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111": "{\"displayName\":\"직접 재현\",\"bio\":\"\",\"avatarUrl\":\"\",\"interests\":[],\"region\":\"\",\"regionPublic\":false,\"itItems\":[]}"
+      },
+      "editedFeedbackRetained": false,
+      "warns": [
+        "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — kept-failed"
+      ]
+    },
+    {
+      "label": "after",
+      "which": "syncServerRecords",
+      "failing": false,
+      "result": true,
+      "initial": null,
+      "server": [
+        {
+          "op": "fetch",
+          "url": "/api/track",
+          "body": {
+            "action": "sync_records",
+            "userId": "11111111-1111-4111-8111-111111111111",
+            "username": "probe@example.invalid",
+            "displayName": "직접 재현",
+            "nickname": "직접 재현",
+            "backupIds": [
+              "11111111-1111-4111-8111-111111111111"
+            ],
+            "settingsToSave": null
+          }
+        }
+      ],
+      "render": [
+        "renderHome"
+      ],
+      "storage": [
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text",
+            "category": "exercise"
+          }
+        ],
+        "goals": [
+          {
+            "id": "server-goal",
+            "title": "서버 목표",
+            "milestones": []
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"category\":\"exercise\",\"photo\":\"unique-photo\",\"feedback\":\"visible-feedback\",\"energy\":60,\"focus\":40}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]",
+        "ourgoal_guest_profile": "{\"id\":\"11111111-1111-4111-8111-111111111111\",\"username\":\"probe@example.invalid\",\"displayName\":\"직접 재현\",\"settings\":{},\"records\":[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"category\":\"exercise\"}],\"goals\":[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]}"
+      },
+      "editedFeedbackRetained": false,
+      "warns": []
+    },
+    {
+      "label": "after",
+      "which": "syncServerRecords",
+      "failing": true,
+      "result": true,
+      "initial": {
+        "kind": "records",
+        "ok": false,
+        "stage": "kept-failed",
+        "reattached": 3,
+        "keptAdded": 0,
+        "prevWritten": false,
+        "backupWritten": false,
+        "held": 0
+      },
+      "server": [
+        {
+          "op": "fetch",
+          "url": "/api/track",
+          "body": {
+            "action": "sync_records",
+            "userId": "11111111-1111-4111-8111-111111111111",
+            "username": "probe@example.invalid",
+            "displayName": "직접 재현",
+            "nickname": "직접 재현",
+            "backupIds": [
+              "11111111-1111-4111-8111-111111111111"
+            ],
+            "settingsToSave": null
+          }
+        }
+      ],
+      "render": [
+        "renderHome"
+      ],
+      "storage": [
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text",
+            "photo": "unique-photo",
+            "energy": 60,
+            "focus": 40,
+            "category": "exercise"
+          }
+        ],
+        "goals": [
+          {
+            "id": "server-goal",
+            "title": "서버 목표",
+            "milestones": []
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"device-edit\",\"photo\":\"unique-photo\",\"feedback\":\"unique-device-feedback\",\"energy\":60,\"focus\":40}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]",
+        "ourgoal_guest_profile": "{\"id\":\"11111111-1111-4111-8111-111111111111\",\"username\":\"probe@example.invalid\",\"displayName\":\"직접 재현\",\"settings\":{},\"records\":[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"photo\":\"unique-photo\",\"energy\":60,\"focus\":40,\"category\":\"exercise\"}],\"goals\":[{\"id\":\"server-goal\",\"title\":\"서버 목표\",\"milestones\":[]}]}"
+      },
+      "editedFeedbackRetained": true,
+      "warns": [
+        "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — kept-failed"
+      ]
+    },
+    {
+      "label": "after",
+      "which": "migrateGuestDataToUser",
+      "failing": false,
+      "result": true,
+      "initial": null,
+      "server": [
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "type",
+              "user_id"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "users",
+          "ids": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "keys": [
+            [
+              "avatar_url",
+              "bio",
+              "display_name",
+              "id",
+              "interests",
+              "region",
+              "region_public",
+              "saved_avatars",
+              "trash",
+              "username"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "same",
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ],
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ]
+          ]
+        }
+      ],
+      "render": [
+        "게스트 모드에서 작성한 목표와 실천 기록이 안전하게 연동되었어요! 🎉"
+      ],
+      "storage": [
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile",
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text"
+          },
+          {
+            "id": "guest-record",
+            "type": "note",
+            "text": "게스트 기록",
+            "photo": "guest-photo",
+            "energy": 20,
+            "focus": 80,
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "goals": [
+          {
+            "id": "guest-goal",
+            "title": "게스트 목표",
+            "milestones": [],
+            "startDate": "2026-10-13",
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"server-text\",\"photo\":\"unique-photo\",\"feedback\":\"visible-feedback\",\"energy\":60,\"focus\":40},{\"id\":\"guest-record\",\"type\":\"note\",\"text\":\"게스트 기록\",\"photo\":\"guest-photo\",\"energy\":20,\"focus\":80,\"user_id\":\"11111111-1111-4111-8111-111111111111\"}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"guest-goal\",\"title\":\"게스트 목표\",\"milestones\":[],\"startDate\":\"2026-10-13\",\"user_id\":\"11111111-1111-4111-8111-111111111111\"}]",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111": "{}",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111": "{\"displayName\":\"직접 재현\",\"bio\":\"\",\"avatarUrl\":\"\",\"interests\":[],\"region\":\"\",\"regionPublic\":false,\"itItems\":[]}"
+      },
+      "editedFeedbackRetained": false,
+      "warns": []
+    },
+    {
+      "label": "after",
+      "which": "migrateGuestDataToUser",
+      "failing": true,
+      "result": true,
+      "initial": {
+        "kind": "records",
+        "ok": false,
+        "stage": "kept-failed",
+        "reattached": 3,
+        "keptAdded": 0,
+        "prevWritten": false,
+        "backupWritten": false,
+        "held": 0
+      },
+      "server": [
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "type",
+              "user_id"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "users",
+          "ids": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "keys": [
+            [
+              "avatar_url",
+              "bio",
+              "display_name",
+              "id",
+              "interests",
+              "region",
+              "region_public",
+              "saved_avatars",
+              "trash",
+              "username"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "goals",
+          "ids": [
+            "guest-goal"
+          ],
+          "keys": [
+            [
+              "archived_at",
+              "category",
+              "due_date",
+              "id",
+              "milestones",
+              "result",
+              "title",
+              "topic",
+              "user_id",
+              "visibility"
+            ]
+          ]
+        },
+        {
+          "op": "upsert",
+          "table": "checkins",
+          "ids": [
+            "same",
+            "guest-record"
+          ],
+          "keys": [
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ],
+            [
+              "category",
+              "end_at",
+              "id",
+              "meta",
+              "start_at",
+              "sub_theme",
+              "text",
+              "theme",
+              "theme_confidence",
+              "type",
+              "user_id"
+            ]
+          ]
+        }
+      ],
+      "render": [
+        "게스트 모드에서 작성한 목표와 실천 기록이 안전하게 연동되었어요! 🎉"
+      ],
+      "storage": [
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_guest_profile",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111"
+      ],
+      "state": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "username": "probe@example.invalid",
+        "displayName": "직접 재현",
+        "settings": {},
+        "records": [
+          {
+            "id": "same",
+            "type": "note",
+            "text": "server-text",
+            "photo": "unique-photo",
+            "energy": 60,
+            "focus": 40
+          },
+          {
+            "id": "guest-record",
+            "type": "note",
+            "text": "게스트 기록",
+            "photo": "guest-photo",
+            "energy": 20,
+            "focus": 80,
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "goals": [
+          {
+            "id": "guest-goal",
+            "title": "게스트 목표",
+            "milestones": [],
+            "startDate": "2026-10-13",
+            "user_id": "11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      },
+      "data": {
+        "ourgoal_records_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"same\",\"type\":\"note\",\"text\":\"device-edit\",\"photo\":\"unique-photo\",\"feedback\":\"unique-device-feedback\",\"energy\":60,\"focus\":40}]",
+        "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111": "[{\"id\":\"guest-goal\",\"title\":\"게스트 목표\",\"milestones\":[],\"startDate\":\"2026-10-13\",\"user_id\":\"11111111-1111-4111-8111-111111111111\"}]",
+        "ourgoal_settings_11111111-1111-4111-8111-111111111111": "{}",
+        "ourgoal_profile_backup_11111111-1111-4111-8111-111111111111": "{\"displayName\":\"직접 재현\",\"bio\":\"\",\"avatarUrl\":\"\",\"interests\":[],\"region\":\"\",\"regionPublic\":false,\"itItems\":[]}"
+      },
+      "editedFeedbackRetained": true,
+      "warns": [
+        "[OurgoalLocalKeep] records 백업을 바꾸지 않았다 — kept-failed"
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "which": "syncServerRecords",
+      "failing": false,
+      "serverSame": true,
+      "stateSame": true,
+      "renderSame": true,
+      "beforeEditedFeedbackRetained": false,
+      "afterEditedFeedbackRetained": false
+    },
+    {
+      "which": "syncServerRecords",
+      "failing": true,
+      "serverSame": true,
+      "stateSame": true,
+      "renderSame": true,
+      "beforeEditedFeedbackRetained": false,
+      "afterEditedFeedbackRetained": true
+    },
+    {
+      "which": "migrateGuestDataToUser",
+      "failing": false,
+      "serverSame": true,
+      "stateSame": true,
+      "renderSame": true,
+      "beforeEditedFeedbackRetained": false,
+      "afterEditedFeedbackRetained": false
+    },
+    {
+      "which": "migrateGuestDataToUser",
+      "failing": true,
+      "serverSame": true,
+      "stateSame": true,
+      "renderSame": true,
+      "beforeEditedFeedbackRetained": false,
+      "afterEditedFeedbackRetained": true
+    }
+  ],
+  "boundary": {
+    "baseCommit": "db82811639c703f95c2349f2045dd443b7cec01f",
+    "path": "actual syncServerRecords at original main with concurrent setItem hook",
+    "baseRetainsConcurrent": false,
+    "correctedRetainsConcurrent": false,
+    "note": "same missing CAS boundary; not a new safety guarantee; B single-writer design is separate"
+  },
+  "scope": "product VM with fake server/store/render; no operating server requests"
+}

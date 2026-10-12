@@ -86,7 +86,7 @@
     try {
       var list = JSON.parse(readRaw(st, TRASH_PREFIX + uid) || '[]');
       (Array.isArray(list) ? list : []).forEach(function (t) { if (t && t.entityType === TRASH_TYPE[kind] && has(t.originalId)) out[String(t.originalId)] = true; });
-    } catch (e) { note('trash', e); }
+    } catch (e) { note('trash', e); throw e; } /* 지움 여부를 읽지 못했을 때 없음으로 간주해 되붙이지 않는다 */
     return out;
   }
 
@@ -123,12 +123,13 @@
   }
 
   /* ---------- (i) 되붙이기 ---------- */
-  function reattachRecord(rec, dev, textDiffers) {
+  function reattachRecord(rec, dev, textDiffers, preserveExplicit) {
     var n = 0;
     Object.keys(dev).forEach(function (k) {
       if (inList(SERVER_RECORD_KEYS, k)) return;            /* 서버가 준 칸은 덮지 않는다 */
       if (!has(dev[k])) return;
       if (has(rec[k])) return;
+      if (preserveExplicit && Object.prototype.hasOwnProperty.call(rec, k)) return; /* 저장 배열의 명시적 null/undefined는 임의로 되살리지 않는다 */
       if (textDiffers && inList(TEXT_BOUND_KEYS, k)) return; /* 본문이 달라졌으면 옛 피드백 · 구조는 되붙이지 않는다 */
       rec[k] = dev[k]; n++;
     });
@@ -142,7 +143,7 @@
   }
 
   /* 서버 기록에 기기 값을 되붙이고, 보관할 것을 고른다. 서버 기록 배열의 각 객체를 고쳐서 돌려준다(쓰기는 commit 이 한다) */
-  function planRecords(uid, serverRecords, store) {
+  function planRecords(uid, serverRecords, store, saveMode) {
     var st = getStore(store);
     var out = { next: Array.isArray(serverRecords) ? serverRecords : [], adds: [], reattached: 0, prevRaw: null, unreadable: false };
     if (!st) return out;
@@ -156,18 +157,18 @@
     ((kept && kept.items) || []).forEach(function (it) {
       if (it && it.why === WHY.NOT_IN_RESPONSE && it.item && has(it.item.id) && ownerOk(it.item, uid)) fromKept[String(it.item.id)] = it.item;
     });
-    var serverIds = {};
+    var serverIds = {}, trashed = trashIds(st, 'records', uid);
     out.next.forEach(function (rec) {
       if (!rec || !has(rec.id)) return;
       var id = String(rec.id);
       serverIds[id] = true;
-      var dev = byId[id] || fromKept[id];
+      if (saveMode && (!ownerOk(rec, uid) || trashed[id])) return;
+      var dev = byId[id] || (!saveMode && fromKept[id]); /* 정상 저장은 숨긴 보관 자료를 자동으로 되살리지 않는다 */
       if (!dev) return;
       var differs = textOf(dev) !== textOf(rec);
-      out.reattached += reattachRecord(rec, dev, differs);
+      out.reattached += reattachRecord(rec, dev, differs, saveMode);
       if (differs && byId[id]) out.adds.push(entry(WHY.TEXT_DIFFERS, textBoundCopy(dev)));
     });
-    var trashed = trashIds(st, 'records', uid);
     devList.forEach(function (d) {
       if (!d || typeof d !== 'object') return;
       if (has(d.id) && (serverIds[String(d.id)] || trashed[String(d.id)])) return; /* 서버에 있거나 휴지통에 든 것은 보관 대상이 아니다 */
@@ -318,6 +319,38 @@
       st.removeItem(prevKey); return readRaw(st, prevKey) === null;
     } catch (e) { note('releasePrev', e); return false; }
   }
+  /* 정상 저장의 화면 배열이 기기 백업보다 적게 알 수 있다. 화면/서버 배열을 고치지 않고 로컬 쓰기 사본만 되붙인다.
+     명시적 비움·새 사진/피드백·본문 차이 때문에 빠지는 기기 칸은 되붙이지 않고 보관한다. 보관 실패면 원래 백업을 그대로 둔다. */
+  function prepareSave(st, kind, uid, list, before) {
+    var local = Array.isArray(list) ? list.map(function (x) { return x && typeof x === 'object' ? Object.assign({}, x) : x; }) : list;
+    var plan = kind === 'records' ? planRecords(uid, local, st, true) : planGoals(uid, local, st);
+    if (plan.prevRaw !== before) return { ok: false, why: 'source-changed' };
+    var nextById = {}, trashed = trashIds(st, kind, uid);
+    plan.next.forEach(function (x) { if (x && has(x.id)) nextById[String(x.id)] = x; });
+    (parseList(before) || []).forEach(function (old) {
+      if (!old || !has(old.id) || trashed[String(old.id)]) return;
+      var next = nextById[String(old.id)];
+      if (!next) return; /* 없는 id 전체는 plan.adds에 이미 있다 */
+      if (kind === 'goals') {
+        if (JSON.stringify(old) !== JSON.stringify(next)) plan.adds.push(entry(WHY.MISSING_IN_BACKUP, old));
+        return;
+      }
+      var miss = { id: old.id, text: textOf(old) }, n = 0;
+      Object.keys(old).forEach(function (k) {
+        if (inList(SERVER_RECORD_KEYS, k) || !has(old[k]) || JSON.stringify(old[k]) === JSON.stringify(next[k])) return;
+        if (textOf(old) !== textOf(next) && inList(TEXT_BOUND_KEYS, k)) return; /* text-differs에 이미 온전한 묶음으로 보관 */
+        miss[k] = old[k]; n++;
+      });
+      if (n) {
+        if (has(old.user_id)) miss.user_id = old.user_id;
+        if (has(old.ownerUid)) miss.ownerUid = old.ownerUid;
+        plan.adds.push(entry(WHY.MISSING_IN_BACKUP, miss));
+      }
+    });
+    if (!addKept(st, kind, uid, plan.adds).ok) return { ok: false, why: 'kept-failed' };
+    if (readRaw(st, BACKUP_PREFIX[kind] + uid) !== before) return { ok: false, why: 'source-changed' };
+    return { ok: true, raw: JSON.stringify(plan.next) };
+  }
   /* saveProfile 이 부른다: 백업 쓰기. 실패하면(용량 초과) 직전 사본을 내려놓고 한 번 더 쓴다. 그래도 실패하면 원래처럼 던진다 */
   function setBackupFromSave(kind, uid, list, store) {
     var st = getStore(store);
@@ -326,7 +359,9 @@
     var before = readRaw(st, key);
     /* 미해결 본문·원문은 다음 저장에서도 원래 백업에 남긴다. 호출자의 화면 배열은 바꾸지 않는다. */
     if (blocked[kind] && blocked[kind][uid]) { note('save-blocked', 'unresolved preservation'); return false; }
-    var raw = JSON.stringify(withHeld(kind, uid, list));
+    var prepared = prepareSave(st, kind, uid, withHeld(kind, uid, list), before);
+    if (!prepared.ok) { blocked[kind][uid] = true; note('save-retained', prepared.why); throw new Error('local backup retained: ' + prepared.why); }
+    var raw = prepared.raw;
     try {
       if (!writeVerified(st, key, raw, before)) throw new Error('backup write unverified');
     }

@@ -1,0 +1,362 @@
+{
+  "source": "C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\followup-backup-only\\after-snapshot\\js\\core\\local-keep.js",
+  "cases": [
+    {
+      "name": "records restore interrupted after 0 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "kept-failed"
+        },
+        "operations": [],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "records restore interrupted after 1 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed"
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_kept_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "records restore interrupted after 2 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "prev-failed",
+          "swapped": false
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_kept_11111111-1111-4111-8111-111111111111"
+          },
+          {
+            "op": "set",
+            "key": "ourgoal_records_backup_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "records transient backup read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "records transient prev read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "records transient kept read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 1,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 2
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "records unreadable current preservation fails then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 0
+        },
+        "wrote": false,
+        "raw": "BROKEN-UNIQUE-RAW"
+      }
+    },
+    {
+      "name": "records unique previous preservation fails then quota release",
+      "assertionsHeld": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\followup-backup-only\\after-snapshot\\reports\\TASK-ES-695\\correction-2026-10-13\\sequence-probe.cjs:54:12\n    at run (C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\followup-backup-only\\after-snapshot\\reports\\TASK-ES-695\\correction-2026-10-13\\sequence-probe.cjs:13:48)\n    at Object.<anonymous> (C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\followup-backup-only\\after-snapshot\\reports\\TASK-ES-695\\correction-2026-10-13\\sequence-probe.cjs:50:3)\n    at Module._compile (node:internal/modules/cjs/loader:1830:14)\n    at Object..js (node:internal/modules/cjs/loader:1961:10)\n    at Module.load (node:internal/modules/cjs/loader:1553:32)\n    at Module._load (node:internal/modules/cjs/loader:1355:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "goals restore interrupted after 0 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "kept-failed"
+        },
+        "operations": [],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "goals restore interrupted after 1 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "backup-failed"
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_goals_kept_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "goals restore interrupted after 2 successful writes",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "prev-failed",
+          "swapped": false
+        },
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_goals_kept_11111111-1111-4111-8111-111111111111"
+          },
+          {
+            "op": "set",
+            "key": "ourgoal_goals_backup_11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "currentRemains": true,
+        "previousRemains": true
+      }
+    },
+    {
+      "name": "goals transient backup read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "goals transient prev read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "error",
+          "error": "read-access-denied"
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "goals transient kept read failure then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 2
+        },
+        "nextSavePreservesRaw": true,
+        "operations": []
+      }
+    },
+    {
+      "name": "goals unreadable current preservation fails then next save",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "goals",
+          "ok": false,
+          "stage": "kept-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": false,
+          "backupWritten": false,
+          "held": 0
+        },
+        "wrote": false,
+        "raw": "BROKEN-UNIQUE-RAW"
+      }
+    },
+    {
+      "name": "goals unique previous preservation fails then quota release",
+      "assertionsHeld": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\followup-backup-only\\after-snapshot\\reports\\TASK-ES-695\\correction-2026-10-13\\sequence-probe.cjs:54:12\n    at run (C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\followup-backup-only\\after-snapshot\\reports\\TASK-ES-695\\correction-2026-10-13\\sequence-probe.cjs:13:48)\n    at Object.<anonymous> (C:\\dev\\wt\\dir006-p0-codex-01a1310c\\reports\\TASK-ES-695\\correction-2026-10-13\\followup-backup-only\\after-snapshot\\reports\\TASK-ES-695\\correction-2026-10-13\\sequence-probe.cjs:50:3)\n    at Module._compile (node:internal/modules/cjs/loader:1830:14)\n    at Object..js (node:internal/modules/cjs/loader:1961:10)\n    at Module.load (node:internal/modules/cjs/loader:1553:32)\n    at Module._load (node:internal/modules/cjs/loader:1355:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "concurrent change before-backup-write-check",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": true,
+          "backupWritten": false,
+          "held": 0
+        },
+        "concurrentRetained": true,
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_prev_11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      }
+    },
+    {
+      "name": "concurrent change atomic-backup-write-throws",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": true,
+          "backupWritten": false,
+          "held": 0
+        },
+        "concurrentRetained": true,
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_prev_11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      }
+    },
+    {
+      "name": "concurrent change after-backup-write",
+      "assertionsHeld": true,
+      "details": {
+        "result": {
+          "kind": "records",
+          "ok": false,
+          "stage": "backup-failed",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": true,
+          "backupWritten": false,
+          "held": 0
+        },
+        "concurrentRetained": true,
+        "operations": [
+          {
+            "op": "set",
+            "key": "ourgoal_records_prev_11111111-1111-4111-8111-111111111111"
+          },
+          {
+            "op": "set",
+            "key": "ourgoal_records_backup_11111111-1111-4111-8111-111111111111"
+          }
+        ]
+      }
+    },
+    {
+      "name": "server non-null values and null device values",
+      "assertionsHeld": true,
+      "details": {
+        "id": "r",
+        "text": "same",
+        "energy": 99,
+        "photo": "server-photo",
+        "arbitraryField": {
+          "y": 2
+        },
+        "focus": 70
+      }
+    }
+  ],
+  "total": 20,
+  "assertionsNotHeld": 2,
+  "boundary": {
+    "position": "another writer inside the final setItem after the last read",
+    "result": {
+      "kind": "records",
+      "ok": true,
+      "stage": "written",
+      "reattached": 0,
+      "keptAdded": 0,
+      "prevWritten": true,
+      "backupWritten": true,
+      "held": 0
+    },
+    "concurrentRemains": false,
+    "scope": "synchronous injection; CAS absent; not actual browser interleaving"
+  },
+  "note": "worker measurement; no court verdict; no operating server requests"
+}

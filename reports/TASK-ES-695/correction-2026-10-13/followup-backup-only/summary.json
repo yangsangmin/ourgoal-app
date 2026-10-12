@@ -1,0 +1,369 @@
+{
+  "measuredAt": "2026-10-12T18:21:39.057Z",
+  "baseline": "c5d95027b6dd5624ab4decc1c214ed1354c447c1",
+  "sourceFiles": [
+    {
+      "file": "js/core/local-keep.js",
+      "sha256": "d9d591cf95d8205a2b634b891006248c433dd30677ee7bcc6ef4130bc83c04a6",
+      "lines": 426
+    }
+  ],
+  "replay": {
+    "comparisons": [
+      {
+        "which": "syncServerRecords",
+        "beforePhoto": null,
+        "beforeFeedback": null,
+        "afterPhoto": "unique-photo",
+        "afterFeedback": "visible-feedback",
+        "afterEnergy": 60,
+        "afterFocus": 40,
+        "serverSame": true,
+        "screenStateSame": true,
+        "renderSame": true,
+        "backupOnly": true
+      },
+      {
+        "which": "migrateGuestDataToUser",
+        "beforePhoto": null,
+        "beforeFeedback": null,
+        "afterPhoto": "unique-photo",
+        "afterFeedback": "visible-feedback",
+        "afterEnergy": 60,
+        "afterFocus": 40,
+        "serverSame": true,
+        "screenStateSame": true,
+        "renderSame": true,
+        "backupOnly": true
+      }
+    ],
+    "photoFeedbackPreserved": true,
+    "serverScreenRenderUnchanged": true,
+    "originalToolSHA256": "01caf5c6e1450d11784b39e034ecc624acb162c9ea6fb5c0771886c3920db9dd"
+  },
+  "variants": {
+    "total": 15,
+    "assertionsNotHeld": 0
+  },
+  "priorCases": {
+    "rows": [
+      {
+        "name": "countercases.cjs",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "name": "comparative.cjs",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "name": "prior-sequence",
+        "exitCode": 0,
+        "error": null
+      }
+    ],
+    "originalCountercasesRetained": true,
+    "sequence": {
+      "total": 20,
+      "assertionsNotHeld": 0,
+      "boundary": {
+        "position": "another writer inside the final setItem after the last read",
+        "result": {
+          "kind": "records",
+          "ok": true,
+          "stage": "written",
+          "reattached": 0,
+          "keptAdded": 0,
+          "prevWritten": true,
+          "backupWritten": true,
+          "held": 0
+        },
+        "concurrentRemains": false,
+        "scope": "synchronous injection; CAS absent; not actual browser interleaving"
+      }
+    },
+    "scope": "prior probes copied without editing; product snapshot; no operating requests"
+  },
+  "unit": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "browser": {
+    "before": {
+      "label": "before",
+      "tree": "C:/Users/HP/AppData/Local/Temp/codex-p0-correction-review/head",
+      "scope": "actual app in isolated Chrome; direct product calls; fake session/response; operating requests 0; not UI click E2E",
+      "scenarios": [
+        {
+          "which": "syncServerRecords",
+          "result": true,
+          "inputBefore": "[{\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"type\":\"note\",\"text\":\"server-text\"}]",
+          "backupBefore": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text",
+              "photo": "unique-photo",
+              "feedback": "visible-feedback",
+              "energy": 60,
+              "focus": 40
+            }
+          ],
+          "backupAfter": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text",
+              "category": "exercise"
+            }
+          ],
+          "screenRecord": {
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+            "type": "note",
+            "text": "server-text",
+            "category": "exercise"
+          },
+          "photoInBackup": null,
+          "feedbackInBackup": null,
+          "photoOnScreen": false,
+          "feedbackOnScreen": false,
+          "api": [
+            {
+              "action": "sync_records",
+              "userId": "00000000-0000-4000-8000-000000000001",
+              "keys": [
+                "action",
+                "backupIds",
+                "displayName",
+                "nickname",
+                "settingsToSave",
+                "userId",
+                "username"
+              ]
+            }
+          ],
+          "entered": true,
+          "requests": [],
+          "exceptions": [],
+          "console": [],
+          "chrome": "Chrome/154.0.8037.98"
+        },
+        {
+          "which": "migrateGuestDataToUser",
+          "result": true,
+          "inputBefore": "[{\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"type\":\"note\",\"text\":\"server-text\"}]",
+          "backupBefore": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text",
+              "photo": "unique-photo",
+              "feedback": "visible-feedback",
+              "energy": 60,
+              "focus": 40
+            }
+          ],
+          "backupAfter": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text"
+            },
+            {
+              "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+              "type": "note",
+              "text": "guest-text",
+              "user_id": "00000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "screenRecord": {
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+            "type": "note",
+            "text": "server-text"
+          },
+          "photoInBackup": null,
+          "feedbackInBackup": null,
+          "photoOnScreen": false,
+          "feedbackOnScreen": false,
+          "api": [],
+          "entered": true,
+          "requests": [
+            {
+              "method": "POST",
+              "table": "checkins",
+              "rows": 1,
+              "keys": "id,user_id,type,text,start_at,end_at,category,theme,sub_theme"
+            },
+            {
+              "method": "POST",
+              "table": "users",
+              "rows": 1,
+              "keys": "trash,id,username,display_name,bio,avatar_url,interests,region,region_public,saved_avatars"
+            },
+            {
+              "method": "POST",
+              "table": "checkins",
+              "rows": 2,
+              "keys": "id,user_id,type,text,end_at,category,theme,sub_theme,theme_confidence,meta"
+            }
+          ],
+          "exceptions": [],
+          "console": [],
+          "chrome": "Chrome/154.0.8037.98"
+        }
+      ]
+    },
+    "after": {
+      "label": "after",
+      "tree": "C:/dev/wt/dir006-p0-codex-01a1310c",
+      "scope": "actual app in isolated Chrome; direct product calls; fake session/response; operating requests 0; not UI click E2E",
+      "scenarios": [
+        {
+          "which": "syncServerRecords",
+          "result": true,
+          "inputBefore": "[{\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"type\":\"note\",\"text\":\"server-text\"}]",
+          "backupBefore": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text",
+              "photo": "unique-photo",
+              "feedback": "visible-feedback",
+              "energy": 60,
+              "focus": 40
+            }
+          ],
+          "backupAfter": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text",
+              "category": "exercise",
+              "photo": "unique-photo",
+              "feedback": "visible-feedback",
+              "energy": 60,
+              "focus": 40
+            }
+          ],
+          "screenRecord": {
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+            "type": "note",
+            "text": "server-text",
+            "category": "exercise"
+          },
+          "photoInBackup": "unique-photo",
+          "feedbackInBackup": "visible-feedback",
+          "energyInBackup": 60,
+          "focusInBackup": 40,
+          "photoOnScreen": false,
+          "feedbackOnScreen": false,
+          "api": [
+            {
+              "action": "sync_records",
+              "userId": "00000000-0000-4000-8000-000000000001",
+              "keys": [
+                "action",
+                "backupIds",
+                "displayName",
+                "nickname",
+                "settingsToSave",
+                "userId",
+                "username"
+              ]
+            }
+          ],
+          "entered": true,
+          "requests": [],
+          "exceptions": [],
+          "console": [],
+          "chrome": "Chrome/154.0.8037.98"
+        },
+        {
+          "which": "migrateGuestDataToUser",
+          "result": true,
+          "inputBefore": "[{\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"type\":\"note\",\"text\":\"server-text\"}]",
+          "backupBefore": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text",
+              "photo": "unique-photo",
+              "feedback": "visible-feedback",
+              "energy": 60,
+              "focus": 40
+            }
+          ],
+          "backupAfter": [
+            {
+              "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+              "type": "note",
+              "text": "server-text",
+              "photo": "unique-photo",
+              "feedback": "visible-feedback",
+              "energy": 60,
+              "focus": 40
+            },
+            {
+              "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+              "type": "note",
+              "text": "guest-text",
+              "user_id": "00000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "screenRecord": {
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+            "type": "note",
+            "text": "server-text"
+          },
+          "photoInBackup": "unique-photo",
+          "feedbackInBackup": "visible-feedback",
+          "energyInBackup": 60,
+          "focusInBackup": 40,
+          "photoOnScreen": false,
+          "feedbackOnScreen": false,
+          "api": [],
+          "entered": true,
+          "requests": [
+            {
+              "method": "POST",
+              "table": "checkins",
+              "rows": 1,
+              "keys": "id,user_id,type,text,start_at,end_at,category,theme,sub_theme"
+            },
+            {
+              "method": "POST",
+              "table": "users",
+              "rows": 1,
+              "keys": "trash,id,username,display_name,bio,avatar_url,interests,region,region_public,saved_avatars"
+            },
+            {
+              "method": "POST",
+              "table": "checkins",
+              "rows": 2,
+              "keys": "id,user_id,type,text,end_at,category,theme,sub_theme,theme_confidence,meta"
+            }
+          ],
+          "exceptions": [],
+          "console": [],
+          "chrome": "Chrome/154.0.8037.98"
+        }
+      ]
+    }
+  },
+  "originalSourceReadOnly": true,
+  "operatingRequests": 0,
+  "fullConditionFourConfirmed": false,
+  "actualUseAvailable": null,
+  "longTermEffect": null,
+  "unmeasured": [
+    "real accounts and operating server",
+    "actual deletion UX",
+    "native device",
+    "service worker",
+    "all two-tab interleavings",
+    "all save routes and all payload fields"
+  ]
+}

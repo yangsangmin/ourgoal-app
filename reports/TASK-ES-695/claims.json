@@ -56,7 +56,7 @@
           "기록 탭의 같은 카드에 사진과 피드백이 그대로 보이는지 본다",
           "개발자 도구에서 ourgoal_records_backup_<내 uid> 의 그 기록에 photo · feedback · energy · focus 가 있는지 본다"
         ],
-        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현에서 고치기 전에는 새로 고침 뒤 카드에 사진 · 피드백이 없고 백업의 네 칸이 비었으며, 고친 뒤에는 넷 다 남았다(reports/TASK-ES-695/measurement.json 의 browser.before · browser.after, 표는 reports/TASK-ES-695/evidence/before-after.md 1절). 부품 시험 tests/local-keep-p0.test.js 의 「(i)」 2건 · 「조건 ③」 1건 · 맞물림 1건. 본문이 달라진 기록(조건 ③)은 부품 시험으로만 보았다.\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다."
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현에서 고치기 전에는 새로 고침 뒤 카드에 사진 · 피드백이 없고 백업의 네 칸이 비었으며, 고친 뒤에는 넷 다 남았다(reports/TASK-ES-695/measurement.json 의 browser.before · browser.after, 표는 reports/TASK-ES-695/evidence/before-after.md 1절). 부품 시험 tests/local-keep-p0.test.js 의 「(i)」 2건 · 「조건 ③」 1건 · 맞물림 1건. 본문이 달라진 기록(조건 ③)은 부품 시험으로만 보았다.\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다.\n유일 백업 보완 차수: 이전 직접 호출은 화면에도 이미 사진·피드백이 있어 기기 백업에만 있는 입력을 놓쳤다. 독립 확인이 c5d95027에서 재현한 정상 수동동기화/게스트이관의 손실은 reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/independent-tool-original.cjs·independent-results-original.json으로 보존했다. 같은 도구·새 Chrome 직접 호출로 수정 전후를 쟀으며, 부가 칸은 로컬 쓰기 사본에만 되붙여 서버 payload/화면 객체는 유지했다. 명시적 비움·다른 값·본문 차이·다른 주인/휴지통/kept-only를 별도 부품 입력으로 확인했고 실제 삭제 UX는 미측정이다. 조건④ 전체 완료로 확대하지 않는다. reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json·worker-measurements.md를 읽는다(작업자 측정, 판정 아님)."
       }
     },
     {
@@ -82,7 +82,7 @@
           "개발자 도구에서 ourgoal_records_kept_<내 uid> 에 그 기록이 있는지, 서버에 올라가지 않았는지 본다",
           "목표도 같은 순서로 본다(목표 올리기 요청 goals 를 막고 새 목표를 만든다)"
         ],
-        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 고치기 전에는 다시 연 뒤 기기 어느 열쇠에도 없었고, 고친 뒤에는 보관 열쇠에 기록 1건 · 목표 1건이 있었으며 다시 연 뒤 · 다음 저장 뒤 · 수동 동기화 뒤 모두 서버에 없었다(measurement.json browser.after.photoAndUnsentRecord · unsentGoal). 부품 시험 「(ii)」 2건 · 목표 1건 · 맞물림 2건.\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다."
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 고치기 전에는 다시 연 뒤 기기 어느 열쇠에도 없었고, 고친 뒤에는 보관 열쇠에 기록 1건 · 목표 1건이 있었으며 다시 연 뒤 · 다음 저장 뒤 · 수동 동기화 뒤 모두 서버에 없었다(measurement.json browser.after.photoAndUnsentRecord · unsentGoal). 부품 시험 「(ii)」 2건 · 목표 1건 · 맞물림 2건.\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다.\n유일 백업 보완 차수: 이전 직접 호출은 화면에도 이미 사진·피드백이 있어 기기 백업에만 있는 입력을 놓쳤다. 독립 확인이 c5d95027에서 재현한 정상 수동동기화/게스트이관의 손실은 reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/independent-tool-original.cjs·independent-results-original.json으로 보존했다. 같은 도구·새 Chrome 직접 호출로 수정 전후를 쟀으며, 부가 칸은 로컬 쓰기 사본에만 되붙여 서버 payload/화면 객체는 유지했다. 명시적 비움·다른 값·본문 차이·다른 주인/휴지통/kept-only를 별도 부품 입력으로 확인했고 실제 삭제 UX는 미측정이다. 조건④ 전체 완료로 확대하지 않는다. reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json·worker-measurements.md를 읽는다(작업자 측정, 판정 아님)."
       }
     },
     {
@@ -107,7 +107,7 @@
           "콘솔에서 OurgoalLocalKeep.restorePrevious(\"records\", \"<내 uid>\") 를 부르고 백업의 글자가 복사해 둔 것과 같아졌는지 본다(한 번 더 부르면 원래대로 돌아간다)",
           "용량 초과: 개발자 도구에서 localStorage 를 거의 가득 채운 뒤 앱을 다시 열고, 백업에 올리지 못한 기록이 그대로 남아 있는지 본다"
         ],
-        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 직전 사본 = 덮어쓰기 전 글자, 되돌리기 뒤 백업 = 덮어쓰기 전 글자(measurement.json browser.after.photoAndUnsentRecord.rollback). 용량 초과는 진짜 QuotaExceededError 로 쟀다(browser.after.storageNearlyFull). 「일부만 쓰임」 「쓰는 사이 종료」와 조건 ②(직전 사본에만 남은 칸을 먼저 보관)는 부품 시험으로만 보았다(tests/local-keep-p0.test.js 「조건 ①」 5건 · 「조건 ②」 2건).\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다."
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 직전 사본 = 덮어쓰기 전 글자, 되돌리기 뒤 백업 = 덮어쓰기 전 글자(measurement.json browser.after.photoAndUnsentRecord.rollback). 용량 초과는 진짜 QuotaExceededError 로 쟀다(browser.after.storageNearlyFull). 「일부만 쓰임」 「쓰는 사이 종료」와 조건 ②(직전 사본에만 남은 칸을 먼저 보관)는 부품 시험으로만 보았다(tests/local-keep-p0.test.js 「조건 ①」 5건 · 「조건 ②」 2건).\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다.\n유일 백업 보완 차수: 이전 직접 호출은 화면에도 이미 사진·피드백이 있어 기기 백업에만 있는 입력을 놓쳤다. 독립 확인이 c5d95027에서 재현한 정상 수동동기화/게스트이관의 손실은 reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/independent-tool-original.cjs·independent-results-original.json으로 보존했다. 같은 도구·새 Chrome 직접 호출로 수정 전후를 쟀으며, 부가 칸은 로컬 쓰기 사본에만 되붙여 서버 payload/화면 객체는 유지했다. 명시적 비움·다른 값·본문 차이·다른 주인/휴지통/kept-only를 별도 부품 입력으로 확인했고 실제 삭제 UX는 미측정이다. 조건④ 전체 완료로 확대하지 않는다. reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json·worker-measurements.md를 읽는다(작업자 측정, 판정 아님)."
       }
     },
     {
@@ -132,7 +132,7 @@
           "설정에서 「내 데이터 전체 복원 및 동기화」 단추를 누른다. 끝난 뒤 기록 탭의 카드에 사진과 피드백이 그대로인지 본다",
           "게스트로 기록을 만든 뒤 가입 · 로그인해(게스트 이관) 기록이 넘어오는지 본다"
         ],
-        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 다음 저장 뒤 · 수동 동기화 뒤 · 두 번째 다시 열기 뒤에도 카드에 사진과 피드백이 있었다(measurement.json browser.after.photoAndUnsentRecord.afterNextSave · afterManualSync · afterSecondReopen). 저장소가 거의 찬 상태에서는 올리지 못한 기록이 다음 저장 뒤에도 백업에 남았다(storageNearlyFull.nextSaveWhileFull). syncServerRecords 와 migrateGuestDataToUser 의 고친 줄은 직접 돌려 보지 못했다(글자로만 확인) — reports/TASK-ES-695/evidence/before-after.md 3절.\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다."
+        "note": "작업자 측정(판정 아님): 가짜 서버 브라우저 재현 — 다음 저장 뒤 · 수동 동기화 뒤 · 두 번째 다시 열기 뒤에도 카드에 사진과 피드백이 있었다(measurement.json browser.after.photoAndUnsentRecord.afterNextSave · afterManualSync · afterSecondReopen). 저장소가 거의 찬 상태에서는 올리지 못한 기록이 다음 저장 뒤에도 백업에 남았다(storageNearlyFull.nextSaveWhileFull). syncServerRecords 와 migrateGuestDataToUser 의 고친 줄은 직접 돌려 보지 못했다(글자로만 확인) — reports/TASK-ES-695/evidence/before-after.md 3절.\n2026-10-13 보완 차수 작업자 측정(법정 확인 아님): reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md. 첫 원시 결과는 그대로 보존했다. 기존 독립 반례의 고유 자료 보존·복원 실패 결과와 추가 오류/종료/다음 저장을 별도 측정했고, syncServerRecords·migrateGuestDataToUser를 실제 Chrome에서 직접 불렀다(세션·응답은 가짜, 실클릭 E2E가 아니다). 정상 다시 열기·다음 저장·수동 동기화·되돌리기도 기존 도구로 다시 쟀다. 마지막 read→setItem 탭 경쟁은 원래 main과 보완 뒤 모두 남는 경계이고 B의 한 탭 작성자 범위다. 운영 실계정·실기기·실제 강제 종료는 미측정이며 P0 조건 전체 충족·저장 안전 완료로 확대하지 않는다.\n유일 백업 보완 차수: 이전 직접 호출은 화면에도 이미 사진·피드백이 있어 기기 백업에만 있는 입력을 놓쳤다. 독립 확인이 c5d95027에서 재현한 정상 수동동기화/게스트이관의 손실은 reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/independent-tool-original.cjs·independent-results-original.json으로 보존했다. 같은 도구·새 Chrome 직접 호출로 수정 전후를 쟀으며, 부가 칸은 로컬 쓰기 사본에만 되붙여 서버 payload/화면 객체는 유지했다. 명시적 비움·다른 값·본문 차이·다른 주인/휴지통/kept-only를 별도 부품 입력으로 확인했고 실제 삭제 UX는 미측정이다. 조건④ 전체 완료로 확대하지 않는다. reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json·worker-measurements.md를 읽는다(작업자 측정, 판정 아님)."
       }
     },
     {
@@ -483,6 +483,54 @@
         "path": "directCalls.requestStateRenderUnchanged",
         "equals": true
       }
+    },
+    {
+      "id": "C27",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "유일 백업 입력의 두 실제 함수 격리 호출에서 사진·피드백·에너지·집중 보존이 true로 기록됐다(작업자 측정 기록; 조건④ 전체 완료의 판정이 아니다)",
+      "touches": [
+        "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json",
+        "path": "replay.photoFeedbackPreserved",
+        "equals": true
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "유일 백업 입력의 격리 호출 전후 서버 요청·화면 state·렌더 순서가 같다고 기록됐다(작업자 측정 기록)",
+      "touches": [
+        "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json",
+        "path": "replay.serverScreenRenderUnchanged",
+        "equals": true
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "본문 차이·명시적 비움·다른 주인·휴지통·보관 실패 등의 새 부품 단언 실패 수가 0으로 기록됐다(작업자 측정 기록; 실제 삭제 UX는 미측정)",
+      "touches": [
+        "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json",
+        "path": "variants.assertionsNotHeld",
+        "equals": 0
+      }
     }
   ],
   "outOfScopeReports": {
@@ -526,5 +574,13 @@
     "originalClaimsUnchanged": "C1-C22 ID/kind/requirements/expectations maintained; notes only supplemented",
     "processEssenceResultOrder": true,
     "newStandard13Fields": "definition pending from spec owner; semantic evidence linked, no runtime enforcement claimed"
+  },
+  "followupBackupOnly": {
+    "source": "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json",
+    "independentNegativeSource": "reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/independent-results-original.json",
+    "originalInputGap": "earlier direct-call input already had metadata in screen array",
+    "fullConditionFourConfirmed": false,
+    "actualUseAvailable": null,
+    "longTermEffect": null
   }
 }
