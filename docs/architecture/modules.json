@@ -3086,6 +3086,45 @@
       "dependsOn": []
     },
     {
+      "id": "data/category-map",
+      "file": "js/data/category-map.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "소통-피드 알고리즘 0단계(#TASK-ES-696) — 목표 topic(대범위 6/중범위 35)·category 라벨·제목 정규식 → 피드 카테고리 18키 매핑표, 글 메타 7칸(withMeta), 칸 없는 서버 재시도 insert. 순수 함수, DOM 없음. SQL feed_category_of 와 같은 표",
+      "spans": [
+        "comm",
+        "records",
+        "goals"
+      ],
+      "provides": [
+        "feed.category-map"
+      ],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [
+        {
+          "name": "feed.category-map",
+          "description": "목표(topic·category·제목)를 피드 카테고리 18키 중 하나로 판정하고, 피드 글 메타 7칸을 만든다. 못 찾으면 null(새 글만 life)",
+          "sideEffect": "none",
+          "needsConfirm": false,
+          "input": "{ topic?, category?, title?, caption? } | goal",
+          "output": "feed key | null · { category, goal_id, group_id, content_type, author_pct, topic, goal_visibility }"
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
       "id": "data/expert-templates/career",
       "file": "js/data/expert-templates/career.js",
       "layer": "legacy",
@@ -5179,7 +5218,8 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalCategoryMap"
       ]
     },
     {
@@ -5875,6 +5915,7 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope",
+        "OurgoalCategoryMap",
         "OurgoalEvents",
         "OurgoalStore",
         "OurgoalTeamInviteComm"
@@ -6885,6 +6926,7 @@
       ],
       "dependsOn": [
         "OurgoalAppScope",
+        "OurgoalCategoryMap",
         "OurgoalGoalEditUX",
         "OurgoalTeamInviteComm",
         "OurgoalTeamLeaderCheck",
@@ -7464,7 +7506,8 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope",
-        "OurgoalAvatar"
+        "OurgoalAvatar",
+        "OurgoalCategoryMap"
       ]
     },
     {
