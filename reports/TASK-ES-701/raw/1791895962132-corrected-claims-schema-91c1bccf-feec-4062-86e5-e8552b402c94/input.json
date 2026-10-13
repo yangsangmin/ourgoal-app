@@ -1,0 +1,11 @@
+{
+  "name": "corrected-claims-schema",
+  "argv": [
+    "-e",
+    "const fs=require('node:fs'),c=require('./court/claims');const errors=c.validateClaims(JSON.parse(fs.readFileSync('reports/TASK-ES-701/claims.json','utf8')));console.log(JSON.stringify({errors}));if(errors.length)process.exitCode=1;"
+  ],
+  "cwd": "C:\\dev\\wt\\ourgoal-share-feed-category-01a1310c",
+  "envOverrides": {
+    "NODE_PATH": "C:/dev/ourgoal-app/node_modules"
+  }
+}

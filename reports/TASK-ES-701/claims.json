@@ -1,0 +1,101 @@
+{
+  "task": "TASK-ES-701",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-701-CORRECTION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "공유 목표의 공통 매핑과 수동 카테고리를 소비하고 목표 미설정의 기본값은 life로 표시한다"
+    },
+    {
+      "id": "R2",
+      "text": "오류/응답 유실은 창과 현재 입력을 유지하고 초안 보관이나 게시 성공을 합성하지 않는다"
+    },
+    {
+      "id": "R3",
+      "text": "같은 창의 공유 의도는 ID와 첫 준비 입력을 유지하며 실제 저장 metadata/SDK 결과/중복 제출 효과를 구분한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "domain": "ui-behavior",
+      "statement": "실제 익명 앱 공유 창의 목표 미설정은 life이며 수동 개발·기획 선택은 실제 미리보기에 남는다",
+      "touches": [
+        "js/tabs/records/share-to-feed.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/no-goal-category.json",
+      "change": "fix",
+      "symptom": 8
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "domain": "ui-behavior",
+      "statement": "실제 익명 앱의 통신 차단 실패는 창/입력 유지·같은 게시물 재시도·초안 미보관 안내로 이어진다",
+      "touches": [
+        "js/tabs/records/share-to-feed.js",
+        "js/tabs/records/share-feed-save.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/post-failure-retention.json",
+      "change": "fix",
+      "symptom": 9
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "persistence",
+      "statement": "실제 로그인 계정의 metadata 저장/행 되읽음·누락 칸 retry·중복 클릭의 원격 효과와 응답 유실 후 같은 ID 확인",
+      "touches": [
+        "js/tabs/records/share-to-feed.js",
+        "js/tabs/records/share-feed-save.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "who": "root가 원래 허용된 전용 시험 계정/게시 및 정리 범위 안에서 배정한 실제 검증 담당",
+        "how": [
+          "별도 허용된 원격 쓰기 범위가 실제 있을 때만 러닝 목표로 공유하고 자기 새 행의 category/goal_id/content_type/author_pct/topic/goal_visibility와 extra를 되읽는다",
+          "지연 중 반복 입력과 같은 창 retry의 ID/실제 행 수를 확인한다",
+          "실제 반환 오류/응답 유실은 게시·보관 성공을 합성하지 않고 다른 계정에 남은 입력을 쓰지 않는지 확인한다"
+        ],
+        "cannotBecause": "needs-login"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 9,
+      "domain": "ui-behavior",
+      "statement": "실패 뒤 첫 준비 문구가 편집 잠금과 미리보기에 같은 내용으로 남는다",
+      "touches": [
+        "js/tabs/records/share-feed-save.js"
+      ],
+      "scenario": "scenarios/frozen-caption-preview.json"
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 9,
+      "domain": "ui-behavior",
+      "statement": "실패 뒤 기존 취소 버튼으로 게시 창을 닫을 수 있다",
+      "touches": [
+        "js/tabs/records/share-feed-save.js"
+      ],
+      "scenario": "scenarios/cancel-after-failure.json"
+    }
+  ],
+  "outOfScopeReports": [
+    "창 닫기/새로고침 후 초안 복구 미구현; 새 영구 초안/DB schema/개인정보 확대0",
+    "component-work-scope2.json은 SDK fixture와 실제 DOM/listener의 작업자 측정이며 실제 Supabase E2E가 아니다",
+    "원82e7 각1회 의견과 원 실패는 원본으로 유지하며 자체 측정은 Court 판정이 아니다"
+  ]
+}

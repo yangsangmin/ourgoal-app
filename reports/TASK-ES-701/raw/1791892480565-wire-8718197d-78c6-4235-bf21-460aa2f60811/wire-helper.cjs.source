@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..'),gen=require(path.join(root,'scripts/new-module.js'));
+const file='js/tabs/records/share-feed-save.js',id='records/share-feed-save',specFile=path.join(root,'docs/architecture/modules.json');
+const spec=JSON.parse(fs.readFileSync(specFile,'utf8'));
+if(spec.cells.some(x=>x.id===id))throw Error('이미 신고됨');
+const cell=gen.declarationOf('records','share-feed-save',['records.share-feed-intent'],[]);
+cell.id=id;cell.file=file;cell.role='계정별 공유 의도 저장과 미확정 초안';cell.listens=[];
+cell.owns=['profile.settings.feedShareDrafts'];
+cell.capabilities=[{name:'records.share-feed-intent',description:cell.role,sideEffect:'server',needsConfirm:false}];
+spec.cells.push(cell);fs.writeFileSync(specFile,JSON.stringify(spec,null,2)+'\n','utf8');
+const indexFile=path.join(root,'index.html'),before=fs.readFileSync(indexFile,'utf8');
+const tag='<script src="js/tabs/records/share-to-feed.js"></script>';
+if(before.split(tag).length!==2)throw Error('원태그 유일성');
+const after=before.replace(tag,'<script src="'+file+'"></script>'+tag);
+fs.writeFileSync(indexFile,after,'utf8');
+fs.writeFileSync(path.join(__dirname,'helper-wiring.json'),JSON.stringify({id,file,generator:'scripts/new-module.js#declarationOf',indexOriginalTag:tag,indexLinesChanged:0,originalTagPreserved:true,sourceSha256:crypto.createHash('sha256').update(before).digest('hex')},null,2)+'\n',{encoding:'utf8',flag:'wx'});
+console.log(JSON.stringify({id,file,indexLinesChanged:0}));

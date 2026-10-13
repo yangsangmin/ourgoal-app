@@ -1,0 +1,61 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),crypto=require('node:crypto');
+const {createRequire}=require('node:module'),{chromium}=createRequire('C:/dev/ourgoal-app/package.json')('playwright');
+const root=path.resolve(__dirname,'../..'),mode=process.argv[2]||'work',base='db8b7ebbd8a9104cd2e3c10f1602d2ae32bf0d6c';
+const sources=['js/core/capabilities.js','js/data/category-map.js','js/tabs/records/share-feed-save.js','js/tabs/records/share-to-feed.js'];
+const bytes=p=>mode==='base'&&p.endsWith('share-to-feed.js')?cp.execFileSync('git',['-c','core.longpaths=true','cat-file','-p',base+':'+p],{cwd:root}):fs.readFileSync(path.join(root,p));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),assets=new Map(sources.filter(p=>mode!=='base'||!p.endsWith('share-feed-save.js')).map(p=>[p,bytes(p)]));
+const server=http.createServer((req,res)=>{const key=req.url.slice(1);res.writeHead(200,{'Content-Type':assets.has(key)?'text/javascript':'text/html'});res.end(assets.get(key)||'<html><body></body></html>');});
+const rows=[];let browser;
+async function main(){
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const url='http://127.0.0.1:'+server.address().port;
+ browser=await chromium.launch({headless:true});
+ async function pageFor(options={}){
+  const page=await browser.newPage({viewport:{width:1100,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(url);await page.evaluate(o=>{
+   window.measure={calls:[],toasts:[],closed:0,profileSaves:0,sequence:0,options:o};
+   const goals=o.none?[]:[{id:'g-run',title:'러닝 목표',topic:'health/러닝·마라톤',category:'health',visibility:'public',pct:42,milestones:[]},{id:'g-mind',title:'명상 목표',topic:'mind/명상·멘탈케어',category:'mind',visibility:'private',pct:61,milestones:[]}];
+   const profile={id:'component-account',displayName:'격리 입력',settings:{virtualCheerEnabled:false},goals,records:[]};
+   const L={state:{profile,lastCapture:null},newId:()=>String(++measure.sequence),nowISO:()=>'2026-10-13T00:00:00Z',goalProgress:g=>g.pct,escapeHtml:s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),md:s=>s,avatarHtml:()=>'',triggerHaptic:()=>{},burstConfetti:()=>{},setTab:()=>{},renderCommScreen:()=>{},toast:s=>measure.toasts.push(s),closeModal:()=>measure.closed++,saveProfile:async()=>{measure.profileSaves++;if(o.profileThrow)throw Error('component profile failure');},saveLocalSettings:(a,s)=>{if(!o.storageFail)localStorage.setItem('ourgoal_settings_'+a,JSON.stringify(s));},openModal:(html,bind)=>{document.body.innerHTML='<main id="modal">'+html+'</main>';bind(document.querySelector('#modal'));},sb:{from:table=>({insert:async p=>{
+    measure.calls.push({table,post:JSON.parse(JSON.stringify(p))});
+    if(o.delay)await new Promise(r=>measure.release=r);
+    if(o.throwInsert)throw Error('component response loss');
+    if(o.emptyResponse)return undefined;
+    if(o.missingColumn&&measure.calls.length===1)return {error:{code:'PGRST204',message:'missing column category'}};
+    return {error:o.rejected?{code:'42501',message:'component denial'}:null};
+   }})}};
+   window.componentScope=L;window.OurgoalAppScope={scope:L};
+  },options);
+  for(const p of assets.keys())await page.addScriptTag({url:url+'/'+p});
+  if(options.helperAbsent)await page.evaluate(()=>OurgoalCapabilities.revokeCell('records/share-feed-save'));
+  await page.evaluate(()=>OurgoalRecordsKit.openShareToFeedModal());
+  return {page,errors};
+ }
+ async function test(name,options,run,check){
+  let p;
+  try{p=await pageFor(options);await run(p.page);const actual=await p.page.evaluate(()=>({calls:measure.calls,toasts:measure.toasts,closed:measure.closed,sequence:measure.sequence,profileSaves:measure.profileSaves,profile:componentScope.state.profile,cache:componentScope.FEED_POSTS_CACHE||[],settings:localStorage.getItem('ourgoal_settings_component-account'),active:document.querySelector('[data-shcat].active')?.dataset.shcat,disabled:document.querySelector('#shareConfirmBtn')?.disabled}));const ok=check(actual)&&!p.errors.length;rows.push({name,ok,actual,pageErrors:p.errors,componentOnly:true,remoteRequests:0});}
+  catch(e){rows.push({name,ok:false,error:e.message,componentOnly:true,remoteRequests:0});}
+  finally{if(p)await p.page.close();}
+ }
+ const wait=p=>p.waitForTimeout(80),submit=async p=>{await p.locator('#shareCaptionInput').fill('격리 공유 입력');await p.locator('#shareConfirmBtn').click();await wait(p);};
+ const success=a=>a.calls.length===1&&a.closed===1&&a.cache.length===1;
+ await test('running-default',{},async()=>{},a=>a.active==='running');
+ await test('none-life', {none:true},async()=>{},a=>a.active==='life');
+ await test('automatic-goal-change',{},async p=>{await p.locator('#shareGoalSelect').selectOption('g-mind');},a=>a.active==='mental');
+ await test('manual-preserved',{},async p=>{await p.locator('[data-shcat="dev"]').click();await p.locator('#shareGoalSelect').selectOption('g-mind');await submit(p);},a=>success(a)&&a.calls[0].post.category==='dev'&&a.calls[0].post.goal_id==='g-mind'&&a.calls[0].post.author_pct===61);
+ await test('SQ-R01-returned-error',{rejected:true},submit,a=>a.calls.length===1&&a.closed===0&&a.cache.length===0&&!a.toasts.some(t=>t.includes('성공'))&&JSON.parse(a.settings).feedShareDrafts.length===1);
+ await test('thrown-response-loss',{throwInsert:true},submit,a=>a.closed===0&&a.cache.length===0&&JSON.parse(a.settings).feedShareDrafts[0].state==='unconfirmed');
+ await test('storage-denied',{rejected:true,storageFail:true},submit,a=>a.closed===0&&a.settings===null&&a.toasts.some(t=>t.includes('보관을 확인하지 못')));
+ await test('empty-response',{emptyResponse:true},submit,a=>a.closed===0&&a.cache.length===0&&JSON.parse(a.settings).feedShareDrafts[0].state==='unconfirmed');
+ await test('SQ-P01-concurrent',{delay:true},async p=>{await p.locator('#shareCaptionInput').fill('격리 공유 입력');await p.locator('#shareConfirmBtn').click();await p.evaluate(()=>document.querySelector('#shareConfirmBtn').dispatchEvent(new Event('click')));await p.evaluate(()=>measure.release());await wait(p);},a=>success(a)&&a.sequence===1);
+ await test('immutable-delayed-source',{delay:true},async p=>{await submit(p);await p.evaluate(()=>{componentScope.state.profile.goals[0].pct=99;componentScope.state.profile.goals[0].topic='mind/명상·멘탈케어';measure.release();});await wait(p);},a=>success(a)&&a.calls[0].post.author_pct===42&&a.calls[0].post.topic==='health/러닝·마라톤'&&a.cache[0].author_pct===42);
+ await test('missing-column-same-id',{missingColumn:true},submit,a=>a.closed===1&&a.calls.length===2&&a.calls[0].post.id===a.calls[1].post.id&&a.calls[0].post.extra.category===a.calls[1].post.extra.category&&a.cache[0].category==='running');
+ await test('pending-manual-retry',{},async p=>{await p.evaluate(()=>measure.options.rejected=true);await submit(p);await p.evaluate(()=>measure.options.rejected=false);await p.locator('#shareConfirmBtn').click();await wait(p);},a=>a.closed===1&&a.calls.length===2&&JSON.stringify(a.calls[0].post)===JSON.stringify(a.calls[1].post)&&a.cache.length===1);
+ await test('account-change-hold',{delay:true},async p=>{await submit(p);await p.evaluate(()=>{componentScope.state.profile={id:'another-component-account',settings:{},goals:[],records:[]};measure.release();});await wait(p);},a=>a.calls.length===1&&a.closed===0&&a.cache.length===0&&a.profile.settings.feedShareDrafts===undefined&&JSON.parse(a.settings).feedShareDrafts.length===1);
+ await test('profile-failure-after-accepted',{profileThrow:true},submit,a=>success(a)&&a.profileSaves===1);
+ await test('helper-absent',{helperAbsent:true},submit,a=>a.calls.length===0&&a.closed===0&&a.toasts.some(t=>t.includes('準備')||t.includes('준비')));
+ await test('reopen-restore-old-frame',{},async p=>{await p.evaluate(()=>measure.options.rejected=true);await submit(p);await p.evaluate(()=>{measure.options.rejected=false;componentScope.state.profile.goals[0].pct=99;OurgoalRecordsKit.openShareToFeedModal();});await p.locator('#shareRetryDraftBtn').click();await p.locator('#shareConfirmBtn').click();await wait(p);},a=>a.closed===1&&a.calls.length===2&&JSON.stringify(a.calls[0].post)===JSON.stringify(a.calls[1].post));
+ const report={mode,base:mode==='base'?base:null,sourcePins:[...assets].map(([file,b])=>({file,sha256:sha(b)})),checks:rows,total:rows.length,matched:rows.filter(r=>r.ok).length,notMatched:rows.filter(r=>!r.ok).length,remoteRequests:0,operatingUse:null};
+ fs.writeFileSync(path.join(__dirname,'component-'+mode+'.json'),JSON.stringify(report,null,2)+'\n',{encoding:'utf8',flag:'wx'});console.log(JSON.stringify({mode,total:report.total,matched:report.matched,notMatched:report.notMatched,failures:rows.filter(r=>!r.ok).map(r=>({name:r.name,error:r.error})),remoteRequests:0}));if(report.notMatched)process.exitCode=1;
+}
+main().catch(e=>{console.error(e.stack);process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();server.close();});
