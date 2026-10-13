@@ -9,6 +9,10 @@
     {
       "id": "R2",
       "text": "동일 source의 검증된 게시 재료를 만들고 원 자료 보존·원격 pending을 구분한다."
+    },
+    {
+      "id": "R3",
+      "text": "지도 일괄 갱신에 맞춰 작업참고 정본과 생성 metadata의 저장소 사본을 동기화한다."
     }
   ],
   "claims": [
@@ -107,6 +111,52 @@
         "file": "reports/TASK-ES-705/measurement.json",
         "path": "descriptionsAllMatch",
         "equals": true
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성 작업참고 사본의 기준 PR 및 경험칙 개수가 정본 생성 표기와 같다.",
+      "touches": [
+        "docs/agents/WORK-REFERENCE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/agents/WORK-REFERENCE.md",
+        "text": "> **기준 PR #975** (3a02bec793ec8e99d58ce7dccaa0703671d2c8c8) · 생성 2026-10-14 01:14 KST · 경험칙 131개"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "원장 사본에 실제 PR975 실측을 바탕으로 부모가 추가한 L131 경험칙이 기록되어 있다.",
+      "touches": [
+        "docs/agents/lessons.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/agents/lessons.json",
+        "text": "운영 권한 변경은 원정의 CAS와 역할 검증, 읽기 전용 메타데이터 대조, 실제 화면 검증을 별도 증거로 남긴다."
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "동일 정본에서 생성한 metadata 사본은 경험칙 개수를 표시한다.",
+      "touches": [
+        "docs/agents/reference-meta.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/agents/reference-meta.json",
+        "path": "lessons",
+        "equals": 131
       }
     }
   ]

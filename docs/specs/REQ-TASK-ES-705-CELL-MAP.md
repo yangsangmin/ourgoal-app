@@ -18,3 +18,8 @@ docs/architecture/cell-descriptions.json의 helpful-reason은 글쓴이가 이�
 docs/architecture/cell-descriptions.json 및 cell-map.json, docs/specs/REQ/PLAN-TASK-ES-705-CELL-MAP.md, ordinary docs/rules/TICKETS.md, dev_log.md와 reports/TASK-ES-705의 단일 claims/측정만 변경한다. .claude/cell-map-705-publish에 새 게시 재료를 만들고 웹·노션·허브 모두 pending으로 남긴다.
 ## 8. 막히는 지점 예상
 main이 이동하면 게시 도장과 병합 이력이 달라질 수 있다. sourceSHA와 기준 commit을 측정 기록에 두고 주장에는 불안정한 전체 수치를 쓰지 않는다. 이전 TASK704 재료·원자료는 수정하지 않으며 private 원문·키·공식 scorecard를 게시하지 않는다. push/PR/원격 게시·SQL3·첫 지표 실행은 이 담당의 범위 밖이다.
+
+
+## TASK705 작업참고 사본 추가 동기화
+
+착수 당시 작업참고 기준 PR #976은 원 측정에 보존한다. 지도 일괄 갱신의 SNOWBALL 의무로 상위 담당이 갱신한 정본 기준 PR #975/PR975 merge source의 경험칙 131개를 docs/agents/lessons.json·WORK-REFERENCE.md·reference-meta.json에 바이트 복사한다. 생성 metadata도 같은 source를 유지한다. 원 a8f 커밋과 final-source-seal.json 및 mapper 17개 측정은 보존한다. 새 동기화 측정은 reports/TASK-ES-705/reference-sync.json에 별도 기록하고 문서 gate만 실행한다. 제품/지도 source 및 이전 주장 C1-C6는 바꾸지 않는다. 웹·노션·허브는 pending이다.

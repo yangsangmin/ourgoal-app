@@ -6110,3 +6110,6 @@
 ## TASK-ES-705 PR975 후 세포지도 설명 갱신
 
 작업참고 기준 PR #976. 제품 source 3a02bec793ec8e99d58ce7dccaa0703671d2c8c8의 helpful-reason/reactions UI 및 privacy SQL 계약을 읽어 손 설명을 교정한다. 생성 정본·게시 재료와 실측은 reports/TASK-ES-705/measurement.json에 결박한다. 원 TASK704 자료·제품·SQL·법정·기대값은 보존한다. 웹·노션·허브는 pending이고 본 담당의 원격 호출·운영 SQL3/첫 지표·push/PR는 실행하지 않는다. 독립 검토와 제출은 상위 담당이 이어간다.
+
+
+TASK-ES-705 추가: SNOWBALL 지도 일괄 갱신 의무에 따라 부모가 PR975 실측 경험칙 L131을 반영한 정본 원장/생성 작업참고/metadata 세 파일을 docs/agents 대응 사본에 바이트 복사했다. 원 TASK705 a8f 지도 source/17개 시험/claims C1-C6 및 원 봉인은 보존하고 reference-sync.json에 사본 SHA를 별도 기록한다. 추가 문서 gate로만 확인하며 mapper·전체 npm·운영 SQL을 반복하지 않는다. 원격 세포지도는 pending이다.

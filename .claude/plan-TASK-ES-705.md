@@ -23,3 +23,6 @@ TASK704 도움 이유 설명은 현재 서버·UI의 글쓴이 집계 전용 계
 이 전용 worktree의 지도 설명·생성 지도·REQ/PLAN·ordinary TICKETS·dev_log·TASK705 보고만 변경한다. 제품/SQL/index/court/규범/시험 기대값은 변경하지 않는다.
 ## 8. 막히는 지점 예상
 main 이동, 번호 충돌, 생성 source stamp, Git CRLF, 동기화 오표시가 위험이다. 원 source와 새 hash를 기록하고 원 자료를 덮지 않으며 publisher 재료를 원격 적용하지 않는다.
+
+- [x] 작업참고 정본 사본 바이트 동기화 및 metadata 확인 · 예상 3분 · 세 파일 정본 바이트 일치
+- [x] 새 문서 gate/claims 및 추가 source 봉인 · 예상 3분 · 원 a8f/지도/제품 불변과 새 HEAD 기록

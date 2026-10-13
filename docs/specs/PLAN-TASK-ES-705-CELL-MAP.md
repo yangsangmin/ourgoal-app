@@ -20,3 +20,8 @@ PR975 이후 helpful-reason/reactions의 손 설명과 생성 지도에 개인�
 지도 설명·생성 지도와 ordinary 문서/티켓/보고만 변경한다. 웹/노션/허브의 원격 호출을 하지 않고 .claude/cell-map-705-publish에만 자료를 만든다.
 ## 8. 막히는 지점 예상
 번호·source 이동·CRLF·새 자료의 원 source 불일치가 위험이다. 원 TASK704 자료를 보존하고 measured source/hash와 각 검사 실제 종료코드를 기록한다. 원격 동기화·UI 효과는 미확인이다.
+
+
+## TASK705 작업참고 사본 추가 동기화
+
+착수 당시 작업참고 기준 PR #976은 원 측정에 보존한다. 지도 일괄 갱신의 SNOWBALL 의무로 상위 담당이 갱신한 정본 기준 PR #975/PR975 merge source의 경험칙 131개를 docs/agents/lessons.json·WORK-REFERENCE.md·reference-meta.json에 바이트 복사한다. 생성 metadata도 같은 source를 유지한다. 원 a8f 커밋과 final-source-seal.json 및 mapper 17개 측정은 보존한다. 새 동기화 측정은 reports/TASK-ES-705/reference-sync.json에 별도 기록하고 문서 gate만 실행한다. 제품/지도 source 및 이전 주장 C1-C6는 바꾸지 않는다. 웹·노션·허브는 pending이다.
