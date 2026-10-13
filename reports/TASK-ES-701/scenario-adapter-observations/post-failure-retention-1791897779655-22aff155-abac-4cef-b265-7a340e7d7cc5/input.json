@@ -1,0 +1,179 @@
+{
+  "taskId": "TASK-ES-701",
+  "base": "0573f7f8e5d32af7693665d814f60fc62b8d8a87",
+  "scenarioFile": "reports/TASK-ES-701/scenarios/post-failure-retention.json",
+  "oldScenario": {
+    "id": "share-post-failure-retention",
+    "title": "외부 통신이 차단된 법정의 실제 게시 요청 실패는 게시 성공으로 닫히지 않고 같은 입력 재시도를 남긴다",
+    "steps": [
+      {
+        "do": "goto",
+        "path": "/index.html"
+      },
+      {
+        "do": "waitFor",
+        "selector": "#btnLandingPreviewDirect"
+      },
+      {
+        "do": "click",
+        "selector": "#btnLandingPreviewDirect"
+      },
+      {
+        "do": "waitFor",
+        "selector": "#captureInput",
+        "timeoutMs": 15000
+      },
+      {
+        "do": "click",
+        "selector": ".navbtn[data-tab=\"comm\"]"
+      },
+      {
+        "do": "click",
+        "selector": "#btnCommPostFeed"
+      },
+      {
+        "do": "fill",
+        "selector": "#shareCaptionInput",
+        "value": "격리된 실패 경로 확인 입력"
+      },
+      {
+        "do": "click",
+        "selector": "#shareConfirmBtn"
+      },
+      {
+        "expect": "textContains",
+        "selector": "#shareConfirmBtn",
+        "text": "같은 게시물 다시 시도",
+        "timeoutMs": 15000
+      },
+      {
+        "expect": "visible",
+        "selector": "#shareCaptionInput"
+      },
+      {
+        "expect": "textContains",
+        "selector": "#shareFeedSaveStatus",
+        "text": "보관되지 않아요"
+      },
+      {
+        "expect": "noExceptions"
+      }
+    ]
+  },
+  "scenario": {
+    "id": "share-post-failure-retention",
+    "title": "외부 통신이 차단된 법정의 실제 게시 요청 실패는 게시 성공으로 닫히지 않고 같은 입력 재시도를 남긴다",
+    "steps": [
+      {
+        "do": "goto",
+        "path": "/index.html"
+      },
+      {
+        "do": "waitFor",
+        "selector": "#btnLandingPreviewDirect"
+      },
+      {
+        "do": "click",
+        "selector": "#btnLandingPreviewDirect"
+      },
+      {
+        "do": "waitFor",
+        "selector": "#captureInput",
+        "timeoutMs": 15000
+      },
+      {
+        "do": "click",
+        "selector": ".navbtn[data-tab=\"comm\"]"
+      },
+      {
+        "do": "click",
+        "selector": "#btnCommPostFeed"
+      },
+      {
+        "do": "type",
+        "selector": "#shareCaptionInput",
+        "text": "격리된 실패 경로 확인 입력",
+        "clear": true
+      },
+      {
+        "do": "click",
+        "selector": "#shareConfirmBtn"
+      },
+      {
+        "expect": "textContains",
+        "selector": "#shareConfirmBtn",
+        "text": "같은 게시물 다시 시도",
+        "timeoutMs": 15000
+      },
+      {
+        "expect": "visible",
+        "selector": "#shareCaptionInput"
+      },
+      {
+        "expect": "textContains",
+        "selector": "#shareFeedSaveStatus",
+        "text": "보관되지 않아요"
+      },
+      {
+        "expect": "noExceptions"
+      }
+    ]
+  },
+  "source": [
+    {
+      "file": "js/tabs/records/share-to-feed.js",
+      "gitSha256": "327f977c1bc85fd319ec6471da52f7f35863b83e55375c4795d4963a31367a51",
+      "diskSha256": "327f977c1bc85fd319ec6471da52f7f35863b83e55375c4795d4963a31367a51",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "js/tabs/records/share-feed-save.js",
+      "gitSha256": "e8afcd16e4c7b4f5e63967794eb91119c80cccfdd4a81ee624c9b0ae03ce1aca",
+      "diskSha256": "e8afcd16e4c7b4f5e63967794eb91119c80cccfdd4a81ee624c9b0ae03ce1aca",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "index.html",
+      "gitSha256": "2a684b272b1862a16ac00faf87dd591fa9b70236a89405f41b4ab623780f6b8b",
+      "diskSha256": "df069141c6f31ff9c3dae5d4c9cba941e83ed33f5245c846bfaacc5fb075af87",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "reports/TASK-ES-701/claims.json",
+      "gitSha256": "b0a090f40d8239fadd43658690cc928139a9adf975eb70299a4bf806f72fd43f",
+      "diskSha256": "b0a090f40d8239fadd43658690cc928139a9adf975eb70299a4bf806f72fd43f",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "court/lib/scenario.js",
+      "gitSha256": "c2aa6ae0101580148b747bc71f4f2ba6659ce15d82ce20f4091ab3f787d3d297",
+      "diskSha256": "66282ef90ec186dad88f1606c1d782fa6ab33013ee0dabe1ea74fdb1fc0d73e1",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "court/lib/static-server.js",
+      "gitSha256": "a1735625496596bed1558360f68149e765eae87812d3e20861f2a3bc87d1d651",
+      "diskSha256": "9eeccc48966a032c91b1eae12c22c2b69f5fb85f328c2995a1bade0792ae0b88",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "court/lib/site-host.js",
+      "gitSha256": "d61c9c276f38402cb42b76f722ed88040341d2adad5cee68e2bd7dc75df1a675",
+      "diskSha256": "6b2fa4a53db33121f849626343bdf63398f0603b56ff08044eadffd5d72ba63e",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "court/lib/chrome.js",
+      "gitSha256": "91843b5e3c637bbc94c704a69e109096c0032b31e96c47937c3431512fb381ae",
+      "diskSha256": "84cda854a3af261b8b634ff80b5e9f40891e3b0f7567f31033a18748a6576fcd",
+      "checkoutNormalizedIdentity": true
+    },
+    {
+      "file": "court/config.json",
+      "gitSha256": "25900afb498cf4b654ceaa626c5b37e0ab75095a7f8c559518a66c29c95039e2",
+      "diskSha256": "97e5baa8c268c7b963c351a8d1e0d6fccaa7c7fbb7bf27fcabcd4a32f7f306c2",
+      "checkoutNormalizedIdentity": true
+    }
+  ],
+  "observerPid": 46404
+}

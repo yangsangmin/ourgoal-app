@@ -26,3 +26,5 @@ Canonical TASK-ES-701, 라우팅 alias TASK-ES-SHARE-FEED-CATEGORY-01a1310c. 기
 게시 교정: 7857 로컬 기록에 다운로드 법정 REPORT/verdict를 잘못 추적하여 기존 사전 푸시가 거절했다. 원 기록·원문은 수정하지 않고 보존한다. root가 허용한 별도 게시 WT는 원격 1e378 후손에 최종 허용 blob만 옮기고 법정 원문 둘을 제외한다. publication-manifest.json은 fe625 제품 21 Git blob과 허용 최종 diff를 대조한다. checkout CRLF와 Git LF 비교로 발생한 첫 봉인 실패는 도구 기록 한계와 함께 남기며 Git index blob 직접 대조로 교정한다. 훅 우회·force push·법정 판정 개명은 없다.
 
 4단계는 PR974 후속 외부 법정의 실제 새 HEAD 판정까지 미완이다. 첫 0A7F8493 돌려보냄을 그대로 유지하며 main 병합·사용 가능·효과 확인은 미확인이다.
+
+두 번째 242C845C가 세 textarea fill 행동을 거절했다. root의 정확 범위 검토 뒤 세 입력 어댑터만 type/text/clear로 교정하고, 같은 0573 제품·정상 보호 config의 public 실행기로 각각 1회 관찰했다. 단언/리터럴/단계 수·제품·claims 변경은 없으며 scenario-adapter-manifest와 wx 원시에 고정한다. 외부 누적 반려 2회, 세 번째 푸시는 root의 이 source 검토 전 보류다. 아직 심사 결과 미충족이므로 4단계는 완료 표시하지 않는다.
