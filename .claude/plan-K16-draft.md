@@ -8,7 +8,7 @@ fetch 후 origin/main 7a4dcea936eea8f308100dbd86d508c75309ce44: 이전 비교와
 - [x] 정확 source·제안 원문·직전판·모델·쓰기 독점 범위 고정 · 예상 8분(추정) · provenance.json 원21pin과 b01c 원비교 불변, origin 이동false/actual 기록
 - [x] REQ/PLAN·티켓·실제 초안 PR 번호 준비 · 예상 8분(추정) · 준비commit4dfe7725와 실제 draft PR978, 승인미확인/효력false 분리
 - [x] 한정15.1·버전·전문 대응·직전 bytearchive·claims 작성 · 예상 12분(추정) · measurement.json에서원문/기존본문보존·bytearchive동일·허용경로/제품무변경 측정
-- [ ] 정합·범위·되읽기 검증과 일반 commit/push/draft 인계 · 예상 12분(추정) · 훅우회 없음, 정확commit/PRURL/차이/미확인 기록. 막히면 완성localpacket과 실제차단근거 인계
+- [x] 정합·범위·되읽기 검증과 일반 commit/push/draft 인계 · 예상 12분(추정) · 규범commit0b9758cc를일반훅으로push, PR978 draft/원격HEAD·본문일치되읽기. 필수정합exit0와원문공백보존에따른diff-check exit2를모두raw인수. 승인/효력/Court판정긍정없음
 
 ## 1. [원칙 ①] 문제 정확히 파악
 kernel14.4의 개정 초안 의무를 수행한다. 기존 비교의 명시 예외 미입증과 최대 양립해석을 그대로 근거로 둔다. 진행/권한 허용은 헌법 개정 승인으로 읽지 않는다.
