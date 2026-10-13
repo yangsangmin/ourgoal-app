@@ -1,0 +1,137 @@
+{
+  "task": "TASK-ES-704",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-704-CELL-MAP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "현재 공유 게시 결과와 도움된 이유 세포 기능 설명을 생성 지도에 반영한다."
+    },
+    {
+      "id": "R2",
+      "text": "기준 main source에서 검증된 게시 재료를 만들고 원격 미동기화를 구분한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "records/share-feed-save 실제 기능 설명이 지도 정본에 반영됐다(제품 사용 판정 아님).",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "현재 게시 창의 계정과 처음 준비한 입력을 고정하고, 같은 게시물 재시도와 서버 SDK 응답에 따른 결과 안내를 처리한다"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "records/share-feed-save 실제 기능 설명이 지도 정본에 반영됐다(제품 사용 판정 아님).",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-map.json",
+        "text": "현재 게시 창의 계정과 처음 준비한 입력을 고정하고, 같은 게시물 재시도와 서버 SDK 응답에 따른 결과 안내를 처리한다"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "helpful-reason 실제 기능 설명이 지도 정본에 반영됐다(제품 사용 판정 아님).",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "「도움돼요」를 누른 뒤 도움된 이유를 골라 짧게 남기고, 글쓴이가 이유 모음과 내용을 보는 창을 연다"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "helpful-reason 실제 기능 설명이 지도 정본에 반영됐다(제품 사용 판정 아님).",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-map.json",
+        "text": "「도움돼요」를 누른 뒤 도움된 이유를 골라 짧게 남기고, 글쓴이가 이유 모음과 내용을 보는 창을 연다"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TASK704 계획·작업 식별자 기록.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-704-CELL-MAP.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-704-CELL-MAP.md",
+        "text": "TASK-ES-704"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TASK704 계획·작업 식별자 기록.",
+      "touches": [
+        "docs/specs/PLAN-TASK-ES-704-CELL-MAP.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/PLAN-TASK-ES-704-CELL-MAP.md",
+        "text": "목표:"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TASK704 계획·작업 식별자 기록.",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-704"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "웹·노션은 원격 미동기화로 기록한다.",
+      "touches": [
+        "reports/TASK-ES-704/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-704/measurement.json",
+        "path": "remoteSync.calls",
+        "equals": 0
+      }
+    }
+  ]
+}
