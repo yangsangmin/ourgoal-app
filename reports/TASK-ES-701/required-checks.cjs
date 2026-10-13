@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),git=args=>cp.execFileSync('git',['-c','core.longpaths=true',...args],{cwd:root,maxBuffer:32*1024*1024});
+const product='bc61afd18534623859f0cba60131c8babb52a45b',merged=git(['rev-parse','HEAD']).toString().trim(),own=['js/tabs/records/share-to-feed.js','js/tabs/records/share-feed-save.js','index.html','docs/architecture/modules.json','reports/TASK-ES-701/claims.json'];
+const equivalence=own.map(file=>({file,productSHA:sha(git(['cat-file','-p',product+':'+file])),mergedSHA:sha(git(['cat-file','-p',merged+':'+file]))}));
+const read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,p),'utf8'));
+const npmDir='raw/1791894052261-required-npm-cc8fcc45-44a7-418c-b106-82bd7207f994';
+const npmExit=read(npmDir+'/exit.json');
+const report={taskId:'TASK-ES-701',originalProduct:product,mergedHead:merged,integratedMain:'f0ac1158c23c4729b0ce0b1d2637a3895c604d2b',equivalence,ownProductBytesChanged:equivalence.some(r=>r.productSHA!==r.mergedSHA),requiredNpm:{input:read(npmDir+'/input.json'),pid:read(npmDir+'/pid.json'),exit:npmExit,stdout: npmDir+'/stdout.bin',stderr:npmDir+'/stderr.bin',context:'태그 없는 자동 merge commit은 훅 거절됐지만 f0ac tree 결합은 staged였고 source 내용 동일 상태에서 실행. 검사 종료 뒤 정식 태그로 merge8d1a 완료'},profileAwait:read('component-work-post-profile-boundary.json'),standaloneIngressBaseline:{source:'db8b7ebbd8a9104cd2e3c10f1602d2ae32bf0d6c',report:'ingress-baseline-recursive-dependencies.json',sameAssertion:read('ingress-baseline-recursive-dependencies.json').stderr.includes('renderCalendar must be called')},originalRawBytes:'original-raw-byte-envelope.json',court:null,remoteWrites:0};
+fs.writeFileSync(path.join(__dirname,'required-checks.json'),JSON.stringify(report,null,2)+'\n',{encoding:'utf8',flag:'wx'});
+console.log(JSON.stringify({merged,ownProductBytesChanged:report.ownProductBytesChanged,npmExit:npmExit.code,postProfileMatched:report.profileAwait.matched,baselineSameAssertion:report.standaloneIngressBaseline.sameAssertion}));
