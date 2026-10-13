@@ -18,7 +18,7 @@
 
 검사 명령은 `node court/appendix.js --versions`와 `node court/appendix.js --check docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`이며 raw stdout/stderr·exit는 같은 폴더에 있다. 초기 `--check`를 kernel에 잘못 적용한 marker부재 실패를 `initial-wrong-target-reproduced.json`에 보존했다. 검사코드를 바꾸지 않고 실제 별표의 전문 경로로 교정했다.
 
-`git diff --check`는 원문 bytearchive에 있는 trailing whitespace와 raw diff 복사 때문에 **exit2**다. `diff-check.stdout.txt`/readback.json에 전체 결과와 해당 두 경로만이라는 측정을 남겼다. 원문을 trim하거나 검사 옵션/훅을 바꾸지 않았으며 '무경고/통과'로 승격하지 않는다. 일반commit/push 훅은 실행했으며 훅우회는 없다.
+`git diff --check`는 원문 bytearchive에 있는 trailing whitespace와 raw diff 복사 때문에 **exit2**다. 규범commit0b9758cc 시점에는 archive/rawdiff 두 경로, 그 경고의 raw stdout을 보존한 후속문서에서는 해당 stdout 파일까지 포함한다. `diff-check.stdout.txt`/readback.json에 실제 결과와 원문/archive/raw증거 경로에 한정된 측정을 남겼다. 원문을 trim하거나 검사 옵션/훅을 바꾸지 않았으며 '무경고/통과'로 승격하지 않는다. 일반commit/push 훅은 실행했으며 훅우회는 없다.
 
 #### [블록 4] Claims (주장)
 -  reports/TASK-ES-DIR006-SAVE-ORDER-01a13674/claims.json 기록 완료

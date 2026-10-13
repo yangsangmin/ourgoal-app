@@ -10,7 +10,7 @@ const check=cp.spawnSync('git',['-c','core.longpaths=true','-C',root,'diff','--c
 fs.writeFileSync(path.join(__dirname,'diff-check.stdout.txt'),check.stdout,{encoding:'utf8'});
 fs.writeFileSync(path.join(__dirname,'diff-check.stderr.txt'),check.stderr,{encoding:'utf8'});
 const rows=check.stdout.split(/\r?\n/).map(l=>l.match(/^(.+?):(\d+): trailing whitespace\.$/)).filter(Boolean).map(m=>({path:m[1],line:Number(m[2])}));
-const preservedPaths=['docs/rules/archive/AGENTS_KERNEL_v2026.10.11-ARGUMENTS.md','reports/'+id+'/normative.diff.patch'];
+const preservedPaths=['docs/rules/archive/AGENTS_KERNEL_v2026.10.11-ARGUMENTS.md','reports/'+id+'/normative.diff.patch','reports/'+id+'/diff-check.stdout.txt'];
 const oldLines=cp.execFileSync('git',['-c','core.longpaths=true','-C',root,'show',p.base+':01_OURGOAL_SUPREME_CONSTITUTION_FULL.md'],{encoding:'utf8'}).split(/\r?\n/);
 const originalWhitespace=rows.filter(r=>r.path===preservedPaths[0]).map(r=>({line:r.line,sourceLineEndsWithWhitespace:/[ \t]+$/.test(oldLines[r.line-1]||'')}));
 const artifacts=['01_OURGOAL_SUPREME_CONSTITUTION_FULL.md','docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md','docs/rules/CONSTITUTION_VERSIONS.md',preservedPaths[0],'docs/rules/TICKETS.md','docs/specs/REQ-'+id+'.md','.claude/plan-K16-draft.md','reports/'+id+'/claims.json','reports/'+id+'/PR-BODY.md','reports/'+id+'/measurement.json','reports/'+id+'/normative.diff.patch'].map(file=>{const b=fs.readFileSync(path.join(root,file));return {file,bytes:b.length,workingCopySHA256:hash(b),utf8RoundTrip:Buffer.from(b.toString('utf8'),'utf8').equals(b)};});
