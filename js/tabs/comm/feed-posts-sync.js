@@ -22,6 +22,23 @@
     L.FEED_POSTS_CACHE = []; if(!L.sb) return;
     var res = await L.sb.from('feed_posts').select('*').order('created_at', { ascending:false }).limit(50);
     L.FEED_POSTS_CACHE = res.data || [];
+    /* #TASK-ES-696 소통-피드 0단계: 최신 50건만으로는 내 목표 카테고리 글이 거의 안 잡힌다(독립 검토 B1).
+       내 활성 목표의 피드 카테고리 글을 따로 50건 더 받아 합친다. category 칸이 아직 없는 서버면(SQL 미실행) 조용히 건너뛴다. */
+    try {
+      var CM = global.OurgoalCategoryMap;
+      var goals = (L.state && L.state.profile && L.state.profile.goals) || [];
+      var cats = [];
+      if(CM) goals.forEach(function(g){ if(g && !g.archivedAt){ var k = CM.fromGoal(g); if(k && cats.indexOf(k) === -1) cats.push(k); } });
+      if(cats.length){
+        var res2 = await L.sb.from('feed_posts').select('*').in('category', cats).order('created_at', { ascending:false }).limit(50);
+        if(res2 && !res2.error && res2.data){
+          var seen = {};
+          L.FEED_POSTS_CACHE.forEach(function(p){ if(p && p.id) seen[p.id] = true; });
+          res2.data.forEach(function(p){ if(p && p.id && !seen[p.id]){ seen[p.id] = true; L.FEED_POSTS_CACHE.push(p); } });
+          L.FEED_POSTS_CACHE.sort(function(a,b){ return String(b.created_at||'').localeCompare(String(a.created_at||'')); });
+        }
+      }
+    } catch(e){ /* 칸 없음·네트워크 — 기본 50건으로 간다 */ }
   }
 
   function setupFeedPostsRealtime(){ if(!L.sb || typeof L.sb.channel !== 'function') return;

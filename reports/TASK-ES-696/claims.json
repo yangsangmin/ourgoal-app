@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-696",
+  "requirementsSource": "docs/growth/2026-10-13-feed-algorithm-stage0.md",
+  "requirements": [
+    { "id": "R1", "text": "소통 피드가 사용자별 목표와 등록한 팀에 맞는 글을 고르려면, 글마다 카테고리·바탕 목표·팀·글 유형·진행률을 서버가 알아야 한다 — feed_posts 에 그 칸을 둔다 (보고서 3-5절, 0단계)" },
+    { "id": "R2", "text": "목표 카테고리 사전(대범위 6·중범위 35·한글 라벨)과 피드 카테고리 사전(18키)이 달라 운동·마음 목표의 글이 기본값 '공부·수험'으로 올라가는 결함을 없앤다 — 매핑표 하나를 JS·SQL 두 곳에 같은 내용으로 둔다 (보고서 3-4절)" },
+    { "id": "R3", "text": "글을 올리는 곳이 메타를 기록하고, 서버에 칸이 아직 없어도(SQL 실행 전) 글쓰기가 끊기지 않는다" },
+    { "id": "R4", "text": "피드 조회가 최신 50건에 갇히지 않고 내 활성 목표 카테고리의 글을 추가로 받아 온다 (독립 검토 B1)" },
+    { "id": "R5", "text": "과거 글의 카테고리를 채우는 길과 글쓴이가 자기 글 카테고리를 고치는 길이 서버에 있다 — 못 찾은 글은 null 로 둔다(life 로 메우지 않는다)" },
+    { "id": "R6", "text": "share-to-feed.js 는 저장 안정화(DIR-006) 담당 파일이라 이 변경에서 손대지 않고, 바꿀 줄을 담당에게 넘긴다" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "목표 중범위 '러닝·마라톤'(대범위 health)은 피드 카테고리 running 으로, '명상·멘탈케어'(mind)는 mental 로 매핑된다 — 매핑표가 js/data/category-map.js 에 있다",
+      "touches": ["js/data/category-map.js", "tests/feed-category-map.test.js"],
+      "check": { "type": "codeContains", "file": "js/data/category-map.js", "text": "'러닝·마라톤': 'running'" }
+    },
+    {
+      "id": "C2", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "SQL 쪽 매핑표(feed_topic_map)에 같은 행이 있어 JS 와 SQL 이 같은 답을 낸다",
+      "touches": ["docs/sql/2026-10-13-feed-posts-category-columns.sql", "tests/feed-category-map.test.js"],
+      "check": { "type": "codeContains", "file": "docs/sql/2026-10-13-feed-posts-category-columns.sql", "text": "('health', '러닝·마라톤', 'running')" }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "체크인 공유 글의 카테고리가 더는 목표 category 라벨 || 'study' 로 떨어지지 않는다",
+      "touches": ["js/tabs/records/checkin-feedback.js"],
+      "check": { "type": "codeNotContains", "file": "js/tabs/records/checkin-feedback.js", "text": "targetGoal.category) || 'study'" }
+    },
+    {
+      "id": "C4", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "체크인 공유 글이 메타 7칸을 붙여(withMeta) 저장하고, 칸 없는 서버면 insertFeedPost 가 메타를 떼고 재시도한다",
+      "touches": ["js/tabs/records/checkin-feedback.js", "js/data/category-map.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/records/checkin-feedback.js", "text": "OurgoalCategoryMap.insertFeedPost(L.sb, post)" }
+    },
+    {
+      "id": "C5", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "몰입 스토리 카드 글도 목표 topic 으로 카테고리를 정하고 메타를 붙인다",
+      "touches": ["js/tabs/goals/focus-autopilot.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/goals/focus-autopilot.js", "text": "OurgoalCategoryMap.fromGoal(curGoal)" }
+    },
+    {
+      "id": "C6", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "팀 완주 글은 extra.category='team' 대신 팀 topic 으로 카테고리를 정하고 content_type=team_done 을 기록한다",
+      "touches": ["js/tabs/goals/team-goals-screen.js", "js/data/category-map.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/goals/team-goals-screen.js", "text": "OurgoalCategoryMap.insertTeamDonePost(window.sb, post, g)" }
+    },
+    {
+      "id": "C7", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "피드 불러오기가 최신 50건 뒤에 내 활성 목표 카테고리 글을 category in(...) 으로 추가 조회해 합친다",
+      "touches": ["js/tabs/comm/feed-posts-sync.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/comm/feed-posts-sync.js", "text": ".in('category', cats)" }
+    },
+    {
+      "id": "C8", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "feed_posts 메타 7칸·team_pings.source·feed_category_of·채우기 RPC·글쓴이 수정 RPC 를 담은 SQL 파일이 있다",
+      "touches": ["docs/sql/2026-10-13-feed-posts-category-columns.sql"],
+      "check": { "type": "fileExists", "file": "docs/sql/2026-10-13-feed-posts-category-columns.sql" }
+    },
+    {
+      "id": "C9", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "index.html 이 매핑 모듈 js/data/category-map.js 를 피드·기록 코드보다 먼저 싣는다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "<script src=\"js/data/category-map.js\"></script>" }
+    },
+    {
+      "id": "C10", "req": "R1", "kind": "unverified", "domain": "persistence",
+      "statement": "SQL 을 실행한 운영 DB 에서 feed_posts 에 category·goal_id·group_id·content_type·author_pct·topic·goal_visibility 칸이 생기고, 새로 올린 체크인 공유 글의 행에 그 값이 들어간다",
+      "touches": ["docs/sql/2026-10-13-feed-posts-category-columns.sql", "js/tabs/records/checkin-feedback.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase SQL Editor 를 열 수 있는 사람(상민님) [손 필요]",
+        "how": [
+          "Supabase SQL Editor 에 docs/sql/2026-10-13-feed-posts-category-columns.sql 전체를 붙여 Run 한다",
+          "select column_name from information_schema.columns where table_name='feed_posts' and column_name in ('category','goal_id','group_id','content_type','author_pct','topic','goal_visibility'); 가 7행인지 본다",
+          "앱에서 러닝 목표(topic health/러닝·마라톤)로 체크인 공유 글을 하나 올린다",
+          "select category, goal_id, content_type, author_pct, topic from feed_posts order by created_at desc limit 1; 의 category 가 running, content_type 이 record 인지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C11", "req": "R5", "kind": "unverified", "domain": "persistence",
+      "statement": "과거 글 채우기 RPC 를 돌리면 extra.category 나 제목으로 판정된 글은 category 가 채워지고, 못 찾은 글은 null 로 남는다(life 로 메워지지 않는다)",
+      "touches": ["docs/sql/2026-10-13-feed-posts-category-columns.sql"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase SQL Editor 를 열 수 있는 사람(상민님) [손 필요]",
+        "how": [
+          "select * from public.feed_posts_backfill_category(500); 를 remaining 이 0 이 될 때까지 반복한다",
+          "select category, count(*) from feed_posts group by 1 order by 2 desc; 에서 life 가 비정상적으로 많지 않고 null 행이 still_null 수와 같은지 본다",
+          "select public.feed_category_of(null, '일반', '정체불명', ''); 가 null 인지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C12", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "share-to-feed.js 는 이 변경에서 바뀌지 않았고, 바꿀 네 줄은 인계 문서에 적혀 있다",
+      "touches": ["docs/growth/2026-10-13-feed-algorithm-stage0.md"],
+      "check": { "type": "codeContains", "file": "docs/growth/2026-10-13-feed-algorithm-stage0.md", "text": "share-to-feed.js" }
+    }
+  ]
+}
