@@ -5,9 +5,9 @@ worktree C:/dev/wt/eg16p-01a13674, branch draft/dir006-save-order-exception-01a1
 fetch 후 origin/main 7a4dcea936eea8f308100dbd86d508c75309ce44: 이전 비교와 이동 없음. 최초 독립 비교 b01c80d8a92cc5c92dfd76b2e6baea5f268c1b2d 보존.
 요청 모델 gpt-6.1-sol/high, 실제는 자기 rollout turn_context에서 별도 측정. 추가소환 없음. 실제 writer /root/contracts 한 명.
 
-- [ ] 정확 source·제안 원문·직전판·모델·쓰기 독점 범위 고정 · 예상 8분(추정) · 원21pin과 b01c 원비교 불변, origin 이동/actual 기록
-- [ ] REQ/PLAN·티켓·실제 초안 PR 번호 준비 · 예상 8분(추정) · 초안 준비 권한과 개정 승인 구분, 실제 PR 주소만 사용
-- [ ] 한정15.1·버전·전문 대응·직전 bytearchive·claims 작성 · 예상 12분(추정) · 첫 원문 보존, 다른 조문/포인터/제품/ACTIVE/금고 검사코드 변경 없음
+- [x] 정확 source·제안 원문·직전판·모델·쓰기 독점 범위 고정 · 예상 8분(추정) · provenance.json 원21pin과 b01c 원비교 불변, origin 이동false/actual 기록
+- [x] REQ/PLAN·티켓·실제 초안 PR 번호 준비 · 예상 8분(추정) · 준비commit4dfe7725와 실제 draft PR978, 승인미확인/효력false 분리
+- [x] 한정15.1·버전·전문 대응·직전 bytearchive·claims 작성 · 예상 12분(추정) · measurement.json에서원문/기존본문보존·bytearchive동일·허용경로/제품무변경 측정
 - [ ] 정합·범위·되읽기 검증과 일반 commit/push/draft 인계 · 예상 12분(추정) · 훅우회 없음, 정확commit/PRURL/차이/미확인 기록. 막히면 완성localpacket과 실제차단근거 인계
 
 ## 1. [원칙 ①] 문제 정확히 파악
