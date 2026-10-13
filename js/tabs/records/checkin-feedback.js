@@ -379,7 +379,8 @@
       defaultCaption = '오늘도 목표를 향해 한 걸음 내딛습니다. 모두 파이팅해요! ✨';
     }
 
-    var selectedCat = (targetGoal && targetGoal.category) || 'study';
+    /* #TASK-ES-696 소통-피드 0단계: 목표의 topic(대범위/중범위)으로 피드 카테고리를 정한다. 예전엔 category 라벨이 피드 사전에 없어 'study' 로 떨어졌다. */
+    var selectedCat = (window.OurgoalCategoryMap && window.OurgoalCategoryMap.fromGoal(targetGoal)) || 'life';
     var postId = 'post_' + L.newId();
     var post = {
       id: postId,
@@ -404,9 +405,14 @@
       }
     };
 
+    /* #TASK-ES-696: 글 메타 7칸(category·goal_id·group_id·content_type·author_pct·topic·goal_visibility) — 서버에 칸이 없으면 insertFeedPost 가 떼고 재시도 */
+    if(window.OurgoalCategoryMap){
+      post = window.OurgoalCategoryMap.withMeta(post, window.OurgoalCategoryMap.feedPostMeta(targetGoal, null, { categoryOverride: selectedCat, contentType: 'record', pct: goalPct, caption: defaultCaption }));
+    }
     try {
       if(typeof L.sb !== 'undefined' && L.sb && L.sb.from){
-        await L.sb.from('feed_posts').insert(post);
+        if(window.OurgoalCategoryMap) await window.OurgoalCategoryMap.insertFeedPost(L.sb, post);
+        else await L.sb.from('feed_posts').insert(post);
       }
     } catch(e){
       console.warn('Supabase post insert failed, saving locally:', e);

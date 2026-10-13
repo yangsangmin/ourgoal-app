@@ -335,7 +335,8 @@
             try {
               L.triggerHaptic(25);
               var dataUrl = canvasEl.toDataURL('image/png');
-              var curGoalCat = (curGoal && curGoal.category) || 'study';
+              /* #TASK-ES-696 소통-피드 0단계: 목표 topic 으로 피드 카테고리. 예전 기본값 'study' 결함 제거 */
+              var curGoalCat = (window.OurgoalCategoryMap && window.OurgoalCategoryMap.fromGoal(curGoal)) || 'life';
 
               var postId = 'post_' + L.newId();
               var post = {
@@ -360,8 +361,13 @@
                 }
               };
 
+              /* #TASK-ES-696: 글 메타 7칸. 칸이 없는 서버면 insertFeedPost 가 떼고 재시도 */
+              if(window.OurgoalCategoryMap){
+                post = window.OurgoalCategoryMap.withMeta(post, window.OurgoalCategoryMap.feedPostMeta(curGoal, null, { categoryOverride: curGoalCat, contentType: 'milestone', pct: 100 }));
+              }
               try {
-                await L.sb.from('feed_posts').insert(post);
+                if(window.OurgoalCategoryMap) await window.OurgoalCategoryMap.insertFeedPost(L.sb, post);
+                else await L.sb.from('feed_posts').insert(post);
               } catch(e){
                 console.warn('Supabase feed post insert fallback:', e);
               }

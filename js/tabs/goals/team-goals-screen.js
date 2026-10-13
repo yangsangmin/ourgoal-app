@@ -488,7 +488,7 @@
           }
         };
         try {
-          if(window.sb) await window.sb.from('feed_posts').insert(post);
+          if(window.sb) await (window.OurgoalCategoryMap ? window.OurgoalCategoryMap.insertTeamDonePost(window.sb, post, g) : window.sb.from('feed_posts').insert(post)); /* #TASK-ES-696 팀 완주 글 메타(팀 topic 카테고리) */
         } catch(e){ console.warn('Supabase feed post fallback', e); }
         L.state.profile.settings = L.state.profile.settings || {};
         L.state.profile.settings.myFeedPosts = L.state.profile.settings.myFeedPosts || [];
