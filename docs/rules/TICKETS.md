@@ -764,3 +764,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-DIR006-SAVE-ORDER-01a13674 | INFRA | DIR006 저장순서 한정예외 헌법 개정 초안 준비·검토: 원15.1 보존, 원격권위/무손실/XP중복방지 유지, 제품/ACTIVE/검사코드 0 | kernel14.4 · REQ-TASK-ES-DIR006-SAVE-ORDER-01a13674.md · 최초 독립 비교 b01c80d8 | PR978 원격 main 병합 e140db658f5b735f8b2d99fa45f541d16871994e · 명시 헌법 개정 승인 확인 · 규범 한정예외 발효. 제품·운영·사용·효과 미확인
 
 - #TASK-ES-DIR006-MERGE-RECORD-01a13674 | INFRA | 승인된 PR978의 실제 병합 해시·시각·계정을 버전 대장 새행에 기록해 새 세션이 발효 근거를 찾는다. 규범본문·제품0 | 기존 명시 헌법 개정 승인 · 커널14.3 후속기록 · REQ-TASK-ES-DIR006-MERGE-RECORD-01a13674.md | 별도 정본 기록 PR 심사 준비·기록 main 반영 미확인
+
+- #TASK-ES-695-A-01a13674 | FIX | DIR006 A: 기기 자료와 미확정 재전송 목록을 되읽어 확인한 뒤 두 기록 caller의 입력·잠금·기기 경험치 후속을 진행한다. 기기 보관과 서버 확인을 구분하고 보존 실패 입력·사진·동일 기록 id를 유지한다. 기존 P0 #TASK-ES-695 실물 보존 | 기존 DIR006 실행 승인 · PR978 한정 예외 발효 · docs/specs/SAVE-SYNC-CONTRACT-2026-10-12.md · docs/specs/REQ-TASK-ES-695-A-01a13674.md · reports/TASK-ES-695-A-01a13674/claims.json | 단독 구현 /root/contracts · 원 P0 주장/자료 불변 · B/C·운영 CAS·XP 서버원장·사용·효과 미확인 · PR 생성 전
