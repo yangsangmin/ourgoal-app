@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..'),git=args=>cp.execFileSync('git',['-c','core.longpaths=true',...args],{cwd:root,maxBuffer:32*1024*1024});
+const source=git(['rev-parse','HEAD']).toString().trim(),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const fixed=['.claude/plan-TASK-ES-701.md','js/tabs/records/share-to-feed.js','js/tabs/records/share-feed-save.js','index.html','docs/architecture/modules.json','docs/architecture/module-baseline.json','docs/specs/REQ-TASK-ES-701-CORRECTION.md','docs/specs/PLAN-TASK-ES-701-CORRECTION.md','docs/specs/REQ-TASK-ES-701-SHARE-FEED-CATEGORY.md','docs/specs/PLAN-TASK-ES-701-SHARE-FEED-CATEGORY.md'];
+const report=git(['ls-tree','-rz','--name-only',source,'--','reports/TASK-ES-701']).toString('utf8').split('\0').filter(Boolean);
+const paths=[...new Set([...fixed,...report])],artifacts=paths.map(file=>{const bytes=git(['cat-file','-p',source+':'+file]);return {file,sha256:sha(bytes),bytes:bytes.length};});
+const manifest={taskId:'TASK-ES-701',productSource:source,base:'db8b7ebbd8a9104cd2e3c10f1602d2ae32bf0d6c',originalSpec:'facccf8a5b7627176f117af42d95de3c85c786c5',originalReview:'82e7fecfb4404e14fa8067b3904f13f47a5d0b83',artifacts,stage:'최초 독립 제품 검토용 고정',operatingUse:null,courtVerdict:null,remoteWrites:0,newDraftStorage:0,fullNpm:null,notes:['원13컴포넌트와 guest3/실제요청차단2는 각 측정 source에 귀속; 마지막 profile await 뒤 계정 guard는 독립검토 대상으로 추가함','기존 ingress baseline 결과와 누락 의존성 오류를 원시로 유지한다','보관 범위 철회 전 WIP와 자체16긍정은 현재제품의 영구 초안/사용 인증으로 승격하지 않는다']};
+fs.writeFileSync(path.join(__dirname,'product-manifest.json'),JSON.stringify(manifest,null,2)+'\n',{encoding:'utf8',flag:'wx'});
+console.log(JSON.stringify({source,manifestSHA:sha(fs.readFileSync(path.join(__dirname,'product-manifest.json'))),artifactCount:artifacts.length}));

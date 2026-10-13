@@ -8366,6 +8366,42 @@
       ]
     },
     {
+      "id": "records/share-feed-save",
+      "file": "js/tabs/records/share-feed-save.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "현재 게시 창 입력의 계정 귀속과 SDK 결과",
+      "spans": [],
+      "provides": [
+        "records.share-feed-intent"
+      ],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [
+        {
+          "name": "records.share-feed-intent",
+          "description": "현재 게시 창 입력의 계정 귀속과 SDK 결과",
+          "sideEffect": "server",
+          "needsConfirm": false
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalCapabilities",
+        "OurgoalCategoryMap"
+      ]
+    },
+    {
       "id": "records/share-to-feed",
       "file": "js/tabs/records/share-to-feed.js",
       "layer": "tabs",
@@ -8375,7 +8411,10 @@
       "role": "목표 & 기록 선택 피드 공유 창(openShareToFeedModal)·게시 뒤 응원 연출(addSimulatedCheerAndReplyToPost). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-466)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "records.share-feed-intent",
+        "feed.category-map"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -8388,7 +8427,9 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalCapabilities",
+        "OurgoalCategoryMap"
       ]
     },
     {

@@ -1,0 +1,59 @@
+{
+  "id": "share-post-failure-retention",
+  "title": "외부 통신이 차단된 법정의 실제 게시 요청 실패는 게시 성공으로 닫히지 않고 같은 입력 재시도를 남긴다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCommPostFeed"
+    },
+    {
+      "do": "type",
+      "selector": "#shareCaptionInput",
+      "text": "격리된 실패 경로 확인 입력",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#shareConfirmBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#shareConfirmBtn",
+      "text": "같은 게시물 다시 시도",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "visible",
+      "selector": "#shareCaptionInput"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#shareFeedSaveStatus",
+      "text": "보관되지 않아요"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+'use strict';
+const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process'), crypto = require('node:crypto');
+const root = path.resolve(__dirname, '../..'), source = '82e7fecfb4404e14fa8067b3904f13f47a5d0b83';
+const git = p => cp.execFileSync('git', ['-c', 'core.longpaths=true', 'cat-file', '-p', source + ':' + p], {cwd:root,maxBuffer:32*1024*1024});
+const sha = b => crypto.createHash('sha256').update(b).digest('hex');
+const manifestPath = 'reports/TASK-ES-701-SPEC-REVIEW/manifest.json', manifestBytes = git(manifestPath);
+if (sha(manifestBytes) !== 'e4ce7a33f7fb2c92bd921ffd8cd2792f22447e1021415aec1a1ecf8c6e267097') throw Error('원 manifest SHA 불일치');
+const manifest = JSON.parse(manifestBytes);
+const artifacts = manifest.files.map(row => {const b=git(row.path); if(sha(b)!==row.sha) throw Error(row.path); return {...row,bytes:b.length};});
+const out = path.join(__dirname, 'original-spec-review'); fs.mkdirSync(out,{recursive:true});
+for (const name of ['REQ-원독립의견.md','PLAN-원독립의견.md','manifest.json']) fs.writeFileSync(path.join(out,name),git('reports/TASK-ES-701-SPEC-REVIEW/'+name),{flag:'wx'});
+fs.writeFileSync(path.join(out,'source-pins.json'),JSON.stringify({source,manifestPath,manifestSha256:sha(manifestBytes),artifacts,originalBytesChanged:0,originalNegativeReexecuted:false,remoteWrites:0},null,2)+'\n',{encoding:'utf8',flag:'wx'});
+console.log(JSON.stringify({source,verifiedArtifacts:artifacts.length,originalBytesChanged:0}));

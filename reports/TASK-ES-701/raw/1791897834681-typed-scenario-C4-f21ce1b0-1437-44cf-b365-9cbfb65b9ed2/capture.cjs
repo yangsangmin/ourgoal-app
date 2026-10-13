@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..'),name=process.argv[2],args=process.argv.slice(3);
+const dir=path.join(__dirname,'raw',Date.now()+'-'+name+'-'+crypto.randomUUID()); fs.mkdirSync(dir,{recursive:true});
+const write=(f,b)=>fs.writeFileSync(path.join(dir,f),b,{encoding:'utf8',flag:'wx'});
+write('input.json',JSON.stringify({name,argv:args,cwd:root,envOverrides:{NODE_PATH:'C:/dev/ourgoal-app/node_modules'}},null,2));
+write('capture.cjs',fs.readFileSync(__filename));
+for(const a of args) if(/\.(cjs|js)$/.test(a)&&fs.existsSync(path.resolve(root,a)))write(path.basename(a)+'.source',fs.readFileSync(path.resolve(root,a)));
+const child=cp.spawn(process.execPath,args,{cwd:root,env:{...process.env,NODE_PATH:'C:/dev/ourgoal-app/node_modules'},stdio:['ignore','pipe','pipe']});
+write('pid.json',JSON.stringify({observerPid:process.pid,childPid:child.pid}));
+const out=[],err=[];child.stdout.on('data',b=>out.push(b));child.stderr.on('data',b=>err.push(b));
+child.on('error',e=>write('spawn-error.json',JSON.stringify({code:e.code,message:e.message})));
+child.on('close',(code,signal)=>{write('stdout.bin',Buffer.concat(out));write('stderr.bin',Buffer.concat(err));write('exit.json',JSON.stringify({code,signal,endedAt:new Date().toISOString()}));console.log(JSON.stringify({dir,childPid:child.pid,code,signal}));process.exitCode=code||0;});

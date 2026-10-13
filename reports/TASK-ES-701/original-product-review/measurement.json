@@ -1,0 +1,175 @@
+{
+  "taskId": "TASK-ES-701-PRODUCT-REVIEW",
+  "product": "bc61afd18534623859f0cba60131c8babb52a45b",
+  "authorManifestHEAD": "3aad63bfa315ee5752426a042159063fd9850891",
+  "authorManifestSHA": "fb67021d2bcad8ac9e506b5601d6b528dc494bf80d3ac397b2a3ce9427f735b5",
+  "claimsSHA": "b9bb189be866730374c42db5639bffaaa5686c556b6e6d2ce6a279e15964f106",
+  "source": {
+    "product": "bc61afd18534623859f0cba60131c8babb52a45b",
+    "manifestHEAD": "3aad63bfa315ee5752426a042159063fd9850891",
+    "manifestSHA": "fb67021d2bcad8ac9e506b5601d6b528dc494bf80d3ac397b2a3ce9427f735b5",
+    "sources": [
+      {
+        "file": "index.html",
+        "sha": "2a684b272b1862a16ac00faf87dd591fa9b70236a89405f41b4ab623780f6b8b",
+        "checkoutSHA": "df069141c6f31ff9c3dae5d4c9cba941e83ed33f5245c846bfaacc5fb075af87",
+        "manifestSHA": "2a684b272b1862a16ac00faf87dd591fa9b70236a89405f41b4ab623780f6b8b",
+        "kind": "manifest-contained",
+        "matches": true
+      },
+      {
+        "file": "js/tabs/records/share-to-feed.js",
+        "sha": "58ea1b80947fdce784dfd10b70b7b73530257127242430df991b4eb57367a076",
+        "checkoutSHA": "0677a237bbd5242ca0137a4815c0e7f63a92b45c3f45aa4ebd0652dfb5396e7a",
+        "manifestSHA": "58ea1b80947fdce784dfd10b70b7b73530257127242430df991b4eb57367a076",
+        "kind": "manifest-contained",
+        "matches": true
+      },
+      {
+        "file": "js/tabs/records/share-feed-save.js",
+        "sha": "e01044ad9e777e319c0d8f962f170033186e9d97de5e932d2af9b6175812157e",
+        "checkoutSHA": "e8021fdad8d15b5d9e27ae51df6f90f54ffb6ed1170ead1c33d376da7a05344c",
+        "manifestSHA": "e01044ad9e777e319c0d8f962f170033186e9d97de5e932d2af9b6175812157e",
+        "kind": "manifest-contained",
+        "matches": true
+      },
+      {
+        "file": "js/data/category-map.js",
+        "sha": "6fdcce3bfbd2322c3b63939da9c20821bbd1a5fb3c5f4c38a2630bf31daed53f",
+        "checkoutSHA": "2c4b63194076c8785fd7be00e1b2b60da716f9a4adf5208aa8b1e09f6cb8207e",
+        "manifestSHA": null,
+        "kind": "unchanged dependency canonical source",
+        "matches": true
+      }
+    ]
+  },
+  "guest": {
+    "id": "SP10-01/02",
+    "actualAnonymousDOM": true,
+    "stateInjection": 0,
+    "failure": {
+      "captionDisabled": false,
+      "cancelDisabled": true,
+      "submitDisabled": false,
+      "notice": "다시 시도할 때 이 입력 그대로 게시합니다. 창을 닫거나 새로고침하면 작성 중인 내용은 보관되지 않아요.",
+      "captionIsFirst": true,
+      "modalVisible": true
+    },
+    "preview": {
+      "captionIsEdited": true,
+      "previewShowsEdited": true
+    },
+    "sdkAttempts": [],
+    "sameId": false,
+    "retrySentFirstCaption": false,
+    "otherBlocked": {
+      "기타": 6,
+      "REST": 32
+    },
+    "pageErrors": [],
+    "remoteRequests": 0,
+    "serverAccepted": null,
+    "loginUse": null
+  },
+  "publicIntentFixture": {
+    "publicAPI": "createIntent.submit",
+    "firstState": "rejected",
+    "retryState": "rejected",
+    "emitted": [
+      {
+        "id": "post_retry-one",
+        "caption": "첫 문구"
+      },
+      {
+        "id": "post_retry-one",
+        "caption": "첫 문구"
+      }
+    ],
+    "emitsFirstOnRetry": true,
+    "sameId": true,
+    "fixtureOnly": true,
+    "actualSDKNetwork": 0
+  },
+  "publicInheritedProfileFixture": {
+    "callerSource": "bc61afd18534623859f0cba60131c8babb52a45b",
+    "actualInheritedPublicSaveProfile": true,
+    "accountSwitchDuringUsersUpsert": true,
+    "effects": [
+      {
+        "kind": "insert",
+        "table": "feed_posts",
+        "user_id": "LOCAL-A",
+        "id": "post_account-one"
+      },
+      {
+        "kind": "upsert",
+        "table": "users",
+        "rows": [
+          {
+            "id": "LOCAL-A",
+            "user_id": null
+          }
+        ]
+      },
+      {
+        "kind": "upsert",
+        "table": "goals",
+        "rows": [
+          {
+            "id": "LOCAL-B-GOAL",
+            "user_id": "LOCAL-A"
+          }
+        ]
+      },
+      {
+        "kind": "settings",
+        "account": "LOCAL-A",
+        "settingsFromCurrent": "LOCAL-B"
+      }
+    ],
+    "oldAccountCache": 1,
+    "newAccountCache": 0,
+    "globalFeedCache": null,
+    "toastCount": 0,
+    "goalFromBTargetedToA": true,
+    "fixtureOnly": true,
+    "actualNetwork": 0,
+    "actualRLSResult": null,
+    "sharedSourceChanged": false,
+    "operatingUse": null
+  },
+  "firstFailure": {
+    "raw": "raw/1791894270130-cda0012d-c2ef-438a-9f4d-125089283ac5",
+    "error": {
+      "name": "Error",
+      "message": "FIXED_PRODUCT_SOURCE",
+      "stackLines": [
+        "    at main (C:\\dev\\wt\\ourgoal-share-feed-category-product-review-01a1310c\\reports\\TASK-ES-701-PRODUCT-REVIEW\\guest-probe.cjs:8:544)",
+        "    at Object.<anonymous> (C:\\dev\\wt\\ourgoal-share-feed-category-product-review-01a1310c\\reports\\TASK-ES-701-PRODUCT-REVIEW\\guest-probe.cjs:21:1)"
+      ]
+    },
+    "kind": "원제품 실패가 아니라 checkout CRLF와 Git 원바이트를 혼동한 reviewer preflight 오류",
+    "dependencyNote": "category-map은 바뀌지 않은 dependency로 원 manifest artifacts 밖에 있음"
+  },
+  "raw": {
+    "guest": "raw/1791894450124-9fa5d7a2-291c-4103-830a-ef84ca767171",
+    "intent": "raw/1791894708407-32f71dd6-fc2a-4053-bc12-4cc0f69c38a1"
+  },
+  "protection": {
+    "tracked": 7349,
+    "changed": []
+  },
+  "protectionLimit": "intent 첫 protected-after의 자기 파일 대 자기 파일 비교는 무효이며 보호 증거로 사용하지 않음. guest actual before/after와 이 별도 final 비교를 사용함.",
+  "sourceArchive": {
+    "reference": "raw/1791894450124-9fa5d7a2-291c-4103-830a-ef84ca767171/archive.json",
+    "zipAndExtractedCode": "자기 readonly static 사본은 로컬에 유지하고 Git 보고에는 SHA/출처/served 원시만 포함. .gitignore는 자기 사본 경로만 제외."
+  },
+  "actualLogin": null,
+  "actualServerPersistence": null,
+  "actualRLSResult": null,
+  "newHumanAuthority": null,
+  "courtVerdict": null,
+  "processOriginalOpinionCount": 1,
+  "essenceOriginalOpinionCount": 1,
+  "existingTestOrExpectationChanges": 0
+}

@@ -1,0 +1,31 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..'),base='0573f7f8e5d32af7693665d814f60fc62b8d8a87',name=process.argv[2];
+const allowed=['post-failure-retention','frozen-caption-preview','cancel-after-failure'];
+if(!allowed.includes(name))throw new Error('허용된 세 시나리오만 실행');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const git=p=>cp.execFileSync('git',['-c','core.longpaths=true','cat-file','blob',base+':'+p],{cwd:root,maxBuffer:32*1024*1024});
+const file='reports/TASK-ES-701/scenarios/'+name+'.json';
+const old=JSON.parse(git(file).toString('utf8')),scenario=JSON.parse(fs.readFileSync(path.join(root,file),'utf8'));
+const expected=JSON.parse(JSON.stringify(old)),step=expected.steps[6];
+if(step.do!=='fill'||step.selector!=='#shareCaptionInput')throw new Error('원 단계 결박 불일치');
+step.do='type';step.text=step.value;step.clear=true;delete step.value;
+if(JSON.stringify(expected)!==JSON.stringify(scenario))throw new Error('입력 어댑터 외 변경');
+const pins=['js/tabs/records/share-to-feed.js','js/tabs/records/share-feed-save.js','index.html','reports/TASK-ES-701/claims.json','court/lib/scenario.js','court/lib/static-server.js','court/lib/site-host.js','court/lib/chrome.js','court/config.json'];
+const source=pins.map(p=>{const original=git(p),current=fs.readFileSync(path.join(root,p));const same=current.toString('utf8').replace(/\r\n/g,'\n')===original.toString('utf8').replace(/\r\n/g,'\n');if(!same)throw new Error('제품/보호 source 변경: '+p);return {file:p,gitSha256:sha(original),diskSha256:sha(current),checkoutNormalizedIdentity:true};});
+const dir=path.join(__dirname,'scenario-adapter-observations',name+'-'+Date.now()+'-'+crypto.randomUUID());
+fs.mkdirSync(dir,{recursive:true});
+const write=(f,o)=>fs.writeFileSync(path.join(dir,f),JSON.stringify(o,null,2)+'\n',{encoding:'utf8',flag:'wx'});
+write('input.json',{taskId:'TASK-ES-701',base,scenarioFile:file,oldScenario:old,scenario,source,observerPid:process.pid});
+const nativeSpawn=cp.spawn,children=[];
+cp.spawn=function(exe,args,opts){const child=nativeSpawn.call(this,exe,args,opts);children.push({pid:child.pid,executable:path.basename(exe),createdObservedAt:new Date().toISOString()});return child;};
+const {runScenario,loadConfig}=require('../../court/lib/scenario');
+const {start}=require('../../court/lib/static-server');
+const {pickSiteHost,siteUrlFor}=require('../../court/lib/site-host');
+(async()=>{const config=loadConfig(),server=await start(root,config.denyServePrefixes);let observation;
+try{observation=await runScenario({scenario,siteUrl:siteUrlFor(pickSiteHost(config),server.port),siteRev:base,outDir:dir,config});}
+finally{await server.close();write('children.json',{observerPid:process.pid,children});}
+write('observation.json',{taskId:'TASK-ES-701',scope:'작업자 로컬 관찰; 법정 판정이 아님',remoteWrites:0,protectedConfigurationChanged:false,observation});
+console.log(JSON.stringify({dir,scenarioId:scenario.id,failedStep:observation.failedStep,failKind:observation.failKind,failReason:observation.failReason,toolError:observation.toolError,errors:observation.errors,stepsObserved:observation.steps.length,children}));
+process.exitCode=observation.failedStep!==null||observation.toolError||observation.invalid?1:0;
+})().catch(error=>{console.error(error.stack);process.exitCode=1;});
