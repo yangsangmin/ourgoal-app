@@ -6098,3 +6098,6 @@
 - 2026-10-13 TASK-ES-695 보완 차수(Codex): 독립 확인의 stale/용량오류 복구·사본 고유 기록/목표/깨진 원문·복원 둘째 쓰기 실패·읽기 오류·보관 실패 뒤 다음 저장 지적을 local-keep에서 보완했다. syncServerRecords와 migrateGuestDataToUser도 같은 보호 쓰기를 사용한다. 과정→본질→결과 순·무거움 등급·13칸 명세 연결은 보완 REQ/PLAN에 기록했다. 기존 주장·기대값·원시 증거는 유지하고 이번 작업자 측정은 reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md이다. 마지막 read→setItem 경합은 원래 main과 보완 모두 미해결(B의 한 탭 작성자 범위)이며 P0 전체 저장 안전으로 일반화하지 않는다. 원래 독립 확인 담당의 새 고정머리 확인과 법정 판정은 root 담당, push/병합은 하지 않음.
 
 - 2026-10-13 TASK-ES-695 유일 백업 보완 차수: 기존 독립 확인이 c5d95027의 정상 syncServerRecords/migrateGuestDataToUser 손실을 추가 재현했다. 앞 직접 호출은 화면에도 사진이 있던 입력으로 유일 백업을 놓쳤다. setBackupFromSave가 로컬 쓰기 사본에만 같은 계정·id 기기 칸을 되붙이고 명시적 비움·새 값·본문 차이의 옛 자료는 보관한다. 다른 주인·휴지통·kept-only를 자동으로 되붙이지 않으며 지움 상태 읽기 실패는 중단한다. 원래 증거/의견과 C1~C22 기대값은 유지, 새 결과는 reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json·worker-measurements.md. 조건④ 전체 완료·실운영 사용 가능·효과는 미확인. 운영 요청/push/병합 없음.
+
+## TASK-ES-701 착수 — root 배정/원명세 제품0
+작업참고 PR968. fresh db8b7ebb/PR972에서 별도 fix/task-es-701-share-feed-category 선점. 실제701은 PR/remote/local 조회로 비점유를 확인하고 registry에 등록했다. 제품 source0, 최초 원REQ/PLAN 검토를 root에 인계하며 원 author forwarded item ref/null을 대표 발화로 만들지 않는다. 운영 posts/DB/SQL0, manual/captured frame/helper 계약을 명시했다.
