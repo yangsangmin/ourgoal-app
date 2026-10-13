@@ -86,7 +86,10 @@
         name: p.display_name,
         avatar: (p.display_name||'').slice(0,1),
         goal: p.goal_title,
-        category: ex.category || null,
+        category: p.category || ex.category || null,
+        /* #TASK-ES-698 피드 묶음·정렬 입력 — 0단계(#TASK-ES-696) 메타 칸, 칸이 없으면 extra 에서 */
+        groupId: p.group_id || ex.groupId || null, topic: p.topic || ex.topic || null, goalId: p.goal_id || ex.goalId || null, contentType: p.content_type || ex.contentType || null,
+        authorPct: (typeof p.author_pct === 'number' ? p.author_pct : (typeof ex.goalPct === 'number' ? ex.goalPct : null)), createdAt: p.created_at || null,
         pct: ex.goalPct || 0,
         action: p.caption,
         recordText: ex.includeRecord ? ex.recordText : null,
@@ -218,13 +221,25 @@
       }
     }
 
+    /* #TASK-ES-698 소통-피드 1단계: 다섯 묶음(내 팀 소식·도움될 글·같은 길·넓히기·마감선) + 카드 사유 라벨. 순수 함수 js/tabs/comm/feed-rank.js.
+       '전체' 칩·'전체' 피드일 때만 켠다. 다른 칩은 예전 동작(최신순 + KF-4 상단 슬롯) 그대로. 목표·팀이 없으면 arrange 가 null 을 돌려 예전 그대로. */
+    var feedRenderList = blendedItems;
+    if(window.OurgoalFeedRank && curCat === 'all' && feedType === 'all'){
+      try {
+        var rankCtx = window.OurgoalFeedRank.buildContext(L.state.profile, { groups: L.MOCK_GROUPS, groupState: L.groupState, goalProgress: L.goalProgress, categoryMap: window.OurgoalCategoryMap });
+        var rankCounts = (window.OurgoalReactions && window.OurgoalReactions._state) ? window.OurgoalReactions._state().counts : null;
+        var ranked = window.OurgoalFeedRank.arrange(blendedItems, rankCtx, { counts: rankCounts, storage: (typeof localStorage !== 'undefined' ? localStorage : null) });
+        if(ranked){ blendedItems = ranked.items; feedRenderList = ranked.render; }
+      } catch(e){ console.warn('feed-rank skipped:', e); feedRenderList = blendedItems; }
+    }
     body.innerHTML =
       typeFilterHtml +
       catChipsHtml +
       '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들' + stageLabel +
       (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
       (blendedItems.length === 0 ? (typeof OurgoalComponents !== 'undefined' && OurgoalComponents.emptyState ? OurgoalComponents.emptyState({ icon: '💬', title: '표시할 소통 글이 없어요', desc: '해당 필터에 등록된 피드가 없습니다. 첫 실천을 공유해보세요!' }) : '<div class="faint" style="text-align:center;padding:40px 0;">해당 카테고리에 공유된 피드가 없어요. 첫 목표나 체크인을 공유해보세요!</div>') : '') +
-      blendedItems.map(function(it){
+      feedRenderList.map(function(it){
+        if(it && it._marker) return window.OurgoalFeedRank ? window.OurgoalFeedRank.markerHtml(it) : '';
         var reactions = (L.state.profile && L.state.profile.settings && L.state.profile.settings.feedReactions) || {};
         var isMe = it.me || it.isMe;
         var aiTagHtml = it.is_ai ? ('<span class="feed-ai-tag' + (it.photo ? ' ai-photo-tag' : '') + '">' + (it.photo ? '🤖 AI 사진인증' : 'AI 봇') + '</span>') : '';
@@ -248,6 +263,7 @@
         var isExpanded = !!(L.state.expandedComments && L.state.expandedComments[it.id]);
 
         return (it._topHelpfulLabel && window.OurgoalTopHelpful ? window.OurgoalTopHelpful.labelHtml() : '') +
+          (it._feedReason && window.OurgoalFeedRank ? window.OurgoalFeedRank.reasonHtml(it._feedReason) : '') +
           '<div class="feed-item">' +
           '<div class="feed-avatar'+(isMe?' me':'')+'" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+L.escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
