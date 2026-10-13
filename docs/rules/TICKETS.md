@@ -761,4 +761,6 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 - #TASK-ES-705 | E3 | PR975 병합 뒤 세포지도 개인정보 계약 설명 갱신 — helpful-reason 본인 원문/작성자 종류별 개수/지급 호출 제외, reactions 개인 원문·집계·계정 세대 경계. 기존 생성기·게시 재료만, 제품/SQL/원격 게시 0 | docs/specs/REQ-TASK-ES-705-CELL-MAP.md · reports/TASK-ES-705/claims.json | 4단계(심사 청구 준비)
 
-- #TASK-ES-DIR006-SAVE-ORDER-01a13674 | INFRA | DIR006 저장순서 한정예외 헌법 개정 초안 준비·검토: 원15.1 보존, 원격권위/무손실/XP중복방지 유지, 제품/ACTIVE/검사코드 0 | kernel14.4 · REQ-TASK-ES-DIR006-SAVE-ORDER-01a13674.md · 최초 독립 비교 b01c80d8 | 명시 헌법 개정 승인 확인; 최종 병합은 root 독립 확인 후·병합 전·efficacy=false
+- #TASK-ES-DIR006-SAVE-ORDER-01a13674 | INFRA | DIR006 저장순서 한정예외 헌법 개정 초안 준비·검토: 원15.1 보존, 원격권위/무손실/XP중복방지 유지, 제품/ACTIVE/검사코드 0 | kernel14.4 · REQ-TASK-ES-DIR006-SAVE-ORDER-01a13674.md · 최초 독립 비교 b01c80d8 | PR978 원격 main 병합 e140db658f5b735f8b2d99fa45f541d16871994e · 명시 헌법 개정 승인 확인 · 규범 한정예외 발효. 제품·운영·사용·효과 미확인
+
+- #TASK-ES-DIR006-MERGE-RECORD-01a13674 | INFRA | 승인된 PR978의 실제 병합 해시·시각·계정을 버전 대장 새행에 기록해 새 세션이 발효 근거를 찾는다. 규범본문·제품0 | 기존 명시 헌법 개정 승인 · 커널14.3 후속기록 · REQ-TASK-ES-DIR006-MERGE-RECORD-01a13674.md | 별도 정본 기록 PR 심사 준비·기록 main 반영 미확인
