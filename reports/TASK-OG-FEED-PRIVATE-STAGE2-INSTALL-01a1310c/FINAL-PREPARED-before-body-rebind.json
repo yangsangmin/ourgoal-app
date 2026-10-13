@@ -1,0 +1,101 @@
+{
+  "schema": "feed-private-stage2-prepared/1",
+  "preflightRef": "preflight-result.json",
+  "priorRef": "C:\\Users\\HP\\handover\\2026-10-13-claude-309dca5d\\private-recovery\\feed-private-prior-1791896440850-6aa9085c-3d9a-40f3-bae7-bc01aaf9aeaf\\prior-definitions.private.json",
+  "priorSHA": "d49d82ac06f8a604e6c482d243813ecfc39bc17c74dbc8ad55b15456728bd83d",
+  "sqlFile": "APPLY-PRIVATE-STAGE2-FIXED.sql",
+  "sqlSHA": "f074e0831497a9eb4fe55feb0d75c107ff9f2f7975a5dfd209979db6c7e04210",
+  "rollbackPrivateRef": "C:\\Users\\HP\\handover\\2026-10-13-claude-309dca5d\\private-recovery\\feed-private-prior-1791896440850-6aa9085c-3d9a-40f3-bae7-bc01aaf9aeaf\\rollback.private.sql",
+  "rollbackPrivateSHA": "a926aefad1156bc889b301a8c2321ba63534d5291c7db510493e69948ca29e7a",
+  "rollbackExecutableComplete": true,
+  "functions": [
+    {
+      "name": "unreact_content",
+      "bodyMD5": "7ef99f784786df77f75c116c0e133383",
+      "sqlSHA": "bd5120d67c553c0b4f0b278043225861eaca9c1f727bb250b081d39cbf8a32c7"
+    },
+    {
+      "name": "count_content_reactions",
+      "bodyMD5": "77ede6d308c473060af1793568eeda9a",
+      "sqlSHA": "24b6a3411a64fa094e2b4cbf8f3dcd4c2b434c995232d5cd1eb56ed82c392ffc"
+    },
+    {
+      "name": "poor_reason_breakdown",
+      "bodyMD5": "be47f6d89e26f0a14cbf04ab20b03c75",
+      "sqlSHA": "73da677c5d2f3d64d10f0e0361932ee517b3d3d67e995516a25b46af47aff52f"
+    },
+    {
+      "name": "react_content",
+      "bodyMD5": "2e18e93ad82bc0db295254f5cbd9b668",
+      "sqlSHA": "18412f5646f297e41ac5b71a5d135f4ceb3c92fcd233e5d748bc19ef5917fe89"
+    },
+    {
+      "name": "moderate_advice",
+      "bodyMD5": "32c1813b74f65ff66b80f38df0acac5a",
+      "sqlSHA": "19839ec6605e85f4ccd2638b255e237c90e01365e6a960fba6f0e8311260e67f"
+    },
+    {
+      "name": "my_content_reactions",
+      "bodyMD5": "500e5208f3dd1c9852ec5ff503ae44fb",
+      "sqlSHA": "8a9ebdfaa1ddb4281cf59e2e73af1f10eb10a01ddfc8f97fa01b9d4fe263fc2f"
+    },
+    {
+      "name": "list_content_advice",
+      "bodyMD5": "c3c9c9647874740c02706ddd10ca9feb",
+      "sqlSHA": "00c113a898dc2dfd813a4be7c587a00501da35fadd03ec22eb241b04368d1c6a"
+    },
+    {
+      "name": "save_helpful_reason",
+      "bodyMD5": "8b3a0b0877bf8f1168a3da1213dd63d7",
+      "sqlSHA": "29309e78cfb1d9fc5a93aaa88ba35e3fe54fbd96186d2ee31effbfd9ed5e270b"
+    },
+    {
+      "name": "helpful_reason_summary",
+      "bodyMD5": "04c16b9542c0da7084c4f643a09bb754",
+      "sqlSHA": "549e1653650ff1269d1dda0b2ccc3a81d20bb5d7e930ab8a707973ffb6ee492a"
+    },
+    {
+      "name": "feed_settings_get",
+      "bodyMD5": "79f07ec11f2f115004792d98724ee332",
+      "sqlSHA": "c4266b8f4f43b7856dc656105a68e46abc138171342c08c6b79921ebcdb46d33"
+    },
+    {
+      "name": "feed_settings_log_trigger",
+      "bodyMD5": "ff5456dce075c0a306c4c9318d241211",
+      "sqlSHA": "581a83d2b370ee71dd3f002c598b7d19d25d2b5eac3dfe740da3154fd7f4dfab"
+    },
+    {
+      "name": "feed_value_counts",
+      "bodyMD5": "47f6faaeca3b7c6b01ab3c56016d78b8",
+      "sqlSHA": "a78643203a16ee71769503b6407aa7b18b0c16b6de58cb7389ff609017dd00d6"
+    },
+    {
+      "name": "my_helpful_tag_profile",
+      "bodyMD5": "18933b031675385fd569ba04ec68c4f8",
+      "sqlSHA": "09743999ea156a711f261500de12e5af542753e7fa272a589899292e7e9296dd"
+    }
+  ],
+  "changedTables": [
+    "content_reactions",
+    "helpful_reasons",
+    "feed_settings",
+    "feed_settings_log"
+  ],
+  "existingCreditPreserved": true,
+  "newTables": 0,
+  "newStoredReactorNames": 0,
+  "creditPayoutCalls": 0,
+  "SQLApplied": 0,
+  "reviewRequired": true,
+  "rollbackSQLRun": 0,
+  "rollbackReopensPriorExposure": true,
+  "restoreDataRows": 0,
+  "restoreNewerSettingsRows": 0,
+  "ownerBaselineCaptured": false,
+  "ownerChangeProtection": "no-owner-edit; apply-transaction must capture and compare its start/end actual owner OIDs; preflight owner prior unknown",
+  "historicalOwnerBaseline": null,
+  "currentOwnerCheckedWithinApplyTransaction": true,
+  "firstMetricAlreadyPerformedBySeparateOwner": true,
+  "metricRerun": 0,
+  "afterApplyScope": "changed privacy permission and aggregate compatibility only; no full-use claim until UI labels fixed"
+}

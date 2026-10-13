@@ -121,12 +121,9 @@
   function adviceRowHtml(it, a){
     var isOwner = !!a.is_owner || (it.userId && it.userId === myId()) || !!it.me;
     var isMine = !!a.is_mine || a.user_id === myId() || a.local === true;
-    var vis = a.advice_visibility === 'everyone' ? '모두에게' : '원작자에게만';
+    var vis = '나만 볼 수 있어요';
     var menu = '';
-    if(isOwner && !a.local){
-      menu += '<button data-rxmod="' + (a.advice_visibility === 'everyone' ? 'author_only' : 'everyone') + '" data-rxmodid="' + a.id + '" type="button" style="background:none;border:none;color:var(--ink-faint);font-size:.7rem;cursor:pointer;">' + (a.advice_visibility === 'everyone' ? '원작자만 보기로' : '모두에게 공개') + '</button>';
-    }
-    if((isOwner || isMine) && !a.local){
+    if(isMine && !a.local){
       menu += '<button data-rxmod="delete" data-rxmodid="' + a.id + '" type="button" style="background:none;border:none;color:var(--ink-faint);font-size:.7rem;cursor:pointer;">삭제</button>';
     }
     if(a.local){
@@ -305,11 +302,7 @@
     deps.openModal(
       '<h3>이 목표에 도움이 될 팁을 남겨요</h3>' +
       '<textarea id="rxAdvText" rows="4" maxlength="' + ADVICE_MAX + '" placeholder="내가 해보니 이렇게 하면 좋았어요…" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:10px;font:inherit;box-sizing:border-box;"></textarea>' +
-      '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:.9375rem;">' +
-        '<label style="display:flex;align-items:center;gap:8px;"><input type="radio" name="rxAdvVis" value="author_only" checked> 글쓴이에게만 보여요</label>' +
-        '<label style="display:flex;align-items:center;gap:8px;"><input type="radio" name="rxAdvVis" value="everyone"> 이 글을 보는 모두에게 보여요</label>' +
-      '</div>' +
-      '<p class="muted" style="margin:10px 0 0;font-size:.8125rem;line-height:1.45;">글쓴이는 이 조언의 공개 범위를 바꾸거나 지울 수 있어요.</p>' +
+      '<p class="muted" style="margin:10px 0 0;font-size:.8125rem;line-height:1.45;">적은 조언은 나만 볼 수 있어요. 글쓴이와 추천에는 개수만 반영돼요.</p>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="rxAdvCancel" type="button">취소</button>' +
         '<button class="btn btn-primary" id="rxAdvOk" type="button" disabled>남기기</button>' +
@@ -320,13 +313,13 @@
         text.addEventListener('input', function(){ ok.disabled = !text.value.trim(); });
         sheet.querySelector('#rxAdvCancel').addEventListener('click', function(){ deps.closeModal(); });
         ok.addEventListener('click', function(){
-          var vis = (sheet.querySelector('input[name="rxAdvVis"]:checked') || {}).value || 'author_only';
+          var vis = 'author_only'; // 기존 RPC 형식 유지; 서버 원문은 본인만 읽는다.
           var v = text.value.trim().slice(0, ADVICE_MAX);
           if(!v) return;
           ok.disabled = true;
           react(it, 'advice', { advice_text: v, advice_visibility: vis }, btn).then(function(done){
             deps.closeModal();
-            if(done){ toast('조언을 남겼어요'); rerender(); }
+            if(done){ toast('나만 볼 수 있는 조언을 저장했어요'); rerender(); }
           });
         });
       }
@@ -347,7 +340,7 @@
         if(action === 'delete' && !(await askConfirm('이 조언을 지울까요?'))) return;
         deps.sb.rpc('moderate_advice', { p_reaction_id: Number(b.dataset.rxmodid), p_action: action }).then(function(res){
           if(res.error){ toast('잠시 후 다시 시도해주세요'); return; }
-          toast(action === 'delete' ? '조언을 지웠어요' : '공개 범위를 바꿨어요');
+          toast('조언을 지웠어요');
           rerender();
         });
       });
