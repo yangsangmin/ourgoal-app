@@ -228,7 +228,9 @@
       try {
         var rankCtx = window.OurgoalFeedRank.buildContext(L.state.profile, { groups: L.MOCK_GROUPS, groupState: L.groupState, goalProgress: L.goalProgress, categoryMap: window.OurgoalCategoryMap });
         var rankCounts = (window.OurgoalReactions && window.OurgoalReactions._state) ? window.OurgoalReactions._state().counts : null;
-        var ranked = window.OurgoalFeedRank.arrange(blendedItems, rankCtx, { counts: rankCounts, storage: (typeof localStorage !== 'undefined' ? localStorage : null) });
+        /* #TASK-ES-699 2단계: 서버 설정표·유익성 집계(이유 태그·가드)·내 이유 분포. 값이 새로 오면 한 번 더 그린다. RPC 가 없으면 1단계 그대로 */
+        var srv = window.OurgoalFeedRankServer ? window.OurgoalFeedRankServer.instance({ sb: L.sb }).state(blendedItems.map(function(it){ return it && it.id; }).filter(Boolean), function(){ if(L.state.activeTab==='comm' && L.state.commSubTab==='feed') renderCommFeed(body); }) : {};
+        var ranked = window.OurgoalFeedRank.arrange(blendedItems, rankCtx, { counts: (srv.counts && Object.keys(srv.counts).length) ? srv.counts : rankCounts, settings: srv.settings || null, tagProfile: srv.tagProfile || null, storage: (typeof localStorage !== 'undefined' ? localStorage : null) });
         if(ranked){ blendedItems = ranked.items; feedRenderList = ranked.render; }
       } catch(e){ console.warn('feed-rank skipped:', e); feedRenderList = blendedItems; }
     }

@@ -5165,6 +5165,7 @@
         "OurgoalAppScope",
         "OurgoalCategoryMap",
         "OurgoalFeedRank",
+        "OurgoalFeedRankServer",
         "OurgoalReactions",
         "OurgoalTeamInviteComm",
         "OurgoalTopHelpful",
@@ -5223,6 +5224,43 @@
         "OurgoalAppScope",
         "OurgoalCategoryMap"
       ]
+    },
+    {
+      "id": "comm/feed-rank-server",
+      "file": "js/tabs/comm/feed-rank-server.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "소통-피드 알고리즘 2단계(#TASK-ES-699) — 서버 설정표 feed_settings_get·유익성 집계 feed_value_counts·내 이유 분포 my_helpful_tag_profile 을 캐시(10·5·10분)로 읽어 feed-rank.js 에 넣어 준다. 값이 오면 rerender 1회, RPC 없으면 재시도 없이 1단계 그대로",
+      "spans": [],
+      "provides": [
+        "feed.rank-server"
+      ],
+      "requires": [
+        "feed.rank"
+      ],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [
+        {
+          "name": "feed.rank-server",
+          "description": "피드 정렬 입력(서버 설정·유익성 집계·내 도움돼요 이유 분포)을 읽어 캐시한다. 정렬은 하지 않는다",
+          "sideEffect": "network",
+          "needsConfirm": false,
+          "input": "post ids[], rerender()",
+          "output": "{ settings, counts, tagProfile, serverOk }"
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
     },
     {
       "id": "comm/feed-rank",
