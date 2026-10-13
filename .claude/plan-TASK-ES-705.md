@@ -5,7 +5,7 @@
 - [x] REQ/PLAN·티켓 및 두 세포 설명 교정 · 예상 5분 · helpful-reason/reactions source와 설명 대조
 - [x] 기존 export·17개 시험·check·publisher 실행 · 예상 5분 · 각 실제 종료코드·새 게시 재료 생성
 - [x] claims schema/문서 lint·제품 불변·원 TASK704 보존 대조 · 예상 5분 · 실제 field 주장·4자 이상 검사·불변 hash
-- [ ] 로컬 커밋·PR 본문·최종 인계 · 예상 5분 · 정확한 HEAD·sourceSHA·pending 상태 보고
+- [x] 로컬 커밋·PR 본문·최종 인계 준비 · 예상 5분 · 커밋 및 .claude/pr-body-TASK-ES-705.md와 게시 자료·측정 인계
 
 ## 1. 파악
 TASK704 도움 이유 설명은 현재 서버·UI의 글쓴이 집계 전용 계약을 반영하지 않는다. reactions도 개인 원문·계정 세대 경계를 설명하지 않는다.
