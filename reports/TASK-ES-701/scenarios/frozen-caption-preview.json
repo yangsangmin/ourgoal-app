@@ -1,0 +1,69 @@
+{
+  "id": "share-frozen-caption-preview",
+  "title": "실패 후 첫 입력이 잠기고 미리보기와 일치한다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCommPostFeed"
+    },
+    {
+      "do": "fill",
+      "selector": "#shareCaptionInput",
+      "value": "처음 준비한 게시 문구"
+    },
+    {
+      "do": "click",
+      "selector": "#shareConfirmBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#shareConfirmBtn",
+      "text": "같은 게시물 다시 시도",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "attr",
+      "selector": "#shareCaptionInput",
+      "name": "disabled",
+      "equals": ""
+    },
+    {
+      "do": "click",
+      "selector": "#sharePreviewBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#sharePreviewCardBody",
+      "text": "처음 준비한 게시 문구"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#shareFeedSaveStatus",
+      "text": "처음 준비한 문구와 선택이 고정"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

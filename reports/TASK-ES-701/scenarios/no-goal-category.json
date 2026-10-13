@@ -2,16 +2,60 @@
   "id": "share-category-no-goal",
   "title": "실제 익명 앱에서 공유 목표를 미설정으로 고르면 일상 카테고리가 선택되고 수동 선택도 미리보기에 남는다",
   "steps": [
-    {"do":"goto","path":"/index.html"},
-    {"do":"waitFor","selector":"#captureInput","timeoutMs":15000},
-    {"do":"click","selector":".navbtn[data-tab=\"comm\"]"},
-    {"do":"click","selector":"#btnCommPostFeed"},
-    {"do":"select","selector":"#shareGoalSelect","value":"__none__"},
-    {"expect":"hasClass","selector":"[data-shcat=\"life\"]","className":"active"},
-    {"do":"click","selector":"[data-shcat=\"dev\"]"},
-    {"do":"click","selector":"#sharePreviewBtn"},
-    {"expect":"textContains","selector":"#sharePreviewCardBody","text":"개발·기획"},
-    {"expect":"visible","selector":"#shareConfirmBtn"},
-    {"expect":"noExceptions"}
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCommPostFeed"
+    },
+    {
+      "do": "select",
+      "selector": "#shareGoalSelect",
+      "value": "__none__"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "[data-shcat=\"life\"]",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": "[data-shcat=\"dev\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#sharePreviewBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#sharePreviewCardBody",
+      "text": "개발·기획"
+    },
+    {
+      "expect": "visible",
+      "selector": "#shareConfirmBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
   ]
 }

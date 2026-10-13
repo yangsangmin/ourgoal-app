@@ -672,7 +672,7 @@
       // Submit
       sheet.querySelector('#shareConfirmBtn').addEventListener('click', async function(){
         if(submitBusy) return;
-        if(!intent || !map || !map.withMeta || !map.feedPostMeta){ L.toast('게시 준비를 확인하지 못했어요. 입력은 그대로 남아 있어요.'); return; }
+        if(!intent || !map || !map.withMeta || !map.feedPostMeta || typeof L.saveLocalSettings !== 'function'){ L.toast('게시 준비를 확인하지 못했어요. 입력은 그대로 남아 있어요.'); return; }
         submitBusy = true;
         var submitBtn = sheet.querySelector('#shareConfirmBtn');
         submitBtn.disabled = true;
@@ -733,7 +733,7 @@
 
         post = map.withMeta(post, map.feedPostMeta(curGoal, null, { categoryOverride: selectedCat, contentType: 'record', pct: finalGoalPct, caption: caption }));
         var outcome = await intent.submit(post);
-        if(outcome.state !== 'accepted' || !outcome.currentAccount){
+        if(outcome.state !== 'accepted' || !outcome.currentAccount || !L.state.profile || L.state.profile.id !== intent.account){
           submitBusy = false;
           submitBtn.disabled = false;
           submitBtn.textContent = '같은 게시물 다시 시도';
@@ -744,10 +744,12 @@
         post = outcome.post;
 
         // Local cache & profile persistence
-        if(!L.state.profile.settings.myFeedPosts) L.state.profile.settings.myFeedPosts = [];
-        L.state.profile.settings.myFeedPosts.unshift(post);
-        try { await L.saveProfile(); } catch(e){ /* 게시 성공과 프로필 저장 결과는 다르다. */ }
-        if(!L.state.profile || L.state.profile.id !== intent.account) return;
+        var ownProfile = L.state.profile;
+        if(!ownProfile.settings.myFeedPosts) ownProfile.settings.myFeedPosts = [];
+        ownProfile.settings.myFeedPosts.unshift(post);
+        var ownSettings = JSON.parse(JSON.stringify(ownProfile.settings));
+        if(typeof L.saveLocalSettings === 'function') L.saveLocalSettings(intent.account, ownSettings);
+        if(L.state.profile !== ownProfile || L.state.profile.id !== intent.account) return;
 
         if(!L.FEED_POSTS_CACHE) L.FEED_POSTS_CACHE = [];
         L.FEED_POSTS_CACHE.unshift(post);

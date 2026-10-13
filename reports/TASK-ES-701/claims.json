@@ -28,7 +28,7 @@
       ],
       "scenario": "scenarios/no-goal-category.json",
       "change": "fix",
-      "symptom": 6
+      "symptom": 8
     },
     {
       "id": "C2",
@@ -43,7 +43,7 @@
       ],
       "scenario": "scenarios/post-failure-retention.json",
       "change": "fix",
-      "symptom": 7
+      "symptom": 9
     },
     {
       "id": "C3",
@@ -56,14 +56,41 @@
         "js/tabs/records/share-feed-save.js"
       ],
       "unverified": {
-        "reason": "needs-live-server",
+        "reason": "tool-cannot-measure",
         "who": "root가 원래 허용된 전용 시험 계정/게시 및 정리 범위 안에서 배정한 실제 검증 담당",
         "how": [
           "별도 허용된 원격 쓰기 범위가 실제 있을 때만 러닝 목표로 공유하고 자기 새 행의 category/goal_id/content_type/author_pct/topic/goal_visibility와 extra를 되읽는다",
           "지연 중 반복 입력과 같은 창 retry의 ID/실제 행 수를 확인한다",
           "실제 반환 오류/응답 유실은 게시·보관 성공을 합성하지 않고 다른 계정에 남은 입력을 쓰지 않는지 확인한다"
-        ]
+        ],
+        "cannotBecause": "needs-login"
       }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 9,
+      "domain": "ui-behavior",
+      "statement": "실패 뒤 첫 준비 문구가 편집 잠금과 미리보기에 같은 내용으로 남는다",
+      "touches": [
+        "js/tabs/records/share-feed-save.js"
+      ],
+      "scenario": "scenarios/frozen-caption-preview.json"
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 9,
+      "domain": "ui-behavior",
+      "statement": "실패 뒤 기존 취소 버튼으로 게시 창을 닫을 수 있다",
+      "touches": [
+        "js/tabs/records/share-feed-save.js"
+      ],
+      "scenario": "scenarios/cancel-after-failure.json"
     }
   ],
   "outOfScopeReports": [

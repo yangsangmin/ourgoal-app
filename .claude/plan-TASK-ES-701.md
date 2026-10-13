@@ -4,7 +4,7 @@ Canonical TASK-ES-701, 라우팅 alias TASK-ES-SHARE-FEED-CATEGORY-01a1310c. 기
 
 - [x] 1단계 REQ/PLAN 최초 원검토 · 예상10분 · facccf8/82e7 원의견과 세 지적, 교정2c382 계약 인수·원33SHA 대조.
 - [x] 2단계 caller 구현 · 예상15분 · owned source/capability/loader 배선·SDK/의도 검증 측정에 한정, 원격 사용 미확인.
-- [ ] 3단계 원시 검증/Claims · 예상15분 · 원 부정/기대 보존, local 단위·browser/원 영향검사·guard·writebudget0 보고.
+- [x] 3단계 원시 검증/Claims · 예상15분 · fe625 교정 source에 원 부정/기대·최초 f4dd 의견 보존, 변경 guest/owner 경계·guard와 별도 standalone 실패를 분리 기록. 작업자 주장에 한정하며 실제 서버 되읽기 미확인.
 - [ ] 4단계 심사 청구 · 예상10분 · draft PR/external Court 정확source 결과/root 인계, merge0.
 
 ①파악: 원 source는 topic 매핑과 공통 insert를 소비하지 않는다.
@@ -22,3 +22,7 @@ Canonical TASK-ES-701, 라우팅 alias TASK-ES-SHARE-FEED-CATEGORY-01a1310c. 기
 ⑦실행: own source/doc/report만, 원격/계정/schema/author overlap0.
 
 ⑧막힘:800줄/helper absence/async/login readback 한계, source pin/null 유지.
+
+게시 교정: 7857 로컬 기록에 다운로드 법정 REPORT/verdict를 잘못 추적하여 기존 사전 푸시가 거절했다. 원 기록·원문은 수정하지 않고 보존한다. root가 허용한 별도 게시 WT는 원격 1e378 후손에 최종 허용 blob만 옮기고 법정 원문 둘을 제외한다. publication-manifest.json은 fe625 제품 21 Git blob과 허용 최종 diff를 대조한다. checkout CRLF와 Git LF 비교로 발생한 첫 봉인 실패는 도구 기록 한계와 함께 남기며 Git index blob 직접 대조로 교정한다. 훅 우회·force push·법정 판정 개명은 없다.
+
+4단계는 PR974 후속 외부 법정의 실제 새 HEAD 판정까지 미완이다. 첫 0A7F8493 돌려보냄을 그대로 유지하며 main 병합·사용 가능·효과 확인은 미확인이다.

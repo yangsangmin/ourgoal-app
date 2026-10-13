@@ -22,13 +22,13 @@
     function bind(target) { sheet = target; }
     function lockInput() {
       if (!sheet) return;
-      sheet.querySelectorAll('input, select, button').forEach(function (el) {
+      sheet.querySelectorAll('input, textarea, select, button').forEach(function (el) {
         if (el.id !== 'shareConfirmBtn' && el.id !== 'sharePreviewBtn') el.disabled = true;
       });
       if (!sheet.querySelector('#shareFeedSaveStatus')) {
         var notice = global.document.createElement('p');
         notice.id = 'shareFeedSaveStatus'; notice.setAttribute('role', 'status');
-        notice.textContent = '다시 시도할 때 이 입력 그대로 게시합니다. 창을 닫거나 새로고침하면 작성 중인 내용은 보관되지 않아요.';
+        notice.textContent = '처음 준비한 문구와 선택이 고정됐어요. 같은 게시물 다시 시도는 이 입력 그대로 게시합니다. 수정하려면 취소 후 새로 작성하세요. 창을 닫거나 새로고침하면 작성 중인 내용은 보관되지 않아요.';
         sheet.querySelector('#shareConfirmBtn').before(notice);
       }
     }
@@ -53,6 +53,7 @@
         }
       } catch (err) { state = 'unconfirmed'; }
       inflight = false;
+      if (sheet && sheet.querySelector('#shareCancelBtn')) sheet.querySelector('#shareCancelBtn').disabled = false;
       if (state === 'accepted') accepted = true;
       return { state: state, post: copy(preparedPost), currentAccount: current(),
         metaStripped: !!(result && result.metaStripped), savedDraft: false, rowReadbackVerified: null };

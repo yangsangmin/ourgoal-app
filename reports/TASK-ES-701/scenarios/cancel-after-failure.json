@@ -1,0 +1,57 @@
+{
+  "id": "share-cancel-after-failure",
+  "title": "실패 뒤 원 취소 버튼이 실제 창을 닫는다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCommPostFeed"
+    },
+    {
+      "do": "fill",
+      "selector": "#shareCaptionInput",
+      "value": "처음 준비한 게시 문구"
+    },
+    {
+      "do": "click",
+      "selector": "#shareConfirmBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#shareConfirmBtn",
+      "text": "같은 게시물 다시 시도",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#shareCancelBtn"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
