@@ -1,0 +1,306 @@
+{
+  "taskId": "TASK-ES-705",
+  "measurementOnly": true,
+  "sourceHead": "3a02bec793ec8e99d58ce7dccaa0703671d2c8c8",
+  "originMain": "3a02bec793ec8e99d58ce7dccaa0703671d2c8c8",
+  "workReferencePR": 976,
+  "sourceFiles": [
+    {
+      "file": "js/reactions.js",
+      "canonicalSHA": "6e004e64de1e894537c3503efcbf10e9b932fc5f7ead86143368609c553adb70"
+    },
+    {
+      "file": "js/helpful-reason.js",
+      "canonicalSHA": "f52c82beb1bc7d2e3ddf38516b7a0d3a1ded21aa98846aaa9ec0a6e114044f49"
+    },
+    {
+      "file": "docs/sql/2026-10-13-feed-private-stage2.sql",
+      "canonicalSHA": "3c96dd2553a24785ef38a91861e8a1b5e7c34501da9dc021f1e09bf3cd2ca2a6"
+    }
+  ],
+  "sourceFacts": {
+    "adviceViewerFilter": true,
+    "refreshViewerFilter": true,
+    "oldResponseGuard": true,
+    "authorTagsOnly": true,
+    "sqlRawOwn": true,
+    "sqlSummaryEmptyTexts": true,
+    "savePayoutInvocationCount": 0
+  },
+  "mapSource": {
+    "repo": "yangsangmin/ourgoal-app",
+    "generator": "scripts/cell-map-export.js",
+    "basisPaths": [
+      "js",
+      "index.html",
+      "docs/architecture/modules.json",
+      "docs/architecture/module-baseline.json"
+    ],
+    "commit": "3a02bec793ec8e99d58ce7dccaa0703671d2c8c8",
+    "short": "3a02bec7",
+    "committedAt": "2026-10-14T00:47:59+09:00",
+    "subject": "Merge pull request #975 from yangsangmin/fix/task-es-703-correction-01a13529"
+  },
+  "mapCanonicalSHA": "e9aeba1e2d15c2e9c3f7f20fcac684d6273d1faba187c854526dfeb8093150be",
+  "mapSummary": {
+    "cells": 386,
+    "files": 385,
+    "jsLines": 95669,
+    "kinds": {
+      "organ": 74,
+      "tab": 205,
+      "hybrid": 106,
+      "future": 1
+    },
+    "descriptionsHand": 383,
+    "descriptionsPending": [
+      "data/category-map",
+      "comm/feed-rank-server",
+      "comm/feed-rank"
+    ],
+    "oversize": {
+      "limit": 800,
+      "first": 12,
+      "firstDate": "2026-10-04",
+      "firstCommit": "bb343d3",
+      "now": 0,
+      "nowFiles": []
+    },
+    "undifferentiated": {
+      "file": "index.html",
+      "role": "미분화 덩어리 — 아직 세포로 나뉘지 않은 index.html 안 스크립트. 여기서 세포를 하나씩 떼어 낸다",
+      "inlineScriptLines": 24,
+      "functionDecls": 1
+    },
+    "health": {
+      "undifferentiatedLines": 24,
+      "globalLinks": 75,
+      "oversizeCells": 0,
+      "drawingSmallCells": {
+        "drew": 7,
+        "total": 22,
+        "cells": [
+          "js/tabs/home/sub-heatmap.js",
+          "js/tabs/home/sub-onescreen.js",
+          "js/tabs/settings/sub-appearance.js",
+          "js/tabs/settings/sub-integrations.js",
+          "js/tabs/settings/sub-notify.js",
+          "js/tabs/settings/sub-profile.js",
+          "js/tabs/settings/sub-security.js"
+        ]
+      },
+      "duplicateCells": {
+        "toast": 1,
+        "modalBridge": 1,
+        "recap": 3,
+        "timer": 4,
+        "selfOverlay": 9,
+        "nativeConfirm": 7
+      },
+      "dataDuplicates": 16,
+      "crossTabRefs": 0
+    }
+  },
+  "descriptionChecks": [
+    {
+      "id": "helpful-reason",
+      "does": "「도움돼요」 이후 이유 종류와 문장을 본인 원문 읽기 범위로 저장하고, 글쓴이 창에는 이유 종류별 개수만 표시한다. 이 저장 경로는 크레딧 지급을 호출하지 않는다",
+      "mapMatches": true,
+      "publisherDBMatches": true,
+      "publisherNotionMatches": true
+    },
+    {
+      "id": "reactions",
+      "does": "응원·도움·조언 반응을 남기고 개인 조언 원문은 본인만 표시한다. 글쓴이·추천에는 개수 집계를 반영하며, 계정 전환 시 개인 캐시를 비우고 이전 요청의 늦은 응답을 제외한다",
+      "mapMatches": true,
+      "publisherDBMatches": true,
+      "publisherNotionMatches": true
+    }
+  ],
+  "descriptionsAllMatch": true,
+  "execution": {
+    "map-export": {
+      "command": [
+        "scripts/cell-map-export.js"
+      ],
+      "exitCode": 0,
+      "outputSHA": "c7514329437a9b900d3bc8d993ba682aeadc0ae04d671e3d99b7ffe37e3d03ea"
+    },
+    "map-tests": {
+      "command": [
+        "tests/cell-map-export-es414.test.js"
+      ],
+      "exitCode": 0,
+      "outputSHA": "50d64f7cacfd9b86b73307bc10b819bfcfc32579351679f9ae271ab19e87c022"
+    },
+    "map-check": {
+      "command": [
+        "scripts/cell-map-export.js",
+        "--check"
+      ],
+      "exitCode": 0,
+      "outputSHA": "4e15f096277df272fc63d92f6f4e4d6a5fb89f35c726211a545f37f98b4bac8c"
+    },
+    "map-publish": {
+      "command": [
+        "scripts/cell-map-publish.js",
+        "--root",
+        "C:\\dev\\wt\\ourgoal-cell-map-705-01a13529",
+        "--db-out",
+        ".claude/cell-map-705-publish/db",
+        "--notion-out",
+        ".claude/cell-map-705-publish/notion"
+      ],
+      "exitCode": 0,
+      "outputSHA": "2c28e787cba319d7a0e9e4f9dc536400ea87823fce6d2dbb3b464d166c583a20"
+    }
+  },
+  "mapperTests": {
+    "observed": 17,
+    "total": 17,
+    "exitCode": 0
+  },
+  "materials": [
+    {
+      "file": ".claude/cell-map-705-publish/db/chunk-0.json",
+      "sha256": "adb171e842d579f57a7cc48f4218b22557350a304692ec26b9ac69c53118c603",
+      "bytes": 152867
+    },
+    {
+      "file": ".claude/cell-map-705-publish/db/chunk-1.json",
+      "sha256": "609643c99d544cee0e14417b6aa917d89c747b7556f9d2db5e57b10db79eb202",
+      "bytes": 152011
+    },
+    {
+      "file": ".claude/cell-map-705-publish/db/chunk-2.json",
+      "sha256": "31b2d46efa0250e602a21ba433f9258359e929da276a41e8f5919855afbfb7ff",
+      "bytes": 152699
+    },
+    {
+      "file": ".claude/cell-map-705-publish/db/chunk-3.json",
+      "sha256": "033442876b703548a6730bbf0513e0c4de376f35d6246a2f6fe858d01df0dbaa",
+      "bytes": 151437
+    },
+    {
+      "file": ".claude/cell-map-705-publish/db/chunk-4.json",
+      "sha256": "67d7f0680eac931aa36d32ed4d42d9d7b35c849460604139be659db12d1d011a",
+      "bytes": 152044
+    },
+    {
+      "file": ".claude/cell-map-705-publish/db/chunk-5.json",
+      "sha256": "ac762af069328a0d170175a8a6f2d60405d6f1301738e435f639aef531587e48",
+      "bytes": 17276
+    },
+    {
+      "file": ".claude/cell-map-705-publish/db/meta.json",
+      "sha256": "9d32e6282cce25dfd483fad62c83da04878babf5c9c0475bf6a2612953b8d190",
+      "bytes": 35486
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-0.md",
+      "sha256": "fbef752821263e1ab1ec7f4f25b909c362efceedfbf26a43cdc1dc1aa95e4505",
+      "bytes": 17861
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-1.md",
+      "sha256": "5e2e081a45749e2ba6e218dcf2133f3962199cbcd3db925450e9652e7540edc6",
+      "bytes": 38145
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-2.md",
+      "sha256": "66903876540decc9f4c773f19920c4e5063588ab3bbdbdeea30b2a1a7d3d85b2",
+      "bytes": 36991
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-3.md",
+      "sha256": "e6906d966382471d8c55838965dbb7169a73ae485bc6e47a5dd91f1a6531f880",
+      "bytes": 26985
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-4.md",
+      "sha256": "805eadbcf6194c9da1adcf6ee79cf566659c20ea534c69a42d810147befe53b3",
+      "bytes": 38847
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-5.md",
+      "sha256": "b0e7bba4564ca4d68157aca48c8cb724c68d3c0478574c3ce4df474d8b922c95",
+      "bytes": 38900
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-6.md",
+      "sha256": "26e2427d4610c243f800b89d532267c0c6d64d33ecbc23072729a23cfaa6bca4",
+      "bytes": 28661
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-7.md",
+      "sha256": "9705b3317eb5e90b26d309ddb2a6932b51674bc2dd9d9947bc9e21dc047ddb17",
+      "bytes": 44634
+    },
+    {
+      "file": ".claude/cell-map-705-publish/notion/notion-8.md",
+      "sha256": "a97e00191507d1f5a0362854b9a4f4e41e6b7f6714512509bacee803fc0ee2ad",
+      "bytes": 15841
+    }
+  ],
+  "claimsValidation": {
+    "errors": [],
+    "minimumMeaningfulTextLength": 90
+  },
+  "specLint": [
+    {
+      "file": "REQ-TASK-ES-705-CELL-MAP.md",
+      "errors": []
+    },
+    {
+      "file": "PLAN-TASK-ES-705-CELL-MAP.md",
+      "errors": []
+    }
+  ],
+  "docsIntegrity": {
+    "exitCode": 0,
+    "outputSHA": "6864a5072bbcdfe41719e6a1a3d20ee746874b8da6d514e02e37e273433f779f",
+    "initial": {
+      "log": "reports/TASK-ES-705/docs-integrity.initial-missing-deps.log",
+      "outputSHA": "41bd66f50545c506db32dffb3ef3cb01ea1ee992ff5bbf5bb5f664d6b3610203",
+      "reportedTotal": 38,
+      "reportedConfirmed": 36,
+      "reportedFailures": 2,
+      "dependencyErrorObserved": true,
+      "resolution": "npm ci --ignore-scripts --no-audit --no-fund in own worktree, locked package dependencies only; later docs gate exit0; no production source changed"
+    }
+  },
+  "prior704": {
+    "reportTreeSHA": "8de76cb3d437712c2ed5d8c4644f5c8be3cdd0dd",
+    "trackedFiles": 5,
+    "changedFiles": []
+  },
+  "remoteSync": {
+    "web": "pending",
+    "notion": "pending",
+    "hub": "pending",
+    "calls": 0
+  },
+  "productChanges": [],
+  "sqlCalls": 0,
+  "firstMetricsRuns": 0,
+  "pushes": 0,
+  "prs": 0,
+  "officialScorecardsPublished": false,
+  "sourceFrameSHA": "9f16781fb2d601a446c572d50dbdd7fa39f961e71359f62db521b57f8d35dc56",
+  "logPublication": [
+    {
+      "file": "reports/TASK-ES-705/docs-integrity.log",
+      "rawPrivateWorktreeRef": ".claude/cell-map-705-publish/raw/docs-integrity.log",
+      "rawSHA": "6864a5072bbcdfe41719e6a1a3d20ee746874b8da6d514e02e37e273433f779f",
+      "publishedSHA": "bbe8bb4d6e03ce56f0775403773fcfd68f40b67f765354f0a72bc4d2d025f334",
+      "normalization": "EOF blank lines removed only; raw original retained in worktree publish/raw"
+    },
+    {
+      "file": "reports/TASK-ES-705/docs-integrity.initial-missing-deps.log",
+      "rawPrivateWorktreeRef": ".claude/cell-map-705-publish/raw/docs-integrity.initial-missing-deps.log",
+      "rawSHA": "41bd66f50545c506db32dffb3ef3cb01ea1ee992ff5bbf5bb5f664d6b3610203",
+      "publishedSHA": "41bd66f50545c506db32dffb3ef3cb01ea1ee992ff5bbf5bb5f664d6b3610203",
+      "normalization": "EOF blank lines removed only; raw original retained in worktree publish/raw"
+    }
+  ]
+}

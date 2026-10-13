@@ -9,15 +9,15 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "b1c89e5ec0b4d391197310a707bf0dd8a920ad25",
-  "short": "b1c89e5e",
-  "committedAt": "2026-10-13T23:08:17+09:00",
-  "subject": "Merge pull request #974 from yangsangmin/fix/task-es-701-share-feed-category"
+  "commit": "3a02bec793ec8e99d58ce7dccaa0703671d2c8c8",
+  "short": "3a02bec7",
+  "committedAt": "2026-10-14T00:47:59+09:00",
+  "subject": "Merge pull request #975 from yangsangmin/fix/task-es-703-correction-01a13529"
  },
  "summary": {
   "cells": 386,
   "files": 385,
-  "jsLines": 95631,
+  "jsLines": 95669,
   "kinds": {
    "organ": 74,
    "tab": 205,
@@ -515,7 +515,7 @@
     "streaks",
     "top-helpful"
    ],
-   "lines": 973,
+   "lines": 1011,
    "over800": 0
   },
   {
@@ -10079,7 +10079,7 @@
    ],
    "name": "도움돼요 이유",
    "nameSource": "hand",
-   "does": "「도움돼요」를 누른 뒤 도움된 이유를 골라 짧게 남기고, 글쓴이가 이유 모음과 내용을 보는 창을 연다",
+   "does": "「도움돼요」 이후 이유 종류와 문장을 본인 원문 읽기 범위로 저장하고, 글쓴이 창에는 이유 종류별 개수만 표시한다. 이 저장 경로는 크레딧 지급을 호출하지 않는다",
    "doesSource": "hand",
    "header": [
     "아워골 — 도움돼요 이유 작성 + 크레딧",
@@ -10087,7 +10087,7 @@
     "도움돼요를 누른 직후 \"왜 도움이 됐나요?\" 시트를 띄운다(건너뛰기 가능).",
     "태그 1개 + 한 줄 텍스트(선택). 텍스트가 품질 게이트(최소 글자 수·복붙 아님)를"
    ],
-   "lines": 213,
+   "lines": 223,
    "over800": false,
    "exposes": [
     "OurgoalHelpfulReason"
@@ -10117,13 +10117,22 @@
    "tasks": [
     "TASK-ES-016",
     "TASK-ES-361",
-    "TASK-ES-588"
+    "TASK-ES-588",
+    "TASK-ES-703"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-361-TOAST-UNIFY.md",
-    "docs/specs/REQ-TASK-ES-588.md"
+    "docs/specs/REQ-TASK-ES-588.md",
+    "docs/specs/REQ-TASK-ES-703-CORRECTION.md",
+    "docs/specs/REQ-TASK-ES-703.md"
    ],
    "prs": [
+    {
+     "number": 975,
+     "task": "TASK-ES-703",
+     "title": "[E3] #TASK-ES-703 fix: 피드 원문 본인 조회와 계정 전환·권한 보존",
+     "date": "2026-10-14"
+    },
     {
      "number": 852,
      "task": "TASK-ES-588",
@@ -10220,7 +10229,7 @@
    ],
    "name": "글 반응 4종",
    "nameSource": "hand",
-   "does": "글에 응원해요·도움돼요·별로에요·조언해요 반응을 남기고 서버에 저장한다",
+   "does": "응원·도움·조언 반응을 남기고 개인 조언 원문은 본인만 표시한다. 글쓴이·추천에는 개수 집계를 반영하며, 계정 전환 시 개인 캐시를 비우고 이전 요청의 늦은 응답을 제외한다",
    "doesSource": "hand",
    "header": [
     "아워골 — 컨텐츠 반응 4종 (응원해요 · 도움돼요 · 별로에요 · 조언해요)",
@@ -10228,7 +10237,7 @@
     "index.html 의 메인 스크립트가 init(deps) 로 필요한 핸들(supabase 클라이언트,",
     "프로필, 모달, 토스트 …)을 넘긴다. 서버(docs/sql/2026-09-12-content-reactions.sql)가"
    ],
-   "lines": 398,
+   "lines": 426,
    "over800": false,
    "exposes": [
     "OurgoalReactions"
@@ -10264,13 +10273,22 @@
    "tasks": [
     "TASK-ES-014",
     "TASK-ES-361",
-    "TASK-ES-374"
+    "TASK-ES-374",
+    "TASK-ES-703"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-361-TOAST-UNIFY.md",
-    "docs/specs/REQ-TASK-ES-374-CONFIRM-SHEET.md"
+    "docs/specs/REQ-TASK-ES-374-CONFIRM-SHEET.md",
+    "docs/specs/REQ-TASK-ES-703-CORRECTION.md",
+    "docs/specs/REQ-TASK-ES-703.md"
    ],
    "prs": [
+    {
+     "number": 975,
+     "task": "TASK-ES-703",
+     "title": "[E3] #TASK-ES-703 fix: 피드 원문 본인 조회와 계정 전환·권한 보존",
+     "date": "2026-10-14"
+    },
     {
      "number": 690,
      "task": "TASK-ES-374",
