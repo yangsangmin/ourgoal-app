@@ -1,0 +1,51 @@
+{
+  "task": "TASK-ES-700",
+  "requirementsSource": "docs/growth/2026-10-13-feed-algorithm-stage3.md",
+  "requirements": [
+    { "id": "R1", "text": "피드의 유익함을 주 1회 실데이터로 잰다: 도움돼요 비율, 노하우·새 정보 이유 비율, 같은 카테고리 안 응답률, 별로에요 중 off_topic 비율, 도움돼요 1건 이상 받은 글 비율, 피드에서 시작된 연결 수, 설정 스냅샷. 체류시간·조회수는 없다. 못 잰 값은 null (보고서 5-2절)" },
+    { "id": "R2", "text": "경보 기준(5-2절): 도움돼요 비율이 지난주보다 20% 넘게 하락, 노하우 비율 30% 아래, 같은 카테고리 응답률 50% 아래, off_topic 비율 상승, 도달 20% 아래" },
+    { "id": "R3", "text": "피드에서 시작된 동반자 추가·팀 초대에 출처(source=feed)를 남겨 연결 수를 셀 수 있게 한다 (5-2절, 0단계 team_pings.source 칸)" },
+    { "id": "R4", "text": "집계는 RLS 로 클라이언트가 못 하므로 service_role 키를 가진 사람 PC·CI 에서만 돌고, 자격이 없으면 measured=false 로 남긴다(0 으로 메우지 않는다)" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "logic",
+      "statement": "scripts/feed-weekly-metrics.js compute() 가 봇·글쓴이 본인·시뮬 글 반응을 빼고 일곱 지표를 계산하며 분모 0 이면 null 이다(시험지 1·2절)",
+      "touches": ["scripts/feed-weekly-metrics.js", "tests/feed-weekly-metrics.test.js"],
+      "check": { "type": "codeContains", "file": "scripts/feed-weekly-metrics.js", "text": "function ratio(a, b) { return b > 0 ? Math.round((a / b) * 1000) / 1000 : null; }" }
+    },
+    {
+      "id": "C2", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "경보 5종의 기준값이 ALERT 한 곳에 있고 시험지 3절이 하락·미달 경보를 확인한다",
+      "touches": ["scripts/feed-weekly-metrics.js", "tests/feed-weekly-metrics.test.js"],
+      "check": { "type": "codeContains", "file": "scripts/feed-weekly-metrics.js", "text": "const ALERT = { helpfulDropPct: 20, howtoShareMin: 0.30, sameCategoryMin: 0.50, reachMin: 0.20 };" }
+    },
+    {
+      "id": "C3", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "피드 카드의 동반자 추가·팀 영입 userObj 에 source:'feed' 가 붙고, 팀 초대 insert 가 team_pings.source 에 싣는다",
+      "touches": ["js/tabs/comm/feed-list.js", "js/team-recruit.js"],
+      "check": { "type": "codeContains", "file": "js/team-recruit.js", "text": "source: (targetUser && targetUser.source) || null" }
+    },
+    {
+      "id": "C4", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "자격(SUPABASE_URL·SUPABASE_SERVICE_ROLE_KEY)이 없으면 measured:false 와 사유를 적고 0 으로 메우지 않는다",
+      "touches": ["scripts/feed-weekly-metrics.js"],
+      "check": { "type": "codeContains", "file": "scripts/feed-weekly-metrics.js", "text": "measured: false, reason: 'SUPABASE_URL 또는 SUPABASE_SERVICE_ROLE_KEY 없음 — 측정불가'" }
+    },
+    {
+      "id": "C5", "req": "R1", "kind": "unverified", "domain": "persistence",
+      "statement": "service_role 키가 있는 PC 에서 스크립트를 돌리면 운영 DB 의 지난 7일 값으로 reports/feed-metrics/<주>.json 이 생기고 한 줄 요약이 찍힌다",
+      "touches": ["scripts/feed-weekly-metrics.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "SUPABASE_SERVICE_ROLE_KEY 를 가진 사람(상민님 PC 의 .env.local 또는 CI) [손 필요]",
+        "how": [
+          "저장소 루트에서 node scripts/feed-weekly-metrics.js 를 실행한다",
+          "출력 한 줄에 글 수·도움돼요 비율·노하우 비율·같은 카테고리·도달·경보 수가 찍히는지 본다",
+          "reports/feed-metrics/ 에 <연도>-W<주>.json 이 생기고 measured 가 true 인지 본다",
+          "--vault \"C:/dev/vault/아워골_총괄 지식기반/피드지표\" 를 붙여 다시 돌리면 그 폴더에 latest.json 이 생기는지 본다"
+        ]
+      }
+    }
+  ]
+}

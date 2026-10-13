@@ -488,7 +488,7 @@
           level: 2,
           theme: post.category || '목표 달성',
           intro: post.action || '아워골 러닝메이트',
-          isAiBot: !!post.is_ai
+          isAiBot: !!post.is_ai, source: 'feed', addedAt: L.nowISO() /* #TASK-ES-700 피드에서 시작된 연결(지표) */
         };
         if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.ensureDefaultCompanions){
           var comps = window.OurgoalTeamInviteComm.ensureDefaultCompanions();
@@ -539,7 +539,7 @@
           name: pName,
           avatar: post.avatar || (pName ? pName.slice(0, 1) : '👤'),
           streak: 7,
-          isAiBot: !!post.is_ai
+          isAiBot: !!post.is_ai, source: 'feed' /* #TASK-ES-700 피드에서 시작된 팀 초대(team_pings.source) */
         };
         if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openScoutToTeamModal){
           window.OurgoalTeamInviteComm.openScoutToTeamModal(userObj);
