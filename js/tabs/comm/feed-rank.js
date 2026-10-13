@@ -24,6 +24,7 @@
     wGoal: 1.0, wTeam: 1.2, wTopic: 0.3, wComp: 0.7, wStage: 0.3, rMin: 0.2, rMax: 2.0,
     activeDays: 14, activeW: 1.0, idleW: 0.6,
     wH: 0.6, k: 3, poorRatioPenalty: 0.3, poorPenalty: 0.5, adviceBonus: 0.2,
+    tagW: { how_to: 1.0, new_info: 1.0, same_situation: 0.8, motivation: 0.8, other: 0.5 }, a: 0.5,   /* 2단계: 이유 태그 가중 · 개인화 강도(p_u) */
     tau0h: 72, tauMaxMult: 3, tauHelpfulDiv: 5, tauHelpfulCap: 10, staleDays: 30,
     sections: { team: 3, help: 7, peers: 5, widen: 2 }, teamHours: 48,
     dailyCap: 30, sameAuthorMax: 2, catShareMax: 0.6, coldstartMin: 3, vLabelMin: 1.5
@@ -132,12 +133,24 @@
     return { R: R, terms: terms, raw: sum };
   }
 
-  function value(it, counts, s) {
+  function value(it, counts, s, tagProfile) {
     var c = counts || null;
     if (!c) return { V: 1, helpful: 0, poor: 0 };
     var helpful = num(c.helpful, 0), poor = num(c.poor, 0), cheer = num(c.cheer, 0), advice = num(c.advice, 0);
     var n = helpful + poor + cheer;
-    var V = 1 + s.wH * Math.log(1 + helpful) * (n / (n + s.k));
+    /* 2단계(#TASK-ES-699): 서버 집계가 이유 태그별 가중 합(helpfulTags, 가드 적용)을 주면 H_adj = Σ tagW[tag]·n_tag·(1 + a·p_u[tag]).
+       태그 집계가 없으면(1단계·reactions.js 집계) 실제 건수를 그대로 쓴다. 라벨에 보이는 helpful 은 언제나 가드 전 실데이터다. */
+    var hAdj = helpful;
+    if (c.helpfulTags && typeof c.helpfulTags === 'object') {
+      var pu = tagProfile || {};
+      var tw = s.tagW || {};
+      hAdj = 0;
+      Object.keys(c.helpfulTags).forEach(function (tag) {
+        var w = typeof tw[tag] === 'number' ? tw[tag] : (typeof tw.other === 'number' ? tw.other : 0.5);
+        hAdj += w * num(c.helpfulTags[tag], 0) * (1 + num(s.a, 0) * num(pu[tag], 0));
+      });
+    } else if (typeof c.helpfulAdj === 'number') hAdj = c.helpfulAdj;
+    var V = 1 + s.wH * Math.log(1 + Math.max(0, hAdj)) * (n / (n + s.k));
     if (n > 0 && poor / n > s.poorRatioPenalty) V *= s.poorPenalty;
     if (advice > 0) V += s.adviceBonus;
     return { V: V, helpful: helpful, poor: poor };
@@ -151,9 +164,9 @@
     return { F: Math.exp(-age / tau), ageH: age };
   }
 
-  function score(it, ctx, s, counts, nowMs) {
+  function score(it, ctx, s, counts, nowMs, tagProfile) {
     var r = relevance(it, ctx, s);
-    var v = value(it, counts, s);
+    var v = value(it, counts, s, tagProfile);
     var f = freshness(it, v.helpful, s, nowMs);
     return { score: r.R * v.V * f.F, R: r.R, V: v.V, F: f.F, terms: r.terms, helpful: v.helpful, ageH: f.ageH };
   }
@@ -223,6 +236,8 @@
     opts = opts || {};
     if (!ctx || !ctx.enabled) return null;
     var s = Object.assign({}, DEFAULTS, opts.settings || {});
+    if (s.enabled === false) return null;                       /* 서버 설정 feed.enabled=false → 사고 시 즉시 예전 최신순 */
+    if (opts.settings && opts.settings.sections) s.sections = Object.assign({}, DEFAULTS.sections, opts.settings.sections);
     var nowMs = num(opts.now, Date.now());
     var counts = opts.counts || {};
     var CM = (global && global.OurgoalCategoryMap) || null;
@@ -230,7 +245,7 @@
 
     /* 점수 */
     list.forEach(function (it) {
-      it._sc = score(it, ctx, s, counts[String(it.id)] || null, nowMs);
+      it._sc = score(it, ctx, s, counts[String(it.id)] || null, nowMs, opts.tagProfile || null);
       delete it._feedReason;
     });
 
