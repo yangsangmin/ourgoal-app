@@ -758,3 +758,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-703 | E3 | 피드 개인정보 범위 교정(D22 직접 승인) — 체감 가설: 조언·사유 원문은 본인만 보고 작성자·추천은 집계만 받는다. 설정 값만 공개하고 운영 actor/reason audit는 비공개. 기존 행·값·크레딧 기능 보존, 지급 호출·노출로그·추가 첫 지표 0. 두 UI 안내와 동일 서버 계약을 맞춤. 근거: 직접 승인 D-2026-10-13-22 · TASK-ES-702 독점 담당 인계 · 한 번의 실제 catalog metadata · 별도 고정 소스 검토 대상 | docs/specs/REQ-TASK-ES-703.md · docs/sql/2026-10-13-feed-private-stage2.sql · reports/TASK-ES-703/claims.json · reports/TASK-OG-FEED-PRIVATE-STAGE2-INSTALL-01a1310c/manifest.json | 고정 소스 검토 준비·서버 교정 적용 미실행
 
 - #TASK-ES-704 | E3 | PR974 병합 뒤 세포지도 — 공유 게시 결과 세포 설명·현재 도움된 이유 기능 설명·생성 지도와 웹/노션 게시 재료, 원격 동기화 pending | docs/specs/REQ-TASK-ES-704-CELL-MAP.md · reports/TASK-ES-704/claims.json | 4단계 준비(로컬 커밋, 심사 미청구)
+
+- #TASK-ES-705 | E3 | PR975 병합 뒤 세포지도 개인정보 계약 설명 갱신 — helpful-reason 본인 원문/작성자 종류별 개수/지급 호출 제외, reactions 개인 원문·집계·계정 세대 경계. 기존 생성기·게시 재료만, 제품/SQL/원격 게시 0 | docs/specs/REQ-TASK-ES-705-CELL-MAP.md · reports/TASK-ES-705/claims.json | 4단계(심사 청구 준비)

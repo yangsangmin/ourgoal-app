@@ -1,0 +1,113 @@
+{
+  "task": "TASK-ES-705",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-705-CELL-MAP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "helpful-reason/reactions 설명을 현재 개인정보 계약에 맞춰 정본 및 생성 지도에 반영한다."
+    },
+    {
+      "id": "R2",
+      "text": "동일 source의 검증된 게시 재료를 만들고 원 자료 보존·원격 pending을 구분한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "helpful-reason의 실제 기능 설명이 지도 자료에 적혀 있다. 원문 권한·UI 사용·운영 효과를 법정이 재검증했다는 뜻이 아니다.",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "「도움돼요」 이후 이유 종류와 문장을 본인 원문 읽기 범위로 저장하고, 글쓴이 창에는 이유 종류별 개수만 표시한다. 이 저장 경로는 크레딧 지급을 호출하지 않는다"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "helpful-reason의 실제 기능 설명이 지도 자료에 적혀 있다. 원문 권한·UI 사용·운영 효과를 법정이 재검증했다는 뜻이 아니다.",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-map.json",
+        "text": "「도움돼요」 이후 이유 종류와 문장을 본인 원문 읽기 범위로 저장하고, 글쓴이 창에는 이유 종류별 개수만 표시한다. 이 저장 경로는 크레딧 지급을 호출하지 않는다"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reactions의 실제 기능 설명이 지도 자료에 적혀 있다. 원문 권한·UI 사용·운영 효과를 법정이 재검증했다는 뜻이 아니다.",
+      "touches": [
+        "docs/architecture/cell-descriptions.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-descriptions.json",
+        "text": "응원·도움·조언 반응을 남기고 개인 조언 원문은 본인만 표시한다. 글쓴이·추천에는 개수 집계를 반영하며, 계정 전환 시 개인 캐시를 비우고 이전 요청의 늦은 응답을 제외한다"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "reactions의 실제 기능 설명이 지도 자료에 적혀 있다. 원문 권한·UI 사용·운영 효과를 법정이 재검증했다는 뜻이 아니다.",
+      "touches": [
+        "docs/architecture/cell-map.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/cell-map.json",
+        "text": "응원·도움·조언 반응을 남기고 개인 조언 원문은 본인만 표시한다. 글쓴이·추천에는 개수 집계를 반영하며, 계정 전환 시 개인 캐시를 비우고 이전 요청의 늦은 응답을 제외한다"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게시 자료 검증 기록은 웹·노션·허브 원격 호출 없음과 pending을 구분한다.",
+      "touches": [
+        "reports/TASK-ES-705/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-705/measurement.json",
+        "path": "remoteSync",
+        "equals": {
+          "web": "pending",
+          "notion": "pending",
+          "hub": "pending",
+          "calls": 0
+        }
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게시 재료의 두 설명이 정본·생성 지도와 같다는 측정 기록을 보존한다.",
+      "touches": [
+        "reports/TASK-ES-705/measurement.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-705/measurement.json",
+        "path": "descriptionsAllMatch",
+        "equals": true
+      }
+    }
+  ]
+}

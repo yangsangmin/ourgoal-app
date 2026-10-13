@@ -6106,3 +6106,7 @@
 측정 정본: reports/TASK-ES-703/correction/measurement-summary.json. 동일 원 fixture와 추가 PostgreSQL/VM 반례, 문서 lint, 모듈 신고서 생성/가드, npm 실제 종료코드가 소스 hash에 연결된다. 로컬 합성 DB/SDK 검증이며 운영 적용·실계정 사용·법정·효과는 미확인이다. SQL3·첫 지표·운영 정상 write probe·게시·노출로그·크레딧 지급은 재실행하지 않았다. 상위 C 담당이 변경 범위 독립 검토와 canonical transport를 이어간다.
 ## TASK-ES-701 착수 — root 배정/원명세 제품0
 작업참고 PR968. fresh db8b7ebb/PR972에서 별도 fix/task-es-701-share-feed-category 선점. 실제701은 PR/remote/local 조회로 비점유를 확인하고 registry에 등록했다. 제품 source0, 최초 원REQ/PLAN 검토를 root에 인계하며 원 author forwarded item ref/null을 대표 발화로 만들지 않는다. 운영 posts/DB/SQL0, manual/captured frame/helper 계약을 명시했다.
+
+## TASK-ES-705 PR975 후 세포지도 설명 갱신
+
+작업참고 기준 PR #976. 제품 source 3a02bec793ec8e99d58ce7dccaa0703671d2c8c8의 helpful-reason/reactions UI 및 privacy SQL 계약을 읽어 손 설명을 교정한다. 생성 정본·게시 재료와 실측은 reports/TASK-ES-705/measurement.json에 결박한다. 원 TASK704 자료·제품·SQL·법정·기대값은 보존한다. 웹·노션·허브는 pending이고 본 담당의 원격 호출·운영 SQL3/첫 지표·push/PR는 실행하지 않는다. 독립 검토와 제출은 상위 담당이 이어간다.
