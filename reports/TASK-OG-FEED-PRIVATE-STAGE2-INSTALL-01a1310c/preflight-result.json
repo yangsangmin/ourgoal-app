@@ -1,0 +1,1715 @@
+{
+  "schema": "feed-private-stage2-preflight/1",
+  "PID": 37864,
+  "sourceCommit": "f0ac1158c23c4729b0ce0b1d2637a3895c604d2b",
+  "project": "dvqosviqbciohcywkzbq",
+  "urlSource": {
+    "file": "index.html",
+    "sha256": "369860bdc16d23df52e4c753712d6bce691e9283c02f524652917423703e9053"
+  },
+  "observedAt": "2026-10-13T13:00:40.857Z",
+  "endpoint": "POST /v1/projects/{ref}/database/query/read-only",
+  "status": 201,
+  "attempts": 1,
+  "querySHA": "0b91ce9aabcf61259169a95ed4ba87b9a43da58e6b3e3dc91c2253961400969a",
+  "priorDefinitionRef": "C:\\Users\\HP\\handover\\2026-10-13-claude-309dca5d\\private-recovery\\feed-private-prior-1791896440850-6aa9085c-3d9a-40f3-bae7-bc01aaf9aeaf\\prior-definitions.private.json",
+  "priorDefinitionSHA": "d49d82ac06f8a604e6c482d243813ecfc39bc17c74dbc8ad55b15456728bd83d",
+  "relations": [
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "content_reactions",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "default": null,
+          "notNull": true,
+          "identity": "a"
+        },
+        {
+          "name": "target_type",
+          "type": "text",
+          "default": "'feed_post'::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "target_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "reactor_name",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "type",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "reason_tag",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "reason_text",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "advice_text",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "advice_visibility",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "hidden_by_owner",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "deleted_by",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX content_reactions_pkey ON public.content_reactions USING btree (id)",
+        "CREATE UNIQUE INDEX content_reactions_user_id_target_type_target_id_type_key ON public.content_reactions USING btree (user_id, target_type, target_id, type)",
+        "CREATE INDEX idx_content_reactions_target ON public.content_reactions USING btree (target_type, target_id) WHERE (deleted_at IS NULL)",
+        "CREATE INDEX idx_content_reactions_user ON public.content_reactions USING btree (user_id) WHERE (deleted_at IS NULL)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "content_reactions_advice_text_check",
+          "definition": "CHECK (((advice_text IS NULL) OR (char_length(advice_text) <= 600)))"
+        },
+        {
+          "name": "content_reactions_advice_visibility_check",
+          "definition": "CHECK (((advice_visibility IS NULL) OR (advice_visibility = ANY (ARRAY['author_only'::text, 'everyone'::text]))))"
+        },
+        {
+          "name": "content_reactions_deleted_by_check",
+          "definition": "CHECK (((deleted_by IS NULL) OR (deleted_by = ANY (ARRAY['author'::text, 'reactor'::text, 'system'::text]))))"
+        },
+        {
+          "name": "content_reactions_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "content_reactions_reactor_name_check",
+          "definition": "CHECK (((reactor_name IS NULL) OR (char_length(reactor_name) <= 60)))"
+        },
+        {
+          "name": "content_reactions_reason_tag_check",
+          "definition": "CHECK (((reason_tag IS NULL) OR (reason_tag = ANY (ARRAY['ai_suspect'::text, 'wrong_info'::text, 'ad'::text, 'off_topic'::text, 'other'::text]))))"
+        },
+        {
+          "name": "content_reactions_reason_text_check",
+          "definition": "CHECK (((reason_text IS NULL) OR (char_length(reason_text) <= 300)))"
+        },
+        {
+          "name": "content_reactions_shape",
+          "definition": "CHECK ((((type = 'poor'::text) AND (reason_tag IS NOT NULL) AND (advice_text IS NULL) AND (advice_visibility IS NULL)) OR ((type = 'advice'::text) AND (advice_text IS NOT NULL) AND (advice_visibility IS NOT NULL) AND (reason_tag IS NULL)) OR ((type = ANY (ARRAY['cheer'::text, 'helpful'::text])) AND (reason_tag IS NULL) AND (reason_text IS NULL) AND (advice_text IS NULL) AND (advice_visibility IS NULL))))"
+        },
+        {
+          "name": "content_reactions_target_type_check",
+          "definition": "CHECK ((target_type = ANY (ARRAY['feed_post'::text, 'checkin'::text, 'goal_template'::text])))"
+        },
+        {
+          "name": "content_reactions_type_check",
+          "definition": "CHECK ((type = ANY (ARRAY['cheer'::text, 'helpful'::text, 'poor'::text, 'advice'::text])))"
+        },
+        {
+          "name": "content_reactions_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "content_reactions_user_id_target_type_target_id_type_key",
+          "definition": "UNIQUE (user_id, target_type, target_id, type)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "credit_settings",
+      "columns": [
+        {
+          "name": "key",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "value",
+          "type": "jsonb",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX credit_settings_pkey ON public.credit_settings USING btree (key)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "credit_settings_pkey",
+          "definition": "PRIMARY KEY (key)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "feed_posts",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "display_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "avatar_url",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "goal_title",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "caption",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "cheers_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "extra",
+          "type": "jsonb",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "hidden",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "goal_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "group_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "content_type",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "author_pct",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "topic",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "goal_visibility",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_feed_posts_category_created ON public.feed_posts USING btree (category, created_at DESC) WHERE (COALESCE(hidden, false) = false)",
+        "CREATE INDEX idx_feed_posts_group_created ON public.feed_posts USING btree (group_id, created_at DESC) WHERE (group_id IS NOT NULL)",
+        "CREATE UNIQUE INDEX feed_posts_pkey ON public.feed_posts USING btree (id)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "feed_posts_author_pct_check",
+          "definition": "CHECK (((author_pct IS NULL) OR ((author_pct >= 0) AND (author_pct <= 100))))"
+        },
+        {
+          "name": "feed_posts_category_check",
+          "definition": "CHECK (((category IS NULL) OR (category = ANY (ARRAY['study'::text, 'dev'::text, 'workout'::text, 'running'::text, 'diet'::text, 'career'::text, 'sideproject'::text, 'finance'::text, 'life'::text, 'morning'::text, 'parenting'::text, 'pet'::text, 'relation'::text, 'reading'::text, 'hobby'::text, 'mental'::text, 'clean'::text, 'travel'::text]))))"
+        },
+        {
+          "name": "feed_posts_content_type_check",
+          "definition": "CHECK (((content_type IS NULL) OR (content_type = ANY (ARRAY['record'::text, 'howto'::text, 'question'::text, 'milestone'::text, 'team_done'::text]))))"
+        },
+        {
+          "name": "feed_posts_goal_visibility_check",
+          "definition": "CHECK (((goal_visibility IS NULL) OR (goal_visibility = ANY (ARRAY['public'::text, 'theme'::text, 'team'::text, 'private'::text, 'followers'::text]))))"
+        },
+        {
+          "name": "feed_posts_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "feed_posts_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "feed_settings",
+      "columns": [
+        {
+          "name": "key",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "value",
+          "type": "jsonb",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX feed_settings_pkey ON public.feed_settings USING btree (key)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "feed_settings_pkey",
+          "definition": "PRIMARY KEY (key)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "feed_settings_log",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "default": null,
+          "notNull": true,
+          "identity": "a"
+        },
+        {
+          "name": "key",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "before",
+          "type": "jsonb",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "after",
+          "type": "jsonb",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "changed_by",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "reason",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "changed_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX feed_settings_log_pkey ON public.feed_settings_log USING btree (id)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "feed_settings_log_pkey",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "goals",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "due_date",
+          "type": "date",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "milestones",
+          "type": "jsonb",
+          "default": "'[]'::jsonb",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "visibility",
+          "type": "text",
+          "default": "'public'::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "topic",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "archived_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "result",
+          "type": "jsonb",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX goals_pkey ON public.goals USING btree (id)",
+        "CREATE INDEX idx_goals_topic ON public.goals USING btree (topic)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "goals_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "goals_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "helpful_reasons",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "default": null,
+          "notNull": true,
+          "identity": "a"
+        },
+        {
+          "name": "target_type",
+          "type": "text",
+          "default": "'feed_post'::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "target_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "reason_tag",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "reason_text",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "quality_pass",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "credit_granted",
+          "type": "integer",
+          "default": "0",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX helpful_reasons_pkey ON public.helpful_reasons USING btree (id)",
+        "CREATE UNIQUE INDEX helpful_reasons_user_id_target_type_target_id_key ON public.helpful_reasons USING btree (user_id, target_type, target_id)",
+        "CREATE INDEX idx_helpful_reasons_target ON public.helpful_reasons USING btree (target_type, target_id) WHERE (deleted_at IS NULL)",
+        "CREATE INDEX idx_helpful_reasons_user ON public.helpful_reasons USING btree (user_id) WHERE (deleted_at IS NULL)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "helpful_reasons_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "helpful_reasons_reason_tag_check",
+          "definition": "CHECK ((reason_tag = ANY (ARRAY['how_to'::text, 'same_situation'::text, 'motivation'::text, 'new_info'::text, 'other'::text])))"
+        },
+        {
+          "name": "helpful_reasons_reason_text_check",
+          "definition": "CHECK (((reason_text IS NULL) OR (char_length(reason_text) <= 300)))"
+        },
+        {
+          "name": "helpful_reasons_target_type_check",
+          "definition": "CHECK ((target_type = ANY (ARRAY['feed_post'::text, 'checkin'::text, 'goal_template'::text])))"
+        },
+        {
+          "name": "helpful_reasons_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "helpful_reasons_user_id_target_type_target_id_key",
+          "definition": "UNIQUE (user_id, target_type, target_id)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "team_pings",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "group_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "sender_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "sender_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "sender_avatar",
+          "type": "text",
+          "default": "'🏃'::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "receiver_id",
+          "type": "text",
+          "default": "''::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "target_type",
+          "type": "text",
+          "default": "'goal'::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "target_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "target_title",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "ping_type",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "message",
+          "type": "text",
+          "default": "''::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'sent'::text",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "hidden",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "source",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX team_pings_pkey ON public.team_pings USING btree (id)",
+        "CREATE INDEX team_pings_group_idx ON public.team_pings USING btree (group_id, created_at DESC)",
+        "CREATE INDEX team_pings_sender_idx ON public.team_pings USING btree (sender_id, created_at DESC)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "team_pings_pkey",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "users",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "username",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "display_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "bio",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "avatar_url",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "interests",
+          "type": "jsonb",
+          "default": "'[]'::jsonb",
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "region",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": ""
+        },
+        {
+          "name": "region_public",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "saved_avatars",
+          "type": "jsonb",
+          "default": "'[]'::jsonb",
+          "notNull": true,
+          "identity": ""
+        },
+        {
+          "name": "is_bot",
+          "type": "boolean",
+          "default": "false",
+          "notNull": false,
+          "identity": ""
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)",
+        "CREATE UNIQUE INDEX users_username_key ON public.users USING btree (username)",
+        "CREATE INDEX idx_users_region ON public.users USING btree (region)",
+        "CREATE INDEX idx_users_is_bot ON public.users USING btree (id) WHERE (is_bot = true)"
+      ],
+      "forcedRls": false,
+      "privileges": [
+        {
+          "role": "authenticated",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "anon",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        },
+        {
+          "role": "service_role",
+          "delete": true,
+          "insert": true,
+          "select": true,
+          "update": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "users_id_fkey",
+          "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "users_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "users_username_key",
+          "definition": "UNIQUE (username)"
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "count_content_reactions",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "count_content_reactions(text[])",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "c6568add2b99e228ca0f64e01c00ffb0",
+      "securityDefiner": true,
+      "definitionSHA": "120d732400e2e16db720de5273148be861dad52dab7b5c7844acf46f26de00b4"
+    },
+    {
+      "name": "feed_settings_get",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "feed_settings_get()",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "290eaff5a62d9c785360e3f54bdc29ba",
+      "securityDefiner": true,
+      "definitionSHA": "fcff1883750ad58d49d6ceac4da98f17e27eb5c3789efc10fdd37c6f8a5cfb1b"
+    },
+    {
+      "name": "feed_settings_log_trigger",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "feed_settings_log_trigger()",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "definitionMD5": "8855a66b4142bbce27fff298662e70f2",
+      "securityDefiner": true,
+      "definitionSHA": "06ad7754eb6a19332fb1287aea8a780accd3b824a022a51d936633ca1f51c47b"
+    },
+    {
+      "name": "feed_value_counts",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "feed_value_counts(text[],integer)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "443c6dbf9eb8c309317cb49f37b0989a",
+      "securityDefiner": true,
+      "definitionSHA": "4dd00f100d715bf126b7990c09c2146e49b9a73124d9dc5561a1f233746f17d6"
+    },
+    {
+      "name": "helpful_reason_summary",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "helpful_reason_summary(text,text)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "27421125d33f553896388f7e54cee6fe",
+      "securityDefiner": true,
+      "definitionSHA": "4b7773c1d76ae98f745b9e729e473b441d55313bfe8c296139fb60c74aa02738"
+    },
+    {
+      "name": "list_content_advice",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "list_content_advice(text[])",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "d34d28be11c4f2fe3146d0558462531a",
+      "securityDefiner": true,
+      "definitionSHA": "92aad3a77c4dbf21737b44b55e39d9336029aba761ef322f9a2e38fd219bbd80"
+    },
+    {
+      "name": "moderate_advice",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "moderate_advice(bigint,text)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "definitionMD5": "56f5e2321d4fedde31556f52bbdb1aa4",
+      "securityDefiner": true,
+      "definitionSHA": "94b14d9b01981d967c2dfcdfb97b0ffa48a9165c7ee01b47d1515cf2d19e9472"
+    },
+    {
+      "name": "my_content_reactions",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "my_content_reactions(text[])",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "faf7206e4e070cd111999d3db1bac922",
+      "securityDefiner": true,
+      "definitionSHA": "f6f6350a60b39bc3efdc579cdd408036f13fdb7e458d64c94f88e548c9030118"
+    },
+    {
+      "name": "my_helpful_tag_profile",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "my_helpful_tag_profile()",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "dba9a8bc4b4580e643e1500b0a40d309",
+      "securityDefiner": false,
+      "definitionSHA": "517f3365bb45bcec13b843118cf45079ff9f40213ca8f1737ca6ca2e09ca5173"
+    },
+    {
+      "name": "poor_reason_breakdown",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "poor_reason_breakdown(text)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "definitionMD5": "57b3ee1c91233d1868bf4b0a2081ee00",
+      "securityDefiner": true,
+      "definitionSHA": "cc051746977a95d74f002a7ffa84f92f7890ac71aa1ffe3010f8a84cefad957c"
+    },
+    {
+      "name": "react_content",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "react_content(text,text,text,text,text,text,text,text)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "definitionMD5": "36b1a342ce507ff4d892516c9e8c10c4",
+      "securityDefiner": true,
+      "definitionSHA": "4c0a30817a0298b3e0885ac941b6a8958288d2faa785f3fbef9f0321fbd1ab11"
+    },
+    {
+      "name": "save_helpful_reason",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "save_helpful_reason(text,text,text,text)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "definitionMD5": "43db5917f9c32342ff5c8483402bc922",
+      "securityDefiner": true,
+      "definitionSHA": "b9771f115221008bc04fa2d99df45fc671ff76b863c13c54a528f4d09549f321"
+    },
+    {
+      "name": "unreact_content",
+      "settings": [
+        "search_path=public"
+      ],
+      "signature": "unreact_content(text,text,text)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "definitionMD5": "38818e1b98347316cc3c47ae77d2ff31",
+      "securityDefiner": true,
+      "definitionSHA": "80d0720587cd4cef5ef06db5a7c807d7d8123ce8482e496fde3e70fecd3f25cb"
+    }
+  ],
+  "policies": [
+    {
+      "name": "content_reactions_select_own",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "content_reactions",
+      "using": "(auth.uid() = user_id)",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "credit_settings_select_all",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "credit_settings",
+      "using": "true",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "feed_posts_delete_own",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "feed_posts",
+      "using": "(auth.uid() = user_id)",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "feed_posts_insert_own",
+      "check": "(auth.uid() = user_id)",
+      "roles": [
+        "public"
+      ],
+      "table": "feed_posts",
+      "using": null,
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "feed_posts_select_visible",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "feed_posts",
+      "using": "((auth.role() = 'authenticated'::text) AND ((hidden IS NOT TRUE) OR (auth.uid() = user_id)))",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "feed_settings_read_all",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "feed_settings",
+      "using": "true",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "feed_settings_log_read_all",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "feed_settings_log",
+      "using": "true",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "goals_own_rows",
+      "check": "(auth.uid() = user_id)",
+      "roles": [
+        "public"
+      ],
+      "table": "goals",
+      "using": "(auth.uid() = user_id)",
+      "command": "ALL",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "helpful_reasons_select_own",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "helpful_reasons",
+      "using": "(auth.uid() = user_id)",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "es347_anon_no_access",
+      "check": "false",
+      "roles": [
+        "anon"
+      ],
+      "table": "team_pings",
+      "using": "false",
+      "command": "ALL",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "es347_anon_no_select",
+      "check": null,
+      "roles": [
+        "anon"
+      ],
+      "table": "team_pings",
+      "using": "false",
+      "command": "SELECT",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "es347_auth_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "team_pings",
+      "using": "(sender_id = (( SELECT auth.uid() AS uid))::text)",
+      "command": "DELETE",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "es347_auth_insert",
+      "check": "((sender_id = (( SELECT auth.uid() AS uid))::text) AND ((group_id IS DISTINCT FROM 'dm_direct'::text) OR ((id = ((('dm_'::text || LEAST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\"))) || '_'::text) || GREATEST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\")))) OR (id = ((LEAST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\")) || '_'::text) || GREATEST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\")))))) AND ((group_id IS DISTINCT FROM 'manito_pool'::text) OR (id = ('mn_pool_'::text || sender_id))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "team_pings",
+      "using": null,
+      "command": "INSERT",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "es347_auth_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "team_pings",
+      "using": "((sender_id = (( SELECT auth.uid() AS uid))::text) OR (receiver_id = (( SELECT auth.uid() AS uid))::text) OR ((group_id = 'feed'::text) AND (target_type = 'feed_comment'::text)) OR ((group_id = 'shared_groups'::text) AND (target_type = 'team_group'::text)) OR ((group_id = 'manito_pool'::text) AND (target_type = 'manito_member'::text)) OR ((target_type = 'team_chat'::text) AND (group_id <> ALL (ARRAY['dm_direct'::text, 'manito'::text, 'manito_pool'::text, 'feed'::text, 'shared_groups'::text])) AND (group_id !~~ 'dm\\_%'::text)))",
+      "command": "SELECT",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "es347_auth_update",
+      "check": "((((( SELECT auth.uid() AS uid))::text = sender_id) OR ((( SELECT auth.uid() AS uid))::text = receiver_id)) AND ((group_id IS DISTINCT FROM 'dm_direct'::text) OR ((id = ((('dm_'::text || LEAST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\"))) || '_'::text) || GREATEST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\")))) OR (id = ((LEAST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\")) || '_'::text) || GREATEST((sender_id COLLATE \"C\"), (receiver_id COLLATE \"C\")))))) AND ((group_id IS DISTINCT FROM 'manito_pool'::text) OR (id = ('mn_pool_'::text || sender_id))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "team_pings",
+      "using": "(((( SELECT auth.uid() AS uid))::text = sender_id) OR ((( SELECT auth.uid() AS uid))::text = receiver_id))",
+      "command": "UPDATE",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "team_pings_insert",
+      "check": "true",
+      "roles": [
+        "public"
+      ],
+      "table": "team_pings",
+      "using": null,
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "team_pings_select_party",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "team_pings",
+      "using": "true",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "team_pings_update",
+      "check": null,
+      "roles": [
+        "public"
+      ],
+      "table": "team_pings",
+      "using": "true",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "users_own_row",
+      "check": "(auth.uid() = id)",
+      "roles": [
+        "public"
+      ],
+      "table": "users",
+      "using": "(auth.uid() = id)",
+      "command": "ALL",
+      "permissive": "PERMISSIVE"
+    }
+  ],
+  "triggers": [
+    {
+      "name": "trg_feed_settings_log",
+      "table": "feed_settings",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER trg_feed_settings_log BEFORE INSERT OR DELETE OR UPDATE ON public.feed_settings FOR EACH ROW EXECUTE FUNCTION feed_settings_log_trigger()"
+    }
+  ],
+  "relatedViews": [
+    {
+      "name": "helpful_reason_stats",
+      "definitionSHA": "866559f26f12bfb69d2423fb11f37e2960f8406ad5d67ae779a984203e699503"
+    }
+  ],
+  "creditEnabled": [
+    "false"
+  ],
+  "awardCreditExists": true,
+  "SQLMutation": 0,
+  "normalWriteProbe": 0,
+  "rawRowsRead": 0,
+  "secretsRecorded": false,
+  "serviceRoleUsed": false
+}

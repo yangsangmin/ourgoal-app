@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const root=path.resolve(__dirname,'../..'),roots=['C:/dev/ourgoal-app/node_modules','C:/dev/ourgoal-feed-702-wt/node_modules','C:/dev/command-center/node_modules'],names=['@electric-sql/pglite','pg-mem','pgsql-ast-parser','libpg-query','@pgsql/parser'];
+const moduleProbe=roots.flatMap(root=>names.map(module=>{try{return {root,module,found:true,resolved:require.resolve(module,{paths:[root]})};}catch{return {root,module,found:false};}}));
+const executableProbe=['psql','postgres'].map(name=>{const r=cp.spawnSync('where.exe',[name],{encoding:'utf8',windowsHide:true});return {name,exit:r.status,found:r.status===0,paths:r.status===0?r.stdout.trim().split(/\r?\n/):[],stderr:r.stderr.trim()};});
+const pgFolder='C:/Program Files/PostgreSQL',postgresDefaultFolderExists=fs.existsSync(pgFolder);
+const lint=require(path.join(root,'scripts/sql-lint')),prep=JSON.parse(fs.readFileSync(path.join(__dirname,'BUNDLE-PREPARED.json'),'utf8'));
+const files=[path.join(root,'docs/sql/2026-10-13-feed-private-stage2.sql'),path.join(__dirname,'PRIVILEGE-TEST-TEMPLATE.sql'),prep.rollbackPrivateRef];
+const outerLint=files.map(file=>{const bytes=fs.readFileSync(file),issues=lint.lintSql(bytes.toString('utf8'));return {file,sha256:sha(bytes),issues,dollarBodySQLParsed:false,roleExecuted:false};});
+const result={schema:'feed-private-existing-offline-tooling/1',PID:process.pid,moduleProbe,executableProbe,postgresDefaultFolderExists,outerLint,SQLLintSource:{file:'scripts/sql-lint.js',sha256:sha(fs.readFileSync(path.join(root,'scripts/sql-lint.js'))),contract:'not a real parser; dollar function/DO bodies are stripped'},genuinePostgreSQLSyntax:null,genuineRoleSemantics:null,knownUsableOfflinePostgres:false,notGlobalFilesystemAbsenceProof:true,downloads:0,serverQueries:0,serverMutation:0};
+fs.writeFileSync(path.join(__dirname,'offline-tooling.json'),JSON.stringify(result,null,2)+'\n',{encoding:'utf8',flag:'wx'});console.log(JSON.stringify({PID:process.pid,moduleFound:moduleProbe.filter(r=>r.found).length,executablesFound:executableProbe.filter(r=>r.found).length,postgresDefaultFolderExists,outerLintIssues:outerLint.reduce((n,r)=>n+r.issues.length,0),genuineSQLSyntax:null,genuineRoleSemantics:null}));
+if(outerLint.some(r=>r.issues.length))process.exitCode=1;

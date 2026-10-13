@@ -1,0 +1,74 @@
+{
+  "id": "703-guest-advice-private-prompt",
+  "title": "게스트가 실제 목표를 만든 뒤 조언 시트의 본인 전용 안내를 본다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "조언 시트 경계 확인 목표",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#mGoalTitle"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "click",
+      "selector": "[data-rx=\"advice\"][data-rxid^=\"me_\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#rxAdvText"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet",
+      "text": "적은 조언은 나만 볼 수 있어요."
+    },
+    {
+      "expect": "notExists",
+      "selector": "input[name=\"rxAdvVis\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#rxAdvCancel"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#rxAdvText"
+    }
+  ]
+}

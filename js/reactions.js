@@ -35,11 +35,21 @@
   var advices = {};             // targetId -> [row]
   var expanded = {};            // targetId -> boolean (조언 패널 열림)
   var lastItems = [];
+  var viewer = null, generation = 0, readGeneration = 0;
+  function syncViewer(){
+    var p = profile(), id = p && p.id || null;
+    if(id !== viewer){
+      viewer = id; generation++; readGeneration++;
+      serverOk = null; counts = {}; mine = {}; advices = {}; expanded = {}; lastItems = [];
+    }
+    return generation;
+  }
+  function current(stamp){ return syncViewer() === stamp; }
 
   function esc(s){ return deps && deps.escapeHtml ? deps.escapeHtml(s == null ? '' : String(s)) : String(s == null ? '' : s); }
   function profile(){ return deps && deps.getProfile ? deps.getProfile() : null; }
-  function settings(){ var p = profile(); if(!p) return null; if(!p.settings) p.settings = {}; return p.settings; }
-  function myId(){ var p = profile(); return p ? p.id : null; }
+  function settings(){ syncViewer(); var p = profile(); if(!p) return null; if(!p.settings) p.settings = {}; return p.settings; }
+  function myId(){ syncViewer(); return viewer; }
   function myName(){ var p = profile(); return (p && p.displayName) || ''; }
   function isBot(it){ return !!(it && (it.is_ai || (typeof it.id === 'string' && it.id.indexOf('sim_') === 0))); }
   function isVirtualMine(it){ return !!(it && typeof it.id === 'string' && it.id.indexOf('me_') === 0); }
@@ -73,11 +83,13 @@
   }
 
   function myState(targetId){
+    syncViewer();
     if(mine[targetId]) return mine[targetId];
     return localMine(targetId);
   }
 
   function countOf(it, type){
+    syncViewer();
     var c = counts[it.id];
     if(c && typeof c[type] === 'number') return c[type];
     if(serverOk === true) return 0;
@@ -89,6 +101,7 @@
 
   /* ---------- 마크업 ---------- */
   function buttonsHtml(it, ctx){
+    syncViewer();
     var bot = isBot(it);
     var m = myState(it.id);
     var isMe = !!(ctx && ctx.isMe);
@@ -107,8 +120,9 @@
   }
 
   function advicePanelHtml(it){
+    syncViewer();
     if(isBot(it)) return '';
-    var list = advices[it.id] || localAdvice(it.id);
+    var list = (advices[it.id] || localAdvice(it.id)).filter(function(a){ return !!viewer && a.user_id === viewer; });
     var n = list.length;
     if(!n) return '<div class="rx-advice-wrap" data-rxadv="' + esc(it.id) + '"></div>';
     var open = !!expanded[it.id];
@@ -121,12 +135,9 @@
   function adviceRowHtml(it, a){
     var isOwner = !!a.is_owner || (it.userId && it.userId === myId()) || !!it.me;
     var isMine = !!a.is_mine || a.user_id === myId() || a.local === true;
-    var vis = a.advice_visibility === 'everyone' ? '모두에게' : '원작자에게만';
+    var vis = '나만 볼 수 있어요';
     var menu = '';
-    if(isOwner && !a.local){
-      menu += '<button data-rxmod="' + (a.advice_visibility === 'everyone' ? 'author_only' : 'everyone') + '" data-rxmodid="' + a.id + '" type="button" style="background:none;border:none;color:var(--ink-faint);font-size:.7rem;cursor:pointer;">' + (a.advice_visibility === 'everyone' ? '원작자만 보기로' : '모두에게 공개') + '</button>';
-    }
-    if((isOwner || isMine) && !a.local){
+    if(isMine && !a.local){
       menu += '<button data-rxmod="delete" data-rxmodid="' + a.id + '" type="button" style="background:none;border:none;color:var(--ink-faint);font-size:.7rem;cursor:pointer;">삭제</button>';
     }
     if(a.local){
@@ -146,7 +157,7 @@
   function localAdvice(targetId){
     var bag = localBag(targetId, false);
     var arr = (bag && bag.adviceList) || [];
-    return arr.map(function(a, i){ return { id: 'local_' + i, idx: i, local: true, reactor_name: myName(), advice_text: a.text, advice_visibility: a.visibility, created_at: a.createdAt, is_mine: true }; });
+    return arr.map(function(a, i){ return { id: 'local_' + i, idx: i, local: true, user_id: myId(), reactor_name: myName(), advice_text: a.text, advice_visibility: a.visibility, created_at: a.createdAt, is_mine: true }; });
   }
 
   /* ---------- 서버 읽기 ---------- */
@@ -155,6 +166,7 @@
   }
 
   function refresh(body, items){
+    var stamp = syncViewer(), request = ++readGeneration;
     if(!deps || !deps.sb || serverOk === false) return Promise.resolve();
     var ids = realIds(items);
     if(!ids.length) return Promise.resolve();
@@ -163,19 +175,21 @@
       deps.sb.rpc('my_content_reactions', { p_target_ids: ids }),
       deps.sb.rpc('list_content_advice', { p_target_ids: ids })
     ]).then(function(res){
+      if(!current(stamp) || request !== readGeneration) return;
       var err = (res[0] && res[0].error) || (res[1] && res[1].error) || (res[2] && res[2].error);
       if(err){ if(missingSchema(err)) serverOk = false; return; }
       serverOk = true;
       ids.forEach(function(id){ counts[id] = { cheer: 0, helpful: 0, poor: 0, advice: 0 }; mine[id] = {}; advices[id] = []; });
       (res[0].data || []).forEach(function(r){ if(counts[r.target_id]) counts[r.target_id][r.type] = r.cnt; });
       (res[1].data || []).forEach(function(r){ if(mine[r.target_id]) mine[r.target_id][r.type] = true; });
-      (res[2].data || []).forEach(function(r){ if(advices[r.target_id]) advices[r.target_id].push(r); });
+      (res[2].data || []).forEach(function(r){ if(r.user_id === viewer && advices[r.target_id]) advices[r.target_id].push(r); });
       patch(body, items);
     }).catch(function(){ /* 조용히 무시 */ });
   }
 
   /* 전체 재렌더 없이 버튼·조언 패널만 갱신 */
   function patch(body, items){
+    syncViewer();
     if(!body) return;
     items.forEach(function(it){
       if(isBot(it)) return;
@@ -203,6 +217,7 @@
 
   /* ---------- 쓰기 ---------- */
   function react(it, type, payload, btn){
+    var stamp = syncViewer();
     if(isBot(it)){ toast('AI 봇 글에는 반응할 수 없어요'); return Promise.resolve(false); }
     var name = myName();
     var params = { p_target_type: 'feed_post', p_target_id: String(it.id), p_type: type, p_reactor_name: name };
@@ -227,6 +242,7 @@
       local(); celebrate(); return Promise.resolve(true);
     }
     return deps.sb.rpc('react_content', params).then(function(res){
+      if(!current(stamp)) return false;
       if(res.error){
         if(missingSchema(res.error)){ serverOk = false; local(); celebrate(); return true; }
         var msg = String(res.error.message || '');
@@ -247,6 +263,7 @@
   }
 
   function unreact(it, type){
+    var stamp = syncViewer();
     if(serverOk === false || isVirtualMine(it) || !deps.sb){
       var bag = localBag(it.id, false);
       if(bag){ delete bag[type]; if(deps.saveProfile) deps.saveProfile(); }
@@ -255,6 +272,7 @@
       return Promise.resolve(true);
     }
     return deps.sb.rpc('unreact_content', { p_target_type: 'feed_post', p_target_id: String(it.id), p_type: type }).then(function(res){
+      if(!current(stamp)) return false;
       if(res.error){ if(missingSchema(res.error)) serverOk = false; return false; }
       if(mine[it.id]) delete mine[it.id][type];
       if(counts[it.id]) counts[it.id][type] = Math.max(0, (counts[it.id][type] || 0) - 1);
@@ -264,6 +282,7 @@
 
   /* ---------- 시트 ---------- */
   function openPoorSheet(it, btn){
+    var stamp = syncViewer();
     if(!deps.openModal) return;
     deps.openModal(
       '<h3>어떤 점이 별로였나요?</h3>' +
@@ -288,10 +307,12 @@
         text.addEventListener('input', sync);
         sheet.querySelector('#rxPoorCancel').addEventListener('click', function(){ deps.closeModal(); });
         ok.addEventListener('click', function(){
+          if(!current(stamp)) return;
           var picked = sheet.querySelector('input[name="rxPoorReason"]:checked');
           if(!picked) return;
           ok.disabled = true;
           react(it, 'poor', { reason_tag: picked.value, reason_text: text.value.trim().slice(0, REASON_MAX) }, btn).then(function(done){
+            if(!current(stamp)) return;
             deps.closeModal();
             if(done){ toast('의견이 전해졌어요'); rerender(); }
           });
@@ -301,15 +322,12 @@
   }
 
   function openAdviceSheet(it, btn){
+    var stamp = syncViewer();
     if(!deps.openModal) return;
     deps.openModal(
       '<h3>이 목표에 도움이 될 팁을 남겨요</h3>' +
       '<textarea id="rxAdvText" rows="4" maxlength="' + ADVICE_MAX + '" placeholder="내가 해보니 이렇게 하면 좋았어요…" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:10px;font:inherit;box-sizing:border-box;"></textarea>' +
-      '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:.9375rem;">' +
-        '<label style="display:flex;align-items:center;gap:8px;"><input type="radio" name="rxAdvVis" value="author_only" checked> 글쓴이에게만 보여요</label>' +
-        '<label style="display:flex;align-items:center;gap:8px;"><input type="radio" name="rxAdvVis" value="everyone"> 이 글을 보는 모두에게 보여요</label>' +
-      '</div>' +
-      '<p class="muted" style="margin:10px 0 0;font-size:.8125rem;line-height:1.45;">글쓴이는 이 조언의 공개 범위를 바꾸거나 지울 수 있어요.</p>' +
+      '<p class="muted" style="margin:10px 0 0;font-size:.8125rem;line-height:1.45;">적은 조언은 나만 볼 수 있어요. 글쓴이와 추천에는 개수만 반영돼요.</p>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="rxAdvCancel" type="button">취소</button>' +
         '<button class="btn btn-primary" id="rxAdvOk" type="button" disabled>남기기</button>' +
@@ -320,13 +338,15 @@
         text.addEventListener('input', function(){ ok.disabled = !text.value.trim(); });
         sheet.querySelector('#rxAdvCancel').addEventListener('click', function(){ deps.closeModal(); });
         ok.addEventListener('click', function(){
-          var vis = (sheet.querySelector('input[name="rxAdvVis"]:checked') || {}).value || 'author_only';
+          if(!current(stamp)) return;
+          var vis = 'author_only'; // 기존 RPC 형식 유지; 서버 원문은 본인만 읽는다.
           var v = text.value.trim().slice(0, ADVICE_MAX);
           if(!v) return;
           ok.disabled = true;
           react(it, 'advice', { advice_text: v, advice_visibility: vis }, btn).then(function(done){
+            if(!current(stamp)) return;
             deps.closeModal();
-            if(done){ toast('조언을 남겼어요'); rerender(); }
+            if(done){ toast('나만 볼 수 있는 조언을 저장했어요'); rerender(); }
           });
         });
       }
@@ -337,23 +357,28 @@
 
   /* ---------- 이벤트 바인딩 ---------- */
   function bindAdvice(wrap, it){
+    var stamp = syncViewer();
     if(!wrap) return;
     var tg = wrap.querySelector('[data-rxadvtoggle]');
-    if(tg) tg.addEventListener('click', function(){ expanded[it.id] = !expanded[it.id]; patch(wrap.parentNode, [it]); });
+    if(tg) tg.addEventListener('click', function(){ if(!current(stamp)) return; expanded[it.id] = !expanded[it.id]; patch(wrap.parentNode, [it]); });
     wrap.querySelectorAll('[data-rxmod]').forEach(function(b){
       b.addEventListener('click', async function(){
+        if(!current(stamp)) return;
         if(!deps.sb) return;
         var action = b.dataset.rxmod;
         if(action === 'delete' && !(await askConfirm('이 조언을 지울까요?'))) return;
+        if(!current(stamp)) return;
         deps.sb.rpc('moderate_advice', { p_reaction_id: Number(b.dataset.rxmodid), p_action: action }).then(function(res){
+          if(!current(stamp)) return false;
           if(res.error){ toast('잠시 후 다시 시도해주세요'); return; }
-          toast(action === 'delete' ? '조언을 지웠어요' : '공개 범위를 바꿨어요');
+          toast('조언을 지웠어요');
           rerender();
         });
       });
     });
     wrap.querySelectorAll('[data-rxlocaldel]').forEach(function(b){
       b.addEventListener('click', function(){
+        if(!current(stamp)) return;
         var bag = localBag(b.dataset.rxlocaldel, false);
         if(bag && bag.adviceList){ bag.adviceList.splice(Number(b.dataset.rxlocalidx), 1); if(deps.saveProfile) deps.saveProfile(); }
         rerender();
@@ -362,20 +387,23 @@
   }
 
   function bind(body, items){
+    var stamp = syncViewer();
     if(!body || !deps) return;
     lastItems = items || [];
     var byId = {};
     lastItems.forEach(function(it){ byId[String(it.id)] = it; });
     body.querySelectorAll('[data-rx]').forEach(function(btn){
       btn.addEventListener('click', function(){
+        if(!current(stamp)) return;
         var it = byId[btn.dataset.rxid];
         if(!it || btn.disabled) return;
         var type = btn.dataset.rx;
         var m = myState(it.id);
-        if(type === 'poor'){ if(m.poor){ unreact(it, 'poor').then(rerender); } else openPoorSheet(it, btn); return; }
+        if(type === 'poor'){ if(m.poor){ unreact(it, 'poor').then(function(){ if(current(stamp)) rerender(); }); } else openPoorSheet(it, btn); return; }
         if(type === 'advice'){ openAdviceSheet(it, btn); return; }
-        if(m[type]) unreact(it, type).then(function(){ patch(body, [it]); });
+        if(m[type]) unreact(it, type).then(function(){ if(current(stamp)) patch(body, [it]); });
         else react(it, type, {}, btn).then(function(done){
+          if(!current(stamp)) return;
           patch(body, [it]);
           /* KF-5 #TASK-ES-016: 도움돼요 저장 직후 "왜 도움이 됐나요?" 시트(건너뛰기 가능) */
           if(done && type === 'helpful' && window.OurgoalHelpfulReason) window.OurgoalHelpfulReason.openSheet(it, btn);
@@ -387,12 +415,12 @@
     refresh(body, lastItems);
   }
 
-  function init(d){ deps = d || null; }
+  function init(d){ deps = d || null; generation++; readGeneration++; serverOk = null; counts = {}; mine = {}; advices = {}; expanded = {}; lastItems = []; syncViewer(); }
 
   window.OurgoalReactions = {
     TYPES: TYPES, POOR_REASONS: POOR_REASONS,
     init: init, buttonsHtml: buttonsHtml, advicePanelHtml: advicePanelHtml, bind: bind,
     isBot: isBot, missingSchema: missingSchema,
-    _state: function(){ return { serverOk: serverOk, counts: counts, mine: mine }; }
+    _state: function(){ syncViewer(); return { serverOk: serverOk, counts: counts, mine: mine }; }
   };
 })();

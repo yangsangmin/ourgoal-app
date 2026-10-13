@@ -1,0 +1,39 @@
+{
+  "schema": "703-viewer-generation-fixture/1",
+  "sourceSHA": {
+    "js/reactions.js": "6e004e64de1e894537c3503efcbf10e9b932fc5f7ead86143368609c553adb70",
+    "js/helpful-reason.js": "f52c82beb1bc7d2e3ddf38516b7a0d3a1ded21aa98846aaa9ec0a6e114044f49"
+  },
+  "productionCalls": 0,
+  "scope": "public API in VM with synthetic SDK/accounts, not actual account E2E",
+  "checks": [
+    {
+      "name": "own advice preserved; foreign row is filtered; transition without init clears raw/count/mine",
+      "observed": true
+    },
+    {
+      "name": "late previous-viewer refresh cannot refill cache even if new-viewer fetch fails",
+      "observed": true
+    },
+    {
+      "name": "latest refresh generation wins within the same viewer",
+      "observed": true
+    },
+    {
+      "name": "late reaction mutation does not alter new-viewer cache or open helpful sheet",
+      "observed": true
+    },
+    {
+      "name": "late summary success and failure cannot open a new-viewer modal",
+      "observed": true
+    },
+    {
+      "name": "late save success/schema failure/rejection cannot save fallback or toast/close another viewer",
+      "observed": true
+    },
+    {
+      "name": "delayed sheet initialization cannot open after a viewer transition",
+      "observed": true
+    }
+  ]
+}

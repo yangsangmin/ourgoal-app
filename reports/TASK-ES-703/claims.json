@@ -1,0 +1,211 @@
+{
+  "task": "TASK-ES-703",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-703.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "개인 반응·이유·조언 원문은 본인만, 추천·글쓴이는 집계만 읽는다."
+    },
+    {
+      "id": "R2",
+      "text": "설정 값만 공개하고 운영 변경 actor/reason audit는 비공개로 보존한다."
+    },
+    {
+      "id": "R3",
+      "text": "새 지급·노출로그·표/원문 삭제 없이 현재 정의를 보존하고 변경 CAS 및 rollback을 제공한다."
+    },
+    {
+      "id": "R4",
+      "text": "두 UI 파일의 안내와 처리기가 본인 원문·집계의 실제 서버 계약과 맞는다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "조언 공개 선택을 제거하고 본인 전용 안내와 기존 author_only RPC payload를 유지했다. 격리 VM public handler fixture만 측정, 운영 사용 판정 아님. viewer/generation 캐시 경계와 현재 user_id 필터를 추가하고 로컬 VM 반례를 재측정했다. 실제 계정 사용은 미확인.",
+      "touches": [
+        "js/reactions.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/reactions.js",
+        "text": "var vis = 'author_only';"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "이유 summary는 태그 개수만 렌더하고 응답 texts를 사용하지 않는다. 예전 응답에 원문을 넣은 격리 반례에서 표시되지 않음을 측정했다. summary/save 지연 응답은 이전 viewer/generation이면 모달·토스트·새 계정 fallback을 반영하지 않는다. 로컬 VM만 측정했다.",
+      "touches": [
+        "js/helpful-reason.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/helpful-reason.js",
+        "text": "function render(tagsArr)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "본인 원조언 RPC 및 작성자 집계의 raw texts=[]를 SQL source로 준비했다. 서버 적용과 역할 시험은 아직 실행하지 않았다. 이름별 전체 서명 집합 CAS와 기존 checkin/goal_template 호출을 로컬 PostgreSQL에서 측정했다. 운영 적용은 여전히 하지 않았다.",
+      "touches": [
+        "docs/sql/2026-10-13-feed-private-stage2.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-13-feed-private-stage2.sql",
+        "text": "where r.user_id=auth.uid() and r.target_type="
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "audit 공개 policy를 제거하고 settings key/value만 읽도록 교정 source를 준비했다. 실제 배포 판정 아님.",
+      "touches": [
+        "docs/sql/2026-10-13-feed-private-stage2.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-13-feed-private-stage2.sql",
+        "text": "drop policy if exists feed_settings_log_read_all"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "server-api",
+      "statement": "고정 SQL의 전체 함수 서명 집합 CAS와 transaction owner 프레임, 별도 bundle의 수정 body hash/private rollback 참조를 제공했다. 원 정의·기존 데이터 보존과 지급·노출로그 제외는 소스 및 기존 로컬 PostgreSQL 측정 범위이며 운영 적용 효과는 미확인이다.",
+      "touches": [
+        "docs/sql/2026-10-13-feed-private-stage2.sql",
+        "reports/TASK-ES-703/correction/bundle.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/2026-10-13-feed-private-stage2.sql",
+        "text": "CURRENT_FUNCTION_SIGNATURE_SET_CHANGED"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "server-api",
+      "statement": "고정 소스 운영 적용과 역할 template/fixture rollback 되읽기는 별도 실제 증거로 확보했다. 현재 정의·owner/CAS 및 원행·설정·credit 보존의 운영 적용 범위는 법정이 외부 DB 연결 없이 직접 재현하지 못한다. post-commit 복구 script를 운영에서 자동 실행했다고 주장하지 않는다. 운영 함수 signature/정의 hash/ACL과 정책 metadata의 일치도 별도 독립 증거로 관측했다.",
+      "touches": [
+        "docs/sql/2026-10-13-feed-private-stage2.sql",
+        "reports/TASK-ES-703/correction/bundle.json"
+      ],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "아워골 실행 담당 세션의 승인된 운영 검증·허용 실계정 하네스",
+        "how": [
+          "고정 canonical SQL·private rollback hash와 현재 관리 API metadata를 대조한다.",
+          "이미 확보한 고정 소스 적용 영수증과 독립 metadata 되읽기를 대조한다. 새 SQL 적용을 반복하지 않고 timeout 불확실성이 있으면 관리 metadata로 먼저 구분한다.",
+          "표·설정·기존 데이터 보존은 원문 출력 없이 count/hash/metadata로 대조하고 실제 rollback readiness를 읽기 전용 확인한다.",
+          "기존 SQL3·첫 지표·정상 운영 write probe·노출로그·크레딧 지급은 실행하지 않는다."
+        ]
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "unverified",
+      "domain": "security-server",
+      "statement": "허용 실계정 두 계정 인증과 본인/비본인 원문 격리·집계 역할 template는 독립 운영 검증에서 관측됐다. 법정은 운영 DB·실계정 접속 없이 그 운영 역할 경계를 직접 재실행하지 못하며 실제 인증 UI 사용은 이 결과에 포함하지 않는다.",
+      "touches": [
+        "docs/sql/2026-10-13-feed-private-stage2.sql"
+      ],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "아워골 실행 담당 세션의 승인된 운영 검증·허용 실계정 하네스",
+        "how": [
+          "허용된 두 실계정과 운영 DB 연결로 읽기 전용 본인/비본인 SELECT와 RPC 역할 경계를 확인한다.",
+          "반환 원문을 출력하거나 중앙에 복제하지 않고 허용/차단·행 수·집계 raw 필드 유무만 기록한다.",
+          "로컬 합성 PostgreSQL 결과를 실제 계정 사용 증명으로 바꾸지 않는다."
+        ]
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "security-server",
+      "statement": "설정 key/value 공개 및 actor/reason audit 비공개 역할 template는 독립 운영 검증에서 관측됐다. 법정은 실제 운영 DB 연결 없이 anon·authenticated 및 기존 운영 역할의 현재 ACL·RLS 경계를 직접 재실행하지 못한다.",
+      "touches": [
+        "docs/sql/2026-10-13-feed-private-stage2.sql"
+      ],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "아워골 실행 담당 세션의 승인된 운영 검증·허용 실계정 하네스",
+        "how": [
+          "운영 역할 ACL·RLS와 column privilege를 metadata로 되읽는다.",
+          "설정 값 공개와 audit SELECT 차단을 허용 역할의 읽기 전용 질의로 확인하되 원문·비밀값은 출력하지 않는다."
+        ]
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R4",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인 후 저장된 본인 조언 표시와 실제 계정 전환 뒤 지연 응답의 화면·토스트·fallback 격리는 인증 UI에서 아직 측정하지 않았다. 게스트 조언 시트 안내는 C10에서 별도로 측정한다.",
+      "touches": [
+        "js/reactions.js",
+        "js/helpful-reason.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "who": "아워골 실행 담당 세션의 승인된 운영 검증·허용 실계정 하네스",
+        "how": [
+          "허용 실계정으로 로그인한 PC에서 저장된 본인 조언을 표시한다.",
+          "계정 전환 및 지연 summary/save 응답 이후 이전 원문·새 계정 fallback·다른 모달 종료가 없는지 확인한다.",
+          "이 확인은 합성 SDK/VM 측정으로 대체하지 않고 신규 게시·운영 원문 복제는 하지 않는다."
+        ],
+        "cannotBecause": "needs-login"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R4",
+      "kind": "behavior",
+      "domain": "ui-behavior",
+      "statement": "게스트가 실제 UI로 같은 테마 목표를 만든 뒤 자신의 로컬 목표 카드에서 조언 시트를 열면 본인 전용 안내가 보이고 공개 선택이 없으며 취소로 닫힌다. 조언 전송·원격 게시·실계정 저장은 이 주장의 범위가 아니다.",
+      "touches": [
+        "js/reactions.js"
+      ],
+      "scenario": "claim-coverage/guest-advice-private.json",
+      "change": "fix",
+      "symptom": 13
+    }
+  ],
+  "actualSQLApplied": true,
+  "actualUserUse": null,
+  "effect": null,
+  "SQLReviewPending": false,
+  "correctionRequirementsSource": "docs/specs/REQ-TASK-ES-703-CORRECTION.md",
+  "originalSource": "aa8a4ef9e72884bd6c1a6939e4214b6162d72bb2",
+  "correctiveMeasurements": "reports/TASK-ES-703/correction/measurement-summary.json",
+  "claimCoverageSource": "reports/TASK-ES-703/claim-coverage/COVERAGE.md",
+  "firstOfficialReviewSource": {
+    "pr": 975,
+    "reviewId": "94BED734",
+    "head": "658743daca3e7f1ebc26e4f49a80cb94bafdd573",
+    "officialScorecardPublished": false
+  },
+  "actualSQLAppliedSource": "reports/TASK-ES-703/claim-coverage/live-role-reference.sanitized.json",
+  "actualRoleVerificationSource": "reports/TASK-ES-703/claim-coverage/live-role-reference.sanitized.json",
+  "historicalStaticClaimsSource": "658743daca3e7f1ebc26e4f49a80cb94bafdd573",
+  "CourtReviewPending": true,
+  "actualMetadataVerificationSource": "reports/TASK-ES-703/claim-coverage/live-metadata-reference.sanitized.json"
+}
