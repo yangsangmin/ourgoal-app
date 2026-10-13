@@ -525,7 +525,7 @@
                   target_title: team.title || team.name || '팀 채팅',
                   ping_type: 'chat',
                   message: welcomeMsg,
-                  status: 'active',
+                  status: 'active', source: (targetUser && targetUser.source) || null, /* #TASK-ES-700 피드 출처 */
                   created_at: new Date().toISOString()
                 });
               } catch(e){
