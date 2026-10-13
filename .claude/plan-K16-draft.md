@@ -32,8 +32,8 @@ PR번호없는대장/동결혼합/원문CRLF대LF/원격이동/훅·계정권한
 
 총괄 전달: 대표가 정확히 「헌법 개정 승인」이라고 답했고 PR978 한정안에 대한 승인이다. root가 최종HEAD/법정 부족을 독립 확인하고 병합을 맡는다. 본 담당 merge/approve/automerge0.
 
-- [ ] 승인 원문·권장안대로 맥락·새 실제 모델·원Court90079533 보존 · 예상 5분(추정) · 실제 root user message 시각/line/hash와 원판정 raw 저장
+- [x] 승인 원문·권장안대로 맥락·새 실제 모델·원Court90079533 보존 · 예상 5분(추정) · approval-evidence.json의 실제user시각/line/hash·새actual·원Court raw 저장
 - [ ] 승인 후·병합 전 상태만 정합·필수검사·일반commit/push/PR본문·Court재청구 · 예상 10분(추정) · kernel예외/다른조문/전문본문/archive 불변·정합검사·새HEAD CI/Court 인수
-- [ ] 세포지도 경로/스크립트/포맷 읽기 인수·총괄 보고 · 예상 5분(추정) · 지도/노션/공용기록쓰기0·원구역보존·부족pending·승인≠제품/운영/use/effect/통과
+- [x] 세포지도 경로/스크립트/포맷 읽기 인수·총괄 보고 · 예상 5분(추정) · CELL-MAP-HANDOFF.md에상위커널/생성기/CAS포맷·원구역보존/부족pending 인수, 지도/노션/공용기록쓰기0
 
 후속 판단 요약: 실제명시승인과「권장안대로」를분리한다. 기존8원칙을유지하며원비교/원판정/archive를보존한다. 절차는승인증거→상태머리만정합→필수검사→일반push→새Court→인계다. 최강반론은채팅승인을GitHub사람review로꾸미거나승인을제품사용/효과로승격하는것이며둘다하지않는다. 효과는root실제main병합전false다.
