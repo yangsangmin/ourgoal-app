@@ -2,8 +2,8 @@
 
 Canonical TASK-ES-701, 라우팅 alias TASK-ES-SHARE-FEED-CATEGORY-01a1310c. 기존 alias preread 계획은 역사 자료이며 새 ID를 소급 적용하지 않는다. root가 기존 L012 선점 결과를 인수했다. 정본 REQ/PLAN은 docs/specs/REQ-/PLAN-TASK-ES-701-SHARE-FEED-CATEGORY.md다.
 
-- [ ] 1단계 REQ/PLAN 최초 원검토 · 예상10분 · 제품0 commit/SHA와 두 원의견 인수.
-- [ ] 2단계 caller 구현 · 예상15분 · owned source default/manual/captured frame/meta/helper 연결.
+- [x] 1단계 REQ/PLAN 최초 원검토 · 예상10분 · facccf8/82e7 원의견과 세 지적, 교정2c382 계약 인수·원33SHA 대조.
+- [x] 2단계 caller 구현 · 예상15분 · owned source/capability/loader 배선·SDK/의도 검증 측정에 한정, 원격 사용 미확인.
 - [ ] 3단계 원시 검증/Claims · 예상15분 · 원 부정/기대 보존, local 단위·browser/원 영향검사·guard·writebudget0 보고.
 - [ ] 4단계 심사 청구 · 예상10분 · draft PR/external Court 정확source 결과/root 인계, merge0.
 

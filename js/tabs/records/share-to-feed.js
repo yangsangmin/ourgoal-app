@@ -100,10 +100,10 @@
     ];
     var customUploadedPhoto = null;
 
-    var selectedCat = (curGoal && curGoal.category) || 'study';
-    if(FEED_CATEGORIES_10.map(function(c){ return c.k; }).indexOf(selectedCat) === -1){
-      selectedCat = 'study';
-    }
+    var map = global.OurgoalCategoryMap;
+    var selectedCat = (map && map.fromGoal(curGoal)) || 'life';
+    var manualCategory = false, submitBusy = false;
+    var intent = global.OurgoalCapabilities && global.OurgoalCapabilities.has('records.share-feed-intent') ? global.OurgoalCapabilities.call('records.share-feed-intent', L) : null;
 
     function renderModalHtml(){
       var goalOptsHtml = '<option value="__none__"' + (!curGoal ? ' selected' : '') + '>미설정 (목표 공개 안 함)</option>';
@@ -308,6 +308,7 @@
     }
 
     L.openModal(renderModalHtml(), function(sheet){
+      if(intent) intent.bind(sheet);
       sheet.querySelector('#shareCancelBtn').addEventListener('click', L.closeModal);
 
       // 직접 사진 첨부 및 드롭존 핸들러 ([#TASK-ES-309], [58])
@@ -530,6 +531,10 @@
           // [TASK-ES-308] 칩 동기화
           sheet.querySelectorAll('[data-targetgoal]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetgoal === val); });
           curGoal = userGoals.find(function(g){ return g.id === val; }) || null;
+          if(!manualCategory){
+            selectedCat = (map && map.fromGoal(curGoal)) || 'life';
+            sheet.querySelectorAll('[data-shcat]').forEach(function(b){ b.classList.toggle('active', b.dataset.shcat === selectedCat); });
+          }
           if(curGoal && curGoal.milestones && curGoal.milestones.length){
             msSection.style.display = 'block';
             sel.ms = {};
@@ -656,6 +661,7 @@
           if(typeof L.triggerHaptic === 'function') L.triggerHaptic(12);
           else if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(err){}
           selectedCat = btn.dataset.shcat;
+          manualCategory = true;
           sheet.querySelectorAll('[data-shcat]').forEach(function(b){ b.classList.toggle('active', b === btn); });
           try {
             btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -665,6 +671,11 @@
 
       // Submit
       sheet.querySelector('#shareConfirmBtn').addEventListener('click', async function(){
+        if(submitBusy) return;
+        if(!intent || !map || !map.withMeta || !map.feedPostMeta){ L.toast('게시 준비를 확인하지 못했어요. 입력은 그대로 남아 있어요.'); return; }
+        submitBusy = true;
+        var submitBtn = sheet.querySelector('#shareConfirmBtn');
+        submitBtn.disabled = true;
         var capInp = sheet.querySelector('#shareCaptionInput');
         var caption = (capInp ? capInp.value.trim() : '') || (capInp && capInp.placeholder ? capInp.placeholder.replace(/^예:\s*/, '') : '갓생 목표를 향해 한 걸음 더 나아가는 중!');
         if(!caption){ L.toast('한마디 소감을 입력해주세요'); return; }
@@ -695,7 +706,7 @@
         var incPhoto = sheet.querySelector('#chkIncPhoto') ? sheet.querySelector('#chkIncPhoto').checked : false;
         var finalPhoto = customUploadedPhoto || ((incPhoto && curPhoto) ? curPhoto : null);
 
-        var postId = 'post_' + L.newId();
+        var postId = intent.id;
         var post = {
           id: postId,
           user_id: L.state.profile.id,
@@ -720,17 +731,23 @@
           }
         };
 
-        // Try supabase insert (with offline fallback)
-        try {
-          await L.sb.from('feed_posts').insert(post);
-        } catch(e){
-          console.warn('Supabase post insert failed, saving locally:', e);
+        post = map.withMeta(post, map.feedPostMeta(curGoal, null, { categoryOverride: selectedCat, contentType: 'record', pct: finalGoalPct, caption: caption }));
+        var outcome = await intent.submit(post);
+        if(outcome.state !== 'accepted' || !outcome.currentAccount){
+          submitBusy = false;
+          submitBtn.disabled = false;
+          submitBtn.textContent = '같은 게시물 다시 시도';
+          L.toast('게시를 확인하지 못했어요. 입력은 이 창에 남아 있고 초안은 보관되지 않았어요.');
+          return;
         }
+        if(outcome.duplicate) return;
+        post = outcome.post;
 
         // Local cache & profile persistence
         if(!L.state.profile.settings.myFeedPosts) L.state.profile.settings.myFeedPosts = [];
         L.state.profile.settings.myFeedPosts.unshift(post);
-        await L.saveProfile();
+        try { await L.saveProfile(); } catch(e){ /* 게시 성공과 프로필 저장 결과는 다르다. */ }
+        if(!L.state.profile || L.state.profile.id !== intent.account) return;
 
         if(!L.FEED_POSTS_CACHE) L.FEED_POSTS_CACHE = [];
         L.FEED_POSTS_CACHE.unshift(post);
