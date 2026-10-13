@@ -30,11 +30,18 @@
   var tags = DEFAULT_TAGS;
   var minChars = DEFAULT_MIN_CHARS;
   var policyLoaded = false;
+  var viewer = null, generation = 0;
+  function syncViewer(){
+    var p = profile(), id = p && p.id || null;
+    if(id !== viewer){ viewer = id; generation++; serverOk = null; policyLoaded = false; }
+    return generation;
+  }
+  function current(stamp){ return syncViewer() === stamp; }
 
   function esc(s){ return deps && deps.escapeHtml ? deps.escapeHtml(s == null ? '' : String(s)) : String(s == null ? '' : s); }
   function profile(){ return deps && deps.getProfile ? deps.getProfile() : null; }
-  function settings(){ var p = profile(); if(!p) return null; if(!p.settings) p.settings = {}; return p.settings; }
-  function myId(){ var p = profile(); return p ? p.id : null; }
+  function settings(){ syncViewer(); var p = profile(); if(!p) return null; if(!p.settings) p.settings = {}; return p.settings; }
+  function myId(){ syncViewer(); return viewer; }
   var toast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return deps && deps.toast; }); /* #TASK-ES-361: 공용 토스트 통로(js/core/toast.js · ui.toast) — 주입 토스트 우선, 없으면 공용(준비 전이면 대기열) */
   function isBot(it){ return window.OurgoalReactions ? window.OurgoalReactions.isBot(it) : !!(it && it.is_ai); }
   function isVirtualMine(it){ return !!(it && typeof it.id === 'string' && it.id.indexOf('me_') === 0); }
@@ -75,12 +82,14 @@
 
   /* ---------- 저장 ---------- */
   function save(it, tag, text){
+    var stamp = syncViewer();
     var targetId = String(it.id);
     if(serverOk === false || isVirtualMine(it) || !deps.sb || !myId()){
       return Promise.resolve({ ok: localSave(targetId, tag, text), local: true });
     }
     return deps.sb.rpc('save_helpful_reason', { p_target_type: 'feed_post', p_target_id: targetId, p_reason_tag: tag, p_reason_text: text || null })
       .then(function(res){
+        if(!current(stamp)) return { ok: false };
         if(res.error){
           if(missingSchema(res.error)){ serverOk = false; return { ok: localSave(targetId, tag, text), local: true }; }
           var msg = String(res.error.message || '');
@@ -93,14 +102,16 @@
         var d = res.data || {};
         return { ok: true, pass: !!d.quality_pass, minChars: d.min_chars || minChars };
       })
-      .catch(function(){ return { ok: localSave(targetId, tag, text), local: true }; });
+      .catch(function(){ if(!current(stamp)) return { ok: false }; return { ok: localSave(targetId, tag, text), local: true }; });
   }
 
   /* ---------- 시트 ---------- */
   function openSheet(it, btn){
+    var stamp = syncViewer();
     if(!deps || !deps.openModal || isBot(it)) return;
     if(localHas(String(it.id)) && serverOk === false) return;   /* 기기 저장 폴백에서 이미 적었으면 다시 묻지 않는다 */
     loadPolicy().then(function(){
+      if(!current(stamp)) return;
       deps.openModal(
         '<h3>어떤 점이 도움이 됐나요?</h3>' +
         '<p class="muted" style="margin:0 0 10px;font-size:.875rem;line-height:1.45;">적은 문장은 나만 볼 수 있어요. 글쓴이와 추천에는 이유 종류별 개수만 반영돼요.</p>' +
@@ -128,12 +139,14 @@
           }
           sheet.querySelectorAll('input[name="hrTag"]').forEach(function(r){ r.addEventListener('change', sync); });
           text.addEventListener('input', sync);
-          sheet.querySelector('#hrSkip').addEventListener('click', function(){ deps.closeModal(); });
+          sheet.querySelector('#hrSkip').addEventListener('click', function(){ if(current(stamp)) deps.closeModal(); });
           ok.addEventListener('click', function(){
+            if(!current(stamp)) return;
             var picked = sheet.querySelector('input[name="hrTag"]:checked');
             if(!picked) return;
             ok.disabled = true;
             save(it, picked.value, text.value.trim().slice(0, TEXT_MAX)).then(function(r){
+              if(!current(stamp)) return;
               deps.closeModal();
               if(!r || !r.ok) return;
               if(r.pass === false && text.value.trim()) toast('나만 볼 수 있는 이유를 저장했어요. 조금 더 구체적으로 적으면 좋아요');
@@ -163,8 +176,10 @@
     if(fresh){ wrap.replaceWith(fresh); bindOne(fresh, it); }
   }
   function openSummary(it){
+    var stamp = syncViewer();
     if(!deps || !deps.openModal) return;
     function render(tagsArr){
+      if(!current(stamp)) return;
       var tagHtml = tagsArr.length
         ? '<div style="display:flex;flex-wrap:wrap;gap:6px;">' + tagsArr.map(function(t){ return '<span class="topic-pill">' + esc(tagLabel(t.tag)) + ' ' + t.cnt + '</span>'; }).join('') + '</div>'
         : '<p class="muted" style="font-size:.875rem;">아직 집계된 이유가 없어요.</p>';
@@ -173,11 +188,12 @@
         '<p class="muted" style="margin:0 0 10px;font-size:.875rem;">이유 종류별 개수만 보여요. 개인이 적은 문장과 누가 적었는지는 보이지 않아요.</p>' +
         tagHtml +
         '<div class="modal-actions"><button class="btn btn-ghost" id="hrSumClose" type="button">닫기</button></div>',
-        function(sheet){ sheet.querySelector('#hrSumClose').addEventListener('click', function(){ deps.closeModal(); }); }
+        function(sheet){ sheet.querySelector('#hrSumClose').addEventListener('click', function(){ if(current(stamp)) deps.closeModal(); }); }
       );
     }
     if(serverOk === false || !deps.sb){ render([], []); return; }
     deps.sb.rpc('helpful_reason_summary', { p_target_type: 'feed_post', p_target_id: String(it.id) }).then(function(res){
+      if(!current(stamp)) return;
       if(res.error){ if(missingSchema(res.error)) serverOk = false; render([], []); return; }
       serverOk = true;
       var d = res.data || {};
@@ -186,21 +202,22 @@
   }
 
   function bindOne(el, it){
+    var stamp = syncViewer();
     if(!el) return;
     var b = el.matches && el.matches('[data-hrsum]') ? el : el.querySelector('[data-hrsum]');
-    if(b) b.addEventListener('click', function(){ loadPolicy().then(function(){ openSummary(it); }); });
+    if(b) b.addEventListener('click', function(){ loadPolicy().then(function(){ if(current(stamp)) openSummary(it); }); });
   }
   function bind(body, items){
     if(!body) return;
     (items || []).forEach(function(it){ bindOne(body.querySelector('[data-hrsumwrap="' + it.id + '"]'), it); });
   }
 
-  function init(d){ deps = d || null; }
+  function init(d){ deps = d || null; generation++; serverOk = null; syncViewer(); }
 
   window.OurgoalHelpfulReason = {
     DEFAULT_TAGS: DEFAULT_TAGS, DEFAULT_MIN_CHARS: DEFAULT_MIN_CHARS,
     init: init, openSheet: openSheet, openSummary: openSummary,
     authorButtonHtml: authorButtonHtml, patchAuthorButton: patchAuthorButton, bind: bind,
-    _state: function(){ return { serverOk: serverOk, tags: tags, minChars: minChars }; }
+    _state: function(){ syncViewer(); return { serverOk: serverOk, tags: tags, minChars: minChars }; }
   };
 })();

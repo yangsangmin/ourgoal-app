@@ -6098,3 +6098,9 @@
 - 2026-10-13 TASK-ES-695 보완 차수(Codex): 독립 확인의 stale/용량오류 복구·사본 고유 기록/목표/깨진 원문·복원 둘째 쓰기 실패·읽기 오류·보관 실패 뒤 다음 저장 지적을 local-keep에서 보완했다. syncServerRecords와 migrateGuestDataToUser도 같은 보호 쓰기를 사용한다. 과정→본질→결과 순·무거움 등급·13칸 명세 연결은 보완 REQ/PLAN에 기록했다. 기존 주장·기대값·원시 증거는 유지하고 이번 작업자 측정은 reports/TASK-ES-695/correction-2026-10-13/summary.json·worker-measurements.md이다. 마지막 read→setItem 경합은 원래 main과 보완 모두 미해결(B의 한 탭 작성자 범위)이며 P0 전체 저장 안전으로 일반화하지 않는다. 원래 독립 확인 담당의 새 고정머리 확인과 법정 판정은 root 담당, push/병합은 하지 않음.
 
 - 2026-10-13 TASK-ES-695 유일 백업 보완 차수: 기존 독립 확인이 c5d95027의 정상 syncServerRecords/migrateGuestDataToUser 손실을 추가 재현했다. 앞 직접 호출은 화면에도 사진이 있던 입력으로 유일 백업을 놓쳤다. setBackupFromSave가 로컬 쓰기 사본에만 같은 계정·id 기기 칸을 되붙이고 명시적 비움·새 값·본문 차이의 옛 자료는 보관한다. 다른 주인·휴지통·kept-only를 자동으로 되붙이지 않으며 지움 상태 읽기 실패는 중단한다. 원래 증거/의견과 C1~C22 기대값은 유지, 새 결과는 reports/TASK-ES-695/correction-2026-10-13/followup-backup-only/summary.json·worker-measurements.md. 조건④ 전체 완료·실운영 사용 가능·효과는 미확인. 운영 요청/push/병합 없음.
+
+## TASK-ES-703 독립 검토 반례 보정
+
+[기본값] 원 aa8a4ef9 최초 검토와 D22 범위를 유지하며 전체 RPC 서명 집합 CAS, 기존 checkin/goal_template 반응 계약, 두 UI의 viewer/generation 격리를 보정했다. 원 REQ는 헤더만 바꾸고 별도 보정 REQ와 표준 PLAN을 만들었다. 기존 fixed SQL/최초 검토/원 rollback은 보존하고 corrected canonical bundle과 private successor rollback을 분리했다.
+
+측정 정본: reports/TASK-ES-703/correction/measurement-summary.json. 동일 원 fixture와 추가 PostgreSQL/VM 반례, 문서 lint, 모듈 신고서 생성/가드, npm 실제 종료코드가 소스 hash에 연결된다. 로컬 합성 DB/SDK 검증이며 운영 적용·실계정 사용·법정·효과는 미확인이다. SQL3·첫 지표·운영 정상 write probe·게시·노출로그·크레딧 지급은 재실행하지 않았다. 상위 C 담당이 변경 범위 독립 검토와 canonical transport를 이어간다.
