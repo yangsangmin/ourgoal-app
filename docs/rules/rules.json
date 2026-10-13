@@ -26,6 +26,32 @@
   },
   "forbidden_patterns": [
     {
+      "id": "FEED_DWELL_SIGNALS",
+      "severity": "block",
+      "files": [
+        "feed-rank.js",
+        "feed-list.js",
+        "feed-posts-sync.js",
+        "category-map.js"
+      ],
+      "regex": "dwell|watchTime|timeSpent|timeOnFeed|viewCount|view_count|impressionCount|scrollDepth|clickRate|\\bctr\\b|체류시간|조회수",
+      "why": "피드 노출 규범 1(2026-10-13 상민님 승인): 체류시간·조회수·스크롤·클릭률은 점수·지표 어디에도 넣지 않는다. 피드가 재는 것은 도움돼요와 그 이유뿐 (본질 ③)",
+      "exempt_if_line_matches": "^\\s*(//|/\\*|\\*)"
+    },
+    {
+      "id": "FEED_WEIGHTS_OUTSIDE_SETTINGS",
+      "severity": "block",
+      "files": [
+        "index.html",
+        "feed-list.js",
+        "feed-posts-sync.js",
+        "category-map.js"
+      ],
+      "regex": "\\bw(Goal|Team|Topic|Comp|Stage|H)\\s*[:=]\\s*[0-9.]+|tau0h\\s*[:=]\\s*[0-9]+|dailyCap\\s*[:=]\\s*[0-9]+",
+      "why": "피드 노출 규범 6: 가중치·상한·반감기는 feed_settings(서버) 또는 feed-rank.js 의 DEFAULTS 한 곳에만. 화면 코드에 숫자를 박지 않는다",
+      "exempt_if_line_matches": "^\\s*(//|/\\*|\\*)"
+    },
+    {
       "id": "FAKE_SOCIAL_NUMBERS",
       "severity": "block",
       "files": [
