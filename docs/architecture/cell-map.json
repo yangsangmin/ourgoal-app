@@ -9,23 +9,27 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "c9bd38b9cf0ef6168de88af1b767653f0bea9cbd",
-  "short": "c9bd38b9",
-  "committedAt": "2026-10-12T02:12:43+09:00",
-  "subject": "Merge pull request #962 from yangsangmin/feat/2026-10-12-task-es-689-finalize-p"
+  "commit": "b1c89e5ec0b4d391197310a707bf0dd8a920ad25",
+  "short": "b1c89e5e",
+  "committedAt": "2026-10-13T23:08:17+09:00",
+  "subject": "Merge pull request #974 from yangsangmin/fix/task-es-701-share-feed-category"
  },
  "summary": {
-  "cells": 381,
-  "files": 380,
-  "jsLines": 94301,
+  "cells": 386,
+  "files": 385,
+  "jsLines": 95631,
   "kinds": {
-   "organ": 73,
-   "tab": 202,
-   "hybrid": 105,
+   "organ": 74,
+   "tab": 205,
+   "hybrid": 106,
    "future": 1
   },
-  "descriptionsHand": 381,
-  "descriptionsPending": [],
+  "descriptionsHand": 383,
+  "descriptionsPending": [
+   "data/category-map",
+   "comm/feed-rank-server",
+   "comm/feed-rank"
+  ],
   "oversize": {
    "limit": 800,
    "first": 12,
@@ -74,21 +78,21 @@
    "key": "organ",
    "name": "기관",
    "desc": "몸 전체를 받치는 세포(신호망·상태·원장·보안·알림·공용 화면 부품) — 능력을 주는 쪽",
-   "count": 73
+   "count": 74
   },
   {
    "key": "tab",
    "name": "탭 세포",
    "desc": "탭의 기능. 큰 세포 = 탭 하나, 작은 세포 = 큰 세포 안의 한 책임",
-   "count": 202,
+   "count": 205,
    "large": 6,
-   "small": 196
+   "small": 199
   },
   {
    "key": "hybrid",
    "name": "하이브리드",
    "desc": "여러 탭·여러 자리에 걸치는 세포",
-   "count": 105
+   "count": 106
   },
   {
    "key": "future",
@@ -173,7 +177,7 @@
     "goals/template-quick-import",
     "goals/topic-region-picker"
    ],
-   "lines": 12567,
+   "lines": 12573,
    "over800": 0
   },
   {
@@ -217,6 +221,7 @@
     "records/record-heatmap-report",
     "records/render",
     "records/sample-purge",
+    "records/share-feed-save",
     "records/share-to-feed",
     "records/stopwatch-format",
     "records/sub-retrospect",
@@ -237,7 +242,7 @@
     "records/voice-table-input",
     "records/weekly-recap"
    ],
-   "lines": 12080,
+   "lines": 12173,
    "over800": 0
   },
   {
@@ -279,6 +284,8 @@
     "comm/feed-list",
     "comm/feed-post-preview",
     "comm/feed-posts-sync",
+    "comm/feed-rank",
+    "comm/feed-rank-server",
     "comm/first-cheer",
     "comm/goal-certificate-share",
     "comm/manito-basics",
@@ -297,7 +304,7 @@
     "comm/user-blocks",
     "comm/user-profile-open"
    ],
-   "lines": 5133,
+   "lines": 5666,
    "over800": 0
   },
   {
@@ -357,7 +364,7 @@
     "settings/widget-settings-modal",
     "settings/withdraw-modal"
    ],
-   "lines": 7655,
+   "lines": 7663,
    "over800": 0
   },
   {
@@ -519,6 +526,7 @@
    "cells": [
     "calendar-attachment",
     "customize",
+    "data/category-map",
     "goal-edit-ux",
     "sanctuary-calendar-actions",
     "sanctuary-calendar-views",
@@ -532,7 +540,7 @@
     "theme-system",
     "viral-sharing"
    ],
-   "lines": 4770,
+   "lines": 5009,
    "over800": 0
   },
   {
@@ -570,6 +578,7 @@
     "core/gcal-token-save",
     "core/gcal-token",
     "core/home-cockpit",
+    "core/local-keep",
     "core/modal-helper",
     "core/modal-open",
     "core/modal",
@@ -593,7 +602,7 @@
     "core/view-dispatch",
     "core/virtual-user-helpers"
    ],
-   "lines": 7532,
+   "lines": 7983,
    "over800": 0
   },
   {
@@ -5273,7 +5282,9 @@
     "avatar/xp",
     "core/confirm",
     "core/modal",
-    "core/toast"
+    "core/toast",
+    "records/share-feed-save",
+    "records/share-to-feed"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
@@ -6112,7 +6123,7 @@
     "#TASK-ES-471(인라인 어려움 기관 묶음 이전 1차): index.html 인라인 IIFE 의 구간(이전 전 4070~4092 · 4094~4114 · 4116~4138 · 4140~4200 · 4201~4306줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 284,
+   "lines": 289,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers",
@@ -6121,6 +6132,7 @@
    "calls": [
     "account-isolation",
     "core/app-scope",
+    "core/local-keep",
     "record-ledger"
    ],
    "calledBy": [
@@ -6175,6 +6187,57 @@
      "date": "2026-10-05"
     }
    ]
+  },
+  {
+   "id": "core/local-keep",
+   "file": "js/core/local-keep.js",
+   "kind": "organ",
+   "kindName": "기관",
+   "size": null,
+   "area": "organ-core",
+   "tabs": [],
+   "name": "기기 보관",
+   "nameSource": "hand",
+   "does": "다시 열 때 기기 백업을 서버 것으로 바꾸기 전에, 서버가 주지 않는 칸(사진·피드백 등)을 기기 값에서 되붙이고 기기에만 있는 기록·목표를 보관 열쇠로 옮기며 직전 사본을 한 세대 남긴다",
+   "doesSource": "hand",
+   "header": [
+    "[#TASK-ES-695] 기기 보관(local keep) — 지시함 DIR-006 묶음 P0(저장 · 동기화 계약 1절)",
+    "다시 열 때(loadProfile) 기기 백업(ourgoal_records_backup_<uid> · ourgoal_goals_backup_<uid>)을 서버에서 받은 것으로 덮어쓰기 **전에**",
+    "(i)   서버가 주지 않는 칸(사진 · 피드백 · 에너지 · 집중 · 노션 구조 · 테마 부가정보 등)을 같은 계정 · 같은 id 의 기기 값에서 되붙인다.",
+    "서버가 준 칸은 기기의 옛 값으로 덮지 않는다. 본문이 달라진 기록에는 옛 피드백 · 구조를 되붙이지 않는다."
+   ],
+   "lines": 425,
+   "over800": false,
+   "exposes": [
+    "OurgoalLocalKeep"
+   ],
+   "calls": [],
+   "calledBy": [
+    "core/home-cockpit",
+    "core/profile-load",
+    "core/server-records-sync",
+    "settings/guest-migration"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-695"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-695-DIR-006-P0-LOCAL-KEEP.md",
+    "docs/specs/REQ-TASK-ES-695-P0-CORRECTION.md"
+   ],
+   "prs": []
   },
   {
    "id": "core/modal-helper",
@@ -6477,7 +6540,7 @@
     "기본 프로필(defaultProfile — 함수 끝 줄에 노출 문이 붙어 있어 옮기면 그 줄이 잘린다)·앱 상태(state)·window 노출 줄은 원래 자리에 그대로 있다.",
     "#TASK-ES-522(인라인 3단계 Z1 로그인·계정 2차): index.html 인라인 IIFE 의 구간(이전 전 3555~3559 · 3576~3603 · 3605~3617 · 3619~3650 · 3651~3861줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 340,
+   "lines": 358,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -6499,6 +6562,7 @@
     "avatar/wallet",
     "avatar/xp",
     "core/app-scope",
+    "core/local-keep",
     "record-ledger"
    ],
    "calledBy": [
@@ -6912,7 +6976,7 @@
     "#TASK-ES-522(인라인 3단계 Z1 로그인·계정 2차): index.html 인라인 IIFE 의 구간(이전 전 3923~4034줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 146,
+   "lines": 149,
    "over800": false,
    "exposes": [
     "OurgoalUiHelpers"
@@ -6920,6 +6984,7 @@
    "calls": [
     "account-isolation",
     "core/app-scope",
+    "core/local-keep",
     "record-ledger"
    ],
    "calledBy": [
@@ -8932,6 +8997,71 @@
    ]
   },
   {
+   "id": "data/category-map",
+   "file": "js/data/category-map.js",
+   "kind": "hybrid",
+   "kindName": "하이브리드",
+   "size": null,
+   "area": "family-misc",
+   "tabs": [
+    "comm",
+    "records",
+    "goals"
+   ],
+   "name": "아워골",
+   "nameSource": "derived",
+   "does": "아워골 — 목표 주제 ↔ 피드 카테고리 매핑표 (소통-피드 알고리즘 0단계, #TASK-ES-696, 본질 ③)",
+   "doesSource": "header",
+   "header": [
+    "아워골 — 목표 주제 ↔ 피드 카테고리 매핑표 (소통-피드 알고리즘 0단계, #TASK-ES-696, 본질 ③)",
+    "왜 필요한가: 목표의 category 값은 깨끗한 키가 아니다(템플릿 키 health·study… 외에 '운동/건강'·'학습/성장'·'일반'",
+    "같은 한글 라벨도 들어온다). 피드 카테고리 칩은 18키라 둘이 거의 겹치지 않아, 글을 올릴 때 기본값이",
+    "'study'(공부·수험)로 떨어졌다(share-to-feed.js 103~106행). 믿을 수 있는 입력은 goal.topic('대범위/중범위')이다."
+   ],
+   "lines": 239,
+   "over800": false,
+   "exposes": [
+    "OurgoalCategoryMap"
+   ],
+   "calls": [],
+   "calledBy": [
+    "comm/feed-list",
+    "comm/feed-posts-sync",
+    "comm/feed-rank",
+    "goals/focus-autopilot",
+    "goals/team-goals-screen",
+    "records/checkin-feedback",
+    "records/share-feed-save",
+    "records/share-to-feed"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [
+    "feed.category-map"
+   ],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-696"
+   ],
+   "reqs": [],
+   "prs": [
+    {
+     "number": 969,
+     "task": "TASK-ES-696",
+     "title": "[E3] #TASK-ES-696 소통-피드 0단계: 목표 topic↔피드 카테고리 매핑·feed_posts 메타 7칸",
+     "date": "2026-10-13"
+    }
+   ]
+  },
+  {
    "id": "data/expert-templates/career",
    "file": "js/data/expert-templates/career.js",
    "kind": "hybrid",
@@ -9949,7 +10079,7 @@
    ],
    "name": "도움돼요 이유",
    "nameSource": "hand",
-   "does": "「도움돼요」를 누른 뒤 왜 도움이 됐는지 짧게 남기게 하고 크레딧을 준다",
+   "does": "「도움돼요」를 누른 뒤 도움된 이유를 골라 짧게 남기고, 글쓴이가 이유 모음과 내용을 보는 창을 연다",
    "doesSource": "hand",
    "header": [
     "아워골 — 도움돼요 이유 작성 + 크레딧",
@@ -13572,13 +13702,16 @@
     "index.html 「피드 상호소통 댓글 & 리액션 헬퍼」 묶음에 남아 있던 두 함수를 옮겼다(댓글·응원 저장 헬퍼는 #TASK-ES-379 가 js/tabs/comm/feed-comments.js 로 먼저 옮겼고, 숨은 빠른 게시 띠는 #TASK-ES-495 가 지웠다).",
     "#TASK-ES-496(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 13417~13448 · 13449~14039줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 660,
+   "lines": 678,
    "over800": false,
    "exposes": [
     "OurgoalCommKit"
    ],
    "calls": [
+    "comm/feed-rank",
+    "comm/feed-rank-server",
     "core/app-scope",
+    "data/category-map",
     "reactions",
     "team-invite-comm",
     "top-helpful"
@@ -13602,7 +13735,10 @@
     "TASK-ES-379",
     "TASK-ES-495",
     "TASK-ES-496",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-698",
+    "TASK-ES-699",
+    "TASK-ES-700"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
@@ -13611,6 +13747,24 @@
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
    ],
    "prs": [
+    {
+     "number": 973,
+     "task": "TASK-ES-700",
+     "title": "[E3] #TASK-ES-700 소통-피드 3단계: 주간 유익함 지표 스크립트·피드 출처 기록",
+     "date": "2026-10-13"
+    },
+    {
+     "number": 972,
+     "task": "TASK-ES-699",
+     "title": "[E3] #TASK-ES-699 소통-피드 2단계: 서버 설정표 feed_settings·유익성 집계 RPC·개인화 (feed-rank-server.js)",
+     "date": "2026-10-13"
+    },
+    {
+     "number": 971,
+     "task": "TASK-ES-698",
+     "title": "[E3] #TASK-ES-698 소통-피드 1단계: 다섯 묶음·사유 라벨·마감선 (feed-rank.js)",
+     "date": "2026-10-13"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -13721,13 +13875,14 @@
     "옮긴 선언(이전 전 줄): ensureFeedPostsLoaded(31106~31111) · setupFeedPostsRealtime(31112~31165)",
     "ensureFeedPostsLoaded = Supabase feed_posts 를 한 번 불러와 캐시(FEED_POSTS_CACHE — 여러 곳이 다시 대입하므로 index.html 에 남고 통로로 읽고 쓴다), setupFeedPostsRealtime = 실시간 구독(팀 댓글·피드·사용자 세션 채널)."
    ],
-   "lines": 98,
+   "lines": 115,
    "over800": false,
    "exposes": [
     "OurgoalCommKit"
    ],
    "calls": [
-    "core/app-scope"
+    "core/app-scope",
+    "data/category-map"
    ],
    "calledBy": [],
    "readsFromIndexHtml": [],
@@ -13747,7 +13902,8 @@
     "TASK-ES-423",
     "TASK-ES-447",
     "TASK-ES-448",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-696"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
@@ -13757,6 +13913,12 @@
     "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
    ],
    "prs": [
+    {
+     "number": 969,
+     "task": "TASK-ES-696",
+     "title": "[E3] #TASK-ES-696 소통-피드 0단계: 목표 topic↔피드 카테고리 매핑·feed_posts 메타 7칸",
+     "date": "2026-10-13"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -13768,6 +13930,129 @@
      "task": "TASK-ES-448",
      "title": "[INFRA] #TASK-ES-448 refactor: 인라인 스크립트 세포화 구역 P2-2 — 소통·목표(팀)·설정·기록 선언 53개를 세포 12개로 이전(동작 그대로)",
      "date": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "id": "comm/feed-rank-server",
+   "file": "js/tabs/comm/feed-rank-server.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "아워골",
+   "nameSource": "derived",
+   "does": "아워골 — 소통 피드 서버 상태 읽기 (소통-피드 알고리즘 2단계, #TASK-ES-699, 본질 ③)",
+   "doesSource": "header",
+   "header": [
+    "아워골 — 소통 피드 서버 상태 읽기 (소통-피드 알고리즘 2단계, #TASK-ES-699, 본질 ③)",
+    "feed-rank.js(순수 함수)에 넣어 줄 서버 값 세 가지를 받아 둔다. 정렬은 여전히 클라이언트가 한다(같은 식을 두 곳에 두지 않는다).",
+    "1 설정 feed_settings_get()          — 가중치·상한·반감기·가드. DEFAULTS 위에 덮어쓴다(규범 6). 10분 캐시",
+    "2 유익성 집계 feed_value_counts(ids) — 최근 30일 도움돼요(이유 태그별, 가드 적용)·별로에요·응원·조언. 5분 캐시(글 id 묶음 기준)"
+   ],
+   "lines": 137,
+   "over800": false,
+   "exposes": [
+    "OurgoalFeedRankServer"
+   ],
+   "calls": [],
+   "calledBy": [
+    "comm/feed-list"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [
+    "feed.rank-server"
+   ],
+   "requiresAbilities": [
+    "feed.rank"
+   ],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-699"
+   ],
+   "reqs": [],
+   "prs": [
+    {
+     "number": 972,
+     "task": "TASK-ES-699",
+     "title": "[E3] #TASK-ES-699 소통-피드 2단계: 서버 설정표 feed_settings·유익성 집계 RPC·개인화 (feed-rank-server.js)",
+     "date": "2026-10-13"
+    }
+   ]
+  },
+  {
+   "id": "comm/feed-rank",
+   "file": "js/tabs/comm/feed-rank.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "comm",
+   "tabs": [
+    "comm"
+   ],
+   "name": "아워골",
+   "nameSource": "derived",
+   "does": "아워골 — 소통 피드 묶음·정렬 (소통-피드 알고리즘 1단계, #TASK-ES-698, 본질 ③ 동류 발견·소통)",
+   "doesSource": "header",
+   "header": [
+    "아워골 — 소통 피드 묶음·정렬 (소통-피드 알고리즘 1단계, #TASK-ES-698, 본질 ③ 동류 발견·소통)",
+    "무엇을 하나: 피드 글을 \"이 사람의 목표 전진에 도움이 되는가\"로 골라 다섯 묶음으로 보여 준다.",
+    "1 내 팀 소식 · 2 내 목표에 도움될 글 · 3 같은 길 가는 사람들 · 4 넓히기 · 5 마감선(그 아래는 예전 최신순)",
+    "점수 하나: score = R(관련성) × V(유익성) × F(신선도). 체류시간·조회수·클릭률은 어디에도 없다(피드 노출 규범 1)."
+   ],
+   "lines": 361,
+   "over800": false,
+   "exposes": [
+    "OurgoalFeedRank"
+   ],
+   "calls": [
+    "data/category-map"
+   ],
+   "calledBy": [
+    "comm/feed-list"
+   ],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [
+    "feed.rank"
+   ],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-698",
+    "TASK-ES-699"
+   ],
+   "reqs": [],
+   "prs": [
+    {
+     "number": 972,
+     "task": "TASK-ES-699",
+     "title": "[E3] #TASK-ES-699 소통-피드 2단계: 서버 설정표 feed_settings·유익성 집계 RPC·개인화 (feed-rank-server.js)",
+     "date": "2026-10-13"
+    },
+    {
+     "number": 971,
+     "task": "TASK-ES-698",
+     "title": "[E3] #TASK-ES-698 소통-피드 1단계: 다섯 묶음·사유 라벨·마감선 (feed-rank.js)",
+     "date": "2026-10-13"
     }
    ]
   },
@@ -15425,7 +15710,7 @@
     "초집중 타이머 상태 변수(focusTimerInterval·focusTimerSeconds·focusTimerRunning)와 FEED_POSTS_CACHE 는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다.",
     "#TASK-ES-476(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 9594~9726 · 9727~10083줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 529,
+   "lines": 535,
    "over800": false,
    "exposes": [
     "OurgoalGoalsKit"
@@ -15434,6 +15719,7 @@
     "core/app-scope",
     "core/event-bus",
     "core/store",
+    "data/category-map",
     "team-invite-comm"
    ],
    "calledBy": [
@@ -15458,7 +15744,8 @@
     "TASK-ES-476",
     "TASK-ES-611",
     "TASK-ES-614",
-    "TASK-ES-664"
+    "TASK-ES-664",
+    "TASK-ES-696"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-476-INLINE-H1-2.md",
@@ -15467,6 +15754,12 @@
     "docs/specs/REQ-TASK-ES-664-PROVIDE-2.md"
    ],
    "prs": [
+    {
+     "number": 969,
+     "task": "TASK-ES-696",
+     "title": "[E3] #TASK-ES-696 소통-피드 0단계: 목표 topic↔피드 카테고리 매핑·feed_posts 메타 7칸",
+     "date": "2026-10-13"
+    },
     {
      "number": 940,
      "task": "TASK-ES-664",
@@ -18052,6 +18345,7 @@
     "comm/shared-groups",
     "core/app-scope",
     "core/boot-comm-seeds",
+    "data/category-map",
     "goal-edit-ux",
     "team-invite-comm",
     "team-leader-check",
@@ -18077,12 +18371,19 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-497"
+    "TASK-ES-497",
+    "TASK-ES-696"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-497-INLINE-H2-3.md"
    ],
    "prs": [
+    {
+     "number": 969,
+     "task": "TASK-ES-696",
+     "title": "[E3] #TASK-ES-696 소통-피드 0단계: 목표 topic↔피드 카테고리 매핑·feed_posts 메타 7칸",
+     "date": "2026-10-13"
+    },
     {
      "number": 796,
      "task": "TASK-ES-497",
@@ -19464,14 +19765,15 @@
     "#TASK-ES-492(인라인 어려움 기관 묶음 이전 3차): index.html 인라인 IIFE 의 구간(이전 전 8469~8470 · 8471~8539 · 8540~8559 · 8560~8791 · 8792~8799 · 8804~8884 · 8886~8950 · 8951~8959줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다.",
     "바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>(js/core/app-scope.js 통로, 대입하는 이름은 setter). 로드 중 바로 돌던 문은 함수로 감싸 index.html 원래 자리에서 부른다."
    ],
-   "lines": 542,
+   "lines": 548,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit"
    ],
    "calls": [
     "avatar-system",
-    "core/app-scope"
+    "core/app-scope",
+    "data/category-map"
    ],
    "calledBy": [
     "sanctuary-record-feed",
@@ -19492,7 +19794,8 @@
    "tasks": [
     "TASK-ES-492",
     "TASK-ES-611",
-    "TASK-ES-614"
+    "TASK-ES-614",
+    "TASK-ES-696"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-492-INLINE-ORGAN-3.md",
@@ -19500,6 +19803,12 @@
     "docs/specs/REQ-TASK-ES-614-CELL-REGISTRY-OWN.md"
    ],
    "prs": [
+    {
+     "number": 969,
+     "task": "TASK-ES-696",
+     "title": "[E3] #TASK-ES-696 소통-피드 0단계: 목표 topic↔피드 카테고리 매핑·feed_posts 메타 7칸",
+     "date": "2026-10-13"
+    },
     {
      "number": 889,
      "task": "TASK-ES-614",
@@ -21552,6 +21861,65 @@
    ]
   },
   {
+   "id": "records/share-feed-save",
+   "file": "js/tabs/records/share-feed-save.js",
+   "kind": "tab",
+   "kindName": "탭 세포(작은 세포)",
+   "size": "small",
+   "area": "records",
+   "tabs": [
+    "records"
+   ],
+   "name": "피드 게시 결과",
+   "nameSource": "hand",
+   "does": "현재 게시 창의 계정과 처음 준비한 입력을 고정하고, 같은 게시물 재시도와 서버 SDK 응답에 따른 결과 안내를 처리한다",
+   "doesSource": "hand",
+   "header": [
+    "기록 공유 의도 하나의 입력과 SDK 결과. #TASK-ES-701",
+    "@module records/share-feed-save",
+    "@kind tab",
+    "현재 게시 창의 계정 귀속·중복 제출·미확정 재시도를 분리한다"
+   ],
+   "lines": 68,
+   "over800": false,
+   "exposes": [],
+   "calls": [
+    "core/capabilities",
+    "data/category-map"
+   ],
+   "calledBy": [],
+   "readsFromIndexHtml": [],
+   "loadedByIndexHtml": true,
+   "usedByIndexHtml": [],
+   "emits": [],
+   "listens": [],
+   "provides": [
+    "records.share-feed-intent"
+   ],
+   "requiresAbilities": [],
+   "contributes": [],
+   "planned": {
+    "provides": [],
+    "contributes": []
+   },
+   "tasks": [
+    "TASK-ES-701"
+   ],
+   "reqs": [
+    "docs/specs/REQ-TASK-ES-701-CORRECTION.md",
+    "docs/specs/REQ-TASK-ES-701-PRODUCT-FEEDBACK.md",
+    "docs/specs/REQ-TASK-ES-701-SHARE-FEED-CATEGORY.md"
+   ],
+   "prs": [
+    {
+     "number": 974,
+     "task": "TASK-ES-701",
+     "title": "[FIX] TASK-ES-701 공유 카테고리와 동일 창 게시 결과 연결",
+     "date": "2026-10-13"
+    }
+   ]
+  },
+  {
    "id": "records/share-to-feed",
    "file": "js/tabs/records/share-to-feed.js",
    "kind": "tab",
@@ -21571,14 +21939,16 @@
     "기록 탭 세포(js/tabs/records/period-ai-card.js)도 이 창을 부르므로 기록 탭 키트에 둔다(탭 간 직접 참조 0). 게시 뒤 가상 응원·답글 연출(addSimulatedCheerAndReplyToPost)도 같은 묶음이다. FEED_POSTS_CACHE 는 index.html 에 그대로 있고 L getter·setter 로 읽고 쓴다.",
     "#TASK-ES-466(인라인 어려움 묶음 시범): index.html 인라인 IIFE 의 구간(이전 전 12628~12631 · 12632~13363줄)을 생성기(docs/design/harness/module-split/gen-inline-hard.js)로 글자 그대로 옮겼다."
    ],
-   "lines": 775,
+   "lines": 794,
    "over800": false,
    "exposes": [
     "OurgoalRecordsKit",
     "openShareToFeedModal"
    ],
    "calls": [
-    "core/app-scope"
+    "core/app-scope",
+    "core/capabilities",
+    "data/category-map"
    ],
    "calledBy": [
     "sanctuary-record-feed",
@@ -21590,7 +21960,10 @@
    "emits": [],
    "listens": [],
    "provides": [],
-   "requiresAbilities": [],
+   "requiresAbilities": [
+    "records.share-feed-intent",
+    "feed.category-map"
+   ],
    "contributes": [],
    "planned": {
     "provides": [],
@@ -21598,13 +21971,23 @@
    },
    "tasks": [
     "TASK-ES-466",
-    "TASK-ES-611"
+    "TASK-ES-611",
+    "TASK-ES-701"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-466-INLINE-H1-1.md",
-    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md"
+    "docs/specs/REQ-TASK-ES-611-CELL-REGISTRY-B2.md",
+    "docs/specs/REQ-TASK-ES-701-CORRECTION.md",
+    "docs/specs/REQ-TASK-ES-701-PRODUCT-FEEDBACK.md",
+    "docs/specs/REQ-TASK-ES-701-SHARE-FEED-CATEGORY.md"
    ],
    "prs": [
+    {
+     "number": 974,
+     "task": "TASK-ES-701",
+     "title": "[FIX] TASK-ES-701 공유 카테고리와 동일 창 게시 결과 연결",
+     "date": "2026-10-13"
+    },
     {
      "number": 885,
      "task": "TASK-ES-611",
@@ -24203,7 +24586,7 @@
     "migrateGuestDataToUser — 「[#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시」(이전 전 5658~5870줄)",
     "로그인 때 둘러보기(게스트) 기록을 계정 기록과 합집합으로 합쳐 서버에 올린다."
    ],
-   "lines": 249,
+   "lines": 257,
    "over800": false,
    "exposes": [
     "OurgoalSettingsKit"
@@ -24211,6 +24594,7 @@
    "calls": [
     "account-isolation",
     "core/app-scope",
+    "core/local-keep",
     "template-credit"
    ],
    "calledBy": [],
@@ -27804,12 +28188,19 @@
     "contributes": []
    },
    "tasks": [
-    "TASK-ES-382"
+    "TASK-ES-382",
+    "TASK-ES-700"
    ],
    "reqs": [
     "docs/specs/REQ-TASK-ES-382-TEAM-SPLIT.md"
    ],
    "prs": [
+    {
+     "number": 973,
+     "task": "TASK-ES-700",
+     "title": "[E3] #TASK-ES-700 소통-피드 3단계: 주간 유익함 지표 스크립트·피드 출처 기록",
+     "date": "2026-10-13"
+    },
     {
      "number": 701,
      "task": "TASK-ES-382",
