@@ -1,0 +1,67 @@
+{
+  "schema": "dir006-approved-premerge-status-check/1",
+  "measuredAt": "2026-10-13T22:55:00.720Z",
+  "priorHEAD": "f3143426f5b28e063144638d4ec77d7661fcd11d",
+  "approval": {
+    "line": 2875,
+    "timestamp": "2026-10-13T22:45:42.725Z",
+    "role": "user",
+    "text": "헌법 개정 승인",
+    "sourceLineSHA256": "f9156e1445d0dd7b31bf5c1428ec7b04b5af1f929da73baeb435b8e9c9e62a1f"
+  },
+  "kernelBodyUnchanged": true,
+  "clause15_1Unchanged": true,
+  "statuteBodyUnchanged": true,
+  "archive": {
+    "byteUnchanged": true,
+    "beforeSHA256": "5b0b5c4e737a0fc4eaeeb622a7034c2e9102ef7a9e0fcf7665dee3626aa93f9f",
+    "afterSHA256": "5b0b5c4e737a0fc4eaeeb622a7034c2e9102ef7a9e0fcf7665dee3626aa93f9f"
+  },
+  "claimExceptStatusSame": true,
+  "claimSchemaErrors": [],
+  "unchanged": [
+    {
+      "file": "AGENTS.md",
+      "same": true
+    },
+    {
+      "file": "CLAUDE.md",
+      "same": true
+    },
+    {
+      "file": "docs/directives/ACTIVE.md",
+      "same": true
+    },
+    {
+      "file": "docs/specs/SAVE-SYNC-CONTRACT-2026-10-12.md",
+      "same": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "versions",
+      "command": "node court/appendix.js --versions",
+      "exitCode": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"version\": \"v2026.10.14-DIR006-SAVE\",\n  \"statuteCurrent\": \"v2026.10.14-DIR006-SAVE\",\n  \"ledgerLast\": \"v2026.10.14-DIR006-SAVE\",\n  \"kernel\": \"01_OURGOAL_SUPREME_CONSTITUTION_FULL.md\",\n  \"pointers\": [\n    \"AGENTS.md\",\n    \"CLAUDE.md\"\n  ],\n  \"problems\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "appendix",
+      "command": "node court/appendix.js --check docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md",
+      "exitCode": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"mismatches\": []\n}\n",
+      "stderr": ""
+    }
+  ],
+  "states": {
+    "explicitAmendmentApproval": true,
+    "merged": false,
+    "efficacy": false,
+    "product": null,
+    "operating": null,
+    "use": null,
+    "effect": null,
+    "CourtBefore": "확인 부족 — 상민님 결심 필요",
+    "CourtAfter": null
+  }
+}

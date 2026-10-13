@@ -1,0 +1,29 @@
+{
+  "note": "초기 --check를 marker 없는 kernel에 호출한 도구 사용 실패의 재현; 실제 별표 대상은 전문이다. 원규범/기계 변경 없이 올바른 전문 경로로 교정했다.",
+  "initialCommand": "node court/appendix.js --check 01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
+  "reproduced": {
+    "ok": false,
+    "mismatches": [
+      {
+        "appendix": 2,
+        "reason": "마커가 없다(<!-- court-appendix-2:start -->)"
+      },
+      {
+        "appendix": 3,
+        "reason": "마커가 없다(<!-- court-appendix-3:start -->)"
+      }
+    ]
+  },
+  "baselineMarkerPresence": [
+    {
+      "n": 2,
+      "baseline": false,
+      "current": false
+    },
+    {
+      "n": 3,
+      "baseline": false,
+      "current": false
+    }
+  ]
+}

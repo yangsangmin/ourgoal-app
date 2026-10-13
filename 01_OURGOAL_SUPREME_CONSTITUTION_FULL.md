@@ -1,15 +1,15 @@
-# [정본] 아워골 최고 헌법 v2026.10.11-ARGUMENTS (OurGoal Supreme Constitution v2026.10.11-ARGUMENTS)
+# [정본] 아워골 최고 헌법 v2026.10.14-DIR006-SAVE (OurGoal Supreme Constitution v2026.10.14-DIR006-SAVE)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.11-ARGUMENTS (세포 분열 `arguments` 조항 개정 — CELL_SPLIT 5호 한 곳: 함수 선언을 선언째로 글자 그대로 옮길 때 그 함수 본문에서 쓰는, 그 함수 자신의 호출 인자를 가리키는 `arguments` 는 허용하고, 최상위 `this` 0 과 감싸기·화살표 함수의 `arguments` 0 은 그대로 둔다. 그 밖의 조문 내용 변경 0). 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
+> **버전**: v2026.10.14-DIR006-SAVE (개정안 — DIR-006 저장 안정화에 한정한 기기 보존·재전송 항목 선행 및 기기 확인 뒤 입력·잠금·경험치 기기 반영·축하·AI 피드백 후속 순서 예외. 조문 15.1의 첫 문장과 원격 원장의 최종 권위·동기화·무손실·경험치 중복 지급 방지·기존 승인선은 보존하며, 그 밖의 조문 내용 변경 0). 상민님의 명시적 "헌법 개정 승인"을 확인했다. 실제 병합 기록은 버전 대장을 참조한다. 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
 > **정본**: 이 파일 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다. `CLAUDE.md` 는 Claude Code 가 기동 때 본문처럼 읽어 들이는 가져오기 포인터(`@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 한 줄), `AGENTS.md` 는 코덱스 등 다른 도구용 포인터·핵심 요약이다. 포인터는 정본 경로와 읽기 지시만 담고 개정 때 바뀌지 않는다(`node court/appendix.js --versions` 가 대조). (`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
 > **법령 전문**: 조·항·호 단위 해설·상세·부록은 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`(이 커널과 다르면 커널이 우선한다 — 조문 14.5), 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
 
 ---
 
-<system_kernel id="ourgoal-supreme-constitution-v2026.10.11-arguments">
+<system_kernel id="ourgoal-supreme-constitution-v2026.10.14-dir006-save">
 
   <metadata>
     <sovereign>상민 (Supreme Decision Maker)</sovereign>
@@ -577,7 +577,7 @@
     </article>
 
     <article id="ARTICLE_15" title="Server-First 스토리지 및 수명주기 4단계 검증">
-      <clause id="15.1">모든 상태 변경은 서버 원장 우선(Server-First)으로 저장 및 반영한다.</clause>
+      <clause id="15.1">모든 상태 변경은 서버 원장 우선(Server-First)으로 저장 및 반영한다. 다만 DIR-006의 저장 안정화에 한하여, 기기 보존 자료와 재전송 항목을 계정·대상·변경 세대별로 서버 호출 전에 쓰고 되읽어 확인할 수 있다. 그 확인 뒤에는 보존된 부분의 입력 비움·잠금 해제와 경험치의 기기 반영·축하·AI 피드백 요청을 서버 반영 확인을 기다리지 않고 진행할 수 있다. 이때 기기 보관과 원격 미확정을 원격 반영 확인과 구분하며, 경험치의 원격 확정도 해당 서버 원장의 확인으로만 판단한다. 원격 원장의 최종 권위·동기화·무손실·경험치 중복 지급 방지와 기존 승인선은 그대로 유지한다.</clause>
       <clause id="15.2">유저 데이터 수명주기는 생성, 조회, 수정, 파기(또는 보존)의 4단계를 거치며 매 단계 무손실 검증을 이행한다.</clause>
     </article>
 

@@ -760,3 +760,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-704 | E3 | PR974 병합 뒤 세포지도 — 공유 게시 결과 세포 설명·현재 도움된 이유 기능 설명·생성 지도와 웹/노션 게시 재료, 원격 동기화 pending | docs/specs/REQ-TASK-ES-704-CELL-MAP.md · reports/TASK-ES-704/claims.json | 4단계 준비(로컬 커밋, 심사 미청구)
 
 - #TASK-ES-705 | E3 | PR975 병합 뒤 세포지도 개인정보 계약 설명 갱신 — helpful-reason 본인 원문/작성자 종류별 개수/지급 호출 제외, reactions 개인 원문·집계·계정 세대 경계. 기존 생성기·게시 재료만, 제품/SQL/원격 게시 0 | docs/specs/REQ-TASK-ES-705-CELL-MAP.md · reports/TASK-ES-705/claims.json | 4단계(심사 청구 준비)
+
+- #TASK-ES-DIR006-SAVE-ORDER-01a13674 | INFRA | DIR006 저장순서 한정예외 헌법 개정 초안 준비·검토: 원15.1 보존, 원격권위/무손실/XP중복방지 유지, 제품/ACTIVE/검사코드 0 | kernel14.4 · REQ-TASK-ES-DIR006-SAVE-ORDER-01a13674.md · 최초 독립 비교 b01c80d8 | 명시 헌법 개정 승인 확인; 최종 병합은 root 독립 확인 후·병합 전·efficacy=false
