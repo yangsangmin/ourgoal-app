@@ -1,0 +1,57 @@
+{
+  "id": "dir006-professional-guest-local",
+  "title": "전문 기록 창은 기기 확인 뒤 닫고 기기 보관을 알린다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "click",
+      "selector": "button[onclick*=\"recProTemplateCard\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickTemplateChips [data-quicktpl=\"health\"]"
+    },
+    {
+      "do": "type",
+      "selector": "#proRecMemo",
+      "text": "DIR006 전문 기기 확인",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#proGeneralSaveBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "기기에 보관",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay.active"
+    },
+    {
+      "capture": "professional-local"
+    }
+  ]
+}

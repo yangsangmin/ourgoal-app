@@ -1,0 +1,4 @@
+const fs=require('fs'),cp=require('child_process');
+const intake=JSON.parse(fs.readFileSync(__dirname+'/source-intake.json','utf8'));
+const rows=intake.openPROverlap.overlaps.map(p=>{const diff=cp.execFileSync('gh',['pr','diff',String(p.number),'--repo','yangsangmin/ourgoal-app'],{encoding:'utf8'});const chunks=diff.split(/^diff --git /m).filter(x=>x.startsWith('a/index.html b/index.html'));return {number:p.number,head:p.headRefOid,indexHunks:chunks.flatMap(x=>x.split('\n').filter(l=>l.startsWith('@@'))),storageMarkersTouched:chunks.some(x=>x.split('\n').some(l=>/^[+-][^+-]/.test(l)&&/captureCardBox|captureSave|capabilities\.js|home-cockpit\.js/.test(l)))};});
+fs.writeFileSync(__dirname+'/open-pr-index-overlap.json',JSON.stringify(rows,null,2)+'\n','utf8');console.log(JSON.stringify(rows));

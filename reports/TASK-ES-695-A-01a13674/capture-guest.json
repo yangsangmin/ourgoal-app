@@ -1,0 +1,60 @@
+{
+  "id": "dir006-capture-guest-local",
+  "title": "게스트 기록은 기기에 보관 상태로 남고 다시 열어 본문을 확인한다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#captureInput"
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "DIR006 기기 확인 기록",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureSyncStatus",
+      "name": "data-sync-reason",
+      "equals": "guest-not-sent",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#recordsList",
+      "text": "DIR006 기기 확인 기록",
+      "timeoutMs": 10000
+    },
+    {
+      "capture": "capture-reopened"
+    }
+  ]
+}
