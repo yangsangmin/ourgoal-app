@@ -25,3 +25,5 @@ DOM #rxAdvText/#rxAdvOk/[data-rxadvtoggle]/#hrText/#hrOk/[data-hrsum]와 함수 
 
 ## 8. 막히는 지점 예상
 과거 metadata는 현재 서버의 실제 상태와 같다고 주장하지 않는다. PostgreSQL 로컬 합성 시험의 owner/ACL guard를 먼저 확인하고, 예상 밖 source drift는 중단한다. canonical Git LF bytes와 worktree CRLF bytes를 구분한다. 기존 rollback은 과거 공개 범위를 열 수 있으므로 자동 운영 실행하지 않는다. 운영 적용/실계정 사용/효과 확인은 상위 담당과 독립 검증의 남은 조건이다.
+
+PR975 첫 판정 94BED734(658743da) 뒤 주장만 보완했다. 원 C1~C4 정적 기대값과 원 측정을 유지하고 C5~C10을 추가했다. R3 소스 CAS/rollback과 운영 적용·역할 template/fixture rollback 되읽기의 별도 증거를 연결한다. R1/R2 운영 역할 증명은 확보했지만 법정 직접 운영 DB 재실행과 실제 인증 UI 사용은 구분한다. 게스트 로컬 목표의 조언 안내는 실제 UI 시나리오 C10으로 확인하고 인증된 본인 원문/계정 전환은 C9 needs-login으로 남긴다. 지원 스키마에서 needs-live-server는 unverified.reason이며 cannotBecause 값이 아니다. 기존 정적 주장이 같은 요구에 있으므로 rollup은 도구 한계보다 코드 확인을 우선할 수 있고, R4는 게스트 확인을 인증 미확인보다 우선할 수 있다. 따라서 요구 bucket만으로 미측정이 사라졌다고 해석하지 않는다. 법정 금고/집계 코드는 바꾸지 않고 두 번째 실제 판정 뒤 claim 단위의 남은 범위를 상위 담당이 판단한다. 상세 대응표는 reports/TASK-ES-703/claim-coverage/COVERAGE.md다. SQL/UI 원 canonical hash와 최초 검토·로컬 PostgreSQL 증명은 불변이다.
