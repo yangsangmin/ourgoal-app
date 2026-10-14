@@ -4,7 +4,7 @@ PR982의 고정 제품을 바꾸지 않고 계정전환 시험의 실제 IIFE �
 - [x] 원CI/source/계약 인수 · 예상 2분 · exact0e785/Bproducte38c·CI38509224519 loadGeneration first6·직전3commit/claims/원지침과 actual6.1high를 기록한다.
 - [x] 시험 로드 최소 보정 · 예상 3분 · 단독 tests/account-switch-isolation.test.js makeBrowser에서 actual capabilities/device-save/profile-load/local-keep IIFE를 lexical 의존성과 함께 로드한다. 추가helper는 source/근거 선보고, 제품·단언·fixture대체0이다.
 - [x] 해당시험 1회·불변 확인 · 예상 2분 · 원 시나리오/검사수/단언/기대값 unchanged를 source로 대조하고 해당시험1회만 실행한다. 새 실패면 원인을 정확 보존, whole중복0이다.
-- [ ] 정상hookcommit/source봉인·closure · 예상 1분 · 원CI/초기실패·REQ/dual8/13칸·공통task leaf·PID0/clean을root에인계하며 원격push/PR/main0이다.
+- [x] 정상hookcommit/source봉인·closure · 예상 1분 · 원CI/초기실패·REQ/dual8/13칸·공통task leaf·PID0/clean을root에인계하며 원격push/PR/main0이다.
 
 ① 파악: source 추출 함수는 loadProfile 내부 lexical loadGeneration/local helpers를 잃는다. 원CI six load failures와 정확dep source를 먼저 대조한다.
 
@@ -23,3 +23,5 @@ PR982의 고정 제품을 바꾸지 않고 계정전환 시험의 실제 IIFE �
 ⑧ 막히는 지점 예상: capability init에서 추가browser시설을요구하거나 원 helper의 함수추출이 다른 IIFE 의존도 잃을 수 있다. 확인된동일원인로드helper만source선보고하며 코드 기대값·제품대체로풀지 않는다. 타시험실패는구체원인과미확인으로root에보존한다.
 
 실측: SOURCE-PRESERVATION.json은 원제품/loader 10 pins byte동일, 단언22/시나리오6 및 suffix SHA동일을 기록했다. SELECTED-RESULT.json의 단일 실행은 exit0·6/6·loadGeneration오류0이다. 실제CI/Court/사용/효과는 미확인이다. 마지막 항목은 정상 hook commit과 clean/PID 종료 뒤 별도 closure로 측정한다.
+
+종결 측정: COMMIT-CLOSE.json은 source commit의 SOURCE-SEAL 전체 되읽기 일치와 own child46860 잔류0을 기록한다. 최종 clean/HEAD는 closure commit 뒤 git status/rev-parse stdout에서 확인하며, 사용/효과/CI/Court를 완료로 승격하지 않는다.
