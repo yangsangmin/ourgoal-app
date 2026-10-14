@@ -8,3 +8,5 @@
 정상 훅 첫실패는 dependency 결측으로409/30, lock고정 npm ci 뒤 required smoke정확1회는437/2였다. 두 잔여는 원승인 literal과 old기대의 충돌이다. root가 작성한 test-only2276ea3e7c45905435b87e00f40afdfaa6d9fbec를 정상cherry로8bf04ca3에 인수했다. scripts/smoke-test.js 두기대2+/2-만이며 원검사명·검사수·부정 value-injection 단언을 보존하고 quickchip은 exacthelpers 함수에서 확인한다. 제품과 시험은 분리commit이고 원437/2 raw·기대·구439scenario는 그대로보존한다. root TICKETS17f등록은 이 childWT에 없으므로 G0warning은 여전히pending이다.
 
 root 시험2줄 인수뒤 정상훅도 smoke에서 차단되었다. 새 필요진단1회는 REQUIRED-SMOKE-AFTER-TEST-ALIGNMENT.json/raw이며 같은check의 뒤쪽 L7620 old post-save literal이 이제 드러났다. 이 첫실패는 438/1이며 앞437/2를 대체하지 않는다. 정확5제품 freeze는 POST-TEST-ALIGNMENT-BLOCKER.json에서 모두동일, 재UI·제품추가편집·시험자체편집·훅우회0이다. 시험정합은 root 단독writer 후속을 인수한다.
+
+최종 root test-only701d869dce9f83b17d3cb1de7f771f77097d4e36을 정상cherry bb4379de로 인수해 L7620의 마지막 old post-save 기대만 맞췄다. 자동필수hook exit0으로 제품 source 57f5a11cf0540ad3a4e4afcd8cde9381f9e30de7 정상commit했다. 앞8bf04와 이번bb4379 시험변경은 제품과 분리되어 있고 검사명/수·부정값 주입단언을 보존한다. 원smoke409/30→437/2→438/1 실패자료는 그대로이며 수동추가suite나UI재측정0이다. root 공용TICKETS17f는 이WT에 없어 G0warning pending을 유지한다. 제품쓰기 종료·보고봉인뒤 반환하며 PR/push/merge/Court/공용generator는 root 별도담당이다.
