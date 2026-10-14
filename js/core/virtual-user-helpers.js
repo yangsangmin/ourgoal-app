@@ -187,26 +187,23 @@
       var exists = profile.records.some(function(r){ return r && rec.id && r.id === rec.id; });
       if(!exists) profile.records.unshift(rec);
     },
-    // 온라인 복귀 때: 큐 기록을 상태에 되살리고 saveProfile(기기 사본 + 로그인 사용자는 서버 원장)이 끝난 뒤에만 큐를 비운다.
-    // 실패하면 큐를 그대로 두고 알리며 30초 뒤 다시 시도한다(온라인일 때).
+    // 전환 전 큐는 존재 미확정 원자료다. 원계정 항목만 보관하고 자동 전송·삭제하지 않는다.
     syncOnline: async function(){
-      var self = this;
+      var profile = L.state && L.state.profile, raw;
+      try {raw = localStorage.getItem(this.QUEUE_KEY);if(raw !== null && !Array.isArray(JSON.parse(raw))) throw new Error('legacy-queue-integrity');}
+      catch(e){return {synced:0,failed:0,state:'local',reason:'legacy-queue-unreadable'};}
       var q = this.getQueue();
       if(!q.length) return { synced: 0, failed: 0 };
-      try {
-        q.forEach(function(it){ self.restoreItem(it); });
-        if(typeof L.saveProfile === 'function') await L.saveProfile();
-      } catch(e) {
-        console.warn('[OfflineSyncManager] 온라인 동기화 실패 — 큐 유지·재시도 예약', e);
-        if(typeof L.toast === 'function') L.toast('오프라인 기록 ' + q.length + '건을 아직 보내지 못했어요. 잠시 뒤 다시 시도할게요.');
-        clearTimeout(self._retryTimer);
-        self._retryTimer = setTimeout(function(){ if(typeof navigator === 'undefined' || navigator.onLine !== false) self.syncOnline(); }, 30000);
-        return { synced: 0, failed: q.length };
-      }
-      var n = await this.flush(function(){ /* 위에서 저장까지 끝났다 — 여기서는 큐에서 뺄 항목만 표시한다 */ });
-      try { if(typeof L.dispatchFullViewPropagation === 'function') L.dispatchFullViewPropagation(); } catch(e){}
-      if(typeof L.toast === 'function') L.toast('오프라인 기록 ' + n + '건을 동기화했어요 ✅');
-      return { synced: n, failed: 0 };
+      // Transition-era queue entries are not evidence of a new DIR006 change. Keep original bytes,
+      // never rebind owner-less/foreign records to the current profile, and never claim a legacy await confirmed.
+      var owned = q.filter(function(it){var r=it && it.action && it.action.type==='record' && it.action.data;
+        return profile && r && r.id && (!it.account || it.account===profile.id) &&
+          (r.user_id===profile.id || r.ownerUid===profile.id) && (!r.user_id || r.user_id===profile.id) && (!r.ownerUid || r.ownerUid===profile.id);
+      }).map(function(it){return it.action.data;});
+      var archived = profile && global.OurgoalLocalKeep && global.OurgoalLocalKeep.preserveUnknown && global.OurgoalLocalKeep.preserveUnknown('records',profile.id,owned);
+      var unchanged = false;try{unchanged=localStorage.getItem(this.QUEUE_KEY)===raw;}catch(e){}
+      if(typeof L.toast === 'function') L.toast('오프라인 자료를 기기에 남겨 두었어요. 반영 여부는 확인되지 않았어요.');
+      return {synced:0,failed:0,preserved:q.length,archiveVerified:!!(archived && archived.ok),queueUnchanged:unchanged,state:'local',reason:'legacy-existence-unknown'};
     }
   };
 

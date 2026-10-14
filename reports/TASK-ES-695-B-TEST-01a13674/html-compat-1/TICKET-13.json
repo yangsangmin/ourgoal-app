@@ -1,0 +1,36 @@
+{
+  "id": "TASK-ES-695-B-TEST-01a13674/html-compat-1",
+  "parent": "TASK-CC-CELL-UNWIRE-RUN-309dca5d",
+  "essence": "FIX",
+  "requirement": "기존 --html 인라인 두 함수 source 선택과 default 실제 IIFE 의존성 로드를 함께 보존한다.",
+  "source": {
+    "base": "e16de9fb35b924323510bd8521d6ba9361585fef",
+    "originalCode": "9e49bb3b34a1c5c5fb71037b50f7ae8226f11968",
+    "originalCLI": "../CLI-SOURCE-SCOPE.md",
+    "firstOriginalCI": "../SOURCE-PRESERVATION.json",
+    "firstOriginalSix": "../SELECTED-RESULT.json"
+  },
+  "owner": "handover_review 단독 test source 선택 writer; root 통합; ops 별도 최종 제품+시험 검토",
+  "prerequisite": "원 CLI 제한 ACK와 root의 좁은 관측 회귀 보정 배정",
+  "scope": [
+    "tests/account-switch-isolation.test.js source 선택만",
+    ".claude/plan-K18-B-test-html-compat.md",
+    "reports/TASK-ES-695-B-TEST-01a13674/html-compat-1/**"
+  ],
+  "completionCriteria": "원22단언/6case/suffix/pins 동일, defaultfalse 및 원IIFE 동일, 실제 makeBrowser legacy 선택 3조건 L1 한 번, 정상 hook/source봉인/PIDclose",
+  "verification": {
+    "proof": "SOURCE-PROOF.json",
+    "firstL1": "L1-FIRST-RESULT.json",
+    "conditions": 3,
+    "allMatched": true,
+    "originalSixRerun": false
+  },
+  "status": "선택 경계의 부품 측정과 source 보존 주장",
+  "unfinished": [
+    "새 CI/Court 미확인",
+    "다른 HTML 실제 함수 전체 실행/E2E 미확인",
+    "중앙 leaf 등록 미확인",
+    "별도 B 제품 source 미통합"
+  ],
+  "nextAction": "root가 exact test+별도 제품 source를 통합하고 operations가 최종 exact source를 독립 확인한다."
+}

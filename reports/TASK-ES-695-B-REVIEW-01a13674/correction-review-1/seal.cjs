@@ -1,0 +1,4 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const files=fs.readdirSync(__dirname).filter(n=>fs.statSync(path.join(__dirname,n)).isFile()).map(n=>({file:n,sha256:sha(fs.readFileSync(path.join(__dirname,n)))}));
+const summary=JSON.parse(fs.readFileSync(__dirname+'/SUMMARY.json','utf8')),out={schema:'B-round1-independent-seal/1',at:new Date().toISOString(),head:summary.head,files,limitedCorrectionVerified:true,firstUnchanged:true,originalTrialReused:false,actualUse:null,Court:null};const file=__dirname+'/source-seal.json',text=JSON.stringify(out,null,2)+'\n';fs.writeFileSync(file,text,{encoding:'utf8',flag:'wx'});assert.equal(fs.readFileSync(file,'utf8'),text);console.log(JSON.stringify({file,sha256:sha(Buffer.from(text)),scopeOpinionSHA256:files.find(v=>v.file==='SCOPE-OPINION.md').sha256}));

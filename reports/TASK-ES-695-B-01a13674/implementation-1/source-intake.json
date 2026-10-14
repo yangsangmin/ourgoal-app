@@ -1,0 +1,370 @@
+{
+  "at": "2026-10-14T02:53:39.994Z",
+  "head": "d326db5e6c7c50255e198d44204241f0c68fc0e8",
+  "originMain": "d326db5e6c7c50255e198d44204241f0c68fc0e8",
+  "referencePR": 979,
+  "lessons": [
+    "L132",
+    "L133"
+  ],
+  "requested": {
+    "model": "gpt-6.1-sol",
+    "effort": "high"
+  },
+  "actual": {
+    "at": "2026-10-14T02:46:21.250Z",
+    "model": "gpt-6.1-sol",
+    "effort": "high"
+  },
+  "rollout": "C:/Users/HP/.codex/sessions/2026/10/14/rollout-2026-10-14T03-50-10-01a13699-c9f8-7bb3-8ec0-c23d9fb8f5a8.jsonl",
+  "selectionReason": "기존 A core의 typed 결과·계정/종류/세대와 존재미확정 보관을 같은 책임 안에서 구현하고 독립 검토는 root가 분리한다.",
+  "writer": "contracts",
+  "ownerCount": 1,
+  "packet": {
+    "path": "C:/dev/wt/eg18b-01a13674/reports/TASK-ES-695-B-01a13674/intake-1/source-intake.json",
+    "sha256": "e341afd0cac11bcd336bd40fdabdd15479de4b86f722500516ccf182406295dd",
+    "source": "3ffe5548bf21f4a9636e9ed0a3cf3c3916ce49ee"
+  },
+  "files": [
+    {
+      "file": "js/core/device-save.js",
+      "sha256": "e6082d010f966e780af9fbf955f3a27072e0c6d9b2fd05345380aabec6992b8e",
+      "canonicalSHA256": "e6082d010f966e780af9fbf955f3a27072e0c6d9b2fd05345380aabec6992b8e",
+      "gitSHA256": "e6082d010f966e780af9fbf955f3a27072e0c6d9b2fd05345380aabec6992b8e",
+      "last3": [
+        "f915b8f711337c430d7fc65a0c42105cbec3d853 [FIX] #TASK-ES-695 fix: confirm device data and pending change before record follow-ups"
+      ],
+      "cell": {
+        "id": "core/device-save",
+        "file": "js/core/device-save.js",
+        "layer": "core",
+        "tab": null,
+        "size": null,
+        "kind": "organ",
+        "role": "TASK-ES-695 A — 기기 자료와 미확정 기록 변경 목록 되읽기·원계정/세대별 비동기 확인",
+        "spans": [],
+        "provides": [
+          "storage.device.save",
+          "storage.device.retry",
+          "storage.device.message",
+          "storage.device.status",
+          "storage.device.focused"
+        ],
+        "requires": [],
+        "contributes": [],
+        "owns": [
+          "data.save.pending"
+        ],
+        "capabilities": [
+          {
+            "name": "storage.device.save",
+            "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+            "sideEffect": "server",
+            "needsConfirm": false
+          },
+          {
+            "name": "storage.device.retry",
+            "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+            "sideEffect": "server",
+            "needsConfirm": false
+          },
+          {
+            "name": "storage.device.message",
+            "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+            "sideEffect": "none",
+            "needsConfirm": false
+          },
+          {
+            "name": "storage.device.status",
+            "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+            "sideEffect": "none",
+            "needsConfirm": false
+          },
+          {
+            "name": "storage.device.focused",
+            "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+            "sideEffect": "none",
+            "needsConfirm": false
+          }
+        ],
+        "planned": {
+          "provides": [],
+          "contributes": []
+        },
+        "emits": [
+          "save:state-changed"
+        ],
+        "listens": [],
+        "domRoot": null,
+        "ownerKeys": [],
+        "dependsOn": []
+      }
+    },
+    {
+      "file": "js/core/home-cockpit.js",
+      "sha256": "76051617f8ed750d28fb4416d7f6ada6419428eb9bb2ad11283eb70c2e11de25",
+      "canonicalSHA256": "76051617f8ed750d28fb4416d7f6ada6419428eb9bb2ad11283eb70c2e11de25",
+      "gitSHA256": "76051617f8ed750d28fb4416d7f6ada6419428eb9bb2ad11283eb70c2e11de25",
+      "last3": [
+        "f915b8f711337c430d7fc65a0c42105cbec3d853 [FIX] #TASK-ES-695 fix: confirm device data and pending change before record follow-ups",
+        "f3314cc54016c1cd6947389f2a06a5e41c7eca91 [FIX] #TASK-ES-695 저장 손실 반례 보완 — 법정 확인 부족 (#968)",
+        "8d4d288de85046b9122d8322951562e4a391ce8b [INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(commit, IIFE 바로 앞 한 번) · 대조 탐침 이름 목록 고정 입력·지문 · 전 키트 모의 철거 측정"
+      ],
+      "cell": {
+        "id": "core/home-cockpit",
+        "file": "js/core/home-cockpit.js",
+        "layer": "core",
+        "tab": null,
+        "size": null,
+        "kind": "organ",
+        "role": "OurGoal Home Cockpit (기관 — 홈 1초 조망 ↔ 체크인 콕핏)",
+        "spans": [],
+        "provides": [],
+        "requires": [
+          "storage.device.save",
+          "storage.device.retry"
+        ],
+        "contributes": [],
+        "owns": [],
+        "capabilities": [],
+        "planned": {
+          "provides": [],
+          "contributes": []
+        },
+        "emits": [],
+        "listens": [],
+        "domRoot": null,
+        "ownerKeys": [],
+        "dependsOn": [
+          "OurgoalAccountIsolation",
+          "OurgoalAppScope",
+          "OurgoalCapabilities",
+          "OurgoalLocalKeep",
+          "OurgoalRecordLedger"
+        ]
+      }
+    },
+    {
+      "file": "js/core/profile-load.js",
+      "sha256": "c0da922615d767114f47d4858992de6a70690f3ec3cadfb297148f574ad9857a",
+      "canonicalSHA256": "c0da922615d767114f47d4858992de6a70690f3ec3cadfb297148f574ad9857a",
+      "gitSHA256": "c0da922615d767114f47d4858992de6a70690f3ec3cadfb297148f574ad9857a",
+      "last3": [
+        "f3314cc54016c1cd6947389f2a06a5e41c7eca91 [FIX] #TASK-ES-695 저장 손실 반례 보완 — 법정 확인 부족 (#968)",
+        "8d4d288de85046b9122d8322951562e4a391ce8b [INFRA] #TASK-ES-614 feat: 미분화 덩어리 해체 B3a — 등록 기관 own 적용(commit, IIFE 바로 앞 한 번) · 대조 탐침 이름 목록 고정 입력·지문 · 전 키트 모의 철거 측정",
+        "50f57e7fc230bc328414f2d187a8a2ead70b1232 [INFRA] #TASK-ES-611 feat: 미분화 덩어리 해체 B2 — 세포별 provide 등록(세포 167개, 생성기 산출) · 대조 등록 438·불일치 0"
+      ],
+      "cell": {
+        "id": "core/profile-load",
+        "file": "js/core/profile-load.js",
+        "layer": "core",
+        "tab": null,
+        "size": null,
+        "kind": "organ",
+        "role": "OurGoal Profile Load (기관 — 프로필 불러오기·사용자 행 만들기·고유 닉네임 태그·완료 마일스톤 합)",
+        "spans": [],
+        "provides": [],
+        "requires": [],
+        "contributes": [],
+        "owns": [],
+        "capabilities": [],
+        "planned": {
+          "provides": [],
+          "contributes": []
+        },
+        "emits": [],
+        "listens": [],
+        "domRoot": null,
+        "ownerKeys": [],
+        "dependsOn": [
+          "OurgoalAccountIsolation",
+          "OurgoalAppScope",
+          "OurgoalAvatarParts",
+          "OurgoalLocalKeep",
+          "OurgoalRecordLedger"
+        ]
+      }
+    },
+    {
+      "file": "js/core/virtual-user-helpers.js",
+      "sha256": "61e05a4f0fa8a2d0927793821aac088fb19faad07dde3ce0bc1910268cdecea6",
+      "canonicalSHA256": "61e05a4f0fa8a2d0927793821aac088fb19faad07dde3ce0bc1910268cdecea6",
+      "gitSHA256": "61e05a4f0fa8a2d0927793821aac088fb19faad07dde3ce0bc1910268cdecea6",
+      "last3": [
+        "50f57e7fc230bc328414f2d187a8a2ead70b1232 [INFRA] #TASK-ES-611 feat: 미분화 덩어리 해체 B2 — 세포별 provide 등록(세포 167개, 생성기 산출) · 대조 등록 438·불일치 0",
+        "f395b7835feda3782d327781e448b40f5fc3acc1 [FIX] #TASK-ES-494 fix: 주간 집중 시간 25분 기본값 삭제(상민님 승인 A안) — 진행 중 기록은 몰입 0분, smoke 검사 기대값 25→0·이름 사실화(retire 사유 기록)",
+        "02408951786a9456e91c7b3b3ad653bc2ff81d37 [FIX] #TASK-ES-490 fix: 오프라인 동기화 큐 데이터 손실(GUARD_03) — 오류를 삼키고 큐를 비우던 flush 를 성공 항목만 지우게, 온라인 복귀는 저장 성공 뒤에만 큐 비움·실패 시 유지·알림·재시도"
+      ],
+      "cell": {
+        "id": "core/virtual-user-helpers",
+        "file": "js/core/virtual-user-helpers.js",
+        "layer": "core",
+        "tab": null,
+        "size": null,
+        "kind": "organ",
+        "role": "OurGoal Virtual-User Helpers (기관 — 가상유저 개선 10대 헬퍼)",
+        "spans": [],
+        "provides": [],
+        "requires": [],
+        "contributes": [],
+        "owns": [],
+        "capabilities": [],
+        "planned": {
+          "provides": [],
+          "contributes": []
+        },
+        "emits": [],
+        "listens": [],
+        "domRoot": null,
+        "ownerKeys": [],
+        "dependsOn": [
+          "OurgoalAppScope"
+        ]
+      }
+    },
+    {
+      "file": "js/core/local-keep.js",
+      "sha256": "254fc3cd99a8e54ddf2cd65b03c6285709747f0d74545f35ce53986609394d4a",
+      "canonicalSHA256": "254fc3cd99a8e54ddf2cd65b03c6285709747f0d74545f35ce53986609394d4a",
+      "gitSHA256": "254fc3cd99a8e54ddf2cd65b03c6285709747f0d74545f35ce53986609394d4a",
+      "last3": [
+        "f3314cc54016c1cd6947389f2a06a5e41c7eca91 [FIX] #TASK-ES-695 저장 손실 반례 보완 — 법정 확인 부족 (#968)"
+      ],
+      "cell": {
+        "id": "core/local-keep",
+        "file": "js/core/local-keep.js",
+        "layer": "core",
+        "tab": null,
+        "size": null,
+        "kind": "organ",
+        "role": "[#TASK-ES-695] 기기 보관 — 다시 열 때 기기 백업을 서버 것으로 바꾸기 전에 서버가 주지 않는 칸을 되붙이고, 기기에만 있는 기록·목표를 보관 열쇠로 옮기고, 직전 사본을 남긴다(지시함 DIR-006 묶음 P0)",
+        "spans": [],
+        "provides": [],
+        "requires": [],
+        "contributes": [],
+        "owns": [],
+        "capabilities": [],
+        "planned": {
+          "provides": [],
+          "contributes": []
+        },
+        "emits": [],
+        "listens": [],
+        "domRoot": null,
+        "ownerKeys": [],
+        "dependsOn": []
+      }
+    },
+    {
+      "file": "js/account-isolation.js",
+      "sha256": "5aa60a0f530a53dab8e133ec60393b1ec968ca20a275e95924d338d1b3957640",
+      "canonicalSHA256": "5aa60a0f530a53dab8e133ec60393b1ec968ca20a275e95924d338d1b3957640",
+      "gitSHA256": "5aa60a0f530a53dab8e133ec60393b1ec968ca20a275e95924d338d1b3957640",
+      "last3": [
+        "eebefb6f9b9ac3a4dcd7d7dead84ab5d22d363d2 [FIX] #TASK-ES-365 fix: 계정 전환 시 이전 사용자 로컬 사본이 새 계정 화면·업로드에 섞이던 결함 차단(CORE-09)"
+      ],
+      "cell": {
+        "id": "account-isolation",
+        "file": "js/account-isolation.js",
+        "layer": "legacy",
+        "tab": null,
+        "size": null,
+        "kind": "organ",
+        "role": "[#TASK-ES-365] CORE-09 계정 전환 격리 — 로컬 사본은 그 주인 uid 에게만, 게스트 사본만 이관",
+        "spans": [],
+        "provides": [],
+        "requires": [],
+        "contributes": [],
+        "owns": [],
+        "capabilities": [],
+        "planned": {
+          "provides": [],
+          "contributes": []
+        },
+        "emits": [],
+        "listens": [],
+        "domRoot": null,
+        "ownerKeys": [],
+        "dependsOn": []
+      }
+    },
+    {
+      "file": "js/tabs/settings/account-actions.js",
+      "sha256": "5467112aff9f8cf703485d96869f89ef9bc228a3cd6717bc05d9f7c6d0bbec21",
+      "canonicalSHA256": "5467112aff9f8cf703485d96869f89ef9bc228a3cd6717bc05d9f7c6d0bbec21",
+      "gitSHA256": "5467112aff9f8cf703485d96869f89ef9bc228a3cd6717bc05d9f7c6d0bbec21",
+      "last3": [
+        "68dd7386953045f9db2acc0e8ceea08bef4c360e [INFRA] #TASK-ES-664 feat: 미분화 덩어리 등록 2차 — 아직 중계되는 키트 이름 89개를 주인 세포 49개가 등록 기관에 등록(생성기 --keep, 손 편집 0)",
+        "50f57e7fc230bc328414f2d187a8a2ead70b1232 [INFRA] #TASK-ES-611 feat: 미분화 덩어리 해체 B2 — 세포별 provide 등록(세포 167개, 생성기 산출) · 대조 등록 438·불일치 0",
+        "1fc8d1210fbab9fb0547df51d995f737782ffe10 [INFRA] #TASK-ES-521 chore: origin/main(#804 등) 합침 — index.html 충돌은 main 판을 입력으로 생성기 재실행(손 0), verify·단독 로드·시나리오 재측정"
+      ],
+      "cell": {
+        "id": "settings/account-actions",
+        "file": "js/tabs/settings/account-actions.js",
+        "layer": "tabs",
+        "tab": "settings",
+        "size": "small",
+        "kind": "tab",
+        "role": "OurGoal Account Actions (설정 — 이메일 로그인 제출·계정 데이터 다시 맞추기·로그아웃·초기화 단추·새 비밀번호 창)",
+        "spans": [],
+        "provides": [],
+        "requires": [
+          "ui.confirm"
+        ],
+        "contributes": [],
+        "owns": [],
+        "capabilities": [],
+        "planned": {
+          "provides": [],
+          "contributes": []
+        },
+        "emits": [],
+        "listens": [],
+        "domRoot": null,
+        "ownerKeys": [],
+        "dependsOn": [
+          "OurgoalAppScope",
+          "OurgoalAuthSafety"
+        ]
+      }
+    }
+  ],
+  "originals": [
+    {
+      "file": "docs/specs/SAVE-SYNC-CONTRACT-2026-10-12.md",
+      "sha256": "c24260fdd87a39418312bd263e404df748ce6644bdf9874f93ca4956dfcd24d8"
+    },
+    {
+      "file": "reports/TASK-ES-694/evidence/after-contract-facts.md",
+      "sha256": "fdfc5b7553ec30c152f0310480458ecda03aa9af91b7160bfbbf0186850db57a"
+    },
+    {
+      "file": "reports/TASK-ES-695-A-01a13674/claims.json",
+      "sha256": "13ec31d28f9737f518c124be05e29534aa40bb1dc20065cf0e2cb1e8e4d0fa66"
+    },
+    {
+      "file": "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
+      "sha256": "c41284516d477b157fb29bc665b54fc69d6b0ded73a708620575e3640a3bf52b"
+    },
+    {
+      "file": "docs/directives/ACTIVE.md",
+      "sha256": "06a885f1a41b5a82905dc80388ca5222012bae34e0f1442903e457f91276d988"
+    }
+  ],
+  "sourceCompatibility": {
+    "AReuse": true,
+    "pendingSchema": 1,
+    "recordKeysPreserved": true,
+    "usersGoalsBucketsOnly": true,
+    "newStoreKind": 0,
+    "newEngine": 0,
+    "oldQueueAutoUpgrade": false
+  },
+  "operating": null,
+  "realDB": null,
+  "twoDevices": null,
+  "serverCAS": null,
+  "actualAccountSwitchUse": null,
+  "effect": null,
+  "Court": null
+}

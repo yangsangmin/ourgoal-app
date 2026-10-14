@@ -15,6 +15,7 @@
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalSettingsKit = global.OurgoalSettingsKit || {};
+  var resyncGeneration = 0;
 
   /* ---- 이전 전 index.html 4441~4446줄(#TASK-ES-521 생성기 표지) ---- */
   /* ============ P0: 새 비밀번호 입력 모달 (비밀번호 복구 링크 수신 시) ============ */
@@ -82,33 +83,55 @@
   function bindResyncAccountDataButton() { /* [#TASK-ES-521] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.resyncBtn){
     L.resyncBtn.addEventListener('click', async function(){
+      if(L.resyncBtn.disabled) return;
       if(!L.state.profile || !L.state.profile.id){
         L.toast('로그인 상태를 확인할 수 없습니다.');
         return;
       }
-      L.resyncBtn.disabled = true;
-      L.toast('서버 및 로컬 백업에서 목표·기록·프로필을 동기화하고 복원하는 중입니다…');
+      var profile=L.state.profile, button=L.resyncBtn, generation=++resyncGeneration;
+      function content(p){return JSON.stringify({id:p.id,username:p.username,displayName:p.displayName,bio:p.bio,avatarUrl:p.avatarUrl,interests:p.interests,region:p.region,regionPublic:p.regionPublic,goals:p.goals,records:p.records});}
+      var snapshot=content(profile);
+      function current(){return generation===resyncGeneration && L.state.profile===profile && content(profile)===snapshot;}
+      button.disabled = true;
+      L.toast('기기에 남은 자료와 반영 상태를 확인하는 중이에요…');
       try {
-        await L.syncServerRecords(true);
-        var refreshed = await L.loadProfile(L.state.profile.id, L.state.profile.username, {
-          display_name: L.state.profile.displayName,
-          avatar_url: L.state.profile.avatarUrl
+        // Only proven DIR006 pending changes may be sent. Legacy queue/backups are never a full-send list.
+        var pending=await L.saveProfile({deviceFirst:true,retry:true,manualRetry:true});
+        if(!current()) return;
+        if(profile.isGuest){
+          L.toast('기기 자료는 남겨 두었어요. 로그인 전에는 반영 여부를 확인할 수 없어요.');
+          return;
+        }
+        var refreshed = await L.loadProfile(profile.id, profile.username, {
+          display_name: profile.displayName,
+          avatar_url: profile.avatarUrl
         }, 'manual_resync');
+        if(!current()) return;
         if(refreshed){
-          L.state.profile = refreshed;
-          await L.saveProfile();
-          L.renderAll();
-          var gCount = (L.state.profile.goals || []).length;
-          var rCount = (L.state.profile.records || []).length;
-          L.toast('동기화 완료: 목표 ' + gCount + '개, 기록 ' + rCount + '개가 안전하게 연결되었습니다!');
+          // loadProfile protects exact pending generations; nonpending rows keep existing P0 server authority.
+          var trash=profile.trash || [], recordDeleted=window.OurgoalRecordLedger.trashRecordIds(trash), goalDeleted=trash.filter(function(t){return t && t.entityType==='goal';}).map(function(t){return String(t.originalId);});
+          ['records','goals'].forEach(function(kind){
+            var deleted=kind==='records'?recordDeleted:goalDeleted;
+            profile[kind]=(refreshed[kind] || []).filter(function(row){return deleted.indexOf(String(row.id))<0;});
+          });
+          if(refreshed._saveLoadState && refreshed._saveLoadState.users.remote==='read-accepted') ['displayName','bio','avatarUrl','interests','region','regionPublic','itItems'].forEach(function(k){profile[k]=refreshed[k];});
+          profile._saveLoadState=refreshed._saveLoadState;
+          // renderAll reaches records' legacy auto-save; this read journey must not dispatch it.
+          snapshot=content(profile);
+          L.renderSettingsScreen();
+          var readState=refreshed._saveLoadState || {}, unknown=['users','goals','records'].some(function(kind){return !readState[kind] || readState[kind].remote!=='read-accepted';});
+          var unfinished=!Array.isArray(pending) || pending.some(function(r){return r.state!=='confirmed';});
+          if(unknown || unfinished) L.toast('기기 자료는 남겨 두었어요. 반영 여부는 아직 확인되지 않았어요.');
+          else if(pending.length) L.toast('이번 요청에서 확인된 변경은 반영됐어요. 기기 보관 자료는 따로 남겨 두었어요.');
+          else L.toast('불러온 자료를 확인했어요. 기기 보관분이 반영됐다는 뜻은 아니에요.');
         } else {
-          L.toast('동기화 완료: 최신 상태입니다.');
+          L.toast('반영 여부를 확인하지 못했어요. 기기 자료는 그대로 남겨 두었어요.');
         }
       } catch(err){
         console.warn('수동 동기화 실패:', err);
-        L.toast('동기화 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        if(current()) L.toast('반영 여부를 확인하지 못했어요. 기기 자료는 그대로 남겨 두었어요.');
       } finally {
-        L.resyncBtn.disabled = false;
+        if(generation===resyncGeneration && L.resyncBtn===button) button.disabled = false;
       }
     });
   }

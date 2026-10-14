@@ -14,7 +14,8 @@ var Module = require('module');
 var ROOT = path.join(__dirname, '..');
 var htmlArg = process.argv.indexOf('--html');
 var HTML_PATH = htmlArg > -1 ? path.resolve(process.argv[htmlArg + 1]) : path.join(ROOT, 'index.html');
-var html = require('./helpers/inline-bundle').withInlineCells(fs.readFileSync(HTML_PATH, 'utf8')); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
+var rawHtml = fs.readFileSync(HTML_PATH, 'utf8');
+var html = require('./helpers/inline-bundle').withInlineCells(rawHtml); /* #TASK-ES-441 인라인 합본(원문 맨 앞 + js/tabs 세포) */
 var Ledger = require('../js/record-ledger');
 var isoPath = path.join(ROOT, 'js', 'account-isolation.js');
 var isolationSrc = fs.existsSync(isoPath) ? fs.readFileSync(isoPath, 'utf8') : null; /* 브라우저처럼 가짜 window·localStorage 안에서 돌린다 */
@@ -181,6 +182,15 @@ function makeBrowser() {
   if (isolationSrc) vm.runInContext(isolationSrc, ctx, { filename: 'js/account-isolation.js' });
   if (guardSrc) vm.runInContext(guardSrc, ctx, { filename: 'js/direct-login-guard.js' });
   var names = ['function defaultProfile(', 'async function sha256Hex(', 'async function ensureUserRow(', 'async function loadProfile(', 'async function saveProfile(', 'async function migrateGuestDataToUser(', 'async function performLogout(', 'async function loginWithDirectIdentifier('];
+  if (rawHtml.indexOf('async function ensureUserRow(') < 0 && rawHtml.indexOf('async function loadProfile(') < 0) {
+    win.OurgoalAppScope = { scope: ctx };
+    ['js/core/capabilities.js', 'js/core/device-save.js', 'js/core/local-keep.js', 'js/core/profile-load.js'].forEach(function (file) {
+      vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+    });
+    ctx.ensureUserRow = win.OurgoalUiHelpers.ensureUserRow;
+    ctx.loadProfile = win.OurgoalUiHelpers.loadProfile;
+    names = names.filter(function (h) { return h !== 'async function ensureUserRow(' && h !== 'async function loadProfile('; });
+  }
   var code = names.map(function (h) { return extractFunction(html, h); }).join('\n') +
     '\nthis.api = { loadProfile: loadProfile, saveProfile: saveProfile, migrateGuestDataToUser: migrateGuestDataToUser, performLogout: performLogout, loginWithDirectIdentifier: loginWithDirectIdentifier };';
   vm.runInContext(code, ctx, { filename: 'index.html(잘라 옴)' });

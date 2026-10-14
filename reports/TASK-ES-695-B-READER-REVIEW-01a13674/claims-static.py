@@ -1,0 +1,29 @@
+"""Readonly exact claims/floor source comparison. No Court validator or judge calls."""
+import pathlib,subprocess,json,hashlib,re,datetime,sys,os
+sys.stdout.reconfigure(encoding='utf8');root=pathlib.Path(__file__).resolve().parents[2];out=pathlib.Path(__file__).resolve().parent
+before='eb232b3b4f96c2d56a17d929fc9f2b6961830737';head='6a69db41e748700479322a8a5cdbd0e811aa9468';file='reports/TASK-ES-695-B-01a13674/claims.json'
+def git(*a):return subprocess.check_output(['git','-c','core.longpaths=true','-c','core.autocrlf=false',*a],cwd=root)
+def blob(f,h=head):return git('show',h+':'+f)
+def sha(b):return hashlib.sha256(b).hexdigest()
+oldBytes=blob(file,before);newBytes=blob(file);old=json.loads(oldBytes);new=json.loads(newBytes);floors=json.loads(blob('court/grade-floors.json'))
+def rawItems(data,key):
+ s=data.decode('utf8');i=s.index('[',s.index('"'+key+'"'));i+=1;items=[];dec=json.JSONDecoder()
+ while True:
+  while s[i].isspace() or s[i]==',':i+=1
+  if s[i]==']':return items
+  _,end=dec.raw_decode(s,i);items.append(s[i:end].encode('utf8'));i=end
+oldC=rawItems(oldBytes,'claims');newC=rawItems(newBytes,'claims');oldR=rawItems(oldBytes,'requirements');newR=rawItems(newBytes,'requirements')
+checks=[]
+for c in new['claims'][len(old['claims']):]:
+ k=c['check'];data=blob(k['file']);pathHits=[{'pattern':r['pattern'],'floor':r['floor']} for r in floors.get('pathFloors',[]) if any(re.search(r['pattern'],f) for f in c['touches'])];keywordHits=[{'label':r['label'],'floor':r['floor']} for r in floors.get('keywordFloors',[]) if re.search(r['pattern'],c['statement'],re.I)]
+ checks.append({'id':c['id'],'req':c['req'],'kind':c['kind'],'domain':c['domain'],'type':k['type'],'file':k['file'],'sourceSha256':sha(data),'textContainsBySource':k['text'] in data.decode('utf8'),'checkFileIsOnlyTouches':c['touches']==[k['file']],'sourceGuidedShape':bool(re.fullmatch(r'[A-Za-z0-9_-]{1,24}',c['id']) and c['req'] in {r['id'] for r in new['requirements']} and c['kind']=='static' and c['domain']=='config' and k['type']=='codeContains' and len(k['text'])>=4 and '..' not in k['file'] and not k['file'].startswith('/') and '\\' not in k['file']),'declaredDomainFloor':floors['domains'][c['domain']]['floor'],'pathFloorMatches':pathHits,'keywordFloorMatches':keywordHits,'runtimeExecutionAsserted':False,'meaning':'source reference text only; not runtime or preservation or complete requirement proof'})
+reqFile=new['requirementsSource'];oldReq=blob(reqFile,before);newReq=blob(reqFile)
+rootPath=pathlib.Path('C:/Users/HP/기업화/01a13674/K18-B-test-claims-root-intake.json');rootIntakeBytes=rootPath.read_bytes()
+packet=pathlib.Path('C:/dev/wt/e18testclaims-01a13674/reports/TASK-ES-695-B-TEST-01a13674/claims-prep-1');expected={'SOURCE-SEAL.json':'da1fc7e17bc7a0d8acdd3a35a005d0d3f1a649202a2e7051e3779e1774c5c0c1','COMMIT-CLOSE.json':'cd0c03229b07090c0082a3df883ae4eb1ecfb5e652d6e79973e1425adfd05e89'}
+pins=[{'file':str(packet/f),'expected':v,'actual':sha((packet/f).read_bytes())} for f,v in expected.items()]
+r={'task':'TASK-ES-695-B-READER-REVIEW-01a13674','measuredAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'collectorPid':os.getpid(),'ownReaderSourceUnchanged':git('rev-parse','HEAD').decode('utf8').strip()==before,'readerSource':before,'readonlyClaimIntegrationSource':head,'claimAuthorSource':'11ad8f7a5e927b5a4af13aee5d5c6fedba691ff3','claimAuthorClosure':'7fd740fe438ca9dc804f5e03172645aeed04dbc3','claimsSha256':sha(newBytes),'claimsExpectedSHAExact':sha(newBytes)=='1e565a70175eb7c7da97b8c77bef788339dcfdd6ab01efa932d4a2d9309514f5','authorPins':pins,'authorPinMismatches':[p for p in pins if p['expected']!=p['actual']],'rootIntakeSha256':sha(rootIntakeBytes),'rootIntakeExpectedShaExact':sha(rootIntakeBytes)=='1a0eb9c38a4c93966042d3225e70772c024d1635b8bf3b3a12f576975beb0232',
+ 'oldClaimsObjectsExact':new['claims'][:len(old['claims'])]==old['claims'],'oldClaimsLiteralObjectsExact':newC[:len(oldC)]==oldC,'oldRequirementsObjectsExact':new['requirements'][:len(old['requirements'])]==old['requirements'],'oldRequirementsLiteralObjectsExact':newR[:len(oldR)]==oldR,'requirementsSourcePrefixExact':newReq.startswith(oldReq),'appendedRequirementIDs':[r['id'] for r in new['requirements'][len(old['requirements']):]],'newClaims':checks,'sourceOnlyStaticClaimsCount':len(checks),
+ 'productAndTestPathsChanged':git('diff','--name-only',before,head,'--','tests','js','index.html','ui.js','ui.css','api','docs/architecture').decode('utf8').strip().splitlines(),'courtFilesChanged':git('diff','--name-only',before,head,'--','court').decode('utf8').strip().splitlines(),'floorSourceSha256':sha(blob('court/grade-floors.json')),'courtClaimSourceSha256':sha(blob('court/claims.js')),'floorMeaning':'read config L1 and source path/keyword match structure only; no effectiveFloor or Court functions executed','CourtStaticOutcomeSource':'court/claims.js:233–238 emits static evidence/TEXT_ONLY; not PRESERVED or runtime behavior',
+ 'newR4EntirePreservationAndRuntimeFulfillment':None,'originalC1ScenarioSha256Unchanged':sha(blob('reports/TASK-ES-695-B-01a13674/manual-guest.json',before))==sha(blob('reports/TASK-ES-695-B-01a13674/manual-guest.json')),'officialNextCourt':None,'actualCI':None,'use':None,'effect':None,'validatorCalls':0,'judgeCalls':0,'suiteExecutions':0,'remoteCalls':0,'productWrites':0,'testWrites':0,'claimWrites':0}
+with (out/'claim-static.json').open('x',encoding='utf8') as f:json.dump(r,f,ensure_ascii=False,indent=2);f.write('\n')
+print(json.dumps({k:r[k] for k in ['collectorPid','claimsExpectedSHAExact','authorPinMismatches','rootIntakeExpectedShaExact','oldClaimsObjectsExact','oldClaimsLiteralObjectsExact','oldRequirementsObjectsExact','oldRequirementsLiteralObjectsExact','requirementsSourcePrefixExact','appendedRequirementIDs','newClaims','productAndTestPathsChanged','courtFilesChanged','originalC1ScenarioSha256Unchanged']},ensure_ascii=False))
