@@ -55,7 +55,7 @@
     } catch(error){ return false; }
   }
   function state(){return caps.request('ui.modal.state',CELL)();}
-  function busy(){return state().active || caps.request('records.feedback.state',CELL)().active;}
+  function busy(){return state().active || caps.request('records.feedback.state',CELL)().active || !caps.has('ui.toast.state') || caps.request('ui.toast.state',CELL)().active;}
   function clear(){if(timer !== null) clearTimeout(timer);timer=null;pending=null;}
   function tick(){
     if(timer !== null) clearTimeout(timer);

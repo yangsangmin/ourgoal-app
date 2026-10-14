@@ -2503,11 +2503,20 @@
       "kind": "organ",
       "role": "OurGoal Toast Renderer (기관 — 공용 토스트 표시·교체·닫기)",
       "spans": [],
-      "provides": [],
+      "provides": [
+        "ui.toast.state"
+      ],
       "requires": [],
       "contributes": [],
       "owns": [],
-      "capabilities": [],
+      "capabilities": [
+        {
+          "name": "ui.toast.state",
+          "description": "공용 토스트의 실제 표시와 fade중 상태 읽기",
+          "sideEffect": "none",
+          "needsConfirm": false
+        }
+      ],
       "planned": {
         "provides": [],
         "contributes": []
@@ -2517,7 +2526,8 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalCapabilities"
       ]
     },
     {
@@ -6612,7 +6622,8 @@
         "ui.modal.close",
         "ui.modal.state",
         "records.feedback.state",
-        "storage.device.focused"
+        "storage.device.focused",
+        "ui.toast.state"
       ],
       "contributes": [],
       "owns": [],

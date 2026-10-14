@@ -16,6 +16,22 @@
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
 
   /* ---- 이전 전 index.html 3419~3427줄(#TASK-ES-569 생성기 표지) ---- */
+  function toastState(){
+    var el = document.getElementById('toast');
+    if(!el) return {active:false,shown:false,opacity:0};
+    try {
+      var style = global.getComputedStyle(el), opacity = Number(style.opacity);
+      var visible = style.display !== 'none' && style.visibility !== 'hidden' && el.getClientRects().length > 0;
+      return {active:visible && (el.classList.contains('show') || !Number.isFinite(opacity) || opacity > 0),shown:el.classList.contains('show'),opacity:Number.isFinite(opacity) ? opacity : null};
+    } catch(error){return {active:true,shown:null,opacity:null};}
+  }
+  function provideToastState(){
+    if(!global.OurgoalCapabilities) return;
+    global.OurgoalCapabilities.provide('ui.toast.state',toastState,{cell:'core/toast-renderer',description:'공용 토스트의 실제 표시와 fade 중 상태 읽기',sideEffect:'none'});
+  }
+  if(global.OurgoalCapabilities) provideToastState();
+  else if(typeof document !== 'undefined') document.addEventListener('DOMContentLoaded',provideToastState,{once:true});
+
   function toast(msg){
     var el = document.getElementById('toast');
     if(!el) return;
