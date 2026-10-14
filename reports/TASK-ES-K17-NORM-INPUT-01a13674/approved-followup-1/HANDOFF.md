@@ -24,6 +24,8 @@ main87에서 이미 병합된 source 변화는 normal merge로 인수한 것이�
 
 첫 b7cab commit lookup 실패는 root shorthand의 자료종류를 오해한 source조회negative다. 실제는 `FIRST-INDEPENDENT-OPINION.json` SHA b7cab7d8...이며 exactfile/hash와 SOURCE-SEAL/HANDOFF/CONDITIONS를 읽고 `CORRECTED-APPROVAL-AND-INDEPENDENT-SOURCE.json`에 별도로 결박했다. 원독립 지적·첫EOL/reader실패·원12C98ADB/e171·최종61A96AEC/73df·기존raw는 변경하지 않았다.
 
+이번 old-tracked raw 비교의 첫 assertion도 기록한다: `.claude/plan-K17-input-norm.md`의 physical CRLF와 Git canonical LF가 서로 달라 raw==blob 검사에서 중단됐고, 그 attempt로 RAW-PRESERVATION/source-seal은 만들어지지 않았다. 기존 초기 physical seal과 canonical LF를 분리해 `RAW-PRESERVATION.json`에 별도로 교정했다. 실제 원physical과 옛외부독립/Court pins는 그대로이며 승인된 current claim literal 외 canonical 내용도 같다. raw CRLF/원문diff 문맥에 대한 git diff whitespace 경고를 없애려고 원raw를 정규화하지 않았다. normal hook/commit 성공과 이 별도source 검사 negative는 구분한다.
+
 # 법정 판정서
 
 현재 최신 **역사 공식 판정은 61A96AEC 확인 부족**, 대상73df/run38507338720이다. 이번 추가승인이 접수됐어도 그 원판정과 심사head를 통과로 재라벨하지 않는다. 이번 새head의 공식Court는 root 후속이며 현재 null이다. 첫12C98ADB는 다른 e171 source다. normal git hook은 실행하며 no-verify/force/rebase/push/PRready/원격mainmerge를 사용하지 않았다.

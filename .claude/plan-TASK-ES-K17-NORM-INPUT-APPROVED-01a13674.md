@@ -1,9 +1,9 @@
 목표: PR981에 대한 이번 명시 헌법개정 승인 접수를 기존 두 행 초안의 실질 변경 없이 기록하고, 최신 main과 정상 병합한 source를 root에게 인계한다.
 
-- [ ] 승인·현재성·원문·독립/Court source 고정 · 예상 5분(추정) · 완료 기준: source73df/main87·WORKREF982·이번 명시 승인 시각/범위·actual context와 원두행/archive/원raw를 pin한다.
-- [ ] published branch에 origin/main 정상 병합·원양쪽추가 보존 · 예상 10분(추정) · 완료 기준: normal merge/no-force/no-rebase/no-verify이며 TICKETS 충돌은 양쪽 append bytes가 모두 남고 다른 실질 충돌은 root에 분리한다.
-- [ ] 전문 머리·전문-only 대장 행의 승인 상태만 갱신 · 예상 5분(추정) · 완료 기준: 승인된 제2조9항3·4호·kernel/archive·다른조항/MASTER/product/ACTIVE/frozen이 해당 source 기준 그대로이며 접수와효력미발생을 구분한다.
-- [ ] 정상 commit·source seal·closure·clean/PID 인계 · 예상 5분(추정) · 완료 기준: 원12C/61A/firstEOL/raw독립·승인전body/diff 보존, 정상훅원로그와exacthead/clean/자기잔류를 root가 되읽는다. push/PRready/원격mainmerge는 root만 한다.
+- [x] 승인·현재성·원문·독립/Court source 고정 · 예상 5분(추정) · 완료 기준: source73df/main87·WORKREF982·이번 명시 승인 시각/범위·actual context와 원두행/archive/원raw를 pin한다.
+- [x] published branch에 origin/main 정상 병합·원양쪽추가 보존 · 예상 10분(추정) · 완료 기준: normal merge/no-force/no-rebase/no-verify이며 TICKETS 충돌은 양쪽 append bytes가 모두 남고 다른 실질 충돌은 root에 분리한다.
+- [x] 전문 머리·전문-only 대장 행의 승인 상태만 갱신 · 예상 5분(추정) · 완료 기준: 승인된 제2조9항3·4호·kernel/archive·다른조항/MASTER/product/ACTIVE/frozen이 해당 source 기준 그대로이며 접수와효력미발생을 구분한다.
+- [x] 정상 commit·source seal·closure·clean/PID 인계 · 예상 5분(추정) · 완료 기준: 원12C/61A/firstEOL/raw독립·승인전body/diff 보존, 정상훅원로그와exacthead/clean/자기잔류를 root가 되읽는다. push/PRready/원격mainmerge는 root만 한다.
 
 막힐 지점: 새승인과978승인 혼동, main추가 티켓 유실, approved를effective로 승격, 미측정행위를PASS로 표기, 공통writer 침범. 직접 승인 범위 밖 실질 충돌은 root에 보고하고 승인된 독립 읽기는 계속한다.
 
@@ -23,3 +23,7 @@ source73df/main87/982·approval→원body/diff/indie/Court pin→normal merge→
 단독 norm981 문서writer를 승계한다. 새자기plan/report 및 전문머리/대장승인상태, 불가피한 TICKETS merge충돌의 양쪽append 보존만 쓴다. rootplan/ledger/task-link·MASTER/product·kernel/ACTIVE/frozen/Court/gates·기존vault/Notion/queue/tri-sync·기존Craw쓰기0이다.
 ## 8. [원칙 ⑧] 막히는 지점 예상·성과 측정
 실제 승인 원문 native 검증은root가별도 담당하고 전달받은직접응답 provenance를조사와구분한다. 원확인부족12C/61A·독립b7cab·firstEOL/078 O1 한계·소진SQL3/첫지표/한건·사진/음성/그릇/미디어 hold를 유지한다. 계획 준비·효력·사용·효과는 각각분리하고 미측정null로 둔다.
+
+추가 위임: current C4/C6 check.text만 실제두승인상태행으로변경했다. 원73df claims raw/SHA·JSON paths는 CLAIMS-LITERAL-ONLY-CHANGE.json, 초기raw-vs-Git assertionnegative와층분리교정은 RAW-PRESERVATION.json에 있다. 원physical을 Git LF와같게 고쳐서경고를없애지 않는다.
+
+측정: 승인상태 source commit·normalhook와firstmergenegative는approved-followup-1 원로그, 범위와raw층분리는SOURCE-MEASUREMENT/RAW-PRESERVATION, 자기잔류는process-observation에서확인했다. 마지막metadata commit뒤실제head/clean은root인계조회에고정한다. 계획준비이며newCourt/효력/제품사용/효과는아직없다.
