@@ -21,7 +21,7 @@
     var inp = document.getElementById('captureInput');
     if(!inp) return;
     // [#TASK-ES-217 / [88]] 지움 피로도 근절: inp.value 강제 주입 제거 및 placeholder 동적 가이드화
-    inp.placeholder = '예: ' + text;
+    inp.placeholder = '기록하고 나의 역사데이터를 만들어요.';
     if(!inp.value){
       inp.value = '';
     }

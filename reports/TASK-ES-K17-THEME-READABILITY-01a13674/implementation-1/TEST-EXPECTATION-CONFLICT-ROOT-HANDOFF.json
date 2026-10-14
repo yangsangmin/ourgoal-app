@@ -1,0 +1,43 @@
+{
+  "requiredSmoke": "REQUIRED-SMOKE-AFTER-FIXED-LOCK.json",
+  "productSource": "SOURCE-FREEZE.json",
+  "testWriter": "/root, separate commit pending",
+  "file": "scripts/smoke-test.js",
+  "fileSHA256": "26edbcad66b288e89f98b40b8ffbe8ee721ee2a6bab8c502555b02aac5542832",
+  "exactConflicts": [
+    {
+      "line": 2207,
+      "originalAssertion": "  assert.ok(html.includes('id=\"captureInput\" placeholder=\"예: '), '앰비언트 체크인 플레이스홀더 안내(사용자 언어 예시)');",
+      "authorizedNewOperand": "id=\"captureInput\" placeholder=\"기록하고 나의 역사데이터를 만들어요.\"",
+      "retainCheckName": true,
+      "retainAssertionCount": true
+    },
+    {
+      "line": 7613,
+      "originalAssertion": "  assert.ok(indexHtml.includes(\"inp.placeholder = '예: ' + text;\"), 'applyQuickCunningText 내 inp.placeholder 배선 누락');",
+      "authorizedNewOperand": "inp.placeholder = '기록하고 나의 역사데이터를 만들어요.';",
+      "recommendedReadScope": "exact js/tabs/records/checkin-helpers.js, not any tutorial occurrence in APP_SRC",
+      "retainOtherNegativeValueInjectionAssertion": true,
+      "retainCheckName": true,
+      "retainAssertionCount": true
+    }
+  ],
+  "approvalSource": {
+    "file": "C:/dev/vault/에이전트 토론장/결심 기록.md",
+    "sha256": "7018f6c1a6ee0cddefad9f67517e1f8d71502218dbf3730e47522d62f6d806d4",
+    "locators": [
+      "D-2026-10-13-01 L94 마9",
+      "D-2026-10-13-02 L115 바9"
+    ],
+    "meaning": "placeholder exact literal only; deletion scopes not executed"
+  },
+  "firstHookFailure": "source-commit.log",
+  "sharedNodePathHookStillFailed": "source-commit-after-deps.log",
+  "environmentCorrection": "npm-ci-fixed-lock.log; package-lock/package unchanged; same locked module versions",
+  "testEditsByThisWriter": 0,
+  "rootCentralEdits": 0,
+  "hookBypass": false,
+  "submitRepeated": false,
+  "newBrowserRepeated": false,
+  "Court": null
+}
