@@ -6120,3 +6120,7 @@ TASK-ES-705 추가: SNOWBALL 지도 일괄 갱신 의무에 따라 부모가 PR9
 ## TASK-ES-K17-THEME-READABILITY-01a13674 — 원077 안내 문구와 네 테마
 공통 TASK-CC-CELL-UNWIRE-RUN-309dca5d, 작업참고 기준 PR984, 원마9/바9 결심 기록 SHA7018f6c1…를 인수했다. 초기 HTML과 세 runtime writer의 placeholder를 확정 문구로 맞추고 ui.css 네 테마 한정 pseudo 색/opacity만 변경했다. 기존 칩·컨디션·값·저장 순서·DTO·MASTER·규범은 변경하지 않았다. 작성자64/독립31 pin(중복 source5개 Git 제외)과 실제 guest 네 테마의 빈칸/입력/삭제 관측은 ROOT-QUALIFICATIONS 및 별도 독립 보고에 결박한다. 원409/30→437/2→438/1 실패와 세 old text expectation 교정·원check/단언수 보존은 서로 분리했다. package.json 필수 네 스크립트와 module check/guard는 exit0, baseline와 manifest 내용은 불변이다.
 정식 패킷의 최초 source-only 인사창 전제 지적은 원99ef에서 보존하고 visible→hidden·symptom 위치만 교정했다. 제품 source57f5/정식4bee PR985를 실제 되읽기 확인했으며 첫 CI38563881801은 성공, Court38563882324는 이 기록 작성 때 진행 중이다. 이를 공식 통과로 기록하지 않는다. 로그인 온보딩과 pseudo 시각 품질은 needs-login/visual-quality로 분리했고 신규 quickchip/guest 저장 시나리오는 공식 법정 범위다. 실제 운영 반영·전체 사용·효과는 미확인이다. 이 작업 이력 추가는 문서만의 변경이며 제품·claims·기존 관측을 다시 쓰지 않는다.
+
+## TASK-ES-080-GOAL-LINK-01a13674 — 저장 뒤 목표 이동 제안
+
+원02 L66 마12/L110 바10과 원080~082를 인수하고 origin/main0692·WORK-REFERENCE PR985/138에서 구현했다. 저장/P0/DTO/기존 AI 요청은 보존하며 실제 modal/feedback 소유자 신호와 원 계정/기록/본문/draft현재성을 결합한다. 관련 목표 제목은 escape 처리해 질문앞에 표시하고 자동 goalId 귀속은 없다. 세션 억제2→4→8은 기본값이며 새로고침/프로필 재생성 시 사라진다. 원PC1은 실제 공개guest/기기저장/기존팝업닫기/이동 한흐름이고 API차단4/전달0, 최종목표표시 보완과 EOL층을 분리했다. 최초 보조검사의 source 상대경로 ENOENT와 CRLF diff-check 오류는 보존하고 경로/개행만 교정했다. 현재source dfb6cac7 정상훅0, 공식 Court·원격/운영/전체 사용/효과는 미확인.
