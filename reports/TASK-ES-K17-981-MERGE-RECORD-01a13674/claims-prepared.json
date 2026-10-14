@@ -1,0 +1,46 @@
+{
+  "task": "TASK-ES-K17-981-MERGE-RECORD-01a13674",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "전문 머리에 실제 PR981 병합 사실을 기록한다."
+    },
+    {
+      "id": "R2",
+      "text": "버전 대장에 같은 실제 PR981 병합 사실을 기록한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "전문 머리에 실제 병합 사실을 기록한다",
+      "touches": [
+        "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md",
+        "text": "실제 병합 기록: PR #981은 2026-10-14T08:13:10Z에 `ourgoaltest` 계정으로 원격 main에 병합되었으며, 병합 커밋은 `b3964db3d6e8a57a8191d20d58b00ede803cea8f`다."
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "버전 대장에 같은 실제 병합 사실을 기록한다",
+      "touches": [
+        "docs/rules/CONSTITUTION_VERSIONS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/CONSTITUTION_VERSIONS.md",
+        "text": "실제 병합 기록: PR #981은 2026-10-14T08:13:10Z에 `ourgoaltest` 계정으로 원격 main에 병합되었으며, 병합 커밋은 `b3964db3d6e8a57a8191d20d58b00ede803cea8f`다."
+      }
+    }
+  ],
+  "requirementsSource": "docs/specs/REQ-TASK-ES-K17-981-MERGE-RECORD-01a13674.md"
+}

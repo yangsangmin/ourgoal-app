@@ -771,3 +771,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-695-A-01a13674 | FIX | DIR006 A: 기기 자료와 미확정 재전송 목록을 되읽어 확인한 뒤 두 기록 caller의 입력·잠금·기기 경험치 후속을 진행한다. 기기 보관과 서버 확인을 구분하고 보존 실패 입력·사진·동일 기록 id를 유지한다. 기존 P0 #TASK-ES-695 실물 보존 | 기존 DIR006 실행 승인 · PR978 한정 예외 발효 · docs/specs/SAVE-SYNC-CONTRACT-2026-10-12.md · docs/specs/REQ-TASK-ES-695-A-01a13674.md · reports/TASK-ES-695-A-01a13674/claims.json | 단독 구현 /root/contracts · 원 P0 주장/자료 불변 · B/C·운영 CAS·XP 서버원장·사용·효과 미확인 · PR980 main 병합 d326db5e6c7c50255e198d44204241f0c68fc0e8 · 최신 공식06C54A5D 확인 부족 · 첫4A23BBCD 돌려보냄/독립의견 보존
 
 - #TASK-ES-695-B-01a13674 | FIX | DIR006 B: users/goals 명시 변경의 기기 자료·typed pending 확인, 빈/미확정 서버읽기·계정전환 전 큐 보존, 수동 동기화의 전체 legacy 전송/완료 오안내 차단 및 pending 세대 읽기 보존 | PR980 actual main d326db5e · PR978 저장순서 한정 예외 · 원DIR006 · docs/specs/REQ-TASK-ES-695-B-01a13674.md · reports/TASK-ES-695-B-01a13674/claims.json | 단독 구현 /root/contracts · 원P0/695/A/원raw 불변 · source 구현중 · C기타caller·실제복원/serverCAS·두기기·운영·사용·효과 미확인
+
+- #TASK-ES-K17-981-MERGE-RECORD-01a13674 | INFRA | PR981 제14.3 승인 후 실제 병합 사실 기록 | 근거 PR981-병합후-되읽기.json | 체감 가설: 전문과 대장에서 실제 발효 근거를 따라갈 수 있다 | root 통합 pending
