@@ -1,0 +1,77 @@
+{
+  "id": "eval-retain-on-failure",
+  "title": "접수 실패 또는 통신 단절 시 평가 모달과 작성 내용을 유지하고 닫히지 않는다",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnAvatarGreetClose",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnAvatarGreetClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnOpenEvalModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnOpenEvalModal"
+    },
+    {
+      "expect": "visible",
+      "selector": "#appEvaluationModal"
+    },
+    {
+      "do": "type",
+      "selector": "#evalCeoMsgInput",
+      "text": "접수 실패 시 입력 보존 확인",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#btnSubmitAppEval"
+    },
+    {
+      "expect": "textEquals",
+      "selector": "#btnSubmitAppEval",
+      "text": "평가 제출하기",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "visible",
+      "selector": "#appEvaluationModal"
+    },
+    {
+      "expect": "visible",
+      "selector": "#evalCeoMsgInput"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

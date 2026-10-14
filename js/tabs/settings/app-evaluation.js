@@ -46,6 +46,7 @@
   }
 
   /* ---- 이전 전 index.html 14046~14128줄(#TASK-ES-466 생성기 표지) ---- */
+  var pendingEvalItem = null; /* [REL-02] 접수 확인 전까지 같은 평가 항목을 붙들어 재시도에서 id 를 유지한다 */
   function bindAppEvalSubmit() { /* [#TASK-ES-466] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
   if(L.btnSubmitEval){
     L.btnSubmitEval.addEventListener('click', function(){
@@ -66,16 +67,28 @@
 
       if(!L.state.profile.settings) L.state.profile.settings = {};
       if(!Array.isArray(L.state.profile.settings.appEvaluations)) L.state.profile.settings.appEvaluations = [];
-      var evalItem = {
-        id: 'eval_' + Date.now(),
-        score: isNaN(scoreVal) ? null : scoreVal,
-        pros: prosVal,
-        cons: consVal,
-        improvements: impVal,
-        ceoMsg: ceoVal,
-        createdAt: new Date().toISOString()
-      };
-      L.state.profile.settings.appEvaluations.push(evalItem);
+      var evalItem;
+      if(pendingEvalItem){
+        // [REL-02] 접수 실패 뒤 다시 누르면 같은 평가 항목(같은 id)을 고쳐서 다시 보낸다 — 기기에 중복 항목을 만들지 않는다.
+        evalItem = pendingEvalItem;
+        evalItem.score = isNaN(scoreVal) ? null : scoreVal;
+        evalItem.pros = prosVal;
+        evalItem.cons = consVal;
+        evalItem.improvements = impVal;
+        evalItem.ceoMsg = ceoVal;
+      } else {
+        evalItem = {
+          id: 'eval_' + Date.now(),
+          score: isNaN(scoreVal) ? null : scoreVal,
+          pros: prosVal,
+          cons: consVal,
+          improvements: impVal,
+          ceoMsg: ceoVal,
+          createdAt: new Date().toISOString()
+        };
+        L.state.profile.settings.appEvaluations.push(evalItem);
+        pendingEvalItem = evalItem;
+      }
       L.saveProfile();
 
       // [#TASK-ES-268] Supabase app_evaluations 테이블 직접 적재
@@ -110,19 +123,25 @@
           evaluation: evalItem
         })
       })
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
-        L.toast('소중한 평가가 접수되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐'); // 소중한 평가가 접수되었습니다. 감사합니다! ⭐
-        resetAppEvaluationForm();
-        closeAppEvaluationModal();
+      .then(function(res){
+        // [REL-02] 서버가 접수를 확인(HTTP 성공 + ok:true)했을 때만 성공으로 다룬다.
+        return res.json().catch(function(){ return {}; }).then(function(data){ return { httpOk: res.ok, data: data || {} }; });
+      })
+      .then(function(r){
+        if(r.httpOk && r.data.ok){
+          pendingEvalItem = null;
+          if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
+          L.toast('소중한 평가가 접수되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐'); // 소중한 평가가 접수되었습니다. 감사합니다! ⭐
+          resetAppEvaluationForm();
+          closeAppEvaluationModal();
+        } else {
+          console.warn('[AppEvaluation] 접수 미확인:', r.data && r.data.error);
+          L.toast('평가를 접수하지 못했어요. 내용은 그대로 두었으니 잠시 뒤 다시 눌러 주세요.');
+        }
       })
       .catch(function(err){
         console.warn('[AppEvaluation] 제출 통신 오류:', err);
-        if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
-        L.toast('소중한 평가가 안전하게 보관되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐');
-        resetAppEvaluationForm();
-        closeAppEvaluationModal();
+        L.toast('평가를 접수하지 못했어요. 내용은 그대로 두었으니 잠시 뒤 다시 눌러 주세요.');
       })
       .finally(function(){
         L.btnSubmitEval.disabled = false;
