@@ -1,0 +1,23 @@
+{
+  "id": "dir006-c-privacy-device-state",
+  "title": "게스트의 나만 보기 되돌리기는 기기 저장 상태를 확인해 알린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#btnAvatarGreetClose", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnAvatarGreetClose" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "click", "selector": "#chipAdd" },
+    { "do": "click", "selector": "#ngManualBtn" },
+    { "do": "type", "selector": "#mGoalTitle", "text": "나만 보기 저장 확인", "clear": true },
+    { "do": "click", "selector": "#mSave" },
+    { "do": "waitFor", "selector": "#btnUndoThemePrivacy" },
+    { "do": "click", "selector": "#btnUndoThemePrivacy" },
+    { "expect": "textContains", "selector": "#toast", "text": "나만 보기로 설정했어요", "timeoutMs": 10000 },
+    { "expect": "textContains", "selector": "#toast", "text": "기기에 보관했어요" },
+    { "expect": "visible", "selector": "#btnUndoThemePrivacy" },
+    { "expect": "attr", "selector": "#btnUndoThemePrivacy", "name": "disabled", "equals": "" },
+    { "capture": "guest-private-device-state" }
+  ]
+}

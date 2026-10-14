@@ -1,0 +1,144 @@
+{
+  "task": "TASK-ES-695-C-GOAL-01a13674",
+  "requirementsSource": "reports/TASK-ES-695-C-GOAL-01a13674/REQ.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 생성 화면은 실제 저장 상태를 알리고 기존 공개 범위 되돌리기를 보존한다."
+    },
+    {
+      "id": "R2",
+      "text": "목표 두 작성 방식은 기기 확인·stable ID·잠금·계정/창/변경 세대로 typed goals 저장 결과를 소비한다."
+    },
+    {
+      "id": "R3",
+      "text": "실제 로그인 계정의 원격 목표 저장과 반환행/현재 세대 확인은 별도 검증한다."
+    },
+    {
+      "id": "R4",
+      "text": "기존 나만 보기 선택을 typed goals 기기 저장 결과와 현재 토스트에 연결하고 실패 재시도·기존 ID를 보존한다."
+    },
+    {
+      "id": "R5",
+      "text": "목표 생성과 공개 범위 되돌리기 모듈의 저장 상태 능력 요청을 신고서에 등록한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "domain": "ui-behavior",
+      "symptom": 14,
+      "statement": "게스트의 직접 목표 생성 화면은 기기 보관 상태와 기존 나만 보기 되돌리기 단추를 함께 알린다. 로그인한 원격 반영이나 실사용 효과는 이 시나리오의 주장이 아니다.",
+      "touches": [
+        "js/tabs/goals/new-goal-modal.js",
+        "js/core/confetti.js"
+      ],
+      "scenario": "manual-empty-guest-state.json"
+    },
+    {
+      "id": "C2",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "persistence",
+      "statement": "실제 로그인 사용자의 목표 생성·같은 ID 재시도·반환행·다른 계정 및 서버 세대 경계와 원격 공개 범위 반영은 미확인이다. 실제 제품/코어 부품과 게스트 PC의 확인 범위는 원raw에 별도로 공개한다.",
+      "touches": [
+        "js/tabs/goals/new-goal-modal.js",
+        "js/core/confetti.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "별도 승인 범위를 배정받은 실제 계정 저장 검증 담당",
+        "how": [
+          "법정은 외부 통신을 막아 실제 로그인과 자기 원격 목표 행을 확인할 수 없다",
+          "허용된 계정/자료/예산에서 두 mode 작성→기기 확인→현재 목표 반환행/재실행 복원을 따로 대조한다",
+          "기존 소진 SQL3/첫지표/한건 예산을 재사용하지 않는다. 실제 계정 원격 공개 범위·여러기기 CAS는 별도 허용된 검증 범위에서 확인한다."
+        ]
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "domain": "persistence",
+      "symptom": 33,
+      "statement": "직접 작성한 게스트 목표 한 개가 탭 재열기와 같은 페이지 재진입 후 유지되는 경계만 확인한다. 두 mode 전체 잠금·계정/창·세대 경계는 선정 부품 source 측정과 구분하며, 이 시나리오로 실계정이나 그 전체 경계를 확인했다고 주장하지 않는다.",
+      "touches": [
+        "js/tabs/goals/new-goal-modal.js"
+      ],
+      "scenario": "manual-guest-retention.json"
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "fix",
+      "domain": "ui-behavior",
+      "symptom": 15,
+      "statement": "게스트의 나만 보기 되돌리기는 기기 확인 뒤 실제 보관 상태를 알리고 해당 단추를 완료 상태로 둔다. 실제 게스트 private 기기/백업/미확정 항목과 새로고침 보존은 별도 원관측이며 원격 반영을 뜻하지 않는다.",
+      "touches": [
+        "js/core/confetti.js"
+      ],
+      "scenario": "privacy-empty-guest-state.json"
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "goals/new-goal-modal 신고서가 실제 요청하는 저장 상태·안내 능력을 등록한다.",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/modules.json",
+        "path": "cells.218.requires",
+        "equals": [
+          "storage.device.message",
+          "storage.device.status"
+        ]
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "core/confetti 신고서가 실제 요청하는 저장 상태·안내 능력을 등록한다.",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/modules.json",
+        "path": "cells.53.requires",
+        "equals": [
+          "storage.device.message",
+          "storage.device.status"
+        ]
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "domain": "ui-behavior",
+      "symptom": 15,
+      "statement": "줄글 템플릿 검토 화면의 적용 버튼은 기기 보관 상태를 알리고 창을 닫는다. 외부 요청이 차단된 제품 내장 대체 템플릿 경로의 한정 주장이고 원격 AI·실계정·R2 전체 잠금/계정/창/세대 경계를 확인했다는 뜻은 아니다.",
+      "touches": [
+        "js/tabs/goals/new-goal-modal.js"
+      ],
+      "scenario": "template-guest-device-state.json"
+    }
+  ],
+  "outOfScopeReports": [
+    "R2의 source/unit 선정 측정은 제품 runtime을 L4나 실제 UI로 판정하는 근거가 아니다. 게스트 입력 유지/lock 및 template 검토 화면의 추가 PC 경계 확인은 별개 독립 검토·시나리오 확정이 필요하다.",
+    "R2 전체 경계를 이 PC 시나리오만으로 닫지 않는다. 원 C1 선정9와 C2 선정8은 실제 코드·제공자와 합성 DOM/저장소/guest 부품 측정이며 로그인·실제 여러기기 사용을 뜻하지 않는다. 최초 숨김 입구와 3회 진입 실패, 원 undo 기기 저장 실패를 보존하고 별도 교정 결과만 추가한다."
+  ]
+}

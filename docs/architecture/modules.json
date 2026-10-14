@@ -1582,7 +1582,10 @@
       "role": "기관 — 축하 꽃가루(burstConfetti, #confettiLayer)·목표 공개 범위 되돌리기 토스트(showUndoPrivacyToast). 토스트(toast)·타이머는 index.html 에 남김. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-482)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "storage.device.message",
+        "storage.device.status"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -1595,7 +1598,8 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalCapabilities"
       ]
     },
     {
@@ -6467,7 +6471,10 @@
       "role": "새 목표 만들기 창(promptNewGoal)·직접 설정·검토 단계·로컬 목표 템플릿. index.html 인라인 「New goal modal」 묶음에서 글자 그대로 옮김(#TASK-ES-466)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "storage.device.message",
+        "storage.device.status"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -6481,6 +6488,7 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope",
+        "OurgoalCapabilities",
         "OurgoalModeration",
         "OurgoalSanctuaryV3"
       ]

@@ -1,0 +1,82 @@
+{
+  "id": "dir006-c-template-guest-device-state",
+  "title": "줄글 템플릿을 적용하면 기기에 보관한 결과를 알리고 목표 창을 닫는다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-goals.active",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sAddGoalBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sAddGoalBtn"
+    },
+    {
+      "do": "type",
+      "selector": "#ngDescInput",
+      "text": "매일 독서 기록 남기기",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#ngGenBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngApplyBtn",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "visible",
+      "selector": "#ngMsList"
+    },
+    {
+      "do": "click",
+      "selector": "#ngApplyBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast.show",
+      "text": "기기에 보관했어요",
+      "timeoutMs": 10000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "capture": "template-device-status"
+    }
+  ]
+}

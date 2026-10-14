@@ -1,0 +1,24 @@
+{
+  "task": "TASK-ES-695-C-PRIVACY-01a13674",
+  "requirementsSource": "reports/TASK-ES-695-C-PRIVACY-01a13674/REQ.md",
+  "requirements": [
+    { "id": "R1", "text": "기존 나만 보기 undo는 typed 목표 기기 저장 결과로 상태를 알리고 선택·ID·현재 토스트 귀속과 실패 재시도를 보존한다." },
+    { "id": "R2", "text": "실제 로그인한 사용자의 원격 공개 범위 반영과 재로그인 뒤 복원은 별도 확인한다." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "behavior", "change": "fix", "domain": "ui-behavior", "symptom": 13,
+      "statement": "게스트 목표의 나만 보기 되돌리기는 기기 보관 상태를 알리고 현재 되돌리기 단추를 유지한다. 이 시나리오는 실제 원격 공개 범위나 재로그인 복원을 주장하지 않는다.",
+      "touches": ["js/core/confetti.js"], "scenario": "guest-privacy.json"
+    },
+    {
+      "id": "C2", "req": "R2", "kind": "unverified", "domain": "persistence",
+      "statement": "실제 로그인 사용자의 목표 공개 범위가 원격에서 private로 반영되고 재로그인 뒤 보존되는지는 미확인이다. 실제 코어 제공자와 합성 DOM/기기/guest로 측정한 부분은 별도 raw에 공개한다.",
+      "touches": ["js/core/confetti.js"],
+      "unverified": {
+        "reason": "tool-cannot-measure", "cannotBecause": "needs-login", "who": "별도 허용 범위를 배정받은 실제 계정 저장 검증 담당",
+        "how": ["법정의 외부 통신 차단으로 실제 로그인과 자기 원격 목표 행을 확인할 수 없다", "허용된 같은 계정·기존 목표 ID에서 나만 보기 선택→현재 반환행 확인→재로그인 복원을 대조한다", "원 SQL3/첫지표/한건 예산은 소진이며 이 source 준비로 새 운영 실행 권한을 만들지 않는다"]
+      }
+    }
+  ]
+}

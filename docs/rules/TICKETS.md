@@ -772,4 +772,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 - #TASK-ES-695-B-01a13674 | FIX | DIR006 B: users/goals 명시 변경의 기기 자료·typed pending 확인, 빈/미확정 서버읽기·계정전환 전 큐 보존, 수동 동기화의 전체 legacy 전송/완료 오안내 차단 및 pending 세대 읽기 보존 | PR980 actual main d326db5e · PR978 저장순서 한정 예외 · 원DIR006 · docs/specs/REQ-TASK-ES-695-B-01a13674.md · reports/TASK-ES-695-B-01a13674/claims.json | 단독 구현 /root/contracts · 원P0/695/A/원raw 불변 · source 구현중 · C기타caller·실제복원/serverCAS·두기기·운영·사용·효과 미확인
 
+- #TASK-ES-695-C-GOAL-01a13674 | FIX | DIR006 C1: 목표 두 작성 mode의 typed goals 기기 확인·stable ID·입력 보존·중복 잠금·늦은 계정/창/세대 귀속. 원실패와 독립 의견 보존 | PR982 main87b7fbd0 · PR978 한정 예외 · reports/TASK-ES-695-C-GOAL-01a13674/REQ.md · reports/TASK-ES-695-C-GOAL-01a13674/claims.json | 구현 /root/handover_review 종료·통합 /root · 실제 게스트 생성/재열기/새로고침 동일ID 확인 · 공식 판정/로그인 원격/전체 사용/효과 미확인
+
+- #TASK-ES-695-C-PRIVACY-01a13674 | FIX | DIR006 C2: 기존 나만 보기 undo 선택의 typed goals 기기 보존과 성공 안내·실패 재시도·계정/목표/토스트 귀속. 원 memory-only 실패 불변 | C1 source7ce400ad · reports/TASK-ES-695-C-PRIVACY-01a13674/REQ.md · reports/TASK-ES-695-C-PRIVACY-01a13674/claims.json | 단독 구현 /root/handover_review · 독립 /root/binding_review · 기기/새로고침 private 교정·공식 판정·로그인 원격·사용·효과 미확인
 - #TASK-ES-K17-981-MERGE-RECORD-01a13674 | INFRA | PR981 제14.3 승인 후 실제 병합 사실 기록 | 근거 PR981-병합후-되읽기.json | 체감 가설: 전문과 대장에서 실제 발효 근거를 따라갈 수 있다 | root 통합 pending
