@@ -1,0 +1,22 @@
+{
+  "id": "dir006-c-goal-guest-state-and-undo",
+  "title": "게스트 목표 생성은 기기 보관 상태와 기존 공개 범위 되돌리기를 함께 알린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#btnAvatarGreetClose", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnAvatarGreetClose" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "waitFor", "selector": "#chipAdd" },
+    { "do": "click", "selector": "#chipAdd" },
+    { "do": "click", "selector": "#ngManualBtn" },
+    { "do": "type", "selector": "#mGoalTitle", "text": "목표 저장 상태 확인", "clear": true },
+    { "do": "click", "selector": "#mSave" },
+    { "expect": "textContains", "selector": "#toast", "text": "기기에 보관했어요", "timeoutMs": 10000 },
+    { "expect": "visible", "selector": "#btnUndoThemePrivacy" },
+    { "expect": "textContains", "selector": "#toast", "text": "같은 테마 공개로 설정했어요" },
+    { "expect": "notHasClass", "selector": "#modalOverlay", "className": "active" },
+    { "capture": "guest-goal-state-and-undo" }
+  ]
+}

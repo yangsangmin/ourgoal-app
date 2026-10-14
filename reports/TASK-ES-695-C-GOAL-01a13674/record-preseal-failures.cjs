@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const current=fs.readFileSync(path.join(__dirname,'source-packet.cjs'),'utf8');
+const first=current.replace("'js/core/profile-load.js','js/core/local-keep.js'","'js/core/profile-load.js','js/core/profile-sync.js','js/core/local-keep.js'");
+const expected='69804aaafac297ba0121af2f5b6fcf89fe0f016f302318bf91501ca40e267d0d';
+if(sha(Buffer.from(first,'utf8'))!==expected)throw Error('FIRST_PACKET_SOURCE_NOT_EXACT');
+fs.writeFileSync(path.join(__dirname,'SOURCE-PACKET-FIRST.cjs'),first,{encoding:'utf8',flag:'wx'});
+fs.writeFileSync(path.join(__dirname,'PRESEAL-FIRST-FAILURES.json'),JSON.stringify({firstSource:{file:'SOURCE-PACKET-FIRST.cjs',SHA256:expected,exactRecovered:true},sourceCollectorFirstFailure:{error:'ENOENT',path:'js/core/profile-sync.js',outcome:'보고 수집기에서 root 예시 파일명을 현재 파일로 추정했다. rg --files에 해당 profile-sync 파일이 없어서 실제 home-cockpit/profile-load 제공자만 보호 목록에 남겼다. 제품 삭제·회귀를 주장하지 않는다.'},shellSnapshotAttempt:{error:'SyntaxError',cause:'Windows PowerShell에서 node -e 인용부호가 사라짐',actualSnapshotCreated:false,correction:'별도 UTF8 cjs로 원 source를 역대조 후 기록했다. 제품·원raw·기대값 변화0'},firstInputFailure:{file:'selected-1791961609319.json',meaning:'합성 DOM에 ngBackToAi 요소를 넣지 못한 하네스 초기 로드 실패'},rawOrProductsRewritten:0,testsRepeated:0,ownPID:process.pid},null,2)+'\n',{encoding:'utf8',flag:'wx'});
+const seal=JSON.parse(fs.readFileSync(path.join(__dirname,'SOURCE-SEAL.json'),'utf8'));
+for(const name of ['record-preseal-failures.cjs','SOURCE-PACKET-FIRST.cjs','PRESEAL-FIRST-FAILURES.json'])seal.files.push({file:'reports/TASK-ES-695-C-GOAL-01a13674/'+name,SHA256:sha(fs.readFileSync(path.join(__dirname,name)))});
+fs.writeFileSync(path.join(__dirname,'SOURCE-SEAL.json'),JSON.stringify(seal,null,2)+'\n','utf8');
+console.log(JSON.stringify({firstSourceSHA256:expected,sealSHA256:sha(fs.readFileSync(path.join(__dirname,'SOURCE-SEAL.json'))),ownPID:process.pid}));

@@ -46,10 +46,10 @@
   /* ---- 이전 전 index.html 3122~3149줄(#TASK-ES-482 생성기 표지) ---- */
 
   /* #TASK-ES-333: 같은 테마 공개 안내 및 1초 되돌리기(나만 보기로 변경) 토스트 배선 */
-  function showUndoPrivacyToast(goalId){
+  function showUndoPrivacyToast(goalId, statusMessage){
     var el = document.getElementById('toast');
     if(!el) return;
-    el.innerHTML = '<span style="vertical-align:middle;">🏷️ 같은 테마 러너에게만 공유돼요</span> ' +
+    el.innerHTML = '<span style="vertical-align:middle;">' + (statusMessage ? L.escapeHtml(statusMessage) + ' · 🏷️ 같은 테마 공개로 설정했어요' : '🏷️ 같은 테마 러너에게만 공유돼요') + '</span> ' +
       '<button id="btnUndoThemePrivacy" type="button" style="background:#fff;color:#1e293b;border:none;border-radius:6px;padding:3px 9px;font-size:12px;font-weight:700;margin-left:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.2);">🔒 나만 보기로 변경</button>';
     el.classList.add('show');
     clearTimeout(L.toastTimer);

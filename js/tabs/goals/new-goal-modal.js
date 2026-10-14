@@ -15,6 +15,55 @@
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalGoalsKit = global.OurgoalGoalsKit || {};
 
+  // DIR006: one draft per opened goal form; consume the existing typed device result.
+  function bindGoalSave(sheet, selector, buildGoal, source, afterSave){
+    var profile = L.state.profile, account = profile && profile.id;
+    var goalId = L.newId(), createdAt = L.nowISO(), saving = false, created = false, stagedGoal = null, draftGeneration = 0;
+    var button = sheet.querySelector(selector);
+    sheet.addEventListener('input', function(){ draftGeneration++; }, true);
+    sheet.addEventListener('change', function(){ draftGeneration++; }, true);
+    function ownsWindow(){
+      var overlay = document.getElementById('modalOverlay');
+      return L.state.profile === profile && profile && profile.id === account && sheet.isConnected
+        && document.getElementById('modalSheet') === sheet && sheet.querySelector(selector) === button
+        && overlay && overlay.classList.contains('active');
+    }
+    function fields(){ return Array.from(sheet.querySelectorAll('input,textarea,select')).map(function(e){ return {element:e,value:e.value,checked:e.checked}; }); }
+    function message(saved, action){ return global.OurgoalCapabilities.request('storage.device.message', 'goals/new-goal-modal')(saved, action); }
+    button.addEventListener('click', async function(){
+      if(saving || !ownsWindow()) return;
+      var newGoal = buildGoal(goalId, createdAt);
+      if(!newGoal) return;
+      saving = true; button.disabled = true;
+      var generation = draftGeneration, submitted = fields();
+      try {
+        var index = profile.goals.findIndex(function(goal){ return goal.id === goalId; });
+        if(index >= 0 && profile.goals[index] !== stagedGoal) throw new Error('goal-draft-replaced');
+        if(index < 0) profile.goals.push(newGoal); else profile.goals[index] = newGoal;
+        stagedGoal = newGoal;
+        var saved = await L.saveProfile({deviceFirst:true, kind:'goals', targetId:goalId, operation:created ? 'update' : 'create'});
+        if(!ownsWindow() || profile.goals.find(function(goal){ return goal.id === goalId; }) !== newGoal) return;
+        var current = global.OurgoalCapabilities.request('storage.device.status', 'goals/new-goal-modal')(account, goalId, 'goals');
+        var verified = saved && saved.account === account && saved.kind === 'goals' && saved.targetId === goalId
+          && saved.types && saved.types.goals && saved.types.goals.device === true
+          && ['confirmed','sending','local','reauth','rejected'].indexOf(saved.state) >= 0
+          && Number.isSafeInteger(saved.generation) && saved.generation > 0 && current
+          && current.account === account && current.kind === 'goals' && current.targetId === goalId
+          && current.localRevision === saved.localRevision && current.generation === saved.generation && current.changeId === saved.changeId;
+        if(!verified){ L.toast(message(null)); return; }
+        if(!created){ L.trackGoalCreated(newGoal, source); created = true; }
+        var now = fields();
+        if(draftGeneration !== generation || now.length !== submitted.length || !now.every(function(e,i){ return e.element === submitted[i].element && e.value === submitted[i].value && e.checked === submitted[i].checked; })){
+          L.toast(message(saved, '앞서 작성한 목표를 보관했어요. 바꾼 입력은 그대로 남겨 두었어요')); return;
+        }
+        L.state.activeGoalId = goalId;
+        L.closeModal();
+        afterSave(newGoal, saved, message);
+      } catch(error){ if(ownsWindow()) L.toast(message(null)); }
+      finally { saving = false; button.disabled = false; }
+    });
+  }
+
   /* ---- 이전 전 index.html 14145~14148줄(#TASK-ES-466 생성기 표지) ---- */
   function promptNewGoal(){
     if(L.isModalDismissCooldown()) return;
@@ -196,7 +245,7 @@
             showNewGoalReviewStep(tmpl);
           });
         });
-        sheet.querySelector('#ngApplyBtn').addEventListener('click', async function(){
+        bindGoalSave(sheet, '#ngApplyBtn', function(goalId, createdAt){
           var title = sheet.querySelector('#ngTitle').value.trim();
           if(!title){ L.toast('목표 제목을 입력해주세요'); return; }
           sheet.querySelectorAll('[data-ngmstitle]').forEach(function(inp){
@@ -215,12 +264,8 @@
               })
             };
           });
-          var newGoal = { id: L.newId(), title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: L.nowISO(), visibility:'private', archivedAt:null, result:null, milestones: milestones };
-          L.state.profile.goals.push(newGoal);
-          L.state.activeGoalId = newGoal.id;
-          L.trackGoalCreated(newGoal, 'template_bot');
-          await L.saveProfile();
-          L.closeModal();
+          return { id: goalId, title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: createdAt, visibility:'private', archivedAt:null, result:null, milestones: milestones };
+        }, 'template_bot', function(newGoal, saved, message){
           if(typeof L.dispatchFullViewPropagation === 'function'){
             L.dispatchFullViewPropagation('goal_create', { goalId: newGoal.id });
           } else {
@@ -229,7 +274,7 @@
           if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render) {
             window.OurgoalSanctuaryV3.render('goals');
           }
-          L.toast('목표를 만들었어요 · 목표 화면 편집 모드에서 더 다듬을 수 있어요');
+          L.toast(message(saved, '목표를 만들었어요 · 목표 화면 편집 모드에서 더 다듬을 수 있어요'));
         });
       }
     );
@@ -297,7 +342,7 @@
           });
         }
         sheet.querySelector('#mCancel').addEventListener('click', L.closeModal);
-        sheet.querySelector('#mSave').addEventListener('click', async function(){
+        bindGoalSave(sheet, '#mSave', function(goalId, createdAt){
           var title = sheet.querySelector('#mGoalTitle').value.trim();
           if(!title){
             L.toast('목표 제목을 입력해주세요');
@@ -305,12 +350,8 @@
             return;
           }
           var due = sheet.querySelector('#mGoalDue').value;
-          var newGoal = { id: L.newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: L.nowISO(), visibility: (sheet.querySelector('#mGoalVis') && sheet.querySelector('#mGoalVis').value) || 'theme', archivedAt: null, result: null, milestones: L.templateMilestones(chosenCat) };
-          L.state.profile.goals.push(newGoal);
-          L.state.activeGoalId = newGoal.id;
-          L.trackGoalCreated(newGoal, 'manual');
-          await L.saveProfile();
-          L.closeModal();
+          return { id: goalId, title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: createdAt, visibility: (sheet.querySelector('#mGoalVis') && sheet.querySelector('#mGoalVis').value) || 'theme', archivedAt: null, result: null, milestones: L.templateMilestones(chosenCat) };
+        }, 'manual', function(newGoal, saved, message){
           if(typeof L.dispatchFullViewPropagation === 'function'){
             L.dispatchFullViewPropagation('goal_create', { goalId: newGoal.id });
           } else {
@@ -320,9 +361,9 @@
             window.OurgoalSanctuaryV3.render('goals');
           }
           if(newGoal.visibility === 'theme'){
-            L.showUndoPrivacyToast(newGoal.id);
+            L.showUndoPrivacyToast(newGoal.id, message(saved, '목표를 만들었어요'));
           } else {
-            L.toast('목표를 만들었어요');
+            L.toast(message(saved, '목표를 만들었어요'));
           }
         });
       }

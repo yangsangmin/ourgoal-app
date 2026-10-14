@@ -1,0 +1,106 @@
+{
+  "at": "2026-10-14T07:07:24.072Z",
+  "base": "87b7fbd0f8530fabe76413757d577da746406471",
+  "scope": "actual product IIFEs and typed device/core providers; synthetic DOM, memory storage, account and SDK responses only; no browser/auth/HTTP/DB/E2E",
+  "sourceFiles": [
+    {
+      "file": "js/core/ui-helpers.js",
+      "SHA256": "860643c6da9aac0e313d790a2e0ee4eadd9a761002c88a693e27d551f1fcd3e8"
+    },
+    {
+      "file": "js/core/capabilities.js",
+      "SHA256": "6b19437fbe0ba2a05d09f8d4ec4205ba4e40461ba9932fb802152557440db7e1"
+    },
+    {
+      "file": "js/account-isolation.js",
+      "SHA256": "5aa60a0f530a53dab8e133ec60393b1ec968ca20a275e95924d338d1b3957640"
+    },
+    {
+      "file": "js/core/local-keep.js",
+      "SHA256": "f1699bfcc069781d68548ecdd9cbc32c28978fed1b239034c1b3131eb5138b8c"
+    },
+    {
+      "file": "js/core/device-save.js",
+      "SHA256": "d32a3d87c0128d908d8adcc4f6c0256e060b7f0ff0756302029e8745e38add53"
+    },
+    {
+      "file": "js/core/home-cockpit.js",
+      "SHA256": "0b4ef19410a5552692437bcd810f44e93791538dbf32ef0e603ab3f7d31f3084"
+    },
+    {
+      "file": "js/core/confetti.js",
+      "SHA256": "8f986124d32c291e7f468f52be885cef68e2762d72b6a6b40569fcfc94cb1f0a"
+    },
+    {
+      "file": "js/tabs/goals/new-goal-modal.js",
+      "SHA256": "4d5e6ea847af2da936ee353daac194fee9f6584c193710aac25ae2d7979b9319"
+    }
+  ],
+  "helperSHA256": "7c7db4750e644f8dffadc84e0b468b04bc35544e7398a27cef9e154023a3f7df",
+  "checks": [
+    {
+      "name": "original two consumers close and track despite returned failed result",
+      "modes": 2,
+      "source": "87b7fbd0f8530fabe76413757d577da746406471",
+      "scope": "original consumer source with injected failure; not core/native"
+    },
+    {
+      "name": "manual actual typed quota failure preserves input/window and retries same ID with one pending target",
+      "failedInputPreserved": true,
+      "stableID": true,
+      "targets": 1,
+      "undo": true,
+      "realHTTP": null
+    },
+    {
+      "name": "template actual typed quota failure preserves input/window and retries same ID with one pending target",
+      "failedInputPreserved": true,
+      "stableID": true,
+      "targets": 1,
+      "undo": null,
+      "realHTTP": null
+    },
+    {
+      "name": "duplicate click locks before local confirmation and closes without waiting for remote result",
+      "submissions": 1,
+      "deviceBeforeRemote": true
+    },
+    {
+      "name": "profile replacement and in-place account change suppress old completion",
+      "variants": 2,
+      "oldCompletion": 0
+    },
+    {
+      "name": "reused modal sheet with replaced button and dismissed overlay reject late closure",
+      "variants": 2,
+      "oldClosure": 0
+    },
+    {
+      "name": "edited draft stays open and same window updates its stable target on next save",
+      "stableID": true,
+      "creationTracking": 1
+    },
+    {
+      "name": "legacy/foreign result and newer local revision cannot trigger current success",
+      "variants": 3,
+      "falseCompletion": 0
+    },
+    {
+      "name": "privacy optional message escapes text and leaves original undo/default and confirmed goal path",
+      "escape": true,
+      "defaultPreserved": true,
+      "syntheticReturnedRowsConfirmed": true
+    }
+  ],
+  "failures": [],
+  "API": 0,
+  "auth": 0,
+  "HTTP": 0,
+  "realDB": 0,
+  "browser": 0,
+  "operating": null,
+  "use": null,
+  "effect": null,
+  "Court": null,
+  "ownPID": 14612
+}
