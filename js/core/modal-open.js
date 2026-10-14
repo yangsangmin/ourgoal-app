@@ -17,6 +17,21 @@
   /* ---- 이전 전 index.html 3804~3857줄(#TASK-ES-591 생성기 표지) ---- */
   /* [#TASK-ES-471] isModalDismissCooldown → js/core/modal-helper.js 로 옮김(인라인 어려움 기관 묶음 이전 1차 — 앞 주석 포함) */
 
+  var modalToken = null;
+  function modalState(){
+    var overlay = document.getElementById('modalOverlay');
+    return { active: !!(overlay && overlay.classList.contains('active')), token: modalToken };
+  }
+  function modalEnded(reason){
+    var token = modalToken;
+    modalToken = null;
+    if(token && global.OurgoalEvents) global.OurgoalEvents.emit('modal:changed', {state:'closed', token:token, reason:reason || 'dismissed'});
+  }
+  if(global.OurgoalCapabilities){
+    global.OurgoalCapabilities.provide('ui.modal.state', modalState, {cell:'core/modal-open',sideEffect:'none',description:'공용 모달의 실제 열림과 창 식별자'});
+    global.OurgoalCapabilities.provide('ui.modal.ended', modalEnded, {cell:'core/modal-open',sideEffect:'screen',description:'닫힌 공용 모달의 관측 신호'});
+  }
+
   function openModal(html, onMount, thirdArg){
     window._modalOpenAt = Date.now();
     var overlay = document.getElementById('modalOverlay');
@@ -44,10 +59,14 @@
       finalHtml = '<button type="button" class="modal-sheet-close touch-target-44" aria-label="닫기" title="닫기" onclick="if(typeof window.triggerHaptic===\'function\') window.triggerHaptic(12); closeModal();">✕</button>' + finalHtml;
     }
 
+    if(modalToken) modalEnded('replaced');
+    modalToken = {};
+
     // [#UIUX-23] 2중 바텀시트 적재(Stacking) 방지: 이미 열려있을 경우 단일 포커스 전환
     sheet.style.transform = '';
     sheet.innerHTML = finalHtml;
     overlay.classList.add('active');
+    if(global.OurgoalEvents) global.OurgoalEvents.emit('modal:changed', {state:'opened',token:modalToken});
     if(finalOnMount){
       try { finalOnMount(sheet); } catch(mErr){ console.error('[openModal] mount error:', mErr); }
     }

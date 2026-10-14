@@ -208,6 +208,13 @@
         '</div>' +
       '</div>';
 
+    var finished = false, stop = null, token = null;
+    function finish(reason){
+      if(finished) return;
+      finished = true;
+      if(stop) stop();
+      if(typeof onDismiss === 'function') onDismiss(reason);
+    }
     L.openModal(html, function(sheet){
       L.triggerHaptic(20);
       L.burstConfetti(window.innerWidth/2, window.innerHeight/2, 20);
@@ -227,7 +234,6 @@
               L.setTab('comm');
             }
             L.toast(msg);
-            if(typeof onDismiss === 'function') onDismiss();
           };
           // [#TASK-ES-352] 세션 없는 사용자·동류 0명: 보내지 않는다. '보냈어요' 문구·EXP 없이 소통 탭으로만.
           if(!(peers.length > 0 && canSendFirstCheckinWelcome())){
@@ -258,10 +264,14 @@
       if(doneBtn){
         doneBtn.addEventListener('click', function(){
           L.closeModal();
-          if(typeof onDismiss === 'function') onDismiss();
         });
       }
     });
+    token = global.OurgoalCapabilities.request('ui.modal.state', 'records/first-checkin-tutorial')().token;
+    if(!token){ finish('unavailable'); return; }
+    stop = global.OurgoalEvents.on('modal:changed', function(change){
+      if(change.state === 'closed' && change.token === token) finish(change.reason);
+    }, {owner:'records/first-checkin-tutorial'});
   }
 
   K.renderFirstCheckinTutorialBanner = renderFirstCheckinTutorialBanner;

@@ -1984,7 +1984,9 @@
       "role": "OurGoal Modal Helper (기관 — 모달 도우미·안드로이드 뒤로가기 처리)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.modal.ended"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -1998,6 +2000,7 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope",
+        "OurgoalCapabilities",
         "triggerHaptic"
       ]
     },
@@ -2010,21 +2013,41 @@
       "kind": "organ",
       "role": "Modal Open & Handlers",
       "spans": [],
-      "provides": [],
+      "provides": [
+        "ui.modal.state",
+        "ui.modal.ended"
+      ],
       "requires": [],
       "contributes": [],
       "owns": [],
-      "capabilities": [],
+      "capabilities": [
+        {
+          "name": "ui.modal.state",
+          "description": "기록 후속을 위한 자기 창의 실제 생명주기 관측",
+          "sideEffect": "none",
+          "needsConfirm": false
+        },
+        {
+          "name": "ui.modal.ended",
+          "description": "기록 후속을 위한 자기 창의 실제 생명주기 관측",
+          "sideEffect": "screen",
+          "needsConfirm": false
+        }
+      ],
       "planned": {
         "provides": [],
         "contributes": []
       },
-      "emits": [],
+      "emits": [
+        "modal:changed"
+      ],
       "listens": [],
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope",
+        "OurgoalCapabilities",
+        "OurgoalEvents",
         "triggerHaptic"
       ]
     },
@@ -2480,11 +2503,20 @@
       "kind": "organ",
       "role": "OurGoal Toast Renderer (기관 — 공용 토스트 표시·교체·닫기)",
       "spans": [],
-      "provides": [],
+      "provides": [
+        "ui.toast.state"
+      ],
       "requires": [],
       "contributes": [],
       "owns": [],
-      "capabilities": [],
+      "capabilities": [
+        {
+          "name": "ui.toast.state",
+          "description": "공용 토스트의 실제 표시와 fade중 상태 읽기",
+          "sideEffect": "none",
+          "needsConfirm": false
+        }
+      ],
       "planned": {
         "provides": [],
         "contributes": []
@@ -2494,7 +2526,8 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalCapabilities"
       ]
     },
     {
@@ -6572,6 +6605,57 @@
       ]
     },
     {
+      "id": "goals/record-link",
+      "file": "js/tabs/goals/record-link.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "홈 기록의 기기 확인·기존 팝업 뒤 내부 규칙 목표 이동 제안",
+      "spans": [],
+      "provides": [
+        "goals.record-link.offer",
+        "goals.record-link.rank"
+      ],
+      "requires": [
+        "ui.modal",
+        "ui.modal.close",
+        "ui.modal.state",
+        "records.feedback.state",
+        "storage.device.focused",
+        "ui.toast.state"
+      ],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [
+        {
+          "name": "goals.record-link.offer",
+          "description": "기기 확인 이후 내부 연관 규칙과 명시 이동 제안",
+          "sideEffect": "screen",
+          "needsConfirm": false
+        },
+        {
+          "name": "goals.record-link.rank",
+          "description": "기기 확인 이후 내부 연관 규칙과 명시 이동 제안",
+          "sideEffect": "none",
+          "needsConfirm": false
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "capture:draft-changed",
+        "modal:changed",
+        "record-feedback:changed"
+      ],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
       "id": "goals/render",
       "file": "js/tabs/goals/render.js",
       "layer": "tabs",
@@ -7628,7 +7712,8 @@
       "provides": [],
       "requires": [
         "storage.device.message",
-        "storage.device.focused"
+        "storage.device.focused",
+        "goals.record-link.offer"
       ],
       "contributes": [],
       "owns": [],
@@ -7638,6 +7723,7 @@
         "contributes": []
       },
       "emits": [
+        "capture:draft-changed",
         "checkin:created",
         "record:saved"
       ],
@@ -7664,23 +7750,36 @@
       "kind": "tab",
       "role": "기록 — 판정 색(verdictClass)·홈/기록 피드백 칸(renderFeedbackSlot·renderRecordFeedbackSlot)·체크인 피드백 창(showCheckinFeedbackSheet·closeCheckinFeedbackSheet)·피드 바로 공유(instantShareCheckinToFeed)·아바타(getUserAvatarHtml)·「n분 전」(timeAgoStr). index.html 인라인에서 글자 그대로 옮김(#TASK-ES-492)",
       "spans": [],
-      "provides": [],
+      "provides": [
+        "records.feedback.state"
+      ],
       "requires": [],
       "contributes": [],
       "owns": [],
-      "capabilities": [],
+      "capabilities": [
+        {
+          "name": "records.feedback.state",
+          "description": "기록 후속을 위한 자기 창의 실제 생명주기 관측",
+          "sideEffect": "none",
+          "needsConfirm": false
+        }
+      ],
       "planned": {
         "provides": [],
         "contributes": []
       },
-      "emits": [],
+      "emits": [
+        "record-feedback:changed"
+      ],
       "listens": [],
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope",
         "OurgoalAvatar",
-        "OurgoalCategoryMap"
+        "OurgoalCapabilities",
+        "OurgoalCategoryMap",
+        "OurgoalEvents"
       ]
     },
     {
@@ -7825,7 +7924,9 @@
       "role": "첫 체크인 튜토리얼 배너·축하 창(renderFirstCheckinTutorialBanner·triggerFirstCheckinCelebrationModal)·동료 러너 환영 도장. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-476)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.modal.state"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -7834,11 +7935,17 @@
         "contributes": []
       },
       "emits": [],
-      "listens": [],
+      "listens": [
+        "modal:changed"
+      ],
       "domRoot": null,
-      "ownerKeys": [],
+      "ownerKeys": [
+        "records/first-checkin-tutorial"
+      ],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalCapabilities",
+        "OurgoalEvents"
       ]
     },
     {

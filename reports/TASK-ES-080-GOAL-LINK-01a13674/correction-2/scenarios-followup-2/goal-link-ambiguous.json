@@ -1,0 +1,266 @@
+{
+  "id": "goal-link-equal-targets-no-proposal",
+  "title": "같은 점수의 서로 다른 목표 둘은 기기에 기록하되 이동을 제안하지 않는다",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sAddGoalBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sAddGoalBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "피아노 연습",
+      "clear": true
+    },
+    {
+      "do": "select",
+      "selector": "#mGoalVis",
+      "value": "private"
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#modalOverlay",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-home.active",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "피아노를 20분 연습했어요",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "count",
+      "selector": "#captureInput:placeholder-shown",
+      "equals": 1,
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureSyncStatus",
+      "name": "data-sync-state",
+      "equals": "local",
+      "timeoutMs": 20000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#firstCheckinDoneBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recordGoalLinkSuggestion"
+    },
+    {
+      "do": "click",
+      "selector": "#firstCheckinDoneBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnCheckinAiClose",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".checkin-ai-loading-box",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recordGoalLinkSuggestion"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCheckinAiClose"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#recordGoalLinkSuggestion",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#recordGoalLinkTarget",
+      "text": "관련 목표: 피아노 연습"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#recordGoalLinkSuggestion",
+      "text": "기록이 목표와 연관된 내용으로 판단됩니다. 목표탭으로 이동할까요?"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#checkinAiSheetBackdrop"
+    },
+    {
+      "do": "click",
+      "selector": "#recordGoalLinkGo"
+    },
+    {
+      "expect": "visible",
+      "selector": "#screen-goals.active"
+    },
+    {
+      "do": "wait",
+      "ms": 450
+    },
+    {
+      "do": "click",
+      "selector": "#sAddGoalBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "피아노 연습",
+      "clear": true
+    },
+    {
+      "do": "select",
+      "selector": "#mGoalVis",
+      "value": "private"
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#modalOverlay",
+      "className": "active"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-home.active",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "count",
+      "selector": "#quickCheckinChips button[data-cunningtext*=\"[피아노 연습]\"]",
+      "equals": 2,
+      "timeoutMs": 15000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "피아노를 20분 연습했어요",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "count",
+      "selector": "#captureInput:placeholder-shown",
+      "equals": 1,
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureSyncStatus",
+      "name": "data-sync-state",
+      "equals": "local",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recordGoalLinkSuggestion"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnCheckinAiClose",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "notVisible",
+      "selector": ".checkin-ai-loading-box",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recordGoalLinkSuggestion"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCheckinAiClose"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recordGoalLinkSuggestion"
+    },
+    {
+      "expect": "visible",
+      "selector": "#screen-home.active"
+    },
+    {
+      "capture": "goal-link-ambiguous-no-proposal"
+    }
+  ]
+}

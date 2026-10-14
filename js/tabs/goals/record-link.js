@@ -1,0 +1,128 @@
+/** 홈 실천메모 → 목표 이동 제안. 규칙은 기기 안에서만 평가하며 목표나 기록을 고치지 않는다. */
+(function(g){
+  'use strict';
+  var CELL = 'goals/record-link', caps = g.OurgoalCapabilities, events = g.OurgoalEvents;
+  var L = (g.OurgoalAppScope && g.OurgoalAppScope.scope) || {};
+  var histories = new WeakMap(), pending = null, timer = null;
+  var STOP = ['오늘','기록','목표','실천','완료','하기','하기를','했어요','했음','나의','성장','정도','위해','그리고','이번','매일','하기로','시작','분','시간','회','개','번','km','kg','ml'];
+  function words(text){
+    return Array.from(new Set((String(text || '').toLowerCase().match(/[가-힣a-z0-9]+/g) || []).filter(function(w){return w.length >= 2 && STOP.indexOf(w) < 0 && !/^\d+$/.test(w);}))); 
+  }
+  function hits(text, labels){
+    var tokens = String(text || '').toLowerCase().match(/[가-힣a-z0-9]+/g) || [];
+    return words(labels).filter(function(w){return tokens.some(function(token){
+      if(token === w) return true;
+      // 한국어 조사/종결어미만 허용한다. 운동↔운동화·독서↔독서실 같은 부분 일치는 근거가 아니다.
+      return /^[가-힣]+$/.test(w) && token.indexOf(w) === 0 && /^(을|를|이|가|은|는|에|에서|으로|로|와|과|도|만|까지|부터|하고|했다|했어요|했습니다|하기|하는|한|함|해요|해|했음)$/.test(token.slice(w.length));
+    });});
+  }
+  function rows(goal){
+    var out = [goal];
+    (goal.milestones || []).forEach(function(ms){out.push(ms); (ms.tasks || []).forEach(function(task){out.push(task);});});
+    return out;
+  }
+  function rank(profile, record){
+    if(!profile || !record || typeof record.text !== 'string') return null;
+    var goals = (profile.goals || []).filter(function(goal){return goal && goal.id && typeof goal.title === 'string' && goal.title.trim() && !goal.archivedAt && !goal.deletedAt;});
+    var ranked = goals.map(function(goal){
+      var title = hits(record.text, goal.title), milestone = hits(record.text, rows(goal).slice(1).map(function(row){return row.title || '';}).join(' '));
+      // 분류·단위·과거 기록은 보조 신호다. 지금 본문과 제목/마일스톤의 낱말 겹침 없이는 제안하지 않는다.
+      var lexical = Array.from(new Set(title.concat(milestone)));
+      var category = goal.category && goal.category !== 'etc' && hits(record.text, goal.category).length > 0;
+      var units = rows(goal).map(function(row){return row.unit || (row.result && row.result.unit) || '';}).filter(function(u){return typeof u === 'string' && u.length > 0;});
+      var unit = units.some(function(u){return new RegExp('(?:^|[^0-9])\\d+(?:\\.\\d+)?\\s*'+u.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?=$|[^a-zA-Z가-힣])','i').test(record.text);});
+      var recent = (profile.records || []).filter(function(row){return row && row !== record && row.goalId === goal.id && !row.deletedAt;}).slice(0, 10);
+      var overlap = recent.some(function(row){return hits(record.text,row.text).filter(function(w){return lexical.indexOf(w) >= 0;}).length > 0;});
+      var score = title.length * 4 + milestone.length * 3 + (category ? 1 : 0) + (unit ? 1 : 0) + (overlap ? 1 : 0);
+      return {goal:goal, score:score, lexical:lexical.length, evidence:{title:title.length,milestone:milestone.length,category:!!category,unit:unit,recent:overlap}};
+    }).sort(function(a,b){return b.score-a.score;});
+    var best = ranked[0], next = ranked[1];
+    if(!best || best.lexical < 1 || best.score < 4 || (next && best.score-next.score < 3)) return null;
+    return best;
+  }
+  function history(profile, id){
+    var map = histories.get(profile);
+    if(!map){map = new Map(); histories.set(profile,map);}
+    if(!map.has(id)) map.set(id,{dismissals:0,remaining:0,seen:new Set()});
+    return map.get(id);
+  }
+  function valid(item){
+    try {
+      return L.state && L.state.profile === item.profile && item.profile.id === item.account && item.record.text === item.text
+        && item.profile.records.find(function(row){return row.id === item.record.id;}) === item.record
+        && item.profile.goals.find(function(goal){return goal.id === item.goal.id;}) === item.goal && item.goal.title === item.title && !item.goal.archivedAt && !item.goal.deletedAt
+        && item.current() === true && caps.request('storage.device.focused',CELL)(item.account,item.record.id);
+    } catch(error){ return false; }
+  }
+  function state(){return caps.request('ui.modal.state',CELL)();}
+  function busy(){return state().active || caps.request('records.feedback.state',CELL)().active || !caps.has('ui.toast.state') || caps.request('ui.toast.state',CELL)().active;}
+  function clear(){if(timer !== null) clearTimeout(timer);timer=null;pending=null;}
+  function tick(){
+    if(timer !== null) clearTimeout(timer);
+    timer = null;
+    var item = pending;
+    if(!item) return;
+    if(!valid(item)){
+      if(item.token && state().token === item.token){item.interrupted=true;caps.request('ui.modal.close',CELL)();}
+      clear(); return;
+    }
+    if(item.token){ timer=setTimeout(tick,250); return; }
+    if(busy()){timer=setTimeout(tick,450);return;}
+    var chosen = rank(item.profile,item.record);
+    if(!chosen || chosen.goal !== item.goal){clear();return;}
+    var accepted = false;
+    caps.request('ui.modal',CELL)(
+      '<div id="recordGoalLinkSuggestion"><h3>기록과 목표 연결</h3><p id="recordGoalLinkTarget">관련 목표: <strong>'+L.escapeHtml(item.title)+'</strong></p>' +
+      '<p>기록이 목표와 연관된 내용으로 판단됩니다. 목표탭으로 이동할까요?</p><div class="modal-actions"><button type="button" class="btn btn-ghost" id="recordGoalLinkClose">닫기</button><button type="button" class="btn btn-primary" id="recordGoalLinkGo">목표탭 이동</button></div></div>',
+      function(sheet){
+        sheet.querySelector('#recordGoalLinkClose').addEventListener('click',function(){caps.request('ui.modal.close',CELL)();});
+        sheet.querySelector('#recordGoalLinkGo').addEventListener('click',function(){
+          if(!valid(item) || state().token !== item.token) return;
+          accepted=true;
+          caps.request('ui.modal.close',CELL)();
+          // 이동만 한다. activeGoalId·record.goalId·목표 진행 상태는 자동으로 바꾸지 않는다.
+          if(valid(item)) L.setTab('goals');
+        });
+      }
+    );
+    item.token=state().token;
+    item.dismiss=function(){
+      if(!accepted && !item.interrupted){item.history.dismissals++;item.history.remaining=Math.min(8,Math.pow(2,item.history.dismissals));}
+    };
+    timer=setTimeout(tick,250);
+  }
+  function offer(context){
+    if(!context || typeof context.current !== 'function') return {offered:false,reason:'invalid-context'};
+    var profile=context.profile, record=context.record, saved=context.saved;
+    if(!profile || !record || !saved || saved.account !== profile.id || saved.kind !== 'records' || saved.recordId !== record.id
+      || !saved.types || !saved.types.records || saved.types.records.device !== true
+      || !Number.isSafeInteger(saved.generation) || saved.generation < 1 || !saved.changeId
+      || ['confirmed','sending','local','reauth','rejected'].indexOf(saved.state) < 0) return {offered:false,reason:'device-unverified'};
+    var selected=rank(profile,record);
+    if(!selected) return {offered:false,reason:'ambiguous'};
+    var item={profile:profile,account:profile.id,record:record,text:record.text,goal:selected.goal,title:selected.goal.title,current:context.current,token:null};
+    if(!valid(item)) return {offered:false,reason:'stale'};
+    var h=history(profile,selected.goal.id), fingerprint=record.id+'\n'+record.text;
+    if(h.seen.has(fingerprint)) return {offered:false,reason:'duplicate'};
+    h.seen.add(fingerprint);
+    if(h.remaining>0){h.remaining--;return {offered:false,reason:'dismissed-recently'};}
+    if(pending && pending.token && state().token === pending.token){pending.interrupted=true;caps.request('ui.modal.close',CELL)();}
+    clear(); item.history=h; pending=item; timer=setTimeout(tick,450);
+    return {offered:true,reason:'queued'};
+  }
+  if(caps){
+    caps.provide('goals.record-link.offer',offer,{cell:CELL,description:'기기 확인과 기존 후속이 끝난 기록의 목표탭 이동 제안',sideEffect:'screen'});
+    caps.provide('goals.record-link.rank',rank,{cell:CELL,description:'제목·마일스톤·분류·단위·최근 기록의 보수적인 내부 연관 규칙',sideEffect:'none'});
+  }
+  if(events){
+    events.on('modal:changed',function(change){
+      if(pending && pending.token === change.token && change.state === 'closed'){
+        if(change.reason === 'dismissed' && pending.dismiss) pending.dismiss();
+        clear();
+      } else if(pending && !pending.token){if(timer!==null)clearTimeout(timer);timer=setTimeout(tick,450);}
+    },{owner:CELL});
+    events.on('record-feedback:changed',function(){if(pending && !pending.token){if(timer!==null)clearTimeout(timer);timer=setTimeout(tick,450);}},{owner:CELL});
+    events.on('capture:draft-changed',function(){if(pending)tick();},{owner:CELL});
+  }
+  if(typeof module!=='undefined' && module.exports) module.exports={rank:rank,offer:offer};
+})(typeof window!=='undefined'?window:globalThis);

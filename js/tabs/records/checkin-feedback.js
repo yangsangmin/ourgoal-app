@@ -110,12 +110,20 @@
   }
   /* ---- 이전 전 index.html 8560~8791줄(#TASK-ES-492 생성기 표지) ---- */
 
+  function feedbackState(){
+    var backdrop = document.getElementById('checkinAiSheetBackdrop');
+    return { active: !!(backdrop && backdrop.isConnected && backdrop.style.display !== 'none') };
+  }
+  if(global.OurgoalCapabilities) global.OurgoalCapabilities.provide('records.feedback.state', feedbackState, {cell:'records/checkin-feedback',sideEffect:'none',description:'AI 피드백 창의 실제 열림 상태'});
+
   function showCheckinFeedbackSheet(rec, fb){
     try {
       var prevPop = document.getElementById('avatarCelebrationToast');
       if(prevPop) prevPop.remove();
     } catch(e){}
     var existingBackdrop = document.getElementById('checkinAiSheetBackdrop');
+    // 닫히는 loading 창에 늦은 응답을 다시 쓰면 이전 제거 타이머가 새 피드백을 지운다.
+    if(existingBackdrop && existingBackdrop.classList.contains('closing')){existingBackdrop.remove(); existingBackdrop=null;}
     if(!fb){
       fb = {
         verdict: '실천 완료',
@@ -161,6 +169,7 @@
           '</div>' +
         '</div>';
       existingBackdrop.style.display = 'flex';
+      if(global.OurgoalEvents) global.OurgoalEvents.emit('record-feedback:changed', {state:'opened'});
       var closeBtn = existingBackdrop.querySelector('#btnCheckinAiClose');
       if(closeBtn) closeBtn.addEventListener('click', closeCheckinFeedbackSheet);
       return;
@@ -234,6 +243,7 @@
       '</div>';
 
     existingBackdrop.style.display = 'flex';
+    if(global.OurgoalEvents) global.OurgoalEvents.emit('record-feedback:changed', {state:'opened'});
     L.triggerHaptic(18);
 
     // wire listeners
@@ -347,7 +357,10 @@
     var existingBackdrop = document.getElementById('checkinAiSheetBackdrop');
     if(existingBackdrop){
       existingBackdrop.classList.add('closing');
-      setTimeout(function(){ existingBackdrop.remove(); }, 200);
+      setTimeout(function(){
+        existingBackdrop.remove();
+        if(global.OurgoalEvents) global.OurgoalEvents.emit('record-feedback:changed', {state:'closed'});
+      }, 200);
     }
   }
 

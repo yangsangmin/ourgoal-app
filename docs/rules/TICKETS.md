@@ -778,3 +778,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-K17-981-MERGE-RECORD-01a13674 | INFRA | PR981 제14.3 승인 후 실제 병합 사실 기록 | 근거 PR981-병합후-되읽기.json | 체감 가설: 전문과 대장에서 실제 발효 근거를 따라갈 수 있다 | root 통합 pending
 
 - #TASK-CC-CELL-UNWIRE-RUN-309dca5d | FIX | 기업화 원077: 빈 기록 입력의 확정 안내 「기록하고 나의 역사데이터를 만들어요.」를 초기·첫 안내·저장 뒤·기존 quickchip 경로에 일치시키고 실제 네 테마의 읽기 쉬운 표시를 확인한다. 칩/버튼/동작 삭제·저장값/표/DTO·MASTER·규범 변경 0 | 대표 새 총괄 실행 지시 · 원마9/바9 D-2026-10-13-01/02 · reports/TASK-ES-K17-THEME-READABILITY-01a13674/SOURCE-PREFLIGHT.json · reports/TASK-ES-K17-THEME-READABILITY-01a13674/implementation-1/REQ.md | 원077 한정 검증·통합 중 /root · 제품 /root/contracts · 공식 판정·배포·전체 사용·효과 미확인
+
+- #TASK-ES-080-GOAL-LINK-01a13674 | FIX | 기업화 원080~082·마12/바10: 기기 확인→기존 축하/AI 팝업 종료→내부규칙의 명확한 목표 관련성에 닫기/목표탭 이동을 제공한다. 자동귀속/새AI/API/DB/schema0, 세션별 반복닫기 억제 | 공통 TASK-CC-CELL-UNWIRE-RUN-309dca5d · 대표 진행 지시 · source dfb6cac7 · docs/specs/REQ-TASK-ES-080-GOAL-LINK-01a13674.md · reports/TASK-ES-080-GOAL-LINK-01a13674/claims.json | 단독작성 /root/contracts · 게스트/선정 부품 증거와 공식 Court 별도 · 독립검토/원격/운영/전체사용/효과 미확인
