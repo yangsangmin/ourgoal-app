@@ -1,0 +1,75 @@
+{
+  "id": "k17-guestsave-source-candidate",
+  "title": "새 guest의 기기 저장 후 확정 안내가 빈칸으로 복귀한다",
+  "viewport": {
+    "width": 1365,
+    "height": 960
+  },
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#appShell.active",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "검"
+    },
+    {
+      "expect": "count",
+      "selector": "#captureInput:placeholder-shown",
+      "equals": 0
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "count",
+      "selector": "#captureInput:placeholder-shown",
+      "equals": 1,
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureInput",
+      "name": "placeholder",
+      "equals": "기록하고 나의 역사데이터를 만들어요."
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureSyncStatus",
+      "name": "data-sync-state",
+      "equals": "local",
+      "timeoutMs": 20000
+    },
+    {
+      "expect": "textContains",
+      "selector": "#captureSyncStatus",
+      "text": "기기에 보관",
+      "timeoutMs": 20000
+    },
+    {
+      "capture": "guest-device-restored"
+    }
+  ]
+}

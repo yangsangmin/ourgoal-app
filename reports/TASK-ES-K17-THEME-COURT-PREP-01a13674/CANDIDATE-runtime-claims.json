@@ -1,0 +1,53 @@
+{
+  "candidateOnly": true,
+  "execution": null,
+  "mergeIntoMainClaimsOnlyAfterRootSelection": true,
+  "claims": [
+    {
+      "id": "C_QUICKCHIP",
+      "req": "R077_TEXT",
+      "kind": "behavior",
+      "domain": "ui-behavior",
+      "touches": [
+        "js/tabs/records/checkin-helpers.js"
+      ],
+      "statement": "기본 러닝 칩을 누르면 선택 표시가 바뀌고 빈 기록 입력칸에 확정 안내 문구가 유지된다.",
+      "change": "fix",
+      "symptom": 10,
+      "scenario": "scenarios/quickchip-source-candidate.json"
+    },
+    {
+      "id": "C_GUESTSAVE",
+      "req": "R077_TEXT",
+      "kind": "behavior",
+      "domain": "ui-behavior",
+      "touches": [
+        "js/tabs/records/checkin-capture.js"
+      ],
+      "statement": "새 guest의 한 글자 기기 저장 뒤 입력칸이 비고 확정 안내 문구와 기기 보관 상태를 확인한다.",
+      "change": "fix",
+      "symptom": 10,
+      "scenario": "scenarios/guestsave-source-candidate.json"
+    },
+    {
+      "id": "C_FIRSTTUTORIAL",
+      "req": "R077_TEXT",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "touches": [
+        "js/tabs/records/first-checkin-tutorial.js"
+      ],
+      "statement": "신규 가입 온보딩 뒤 첫 체크인 안내 writer가 확정 문구를 유지한다.",
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "신규 가입/로그인 가능한 실제 화면 검토자; 현재 실행은 없음",
+        "how": [
+          "signup 성공 세션 또는 _isNewSignup 복원 세션의 정상 온보딩을 완료한다.",
+          "records가 비었고 firstCheckinPending인 첫 체크인 화면의 정확 안내를 확인한다.",
+          "현재 금고 fixture는 empty guest-fresh뿐이며 이 상태를 주입하거나 fixture를 새로 만들지 않는다."
+        ]
+      }
+    }
+  ]
+}
