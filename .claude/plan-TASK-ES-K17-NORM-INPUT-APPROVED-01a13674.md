@@ -27,3 +27,7 @@ source73df/main87/982·approval→원body/diff/indie/Court pin→normal merge→
 추가 위임: current C4/C6 check.text만 실제두승인상태행으로변경했다. 원73df claims raw/SHA·JSON paths는 CLAIMS-LITERAL-ONLY-CHANGE.json, 초기raw-vs-Git assertionnegative와층분리교정은 RAW-PRESERVATION.json에 있다. 원physical을 Git LF와같게 고쳐서경고를없애지 않는다.
 
 측정: 승인상태 source commit·normalhook와firstmergenegative는approved-followup-1 원로그, 범위와raw층분리는SOURCE-MEASUREMENT/RAW-PRESERVATION, 자기잔류는process-observation에서확인했다. 마지막metadata commit뒤실제head/clean은root인계조회에고정한다. 계획준비이며newCourt/효력/제품사용/효과는아직없다.
+
+- [x] 추가 위임 current C6 statement 시점 정합·R3 source 대조 · 예상 3분(추정) · 완료 기준: /claims/C6/statement만 지정문구로 바뀌고 requirement가 미승인 사실을 고정했는지 exactsource로 확인하며 원73df·강도·조건·옛판정은 그대로다.
+
+followup-2 최종source: root추가위임한 C6 statement/R3 metadata시점교정은 SOURCE-MEASUREMENT-FOLLOWUP-2.json, 최종현재 artifact는 source-seal-followup-2.json/closure-followup-2.json을따른다. 첫 source-seal/closure와Git f4a910c6는 literal-only 당시snapshot으로보존하며 현재검증으로재라벨하지않는다.

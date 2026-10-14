@@ -22,6 +22,8 @@ main87에서 이미 병합된 source 변화는 normal merge로 인수한 것이�
 
 현재 `reports/TASK-ES-K17-NORM-DRAFT-01a13674/claims.json`의 C4/C6 `check.text`만 실제 승인 접수 대장행/header에 맞췄다. root의 추가 위임 범위이며 ID/req/kind/domain/touches/statement/강도와 나머지 check는 그대로다. 원73df claims raw는 `CLAIMS-SOURCE73df-BEFORE.json` 및 Git73df에 보존하고 전후 두 JSON pointer·SHA는 `CLAIMS-LITERAL-ONLY-CHANGE.json`에 고정했다. 승인 접수에 따른 글자핀 정합이며 현재Court/제품검사 성공 판정이 아니다. 최초 official61A는 제품주장심사 없음이고 author 정적청구와 다르다.
 
+위 literal 정합 단계 뒤 root가 현재 C6 statement와 R3 문장의 승인 부재 사실도 시점 정합하도록 추가 위임했다. 최종 현재 source는 C6 statement를 「전문 머리에 이번 명시 승인 접수와 main 미병합으로 효력이 아직 없음을 구분해 적는다」, R3 text를 「이번 명시 규범 승인 접수와 main 미병합·효력 미발생을 구분하고 원삭제 승인과 별도 규범 결심을 구분한다.」로 한정 교정했다. 별도 `CLAIMS-METADATA-FOLLOWUP-2.json`·`R3-METADATA-FOLLOWUP-2.json`·`SOURCE-MEASUREMENT-FOLLOWUP-2.json`이 전후 원문/JSON pointer를 보존한다. ID/req/kind/domain/touches/검증강도·조건·승인선은 바꾸지 않았고 원73df/f4 단계와 옛판정을 재작성하지 않았다. 현재 최종 source는 이 followup-2 측정과 seal을 따른다.
+
 첫 b7cab commit lookup 실패는 root shorthand의 자료종류를 오해한 source조회negative다. 실제는 `FIRST-INDEPENDENT-OPINION.json` SHA b7cab7d8...이며 exactfile/hash와 SOURCE-SEAL/HANDOFF/CONDITIONS를 읽고 `CORRECTED-APPROVAL-AND-INDEPENDENT-SOURCE.json`에 별도로 결박했다. 원독립 지적·첫EOL/reader실패·원12C98ADB/e171·최종61A96AEC/73df·기존raw는 변경하지 않았다.
 
 이번 old-tracked raw 비교의 첫 assertion도 기록한다: `.claude/plan-K17-input-norm.md`의 physical CRLF와 Git canonical LF가 서로 달라 raw==blob 검사에서 중단됐고, 그 attempt로 RAW-PRESERVATION/source-seal은 만들어지지 않았다. 기존 초기 physical seal과 canonical LF를 분리해 `RAW-PRESERVATION.json`에 별도로 교정했다. 실제 원physical과 옛외부독립/Court pins는 그대로이며 승인된 current claim literal 외 canonical 내용도 같다. raw CRLF/원문diff 문맥에 대한 git diff whitespace 경고를 없애려고 원raw를 정규화하지 않았다. normal hook/commit 성공과 이 별도source 검사 negative는 구분한다.
