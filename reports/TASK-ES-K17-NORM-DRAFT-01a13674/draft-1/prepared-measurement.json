@@ -1,8 +1,8 @@
 {
   "schema": "k17-prepared-text-measurement/1",
-  "measuredAt": "2026-10-14T03:27:48.388Z",
+  "measuredAt": "2026-10-14T03:31:01.456Z",
   "base": "d326db5e6c7c50255e198d44204241f0c68fc0e8",
-  "workingHead": "6a4dae2a00662c61f2a7b6cf1a3a53b0f52cf7c2",
+  "workingHead": "1244958c9361711e0ca2e28c184174db1078b6d3",
   "requiredCommands": [
     {
       "command": [
@@ -86,35 +86,43 @@
   "unchanged": [
     {
       "file": "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     },
     {
       "file": "AGENTS.md",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     },
     {
       "file": "CLAUDE.md",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     },
     {
       "file": "docs/directives/ACTIVE.md",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     },
     {
       "file": "docs/rules/MASTER_PLAN_OURGOAL.md",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     },
     {
       "file": "docs/rules/REPORT-TEMPLATES.md",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     },
     {
       "file": "court/appendix.js",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     },
     {
       "file": "court/vault.json",
-      "sameGitBytes": true
+      "sameGitBytes": true,
+      "initialWorkingCopySame": true
     }
   ],
   "originalPacketSame": true,
@@ -131,7 +139,15 @@
     "source": "prepared-measurement-first.json",
     "exitCode": 1,
     "finding": "CRLF와 LF를 다른 문구 행으로 센 비교",
-    "correction": "문구 행 비교에서만 CRLF를 LF로 정규화. archive와 보호파일은 raw byte 비교 유지. 원false는 보존"
+    "correction": "문구 행 비교에서만 CRLF를 LF로 정규화. 원false는 보존"
+  },
+  "canonicalRawCorrection": {
+    "source": "newline-first-observation.json",
+    "gitOptions": [
+      "core.autocrlf=false",
+      "core.eol=lf"
+    ],
+    "protectionProof": "Git base/head raw동일 + initialWorking/raw현재동일, archive는선정main rawblob byte동일"
   },
   "newApproval": null,
   "efficacy": false,
