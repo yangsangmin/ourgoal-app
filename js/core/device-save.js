@@ -32,7 +32,7 @@
         || Object.keys(b.confirmed).some(function(id){return !payloadOwn(kind,b.confirmed[id],id,uid);})) throw new Error('pending-integrity');
       Object.keys(b.entries).forEach(function (id) {
         var e = b.entries[id];
-        if (!e || e.account !== uid || e.target !== id || e.kind !== kind || !e.changeId || !Number.isSafeInteger(e.generation) || e.generation < 1 || !payloadOwn(kind,e.payload,id,uid) || b.versions[id] !== e.generation) throw new Error('pending-integrity');
+        if (!e || e.account !== uid || e.target !== id || e.kind !== kind || !e.changeId || !Number.isSafeInteger(e.generation) || e.generation < 1 || !Number.isSafeInteger(e.attempts) || e.attempts < 0 || !payloadOwn(kind,e.payload,id,uid) || b.versions[id] !== e.generation) throw new Error('pending-integrity');
       });
     });
     return q;

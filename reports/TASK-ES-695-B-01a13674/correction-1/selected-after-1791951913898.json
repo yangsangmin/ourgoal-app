@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-14T04:25:13.897Z",
+  "base": "d831b3a9cc93bf764cc852e1aaa3e99df439f7ad",
+  "originalIndependentRawSHA256": "491cb8f7ec9d3e21b3fc12f1f61901584dbfbb564d4368bc1a00a1e6f9140305",
+  "scope": "two selected defects + needed compatibility counterparts only; L1 VM/in-memory/mockSDK, not real auth/HTTP/DB/guest/E2E",
+  "checks": [
+    {
+      "name": "first attempts corruption is integrity hold and preserves q/backup/body bytes",
+      "typedReason": "pending-integrity",
+      "selectedAutoInvocations": 3,
+      "mockSends": 0,
+      "qSHA256": "d31a5121d93c0e9b189c0194a48d8abc5e7d79e9562255186c68b5a2885f5dee",
+      "backupSHA256": "7278fce670931e3f3f6af1156dc90d6a080195b34b432c891db6555c1597dee3",
+      "bodySHA256": "85b793293b89f53f4c561450be5443aabd4bcc29a859efe3d95e1fdb85c32814",
+      "bytesUnchanged": true
+    },
+    {
+      "name": "related counter shapes are rejected without normalization",
+      "shapeCases": 5,
+      "normalization": 0
+    }
+  ],
+  "failures": [
+    {
+      "name": "normal A schema1 counter and optional/future metadata remain compatible with auto cap",
+      "error": "AssertionError",
+      "messageSHA256": "a40c5903da05f4913a9a28f4745ccf65fbad49b2e479873fba559e4022bb2126"
+    }
+  ],
+  "products": [
+    {
+      "file": "js/core/device-save.js",
+      "sha256": "d32a3d87c0128d908d8adcc4f6c0256e060b7f0ff0756302029e8745e38add53"
+    },
+    {
+      "file": "js/core/profile-load.js",
+      "sha256": "328d202e8236c059fcc3861ff7106d962acbb792947f1c39e132dc095daeeaf3"
+    }
+  ],
+  "helperSHA256": "7b093296d3c6aaa8901796dde9bd313be7c4654d51176143698155d48b581072",
+  "ownPID": 27908,
+  "realAuth": 0,
+  "realHTTP": 0,
+  "realDB": 0,
+  "fixtureDB": 0,
+  "oldSuiteRepeated": 0,
+  "guestRepeated": 0,
+  "operating": null,
+  "use": null,
+  "effect": null,
+  "Court": "68BA002F first rejection retained; correction not submitted"
+}

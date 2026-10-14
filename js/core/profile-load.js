@@ -76,13 +76,14 @@
 
   /* ---- 이전 전 index.html 3619~3650줄(#TASK-ES-522 생성기 표지) ---- */
 
-  async function ensureUserRow(userId, username, displayName, extra, checkCurrent){
+  async function ensureUserRow(userId, username, displayName, extra, checkCurrent, pendingUser){
     var found = null;
     try {
       found = await L.sb.from('users').select('*').eq('id', userId).maybeSingle();
       if(found && !found.error && found.data && found.data.id === userId) return { row: found.data, isNew: false, readState:'read-accepted' };
     } catch(e){}
     if(checkCurrent) checkCurrent();
+    if(pendingUser && pendingUser.id === userId) return {row:pendingUser,isNew:false,readState:'unconfirmed'};
     // 로컬 백업 확인: 기존에 편집된 프로필이 있다면 그 값을 기본값으로 보존 (데이터 유실 원천 방어)
     var localProf = null;
     try {
@@ -137,7 +138,7 @@
     }
     var safeUsername = String(username || (newUserExtra && newUserExtra.display_name) || userId || 'user').trim();
     var defaultDisplayName = (newUserExtra && newUserExtra.display_name) || (safeUsername.indexOf('@') !== -1 ? safeUsername.split('@')[0] : safeUsername);
-    var ures = await ensureUserRow(userId, safeUsername, defaultDisplayName, newUserExtra, currentLoad);
+    var ures = await ensureUserRow(userId, safeUsername, defaultDisplayName, newUserExtra, currentLoad, entries('users')[userId] && entries('users')[userId].payload);
     currentLoad();
     var urow = ures.row || {};
     if(hasPending('users')){
