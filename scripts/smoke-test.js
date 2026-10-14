@@ -7617,7 +7617,7 @@ check('[#TASK-ES-217 / 생각 메모장 88번] 오늘의 3초 체크인 목표 �
   assert.ok(indexHtml.includes('(탭하면 가이드 예시 힌트 설정 ⚡)'), 'renderQuickCheckinGuideChips 캡션 동기화 누락');
 
   // 3. captureSave 완료 시 기본 플레이스홀더 원복 확인
-  assert.ok(indexHtml.includes("t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';"), 'captureSave 내 placeholder 원복 누락');
+  assert.ok(fs.readFileSync(path.join(__dirname, '..', 'js', 'tabs', 'records', 'checkin-capture.js'), 'utf8').includes("t.placeholder = '기록하고 나의 역사데이터를 만들어요.';"), 'captureSave 내 placeholder 원복 누락');
 });
 
 check('[#TASK-ES-219 / 생각 메모장 89번] 데이터분석 프롬프트 백과사전 실사용 유저 등록·피드 게시 및 도움돼요 상호작용 무결성', () => {
