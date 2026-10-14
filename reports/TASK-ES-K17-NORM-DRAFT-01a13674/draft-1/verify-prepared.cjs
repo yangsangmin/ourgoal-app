@@ -1,0 +1,36 @@
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const cp = require('node:child_process');
+const root = path.resolve(__dirname, '../../..');
+const task = 'TASK-ES-K17-NORM-DRAFT-01a13674';
+const base = 'd326db5e6c7c50255e198d44204241f0c68fc0e8';
+const sha = b => crypto.createHash('sha256').update(b).digest('hex');
+const read = p => fs.readFileSync(p, 'utf8').replace(/^\uFEFF/, '');
+const git = args => cp.execFileSync('git', ['-C', root, '-c', 'core.autocrlf=false', '-c', 'core.eol=lf', ...args]);
+const outputs = [];
+for (const args of [ ['court/appendix.js', '--versions'], ['court/appendix.js', '--check', 'docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md'] ]) {
+  const r = cp.spawnSync(process.execPath, args, { cwd: root, encoding: 'utf8' });
+  const name = args.includes('--versions') ? 'versions' : 'appendix-check';
+  fs.writeFileSync(path.join(__dirname, name + '-raw.log'), String(r.stdout || '') + String(r.stderr || ''), 'utf8');
+  outputs.push({ command: ['node', ...args], exitCode: r.status, outputFile: name + '-raw.log' });
+}
+const doc = JSON.parse(read(path.join(root, 'reports', task, 'claims.json')));
+const errors = require(path.join(root, 'court', 'claims.js')).validateClaims(doc);
+const original = JSON.parse(read(path.join(__dirname, 'provenance-initial.json')));
+const originalPacket = original.originalPacketPins.map(p => ({ file: p.file, originalSHA256: p.sha256, currentSHA256: sha(fs.readFileSync(p.file)), same: sha(fs.readFileSync(p.file)) === p.sha256 }));
+const unchanged = original.sourcePins.filter(p => !['docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md', 'docs/rules/CONSTITUTION_VERSIONS.md'].includes(p.path)).map(p => ({ file: p.path, sameGitBytes: git(['cat-file', 'blob', base + ':' + p.path]).equals(git(['cat-file', 'blob', 'HEAD:' + p.path])), initialWorkingCopySame: p.workingPin.sha256 === sha(fs.readFileSync(path.join(root, p.path))) }));
+const e = JSON.parse(read(path.join(root, 'reports/TASK-ES-K17-INPUT-NORM-01a13674/evidence.json')));
+const oldStatute = git(['cat-file', 'blob', base + ':docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md']).toString('utf8').replace(/\r\n/g, '\n').split('\n');
+const newStatute = read(path.join(root, 'docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md')).replace(/\r\n/g, '\n').split('\n');
+const changedLines = [];
+for (let i = 0; i < Math.max(oldStatute.length, newStatute.length); i++) if (oldStatute[i] !== newStatute[i]) changedLines.push({ line: i + 1, old: oldStatute[i], after: newStatute[i] });
+const known = new Set([5, 170, 171]);
+const exactTwoRows = e.normComparison.every(v => changedLines.some(c => c.line === v.line && c.old === v.old && c.after === v.proposed));
+const archive = fs.readFileSync(path.join(root, 'docs/rules/archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_2026.10.14_DIR006_SAVE.md'));
+const archivedMain = git(['cat-file', 'blob', base + ':docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md']);
+const r = { schema: 'k17-prepared-text-measurement/1', measuredAt: new Date().toISOString(), base, workingHead: git(['rev-parse', 'HEAD']).toString().trim(), requiredCommands: outputs, claimsSchemaErrors: errors, changedStatuteLines: changedLines, extraStatuteChangedLines: changedLines.filter(v => !known.has(v.line)), exactTwoRows, oldStatuteArchiveExact: archive.equals(archivedMain), originalPacket, unchanged, originalPacketSame: originalPacket.every(v => v.same), protectedUnchanged: unchanged.every(v => v.sameGitBytes && v.initialWorkingCopySame), productFilesChanged: git(['diff', '--name-only', base, '--', 'js', 'api', 'index.html', 'ui.css', 'ui.js', 'css', 'sw.js', 'package.json', 'package-lock.json']).toString().trim().split('\n').filter(Boolean), priorCommandFailure: { command: 'node court/appendix.js --check', toolChunk: '14598c', exitCode: 1, observed: '필수 정본 경로 인자 누락, 사용법 출력', correction: '동일 도구에 실제 전문 경로 제공. 도구 변경 없음' }, firstMeasurementFailure: { source: 'prepared-measurement-first.json', exitCode: 1, finding: 'CRLF와 LF를 다른 문구 행으로 센 비교', correction: '문구 행 비교에서만 CRLF를 LF로 정규화. 원false는 보존' }, canonicalRawCorrection: { source: 'newline-first-observation.json', gitOptions: ['core.autocrlf=false', 'core.eol=lf'], protectionProof: 'Git base/head raw동일 + initialWorking/raw현재동일, archive는선정main rawblob byte동일' }, newApproval: null, efficacy: false, officialCourt: null, use: null, effect: null };
+fs.writeFileSync(path.join(__dirname, 'prepared-measurement.json'), JSON.stringify(r, null, 2) + '\n', 'utf8');
+process.stdout.write(JSON.stringify({ requiredCommands: outputs, claimsSchemaErrors: errors, changedStatuteLines: changedLines.map(v => v.line), exactTwoRows, extraStatuteChangedLineCount: r.extraStatuteChangedLines.length, oldStatuteArchiveExact: r.oldStatuteArchiveExact, originalPacketSame: r.originalPacketSame, protectedUnchanged: r.protectedUnchanged, productFileChangeCount: r.productFilesChanged.length }) + '\n');
+process.exitCode = outputs.some(v => v.exitCode !== 0) || errors.length || !exactTwoRows || r.extraStatuteChangedLines.length || !r.oldStatuteArchiveExact || !r.originalPacketSame || !r.protectedUnchanged || r.productFilesChanged.length ? 1 : 0;
