@@ -4,7 +4,7 @@
 
 - [x] 원 P0 reader/source보존·CI/correction packet 인수 · 예상3분 · 원해시/보호16pins·단언/fixture불변 및provider/cache/reset/ctx/legacy 조건 읽기
 - [x] exact 정적claims source 인수·형식/범위 대조 · 예상3분 · 원C1–C3 불변·새R4 정적 사실을 실행/보존증명으로 승격0
-- [ ] 최초 독립의견·seal/ordinarycommit/closure/clean · 예상2분 · 새source/raw불변·실제ownprocess잔여0·root인계 후쓰기종료
+- [x] 최초 독립의견·seal/ordinarycommit/closure/clean · 예상2분 · 새source/raw불변·실제ownprocess잔여0·root인계 후쓰기종료
 
 ## ① 파악
 local-keep-p0::boot와 direct-login-guard::makeBrowser의 provider 로드 교정이다. 원계정6·P0whole26·directwhole6·selected4+1을 다시 실행하지 않고 현재source와 원단언을 대조한다.
@@ -22,3 +22,5 @@ originalCI 실패·공식65E957E7 9cf의unclaimed test와failure는 보존한다
 제품/원claims/원raw/oldprotected16pins/root파일 불변. auth/DB/browser/API/SQL0. 새claims를 받기 전 reader검토는 진행하지만 claim종결은pending으로 둔다. 추가소환0.
 ## ⑧ 막히는 지점 예상
 WT dependency부재·module cache/window 이전상태·legacyheader 선택 모호함·VM host/realm·statickind 공허함·새claims미전달을 예상한다. 코드참조와실행사실을 구분하고 원budget/승인선·공식Court/use/effect null을 보존한다.
+
+종료 측정: source 의견 commit c888cb51fd3a722ebdce982c266a03a232c86344 normalhook exit0. reader eb232/claim6a69 별도 source핀과 두 최초의견 불변. collectorPythonPID43684/8068 Get-Process 잔여 없음·background/child0. 첫 closure가 PS redirect UTF16 로그 읽기에서 실패해 원byte raw를 보존하고 명시UTF8 projection으로 다시 읽었다. 후속 add pathspec/no-staged commit 원실패는 closure에 기록한다. source-seal plan은 sourcecommit snapshot이고 마지막 표시만 closure-only다. 제품/시험/claims/raw/root 변경0·추가실행0·공식CI/Court/use/effect null.
