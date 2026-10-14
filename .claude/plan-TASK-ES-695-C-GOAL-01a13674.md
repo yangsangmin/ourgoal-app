@@ -4,7 +4,7 @@
 - [x] 현재 main·DIR006·회의03·코어 API 인수 · 예상 4분 · exact87b7 source/원계약/실제 모델/두 caller·11 대표 여정 범위를 고정한다.
 - [x] REQ·단독 목표 화면 교정 · 예상 6분 · ngApplyBtn/mSave는 typed goals 결과·stable ID·중복 lock·local-confirm·현재 계정/세대/창을 검사한다.
 - [x] 변경 경계 한정 측정 · 예상 4분 · 보류/기기 실패/중복/늦은 계정·창 응답/성공 후속을 실제 제품 source 부품에서 확인한다. 실계정 E2E로 승격하지 않는다.
-- [ ] 주장·정상 커밋·source 봉인/closure · 예상 2분 · 원코어/기존 시험 바이트·정확 HEAD/hash·ownNode 종료·clean을 root에 인계한다. 독립/CI/Court는 root 후속이다.
+- [x] 주장·정상 커밋·source 봉인/closure · 예상 2분 · 원코어/기존 시험 바이트·정확 HEAD/hash·ownNode 종료·clean을 root에 인계한다. 독립/CI/Court는 root 후속이다.
 
 ① 파악: DIR006 C의 11은 대표 여정이며 모든 saveProfile caller 수가 아니다. 이번 목표 두 submit만 담당한다.
 
@@ -25,3 +25,5 @@
 task_id TASK-ES-695-C-GOAL-01a13674, 기존 TASK-ES-695 연결. common TASK-CC-CELL-UNWIRE-RUN-309dca5d의 sync/leaf 등록은 root 단독·localpending이며 본 계획은 공용 연결을 수정하지 않는다.
 
 root 승인으로 confetti::showUndoPrivacyToast optional statusMessage만 추가했다. 새 WORK-REFERENCE982 전체 읽기를 마쳤고 착수979 이력을 보존했다. SOURCE-PROOF의 선정 부품/실제 source/hash와 원하네스 첫 실패를 인수했다. guest PC 시나리오는 준비만 했으며 실행·R2 Court coverage·실제 사용 가능·효과는 미확인이다. 공용 metadata/TICKETS/연계는 root 단독 pending이다.
+
+제품 source 19ec7749f350805a718395432041c61521874024와 봉인 파일·원자료 보호/범위·선정 raw를 COMMIT-CLOSE에서 대조했다. 마지막 closure HEAD/clean/PID는 커밋 뒤 별도 읽기로 측정한다. SOURCE-SEAL은 원 source 계획을 보존하며 체크 항목 마감만 closure에서 갱신한다. 실제 UI/R2 Court coverage/CI/Court/use/effect는 root 후속·미확인이다.
