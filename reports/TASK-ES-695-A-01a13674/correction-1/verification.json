@@ -1,0 +1,232 @@
+{
+  "at": "2026-10-14T00:37:57.443Z",
+  "base": "71429cb3a06a86106c1d14d8d28f6294d50fa3f2",
+  "headBeforeCommit": "71429cb3a06a86106c1d14d8d28f6294d50fa3f2",
+  "origin": "f1b03d0c84344a260d8a0a813e107f897f706a24",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "scripts/module-specs.js",
+        "--write"
+      ],
+      "exit": 0,
+      "stdout": "check-0.stdout.txt",
+      "stderr": "check-0.stderr.txt"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/module-guard.js"
+      ],
+      "exit": 0,
+      "stdout": "check-1.stdout.txt",
+      "stderr": "check-1.stderr.txt"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "js/tabs/records/checkin-capture.js"
+      ],
+      "exit": 0,
+      "stdout": "check-2.stdout.txt",
+      "stderr": "check-2.stderr.txt"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "js/tabs/records/pro-record-save.js"
+      ],
+      "exit": 0,
+      "stdout": "check-3.stdout.txt",
+      "stderr": "check-3.stderr.txt"
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "check-4.stdout.txt",
+      "stderr": "check-4.stderr.txt"
+    }
+  ],
+  "claimErrors": [],
+  "stableClaimIDsAndKinds": true,
+  "scenariosBytesUnchanged": true,
+  "originalEvidenceHashesPreserved": true,
+  "protectedDiffBytes": 0,
+  "productFiles": [
+    {
+      "file": "js/tabs/records/checkin-capture.js",
+      "workingSHA256": "19c4edc3d85ca17d33330a12ae6b092cba2f0d40fc5642f7e85aadd418d45161",
+      "normalizedLFSHA256": "05180abfdb5fe211b1a7860b71bedeb01e49460c6538dffa5beee0e31846624e"
+    },
+    {
+      "file": "js/tabs/records/pro-record-save.js",
+      "workingSHA256": "52d86bd9eed00192783be367ad8c844e2a1af96567a55062cf4c255da452dc95",
+      "normalizedLFSHA256": "c8c026a2934eb70693c00b3ac5289692189c94fa378afd8c77bac685474a2bbd"
+    }
+  ],
+  "targetedCount": 9,
+  "targetedCases": [
+    {
+      "file": "late-input-final2.json",
+      "sha256": "37b09d461e131d8d2c945c4098b3b90f022ef8b301115a871c3ab18f22ce547e",
+      "responsibleSource": "js/tabs/records/checkin-capture.js",
+      "responsibleSHA256": "19c4edc3d85ca17d33330a12ae6b092cba2f0d40fc5642f7e85aadd418d45161",
+      "inputAfter": "저장 대기 중 새로 쓴 원문",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "same-text-final2.json",
+      "sha256": "421508ad7d047064d43c2f861c53229c2cca682df1857626d037f3b7782549b6",
+      "responsibleSource": "js/tabs/records/checkin-capture.js",
+      "responsibleSHA256": "19c4edc3d85ca17d33330a12ae6b092cba2f0d40fc5642f7e85aadd418d45161",
+      "inputAfter": "독립 먼저 저장할 본문",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "failed-late-input-final2.json",
+      "sha256": "0c6bcc2ee9b0c2843ded31d6e346ec625c40374ec79ff6df43dc200295808c5e",
+      "responsibleSource": "js/tabs/records/checkin-capture.js",
+      "responsibleSHA256": "19c4edc3d85ca17d33330a12ae6b092cba2f0d40fc5642f7e85aadd418d45161",
+      "inputAfter": "저장 대기 중 새로 쓴 원문",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "late-photo-final2.json",
+      "sha256": "cc69d047777642d30493908deb4f118ff8d0ad713b62c6515a4c4e9e072d5d1e",
+      "responsibleSource": "js/tabs/records/checkin-capture.js",
+      "responsibleSHA256": "19c4edc3d85ca17d33330a12ae6b092cba2f0d40fc5642f7e85aadd418d45161",
+      "inputAfter": "",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "profile-generation-final.json",
+      "sha256": "25c0fb822e2b26640b21a30ab2314366585c7d0590ac917f7804414eb1a29677",
+      "responsibleSource": "js/tabs/records/checkin-capture.js",
+      "responsibleSHA256": "19c4edc3d85ca17d33330a12ae6b092cba2f0d40fc5642f7e85aadd418d45161",
+      "inputAfter": "저장 대기 중 새로 쓴 원문",
+      "records": null,
+      "backup": null,
+      "distinctIds": null,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "pro-late-input-final.json",
+      "sha256": "ff0f25c2a74a0eaefde56ba7a80f337061a802a0c910563aa17a322c584c2135",
+      "responsibleSource": "js/tabs/records/pro-record-save.js",
+      "responsibleSHA256": "52d86bd9eed00192783be367ad8c844e2a1af96567a55062cf4c255da452dc95",
+      "inputAfter": "전문 대기 중 새 원문",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "pro-same-text-final.json",
+      "sha256": "e50caf2cd7ebc367c9204233e012e18758214bc9cb3404f58485e4c8ca7a15dd",
+      "responsibleSource": "js/tabs/records/pro-record-save.js",
+      "responsibleSHA256": "52d86bd9eed00192783be367ad8c844e2a1af96567a55062cf4c255da452dc95",
+      "inputAfter": "전문 제출 본문",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "pro-reopen-final.json",
+      "sha256": "4230b93b36f60baf9ac14d873754606c699340259f05f9e57ffa11da5b879a7d",
+      "responsibleSource": "js/tabs/records/pro-record-save.js",
+      "responsibleSHA256": "52d86bd9eed00192783be367ad8c844e2a1af96567a55062cf4c255da452dc95",
+      "inputAfter": "전문 대기 중 새 원문",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    },
+    {
+      "file": "pro-failed-input-final.json",
+      "sha256": "aa353651333a15e7798e9bb542edb10568468a27304bd8bb57d840c3c9ffd23e",
+      "responsibleSource": "js/tabs/records/pro-record-save.js",
+      "responsibleSHA256": "52d86bd9eed00192783be367ad8c844e2a1af96567a55062cf4c255da452dc95",
+      "inputAfter": "전문 대기 중 새 원문",
+      "records": 2,
+      "backup": 2,
+      "distinctIds": 2,
+      "exceptions": 0,
+      "scope": "actual visible guest entry + CDP mouse/keyboard; native browser lock controlled only for boundary fault; no fake auth/real-account E2E",
+      "externalCompleted": 0,
+      "AIIncrease": 0,
+      "liveWrites": 0
+    }
+  ],
+  "C2": {
+    "fingerprint": "d9346f5400a39a13",
+    "failedStep": null,
+    "steps": 12,
+    "sha256": "e2b740acb964540251076d2d99a51376b230ca23580f882f2f656430c292126c",
+    "publicFile": "public/C2-final.json",
+    "responsibleSource": {
+      "file": "js/tabs/records/pro-record-save.js",
+      "sha256": "52d86bd9eed00192783be367ad8c844e2a1af96567a55062cf4c255da452dc95"
+    }
+  },
+  "firstOfficialCourt": "4A23BBCD 돌려보냄 1회",
+  "resubmission": null,
+  "pushed": false,
+  "merge": null,
+  "operating": null,
+  "actualUse": null,
+  "effect": null
+}

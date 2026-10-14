@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..'),base='e140db658f5b735f8b2d99fa45f541d16871994e';
+const git=a=>cp.execFileSync('git',['-c','core.longpaths=true','-C',root,...a],{encoding:'utf8'}).trim();
+const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const paths=['js/core/home-cockpit.js','js/core/local-keep.js','js/core/profile-load.js','js/tabs/records/checkin-capture.js','js/tabs/records/pro-record-save.js','js/record-ledger.js','index.html','docs/architecture/modules.json','docs/specs/SAVE-SYNC-CONTRACT-2026-10-12.md','docs/directives/ACTIVE.md','docs/specs/REQ-TASK-ES-695-DIR-006-P0-LOCAL-KEEP.md','reports/TASK-ES-695/claims.json','docs/design/home-pilot-2026-10/03-오늘-기록하기-창-명세.md'];
+const pins=paths.map(p=>{const b=cp.execFileSync('git',['-c','core.longpaths=true','-C',root,'show',base+':'+p]);return {path:p,sha256:hash(b),bytes:b.length,lastThreeCommits:git(['log','-3','--format=%H %s',base,'--',p]).split('\n')};});
+const originalFiles=git(['ls-tree','-r','-z','--name-only',base,'--','reports/TASK-ES-695']).split('\0').filter(Boolean);
+const originals=originalFiles.map(p=>({path:p,gitBlobSHA256:hash(cp.execFileSync('git',['-c','core.longpaths=true','-C',root,'show',base+':'+p]))}));
+const rollout='C:/Users/HP/.codex/sessions/2026/10/14/rollout-2026-10-14T03-50-10-01a13699-c9f8-7bb3-8ec0-c23d9fb8f5a8.jsonl';let actual=null;
+for(const line of fs.readFileSync(rollout,'utf8').split(/\r?\n/)){if(!line.trim())continue;const e=JSON.parse(line);if(e.type==='turn_context')actual={timestamp:e.timestamp,model:e.payload.model,effort:e.payload.effort??e.payload.reasoning_effort??null};}
+const query='query { repository(owner:"yangsangmin", name:"ourgoal-app") { pullRequests(states:OPEN, first:100, orderBy:{field:UPDATED_AT,direction:DESC}) { pageInfo { hasNextPage endCursor } nodes { number title headRefName headRefOid files(first:100) { pageInfo { hasNextPage endCursor } nodes { path } } } } } }';
+const response=JSON.parse(cp.execFileSync('gh',['api','graphql','-f','query='+query],{encoding:'utf8'}));
+const prs=response.data.repository.pullRequests;
+const owned=paths.slice(0,7);
+const overlaps=prs.nodes.map(p=>({number:p.number,title:p.title,headRefName:p.headRefName,headRefOid:p.headRefOid,files:p.files.nodes.map(f=>f.path).filter(f=>owned.includes(f)),fileListIncomplete:p.files.pageInfo.hasNextPage})).filter(p=>p.files.length||p.fileListIncomplete);
+const p0=JSON.parse(fs.readFileSync(path.join(root,'reports/TASK-ES-695/claims.json'),'utf8'));
+const result={schema:'k18-a-source-intake/1',measuredAt:new Date().toISOString(),taskId:'TASK-ES-695-A-01a13674',retainedTaskIds:['TASK-ES-695','TASK-OG-PRODUCT-PART-01a1310c'],commonTaskId:'TASK-CC-CELL-UNWIRE-RUN-309dca5d',base,head:git(['rev-parse','HEAD']),origin:git(['rev-parse','origin/main']),branch:git(['branch','--show-current']),model:{requested:'gpt-6.1-sol',requestedEffort:'high',actual,rollout,reason:'복합 저장/caller의 무손실·계정/세대·partial/late 경계를 같은 source에서 구현; root 별도 독립검토'},soleWriter:'/root/contracts',ownerAssignment:'root 명시 home-cockpit/local-keep/capture/prosave/new storage module/index loader·status/modules 신고; root TICKETS/중앙metadata는쓰기금지',pins,originals,p0Requirements:p0.requirements,p0ClaimIds:(p0.claims||[]).map(c=>c.id),openPROverlap:{queryScope:'OPEN first100 / files first100; incomplete은충돌없음증거아님',PRListIncomplete:prs.pageInfo.hasNextPage,overlaps},states:{code:null,operating:null,actualUse:null,effect:null,Court:null},budgets:{SQL:0,liveWrites:0,originalOneRecordRepeat:0,originalFirstMetricRepeat:0,AIIncrease:0,NotionDirect:0,spawn:0}};
+fs.writeFileSync(path.join(__dirname,'source-intake.json'),JSON.stringify(result,null,2)+'\n',{encoding:'utf8'});
+process.stdout.write(JSON.stringify({base,head:result.head,origin:result.origin,model:actual,sourcePins:pins.length,originalFiles:originals.length,openPROverlap:result.openPROverlap})+'\n');

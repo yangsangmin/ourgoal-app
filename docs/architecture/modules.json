@@ -1739,6 +1739,71 @@
       ]
     },
     {
+      "id": "core/device-save",
+      "file": "js/core/device-save.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "TASK-ES-695 A — 기기 자료와 미확정 기록 변경 목록 되읽기·원계정/세대별 비동기 확인",
+      "spans": [],
+      "provides": [
+        "storage.device.save",
+        "storage.device.retry",
+        "storage.device.message",
+        "storage.device.status",
+        "storage.device.focused"
+      ],
+      "requires": [],
+      "contributes": [],
+      "owns": [
+        "data.save.pending"
+      ],
+      "capabilities": [
+        {
+          "name": "storage.device.save",
+          "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+          "sideEffect": "server",
+          "needsConfirm": false
+        },
+        {
+          "name": "storage.device.retry",
+          "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+          "sideEffect": "server",
+          "needsConfirm": false
+        },
+        {
+          "name": "storage.device.message",
+          "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+          "sideEffect": "none",
+          "needsConfirm": false
+        },
+        {
+          "name": "storage.device.status",
+          "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+          "sideEffect": "none",
+          "needsConfirm": false
+        },
+        {
+          "name": "storage.device.focused",
+          "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+          "sideEffect": "none",
+          "needsConfirm": false
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "save:state-changed"
+      ],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
       "id": "core/event-bus",
       "file": "js/core/event-bus.js",
       "layer": "core",
@@ -1851,7 +1916,10 @@
       "role": "OurGoal Home Cockpit (기관 — 홈 1초 조망 ↔ 체크인 콕핏)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "storage.device.save",
+        "storage.device.retry"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -1866,6 +1934,7 @@
       "dependsOn": [
         "OurgoalAccountIsolation",
         "OurgoalAppScope",
+        "OurgoalCapabilities",
         "OurgoalLocalKeep",
         "OurgoalRecordLedger"
       ]
@@ -7538,7 +7607,10 @@
       "role": "홈 체크인 입력칸 글자수 힌트 처리기(bindCaptureLiveMeta)와 「기록」 단추 저장 처리기(bindCaptureSave) — 기록 추가·XP·축하·AI 피드백·노션 전송. 로드 중 걸리던 처리기를 함수로 감싸 index.html 원래 자리에서 부른다. index.html 인라인에서 글자 그대로 옮김(#TASK-ES-439)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "storage.device.message",
+        "storage.device.focused"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -7550,11 +7622,16 @@
         "checkin:created",
         "record:saved"
       ],
-      "listens": [],
+      "listens": [
+        "save:state-changed"
+      ],
       "domRoot": null,
-      "ownerKeys": [],
+      "ownerKeys": [
+        "records/checkin-capture"
+      ],
       "dependsOn": [
         "OurgoalAppScope",
+        "OurgoalCapabilities",
         "OurgoalEvents",
         "OurgoalStore"
       ]
@@ -7946,7 +8023,10 @@
       "role": "OurGoal Pro Record Save (기록 — 전문 템플릿 기록 창의 저장·닫기)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "storage.device.message",
+        "storage.device.focused"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -7959,7 +8039,8 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalCapabilities"
       ]
     },
     {

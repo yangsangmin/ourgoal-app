@@ -1,0 +1,273 @@
+{
+  "scope": "unchanged Court scenario executed locally; worker observation, not official Court verdict",
+  "id": "dir006-professional-guest-local",
+  "title": "전문 기록 창은 기기 확인 뒤 닫고 기기 보관을 알린다",
+  "fingerprint": "d9346f5400a39a13",
+  "siteRev": "local-worker-observation",
+  "passed": true,
+  "invalid": false,
+  "errors": [],
+  "weaknesses": [],
+  "hollow": false,
+  "failedStep": null,
+  "failKind": null,
+  "failReason": null,
+  "steps": [
+    {
+      "i": 1,
+      "kind": "do",
+      "name": "goto",
+      "ok": true,
+      "detail": "/index.html"
+    },
+    {
+      "i": 2,
+      "kind": "do",
+      "name": "waitFor",
+      "ok": true,
+      "detail": "#btnLandingPreviewDirect → 보이는 요소 1개"
+    },
+    {
+      "i": 3,
+      "kind": "do",
+      "name": "click",
+      "ok": true,
+      "detail": "클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x46px"
+    },
+    {
+      "i": 4,
+      "kind": "do",
+      "name": "waitFor",
+      "ok": true,
+      "detail": "#captureInput → 보이는 요소 1개"
+    },
+    {
+      "i": 5,
+      "kind": "do",
+      "name": "click",
+      "ok": true,
+      "detail": "클릭 button \"기록/통계\" 57x50px"
+    },
+    {
+      "i": 6,
+      "kind": "do",
+      "name": "click",
+      "ok": true,
+      "detail": "클릭 button \"📋 템플릿\" 82x44px"
+    },
+    {
+      "i": 7,
+      "kind": "do",
+      "name": "click",
+      "ok": true,
+      "detail": "클릭 button \"헬스\" 51x44px"
+    },
+    {
+      "i": 8,
+      "kind": "do",
+      "name": "type",
+      "ok": true,
+      "detail": "입력 input#proRecMemo \"\" 333x52px"
+    },
+    {
+      "i": 9,
+      "kind": "do",
+      "name": "click",
+      "ok": true,
+      "detail": "클릭 button#proGeneralSaveBtn \"일반저장\" 131x44px"
+    },
+    {
+      "i": 10,
+      "kind": "expect",
+      "name": "textContains",
+      "ok": true,
+      "detail": "#toast → 보이는 글자: [\"전문 템플릿 기록을 저장했어요 · 기기에 보관했어요. 올라간 것은 아직 확인되지 않았어요\"]",
+      "vacuous": false
+    },
+    {
+      "i": 11,
+      "kind": "expect",
+      "name": "notVisible",
+      "ok": true,
+      "detail": "#modalOverlay.active → 보이는 요소 0개",
+      "vacuous": false
+    },
+    {
+      "i": 12,
+      "kind": "capture",
+      "name": "professional-local",
+      "ok": true,
+      "detail": "dir006-professional-guest-local--professional-local.png sha256=1f846bb8658d0bc9"
+    }
+  ],
+  "bootExceptions": [],
+  "exceptions": [],
+  "consoleErrors": [
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/gsi/client"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/static/array.js"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/events"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/users"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+    },
+    {
+      "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=[public SDK credential omitted]",
+      "url": "/npm/@supabase/supabase-js@2"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/rpc/feed_settings_get"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/rpc/my_helpful_tag_profile"
+    },
+    {
+      "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=[public SDK credential omitted]",
+      "url": "/npm/@supabase/supabase-js@2"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+    },
+    {
+      "text": "WebSocket connection to 'wss://dvqosviqbciohcywkzbq.supabase.co/realtime/v1/websocket?apikey=[public SDK credential omitted]",
+      "url": "/npm/@supabase/supabase-js@2"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/feed_posts?select=*&order=created_at.desc&limit=50"
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "url": "/rest/v1/team_pings?select=*&group_id=eq.shared_groups&target_type=eq.team_group&order=created_at.desc&limit=50"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "/api/feedback"
+    }
+  ],
+  "dialogs": [],
+  "captures": [
+    {
+      "name": "professional-local",
+      "file": "dir006-professional-guest-local--professional-local.png",
+      "sha256": "1f846bb8658d0bc905c149aea89fe39d0c20a3bc1dffe7a31ab8427afe610728",
+      "bytes": 181592,
+      "afterStep": 12,
+      "at": "2026-10-14T00:24:00.240Z",
+      "caption": "한 행동: 클릭 button#proGeneralSaveBtn \"일반저장\" 131x44px / 확인한 것: textContains(#toast) · notVisible(#modalOverlay.active)",
+      "actor": "main"
+    }
+  ],
+  "fixtures": [],
+  "blockedExternal": [
+    {
+      "url": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
+      "type": "Stylesheet"
+    },
+    {
+      "url": "https://accounts.google.com/gsi/client",
+      "type": "Script"
+    },
+    {
+      "url": "https://us-assets.i.posthog.com/static/array.js",
+      "type": "Script"
+    },
+    {
+      "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/events",
+      "type": "Preflight"
+    },
+    {
+      "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/feed_posts",
+      "type": "Preflight"
+    },
+    {
+      "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/users",
+      "type": "Preflight"
+    },
+    {
+      "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/rpc/feed_settings_get",
+      "type": "Preflight"
+    },
+    {
+      "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/rpc/my_helpful_tag_profile",
+      "type": "Preflight"
+    },
+    {
+      "url": "https://dvqosviqbciohcywkzbq.supabase.co/rest/v1/team_pings",
+      "type": "Preflight"
+    }
+  ],
+  "nonVacuousExpects": 2,
+  "vacuousExpects": 0,
+  "viewport": {
+    "width": 375,
+    "height": 812
+  },
+  "chromeVersion": "Chrome/155.0.8059.40",
+  "startedAt": "2026-10-14T00:23:52.267Z",
+  "finishedAt": "2026-10-14T00:24:00.518Z",
+  "toolError": null,
+  "multiActor": false,
+  "hardwareDevice": false,
+  "stubs": [
+    "vendor/supabase-js-2.115.0.umd.js"
+  ],
+  "env": {
+    "userAgentRaw": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "webdriverRaw": "true",
+    "hadHeadless": true,
+    "userAgentServed": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+    "brandsRaw": [
+      "Google Chrome",
+      "Chromium",
+      "Not(A:Brand"
+    ],
+    "brandsServed": [
+      "Google Chrome",
+      "Chromium",
+      "Not(A:Brand"
+    ],
+    "hostname": "court-c31ceea5.test",
+    "webdriverSeen": "false",
+    "userAgentSeen": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+    "languages": "[\"ko-KR\",\"ko\"]",
+    "visibilityState": "visible",
+    "brandsSeen": "[\"Google Chrome\",\"Chromium\",\"Not(A:Brand\"]"
+  },
+  "provesBehavior": true,
+  "redaction": {
+    "scope": "consoleErrors URL credential only; steps/assertions/result/product pins unchanged",
+    "rawLocalFile": "C2-after.json",
+    "rawSHA256": "03d476be6dc1ca51be19996cc12f660fee4517bc4ea44bf008b65cfdf8b0c9a3",
+    "rawBytes": 8759,
+    "redactedURLs": 3,
+    "rawPublished": false
+  }
+}

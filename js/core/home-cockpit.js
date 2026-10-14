@@ -66,6 +66,7 @@
 
   function initHomeCockpit(){
     initDimensionSliders();
+    saveProfile({deviceFirst:true, retry:true}).catch(function(){ /* pending remains on device */ });
     var inp = document.getElementById('captureInput');
     if(inp && !inp.value){
       inp.value = ''; // [공준 1: 무예단 원칙] 깨끗한 빈칸 보장
@@ -151,7 +152,43 @@
   }
   /* ---- 이전 전 index.html 4201~4306줄(#TASK-ES-471 생성기 표지) ---- */
 
-  async function saveProfile(){
+  async function saveProfile(options){
+
+    if(options && options.deviceFirst){
+      try {
+        var deviceSave = global.OurgoalCapabilities.request('storage.device.save', 'core/home-cockpit');
+        var deps = {
+          current: function(){ return L.state.profile; }, store: localStorage, newId: L.newId,
+          isGuest: function(){ return !!(L.state.profile && L.state.profile.isGuest); },
+          keep: function(kind, uid, rows, st){ return global.OurgoalLocalKeep.setBackupFromSave(kind, uid, rows, st); },
+          owned: function(rec, uid){ return global.OurgoalAccountIsolation.ownRecordsOnly([rec], uid).length === 1; },
+          row: function(rec, uid){ return global.OurgoalRecordLedger.toCheckinRow(rec, uid); },
+          fromRow: function(row){ return global.OurgoalRecordLedger.fromCheckinRow(row); },
+          session: async function(){
+            if(!L.sb || !L.sb.auth) return null;
+            var response = await L.sb.auth.getSession();
+            return response && response.data && response.data.session && response.data.session.user;
+          },
+          send: function(row, signal){
+            /* Existing schema fallback/DTO stays in RecordLedger. Request returned rows without changing its API. */
+            var selected = { from: function(table){ return { upsert: function(rows){
+              var query = L.sb.from(table).upsert(rows);
+              if(query && typeof query.select === 'function') query = query.select();
+              if(query && typeof query.abortSignal === 'function') query = query.abortSignal(signal);
+              return query;
+            }}; }};
+            return global.OurgoalRecordLedger.upsertCheckinRows(selected, [row]);
+          }
+        };
+        if(options.retry) return global.OurgoalCapabilities.request('storage.device.retry', 'core/home-cockpit')(deps, options.manualRetry === true);
+        var saved = await deviceSave(deps, options);
+        if(saved.state !== 'failed') L.saveLocalSettings(saved.account, L.state.profile.settings);
+        return saved;
+      } catch(deviceError){
+        return { account: L.state.profile && L.state.profile.id, recordId: options.recordId, state: 'failed', reason: String(deviceError && deviceError.message), photoStored: false,
+          types: { users: {device:false,remote:'not-sent'}, goals:{device:false,remote:'not-sent'}, records:{device:false,remote:'not-sent'} } };
+      }
+    }
 
 
 
@@ -260,6 +297,11 @@
     } catch(e){ console.warn('Supabase sync failed:', e); }
     L.saveLocalSettings(uidVal, L.state.profile.settings);
     try { if(typeof L.syncLockScreenLiveCard === 'function') L.syncLockScreenLiveCard(false); } catch(lsErr){}
+    /* Legacy callers still await their original remote path. It did not verify returned rows;
+       do not convert completion of that path into a confirmed result. */
+    return { account: uidVal, state: 'local', reason: 'legacy-unconfirmed', types: {
+      users:{device:null,remote:'unconfirmed'}, goals:{device:null,remote:'unconfirmed'}, records:{device:null,remote:'unconfirmed'}
+    }};
   }
 
   K.switchHomeDate = switchHomeDate;
