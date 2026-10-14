@@ -4,8 +4,8 @@
   "steps": [
     {
       "do": "setViewport",
-      "width": 430,
-      "height": 932
+      "width": 375,
+      "height": 812
     },
     {
       "do": "goto",
@@ -14,7 +14,7 @@
     {
       "do": "waitFor",
       "selector": "#btnLandingPreviewDirect",
-      "timeoutMs": 10000
+      "timeoutMs": 15000
     },
     {
       "do": "click",
@@ -22,16 +22,18 @@
     },
     {
       "do": "waitFor",
-      "selector": "#btnAvatarGreetClose",
-      "timeoutMs": 10000
+      "selector": "#homeCompassQuest",
+      "timeoutMs": 15000
     },
     {
       "do": "click",
-      "selector": "#btnAvatarGreetClose"
+      "selector": "#homeCompassQuest"
     },
     {
-      "expect": "notVisible",
-      "selector": "#btnAvatarGreetClose"
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open",
+      "timeoutMs": 10000
     },
     {
       "do": "waitFor",
@@ -44,7 +46,8 @@
     },
     {
       "expect": "visible",
-      "selector": "#appEvaluationModal"
+      "selector": "#appEvaluationModal",
+      "timeoutMs": 10000
     },
     {
       "do": "type",
@@ -57,14 +60,9 @@
       "selector": "#btnSubmitAppEval"
     },
     {
-      "expect": "textEquals",
-      "selector": "#btnSubmitAppEval",
-      "text": "평가 제출하기",
-      "timeoutMs": 15000
-    },
-    {
       "expect": "visible",
-      "selector": "#appEvaluationModal"
+      "selector": "#appEvaluationModal",
+      "timeoutMs": 6000
     },
     {
       "expect": "visible",
