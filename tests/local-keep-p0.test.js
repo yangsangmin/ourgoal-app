@@ -244,8 +244,9 @@ function boot() {
     saveLocalSettings: function (u, s) { store.setItem('ourgoal_settings_' + u, JSON.stringify(s || {})); }, loadLocalSettings: function () { return {}; },
     syncLockScreenLiveCard: function () {}, nowISO: function () { return new Date().toISOString(); }, track: function () {}, getAttribution: function () { return {}; },
     getSupabaseAuthToken: function () { return Promise.resolve(null); }, classifyRecordTheme: function () { return { theme: 'daily' }; } };
-  ['../js/record-ledger.js', '../js/account-isolation.js', '../js/core/local-keep.js', '../js/core/home-cockpit.js', '../js/core/profile-load.js'].forEach(function (f) { delete require.cache[require.resolve(f)]; });
+  ['../js/record-ledger.js', '../js/account-isolation.js', '../js/core/capabilities.js', '../js/core/device-save.js', '../js/core/local-keep.js', '../js/core/home-cockpit.js', '../js/core/profile-load.js'].forEach(function (f) { delete require.cache[require.resolve(f)]; });
   global.window = global; global.localStorage = store; global.OurgoalAppScope = { scope: L };
+  require('../js/core/capabilities.js'); require('../js/core/device-save.js');
   require('../js/record-ledger.js'); require('../js/account-isolation.js'); require('../js/core/local-keep.js');
   var HC = require('../js/core/home-cockpit.js'), PL = require('../js/core/profile-load.js');
   return { store: store, srv: srv, state: state, save: HC.saveProfile, load: function () { return PL.loadProfile(UID, 'probe@example.invalid', {}, null); }, Keep: global.OurgoalLocalKeep };

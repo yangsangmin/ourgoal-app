@@ -1752,7 +1752,8 @@
         "storage.device.retry",
         "storage.device.message",
         "storage.device.status",
-        "storage.device.focused"
+        "storage.device.focused",
+        "storage.device.pending"
       ],
       "requires": [],
       "contributes": [],
@@ -1787,6 +1788,12 @@
         {
           "name": "storage.device.focused",
           "description": "DIR006 기록 저장 및 원계정/기록 후속 귀속",
+          "sideEffect": "none",
+          "needsConfirm": false
+        },
+        {
+          "name": "storage.device.pending",
+          "description": "DIR006 원계정 pending 원자료와 현재 세대 읽기",
           "sideEffect": "none",
           "needsConfirm": false
         }
@@ -2120,7 +2127,9 @@
       "role": "OurGoal Profile Load (기관 — 프로필 불러오기·사용자 행 만들기·고유 닉네임 태그·완료 마일스톤 합)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "storage.device.pending"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -2136,6 +2145,7 @@
         "OurgoalAccountIsolation",
         "OurgoalAppScope",
         "OurgoalAvatarParts",
+        "OurgoalCapabilities",
         "OurgoalLocalKeep",
         "OurgoalRecordLedger"
       ]
@@ -2640,7 +2650,8 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "OurgoalAppScope"
+        "OurgoalAppScope",
+        "OurgoalLocalKeep"
       ]
     },
     {
@@ -9056,7 +9067,8 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalAppScope",
-        "OurgoalAuthSafety"
+        "OurgoalAuthSafety",
+        "OurgoalRecordLedger"
       ]
     },
     {

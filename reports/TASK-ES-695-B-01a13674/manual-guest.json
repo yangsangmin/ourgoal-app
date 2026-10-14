@@ -1,0 +1,18 @@
+{
+  "id": "dir006-b-manual-guest-state",
+  "title": "게스트의 수동 동기화는 로그인 전 미확정 보관을 알린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#btnAvatarGreetClose", "timeoutMs": 10000 },
+    { "do": "click", "selector": "#btnAvatarGreetClose" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "#setGroupDataSummary" },
+    { "do": "click", "selector": "#advancedSettingsSummary" },
+    { "do": "click", "selector": "#resyncAccountDataBtn" },
+    { "expect": "textContains", "selector": "#toast", "text": "로그인 전에는 반영 여부를 확인할 수 없어요", "timeoutMs": 10000 },
+    { "expect": "visible", "selector": "#toast" },
+    { "capture": "manual-guest-unconfirmed" }
+  ]
+}
