@@ -6113,3 +6113,6 @@
 
 
 TASK-ES-705 추가: SNOWBALL 지도 일괄 갱신 의무에 따라 부모가 PR975 실측 경험칙 L131을 반영한 정본 원장/생성 작업참고/metadata 세 파일을 docs/agents 대응 사본에 바이트 복사했다. 원 TASK705 a8f 지도 source/17개 시험/claims C1-C6 및 원 봉인은 보존하고 reference-sync.json에 사본 SHA를 별도 기록한다. 추가 문서 gate로만 확인하며 mapper·전체 npm·운영 SQL을 반복하지 않는다. 원격 세포지도는 pending이다.
+
+## TASK-ES-K17-NORM-DRAFT-01a13674 — 전문 두 행 정합 초안 준비
+기존 마9·마10·바9 삭제승인을 원source/06확인으로 인수하고 전문2.9 제3·4호와 분리한다. 커널DIR006/ACTIVE/제품/Court/게이트0변경, 신승인·발효·병합0. 원소견/원packet불변, 기획정본후속tri-sync와 단독writer 미확인. 정상훅과 공식판정은 해당raw/초안PR로 연결하며 사용·효과 미확인.
