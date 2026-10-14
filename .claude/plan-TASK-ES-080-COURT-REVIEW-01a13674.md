@@ -15,9 +15,9 @@ Goal 재심 C081/C082 동선 교정이 원 기대를 약화하지 않고 기존 
 
 ## 체크리스트
 - [x] 별도 WT/기준 인수 · 예상 5분 · fetch 후 origin/main과 지정 PR 후보 확인.
-- [ ] 동결 시나리오 인수 · 예상 미정 · exact Git/physical SHA 및 제품·원 claims 불변 확인.
-- [ ] 기대·동선 독립 검토 · 예상 미정 · 원 단언 보존, 양성 전제·동률·기존 팝업 정상 닫힘 검토.
-- [ ] 필요한 선정 관측과 인계 · 예상 미정 · FIRST/근거/source seal·정상 commit·clean·자기 process 종료 확인. 공식 재심은 root 담당.
+- [x] 동결 시나리오 인수 · 예상 미정 · exact Git/physical SHA 및 제품·원 claims 불변 확인.
+- [x] 기대·동선 독립 검토 · 예상 미정 · 원 단언 보존, 양성 전제·동률·기존 팝업 정상 닫힘 검토.
+- [x] 필요한 선정 관측과 인계 · 예상 미정 · FIRST/근거/source seal·정상 commit·clean·자기 process 종료 확인. 공식 재심은 root 담당.
 
 ## ① 파악
 원 scenarios/goal-link-ambiguous.json 및 goal-link-dismiss.json과 공식 첫 반려를 읽는다.

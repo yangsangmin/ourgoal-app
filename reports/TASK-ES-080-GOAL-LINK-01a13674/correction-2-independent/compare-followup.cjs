@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs'),cp=require('node:child_process'),crypto=require('node:crypto');
+const root='reports/TASK-ES-080-GOAL-LINK-01a13674/',base='9f161a5bc5c9c234e147ea1b2de8eda39674c22f',first='652e9c6b37ee639537e53a4ae7d2b79c44229819',head='00076c0fff7b7bbf77ea806dcafb9c69c26b6af5';
+const git=(...a)=>cp.execFileSync('git',['-c','core.longpaths=true','-c','core.autocrlf=false',...a]);
+const blob=(ref,file)=>git('show',ref+':'+file),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const file=root+'correction-2/scenarios-followup-2/goal-link-ambiguous.json';
+const old=JSON.parse(blob(base,root+'scenarios/goal-link-ambiguous.json')),middle=JSON.parse(blob(first,root+'correction-2/scenarios/goal-link-ambiguous.json')),next=JSON.parse(blob(head,file));
+const counts=s=>{const m=new Map();for(const row of s.steps.filter(x=>x.expect)){const k=JSON.stringify(row);m.set(k,(m.get(k)||0)+1);}return m;};
+const a=counts(old),b=counts(next),missing=[...a].filter(([k,n])=>(b.get(k)||0)<n);
+const target='#quickCheckinChips button[data-cunningtext*="[피아노 연습]"]';
+const i=next.steps.findIndex(x=>x.expect==='count'&&x.selector===target),prefix=next.steps.slice(0,i);
+const withoutAddedCount=s=>s.steps.filter(x=>!(x.expect==='count'&&(x.selector==='#goalChipRow [data-chip]'||x.selector===target)));
+const sourceOnlyDifference=JSON.stringify(withoutAddedCount(middle))===JSON.stringify(withoutAddedCount(next));
+const retained=[root+'claims.json',root+'scenarios/goal-link-navigation.json',root+'scenarios/goal-link-ambiguous.json',root+'scenarios/goal-link-dismiss.json',root+'correction-2/scenarios/goal-link-dismiss.json'].map(p=>({path:p,unchanged:blob(first,p).equals(blob(head,p)),sha256:hash(blob(head,p))}));
+const result={at:new Date().toISOString(),base,first,head,path:file,sha256:hash(blob(head,file)),physicalMatch:hash(fs.readFileSync('C:/dev/wt/eGoal080-courtfix-01a13674/'+file))===hash(blob(head,file)),steps:next.steps.length,oldExpectations:old.steps.filter(x=>x.expect).length,newExpectations:next.steps.filter(x=>x.expect).length,missing,onlyAddedCountSelectorAndPositionChanged:sourceOnlyDifference,countStep:i+1,priorSaveClicks:prefix.filter(x=>x.do==='click'&&x.selector==='#mSave').length,priorExplicitGo:prefix.filter(x=>x.do==='click'&&x.selector==='#recordGoalLinkGo').length,retained,productDelta:git('diff','--name-only',first,head,'--','index.html','js','ui.css','court','tests').toString('utf8').trim(),browserExecuted:false,Court:null};
+fs.writeFileSync(__dirname+'/FOLLOWUP-COMPARISON.json',JSON.stringify(result,null,2)+'\n','utf8');
+console.log(JSON.stringify(result));
+if(missing.length||!sourceOnlyDifference||!result.physicalMatch||result.priorSaveClicks!==2||result.priorExplicitGo!==1||result.productDelta||retained.some(x=>!x.unchanged))process.exitCode=1;
