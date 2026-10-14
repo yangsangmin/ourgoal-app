@@ -14,6 +14,13 @@
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalUiHelpers = global.OurgoalUiHelpers || {};
+  var loadGeneration = 0;
+  async function readForLoad(query){
+    try { return await query; } catch(e){ return {data:null,error:{code:'READ_UNCONFIRMED'}}; }
+  }
+  function ownRows(res, uid){
+    return !!res && !res.error && Array.isArray(res.data) && res.data.every(function(row){return row && row.id != null && row.user_id === uid;});
+  }
 
   /* ---- 이전 전 index.html 3555~3559줄(#TASK-ES-522 생성기 표지) ---- */
   function totalCompletedMilestones(p){
@@ -69,12 +76,13 @@
 
   /* ---- 이전 전 index.html 3619~3650줄(#TASK-ES-522 생성기 표지) ---- */
 
-  async function ensureUserRow(userId, username, displayName, extra){
+  async function ensureUserRow(userId, username, displayName, extra, checkCurrent){
     var found = null;
     try {
       found = await L.sb.from('users').select('*').eq('id', userId).maybeSingle();
-      if(found && found.data) return { row: found.data, isNew: false };
+      if(found && !found.error && found.data && found.data.id === userId) return { row: found.data, isNew: false, readState:'read-accepted' };
     } catch(e){}
+    if(checkCurrent) checkCurrent();
     // 로컬 백업 확인: 기존에 편집된 프로필이 있다면 그 값을 기본값으로 보존 (데이터 유실 원천 방어)
     var localProf = null;
     try {
@@ -85,6 +93,7 @@
     if(!localProf && rawName){
       finalDisplayName = await resolveUniqueDisplayName(rawName, userId);
     }
+    if(checkCurrent) checkCurrent();
     var row = {
       id: userId,
       username: username,
@@ -95,21 +104,54 @@
       region: (localProf && localProf.region) || null,
       region_public: localProf ? !!localProf.regionPublic : false
     };
+    // A failed/empty read cannot authorize overwriting a previously edited account.
+    if(!found || found.error || found.data || localProf) return {row:row,isNew:false,readState:'unconfirmed'};
     try {
-      await L.sb.from('users').upsert(row);
-    } catch(e){}
-    return { row: row, isNew: !localProf };
+      var written = await L.sb.from('users').upsert(row).select();
+      if(checkCurrent) checkCurrent();
+      var confirmed = written && !written.error && Array.isArray(written.data) && written.data.length === 1 && written.data[0].id === userId;
+      if(!confirmed) return {row:row,isNew:false,readState:'unconfirmed'};
+    } catch(e){return {row:row,isNew:false,readState:'unconfirmed'};}
+    return { row: row, isNew: !localProf, readState:'read-accepted' };
   }
   /* ---- 이전 전 index.html 3651~3861줄(#TASK-ES-522 생성기 표지) ---- */
 
   async function loadProfile(userId, username, newUserExtra, provider){
+    var generation = ++loadGeneration, startingProfile = L.state && L.state.profile;
+    var readPending=global.OurgoalCapabilities.request('storage.device.pending','core/profile-load'), pending=readPending(userId,localStorage);
+    function currentLoad(){
+      if(generation !== loadGeneration || L.state && L.state.profile !== startingProfile) throw new Error('profile-load-generation-changed');
+      readPending(userId,localStorage,pending.source);
+    }
+    function entries(kind){return kind==='records'?pending.data.entries:pending.data.kindData && pending.data.kindData[kind] && pending.data.kindData[kind].entries || {};}
+    function hasPending(kind){return Object.keys(entries(kind)).length>0;}
+    function pendingRows(kind,rows,localRows){
+      var changes=entries(kind), owned=window.OurgoalAccountIsolation.ownRecordsOnly(localRows || [],userId), byId=new Map(owned.map(function(r){return [String(r.id),r];}));
+      var next=rows.filter(function(row){return !Object.prototype.hasOwnProperty.call(changes,String(row.id));});
+      Object.keys(changes).forEach(function(id){
+        var row=byId.get(id), payload=changes[id].payload;
+        if(!row) row=kind==='records'?window.OurgoalRecordLedger.fromCheckinRow(payload):{id:payload.id,title:payload.title,category:payload.category,dueDate:payload.due_date,visibility:payload.visibility,topic:payload.topic,archivedAt:payload.archived_at,result:payload.result,milestones:payload.milestones};
+        next.push(row);
+      });
+      return next;
+    }
     var safeUsername = String(username || (newUserExtra && newUserExtra.display_name) || userId || 'user').trim();
     var defaultDisplayName = (newUserExtra && newUserExtra.display_name) || (safeUsername.indexOf('@') !== -1 ? safeUsername.split('@')[0] : safeUsername);
-    var ures = await ensureUserRow(userId, safeUsername, defaultDisplayName, newUserExtra);
+    var ures = await ensureUserRow(userId, safeUsername, defaultDisplayName, newUserExtra, currentLoad);
+    currentLoad();
     var urow = ures.row || {};
-    var goalsRes = await L.sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
-    var recsRes = await L.sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
-    var goals = (goalsRes.data||[]).filter(function(g){ return !g.deleted_at; }).map(function(g){
+    if(hasPending('users')){
+      urow=Object.assign({},urow,entries('users')[userId].payload);
+      var pendingUserCopy=window.OurgoalAccountIsolation.readOwnCopy('ourgoal_profile_backup_',userId,null);
+      if(pendingUserCopy) Object.assign(urow,{display_name:pendingUserCopy.displayName,bio:pendingUserCopy.bio,avatar_url:pendingUserCopy.avatarUrl,interests:pendingUserCopy.interests,region:pendingUserCopy.region,region_public:pendingUserCopy.regionPublic});
+      ures.readState='unconfirmed';
+    }
+    var goalsRes = await readForLoad(L.sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true}));
+    currentLoad();
+    var recsRes = await readForLoad(L.sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false}));
+    currentLoad();
+    var loadState = {users:{remote:ures.readState},goals:{remote:ownRows(goalsRes,userId)?'read-accepted':'unconfirmed'},records:{remote:ownRows(recsRes,userId)?'read-accepted':'unconfirmed'}};
+    var goals = (ownRows(goalsRes,userId) ? goalsRes.data : []).filter(function(g){ return !g.deleted_at; }).map(function(g){
       if(g.visibility === 'followers') g.visibility = 'team';
       return {
         id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at,
@@ -128,27 +170,24 @@
       }
     } catch(e){}
     if((!goals || goals.length === 0) && localCachedGoals && localCachedGoals.length > 0){
-      goals = localCachedGoals;
-      try {
-        await L.sb.from('goals').upsert(goals.map(function(g){
-          return {
-            id:g.id, user_id:userId, title:g.title, category:g.category||null, due_date:g.dueDate||null,
-            visibility:g.visibility||'private', topic:g.topic||null, archived_at:g.archivedAt||null,
-            result:g.result||null, milestones:g.milestones||[]
-          };
-        }));
-      } catch(e){}
+      goals = hasPending('goals')?pendingRows('goals',localCachedGoals,localCachedGoals):localCachedGoals;
+      var heldGoals = window.OurgoalLocalKeep && window.OurgoalLocalKeep.preserveUnknown && window.OurgoalLocalKeep.preserveUnknown('goals',userId,goals);
+      loadState.goals = {remote:'unconfirmed',reason:'existence-unknown',archiveVerified:!!(heldGoals && heldGoals.ok)};
+    } else if(hasPending('goals')){
+      goals=pendingRows('goals',goals,localCachedGoals);
+      loadState.goals={remote:'unconfirmed',reason:'pending-change'};
     } else if(goals && goals.length > 0){
       /* [#TASK-ES-695] DIR-006 묶음 P0: 기기 백업을 서버 것으로 바꾸기 전에 기기에만 있는 목표를 보관 열쇠로 옮기고 직전 사본을 남긴다(js/core/local-keep.js).
          보관 · 직전 사본을 되읽어 확인하지 못하면 원래 백업을 그대로 둔다. 서버에는 아무것도 더 묻거나 올리지 않는다 */
       if(window.OurgoalLocalKeep && typeof window.OurgoalLocalKeep.commitServerGoals === 'function'){
+        currentLoad();
         goals = window.OurgoalLocalKeep.commitServerGoals(userId, goals).goals;
       } else {
         try { localStorage.setItem('ourgoal_goals_backup_' + userId, JSON.stringify(goals)); } catch(e){}
       }
     }
 
-    var records = (recsRes.data||[]).filter(function(r){ return !r.deleted_at; }).map(function(r){
+    var records = (ownRows(recsRes,userId) ? recsRes.data : []).filter(function(r){ return !r.deleted_at; }).map(function(r){
       var rec = {
         id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at,
         category: r.category || null,
@@ -174,16 +213,19 @@
     } catch(e){}
     if((!records || records.length === 0) && localCachedRecords && localCachedRecords.length > 0){
       records = window.OurgoalAccountIsolation.ownRecordsOnly(localCachedRecords, userId);
-      try {
-        if(records.length) await window.OurgoalRecordLedger.upsertCheckinRows(L.sb, records.map(function(r){
-          return window.OurgoalRecordLedger.toCheckinRow(r, userId);
-        }));
-      } catch(e){}
+      if(hasPending('records')) records=pendingRows('records',records,records);
+      var heldRecords = window.OurgoalLocalKeep && window.OurgoalLocalKeep.preserveUnknown && window.OurgoalLocalKeep.preserveUnknown('records',userId,records);
+      loadState.records = {remote:'unconfirmed',reason:'existence-unknown',archiveVerified:!!(heldRecords && heldRecords.ok)};
+    } else if(hasPending('records')){
+      records=window.OurgoalLocalKeep.planRecords(userId,records).next;
+      records=pendingRows('records',records,localCachedRecords);
+      loadState.records={remote:'unconfirmed',reason:'pending-change'};
     } else if(records && records.length > 0){
       /* [#TASK-ES-695] DIR-006 묶음 P0: 기기 백업을 서버 것으로 바꾸기 전에 (i) 서버가 주지 않는 칸(사진 · 피드백 · 에너지 · 집중 등)을 같은 계정 · 같은 id 의 기기 값에서 되붙이고
          (ii) 기기에만 있는 기록은 보관 열쇠로 옮기고 (iii) 직전 사본을 남긴다(js/core/local-keep.js). 되붙인 기록이 화면과 백업에 함께 쓰인다.
          보관 · 직전 사본을 되읽어 확인하지 못하면 원래 백업을 그대로 둔다. 서버에는 아무것도 더 묻거나 올리지 않는다 */
       if(window.OurgoalLocalKeep && typeof window.OurgoalLocalKeep.commitServerRecords === 'function'){
+        currentLoad();
         records = window.OurgoalLocalKeep.commitServerRecords(userId, records).records;
       } else {
         try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
@@ -201,7 +243,8 @@
     var finalRegionPublic = (typeof urow.region_public !== 'undefined') ? !!urow.region_public : (localCachedProf ? !!localCachedProf.regionPublic : false);
     var finalItItems = (localCachedProf && localCachedProf.itItems) || [];
 
-    if(finalBio || finalInterests.length || finalRegion || finalItItems.length){
+    if(!hasPending('users') && (finalBio || finalInterests.length || finalRegion || finalItItems.length)){
+      currentLoad();
       try {
         localStorage.setItem('ourgoal_profile_backup_' + userId, JSON.stringify({
           displayName: finalDisplayName, bio: finalBio, avatarUrl: finalAvatarUrl,
@@ -282,6 +325,7 @@
           });
           if(sRes.ok){
             var sData = await sRes.json();
+            currentLoad();
             if(sData && sData.records && sData.records.length > 0 && window.OurgoalAccountIsolation.isResponseForUid(sData.targetUserId, userId)){
               records = sData.records;
               /* [#TASK-ES-695] 이 자리도 기기 백업을 받은 것으로 바꾼다 — 같은 순서(보관 → 직전 사본 → 백업)를 지킨다 */
@@ -320,6 +364,11 @@
       localCalDayBg = localCachedProf.calendarDayBackgrounds;
     }
 
+    currentLoad();
+    if(loadState.goals.reason === 'existence-unknown' || loadState.records.reason === 'existence-unknown'){
+      if(typeof L.toast === 'function') L.toast('기기에 남은 자료는 그대로 두었어요. 반영 여부는 아직 확인되지 않았어요.');
+    }
+
     return {
       id: userId, username: safeUsername, displayName: finalDisplayName,
       bio: finalBio, avatarUrl: finalAvatarUrl, interests: finalInterests,
@@ -327,6 +376,7 @@
       goals: goals, records: records, settings: settings,
       companions: finalCompanions,
       calendarDayBackgrounds: localCalDayBg,
+      _saveLoadState: loadState,
       _isNewSignup: isActuallyNew
     };
   }

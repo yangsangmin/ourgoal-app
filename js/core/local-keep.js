@@ -101,6 +101,18 @@
       var d = JSON.parse(raw); return (d && Array.isArray(d.items)) ? d : null;
     } catch (e) { note('kept-read', e); return null; }
   }
+  /* DIR006 B: archive only. An empty/missing response is not proof of remote absence.
+     Reuse the original kept keys/write verification; never replace backup/previous or enqueue a send. */
+  function preserveUnknown(kind, uid, rows, store) {
+    var st = getStore(store), res = { ok:false, kind:kind, state:'local', reason:'existence-unknown', remote:'unconfirmed' };
+    if (!st || !KEPT_PREFIX[kind] || !has(uid) || uid === '' || !Array.isArray(rows)
+      || rows.some(function(row){return !row || !has(row.id) || !ownerOk(row,uid);})) return res;
+    try {
+      var adds = rows.map(function(row){var held = entry(WHY.NOT_IN_RESPONSE,row);held.existenceUnknown=true;return held;});
+      var saved = addKept(st,kind,uid,adds);res.ok=saved.ok;res.added=saved.added;
+    } catch(e) { note('preserveUnknown',e); }
+    return res;
+  }
   /* 보관 항목을 더한다(같은 지문은 한 번만). 쓴 뒤 되읽어 확인한다. 이미 있는 항목은 지우거나 바꾸지 않는다 */
   function addKept(st, kind, uid, adds) {
     if (!adds.length) return { ok: true, added: 0 };
@@ -418,7 +430,7 @@
     planRecords: planRecords, planGoals: planGoals, commit: commit,
     commitServerRecords: commitServerRecords, commitServerGoals: commitServerGoals,
     withHeld: withHeld, setBackupFromSave: setBackupFromSave, releasePrev: releasePrev,
-    restorePrevious: restorePrevious, readKept: readKept, status: status
+    restorePrevious: restorePrevious, readKept: readKept, preserveUnknown: preserveUnknown, status: status
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) root.OurgoalLocalKeep = api;

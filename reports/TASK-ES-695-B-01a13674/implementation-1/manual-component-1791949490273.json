@@ -1,0 +1,65 @@
+{
+  "at": "2026-10-14T03:44:50.727Z",
+  "scope": "source component + private FS, injected local responses; not native UI/auth/DB/E2E",
+  "helperSHA256": "be3d5aaec37378aa636efe5f65fd182d197df7a542afe8c9b50c703adb537fa4",
+  "foundationSHA256": "9bfe3b19b82b47eceecf72ad4435d0cf962f9fa20b37b9fb2882bfbd3f6612c2",
+  "products": [
+    {
+      "file": "js/core/device-save.js",
+      "sha256": "f8177b21d7918874eea43a5d6856d9a036b0e246ef35d09160627c1340eb3281"
+    },
+    {
+      "file": "js/tabs/settings/account-actions.js",
+      "sha256": "86ed731a9a02d77c48175ec2c10477e93fb9022e22fc61843ff6bfff7bfff725"
+    }
+  ],
+  "checks": [
+    {
+      "name": "original manual resync dispatches legacy full send and full render",
+      "base": "d326db5e6c7c50255e198d44204241f0c68fc0e8",
+      "scope": "source component only"
+    },
+    {
+      "name": "manual unknown keeps original backup and does not send full profile or claim completion",
+      "fullSend": 0,
+      "backupUnchanged": true,
+      "notice": "unconfirmed"
+    },
+    {
+      "name": "manual confirmed pending and empty pending use different truthful notices",
+      "noticeCases": 2
+    },
+    {
+      "name": "manual double click and later same-profile edit do not overwrite or emit old completion",
+      "dispatches": 1,
+      "lateNotice": 0
+    },
+    {
+      "name": "manual profile replacement during load prevents adopting old rows or feedback",
+      "adoptOldRows": 0,
+      "lateNotice": 0
+    },
+    {
+      "name": "invalid users target and B delete operation leave pending untouched and send nothing",
+      "invalidCases": 2
+    },
+    {
+      "name": "matching payload with 500 status cannot be confirmed",
+      "pendingRetained": true
+    },
+    {
+      "name": "corrupt pending retry returns failure so manual journey cannot infer empty successful queue",
+      "typedFailure": true,
+      "sendCount": 0
+    }
+  ],
+  "failures": [],
+  "network": 0,
+  "auth": 0,
+  "realDB": 0,
+  "operating": null,
+  "use": null,
+  "effect": null,
+  "Court": null,
+  "ownPID": 28036
+}

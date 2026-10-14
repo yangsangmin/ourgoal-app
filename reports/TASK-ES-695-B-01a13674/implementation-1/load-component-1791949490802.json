@@ -1,0 +1,76 @@
+{
+  "at": "2026-10-14T03:44:51.271Z",
+  "scope": "source-derived VM + private FS components only; no account auth/live DB/UI/E2E",
+  "helperSHA256": "2672160365dafef6f9c7970fb1f11df13274e52f06f2469217657ebce9246ae3",
+  "foundationHelperSHA256": "9bfe3b19b82b47eceecf72ad4435d0cf962f9fa20b37b9fb2882bfbd3f6612c2",
+  "products": [
+    {
+      "file": "js/core/profile-load.js",
+      "sha256": "e8c7fb852b9651181b17ac84e85da96a048ad615fe17f86f0c4ec8fb1fa80d4f"
+    },
+    {
+      "file": "js/core/device-save.js",
+      "sha256": "f8177b21d7918874eea43a5d6856d9a036b0e246ef35d09160627c1340eb3281"
+    },
+    {
+      "file": "js/core/local-keep.js",
+      "sha256": "f1699bfcc069781d68548ecdd9cbc32c28978fed1b239034c1b3131eb5138b8c"
+    }
+  ],
+  "checks": [
+    {
+      "name": "load empty response keeps local data and never upserts",
+      "upserts": 0,
+      "backupsUnchanged": true,
+      "existence": "unknown"
+    },
+    {
+      "name": "load error response keeps local data and never upserts",
+      "upserts": 0,
+      "backupsUnchanged": true,
+      "existence": "unknown"
+    },
+    {
+      "name": "load throw response keeps local data and never upserts",
+      "upserts": 0,
+      "backupsUnchanged": true,
+      "existence": "unknown"
+    },
+    {
+      "name": "load foreign response keeps local data and never upserts",
+      "upserts": 0,
+      "backupsUnchanged": true,
+      "existence": "unknown"
+    },
+    {
+      "name": "exact baseline empty-response automatic whole upsert is reproduced once",
+      "baseSource": "d326db5e6c7c50255e198d44204241f0c68fc0e8",
+      "wholeUpserts": 2,
+      "scope": "injected component only"
+    },
+    {
+      "name": "load archive quota leaves exact original backups and unknown state",
+      "archiveVerified": false,
+      "backupRetained": true
+    },
+    {
+      "name": "profile replacement while read is pending rejects stale load before archive/toast",
+      "lateLoadRejected": true
+    },
+    {
+      "name": "user response after profile replacement cannot acknowledge or emit current event",
+      "pendingRetained": true,
+      "currentEventCount": 0
+    }
+  ],
+  "failures": [],
+  "network": 0,
+  "realDB": 0,
+  "auth": 0,
+  "fixtureDB": 0,
+  "operating": null,
+  "use": null,
+  "effect": null,
+  "Court": null,
+  "ownPID": 26872
+}

@@ -152,6 +152,38 @@
   }
   /* ---- 이전 전 index.html 4201~4306줄(#TASK-ES-471 생성기 표지) ---- */
 
+  function typedRow(item, uid, kind){
+    if(kind === 'users') return {
+      id:uid, username:item.username, display_name:item.displayName,
+      bio:item.bio || null, avatar_url:item.avatarUrl || null, interests:item.interests || [],
+      region:item.region || null, region_public:!!item.regionPublic,
+      saved_avatars:item.settings && item.settings.savedAvatars || [], trash:item.trash || []
+    };
+    if(kind === 'goals') return {
+      id:item.id, user_id:uid, title:item.title, category:item.category || null, due_date:item.dueDate || null,
+      visibility:item.visibility || 'private', topic:item.topic || null, archived_at:item.archivedAt || null,
+      result:item.result || null, milestones:item.milestones || []
+    };
+    return global.OurgoalRecordLedger.toCheckinRow(item, uid);
+  }
+  function typedFromRow(row, kind){
+    if(kind === 'goals') return {id:row.id,title:row.title,category:row.category,dueDate:row.due_date,visibility:row.visibility,topic:row.topic,archivedAt:row.archived_at,result:row.result,milestones:row.milestones};
+    if(kind === 'users') return {displayName:row.display_name,bio:row.bio || '',avatarUrl:row.avatar_url || '',interests:row.interests || [],region:row.region || '',regionPublic:!!row.region_public};
+    return global.OurgoalRecordLedger.fromCheckinRow(row);
+  }
+  async function typedUserSend(selected, original){
+    var row = Object.assign({}, original), res = await selected.from('users').upsert(row);
+    if(res && res.error && /saved_avatars/i.test(res.error.message || '')){
+      delete row.saved_avatars; res = await selected.from('users').upsert(row);
+    }
+    if(res && res.error && /interests|region|trash|saved_avatars/i.test(res.error.message || '')){
+      row = {id:original.id,username:original.username,display_name:original.display_name,bio:original.bio,avatar_url:original.avatar_url};
+      res = await selected.from('users').upsert(row);
+    }
+    // Preserve the original request and report schema omissions; a reduced fallback is not full confirmation.
+    return Object.assign({},res,{omittedFields:Object.keys(original).filter(function(k){return !Object.prototype.hasOwnProperty.call(row,k);})});
+  }
+
   async function saveProfile(options){
 
     if(options && options.deviceFirst){
@@ -161,15 +193,15 @@
           current: function(){ return L.state.profile; }, store: localStorage, newId: L.newId,
           isGuest: function(){ return !!(L.state.profile && L.state.profile.isGuest); },
           keep: function(kind, uid, rows, st){ return global.OurgoalLocalKeep.setBackupFromSave(kind, uid, rows, st); },
-          owned: function(rec, uid){ return global.OurgoalAccountIsolation.ownRecordsOnly([rec], uid).length === 1; },
-          row: function(rec, uid){ return global.OurgoalRecordLedger.toCheckinRow(rec, uid); },
-          fromRow: function(row){ return global.OurgoalRecordLedger.fromCheckinRow(row); },
+          owned: function(rec, uid, kind){ return kind === 'users' ? rec.id === uid : global.OurgoalAccountIsolation.ownRecordsOnly([rec], uid).length === 1; },
+          row: typedRow,
+          fromRow: typedFromRow,
           session: async function(){
             if(!L.sb || !L.sb.auth) return null;
             var response = await L.sb.auth.getSession();
             return response && response.data && response.data.session && response.data.session.user;
           },
-          send: function(row, signal){
+          send: function(row, signal, kind){
             /* Existing schema fallback/DTO stays in RecordLedger. Request returned rows without changing its API. */
             var selected = { from: function(table){ return { upsert: function(rows){
               var query = L.sb.from(table).upsert(rows);
@@ -177,6 +209,8 @@
               if(query && typeof query.abortSignal === 'function') query = query.abortSignal(signal);
               return query;
             }}; }};
+            if(kind === 'users') return typedUserSend(selected,row);
+            if(kind === 'goals') return selected.from('goals').upsert([row]);
             return global.OurgoalRecordLedger.upsertCheckinRows(selected, [row]);
           }
         };
