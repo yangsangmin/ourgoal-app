@@ -4,7 +4,7 @@
 - [x] exact C1/QA/호출자·원계약 인수 · 예상 2분 · 7ce base·QA measured 실패·유일 실제 caller·WORKREFERENCE982 동일 bytes와 실제 모델을 확인한다.
 - [x] typed undo·실패 재시도·귀속 최소 교정 · 예상 4분 · confetti 함수 안에서만 기기 확인 전 성공0·현재 account/profile/goal/토스트/세대·중복 잠금을 결박한다.
 - [x] 새 책임의 선정 부품 측정 · 예상 3분 · 원 sb=null 실패를 별도 원자료로 인수하고 기기 실패·재시도·중복·늦은 계정/토스트/목표 변경을 실제 제공자 부품에서 확인한다. 원9/actual flow 반복0이다.
-- [ ] 주장·정상 커밋·봉인·closure · 예상 2분 · source/hash·원제품 보호·자기 Node 종료/clean을 측정해 root 별개 독립 검토로 넘긴다.
+- [x] 주장·정상 커밋·봉인·closure · 예상 2분 · source/hash·원제품 보호·자기 Node 종료/clean을 측정해 root 별개 독립 검토로 넘긴다.
 
 ① 파악: QA 측정은 undoMemoryPrivate true지만 undoStoredPrivate/reloadPrivate false다. 원 C1 저장은 같은 ID로 보존되었고 기존 privacy legacy 후속 잔여를 고치는 별도 C2다.
 
@@ -25,3 +25,5 @@
 task TASK-ES-695-C-PRIVACY-01a13674 / retained TASK-ES-695 / common TASK-CC-CELL-UNWIRE-RUN-309dca5d(root 중앙 연결·leaf 등록 localpending).
 
 source 부품 raw와 SOURCE-PROOF에서 새 책임만 측정했다. 원C1/실제QA flow 반복0이다. 실제 UI/use/effect/Court는 root 후속이며 미확인으로 유지한다.
+
+source 84750f33b6293ee6da37e1c4fa3f8c4bc486ddfd의 seal/원보호/QA/단독 쓰기 범위·준비 Node 종료를 COMMIT-CLOSE에서 확인했다. 마지막 closure HEAD/clean/자기 PID 종료는 커밋 뒤 stdout으로 인수한다. 실제 PC/원격 개인정보 반영·사용 가능·효과·Court는 미확인이다.
