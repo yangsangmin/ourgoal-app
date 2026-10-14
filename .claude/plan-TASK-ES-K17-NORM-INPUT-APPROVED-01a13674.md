@@ -39,7 +39,7 @@ followup-2 최종source: root추가위임한 C6 statement/R3 metadata시점교�
 
 - [x] 현재 source·최초 지적·actual context 고정 · 예상 2분(추정) · 완료 기준: SOURCE-MEASUREMENT.json에 f38/첫 지적 SHA/actual context가 있다.
 - [x] 상태 문구와 관련 claims 한정 교정 · 예상 3분(추정) · 완료 기준: 현재 정본 두 행과 지정 JSON pointer만 변화하고 승인 두 본문·보호 파일은 불변이다.
-- [ ] 필요한 형식 확인·정상 commit·clean 인계 · 예상 3분(추정) · 완료 기준: 정상 훅 기록·새 source seal·closure와 실제 HEAD/clean/PID 측정으로 writer를 종료한다.
+- [x] 필요한 형식 확인·정상 commit·clean 인계 · 예상 3분(추정) · 완료 기준: 정상 훅 기록·새 source seal·closure와 실제 HEAD/clean/PID 측정으로 writer를 종료한다.
 
 ### ① 파악
 f38는 승인 접수의 당시 상태를 현재형으로 적어 실제 병합 뒤 거짓이 된다. 최초 독립 지적 da703e70은 보존한다.
