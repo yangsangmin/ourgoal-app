@@ -4,7 +4,7 @@ PR982 고정 제품의 실제 capabilities/device-save 의존성을 P0 시험 bo
 - [x] source/CI/범위 인수 · 예상 1분 · exact9cf/CI38514502201 raw940e·metadata의22of26/네request TypeError 및 직전3commit/claims·actualmodel을 기록한다.
 - [x] 확인된 두 reader 로드 최소교정 · 예상 2분 · P0 actual capabilities/device-save+perbootcache, root추가ACK의 direct-login makeBrowser actual4IIFE/live ctx·legacy rawheader OR 선택을 연결한다. 제품/나머지6추출/fixtures/cases/단언/expected0변경이다.
 - [x] 새 맞물림4/직접입장⑥ 선정 L1 각각1회 · 예상 2분 · 원선언/fixtures+맞물림섹션4 및 직접입장⑥ 원callback만 실행, 원직접22/원다른5/원계정6 반복0·원파일count/단언SHA 동일을 확인한다. record-ledger-sync는읽기만이다.
-- [ ] 정상hook/source freeze/closure · 예상 1분 · 원CI/실패 불변·제품sixhash/rootclaims동일·13칸/모델/원source/source-seal·PID/clean을root에인계, push/공용쓰기0이다.
+- [x] 정상hook/source freeze/closure · 예상 1분 · 원CI/실패 불변·제품sixhash/rootclaims동일·13칸/모델/원source/source-seal·PID/clean을root에인계, push/공용쓰기0이다.
 
 ① 파악: local-keep-p0.test.js boot는 actual local-keep/home-cockpit/profile-load만 로드해 profile-load가 쓰는 OurgoalCapabilities.request('storage.device.pending')를 제공하지 않는다. 실제CI는 네 맞물림에서 undefined.request로 실패했다.
 
@@ -25,3 +25,5 @@ PR982 고정 제품의 실제 capabilities/device-save 의존성을 P0 시험 bo
 root 추가ACK 인수: 같은WT tests/direct-login-guard.test.js makeBrowser의 두profile 추출/source선택만 추가writer다. P0는 actualIIFE 자체를 이미require하지만registry/provider가없는 문제이고 direct는 함수본문을 잘라 lexical state도잃은 문제로분리한다. direct원실패실측은초기null이며 source근거만먼저기록한다. 기존Ledger는이미win에있어새provider/stub0이다. rawHeader두개중하나만있어도 원8extract 의미를유지하고 둘다없으면 원actual4IIFE/나머지6extract를 쓴다. body/assert/count/expected/guard/iso는동일하며 selected⑥ 이외runtime검사는추가하지않는다.
 
 측정은 SOURCE-PRESERVATION/FIRST-SELECTED-RESULT/INTAKE를따른다. P0선정4/4·direct⑥1/1 각1회, 원조건26/6·단언/제품six/claims불변·선정밖반복0이다. 마지막hook/source/closure는commit/PID/clean후기록하며실제CI/Court/use/effect는null이다.
+
+종결 측정: COMMIT-CLOSE.json은 정상hook source의전 SOURCE-SEAL파일을git/disk되읽어일치함과own Node잔류0/숫자PID재사용구분을기록한다. 마지막계획표시와종결주석만closure에서추가했고원source plan hash는source commit판을가리킨다. 최종HEAD/clean/close Node종료는commit뒤stdout ACK로측정하며실제CI/Court/use/effect/사진권위는미확인이다.
