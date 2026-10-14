@@ -31,3 +31,29 @@ source73df/main87/982·approval→원body/diff/indie/Court pin→normal merge→
 - [x] 추가 위임 current C6 statement 시점 정합·R3 source 대조 · 예상 3분(추정) · 완료 기준: /claims/C6/statement만 지정문구로 바뀌고 requirement가 미승인 사실을 고정했는지 exactsource로 확인하며 원73df·강도·조건·옛판정은 그대로다.
 
 followup-2 최종source: root추가위임한 C6 statement/R3 metadata시점교정은 SOURCE-MEASUREMENT-FOLLOWUP-2.json, 최종현재 artifact는 source-seal-followup-2.json/closure-followup-2.json을따른다. 첫 source-seal/closure와Git f4a910c6는 literal-only 당시snapshot으로보존하며 현재검증으로재라벨하지않는다.
+
+
+## approved-condition-2 — 時点中立の承認・発効条件整合
+
+목표: 승인 접수와 실제 원격 main 병합 시 발효 조건만 현재 문서에 정합하고 기존 f38 원판·독립 최초 지적을 보존한다.
+
+- [x] 현재 source·최초 지적·actual context 고정 · 예상 2분(추정) · 완료 기준: SOURCE-MEASUREMENT.json에 f38/첫 지적 SHA/actual context가 있다.
+- [x] 상태 문구와 관련 claims 한정 교정 · 예상 3분(추정) · 완료 기준: 현재 정본 두 행과 지정 JSON pointer만 변화하고 승인 두 본문·보호 파일은 불변이다.
+- [ ] 필요한 형식 확인·정상 commit·clean 인계 · 예상 3분(추정) · 완료 기준: 정상 훅 기록·새 source seal·closure와 실제 HEAD/clean/PID 측정으로 writer를 종료한다.
+
+### ① 파악
+f38는 승인 접수의 당시 상태를 현재형으로 적어 실제 병합 뒤 거짓이 된다. 최초 독립 지적 da703e70은 보존한다.
+### ② 본질·원인·중심·핵심
+본질은 승인 범위를 바꾸지 않고 발효 조건을 적는 것이다. 원인은 상태 snapshot의 정본 혼입이다. 중심은 전문 머리와 버전대장 K17 행이다. 핵심은 승인 사실·발효 조건·실제 병합 근거의 분리다.
+### ③ 해결방식
+현재 미병합 단정만 조건식으로 바꾸고 /requirements/2/text, /claims/3/check/text, /claims/5/statement, /claims/5/check/text만 글자 정합한다.
+### ④ 재검토
+승인 본문 170/171·커널·기존 값·MASTER·제품·ACTIVE·Court·원 archive·과거 보고는 변경하지 않는다.
+### ⑤ 절차
+f38/최초 지적 pin → 정본 두 행·claims 수정 → byte/JSON pointer 대조 → 형식 확인 → 정상 commit → clean/잔류 관측과 root 인계.
+### ⑥ 절차 재검증
+반론1: 과거 미병합 사실도 지워야 한다는 주장은 당시 snapshot이므로 배제한다. 반론2: 승인 접수만으로 효력이 생긴다는 주장은 실제 원격 main 병합 조건과 달라 배제한다.
+### ⑦ 단계별 실행
+단독 norm writer로 이 계획 부록·새 approved-condition-2 보고와 지정 문구만 쓴다. root가 publish·공식 Court·실제 병합을 이어받는다.
+### ⑧ 막히는 지점 예상
+원 raw CRLF를 whitespace 교정으로 바꾸지 않는다. 미래 SHA를 발명하지 않는다. root linkage는 common309d 참조/pending만 기록한다. 계획·사용·효과와 자체 측정·법정 판정을 분리한다.
