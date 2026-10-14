@@ -4,7 +4,7 @@
 - [x] 공식원판정/형식/source 인수 · 예상 1분 · exactaafecdb/65E957E7 exact9cf unclaimed·원CI940e 및 claims.js/grade-floors의static/config/codeContains 형식을읽고 고정한다.
 - [x] R4·세정적claim 문서준비 · 예상 2분 · C1/C2/C3와R1/R2/R3 literal/객체 불변, R4와각다른test touches/check.file을추가하되 실행/무손실/동작보존을문자검사로주장하지않는다.
 - [x] validateClaims/범위 대조 · 예상 1분 · validateClaims 형식오류수와원객체/literal/test/product/raw/SHA를기록한다. Court실행/자기판정/sourcePreservation0이다.
-- [ ] 정상hooks/source봉인·closure · 예상 1분 · 자기rootref pending leaf·13칸/actualmodel·최초소견보존·HEAD/hash/PID/clean을인계한다. 필수CI/독립검토는새head root후속이며 외부0이다.
+- [x] 정상hooks/source봉인·closure · 예상 1분 · 자기rootref pending leaf·13칸/actualmodel·최초소견보존·HEAD/hash/PID/clean을인계한다. 필수CI/독립검토는새head root후속이며 외부0이다.
 
 ① 파악: official65E957E7 head9cf는account-switch 시험이coverage.unclaimed라고기록한다. 새P0/direct reader는뒤sourceaafe에있어같이공식coverage연결이필요하지만문자존재검사로실행정상성을주장할수는없다.
 
@@ -23,3 +23,5 @@
 ⑧ 막히는 지점 예상: static문장을동작주장처럼읽히게쓰거나file touch를잘못걸면범위가부풀수있다. statement는코드문참조선언존재만쓴다. branch docs는root명시선택을따른다. 기존주의C1-3/공식반려이력/새CI/Court/양성사용/효과미확인은유지한다.
 
 형식오류목록·원객체/literal/source대조는VALIDATE-CLAIMS-FIRST/SOURCE-PROOF에기록했다. 다음독립/필수CI/Court는별개미완이다. 마지막hook/source/closure는commit/PID/clean뒤측정한다.
+
+종결 측정: COMMIT-CLOSE.json에서정상hook source의전seal파일Git/disk되읽기일치와own Node잔류0/PID재사용을구분했다. 원source plan hash는source commit판이며마지막체크/종결문만closure에추가했다. 최종HEAD/clean/close Node종료는commit뒤stdout ACK로확인한다. root공통ref/pending과새독립/CI/Court미완은그대로다.
