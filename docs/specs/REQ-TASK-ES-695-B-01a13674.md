@@ -37,3 +37,13 @@ js/core/device-save.js는 records의 자료+목록 되읽기·잠금·changeId/g
 
 ## 기존 13칸 정합
 작업번호·대표원문(이번은 root 위임)·본질·끝모습(typed 결과/보관 안내·실제 수동 버튼)·품질(자료+목록 되읽기/해당세대 확인)·불변(원자료/P0/A/권위)·하지않음(외부/새원예산)·닿는곳(6파일+공식 신고서 산출)·등급(저장복합FIX)·사람과눈(contracts/root별도독립)·증거(implementation-1)·상태(현재구현/후속PR)·결과(사용/효과 별도)를 유지한다. 새 규범/승인선을 만들지 않는다.
+
+## R4 — 원시험 조건·단언 보존 및 실제 의존성 시험 로드
+
+source 보완은 PR982 공식65E957E7(head9cfb8574e3acb62f259b9991df5ef2f84bb506ca, run38514755117)의 `coverage.unclaimed`에 account-switch 시험이 남은 사실과, 이후 aafecdb710985f5626c6183de7661a08680584b7의 P0/direct reader 교정을 인수한다. 기존 R1/R2/R3 및 C1/C2/C3의 내용·종류·강도·제품 touches는 변경하지 않는다. R4는 세 시험의 원조건·단언과 실제 의존성 reader를 보존하는 별도 요구다.
+
+새 C4/C5/C6는 `tests/account-switch-isolation.test.js`, `tests/local-keep-p0.test.js`, `tests/direct-login-guard.test.js` 각각에 선언된 loader 참조문 포함 사실만 `static/config/codeContains`로 명시한다. 경로 배열의 forEach 또는 actual registry/provider require 문이 코드에 있다는 좁은 사실이며, 실제 함수 실행·검사 결과·무손실·동작 보존·계정 격리·사진 보존을 이 문자검사로 보장하지 않는다. touches와 check.file은 각 test 하나로 동일하다. module split generator 전용인 court/sourcePreservation은 사용하지 않는다.
+
+서로 다른 근거를 유지한다. 원조건/단언·제품 바이트 비교는 `reports/TASK-ES-695-B-TEST-01a13674/SOURCE-PRESERVATION.json` 및 `html-compat-1/SOURCE-PROOF.json`, `p0-loading-1/SOURCE-PRESERVATION.json`의 해당 source 범위다. 기존 선정 실행은 첫 계정6·legacy 선택 조건·P0 맞물림4·direct⑥의 원 raw/source에 한정하며 전체 suite/실계정/E2E를 대신하지 않는다. 원CI38514502201 실패 raw940e 및 공식65E957E7의 확인 부족·unclaimed 기록을 그대로 보존한다.
+
+새 claim 형식 검사만으로 공식 coverage 해결·동작 보존·심사 통과를 선언하지 않는다. root가 새 통합 head에서 독립 source 검토와 필수 CI를 확인하고 공식 Court의 새 결과를 따로 받아야 한다. 기존 first66·68BA 반려 및 제품 미완·실계정/실DB/사진/사용/효과 null을 새 정적 주장으로 덮지 않는다. 이번 claim 문서 보완의 상세 source/모델/형식 오류 목록은 `reports/TASK-ES-695-B-TEST-01a13674/claims-prep-1/`에 별도로 둔다.

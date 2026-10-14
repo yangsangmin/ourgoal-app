@@ -4,7 +4,8 @@
   "requirements": [
     { "id": "R1", "text": "users/goals 명시 create/update는 A의 원 pending key·되읽기·종류/대상/계정/세대와 typed 반환행 확인을 재사용한다." },
     { "id": "R2", "text": "빈/unknown 읽기와 oldqueue를 부재나 새로운 전송 증거로 올리지 않고 원자료·미확정 편집을 보존한다." },
-    { "id": "R3", "text": "실제 수동 동기화 입구는 전체 legacy 보내기와 완료 오안내를 하지 않고 실제 보관/읽기/확인 결과를 알린다." }
+    { "id": "R3", "text": "실제 수동 동기화 입구는 전체 legacy 보내기와 완료 오안내를 하지 않고 실제 보관/읽기/확인 결과를 알린다." },
+    { "id": "R4", "text": "원시험 조건·단언 보존 및 실제 의존성 시험 로드" }
   ],
   "claims": [
     {
@@ -29,6 +30,33 @@
       "unverified": {
         "reason": "tool-cannot-measure", "cannotBecause": "needs-login", "who": "별도 승인된 실제 계정 읽기/운영 담당",
         "how": ["실제 로그인과 해당 원장 응답 없이 0행을 부재로 확정하지 않는다", "허용된 자기 계정의 nonempty/unknown 읽기와 같은 id pending 편집을 원기기 백업/보관/본문 세대로 대조한다", "PC source 부품은 실제 파일 저장소와 원 P0 bytes 비교이며 로그인/실서버 E2E가 아니다; 실제 계정 전환 사용·두탭 백업 원자성은 null이다"]
+      }
+    },
+    {
+      "id": "C4", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "tests/account-switch-isolation.test.js에 capabilities/device-save/local-keep/profile-load 경로 배열의 forEach 참조문이 선언되어 있다. 코드문 포함 사실만 주장하며 실행 결과는 포함하지 않는다.",
+      "touches": ["tests/account-switch-isolation.test.js"],
+      "check": {
+        "type": "codeContains", "file": "tests/account-switch-isolation.test.js",
+        "text": "['js/core/capabilities.js', 'js/core/device-save.js', 'js/core/local-keep.js', 'js/core/profile-load.js'].forEach(function (file) {"
+      }
+    },
+    {
+      "id": "C5", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "tests/local-keep-p0.test.js에 capabilities와 device-save를 require하는 참조문이 선언되어 있다. 코드문 포함 사실만 주장하며 실행 결과는 포함하지 않는다.",
+      "touches": ["tests/local-keep-p0.test.js"],
+      "check": {
+        "type": "codeContains", "file": "tests/local-keep-p0.test.js",
+        "text": "require('../js/core/capabilities.js'); require('../js/core/device-save.js');"
+      }
+    },
+    {
+      "id": "C6", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "tests/direct-login-guard.test.js에 capabilities/device-save/local-keep/profile-load 경로 배열의 forEach 참조문이 선언되어 있다. 코드문 포함 사실만 주장하며 실행 결과는 포함하지 않는다.",
+      "touches": ["tests/direct-login-guard.test.js"],
+      "check": {
+        "type": "codeContains", "file": "tests/direct-login-guard.test.js",
+        "text": "['js/core/capabilities.js', 'js/core/device-save.js', 'js/core/local-keep.js', 'js/core/profile-load.js'].forEach(function (file) {"
       }
     }
   ]
