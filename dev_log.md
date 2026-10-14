@@ -6116,3 +6116,7 @@ TASK-ES-705 추가: SNOWBALL 지도 일괄 갱신 의무에 따라 부모가 PR9
 
 ## TASK-ES-K17-NORM-DRAFT-01a13674 — 전문 두 행 정합 초안 준비
 기존 마9·마10·바9 삭제승인을 원source/06확인으로 인수하고 전문2.9 제3·4호와 분리한다. 커널DIR006/ACTIVE/제품/Court/게이트0변경, 신승인·발효·병합0. 원소견/원packet불변, 기획정본후속tri-sync와 단독writer 미확인. 정상훅과 공식판정은 해당raw/초안PR로 연결하며 사용·효과 미확인.
+
+## TASK-ES-K17-THEME-READABILITY-01a13674 — 원077 안내 문구와 네 테마
+공통 TASK-CC-CELL-UNWIRE-RUN-309dca5d, 작업참고 기준 PR984, 원마9/바9 결심 기록 SHA7018f6c1…를 인수했다. 초기 HTML과 세 runtime writer의 placeholder를 확정 문구로 맞추고 ui.css 네 테마 한정 pseudo 색/opacity만 변경했다. 기존 칩·컨디션·값·저장 순서·DTO·MASTER·규범은 변경하지 않았다. 작성자64/독립31 pin(중복 source5개 Git 제외)과 실제 guest 네 테마의 빈칸/입력/삭제 관측은 ROOT-QUALIFICATIONS 및 별도 독립 보고에 결박한다. 원409/30→437/2→438/1 실패와 세 old text expectation 교정·원check/단언수 보존은 서로 분리했다. package.json 필수 네 스크립트와 module check/guard는 exit0, baseline와 manifest 내용은 불변이다.
+정식 패킷의 최초 source-only 인사창 전제 지적은 원99ef에서 보존하고 visible→hidden·symptom 위치만 교정했다. 제품 source57f5/정식4bee PR985를 실제 되읽기 확인했으며 첫 CI38563881801은 성공, Court38563882324는 이 기록 작성 때 진행 중이다. 이를 공식 통과로 기록하지 않는다. 로그인 온보딩과 pseudo 시각 품질은 needs-login/visual-quality로 분리했고 신규 quickchip/guest 저장 시나리오는 공식 법정 범위다. 실제 운영 반영·전체 사용·효과는 미확인이다. 이 작업 이력 추가는 문서만의 변경이며 제품·claims·기존 관측을 다시 쓰지 않는다.
