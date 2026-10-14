@@ -4,7 +4,7 @@
 - [x] exact 원 source/범위 인수 · 예상 1분 · e16de9fb·원9e49/6of6/raw/22단언/CLI 제한을 변경 없이 대조한다.
 - [x] source 선택 최소교정 · 예상 2분 · 원 raw HTML에 두 header 중 하나라도 있으면 기존 names6/extract를 유지하고 없으면 원 four IIFE/four extract를 유지한다.
 - [x] L1 선택 조건 1검증 · 예상 2분 · 양쪽/한쪽 raw header의 원 첫선언 선택·default false와 원 IIFE 블록 동일성·22단언/suffix 불변을 측정한다. 원6 재시험0이다.
-- [ ] 정상 hook/source 봉인 및 종료 · 예상 1분 · 정확 HEAD/SHA·원자료 불변·자기 PID 종료·clean을 root에 인계한다. 제품/원격0이다.
+- [x] 정상 hook/source 봉인 및 종료 · 예상 1분 · 정확 HEAD/SHA·원자료 불변·자기 PID 종료·clean을 root에 인계한다. 제품/원격0이다.
 
 ① 파악: 첫 loader 교정은 default modular source의 lexical 의존성을 복구했으나 --html에 있던 과거 인라인 두 함수를 항상 ROOT source로 바꾸었다. CLI-SOURCE-SCOPE.md의 원 제한을 먼저 보존한다.
 
@@ -23,3 +23,5 @@
 ⑧ 막히는 지점 예상: 합본은 여전히 ROOT 세포/iso/Ledger를 읽는다. --html을 독립된 전체 제품 비교로 승격하지 않는다. 하나만 있는 경우 원 함수 추출의 lexical 한계가 남으면 이를 그대로 보존하며 제품/fixture로 보완하지 않는다.
 
 SOURCE-PROOF.json/L1-FIRST-RESULT.json이 원단언22·원case6·suffix·보존pins 23개 및 legacy 선택 3조건 일치를 측정했다. default guardfalse이며 actualIIFE 블록은 indent 제외 동일하다. 원 여섯 시나리오는 반복하지 않았다. 최종 hook/source/PID/clean은 closure로 기록한다.
+
+마지막 측정: COMMIT-CLOSE.json은 정상 hook source의 모든 seal 항목 되읽기와 L1/seal PID 잔류0을 기록한다. source plan hash는 source commit 판을 가리키며 마지막 체크표시만 이후 closure에서 추가했다. 최종 HEAD/clean은 closure commit 뒤 stdout ACK로 확인한다. 실제 CI/Court/사용/효과는 미확인이다.
