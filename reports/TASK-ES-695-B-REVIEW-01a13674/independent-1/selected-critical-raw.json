@@ -1,0 +1,63 @@
+{
+  "schema": "K18B-independent-selected-critical/1",
+  "at": "2026-10-14T04:07:40.104Z",
+  "ownPID": 2148,
+  "scope": "L1 product VM · in-memory component inputs and mocked SDK only; no real E2E",
+  "conditions": [
+    {
+      "condition": "손상된 typed attempts의 strict reader와 자동 retry 상한",
+      "strictReadRejected": false,
+      "mockSendCount": 3,
+      "configuredMaxAttempts": 2,
+      "limitExceeded": true,
+      "attemptsType": "string",
+      "entryPreserved": true,
+      "realAuth": 0,
+      "realDB": 0
+    },
+    {
+      "condition": "users pending 존재·별도 backup 부재·빈 서버 읽기",
+      "profileBackupInitiallyAbsent": true,
+      "pendingPresent": true,
+      "mockReadInducedUpsertCount": 1,
+      "onlyUsersUpsert": true,
+      "pendingBytesUnchanged": true,
+      "displayPendingValue": true,
+      "readState": "unconfirmed",
+      "newSignupFlag": true,
+      "realAuth": 0,
+      "realDB": 0
+    }
+  ],
+  "productPins": [
+    {
+      "file": "js/core/local-keep.js",
+      "sha256": "f1699bfcc069781d68548ecdd9cbc32c28978fed1b239034c1b3131eb5138b8c"
+    },
+    {
+      "file": "js/core/device-save.js",
+      "sha256": "f8177b21d7918874eea43a5d6856d9a036b0e246ef35d09160627c1340eb3281"
+    },
+    {
+      "file": "js/core/home-cockpit.js",
+      "sha256": "0b4ef19410a5552692437bcd810f44e93791538dbf32ef0e603ab3f7d31f3084"
+    },
+    {
+      "file": "js/core/profile-load.js",
+      "sha256": "ef297d846676a601a643fd62edccd36b4d17862de6e8c0f088c9994548c3d180"
+    },
+    {
+      "file": "js/account-isolation.js",
+      "sha256": "5aa60a0f530a53dab8e133ec60393b1ec968ca20a275e95924d338d1b3957640"
+    }
+  ],
+  "realAuth": 0,
+  "realHTTP": 0,
+  "realDB": 0,
+  "DBFixtureWrites": 0,
+  "productChanges": 0,
+  "originalSuitesRepeated": 0,
+  "Court": null,
+  "use": null,
+  "effect": null
+}
