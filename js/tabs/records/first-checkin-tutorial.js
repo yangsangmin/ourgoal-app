@@ -42,7 +42,7 @@
     }
     var inp = document.getElementById('captureInput');
     if(inp){
-      inp.placeholder = g ? ('예: 오늘 ' + g.title + ' 10초 실천 완료!') : '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';
+      inp.placeholder = '기록하고 나의 역사데이터를 만들어요.';
       setTimeout(function(){
         try { inp.focus(); } catch(e){}
       }, 300);

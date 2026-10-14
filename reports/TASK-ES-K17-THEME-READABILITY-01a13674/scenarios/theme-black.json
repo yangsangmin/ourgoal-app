@@ -1,0 +1,98 @@
+{
+  "id": "k17-theme-black",
+  "title": "black에서 확정 안내가 빈칸에 있고 입력·삭제에 따라 숨김·복귀한다",
+  "viewport": {
+    "width": 1365,
+    "height": 960
+  },
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#appShell.active",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#themeGrid)>summary"
+    },
+    {
+      "do": "click",
+      "selector": "#themeGrid .theme-card[data-themeid=\"black\"]"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "html[data-theme=\"black\"] #captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureInput",
+      "name": "placeholder",
+      "equals": "기록하고 나의 역사데이터를 만들어요."
+    },
+    {
+      "expect": "count",
+      "selector": "#captureInput:placeholder-shown",
+      "equals": 1
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "검"
+    },
+    {
+      "expect": "count",
+      "selector": "#captureInput:placeholder-shown",
+      "equals": 0
+    },
+    {
+      "do": "key",
+      "key": "Backspace"
+    },
+    {
+      "expect": "count",
+      "selector": "#captureInput:placeholder-shown",
+      "equals": 1
+    },
+    {
+      "expect": "attr",
+      "selector": "#captureInput",
+      "name": "placeholder",
+      "equals": "기록하고 나의 역사데이터를 만들어요."
+    },
+    {
+      "capture": "empty-restored-black"
+    }
+  ]
+}

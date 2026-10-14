@@ -166,7 +166,7 @@
       t.value = '';
       }
       if(sameDraft){
-      t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';
+      t.placeholder = '기록하고 나의 역사데이터를 만들어요.';
       if(slEnergy) { slEnergy.value = 80; var ve = document.getElementById('valEnergy'); if(ve) ve.textContent = '80%'; }
       if(slFocus) { slFocus.value = 80; var vf = document.getElementById('valFocus'); if(vf) vf.textContent = '80%'; }
       var activeChips = document.querySelectorAll('.quick-checkin-chips .btn-quick-chip');

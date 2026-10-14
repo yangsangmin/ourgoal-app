@@ -1,0 +1,41 @@
+{
+  "sourceOnly": [
+    {
+      "file": "js/tabs/records/first-checkin-tutorial.js",
+      "writer": "renderFirstCheckinTutorialBanner",
+      "trigger": "firstCheckinPending && records.length===0",
+      "sourceLiteral": "기록하고 나의 역사데이터를 만들어요.",
+      "independentRuntimeExecution": null,
+      "claimFloor": "L3 required by product path",
+      "coverageClosed": false
+    },
+    {
+      "file": "js/tabs/records/checkin-capture.js",
+      "writer": "bindCaptureSave anonymous click",
+      "trigger": "verified device save then sameDraft",
+      "sourceLiteral": "기록하고 나의 역사데이터를 만들어요.",
+      "independentRuntimeExecution": null,
+      "claimFloor": "L3 required by product path",
+      "coverageClosed": false
+    },
+    {
+      "file": "js/tabs/records/checkin-helpers.js",
+      "writer": "applyQuickCunningText",
+      "trigger": "normal data-cunningtext click",
+      "sourceLiteral": "기록하고 나의 역사데이터를 만들어요.",
+      "independentRuntimeExecution": null,
+      "claimFloor": "L3 required by product path",
+      "coverageClosed": false
+    }
+  ],
+  "formalSubmissionReady": false,
+  "reason": "네 theme guest PC는 세 runtime writer를 실행했다고 증명하지 않는다. touches로 묶거나 codeContains를 낮은 domain으로 바꿔 하한을 우회하지 않는다.",
+  "options": [
+    "root가 정상 guest writer별 행동 시나리오를 별도 검토하여 청구",
+    "미검증 writer가 남은 packet은 완전한 제출로 표시하지 않음"
+  ],
+  "notValidExcuses": [
+    "guest에서 가능한 동작을 needs-login으로 표기",
+    "runtime 행동을 visual-quality로 덮기"
+  ]
+}

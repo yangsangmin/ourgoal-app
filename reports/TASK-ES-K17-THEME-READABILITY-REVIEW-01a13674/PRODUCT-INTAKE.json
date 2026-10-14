@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-14T11:56:24.739Z",
+  "head": "57f5a11cf0540ad3a4e4afcd8cde9381f9e30de7",
+  "products": [
+    {
+      "file": "index.html",
+      "sha256": "a80d9ad1ee853309b6272be86539cae1be33a2676b55cd33e02f5bc4b898e3c9",
+      "baseSHA256": "d222e0c84ae402edbbb54bab25c7cf6602bf1e15641217042ca03be03356a4b7",
+      "gitPhysicalMatched": true
+    },
+    {
+      "file": "ui.css",
+      "sha256": "3777b9672f5e5f684a969731cd35974f791b05abcc6b555cb2ae83864b8bc96d",
+      "baseSHA256": "2163c6723a34e7dab3c3aa5cc814325aacfef4f356e41b36c928e20505794744",
+      "gitPhysicalMatched": true
+    },
+    {
+      "file": "js/tabs/records/first-checkin-tutorial.js",
+      "sha256": "4180803aba8eb4d352e504c13ae9810e6b2334154052dd425736113d43404dcd",
+      "baseSHA256": "9b5f1d5471a32b23bc891015157d05780f4433308d01647105f92f912e87d752",
+      "gitPhysicalMatched": true
+    },
+    {
+      "file": "js/tabs/records/checkin-capture.js",
+      "sha256": "967f890967e085f5a7dfa1bf31b2baacf5f811630d33b80e6f40c0948906fd48",
+      "baseSHA256": "05180abfdb5fe211b1a7860b71bedeb01e49460c6538dffa5beee0e31846624e",
+      "gitPhysicalMatched": true
+    },
+    {
+      "file": "js/tabs/records/checkin-helpers.js",
+      "sha256": "5856fcbae4e16e2f9ef88b5e53f0395094e197535e728c33b4277a2683e1e9d3",
+      "baseSHA256": "c237974f55e977a20c10eb3f60090f19c39a21e7f8a40dc8c18ec3e4dcedd488",
+      "gitPhysicalMatched": true
+    }
+  ],
+  "changes": [
+    {
+      "file": "index.html",
+      "diff": "diff --git a/index.html b/index.html\nindex e0188ec3..5d7f7533 100644\n--- a/index.html\n+++ b/index.html\n@@ -689,7 +689,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {\n         <div class=\"capture-sub home-running-mate-text\" style=\"margin-bottom:8px;font-size:0.8125rem;color:var(--ink-soft);\">오늘 마음을 단단히 먹은 일 한 줄을 자유롭게 적어보세요 ✍️</div>\n         <div class=\"quick-checkin-chips\" id=\"quickCheckinChips\"></div>\n         <div class=\"capture-ta-wrap\" style=\"position:relative;\">\n-          <textarea id=\"captureInput\" placeholder=\"예: 오늘 마음을 단단히 먹은 일 한 줄을 자유롭게 적어보세요 ✍️\"></textarea>\n+          <textarea id=\"captureInput\" placeholder=\"기록하고 나의 역사데이터를 만들어요.\"></textarea>\n           <button class=\"mic-btn\" id=\"micBtn\" type=\"button\" aria-label=\"음성으로 입력하기\" title=\"음성으로 입력하기\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z\"/><path d=\"M19 10v2a7 7 0 0 1-14 0v-2\"/><path d=\"M12 19v4\"/><path d=\"M8 23h8\"/></svg></button>\n         </div>\n         <!-- 🏃 [HOME-04] 스마트 추천 칩 3종 -->\n"
+    },
+    {
+      "file": "ui.css",
+      "diff": "diff --git a/ui.css b/ui.css\nindex 09e7ebdc..b952abbd 100644\n--- a/ui.css\n+++ b/ui.css\n@@ -16737,3 +16737,12 @@ small {\n }\n \n \n+\n+/* 원077: 확정 기록 안내는 입력 빈칸에만, 네 공식 테마의 읽기 색을 따른다. */\n+html[data-theme=\"focus-sanctuary\"] #captureInput::placeholder,\n+html[data-theme=\"black\"] #captureInput::placeholder,\n+html[data-theme=\"white\"] #captureInput::placeholder,\n+html[data-theme=\"urban-city\"] #captureInput::placeholder {\n+  color: var(--ink-soft) !important;\n+  opacity: 1 !important;\n+}\n"
+    },
+    {
+      "file": "js/tabs/records/first-checkin-tutorial.js",
+      "diff": "diff --git a/js/tabs/records/first-checkin-tutorial.js b/js/tabs/records/first-checkin-tutorial.js\nindex 869bd94e..fb55bcf3 100644\n--- a/js/tabs/records/first-checkin-tutorial.js\n+++ b/js/tabs/records/first-checkin-tutorial.js\n@@ -42,7 +42,7 @@\n     }\n     var inp = document.getElementById('captureInput');\n     if(inp){\n-      inp.placeholder = g ? ('예: 오늘 ' + g.title + ' 10초 실천 완료!') : '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';\n+      inp.placeholder = '기록하고 나의 역사데이터를 만들어요.';\n       setTimeout(function(){\n         try { inp.focus(); } catch(e){}\n       }, 300);\n"
+    },
+    {
+      "file": "js/tabs/records/checkin-capture.js",
+      "diff": "diff --git a/js/tabs/records/checkin-capture.js b/js/tabs/records/checkin-capture.js\nindex 7514276a..ae9e532f 100644\n--- a/js/tabs/records/checkin-capture.js\n+++ b/js/tabs/records/checkin-capture.js\n@@ -166,7 +166,7 @@\n       t.value = '';\n       }\n       if(sameDraft){\n-      t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';\n+      t.placeholder = '기록하고 나의 역사데이터를 만들어요.';\n       if(slEnergy) { slEnergy.value = 80; var ve = document.getElementById('valEnergy'); if(ve) ve.textContent = '80%'; }\n       if(slFocus) { slFocus.value = 80; var vf = document.getElementById('valFocus'); if(vf) vf.textContent = '80%'; }\n       var activeChips = document.querySelectorAll('.quick-checkin-chips .btn-quick-chip');\n"
+    },
+    {
+      "file": "js/tabs/records/checkin-helpers.js",
+      "diff": "diff --git a/js/tabs/records/checkin-helpers.js b/js/tabs/records/checkin-helpers.js\nindex c3ab58e4..09138bff 100644\n--- a/js/tabs/records/checkin-helpers.js\n+++ b/js/tabs/records/checkin-helpers.js\n@@ -21,7 +21,7 @@\n     var inp = document.getElementById('captureInput');\n     if(!inp) return;\n     // [#TASK-ES-217 / [88]] 지움 피로도 근절: inp.value 강제 주입 제거 및 placeholder 동적 가이드화\n-    inp.placeholder = '예: ' + text;\n+    inp.placeholder = '기록하고 나의 역사데이터를 만들어요.';\n     if(!inp.value){\n       inp.value = '';\n     }\n"
+    }
+  ],
+  "testOnlyFinal": "701d869dce9f83b17d3cb1de7f771f77097d4e36",
+  "testSHA256": "0a3210c7f082510cbac8a55b9e604e7f565e1cdf54618051e1830fcc430f7bb3",
+  "testBytesEqualRoot": true,
+  "freezeSHA256": "eefaad50a2ec2f1457fd72ec0ff3442bab4612569946021ce1afa5201564091a",
+  "preflightBase": "e176ccb986723d6b8ba323b9f9d7df8b3a46b48b",
+  "sourceInspectionOnly": true
+}

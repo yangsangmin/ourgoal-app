@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const raw=JSON.parse(fs.readFileSync(path.join(__dirname,'SOURCE-REVIEW.json'),'utf8'));
+for(const row of raw.sourceInputs)if(sha(fs.readFileSync(path.resolve(root,row.file)))!==row.SHA256)throw Error('source changed');
+if(sha(fs.readFileSync(raw.approval.file))!==raw.approval.SHA256)throw Error('approval source changed');
+const write=(name,value)=>{const text=JSON.stringify(value,null,2)+'\n',f=path.join(__dirname,name);fs.writeFileSync(f,text,'utf8');if(fs.readFileSync(f,'utf8')!==text)throw Error('readback');return sha(Buffer.from(text));};
+write('SUMMARY.json',{sourceHead:raw.sourceHead,reviewer:'operations',firstOpinion:'FIRST.json',findingIds:['FORMAL-R1'],claimCount:raw.claimCount,scenarioCount:raw.scenarioCount,coveredProductCount:raw.coveredProductCount,exactProductsMatch57f:raw.coverage.every(r=>r.equalsFrozen57f),allInputHashesUnchanged:true,originalsModified:0,browser:0,test:0,suite:0,API:0,operating:0,actualModel:raw.actual,runtimeFailure:null,productDefect:null,Court:null,use:null,effect:null});
+const files=fs.readdirSync(__dirname).filter(n=>!['SOURCE-SEAL.json','CLOSURE.json'].includes(n)).map(file=>({file,SHA256:sha(fs.readFileSync(path.join(__dirname,file)))}));
+const seal=write('SOURCE-SEAL.json',{at:new Date().toISOString(),sourceHead:raw.sourceHead,files,sourceInputs:raw.sourceInputs});
+write('CLOSURE.json',{sourceWritingEnded:true,scope:'independent-source-only',sourceSealSHA256:seal,persistentChildrenStarted:0,persistentChildrenRemaining:0,OSPIDInventoryPerformed:false,browser:0,test:0,suite:0,API:0,sourceInputUnchanged:true,actualRuntime:null,Court:null,use:null,effect:null});
+console.log(JSON.stringify({sourceHead:raw.sourceHead,sourceSealSHA256:seal,sourceInputsUnchanged:true}));

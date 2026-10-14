@@ -2204,7 +2204,7 @@ check('rescaleGoal: 지연된 마일스톤과 할 일 일정을 여유롭게 연
 check('compliance: 앰비언트 1줄 체크인 및 모바일 엄지 인체공학 UI', () => {
   // 1. 홈 화면 앰비언트 1줄 체크인 안내 및 플레이스홀더
   assert.ok(html.includes('>오늘 기록하기<'), '홈 체크인 헤더 사용자 언어 명시');
-  assert.ok(html.includes('id="captureInput" placeholder="예: '), '앰비언트 체크인 플레이스홀더 안내(사용자 언어 예시)');
+  assert.ok(html.includes('id="captureInput" placeholder="기록하고 나의 역사데이터를 만들어요."'), '앰비언트 체크인 플레이스홀더 안내(사용자 언어 예시)');
   assert.ok(html.includes('id="captureLiveMeta"'), '1초 앰비언트 실시간 프리뷰 힌트 바 존재');
   assert.ok(html.includes('id="iosPwaSlot"'), 'iOS PWA 스마트 설치 배너 슬롯 존재');
 });
@@ -7610,14 +7610,14 @@ check('[#TASK-ES-217 / 생각 메모장 88번] 오늘의 3초 체크인 목표 �
   const indexHtml = APP_SRC;
 
   // 1. applyQuickCunningText에서 inp.value = text 제거 및 placeholder 배선 확인
-  assert.ok(indexHtml.includes("inp.placeholder = '예: ' + text;"), 'applyQuickCunningText 내 inp.placeholder 배선 누락');
+  assert.ok(extractFunction(fs.readFileSync(path.join(__dirname, '..', 'js', 'tabs', 'records', 'checkin-helpers.js'), 'utf8'), 'applyQuickCunningText').includes("inp.placeholder = '기록하고 나의 역사데이터를 만들어요.';"), 'applyQuickCunningText 내 inp.placeholder 배선 누락');
   assert.ok(!indexHtml.includes("inp.value = text;\n    inp.dispatchEvent"), 'applyQuickCunningText 내 inp.value 강제 주입 잔존');
 
   // 2. renderQuickCheckinGuideChips 내 가이드 안내 캡션 확인
   assert.ok(indexHtml.includes('(탭하면 가이드 예시 힌트 설정 ⚡)'), 'renderQuickCheckinGuideChips 캡션 동기화 누락');
 
   // 3. captureSave 완료 시 기본 플레이스홀더 원복 확인
-  assert.ok(indexHtml.includes("t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';"), 'captureSave 내 placeholder 원복 누락');
+  assert.ok(fs.readFileSync(path.join(__dirname, '..', 'js', 'tabs', 'records', 'checkin-capture.js'), 'utf8').includes("t.placeholder = '기록하고 나의 역사데이터를 만들어요.';"), 'captureSave 내 placeholder 원복 누락');
 });
 
 check('[#TASK-ES-219 / 생각 메모장 89번] 데이터분석 프롬프트 백과사전 실사용 유저 등록·피드 게시 및 도움돼요 상호작용 무결성', () => {

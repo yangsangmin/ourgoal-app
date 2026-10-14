@@ -776,3 +776,5 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 - #TASK-ES-695-C-PRIVACY-01a13674 | FIX | DIR006 C2: 기존 나만 보기 undo 선택의 typed goals 기기 보존과 성공 안내·실패 재시도·계정/목표/토스트 귀속. 원 memory-only 실패 불변 | C1 source7ce400ad · reports/TASK-ES-695-C-PRIVACY-01a13674/REQ.md · reports/TASK-ES-695-C-PRIVACY-01a13674/claims.json | 단독 구현 /root/handover_review · 독립 /root/binding_review · 기기/새로고침 private 교정·공식 판정·로그인 원격·사용·효과 미확인
 - #TASK-ES-K17-981-MERGE-RECORD-01a13674 | INFRA | PR981 제14.3 승인 후 실제 병합 사실 기록 | 근거 PR981-병합후-되읽기.json | 체감 가설: 전문과 대장에서 실제 발효 근거를 따라갈 수 있다 | root 통합 pending
+
+- #TASK-CC-CELL-UNWIRE-RUN-309dca5d | FIX | 기업화 원077: 빈 기록 입력의 확정 안내 「기록하고 나의 역사데이터를 만들어요.」를 초기·첫 안내·저장 뒤·기존 quickchip 경로에 일치시키고 실제 네 테마의 읽기 쉬운 표시를 확인한다. 칩/버튼/동작 삭제·저장값/표/DTO·MASTER·규범 변경 0 | 대표 새 총괄 실행 지시 · 원마9/바9 D-2026-10-13-01/02 · reports/TASK-ES-K17-THEME-READABILITY-01a13674/SOURCE-PREFLIGHT.json · reports/TASK-ES-K17-THEME-READABILITY-01a13674/implementation-1/REQ.md | 원077 한정 검증·통합 중 /root · 제품 /root/contracts · 공식 판정·배포·전체 사용·효과 미확인
