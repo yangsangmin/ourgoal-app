@@ -1,0 +1,10 @@
+TASK-ES-365 계정 전환 격리 시험 (부품만 돌려 봄 — 가짜 브라우저·가짜 Supabase) 대상: index.html
+  [통과] ① A 로그인·기록·로그아웃 -> 같은 브라우저 B 로그인: B 화면 기록·소개·동반자에 A 데이터 0건, B 업로드에 A 기록 0건
+  [통과] ② 서버에 A 기록이 아직 없을 때(오프라인 저장분)도 B 로 넘어가지 않는다
+  [통과] ③ 로그아웃 없이 계정이 바뀌어도(A 전체 사본이 남은 채 B 세션) A 사본을 B 로 이관하지 않는다
+  [통과] ④ 서버 동기화 요청(sync_records)에는 지금 로그인 uid 만 실린다
+  [통과] ⑤ 기존 흐름 유지: 게스트로 쓴 목표·기록은 로그인한 계정으로 이관되어 그 계정 이름으로 올라간다
+  [통과] ⑥ 로그아웃은 계정 공용 키만 지우고 서버 원장(A 기록)은 그대로 둔다
+
+측정값: {"profileIsB":true,"aTextOnB":0,"aBioOnB":0,"aCompanionOnB":0,"bUploadsWithA":0,"bLocalCopiesWithA":0,"offlineATextOnB":0,"offlineBUploadsWithA":0,"aBackRestored":1,"aCopyLeftBeforeSwitch":true,"noLogoutATextOnB":0,"noLogoutBUploadsWithA":0,"syncIdsOtherThanB":0,"guestRecMigrated":1,"guestGoalMigrated":1,"guestRecOnServerAsB":1,"guestCopyRemoved":true,"sharedKeysLeft":[],"serverAKept":true,"aOwnBackupKept":true}
+결과: 6/6 통과

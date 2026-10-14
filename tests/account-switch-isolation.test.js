@@ -1,7 +1,7 @@
 // tests/account-switch-isolation.test.js
 // #TASK-ES-365 (노션 CORE-09): 같은 브라우저에서 A 로그아웃 -> B 로그인 시 A 데이터가 B 화면·B 업로드에 섞이는 결함 회귀 시험
-// 확인 수준: "부품만 돌려 봄" — index.html 의 실제 함수 본문(ensureUserRow·loadProfile·saveProfile·syncServerRecords·
-// migrateGuestDataToUser·performLogout)을 잘라 메모리 가짜 브라우저(localStorage)·가짜 Supabase(RLS 흉내)로 돌린다.
+// 확인 수준: "부품만 돌려 봄" — profile-load 및 capabilities/device-save/local-keep 실제 IIFE와 나머지 실제 함수 본문
+// (saveProfile·syncServerRecords·migrateGuestDataToUser·performLogout)을 메모리 가짜 브라우저(localStorage)·가짜 Supabase(RLS 흉내)로 돌린다.
 // 서버 쪽 sync_records 는 api/track.js 실제 처리기를 쓴다. 실서버·실계정 왕복이 아니다(실계정 확인은 docs/design/harness/real-account-check.js).
 // 실행: node tests/account-switch-isolation.test.js [--html <index.html 경로>]   (워크트리에 node_modules 가 없으면 NODE_PATH 로 본 저장소 것을 쓴다)
 
@@ -172,7 +172,15 @@ function makeBrowser() {
   win.sb = ctx.sb;
   vm.createContext(ctx);
   if (isolationSrc) vm.runInContext(isolationSrc, ctx, { filename: 'js/account-isolation.js' });
-  var names = ['async function ensureUserRow(', 'async function loadProfile(', 'async function saveProfile(', 'async function syncServerRecords(', 'async function migrateGuestDataToUser(', 'async function performLogout('];
+  // The profile loader owns lexical read generations/helpers and the pending capability contract.
+  // Load its unchanged IIFE with actual providers; do not replace missing state with test globals.
+  win.OurgoalAppScope = { scope: ctx };
+  ['js/core/capabilities.js', 'js/core/device-save.js', 'js/core/local-keep.js', 'js/core/profile-load.js'].forEach(function (file) {
+    vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+  });
+  ctx.ensureUserRow = win.OurgoalUiHelpers.ensureUserRow;
+  ctx.loadProfile = win.OurgoalUiHelpers.loadProfile;
+  var names = ['async function saveProfile(', 'async function syncServerRecords(', 'async function migrateGuestDataToUser(', 'async function performLogout('];
   var code = names.map(function (h) { return extractFunction(html, h); }).join('\n') +
     '\nthis.api = { ensureUserRow: ensureUserRow, loadProfile: loadProfile, saveProfile: saveProfile, syncServerRecords: syncServerRecords, migrateGuestDataToUser: migrateGuestDataToUser, performLogout: performLogout };';
   vm.runInContext(code, ctx, { filename: 'index.html(잘라 옴)' });
