@@ -2,10 +2,10 @@
 
 원제품 dfb6cac74fb336cab496e113f356875fb2da25fc와 패킷bd498/finalfecf777, FIRST/PC/60핀은 그대로 보존한다. 공통 TASK-CC-CELL-UNWIRE-RUN-309dca5d/중앙root단독. 모델 요청/actual은 기존 gpt-6.1-sol/high, 이번 toast fade/표시경계의 오판을 줄이기 위해 유지한다. exact turn_context 근거는 교정 SOURCE-INTAKE에 기록한다.
 
-- [ ] toast 소유자와 표시/fade 실제 계약 · 예상 5분 · 실제source/등록순서/기존기능 고정
-- [ ] readcap과 목표 busy 소비 · 예상 10분 · message/시간/클릭/CSS 불변, 타DOM직접read0
-- [ ] 신규 fade부품/실제 oneflow · 예상 10분 · fade중 제안0/질문·목표·버튼 hit/화면 읽기와 이동
-- [ ] 원자료 보존·normal sourcecommit/packet 봉인 · 예상 5분 · claims 기대불변/indie인계, push0
+- [x] toast 소유자와 표시/fade 실제 계약 · 예상 5분 · 실제source/등록순서/기존기능 고정
+- [x] readcap과 목표 busy 소비 · 예상 10분 · message/시간/클릭/CSS 불변, 타DOM직접read0
+- [x] 신규 fade부품/실제 oneflow · 예상 10분 · fade중 제안0/질문·목표·버튼 hit/화면 읽기와 이동
+- [x] 원자료 보존·normal sourcecommit/packet 봉인 · 예상 5분 · claims 기대불변/indie인계, push0
 
 ## 1. [원칙 ①] 파악
 기존 AI fallback toast가 닫힌 피드백 뒤에도 남아 목표 질문을 덮는다. 원PNG/indie 판독을 보존한다.
@@ -23,3 +23,6 @@ cap 부재 source확인→선후로드분리 등록→owner readcap→consumer/�
 이번새교정부품과실제공개guest 한flow만. 기존규칙/oldcapture/전체suite 무이유재반복0. normal hook필수검사는별도다.
 ## 8. [원칙 ⑧] 막히는 지점 예상
 토스트renderer는capabilities보다먼저로드되어DOMContentLoaded등록이필요하다. 기존timer bounded2개미세사항은별개라교정하지않는다. 운영·실계정·원격·효과·Court null.
+
+
+완료출처: b881 정상hook0, FINAL-SOURCE-CHECKS의선정readcap/consumer·guard·문법·diff0, author직전observer-PC와독립최종readcap-only-PC의층별인수, 원3시나리오Gitbyte동일/claims기대불변. source추가쓰기0·push/PR/Court/운영/null/root후속. 원계획첫방식observer는검토후readcap-only로대체하고이유/원자료를보존했다.
