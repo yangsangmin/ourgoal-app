@@ -55,19 +55,51 @@
     clearTimeout(L.toastTimer);
     var btn = el.querySelector('#btnUndoThemePrivacy');
     if(btn){
+      var profile = L.state.profile, account = profile && profile.id;
+      var target = (profile && profile.goals || []).find(function(g){ return g.id === goalId; });
+      var ownerDocument = el.ownerDocument, label = el.querySelector('span'), saving = false, completed = false;
+      function ownsToast(){
+        return document === ownerDocument && el.isConnected && document.getElementById('toast') === el
+          && el.classList.contains('show') && el.querySelector('#btnUndoThemePrivacy') === btn && el.querySelector('span') === label
+          && L.state.profile === profile && profile && profile.id === account
+          && target && target.id === goalId && (profile.goals || []).find(function(g){ return g.id === goalId; }) === target;
+      }
+      function notice(saved){
+        if(!ownsToast()) return;
+        var text;
+        try { text = saved ? global.OurgoalCapabilities.request('storage.device.message', 'core/confetti')(saved, '나만 보기로 설정했어요') : '저장 상태를 확인하지 못했어요.'; }
+        catch(error){ text = '저장 상태를 확인하지 못했어요.'; }
+        label.textContent = text + (!saved || saved.state === 'failed' ? ' 나만 보기 선택은 남겨 두었어요. 단추를 눌러 다시 시도해주세요.' : '');
+      }
       btn.onclick = async function(e){
         e.stopPropagation();
-        var target = (L.state.profile && L.state.profile.goals || []).find(function(g){ return g.id === goalId; });
-        if(target){
+        if(saving || completed || !ownsToast()) return;
+        saving = true; btn.disabled = true;
+        try {
           target.visibility = 'private';
-          await L.saveProfile();
+          var submitted = JSON.stringify(target);
+          var saved = await L.saveProfile({deviceFirst:true, kind:'goals', targetId:goalId, operation:'update'});
+          if(!ownsToast() || JSON.stringify(target) !== submitted) return;
+          var current = global.OurgoalCapabilities.request('storage.device.status', 'core/confetti')(account, goalId, 'goals');
+          if(saved && saved.account === account && saved.kind === 'goals' && saved.targetId === goalId && current
+            && (current.account !== account || current.kind !== 'goals' || current.targetId !== goalId
+              || current.localRevision !== saved.localRevision || current.generation !== saved.generation || current.changeId !== saved.changeId)) return;
+          var verified = saved && saved.account === account && saved.kind === 'goals' && saved.targetId === goalId
+            && saved.types && saved.types.goals && saved.types.goals.device === true
+            && ['confirmed','sending','local','reauth','rejected'].indexOf(saved.state) >= 0
+            && Number.isSafeInteger(saved.generation) && saved.generation > 0 && current
+            && current.account === account && current.kind === 'goals' && current.targetId === goalId
+            && current.localRevision === saved.localRevision && current.generation === saved.generation && current.changeId === saved.changeId;
+          if(!verified){ notice(saved && saved.state === 'failed' ? saved : null); return; }
+          completed = true;
+          notice(saved);
           if(typeof L.dispatchFullViewPropagation === 'function'){
             L.dispatchFullViewPropagation('goal_update', { goalId: goalId });
           } else {
             L.renderAll();
           }
-        }
-        L.toast('🔒 나만 보기로 변경되었어요');
+        } catch(error){ notice(null); }
+        finally { saving = false; btn.disabled = completed; }
       };
     }
     L.toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 5000);
