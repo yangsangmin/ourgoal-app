@@ -9,5 +9,5 @@ for(const name of ['C2-before.json','C2-after.json','C2-final.json']){
   const dest=__dirname+'/public/'+name;fs.writeFileSync(dest,JSON.stringify(projection,null,2)+'\n','utf8');
   projections.push({rawLocalFile:name,rawSHA256:hash(raw),rawBytes:raw.length,publicFile:'public/'+name,publicSHA256:hash(fs.readFileSync(dest)),redactedURLs:redacted});
 }
-fs.writeFileSync(__dirname+'/C2-public-projection.json',JSON.stringify({scope:'secret-bearing raw excluded from Git; source/steps/results immutable',projections},null,2)+'\n','utf8');
+fs.writeFileSync(__dirname+'/public-projection.json',JSON.stringify({scope:'secret-bearing raw excluded from Git; source/steps/results immutable',projections},null,2)+'\n','utf8');
 console.log(JSON.stringify(projections));

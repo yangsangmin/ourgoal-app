@@ -1,6 +1,6 @@
 # PR980 교정 1 인계
 
-계획의 구현·변경 경계 측정을 수행했다. 정상 commit 뒤 정확 HEAD는 총괄에 도구 결과로 인계한다. 원격 push·Court 재청구는 총괄의 이 source 검토 전 보류다. 사용 가능·운영·효과와 새 공식 Court 판정은 null이다. 최초 공식 Court 4A23BBCD의 돌려보냄 1회는 불변이다.
+계획의 구현·변경 경계 측정을 수행했다. 정상 훅 제품 commit은 `794bcd8798621f5933a5c14a1bfea1523e92f46f`이고 바이트 봉인은 `seal.json`이다. 그 뒤 문서 봉인 HEAD는 총괄에 도구 결과로 인계한다. 원격 push·Court 재청구는 총괄의 이 source 검토 전 보류다. 사용 가능·운영·효과와 새 공식 Court 판정은 null이다. 최초 공식 Court 4A23BBCD의 돌려보냄 1회는 불변이다.
 
 기준 source 71429cb3a06a86106c1d14d8d28f6294d50fa3f2, 최신 fetch origin/main f1b03d0c84344a260d8a0a813e107f897f706a24. 단독 제품 변경은 checkin-capture.js와 pro-record-save.js뿐이다. 현행 SAVE-SYNC/원 DIR006/P0/헌법978과 원티켓695를 승계하며 규범, 금고, 게이트, Court, TICKETS, index, 서버 DTO, LocalKeep 변경은 없다.
 
@@ -31,3 +31,5 @@ source의 working 및 Git LF SHA는 verification.json의 productFiles에 있다.
 최초 작업자의 hidden landGuestBtn JS click/JS 클릭 범위는 최초 chrome-result.json 그대로 보존한다. 새 실제 보이는 입구·mouse 결과를 최초 조작 방식으로 소급하지 않는다. c2-diag-before의 탐침 실패는 실제 인사 팝업이 클릭을 가린 locator 문제다. 원 실패 파일을 보존하고 실제 닫기 버튼 조작 뒤 별도 before-visible 결과를 만들었다. 해당 탐침 문제를 제품 결함으로 세지 않는다.
 
 다음은 총괄의 exact source 독립 검토 → 정상 push/필수 prepush → 공식 Court 재청구다. product merge는 총괄 담당이고 이 writer는 merge/ready/approve/automerge하지 않는다. 서버 CAS·여러기기·XP 원장·실계정·운영 사용·효과는 null. 사진/AI/energy/focus 서버 확대·새AI 비용·live DB·SQL·원 소진 운영시험 재사용·중앙 Notion/metadata 쓰기는 0이다.
+
+정상 훅의 credential-bearing 콘솔 raw 차단과 commit 메시지 태그 거절도 ATTEMPTS.md에 보존했다. 원 C2 local raw는 원경로의 ignored 파일로 그대로 보관하며 공개 사본·변환 SHA는 public-projection.json 및 public/C2-*.json에 있다. 원 기대값/단계/결과는 바꾸지 않고 콘솔 URL credential만 제외했다. 원 독립/Court/source 사본의 실제 Git blob SHA는 원 physical byte SHA와 같음을 seal.cjs가 확인했다. own 직접 실행 harness는 모두 정상 종료 후 자기 browser.close/server.close를 기다린 상태이며 다른 세션 프로세스를 종료하지 않았다.

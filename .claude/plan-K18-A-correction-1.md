@@ -5,7 +5,7 @@ TASK-ES-695-A-01a13674 / retained TASK-ES-695 / common TASK-CC-CELL-UNWIRE-RUN-3
 - [x] D1 원raw·원source·C2/C4 원Court·listener/초안 경계 인수 · 예상 10분(추정) · source-intake.json 원 hash 인수, 원의견·Court raw 바이트 대조
 - [x] 입력 세대·제출분 결박과 전문모달/C2 토스트 원인 교정 · 예상 20분(추정) · 입력 disabled/기능 삭제 0, 현재 초안과 제출 원record ID 분리, 기기 실패 snapshot은 영속 성공으로 표시하지 않음
 - [x] D1/C2 targeted 실제 Chrome·정합 검사 · 예상 15분(추정) · verification.json 9개 변경 경계·동일 C2 12단계, 같은 글·새사진·국소 profile 세대·새 전문창·실패 후 재시도 측정; 원 whole 반복 0
-- [ ] 최소 commit·exact source/증거를 root와 독립 검토에 인계 · 예상 10분(추정) · 정상 훅·단독writer·root 검토 전 재push 0
+- [x] 최소 commit·exact source/증거를 root와 독립 검토에 인계 · 예상 10분(추정) · 정상 훅 제품 commit 794bcd87 실물, 검증/source/원실패 공개 사본과 원byte 인계. root 검토 전 재push/Court 0; 재심·병합은 root 별도 실행 책임
 
 ## 1. [원칙 ①] 파악
 독립 D1은 실제 visible entry/CDP mouse·keyboard와 원 navigator.locks 대기로 제출 뒤 타이핑한 내용이 capture clear로 없어짐을 확인했다. C2는 실제 전문 save click 뒤 #toast 보이는 글자 없음, C4는 실제 한계 사유 누락이다. 각각 별도 원인과 증거로 교정한다.
