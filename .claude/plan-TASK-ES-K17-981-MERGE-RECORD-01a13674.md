@@ -4,7 +4,7 @@ Task ID: #TASK-ES-K17-981-MERGE-RECORD-01a13674. 공통 TASK-CC-CELL-UNWIRE-RUN-
 
 - [x] 원격main/원승인/병합 proof·실제 모델 고정 · 예상 2분(추정) · 완료 기준: SOURCE.json에 source/pins/context가 있다.
 - [x] 사실 두 행·기존 literal 및 자기 config claim 정합 · 예상 3분(추정) · 완료 기준: 보호 조항 불변·관련 JSON pointer만 변화한다.
-- [ ] 필요한 형식/버전확인·normal commit·seal/clean 인계 · 예상 3분(추정) · 완료 기준: 정상 훅·실제HEAD·clean·자기잔류 측정으로 writer 종료.
+- [x] 필요한 형식/버전확인·normal commit·seal/clean 인계 · 예상 3분(추정) · 완료 기준: 정상 훅·실제HEAD·clean·자기잔류 측정으로 writer 종료.
 
 ## 1. [원칙 ①] 문제 정확히 파악
 PR981은 명시승인 뒤 실제 병합됐으나 전문 머리·대장에는 조건식만 있다. 이번 작업은 제14.3의 병합 근거 사실기입 후속이며 새 규범개정이 아니다.
