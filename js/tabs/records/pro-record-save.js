@@ -14,12 +14,21 @@
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
+  var draftObservers = new WeakMap(), failedSubmissions = [];
 
   /* ---- 이전 전 index.html 3487~3673줄(#TASK-ES-672 생성기 표지) ---- */
   function bindProRecSave(ctx){ /* [#TASK-ES-646] 전문 템플릿 기록 창 조각 — 저장·닫기: 기기 즉시 저장 → 목표·일정·기록 연동 → 화면 갱신 → 서버 동기화 → Notion 자동 전송, 취소·돌아가기. 꾸러미(ctx)는 openProTemplateRecordModal 가 만든다 */
       var profile = L.state.profile, recordId = ctx.editRec ? ctx.editRec.id : L.newId();
       var saving = false, awarded = false;
       var buttons = [ctx.sheet.querySelector('#proGeneralSaveBtn'), ctx.sheet.querySelector('#proCalendarSaveBtn')];
+      var memoInput = ctx.sheet.querySelector('#proRecMemo'), draftGeneration = 0, feedbackRecords = new Set();
+      var oldObserver = draftObservers.get(ctx.sheet);
+      if(oldObserver) oldObserver.abort();
+      var observer = new AbortController(); draftObservers.set(ctx.sheet, observer);
+      function changedDraft(){ draftGeneration++; }
+      ctx.sheet.addEventListener('input', changedDraft, {capture:true, signal:observer.signal});
+      ctx.sheet.addEventListener('change', changedDraft, {capture:true, signal:observer.signal});
+      function draftFields(){ return Array.from(ctx.sheet.querySelectorAll('input,textarea,select')).map(function(e){ return {element:e,value:e.value,checked:e.checked}; }); }
       function unlock(){ saving = false; buttons.forEach(function(b){ if(b) b.disabled = false; }); }
       function message(saved, action){ return global.OurgoalCapabilities.request('storage.device.message', 'records/pro-record-save')(saved, action); }
       ctx.sheet.querySelector('#proCancelBtn').onclick = function(){
@@ -32,8 +41,28 @@
         if(saving || L.state.profile !== profile) return;
         saving = true; buttons.forEach(function(b){ if(b) b.disabled = true; });
         try {
+        for(var pendingIndex = 0; pendingIndex < failedSubmissions.length;){
+          var pending = failedSubmissions[pendingIndex];
+          if(pending.profile !== profile){ pendingIndex++; continue; }
+          var recovered = await L.saveProfile({deviceFirst:true, recordId:pending.record.id, operation:pending.operation});
+          if(L.state.profile !== profile) return;
+          if(recovered.state === 'failed'){ L.toast(message(recovered)); return; }
+          if(pending.isNew && !pending.record.deviceXpAwarded){
+            L.awardXP(L.XP_RULES.checkin, '전문 템플릿 기록'); pending.record.deviceXpAwarded = true;
+            await L.saveProfile({deviceFirst:true, recordId:pending.record.id});
+            if(L.state.profile !== profile) return;
+          }
+          failedSubmissions.splice(pendingIndex, 1);
+        }
         ctx.stopSwTimer();
         ctx.syncCurrentRowsFromDOM();
+        var submittedGeneration = draftGeneration, submittedFields = draftFields(), submittedPhoto = ctx.attachedPhoto;
+        var submittedTpl = Object.assign({}, ctx.curTpl);
+        function sameDraft(){
+          if(ctx.sheet.querySelector('#proRecMemo') !== memoInput || ctx.sheet.querySelector('#proGeneralSaveBtn') !== buttons[0] || draftGeneration !== submittedGeneration || ctx.attachedPhoto !== submittedPhoto) return false;
+          var now = draftFields();
+          return now.length === submittedFields.length && now.every(function(e,i){ return e.element === submittedFields[i].element && e.value === submittedFields[i].value && e.checked === submittedFields[i].checked; });
+        }
         var dateInpVal = (ctx.sheet.querySelector('#proRecDate').value || '').trim();
         var schedDateVal = dateInpVal ? (dateInpVal.indexOf('T') !== -1 ? dateInpVal : dateInpVal + 'T09:00') : L.toLocalInputValue(new Date());
         var recordDateISO = new Date(schedDateVal).toISOString();
@@ -42,6 +71,7 @@
           return r && r.some(function(cell, idx){ return idx > 0 && cell && String(cell).trim().length > 0; });
         });
         if(!validRows.length) validRows = ctx.rows.slice(0, 1);
+        validRows = validRows.map(function(r){ return r.slice(); });
 
         var recId = recordId;
         var yymmdd = L.fmtYYMMDD(schedDateVal);
@@ -63,7 +93,7 @@
           templateId: ctx.curTpl.id,
           templateKey: ctx.curTpl.key,
           templateTitle: tplTitle,
-          columns: ctx.columns,
+          columns: ctx.columns.slice(),
           rows: validRows,
           text: fullText,
           summaryText: summaryText,
@@ -132,12 +162,18 @@
         // 1. Save locally IMMEDIATELY (never loses data even if Supabase is offline/slow)
         var saved = await L.saveProfile({deviceFirst:true, recordId:recId, operation:ctx.isNew ? 'create' : 'update', focus:true});
         if(L.state.profile !== profile) return;
-        if(saved.state === 'failed'){ L.toast(message(saved)); return; }
+        if(saved.state === 'failed'){
+          if(!sameDraft()){
+            failedSubmissions.push({profile:profile,record:recObj,operation:ctx.isNew ? 'create' : 'update',isNew:ctx.isNew});
+            if(ctx.isNew){ recordId = L.newId(); awarded = false; }
+          }
+          L.toast(message(saved)); return;
+        }
         unlock();
         if(ctx.isNew && !awarded){ L.awardXP(L.XP_RULES.checkin, '전문 템플릿 기록'); awarded = true; recObj.deviceXpAwarded = true; }
 
         // 🎯 3각 자동 추적 엔진: 목표-일정-맞춤기록 실시간 연동
-        L.syncRecordToMatchingGoals(recObj, ctx.curTpl, ctx.columns, validRows);
+        L.syncRecordToMatchingGoals(recObj, submittedTpl, recObj.columns, validRows);
 
         // 2. Refresh screens
         L.renderRecordsScreen();
@@ -147,11 +183,14 @@
 
         if(!saved.photoStored){
           L.toast(message(saved, '본문을 기록했어요'));
+        } else if(!sameDraft()){
+          // This sheet contains a newer draft; the submitted record must not close it.
         } else if(ctx.initialDate){
           L.openCalendarDayEditHubModal(ctx.initialDate);
         } else {
           L.closeModal();
         }
+        if(ctx.isNew && !sameDraft()){ recordId = L.newId(); awarded = false; }
 
         // 3. Sync to Supabase in background
         await L.saveProfile({deviceFirst:true, recordId:recId});
@@ -160,7 +199,7 @@
 
         // 4. Background Notion Auto-Push if enabled
         if(L.state.profile.settings && L.state.profile.settings.notionAutoPush && (L.state.profile.settings.notionApiKey || L.state.profile.settings.notionWebhookUrl)){
-          L.pushRecordToNotion(recObj, ctx.curTpl, ctx.columns, validRows).then(function(res){
+          L.pushRecordToNotion(recObj, submittedTpl, recObj.columns, validRows).then(function(res){
             if(res && res.ok){
               console.log('[Notion AutoPush Success]', res.summary);
             }
@@ -176,8 +215,8 @@
         }
         L.burstConfetti(window.innerWidth/2, window.innerHeight/2);
 
-        if(ctx.isNew && !ctx.deviceFeedbackRequested){
-          ctx.deviceFeedbackRequested = true;
+        if(ctx.isNew && !feedbackRecords.has(recId)){
+          feedbackRecords.add(recId);
           L.renderRecordFeedbackSlot('loading');
           var summaryText = (ctx.curTpl ? ctx.curTpl.title + ': ' : '') + validRows.map(function(r){ return r.filter(Boolean).join(' '); }).join(', ');
           var recGoal = (L.state.profile.goals || []).find(function(g){ return g.category === recObj.category; }) || (L.state.profile.goals && L.state.profile.goals[0]) || { title: '나의 맞춤 템플릿 성장', milestones: [] };
@@ -186,7 +225,9 @@
             if(fb){
               recObj.feedback = fb;
               await L.saveProfile({deviceFirst:true, recordId:recId});
-              if(L.state.profile !== profile || !global.OurgoalCapabilities.request('storage.device.focused', 'records/pro-record-save')(profile.id, recId)) return;
+              if(L.state.profile !== profile || !sameDraft() || !global.OurgoalCapabilities.request('storage.device.focused', 'records/pro-record-save')(profile.id, recId)) return;
+              // The AI helper may show its own notice; finish with the verified save result.
+              if(sameDraft()) L.toast(message(saved, syncCalendar ? '기록 및 [' + schedTitle + '] 기기 일정에 연동했어요' : '전문 템플릿 기록을 저장했어요'));
               L.state.lastCapture = { record: recObj, goal: recGoal, feedback: fb };
               L.renderRecordFeedbackSlot(fb);
               L.renderFeedbackSlot(fb);

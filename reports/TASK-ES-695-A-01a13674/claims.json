@@ -77,19 +77,20 @@
       "req": "R4",
       "kind": "unverified",
       "domain": "persistence",
-      "statement": "실서버 응답과 원계정/세대/returned row 확인, timeout 미확정 및 여러기기 경계는 운영 미확인이다. local 부품 반례를 실서버 확인으로 승격하지 않는다.",
+      "statement": "실제 로그인 계정의 원격 원장 응답·원계정/세대/returned row·timeout 미확정과 여러기기 경계는 운영 미확인이다. PC 게스트 저장과 local 부품의 0행/거절/늦은 세대 반례는 별도 실측 자료로 공개하며 이 도구 한계에 숨기지 않는다.",
       "touches": [
         "js/core/device-save.js",
         "js/core/home-cockpit.js"
       ],
       "unverified": {
-        "reason": "needs-live-server",
+        "reason": "tool-cannot-measure",
         "who": "별도 승인된 운영 시험 담당",
         "how": [
-          "실서버 읽기 조사 결과와 시험 예산을 먼저 확정한다",
-          "0행·권한/인증 거절·late 세대·계정 전환을 각기 측정한다",
-          "서버 CAS와 경험치 원장/여러기기 중복 지급은 별도로 확인한다"
-        ]
+          "법정은 외부 통신을 막아 실제 계정 로그인 및 원격 원장 확인을 할 수 없다. 별도 운영 예산과 담당을 먼저 확정한다",
+          "실제 로그인 계정과 원격 원장에서 0행·권한/인증 거절·늦은 세대·계정 전환을 각각 측정한다",
+          "PC에서 잴 수 있는 게스트 화면과 local 부품 반례는 correction-1 및 최초 component-check 실제 결과를 구분해 공개한다. 서버 CAS·경험치 원장·여러기기 중복 지급은 별도 미확인이다"
+        ],
+        "cannotBecause": "needs-login"
       }
     }
   ]

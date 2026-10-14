@@ -15,12 +15,15 @@
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
   // 탭 키트: 이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다
   var K = global.OurgoalRecordsKit = global.OurgoalRecordsKit || {};
+  var captureInputGeneration = 0, captureDraftGeneration = 0;
 
   /* ---- 이전 전 index.html 11206~11217줄(#TASK-ES-439 생성기 표지) ---- */
   function bindCaptureLiveMeta() { /* [#TASK-ES-439] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
 
   if(L.capInput && L.liveMeta){
     L.capInput.addEventListener('input', function(){
+      captureInputGeneration++;
+      captureDraftGeneration++;
       var val = L.capInput.value.trim();
       if(val.length > 0){
         L.liveMeta.style.display = 'flex';
@@ -30,12 +33,19 @@
       }
     });
   }
+  var captureBox = document.getElementById('captureCardBox');
+  if(captureBox){
+    function changedField(e){ if(e.target !== L.capInput) captureDraftGeneration++; }
+    captureBox.addEventListener('input', changedField);
+    captureBox.addEventListener('change', changedField);
+  }
   } /* bindCaptureLiveMeta */
   /* ---- 이전 전 index.html 11218~11404줄(#TASK-ES-439 생성기 표지) ---- */
   function bindCaptureSave() { /* [#TASK-ES-439] 로드 중 문 — index.html 원래 자리에서 이 함수를 부른다(호출 순서 보존) */
 
-  var draftId = L.newId(), draftAccount = L.state.profile && L.state.profile.id;
+  var draftId = L.newId(), draftAccount = L.state.profile && L.state.profile.id, draftProfile = L.state.profile;
   var draftText = null, awarded = false, displayed = null;
+  var failedSubmissions = [];
   function message(saved, action){ return global.OurgoalCapabilities.request('storage.device.message', 'records/checkin-capture')(saved, action); }
   function paint(saved){
     if(!displayed || !L.state.profile || L.state.profile.id !== saved.account || saved.recordId !== displayed.recordId || saved.generation !== displayed.generation || saved.changeId !== displayed.changeId || saved.localRevision !== displayed.localRevision) return;
@@ -71,13 +81,30 @@
     if(!text && L.pendingCapturePhoto) text = '사진 인증';
     var profile = L.state.profile;
     if(!profile) return;
-    if(draftAccount !== profile.id){ draftAccount = profile.id; draftId = L.newId(); draftText = null; awarded = false; }
+    if(draftAccount !== profile.id || draftProfile !== profile){ draftAccount = profile.id; draftProfile = profile; draftId = L.newId(); draftText = null; awarded = false; }
     if(draftText && !t.value.trim() && L.pendingCapturePhoto) text = draftText;
+    var submittedInput = t.value, submittedGeneration = captureInputGeneration, submittedDraftGeneration = captureDraftGeneration;
+    var submittedPhoto = L.pendingCapturePhoto;
+    var submittedFile = L.capturePhotoInput && L.capturePhotoInput.files[0];
     var recordId = draftId, xpAlready = awarded, released = false;
     saveBtn.disabled = true;
     var origSaveBtnHtml = saveBtn.innerHTML;
     saveBtn.textContent = '기록 중…';
     try {
+      // A storage failure cannot make a newer input replace the unverified submission.
+      for(var pendingIndex = 0; pendingIndex < failedSubmissions.length;){
+        var pending = failedSubmissions[pendingIndex];
+        if(pending.profile !== profile){ pendingIndex++; continue; }
+        var recovered = await L.saveProfile({deviceFirst:true, recordId:pending.record.id, operation:'create'});
+        if(L.state.profile !== profile) return;
+        if(recovered.state === 'failed'){ displayed = recovered; paint(recovered); L.toast(message(recovered)); return; }
+        if(!pending.record.deviceXpAwarded){
+          L.awardXP(L.XP_RULES.checkin, '체크인'); pending.record.deviceXpAwarded = true;
+          await L.saveProfile({deviceFirst:true, recordId:pending.record.id});
+          if(L.state.profile !== profile) return;
+        }
+        failedSubmissions.splice(pendingIndex, 1);
+      }
       var goal = L.state.profile.goals.find(function(g){ return g.id===L.state.activeGoalId; }) || L.state.profile.goals[0];
       var cat = goal ? goal.category : null;
       var isFirst = (L.state.profile.records.length === 0);
@@ -122,13 +149,23 @@
       if(L.state.profile !== profile) return;
       displayed = saved; paint(saved);
       if(saved.state === 'failed'){
-        var failedIndex = profile.records.indexOf(newRec);
-        if(failedIndex >= 0){ if(previous) profile.records[failedIndex] = previous; else profile.records.splice(failedIndex, 1); }
+        if(captureDraftGeneration !== submittedDraftGeneration || t.value !== submittedInput || L.pendingCapturePhoto !== submittedPhoto || (L.capturePhotoInput && L.capturePhotoInput.files[0] !== submittedFile)){
+          failedSubmissions.push({profile:profile, record:newRec});
+          draftId = L.newId(); draftText = null; awarded = false;
+        } else {
+          var failedIndex = profile.records.indexOf(newRec);
+          if(failedIndex >= 0){ if(previous) profile.records[failedIndex] = previous; else profile.records.splice(failedIndex, 1); }
+        }
         L.toast(message(saved)); return;
       }
-      // Only verified parts leave the input. A photo retry keeps this record id and XP marker.
-      draftText = text;
+      // Only this submitted draft may leave the input; equal retyping is still a new generation.
+      var sameTextDraft = t === document.getElementById('captureInput') && captureInputGeneration === submittedGeneration && t.value === submittedInput;
+      var samePhotoDraft = L.pendingCapturePhoto === submittedPhoto && (!L.capturePhotoInput || L.capturePhotoInput.files[0] === submittedFile);
+      var sameDraft = sameTextDraft && samePhotoDraft && captureDraftGeneration === submittedDraftGeneration;
+      if(sameTextDraft){
       t.value = '';
+      }
+      if(sameDraft){
       t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';
       if(slEnergy) { slEnergy.value = 80; var ve = document.getElementById('valEnergy'); if(ve) ve.textContent = '80%'; }
       if(slFocus) { slFocus.value = 80; var vf = document.getElementById('valFocus'); if(vf) vf.textContent = '80%'; }
@@ -141,12 +178,14 @@
         });
       }
       if(L.liveMeta) L.liveMeta.style.display = 'none';
-      if(saved.photoStored){
+      }
+      if(saved.photoStored && samePhotoDraft){
         L.pendingCapturePhoto = null;
         if(L.capturePhotoPreview){ L.capturePhotoPreview.innerHTML = ''; L.capturePhotoPreview.style.display = 'none'; }
         if(L.capturePhotoInput) L.capturePhotoInput.value = '';
-        draftId = L.newId(); draftText = null; awarded = false;
-      } else { awarded = true; }
+      }
+      if(saved.photoStored || !sameDraft){ draftId = L.newId(); draftText = null; awarded = false; }
+      else { draftText = text; awarded = true; }
       saveBtn.disabled = false; saveBtn.innerHTML = origSaveBtnHtml; released = true;
       if(xpAlready){ L.toast(message(saved, '사진 보관을 다시 확인했어요')); return; }
 
@@ -192,10 +231,10 @@
         }
         var tutBanner = document.getElementById('firstCheckinTutorialBanner');
         if(tutBanner) tutBanner.style.display = 'none';
-        L.triggerFirstCheerResponse(goal, text);
-        if(typeof L.triggerFirstCheckinCelebrationModal === 'function'){
+        if(sameDraft) L.triggerFirstCheerResponse(goal, text);
+        if(sameDraft && typeof L.triggerFirstCheckinCelebrationModal === 'function'){
           L.triggerFirstCheckinCelebrationModal(goal, text, function(){
-            var curRec = L.state.profile === profile && displayed && displayed.recordId === recordId ? newRec : null;
+            var curRec = L.state.profile === profile && captureDraftGeneration === submittedDraftGeneration && displayed && displayed.recordId === recordId ? newRec : null;
             if(curRec && curRec.feedback){
               L.showCheckinFeedbackSheet(curRec, curRec.feedback);
             }
@@ -235,7 +274,7 @@
 
       var fb = null;
       var targetGoal = goal || (L.state.profile.goals && L.state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-      if(!isFirstCheckinCelebration){
+      if(sameDraft && captureDraftGeneration === submittedDraftGeneration && !isFirstCheckinCelebration){
         L.renderFeedbackSlot('loading');
         L.renderRecordFeedbackSlot('loading');
         L.showCheckinFeedbackSheet(newRec, 'loading');
@@ -258,7 +297,7 @@
         await L.saveProfile({deviceFirst:true, recordId:recordId});
       }
       if(L.state.profile === profile) L.sendToNotion(newRec, fb);
-      if(L.state.profile !== profile || !displayed || displayed.recordId !== recordId || !global.OurgoalCapabilities.request('storage.device.focused', 'records/checkin-capture')(profile.id, recordId)) return;
+      if(L.state.profile !== profile || captureDraftGeneration !== submittedDraftGeneration || !sameDraft || !displayed || displayed.recordId !== recordId || !global.OurgoalCapabilities.request('storage.device.focused', 'records/checkin-capture')(profile.id, recordId)) return;
       L.state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
       L.renderFeedbackSlot(fb);
       L.renderRecordFeedbackSlot(fb);
