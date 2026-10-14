@@ -24,6 +24,7 @@
     L.capInput.addEventListener('input', function(){
       captureInputGeneration++;
       captureDraftGeneration++;
+      if(global.OurgoalEvents) global.OurgoalEvents.emit('capture:draft-changed');
       var val = L.capInput.value.trim();
       if(val.length > 0){
         L.liveMeta.style.display = 'flex';
@@ -35,7 +36,7 @@
   }
   var captureBox = document.getElementById('captureCardBox');
   if(captureBox){
-    function changedField(e){ if(e.target !== L.capInput) captureDraftGeneration++; }
+    function changedField(e){ if(e.target !== L.capInput){ captureDraftGeneration++; if(global.OurgoalEvents) global.OurgoalEvents.emit('capture:draft-changed'); } }
     captureBox.addEventListener('input', changedField);
     captureBox.addEventListener('change', changedField);
   }
@@ -223,6 +224,7 @@
 
       L.track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
       L.track('checkin_completed', { source: 'voice', goal_type: goal && goal.category, day_index: L.dayIndexSinceSignup() });
+      var firstCelebrationClosed = Promise.resolve('dismissed');
       var isFirstCheckinCelebration = isFirst || (L.state.profile && L.state.profile.firstCheckinPending) || (L.state.profile && !L.state.profile.firstCheckinCelebrated);
       if(isFirstCheckinCelebration){
         if(L.state.profile){
@@ -233,11 +235,8 @@
         if(tutBanner) tutBanner.style.display = 'none';
         if(sameDraft) L.triggerFirstCheerResponse(goal, text);
         if(sameDraft && typeof L.triggerFirstCheckinCelebrationModal === 'function'){
-          L.triggerFirstCheckinCelebrationModal(goal, text, function(){
-            var curRec = L.state.profile === profile && captureDraftGeneration === submittedDraftGeneration && displayed && displayed.recordId === recordId ? newRec : null;
-            if(curRec && curRec.feedback){
-              L.showCheckinFeedbackSheet(curRec, curRec.feedback);
-            }
+          firstCelebrationClosed = new Promise(function(resolve){
+            L.triggerFirstCheckinCelebrationModal(goal, text, resolve);
           });
         }
       }
@@ -297,16 +296,25 @@
         await L.saveProfile({deviceFirst:true, recordId:recordId});
       }
       if(L.state.profile === profile) L.sendToNotion(newRec, fb);
+      var firstCloseReason = await firstCelebrationClosed;
+      if(firstCloseReason !== 'dismissed') return;
       if(L.state.profile !== profile || captureDraftGeneration !== submittedDraftGeneration || !sameDraft || !displayed || displayed.recordId !== recordId || !global.OurgoalCapabilities.request('storage.device.focused', 'records/checkin-capture')(profile.id, recordId)) return;
       L.state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
       L.renderFeedbackSlot(fb);
       L.renderRecordFeedbackSlot(fb);
-      if(!isFirstCheckinCelebration){
-        L.showCheckinFeedbackSheet(newRec, fb);
-      }
+      L.showCheckinFeedbackSheet(newRec, fb);
       if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
         L.maybeShowGoalUpdateModal(targetGoal, fb);
       }
+      global.OurgoalCapabilities.request('goals.record-link.offer', 'records/checkin-capture')({
+        profile:profile, record:newRec, saved:saved,
+        current:function(){
+          return L.state.profile === profile && sameDraft && captureDraftGeneration === submittedDraftGeneration
+            && displayed && displayed.recordId === recordId && newRec.text === text
+            && profile.records.find(function(r){ return r.id === recordId; }) === newRec
+            && global.OurgoalCapabilities.request('storage.device.focused', 'records/checkin-capture')(profile.id, recordId);
+        }
+      });
     } catch(saveError){
       L.toast('기록 후속 처리를 마치지 못했어요. 기기에 보관한 기록은 그대로 남아 있어요.');
       console.warn('[captureSave] follow-up failed:', saveError);

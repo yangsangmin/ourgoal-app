@@ -36,6 +36,9 @@
     } else {
       L._modalHistoryPushed = false;
     }
+    if(global.OurgoalCapabilities && global.OurgoalCapabilities.has('ui.modal.ended')){
+      global.OurgoalCapabilities.request('ui.modal.ended', 'core/modal-helper')('dismissed');
+    }
   }
   /* ---- 이전 전 index.html 6307~6326줄(#TASK-ES-471 생성기 표지) ---- */
 
