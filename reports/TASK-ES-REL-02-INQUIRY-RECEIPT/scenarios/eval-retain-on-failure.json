@@ -1,0 +1,75 @@
+{
+  "id": "eval-retain-on-failure",
+  "title": "접수 실패 또는 통신 단절 시 평가 모달과 작성 내용을 유지하고 닫히지 않는다",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeCompassQuest",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeCompassQuest"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#homeDetailSheet",
+      "className": "open",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnOpenEvalModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnOpenEvalModal"
+    },
+    {
+      "expect": "visible",
+      "selector": "#appEvaluationModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "type",
+      "selector": "#evalCeoMsgInput",
+      "text": "접수 실패 시 입력 보존 확인",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#btnSubmitAppEval"
+    },
+    {
+      "expect": "visible",
+      "selector": "#appEvaluationModal",
+      "timeoutMs": 6000
+    },
+    {
+      "expect": "visible",
+      "selector": "#evalCeoMsgInput"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

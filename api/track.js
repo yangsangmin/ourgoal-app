@@ -481,6 +481,7 @@ async function handleInquiry(sb, body, req, res) {
       : ('[' + typeLabel + '] ' + content.slice(0, 25).replace(/[\r\n]+/g, ' ') + (content.length > 25 ? '...' : '') + ' (' + userNickname + ')'));
 
   var results = { supabase: false, notion: false, telegram: false };
+  var receiptId = null;
 
   // 1. Supabase 적재 (inquiries 테이블)
   if (sb) {
@@ -499,6 +500,7 @@ async function handleInquiry(sb, body, req, res) {
 
       if (!sbErr && sbData) {
         results.supabase = true;
+        receiptId = sbData.id != null ? sbData.id : null;
       } else if (sbErr) {
         console.warn('[Inquiry] Supabase warning:', sbErr.message);
       }
@@ -622,6 +624,18 @@ async function handleInquiry(sb, body, req, res) {
     }
   }
 
+  // [REL-02] 접수 성공은 "원장에 실제로 저장됐을 때"만 알린다.
+  // 저장 원장 = Supabase inquiries · Notion 고객 문의 원장. Telegram 은 알림일 뿐이라 저장으로 세지 않는다.
+  var storedInLedger = results.supabase === true || results.notion === true;
+  if (!storedInLedger) {
+    console.warn('[Inquiry] 저장 원장 전부 실패 — 접수 성공으로 알리지 않음', JSON.stringify(results));
+    return res.status(503).json({
+      ok: false,
+      error: '접수를 저장하지 못했어요. 입력한 내용은 그대로 두었으니 잠시 뒤 다시 시도해 주세요.',
+      results: results
+    });
+  }
+
   return res.status(200).json({
     ok: true,
     message: isAppEval
@@ -629,6 +643,8 @@ async function handleInquiry(sb, body, req, res) {
       : (isItemReport
         ? '신고가 정상 접수되었습니다. 신속히 검토하여 조치하겠습니다.'
         : '문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.'),
+    receipt: { id: receiptId, stored: { supabase: results.supabase, notion: results.notion } },
+    notify: { telegram: results.telegram },
     results: results
   });
 }

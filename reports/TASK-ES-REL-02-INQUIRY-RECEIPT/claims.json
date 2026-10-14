@@ -1,0 +1,47 @@
+{
+  "task": "TASK-ES-REL-02-INQUIRY-RECEIPT",
+  "requirementsSource": "reports/TASK-ES-REL-02-INQUIRY-RECEIPT/REQ.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "api/track.js 의 handleInquiry 는 Supabase inquiries 또는 Notion 저장 원장에 실제 저장되었을 때만 200 ok:true 와 receipt 를 반환하고, 저장 원장 적재가 모두 실패하면 503 ok:false 를 반환한다."
+    },
+    {
+      "id": "R2",
+      "text": "클라이언트 앱 평가 모달은 서버가 접수 성공(httpOk && ok:true)을 확정한 경우에만 폼을 초기화하고 모달을 닫는다. 접수 실패 또는 네트워크 통신 오류 시에는 성공으로 안내하지 않고 입력 내용과 모달을 유지하며, 재시도 시 동일 평가 id를 갱신하여 로컬 중복을 방지한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "unverified",
+      "domain": "server-api",
+      "statement": "api/track.js handleInquiry 서버 접수 원장(Supabase·Notion) 저장 확인 후 영수증 발급 및 전원 실패 시 503 반환",
+      "touches": [
+        "api/track.js"
+      ],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "실서버 배포 환경 및 실DB(Supabase inquiries / Notion 토큰) 접근 권한을 가진 운영 환경",
+        "how": [
+          "실제 Supabase 및 Notion 연동 상태에서 /api/inquiry POST 요청을 전송하고 응답 상태코드(200 vs 503)를 확인한다",
+          "양쪽 원장 연결이 단절된 상태에서 503 ok:false 응답 및 가짜 접수 성공 방지를 대조 확인한다"
+        ]
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "domain": "ui-behavior",
+      "statement": "통신 차단 또는 접수 미확인 시 아워골 평가 모달이 닫히지 않고 작성 중이던 입력창과 모달이 유지된다",
+      "touches": [
+        "js/tabs/settings/app-evaluation.js"
+      ],
+      "scenario": "scenarios/eval-retain-on-failure.json",
+      "change": "fix",
+      "symptom": 13
+    }
+  ]
+}
