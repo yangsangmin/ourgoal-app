@@ -1,0 +1,168 @@
+{
+  "id": "dir006-c-goal-guest-reentry-retention",
+  "title": "게스트가 직접 만든 목표 한 개는 탭을 다시 열고 같은 페이지에 재진입해도 남는다",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-goals.active",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "waitFor",
+      "selector": "#sAddGoalBtn",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#sAddGoalBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "게스트 재진입 보관 확인",
+      "clear": true
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#modalOverlay",
+      "className": "active"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-goals.active",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "expect": "count",
+      "selector": ".s-goal-pill[data-sgoalid]",
+      "equals": 1
+    },
+    {
+      "expect": "textEquals",
+      "selector": ".s-goal-pill[data-sgoalid]",
+      "text": "게스트 재진입 보관 확인"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-home.active"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-goals.active",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "expect": "count",
+      "selector": ".s-goal-pill[data-sgoalid]",
+      "equals": 1
+    },
+    {
+      "expect": "textEquals",
+      "selector": ".s-goal-pill[data-sgoalid]",
+      "text": "게스트 재진입 보관 확인"
+    },
+    {
+      "do": "goto",
+      "path": "/index.html",
+      "settleMs": 1800
+    },
+    {
+      "do": "waitFor",
+      "selector": "#appShell.active",
+      "timeoutMs": 15000
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#avatarGreetingModal",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#screen-goals.active",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "expect": "count",
+      "selector": ".s-goal-pill[data-sgoalid]",
+      "equals": 1
+    },
+    {
+      "expect": "textEquals",
+      "selector": ".s-goal-pill[data-sgoalid]",
+      "text": "게스트 재진입 보관 확인"
+    },
+    {
+      "capture": "guest-goal-retained-after-reentry"
+    }
+  ]
+}
