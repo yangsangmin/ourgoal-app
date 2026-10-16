@@ -25,11 +25,11 @@
     var bodyEl = document.getElementById('goalDrawerBody');
     var pct = (typeof L.goalAchievement === 'function') ? L.goalAchievement(g) : (Number(g.progress) || 0);
     g.progress = pct;
-    if(titleEl) titleEl.textContent = g.title + ' 🎯';
+    if(titleEl) titleEl.textContent = (g.icon || '🎯') + ' ' + g.title;
     if(bodyEl){
       var msHtml = '';
       if(g.milestones && g.milestones.length > 0){
-        msHtml = '<div style="margin-bottom:14px;"><h4 style="font-size:0.9rem;margin-bottom:8px;color:var(--ink);">핵심 마일스톤</h4>' +
+        msHtml = '<div style="margin-bottom:14px;"><h4 style="font-size:0.88rem;margin:0 0 8px;color:var(--ink);">핵심 마일스톤 (' + g.milestones.filter(function(m){ return m.status === 'done' || m.done; }).length + '/' + g.milestones.length + ')</h4>' +
           g.milestones.map(function(m){
             var isDone = (m.status === 'done' || m.done);
             return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:6px;background:var(--card2, var(--surface));border:1px solid var(--rule);border-radius:10px;">' +
@@ -38,10 +38,27 @@
             '</div>';
           }).join('') + '</div>';
       }
+      var routines = (L.state && L.state.profile && L.state.profile.settings && Array.isArray(L.state.profile.settings.routines)) ? L.state.profile.settings.routines : [];
+      var linkedRoutines = routines.filter(function(r){ return r && (r.linkedGoalId === goalId || r.goalId === goalId); });
+      var routineHtml = '<div style="margin-bottom:14px;padding:11px 12px;background:var(--card2, var(--surface));border:1px solid var(--rule);border-radius:12px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<span style="font-size:0.84rem;font-weight:700;color:var(--ink);">🔄 연결된 데일리 루틴 (' + linkedRoutines.length + '개)</span>' +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="closeGoalDetailDrawer(); if(typeof switchGoalsSubTab===\'function\') switchGoalsSubTab(\'routine\');" style="font-size:0.72rem;padding:3px 8px;min-height:26px;">루틴 탭 이동 ➔</button>' +
+        '</div>' +
+        (linkedRoutines.length > 0
+          ? linkedRoutines.map(function(r){
+              return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;margin-top:4px;background:var(--card);border:1px solid var(--rule);border-radius:8px;font-size:0.8rem;color:var(--ink);">' +
+                '<span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + L.escapeHtml(r.title || '루틴') + '</span>' +
+                '<span style="font-size:0.72rem;color:var(--brand);font-weight:700;flex-shrink:0;">🔥 ' + (r.streak || 0) + '일</span>' +
+              '</div>';
+            }).join('')
+          : '<div style="font-size:0.78rem;color:var(--ink-soft);">아직 이 목표에 연결된 루틴이 없어요. 루틴 탭에서 매일 실천할 습관을 연결해보세요!</div>') +
+      '</div>';
       var progHtml = '<div style="margin-bottom:14px;padding:12px;background:var(--card2, var(--surface));border:1px solid var(--rule);border-radius:12px;"><div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:6px;"><span>목표 진척도</span><span style="color:var(--brand);">' + pct + '%</span></div>' +
         '<div class="goal-progress-track"><div class="goal-progress-fill" style="width:' + pct + '%;"></div></div></div>';
-      bodyEl.innerHTML = progHtml + msHtml +
+      bodyEl.innerHTML = progHtml + msHtml + routineHtml +
         '<div style="margin-top:16px;display:flex;gap:8px;">' +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="closeGoalDetailDrawer(); if(window.state){ window.state.activeGoalId=\''+L.escapeHtml(String(g.id))+'\'; window.state.goalEditMode=true; if(typeof window.renderGoalsScreen===\'function\') window.renderGoalsScreen(); }" style="flex:1;min-height:44px;border-radius:12px;font-weight:700;border:1px solid var(--rule);color:var(--ink);">✏️ 목표 편집</button>' +
           '<button type="button" class="btn btn-primary btn-sm" onclick="closeGoalDetailDrawer()" style="flex:1;min-height:44px;border-radius:12px;font-weight:700;">확인</button>' +
         '</div>';
     }

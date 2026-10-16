@@ -35,21 +35,23 @@
 
     var modalHtml = '' +
       '<div class="routine-detail-modal-box" style="padding:2px 0;">' +
-        '<div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
-          '<div style="display:flex;align-items:center;gap:8px;">' +
-            '<span style="font-size:1.25rem;">🎯</span>' +
-            '<h3 style="margin:0;font-size:1.1rem;font-weight:800;color:var(--ink);">루틴 상세 & 편집 (목표 벤치마킹)</h3>' +
+        '<div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-right:36px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+            '<span style="font-size:1.2rem;flex-shrink:0;">🎯</span>' +
+            '<h3 style="margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);">루틴 상세 & 편집</h3>' +
           '</div>' +
-          '<span class="badge" style="font-size:.75rem;padding:3px 8px;border-radius:8px;background:' + (isDoneToday ? 'rgba(34,197,94,0.15)' : 'rgba(99,102,241,0.12)') + ';color:' + (isDoneToday ? '#16a34a' : 'var(--brand)') + ';font-weight:700;">' +
-            (isDoneToday ? '✓ 오늘 완수됨' : '진행 대기 중') +
-          '</span>' +
         '</div>' +
-        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
           '<div>' +
-            '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);">누적 실천 성취</div>' +
-            '<div class="faint" style="font-size:.75rem;">설정 이후 꾸준히 실천한 총 완수 일수</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">누적 실천 성취</span>' +
+              '<span class="routine-status-chip" style="display:inline-flex;align-items:center;font-size:.7rem;padding:2px 8px;border-radius:8px;background:' + (isDoneToday ? 'rgba(34,197,94,0.15)' : 'rgba(99,102,241,0.12)') + ';color:' + (isDoneToday ? '#16a34a' : 'var(--brand)') + ';font-weight:700;white-space:nowrap;">' +
+                (isDoneToday ? '✓ 오늘 완수됨' : '진행 대기 중') +
+              '</span>' +
+            '</div>' +
+            '<div class="faint" style="font-size:.75rem;margin-top:2px;">설정 이후 꾸준히 실천한 총 완수 일수</div>' +
           '</div>' +
-          '<div style="font-size:1.15rem;font-weight:800;color:var(--brand);font-family:monospace;">총 ' + compCount + '일</div>' +
+          '<div style="font-size:1.15rem;font-weight:800;color:var(--brand);font-family:monospace;white-space:nowrap;flex-shrink:0;">총 ' + compCount + '일</div>' +
         '</div>' +
         '<div style="margin-bottom:12px;">' +
           '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">루틴 카테고리 (목표 연계)</label>' +

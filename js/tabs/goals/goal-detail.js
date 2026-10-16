@@ -107,21 +107,22 @@
         '</button>' +
       '</span>' +
     '</div>';
-    var dueRow = '<div class="duedate-row"><span class="lbl">목표 마감일시 (년월일시분)</span>' +
-      '<span style="display:flex;align-items:center;gap:6px;">' +
-        (L.state.goalEditMode ?
-          '<input type="datetime-local" id="goalDueInput" value="'+L.toDateTimeLocalValue(goal.dueDate)+'">' :
-          '<span class="faint">'+(goal.dueDate ? formattedGoalDue : '설정 안 함')+'</span>') +
-        ddayPill +
-        L.formatSchedulePillHtml(goal, 'goal', goal.id) +
-        '<button class="icon-btn" data-calsyncgoal="'+goal.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
-      '</span>' +
+    var dueRow = '<div class="duedate-row' + (L.state.goalEditMode ? ' edit-mode-due' : '') + '">' +
+      '<div class="duedate-row-head"><span class="lbl">📅 목표 마감일시</span>' +
+        '<span class="duedate-row-badges">' +
+          (!L.state.goalEditMode ? '<span class="faint">'+(goal.dueDate ? formattedGoalDue : '설정 안 함')+'</span>' : '') +
+          ddayPill +
+          L.formatSchedulePillHtml(goal, 'goal', goal.id) +
+          '<button class="icon-btn" data-calsyncgoal="'+goal.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
+        '</span>' +
+      '</div>' +
+      (L.state.goalEditMode ? '<input type="datetime-local" id="goalDueInput" value="'+L.toDateTimeLocalValue(goal.dueDate)+'" style="width:100%;max-width:100%;box-sizing:border-box;">' : '') +
       '</div>';
 
     var vis = goal.visibility || 'private';
-    var visRow = '<div class="duedate-row"><span class="lbl">공개 범위</span>' +
+    var visRow = '<div class="duedate-row"><span class="lbl" style="white-space:nowrap;flex-shrink:0;">🔒 공개 범위</span>' +
       (L.state.goalEditMode ?
-        '<select id="goalVisInput">' +
+        '<select id="goalVisInput" style="flex:1;max-width:200px;">' +
           Object.keys(L.VISIBILITY_LABELS).map(function(k){
             return '<option value="'+k+'"'+(k===vis?' selected':'')+'>'+L.VISIBILITY_LABELS[k]+'</option>';
           }).join('') +
@@ -260,7 +261,7 @@
       goal.milestones.map(function(m, idx){
       if(L.state.msFilter !== 'all' && m.status !== L.state.msFilter) return '';
       var statusIcon = m.status==='done' ? '✓' : '';
-      var titleClass = m.status==='done' ? 'ms-title-compact done-text' : 'ms-title-compact';
+      var titleClass = (m.status==='done' ? 'ms-title-compact done-text' : 'ms-title-compact') + (L.state.goalEditMode ? ' edit-mode-input' : '');
       var isCollapsed = !!L.state.collapsedMilestones[m.id];
       var totalTasks = (m.tasks||[]).length;
       var doneTasks = (m.tasks||[]).filter(function(t){ return t.done; }).length;
@@ -269,21 +270,21 @@
         var tSel = !!L.state.taskSel[t.id];
         var tAttHtml = L.renderInlineAttachmentChips(t.attachments, 'task', t.id, m.id);
         var taskDueHtml = L.state.goalEditMode ?
-          ('<input type="datetime-local" data-taskdate="1" value="'+L.toDateTimeLocalValue(t.dueDate)+'" style="font-size:.7rem;padding:1px 3px;max-width:130px;">' + (t.dueDate ? ddayMini(t.dueDate) : '')) : '';
-        var tResHtml = t.result ? ('<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>') : (L.state.goalEditMode ? '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;font-size:.7rem;color:var(--ink-faint);">+결과</button>' : '');
+          ('<input type="datetime-local" data-taskdate="1" value="'+L.toDateTimeLocalValue(t.dueDate)+'" style="font-size:.7rem;padding:1px 3px;max-width:125px;">' + (t.dueDate ? ddayMini(t.dueDate) : '')) : '';
+        var tResHtml = t.result ? ('<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>') : (L.state.goalEditMode ? '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;font-size:.7rem;color:var(--ink-faint);display:none;">+결과</button>' : '');
 
-        return '<div class="task-row compact-task-row'+(tSel?' selected':'')+'" data-taskid="'+t.id+'" data-msid="'+m.id+'">' +
-          (L.state.goalEditMode ? '<div class="sel-check'+(tSel?' on':'')+'" data-seltask="'+t.id+'">'+(tSel?'✓':'')+'</div>' : '') +
-          '<div class="task-check'+(t.done?' done':'')+'" data-taskcheck="1">'+(t.done?'✓':'')+'</div>' +
-          '<input class="task-title-inline'+(t.done?' done-text':'')+'" data-taskinput="1" value="'+L.escapeHtml(t.title)+'" '+(L.state.goalEditMode?'':'readonly')+'>' +
+        return '<div class="task-row compact-task-row'+(tSel?' selected':'')+(L.state.goalEditMode?' edit-mode':'')+'" data-taskid="'+t.id+'" data-msid="'+m.id+'">' +
+          (L.state.goalEditMode ? '<div class="sel-check'+(tSel?' on':'')+'" data-seltask="'+t.id+'" title="삭제할 할 일 선택">'+(tSel?'✓':'')+'</div>' : '') +
+          '<div class="task-check'+(t.done?' done':'')+(L.state.goalEditMode?' edit-locked':'')+'" data-taskcheck="1">'+(t.done?'✓':'')+'</div>' +
+          '<input class="task-title-inline'+(t.done?' done-text':'')+(L.state.goalEditMode?' edit-mode-input':'')+'" data-taskinput="1" value="'+L.escapeHtml(t.title)+'" '+(L.state.goalEditMode?'':'readonly')+'>' +
           '<div class="task-meta-inline">' +
             taskDueHtml +
-            tAttHtml +
-            '<button class="att-add-btn compact-att-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button" title="참고자료 첨부">+참고</button>' +
-            L.formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id) +
-            '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:1px 3px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
+            (!L.state.goalEditMode ? tAttHtml : '') +
+            (!L.state.goalEditMode ? '<button class="att-add-btn compact-att-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button" title="참고자료 첨부">+참고</button>' : '') +
+            (!L.state.goalEditMode ? L.formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id) +
+            '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:1px 3px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
             tResHtml +
-            (L.state.goalEditMode ? '<button class="icon-btn" data-deltask="1" aria-label="삭제" style="padding:1px 4px;font-size:.8rem;">×</button>' : '') +
+            (L.state.goalEditMode ? '<button class="icon-btn task-del-btn" data-deltask="1" aria-label="삭제" title="이 할 일 삭제" style="padding:2px 6px;font-size:.82rem;color:#ef4444;">🗑️</button>' : '') +
           '</div>' +
         '</div>';
       }
@@ -325,20 +326,20 @@
       var prioLabel = curPrio === 'high' ? '높음' : (curPrio === 'low' ? '낮음' : '보통');
       var prioTagHtml = '<span class="ms-priority-tag ms-priority-' + curPrio + '" data-cyclepriority="' + m.id + '" title="우선순위 변경 (클릭)">' + prioLabel + '</span>';
       var calBtnHtml = '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>';
-      var resBtnHtml = '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>';
+      var resBtnHtml = '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;' + (L.state.goalEditMode ? 'display:none;' : '') + '">'+resultBadgeHtml(m.result)+'</button>';
 
       var msDueHtml = L.state.goalEditMode ?
-        ('<div class="ms-date" style="display:inline-flex;align-items:center;gap:4px;"><input type="datetime-local" data-msdate="1" value="'+L.toDateTimeLocalValue(m.dueDate)+'" style="font-size:.75rem;padding:2px 4px;max-width:140px;">' + (m.dueDate ? ddayMini(m.dueDate) : '') + '</div>') : '';
+        ('<div class="ms-date" style="display:inline-flex;align-items:center;gap:4px;"><input type="datetime-local" data-msdate="1" value="'+L.toDateTimeLocalValue(m.dueDate)+'" style="font-size:.75rem;padding:2px 6px;max-width:148px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);">' + (m.dueDate ? ddayMini(m.dueDate) : '') + '</div>') : '';
       var attSnippet = L.renderInlineAttachmentChips(m.attachments, 'ms', m.id);
 
-      return '<div class="ms-row'+(m.status==='doing'?' doing':'')+(mSel?' selected':'')+'" data-msid="'+m.id+'" '+(L.state.goalEditMode?'draggable="true"':'')+'>' +
+      return '<div class="ms-row'+(m.status==='doing'?' doing':'')+(mSel?' selected':'')+(L.state.goalEditMode?' edit-mode':'')+'" data-msid="'+m.id+'" '+(L.state.goalEditMode?'draggable="true"':'')+'>' +
         '<div class="ms-grid-row">' +
           '<div class="ms-main-line">' +
             '<div class="ms-main-left">' +
-              (L.state.goalEditMode ? '<div class="sel-check'+(mSel?' on':'')+'" data-selms="'+m.id+'">'+(mSel?'✓':'')+'</div>' : '') +
+              (L.state.goalEditMode ? '<div class="sel-check'+(mSel?' on':'')+'" data-selms="'+m.id+'" title="삭제할 마일스톤 선택">'+(mSel?'✓':'')+'</div>' : '') +
               (L.state.goalEditMode ? '<div class="drag-handle" title="드래그해서 순서 변경"><span></span><span></span><span></span></div>' : '') +
               (totalTasks > 0 ? '<button class="icon-btn" data-mstoggle="'+m.id+'" type="button" title="'+(isCollapsed?'하위 할 일 펼치기':'하위 할 일 접기')+'" style="padding:2px 5px;font-size:.75rem;color:var(--ink-soft);flex:0 0 auto;">'+(isCollapsed ? '▼' : '▲')+'</button>' : '') +
-              '<div class="ms-status '+m.status+'" data-cyclestatus="1">'+statusIcon+'</div>' +
+              '<div class="ms-status '+m.status+(L.state.goalEditMode?' edit-locked':'')+'" data-cyclestatus="1">'+statusIcon+'</div>' +
               '<input class="'+titleClass+'" data-msinput="1" value="'+L.escapeHtml(m.title)+'" '+(L.state.goalEditMode?'':'readonly')+'>' +
             '</div>' +
             '<div class="ms-main-right">' +
@@ -351,17 +352,17 @@
             '<div class="ms-sub-meta-left">' +
               prioTagHtml +
               msDueHtml +
-              attSnippet +
-              '<button class="att-add-btn" data-addattms="'+m.id+'" type="button" style="padding:0 6px;min-height:20px;font-size:.6875rem;">+참고</button>' +
+              (!L.state.goalEditMode ? attSnippet : '') +
+              (!L.state.goalEditMode ? '<button class="att-add-btn" data-addattms="'+m.id+'" type="button" style="padding:0 6px;min-height:20px;font-size:.6875rem;">+참고</button>' : '') +
               resBtnHtml +
             '</div>' +
             '<div class="ms-sub-meta-right">' +
-              L.formatSchedulePillHtml(m, 'ms', goal.id, m.id) +
-              calBtnHtml +
+              (!L.state.goalEditMode ? L.formatSchedulePillHtml(m, 'ms', goal.id, m.id) +
+              calBtnHtml : '') +
               (L.state.goalEditMode ?
-                ((idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로">↑</button>':'') +
-                 (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로">↓</button>':'') +
-                 '<button class="icon-btn" data-msdel="1" aria-label="삭제">×</button>') : '') +
+                ((idx>0?'<button class="icon-btn ms-edit-action-btn" data-msup="1" aria-label="위로" title="위로 이동">↑</button>':'') +
+                 (idx<goal.milestones.length-1?'<button class="icon-btn ms-edit-action-btn" data-msdown="1" aria-label="아래로" title="아래로 이동">↓</button>':'') +
+                 '<button class="icon-btn ms-edit-action-btn danger" data-msdel="1" aria-label="삭제" title="마일스톤 삭제">🗑️</button>') : '') +
             '</div>' +
           '</div>' +
         '</div>' +

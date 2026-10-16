@@ -297,6 +297,12 @@ L.wirePromptEncyclopediaEvents(body);
 
       var statusEl = row.querySelector('[data-cyclestatus]');
       statusEl.addEventListener('click', async function(){
+        if(L.state.goalEditMode){
+          var inp = row.querySelector('[data-msinput]');
+          if(inp) inp.focus();
+          L.toast('편집 모드에서는 제목과 순서를 수정할 수 있어요');
+          return;
+        }
         var order = ['todo','doing','done'];
         var wasDone = ms.status==='done';
         ms.status = order[(order.indexOf(ms.status)+1)%3];
@@ -425,6 +431,12 @@ L.wirePromptEncyclopediaEvents(body);
         ev.stopPropagation();
         var rowEl = chk.closest('.task-row');
         if(!rowEl) return;
+        if(L.state.goalEditMode){
+          var tinp = rowEl.querySelector('[data-taskinput]');
+          if(tinp) tinp.focus();
+          L.toast('편집 모드에서는 할 일 제목과 마감일을 수정할 수 있어요');
+          return;
+        }
         var tid = rowEl.dataset.taskid;
         var mid = rowEl.dataset.msid;
         var targetTask = null;

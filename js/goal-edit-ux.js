@@ -14,12 +14,27 @@
       var esc = function(str){
         return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       };
-      return '<div class="field" style="margin:6px 0 10px;padding:10px 12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
-        '<label class="lbl" for="goalTitleInput" style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:.8125rem;color:var(--ink);margin-bottom:6px;">' +
-          '<span>🎯 목표 이름</span>' +
-          '<span class="faint" style="font-size:.72rem;">목표명을 직접 수정할 수 있어요</span>' +
-        '</label>' +
-        '<input type="text" id="goalTitleInput" value="' + esc(goal.title) + '" style="font-size:.95rem;font-weight:700;width:100%;padding:8px 10px;border:1.5px solid var(--brand);border-radius:8px;background:var(--card);color:var(--ink);" placeholder="목표 이름을 입력하세요">' +
+      var icons = ['🎯','🏃','📚','💼','🌱','💪','💰','🎨','🏆','🔥'];
+      var curIcon = goal.icon || '🎯';
+      if(icons.indexOf(curIcon) === -1) icons.unshift(curIcon);
+      var topics = ['운동/건강','학습/성장','커리어','습관/루틴','재테크','취미·창작','기타'];
+      var curTopic = goal.topic || goal.category || '운동/건강';
+      if(topics.indexOf(curTopic) === -1) topics.unshift(curTopic);
+
+      return '<div class="field goal-edit-title-card" style="margin:6px 0 10px;padding:12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+          '<label class="lbl" for="goalTitleInput" style="font-weight:700;font-size:.82rem;color:var(--ink);margin:0;">🎯 목표 기본 정보 수정</label>' +
+          '<span class="faint" style="font-size:.72rem;">아이콘·카테고리·목표명</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">' +
+          '<select id="goalIconInput" aria-label="목표 아이콘" style="width:68px;min-height:38px;padding:4px 6px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);font-size:.95rem;font-weight:700;flex-shrink:0;">' +
+            icons.map(function(ic){ return '<option value="'+esc(ic)+'"'+(ic===curIcon?' selected':'')+'>'+esc(ic)+'</option>'; }).join('') +
+          '</select>' +
+          '<select id="goalTopicInput" aria-label="목표 카테고리" style="flex:1;min-height:38px;padding:4px 8px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);font-size:.82rem;font-weight:600;">' +
+            topics.map(function(tp){ return '<option value="'+esc(tp)+'"'+(tp===curTopic?' selected':'')+'>🏷️ '+esc(tp)+'</option>'; }).join('') +
+          '</select>' +
+        '</div>' +
+        '<input type="text" id="goalTitleInput" value="' + esc(goal.title) + '" style="font-size:.95rem;font-weight:700;width:100%;padding:8px 10px;border:1.5px solid var(--brand);border-radius:8px;background:var(--card);color:var(--ink);box-sizing:border-box;" placeholder="목표 이름을 입력하세요">' +
       '</div>';
     },
 
@@ -28,7 +43,7 @@
      */
     renderDoneInlineBtn: function(state, goal){
       if(!state || !state.goalEditMode || !goal) return '';
-      return '<button class="goal-edit-done-inline-btn" id="btnGoalEditDoneInline" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;border-radius:12px;font-weight:700;font-size:.9375rem;background:var(--brand);color:#fff;border:none;cursor:pointer;margin-top:12px;margin-bottom:8px;box-shadow:0 3px 14px rgba(99,102,241,0.3);">' +
+      return '<button class="goal-edit-done-inline-btn" id="btnGoalEditDoneInline" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;border-radius:12px;font-weight:700;font-size:.9375rem;background:var(--brand);color:#fff;border:none;cursor:pointer;margin-top:12px;margin-bottom:8px;box-shadow:0 3px 14px rgba(16,185,129,0.25);">' +
         '✓ 목표 편집 완료 (저장)' +
       '</button>';
     },
@@ -38,7 +53,7 @@
      */
     renderTeamDoneInlineBtn: function(state){
       if(!state || !state.teamGoalEditMode) return '';
-      return '<button class="goal-edit-done-inline-btn" id="btnTeamGoalEditDoneInline" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;border-radius:12px;font-weight:700;font-size:.9375rem;background:var(--brand);color:#fff;border:none;cursor:pointer;margin-top:16px;margin-bottom:12px;box-shadow:0 3px 14px rgba(99,102,241,0.3);">' +
+      return '<button class="goal-edit-done-inline-btn" id="btnTeamGoalEditDoneInline" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;border-radius:12px;font-weight:700;font-size:.9375rem;background:var(--brand);color:#fff;border:none;cursor:pointer;margin-top:16px;margin-bottom:12px;box-shadow:0 3px 14px rgba(16,185,129,0.25);">' +
         '✓ 팀 목표 편집 완료 (저장)' +
       '</button>';
     },
@@ -69,6 +84,15 @@
       var titleInp = document.getElementById('goalTitleInput');
       if(titleInp && titleInp.value.trim()){
         goal.title = titleInp.value.trim();
+      }
+      var iconInp = document.getElementById('goalIconInput');
+      if(iconInp && iconInp.value){
+        goal.icon = iconInp.value;
+      }
+      var topicInp = document.getElementById('goalTopicInput');
+      if(topicInp && topicInp.value){
+        goal.topic = topicInp.value;
+        goal.category = topicInp.value;
       }
       var dueInp = document.getElementById('goalDueInput');
       if(dueInp){
@@ -264,7 +288,7 @@
         return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       };
 
-      // 1. 목표 제목 인풋 실시간 반영
+      // 1. 목표 제목·아이콘·카테고리 인풋 실시간 반영
       var titleInput = document.getElementById('goalTitleInput');
       if(titleInput){
         titleInput.addEventListener('input', function(){
@@ -279,6 +303,25 @@
           }
         });
       }
+      var iconInput = document.getElementById('goalIconInput');
+      if(iconInput){
+        iconInput.addEventListener('change', async function(){
+          if(iconInput.value){
+            goal.icon = iconInput.value;
+            if(typeof deps.saveProfile === 'function') await deps.saveProfile();
+          }
+        });
+      }
+      var topicInput = document.getElementById('goalTopicInput');
+      if(topicInput){
+        topicInput.addEventListener('change', async function(){
+          if(topicInput.value){
+            goal.topic = topicInput.value;
+            goal.category = topicInput.value;
+            if(typeof deps.saveProfile === 'function') await deps.saveProfile();
+          }
+        });
+      }
 
       // 2. 인라인 완료 버튼 바인딩
       var doneInlineBtn = document.getElementById('btnGoalEditDoneInline');
@@ -289,9 +332,9 @@
         });
       }
 
-      // 3. 플로팅 완료 바 초기화 및 생성
+      // 3. 플로팅 완료 바 초기화 및 생성 (인라인 완료 버튼이 화면에 이미 존재하면 중복 노출 방지)
       OurgoalGoalEditUX.removeFloatingBar();
-      if(state.goalEditMode && goal){
+      if(state.goalEditMode && goal && !doneInlineBtn){
         var fb = document.createElement('div');
         fb.id = 'goalEditFloatingBar';
         fb.className = 'goal-edit-floating-bar';
@@ -330,9 +373,9 @@
         });
       }
 
-      // 하단 플로팅 완료 바 (#TASK-ES-176)
+      // 하단 플로팅 완료 바 (#TASK-ES-176 · 인라인 버튼 존재 시 중복 노출 방지)
       OurgoalGoalEditUX.removeFloatingBar();
-      if(state.teamGoalEditMode){
+      if(state.teamGoalEditMode && !teamDoneBtn){
         var fb = document.createElement('div');
         fb.id = 'goalEditFloatingBar';
         fb.className = 'goal-edit-floating-bar';

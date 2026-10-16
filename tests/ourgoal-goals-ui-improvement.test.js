@@ -122,3 +122,86 @@ test('T-GOALS-TOPBAR-UNIFY: 6등분 언더라인 서브탭 바, 목표 스위처
   );
 });
 
+test('Part 1 (T-GOALS-PERSONAL-EDIT-DRAWER): 개인 목표 편집 모드 7대 결함 수리 및 우측 상세 서랍 4테마·연결 루틴 복구', function() {
+  var detailSrc = readFile('js/tabs/goals/goal-detail.js');
+  var eventsSrc = readFile('js/tabs/goals/goal-detail-events.js');
+  var editUxSrc = readFile('js/goal-edit-ux.js');
+  var drawerSrc = readFile('js/tabs/goals/goal-detail-drawer.js');
+  var orderSrc = readFile('js/tabs/goals/goal-order.js');
+  var engineSrc = readFile('js/sanctuary-v3-engine.js');
+
+  assert.ok(
+    detailSrc.includes('edit-mode-due') && detailSrc.includes('edit-mode-input'),
+    'goal-detail.js should render 2-row edit-mode-due and edit-mode-input in edit mode'
+  );
+  assert.ok(
+    eventsSrc.includes('if(L.state.goalEditMode){') && eventsSrc.includes('편집 모드에서는 제목과 순서를 수정할 수 있어요'),
+    'goal-detail-events.js should lock milestone and task completion toggles during goalEditMode'
+  );
+  assert.ok(
+    editUxSrc.includes('id="goalIconInput"') && editUxSrc.includes('id="goalTopicInput"'),
+    'goal-edit-ux.js should render icon and category selectors alongside goalTitleInput'
+  );
+  assert.ok(
+    drawerSrc.includes('연결된 데일리 루틴') && drawerSrc.includes('✏️ 목표 편집'),
+    'goal-detail-drawer.js should display linked routines summary and goal edit button'
+  );
+  assert.ok(
+    orderSrc.includes('!g.archivedAt && !g.teamLinked') && engineSrc.includes('data-sgoalshiftleft'),
+    'goal-order.js and sanctuary-v3-engine.js should support personal goal order shifting'
+  );
+});
+
+test('Part 2 (T-GOALS-ROUTINE-UX-FUSION): 교대근무 기본 접힘, 요일 필터/교대 버튼 잘림 제로화, 인라인 루틴 편집 및 상위 목표 배지', function() {
+  var routineSrc = readFile('js/tabs/goals/routine-screen.js');
+  var modalSrc = readFile('js/tabs/goals/routine-detail-modal.js');
+
+  assert.ok(
+    routineSrc.includes('id="shiftWorkRoutineBody"') && routineSrc.includes('id="btnToggleShiftSectionHeader"'),
+    'routine-screen.js should collapse #shiftWorkRoutineBody by default with toggle header'
+  );
+  assert.ok(
+    routineSrc.includes('data-rtinput=') && routineSrc.includes('id="btnRoutineEditDoneInline"'),
+    'routine-screen.js should support inline routine title/time editing and completion button in routineEditMode'
+  );
+  assert.ok(
+    routineSrc.includes('data-rtgotogoal=') && modalSrc.includes('padding-right:36px;'),
+    'routine-screen.js should render linked goal badge and routine-detail-modal.js should prevent close button overlap'
+  );
+});
+
+test('Part 3 (T-GOALS-TEAM-AND-LINKED-FIX): 팀연계/팀목표 세로 파손·겹침 해소 및 편집 모드 고도화', function() {
+  var tlScreenSrc = readFile('js/team-linked-goals-screen.js');
+  var tlGoalsSrc = readFile('js/team-linked-goals.js');
+  var visSrc = readFile('js/team-visibility-levels.js');
+  var teamScreenSrc = readFile('js/tabs/goals/team-goals-screen.js');
+
+  assert.ok(
+    tlScreenSrc.includes('id="tlGoalDueInput"') && tlScreenSrc.includes('data-tlmsup='),
+    'team-linked-goals-screen.js should support inline dueDate and milestone reorder in editMode'
+  );
+  assert.ok(
+    tlGoalsSrc.includes('tg-participant-row') && visSrc.includes('data-tgmprio='),
+    'team-linked-goals.js and team-visibility-levels.js should use 2-row participant/milestone layouts'
+  );
+  assert.ok(
+    teamScreenSrc.split('\n').length <= 800,
+    'team-goals-screen.js must remain within the 800-line module ceiling'
+  );
+});
+
+test('Part 4 (T-GOALS-TEMPLATE-STATS-HUB): 템플릿 백과사전 페이지네이션/배지 보호 및 성취통계 통합 성장 리포트', function() {
+  var tplSrc = readFile('js/tabs/goals/template-encyclopedia.js');
+  var statsSrc = readFile('js/tabs/goals/goals-ia-actions.js');
+
+  assert.ok(
+    tplSrc.includes('id="btnLoadMoreTemplates"') && tplSrc.split('\n').length <= 800,
+    'template-encyclopedia.js should implement load-more pagination and stay under 800 lines'
+  );
+  assert.ok(
+    statsSrc.includes('통합 성장 리포트') && statsSrc.includes('id="btnStatsCopyAiPrompt"') && statsSrc.includes('id="btnStatsExportJson"'),
+    'goals-ia-actions.js should render period-aware unified growth stats and AI/JSON export hub'
+  );
+});
+
+

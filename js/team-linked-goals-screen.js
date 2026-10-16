@@ -34,8 +34,8 @@
     if(linkedGoals.length === 0){
       view.innerHTML =
         '<div class="goal-head-row" style="margin-bottom:12px;">' +
-          '<div class="goal-head-l">' +
-            '<div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;">팀 연계 개인목표</h2></div>' +
+          '<div class="goal-head-l" style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;white-space:nowrap;">팀 연계 개인목표</h2></div>' +
             '<span class="faint" style="font-size:.8125rem;">팀 로드맵을 복사해 나만의 페이스로 실행하고 팀원과 상호 체크해요</span>' +
           '</div>' +
         '</div>' +
@@ -52,19 +52,19 @@
           '</button>' +
           '<!-- 실제 우수 사용사례 예시 프리뷰 카드 (#TASK-ES-174) -->' +
           '<div id="tlSampleShowcaseCard" style="text-align:left;background:var(--card);border:1.5px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,0.06);">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-bottom:1px solid var(--rule);padding-bottom:10px;">' +
-              '<div style="display:flex;align-items:center;gap:6px;">' +
-                '<span style="font-size:1.1rem;">💡</span>' +
-                '<span style="font-size:.875rem;font-weight:800;color:var(--primary);">실제 우수 사용사례 예시 (참가 후 내 화면)</span>' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;border-bottom:1px solid var(--rule);padding-bottom:10px;flex-wrap:wrap;">' +
+              '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
+                '<span style="font-size:1.1rem;flex-shrink:0;">💡</span>' +
+                '<span style="font-size:.84rem;font-weight:800;color:var(--primary);word-break:keep-all;">실제 우수 사용사례 예시 (참가 후 내 화면)</span>' +
               '</div>' +
-              '<span class="badge" style="font-size:.7rem;padding:2px 8px;border-radius:10px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">실제 동작 화면 예시</span>' +
+              '<span class="badge" style="font-size:.7rem;padding:2px 8px;border-radius:10px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;white-space:nowrap;flex-shrink:0;">실제 동작 화면 예시</span>' +
             '</div>' +
-            '<div style="background:var(--card2);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">' +
-              '<div>' +
+            '<div style="background:var(--card2);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+              '<div style="min-width:0;">' +
                 '<div style="font-size:.75rem;color:var(--ink-soft);font-weight:600;">연계 팀: 🏃‍♂️ 모닝 러닝 크루</div>' +
-                '<div style="font-size:.9375rem;font-weight:800;color:var(--ink);margin-top:2px;">가을 10km 완주 & 페이스 단축 프로젝트</div>' +
+                '<div style="font-size:.9rem;font-weight:800;color:var(--ink);margin-top:2px;word-break:keep-all;">가을 10km 완주 & 페이스 단축 프로젝트</div>' +
               '</div>' +
-              '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-weight:700;">D-28</span>' +
+              '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-weight:700;white-space:nowrap;flex-shrink:0;">D-28</span>' +
             '</div>' +
             '<div style="margin-bottom:10px;">' +
               '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
@@ -87,9 +87,9 @@
                 '<span style="color:var(--ink);font-weight:700;">3단계: 주말 8km 빌드업 지속주 러닝 (오늘 실천 중)</span>' +
               '</div>' +
             '</div>' +
-            '<div style="padding:8px 10px;background:var(--card2);border-radius:8px;font-size:.75rem;color:var(--ink-soft);display:flex;align-items:center;justify-content:space-between;">' +
+            '<div style="padding:8px 10px;background:var(--card2);border-radius:8px;font-size:.75rem;color:var(--ink-soft);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">' +
               '<span>👥 <b>팀원 실시간 상호 체크</b>: 김민우(75%) · 이서연(50%) · 박진혁(25%)</span>' +
-              '<span style="color:var(--primary);font-weight:700;">⚡ 찌르기 · 💬 대화</span>' +
+              '<span style="color:var(--primary);font-weight:700;white-space:nowrap;">⚡ 찌르기 · 💬 대화</span>' +
             '</div>' +
             '<div style="margin-top:8px;font-size:.72rem;color:var(--ink-faint);text-align:right;">' +
               '* 팀 연계 개인목표를 생성하면 이 예시 카드는 자동으로 사라집니다.' +
@@ -115,65 +115,80 @@
     var doneTCount = allTasks.filter(function(t){ return t.done; }).length;
     var totalTCount = allTasks.length;
 
-    var chipRowHtml = '<div class="goal-chip-row" id="tlGoalChipRow" style="margin-bottom:12px;">' +
+    var chipRowHtml = '<div class="goal-chip-row s-goal-pills-wrap" id="tlGoalChipRow" style="margin-bottom:12px;display:flex;align-items:center;gap:6px;overflow-x:auto;padding-bottom:4px;">' +
       linkedGoals.map(function(g){
         var isAct = (g.id === goal.id);
         var gPct = T.getGoalAchievement(g);
-        return '<button class="goal-chip' + (isAct ? ' active' : '') + '" data-tlchip="' + g.id + '" type="button">' +
+        return '<button class="goal-chip s-goal-pill' + (isAct ? ' active' : '') + '" data-tlchip="' + g.id + '" type="button" style="white-space:nowrap;flex-shrink:0;">' +
           (g.groupIcon || '🎯') + ' ' + T.esc(g.title) + ' (' + gPct + '%)' +
         '</button>';
       }).join('') +
-      '<button class="goal-chip addchip" id="btnExploreMoreTeamGoals" type="button" title="다른 팀 목표 복사하러 가기">+</button>' +
+      '<button class="goal-chip addchip" id="btnExploreMoreTeamGoals" type="button" title="다른 팀 목표 복사하러 가기" style="flex-shrink:0;">+</button>' +
     '</div>';
 
     var originBannerHtml =
       '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">' +
-        '<div style="display:flex;align-items:center;gap:8px;">' +
-          '<span style="font-size:1.3rem;">🏢</span>' +
-          '<div>' +
+        '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+          '<span style="font-size:1.3rem;flex-shrink:0;">🏢</span>' +
+          '<div style="min-width:0;">' +
             '<div style="font-size:.75rem;color:var(--ink-soft);font-weight:600;">연계된 팀 및 원본 팀 목표</div>' +
-            '<div style="font-size:.9375rem;font-weight:700;color:var(--ink);">' +
+            '<div style="font-size:.9rem;font-weight:700;color:var(--ink);word-break:keep-all;">' +
               (goal.groupIcon || '🎯') + ' ' + T.esc(goal.groupName || '팀') + ' &gt; ' + T.esc(goal.originTitle || goal.title) +
             '</div>' +
           '</div>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-sm" id="btnGoToTeamOrigin" type="button" style="font-size:.8125rem;font-weight:700;color:var(--brand-strong);border-color:var(--red-line);padding:4px 10px;cursor:pointer;">' +
+        '<button class="btn btn-ghost btn-sm" id="btnGoToTeamOrigin" type="button" style="font-size:.78rem;font-weight:700;color:var(--brand-strong);border-color:var(--red-line);padding:4px 10px;cursor:pointer;white-space:nowrap;">' +
           '팀 목표 대시보드 & 팀원 현황 보기 ➔' +
         '</button>' +
       '</div>';
 
-    var msListHtml = (goal.milestones || []).map(function(ms){
+    var msListHtml = (goal.milestones || []).map(function(ms, msIdx){
       var isDone = ms.status === 'done';
       var msTasks = ms.tasks || [];
       var nTasksDone = msTasks.filter(function(t){ return t.done; }).length;
+      var prio = ms.priority || 'medium';
 
       var tasksHtml = msTasks.map(function(t){
         return '<div class="task-row" style="padding:5px 0;display:flex;align-items:center;gap:8px;">' +
-          '<div class="task-check' + (t.done ? ' done' : '') + '" data-tltoggletask="' + ms.id + ':' + t.id + '" style="cursor:pointer;" title="할 일 완료 토글">' +
+          '<div class="task-check' + (t.done ? ' done' : '') + '" data-tltoggletask="' + ms.id + ':' + t.id + '" style="cursor:' + (editMode ? 'default' : 'pointer') + ';opacity:' + (editMode ? '0.55' : '1') + ';" title="' + (editMode ? '편집 모드에서는 완료 상태가 고정됩니다' : '할 일 완료 토글') + '">' +
             (t.done ? '✓' : '') +
           '</div>' +
           (editMode
-            ? '<input class="task-title' + (t.done ? ' done-text' : '') + '" data-tltasktitle="' + ms.id + ':' + t.id + '" value="' + T.esc(t.title) + '" style="flex:1;font-size:.875rem;">'
+            ? '<input class="task-title edit-mode-input' + (t.done ? ' done-text' : '') + '" data-tltasktitle="' + ms.id + ':' + t.id + '" value="' + T.esc(t.title) + '" style="flex:1;min-width:0;font-size:.84rem;padding:4px 8px;border-radius:6px;border:1px solid var(--brand);background:var(--surface-2);color:var(--ink);">'
             : '<span class="task-title' + (t.done ? ' done-text' : '') + '" data-tltoggletask="' + ms.id + ':' + t.id + '" style="flex:1;font-size:.875rem;cursor:pointer;">' + T.esc(t.title) + '</span>') +
-          (editMode ? '<button class="icon-btn" data-tldeltask="' + ms.id + ':' + t.id + '" type="button" title="삭제" style="padding:2px 6px;">×</button>' : '') +
+          (editMode ? '<button class="icon-btn" data-tldeltask="' + ms.id + ':' + t.id + '" type="button" title="삭제" style="padding:2px 6px;flex-shrink:0;">×</button>' : '') +
         '</div>';
       }).join('');
 
+      var editMetaSubRow = editMode ? (
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;">' +
+          '<div style="display:flex;gap:3px;">' +
+            '<button type="button" class="btn btn-ghost btn-xs" data-tlmsup="' + ms.id + '"' + (msIdx === 0 ? ' disabled' : '') + ' style="padding:2px 6px;font-size:.7rem;">▲</button>' +
+            '<button type="button" class="btn btn-ghost btn-xs" data-tlmsdown="' + ms.id + '"' + (msIdx === (goal.milestones.length - 1) ? ' disabled' : '') + ' style="padding:2px 6px;font-size:.7rem;">▼</button>' +
+          '</div>' +
+          '<select data-tlmprio="' + ms.id + '" style="font-size:.75rem;padding:3px 6px;border-radius:6px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);">' +
+            '<option value="high"' + (prio === 'high' ? ' selected' : '') + '>우선순위: 높음</option>' +
+            '<option value="medium"' + (prio === 'medium' ? ' selected' : '') + '>우선순위: 보통</option>' +
+            '<option value="low"' + (prio === 'low' ? ' selected' : '') + '>우선순위: 낮음</option>' +
+          '</select>' +
+          '<input type="date" data-tlmsdue="' + ms.id + '" value="' + (ms.dueDate || '') + '" style="font-size:.75rem;padding:2px 6px;border-radius:6px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);">' +
+        '</div>'
+      ) : '';
+
       return '<div class="ms-row" style="padding:10px 12px;margin-bottom:10px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
-        '<div class="ms-main" style="display:flex;align-items:center;gap:10px;">' +
-          '<div class="ms-status ' + ms.status + '" data-tlcyclems="' + ms.id + '" style="cursor:pointer;" title="클릭하여 상태 변경">' +
+        '<div class="ms-main" style="display:flex;align-items:center;gap:8px;">' +
+          '<div class="ms-status ' + ms.status + '" data-tlcyclems="' + ms.id + '" style="cursor:' + (editMode ? 'default' : 'pointer') + ';opacity:' + (editMode ? '0.55' : '1') + ';flex-shrink:0;" title="' + (editMode ? '편집 모드에서는 완료 상태가 고정됩니다' : '클릭하여 상태 변경') + '">' +
             (isDone ? '✓' : '') +
           '</div>' +
           '<div style="flex:1;min-width:0;">' +
             (editMode
-              ? '<input class="' + (isDone ? 'ms-title done-text' : 'ms-title') + '" data-tlmstitle="' + ms.id + '" value="' + T.esc(ms.title) + '" style="font-weight:700;font-size:.9375rem;border-bottom:1.5px solid var(--brand);background:var(--surface-2);width:100%;">'
+              ? '<input class="' + (isDone ? 'ms-title done-text ' : 'ms-title ') + 'edit-mode-input" data-tlmstitle="' + ms.id + '" value="' + T.esc(ms.title) + '" style="font-weight:700;font-size:.9rem;padding:5px 8px;border:1.5px solid var(--brand);border-radius:8px;background:var(--surface-2);color:var(--ink);width:100%;box-sizing:border-box;">'
               : '<span class="' + (isDone ? 'ms-title done-text' : 'ms-title') + '" style="font-weight:700;font-size:.9375rem;">' + T.esc(ms.title) + '</span>') +
-            '<div class="faint" style="font-size:.75rem;margin-top:2px;">' +
-              '세부 할 일 ' + nTasksDone + '/' + msTasks.length + ' 완료' +
-            '</div>' +
+            (!editMode ? '<div class="faint" style="font-size:.75rem;margin-top:2px;">세부 할 일 ' + nTasksDone + '/' + msTasks.length + ' 완료' + (ms.dueDate ? ' · 마감 ' + ms.dueDate : '') + '</div>' : '') +
           '</div>' +
-          (editMode ? '<button class="icon-btn" data-tlmsdel="' + ms.id + '" type="button" aria-label="마일스톤 삭제" style="padding:2px 6px;">×</button>' : '') +
+          (editMode ? '<button class="icon-btn" data-tlmsdel="' + ms.id + '" type="button" aria-label="마일스톤 삭제" style="padding:2px 6px;flex-shrink:0;">×</button>' : '') +
         '</div>' +
+        editMetaSubRow +
         '<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--rule);">' +
           tasksHtml +
           '<div style="margin-top:6px;">' +
@@ -185,13 +200,13 @@
 
     view.innerHTML =
       '<div class="goal-head-row" style="margin-bottom:10px;">' +
-        '<div class="goal-head-l">' +
-          '<div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;">팀 연계 개인목표</h2></div>' +
+        '<div class="goal-head-l" style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;white-space:nowrap;">팀 연계 개인목표</h2></div>' +
           '<span class="faint" style="font-size:.8125rem;">팀 로드맵을 개인 창에서 작성하고 달성도를 상호 체크해요</span>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          (editMode ? '<button class="btn btn-danger btn-sm" id="btnDeleteTlGoal" type="button" style="font-size:.8125rem;padding:3px 9px;">연계 목표 삭제</button>' : '') +
-          '<button class="edit-toggle ' + (editMode ? 'on' : 'off') + '" id="btnToggleTlEdit" type="button" style="font-size:.8125rem;padding:3px 10px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
+          (editMode ? '<button class="btn btn-danger btn-sm" id="btnDeleteTlGoal" type="button" style="font-size:.78rem;padding:4px 9px;white-space:nowrap;">연계 목표 삭제</button>' : '') +
+          '<button class="edit-toggle ' + (editMode ? 'on' : 'off') + '" id="btnToggleTlEdit" type="button" style="font-size:.8125rem;padding:4px 10px;white-space:nowrap;">' +
             (editMode ? '✓ 편집 완료' : '편집') +
           '</button>' +
         '</div>' +
@@ -201,10 +216,15 @@
       '<div class="card" style="margin-bottom:14px;">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px;">' +
           (editMode
-            ? '<input id="tlGoalTitleInput" value="' + T.esc(goal.title) + '" style="font-weight:700;font-size:1.1rem;flex:1;border-bottom:1.5px solid var(--brand);background:var(--surface-2);">'
-            : '<h3 style="margin:0;font-size:1.1rem;color:var(--ink);">' + T.esc(goal.title) + '</h3>') +
-          (goal.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);">' + T.getDDay(goal.dueDate) + '</span>' : '') +
+            ? '<input id="tlGoalTitleInput" class="edit-mode-input" value="' + T.esc(goal.title) + '" style="font-weight:700;font-size:1rem;flex:1;min-width:0;padding:6px 10px;border:1.5px solid var(--brand);border-radius:8px;background:var(--surface-2);color:var(--ink);">'
+            : '<h3 style="margin:0;font-size:1.05rem;color:var(--ink);">' + T.esc(goal.title) + '</h3>') +
+          (goal.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);white-space:nowrap;flex-shrink:0;">' + T.getDDay(goal.dueDate) + '</span>' : '') +
         '</div>' +
+        (editMode ?
+          '<div style="display:flex;align-items:center;gap:8px;margin:8px 0;padding:6px 10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--rule);">' +
+            '<span style="font-size:.78rem;font-weight:700;color:var(--ink-soft);white-space:nowrap;">📅 목표 마감일</span>' +
+            '<input type="date" id="tlGoalDueInput" value="' + (goal.dueDate || '') + '" style="font-size:.8125rem;padding:3px 8px;border-radius:6px;border:1px solid var(--rule);background:var(--card);color:var(--ink);">' +
+          '</div>' : '') +
         '<div class="group-bar" style="margin-top:10px;height:7px;"><span style="width:' + pct + '%;"></span></div>' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:.8125rem;">' +
           '<span style="font-weight:700;color:var(--brand-strong);">' + pct + '% 달성</span>' +
@@ -250,14 +270,37 @@
       if(titleInp && titleInp.value.trim()){
         goal.title = titleInp.value.trim();
       }
-      view.querySelectorAll('[data-tlminput]').forEach(function(inp){
-        var mid = inp.dataset.tlminput;
+      var dueInp = view.querySelector('#tlGoalDueInput');
+      if(dueInp){
+        goal.dueDate = dueInp.value || '';
+      }
+      view.querySelectorAll('[data-tlmstitle]').forEach(function(inp){
+        var mid = inp.dataset.tlmstitle;
         var m = (goal.milestones||[]).find(function(x){ return x.id===mid; });
         if(m){ var v = inp.value.trim(); if(v) m.title = v; }
       });
+      view.querySelectorAll('[data-tltasktitle]').forEach(function(inp){
+        var parts = inp.dataset.tltasktitle.split(':');
+        var m = (goal.milestones||[]).find(function(x){ return x.id===parts[0]; });
+        if(m){
+          var t = (m.tasks||[]).find(function(x){ return x.id===parts[1]; });
+          if(t){ var v = inp.value.trim(); if(v) t.title = v; }
+        }
+      });
+      view.querySelectorAll('[data-tlmprio]').forEach(function(sel){
+        var mid = sel.dataset.tlmprio;
+        var m = (goal.milestones||[]).find(function(x){ return x.id===mid; });
+        if(m) m.priority = sel.value;
+      });
+      view.querySelectorAll('[data-tlmsdue]').forEach(function(inp){
+        var mid = inp.dataset.tlmsdue;
+        var m = (goal.milestones||[]).find(function(x){ return x.id===mid; });
+        if(m) m.dueDate = inp.value || '';
+      });
       state.teamLinkedEditMode = false;
+      T.syncTeamGoalParticipantProgress(goal);
       await T.saveProfile();
-      T.toast('팀 연계 개인목표 편집을 완료했어요');
+      T.toast('팀 연계 개인목표 편집을 완료했어요 ✨');
       renderTeamLinkedGoalsScreen(view);
     }
 
@@ -295,8 +338,38 @@
       });
     }
 
+    view.querySelectorAll('[data-tlmsup]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var mid = btn.dataset.tlmsup;
+        var list = goal.milestones || [];
+        var idx = list.findIndex(function(m){ return m.id === mid; });
+        if(idx > 0){
+          var tmp = list[idx]; list[idx] = list[idx - 1]; list[idx - 1] = tmp;
+          await T.saveProfile();
+          renderTeamLinkedGoalsScreen(view);
+        }
+      });
+    });
+
+    view.querySelectorAll('[data-tlmsdown]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var mid = btn.dataset.tlmsdown;
+        var list = goal.milestones || [];
+        var idx = list.findIndex(function(m){ return m.id === mid; });
+        if(idx !== -1 && idx < list.length - 1){
+          var tmp = list[idx]; list[idx] = list[idx + 1]; list[idx + 1] = tmp;
+          await T.saveProfile();
+          renderTeamLinkedGoalsScreen(view);
+        }
+      });
+    });
+
     view.querySelectorAll('[data-tlcyclems]').forEach(function(btn){
       btn.addEventListener('click', async function(){
+        if(state.teamLinkedEditMode){
+          T.toast('편집 모드에서는 완료 상태가 변경되지 않아요.');
+          return;
+        }
         var msId = btn.dataset.tlcyclems;
         var ms = (goal.milestones || []).find(function(m){ return m.id === msId; });
         if(!ms) return;
@@ -314,6 +387,10 @@
 
     view.querySelectorAll('[data-tltoggletask]').forEach(function(el){
       el.addEventListener('click', async function(){
+        if(state.teamLinkedEditMode){
+          T.toast('편집 모드에서는 완료 상태가 변경되지 않아요.');
+          return;
+        }
         var parts = el.dataset.tltoggletask.split(':');
         var msId = parts[0], tId = parts[1];
         var ms = (goal.milestones || []).find(function(m){ return m.id === msId; });

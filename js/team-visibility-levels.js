@@ -205,18 +205,18 @@
         var nDone = tasks.filter(function(t){ return t.done; }).length;
         var taskRows = tasks.map(function(t){
           return '<div class="task-row" style="padding:4px 0;display:flex;align-items:center;gap:6px;">' +
-            '<div class="task-check' + (t.done ? ' done' : '') + '"' + (canManage ? ' data-tgtoggletask="' + tg.id + ':' + m.id + ':' + t.id + '" style="cursor:pointer;"' : '') + '>' + (t.done ? '✓' : '') + '</div>' +
+            '<div class="task-check' + (t.done ? ' done' : '') + '"' + (canManage ? ' data-tgtoggletask="' + tg.id + ':' + m.id + ':' + t.id + '" style="cursor:' + (isEdit ? 'default' : 'pointer') + ';opacity:' + (isEdit ? '0.55' : '1') + ';"' : '') + '>' + (t.done ? '✓' : '') + '</div>' +
             (isEdit
-              ? '<input class="task-title' + (t.done ? ' done-text' : '') + '" data-tgtasktitle="' + tg.id + ':' + m.id + ':' + t.id + '" value="' + esc(t.title) + '" style="flex:1;font-size:.8125rem;">'
+              ? '<input class="task-title edit-mode-input' + (t.done ? ' done-text' : '') + '" data-tgtasktitle="' + tg.id + ':' + m.id + ':' + t.id + '" value="' + esc(t.title) + '" style="flex:1;min-width:0;font-size:.8125rem;padding:4px 8px;border:1px solid var(--brand);border-radius:6px;background:var(--surface-2);color:var(--ink);">'
               : '<span class="task-title' + (t.done ? ' done-text' : '') + '" style="flex:1;font-size:.8125rem;">' + esc(t.title) + '</span>') +
-            (isEdit ? '<button class="icon-btn" data-tgdeltask="' + tg.id + ':' + m.id + ':' + t.id + '" type="button" title="삭제" style="padding:2px 4px;">×</button>' : '') +
+            (isEdit ? '<button class="icon-btn" data-tgdeltask="' + tg.id + ':' + m.id + ':' + t.id + '" type="button" title="삭제" style="padding:2px 4px;flex-shrink:0;">×</button>' : '') +
           '</div>';
         }).join('');
 
         var taskToggleBtn = nT > 0 ?
-          '<button class="tg-task-toggle-btn" data-tgtoggletasks="' + tg.id + ':' + m.id + '" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-top:2px;">' +
+          '<button class="tg-task-toggle-btn" data-tgtoggletasks="' + tg.id + ':' + m.id + '" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-top:2px;white-space:nowrap;">' +
             '세부 할 일 ' + nDone + '/' + nT + ' <span class="t-arrow">▼</span>' +
-          '</button>' : (isEdit ? '<button class="tg-task-toggle-btn" data-tgaddtaskmodal="' + tg.id + ':' + m.id + '" type="button" style="background:transparent;border:none;color:var(--ink-faint);font-size:.75rem;padding:2px 0;cursor:pointer;">+ 할 일 추가</button>' : '');
+          '</button>' : (isEdit ? '<button class="tg-task-toggle-btn" data-tgaddtaskmodal="' + tg.id + ':' + m.id + '" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;white-space:nowrap;">+ 할 일 추가</button>' : '');
 
         var tasksBox =
           '<div class="tg-subtask-box" data-tgtaskbox="' + tg.id + ':' + m.id + '" style="' + (isEdit ? '' : 'display:none;') + 'margin-top:6px;padding:6px 10px;background:var(--card2);border-radius:8px;border:1px dashed var(--rule);">' +
@@ -225,14 +225,14 @@
           '</div>';
 
         var reorderBtns = isEdit ?
-          '<div style="display:flex;align-items:center;gap:4px;margin-right:6px;">' +
+          '<div style="display:flex;align-items:center;gap:4px;">' +
             '<button class="tg-reorder-btn" data-tgmup="' + g.id + ':' + tg.id + ':' + m.id + '" type="button" title="위로" aria-label="위로 이동">▲</button>' +
             '<button class="tg-reorder-btn" data-tgmdown="' + g.id + ':' + tg.id + ':' + m.id + '" type="button" title="아래로" aria-label="아래로 이동">▼</button>' +
           '</div>' : '';
 
         var priorityBadgeOrSelect = isEdit ?
-          '<select data-tgmprio="' + g.id + ':' + tg.id + ':' + m.id + '" style="font-size:.75rem;padding:2px 4px;border-radius:6px;border:1px solid var(--rule);background:var(--card);margin-right:6px;"><option value="high"' + (m.priority==='high'?' selected':'') + '>높음</option><option value="medium"' + (!m.priority||m.priority==='medium'?' selected':'') + '>보통</option><option value="low"' + (m.priority==='low'?' selected':'') + '>낮음</option></select>' :
-          (m.priority ? '<span class="ms-priority-tag ms-priority-' + m.priority + '" style="margin-right:4px;">' + (m.priority==='high'?'높음':(m.priority==='low'?'낮음':'보통')) + '</span>' : '');
+          '<select data-tgmprio="' + g.id + ':' + tg.id + ':' + m.id + '" style="font-size:.75rem;padding:3px 6px;border-radius:6px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);"><option value="high"' + (m.priority==='high'?' selected':'') + '>우선순위: 높음</option><option value="medium"' + (!m.priority||m.priority==='medium'?' selected':'') + '>우선순위: 보통</option><option value="low"' + (m.priority==='low'?' selected':'') + '>우선순위: 낮음</option></select>' :
+          (m.priority ? '<span class="ms-priority-tag ms-priority-' + m.priority + '" style="margin-right:4px;white-space:nowrap;flex-shrink:0;">' + (m.priority==='high'?'높음':(m.priority==='low'?'낮음':'보통')) + '</span>' : '');
 
         var msCmtList = (getTeamCommentsCache()[g.id] || []).filter(function(c){ return c.target_id === m.id; });
         var msCmtCount = msCmtList.length;
@@ -246,19 +246,29 @@
         '</div>';
 
         return '<div class="ms-row" data-tgmid="' + m.id + '" style="padding:8px 10px;">' +
-            '<div class="ms-main">' +
-              reorderBtns +
-              '<div class="ms-status ' + m.status + '"' + (canManage ? ' data-tgcycle="1" style="cursor:pointer;"' : '') + '>' + (m.status === 'done' ? '✓' : '') + '</div>' +
-              priorityBadgeOrSelect +
-              '<div style="flex:1;min-width:0;">' +
-                (isEdit
-                  ? '<input class="' + (m.status === 'done' ? 'ms-title done-text' : 'ms-title') + '" data-tgmtitle="1" value="' + esc(m.title) + '" style="border-bottom:1.5px solid var(--brand);background:var(--surface-2);border-radius:6px;padding:3px 6px;">'
-                  : '<span class="' + (m.status === 'done' ? 'ms-title done-text' : 'ms-title') + '" style="display:inline-block;">' + esc(m.title) + '</span>') +
-                taskToggleBtn +
+            (isEdit ? (
+              '<div class="ms-main" style="display:flex;align-items:center;gap:8px;">' +
+                '<div class="ms-status ' + m.status + '"' + (canManage ? ' data-tgcycle="1" style="cursor:default;opacity:0.55;flex-shrink:0;"' : '') + '>' + (m.status === 'done' ? '✓' : '') + '</div>' +
+                '<div style="flex:1;min-width:0;">' +
+                  '<input class="' + (m.status === 'done' ? 'ms-title done-text ' : 'ms-title ') + 'edit-mode-input" data-tgmtitle="1" value="' + esc(m.title) + '" style="width:100%;box-sizing:border-box;border:1.5px solid var(--brand);background:var(--surface-2);border-radius:8px;padding:5px 8px;font-weight:700;font-size:.9rem;color:var(--ink);">' +
+                '</div>' +
+                '<div class="ms-actions" style="flex-shrink:0;"><button class="icon-btn" data-tgmdel="1" aria-label="마일스톤 삭제">×</button></div>' +
               '</div>' +
-              msPingBtn +
-              (isEdit ? '<div class="ms-actions"><button class="icon-btn" data-tgmdel="1" aria-label="마일스톤 삭제">×</button></div>' : '') +
-            '</div>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:6px;flex-wrap:wrap;">' +
+                '<div style="display:flex;align-items:center;gap:6px;">' + reorderBtns + priorityBadgeOrSelect + '</div>' +
+                taskToggleBtn +
+              '</div>'
+            ) : (
+              '<div class="ms-main" style="display:flex;align-items:center;gap:6px;">' +
+                '<div class="ms-status ' + m.status + '"' + (canManage ? ' data-tgcycle="1" style="cursor:pointer;flex-shrink:0;"' : '') + '>' + (m.status === 'done' ? '✓' : '') + '</div>' +
+                priorityBadgeOrSelect +
+                '<div style="flex:1;min-width:0;">' +
+                  '<span class="' + (m.status === 'done' ? 'ms-title done-text' : 'ms-title') + '" style="display:inline-block;word-break:keep-all;">' + esc(m.title) + '</span>' +
+                  '<div>' + taskToggleBtn + '</div>' +
+                '</div>' +
+                msPingBtn +
+              '</div>'
+            )) +
             tasksBox +
             msCommentsBox +
           '</div>';
@@ -278,15 +288,15 @@
       '</div>';
 
       var inlineDueHtml = isEdit
-        ? '<div style="display:flex;align-items:center;gap:6px;margin:6px 0 8px;"><span class="faint" style="font-size:.75rem;">마감일</span><input type="date" data-tgdue="' + g.id + ':' + tg.id + '" value="' + (tg.dueDate || '') + '" style="font-size:.8125rem;padding:2px 6px;border-radius:6px;border:1px solid var(--rule);background:var(--card);"></div>'
+        ? '<div style="display:flex;align-items:center;gap:8px;margin:8px 0;padding:6px 10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--rule);"><span class="faint" style="font-size:.78rem;font-weight:700;white-space:nowrap;">📅 마감일</span><input type="date" data-tgdue="' + g.id + ':' + tg.id + '" value="' + (tg.dueDate || '') + '" style="font-size:.8125rem;padding:3px 8px;border-radius:6px;border:1px solid var(--rule);background:var(--card);color:var(--ink);"></div>'
         : '';
 
       singleGoalCardHtml = '<div class="tg-compact-goal-card" data-teamgoal="' + tg.id + '">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
             (isEdit
-              ? '<input class="ms-title" data-tgtitle="1" value="' + esc(tg.title) + '" style="flex:1;font-weight:700;font-size:1rem;border-bottom:1.5px solid var(--brand);background:var(--surface-2);border-radius:6px;padding:3px 6px;">'
-              : '<b style="font-size:1rem;color:var(--ink);">' + esc(tg.title) + '</b>') +
-            tgPingBtn + (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;">' + dDay(tg.dueDate) + '</span>' : '') + (isEdit ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제">×</button>' : '') +
+              ? '<input class="ms-title edit-mode-input" data-tgtitle="1" value="' + esc(tg.title) + '" style="flex:1;min-width:0;font-weight:700;font-size:1rem;border:1.5px solid var(--brand);background:var(--surface-2);border-radius:8px;padding:5px 8px;color:var(--ink);">'
+              : '<b style="font-size:1rem;color:var(--ink);word-break:keep-all;">' + esc(tg.title) + '</b>') +
+            tgPingBtn + (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;white-space:nowrap;">' + dDay(tg.dueDate) + '</span>' : '') + (isEdit ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제" style="flex-shrink:0;">×</button>' : '') +
           '</div>' +
           inlineDueHtml +
           '<div class="group-bar" style="margin-top:8px;"><span style="width:' + pct + '%;"></span></div>' +

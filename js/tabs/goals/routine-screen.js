@@ -30,6 +30,7 @@
     }
 
     if(typeof L.state.routineEditMode === 'undefined') L.state.routineEditMode = false;
+    if(typeof L.state.showShiftRoutineSection === 'undefined') L.state.showShiftRoutineSection = false;
 
     // [#TASK-ES-220] 교대근무 설정 초기화 및 당일 근무 모드 계산
     if(!L.state.profile.settings.shiftSettings){
@@ -44,6 +45,14 @@
     var shiftSettings = L.state.profile.settings.shiftSettings;
 
     var routines = L.state.profile.settings.routines;
+    var activePersonalGoals = (L.state.profile && L.state.profile.goals) ? L.state.profile.goals.filter(function(g){ return !g.archivedAt && !g.teamLinked; }) : [];
+    if(activePersonalGoals.length > 0){
+      routines.forEach(function(r){
+        if(!r.linkedGoalId && (r.id === 'rt_focus' || r.id === 'rt_morning')){
+          r.linkedGoalId = activePersonalGoals[0].id;
+        }
+      });
+    }
     var now = new Date();
     var todayKey = L.dateKey(now);
     var dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
@@ -99,86 +108,93 @@
       { key: 'all', label: '전체' }
     ];
 
+    var showShiftBody = !!L.state.showShiftRoutineSection;
+
     var html = '' +
       '<div style="margin-bottom:14px;">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">' +
           '<div>' +
-            '<h3 style="margin:0;font-size:1.15rem;font-weight:700;color:var(--ink);">📅 나의 데일리 루틴</h3>' +
-            '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">루틴을 터치하면 상세/편집이 가능하며, 당일 루틴 완수 시 <b>+10 EXP</b> 획득!</p>' +
+            '<h3 style="margin:0;font-size:1.1rem;font-weight:700;color:var(--ink);">📅 나의 데일리 루틴</h3>' +
+            '<p class="faint" style="margin:2px 0 0;font-size:.78rem;">루틴 터치 시 상세/편집 · 당일 완수 시 <b>+10 EXP</b></p>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-            '<button class="btn btn-ghost btn-sm" id="btnOpenShiftRoutineModal" type="button" style="padding:6px 10px;font-size:.8125rem;font-weight:700;border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--brand);background:rgba(99,102,241,0.06);display:flex;align-items:center;gap:4px;">' +
-              '🔄 교대 맞춤 루틴' +
+            '<button class="btn btn-ghost btn-sm" id="btnOpenShiftRoutineModal" type="button" style="padding:5px 9px;font-size:.78rem;font-weight:700;border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--brand);background:rgba(99,102,241,0.06);display:flex;align-items:center;gap:4px;white-space:nowrap;">' +
+              '🔄 교대 맞춤' +
             '</button>' +
-            '<button class="btn btn-ghost btn-sm" id="btnToggleRoutineEdit" type="button" style="padding:6px 12px;font-size:.8125rem;font-weight:700;border:1px solid var(--rule);border-radius:10px;color:' + (L.state.routineEditMode ? 'var(--brand)' : 'var(--ink)') + ';">' +
-              (L.state.routineEditMode ? '완료' : '편집') +
+            '<button class="btn btn-ghost btn-sm" id="btnToggleRoutineEdit" type="button" style="padding:5px 11px;font-size:.78rem;font-weight:700;border:1px solid ' + (L.state.routineEditMode ? 'var(--brand)' : 'var(--rule)') + ';border-radius:10px;background:' + (L.state.routineEditMode ? 'rgba(99,102,241,0.1)' : 'transparent') + ';color:' + (L.state.routineEditMode ? 'var(--brand)' : 'var(--ink)') + ';white-space:nowrap;">' +
+              (L.state.routineEditMode ? '✓ 편집 완료' : '편집') +
             '</button>' +
-            '<button class="btn btn-primary btn-sm" id="btnAddRoutineBtn" type="button" style="padding:6px 12px;font-size:.8125rem;font-weight:700;border-radius:10px;">+ 새 루틴</button>' +
+            (!L.state.routineEditMode ? '<button class="btn btn-primary btn-sm" id="btnAddRoutineBtn" type="button" style="padding:5px 11px;font-size:.78rem;font-weight:700;border-radius:10px;white-space:nowrap;">+ 새 루틴</button>' : '') +
           '</div>' +
         '</div>' +
-        '<div class="card" id="shiftWorkRoutineSection" style="margin-bottom:12px;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">' +
-            '<div style="display:flex;align-items:center;gap:6px;">' +
-              '<span style="font-size:1.05rem;">🩺</span>' +
-              '<span style="font-size:.875rem;font-weight:700;color:var(--ink);">교대근무 가변형 루틴 스케줄러</span>' +
-              '<span class="badge" style="font-size:.7rem;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);font-weight:700;">서카디언 케어</span>' +
+        '<div class="card" id="shiftWorkRoutineSection" style="margin-bottom:10px;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:10px 12px;">' +
+          '<div id="btnToggleShiftSectionHeader" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;cursor:pointer;">' +
+            '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
+              '<span style="font-size:1rem;">🩺</span>' +
+              '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);white-space:nowrap;">교대근무 루틴 스케줄러</span>' +
+              '<span class="badge" style="font-size:.68rem;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);font-weight:700;white-space:nowrap;">' + activePreset.label + '</span>' +
             '</div>' +
-            '<button class="btn btn-ghost btn-xs" id="btnOpenShiftCycleModal" type="button" style="min-height:30px;padding:4px 8px;font-size:.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);">' +
-              '⚙️ 교대주기 설정' +
-            '</button>' +
-          '</div>' +
-          '<div id="shiftWorkRoutineBar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">' +
-            '<button class="btn btn-ghost" id="btnShiftDay" data-shift="day" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'day' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'day' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'day' ? 'var(--brand)' : 'var(--ink)') + ';">' +
-              '<span>☀️ 주간조</span>' +
-              '<span class="faint" style="font-size:.65rem;margin-top:2px;">09:00~18:00</span>' +
-            '</button>' +
-            '<button class="btn btn-ghost" id="btnShiftNight" data-shift="night" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'night' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'night' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'night' ? 'var(--brand)' : 'var(--ink)') + ';">' +
-              '<span>🌙 야간조</span>' +
-              '<span class="faint" style="font-size:.65rem;margin-top:2px;">21:00~08:00</span>' +
-            '</button>' +
-            '<button class="btn btn-ghost" id="btnShiftDuty" data-shift="duty" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'duty' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'duty' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'duty' ? 'var(--brand)' : 'var(--ink)') + ';">' +
-              '<span>🔄 당직/비번</span>' +
-              '<span class="faint" style="font-size:.65rem;margin-top:2px;">24H 대기/회복</span>' +
-            '</button>' +
-            '<button class="btn btn-ghost" id="btnShiftOff" data-shift="off" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'off' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'off' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'off' ? 'var(--brand)' : 'var(--ink)') + ';">' +
-              '<span>🌿 휴무</span>' +
-              '<span class="faint" style="font-size:.65rem;margin-top:2px;">리셋/리프레시</span>' +
-            '</button>' +
-          '</div>' +
-          '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">' +
-            '<div style="flex:1;min-width:200px;">' +
-              '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-                '<span>현재 근무 모드: <b style="color:var(--brand);">' + activePreset.label + '</b></span>' +
-                (shiftSettings.autoCycleEnabled ? '<span class="badge" style="font-size:.68rem;padding:2px 5px;background:rgba(34,197,94,0.15);color:#16a34a;border-radius:4px;">자동순환 중</span>' : '') +
-              '</div>' +
-              '<div class="faint" style="font-size:.75rem;margin-top:3px;line-height:1.4;">' +
-                '💡 ' + activePreset.healthTip +
-              '</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
+              '<button class="btn btn-ghost btn-xs" id="btnOpenShiftCycleModal" type="button" style="min-height:28px;padding:3px 7px;font-size:.72rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);white-space:nowrap;">' +
+                '⚙️ 주기 설정' +
+              '</button>' +
+              '<span style="font-size:.75rem;color:var(--ink-soft);font-weight:700;">' + (showShiftBody ? '접기 ▲' : '펼치기 ▼') + '</span>' +
             '</div>' +
-            '<button class="btn btn-primary btn-sm" id="btnApplyShiftRoutines" type="button" style="min-height:36px;padding:6px 12px;font-size:.8125rem;font-weight:700;border-radius:8px;flex-shrink:0;">' +
-              '⚡ ' + activePreset.label + ' 맞춤 루틴 연동' +
-            '</button>' +
+          '</div>' +
+          '<div id="shiftWorkRoutineBody" style="display:' + (showShiftBody ? 'block' : 'none') + ';margin-top:10px;">' +
+            '<div id="shiftWorkRoutineBar" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:10px;">' +
+              '<button class="btn btn-ghost" id="btnShiftDay" data-shift="day" type="button" style="min-width:0;min-height:42px;padding:4px 2px;font-size:.75rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'day' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'day' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'day' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+                '<span style="white-space:nowrap;">☀️ 주간조</span>' +
+                '<span class="faint" style="font-size:.6rem;margin-top:1px;white-space:nowrap;">09~18시</span>' +
+              '</button>' +
+              '<button class="btn btn-ghost" id="btnShiftNight" data-shift="night" type="button" style="min-width:0;min-height:42px;padding:4px 2px;font-size:.75rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'night' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'night' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'night' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+                '<span style="white-space:nowrap;">🌙 야간조</span>' +
+                '<span class="faint" style="font-size:.6rem;margin-top:1px;white-space:nowrap;">21~08시</span>' +
+              '</button>' +
+              '<button class="btn btn-ghost" id="btnShiftDuty" data-shift="duty" type="button" style="min-width:0;min-height:42px;padding:4px 2px;font-size:.75rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'duty' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'duty' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'duty' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+                '<span style="white-space:nowrap;">🔄 당직</span>' +
+                '<span class="faint" style="font-size:.6rem;margin-top:1px;white-space:nowrap;">24H/회복</span>' +
+              '</button>' +
+              '<button class="btn btn-ghost" id="btnShiftOff" data-shift="off" type="button" style="min-width:0;min-height:42px;padding:4px 2px;font-size:.75rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'off' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'off' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'off' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+                '<span style="white-space:nowrap;">🌿 휴무</span>' +
+                '<span class="faint" style="font-size:.6rem;margin-top:1px;white-space:nowrap;">리프레시</span>' +
+              '</button>' +
+            '</div>' +
+            '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:10px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">' +
+              '<div style="flex:1;min-width:180px;">' +
+                '<div style="font-size:.78rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+                  '<span>현재 근무 모드: <b style="color:var(--brand);">' + activePreset.label + '</b></span>' +
+                  (shiftSettings.autoCycleEnabled ? '<span class="badge" style="font-size:.65rem;padding:2px 5px;background:rgba(34,197,94,0.15);color:#16a34a;border-radius:4px;">자동순환 중</span>' : '') +
+                '</div>' +
+                '<div class="faint" style="font-size:.72rem;margin-top:2px;line-height:1.35;">' +
+                  '💡 ' + activePreset.healthTip +
+                '</div>' +
+              '</div>' +
+              '<button class="btn btn-primary btn-sm" id="btnApplyShiftRoutines" type="button" style="min-height:34px;padding:5px 10px;font-size:.75rem;font-weight:700;border-radius:8px;flex-shrink:0;">' +
+                '⚡ ' + activePreset.label + ' 맞춤 루틴 연동' +
+              '</button>' +
+            '</div>' +
           '</div>' +
         '</div>' +
-        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:14px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">' +
           '<div>' +
-            '<div style="font-size:.875rem;font-weight:700;color:var(--ink);">' +
+            '<div style="font-size:.84rem;font-weight:700;color:var(--ink);">' +
               (allDone ? '🎉 오늘의 모든 루틴 달성 완료!' : '오늘 루틴 진행률 (' + completedCount + ' / ' + totalToday + ')') +
             '</div>' +
-            '<div class="faint" style="font-size:.78125rem;margin-top:2px;">' +
+            '<div class="faint" style="font-size:.75rem;margin-top:2px;">' +
               (allDone ? '오늘의 완주 보너스 +10 EXP가 지급되었습니다.' : '모든 루틴을 체크하면 +10 EXP가 자동 지급됩니다.') +
             '</div>' +
           '</div>' +
-          '<div style="font-size:1.25rem;font-weight:800;color:' + (allDone ? 'var(--brand)' : 'var(--ink)') + ';">' +
+          '<div style="font-size:1.2rem;font-weight:800;color:' + (allDone ? 'var(--brand)' : 'var(--ink)') + ';">' +
             (totalToday ? Math.round((completedCount / totalToday) * 100) : 0) + '%' +
           '</div>' +
         '</div>' +
-        '<div id="routineDayFilterBar" class="routine-day-bar" style="display:flex;align-items:center;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-bottom:10px;-webkit-overflow-scrolling:touch;">' +
+        '<div id="routineDayFilterBar" class="routine-day-bar" style="display:flex;align-items:center;gap:3px;padding:2px 0 6px;margin-bottom:8px;width:100%;box-sizing:border-box;">' +
           filterChips.map(function(fc){
             var isSel = (filterDay === fc.key);
             var isTodayChip = (fc.key === 'today');
-            var chipText = isTodayChip ? '⭐ 오늘' : (fc.key === 'all' ? '전체' : fc.label);
-            return '<button type="button" class="btn btn-ghost routine-day-chip' + (isSel ? ' active' : '') + '" data-rday="' + fc.key + '" style="min-height:36px;padding:6px 14px;font-size:.8125rem;font-weight:700;border-radius:20px;white-space:nowrap;flex-shrink:0;transition:all 0.15s;' +
+            var chipText = isTodayChip ? '오늘' : (fc.key === 'all' ? '전체' : fc.label);
+            return '<button type="button" class="btn btn-ghost routine-day-chip' + (isSel ? ' active' : '') + '" data-rday="' + fc.key + '" style="flex:1 1 0;min-width:0;min-height:32px;padding:4px 2px;font-size:.75rem;font-weight:700;border-radius:14px;white-space:nowrap;text-align:center;justify-content:center;transition:all 0.15s;' +
               (isSel ? 'background:var(--brand);color:#fff;border:1px solid var(--brand);box-shadow:0 2px 6px rgba(99,102,241,0.25);' : 'background:var(--card2);color:var(--ink);border:1px solid var(--rule);') + '">' +
               chipText +
             '</button>';
@@ -196,11 +212,11 @@
           var isDone = r.completedDates && r.completedDates.indexOf(todayKey) !== -1;
           var borderStyle = L.state.routineEditMode ? '1.5px dashed var(--brand)' : (isDone ? '1px solid var(--brand-line)' : '1px solid var(--rule)');
           var linkedGoal = r.linkedGoalId && L.state.profile && L.state.profile.goals ? L.state.profile.goals.find(function(g){ return g.id === r.linkedGoalId; }) : null;
-          return '<div class="routine-card" data-rtid="' + r.id + '" style="background:var(--card);border:' + borderStyle + ';border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all 0.2s;cursor:pointer;">' +
+          return '<div class="routine-card" data-rtid="' + r.id + '" style="background:var(--card);border:' + borderStyle + ';border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;transition:all 0.2s;cursor:pointer;">' +
             (L.state.routineEditMode ? 
               '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">' +
-                '<button type="button" class="btn btn-ghost btn-xs" data-rtup="' + r.id + '" style="padding:1px 4px;font-size:.7rem;line-height:1;" title="위로 이동">▲</button>' +
-                '<button type="button" class="btn btn-ghost btn-xs" data-rtdown="' + r.id + '" style="padding:1px 4px;font-size:.7rem;line-height:1;" title="아래로 이동">▼</button>' +
+                '<button type="button" class="btn btn-ghost btn-xs" data-rtup="' + r.id + '" style="padding:2px 5px;font-size:.7rem;line-height:1;" title="위로 이동">▲</button>' +
+                '<button type="button" class="btn btn-ghost btn-xs" data-rtdown="' + r.id + '" style="padding:2px 5px;font-size:.7rem;line-height:1;" title="아래로 이동">▼</button>' +
               '</div>'
               :
               '<div class="sel-check' + (isDone ? ' on' : '') + '" data-rtchk="' + r.id + '" style="cursor:pointer;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;border:1.5px solid ' + (isDone ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isDone ? 'var(--brand)' : 'transparent') + ';color:#fff;flex-shrink:0;">' +
@@ -208,43 +224,127 @@
               '</div>'
             ) +
             '<div style="flex:1;min-width:0;" data-rtopen="' + r.id + '">' +
-              '<div style="font-size:.9375rem;font-weight:700;color:var(--ink);text-decoration:' + (isDone ? 'line-through' : 'none') + ';opacity:' + (isDone ? '0.7' : '1') + ';display:flex;align-items:center;gap:6px;">' +
-                '<span>' + L.escapeHtml(r.title) + '</span>' +
-                (!L.state.routineEditMode ? '<span style="font-size:.75rem;color:var(--ink-soft);opacity:0.6;" title="클릭하여 상세/편집">✏️</span>' : '') +
-              '</div>' +
-              (r.memo ? '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">💬 ' + L.escapeHtml(r.memo) + '</div>' : '') +
-              '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">' +
-                (r.category ? '<span class="routine-cat-badge" style="font-size:.71875rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);">' + L.escapeHtml(r.category) + '</span>' : '') +
-                (linkedGoal ? '<span class="routine-linked-goal-badge" style="font-size:.71875rem;padding:2px 6px;border-radius:6px;background:var(--card2);border:1px solid var(--rule);color:var(--ink-soft);">🎯 ' + L.escapeHtml(linkedGoal.title) + '</span>' : '') +
-                (r.time ? '<span style="font-size:.75rem;color:var(--ink-soft);background:var(--card2);padding:2px 6px;border-radius:6px;border:1px solid var(--rule);">⏰ ' + r.time + '</span>' : '') +
-                '<span style="font-size:.75rem;color:var(--ink-soft);">' +
-                  (r.days || [1,2,3,4,5,6,7]).map(function(d){ return dayLabels[d-1]; }).join(',') +
+              (L.state.routineEditMode ?
+                '<input type="text" class="routine-title-edit-input edit-mode-input" data-rtinput="' + r.id + '" value="' + L.escapeHtml(r.title) + '" style="width:100%;font-size:.875rem;font-weight:700;padding:4px 8px;border-radius:8px;border:1.5px solid var(--brand);background:var(--surface-2);color:var(--ink);box-sizing:border-box;margin-bottom:4px;">'
+                :
+                '<div style="font-size:.9rem;font-weight:700;color:var(--ink);text-decoration:' + (isDone ? 'line-through' : 'none') + ';opacity:' + (isDone ? '0.7' : '1') + ';display:flex;align-items:center;gap:6px;">' +
+                  '<span style="word-break:keep-all;">' + L.escapeHtml(r.title) + '</span>' +
+                '</div>'
+              ) +
+              (r.memo && !L.state.routineEditMode ? '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">💬 ' + L.escapeHtml(r.memo) + '</div>' : '') +
+              '<div style="display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap;">' +
+                (r.category ? '<span class="routine-cat-badge" style="font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);white-space:nowrap;">' + L.escapeHtml(r.category) + '</span>' : '') +
+                (linkedGoal ? '<span class="routine-linked-goal-badge" data-rtgotogoal="' + linkedGoal.id + '" style="font-size:.7rem;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.28);color:var(--brand);font-weight:700;white-space:nowrap;">🎯 ' + L.escapeHtml(linkedGoal.title.length > 14 ? linkedGoal.title.slice(0, 14) + '…' : linkedGoal.title) + '</span>' : '') +
+                (L.state.routineEditMode ?
+                  '<input type="time" data-rttimeinput="' + r.id + '" value="' + (r.time || '08:00') + '" style="font-size:.72rem;padding:2px 5px;border-radius:6px;border:1px solid var(--brand);background:var(--surface-2);color:var(--ink);">'
+                  :
+                  (r.time ? '<span style="font-size:.72rem;color:var(--ink-soft);background:var(--card2);padding:2px 6px;border-radius:6px;border:1px solid var(--rule);white-space:nowrap;">⏰ ' + r.time + '</span>' : '')
+                ) +
+                '<span style="font-size:.72rem;color:var(--ink-soft);white-space:nowrap;">' +
+                  ((r.days && r.days.length === 7) ? '매일' : (r.days || [1,2,3,4,5,6,7]).map(function(d){ return dayLabels[d-1]; }).join(',')) +
                 '</span>' +
-                (r.notify ? '<span style="font-size:.75rem;color:var(--brand);">🔔 알림</span>' : '') +
+                (r.notify && !L.state.routineEditMode ? '<span style="font-size:.72rem;color:var(--brand);white-space:nowrap;">🔔</span>' : '') +
               '</div>' +
             '</div>' +
             (L.state.routineEditMode ?
               '<div style="display:flex;gap:4px;flex-shrink:0;">' +
-                '<button class="btn btn-ghost btn-sm" data-rtedit="' + r.id + '" type="button" style="color:var(--brand);padding:4px 8px;font-size:.8125rem;font-weight:700;">수정</button>' +
-                '<button class="btn btn-ghost btn-sm" data-rtdel="' + r.id + '" type="button" style="color:#ef4444;padding:4px 8px;font-size:.8125rem;">삭제</button>' +
+                '<button class="btn btn-ghost btn-sm" data-rtedit="' + r.id + '" type="button" style="color:var(--brand);padding:4px 7px;font-size:.75rem;font-weight:700;white-space:nowrap;">상세</button>' +
+                '<button class="btn btn-ghost btn-sm" data-rtdel="' + r.id + '" type="button" style="color:#ef4444;padding:4px 7px;font-size:.75rem;white-space:nowrap;">삭제</button>' +
               '</div>'
               :
-              '<button class="btn btn-ghost btn-sm" data-rtdel="' + r.id + '" type="button" style="color:var(--ink-soft);padding:4px 8px;font-size:.8125rem;">삭제</button>'
+              '<button class="btn btn-ghost btn-sm" data-rtedit="' + r.id + '" type="button" style="color:var(--ink-soft);padding:4px 6px;font-size:.75rem;white-space:nowrap;" title="루틴 상세/수정">상세 ▸</button>' +
+              '<button class="btn btn-ghost btn-sm" data-rtdel="' + r.id + '" type="button" style="display:none;">삭제</button>'
             ) +
           '</div>';
         }).join('') +
-      '</div>';
+      '</div>' +
+      (L.state.routineEditMode ? '<button type="button" class="goal-edit-done-inline-btn" id="btnRoutineEditDoneInline" style="margin-top:12px;">✓ 루틴 편집 완료 (저장)</button>' : '');
 
     container.innerHTML = html;
+
+    async function commitRoutineInlineEdits(){
+      container.querySelectorAll('[data-rtinput]').forEach(function(inp){
+        var rId = inp.getAttribute('data-rtinput');
+        var target = routines.find(function(r){ return r.id === rId; });
+        if(target && inp.value.trim()) target.title = inp.value.trim();
+      });
+      container.querySelectorAll('[data-rttimeinput]').forEach(function(inp){
+        var rId = inp.getAttribute('data-rttimeinput');
+        var target = routines.find(function(r){ return r.id === rId; });
+        if(target && inp.value) target.time = inp.value;
+      });
+      await L.saveProfile();
+    }
 
     // 편집 모드 토글
     var editToggleBtn = container.querySelector('#btnToggleRoutineEdit');
     if(editToggleBtn){
-      editToggleBtn.onclick = function(){
-        L.state.routineEditMode = !L.state.routineEditMode;
+      editToggleBtn.onclick = async function(){
+        if(L.state.routineEditMode){
+          await commitRoutineInlineEdits();
+          L.state.routineEditMode = false;
+          L.toast('루틴 편집 사항이 저장되었습니다 ✨');
+        } else {
+          L.state.routineEditMode = true;
+        }
         renderRoutineGoalsScreen();
       };
     }
+
+    var editDoneInlineBtn = container.querySelector('#btnRoutineEditDoneInline');
+    if(editDoneInlineBtn){
+      editDoneInlineBtn.onclick = async function(){
+        await commitRoutineInlineEdits();
+        L.state.routineEditMode = false;
+        L.toast('루틴 편집 사항이 저장되었습니다 ✨');
+        renderRoutineGoalsScreen();
+      };
+    }
+
+    var shiftHeaderToggle = container.querySelector('#btnToggleShiftSectionHeader');
+    if(shiftHeaderToggle){
+      shiftHeaderToggle.onclick = function(e){
+        if(e.target.closest('#btnOpenShiftCycleModal')) return;
+        L.state.showShiftRoutineSection = !L.state.showShiftRoutineSection;
+        renderRoutineGoalsScreen();
+      };
+    }
+
+    container.querySelectorAll('[data-rtinput]').forEach(function(inp){
+      inp.onclick = function(e){ e.stopPropagation(); };
+      inp.onchange = async function(){
+        var rId = inp.getAttribute('data-rtinput');
+        var target = routines.find(function(r){ return r.id === rId; });
+        if(target && inp.value.trim()){
+          target.title = inp.value.trim();
+          await L.saveProfile();
+        }
+      };
+    });
+
+    container.querySelectorAll('[data-rttimeinput]').forEach(function(inp){
+      inp.onclick = function(e){ e.stopPropagation(); };
+      inp.onchange = async function(){
+        var rId = inp.getAttribute('data-rttimeinput');
+        var target = routines.find(function(r){ return r.id === rId; });
+        if(target && inp.value){
+          target.time = inp.value;
+          await L.saveProfile();
+        }
+      };
+    });
+
+    container.querySelectorAll('[data-rtgotogoal]').forEach(function(badge){
+      badge.onclick = function(e){
+        e.stopPropagation();
+        var gId = badge.getAttribute('data-rtgotogoal');
+        if(gId){
+          L.state.activeGoalId = gId;
+          L.state.goalsSubTab = 'personal';
+          L.renderGoalsScreen();
+        }
+      };
+    });
 
     // 순서 변경 (위로 / 아래로)
     container.querySelectorAll('[data-rtup]').forEach(function(btn){
@@ -286,10 +386,10 @@
       };
     });
 
-    // 루틴 카드 클릭 시 상세/수정 모달 오픈 (체크박스/삭제버튼 제외)
+    // 루틴 카드 클릭 시 상세/수정 모달 오픈 (체크박스/삭제버튼/인라인입력 제외)
     container.querySelectorAll('.routine-card').forEach(function(card){
       card.onclick = function(e){
-        if(e.target.closest('[data-rtchk]') || e.target.closest('[data-rtdel]') || e.target.closest('[data-rtup]') || e.target.closest('[data-rtdown]')) return;
+        if(e.target.closest('[data-rtchk]') || e.target.closest('[data-rtdel]') || e.target.closest('[data-rtup]') || e.target.closest('[data-rtdown]') || e.target.closest('[data-rtinput]') || e.target.closest('[data-rttimeinput]') || e.target.closest('[data-rtgotogoal]')) return;
         var rId = card.getAttribute('data-rtid');
         L.openRoutineDetailModal(rId);
       };

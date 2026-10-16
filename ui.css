@@ -17127,6 +17127,7 @@ html[data-theme="minimal-dark"] #sanctuaryGoalsView {
   display: block;
 }
 
+#screen-goals #goalsStickySubnav,
 #screen-goals .goals-sticky-subnav {
   display: grid !important;
   grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
@@ -17388,6 +17389,167 @@ html[data-theme="minimal-dark"] .s-goal-pill.active {
   box-shadow: none !important;
 }
 
+/* ==========================================================================
+   Part 1 (T-GOALS-PERSONAL-EDIT-DRAWER): 개인 목표 편집 모드 & 우측 상세 서랍 4테마 복구
+   ========================================================================== */
+.goal-detail-drawer {
+  background: var(--card, #ffffff) !important;
+  color: var(--ink, #0f172a) !important;
+  border-left: 1.5px solid var(--rule, #e2e8f0) !important;
+  box-shadow: -8px 0 32px rgba(15, 23, 42, 0.22) !important;
+}
+.goal-drawer-header {
+  background: var(--card2, var(--surface)) !important;
+  border-bottom: 1px solid var(--rule) !important;
+}
 
+#screen-goals .duedate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background: var(--card2, var(--surface));
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+#screen-goals .duedate-row.edit-mode-due {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+#screen-goals .duedate-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+#screen-goals .duedate-row-head .lbl {
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 0.82rem;
+}
+#screen-goals .duedate-row-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+#screen-goals .duedate-row input[type="datetime-local"],
+#screen-goals .duedate-row select {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--card);
+  min-height: 36px;
+}
 
+#screen-goals .s-goal-pill-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+#screen-goals .s-goal-pill-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--card2, var(--surface));
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+#screen-goals .s-goal-pill-nav-btn.disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+#screen-goals .ms-title-compact.edit-mode-input,
+#screen-goals .task-title-inline.edit-mode-input {
+  border: 1px solid var(--rule) !important;
+  border-radius: 7px !important;
+  background: var(--card) !important;
+  padding: 4px 8px !important;
+  color: var(--ink) !important;
+  text-decoration: none !important;
+}
+#screen-goals .ms-title-compact.edit-mode-input:focus,
+#screen-goals .task-title-inline.edit-mode-input:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.14) !important;
+}
+#screen-goals .ms-status.edit-locked,
+#screen-goals .task-check.edit-locked {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+}
+#screen-goals .ms-edit-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 2px 6px !important;
+  border-radius: 7px !important;
+  border: 1px solid var(--rule) !important;
+  background: var(--card) !important;
+  color: var(--ink) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+}
+#screen-goals .ms-edit-action-btn.danger {
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+#screen-goals span.badge,
+#goalTemplateEncyclopediaModal span.badge,
+#routineDetailModal span.badge,
+.modal span.badge,
+#modalBody span.badge {
+  width: auto !important;
+  height: auto !important;
+  min-width: max-content !important;
+  flex-direction: row !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+#screen-goals #sAddGoalBtn,
+#screen-goals .att-add-btn,
+#screen-goals #routineGoalsView .btn-sm {
+  min-width: 56px !important;
+  white-space: nowrap !important;
+}
+
+#screen-goals #routineGoalsView .btn-xs,
+#screen-goals #teamGoalsView .btn-sm {
+  min-width: 28px !important;
+}
+
+#screen-goals .tg-goal-switcher {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  overflow-x: visible !important;
+}
+
+#screen-goals #goalDetailPrivacyBadge {
+  min-height: 28px !important;
+}
 

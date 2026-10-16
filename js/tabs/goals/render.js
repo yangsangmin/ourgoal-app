@@ -187,7 +187,8 @@
     if(guideModalBtn) guideModalBtn.style.display = L.state.goalToolsOpen ? '' : 'none';
     var oldQuickToggle = document.getElementById('btnToggleQuickGoalAdd');
     if(oldQuickToggle) oldQuickToggle.remove();
-    if(goals.length > 0 && headRow && personalAddInline){
+    if(personalAddInline) personalAddInline.style.display = L.state.goalEditMode ? 'none' : '';
+    if(goals.length > 0 && !L.state.goalEditMode && headRow && personalAddInline){
       var quickToggleEl = document.createElement('span');
       quickToggleEl.id = 'btnToggleQuickGoalAdd';
       quickToggleEl.setAttribute('role', 'button');
@@ -221,8 +222,10 @@
       delInline.id = 'goalDeleteInline';
       delInline.type = 'button';
       delInline.className = 'btn btn-danger btn-sm';
-      delInline.textContent = '목표 삭제';
+      delInline.textContent = '삭제';
       delInline.style.marginRight = '6px';
+      delInline.style.fontSize = '.78rem';
+      delInline.style.padding = '4px 8px';
       headRow.insertBefore(delInline, archiveBtnEl);
       delInline.addEventListener('click', async function(){
         if(!confirm('"'+goal.title+'" 목표를 휴지통으로 이동할까요?\n7일간 안전하게 보관되며 언제든 원복할 수 있습니다.')) return;

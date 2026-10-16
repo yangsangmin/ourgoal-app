@@ -34,7 +34,7 @@
   /* ---- 이전 전 index.html 7455~7473줄(#TASK-ES-545 생성기 표지) ---- */
 
   function shiftGoalOrder(goalId, dir){
-    var rawGoals = (L.state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
+    var rawGoals = (L.state.profile.goals || []).filter(function(g){ return !g.archivedAt && !g.teamLinked; });
     var settings = L.state.profile.settings = L.state.profile.settings || {};
     var currentSorted = sortGoalsByOrder(rawGoals, settings.goalOrder || []);
     var ids = currentSorted.map(function(g){ return g.id; });
@@ -49,12 +49,13 @@
     L.saveProfile();
     L.renderHome();
     if(L.state.activeTab === 'goals') L.renderGoalsScreen();
+    if(typeof L.toast === 'function') L.toast('목표 순서를 변경했어요');
     L.triggerHaptic(12);
   }
   /* ---- 이전 전 index.html 7474~7491줄(#TASK-ES-545 생성기 표지) ---- */
 
   function reorderGoal(fromId, toId){
-    var rawGoals = (L.state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
+    var rawGoals = (L.state.profile.goals || []).filter(function(g){ return !g.archivedAt && !g.teamLinked; });
     var settings = L.state.profile.settings = L.state.profile.settings || {};
     var currentSorted = sortGoalsByOrder(rawGoals, settings.goalOrder || []);
     var ids = currentSorted.map(function(g){ return g.id; });
