@@ -1,0 +1,32 @@
+{
+  "task": "TASK-WAVE2-4022560a",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "홈 원스크린에서 [3번이미지] 아바타+경험치 박스창(#levelBadgeRow)은 살리고 [2번이미지] 상단 원형 아바타(#homeHeroAvatar)와 그 바로 밑의 게이지(#homeHeroExpBar)는 지우며, 4대 Clean & Cute 테마 및 60fps·오프라인 동기화·44px 터치 타겟 개선을 적용한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "첫 화면에서 로그인 없이 둘러보기를 누르면 홈 화면에서 [3번이미지] 아바타+경험치 박스창(#levelBadgeRow)이 표시되고 [2번이미지] 상단 원형 아바타(#homeHeroAvatar)와 하단 게이지(#homeHeroExpBar)는 표시되지 않는다",
+      "touches": [
+        "js/core/device-save.js",
+        "js/core/server-records-sync.js",
+        "js/sanctuary-record-feed.js",
+        "js/tabs/comm/feed-posts-sync.js",
+        "js/tabs/home/quest-summary.js",
+        "js/tabs/home/sub-onescreen.js",
+        "js/tabs/settings/onboarding.js",
+        "js/tabs/settings/sub-appearance.js",
+        "js/tabs/settings/theme-apply.js",
+        "ui.css"
+      ],
+      "scenario": "scenarios/home-avatar-box.json"
+    }
+  ]
+}

@@ -39,6 +39,35 @@
     { mbti: 'ESFP', name: '연예인 원숭이', group: '탐험형', emoji: '🐵', desc: '언제나 유쾌한 분위기 메이커' }
   ];
 
+
+  // [T-P3-01] 온보딩 완료 -> 오늘의 퀘스트 자동 생성 및 첫 체크인 직결 브릿지
+  function bridgeOnboardingToTodayQuest(scope, newGoal) {
+    if (!scope || !scope.state || !scope.state.profile || !newGoal) return null;
+    var prof = scope.state.profile;
+    prof.settings = prof.settings || {};
+    prof.settings.todayMissions = prof.settings.todayMissions || {};
+    var todayKey = typeof scope.dateKey === 'function' ? scope.dateKey(new Date()) : new Date().toISOString().slice(0, 10);
+    var nowStr = typeof scope.nowISO === 'function' ? scope.nowISO() : new Date().toISOString();
+    newGoal.tasks = Array.isArray(newGoal.tasks) ? newGoal.tasks : [];
+    if (newGoal.tasks.length === 0) {
+      newGoal.tasks.push({
+        id: typeof scope.uid === 'function' ? scope.uid('task') : ('t_ob_' + Date.now()),
+        title: newGoal.title + ' — 오늘 첫 10분 실천하기',
+        done: false,
+        status: 'todo'
+      });
+    }
+    var missionEntry = {
+      date: todayKey,
+      text: newGoal.title + ' — 오늘 첫 10분 가볍게 시작하기',
+      hash: String(newGoal.title || ''),
+      updatedAt: nowStr,
+      bridgedFromOnboarding: true
+    };
+    prof.settings.todayMissions[newGoal.id] = missionEntry;
+    return missionEntry;
+  }
+
   function startOnboarding(){
     window.startOnboarding = startOnboarding;
     var selectedGroup = '분석형';
@@ -228,6 +257,7 @@
         L.state.profile.goals = L.state.profile.goals || [];
         L.state.profile.goals.unshift(newGoal);
         L.state.activeGoalId = newGoal.id;
+        bridgeOnboardingToTodayQuest(L, newGoal);
       }
 
       await L.saveProfile();
@@ -242,6 +272,9 @@
       L.track('onboarding_completed', { source: 'onboarding_fusion', mbti: avatarObj.mbti, day_index: 0 });
 
       // 4. 3단계 (10초): 첫 체크인 튜토리얼 가이드 칩 홈 콕핏에 렌더링
+      if(typeof L.switchTab === 'function') { try { L.switchTab('home'); } catch(e){} }
+      if(typeof L.renderTodayMissionCard === 'function') { try { L.renderTodayMissionCard(); } catch(e){} }
+      if(typeof L.renderDailyQuestBar === 'function') { try { L.renderDailyQuestBar(true); } catch(e){} }
       if(typeof L.renderFirstCheckinTutorialBanner === 'function'){
         L.renderFirstCheckinTutorialBanner();
       }
@@ -250,6 +283,7 @@
 
   K.ONBOARDING_AVATARS = ONBOARDING_AVATARS;
   K.startOnboarding = startOnboarding;
+  K.bridgeOnboardingToTodayQuest = bridgeOnboardingToTodayQuest;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = K;

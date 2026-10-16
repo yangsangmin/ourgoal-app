@@ -23,7 +23,8 @@
     if(curTheme === 'light' || curTheme === 'system') curTheme = 'white';
     var themeGrid = document.getElementById('themeGrid');
     if(themeGrid){
-      themeGrid.innerHTML = L.THEMES.map(function(t){
+      var allThemes = (Array.isArray(K.CLEAN_CUTE_THEMES) ? K.CLEAN_CUTE_THEMES : []).concat(Array.isArray(L.THEMES) ? L.THEMES : []);
+      themeGrid.innerHTML = allThemes.map(function(t){
         var isActive = (t.id === curTheme);
         return '<div class="theme-card' + (isActive ? ' active' : '') + '" data-themeid="' + t.id + '">' +
           '<div class="theme-dot theme-swatch" style="background:' + t.preview + '"></div>' +
@@ -43,7 +44,7 @@
           L.applyTheme(tid);
           K.renderSettingsScreen();
           L.triggerHaptic(10);
-          var found = L.THEMES.find(function(t){ return t.id === tid; });
+          var found = allThemes.find(function(t){ return t.id === tid; });
           L.toast((found ? found.name : tid) + ' 테마가 적용되었어요');
         };
       });

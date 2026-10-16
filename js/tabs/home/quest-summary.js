@@ -128,18 +128,21 @@
       + '</div>'
       + '<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">'
       + '  <div class="daily-quest-item' + (q1Done ? ' done' : '') + '" id="questItemCheckin" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:4px 0;">'
-      + '    <div style="display:flex;align-items:center;gap:10px;"><span class="quest-checkbox-44' + (q1Done ? ' checked' : '') + '">' + (q1Done ? '✅' : '⭕') + '</span><span class="' + (q1Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">오늘 한 줄 체크인 남기기</span></div>'
+      + '    <div style="display:flex;align-items:center;gap:10px;"><span style="min-width:44px;min-height:44px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;touch-action:manipulation;user-select:none;cursor:pointer;" class="quest-checkbox-44' + (q1Done ? ' checked' : '') + '">' + (q1Done ? '✅' : '⭕') + '</span><span class="' + (q1Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">오늘 한 줄 체크인 남기기</span></div>'
       + '    <span style="font-size:.72rem;font-weight:800;color:' + (q1Done ? '#22c55e' : 'var(--ink-faint)') + ';">+30 EXP' + (q1Done ? ' 완료' : '') + '</span>'
       + '  </div>'
       + '  <div class="daily-quest-item' + (q2Done ? ' done' : '') + '" id="questItemMilestone" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:4px 0;">'
-      + '    <div style="display:flex;align-items:center;gap:10px;"><span class="quest-checkbox-44' + (q2Done ? ' checked' : '') + '">' + (q2Done ? '✅' : '⭕') + '</span><span class="' + (q2Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">할일 1개 완료</span></div>'
+      + '    <div style="display:flex;align-items:center;gap:10px;"><span style="min-width:44px;min-height:44px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;touch-action:manipulation;user-select:none;cursor:pointer;" class="quest-checkbox-44' + (q2Done ? ' checked' : '') + '">' + (q2Done ? '✅' : '⭕') + '</span><span class="' + (q2Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">할일 1개 완료</span></div>'
       + '    <span style="font-size:.72rem;font-weight:800;color:' + (q2Done ? '#22c55e' : 'var(--ink-faint)') + ';">+10 EXP' + (q2Done ? ' 완료' : '') + '</span>'
       + '  </div>'
       + '  <div class="daily-quest-item' + (q3Done ? ' done' : '') + '" id="questItemTracker" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:4px 0;">'
-      + '    <div style="display:flex;align-items:center;gap:10px;"><span class="quest-checkbox-44' + (q3Done ? ' checked' : '') + '">' + (q3Done ? '✅' : '⭕') + '</span><span class="' + (q3Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">25분 집중 시간기록 완주</span></div>'
+      + '    <div style="display:flex;align-items:center;gap:10px;"><span style="min-width:44px;min-height:44px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;touch-action:manipulation;user-select:none;cursor:pointer;" class="quest-checkbox-44' + (q3Done ? ' checked' : '') + '">' + (q3Done ? '✅' : '⭕') + '</span><span class="' + (q3Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">25분 집중 시간기록 완주</span></div>'
       + '    <span style="font-size:.72rem;font-weight:800;color:' + (q3Done ? '#22c55e' : 'var(--ink-faint)') + ';">+50 EXP' + (q3Done ? ' 완료' : '') + '</span>'
       + '  </div>'
       + '</div>';
+
+    // [T-P3-03] 44x44px 터치 타겟 및 pointerup 즉각 반응 바인딩 (중복 클릭 방지 포함)
+    bindQuestTouchTargets(wrap, L);
     var btn1 = wrap.querySelector('#questItemCheckin');
     if(btn1) btn1.onclick = function(){ L.triggerHaptic(15); var ta = document.getElementById('captureInput'); if(ta){ ta.scrollIntoView({ behavior:'smooth', block:'center' }); ta.focus(); } };
     var btn2 = wrap.querySelector('#questItemMilestone');
@@ -152,8 +155,42 @@
     }
   }
 
+
+  function bindQuestTouchTargets(wrap, scope) {
+    if (!wrap) return;
+    var pairs = [
+      ['#questItemCheckin', function () {
+        if (scope && typeof scope.triggerHaptic === 'function') scope.triggerHaptic(15);
+        var ta = typeof document !== 'undefined' ? document.getElementById('captureInput') : null;
+        if (ta) { ta.scrollIntoView({ behavior: 'smooth', block: 'center' }); ta.focus(); }
+      }],
+      ['#questItemMilestone', function () {
+        if (scope && typeof scope.triggerHaptic === 'function') scope.triggerHaptic(15);
+        if (scope && typeof scope.switchTab === 'function') scope.switchTab('goals');
+      }],
+      ['#questItemTracker', function () {
+        if (scope && typeof scope.triggerHaptic === 'function') scope.triggerHaptic(15);
+        var openBtn = typeof document !== 'undefined' ? document.getElementById('btnOpenTimeTracker') : null;
+        if (openBtn) openBtn.click();
+        else if (scope && typeof scope.switchTab === 'function') scope.switchTab('records');
+      }]
+    ];
+    pairs.forEach(function (pair) {
+      var el = wrap.querySelector(pair[0]);
+      if (!el || typeof el.addEventListener !== 'function') return;
+      el.style.minHeight = '44px';
+      el.style.touchAction = 'manipulation';
+      el.addEventListener('pointerup', function (ev) {
+        if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+        el._lastPointerUpAt = Date.now();
+        pair[1]();
+      });
+    });
+  }
+
   K.renderTodayGlancePill = renderTodayGlancePill;
   K.renderDailyQuestBar = renderDailyQuestBar;
+  K.bindQuestTouchTargets = bindQuestTouchTargets;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = K;

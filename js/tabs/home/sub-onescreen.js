@@ -218,11 +218,10 @@
       card.className = 'home-hero-avatar-card';
       card.innerHTML =
         '<div class="hero-avatar-bubble" id="homeHeroAvatarBubble" role="status">오늘도 함께 달려볼까요? ✨</div>' +
-        '<div class="home-hero-avatar-wrap" id="homeHeroAvatar" role="button" tabindex="0" aria-label="수호 아바타 상세 열기">' +
+        '<div class="home-hero-avatar-wrap" id="homeHeroAvatar" role="button" tabindex="0" aria-label="수호 아바타 상세 열기" style="display:none;" hidden>' +
           '<div class="avatar-placeholder avatar-pulse-breathing" id="homeHeroAvatarImg">🌱</div>' +
         '</div>' +
-        // [HOME-19] 홈에는 레벨·EXP 숫자를 쓰지 않는다 — 숫자 없는 진행 바 + 얻는 순간 0.5초 "+N EXP"
-        '<div class="hero-avatar-exp-bar" id="homeHeroExpBar" role="progressbar" aria-label="다음 성장까지 진행" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+        '<div class="hero-avatar-exp-bar" id="homeHeroExpBar" role="progressbar" aria-label="다음 성장까지 진행" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="display:none;" hidden>' +
           '<div class="hero-avatar-exp-fill" id="homeHeroExpFill" style="width:0%;"></div>' +
         '</div>' +
         '<div class="hero-avatar-exp-gain" id="homeHeroExpGain" aria-live="polite"></div>';
@@ -270,7 +269,8 @@
       if (!img || !bubble) return;
 
       var p = global.state && global.state.profile;
-      var visual = (p && (p.guardianAnimal || p.avatar)) || '🌱';
+      var rawVisual = p && (p.guardianAnimal || p.avatar);
+      var visual = (rawVisual && typeof rawVisual === 'object') ? (rawVisual.emoji || p.avatar || '🌱') : (rawVisual || '🌱');
       img.textContent = visual;
 
       // 시간대별 다정한 1:1 러닝메이트 대화체
