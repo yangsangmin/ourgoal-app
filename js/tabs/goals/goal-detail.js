@@ -83,20 +83,28 @@
       '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
         L.formatSchedulePillHtml(goal, 'goal', goal.id) +
         '<button class="icon-btn" data-calsyncgoal="'+goal.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
-        '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'))+' ▾</span>' +
+        '<span class="dday-pill" id="goalHeroPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'))+' ▾</span>' +
         (goal.topic ? L.topicPill(goal.topic) : '') +
         '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalPct+'%</span>' +
         predictedPill +
       '</div>' +
     '</div>';
-    /* #TASK-ES-380: "+ 최종 결과" 버튼은 위 카드(ui.css 가 상단 등반 로드맵과 중복이라 숨김) 밖, 목표 상세 맨 위 한 줄에 둔다.
-       문구·동작(goal-detail-events.js 의 L.openResultModal('goal', goal, …))은 그대로이고, 저장된 결과가 있으면 그 줄에 달성률을 보여 준다. */
+    /* #TASK-ES-380 & T-GOALS-03: "+ 최종 결과" 버튼과 목표 핵심 요약(달성률·D-Day·예상도달일·공개범위)을 숨김 카드 밖, 목표 상세 맨 위 한 줄(.goal-result-row.goal-unified-summary-strip)에 통합 배치한다. */
+    var visBadgeLabel = (visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'));
     var goalResultPct = goal.result ? L.resultPct(goal.result) : null;
-    var goalResultRow = '<div class="goal-result-row" id="goalResultRow" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 8px;">' +
-      (goal.result ? '<span class="faint" id="goalResultSummary" style="font-size:.75rem;">최종 결과 · ' + (goalResultPct === null ? '기록 완료' : '달성률 ' + goalResultPct + '%') + '</span>' : '') +
-      '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;color:var(--ink-soft);border:1px solid var(--rule);">' +
-        (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
-      '</button>' +
+    var goalResultRow = '<div class="goal-result-row goal-unified-summary-strip" id="goalResultRow" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;background:var(--card);border:1px solid var(--rule);border-radius:14px;">' +
+      '<span class="goal-summary-meta-left" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;">' +
+        '<span class="dday-pill" style="background:var(--sage-soft, var(--brand-soft));color:var(--sage, var(--brand-strong));font-weight:800;">달성 ' + goalPct + '%</span>' +
+        (ddayText ? '<span class="dday-pill" style="background:var(--red-soft, var(--card2));color:var(--brand-strong, var(--ink));font-weight:700;">' + ddayText + '</span>' : '') +
+        predictedPill +
+        '<span class="dday-pill" id="goalDetailPrivacyBadge" role="button" tabindex="0" style="cursor:pointer;background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);" title="탭하여 공개 범위 순환 변경">' + visBadgeLabel + ' ▾</span>' +
+      '</span>' +
+      '<span class="goal-summary-meta-right" style="display:inline-flex;align-items:center;gap:6px;margin-left:auto;">' +
+        (goal.result ? '<span class="faint" id="goalResultSummary" style="font-size:.75rem;">최종 결과 · ' + (goalResultPct === null ? '기록 완료' : '달성률 ' + goalResultPct + '%') + '</span>' : '') +
+        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:4px 10px;min-height:32px;color:var(--ink-soft);border:1px solid var(--rule);border-radius:8px;">' +
+          (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
+        '</button>' +
+      '</span>' +
     '</div>';
     var dueRow = '<div class="duedate-row"><span class="lbl">목표 마감일시 (년월일시분)</span>' +
       '<span style="display:flex;align-items:center;gap:6px;">' +

@@ -162,8 +162,15 @@
     var slot = document.getElementById('sanctuaryGoalsView');
     if (!slot) return;
 
-    var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
-    if (!engine.activeGoalId || !goals.find(function(g) { return g.id === engine.activeGoalId; })) {
+    var rawGoals = ((window.state && window.state.profile && window.state.profile.goals) || []).filter(function(g) {
+      return !g.archivedAt && !g.teamLinked;
+    });
+    var goalOrder = (window.state && window.state.profile && window.state.profile.settings && window.state.profile.settings.goalOrder) || [];
+    var goals = (typeof window.sortGoalsByOrder === 'function') ? window.sortGoalsByOrder(rawGoals, goalOrder) : rawGoals;
+
+    if (window.state && window.state.activeGoalId && goals.find(function(g) { return g.id === window.state.activeGoalId; })) {
+      engine.activeGoalId = window.state.activeGoalId;
+    } else if (!engine.activeGoalId || !goals.find(function(g) { return g.id === engine.activeGoalId; })) {
       engine.activeGoalId = goals.length ? goals[0].id : null;
     }
     if (window.state) {
@@ -251,12 +258,24 @@
 
     slot.innerHTML = pillsHtml + trailHtml;
 
-    // 알약 클릭 이벤트 바인딩
+    // 알약 클릭 이벤트 바인딩 (상·하단 단일 activeGoalId 동기화 및 편집 모드 안전 종료)
     slot.querySelectorAll('[data-sgoalid]').forEach(function(b) {
       b.onclick = function() {
         engine.activeGoalId = b.dataset.sgoalid;
-        if (window.state) window.state.activeGoalId = b.dataset.sgoalid;
-        renderSanctuaryGoals();
+        if (window.state) {
+          window.state.activeGoalId = b.dataset.sgoalid;
+          if (window.state.goalEditMode) {
+            window.state.goalEditMode = false;
+            if (window.OurgoalGoalEditUX && typeof window.OurgoalGoalEditUX.removeFloatingBar === 'function') {
+              window.OurgoalGoalEditUX.removeFloatingBar();
+            }
+          }
+        }
+        if (typeof window.renderGoalsScreen === 'function') {
+          window.renderGoalsScreen();
+        } else {
+          renderSanctuaryGoals();
+        }
       };
     });
   }
@@ -629,6 +648,7 @@
       renderSanctuarySettings();
     },
     render: renderSanctuaryV3,
+    renderSanctuaryGoals: renderSanctuaryGoals,
     renderRadar: renderSanctuaryComm,
     toggleRadarCollapse: toggleRadarCollapse,
     setCalMode: function(m) {

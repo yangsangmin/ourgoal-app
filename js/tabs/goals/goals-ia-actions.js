@@ -45,7 +45,10 @@
     if(!container) return;
     var goals = L.state.profile.goals || [];
     var totalGoals = goals.length;
-    var doneGoals = goals.filter(function(g){ return g.progress === 100 || g.status === 'completed'; }).length;
+    var doneGoals = goals.filter(function(g){
+      var pct = (typeof L.goalAchievement === 'function') ? L.goalAchievement(g) : (g.progress || 0);
+      return pct === 100 || g.progress === 100 || g.status === 'completed';
+    }).length;
     var overallRate = totalGoals > 0 ? Math.round((doneGoals / totalGoals) * 100) : 0;
     var periodLabels = { 'week':'주간', 'month':'월간', 'year':'연간' };
 
@@ -59,8 +62,8 @@
         '<div class="goal-progress-fill" style="width:' + overallRate + '%;"></div>' +
       '</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.8rem;">' +
-        '<div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;">🎯 진행 중: ' + (totalGoals - doneGoals) + '개</div>' +
-        '<div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;">🏆 완주: ' + doneGoals + '개</div>' +
+        '<div style="padding:8px;background:var(--card2, var(--surface));border:1px solid var(--rule);border-radius:8px;color:var(--ink);">🎯 진행 중: ' + (totalGoals - doneGoals) + '개</div>' +
+        '<div style="padding:8px;background:var(--card2, var(--surface));border:1px solid var(--rule);border-radius:8px;color:var(--ink);">🏆 완주: ' + doneGoals + '개</div>' +
       '</div>' +
     '</div>';
   }
@@ -76,19 +79,25 @@
       id: 'g_' + Date.now(),
       title: title || '새로운 템플릿 목표',
       category: category || '학습/성장',
+      topic: category || '학습/성장',
+      icon: '🎯',
+      visibility: 'private',
       status: 'active',
       progress: 0,
       createdAt: new Date().toISOString(),
       dueDate: d30,
       milestones: [
-        { id: 'm_' + Date.now() + '_1', title: '1단계 시작하기 (기초 세팅)', status: 'doing', dueDate: d14 },
-        { id: 'm_' + Date.now() + '_2', title: '2단계 꾸준히 실천하기 (습관화)', status: 'todo', dueDate: d30 }
+        { id: 'm_' + Date.now() + '_1', title: '1단계 시작하기 (기초 세팅)', status: 'doing', done: false, dueDate: d14, tasks: [] },
+        { id: 'm_' + Date.now() + '_2', title: '2단계 꾸준히 실천하기 (습관화)', status: 'todo', done: false, dueDate: d30, tasks: [] }
       ]
     };
     if(!L.state.profile.goals) L.state.profile.goals = [];
     L.state.profile.goals.unshift(newGoal);
     L.state.activeGoalId = newGoal.id;
     if(!L.state.profile.settings) L.state.profile.settings = {};
+    if(Array.isArray(L.state.profile.settings.goalOrder)){
+      L.state.profile.settings.goalOrder.unshift(newGoal.id);
+    }
     if(!Array.isArray(L.state.profile.settings.customSchedules)) L.state.profile.settings.customSchedules = [];
     L.state.profile.settings.customSchedules.push({
       id: 'sched_' + newGoal.milestones[0].id,

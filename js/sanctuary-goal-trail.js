@@ -23,8 +23,11 @@
       var msList = activeGoal.milestones || [];
       var totalMs = msList.length;
       var doneMs = msList.filter(function(m) { return m.status === 'done' || m.done; }).length;
-      var pct = totalMs > 0 ? Math.round((doneMs / totalMs) * 100) : (activeGoal.progress || 0);
+      var pct = (typeof window.goalAchievement === 'function')
+        ? window.goalAchievement(activeGoal)
+        : (totalMs > 0 ? Math.round((doneMs / totalMs) * 100) : (activeGoal.progress || 0));
       var ddayText = activeGoal.dueDate ? (window.dDay ? window.dDay(activeGoal.dueDate) : 'D-day') : '';
+      var isTrailCollapsed = !!(window.state && window.state.trailCollapsed);
 
       // 마일스톤 노드 리스트 생성 (정상이 상단, 시작이 하단)
       var nodesHtml = '';
@@ -77,14 +80,17 @@
           '<div class="m-title-col">' +
             '<span class="m-badge">등반 로드맵 (Mountain Trail)</span>' +
             '<h3 class="m-goal-title">' + T.escapeHtml(activeGoal.title) + '</h3>' +
-            /* [#TASK-ES-462] 목표 상세 서랍(#goalDetailDrawer · index.html openGoalDetailDrawer — 진척 막대·마일스톤 체크)을 부르는 곳이 없었다 → 트레일 머리에 「상세」 단추. 트레일 노드 누름 동작은 그대로 */
-            '<button type="button" class="btn btn-ghost btn-sm" id="sGoalDetailBtn" title="누르면: 진척도와 마일스톤 체크 목록이 오른쪽 서랍으로 열려요" data-goalid="' + T.escapeHtml(String(activeGoal.id)) + '" onclick="window.openGoalDetailDrawer(this.dataset.goalid);" style="align-self:flex-start;margin-top:6px;min-height:44px;padding:0 12px;font-size:0.8125rem;font-weight:700;border-radius:10px;">📋 상세 보기</button>' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
+              /* [#TASK-ES-462] 목표 상세 서랍(#goalDetailDrawer · index.html openGoalDetailDrawer — 진척 막대·마일스톤 체크)을 부르는 곳이 없었다 → 트레일 머리에 「상세」 단추. 트레일 노드 누름 동작은 그대로 */
+              '<button type="button" class="btn btn-ghost btn-sm" id="sGoalDetailBtn" title="누르면: 진척도와 마일스톤 체크 목록이 오른쪽 서랍으로 열려요" data-goalid="' + T.escapeHtml(String(activeGoal.id)) + '" onclick="window.openGoalDetailDrawer(this.dataset.goalid);" style="min-height:44px;padding:0 12px;font-size:0.8125rem;font-weight:700;border-radius:10px;">📋 상세 보기</button>' +
+              '<span class="trail-collapse-chip" id="sTrailCollapseChip" role="button" tabindex="0" title="등반 로드맵 접기/펼치기" onclick="event.stopPropagation(); if(!window.state) window.state={}; window.state.trailCollapsed = !window.state.trailCollapsed; if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.renderSanctuaryGoals();" style="display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 10px;font-size:0.78rem;font-weight:700;border-radius:10px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;">' + (isTrailCollapsed ? '▼ 트레일 펼치기 (' + doneMs + '/' + totalMs + ')' : '▲ 트레일 접기') + '</span>' +
+            '</div>' +
           '</div>' +
           '<div class="m-summit-badge">' +
-            '<span>' + (pct >= 100 ? '🎉 정상 정복 완료!' : ('정상까지 ' + (100 - pct) + '% 남음 🏔️')) + '</span>' +
+            '<span>' + (pct >= 100 ? '🎉 정상 정복 완료!' : ('정상까지 ' + (100 - pct) + '% 남음 🏔️')) + (ddayText ? ' · ' + ddayText : '') + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="mountain-trail-path">' +
+        '<div class="mountain-trail-path" style="' + (isTrailCollapsed ? 'display:none;' : '') + '">' +
           nodesHtml +
         '</div>' +
       '</div>';
@@ -114,12 +120,15 @@
 
       var total = g.milestones.length;
       var done = g.milestones.filter(function(m) { return m.status === 'done' || m.done; }).length;
-      g.progress = total > 0 ? Math.round((done / total) * 100) : 0;
+      g.progress = (typeof window.goalAchievement === 'function')
+        ? window.goalAchievement(g)
+        : (total > 0 ? Math.round((done / total) * 100) : 0);
 
       if (window.saveProfile) await window.saveProfile();
       if (window.triggerHaptic) window.triggerHaptic(15);
       toast('마일스톤 상태가 변경되었습니다! ✨ (' + (ms.status === 'done' ? '완료' : '진행') + ')');
-      T.renderSanctuaryGoals();
+      if (typeof window.renderGoalsScreen === 'function') window.renderGoalsScreen();
+      else T.renderSanctuaryGoals();
     },
     toggleTask: async function(goalId, msId, taskId) {
       var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
@@ -131,10 +140,22 @@
       if (!t) return;
 
       t.done = !t.done;
+      if (ms.tasks && ms.tasks.length) {
+        var allTasksDone = ms.tasks.every(function(tk) { return !!tk.done; });
+        ms.status = allTasksDone ? 'done' : (ms.status === 'done' ? 'todo' : (ms.status || 'doing'));
+        ms.done = (ms.status === 'done');
+      }
+      var total = (g.milestones || []).length;
+      var done = (g.milestones || []).filter(function(m) { return m.status === 'done' || m.done; }).length;
+      g.progress = (typeof window.goalAchievement === 'function')
+        ? window.goalAchievement(g)
+        : (total > 0 ? Math.round((done / total) * 100) : 0);
+
       if (window.saveProfile) await window.saveProfile();
       if (window.triggerHaptic) window.triggerHaptic(10);
       toast('할 일을 ' + (t.done ? '완료했습니다! (+5P)' : '미완료로 변경했습니다.'));
-      T.renderSanctuaryGoals();
+      if (typeof window.renderGoalsScreen === 'function') window.renderGoalsScreen();
+      else T.renderSanctuaryGoals();
     },
     openMilestoneCheckin: function(msTitle) {
       if (typeof setTab === 'function') setTab('home');
@@ -153,12 +174,14 @@
         title: '10km 하프마라톤 4주 완주 🏃',
         topic: '운동/건강',
         theme: 'workout',
+        visibility: 'private',
+        icon: '🏃',
         progress: 25,
         dueDate: T.getTodayStr(),
         milestones: [
-          { id: 'ms_t1', title: '5km 논스톱 달리기', status: 'done', done: true, dueDate: T.getTodayStr() },
-          { id: 'ms_t2', title: '10km 지속 페이스 5:30 달성', status: 'doing', done: false, dueDate: T.getTodayStr() },
-          { id: 'ms_t3', title: '하프코스 21.0975km 완주', status: 'todo', done: false, dueDate: T.getTodayStr() }
+          { id: 'ms_t1', title: '5km 논스톱 달리기', status: 'done', done: true, dueDate: T.getTodayStr(), tasks: [] },
+          { id: 'ms_t2', title: '10km 지속 페이스 5:30 달성', status: 'doing', done: false, dueDate: T.getTodayStr(), tasks: [] },
+          { id: 'ms_t3', title: '하프코스 21.0975km 완주', status: 'todo', done: false, dueDate: T.getTodayStr(), tasks: [] }
         ],
         tasks: [
           { id: 'tk_t1', title: '카본 러닝화 점검', done: true },
@@ -171,13 +194,17 @@
       if (!Array.isArray(window.state.profile.goals)) window.state.profile.goals = [];
 
       window.state.profile.goals.unshift(routine);
+      if (window.state.profile.settings && Array.isArray(window.state.profile.settings.goalOrder)) {
+        window.state.profile.settings.goalOrder.unshift(routine.id);
+      }
       T.engine.activeGoalId = routine.id;
       window.state.activeGoalId = routine.id;
 
       if (window.saveProfile) await window.saveProfile();
       if (window.triggerHaptic) window.triggerHaptic(20);
       toast('⚡ [10km 하프마라톤 완주] 루틴이 내 목표에 1초 만에 담겼습니다! 🎉');
-      T.renderSanctuaryGoals();
+      if (typeof window.renderGoalsScreen === 'function') window.renderGoalsScreen();
+      else T.renderSanctuaryGoals();
     },
   };
 

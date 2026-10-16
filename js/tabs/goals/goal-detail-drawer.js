@@ -23,24 +23,26 @@
     var drawer = document.getElementById('goalDetailDrawer');
     var titleEl = document.getElementById('goalDrawerTitle');
     var bodyEl = document.getElementById('goalDrawerBody');
+    var pct = (typeof L.goalAchievement === 'function') ? L.goalAchievement(g) : (Number(g.progress) || 0);
+    g.progress = pct;
     if(titleEl) titleEl.textContent = g.title + ' 🎯';
     if(bodyEl){
       var msHtml = '';
       if(g.milestones && g.milestones.length > 0){
         msHtml = '<div style="margin-bottom:14px;"><h4 style="font-size:0.9rem;margin-bottom:8px;color:var(--ink);">핵심 마일스톤</h4>' +
           g.milestones.map(function(m){
-            var isDone = (m.status === 'done');
-            return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--rule);">' +
-              '<span style="cursor:pointer;" onclick="toggleMilestoneInDrawer(\''+g.id+'\',\''+m.id+'\')">' + (isDone ? '✅' : '⬜') + '</span>' +
-              '<span style="font-size:0.85rem;' + (isDone ? 'text-decoration:line-through;color:var(--ink-soft);' : 'color:var(--ink);') + '">' + L.escapeHtml(m.title) + '</span>' +
+            var isDone = (m.status === 'done' || m.done);
+            return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:6px;background:var(--card2, var(--surface));border:1px solid var(--rule);border-radius:10px;">' +
+              '<span style="cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;" onclick="toggleMilestoneInDrawer(\''+g.id+'\',\''+m.id+'\')">' + (isDone ? '✅' : '⬜') + '</span>' +
+              '<span style="font-size:0.85rem;font-weight:600;' + (isDone ? 'text-decoration:line-through;color:var(--ink-soft);' : 'color:var(--ink);') + '">' + L.escapeHtml(m.title) + '</span>' +
             '</div>';
           }).join('') + '</div>';
       }
-      var progHtml = '<div style="margin-bottom:14px;"><div style="font-size:0.82rem;color:var(--ink-soft);margin-bottom:4px;">목표 진척도: ' + (g.progress || 0) + '%</div>' +
-        '<div class="goal-progress-track"><div class="goal-progress-fill" style="width:' + (g.progress || 0) + '%;"></div></div></div>';
+      var progHtml = '<div style="margin-bottom:14px;padding:12px;background:var(--card2, var(--surface));border:1px solid var(--rule);border-radius:12px;"><div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:6px;"><span>목표 진척도</span><span style="color:var(--brand);">' + pct + '%</span></div>' +
+        '<div class="goal-progress-track"><div class="goal-progress-fill" style="width:' + pct + '%;"></div></div></div>';
       bodyEl.innerHTML = progHtml + msHtml +
         '<div style="margin-top:16px;display:flex;gap:8px;">' +
-          '<button type="button" class="btn btn-primary btn-sm" onclick="closeGoalDetailDrawer()" style="flex:1;min-height:44px;">확인</button>' +
+          '<button type="button" class="btn btn-primary btn-sm" onclick="closeGoalDetailDrawer()" style="flex:1;min-height:44px;border-radius:12px;font-weight:700;">확인</button>' +
         '</div>';
     }
     if(drawer) drawer.classList.add('open');
@@ -58,8 +60,11 @@
     if(!m) return;
     L.triggerHapticFeedback(12);
     m.status = (m.status === 'done' ? 'todo' : 'done');
-    var doneCount = g.milestones.filter(function(x){ return x.status === 'done'; }).length;
-    g.progress = Math.round((doneCount / g.milestones.length) * 100);
+    m.done = (m.status === 'done');
+    var doneCount = g.milestones.filter(function(x){ return x.status === 'done' || x.done; }).length;
+    g.progress = (typeof L.goalAchievement === 'function')
+      ? L.goalAchievement(g)
+      : Math.round((doneCount / g.milestones.length) * 100);
     openGoalDetailDrawer(goalId);
     if(typeof L.dispatchFullViewPropagation === 'function') L.dispatchFullViewPropagation();
     L.saveProfile().catch(function(e){ console.warn('[TASK-ES-462] 마일스톤 저장 실패', e); }); /* [#TASK-ES-462] 서랍 토글은 메모리만 바꾸고 저장하지 않았다 → 성소 트레일 토글과 같은 saveProfile(서버 goals upsert + 기기 사본) */

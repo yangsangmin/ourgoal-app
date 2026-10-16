@@ -17025,3 +17025,196 @@ html[data-theme="minimal-dark"] #levelBadgeRow .level-badge {
   cursor: pointer;
   transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+/* [PLAN-OURGOAL-GOALS-UI-4022560a] 목표 탭 통합 요약 바 · 트레일 접기 칩 · 모바일 헤더 반응형 · 마일스톤 슬림화 */
+#screen-goals .goal-result-row.goal-unified-summary-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1.5px solid var(--rule);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+#screen-goals .goal-summary-metrics {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#screen-goals .goal-summary-pct-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--brand);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+
+#screen-goals .goal-summary-dday-badge,
+#screen-goals .goal-summary-pred-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--card2, var(--surface));
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+}
+
+#screen-goals .goal-summary-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+#screen-goals .trail-collapse-chip {
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+#screen-goals .trail-collapse-chip:active {
+  transform: scale(0.96);
+}
+
+#screen-goals .ms-row .ms-head {
+  padding: 10px 12px;
+  min-height: 48px;
+}
+
+#screen-goals .ms-status-btn,
+#screen-goals .task-check {
+  min-width: 36px;
+  min-height: 36px;
+}
+
+@media (max-width: 420px) {
+  #screen-goals .goal-head-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  #screen-goals .goal-head-main {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  #screen-goals .goal-head-actions {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+/* [PLAN-OURGOAL-GOALS-UI-4022560a] 4대 Clean & Cute 테마(#sanctuaryGoalsView · 서브탭 · 트레일 카드 · 목표 알약) 완벽 연동 */
+html[data-theme="apple-white"] #sanctuaryGoalsView,
+html[data-theme="notion-warm"] #sanctuaryGoalsView,
+html[data-theme="pomodoro-pastel"] #sanctuaryGoalsView,
+html[data-theme="minimal-dark"] #sanctuaryGoalsView {
+  display: block;
+}
+
+#screen-goals .goals-sticky-subnav {
+  background: var(--bg) !important;
+  border-bottom: 1px solid var(--rule) !important;
+}
+
+#screen-goals .goals-subtab-chip {
+  flex-shrink: 0 !important;
+  background: var(--card) !important;
+  border: 1px solid var(--rule) !important;
+  color: var(--ink-soft) !important;
+}
+
+#screen-goals .goals-subtab-chip.active {
+  background: var(--brand) !important;
+  border-color: var(--brand) !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.22) !important;
+}
+
+html[data-theme="apple-white"] .mountain-trail-card,
+html[data-theme="notion-warm"] .mountain-trail-card,
+html[data-theme="pomodoro-pastel"] .mountain-trail-card,
+html[data-theme="minimal-dark"] .mountain-trail-card {
+  background: var(--card) !important;
+  border: 1.5px solid var(--rule) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+}
+
+html[data-theme="apple-white"] .m-goal-title,
+html[data-theme="notion-warm"] .m-goal-title,
+html[data-theme="pomodoro-pastel"] .m-goal-title,
+html[data-theme="minimal-dark"] .m-goal-title,
+html[data-theme="apple-white"] .trail-node-title,
+html[data-theme="notion-warm"] .trail-node-title,
+html[data-theme="pomodoro-pastel"] .trail-node-title,
+html[data-theme="minimal-dark"] .trail-node-title {
+  color: var(--ink) !important;
+}
+
+html[data-theme="apple-white"] .trail-node-sub,
+html[data-theme="notion-warm"] .trail-node-sub,
+html[data-theme="pomodoro-pastel"] .trail-node-sub,
+html[data-theme="minimal-dark"] .trail-node-sub {
+  color: var(--ink-soft) !important;
+}
+
+html[data-theme="apple-white"] .trail-node,
+html[data-theme="notion-warm"] .trail-node,
+html[data-theme="pomodoro-pastel"] .trail-node,
+html[data-theme="minimal-dark"] .trail-node {
+  background: var(--card2, var(--surface)) !important;
+  border: 1px solid var(--rule) !important;
+}
+
+html[data-theme="apple-white"] .m-badge,
+html[data-theme="notion-warm"] .m-badge,
+html[data-theme="pomodoro-pastel"] .m-badge,
+html[data-theme="minimal-dark"] .m-badge,
+html[data-theme="apple-white"] .m-summit-badge,
+html[data-theme="notion-warm"] .m-summit-badge,
+html[data-theme="pomodoro-pastel"] .m-summit-badge,
+html[data-theme="minimal-dark"] .m-summit-badge {
+  background: var(--card2, var(--surface)) !important;
+  border: 1px solid var(--rule) !important;
+  color: var(--brand) !important;
+}
+
+html[data-theme="apple-white"] .s-goal-pill,
+html[data-theme="notion-warm"] .s-goal-pill,
+html[data-theme="pomodoro-pastel"] .s-goal-pill,
+html[data-theme="minimal-dark"] .s-goal-pill {
+  background: var(--card) !important;
+  border: 1px solid var(--rule) !important;
+  color: var(--ink-soft) !important;
+}
+
+html[data-theme="apple-white"] .s-goal-pill.active,
+html[data-theme="notion-warm"] .s-goal-pill.active,
+html[data-theme="pomodoro-pastel"] .s-goal-pill.active,
+html[data-theme="minimal-dark"] .s-goal-pill.active {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+  font-weight: 800 !important;
+}
+
+#screen-goals .ms-row.selected {
+  box-shadow: inset 0 0 0 1.5px var(--brand);
+}
+
+
