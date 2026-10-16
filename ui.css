@@ -5525,7 +5525,15 @@ html[data-theme="urban-city"] #appShell {
 [data-theme="focus-sanctuary"] #screen-home > #todayGlancePill,
 [data-theme="black"] #screen-home > #todayGlancePill,
 [data-theme="white"] #screen-home > #todayGlancePill,
-[data-theme="urban-city"] #screen-home > #todayGlancePill {
+[data-theme="urban-city"] #screen-home > #todayGlancePill,
+[data-theme="apple-white"] .home-head-row,
+[data-theme="minimal-dark"] .home-head-row,
+[data-theme="notion-warm"] .home-head-row,
+[data-theme="pomodoro-pastel"] .home-head-row,
+[data-theme="apple-white"] #captureLiveMeta,
+[data-theme="minimal-dark"] #captureLiveMeta,
+[data-theme="notion-warm"] #captureLiveMeta,
+[data-theme="pomodoro-pastel"] #captureLiveMeta {
   display: none !important;
 }
 /* [#TASK-ES-440] #todayMissionCard·#todayGlancePill 은 홈 첫 화면(#screen-home 바로 아래)에서만 숨긴다 — 홈 원스크린(js/tabs/home/sub-onescreen.js)이 「오늘 목표」 시트로 옮긴 뒤에는 보이고, 보이기/숨기기는 홈 구성 스위치(js/customize.js)가 정한다 */
@@ -6046,7 +6054,11 @@ html[data-theme="urban-city"] #appShell {
 html[data-theme="focus-sanctuary"] .topbar,
 html[data-theme="black"] .topbar,
 html[data-theme="white"] .topbar,
-html[data-theme="urban-city"] .topbar {
+html[data-theme="urban-city"] .topbar,
+html[data-theme="apple-white"] .topbar,
+html[data-theme="minimal-dark"] .topbar,
+html[data-theme="notion-warm"] .topbar,
+html[data-theme="pomodoro-pastel"] .topbar {
   display: none !important;
 }
 
@@ -16719,7 +16731,7 @@ small {
   #screen-home.home-onescreen .home-hero-avatar-wrap .avatar-placeholder { font-size: 1.6rem !important; }
   #screen-home.home-onescreen .hero-avatar-bubble { font-size: 0.7rem !important; padding: 2px 6px !important; margin-bottom: 2px !important; }
   #screen-home.home-onescreen .hero-avatar-exp-text { font-size: 0.68rem !important; margin-top: 1px !important; }
-  #screen-home.home-onescreen #levelBadgeRow { display: none !important; }
+  #screen-home.home-onescreen #levelBadgeRow { display: block !important; }
   #screen-home.home-onescreen #captureCardBox { padding: 4px 8px !important; margin-bottom: 2px !important; }
   #screen-home.home-onescreen #captureInput { min-height: 36px !important; padding: 4px 6px !important; font-size: 0.8rem !important; }
   #screen-home.home-onescreen .capture-title { margin-bottom: 1px !important; font-size: 0.82rem !important; }
@@ -16746,3 +16758,798 @@ html[data-theme="urban-city"] #captureInput::placeholder {
   color: var(--ink-soft) !important;
   opacity: 1 !important;
 }
+
+
+/* [T-P3-07] Clean & Cute 4-Theme Tokens & 6-Tab Slim Layout */
+:root[data-theme="apple-white"],
+html[data-theme="apple-white"] {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --card-soft: #eff2f9;
+  --ink: #171923;
+  --ink-soft: #5a6275;
+  --ink-faint: #8c95a8;
+  --brand: #3b82f6;
+  --brand-soft: rgba(59, 130, 246, 0.12);
+  --rule: rgba(23, 25, 35, 0.08);
+  --meta-theme-color: #f6f7fb;
+}
+
+:root[data-theme="minimal-dark"],
+html[data-theme="minimal-dark"] {
+  --bg: #0f131c;
+  --card: #181e2c;
+  --card-soft: #222a3d;
+  --ink: #f8fafc;
+  --ink-soft: #cbd5e1;
+  --ink-faint: #64748b;
+  --brand: #38bdf8;
+  --brand-soft: rgba(56, 189, 248, 0.15);
+  --rule: rgba(255, 255, 255, 0.09);
+  --meta-theme-color: #0f131c;
+}
+
+:root[data-theme="notion-warm"],
+html[data-theme="notion-warm"] {
+  --bg: #f7f5f0;
+  --card: #fffdf9;
+  --card-soft: #efeae1;
+  --ink: #2c2825;
+  --ink-soft: #69625c;
+  --ink-faint: #9c948c;
+  --brand: #e06c4c;
+  --brand-soft: rgba(224, 108, 76, 0.14);
+  --rule: rgba(44, 40, 37, 0.09);
+  --meta-theme-color: #f7f5f0;
+}
+
+:root[data-theme="pomodoro-pastel"],
+html[data-theme="pomodoro-pastel"] {
+  --bg: #fff6f8;
+  --card: #ffffff;
+  --card-soft: #ffe8ee;
+  --ink: #332228;
+  --ink-soft: #75535f;
+  --ink-faint: #a68591;
+  --brand: #ff6b8b;
+  --brand-soft: rgba(255, 107, 139, 0.15);
+  --rule: rgba(255, 107, 139, 0.16);
+  --meta-theme-color: #fff6f8;
+}
+
+/* 4대 Clean & Cute 테마 공통 레이아웃 & 표면(Surface) 동기화 */
+html[data-theme="apple-white"] body,
+html[data-theme="apple-white"] .app,
+html[data-theme="apple-white"] #appShell,
+html[data-theme="notion-warm"] body,
+html[data-theme="notion-warm"] .app,
+html[data-theme="notion-warm"] #appShell,
+html[data-theme="pomodoro-pastel"] body,
+html[data-theme="pomodoro-pastel"] .app,
+html[data-theme="pomodoro-pastel"] #appShell,
+html[data-theme="minimal-dark"] body,
+html[data-theme="minimal-dark"] .app,
+html[data-theme="minimal-dark"] #appShell {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+html[data-theme="apple-white"] .topbar,
+html[data-theme="minimal-dark"] .topbar,
+html[data-theme="notion-warm"] .topbar,
+html[data-theme="pomodoro-pastel"] .topbar {
+  display: none;
+}
+
+html[data-theme="apple-white"] #sanctuaryTopBar,
+html[data-theme="apple-white"] .sanctuary-top-bar,
+html[data-theme="notion-warm"] #sanctuaryTopBar,
+html[data-theme="notion-warm"] .sanctuary-top-bar,
+html[data-theme="pomodoro-pastel"] #sanctuaryTopBar,
+html[data-theme="pomodoro-pastel"] .sanctuary-top-bar,
+html[data-theme="minimal-dark"] #sanctuaryTopBar,
+html[data-theme="minimal-dark"] .sanctuary-top-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 2px 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  border-bottom: none !important;
+  color: var(--ink) !important;
+}
+
+html[data-theme="apple-white"] .sanctuary-top-bar .sanctuary-app-title,
+html[data-theme="notion-warm"] .sanctuary-top-bar .sanctuary-app-title,
+html[data-theme="pomodoro-pastel"] .sanctuary-top-bar .sanctuary-app-title,
+html[data-theme="minimal-dark"] .sanctuary-top-bar .sanctuary-app-title,
+html[data-theme="apple-white"] #screen-home #captureCardBox .capture-title,
+html[data-theme="notion-warm"] #screen-home #captureCardBox .capture-title,
+html[data-theme="pomodoro-pastel"] #screen-home #captureCardBox .capture-title,
+html[data-theme="minimal-dark"] #screen-home #captureCardBox .capture-title,
+html[data-theme="apple-white"] #captureCardBox .capture-title,
+html[data-theme="notion-warm"] #captureCardBox .capture-title,
+html[data-theme="pomodoro-pastel"] #captureCardBox .capture-title,
+html[data-theme="minimal-dark"] #captureCardBox .capture-title,
+html[data-theme="apple-white"] .sanctuary-title-text,
+html[data-theme="notion-warm"] .sanctuary-title-text,
+html[data-theme="pomodoro-pastel"] .sanctuary-title-text,
+html[data-theme="minimal-dark"] .sanctuary-title-text {
+  color: var(--ink) !important;
+}
+
+html[data-theme="apple-white"] .card,
+html[data-theme="apple-white"] .screen .card,
+html[data-theme="apple-white"] #screen-home #captureCardBox,
+html[data-theme="apple-white"] #captureCardBox,
+html[data-theme="notion-warm"] .card,
+html[data-theme="notion-warm"] .screen .card,
+html[data-theme="notion-warm"] #screen-home #captureCardBox,
+html[data-theme="notion-warm"] #captureCardBox,
+html[data-theme="pomodoro-pastel"] .card,
+html[data-theme="pomodoro-pastel"] .screen .card,
+html[data-theme="pomodoro-pastel"] #screen-home #captureCardBox,
+html[data-theme="pomodoro-pastel"] #captureCardBox,
+html[data-theme="minimal-dark"] .card,
+html[data-theme="minimal-dark"] .screen .card,
+html[data-theme="minimal-dark"] #screen-home #captureCardBox,
+html[data-theme="minimal-dark"] #captureCardBox {
+  background: var(--card) !important;
+  border: 1.5px solid var(--rule) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+  color: var(--ink) !important;
+}
+
+html[data-theme="apple-white"] .capture-ta-wrap,
+html[data-theme="notion-warm"] .capture-ta-wrap,
+html[data-theme="pomodoro-pastel"] .capture-ta-wrap,
+html[data-theme="minimal-dark"] .capture-ta-wrap {
+  background: var(--card-soft) !important;
+  border: 1.5px solid var(--brand) !important;
+  box-shadow: 0 0 0 3px var(--brand-soft) !important;
+}
+
+html[data-theme="apple-white"] #screen-home #captureInput,
+html[data-theme="apple-white"] #captureInput,
+html[data-theme="notion-warm"] #screen-home #captureInput,
+html[data-theme="notion-warm"] #captureInput,
+html[data-theme="pomodoro-pastel"] #screen-home #captureInput,
+html[data-theme="pomodoro-pastel"] #captureInput,
+html[data-theme="minimal-dark"] #screen-home #captureInput,
+html[data-theme="minimal-dark"] #captureInput {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--ink) !important;
+}
+
+html[data-theme="apple-white"] #captureInput::placeholder,
+html[data-theme="notion-warm"] #captureInput::placeholder,
+html[data-theme="pomodoro-pastel"] #captureInput::placeholder,
+html[data-theme="minimal-dark"] #captureInput::placeholder {
+  color: var(--ink-faint) !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="apple-white"] .bottomnav,
+html[data-theme="apple-white"] .bottomnav-inner,
+html[data-theme="notion-warm"] .bottomnav,
+html[data-theme="notion-warm"] .bottomnav-inner,
+html[data-theme="pomodoro-pastel"] .bottomnav,
+html[data-theme="pomodoro-pastel"] .bottomnav-inner,
+html[data-theme="minimal-dark"] .bottomnav,
+html[data-theme="minimal-dark"] .bottomnav-inner {
+  background: var(--card) !important;
+  border-top: 1px solid var(--rule) !important;
+}
+
+html[data-theme="apple-white"] .navbtn,
+html[data-theme="notion-warm"] .navbtn,
+html[data-theme="pomodoro-pastel"] .navbtn,
+html[data-theme="minimal-dark"] .navbtn {
+  color: var(--ink-faint) !important;
+}
+
+html[data-theme="apple-white"] .navbtn.active,
+html[data-theme="notion-warm"] .navbtn.active,
+html[data-theme="pomodoro-pastel"] .navbtn.active,
+html[data-theme="minimal-dark"] .navbtn.active {
+  color: var(--brand) !important;
+  font-weight: 800 !important;
+}
+
+html[data-theme="apple-white"] .home-compass-btn,
+html[data-theme="notion-warm"] .home-compass-btn,
+html[data-theme="pomodoro-pastel"] .home-compass-btn,
+html[data-theme="minimal-dark"] .home-compass-btn {
+  background: var(--card) !important;
+  border: 1px solid var(--rule) !important;
+  color: var(--ink) !important;
+}
+
+/* [상민님 피드백 반영] [3번이미지] 아바타+경험치 박스창(#levelBadgeRow) 보존 & [2번이미지] 상단 원형 아바타(#homeHeroAvatar)·하단 게이지(#homeHeroExpBar) 제거 */
+#screen-home #levelBadgeRow,
+html[data-theme="focus-sanctuary"] #screen-home #levelBadgeRow,
+html[data-theme="black"] #screen-home #levelBadgeRow,
+html[data-theme="white"] #screen-home #levelBadgeRow,
+html[data-theme="urban-city"] #screen-home #levelBadgeRow,
+html[data-theme="apple-white"] #screen-home #levelBadgeRow,
+html[data-theme="minimal-dark"] #screen-home #levelBadgeRow,
+html[data-theme="notion-warm"] #screen-home #levelBadgeRow,
+html[data-theme="pomodoro-pastel"] #screen-home #levelBadgeRow {
+  display: block !important;
+  order: 2 !important;
+}
+
+#homeHeroAvatar,
+.home-hero-avatar-wrap,
+#homeHeroExpBar,
+.hero-avatar-exp-bar,
+.hero-avatar-bubble::after {
+  display: none;
+}
+
+html[data-theme="apple-white"] .home-head-row,
+html[data-theme="minimal-dark"] .home-head-row,
+html[data-theme="notion-warm"] .home-head-row,
+html[data-theme="pomodoro-pastel"] .home-head-row,
+html[data-theme="apple-white"] #captureLiveMeta,
+html[data-theme="minimal-dark"] #captureLiveMeta,
+html[data-theme="notion-warm"] #captureLiveMeta,
+html[data-theme="pomodoro-pastel"] #captureLiveMeta {
+  display: none;
+}
+
+html[data-theme="apple-white"] #levelBadgeRow .level-badge,
+html[data-theme="notion-warm"] #levelBadgeRow .level-badge,
+html[data-theme="pomodoro-pastel"] #levelBadgeRow .level-badge,
+html[data-theme="minimal-dark"] #levelBadgeRow .level-badge {
+  background: var(--card) !important;
+  border: 1.5px solid var(--rule) !important;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06) !important;
+  color: var(--ink) !important;
+}
+
+.quest-checkbox-44 {
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  touch-action: manipulation;
+  user-select: none;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* [PLAN-OURGOAL-GOALS-UI-4022560a] 목표 탭 통합 요약 바 · 트레일 접기 칩 · 모바일 헤더 반응형 · 마일스톤 슬림화 */
+#screen-goals .goal-result-row.goal-unified-summary-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1.5px solid var(--rule);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+#screen-goals .goal-summary-metrics {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#screen-goals .goal-summary-pct-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--brand);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+
+#screen-goals .goal-summary-dday-badge,
+#screen-goals .goal-summary-pred-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--card2, var(--surface));
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+}
+
+#screen-goals .goal-summary-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+#screen-goals .trail-collapse-chip {
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+#screen-goals .trail-collapse-chip:active {
+  transform: scale(0.96);
+}
+
+#screen-goals .ms-row .ms-head {
+  padding: 10px 12px;
+  min-height: 48px;
+}
+
+#screen-goals .ms-status-btn,
+#screen-goals .task-check {
+  min-width: 36px;
+  min-height: 36px;
+}
+
+@media (max-width: 420px) {
+  #screen-goals .goal-head-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  #screen-goals .goal-head-main {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  #screen-goals .goal-head-actions {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+/* [PLAN-OURGOAL-GOALS-UI-4022560a] 4대 Clean & Cute 테마(#sanctuaryGoalsView · 서브탭 · 트레일 카드 · 목표 알약) 완벽 연동 */
+html[data-theme="apple-white"] #sanctuaryGoalsView,
+html[data-theme="notion-warm"] #sanctuaryGoalsView,
+html[data-theme="pomodoro-pastel"] #sanctuaryGoalsView,
+html[data-theme="minimal-dark"] #sanctuaryGoalsView {
+  display: block;
+}
+
+#screen-goals #goalsStickySubnav,
+#screen-goals .goals-sticky-subnav {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 2px !important;
+  padding: 2px 10px 0 !important;
+  margin-bottom: 10px !important;
+  overflow: visible !important;
+  background: var(--bg) !important;
+  border-bottom: 1.5px solid var(--rule) !important;
+}
+
+#screen-goals .goals-subtab-chip {
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  padding: 8px 2px 7px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2.5px solid transparent !important;
+  border-radius: 8px 8px 0 0 !important;
+  color: var(--ink-soft) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+}
+
+#screen-goals .goals-subtab-chip:hover {
+  color: var(--ink) !important;
+  background: rgba(16, 185, 129, 0.05) !important;
+}
+
+#screen-goals .goals-subtab-chip.active {
+  background: rgba(16, 185, 129, 0.09) !important;
+  border: none !important;
+  border-bottom: 2.5px solid var(--brand) !important;
+  color: var(--brand) !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="apple-white"] .mountain-trail-card,
+html[data-theme="notion-warm"] .mountain-trail-card,
+html[data-theme="pomodoro-pastel"] .mountain-trail-card,
+html[data-theme="minimal-dark"] .mountain-trail-card {
+  background: var(--card) !important;
+  border: 1.5px solid var(--rule) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+}
+
+html[data-theme="apple-white"] .m-goal-title,
+html[data-theme="notion-warm"] .m-goal-title,
+html[data-theme="pomodoro-pastel"] .m-goal-title,
+html[data-theme="minimal-dark"] .m-goal-title,
+html[data-theme="apple-white"] .trail-node-title,
+html[data-theme="notion-warm"] .trail-node-title,
+html[data-theme="pomodoro-pastel"] .trail-node-title,
+html[data-theme="minimal-dark"] .trail-node-title {
+  color: var(--ink) !important;
+}
+
+html[data-theme="apple-white"] .trail-node-sub,
+html[data-theme="notion-warm"] .trail-node-sub,
+html[data-theme="pomodoro-pastel"] .trail-node-sub,
+html[data-theme="minimal-dark"] .trail-node-sub {
+  color: var(--ink-soft) !important;
+}
+
+html[data-theme="apple-white"] .trail-node,
+html[data-theme="notion-warm"] .trail-node,
+html[data-theme="pomodoro-pastel"] .trail-node,
+html[data-theme="minimal-dark"] .trail-node {
+  background: var(--card2, var(--surface)) !important;
+  border: 1px solid var(--rule) !important;
+}
+
+html[data-theme="apple-white"] .m-badge,
+html[data-theme="notion-warm"] .m-badge,
+html[data-theme="pomodoro-pastel"] .m-badge,
+html[data-theme="minimal-dark"] .m-badge,
+html[data-theme="apple-white"] .m-summit-badge,
+html[data-theme="notion-warm"] .m-summit-badge,
+html[data-theme="pomodoro-pastel"] .m-summit-badge,
+html[data-theme="minimal-dark"] .m-summit-badge {
+  background: var(--card2, var(--surface)) !important;
+  border: 1px solid var(--rule) !important;
+  color: var(--brand) !important;
+}
+
+#screen-goals .s-goal-pills-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 8px !important;
+  margin-bottom: 10px !important;
+  background: var(--card2, var(--surface)) !important;
+  border: 1px solid var(--rule) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+#screen-goals .s-goal-pills-wrap.expanded {
+  flex-wrap: wrap !important;
+  overflow: visible !important;
+}
+
+#screen-goals .s-goal-pill,
+html[data-theme="apple-white"] .s-goal-pill,
+html[data-theme="notion-warm"] .s-goal-pill,
+html[data-theme="pomodoro-pastel"] .s-goal-pill,
+html[data-theme="minimal-dark"] .s-goal-pill {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 5px !important;
+  padding: 6px 8px !important;
+  border-radius: 9px !important;
+  background: var(--card) !important;
+  border: 1px solid var(--rule) !important;
+  color: var(--ink-soft) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+#screen-goals .s-goal-pills-wrap.expanded .s-goal-pill:not(.add) {
+  flex: 1 1 calc(50% - 4px) !important;
+}
+
+#screen-goals .s-goal-pill.add,
+html[data-theme="apple-white"] .s-goal-pill.add,
+html[data-theme="notion-warm"] .s-goal-pill.add,
+html[data-theme="pomodoro-pastel"] .s-goal-pill.add,
+html[data-theme="minimal-dark"] .s-goal-pill.add {
+  flex: 0 0 auto !important;
+  justify-content: center !important;
+  padding: 6px 9px !important;
+  font-weight: 700 !important;
+}
+
+#screen-goals .s-goal-pill.active,
+html[data-theme="apple-white"] .s-goal-pill.active,
+html[data-theme="notion-warm"] .s-goal-pill.active,
+html[data-theme="pomodoro-pastel"] .s-goal-pill.active,
+html[data-theme="minimal-dark"] .s-goal-pill.active {
+  background: var(--card) !important;
+  border: 1.5px solid var(--brand) !important;
+  border-left: 3.5px solid var(--brand) !important;
+  color: var(--ink) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.14) !important;
+}
+
+#screen-goals .s-goal-pill-title {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  color: inherit !important;
+}
+
+#screen-goals .s-goal-pill.active .s-goal-pill-title {
+  color: var(--ink) !important;
+}
+
+#screen-goals .s-goal-pill-pct {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+  background: rgba(148, 163, 184, 0.16);
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+
+#screen-goals .s-goal-pill.active .s-goal-pill-pct {
+  background: rgba(16, 185, 129, 0.16);
+  color: var(--brand);
+}
+
+#screen-goals .s-goal-pill-expand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1px dashed var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#screen-goals .s-goal-pill-expand:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+#screen-goals .ms-row.selected {
+  box-shadow: inset 0 0 0 1.5px var(--brand);
+}
+
+#screen-goals .format-toggle {
+  background: var(--card2, var(--surface)) !important;
+  border: 1px solid var(--rule) !important;
+  border-radius: 10px !important;
+  padding: 2px !important;
+}
+
+#screen-goals .format-toggle .format-opt {
+  border-radius: 8px !important;
+  color: var(--ink-soft) !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  padding: 5px 8px !important;
+}
+
+#screen-goals .format-toggle .format-opt.active {
+  background: var(--brand) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12) !important;
+}
+
+#screen-goals .goal-head-row h2 {
+  font-size: 1.02rem !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+}
+
+#screen-goals .ms-list {
+  border: 1px solid var(--rule) !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+}
+
+#screen-goals .btn-primary,
+#screen-goals .goal-fast-add-btn {
+  background: var(--brand) !important;
+  border-color: var(--brand) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   Part 1 (T-GOALS-PERSONAL-EDIT-DRAWER): 개인 목표 편집 모드 & 우측 상세 서랍 4테마 복구
+   ========================================================================== */
+.goal-detail-drawer {
+  background: var(--card, #ffffff) !important;
+  color: var(--ink, #0f172a) !important;
+  border-left: 1.5px solid var(--rule, #e2e8f0) !important;
+  box-shadow: -8px 0 32px rgba(15, 23, 42, 0.22) !important;
+}
+.goal-drawer-header {
+  background: var(--card2, var(--surface)) !important;
+  border-bottom: 1px solid var(--rule) !important;
+}
+
+#screen-goals .duedate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background: var(--card2, var(--surface));
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+#screen-goals .duedate-row.edit-mode-due {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+#screen-goals .duedate-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+#screen-goals .duedate-row-head .lbl {
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 0.82rem;
+}
+#screen-goals .duedate-row-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+#screen-goals .duedate-row input[type="datetime-local"],
+#screen-goals .duedate-row select {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--card);
+  min-height: 36px;
+}
+
+#screen-goals .s-goal-pill-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+#screen-goals .s-goal-pill-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--card2, var(--surface));
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+#screen-goals .s-goal-pill-nav-btn.disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+#screen-goals .ms-title-compact.edit-mode-input,
+#screen-goals .task-title-inline.edit-mode-input {
+  border: 1px solid var(--rule) !important;
+  border-radius: 7px !important;
+  background: var(--card) !important;
+  padding: 4px 8px !important;
+  color: var(--ink) !important;
+  text-decoration: none !important;
+}
+#screen-goals .ms-title-compact.edit-mode-input:focus,
+#screen-goals .task-title-inline.edit-mode-input:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.14) !important;
+}
+#screen-goals .ms-status.edit-locked,
+#screen-goals .task-check.edit-locked {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+}
+#screen-goals .ms-edit-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 2px 6px !important;
+  border-radius: 7px !important;
+  border: 1px solid var(--rule) !important;
+  background: var(--card) !important;
+  color: var(--ink) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+}
+#screen-goals .ms-edit-action-btn.danger {
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+#screen-goals span.badge,
+#goalTemplateEncyclopediaModal span.badge,
+#routineDetailModal span.badge,
+.modal span.badge,
+#modalBody span.badge {
+  width: auto !important;
+  height: auto !important;
+  min-width: max-content !important;
+  flex-direction: row !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+#screen-goals #sAddGoalBtn,
+#screen-goals .att-add-btn,
+#screen-goals #routineGoalsView .btn-sm {
+  min-width: 56px !important;
+  white-space: nowrap !important;
+}
+
+#screen-goals #routineGoalsView .btn-xs,
+#screen-goals #teamGoalsView .btn-sm {
+  min-width: 28px !important;
+}
+
+#screen-goals .tg-goal-switcher {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  overflow-x: visible !important;
+}
+
+#screen-goals #goalDetailPrivacyBadge {
+  min-height: 28px !important;
+}
+

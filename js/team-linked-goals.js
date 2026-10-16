@@ -302,32 +302,34 @@
     var participantsRows = participants.map(function(item){
       var isMe = item.isMe;
       var pActionsHtml = isMe ?
-        '<button class="btn btn-ghost tg-p-action-btn" data-gotolinkedgoal="' + item.linkedGoalId + '" type="button" style="border-color:var(--sage);color:var(--sage);">내 목표 ➔</button>' :
-        '<div class="tg-p-actions">' +
-          '<button class="btn btn-ghost tg-p-action-btn" data-tgpnudge="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="응원 찌르기" style="border-color:var(--gold);background:var(--gold-soft);color:var(--gold);">⚡ 찌르기</button>' +
-          '<button class="btn btn-ghost tg-p-action-btn" data-tgpcmt="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="댓글로 소통" style="border-color:var(--teal);background:rgba(20,184,166,0.1);color:var(--teal);">💬 댓글</button>' +
-          '<button class="btn btn-ghost tg-p-action-btn" data-tgpdm="' + g.id + ':' + tg.id + ':' + esc(item.name) + ':' + esc(item.avatar) + '" type="button" title="1:1 메시지" style="border-color:var(--brand);background:var(--red-soft);color:var(--brand-strong);">✉️ DM</button>' +
+        '<button class="btn btn-ghost tg-p-action-btn" data-gotolinkedgoal="' + item.linkedGoalId + '" type="button" style="border-color:var(--sage);color:var(--sage);white-space:nowrap;">내 목표 ➔</button>' :
+        '<div class="tg-p-actions" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;">' +
+          '<button class="btn btn-ghost tg-p-action-btn" data-tgpnudge="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="응원 찌르기" style="border-color:var(--gold);background:var(--gold-soft);color:var(--gold);white-space:nowrap;padding:3px 7px;font-size:.72rem;">⚡ 찌르기</button>' +
+          '<button class="btn btn-ghost tg-p-action-btn" data-tgpcmt="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="댓글로 소통" style="border-color:var(--teal);background:rgba(20,184,166,0.1);color:var(--teal);white-space:nowrap;padding:3px 7px;font-size:.72rem;">💬 댓글</button>' +
+          '<button class="btn btn-ghost tg-p-action-btn" data-tgpdm="' + g.id + ':' + tg.id + ':' + esc(item.name) + ':' + esc(item.avatar) + '" type="button" title="1:1 메시지" style="border-color:var(--brand);background:var(--red-soft);color:var(--brand-strong);white-space:nowrap;padding:3px 7px;font-size:.72rem;">✉️ DM</button>' +
         '</div>';
 
       var roleBadge = isMe ?
-        '<span class="tg-p-role-badge me">나</span>' :
-        (item.role ? '<span class="tg-p-role-badge peer">' + esc(item.role) + '</span>' : '');
+        '<span class="tg-p-role-badge me" style="white-space:nowrap;">나</span>' :
+        (item.role ? '<span class="tg-p-role-badge peer" style="white-space:nowrap;">' + esc(item.role) + '</span>' : '');
 
-      return '<div class="tg-participant-row">' +
-        '<div class="tg-p-left">' +
-          '<span class="tg-p-avatar">' + (item.avatar || '🏃‍♂️') + '</span>' +
-          '<div class="tg-p-meta">' +
-            '<b class="tg-p-name">' + esc(item.name) + '</b>' +
-            roleBadge +
-            '<span class="tg-p-divider">·</span>' +
-            '<span class="tg-p-status" title="마일스톤 ' + item.doneMs + '/' + item.totalMs + ' 완료">마일스톤 ' + item.doneMs + '/' + item.totalMs + ' 완료</span>' +
+      return '<div class="tg-participant-row" style="display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:8px 10px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;">' +
+          '<div class="tg-p-left" style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">' +
+            '<span class="tg-p-avatar" style="flex-shrink:0;">' + (item.avatar || '🏃‍♂️') + '</span>' +
+            '<div class="tg-p-meta" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-width:0;">' +
+              '<b class="tg-p-name" style="white-space:nowrap;">' + esc(item.name) + '</b>' +
+              roleBadge +
+              '<span class="tg-p-divider">·</span>' +
+              '<span class="tg-p-status" style="white-space:nowrap;" title="마일스톤 ' + item.doneMs + '/' + item.totalMs + ' 완료">마일스톤 ' + item.doneMs + '/' + item.totalMs + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="tg-p-progress" style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
+            '<span class="tg-p-pct" style="white-space:nowrap;font-weight:800;font-size:.78rem;">' + item.progressPct + '%</span>' +
+            '<div class="group-bar tg-p-bar" style="width:44px;height:5px;margin:0;"><span style="width:' + item.progressPct + '%;"></span></div>' +
           '</div>' +
         '</div>' +
-        '<div class="tg-p-right">' +
-          '<div class="tg-p-progress">' +
-            '<span class="tg-p-pct">' + item.progressPct + '%</span>' +
-            '<div class="group-bar tg-p-bar"><span style="width:' + item.progressPct + '%;"></span></div>' +
-          '</div>' +
+        '<div class="tg-p-right" style="display:flex;align-items:center;justify-content:flex-end;width:100%;">' +
           pActionsHtml +
         '</div>' +
       '</div>';

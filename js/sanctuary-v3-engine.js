@@ -162,8 +162,15 @@
     var slot = document.getElementById('sanctuaryGoalsView');
     if (!slot) return;
 
-    var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
-    if (!engine.activeGoalId || !goals.find(function(g) { return g.id === engine.activeGoalId; })) {
+    var rawGoals = ((window.state && window.state.profile && window.state.profile.goals) || []).filter(function(g) {
+      return !g.archivedAt && !g.teamLinked;
+    });
+    var goalOrder = (window.state && window.state.profile && window.state.profile.settings && window.state.profile.settings.goalOrder) || [];
+    var goals = (typeof window.sortGoalsByOrder === 'function') ? window.sortGoalsByOrder(rawGoals, goalOrder) : rawGoals;
+
+    if (window.state && window.state.activeGoalId && goals.find(function(g) { return g.id === window.state.activeGoalId; })) {
+      engine.activeGoalId = window.state.activeGoalId;
+    } else if (!engine.activeGoalId || !goals.find(function(g) { return g.id === engine.activeGoalId; })) {
       engine.activeGoalId = goals.length ? goals[0].id : null;
     }
     if (window.state) {
@@ -172,17 +179,35 @@
 
     var activeGoal = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0];
 
-    // 1-1. 상단 목표 알약 셀렉터 (목표가 0건이어도 추가 버튼 보존)
+    // 1-1. 상단 목표 알약 셀렉터 (각 목표 실시간 달성률 % 배지 표시 + 전체 펼침 토글 + 편집 모드 순서 이동 + 추가 버튼 보존)
+    var isEditMode = !!(window.state && window.state.goalEditMode);
+    var pillsExpanded = !!(window.state && window.state.goalPillsExpanded) || isEditMode;
     var pillsHtml = '';
     if (goals.length > 0) {
-      pillsHtml = '<div class="s-goal-pills-wrap">' +
-        goals.map(function(g) {
+      pillsHtml = '<div class="s-goal-pills-wrap' + (pillsExpanded ? ' expanded' : '') + (isEditMode ? ' edit-mode' : '') + '">' +
+        goals.map(function(g, gIdx) {
           var isCur = (g.id === engine.activeGoalId);
-          return '<button type="button" class="s-goal-pill ' + (isCur ? 'active' : '') + '" data-sgoalid="' + g.id + '">' +
-            escapeHtml(g.title) +
+          var isFirst = (gIdx === 0);
+          var isLast = (gIdx === goals.length - 1);
+          var gMs = g.milestones || [];
+          var gDone = gMs.filter(function(m) { return m.status === 'done' || m.completed; }).length;
+          var gPct = (typeof window.goalAchievement === 'function')
+            ? window.goalAchievement(g)
+            : (gMs.length > 0 ? Math.round((gDone / gMs.length) * 100) : (g.progress || 0));
+          var navBtns = (isEditMode && goals.length > 1)
+            ? '<span class="s-goal-pill-nav" onclick="event.stopPropagation();">' +
+                '<span role="button" tabindex="0" class="s-goal-pill-nav-btn' + (isFirst ? ' disabled' : '') + '" data-sgoalshiftleft="' + g.id + '" title="앞으로 이동">◀</span>' +
+                '<span role="button" tabindex="0" class="s-goal-pill-nav-btn' + (isLast ? ' disabled' : '') + '" data-sgoalshiftright="' + g.id + '" title="뒤로 이동">▶</span>' +
+              '</span>'
+            : '';
+          return '<button type="button" class="s-goal-pill ' + (isCur ? 'active' : '') + '" data-sgoalid="' + g.id + '" title="' + escapeHtml(g.title) + ' (' + gPct + '%)">' +
+            '<span class="s-goal-pill-title">' + (g.icon ? escapeHtml(g.icon) + ' ' : '') + escapeHtml(g.title) + '</span>' +
+            '<span class="s-goal-pill-pct">' + gPct + '%</span>' +
+            navBtns +
           '</button>';
         }).join('') +
-        '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표</button>' +
+        (!isEditMode && goals.length > 2 ? '<span class="s-goal-pill-expand" id="sToggleGoalPillsWrap" role="button" tabindex="0" onclick="event.stopPropagation(); if(!window.state) window.state={}; window.state.goalPillsExpanded = !window.state.goalPillsExpanded; if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.renderSanctuaryGoals();">' + (pillsExpanded ? '▲ 접기' : '전체 ' + goals.length + '개 ▾') + '</span>' : '') +
+        '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" title="새 목표 추가" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 추가</button>' +
       '</div>';
     } else {
       pillsHtml = '<div class="s-goal-pills-wrap empty" style="display:none;"></div>';
@@ -251,12 +276,34 @@
 
     slot.innerHTML = pillsHtml + trailHtml;
 
-    // 알약 클릭 이벤트 바인딩
+    // 알약 클릭 이벤트 바인딩 (상·하단 단일 activeGoalId 동기화)
     slot.querySelectorAll('[data-sgoalid]').forEach(function(b) {
       b.onclick = function() {
         engine.activeGoalId = b.dataset.sgoalid;
-        if (window.state) window.state.activeGoalId = b.dataset.sgoalid;
-        renderSanctuaryGoals();
+        if (window.state) {
+          window.state.activeGoalId = b.dataset.sgoalid;
+        }
+        if (typeof window.renderGoalsScreen === 'function') {
+          window.renderGoalsScreen();
+        } else {
+          renderSanctuaryGoals();
+        }
+      };
+    });
+    slot.querySelectorAll('[data-sgoalshiftleft]').forEach(function(btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        if (btn.classList.contains('disabled')) return;
+        var shiftFn = (window.OurgoalGoalsKit && window.OurgoalGoalsKit.shiftGoalOrder) || window.shiftGoalOrder;
+        if (typeof shiftFn === 'function') shiftFn(btn.dataset.sgoalshiftleft, -1);
+      };
+    });
+    slot.querySelectorAll('[data-sgoalshiftright]').forEach(function(btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        if (btn.classList.contains('disabled')) return;
+        var shiftFn = (window.OurgoalGoalsKit && window.OurgoalGoalsKit.shiftGoalOrder) || window.shiftGoalOrder;
+        if (typeof shiftFn === 'function') shiftFn(btn.dataset.sgoalshiftright, 1);
       };
     });
   }
@@ -629,6 +676,7 @@
       renderSanctuarySettings();
     },
     render: renderSanctuaryV3,
+    renderSanctuaryGoals: renderSanctuaryGoals,
     renderRadar: renderSanctuaryComm,
     toggleRadarCollapse: toggleRadarCollapse,
     setCalMode: function(m) {

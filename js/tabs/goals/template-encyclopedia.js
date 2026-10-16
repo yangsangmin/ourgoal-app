@@ -290,153 +290,119 @@
                          L._subtabTplDomain === 'routine' ? '루틴 카탈로그' : '팀 목표 카탈로그';
 
     var headerHtml =
-      '<div class="screen-head" style="margin-bottom:12px;">' +
-        '<div class="screen-head-l">' +
-          '<h2 class="s-title" style="margin:0;">📖 템플릿 백과사전</h2>' +
-          '<span class="privacy-badge" style="background:var(--brand-soft);color:var(--brand-strong);border:1px solid var(--brand);margin-left:8px;">' + domainBadgeText + '</span>' +
+      '<div class="screen-head" style="margin-bottom:10px;">' +
+        '<div class="screen-head-l" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          '<h2 class="s-title" style="margin:0;font-size:1.15rem;">📖 템플릿 백과사전</h2>' +
+          '<span class="privacy-badge" style="background:var(--brand-soft);color:var(--brand-strong);border:1px solid var(--brand);white-space:nowrap;">' + domainBadgeText + '</span>' +
         '</div>' +
       '</div>' +
-      // 1단: 3대 도메인(개인/루틴/팀) 선택 세그먼트 (최소 44px 터치 타겟 엄수)
-      '<div style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:10px 12px;margin-bottom:12px;">' +
+      '<div style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:10px;margin-bottom:10px;">' +
         '<div style="font-size:.75rem;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">백과사전 도메인 분류 선택</div>' +
-        '<div style="display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;">' +
-          '<button type="button" class="btn btn-sm ' + (L._subtabTplDomain === 'personal' ? 'btn-primary' : 'btn-ghost') + '" id="encyclDomainPersonal" style="flex:1;min-height:44px;border-radius:10px;font-size:.84rem;font-weight:700;white-space:nowrap;padding:8px 12px;' + (L._subtabTplDomain !== 'personal' ? 'border:1px solid var(--rule);' : '') + '">' +
-            '🎯 개인목표 백과사전' +
-          '</button>' +
-          '<button type="button" class="btn btn-sm ' + (L._subtabTplDomain === 'routine' ? 'btn-primary' : 'btn-ghost') + '" id="encyclDomainRoutine" style="flex:1;min-height:44px;border-radius:10px;font-size:.84rem;font-weight:700;white-space:nowrap;padding:8px 12px;' + (L._subtabTplDomain !== 'routine' ? 'border:1px solid var(--rule);' : '') + '">' +
-            '⏰ 루틴 백과사전' +
-          '</button>' +
-          '<button type="button" class="btn btn-sm ' + (L._subtabTplDomain === 'team' ? 'btn-primary' : 'btn-ghost') + '" id="encyclDomainTeam" style="flex:1;min-height:44px;border-radius:10px;font-size:.84rem;font-weight:700;white-space:nowrap;padding:8px 12px;' + (L._subtabTplDomain !== 'team' ? 'border:1px solid var(--rule);' : '') + '">' +
-            '👥 팀 목표 백과사전' +
-          '</button>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;">' +
+          '<button type="button" class="btn btn-sm ' + (L._subtabTplDomain === 'personal' ? 'btn-primary' : 'btn-ghost') + '" id="encyclDomainPersonal" title="개인목표 백과사전" style="min-width:0;min-height:42px;border-radius:10px;font-size:.78rem;font-weight:700;white-space:nowrap;padding:6px 4px;justify-content:center;' + (L._subtabTplDomain !== 'personal' ? 'border:1px solid var(--rule);' : '') + '">🎯 개인목표</button>' +
+          '<button type="button" class="btn btn-sm ' + (L._subtabTplDomain === 'routine' ? 'btn-primary' : 'btn-ghost') + '" id="encyclDomainRoutine" title="루틴 백과사전" style="min-width:0;min-height:42px;border-radius:10px;font-size:.78rem;font-weight:700;white-space:nowrap;padding:6px 4px;justify-content:center;' + (L._subtabTplDomain !== 'routine' ? 'border:1px solid var(--rule);' : '') + '">⏰ 루틴</button>' +
+          '<button type="button" class="btn btn-sm ' + (L._subtabTplDomain === 'team' ? 'btn-primary' : 'btn-ghost') + '" id="encyclDomainTeam" title="팀 목표 백과사전" style="min-width:0;min-height:42px;border-radius:10px;font-size:.78rem;font-weight:700;white-space:nowrap;padding:6px 4px;justify-content:center;' + (L._subtabTplDomain !== 'team' ? 'border:1px solid var(--rule);' : '') + '">👥 팀 목표</button>' +
         '</div>' +
       '</div>' +
-      // 2단: 2대 출처(AI 추천 / 실사용자) 전환 및 검색창
-      '<div style="background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-bottom:14px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
-          '<div style="display:flex;gap:6px;flex:1;">' +
-            '<button type="button" class="btn btn-sm ' + (L._subtabTplType === 'ai' ? 'btn-primary' : 'btn-ghost') + '" id="subtabTplBtnAi" style="flex:1;min-height:40px;border-radius:20px;font-size:.8125rem;font-weight:700;' + (L._subtabTplType !== 'ai' ? 'border:1px solid var(--rule);' : '') + '">' +
-              '🤖 AI 추천 템플릿' +
-            '</button>' +
-            '<button type="button" class="btn btn-sm ' + (L._subtabTplType === 'real' ? 'btn-primary' : 'btn-ghost') + '" id="subtabTplBtnReal" style="flex:1;min-height:40px;border-radius:20px;font-size:.8125rem;font-weight:700;' + (L._subtabTplType !== 'real' ? 'border:1px solid var(--rule);' : '') + '">' +
-              '👥 실사용자 템플릿' +
-            '</button>' +
-          '</div>' +
+      '<div style="background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:10px 12px;margin-bottom:12px;">' +
+        '<div style="display:flex;gap:6px;margin-bottom:8px;">' +
+          '<button type="button" class="btn btn-sm ' + (L._subtabTplType === 'ai' ? 'btn-primary' : 'btn-ghost') + '" id="subtabTplBtnAi" style="flex:1;min-width:0;min-height:38px;border-radius:20px;font-size:.78rem;font-weight:700;white-space:nowrap;' + (L._subtabTplType !== 'ai' ? 'border:1px solid var(--rule);' : '') + '">🤖 AI 추천 템플릿</button>' +
+          '<button type="button" class="btn btn-sm ' + (L._subtabTplType === 'real' ? 'btn-primary' : 'btn-ghost') + '" id="subtabTplBtnReal" style="flex:1;min-width:0;min-height:38px;border-radius:20px;font-size:.78rem;font-weight:700;white-space:nowrap;' + (L._subtabTplType !== 'real' ? 'border:1px solid var(--rule);' : '') + '">👥 실사용자 템플릿</button>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:8px;">' +
-          '<input type="text" id="subtabTplSearchInp" value="' + L.escapeHtml(L._subtabTplQuery) + '" placeholder="' + (L._subtabTplDomain==='personal'?'개인 목표 키워드 검색 (예: 마라톤, 토익, 기상...)':L._subtabTplDomain==='routine'?'루틴 키워드 검색 (예: 미라클모닝, 뽀모도로...)':'팀 챌린지 키워드 검색 (예: 알고리즘, 러닝크루...)') + '" style="flex:1;min-height:40px;padding:8px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--bg);color:var(--ink);font-size:.8125rem;">' +
-          (L._subtabTplQuery ? '<button type="button" id="subtabTplSearchClear" class="btn btn-ghost btn-xs" style="padding:6px 10px;font-size:.75rem;">초기화</button>' : '') +
+          '<input type="text" id="subtabTplSearchInp" value="' + L.escapeHtml(L._subtabTplQuery) + '" placeholder="' + (L._subtabTplDomain==='personal'?'개인 목표 키워드 검색 (예: 마라톤, 토익, 기상...)':L._subtabTplDomain==='routine'?'루틴 키워드 검색 (예: 미라클모닝, 뽀모도로...)':'팀 챌린지 키워드 검색 (예: 알고리즘, 러닝크루...)') + '" style="flex:1;min-width:0;min-height:38px;padding:7px 11px;border:1px solid var(--rule);border-radius:10px;background:var(--bg);color:var(--ink);font-size:.8125rem;">' +
+          (L._subtabTplQuery ? '<button type="button" id="subtabTplSearchClear" class="btn btn-ghost btn-xs" style="padding:6px 10px;font-size:.75rem;white-space:nowrap;">초기화</button>' : '') +
         '</div>' +
       '</div>';
 
     var chipsHtml = '';
-    // 개인목표 AI일 경우 테마 카테고리 칩 제공
     if(L._subtabTplDomain === 'personal' && L._subtabTplType === 'ai'){
-      chipsHtml = '<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;-webkit-overflow-scrolling:touch;">' +
+      chipsHtml = '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">' +
         catTabs.map(function(c){
           var on = (c.id === L._subtabTplCat);
-          return '<button type="button" class="btn btn-xs ' + (on ? 'btn-primary' : 'btn-ghost') + '" data-subtcat="' + c.id + '" style="font-size:.78125rem;white-space:nowrap;padding:6px 12px;min-height:34px;border-radius:16px;' + (on ? 'font-weight:700;' : 'border:1px solid var(--rule);') + '">' +
-            c.label +
-          '</button>';
+          return '<button type="button" class="btn btn-xs ' + (on ? 'btn-primary' : 'btn-ghost') + '" data-subtcat="' + c.id + '" style="font-size:.75rem;white-space:nowrap;padding:5px 10px;min-height:32px;border-radius:16px;' + (on ? 'font-weight:700;' : 'border:1px solid var(--rule);') + '">' + c.label + '</button>';
         }).join('') +
       '</div>';
     }
 
     var listHtml = '';
     var q = (L._subtabTplQuery || '').toLowerCase();
-    /* =========================================================================
-     * 도메인 1: 🎯 개인목표 백과사전
-     * ========================================================================= */
+    var visibleLimit = (L.state && L.state.tplVisibleLimit) ? L.state.tplVisibleLimit : 8;
+    var remainingCount = 0;
     if(L._subtabTplDomain === 'personal'){
       if(L._subtabTplType === 'ai'){
-        var allTpls = [];
-        if(window.OURGOAL_60_TEMPLATES && typeof window.OURGOAL_60_TEMPLATES.getByCategory === 'function'){
-          allTpls = window.OURGOAL_60_TEMPLATES.getByCategory(L._subtabTplCat);
-        } else {
-          allTpls = window.CREATOR_TEMPLATES || [];
-        }
+        var allTpls = (window.OURGOAL_60_TEMPLATES && typeof window.OURGOAL_60_TEMPLATES.getByCategory === 'function')
+          ? window.OURGOAL_60_TEMPLATES.getByCategory(L._subtabTplCat)
+          : (window.CREATOR_TEMPLATES || []);
         if(q){
           allTpls = allTpls.filter(function(t){
-            return (t.title && t.title.toLowerCase().indexOf(q) !== -1) ||
-                   (t.desc && t.desc.toLowerCase().indexOf(q) !== -1) ||
-                   (t.category && t.category.toLowerCase().indexOf(q) !== -1);
+            return (t.title && t.title.toLowerCase().indexOf(q) !== -1) || (t.desc && t.desc.toLowerCase().indexOf(q) !== -1) || (t.category && t.category.toLowerCase().indexOf(q) !== -1);
           });
         }
         if(allTpls.length === 0){
           listHtml = '<div class="empty-state" style="padding:40px 20px;text-align:center;color:var(--ink-soft);"><p>검색 결과와 일치하는 개인목표 템플릿이 없습니다.</p></div>';
         } else {
+          var pagedTpls = allTpls.slice(0, visibleLimit);
+          remainingCount = Math.max(0, allTpls.length - pagedTpls.length);
           listHtml = '<div style="display:flex;flex-direction:column;gap:12px;">' +
-            allTpls.map(function(t){
+            pagedTpls.map(function(t){
               var totalTasks = (t.ms || []).reduce(function(a, m){ return a + (m.tasks || []).length; }, 0);
               var badgeText = t.badge || (t.categoryMinor ? t.categoryMinor : '추천');
               return '<div class="card" style="padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;">' +
-                '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-                  '<div style="display:flex;align-items:center;gap:6px;">' +
-                    '<span style="background:var(--brand);color:#fff;font-size:.6875rem;padding:2px 7px;border-radius:6px;font-weight:700;">' + L.escapeHtml(badgeText) + '</span>' +
-                    '<b style="font-size:.9375rem;color:var(--ink);">' + L.escapeHtml(t.title) + '</b>' +
+                '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+                  '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;flex-wrap:wrap;">' +
+                    '<span style="background:var(--brand);color:#fff;font-size:.6875rem;padding:2px 7px;border-radius:6px;font-weight:700;white-space:nowrap;flex-shrink:0;">' + L.escapeHtml(badgeText) + '</span>' +
+                    '<b style="font-size:.9375rem;color:var(--ink);word-break:keep-all;">' + L.escapeHtml(t.title) + '</b>' +
                   '</div>' +
-                  '<span class="faint" style="font-size:.75rem;white-space:nowrap;flex-shrink:0;margin-left:8px;">' + (t.weeks || 12) + '주 과정</span>' +
+                  '<span class="faint" style="font-size:.75rem;white-space:nowrap;flex-shrink:0;">' + (t.weeks || 12) + '주 과정</span>' +
                 '</div>' +
                 '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.45;">' + L.escapeHtml(t.desc || '') + '</div>' +
                 '<div class="faint" style="font-size:.75rem;margin-bottom:10px;background:var(--card2);padding:6px 10px;border-radius:8px;">' +
                   '🚩 4단계 마일스톤 ' + (t.ms || []).length + '개 · 세부할일 ' + totalTasks + '개' + (t.kpi ? ' · 🎯 ' + L.escapeHtml(t.kpi) : '') +
                 '</div>' +
                 '<div style="display:flex;gap:8px;">' +
-                  '<button type="button" class="btn btn-ghost btn-sm" data-subtpl-prev="' + t.id + '" style="flex:1;min-height:40px;font-size:.8125rem;padding:7px 0;border:1px solid var(--rule);border-radius:8px;">👀 상세 미리보기</button>' +
-                  '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-clone="' + t.id + '" style="flex:1.6;min-height:40px;font-size:.8125rem;font-weight:700;padding:7px 0;border-radius:8px;">⚡ 개인 목표에 바로 담기 (1초 이식)</button>' +
+                  '<button type="button" class="btn btn-ghost btn-sm" data-subtpl-prev="' + t.id + '" style="flex:1;min-height:40px;font-size:.78rem;padding:7px 4px;border:1px solid var(--rule);border-radius:8px;white-space:nowrap;">👀 상세 미리보기</button>' +
+                  '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-clone="' + t.id + '" style="flex:1.5;min-height:40px;font-size:.78rem;font-weight:700;padding:7px 4px;border-radius:8px;white-space:nowrap;">⚡ 개인 목표에 담기</button>' +
                 '</div>' +
               '</div>';
             }).join('') +
+            (remainingCount > 0 ? '<button type="button" class="btn btn-ghost" id="btnLoadMoreTemplates" style="width:100%;min-height:44px;border-radius:12px;border:1.5px dashed var(--brand);color:var(--brand);font-weight:800;font-size:.85rem;">+ 템플릿 더보기 (남은 ' + remainingCount + '개)</button>' : '') +
           '</div>';
         }
       } else {
-        // 개인목표 실사용자 템플릿
         var realPersonal = PERSONAL_TEMPLATES_REAL;
-        if(q){
-          realPersonal = realPersonal.filter(function(t){
-            return t.title.toLowerCase().indexOf(q) !== -1 || t.desc.toLowerCase().indexOf(q) !== -1;
-          });
-        }
+        if(q) realPersonal = realPersonal.filter(function(t){ return t.title.toLowerCase().indexOf(q) !== -1 || t.desc.toLowerCase().indexOf(q) !== -1; });
         listHtml = '<div style="display:flex;flex-direction:column;gap:12px;">' +
           realPersonal.map(function(t){
             return '<div class="card" style="padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-                '<b style="font-size:.9375rem;color:var(--ink);">' + L.escapeHtml(t.title) + '</b>' +
-                '<span class="tag on" style="font-size:.6875rem;padding:2px 7px;background:var(--brand);color:#fff;border-radius:4px;">' + L.escapeHtml(t.category) + '</span>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+                '<b style="font-size:.9375rem;color:var(--ink);word-break:keep-all;">' + L.escapeHtml(t.title) + '</b>' +
+                '<span class="tag on" style="font-size:.6875rem;padding:2px 7px;background:var(--brand);color:#fff;border-radius:4px;white-space:nowrap;flex-shrink:0;">' + L.escapeHtml(t.category) + '</span>' +
               '</div>' +
               '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.45;">' + L.escapeHtml(t.desc) + '</div>' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:10px;font-size:.78125rem;color:var(--ink-soft);">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--rule);padding-top:10px;font-size:.78125rem;color:var(--ink-soft);">' +
                 '<span>작성자: <b>' + L.escapeHtml(t.author) + '</b> · 복제 <b>' + t.copies + '회</b></span>' +
-                '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-real="' + t.id + '" data-tpltit="' + L.escapeHtml(t.title) + '" data-tplcat="' + L.escapeHtml(t.category) + '" style="font-size:.8125rem;font-weight:700;padding:6px 14px;min-height:36px;border-radius:8px;">⚡ 개인 목표에 바로 담기</button>' +
+                '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-real="' + t.id + '" data-tpltit="' + L.escapeHtml(t.title) + '" data-tplcat="' + L.escapeHtml(t.category) + '" style="font-size:.78rem;font-weight:700;padding:6px 12px;min-height:36px;border-radius:8px;white-space:nowrap;">⚡ 개인 목표에 담기</button>' +
               '</div>' +
             '</div>';
           }).join('') +
         '</div>';
       }
-    }
-
-    /* =========================================================================
-     * 도메인 2: ⏰ 루틴 백과사전
-     * ========================================================================= */
-    else if(L._subtabTplDomain === 'routine'){
+    } else if(L._subtabTplDomain === 'routine'){
       var dayMap = { 1:'월', 2:'화', 3:'수', 4:'목', 5:'금', 6:'토', 7:'일' };
       if(L._subtabTplType === 'ai'){
         var rTpls = ROUTINE_TEMPLATES_AI;
-        if(q){
-          rTpls = rTpls.filter(function(r){
-            return r.title.toLowerCase().indexOf(q) !== -1 || r.desc.toLowerCase().indexOf(q) !== -1;
-          });
-        }
+        if(q) rTpls = rTpls.filter(function(r){ return r.title.toLowerCase().indexOf(q) !== -1 || r.desc.toLowerCase().indexOf(q) !== -1; });
         listHtml = '<div style="display:flex;flex-direction:column;gap:12px;">' +
           rTpls.map(function(r){
             var dayStr = (r.days.length === 7) ? '매일' : (r.days.length === 5 && r.days[4] === 5) ? '평일 매일' : r.days.map(function(d){ return dayMap[d]; }).join(',');
             return '<div class="card" style="padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-                '<div style="display:flex;align-items:center;gap:6px;">' +
-                  '<span style="background:var(--brand);color:#fff;font-size:.6875rem;padding:2px 7px;border-radius:6px;font-weight:700;">' + L.escapeHtml(r.badge) + '</span>' +
-                  '<b style="font-size:.9375rem;color:var(--ink);">' + L.escapeHtml(r.title) + '</b>' +
+              '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+                '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;flex-wrap:wrap;">' +
+                  '<span style="background:var(--brand);color:#fff;font-size:.6875rem;padding:2px 7px;border-radius:6px;font-weight:700;white-space:nowrap;flex-shrink:0;">' + L.escapeHtml(r.badge) + '</span>' +
+                  '<b style="font-size:.9375rem;color:var(--ink);word-break:keep-all;">' + L.escapeHtml(r.title) + '</b>' +
                 '</div>' +
-                '<span style="font-size:.8125rem;font-weight:700;color:var(--brand);background:var(--card2);padding:2px 8px;border-radius:6px;">⏰ ' + r.time + '</span>' +
+                '<span style="font-size:.78rem;font-weight:700;color:var(--brand);background:var(--card2);padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;">⏰ ' + r.time + '</span>' +
               '</div>' +
               '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.45;">' + L.escapeHtml(r.desc) + '</div>' +
               '<div class="faint" style="font-size:.75rem;margin-bottom:10px;background:var(--card2);padding:6px 10px;border-radius:8px;">' +
@@ -449,54 +415,40 @@
           }).join('') +
         '</div>';
       } else {
-        // 루틴 실사용자 템플릿
         var realRoutines = ROUTINE_TEMPLATES_REAL;
-        if(q){
-          realRoutines = realRoutines.filter(function(r){
-            return r.title.toLowerCase().indexOf(q) !== -1 || r.desc.toLowerCase().indexOf(q) !== -1;
-          });
-        }
+        if(q) realRoutines = realRoutines.filter(function(r){ return r.title.toLowerCase().indexOf(q) !== -1 || r.desc.toLowerCase().indexOf(q) !== -1; });
         listHtml = '<div style="display:flex;flex-direction:column;gap:12px;">' +
           realRoutines.map(function(r){
             var dayStr = (r.days.length === 7) ? '매일' : (r.days.length === 5 && r.days[4] === 5) ? '평일 매일' : r.days.map(function(d){ return dayMap[d]; }).join(',');
             return '<div class="card" style="padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-                '<b style="font-size:.9375rem;color:var(--ink);">' + L.escapeHtml(r.title) + '</b>' +
-                '<span style="font-size:.8125rem;font-weight:700;color:var(--brand);background:var(--card2);padding:2px 8px;border-radius:6px;">⏰ ' + r.time + '</span>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+                '<b style="font-size:.9375rem;color:var(--ink);word-break:keep-all;">' + L.escapeHtml(r.title) + '</b>' +
+                '<span style="font-size:.78rem;font-weight:700;color:var(--brand);background:var(--card2);padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;">⏰ ' + r.time + '</span>' +
               '</div>' +
               '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.45;">' + L.escapeHtml(r.desc) + '</div>' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:10px;font-size:.78125rem;color:var(--ink-soft);">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--rule);padding-top:10px;font-size:.78125rem;color:var(--ink-soft);">' +
                 '<span>작성자: <b>' + L.escapeHtml(r.author) + '</b> · 복제 <b>' + r.copies + '회</b> (' + dayStr + ')</span>' +
-                '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-routine-real="' + r.id + '" style="font-size:.8125rem;font-weight:700;padding:6px 14px;min-height:36px;border-radius:8px;">⚡ 내 루틴에 바로 담기</button>' +
+                '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-routine-real="' + r.id + '" style="font-size:.78rem;font-weight:700;padding:6px 12px;min-height:36px;border-radius:8px;white-space:nowrap;">⚡ 내 루틴에 담기</button>' +
               '</div>' +
             '</div>';
           }).join('') +
         '</div>';
       }
-    }
-
-    /* =========================================================================
-     * 도메인 3: 👥 팀 목표 백과사전
-     * ========================================================================= */
-    else if(L._subtabTplDomain === 'team'){
+    } else if(L._subtabTplDomain === 'team'){
       if(L._subtabTplType === 'ai'){
         var tTpls = TEAM_TEMPLATES_AI;
-        if(q){
-          tTpls = tTpls.filter(function(t){
-            return t.title.toLowerCase().indexOf(q) !== -1 || t.desc.toLowerCase().indexOf(q) !== -1 || (t.category && t.category.toLowerCase().indexOf(q) !== -1);
-          });
-        }
+        if(q) tTpls = tTpls.filter(function(t){ return t.title.toLowerCase().indexOf(q) !== -1 || t.desc.toLowerCase().indexOf(q) !== -1 || (t.category && t.category.toLowerCase().indexOf(q) !== -1); });
         listHtml = '<div style="display:flex;flex-direction:column;gap:12px;">' +
           tTpls.map(function(t){
             var msCount = (t.milestones || []).length;
             var taskCount = (t.milestones || []).reduce(function(a, m){ return a + (m.tasks || []).length; }, 0);
             return '<div class="card" style="padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-                '<div style="display:flex;align-items:center;gap:6px;">' +
-                  '<span style="background:var(--brand);color:#fff;font-size:.6875rem;padding:2px 7px;border-radius:6px;font-weight:700;">' + L.escapeHtml(t.badge) + '</span>' +
-                  '<b style="font-size:.9375rem;color:var(--ink);">' + L.escapeHtml(t.title) + '</b>' +
+              '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+                '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;flex-wrap:wrap;">' +
+                  '<span style="background:var(--brand);color:#fff;font-size:.6875rem;padding:2px 7px;border-radius:6px;font-weight:700;white-space:nowrap;flex-shrink:0;">' + L.escapeHtml(t.badge) + '</span>' +
+                  '<b style="font-size:.9375rem;color:var(--ink);word-break:keep-all;">' + L.escapeHtml(t.title) + '</b>' +
                 '</div>' +
-                '<span class="tag on" style="font-size:.6875rem;padding:2px 7px;background:var(--card2);color:var(--ink);border:1px solid var(--rule);border-radius:4px;">' + L.escapeHtml(t.category) + '</span>' +
+                '<span class="tag on" style="font-size:.6875rem;padding:2px 7px;background:var(--card2);color:var(--ink);border:1px solid var(--rule);border-radius:4px;white-space:nowrap;flex-shrink:0;">' + L.escapeHtml(t.category) + '</span>' +
               '</div>' +
               '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.45;">' + L.escapeHtml(t.desc) + '</div>' +
               '<div class="faint" style="font-size:.75rem;margin-bottom:10px;background:var(--card2);padding:6px 10px;border-radius:8px;">' +
@@ -509,24 +461,19 @@
           }).join('') +
         '</div>';
       } else {
-        // 팀 목표 실사용자 템플릿
         var realTeams = TEAM_TEMPLATES_REAL;
-        if(q){
-          realTeams = realTeams.filter(function(t){
-            return t.title.toLowerCase().indexOf(q) !== -1 || t.desc.toLowerCase().indexOf(q) !== -1;
-          });
-        }
+        if(q) realTeams = realTeams.filter(function(t){ return t.title.toLowerCase().indexOf(q) !== -1 || t.desc.toLowerCase().indexOf(q) !== -1; });
         listHtml = '<div style="display:flex;flex-direction:column;gap:12px;">' +
           realTeams.map(function(t){
             return '<div class="card" style="padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-                '<b style="font-size:.9375rem;color:var(--ink);">' + L.escapeHtml(t.title) + '</b>' +
-                '<span class="tag on" style="font-size:.6875rem;padding:2px 7px;background:var(--brand);color:#fff;border-radius:4px;">' + L.escapeHtml(t.category) + '</span>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+                '<b style="font-size:.9375rem;color:var(--ink);word-break:keep-all;">' + L.escapeHtml(t.title) + '</b>' +
+                '<span class="tag on" style="font-size:.6875rem;padding:2px 7px;background:var(--brand);color:#fff;border-radius:4px;white-space:nowrap;flex-shrink:0;">' + L.escapeHtml(t.category) + '</span>' +
               '</div>' +
               '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.45;">' + L.escapeHtml(t.desc) + '</div>' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:10px;font-size:.78125rem;color:var(--ink-soft);">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--rule);padding-top:10px;font-size:.78125rem;color:var(--ink-soft);">' +
                 '<span>크루장: <b>' + L.escapeHtml(t.author) + '</b> · 복제 <b>' + t.copies + '회</b> · ' + L.escapeHtml(t.kpi) + '</span>' +
-                '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-team-real="' + t.id + '" style="font-size:.8125rem;font-weight:700;padding:6px 14px;min-height:36px;border-radius:8px;">⚡ 팀 목표에 바로 담기</button>' +
+                '<button type="button" class="btn btn-primary btn-sm btn-transplant" data-subtpl-team-real="' + t.id + '" style="font-size:.78rem;font-weight:700;padding:6px 12px;min-height:36px;border-radius:8px;white-space:nowrap;">⚡ 팀 목표에 담기</button>' +
               '</div>' +
             '</div>';
           }).join('') +
@@ -535,25 +482,23 @@
     }
 
     tev.innerHTML = headerHtml + chipsHtml + listHtml;
-    // 1단: 3대 도메인 탭 이벤트 배선
     var btnDomPersonal = tev.querySelector('#encyclDomainPersonal');
     var btnDomRoutine = tev.querySelector('#encyclDomainRoutine');
     var btnDomTeam = tev.querySelector('#encyclDomainTeam');
-    if(btnDomPersonal) btnDomPersonal.onclick = function(){ L._subtabTplDomain = 'personal'; renderTemplateEncyclopediaScreen(); };
-    if(btnDomRoutine) btnDomRoutine.onclick = function(){ L._subtabTplDomain = 'routine'; renderTemplateEncyclopediaScreen(); };
-    if(btnDomTeam) btnDomTeam.onclick = function(){ L._subtabTplDomain = 'team'; renderTemplateEncyclopediaScreen(); };
+    if(btnDomPersonal) btnDomPersonal.onclick = function(){ L._subtabTplDomain = 'personal'; if(L.state) L.state.tplVisibleLimit = 8; renderTemplateEncyclopediaScreen(); };
+    if(btnDomRoutine) btnDomRoutine.onclick = function(){ L._subtabTplDomain = 'routine'; if(L.state) L.state.tplVisibleLimit = 8; renderTemplateEncyclopediaScreen(); };
+    if(btnDomTeam) btnDomTeam.onclick = function(){ L._subtabTplDomain = 'team'; if(L.state) L.state.tplVisibleLimit = 8; renderTemplateEncyclopediaScreen(); };
 
-    // 2단: 2대 출처 탭 이벤트 배선
     var btnAi = tev.querySelector('#subtabTplBtnAi');
     var btnReal = tev.querySelector('#subtabTplBtnReal');
-    if(btnAi) btnAi.onclick = function(){ L._subtabTplType = 'ai'; renderTemplateEncyclopediaScreen(); };
-    if(btnReal) btnReal.onclick = function(){ L._subtabTplType = 'real'; renderTemplateEncyclopediaScreen(); };
+    if(btnAi) btnAi.onclick = function(){ L._subtabTplType = 'ai'; if(L.state) L.state.tplVisibleLimit = 8; renderTemplateEncyclopediaScreen(); };
+    if(btnReal) btnReal.onclick = function(){ L._subtabTplType = 'real'; if(L.state) L.state.tplVisibleLimit = 8; renderTemplateEncyclopediaScreen(); };
 
-    // 검색창 및 초기화
     var searchInp = tev.querySelector('#subtabTplSearchInp');
     if(searchInp){
       searchInp.oninput = function(){
         L._subtabTplQuery = searchInp.value.trim();
+        if(L.state) L.state.tplVisibleLimit = 8;
         renderTemplateEncyclopediaScreen();
       };
     }
@@ -561,19 +506,27 @@
     if(searchClear){
       searchClear.onclick = function(){
         L._subtabTplQuery = '';
+        if(L.state) L.state.tplVisibleLimit = 8;
         renderTemplateEncyclopediaScreen();
       };
     }
 
-    // 개인목표 카테고리 칩 필터
     tev.querySelectorAll('[data-subtcat]').forEach(function(b){
       b.onclick = function(){
         L._subtabTplCat = b.dataset.subtcat;
+        if(L.state) L.state.tplVisibleLimit = 8;
         renderTemplateEncyclopediaScreen();
       };
     });
 
-    // 상세 미리보기 모달
+    var btnLoadMore = tev.querySelector('#btnLoadMoreTemplates');
+    if(btnLoadMore){
+      btnLoadMore.onclick = function(){
+        if(L.state) L.state.tplVisibleLimit = ((L.state.tplVisibleLimit || 8) + 12);
+        renderTemplateEncyclopediaScreen();
+      };
+    }
+
     tev.querySelectorAll('[data-subtpl-prev]').forEach(function(b){
       b.onclick = function(){
         if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openTemplatePreviewModal){

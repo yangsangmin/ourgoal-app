@@ -377,6 +377,28 @@
     }
   };
 
+
+  // [T-P3-05] 성소 기록 피드 커서 기반 페이지네이션 (기본 LIMIT 20)
+  function paginateRecordsByCursor(records, cursorIso, limit) {
+    var pageSize = Math.min(50, Math.max(1, Number(limit) || 20));
+    var sorted = (records || []).slice().sort(function (a, b) {
+      var tA = new Date(a.startAt || a.created_at || a.start_at || 0).getTime();
+      var tB = new Date(b.startAt || b.created_at || b.start_at || 0).getTime();
+      return tB - tA;
+    });
+    if (cursorIso) {
+      var cursorTs = new Date(cursorIso).getTime();
+      sorted = sorted.filter(function (r) {
+        return new Date(r.startAt || r.created_at || r.start_at || 0).getTime() < cursorTs;
+      });
+    }
+    var items = sorted.slice(0, pageSize);
+    var last = items[items.length - 1];
+    var nextCursor = (items.length === pageSize && last) ? (last.startAt || last.created_at || last.start_at || null) : null;
+    return { items: items, nextCursor: nextCursor, limit: pageSize, totalRemaining: sorted.length };
+  }
+
+  K.paginateRecordsByCursor = paginateRecordsByCursor;
   K.renderSanctuaryRecordsFeed = renderSanctuaryRecordsFeed;
   K.renderSanctuaryRecordsArchive = renderSanctuaryRecordsArchive;
 })(window);

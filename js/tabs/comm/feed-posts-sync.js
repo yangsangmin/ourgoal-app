@@ -17,10 +17,51 @@
   // 탭 키트: 같은 탭 파일끼리 서로 부르는 함수 묶음(이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다)
   var K = global.OurgoalCommKit = global.OurgoalCommKit || {};
 
+  // [T-P3-05] 소통 피드 N+1 쿼리 제거 및 커서 기반 페이지네이션 (LIMIT 20)
+  var FEED_PAGE_LIMIT = 20;
+
+  async function batchHydrateFeedComments(postIds) {
+    if (!L.sb || !Array.isArray(postIds) || postIds.length === 0) return {};
+    try {
+      var q = L.sb.from('team_pings').select('*').eq('group_id', 'feed').eq('target_type', 'feed_comment').in('target_id', postIds).order('created_at', { ascending: true });
+      var res = await q;
+      var byPost = {};
+      ((res && res.data) || []).forEach(function (row) {
+        if (!row || !row.target_id) return;
+        byPost[row.target_id] = byPost[row.target_id] || [];
+        byPost[row.target_id].push(row);
+      });
+      return byPost;
+    } catch (_) {
+      return {};
+    }
+  }
+
+  async function loadFeedPostsPage(cursorCreatedAt, limit) {
+    var pageSize = Math.min(50, Math.max(1, Number(limit) || FEED_PAGE_LIMIT));
+    if (!L.sb) return { items: [], nextCursor: null, limit: pageSize };
+    var query = L.sb.from('feed_posts').select('*').order('created_at', { ascending: false });
+    if (cursorCreatedAt && typeof query.lt === 'function') {
+      query = query.lt('created_at', cursorCreatedAt);
+    }
+    var res = await query.limit(pageSize);
+    var items = (res && res.data) || [];
+    var postIds = items.map(function (p) { return p && p.id; }).filter(Boolean);
+    var commentsMap = await batchHydrateFeedComments(postIds);
+    items.forEach(function (item) {
+      if (item && item.id && commentsMap[item.id]) {
+        item._hydratedComments = commentsMap[item.id];
+      }
+    });
+    var nextCursor = items.length === pageSize ? (items[items.length - 1].created_at || null) : null;
+    L.FEED_NEXT_CURSOR = nextCursor;
+    return { items: items, nextCursor: nextCursor, limit: pageSize };
+  }
+
   async function ensureFeedPostsLoaded(){
     if(L.FEED_POSTS_CACHE) return;
     L.FEED_POSTS_CACHE = []; if(!L.sb) return;
-    var res = await L.sb.from('feed_posts').select('*').order('created_at', { ascending:false }).limit(50);
+    var res = await L.sb.from('feed_posts').select('*').order('created_at', { ascending:false }).limit(FEED_PAGE_LIMIT);
     L.FEED_POSTS_CACHE = res.data || [];
     /* #TASK-ES-696 소통-피드 0단계: 최신 50건만으로는 내 목표 카테고리 글이 거의 안 잡힌다(독립 검토 B1).
        내 활성 목표의 피드 카테고리 글을 따로 50건 더 받아 합친다. category 칸이 아직 없는 서버면(SQL 미실행) 조용히 건너뛴다. */
@@ -30,7 +71,7 @@
       var cats = [];
       if(CM) goals.forEach(function(g){ if(g && !g.archivedAt){ var k = CM.fromGoal(g); if(k && cats.indexOf(k) === -1) cats.push(k); } });
       if(cats.length){
-        var res2 = await L.sb.from('feed_posts').select('*').in('category', cats).order('created_at', { ascending:false }).limit(50);
+        var res2 = await L.sb.from('feed_posts').select('*').in('category', cats).order('created_at', { ascending:false }).limit(FEED_PAGE_LIMIT);
         if(res2 && !res2.error && res2.data){
           var seen = {};
           L.FEED_POSTS_CACHE.forEach(function(p){ if(p && p.id) seen[p.id] = true; });
@@ -96,6 +137,9 @@
       .subscribe();
   }
 
+  K.FEED_PAGE_LIMIT = FEED_PAGE_LIMIT;
+  K.loadFeedPostsPage = loadFeedPostsPage;
+  K.batchHydrateFeedComments = batchHydrateFeedComments;
   K.ensureFeedPostsLoaded = ensureFeedPostsLoaded;
   K.setupFeedPostsRealtime = setupFeedPostsRealtime;
 

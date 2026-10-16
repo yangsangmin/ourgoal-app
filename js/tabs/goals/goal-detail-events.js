@@ -29,30 +29,46 @@ L.wirePromptEncyclopediaEvents(body);
       L.toast(L.VISIBILITY_LABELS[goal.visibility]+'(으)로 바꿨어요');
     });
 
+    var cycleGoalPrivacy = async function(){
+      var activeGoals = (L.state && L.state.profile && L.state.profile.goals) || [];
+      var targetGoal = activeGoals.find(function(g){ return g.id === L.state.activeGoalId; }) || goal;
+      if(!targetGoal) return;
+      var cur = targetGoal.visibility || 'private';
+      var next = 'private';
+      var nextLbl = '나만 보기';
+      if(cur === 'private'){
+        next = 'theme';
+        nextLbl = '같은 테마 공개';
+      } else if(cur === 'theme'){
+        next = 'team';
+        nextLbl = '팀원 공개';
+      } else if(cur === 'team' || cur === 'followers'){
+        next = 'public';
+        nextLbl = '전체 공개';
+      } else {
+        next = 'private';
+        nextLbl = '나만 보기';
+      }
+      targetGoal.visibility = next;
+      await L.saveProfile();
+      L.toast('목표 공개 범위: ' + nextLbl + '로 변경되었습니다', 1000);
+      K.renderGoalsScreen();
+    };
     var privBadge = document.getElementById('goalsPrivacyBadge');
     if(privBadge){
-      privBadge.addEventListener('click', async function(){
-        var cur = goal.visibility || 'private';
-        var next = 'private';
-        var nextLbl = '나만 보기';
-        if(cur === 'private'){
-          next = 'theme';
-          nextLbl = '같은 테마 공개';
-        } else if(cur === 'theme'){
-          next = 'team';
-          nextLbl = '팀원 공개';
-        } else if(cur === 'team' || cur === 'followers'){
-          next = 'public';
-          nextLbl = '전체 공개';
-        } else {
-          next = 'private';
-          nextLbl = '나만 보기';
-        }
-        goal.visibility = next;
-        await L.saveProfile();
-        L.toast('목표 공개 범위: ' + nextLbl + '로 변경되었습니다', 1000);
-        K.renderGoalsScreen();
-      });
+      var curVis = goal.visibility || 'private';
+      privBadge.textContent = (curVis==='theme'?'🏷️ ':(curVis==='private'?'🔒 ':(curVis==='team'||curVis==='followers'?'👥 ':'🌐 '))) + ((curVis==='team'||curVis==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[curVis]||'나만 보기'));
+      privBadge._onPrivacyClick = cycleGoalPrivacy;
+      if(!privBadge.dataset.privacyBound){
+        privBadge.dataset.privacyBound = '1';
+        privBadge.addEventListener('click', function(){
+          if(typeof privBadge._onPrivacyClick === 'function') privBadge._onPrivacyClick();
+        });
+      }
+    }
+    var detailPrivBadge = document.getElementById('goalDetailPrivacyBadge');
+    if(detailPrivBadge){
+      detailPrivBadge.onclick = cycleGoalPrivacy;
     }
 
     var filterToggle = document.getElementById('msFilterToggle');
@@ -73,6 +89,13 @@ L.wirePromptEncyclopediaEvents(body);
           K.renderGoalsScreen();
         });
       });
+    }
+    var toolsToggleBtn = document.getElementById('btnToggleGoalToolsDrawer');
+    if(toolsToggleBtn){
+      toolsToggleBtn.onclick = function(){
+        L.state.goalToolsOpen = !L.state.goalToolsOpen;
+        K.renderGoalsScreen();
+      };
     }
     var collapseAllBtn = document.getElementById('msCollapseAllBtn');
     if(collapseAllBtn){
@@ -274,9 +297,17 @@ L.wirePromptEncyclopediaEvents(body);
 
       var statusEl = row.querySelector('[data-cyclestatus]');
       statusEl.addEventListener('click', async function(){
+        if(L.state.goalEditMode){
+          var inp = row.querySelector('[data-msinput]');
+          if(inp) inp.focus();
+          L.toast('편집 모드에서는 제목과 순서를 수정할 수 있어요');
+          return;
+        }
         var order = ['todo','doing','done'];
         var wasDone = ms.status==='done';
         ms.status = order[(order.indexOf(ms.status)+1)%3];
+        ms.done = (ms.status === 'done');
+        goal.progress = (typeof L.goalAchievement === 'function') ? L.goalAchievement(goal) : (goal.progress || 0);
         if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);
         var cycleXpRes = (!wasDone && ms.status==='done') ? L.awardXP(L.XP_RULES.milestoneDone, '마일스톤 완료') : null;
         await L.saveProfile();
@@ -325,6 +356,7 @@ L.wirePromptEncyclopediaEvents(body);
       if(delBtn) delBtn.addEventListener('click', async function(){
         if(!confirm('이 마일스톤을 삭제할까요?')) return;
         goal.milestones = goal.milestones.filter(function(x){ return x.id!==msid; });
+        goal.progress = (typeof L.goalAchievement === 'function') ? L.goalAchievement(goal) : (goal.progress || 0);
         await L.saveProfile(); K.renderGoalsScreen();
       });
 
@@ -378,6 +410,7 @@ L.wirePromptEncyclopediaEvents(body);
         var tdel = trow.querySelector('[data-deltask]');
         if(tdel) tdel.addEventListener('click', async function(){
           ms.tasks = ms.tasks.filter(function(t){ return t.id!==tid; });
+          goal.progress = (typeof L.goalAchievement === 'function') ? L.goalAchievement(goal) : (goal.progress || 0);
           await L.saveProfile(); K.renderGoalsScreen();
         });
       });
@@ -398,6 +431,12 @@ L.wirePromptEncyclopediaEvents(body);
         ev.stopPropagation();
         var rowEl = chk.closest('.task-row');
         if(!rowEl) return;
+        if(L.state.goalEditMode){
+          var tinp = rowEl.querySelector('[data-taskinput]');
+          if(tinp) tinp.focus();
+          L.toast('편집 모드에서는 할 일 제목과 마감일을 수정할 수 있어요');
+          return;
+        }
         var tid = rowEl.dataset.taskid;
         var mid = rowEl.dataset.msid;
         var targetTask = null;
@@ -421,7 +460,9 @@ L.wirePromptEncyclopediaEvents(body);
         if(targetMilestone && targetMilestone.tasks && targetMilestone.tasks.length){
           var allTasksDone = targetMilestone.tasks.every(function(tk){ return !!tk.done; });
           targetMilestone.status = allTasksDone ? 'done' : (targetMilestone.status === 'done' ? 'todo' : targetMilestone.status);
+          targetMilestone.done = (targetMilestone.status === 'done');
         }
+        targetGoal.progress = (typeof L.goalAchievement === 'function') ? L.goalAchievement(targetGoal) : (targetGoal.progress || 0);
 
         if(isNowDone){
           if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);

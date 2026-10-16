@@ -31,7 +31,10 @@
   /* ---- 이전 전 index.html 3366~3398줄(#TASK-ES-640 생성기 표지) ---- */
   /* [#TASK-ES-481] switchGoalsSubTab → js/tabs/goals/goals-ia-actions.js 로 옮김(인라인 어려움 묶음 시범 — 앞 주석 포함) */
 
+  var _isSavingFastGoal = false;
+
   function handleGoalFastAddSubmit(){
+    if(_isSavingFastGoal) return;
     var input = document.getElementById('goalFastAddInput');
     if(!input) return;
     var title = input.value.trim();
@@ -40,6 +43,7 @@
       input.focus();
       return;
     }
+    _isSavingFastGoal = true;
     L.triggerHapticFeedback(12);
     var tag = window.selectedGoalSmartTag || 'health';
     var tagNames = { 'health':'운동/건강', 'study':'학습/성장', 'career':'커리어', 'habit':'습관/루틴' };
@@ -47,18 +51,25 @@
       id: 'g_' + Date.now(),
       title: title,
       category: tagNames[tag] || '일반',
+      topic: tagNames[tag] || '일반',
+      icon: '🎯',
+      visibility: 'private',
       status: 'active',
       progress: 0,
       createdAt: new Date().toISOString(),
       milestones: [
-        { id: 'm_' + Date.now() + '_1', title: '첫 번째 작은 실천하기', status: 'todo' }
+        { id: 'm_' + Date.now() + '_1', title: '첫 번째 작은 실천하기', status: 'todo', done: false, tasks: [] }
       ]
     };
     if(!L.state.profile.goals) L.state.profile.goals = [];
     L.state.profile.goals.unshift(newGoal);
+    if(L.state.profile.settings && Array.isArray(L.state.profile.settings.goalOrder)){
+      L.state.profile.settings.goalOrder.unshift(newGoal.id);
+    }
     L.state.activeGoalId = newGoal.id;
     input.value = '';
-    if(typeof L.toast === 'function') L.toast('새 목표가 등록되었습니다! 🎯'); L.saveProfile().catch(function(e){ console.warn('[TASK-ES-514] 빠른 목표 추가 저장 실패', e); if(typeof L.toast === 'function') L.toast('목표를 저장하지 못했어요. 잠시 뒤 다시 시도해 주세요'); }); /* [#TASK-ES-514] 빠른 목표 추가는 메모리에만 넣고 저장하지 않아 새로 고치면 사라졌다 → 서랍 마일스톤 토글(#TASK-ES-462)과 같은 saveProfile(서버 goals upsert + 기기 사본) */
+    if(typeof L.toast === 'function') L.toast('새 목표가 등록되었습니다! 🎯');
+    Promise.resolve(L.saveProfile()).catch(function(e){ console.warn('[TASK-ES-514] 빠른 목표 추가 저장 실패', e); if(typeof L.toast === 'function') L.toast('목표를 저장하지 못했어요. 잠시 뒤 다시 시도해 주세요'); }).finally(function(){ _isSavingFastGoal = false; }); /* [#TASK-ES-514] 빠른 목표 추가는 메모리에만 넣고 저장하지 않아 새로 고치면 사라졌다 → 서랍 마일스톤 토글(#TASK-ES-462)과 같은 saveProfile(서버 goals upsert + 기기 사본) */
     if(typeof L.dispatchFullViewPropagation === 'function') L.dispatchFullViewPropagation();
     else L.renderGoalsScreen();
   }

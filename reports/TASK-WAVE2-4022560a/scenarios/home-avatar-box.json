@@ -1,0 +1,14 @@
+{
+  "id": "home-avatar-box",
+  "title": "첫 화면에서 둘러보기로 홈에 진입하면 아바타+경험치 박스(#levelBadgeRow)가 보이고 상단 원형 아바타(#homeHeroAvatar)와 하단 게이지(#homeHeroExpBar)는 숨겨진다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#levelBadgeRow", "timeoutMs": 15000 },
+    { "expect": "notVisible", "selector": "#homeHeroAvatar" },
+    { "expect": "notVisible", "selector": "#homeHeroExpBar" },
+    { "expect": "stillInApp" },
+    { "capture": "home-avatar-box" }
+  ]
+}

@@ -54,20 +54,22 @@
     var isAiModal = !!(t.isAi || (t.id && String(t.id).indexOf('tpl_') === 0));
     var aiNoticeModalHtml = isAiModal ? '<div style="font-size:calc(.875rem - 3pt);color:var(--ink-soft);margin:-6px 0 10px;font-weight:500;">ai생성템플릿입니다</div>' : '';
 
-    var modalHtml = '<h3>' + T.esc(t.title) + ' · 세부 둘러보기</h3>' +
+    var modalHtml = '<h3 style="margin:0 0 8px;padding-right:36px;word-break:keep-all;">' + T.esc(t.title) + ' · 세부 둘러보기</h3>' +
       aiNoticeModalHtml +
-      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">' + T.esc(t.desc) + ' (' + (t.weeks || 12) + '주 완주 코스)</p>' +
+      '<p class="faint" style="margin:0 0 12px;font-size:.8125rem;">' + T.esc(t.desc) + ' (' + (t.weeks || 12) + '주 완주 코스)</p>' +
       expertBannerHtml +
-      '<div style="max-height:50vh;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
+      '<div style="max-height:46vh;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">📋 4단계 마일스톤 및 세부 할 일 목록 (' + (t.ms||[]).length + '개 단계)</div>' +
         msListHtml +
       '</div>' +
-      '<div class="modal-actions" style="display:flex;gap:6px;flex-wrap:wrap;">' +
-        '<button class="btn btn-ghost" id="tplPreviewCloseBtn" type="button" style="flex:1;">닫기</button>' +
-        '<button class="btn btn-ghost" id="tplPreviewShareBtn" type="button" style="border:1px solid var(--rule);color:var(--ink);font-weight:700;flex:1;">🔗 템플릿 공유</button>' +
-        '<button class="btn btn-ghost" id="tplPreviewGiftBtn" type="button" style="border:1.5px solid var(--gold);color:var(--gold);font-weight:700;flex:1;background:var(--gold-soft);">🎁 동반자에게 추천</button>' +
-        '<button class="btn btn-primary" id="tplPreviewStartTeamBtn" type="button" style="font-weight:700;padding:9px 14px;width:100%;margin-top:4px;background:var(--card2);border:1.5px solid var(--sage);color:var(--sage);">👑 이 템플릿으로 팀 목표 만들기</button>' +
-        '<button class="btn btn-primary" id="tplPreviewStartBtn" type="button" style="font-weight:700;padding:10px 18px;width:100%;margin-top:2px;">✨ 이 템플릿으로 내 개인 목표 시작</button>' +
+      '<div class="modal-actions" style="display:flex;flex-direction:column;gap:8px;">' +
+        '<button class="btn btn-primary" id="tplPreviewStartBtn" type="button" style="font-weight:800;padding:11px 16px;width:100%;font-size:.9rem;">✨ 이 템플릿으로 내 개인 목표 시작</button>' +
+        '<button class="btn btn-ghost" id="tplPreviewStartTeamBtn" type="button" style="font-weight:700;padding:9px 14px;width:100%;background:var(--card2);border:1.5px solid var(--sage);color:var(--sage);font-size:.84rem;">👑 이 템플릿으로 팀 목표 만들기</button>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;">' +
+          '<button class="btn btn-ghost" id="tplPreviewCloseBtn" type="button" style="min-width:0;padding:7px 4px;font-size:.78rem;white-space:nowrap;">닫기</button>' +
+          '<button class="btn btn-ghost" id="tplPreviewShareBtn" type="button" style="min-width:0;padding:7px 4px;font-size:.78rem;border:1px solid var(--rule);color:var(--ink);font-weight:700;white-space:nowrap;">🔗 공유</button>' +
+          '<button class="btn btn-ghost" id="tplPreviewGiftBtn" type="button" style="min-width:0;padding:7px 4px;font-size:.78rem;border:1.5px solid var(--gold);color:var(--gold);font-weight:700;background:var(--gold-soft);white-space:nowrap;">🎁 동반자 추천</button>' +
+        '</div>' +
       '</div>';
 
     if(global.openModal){

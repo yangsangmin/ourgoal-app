@@ -68,7 +68,46 @@
     if (g.OurgoalEvents) g.OurgoalEvents.emit('save:state-changed', publicResult(r));
   }
   function publicResult(r) { var x = Object.assign({}, r); delete x.whenSettled; return copy(x); }
+
+  // [T-P3-02] localStorage 4.5MB 상한 체크 및 IndexedDB/메모리 백업 아카이빙 가드
+  var MAX_STORAGE_BYTES = 4718592; // 4.5 MB
+  var idbArchiveMemory = (g.__ourgoalIdbArchive = g.__ourgoalIdbArchive || []);
+  function estimateStorageBytes(st, extraObj) {
+    var total = 0;
+    try {
+      if (st && typeof st.length === 'number' && typeof st.key === 'function') {
+        for (var i = 0; i < st.length; i++) {
+          var k = st.key(i);
+          var v = st.getItem(k) || '';
+          total += (k.length + v.length) * 2;
+        }
+      } else if (st && st._map && typeof st._map.forEach === 'function') {
+        st._map.forEach(function (v, k) { total += (String(k).length + String(v).length) * 2; });
+      }
+      if (extraObj) total += JSON.stringify(extraObj).length * 2;
+    } catch (_) {}
+    return total;
+  }
+  function checkQuotaAndGuard(st, uid, profile) {
+    var estimated = estimateStorageBytes(st, profile);
+    if (estimated <= MAX_STORAGE_BYTES) return { guarded: false, estimatedBytes: estimated, archivedCount: 0 };
+    var archivedCount = 0;
+    if (profile && Array.isArray(profile.records)) {
+      for (var i = profile.records.length - 1; i >= 0; i--) {
+        var rec = profile.records[i];
+        if (rec && (rec.photo || (rec.text && rec.text.length > 500))) {
+          idbArchiveMemory.push({ uid: uid, recordId: rec.id, photo: rec.photo || null, archivedAt: new Date().toISOString() });
+          if (rec.photo) { delete rec.photo; rec.photoArchivedToIdb = true; }
+          archivedCount++;
+          if (estimateStorageBytes(st, profile) <= MAX_STORAGE_BYTES) break;
+        }
+      }
+    }
+    return { guarded: true, estimatedBytes: estimateStorageBytes(st, profile), archivedCount: archivedCount };
+  }
+
   function persist(d, profile) {
+    checkQuotaAndGuard(d.store, profile && profile.id, profile);
     var uid = profile.id, st = d.store;
     ['goals', 'records'].forEach(function (kind) {
       var backupKey = 'ourgoal_' + kind + '_backup_' + uid, before = st.getItem(backupKey), storageError = null;
@@ -273,7 +312,7 @@
     var words = { confirmed: '반영됐어요', sending: '올리는 중이에요', local: '기기에 보관했어요. 올라간 것은 아직 확인되지 않았어요', reauth: '기기에 보관했어요. 다시 로그인하면 올라가요', rejected: '기기에 보관했지만 올리지 못했어요' };
     return (action ? action + ' · ' : '') + words[r.state] + (r.photoStored === false ? ' · 사진은 보관하지 못했어요. 다시 붙여 주세요.' : '');
   }
-  var api = { save: save, retry: retry, pending: pending, message: message, focused: function(uid,id){return !!focused && focused.account === uid && focused.recordId === id;}, status: function (uid, id, kind) { return states.get(stateKey(uid,kind || 'records',id)) || null; }, equal: equal, read: read };
+  var api = { MAX_STORAGE_BYTES: MAX_STORAGE_BYTES, estimateStorageBytes: estimateStorageBytes, checkQuotaAndGuard: checkQuotaAndGuard, save: save, retry: retry, pending: pending, message: message, focused: function(uid,id){return !!focused && focused.account === uid && focused.recordId === id;}, status: function (uid, id, kind) { return states.get(stateKey(uid,kind || 'records',id)) || null; }, equal: equal, read: read };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (g.OurgoalCapabilities) {
     var localMeta = { cell: 'core/device-save', description: 'DIR006 기기 확인과 계정별 미확정 자료', sideEffect: 'server' };

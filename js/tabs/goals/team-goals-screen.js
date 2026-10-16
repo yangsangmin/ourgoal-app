@@ -268,23 +268,19 @@
           (levelGroupsHtml || '<p class="faint" style="font-size:.8125rem;">등록된 수준별 조가 없어요.</p>') +
         '</div>';
 
-      return '<div class="card" data-teamcard="'+g.id+'" style="margin-bottom:16px;">' +
-          leaderDashboardHtml +
-          memberFeedbackBannerHtml +
-          previewBadgeHtml +
-          '<div class="card-title-row" style="align-items:flex-start;margin-bottom:10px;">' +
-            '<div style="flex:1;min-width:0;">' +
-              leaderCrownHtml +
-              '<h3 style="margin:0;font-size:1.1rem;letter-spacing:-.01em;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">'+g.icon+' '+L.escapeHtml(g.name)+mockTeamBadgeHtml+'</h3>' +
+      return '<div class="card" data-teamcard="'+g.id+'" style="margin-bottom:16px;">' + leaderDashboardHtml + memberFeedbackBannerHtml + previewBadgeHtml +
+          '<div class="card-title-row" style="display:flex;flex-direction:column;align-items:stretch;gap:8px;margin-bottom:10px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;">' +
+              '<div style="flex:1;min-width:0;">' + leaderCrownHtml + '<h3 style="margin:0;font-size:1.05rem;letter-spacing:-.01em;display:flex;align-items:center;flex-wrap:wrap;gap:4px;word-break:keep-all;">'+g.icon+' '+L.escapeHtml(g.name)+mockTeamBadgeHtml+'</h3></div>' +
+              '<span class="dday-pill" style="white-space:nowrap;flex-shrink:0;">'+roleLabel+'</span>' +
             '</div>' +
-            '<div style="display:flex;align-items:center;gap:5px;flex:0 0 auto;flex-wrap:wrap;">' +
-              '<button class="btn btn-ghost btn-sm btn-team-personal-goal team-personal-goal-pill-btn" data-teamid="'+g.id+'" data-teamname="'+L.escapeHtml(g.name)+'" type="button">🎯 팀 연계 개인목표</button>' +
-              (canManage ? '<button class="btn btn-ghost btn-sm" data-inviteteam="'+g.id+'" data-teamname="'+L.escapeHtml(g.name)+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--brand);color:var(--brand-strong);font-weight:700;">👥 팀원 초대</button>' : '') + '<button class="btn btn-ghost btn-sm" data-teamchat="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink);font-weight:700;">💬 팀 대화</button><span class="dday-pill">'+roleLabel+'</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+              '<button class="btn btn-ghost btn-sm btn-team-personal-goal team-personal-goal-pill-btn" data-teamid="'+g.id+'" data-teamname="'+L.escapeHtml(g.name)+'" type="button" style="white-space:nowrap;">🎯 팀 연계 개인목표</button>' +
+              (canManage ? '<button class="btn btn-ghost btn-sm" data-inviteteam="'+g.id+'" data-teamname="'+L.escapeHtml(g.name)+'" type="button" style="font-size:.75rem;padding:3px 8px;border-color:var(--brand);color:var(--brand-strong);font-weight:700;white-space:nowrap;">👥 팀원 초대</button>' : '') +
+              '<button class="btn btn-ghost btn-sm" data-teamchat="'+g.id+'" type="button" style="font-size:.75rem;padding:3px 8px;border-color:var(--rule);color:var(--ink);font-weight:700;white-space:nowrap;">💬 팀 대화</button>' +
+            '</div>' +
           '</div>' +
-          (window.OurgoalTeamVisibilityLevels ? OurgoalTeamVisibilityLevels.renderTeamCardContent(g, canManage, L.state) : (
-            '<div style="margin-bottom:6px;"><b style="font-size:.875rem;color:var(--ink-soft);">공동 팀 목표</b></div>' +
-            (goals.length ? goalsHtml : '<p class="faint" style="margin-top:4px;">아직 공동 팀 목표가 없어요.</p>') +
-            (canManage ? '<button class="btn btn-primary btn-sm" data-addteamgoal="'+g.id+'" type="button" style="margin-top:12px;width:100%;">+ 공동 팀 목표 추가</button>' : '') + levelSectionHtml)) +
+          (window.OurgoalTeamVisibilityLevels ? OurgoalTeamVisibilityLevels.renderTeamCardContent(g, canManage, L.state) : ('<div style="margin-bottom:6px;"><b style="font-size:.875rem;color:var(--ink-soft);">공동 팀 목표</b></div>' + (goals.length ? goalsHtml : '<p class="faint" style="margin-top:4px;">아직 공동 팀 목표가 없어요.</p>') + (canManage ? '<button class="btn btn-primary btn-sm" data-addteamgoal="'+g.id+'" type="button" style="margin-top:12px;width:100%;">+ 공동 팀 목표 추가</button>' : '') + levelSectionHtml)) +
         '</div>';
     }).join('');
 
@@ -592,32 +588,24 @@
           var m = tg.milestones.find(function(x){ return x.id===mid; });
           var cycleEl = row.querySelector('[data-tgcycle]');
           if(cycleEl) cycleEl.addEventListener('click', async function(){
-            var order = ['todo','doing','done'];
-            m.status = order[(order.indexOf(m.status)+1)%3];
+            if(L.state.teamGoalEditMode){ L.toast('편집 모드에서는 완료 상태가 변경되지 않아요.'); return; }
+            var order = ['todo','doing','done']; m.status = order[(order.indexOf(m.status)+1)%3];
             await L.saveProfile(); renderTeamGoalsScreen();
           });
           var mTitleInput = row.querySelector('[data-tgmtitle]');
           if(mTitleInput) mTitleInput.addEventListener('change', async function(){
-            m.title = mTitleInput.value.trim() || m.title;
-            await L.saveProfile();
+            m.title = mTitleInput.value.trim() || m.title; await L.saveProfile();
           });
           var mDelBtn = row.querySelector('[data-tgmdel]');
           if(mDelBtn) mDelBtn.addEventListener('click', function(){
             L.openModal(
-              '<h3>마일스톤 삭제</h3>' +
-              '<p class="faint" style="margin:8px 0 16px;">"' + L.escapeHtml(m.title) + '" 마일스톤을 삭제할까요?</p>' +
-              '<div class="modal-actions">' +
-                '<button class="btn btn-ghost" id="btnCancelDelMs" type="button">취소</button>' +
-                '<button class="btn btn-primary" id="btnConfirmDelMs" type="button" style="background:var(--brand-strong);">삭제</button>' +
-              '</div>',
+              '<h3>마일스톤 삭제</h3><p class="faint" style="margin:8px 0 16px;">"' + L.escapeHtml(m.title) + '" 마일스톤을 삭제할까요?</p>' +
+              '<div class="modal-actions"><button class="btn btn-ghost" id="btnCancelDelMs" type="button">취소</button><button class="btn btn-primary" id="btnConfirmDelMs" type="button" style="background:var(--brand-strong);">삭제</button></div>',
               function(sheet){
                 sheet.querySelector('#btnCancelDelMs').addEventListener('click', L.closeModal);
                 sheet.querySelector('#btnConfirmDelMs').addEventListener('click', async function(){
                   tg.milestones = tg.milestones.filter(function(x){ return x.id!==mid; });
-                  L.closeModal();
-                  await L.saveProfile();
-                  L.toast('마일스톤을 삭제했어요');
-                  renderTeamGoalsScreen();
+                  L.closeModal(); await L.saveProfile(); L.toast('마일스톤을 삭제했어요'); renderTeamGoalsScreen();
                 });
               }
             );
@@ -652,14 +640,13 @@
         });
         tgEl.querySelectorAll('[data-tgtoggletask]').forEach(function(el){
           el.addEventListener('click', async function(){
+            if(L.state.teamGoalEditMode){ L.toast('편집 모드에서는 완료 상태가 변경되지 않아요.'); return; }
             var parts = el.dataset.tgtoggletask.split(':');
             var m = tg.milestones.find(function(x){ return x.id===parts[1]; });
             if(!m || !m.tasks) return;
             var t = m.tasks.find(function(x){ return x.id===parts[2]; });
             if(!t) return;
-            t.done = !t.done;
-            await L.saveProfile();
-            renderTeamGoalsScreen();
+            t.done = !t.done; await L.saveProfile(); renderTeamGoalsScreen();
           });
         });
         tgEl.querySelectorAll('[data-tgtasktitle]').forEach(function(inp){

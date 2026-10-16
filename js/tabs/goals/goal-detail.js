@@ -83,36 +83,46 @@
       '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
         L.formatSchedulePillHtml(goal, 'goal', goal.id) +
         '<button class="icon-btn" data-calsyncgoal="'+goal.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
-        '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'))+' ▾</span>' +
+        '<span class="dday-pill" id="goalHeroPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'))+' ▾</span>' +
         (goal.topic ? L.topicPill(goal.topic) : '') +
         '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalPct+'%</span>' +
         predictedPill +
       '</div>' +
     '</div>';
-    /* #TASK-ES-380: "+ 최종 결과" 버튼은 위 카드(ui.css 가 상단 등반 로드맵과 중복이라 숨김) 밖, 목표 상세 맨 위 한 줄에 둔다.
-       문구·동작(goal-detail-events.js 의 L.openResultModal('goal', goal, …))은 그대로이고, 저장된 결과가 있으면 그 줄에 달성률을 보여 준다. */
+    /* #TASK-ES-380 & T-GOALS-03: "+ 최종 결과" 버튼과 목표 핵심 요약(달성률·D-Day·예상도달일·공개범위)을 숨김 카드 밖, 목표 상세 맨 위 한 줄(.goal-result-row.goal-unified-summary-strip)에 통합 배치한다. */
+    var visBadgeLabel = (visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'));
     var goalResultPct = goal.result ? L.resultPct(goal.result) : null;
-    var goalResultRow = '<div class="goal-result-row" id="goalResultRow" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 8px;">' +
-      (goal.result ? '<span class="faint" id="goalResultSummary" style="font-size:.75rem;">최종 결과 · ' + (goalResultPct === null ? '기록 완료' : '달성률 ' + goalResultPct + '%') + '</span>' : '') +
-      '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;color:var(--ink-soft);border:1px solid var(--rule);">' +
-        (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
-      '</button>' +
-    '</div>';
-    var dueRow = '<div class="duedate-row"><span class="lbl">목표 마감일시 (년월일시분)</span>' +
-      '<span style="display:flex;align-items:center;gap:6px;">' +
-        (L.state.goalEditMode ?
-          '<input type="datetime-local" id="goalDueInput" value="'+L.toDateTimeLocalValue(goal.dueDate)+'">' :
-          '<span class="faint">'+(goal.dueDate ? formattedGoalDue : '설정 안 함')+'</span>') +
-        ddayPill +
-        L.formatSchedulePillHtml(goal, 'goal', goal.id) +
-        '<button class="icon-btn" data-calsyncgoal="'+goal.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
+    var toolsOpen = !!L.state.goalToolsOpen;
+    var goalResultRow = '<div class="goal-result-row goal-unified-summary-strip" id="goalResultRow" style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:' + (toolsOpen ? 'wrap' : 'nowrap') + ';margin:0 0 8px;padding:7px 10px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
+      '<span class="goal-summary-meta-left" style="display:inline-flex;align-items:center;gap:4px;flex-wrap:' + (toolsOpen ? 'wrap' : 'nowrap') + ';min-width:0;">' +
+        '<span class="dday-pill" style="background:rgba(16,185,129,0.12);color:var(--brand);font-weight:800;padding:3px 7px;font-size:.72rem;white-space:nowrap;">달성 ' + goalPct + '%</span>' +
+        (ddayText ? '<span class="dday-pill" style="background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);font-weight:700;padding:3px 7px;font-size:.72rem;white-space:nowrap;">' + ddayText + '</span>' : '') +
+        (toolsOpen ? predictedPill : '') +
+        '<span class="dday-pill" id="goalDetailPrivacyBadge" role="button" tabindex="0" style="cursor:pointer;background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);padding:3px 7px;font-size:.72rem;white-space:nowrap;" title="탭하여 공개 범위 순환 변경">' + visBadgeLabel + ' ▾</span>' +
       '</span>' +
+      '<span class="goal-summary-meta-right" style="display:inline-flex;align-items:center;gap:5px;margin-left:auto;flex-shrink:0;">' +
+        (goal.result ? '<span class="faint" id="goalResultSummary" style="font-size:.72rem;white-space:nowrap;">최종 결과 · ' + (goalResultPct === null ? '기록 완료' : '달성률 ' + goalResultPct + '%') + '</span>' : '') +
+        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.72rem;padding:4px 8px;min-height:28px;color:var(--ink-soft);border:1px solid var(--rule);border-radius:8px;white-space:nowrap;">' +
+          (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
+        '</button>' +
+      '</span>' +
+    '</div>';
+    var dueRow = '<div class="duedate-row' + (L.state.goalEditMode ? ' edit-mode-due' : '') + '">' +
+      '<div class="duedate-row-head"><span class="lbl">📅 목표 마감일시</span>' +
+        '<span class="duedate-row-badges">' +
+          (!L.state.goalEditMode ? '<span class="faint">'+(goal.dueDate ? formattedGoalDue : '설정 안 함')+'</span>' : '') +
+          ddayPill +
+          L.formatSchedulePillHtml(goal, 'goal', goal.id) +
+          '<button class="icon-btn" data-calsyncgoal="'+goal.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
+        '</span>' +
+      '</div>' +
+      (L.state.goalEditMode ? '<input type="datetime-local" id="goalDueInput" value="'+L.toDateTimeLocalValue(goal.dueDate)+'" style="width:100%;max-width:100%;box-sizing:border-box;">' : '') +
       '</div>';
 
     var vis = goal.visibility || 'private';
-    var visRow = '<div class="duedate-row"><span class="lbl">공개 범위</span>' +
+    var visRow = '<div class="duedate-row"><span class="lbl" style="white-space:nowrap;flex-shrink:0;">🔒 공개 범위</span>' +
       (L.state.goalEditMode ?
-        '<select id="goalVisInput">' +
+        '<select id="goalVisInput" style="flex:1;max-width:200px;">' +
           Object.keys(L.VISIBILITY_LABELS).map(function(k){
             return '<option value="'+k+'"'+(k===vis?' selected':'')+'>'+L.VISIBILITY_LABELS[k]+'</option>';
           }).join('') +
@@ -140,29 +150,30 @@
 
     var gView = L.state.goalViewMode || 'default';
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar goals-filter-strip" style="display:flex;flex-direction:column;gap:5px;margin:4px 0 8px;">' +
+      '<div class="ms-filter-bar goals-filter-strip" style="display:flex;flex-direction:column;gap:6px;margin:4px 0 8px;">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
-          '<div class="format-toggle seg-compact" id="msFilterToggle" style="flex:1;max-width:280px;min-width:200px;">' +
+          '<div class="format-toggle seg-compact" id="msFilterToggle" style="flex:1;max-width:290px;min-width:200px;">' +
             '<div class="format-opt'+(L.state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
             '<div class="format-opt'+(L.state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +
             '<div class="format-opt'+(L.state.msFilter==='todo'?' active':'')+'" data-msfilter="todo">대기 ('+todoCount+')</div>' +
             '<div class="format-opt'+(L.state.msFilter==='done'?' active':'')+'" data-msfilter="done">완료 ('+doneCount+')</div>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
-            densityBtnHtml +
-            '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
-              (allCollapsed ? '모두 펼치기' : '모두 접기') +
-            '</button>' +
-          '</div>' +
+          '<span id="btnToggleGoalToolsDrawer" role="button" tabindex="0" style="display:inline-flex;align-items:center;gap:4px;font-size:.75rem;font-weight:700;padding:4px 9px;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;flex-shrink:0;">' + (toolsOpen ? '▲ 도구 닫기' : '⚙️ 도구·뷰 ▾') + '</span>' +
         '</div>' +
-        '<div id="msViewToggle" style="display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
-          '<div class="format-toggle seg-compact ms-view-main-group" style="flex:1;max-width:280px;min-width:180px;">' +
+        '<div id="msViewToggle" style="' + (toolsOpen ? 'display:flex;' : 'display:none;') + 'align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;padding:6px 8px;border-radius:10px;background:var(--card2);border:1px solid var(--rule);">' +
+          '<div class="format-toggle seg-compact ms-view-main-group" style="flex:1;min-width:170px;">' +
             '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본</div>' +
             '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤</div>' +
             '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일</div>' +
           '</div>' +
           '<div class="format-toggle seg-compact goals-only-wrap" style="flex-shrink:0;margin-left:4px;">' +
             '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only" style="font-weight:700;">🎯 목표만</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
+            densityBtnHtml +
+            '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
+              (allCollapsed ? '모두 펼치기' : '모두 접기') +
+            '</button>' +
           '</div>' +
         '</div>' +
       '</div>' : '';
@@ -250,7 +261,7 @@
       goal.milestones.map(function(m, idx){
       if(L.state.msFilter !== 'all' && m.status !== L.state.msFilter) return '';
       var statusIcon = m.status==='done' ? '✓' : '';
-      var titleClass = m.status==='done' ? 'ms-title-compact done-text' : 'ms-title-compact';
+      var titleClass = (m.status==='done' ? 'ms-title-compact done-text' : 'ms-title-compact') + (L.state.goalEditMode ? ' edit-mode-input' : '');
       var isCollapsed = !!L.state.collapsedMilestones[m.id];
       var totalTasks = (m.tasks||[]).length;
       var doneTasks = (m.tasks||[]).filter(function(t){ return t.done; }).length;
@@ -259,21 +270,21 @@
         var tSel = !!L.state.taskSel[t.id];
         var tAttHtml = L.renderInlineAttachmentChips(t.attachments, 'task', t.id, m.id);
         var taskDueHtml = L.state.goalEditMode ?
-          ('<input type="datetime-local" data-taskdate="1" value="'+L.toDateTimeLocalValue(t.dueDate)+'" style="font-size:.7rem;padding:1px 3px;max-width:130px;">' + (t.dueDate ? ddayMini(t.dueDate) : '')) : '';
-        var tResHtml = t.result ? ('<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>') : (L.state.goalEditMode ? '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;font-size:.7rem;color:var(--ink-faint);">+결과</button>' : '');
+          ('<input type="datetime-local" data-taskdate="1" value="'+L.toDateTimeLocalValue(t.dueDate)+'" style="font-size:.7rem;padding:1px 3px;max-width:125px;">' + (t.dueDate ? ddayMini(t.dueDate) : '')) : '';
+        var tResHtml = t.result ? ('<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>') : (L.state.goalEditMode ? '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;font-size:.7rem;color:var(--ink-faint);display:none;">+결과</button>' : '');
 
-        return '<div class="task-row compact-task-row'+(tSel?' selected':'')+'" data-taskid="'+t.id+'" data-msid="'+m.id+'">' +
-          (L.state.goalEditMode ? '<div class="sel-check'+(tSel?' on':'')+'" data-seltask="'+t.id+'">'+(tSel?'✓':'')+'</div>' : '') +
-          '<div class="task-check'+(t.done?' done':'')+'" data-taskcheck="1">'+(t.done?'✓':'')+'</div>' +
-          '<input class="task-title-inline'+(t.done?' done-text':'')+'" data-taskinput="1" value="'+L.escapeHtml(t.title)+'" '+(L.state.goalEditMode?'':'readonly')+'>' +
+        return '<div class="task-row compact-task-row'+(tSel?' selected':'')+(L.state.goalEditMode?' edit-mode':'')+'" data-taskid="'+t.id+'" data-msid="'+m.id+'">' +
+          (L.state.goalEditMode ? '<div class="sel-check'+(tSel?' on':'')+'" data-seltask="'+t.id+'" title="삭제할 할 일 선택">'+(tSel?'✓':'')+'</div>' : '') +
+          '<div class="task-check'+(t.done?' done':'')+(L.state.goalEditMode?' edit-locked':'')+'" data-taskcheck="1">'+(t.done?'✓':'')+'</div>' +
+          '<input class="task-title-inline'+(t.done?' done-text':'')+(L.state.goalEditMode?' edit-mode-input':'')+'" data-taskinput="1" value="'+L.escapeHtml(t.title)+'" '+(L.state.goalEditMode?'':'readonly')+'>' +
           '<div class="task-meta-inline">' +
             taskDueHtml +
-            tAttHtml +
-            '<button class="att-add-btn compact-att-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button" title="참고자료 첨부">+참고</button>' +
-            L.formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id) +
-            '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:1px 3px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
+            (!L.state.goalEditMode ? tAttHtml : '') +
+            (!L.state.goalEditMode ? '<button class="att-add-btn compact-att-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button" title="참고자료 첨부">+참고</button>' : '') +
+            (!L.state.goalEditMode ? L.formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id) +
+            '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:1px 3px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
             tResHtml +
-            (L.state.goalEditMode ? '<button class="icon-btn" data-deltask="1" aria-label="삭제" style="padding:1px 4px;font-size:.8rem;">×</button>' : '') +
+            (L.state.goalEditMode ? '<button class="icon-btn task-del-btn" data-deltask="1" aria-label="삭제" title="이 할 일 삭제" style="padding:2px 6px;font-size:.82rem;color:#ef4444;">🗑️</button>' : '') +
           '</div>' +
         '</div>';
       }
@@ -315,20 +326,20 @@
       var prioLabel = curPrio === 'high' ? '높음' : (curPrio === 'low' ? '낮음' : '보통');
       var prioTagHtml = '<span class="ms-priority-tag ms-priority-' + curPrio + '" data-cyclepriority="' + m.id + '" title="우선순위 변경 (클릭)">' + prioLabel + '</span>';
       var calBtnHtml = '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>';
-      var resBtnHtml = '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>';
+      var resBtnHtml = '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;' + (L.state.goalEditMode ? 'display:none;' : '') + '">'+resultBadgeHtml(m.result)+'</button>';
 
       var msDueHtml = L.state.goalEditMode ?
-        ('<div class="ms-date" style="display:inline-flex;align-items:center;gap:4px;"><input type="datetime-local" data-msdate="1" value="'+L.toDateTimeLocalValue(m.dueDate)+'" style="font-size:.75rem;padding:2px 4px;max-width:140px;">' + (m.dueDate ? ddayMini(m.dueDate) : '') + '</div>') : '';
+        ('<div class="ms-date" style="display:inline-flex;align-items:center;gap:4px;"><input type="datetime-local" data-msdate="1" value="'+L.toDateTimeLocalValue(m.dueDate)+'" style="font-size:.75rem;padding:2px 6px;max-width:148px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);">' + (m.dueDate ? ddayMini(m.dueDate) : '') + '</div>') : '';
       var attSnippet = L.renderInlineAttachmentChips(m.attachments, 'ms', m.id);
 
-      return '<div class="ms-row'+(m.status==='doing'?' doing':'')+(mSel?' selected':'')+'" data-msid="'+m.id+'" '+(L.state.goalEditMode?'draggable="true"':'')+'>' +
+      return '<div class="ms-row'+(m.status==='doing'?' doing':'')+(mSel?' selected':'')+(L.state.goalEditMode?' edit-mode':'')+'" data-msid="'+m.id+'" '+(L.state.goalEditMode?'draggable="true"':'')+'>' +
         '<div class="ms-grid-row">' +
           '<div class="ms-main-line">' +
             '<div class="ms-main-left">' +
-              (L.state.goalEditMode ? '<div class="sel-check'+(mSel?' on':'')+'" data-selms="'+m.id+'">'+(mSel?'✓':'')+'</div>' : '') +
+              (L.state.goalEditMode ? '<div class="sel-check'+(mSel?' on':'')+'" data-selms="'+m.id+'" title="삭제할 마일스톤 선택">'+(mSel?'✓':'')+'</div>' : '') +
               (L.state.goalEditMode ? '<div class="drag-handle" title="드래그해서 순서 변경"><span></span><span></span><span></span></div>' : '') +
               (totalTasks > 0 ? '<button class="icon-btn" data-mstoggle="'+m.id+'" type="button" title="'+(isCollapsed?'하위 할 일 펼치기':'하위 할 일 접기')+'" style="padding:2px 5px;font-size:.75rem;color:var(--ink-soft);flex:0 0 auto;">'+(isCollapsed ? '▼' : '▲')+'</button>' : '') +
-              '<div class="ms-status '+m.status+'" data-cyclestatus="1">'+statusIcon+'</div>' +
+              '<div class="ms-status '+m.status+(L.state.goalEditMode?' edit-locked':'')+'" data-cyclestatus="1">'+statusIcon+'</div>' +
               '<input class="'+titleClass+'" data-msinput="1" value="'+L.escapeHtml(m.title)+'" '+(L.state.goalEditMode?'':'readonly')+'>' +
             '</div>' +
             '<div class="ms-main-right">' +
@@ -337,21 +348,21 @@
             '</div>' +
           '</div>' +
           msProgressBar +
-          '<div class="ms-sub-meta-line">' +
+          '<div class="ms-sub-meta-line" style="' + ((density === 'compact' && !L.state.goalEditMode && !toolsOpen) ? 'display:none;' : '') + '">' +
             '<div class="ms-sub-meta-left">' +
               prioTagHtml +
               msDueHtml +
-              attSnippet +
-              '<button class="att-add-btn" data-addattms="'+m.id+'" type="button" style="padding:0 6px;min-height:20px;font-size:.6875rem;">+참고</button>' +
+              (!L.state.goalEditMode ? attSnippet : '') +
+              (!L.state.goalEditMode ? '<button class="att-add-btn" data-addattms="'+m.id+'" type="button" style="padding:0 6px;min-height:20px;font-size:.6875rem;">+참고</button>' : '') +
               resBtnHtml +
             '</div>' +
             '<div class="ms-sub-meta-right">' +
-              L.formatSchedulePillHtml(m, 'ms', goal.id, m.id) +
-              calBtnHtml +
+              (!L.state.goalEditMode ? L.formatSchedulePillHtml(m, 'ms', goal.id, m.id) +
+              calBtnHtml : '') +
               (L.state.goalEditMode ?
-                ((idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로">↑</button>':'') +
-                 (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로">↓</button>':'') +
-                 '<button class="icon-btn" data-msdel="1" aria-label="삭제">×</button>') : '') +
+                ((idx>0?'<button class="icon-btn ms-edit-action-btn" data-msup="1" aria-label="위로" title="위로 이동">↑</button>':'') +
+                 (idx<goal.milestones.length-1?'<button class="icon-btn ms-edit-action-btn" data-msdown="1" aria-label="아래로" title="아래로 이동">↓</button>':'') +
+                 '<button class="icon-btn ms-edit-action-btn danger" data-msdel="1" aria-label="삭제" title="마일스톤 삭제">🗑️</button>') : '') +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -394,7 +405,7 @@
       }
     }
 
-    var goalStatusRow = '<div class="goal-status-minibar' + (isStatusExpanded ? ' expanded' : '') + '" id="goalStatusMinibar" style="background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;">' +
+    var goalStatusRow = '<div class="goal-status-minibar' + (isStatusExpanded ? ' expanded' : '') + '" id="goalStatusMinibar" style="' + (toolsOpen ? '' : 'display:none;') + 'background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;">' +
       '<div class="status-minibar-head" id="goalStatusToggleBtn" style="display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none;flex-wrap:wrap;">' +
         '<span class="minibar-icon" style="font-size:1.05rem;">🤖</span>' +
         '<span class="minibar-title" style="font-weight:700;font-size:.875rem;color:var(--ink);">현상태 분석 AI 조언</span>' +
@@ -407,7 +418,7 @@
       '</div>' +
     '</div>';
 
-    var exportCardHtml = '<div class="export-card" style="margin-top:16px;margin-bottom:14px;">' +
+    var exportCardHtml = '<div class="export-card" style="' + (toolsOpen ? '' : 'display:none;') + 'margin-top:16px;margin-bottom:14px;">' +
       '<div class="ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></div>' +
       '<div class="txt"><b>현 상태로 데이터 받기</b><span>목표·마일스톤·할 일·결과·체크인을 AI 분석용으로 내보내요</span></div>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" style="margin-left:auto;">이 목표</button>' +

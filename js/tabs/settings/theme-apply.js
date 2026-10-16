@@ -16,16 +16,24 @@
   // 탭 키트: 같은 탭 파일끼리 서로 부르는 함수 묶음(이미 있는 키트를 같이 쓴다 — 전역 이름을 새로 늘리지 않는다)
   var K = global.OurgoalSettingsKit = global.OurgoalSettingsKit || {};
 
+  var CLEAN_CUTE_THEMES = [
+    { id: 'apple-white', name: '애플 화이트', label: '🍎 애플 화이트', desc: '깔끔하고 정돈된 기본 화이트 테마', preview: '#3b82f6', metaColor: '#f6f7fb' },
+    { id: 'minimal-dark', name: '미니멀 다크', label: '🌙 미니멀 다크', desc: '눈부심 없는 딥 슬레이트 다크 테마', preview: '#38bdf8', metaColor: '#0f131c' },
+    { id: 'notion-warm', name: '노션 웜', label: '☕ 노션 웜', desc: '따뜻한 종이 질감의 아이보리 테마', preview: '#e06c4c', metaColor: '#f7f5f0' },
+    { id: 'pomodoro-pastel', name: '뽀모도로 파스텔', label: '🍑 뽀모도로 파스텔', desc: '산뜻하고 귀여운 코랄 핑크 테마', preview: '#ff6b8b', metaColor: '#fff6f8' }
+  ];
+
   function applyTheme(themeId){
     if(!themeId) themeId = 'focus-sanctuary';
     if(themeId === 'dark') themeId = 'black';
     if(themeId === 'light' || themeId === 'system') themeId = 'white';
-    if(['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(themeId) === -1) themeId = 'focus-sanctuary';
+    if(['focus-sanctuary', 'black', 'white', 'urban-city', 'apple-white', 'minimal-dark', 'notion-warm', 'pomodoro-pastel'].indexOf(themeId) === -1) themeId = 'focus-sanctuary';
     /* [#TASK-ES-353] 설정 저장(saveLocalSettings→applyAppSettings)마다 같은 테마로 불려 햅틱·활성 탭 재렌더가 반복되던 것 차단 — 실제로 바뀔 때만 */
     var themeChanged = document.documentElement.getAttribute('data-theme') !== themeId;
     document.documentElement.setAttribute('data-theme', themeId);
     if(themeChanged){ try{ if(typeof L.triggerHaptic === 'function') L.triggerHaptic(12); } catch(e){} }
-    var found = L.THEMES.find(function(t){ return t.id === themeId; });
+    var allThemes = (Array.isArray(L.THEMES) ? L.THEMES : []).concat(CLEAN_CUTE_THEMES);
+    var found = allThemes.find(function(t){ return t.id === themeId; });
     if(found && found.metaColor){
       var meta = document.querySelector('meta[name="theme-color"]');
       if(meta) meta.setAttribute('content', found.metaColor);
@@ -56,6 +64,7 @@
     } catch(e){}
   }
 
+  K.CLEAN_CUTE_THEMES = CLEAN_CUTE_THEMES;
   K.applyTheme = applyTheme;
   K.applyAppSettings = applyAppSettings;
 

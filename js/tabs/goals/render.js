@@ -89,7 +89,7 @@
     var tev = document.getElementById('templateEncyclopediaView');
     var statv = document.getElementById('statsGoalsView');
     if(rv) rv.style.display = (L.state.goalsSubTab==='routine') ? '' : 'none';
-    if(pv) pv.style.display = (isPersonal && goals.length > 0) ? '' : 'none';
+    if(pv) pv.style.display = isPersonal ? '' : 'none';
     if(tlv) tlv.style.display = (L.state.goalsSubTab==='teamLinked') ? '' : 'none';
     if(tv) tv.style.display = (L.state.goalsSubTab==='team') ? '' : 'none';
     if(tev) tev.style.display = (L.state.goalsSubTab==='templateEncyclopedia') ? '' : 'none';
@@ -169,8 +169,38 @@
     var body = document.getElementById('goalDetailBody');
     var goal = goals.find(function(g){ return g.id===L.state.activeGoalId; });
 
-    /* 편집 모드: 목표 옆에서 바로 삭제 및 보관 */
+    /* 편집 모드: 목표 옆에서 바로 삭제 및 보관 + 시각 과밀 해소(목표 보유 시 빠른입력·보조버튼 기본 접힘) */
     var headRow = editBtn.parentElement;
+    var goalHeadRowWrap = pv ? pv.querySelector('.goal-head-row') : null;
+    if(goalHeadRowWrap) goalHeadRowWrap.style.display = (goals.length > 0) ? '' : 'none';
+    if(body) body.style.display = (goals.length > 0) ? '' : 'none';
+    var fastAddBoxEl = document.getElementById('goalFastAddBox');
+    var agentCardEl = document.getElementById('goalAgentCard');
+    var showQuickAdd = (goals.length === 0) || !!L.state.showGoalQuickAdd;
+    if(fastAddBoxEl) fastAddBoxEl.style.display = showQuickAdd ? '' : 'none';
+    if(agentCardEl) agentCardEl.style.display = showQuickAdd ? '' : 'none';
+    var headPrivBadge = document.getElementById('goalsPrivacyBadge');
+    if(headPrivBadge) headPrivBadge.style.display = (goals.length > 0) ? 'none' : '';
+    var tplEncBtn = document.getElementById('btnGoalTemplateEncyclopedia');
+    if(tplEncBtn) tplEncBtn.style.display = L.state.goalToolsOpen ? 'inline-flex' : 'none';
+    var guideModalBtn = document.getElementById('btnShowPersonalGuideModal');
+    if(guideModalBtn) guideModalBtn.style.display = L.state.goalToolsOpen ? '' : 'none';
+    var oldQuickToggle = document.getElementById('btnToggleQuickGoalAdd');
+    if(oldQuickToggle) oldQuickToggle.remove();
+    if(personalAddInline) personalAddInline.style.display = L.state.goalEditMode ? 'none' : '';
+    if(goals.length > 0 && !L.state.goalEditMode && headRow && personalAddInline){
+      var quickToggleEl = document.createElement('span');
+      quickToggleEl.id = 'btnToggleQuickGoalAdd';
+      quickToggleEl.setAttribute('role', 'button');
+      quickToggleEl.setAttribute('tabindex', '0');
+      quickToggleEl.textContent = L.state.showGoalQuickAdd ? '▲ 입력창 닫기' : '⚡ 빠른 추가';
+      quickToggleEl.style.cssText = 'font-size:.78rem;padding:4px 9px;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;';
+      quickToggleEl.onclick = function(){
+        L.state.showGoalQuickAdd = !L.state.showGoalQuickAdd;
+        renderGoalsScreen();
+      };
+      headRow.insertBefore(quickToggleEl, personalAddInline);
+    }
     var oldDel = document.getElementById('goalDeleteInline');
     if(oldDel) oldDel.remove();
     var oldArchive = document.getElementById('goalArchiveBtn');
@@ -192,8 +222,10 @@
       delInline.id = 'goalDeleteInline';
       delInline.type = 'button';
       delInline.className = 'btn btn-danger btn-sm';
-      delInline.textContent = '목표 삭제';
+      delInline.textContent = '삭제';
       delInline.style.marginRight = '6px';
+      delInline.style.fontSize = '.78rem';
+      delInline.style.padding = '4px 8px';
       headRow.insertBefore(delInline, archiveBtnEl);
       delInline.addEventListener('click', async function(){
         if(!confirm('"'+goal.title+'" 목표를 휴지통으로 이동할까요?\n7일간 안전하게 보관되며 언제든 원복할 수 있습니다.')) return;
@@ -205,19 +237,24 @@
 
     var emptyGuideSlot = document.getElementById('personalGoalsEmptyGuideSlot');
     if(emptyGuideSlot){
-      // [#TASK-ES-462] 빈 안내는 목표 0개일 때만 그리는데, 그때 이 칸의 부모(#personalGoalsView)는 위에서 늘 숨겨진다(goals.length > 0 일 때만 보임).
-      //   숨은 칸에 같은 안내를 또 그리면 성소 목표 화면(#sanctuaryGoalsView)의 #goalTemplateHeroCard 와 같은 id 가 두 번 생긴다 → 칸이 보일 때만 그린다.
-      var guideSlotShown = !!pv && pv.style.display !== 'none';
+      // [#TASK-ES-462] 상단 #sanctuaryGoalsView(sv)가 보일 때는 이미 #goalTemplateHeroCard 를 그리므로 중복 ID 방지를 위해 sv 가 숨겨진 경우에만 그린다.
+      var guideSlotShown = !!pv && pv.style.display !== 'none' && (!sv || sv.style.display === 'none');
       emptyGuideSlot.innerHTML = (goals.length === 0 && guideSlotShown) ? L.renderPersonalGoalsEmptyGuideHtml() : '';
     }
 
     if(!goal){
       body.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><p>목표를 만들면 여기에 마일스톤이 보여요.</p></div>';
+      if(isPersonal && global.OurgoalSanctuaryV3 && typeof global.OurgoalSanctuaryV3.renderSanctuaryGoals === 'function'){
+        global.OurgoalSanctuaryV3.renderSanctuaryGoals();
+      }
       return;
     }
     // [#TASK-ES-370] 여기부터는 goal-detail.js · goal-detail-events.js 로 옮긴 구간이다. 원래 순서 그대로 부르고, 구간 사이 지역 변수는 인자·반환값으로 넘긴다.
     var _goalDetail = K.renderGoalDetailBody(goal, body);
     K.wireGoalDetailEvents(goal, body, _goalDetail.allCollapsed, _goalDetail.goalStatusHash, _goalDetail.isDateStale, _goalDetail.goalStatusStale);
+    if(isPersonal && global.OurgoalSanctuaryV3 && typeof global.OurgoalSanctuaryV3.renderSanctuaryGoals === 'function'){
+      global.OurgoalSanctuaryV3.renderSanctuaryGoals();
+    }
   }
 
   K.renderGoalsScreen = renderGoalsScreen;

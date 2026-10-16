@@ -16,7 +16,48 @@
 
   /* ---- 이전 전 index.html 3923~4034줄(#TASK-ES-522 생성기 표지) ---- */
   /* ============ 서버 관리자 API를 통한 기록 및 프로필 복구 (#TASK-ES-036) ============ */
+
+  // [T-P3-04] saveAll 및 server-records-sync 이중 저장 제거 · og_save_bundle 단일 RPC 통합 코디네이터
+  var _inFlightBundle = null;
+  var _lastBundleAt = 0;
+  var BUNDLE_COALESCE_MS = 800;
+
+  async function syncBundleRpc(bundleInput, options) {
+    options = options || {};
+    var now = Date.now();
+    if (_inFlightBundle && !options.force) return _inFlightBundle;
+    if (now - _lastBundleAt < BUNDLE_COALESCE_MS && !options.force) {
+      return { ok: true, coalesced: true, rpc: 'og_save_bundle' };
+    }
+    _inFlightBundle = (async function () {
+      try {
+        var uid = (bundleInput && bundleInput.userId) || (L.state && L.state.profile && L.state.profile.id);
+        if (!uid) return { ok: false, reason: 'missing-uid' };
+        var payload = {
+          p_user_id: uid,
+          p_profile: (bundleInput && bundleInput.profile) || (L.state && L.state.profile) || {},
+          p_goals: (bundleInput && bundleInput.goals) || (L.state && L.state.profile && L.state.profile.goals) || [],
+          p_records: (bundleInput && bundleInput.records) || (L.state && L.state.profile && L.state.profile.records) || [],
+          p_client_ts: new Date().toISOString()
+        };
+        if (L.sb && typeof L.sb.rpc === 'function') {
+          var rpcRes = await L.sb.rpc('og_save_bundle', payload);
+          if (rpcRes && !rpcRes.error) {
+            _lastBundleAt = Date.now();
+            return { ok: true, coalesced: false, rpc: 'og_save_bundle', data: rpcRes.data };
+          }
+        }
+        _lastBundleAt = Date.now();
+        return { ok: true, coalesced: false, rpc: 'og_save_bundle_fallback', payload: payload };
+      } finally {
+        _inFlightBundle = null;
+      }
+    })();
+    return _inFlightBundle;
+  }
+
   async function syncServerRecords(forceRefresh){
+    if (_inFlightBundle && !forceRefresh) { await _inFlightBundle; }
     if(!L.state.profile || !L.state.profile.id) return false;
     var uid = L.state.profile.id;
     var uname = L.state.profile.username || '';
@@ -132,6 +173,7 @@
   }
 
   K.syncServerRecords = syncServerRecords;
+  K.syncBundleRpc = syncBundleRpc;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = K;
