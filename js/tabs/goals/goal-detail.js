@@ -92,11 +92,12 @@
     /* #TASK-ES-380 & T-GOALS-03: "+ 최종 결과" 버튼과 목표 핵심 요약(달성률·D-Day·예상도달일·공개범위)을 숨김 카드 밖, 목표 상세 맨 위 한 줄(.goal-result-row.goal-unified-summary-strip)에 통합 배치한다. */
     var visBadgeLabel = (visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'));
     var goalResultPct = goal.result ? L.resultPct(goal.result) : null;
-    var goalResultRow = '<div class="goal-result-row goal-unified-summary-strip" id="goalResultRow" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;background:var(--card);border:1px solid var(--rule);border-radius:14px;">' +
+    var toolsOpen = !!L.state.goalToolsOpen;
+    var goalResultRow = '<div class="goal-result-row goal-unified-summary-strip" id="goalResultRow" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:8px 12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
       '<span class="goal-summary-meta-left" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;">' +
-        '<span class="dday-pill" style="background:var(--sage-soft, var(--brand-soft));color:var(--sage, var(--brand-strong));font-weight:800;">달성 ' + goalPct + '%</span>' +
-        (ddayText ? '<span class="dday-pill" style="background:var(--red-soft, var(--card2));color:var(--brand-strong, var(--ink));font-weight:700;">' + ddayText + '</span>' : '') +
-        predictedPill +
+        '<span class="dday-pill" style="background:rgba(16,185,129,0.12);color:var(--brand);font-weight:800;">달성 ' + goalPct + '%</span>' +
+        (ddayText ? '<span class="dday-pill" style="background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);font-weight:700;">' + ddayText + '</span>' : '') +
+        (toolsOpen ? predictedPill : '') +
         '<span class="dday-pill" id="goalDetailPrivacyBadge" role="button" tabindex="0" style="cursor:pointer;background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);" title="탭하여 공개 범위 순환 변경">' + visBadgeLabel + ' ▾</span>' +
       '</span>' +
       '<span class="goal-summary-meta-right" style="display:inline-flex;align-items:center;gap:6px;margin-left:auto;">' +
@@ -148,29 +149,30 @@
 
     var gView = L.state.goalViewMode || 'default';
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar goals-filter-strip" style="display:flex;flex-direction:column;gap:5px;margin:4px 0 8px;">' +
+      '<div class="ms-filter-bar goals-filter-strip" style="display:flex;flex-direction:column;gap:6px;margin:4px 0 8px;">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
-          '<div class="format-toggle seg-compact" id="msFilterToggle" style="flex:1;max-width:280px;min-width:200px;">' +
+          '<div class="format-toggle seg-compact" id="msFilterToggle" style="flex:1;max-width:290px;min-width:200px;">' +
             '<div class="format-opt'+(L.state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
             '<div class="format-opt'+(L.state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +
             '<div class="format-opt'+(L.state.msFilter==='todo'?' active':'')+'" data-msfilter="todo">대기 ('+todoCount+')</div>' +
             '<div class="format-opt'+(L.state.msFilter==='done'?' active':'')+'" data-msfilter="done">완료 ('+doneCount+')</div>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
-            densityBtnHtml +
-            '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
-              (allCollapsed ? '모두 펼치기' : '모두 접기') +
-            '</button>' +
-          '</div>' +
+          '<span id="btnToggleGoalToolsDrawer" role="button" tabindex="0" style="display:inline-flex;align-items:center;gap:4px;font-size:.75rem;font-weight:700;padding:4px 9px;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;flex-shrink:0;">' + (toolsOpen ? '▲ 도구 닫기' : '⚙️ 도구·뷰 ▾') + '</span>' +
         '</div>' +
-        '<div id="msViewToggle" style="display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
-          '<div class="format-toggle seg-compact ms-view-main-group" style="flex:1;max-width:280px;min-width:180px;">' +
+        '<div id="msViewToggle" style="' + (toolsOpen ? 'display:flex;' : 'display:none;') + 'align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;padding:6px 8px;border-radius:10px;background:var(--card2);border:1px solid var(--rule);">' +
+          '<div class="format-toggle seg-compact ms-view-main-group" style="flex:1;min-width:170px;">' +
             '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본</div>' +
             '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤</div>' +
             '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일</div>' +
           '</div>' +
           '<div class="format-toggle seg-compact goals-only-wrap" style="flex-shrink:0;margin-left:4px;">' +
             '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only" style="font-weight:700;">🎯 목표만</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
+            densityBtnHtml +
+            '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
+              (allCollapsed ? '모두 펼치기' : '모두 접기') +
+            '</button>' +
           '</div>' +
         '</div>' +
       '</div>' : '';
@@ -345,7 +347,7 @@
             '</div>' +
           '</div>' +
           msProgressBar +
-          '<div class="ms-sub-meta-line">' +
+          '<div class="ms-sub-meta-line" style="' + ((density === 'compact' && !L.state.goalEditMode && !toolsOpen) ? 'display:none;' : '') + '">' +
             '<div class="ms-sub-meta-left">' +
               prioTagHtml +
               msDueHtml +
@@ -402,7 +404,7 @@
       }
     }
 
-    var goalStatusRow = '<div class="goal-status-minibar' + (isStatusExpanded ? ' expanded' : '') + '" id="goalStatusMinibar" style="background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;">' +
+    var goalStatusRow = '<div class="goal-status-minibar' + (isStatusExpanded ? ' expanded' : '') + '" id="goalStatusMinibar" style="' + (toolsOpen ? '' : 'display:none;') + 'background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;">' +
       '<div class="status-minibar-head" id="goalStatusToggleBtn" style="display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none;flex-wrap:wrap;">' +
         '<span class="minibar-icon" style="font-size:1.05rem;">🤖</span>' +
         '<span class="minibar-title" style="font-weight:700;font-size:.875rem;color:var(--ink);">현상태 분석 AI 조언</span>' +
@@ -415,7 +417,7 @@
       '</div>' +
     '</div>';
 
-    var exportCardHtml = '<div class="export-card" style="margin-top:16px;margin-bottom:14px;">' +
+    var exportCardHtml = '<div class="export-card" style="' + (toolsOpen ? '' : 'display:none;') + 'margin-top:16px;margin-bottom:14px;">' +
       '<div class="ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></div>' +
       '<div class="txt"><b>현 상태로 데이터 받기</b><span>목표·마일스톤·할 일·결과·체크인을 AI 분석용으로 내보내요</span></div>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" style="margin-left:auto;">이 목표</button>' +

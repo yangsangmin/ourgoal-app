@@ -90,6 +90,13 @@ L.wirePromptEncyclopediaEvents(body);
         });
       });
     }
+    var toolsToggleBtn = document.getElementById('btnToggleGoalToolsDrawer');
+    if(toolsToggleBtn){
+      toolsToggleBtn.onclick = function(){
+        L.state.goalToolsOpen = !L.state.goalToolsOpen;
+        K.renderGoalsScreen();
+      };
+    }
     var collapseAllBtn = document.getElementById('msCollapseAllBtn');
     if(collapseAllBtn){
       collapseAllBtn.addEventListener('click', function(){

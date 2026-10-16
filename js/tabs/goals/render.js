@@ -169,11 +169,37 @@
     var body = document.getElementById('goalDetailBody');
     var goal = goals.find(function(g){ return g.id===L.state.activeGoalId; });
 
-    /* 편집 모드: 목표 옆에서 바로 삭제 및 보관 */
+    /* 편집 모드: 목표 옆에서 바로 삭제 및 보관 + 시각 과밀 해소(목표 보유 시 빠른입력·보조버튼 기본 접힘) */
     var headRow = editBtn.parentElement;
     var goalHeadRowWrap = pv ? pv.querySelector('.goal-head-row') : null;
     if(goalHeadRowWrap) goalHeadRowWrap.style.display = (goals.length > 0) ? '' : 'none';
     if(body) body.style.display = (goals.length > 0) ? '' : 'none';
+    var fastAddBoxEl = document.getElementById('goalFastAddBox');
+    var agentCardEl = document.getElementById('goalAgentCard');
+    var showQuickAdd = (goals.length === 0) || !!L.state.showGoalQuickAdd;
+    if(fastAddBoxEl) fastAddBoxEl.style.display = showQuickAdd ? '' : 'none';
+    if(agentCardEl) agentCardEl.style.display = showQuickAdd ? '' : 'none';
+    var headPrivBadge = document.getElementById('goalsPrivacyBadge');
+    if(headPrivBadge) headPrivBadge.style.display = (goals.length > 0) ? 'none' : '';
+    var tplEncBtn = document.getElementById('btnGoalTemplateEncyclopedia');
+    if(tplEncBtn) tplEncBtn.style.display = L.state.goalToolsOpen ? 'inline-flex' : 'none';
+    var guideModalBtn = document.getElementById('btnShowPersonalGuideModal');
+    if(guideModalBtn) guideModalBtn.style.display = L.state.goalToolsOpen ? '' : 'none';
+    var oldQuickToggle = document.getElementById('btnToggleQuickGoalAdd');
+    if(oldQuickToggle) oldQuickToggle.remove();
+    if(goals.length > 0 && headRow && personalAddInline){
+      var quickToggleEl = document.createElement('span');
+      quickToggleEl.id = 'btnToggleQuickGoalAdd';
+      quickToggleEl.setAttribute('role', 'button');
+      quickToggleEl.setAttribute('tabindex', '0');
+      quickToggleEl.textContent = L.state.showGoalQuickAdd ? '▲ 입력창 닫기' : '⚡ 빠른 추가';
+      quickToggleEl.style.cssText = 'font-size:.78rem;padding:4px 9px;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;';
+      quickToggleEl.onclick = function(){
+        L.state.showGoalQuickAdd = !L.state.showGoalQuickAdd;
+        renderGoalsScreen();
+      };
+      headRow.insertBefore(quickToggleEl, personalAddInline);
+    }
     var oldDel = document.getElementById('goalDeleteInline');
     if(oldDel) oldDel.remove();
     var oldArchive = document.getElementById('goalArchiveBtn');

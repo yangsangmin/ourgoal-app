@@ -27,7 +27,10 @@
         ? window.goalAchievement(activeGoal)
         : (totalMs > 0 ? Math.round((doneMs / totalMs) * 100) : (activeGoal.progress || 0));
       var ddayText = activeGoal.dueDate ? (window.dDay ? window.dDay(activeGoal.dueDate) : 'D-day') : '';
-      var isTrailCollapsed = !!(window.state && window.state.trailCollapsed);
+      if (window.state && typeof window.state.trailCollapsed === 'undefined') {
+        window.state.trailCollapsed = true;
+      }
+      var isTrailCollapsed = (window.state && typeof window.state.trailCollapsed !== 'undefined') ? !!window.state.trailCollapsed : true;
 
       // 마일스톤 노드 리스트 생성 (정상이 상단, 시작이 하단)
       var nodesHtml = '';
@@ -75,19 +78,14 @@
         }).join('');
       }
 
-      trailHtml = '<div class="mountain-trail-card">' +
-        '<div class="mountain-head">' +
-          '<div class="m-title-col">' +
-            '<span class="m-badge">등반 로드맵 (Mountain Trail)</span>' +
-            '<h3 class="m-goal-title">' + T.escapeHtml(activeGoal.title) + '</h3>' +
-            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
-              /* [#TASK-ES-462] 목표 상세 서랍(#goalDetailDrawer · index.html openGoalDetailDrawer — 진척 막대·마일스톤 체크)을 부르는 곳이 없었다 → 트레일 머리에 「상세」 단추. 트레일 노드 누름 동작은 그대로 */
-              '<button type="button" class="btn btn-ghost btn-sm" id="sGoalDetailBtn" title="누르면: 진척도와 마일스톤 체크 목록이 오른쪽 서랍으로 열려요" data-goalid="' + T.escapeHtml(String(activeGoal.id)) + '" onclick="window.openGoalDetailDrawer(this.dataset.goalid);" style="min-height:44px;padding:0 12px;font-size:0.8125rem;font-weight:700;border-radius:10px;">📋 상세 보기</button>' +
-              '<span class="trail-collapse-chip" id="sTrailCollapseChip" role="button" tabindex="0" title="등반 로드맵 접기/펼치기" onclick="event.stopPropagation(); if(!window.state) window.state={}; window.state.trailCollapsed = !window.state.trailCollapsed; if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.renderSanctuaryGoals();" style="display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 10px;font-size:0.78rem;font-weight:700;border-radius:10px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;">' + (isTrailCollapsed ? '▼ 트레일 펼치기 (' + doneMs + '/' + totalMs + ')' : '▲ 트레일 접기') + '</span>' +
-            '</div>' +
+      trailHtml = '<div class="mountain-trail-card" style="padding:10px 12px;margin-bottom:8px;">' +
+        '<div class="mountain-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:' + (isTrailCollapsed ? '0' : '10px') + ';">' +
+          '<div class="m-title-col" style="display:flex;flex-direction:row;align-items:center;gap:8px;min-width:0;flex:1;">' +
+            '<h3 class="m-goal-title" style="margin:0;font-size:1.02rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + T.escapeHtml(activeGoal.title) + '</h3>' +
           '</div>' +
-          '<div class="m-summit-badge">' +
-            '<span>' + (pct >= 100 ? '🎉 정상 정복 완료!' : ('정상까지 ' + (100 - pct) + '% 남음 🏔️')) + (ddayText ? ' · ' + ddayText : '') + '</span>' +
+          '<div style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0;">' +
+            '<span class="trail-collapse-chip" id="sTrailCollapseChip" role="button" tabindex="0" title="등반 로드맵 접기/펼치기" onclick="event.stopPropagation(); if(!window.state) window.state={}; window.state.trailCollapsed = !window.state.trailCollapsed; if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.renderSanctuaryGoals();" style="display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 10px;font-size:0.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;">' + (isTrailCollapsed ? '🗺️ 로드맵 (' + doneMs + '/' + totalMs + ') ▾' : '▲ 로드맵 접기') + '</span>' +
+            '<button type="button" class="btn btn-ghost btn-sm" id="sGoalDetailBtn" title="누르면: 진척도와 마일스톤 체크 목록이 오른쪽 서랍으로 열려요" data-goalid="' + T.escapeHtml(String(activeGoal.id)) + '" onclick="window.openGoalDetailDrawer(this.dataset.goalid);" style="min-height:34px;padding:0 10px;font-size:0.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);">📋 요약</button>' +
           '</div>' +
         '</div>' +
         '<div class="mountain-trail-path" style="' + (isTrailCollapsed ? 'display:none;' : '') + '">' +
