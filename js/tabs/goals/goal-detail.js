@@ -93,16 +93,16 @@
     var visBadgeLabel = (visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(L.VISIBILITY_LABELS[visNow]||'같은 테마 공개'));
     var goalResultPct = goal.result ? L.resultPct(goal.result) : null;
     var toolsOpen = !!L.state.goalToolsOpen;
-    var goalResultRow = '<div class="goal-result-row goal-unified-summary-strip" id="goalResultRow" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:8px 12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
-      '<span class="goal-summary-meta-left" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;">' +
-        '<span class="dday-pill" style="background:rgba(16,185,129,0.12);color:var(--brand);font-weight:800;">달성 ' + goalPct + '%</span>' +
-        (ddayText ? '<span class="dday-pill" style="background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);font-weight:700;">' + ddayText + '</span>' : '') +
+    var goalResultRow = '<div class="goal-result-row goal-unified-summary-strip" id="goalResultRow" style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:' + (toolsOpen ? 'wrap' : 'nowrap') + ';margin:0 0 8px;padding:7px 10px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
+      '<span class="goal-summary-meta-left" style="display:inline-flex;align-items:center;gap:4px;flex-wrap:' + (toolsOpen ? 'wrap' : 'nowrap') + ';min-width:0;">' +
+        '<span class="dday-pill" style="background:rgba(16,185,129,0.12);color:var(--brand);font-weight:800;padding:3px 7px;font-size:.72rem;white-space:nowrap;">달성 ' + goalPct + '%</span>' +
+        (ddayText ? '<span class="dday-pill" style="background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);font-weight:700;padding:3px 7px;font-size:.72rem;white-space:nowrap;">' + ddayText + '</span>' : '') +
         (toolsOpen ? predictedPill : '') +
-        '<span class="dday-pill" id="goalDetailPrivacyBadge" role="button" tabindex="0" style="cursor:pointer;background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);" title="탭하여 공개 범위 순환 변경">' + visBadgeLabel + ' ▾</span>' +
+        '<span class="dday-pill" id="goalDetailPrivacyBadge" role="button" tabindex="0" style="cursor:pointer;background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);padding:3px 7px;font-size:.72rem;white-space:nowrap;" title="탭하여 공개 범위 순환 변경">' + visBadgeLabel + ' ▾</span>' +
       '</span>' +
-      '<span class="goal-summary-meta-right" style="display:inline-flex;align-items:center;gap:6px;margin-left:auto;">' +
-        (goal.result ? '<span class="faint" id="goalResultSummary" style="font-size:.75rem;">최종 결과 · ' + (goalResultPct === null ? '기록 완료' : '달성률 ' + goalResultPct + '%') + '</span>' : '') +
-        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:4px 10px;min-height:32px;color:var(--ink-soft);border:1px solid var(--rule);border-radius:8px;">' +
+      '<span class="goal-summary-meta-right" style="display:inline-flex;align-items:center;gap:5px;margin-left:auto;flex-shrink:0;">' +
+        (goal.result ? '<span class="faint" id="goalResultSummary" style="font-size:.72rem;white-space:nowrap;">최종 결과 · ' + (goalResultPct === null ? '기록 완료' : '달성률 ' + goalResultPct + '%') + '</span>' : '') +
+        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.72rem;padding:4px 8px;min-height:28px;color:var(--ink-soft);border:1px solid var(--rule);border-radius:8px;white-space:nowrap;">' +
           (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
         '</button>' +
       '</span>' +

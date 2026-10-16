@@ -107,3 +107,18 @@ test('T-GOALS-04 & T-GOALS-05: 트레일 접기 칩(#sTrailCollapseChip), 우측
     'ui.css should define unified summary strip and mobile responsive rules for #screen-goals'
   );
 });
+
+test('T-GOALS-TOPBAR-UNIFY: 6등분 언더라인 서브탭 바, 목표 스위처 달성률 배지(.s-goal-pill-pct) 및 전체 펼치기(#sToggleGoalPillsWrap)', function() {
+  var engineSrc = readFile('js/sanctuary-v3-engine.js');
+  var cssSrc = readFile('ui.css');
+
+  assert.ok(
+    engineSrc.includes('s-goal-pill-pct') && engineSrc.includes('id="sToggleGoalPillsWrap"'),
+    'sanctuary-v3-engine.js should render live % badge (.s-goal-pill-pct) and expand toggle (#sToggleGoalPillsWrap)'
+  );
+  assert.ok(
+    cssSrc.includes('grid-template-columns: repeat(6, minmax(0, 1fr)) !important;'),
+    'ui.css should style .goals-sticky-subnav as a 6-column full-width grid tab bar'
+  );
+});
+

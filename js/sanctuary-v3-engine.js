@@ -179,17 +179,25 @@
 
     var activeGoal = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0];
 
-    // 1-1. 상단 목표 알약 셀렉터 (목표가 0건이어도 추가 버튼 보존)
+    // 1-1. 상단 목표 알약 셀렉터 (각 목표 실시간 달성률 % 배지 표시 + 전체 펼침 토글 + 추가 버튼 보존)
+    var pillsExpanded = !!(window.state && window.state.goalPillsExpanded);
     var pillsHtml = '';
     if (goals.length > 0) {
-      pillsHtml = '<div class="s-goal-pills-wrap">' +
+      pillsHtml = '<div class="s-goal-pills-wrap' + (pillsExpanded ? ' expanded' : '') + '">' +
         goals.map(function(g) {
           var isCur = (g.id === engine.activeGoalId);
-          return '<button type="button" class="s-goal-pill ' + (isCur ? 'active' : '') + '" data-sgoalid="' + g.id + '">' +
-            escapeHtml(g.title) +
+          var gMs = g.milestones || [];
+          var gDone = gMs.filter(function(m) { return m.status === 'done' || m.completed; }).length;
+          var gPct = (typeof window.goalAchievement === 'function')
+            ? window.goalAchievement(g)
+            : (gMs.length > 0 ? Math.round((gDone / gMs.length) * 100) : (g.progress || 0));
+          return '<button type="button" class="s-goal-pill ' + (isCur ? 'active' : '') + '" data-sgoalid="' + g.id + '" title="' + escapeHtml(g.title) + ' (' + gPct + '%)">' +
+            '<span class="s-goal-pill-title">' + escapeHtml(g.title) + '</span>' +
+            '<span class="s-goal-pill-pct">' + gPct + '%</span>' +
           '</button>';
         }).join('') +
-        '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표</button>' +
+        (goals.length > 2 ? '<span class="s-goal-pill-expand" id="sToggleGoalPillsWrap" role="button" tabindex="0" onclick="event.stopPropagation(); if(!window.state) window.state={}; window.state.goalPillsExpanded = !window.state.goalPillsExpanded; if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.renderSanctuaryGoals();">' + (pillsExpanded ? '▲ 접기' : '전체 ' + goals.length + '개 ▾') + '</span>' : '') +
+        '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" title="새 목표 추가" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 추가</button>' +
       '</div>';
     } else {
       pillsHtml = '<div class="s-goal-pills-wrap empty" style="display:none;"></div>';

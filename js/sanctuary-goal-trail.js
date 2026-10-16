@@ -78,14 +78,16 @@
         }).join('');
       }
 
-      trailHtml = '<div class="mountain-trail-card" style="padding:10px 12px;margin-bottom:8px;">' +
+      trailHtml = '<div class="mountain-trail-card" style="padding:7px 10px;margin-bottom:6px;border-radius:12px;">' +
         '<div class="mountain-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:' + (isTrailCollapsed ? '0' : '10px') + ';">' +
-          '<div class="m-title-col" style="display:flex;flex-direction:row;align-items:center;gap:8px;min-width:0;flex:1;">' +
-            '<h3 class="m-goal-title" style="margin:0;font-size:1.02rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + T.escapeHtml(activeGoal.title) + '</h3>' +
+          '<div class="m-title-col" style="display:flex;flex-direction:row;align-items:center;gap:6px;min-width:0;flex:1;">' +
+            '<span class="m-goal-title" style="margin:0;font-size:0.8125rem;font-weight:700;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
+              (isTrailCollapsed ? ('🏔️ 등반 트레일 · ' + doneMs + '/' + totalMs + ' 완료') : T.escapeHtml(activeGoal.title)) +
+            '</span>' +
           '</div>' +
-          '<div style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0;">' +
-            '<span class="trail-collapse-chip" id="sTrailCollapseChip" role="button" tabindex="0" title="등반 로드맵 접기/펼치기" onclick="event.stopPropagation(); if(!window.state) window.state={}; window.state.trailCollapsed = !window.state.trailCollapsed; if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.renderSanctuaryGoals();" style="display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 10px;font-size:0.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;">' + (isTrailCollapsed ? '🗺️ 로드맵 (' + doneMs + '/' + totalMs + ') ▾' : '▲ 로드맵 접기') + '</span>' +
-            '<button type="button" class="btn btn-ghost btn-sm" id="sGoalDetailBtn" title="누르면: 진척도와 마일스톤 체크 목록이 오른쪽 서랍으로 열려요" data-goalid="' + T.escapeHtml(String(activeGoal.id)) + '" onclick="window.openGoalDetailDrawer(this.dataset.goalid);" style="min-height:34px;padding:0 10px;font-size:0.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);">📋 요약</button>' +
+          '<div style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0;">' +
+            '<span class="trail-collapse-chip" id="sTrailCollapseChip" role="button" tabindex="0" title="등반 로드맵 접기/펼치기" onclick="event.stopPropagation(); if(!window.state) window.state={}; window.state.trailCollapsed = !window.state.trailCollapsed; if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.renderSanctuaryGoals();" style="display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:0 8px;font-size:0.72rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);cursor:pointer;user-select:none;">' + (isTrailCollapsed ? '🗺️ 로드맵 ▾' : '▲ 로드맵 접기') + '</span>' +
+            '<button type="button" class="btn btn-ghost btn-sm" id="sGoalDetailBtn" title="누르면: 진척도와 마일스톤 체크 목록이 오른쪽 서랍으로 열려요" data-goalid="' + T.escapeHtml(String(activeGoal.id)) + '" onclick="window.openGoalDetailDrawer(this.dataset.goalid);" style="min-height:28px;padding:0 8px;font-size:0.72rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink-soft);">📋 요약</button>' +
           '</div>' +
         '</div>' +
         '<div class="mountain-trail-path" style="' + (isTrailCollapsed ? 'display:none;' : '') + '">' +

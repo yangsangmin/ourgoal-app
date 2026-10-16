@@ -9,15 +9,15 @@
    "docs/architecture/modules.json",
    "docs/architecture/module-baseline.json"
   ],
-  "commit": "f48e5f2f6359dad33dfdb29da8e726bfcdc7f70b",
-  "short": "f48e5f2f",
-  "committedAt": "2026-10-17T02:19:01+09:00",
-  "subject": "[E1] #TASK-UIUX-PHASE4-GOALS feat(goals): 목표 탭 상하단 단방향 동기화·통합 요약 바·4테마 정돈 (T-GOALS-01~06)"
+  "commit": "eb43fcc83a728e5e5b16e9ea01f8740354624419",
+  "short": "eb43fcc8",
+  "committedAt": "2026-10-17T02:54:59+09:00",
+  "subject": "[E1] #TASK-UIUX-PHASE4-GOALS feat(goals): 목표 탭 중복 목록 단일화·빠른추가 기본접힘·5층 컨트롤 1줄 압축"
  },
  "summary": {
   "cells": 388,
   "files": 387,
-  "jsLines": 96916,
+  "jsLines": 96926,
   "kinds": {
    "organ": 75,
    "tab": 206,
@@ -48,7 +48,7 @@
   },
   "health": {
    "undifferentiatedLines": 24,
-   "globalLinks": 76,
+   "globalLinks": 77,
    "oversizeCells": 0,
    "drawingSmallCells": {
     "drew": 7,
@@ -543,7 +543,7 @@
     "theme-system",
     "viral-sharing"
    ],
-   "lines": 5076,
+   "lines": 5086,
    "over800": 0
   },
   {
@@ -1384,7 +1384,7 @@
    "file": "js/sanctuary-v3-engine.js",
    "name": "sanctuary-v3-engine.js",
    "firstLines": 1969,
-   "nowLines": 737,
+   "nowLines": 745,
    "over800Now": false,
    "steps": [
     {
@@ -1422,7 +1422,7 @@
     {
      "id": "sanctuary-goal-trail",
      "file": "js/sanctuary-goal-trail.js",
-     "lines": 210
+     "lines": 212
     },
     {
      "id": "sanctuary-peer-radar",
@@ -1800,6 +1800,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit"
    ],
    "calledBy": [
@@ -3052,7 +3053,8 @@
     "core/boot-early-state",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "calendar/day-edit-hub",
@@ -7274,7 +7276,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "core/registry",
@@ -10343,7 +10346,8 @@
     "core/boot-entry-wiring",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "comm/first-cheer",
@@ -10643,7 +10647,8 @@
     "core/boot-entry-wiring",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "sanctuary-v3-engine"
@@ -10869,7 +10874,7 @@
     "분기 본문 renderSanctuaryGoalTrail(218~283)",
     "메서드 toggleMilestone·toggleTask·openMilestoneCheckin·transplantSampleRoutine(1585~1670)"
    ],
-   "lines": 210,
+   "lines": 212,
    "over800": false,
    "exposes": [
     "OurgoalSanctuaryV3Kit",
@@ -11170,10 +11175,11 @@
     "더미 목데이터 0%, 100% 실제 데이터 원장(state.profile.goals, calendarItemsByDate, records) 바인딩",
     "72개 인터랙션 전수 실구현 및 20종 정본 그래픽 시안 1:1 완벽 일치 보장"
    ],
-   "lines": 737,
+   "lines": 745,
    "over800": false,
    "exposes": [
-    "OurgoalSanctuaryV3"
+    "OurgoalSanctuaryV3",
+    "state"
    ],
    "calls": [
     "calendar/calendar-core",
@@ -11248,20 +11254,59 @@
     "time-tracker"
    ],
    "calledBy": [
+    "auth-safety",
+    "calendar-attachment",
+    "calendar/index",
     "calendar/render",
+    "calendar/sub-day-detail",
+    "calendar/sub-month-view",
+    "calendar/sub-photo-diary",
+    "comm/index",
+    "comm/sub-companions",
+    "comm/sub-crew",
+    "comm/sub-feed",
     "core/all-view-render",
     "core/registry-init",
+    "core/store",
     "core/view-dispatch",
+    "goals/index",
     "goals/new-goal-modal",
+    "goals/sub-personal",
+    "goals/sub-routine",
+    "goals/sub-team",
+    "home/index",
+    "home/sub-onescreen",
+    "notify-engine",
+    "records/index",
     "records/render",
     "records/sample-purge",
+    "records/sub-retrospect",
+    "records/sub-timeline",
+    "records/sub-timer",
+    "sanctuary-calendar-actions",
     "sanctuary-calendar-views",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
     "sanctuary-peer-radar",
     "sanctuary-record-feed",
     "sanctuary-weekly-recap",
-    "settings/theme-apply"
+    "settings/index",
+    "settings/theme-apply",
+    "tab-guides",
+    "team-chat",
+    "team-companion-search",
+    "team-companions",
+    "team-dm-inbox",
+    "team-dm-room",
+    "team-invite-comm",
+    "team-linked-goals",
+    "team-member-review",
+    "team-profile",
+    "team-recruit",
+    "team-share",
+    "team-templates",
+    "team-visibility-levels",
+    "viral-sharing"
    ],
    "readsFromIndexHtml": [],
    "loadedByIndexHtml": true,
@@ -12481,7 +12526,8 @@
     "core/boot-early-state",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "core/boot-home-wiring"
@@ -12842,7 +12888,8 @@
     "core/registry",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "core/registry-init"
@@ -13429,7 +13476,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "calendar/index"
@@ -13500,7 +13548,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "calendar/index"
@@ -13563,7 +13612,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "calendar/index"
@@ -14413,7 +14463,8 @@
     "core/registry",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "core/registry-init"
@@ -15153,7 +15204,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "comm/index"
@@ -15216,7 +15268,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "comm/index"
@@ -15279,7 +15332,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "comm/index"
@@ -16939,7 +16993,8 @@
     "goals/sub-routine",
     "goals/sub-team",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "core/registry-init"
@@ -18005,7 +18060,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "goals/index"
@@ -18068,7 +18124,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "goals/index"
@@ -18133,6 +18190,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "team-linked-goals"
    ],
    "calledBy": [
@@ -19185,7 +19243,8 @@
     "home/sub-quest",
     "home/sub-today",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "core/registry-init"
@@ -19379,7 +19438,8 @@
     "core/boot-early-state",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "avatar/xp",
@@ -20755,7 +20815,8 @@
     "records/sub-timeline",
     "records/sub-timer",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "core/registry-init"
@@ -22428,7 +22489,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "records/index"
@@ -22491,7 +22553,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "records/index"
@@ -22554,7 +22617,8 @@
     "core/event-bus",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "records/index"
@@ -25156,6 +25220,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "settings/sub-appearance",
     "settings/sub-data",
     "settings/sub-integrations",
@@ -27542,6 +27607,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit"
    ],
    "calledBy": [
@@ -27612,6 +27678,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit"
    ],
    "calledBy": [
@@ -27674,6 +27741,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit"
    ],
    "calledBy": [
@@ -27738,6 +27806,7 @@
     "notify-engine",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit"
    ],
    "calledBy": [
@@ -27801,6 +27870,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "team-invite-comm",
     "template-credit"
    ],
@@ -27886,6 +27956,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "team-auto-actions",
     "team-chat",
     "team-companion-search",
@@ -28250,6 +28321,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "team-level-group-modal",
     "team-linked-goals-screen",
     "team-member-review"
@@ -28378,6 +28450,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "team-invite-comm",
     "template-credit"
    ],
@@ -28442,7 +28515,8 @@
     "core/boot-early-state",
     "goals/goal-archive",
     "sanctuary-focus-timer",
-    "sanctuary-goal-trail"
+    "sanctuary-goal-trail",
+    "sanctuary-v3-engine"
    ],
    "calledBy": [
     "team-invite-comm"
@@ -28507,6 +28581,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit"
    ],
    "calledBy": [
@@ -28580,6 +28655,7 @@
     "goals/team-goals-screen",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit",
     "viral-sharing"
    ],
@@ -28663,6 +28739,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "template-credit",
     "viral-sharing"
    ],
@@ -28732,6 +28809,7 @@
     "goals/goal-archive",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "team-leader-check",
     "team-level-group-modal",
     "team-linked-goals",
@@ -29473,6 +29551,7 @@
     "goals/team-goals-screen",
     "sanctuary-focus-timer",
     "sanctuary-goal-trail",
+    "sanctuary-v3-engine",
     "team-invite-comm"
    ],
    "calledBy": [
