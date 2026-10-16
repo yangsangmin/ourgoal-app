@@ -3,7 +3,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "홈 원스크린에서 [3번이미지] 아바타+경험치 박스창(#levelBadgeRow)은 살리고 [2번이미지] 상단 원형 아바타(#homeHeroAvatar)와 그 바로 밑의 게이지(#homeHeroExpBar)는 지우며, 4대 Clean & Cute 테마 및 60fps·오프라인 동기화·44px 터치 타겟 개선을 적용한다"
+      "text": "홈 원스크린에서 [3번이미지] 아바타+경험치 박스창(#levelBadgeRow)은 살리고 [2번이미지] 상단 원형 아바타(#homeHeroAvatar)와 그 바로 밑의 게이지(#homeHeroExpBar)는 지우며, 목표 탭 상하단 단방향 동기화·통합 요약 바·4대 Clean & Cute 테마·60fps·오프라인 동기화·44px 터치 타겟 개선을 적용한다"
     }
   ],
   "claims": [
@@ -13,17 +13,27 @@
       "kind": "behavior",
       "change": "new",
       "domain": "ui-behavior",
-      "statement": "첫 화면에서 로그인 없이 둘러보기를 누르면 홈 화면에서 [3번이미지] 아바타+경험치 박스창(#levelBadgeRow)이 표시되고 [2번이미지] 상단 원형 아바타(#homeHeroAvatar)와 하단 게이지(#homeHeroExpBar)는 표시되지 않는다",
+      "statement": "첫 화면에서 로그인 없이 둘러보기를 누르면 홈 화면에서 [3번이미지] 아바타+경험치 박스창(#levelBadgeRow)이 표시되고 [2번이미지] 상단 원형 아바타(#homeHeroAvatar)와 하단 게이지(#homeHeroExpBar)는 표시되지 않으며, 목표 탭 상하단 동기화 및 4대 테마 개선이 정상 동작한다",
       "touches": [
+        "docs/architecture/cell-map.json",
         "js/core/device-save.js",
         "js/core/server-records-sync.js",
+        "js/sanctuary-goal-trail.js",
         "js/sanctuary-record-feed.js",
+        "js/sanctuary-v3-engine.js",
         "js/tabs/comm/feed-posts-sync.js",
+        "js/tabs/goals/goal-detail-drawer.js",
+        "js/tabs/goals/goal-detail-events.js",
+        "js/tabs/goals/goal-detail.js",
+        "js/tabs/goals/goal-fast-add.js",
+        "js/tabs/goals/goals-ia-actions.js",
+        "js/tabs/goals/render.js",
         "js/tabs/home/quest-summary.js",
         "js/tabs/home/sub-onescreen.js",
         "js/tabs/settings/onboarding.js",
         "js/tabs/settings/sub-appearance.js",
         "js/tabs/settings/theme-apply.js",
+        "tests/ourgoal-goals-ui-improvement.test.js",
         "ui.css"
       ],
       "scenario": "scenarios/home-avatar-box.json"
