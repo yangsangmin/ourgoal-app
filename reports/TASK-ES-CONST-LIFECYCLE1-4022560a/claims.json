@@ -1,0 +1,46 @@
+{
+  "task": "TASK-ES-CONST-LIFECYCLE1-4022560a",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-CONST-LIFECYCLE1-4022560a.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md의 <lifecycle> 1호(추가) 기존 문장을 보존하고 끝에 '같은 자리를 대신하는 새 화면은 덧대지 말고 융합 절차로 대체한다.' 한 문장만 추가한다."
+    },
+    {
+      "id": "R2",
+      "text": "커널/법령 전문 머리/버전 대장의 버전 정합 패킷(v2026.10.17-LIFECYCLE-REPLACE)과 직전 커널(v2026.10.14-DIR006-SAVE) 원문 아카이브를 준비하며 제품 코드는 0줄 변경한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 문서에 <lifecycle> 1호 추가 문구와 제품 코드 0줄 변경 범위가 명시되어 있다.",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-CONST-LIFECYCLE1-4022560a.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-CONST-LIFECYCLE1-4022560a.md",
+        "text": "같은 자리를 대신하는 새 화면은 덧대지 말고 융합 절차로 대체한다."
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS.md에 단독 헌법 초안 티켓(#TASK-ES-CONST-LIFECYCLE1-4022560a)이 병합 금지(상민님 헌법 개정 승인 대기) 상태로 등재되어 있다.",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-CONST-LIFECYCLE1-4022560a"
+      }
+    }
+  ]
+}
