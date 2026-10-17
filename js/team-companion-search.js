@@ -207,6 +207,14 @@
       state._companionSearchError = null;
       state._companionSearchResults = matched;
       renderCommTopInviteSearch(container);
+      var nextInput = container.querySelector('#compSearchInput');
+      if(nextInput){
+        nextInput.focus();
+        try {
+          var len = (nextInput.value || '').length;
+          nextInput.setSelectionRange(len, len);
+        } catch(e){}
+      }
     };
 
     var debounceTimer = null;
@@ -249,7 +257,11 @@
       el.addEventListener('click', function(e){
         if(e){ e.stopPropagation(); e.preventDefault(); }
         var uid = el.dataset.viewprof;
-        if(uid && K.openUserProfileModal) K.openUserProfileModal(uid);
+        if(uid && K.openUserProfileModal){
+          var pool = (state._companionSearchResults || []).concat((K.ensureDefaultCompanions && K.ensureDefaultCompanions()) || []);
+          var foundUser = pool.find(function(u){ return u && String(u.id) === String(uid); }) || { id: uid, nickname: uid, name: uid, streak: 1, level: 1, goals: ['아워골 목표 실천 중'] };
+          K.openUserProfileModal(foundUser);
+        }
       });
     });
 

@@ -163,7 +163,9 @@
     if (!slot) return;
 
     var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
-    if (!engine.activeGoalId || !goals.find(function(g) { return g.id === engine.activeGoalId; })) {
+    if (window.state && window.state.activeGoalId && goals.some(function(g) { return g.id === window.state.activeGoalId; })) {
+      engine.activeGoalId = window.state.activeGoalId;
+    } else if (!engine.activeGoalId || !goals.find(function(g) { return g.id === engine.activeGoalId; })) {
       engine.activeGoalId = goals.length ? goals[0].id : null;
     }
     if (window.state) {
@@ -366,8 +368,9 @@
           var kind = it.kind || 'custom';
           var goalId = it.goalId || '';
           var msId = it.msId || '';
+          var taskId = it.taskId || '';
           return '<div class="s-cal-item ' + (isDone ? 'done' : '') + '" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--surface-2, rgba(255,255,255,0.04));border:1px solid var(--rule);margin-bottom:8px;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
-            '<button type="button" class="s-cal-check-btn" style="background:none;border:none;padding:4px;cursor:pointer;color:' + (isDone ? '#10b981' : 'var(--ink-sub)') + ';" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\');">' +
+            '<button type="button" class="s-cal-check-btn" style="background:none;border:none;padding:4px;cursor:pointer;color:' + (isDone ? '#10b981' : 'var(--ink-sub)') + ';" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\', \'' + taskId + '\');">' +
               (isDone ? '☑' : '☐') +
             '</button>' +
             '<div style="flex:1;min-width:0;">' +
@@ -413,7 +416,7 @@
 
     var isHeatmapActive = (engine.activeRecMode === 'heatmap' || engine.activeRecMode === 'stats');
     var isTimerActive = (engine.activeRecMode === 'timer');
-    var isFeedActive = (engine.activeRecMode === 'feed' || engine.activeRecMode === 'archive' || engine.activeRecMode === 'recap');
+    var isFeedActive = (engine.activeRecMode === 'feed');
 
     var modeNav = '<div class="s-rec-modes-wrap" id="sRecModesWrap" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding-bottom:4px;margin-bottom:12px;width:100%;box-sizing:border-box;">' + /* [#TASK-ES-462] minmax(min-content) 는 줄바꿈 없는 단추 글자 폭만큼 칸을 늘려 375px 에서 오른쪽 단추가 화면 밖으로 넘쳤다 → 칸은 1/3 씩, 글자는 단추 안에서 두 줄까지 */
       '<button type="button" class="s-rec-mode-btn ' + (isHeatmapActive ? 'active' : '') + '" style="flex:1;min-width:0;min-height:42px;padding:4px 6px;font-size:0.875rem;font-weight:700;border-radius:12px;white-space:normal;word-break:keep-all;line-height:1.15;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">📈 히트맵·통계</button>' +
@@ -589,11 +592,9 @@
       else if (navigator.vibrate) navigator.vibrate(12);
 
       var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
-      var activeG = goals[0] || { id: 'g_default', title: '1순위 실천' };
-      if (goals.length > 0) {
-        goals[0].progress = Math.min((goals[0].progress || 0) + 10, 100);
-      }
-      var today = (typeof dateKey === 'function') ? dateKey() : (new Date().toISOString().slice(0,10));
+      var activeG = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0] || { id: 'g_default', title: '1순위 실천' };
+      var nowIso = new Date().toISOString();
+      var today = (typeof dateKey === 'function') ? dateKey() : nowIso.slice(0, 10);
       if (window.state && window.state.profile) {
         if (!Array.isArray(window.state.profile.records)) window.state.profile.records = [];
         window.state.profile.records.push({
@@ -601,9 +602,13 @@
           goalId: activeG.id,
           text: activeG.title + ' 실천 완료',
           date: today,
-          createdAt: new Date().toISOString()
+          startAt: nowIso,
+          endAt: nowIso,
+          createdAt: nowIso,
+          created_at: nowIso
         });
       }
+      if (typeof window.awardXP === 'function') window.awardXP(10, '빠른 체크인');
       if (typeof saveState === 'function') saveState();
       else if (typeof saveProfile === 'function') saveProfile();
 

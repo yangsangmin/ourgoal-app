@@ -141,9 +141,10 @@
             var kind = it.kind || 'custom';
             var goalId = it.goalId || '';
             var msId = it.msId || '';
+            var taskId = it.taskId || '';
             return '<div class="quest-item" style="cursor:pointer;margin-bottom:6px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + T.engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
               '<div class="quest-left">' +
-                '<div class="quest-checkbox ' + (isDone ? 'done' : '') + '" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\');">' +
+                '<div class="quest-checkbox ' + (isDone ? 'done' : '') + '" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\', \'' + taskId + '\');">' +
                   (isDone ? '✓' : '') +
                 '</div>' +
                 '<div>' +
