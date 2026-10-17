@@ -1,15 +1,15 @@
-# [정본] 아워골 최고 헌법 v2026.10.14-DIR006-SAVE (OurGoal Supreme Constitution v2026.10.14-DIR006-SAVE)
+# [정본] 아워골 최고 헌법 v2026.10.17-LIFECYCLE-REPLACE (OurGoal Supreme Constitution v2026.10.17-LIFECYCLE-REPLACE)
 
 > **최고결정권자**: 상민 (Supreme Decision Maker)  
 > **문서 성격**: AI 에이전트 자율 코딩 및 시스템 거버넌스 전용 순수 실행 커널 (Execution Kernel)  
-> **버전**: v2026.10.14-DIR006-SAVE (개정안 — DIR-006 저장 안정화에 한정한 기기 보존·재전송 항목 선행 및 기기 확인 뒤 입력·잠금·경험치 기기 반영·축하·AI 피드백 후속 순서 예외. 조문 15.1의 첫 문장과 원격 원장의 최종 권위·동기화·무손실·경험치 중복 지급 방지·기존 승인선은 보존하며, 그 밖의 조문 내용 변경 0). 상민님의 명시적 "헌법 개정 승인"을 확인했다. 실제 병합 기록은 버전 대장을 참조한다. 효력은 이 개정을 담은 PR 이 상민님의 "헌법 개정 승인" 뒤 원격 main 에 병합된 때 발생한다.
+> **버전**: v2026.10.17-LIFECYCLE-REPLACE (개정 초안 PR #990 — `<lifecycle>` 1호 `추가` 조항 끝에 「같은 자리를 대신하는 새 화면은 덧대지 말고 융합 절차로 대체한다.」 한 문장 보완. 기존 `<lifecycle>` 1~5호 및 전 조문·승인선·판정 분리·금고 보존, 제품 코드 변경 0). 상민님의 명시적 "헌법 개정 승인" 대기 중인 초안이며, 효력은 상민님의 "헌법 개정 승인" 뒤 이 PR(#990)이 원격 main 에 병합된 때 발생한다(병합 전 효력 없음).
 > **적용 범위**: OurGoal 시스템 내 모든 메인 에이전트, 서브 에이전트, 오케스트레이터 및 자율 코딩 세션 — 새로 열린 세션·다른 도구의 세션을 포함한다  
 > **정본**: 이 파일 `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 하나다. `CLAUDE.md` 는 Claude Code 가 기동 때 본문처럼 읽어 들이는 가져오기 포인터(`@01_OURGOAL_SUPREME_CONSTITUTION_FULL.md` 한 줄), `AGENTS.md` 는 코덱스 등 다른 도구용 포인터·핵심 요약이다. 포인터는 정본 경로와 읽기 지시만 담고 개정 때 바뀌지 않는다(`node court/appendix.js --versions` 가 대조). (`101_ourgoal_supreme_constitution versio.md` 는 대체되어 효력 없음)  
 > **법령 전문**: 조·항·호 단위 해설·상세·부록은 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`(이 커널과 다르면 커널이 우선한다 — 조문 14.5), 개정 이력은 `docs/rules/CONSTITUTION_VERSIONS.md`  
 
 ---
 
-<system_kernel id="ourgoal-supreme-constitution-v2026.10.14-dir006-save">
+<system_kernel id="ourgoal-supreme-constitution-v2026.10.17-lifecycle-replace">
 
   <metadata>
     <sovereign>상민 (Supreme Decision Maker)</sovereign>
@@ -316,7 +316,7 @@
       </ratchet_baseline>
 
       <lifecycle>
-        1. 추가 [결정: 작업 세션] — 새 기능은 새 세포로: `node scripts/new-module.js 탭 이름 [--provides 영역.동작] [--contributes 자리]` → 신고서 → 자리에 기여 → 신호에 반응. 기존 세포 코드는 고치지 않는다.
+        1. 추가 [결정: 작업 세션] — 새 기능은 새 세포로: `node scripts/new-module.js 탭 이름 [--provides 영역.동작] [--contributes 자리]` → 신고서 → 자리에 기여 → 신호에 반응. 기존 세포 코드는 고치지 않는다. 같은 자리를 대신하는 새 화면은 덧대지 말고 융합 절차로 대체한다.
         2. 분열 [결정: 작업 세션] — 800줄에 가까워짐 · 책임이 둘 이상 · 같은 파일 충돌 반복일 때. 800줄은 상한이지 자르는 기준이 아니다 — 책임 단위로 나누고 `-part1` 같은 줄 수 분할은 금지. 절차는 CELL_SPLIT, 증명은 CELL_SPLIT_PROOF.
         3. 융합 [결정: 작업 세션, 화면에서 기능이 사라지면 상민님(승인선 ③)] — 같은 일을 하는 세포가 여럿이면 하나로 합쳐 능력으로 제공하고 나머지는 그 능력을 요청한다.
         4. 소멸 [결정: 상민님(승인선 ③)] — 연결 해제(`dispose`·`revokeCell`·`withdrawCell`) → 데이터 이전·보관 → 흔적 0 검사 → 신고서 삭제. 결심 요청서에는 그 세포가 실제로 하는 일(창 제목·호출부)을 코드에서 읽은 그대로 적는다.
