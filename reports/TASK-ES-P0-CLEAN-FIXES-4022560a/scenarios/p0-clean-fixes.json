@@ -1,12 +1,14 @@
 {
   "id": "p0-clean-fixes",
-  "title": "목표 탭에서 보기 모드 전환 버튼을 눌러 상세로 바꾼 뒤 다시 간결로 바꾸면 보조 메타 줄이 숨겨진다",
+  "title": "목표 탭에서 추천 목표를 담고 보기 모드 전환 버튼을 눌러 상세로 바꾼 뒤 다시 간결로 바꾸면 보조 메타 줄이 숨겨진다",
   "steps": [
     { "do": "goto", "path": "/index.html" },
     { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
     { "do": "click", "selector": "#btnLandingPreviewDirect" },
     { "do": "waitFor", "selector": "#homeAddGoal" },
     { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#goalTemplateHeroCard .template-quick-card:first-child button.btn-quick-adopt-goal" },
+    { "do": "click", "selector": "#goalTemplateHeroCard .template-quick-card:first-child button.btn-quick-adopt-goal" },
     { "expect": "visible", "selector": "#msDensityToggleBtn" },
     { "do": "click", "selector": "#msDensityToggleBtn" },
     { "expect": "textContains", "selector": "#msDensityToggleBtn", "text": "간결" },
