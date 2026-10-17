@@ -41,6 +41,9 @@
     activeCalMode: 'month',   // 'month' | 'timeline' | 'timer'
     activeRecMode: 'heatmap', // 'heatmap' | 'feed' | 'stats' | 'archive' | 'recap'
     activeGoalId: null,
+    trailExpanded: false,
+    calInlineDetailExpanded: false,
+    recLegacyFeedExpanded: false,
     timerInterval: null,
     timerSeconds: 1500, // 25:00
     timerRunning: false,
@@ -254,8 +257,14 @@
     // 알약 클릭 이벤트 바인딩
     slot.querySelectorAll('[data-sgoalid]').forEach(function(b) {
       b.onclick = function() {
-        engine.activeGoalId = b.dataset.sgoalid;
-        if (window.state) window.state.activeGoalId = b.dataset.sgoalid;
+        var gid = b.dataset.sgoalid;
+        engine.activeGoalId = gid;
+        if (window.state) window.state.activeGoalId = gid;
+        if (typeof window.selectGoal === 'function') {
+          window.selectGoal(gid);
+        } else if (typeof window.renderGoalsScreen === 'function') {
+          window.renderGoalsScreen();
+        }
         renderSanctuaryGoals();
       };
     });
@@ -390,11 +399,16 @@
           weekRowsHtml +
         '</div>' +
         '<div class="s-week-day-detail" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--rule, rgba(255,255,255,0.08));">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
-            '<h4 style="margin:0;font-size:0.9rem;color:var(--ink-soft);">' + engine.selectedCalDate + ' 상세 일정</h4>' +
-            '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal(\'' + engine.selectedCalDate + '\');">+ 일정 추가</button>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:6px;flex-wrap:wrap;">' +
+            '<h4 style="margin:0;font-size:0.9rem;color:var(--ink-soft);">' + engine.selectedCalDate + ' 상세 일정 (' + selectedDayItems.length + '건)</h4>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<button class="btn btn-ghost btn-sm" id="btnToggleWeekInlineDetail" type="button" onclick="window.OurgoalSanctuaryV3.toggleCalInlineDetail();">' + (engine.calInlineDetailExpanded ? '📋 요약 접기 ▴' : '📋 요약 펼치기 ▾') + '</button>' +
+              '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal(\'' + engine.selectedCalDate + '\');">+ 일정 추가</button>' +
+            '</div>' +
           '</div>' +
-          (dayDetailsHtml || '<div style="text-align:center;padding:18px 0;color:var(--ink-soft);font-size:0.85rem;">등록된 일정이 없습니다.</div>') +
+          '<div class="s-week-inline-detail-body" style="' + (engine.calInlineDetailExpanded ? '' : 'display:none;') + '">' +
+            (dayDetailsHtml || '<div style="text-align:center;padding:18px 0;color:var(--ink-soft);font-size:0.85rem;">등록된 일정이 없습니다.</div>') +
+          '</div>' +
         '</div>' +
       '</div>';
     } else if (engine.activeCalMode === 'timeline') {
@@ -549,6 +563,10 @@
     }
 
     slot.innerHTML = modeNav + contentHtml;
+    var recTimelineList = document.getElementById('recTimelineList');
+    if (recTimelineList) {
+      recTimelineList.style.display = (engine.activeRecMode === 'feed' && !engine.recLegacyFeedExpanded) ? 'none' : '';
+    }
   }
 
   /* [#TASK-ES-429] 함수 renderPeerAvatarHtml·getRealRunningMates·toggleRadarCollapse·renderSanctuaryComm → js/sanctuary-peer-radar.js 로 옮김(동작 그대로). 이 IIFE 맨 위에서 같은 이름으로 가져온다. */
@@ -631,6 +649,18 @@
     render: renderSanctuaryV3,
     renderRadar: renderSanctuaryComm,
     toggleRadarCollapse: toggleRadarCollapse,
+    toggleGoalTrail: function() {
+      engine.trailExpanded = !engine.trailExpanded;
+      renderSanctuaryGoals();
+    },
+    toggleCalInlineDetail: function() {
+      engine.calInlineDetailExpanded = !engine.calInlineDetailExpanded;
+      renderSanctuaryCalendar();
+    },
+    toggleRecLegacyFeed: function() {
+      engine.recLegacyFeedExpanded = !engine.recLegacyFeedExpanded;
+      renderSanctuaryRecords();
+    },
     setCalMode: function(m) {
       if (m === 'timer') {
         if (typeof window.switchTab === 'function') window.switchTab('records');
@@ -680,6 +710,9 @@
       if (typeof window.openCalendarManualEditModal === 'function') {
         var itemsByDate = (typeof window.calendarItemsByDate === 'function') ? window.calendarItemsByDate() : {};
         var dayItems = itemsByDate[dt] || [];
+        var found = dayItems.find(function(it) {
+          return String(it.schedId || it.id || '') === String(schedId);
+        });
         var editEvent = null;
         if ((kind === 'custom' || !kind) && window.state && window.state.profile && window.state.profile.settings && window.state.profile.settings.customSchedules) {
           editEvent = window.state.profile.settings.customSchedules.find(function(cs) {

@@ -13,6 +13,8 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
+- #TASK-ES-G01-SANCTUARY-FUSION-4022560a | E1/E2/FIX | [G-01 성소 화면 vs 옛 화면 기능 무손실 뷰 모드 흡수 융합] 목표(goals)·일정(calendar)·기록(records) 3대 탭에서 상단 성소 렌더러(OurgoalSanctuaryV3)와 하단 레거시 렌더러가 한 화면에 위·아래로 중복 렌더링되는 G-01 결함을 해소하되, 양쪽 고유 기능을 단 하나도 삭제하지 않고 접이식/뷰 전환 토글(#btnToggleMountainTrailPath, #btnToggleCalInlineDayList, #btnToggleRecLegacyTimeline) 및 모달 직결(R-04 기록 카드 클릭 시 openRecordModal 호출, C-01/C-02 일정 상세 found 참조 보정)로 통합하여 첫 화면 본문 도달 거리와 UX 일관성을 동시에 향상시킨다 | 상민님 직접 지시 (2026-10-17 "결심필요 2건 모두 승인, 헌법 개정 승인") | 진행중
+
 - #TASK-INFRA-SHIPYARD-MODULAR-HARDENING | INFRA | [조선소 블록 모듈화 하드닝] index.html 내 검증 마크업 오염(og-task-shipyard-p1-container) 소탕(헌법 제4조 제1항 제10호 준수) 및 6대 메가블록 이중 렌더링 방어 수밀 가드 탑재 무결성 완결 | 상민님 직접 지시 (2026-10-02 "진행" -> "병합") | 완료 (PR #625 머지 완료)
 
 - #TASK-UIUX-FRAMEWORK-SYNC | INFRA/RULES | [UI/UX 틀 개편 완결 대장 등재] 아워골 UI/UX 프레임워크 8대 실행 단계(전수 64대 과업, Phase 0~7) 전원 법정 심사 success 및 GitHub main 머지 완료 공식 등재 & 942개 버튼 Zero Dead-Click 영구 무결성 대장 동기화 | 상민님 직접 지시 (2026-10-02 "진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.") | 완료 (PR #623 머지 완료)
