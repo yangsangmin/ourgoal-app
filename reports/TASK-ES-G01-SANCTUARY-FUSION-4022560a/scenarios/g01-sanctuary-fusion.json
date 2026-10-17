@@ -1,0 +1,24 @@
+{
+  "id": "g01-sanctuary-fusion",
+  "title": "목표 탭에서 추천 목표를 담으면 상단 성소 마운틴 트레일 경로는 기본 접힘 상태로 유지되어 하단 마일스톤 카드와 중복 노출되지 않고 토글 버튼으로 여닫을 수 있다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#goalTemplateHeroCard .template-quick-card:first-child button.btn-quick-adopt-goal" },
+    { "do": "click", "selector": "#goalTemplateHeroCard .template-quick-card:first-child button.btn-quick-adopt-goal" },
+    { "expect": "visible", "selector": "#msDensityToggleBtn" },
+    { "expect": "notVisible", "selector": "#sanctuaryGoalsView .mountain-trail-path" },
+    { "do": "click", "selector": "#btnToggleMountainTrailPath" },
+    { "expect": "visible", "selector": "#sanctuaryGoalsView .mountain-trail-path" },
+    { "do": "click", "selector": "#btnToggleMountainTrailPath" },
+    { "expect": "notVisible", "selector": "#sanctuaryGoalsView .mountain-trail-path" },
+    { "expect": "rect", "selector": "#screen-goals", "minWidth": 300, "minHeight": 200 },
+    { "expect": "noHorizontalOverflow" },
+    { "expect": "noExceptions" },
+    { "expect": "stillInApp" },
+    { "capture": "g01-sanctuary-fusion-verified" }
+  ]
+}

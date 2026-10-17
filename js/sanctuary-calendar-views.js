@@ -161,6 +161,7 @@
         '</div>';
       }
 
+      var isCalInlineOpen = !!(T.engine && T.engine.calInlineDetailExpanded);
       contentHtml = '<div class="s-month-cal-card">' +
         '<div class="s-month-header">' +
           '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftCal(-1);">◀</button>' +
@@ -181,12 +182,15 @@
             '<span class="s-cal-sel-task">' + (selectedItems.length > 0 ? '실천 일정 목록' : '등록된 일정 없음') + '</span>' +
           '</div>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap;">' +
+            '<button class="btn btn-ghost btn-xs" id="btnToggleCalInlineDayList" type="button" onclick="window.OurgoalSanctuaryV3.toggleCalInlineDetail();" style="padding:3px 7px;font-size:0.72rem;" title="누르면: 달력 카드 안의 선택 일자 요약 목록을 펼치거나 접어 하단 상세창과의 중복을 줄입니다">' + (isCalInlineOpen ? '📋 요약 접기 ▴' : '📋 요약 펼치기 ▾') + '</button>' +
             '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" style="padding:3px 7px;font-size:0.72rem;" title="누르면: 이 날짜에 실천한 인증 사진을 달력 배경으로 등록합니다">🖼️ 사진</button>' +
             '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" style="padding:3px 7px;font-size:0.72rem;" title="누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다">📅 허브</button>' +
             '<button class="btn btn-primary btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:3px 9px;font-size:0.72rem;" title="누르면: 이 날짜에 새로운 실천 일정을 등록합니다">+ 일정 추가</button>' +
           '</div>' +
         '</div>' +
-        itemsListDetailHtml +
+        '<div class="s-cal-inline-detail-wrap" style="' + (isCalInlineOpen ? '' : 'display:none;') + '">' +
+          itemsListDetailHtml +
+        '</div>' +
       '</div>';
     return contentHtml;
   }

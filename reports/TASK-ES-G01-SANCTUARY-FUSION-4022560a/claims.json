@@ -1,0 +1,28 @@
+{
+  "task": "TASK-ES-G01-SANCTUARY-FUSION-4022560a",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-G01-SANCTUARY-FUSION-4022560a.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "상민님의 [결심 필요 2](G-01 선택지 1) 승인에 따라 어떤 기존 기능도 삭제하지 않고 목표·일정·기록 탭의 성소 컨테이너와 옛 화면 컨테이너 상·하단 중복 목록을 뷰 모드 전환(접기/펼치기)과 모달/선택 연동으로 무손실 통합한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 9,
+      "domain": "ui-behavior",
+      "statement": "둘러보기로 진입해 목표 탭에서 추천 목표를 담으면 하단 마일스톤 카드(.ms-card)가 표시되면서 상단 성소 마운틴 트레일 경로(#sanctuaryGoalsView .mountain-trail-path)는 기본 접힘 상태로 유지되어 이중 노출되지 않으며, 등반 트레일 토글 버튼(#btnToggleMountainTrailPath)을 누르면 트레일이 펼쳐지고 다시 누르면 접힌다",
+      "touches": [
+        "js/sanctuary-calendar-views.js",
+        "js/sanctuary-goal-trail.js",
+        "js/sanctuary-record-feed.js",
+        "js/sanctuary-v3-engine.js"
+      ],
+      "scenario": "scenarios/g01-sanctuary-fusion.json"
+    }
+  ]
+}

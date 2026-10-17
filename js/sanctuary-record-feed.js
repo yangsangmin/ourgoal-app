@@ -22,14 +22,18 @@
   //   렌더 함수 지역 변수(records·contentHtml)는 인자로 받는다, 바뀐 contentHtml 을 돌려준다.
   function renderSanctuaryRecordsFeed(records, contentHtml) {
       var feedItemsHtml = '';
+      var isRecLegacyOpen = !!(T.engine && T.engine.recLegacyFeedExpanded);
       if (records.length === 0) {
         feedItemsHtml = '<div style="text-align:center;padding:40px 20px;color:var(--ink-sub);">' +
           '등록된 기록이 없습니다.<br>오늘의 첫 체크인과 회고를 남겨보세요.' +
         '</div>';
         contentHtml = '<div class="s-feed-container">' +
-          '<div class="s-feed-header">' +
+          '<div class="s-feed-header" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
             '<h4>나의 체크인 & 회고 피드 (0건)</h4>' +
-            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(null);">+ 새 기록</button>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<button class="btn btn-ghost btn-sm" id="btnToggleRecLegacyTimeline" type="button" onclick="window.OurgoalSanctuaryV3.toggleRecLegacyFeed();">' + (isRecLegacyOpen ? '🗂️ 전체 목록 접기 ▴' : '🗂️ 전체 목록 펼치기 ▾') + '</button>' +
+              '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(null);">+ 새 기록</button>' +
+            '</div>' +
           '</div>' +
           feedItemsHtml +
         '</div>';
@@ -47,7 +51,8 @@
           var dateStr = (r.startAt || r.created_at || r.start_at || '').slice(0, 16).replace('T', ' ');
           var topicTag = r.topic ? '<span class="s-f-tag">#' + T.escapeHtml(r.topic) + '</span>' : '';
           var isLatest = (idx === 0) ? '<span style="font-size:0.7rem;font-weight:700;color:var(--brand);background:var(--brand-glow, rgba(99,102,241,0.12));padding:1px 6px;border-radius:4px;margin-left:4px;">최신글</span>' : '';
-          return '<div class="s-feed-item-card">' +
+          var recIdAttr = T.escapeHtml(String(r.id || ''));
+          return '<div class="s-feed-item-card" style="cursor:pointer;" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(\'' + recIdAttr + '\'); else if(typeof window.openRecordModal === \'function\') window.openRecordModal(\'' + recIdAttr + '\');">' +
             '<div class="s-f-head">' +
               '<span class="s-f-date">' + dateStr + isLatest + '</span>' +
               '<span class="s-f-xp">+10 EXP</span>' +
@@ -57,7 +62,7 @@
             '</div>' +
             '<div class="s-f-meta">' +
               topicTag +
-              '<span class="s-f-goal">목표 연동</span>' +
+              '<span class="s-f-goal">목표 연동 · 상세/편집 ›</span>' +
             '</div>' +
           '</div>';
         }).join('');
@@ -138,7 +143,8 @@
             var cardsList = pageItems.map(function(r) {
               var dateStr = (r.startAt || r.created_at || r.start_at || '').slice(0, 16).replace('T', ' ');
               var topicTag = r.topic ? '<span class="s-f-tag">#' + T.escapeHtml(r.topic) + '</span>' : '';
-              return '<div class="s-feed-item-card">' +
+              var recIdAttr = T.escapeHtml(String(r.id || ''));
+              return '<div class="s-feed-item-card" style="cursor:pointer;" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(\'' + recIdAttr + '\'); else if(typeof window.openRecordModal === \'function\') window.openRecordModal(\'' + recIdAttr + '\');">' +
                 '<div class="s-f-head">' +
                   '<span class="s-f-date">' + dateStr + '</span>' +
                   '<span class="s-f-xp">+10 EXP</span>' +
@@ -148,7 +154,7 @@
                 '</div>' +
                 '<div class="s-f-meta">' +
                   topicTag +
-                  '<span class="s-f-goal">목표 연동</span>' +
+                  '<span class="s-f-goal">목표 연동 · 상세/편집 ›</span>' +
                 '</div>' +
               '</div>';
             }).join('');
@@ -203,9 +209,12 @@
         }
 
         contentHtml = '<div class="s-feed-container">' +
-          '<div class="s-feed-header">' +
+          '<div class="s-feed-header" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
             '<h4>나의 체크인 & 회고 피드 (' + records.length + '건)</h4>' +
-            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(null);">+ 새 기록</button>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<button class="btn btn-ghost btn-sm" id="btnToggleRecLegacyTimeline" type="button" onclick="window.OurgoalSanctuaryV3.toggleRecLegacyFeed();">' + (isRecLegacyOpen ? '🗂️ 전체 목록 접기 ▴' : '🗂️ 전체 목록 펼치기 ▾') + '</button>' +
+              '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.OurgoalRecordsKit && typeof OurgoalRecordsKit.openRecordModal === \'function\') OurgoalRecordsKit.openRecordModal(null);">+ 새 기록</button>' +
+            '</div>' +
           '</div>' +
           '<div style="font-size:0.75rem;font-weight:700;color:var(--ink-soft);margin-bottom:8px;">✍️ 최근 실천 3개 (최신순)</div>' +
           top3Html +
