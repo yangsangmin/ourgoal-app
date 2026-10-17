@@ -107,14 +107,18 @@
       var curGoal = goals.find(function(g) { return g.id === T.engine.activeGoalId; }) || goals[0];
       var goalTitle = curGoal ? curGoal.title : '집중 몰입';
 
+      var nowIso = new Date().toISOString();
       var newRecord = {
         id: 'rec_pomo_' + Date.now(),
+        goalId: (curGoal && curGoal.id) || null,
         text: '뽀모도로 25분 몰입 완주 🧘 (' + goalTitle + ')',
         content: '뽀모도로 25분 몰입 완주 🧘 (' + goalTitle + ')',
         durationMinutes: 25,
         topic: (curGoal && curGoal.topic) || '운동/건강',
         startAt: new Date(Date.now() - 25 * 60000).toISOString(),
-        created_at: new Date().toISOString()
+        endAt: nowIso,
+        createdAt: nowIso,
+        created_at: nowIso
       };
 
       if (!window.state) window.state = {};
@@ -122,6 +126,7 @@
       if (!Array.isArray(window.state.profile.records)) window.state.profile.records = [];
 
       window.state.profile.records.unshift(newRecord);
+      if (typeof window.awardXP === 'function') window.awardXP(25, '뽀모도로 25분 완주');
       if (window.saveProfile) await window.saveProfile();
       if (window.playTimerBeep) window.playTimerBeep();
 

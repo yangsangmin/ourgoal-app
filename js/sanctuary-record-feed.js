@@ -57,7 +57,7 @@
             '</div>' +
             '<div class="s-f-meta">' +
               topicTag +
-              '<span class="s-f-goal">목표 연동</span>' +
+              '<span class="s-f-goal">' + (r.goalId ? '목표 연동' : '일반 기록') + '</span>' +
             '</div>' +
           '</div>';
         }).join('');
@@ -148,7 +148,7 @@
                 '</div>' +
                 '<div class="s-f-meta">' +
                   topicTag +
-                  '<span class="s-f-goal">목표 연동</span>' +
+                  '<span class="s-f-goal">' + (r.goalId ? '목표 연동' : '일반 기록') + '</span>' +
                 '</div>' +
               '</div>';
             }).join('');

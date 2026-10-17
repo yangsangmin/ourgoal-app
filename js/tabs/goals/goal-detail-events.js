@@ -119,8 +119,10 @@ L.wirePromptEncyclopediaEvents(body);
     body.querySelectorAll('[data-selectgoal]').forEach(function(el){
       el.addEventListener('click', function(){
         var targetGid = el.dataset.selectgoal;
-        if(targetGid && targetGid !== L.state.activeGoalId){
+        if(targetGid){
           L.state.activeGoalId = targetGid;
+          L.state.goalViewMode = 'default';
+          if(window.OurgoalSanctuaryV3) window.OurgoalSanctuaryV3.activeGoalId = targetGid;
           K.renderGoalsScreen();
         }
       });

@@ -1,0 +1,36 @@
+{
+  "task": "TASK-ES-P0-CLEAN-FIXES-4022560a",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-P0-CLEAN-FIXES-4022560a.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "origin/main(582eed2a) 실측으로 확인된 비저장(DIR-006 외) P0 및 일반 기능 결함(목표 밀도 토글 #msDensityToggleBtn 실배선·목표만 보기 뷰 탈출·템플릿/동반자 검색창 포커스 보존·성소 체크인/일정/기록/소통/설정 아코디언 상태 보존)을 저장 처리 파일을 건드리지 않고 수리한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 10,
+      "domain": "ui-behavior",
+      "statement": "둘러보기로 진입해 목표 탭에서 보기 모드 전환(#msDensityToggleBtn)을 눌러 상세 모드로 바꾼 뒤 다시 간결 모드로 바꾸면 마일스톤 보조 메타 줄(.ms-sub-meta-line)이 실제로 숨겨지고 화면 가로 넘침이나 예외 없이 동작한다",
+      "touches": [
+        "js/sanctuary-calendar-actions.js",
+        "js/sanctuary-calendar-views.js",
+        "js/sanctuary-focus-timer.js",
+        "js/sanctuary-record-feed.js",
+        "js/sanctuary-v3-engine.js",
+        "js/tabs/calendar/schedule-done-toggle.js",
+        "js/tabs/comm/feed-list.js",
+        "js/tabs/goals/goal-detail-events.js",
+        "js/tabs/goals/goal-detail.js",
+        "js/tabs/goals/template-encyclopedia.js",
+        "js/tabs/settings/render.js",
+        "js/team-companion-search.js"
+      ],
+      "scenario": "scenarios/p0-clean-fixes.json"
+    }
+  ]
+}

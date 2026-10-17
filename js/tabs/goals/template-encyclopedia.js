@@ -553,8 +553,19 @@
     var searchInp = tev.querySelector('#subtabTplSearchInp');
     if(searchInp){
       searchInp.oninput = function(){
-        L._subtabTplQuery = searchInp.value.trim();
+        var rawVal = searchInp.value;
+        var selStart = searchInp.selectionStart;
+        var selEnd = searchInp.selectionEnd;
+        L._subtabTplQuery = rawVal.trim();
         renderTemplateEncyclopediaScreen();
+        var nextInp = tev.querySelector('#subtabTplSearchInp');
+        if(nextInp){
+          nextInp.value = rawVal;
+          nextInp.focus();
+          try {
+            if(typeof selStart === 'number') nextInp.setSelectionRange(selStart, selEnd);
+          } catch(e){}
+        }
       };
     }
     var searchClear = tev.querySelector('#subtabTplSearchClear');

@@ -456,8 +456,8 @@
           name: pName,
           avatar: pAvatar,
           goals: post.goal ? [post.goal] : (post.goal_title ? [post.goal_title] : ['아워골 목표 실천 중']),
-          streak: 7,
-          level: 2,
+          streak: post.streak || 1,
+          level: post.level || 1,
           theme: post.category || '목표 달성',
           intro: post.action || post.caption || (post.recordText ? post.recordText.slice(0, 80) : '매일 꾸준히 목표를 향해 나아가는 중입니다.'),
           isAiBot: !!post.is_ai
@@ -484,8 +484,8 @@
           name: pName,
           avatar: post.avatar || (pName ? pName.slice(0, 1) : '👤'),
           goals: post.goal ? [post.goal] : ['아워골 목표 실천 중'],
-          streak: 7,
-          level: 2,
+          streak: post.streak || 1,
+          level: post.level || 1,
           theme: post.category || '목표 달성',
           intro: post.action || '아워골 러닝메이트',
           isAiBot: !!post.is_ai, source: 'feed', addedAt: L.nowISO() /* #TASK-ES-700 피드에서 시작된 연결(지표) */
@@ -518,6 +518,7 @@
         var pUid = post.userId || post.user_id || ('user_' + pName);
         L.state.activeTab = 'comm';
         L.state.commSubTab = 'dm';
+        L.state.dmActiveId = pUid;
         L.state.activeDmPeer = pUid;
         L.state.activeDmPeerName = pName;
         L.state.activeDmPeerAvatar = post.avatar || (pName ? pName.slice(0, 1) : '👤');
@@ -538,7 +539,7 @@
           nickname: pName,
           name: pName,
           avatar: post.avatar || (pName ? pName.slice(0, 1) : '👤'),
-          streak: 7,
+          streak: post.streak || 1,
           isAiBot: !!post.is_ai, source: 'feed' /* #TASK-ES-700 피드에서 시작된 팀 초대(team_pings.source) */
         };
         if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openScoutToTeamModal){

@@ -157,7 +157,11 @@
     if(typeof L.triggerHapticFeedback === 'function'){
       L.triggerHapticFeedback(12);
     }
+    var _openSettingsDetails = (L.state && L.state.activeTab === 'settings')
+      ? Array.prototype.slice.call(document.querySelectorAll('#screen-settings details[open]'))
+      : [];
     collapseAllSettingsSections();
+    _openSettingsDetails.forEach(function(acc){ acc.open = true; });
     renderSettingsHeroCard();
     L.refreshCustomFeedbackButtons();
     L.renderProfileCard();

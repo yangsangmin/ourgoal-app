@@ -197,7 +197,12 @@
     if(isNowDone){
       if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);
       L.triggerHaptic(15);
-      L.awardXP(10, '일정 및 목표 달성');
+      if(!L.state._xpAwardedSchedKeys) L.state._xpAwardedSchedKeys = {};
+      var xpKey = String(kind || 'custom') + ':' + String(schedId || '') + ':' + String(goalId || '') + ':' + String(msId || '') + ':' + String(taskId || '');
+      if(!L.state._xpAwardedSchedKeys[xpKey]){
+        L.state._xpAwardedSchedKeys[xpKey] = true;
+        L.awardXP(10, '일정 및 목표 달성');
+      }
       L.toast(wasLinked ? '일정 및 연계 목표를 달성했어요! 🎯 (+10 EXP)' : '일정을 완료했어요! 🎯 (+10 EXP)');
     } else {
       if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);

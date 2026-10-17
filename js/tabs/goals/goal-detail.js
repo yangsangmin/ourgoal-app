@@ -139,7 +139,7 @@
     '</button>';
 
     var gView = L.state.goalViewMode || 'default';
-    var msFilterBar = totalMs > 0 ?
+    var msFilterBar = (totalMs > 0 || gView !== 'default') ?
       '<div class="ms-filter-bar goals-filter-strip" style="display:flex;flex-direction:column;gap:5px;margin:4px 0 8px;">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
           '<div class="format-toggle seg-compact" id="msFilterToggle" style="flex:1;max-width:280px;min-width:200px;">' +
@@ -169,7 +169,7 @@
 
     var msHtml = (gView === 'goals_only') ?
       [(function(){
-        var allGoals = (L.state.profile && L.state.profile.goals) || [];
+        var allGoals = ((L.state.profile && L.state.profile.goals) || []).filter(function(g){ return !g.archivedAt && !g.teamLinked; });
         if(!allGoals.length) return '<div class="faint" style="padding:16px;text-align:center;">등록된 목표가 없습니다.</div>';
         return '<div class="goals-only-overview" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">' +
           '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:space-between;">' +
@@ -179,9 +179,10 @@
           allGoals.map(function(g){
             var gMs = g.milestones || [];
             var gDone = gMs.filter(function(m){ return m.status === 'done'; }).length;
-            var gPct = gMs.length ? Math.round((gDone / gMs.length) * 100) : 0;
+            var gPct = (typeof L.goalAchievement === 'function') ? L.goalAchievement(g) : (gMs.length ? Math.round((gDone / gMs.length) * 100) : 0);
             var isCur = g.id === L.state.activeGoalId;
-            var d = g.deadline ? ddayMini(g.deadline) : '';
+            var gDue = g.dueDate || g.deadline;
+            var d = gDue ? ddayMini(gDue) : '';
             return '<div class="card goal-milestone-overview-card" data-selectgoal="'+g.id+'" style="padding:12px;background:var(--card);border:'+(isCur?'2px solid var(--accent)':'1px solid var(--rule)')+';border-radius:14px;cursor:pointer;transition:all .15s ease;">' +
               '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
                 '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
@@ -206,7 +207,8 @@
                     var mTasks = m.tasks || [];
                     var tDone = mTasks.filter(function(t){ return t.done; }).length;
                     var tPct = mTasks.length ? Math.round((tDone / mTasks.length) * 100) : (m.status === 'done' ? 100 : 0);
-                    var mDday = m.deadline ? ddayMini(m.deadline) : '';
+                    var mDue = m.dueDate || m.deadline;
+                    var mDday = mDue ? ddayMini(mDue) : '';
                     return '<div class="goal-sub-milestone-item" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:var(--bg-subtle, rgba(0,0,0,0.02));border:1px solid var(--rule);border-radius:8px;">' +
                       '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">' +
                         stBadge +
@@ -337,7 +339,7 @@
             '</div>' +
           '</div>' +
           msProgressBar +
-          '<div class="ms-sub-meta-line">' +
+          '<div class="ms-sub-meta-line" style="display:' + ((density === 'compact' && !L.state.goalEditMode) ? 'none' : 'flex') + ';">' +
             '<div class="ms-sub-meta-left">' +
               prioTagHtml +
               msDueHtml +

@@ -13,6 +13,8 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
+- #TASK-ES-P0-CLEAN-FIXES-4022560a | E1/E2/E3/FIX | [전사 포렌식 확인 P0/일반 결함 즉시 수리 — 비저장(DIR-006 외) 12개 파일] origin/main(582eed2a) 실측으로 확인된 비저장(DIR-005·DIR-006·승인선 밖) 핵심 결함 수리: ① [H-01] 성소 홈 3초 체크인(fastCheckin) 기록 startAt/endAt 정합성 보강, 0번 목표 progress 가짜 +10% 왜곡 제거 및 +10 EXP 정식 지급 ② [H-05/F-05/C-02] 목표 알약 전환 시 L.state.activeGoalId 동기화 및 주간/월간 일정 완료 토글(toggleSanctuaryTask) 5번째 인자(taskId) 누락 수리 ③ [C-03] 레거시 일정 완료 토글(_xpAwardedSchedKeys) 반복 클릭 시 무한 +10 EXP 파밍 방어 ④ [R-01/R-03/R-04/R-05] 성소 기록 탭 24시간/주간 뷰 전환 시 피드 강제 렌더링 버그 수리, 포모도로 완료 시 endAt/createdAt/goalId 및 +25 EXP 지급, 기록 피드 배지 정합화 ⑤ [F-01/F-02/F-15] 목표탭 밀도 토글(#msDensityToggleBtn) 실배선, '목표만 보기' 뷰 전환 시 아카이브/팀연계 필터·마감일·달성률 정합화 및 뷰 전환 드롭다운 유지(탈출 불능 해소), 템플릿 검색창(#subtabTplSearchInp) 타이핑 중 포커스/커서 보존 ⑥ [M-01/M-02/M-03/M-04/M-08/M-09/M-10] 소통 피드 작성자 1:1 DM 직통 연결(dmActiveId 설정), 스트릭 하드코딩(🔥 14일 연속 -> post.streak || 1) 제거, 동반자 검색 결과 프로필 모달에 전체 유저 객체 전달 및 검색창(#compSearchInput) 포커스 보존 ⑦ [S-01] 설정 탭 내부 토글/조작으로 재렌더링될 때 열려 있던 아코디언(<details>) 상태 보존 + DIR-006 정식 인계문 및 G-01 성소/레거시 1:1 대조표·마스터 감찰 보고서 등재 | 상민님 직접 지시 (2026-10-17 "진행.") | 진행중
+
 - #TASK-INFRA-SHIPYARD-MODULAR-HARDENING | INFRA | [조선소 블록 모듈화 하드닝] index.html 내 검증 마크업 오염(og-task-shipyard-p1-container) 소탕(헌법 제4조 제1항 제10호 준수) 및 6대 메가블록 이중 렌더링 방어 수밀 가드 탑재 무결성 완결 | 상민님 직접 지시 (2026-10-02 "진행" -> "병합") | 완료 (PR #625 머지 완료)
 
 - #TASK-UIUX-FRAMEWORK-SYNC | INFRA/RULES | [UI/UX 틀 개편 완결 대장 등재] 아워골 UI/UX 프레임워크 8대 실행 단계(전수 64대 과업, Phase 0~7) 전원 법정 심사 success 및 GitHub main 머지 완료 공식 등재 & 942개 버튼 Zero Dead-Click 영구 무결성 대장 동기화 | 상민님 직접 지시 (2026-10-02 "진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.") | 완료 (PR #623 머지 완료)
