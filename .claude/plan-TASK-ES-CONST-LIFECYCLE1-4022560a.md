@@ -34,8 +34,8 @@
 ### 7. [원칙 ⑦] 단계별 실행 체크리스트 (헌법 제9조 제1항: 4단계 심사 청구까지만 기록)
 - [x] **[1단계: 요구사항 정의]** `docs/specs/REQ-TASK-ES-CONST-LIFECYCLE1-4022560a.md` 작성 완료 · 예상 3분 · 완료 기준: 지시 원문 및 8원칙 완비
 - [x] **[2단계: 실행계획 수립]** `.claude/plan-TASK-ES-CONST-LIFECYCLE1-4022560a.md` 작성 완료 · 예상 3분 · 완료 기준: 2차 8원칙 및 체크리스트 완비
-- [ ] **[3단계: 규범 초안 작성 및 정합 검증]** 직전 커널 아카이브 + `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md:319` 1줄 보완 + `node court/appendix.js --check` 실행 · 예상 5분 · 완료 기준: `ok: true` 및 제품 코드 diff 0줄 확인
-- [ ] **[4단계: 심사 청구 (초안 PR)]** GitHub 단독 Draft PR 생성 및 상민님 결심 대기 보고 · 예상 5분 · 완료 기준: Draft PR URL 및 문안 diff 제시 완료
+- [x] **[3단계: 규범 초안 작성 및 정합 검증]** 직전 커널 아카이브 + `01_OURGOAL_SUPREME_CONSTITUTION_FULL.md:319` 1줄 보완 + `node court/appendix.js --check` 실행 · 예상 5분 · 완료 기준: `ok: true` 및 제품 코드 diff 0줄 확인
+- [x] **[4단계: 심사 청구 (초안 PR)]** GitHub 단독 Draft PR (#990) 생성 및 상민님 결심 대기 보고 · 예상 5분 · 완료 기준: Draft PR URL 및 문안 diff 제시 완료
 
 ### 8. [원칙 ⑧] 막히는 지점 예상·성과 측정
 - `node court/appendix.js --check 01_OURGOAL_SUPREME_CONSTITUTION_FULL.md`가 `{"ok": true, "mismatches": []}`를 반환하는지로 측정한다.
